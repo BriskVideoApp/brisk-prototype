@@ -1,0 +1,540 @@
+:root {
+  ----black\/100: #000;
+  ----white\/100: #FFF;
+  ----gray\/5: #F8F9FA;
+  ----gray\/10: #EEF1F4;
+  ----gray\/20: #CDD5DE;
+  ----gray\/30: #ABBBC9;
+  ----gray\/40: #8FA0AF;
+  ----gray\/50: #778592;
+  ----gray\/60: #616C76;
+  ----gray\/70: #4A545C;
+  ----gray\/80: #353C43;
+  ----gray\/90: #21262B;
+  ----gray\/95: #181C20;
+  ----gray\/100: #0E1114;
+  ----blue\/5: #F6FAFE;
+  ----blue\/10: #E8F2FE;
+  ----blue\/20: #C0D5FF;
+  ----blue\/30: #91BAFF;
+  ----blue\/40: #53A0FF;
+  ----blue\/50: #0086EA;
+  ----blue\/60: #0D6CBD;
+  ----blue\/70: #0F5493;
+  ----blue\/80: #0C3C6C;
+  ----blue\/90: #062647;
+  ----blue\/95: #041C39;
+  ----red\/5: #FFF8F8;
+  ----blue\/100: #021125;
+  ----red\/10: #FFECED;
+  ----red\/20: #FFC6C8;
+  ----red\/30: #FF9EA2;
+  ----red\/40: #FF7071;
+  ----red\/50: #FE2836;
+  ----red\/60: #D60428;
+  ----red\/70: #A80817;
+  ----red\/80: #7B0515;
+  ----red\/90: #520401;
+  ----red\/100: #2B0104;
+  ----green\/10: #C6FED0;
+  ----yellow\/5: #FFFAF0;
+  ----green\/20: #5EEF88;
+  ----green\/30: #2CD463;
+  ----green\/40: #24B553;
+  ----green\/50: #1D9745;
+  ----green\/60: #157B2F;
+  ----green\/70: #0E601F;
+  ----green\/80: #04460B;
+  ----green\/90: #002D01;
+  ----green\/100: #001503;
+  ----yellow\/10: #FFEFD4;
+  ----yellow\/20: #FDCE5D;
+  ----yellow\/30: #E5B13A;
+  ----yellow\/40: #C89600;
+  ----yellow\/50: #A77D00;
+  ----yellow\/60: #896500;
+  ----yellow\/70: #684F07;
+  ----yellow\/80: #49390A;
+  ----orange\/10: #FFEEE1;
+  ----yellow\/90: #2F2404;
+  ----orange\/20: #FFCA9C;
+  ----yellow\/100: #171001;
+  ----orange\/30: #FDA465;
+  ----orange\/40: #F77B28;
+  ----orange\/50: #D7601D;
+  ----orange\/60: #B64804;
+  ----orange\/70: #893C00;
+  ----orange\/80: #622C00;
+  ----orange\/90: #3D1D02;
+  ----lime\/10: #D5FDB9;
+  ----orange\/100: #1D0D00;
+  ----lime\/20: #A6E74D;
+  ----lime\/30: #93C933;
+  ----lime\/40: #81AC00;
+  ----lime\/50: #6B8F00;
+  ----lime\/60: #5D7300;
+  ----lime\/70: #495900;
+  ----lime\/80: #344000;
+  ----lime\/90: #1F2900;
+  ----cyan\/10: #D2F7FF;
+  ----lime\/100: #0D1300;
+  ----cyan\/20: #6DE5FA;
+  ----cyan\/30: #00CBE0;
+  ----cyan\/40: #00AEBF;
+  ----cyan\/50: #0091A2;
+  ----cyan\/60: #007682;
+  ----cyan\/70: #145B64;
+  ----cyan\/80: #064249;
+  ----cyan\/90: #022A30;
+  ----cyan\/100: #001417;
+  ----pink\/10: #FFECF3;
+  ----purple\/5: #FBF9FF;
+  ----purple\/10: #F3EEFF;
+  ----pink\/20: #FEC5DD;
+  ----purple\/20: #DCCDFF;
+  ----purple\/30: #C6ABFF;
+  ----pink\/30: #FD9AC8;
+  ----purple\/40: #B187FF;
+  ----pink\/40: #FD68B5;
+  ----pink\/50: #F716A2;
+  ----pink\/60: #CA0F83;
+  ----purple\/50: #9F60FF;
+  ----purple\/60: #8B2CFF;
+  ----pink\/70: #9B146C;
+  ----purple\/70: #6625CD;
+  ----pink\/80: #75054B;
+  ----purple\/80: #5300A1;
+  ----pink\/90: #4E0133;
+  ----purple\/90: #340768;
+  ----purple\/100: #1B003C;
+  ----opacity\/black-100-16\%: #00000029;
+  ----opacity\/black-100-40\%: #0006;
+  ----opacity\/black-100-48\%: #0000007A;
+  ----opacity\/black-100-56\%: #0000008F;
+  ----opacity\/black-100-72\%: #000000B8;
+  ----opacity\/black-100-80\%: #000C;
+  ----opacity\/white-100-4\%: #FFFFFF0A;
+  ----opacity\/white-100-8\%: #FFFFFF14;
+  ----opacity\/white-100-12\%: #FFFFFF1F;
+  ----opacity\/white-100-16\%: #FFFFFF29;
+  ----opacity\/white-100-24\%: #FFFFFF3D;
+  ----opacity\/white-100-40\%: #FFF6;
+  ----opacity\/white-100-48\%: #FFFFFF7A;
+  ----opacity\/white-100-56\%: #FFFFFF8F;
+  ----opacity\/gray-40-16\%: #8FA0AF29;
+  ----opacity\/blue-50-8\%: #0086EA14;
+  ----opacity\/blue-50-16\%: #0086EA29;
+  ----opacity\/blue-50-24\%: #0086EA3D;
+  ----opacity\/blue-50-32\%: #0086EA52;
+  ----opacity\/red-50-16\%: #FE283629;
+  ----opacity\/green-40-16\%: #24B55329;
+  ----opacity\/yellow-40-16\%: #C8960029;
+  ----opacity\/purple-40-8\%: #B187FF14;
+  ----opacity\/purple-40-16\%: #B187FF29;
+  ----opacity\/purple-40-24\%: #B187FF3D;
+  ----opacity\/purple-40-32\%: #B187FF52;
+  ----pink\/100: #270317;
+  ----text\/title: var(----gray\/100);
+  ----text\/primary: var(----gray\/100);
+  ----text\/secondary: var(----gray\/60);
+  ----text\/tertiary: var(----gray\/40);
+  ----text\/white: var(----white\/100);
+  ----text\/white-on-color: var(----white\/100);
+  ----icon\/primary: var(----gray\/100);
+  ----icon\/action: var(----gray\/60);
+  ----border\/primary: var(----gray\/100);
+  ----brand\/primary: var(----purple\/60);
+  ----brand\/primary-hover: var(----purple\/10);
+  ----brand\/primary-click: var(----purple\/70);
+  ----brand\/secondary: var(----purple\/10);
+  ----brand\/secondary-hover: var(----purple\/10);
+  ----brand\/secondary-click: var(----purple\/20);
+  ----border\/secondary: var(----gray\/20);
+  ----border\/elevated: var(----gray\/10);
+  ----border\/focus-state: var(----blue\/30);
+  ----link\/primary: var(----purple\/50);
+  ----link\/visited: var(----purple\/70);
+  ----bg-block\/primary: var(----white\/100);
+  ----bg-block\/secondary: var(----gray\/5);
+  ----bg-block\/dim: var(----gray\/10);
+  ----bg-page\/primary: var(----yellow\/5);
+  ----bg-elevated-block\/primary: var(----white\/100);
+  ----bg-elevated-block\/secondary: var(----gray\/5);
+  ----bg-elevated-block\/dark: var(----opacity\/black-100-72\%);
+  ----bg-page\/secondary: var(----white\/100);
+  ----bg-page\/tertiary: var(----gray\/5);
+  ----item\/primary: var(----white\/100);
+  ----item\/secondary: var(----gray\/5);
+  ----item\/tertiary: var(----gray\/10);
+  ----item\/dark-primary: var(----gray\/20);
+  ----item\/dark-secondary: var(----gray\/30);
+  ----item\/dark-tertiary: var(----gray\/40);
+  ----item\/progress: var(----opacity\/white-100-24\%);
+  ----item\/progress-filled: var(----opacity\/white-100-48\%);
+  ----overlay\/dark: var(----opacity\/black-100-48\%);
+  ----system\/error: var(----red\/50);
+  ----system\/success: var(----green\/50);
+  ----system\/info: var(----blue\/50);
+  ----system\/warning: var(----yellow\/40);
+  ----system\/special: #9F60FF;
+  ----system\/neutral: var(----gray\/40);
+  ----system\/error-dark: var(----red\/60);
+  ----system\/success-dark: var(----green\/60);
+  ----system\/info-dark: var(----blue\/60);
+  ----system\/warning-dark: var(----yellow\/50);
+  ----system\/neutral-dark: var(----gray\/60);
+  ----system\/error-light: var(----red\/10);
+  ----system\/success-light: var(----green\/10);
+  ----system\/info-light: var(----blue\/10);
+  ----system\/warning-light: var(----yellow\/10);
+  ----system\/special-light: var(----purple\/10);
+  ----system\/neutral-light: var(----gray\/10);
+  ----disabled\/primary: var(----gray\/40);
+  ----disabled\/border: var(----gray\/20);
+  ----disabled\/tertiary: var(----gray\/5);
+  ----extra\/stars: var(----yellow\/20);
+  ----extra\/lime-primary: var(----lime\/40);
+  ----extra\/lime-secondary: var(----lime\/20);
+  ----extra\/lime-tertiary: var(----lime\/10);
+  ----extra\/cyanic-primary: var(----cyan\/40);
+  ----extra\/cyanic-secondary: var(----cyan\/20);
+  ----extra\/cyanic-tertiary: var(----cyan\/10);
+  ----extra\/purple-primary: var(----purple\/60);
+  ----extra\/purple-secondary: var(----purple\/30);
+  ----extra\/purple-tertiary: var(----purple\/10);
+  ----extra\/pink-primary: var(----pink\/50);
+  ----extra\/pink-secondary: var(----pink\/30);
+  ----extra\/pink-tertiary: var(----pink\/10);
+  ----item\/hover: var(----gray\/5);
+  ----item\/click: var(----gray\/10);
+  ----illustration\/light: var(----white\/100);
+  ----illustration\/black: var(----black\/100);
+  ----illustration\/bg: var(----blue\/5);
+  ----illustration\/shadow-light: var(----blue\/10);
+  ----illustration\/shadow-middle: var(----blue\/20);
+  ----illustration\/shadow-dark: var(----blue\/30);
+  ----illustration\/stroke: var(----blue\/50);
+  ----btn\/danger: var(----red\/50);
+  ----btn\/danger-hover: var(----red\/40);
+  ----btn\/danger-click: var(----red\/60);
+  ----btn\/danger-secondary-hover: var(----red\/5);
+  ----btn\/danger-secondary-click: var(----red\/20);
+  ----btn\/inverse: var(----white\/100);
+  ----btn\/inverse-hover: var(----gray\/5);
+  ----btn\/inverse-click: var(----gray\/10);
+  ----btn\/inverse-secondary-hover: var(----opacity\/white-100-24\%);
+  ----btn\/inverse-secondary-click: var(----opacity\/white-100-48\%);
+  ----icon\/info: var(----gray\/40);
+  ----icon\/white: var(----white\/100);
+  ----icon\/white-on-color: var(----white\/100);
+  ----item\/dark-transparent: var(----opacity\/black-100-48\%);
+  ----item\/white-on-color: var(----white\/100);
+  --padding\/none: 0;
+  --padding\/xxs: 2;
+  --padding\/xs: 4;
+  --padding\/s: 8;
+  --padding\/m: 12;
+  --padding\/l: 16;
+  --padding\/xl: 24;
+  --padding\/2xl: 32;
+  --padding\/3xl: 40;
+  --padding\/4xl: 48;
+  --padding\/5xl: 56;
+  --padding\/6xl: 64;
+  --gap\/none: 0;
+  --gap\/xxs: 2;
+  --gap\/xs: 4;
+  --gap\/s: 8;
+  --gap\/m: 12;
+  --gap\/l: 16;
+  --gap\/xl: 24;
+  --gap\/2xl: 32;
+  --gap\/3xl: 40;
+  --gap\/4xl: 48;
+  --gap\/5xl: 56;
+  --gap\/6xl: 64;
+  --radius\/none: 0;
+  --radius\/xxs: 2;
+  --radius\/xs: 4;
+  --radius\/s: 8;
+  --radius\/m: 12;
+  --radius\/l: 16;
+  --radius\/xl: 24;
+  --radius\/2xl: 32;
+  --radius\/3xl: 40;
+  --radius\/4xl: 48;
+  --radius\/5xl: 56;
+  --radius\/6xl: 64;
+  --radius\/full: 999;
+}
+
+.paragraph-xs {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0px;
+}
+
+.paragraph-xs-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0px;
+}
+
+.paragraph-s {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0px;
+}
+
+.paragraph-s-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0px;
+}
+
+.paragraph-m {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+.paragraph-m-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+.paragraph-l {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0px;
+}
+
+.paragraph-l-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: 0px;
+}
+
+.paragraph-xl {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: 0px;
+}
+
+.paragraph-xl-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: 0px;
+}
+
+.label-xs {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0px;
+}
+
+.label-xs-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0px;
+}
+
+.label-s {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0px;
+}
+
+.label-s-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0px;
+}
+
+.label-m {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+.label-m-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+.label-l {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0px;
+}
+
+.label-l-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: 0px;
+}
+
+.label-xl {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Regular";
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: 0px;
+}
+
+.label-xl-semibold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "SemiBold";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: 0px;
+}
+
+.headings-3xs-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0px;
+}
+
+.headings-2xs-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+.headings-xs-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0px;
+}
+
+.headings-s-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: 0px;
+}
+
+.headings-m-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0px;
+}
+
+.headings-l-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0px;
+}
+
+.headings-xl-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 56px;
+  letter-spacing: 0px;
+}
+
+.headings-2xl-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 64px;
+  letter-spacing: 0px;
+}
+
+.headings-3xl-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 72px;
+  letter-spacing: 0px;
+}
+
+.headings-4xl-bold {
+  font-family: "Plus Jakarta Sans";
+  font-style: "Bold";
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 88px;
+  letter-spacing: 0px;
+}
+
