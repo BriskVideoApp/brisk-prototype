@@ -81,6 +81,14 @@ Before generating any screen, load the right skill:
 
 If a question spans multiple skills (most do), load all relevant ones.
 
+## Screen references
+
+Before building or modifying any screen, read `Docs/References/screen-inventory.md` and consult the referenced screenshots.
+
+- The `brisk/` folder defines **visual truth** - use these for styling, components, icons, layout patterns.
+- The `current/` folder is **reference only** - it shows what the legacy ChopChop product does today, not what the new prototype should do. Many features will change in Brisk. Propose a redesigned, Brisk-styled version and confirm with Tom before writing code.
+- Never directly clone a `current/` screen into code without operator approval of the redesign.
+
 ## Coding rules
 
 - TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
