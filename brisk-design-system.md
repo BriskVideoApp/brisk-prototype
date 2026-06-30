@@ -57,6 +57,7 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 - Use **Flow icons** only. The full library lives in the `Brisk DS/` folder.
 - Do not generate or substitute SVGs from other sources.
 - If an icon is missing, ask before adding one from elsewhere.
+- Current production-stage UI uses the circular seven-stage treatment for Brisk stages: Brief, Script, Shoot, Storyboard, Media, Edit, Masters. Do not use Styleframes, square flow tiles, letter tiles, or generic substitute icons for current stage pickers or progress rows.
 
 ## Components
 

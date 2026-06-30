@@ -1,0 +1,1278 @@
+.project-overview-shell {
+  min-height: 100vh;
+  background: var(--brisk-page-primary);
+  color: var(--brisk-text-primary);
+  padding: 32px;
+}
+
+.project-overview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  gap: 24px;
+  padding-bottom: 24px;
+}
+
+.project-overview-back {
+  display: inline-flex;
+  color: var(--brisk-brand-primary-click);
+  margin-bottom: 14px;
+  text-decoration: none;
+}
+
+.project-overview-client {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  padding: 0 10px;
+}
+
+.project-overview-title {
+  max-width: 760px;
+  margin: 10px 0 0;
+  color: var(--brisk-text-primary);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.project-overview-role-switcher {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+}
+
+.project-overview-role {
+  min-height: 34px;
+  border: 0;
+  border-left: 1px solid var(--brisk-border-primary);
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  padding: 0 12px;
+}
+
+.project-overview-role:first-child {
+  border-left: 0;
+}
+
+.project-overview-role.selected {
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-primary);
+}
+
+.project-overview-grid {
+  display: grid;
+  max-width: 1120px;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.project-overview-hidden-panel {
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: 24px;
+}
+
+.team-panel {
+  overflow: visible;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.team-panel-header {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  padding: 0 20px;
+}
+
+.team-panel-collapse {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
+  padding: 0;
+  text-align: left;
+}
+
+.team-panel-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-panel-title {
+  font-size: 18px;
+}
+
+.team-role-menu-button,
+.team-modal-close,
+.team-panel-edit {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  padding: 0;
+}
+
+.team-role-menu-button:not(:disabled):hover,
+.team-modal-close:hover,
+.team-panel-edit:hover {
+  color: var(--brisk-brand-primary);
+}
+
+.team-panel-edit {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+}
+
+.team-role-menu-button:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.team-panel-body {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.team-panel-table {
+  display: grid;
+  overflow: visible;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+}
+
+.team-panel-table-head,
+.team-role-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr) minmax(120px, 0.7fr) minmax(110px, 0.6fr) 56px;
+  align-items: center;
+  column-gap: 16px;
+}
+
+.team-panel-table-head {
+  min-height: 44px;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-text-secondary);
+  padding: 0 16px;
+}
+
+.team-role-row {
+  min-height: 76px;
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  padding: 12px 16px;
+}
+
+.team-role-row {
+  position: relative;
+}
+
+.team-role-row:hover {
+  background: color-mix(in srgb, var(--brisk-brand-secondary) 40%, var(--brisk-white));
+}
+
+.team-role-main,
+.team-role-person {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.team-role-main {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-role-stages,
+.team-role-rate {
+  color: var(--brisk-text-secondary);
+}
+
+.team-role-person-name {
+  display: block;
+}
+
+.team-role-empty-avatar {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-full);
+  color: var(--brisk-text-secondary);
+}
+
+.team-role-status {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border: 1px solid currentColor;
+  border-radius: var(--brisk-radius-full);
+  padding: 0 10px;
+}
+
+.status-confirmed,
+.status-accepted,
+.status-completed {
+  background: var(--brisk-green-10);
+  color: var(--brisk-system-success);
+}
+
+.status-invited {
+  background: var(--brisk-purple-10);
+  color: var(--brisk-purple-70);
+}
+
+.status-declined {
+  background: var(--brisk-orange-10);
+  color: var(--brisk-orange-40);
+}
+
+.team-role-menu-cell {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.team-role-menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  z-index: 20;
+  display: grid;
+  width: 190px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: 8px;
+}
+
+.team-role-menu button,
+.team-add-role-menu button {
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
+  padding: 0 10px;
+  text-align: left;
+}
+
+.team-role-menu button:hover,
+.team-add-role-menu button:hover,
+.team-person-option:hover,
+.team-stage-option:hover {
+  background: var(--brisk-brand-secondary);
+}
+
+.team-role-menu .danger {
+  color: var(--brisk-pink-70);
+}
+
+.team-panel-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-detail-panel .team-panel {
+  display: grid;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  box-shadow: none;
+  gap: 8px;
+  padding: 22px 24px;
+}
+
+.project-detail-panel .team-panel-header {
+  min-height: auto;
+  border-bottom: 0;
+  padding: 0;
+}
+
+.project-detail-panel .team-panel-title {
+  color: var(--brisk-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.project-detail-panel .team-panel-body {
+  gap: 10px;
+  padding: 0;
+}
+
+.project-detail-panel .team-panel-table-head {
+  display: none;
+}
+
+.project-detail-panel .team-role-row {
+  grid-template-areas:
+    "role menu"
+    "person status"
+    "hours hours";
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: auto;
+  align-items: flex-start;
+  border-bottom: 0;
+  row-gap: 10px;
+  padding: 0;
+}
+
+.project-detail-panel .team-role-row:hover {
+  background: transparent;
+}
+
+.project-detail-panel .team-role-main {
+  grid-area: role;
+}
+
+.project-detail-panel .team-role-person {
+  grid-area: person;
+}
+
+.project-detail-panel .team-role-hours {
+  grid-area: hours;
+}
+
+.project-detail-panel .team-role-row > div:nth-child(4) {
+  grid-area: status;
+  justify-self: end;
+}
+
+.project-detail-panel .team-role-menu-cell {
+  grid-area: menu;
+}
+
+.team-add-role-wrap {
+  position: relative;
+}
+
+.team-add-role-button,
+.team-panel-reset,
+.team-primary-button,
+.team-secondary-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  gap: 8px;
+  padding: 0 14px;
+}
+
+.team-add-role-button:hover,
+.team-panel-reset:hover,
+.team-secondary-button:hover {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.team-primary-button {
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-text-white);
+}
+
+.team-primary-button:hover {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.team-primary-button:disabled,
+.team-secondary-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.team-add-role-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 25;
+  display: grid;
+  width: 240px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  gap: 4px;
+  padding: 8px;
+}
+
+.team-custom-role {
+  display: grid;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: 8px;
+  margin-top: 4px;
+  padding: 12px 8px 4px;
+}
+
+.team-inline-input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: 0 12px;
+}
+
+.team-hours-needed-input {
+  width: 56px;
+  min-height: 28px;
+  padding: 0 var(--brisk-space-s);
+  text-align: center;
+}
+
+.team-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--brisk-text-primary) 36%, transparent);
+  padding: 24px;
+}
+
+.team-modal {
+  display: grid;
+  width: min(480px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  gap: 16px;
+  padding: 20px;
+}
+
+.team-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.team-modal-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.team-modal-header-action-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.team-modal-icon-action {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-none);
+}
+
+.team-modal-icon-action:hover,
+.team-modal-icon-action[aria-expanded="true"] {
+  color: var(--brisk-pink-70);
+}
+
+.team-remove-popconfirm {
+  position: absolute;
+  top: calc(100% + var(--brisk-space-s));
+  right: 0;
+  z-index: 2;
+  width: 260px;
+}
+
+.team-modal-title,
+.team-modal-subtitle {
+  margin: 0;
+}
+
+.team-modal-heading {
+  display: grid;
+  min-width: 0;
+  gap: var(--brisk-space-xs);
+}
+
+.team-modal-current-person {
+  width: max-content;
+  max-width: 100%;
+}
+
+.team-modal-empty-slot {
+  color: var(--brisk-text-secondary);
+}
+
+.team-modal-subtitle,
+.team-person-group-title {
+  color: var(--brisk-text-secondary);
+}
+
+.team-person-group,
+.team-stage-list,
+.team-hours-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.team-person-option {
+  display: flex;
+  align-items: center;
+  border: 0;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  gap: 10px;
+  padding: 8px;
+  text-align: left;
+}
+
+.team-invite-form {
+  display: grid;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.team-email-popover {
+  display: grid;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-s);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m);
+}
+
+.team-email-textarea {
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.team-invite-row,
+.team-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.team-stage-option {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  border: 0;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  gap: 10px;
+  padding: 0 8px;
+  text-align: left;
+}
+
+.team-checkbox {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+  color: var(--brisk-text-white);
+}
+
+.team-checkbox.checked {
+  background: var(--brisk-brand-primary);
+}
+
+.team-hours-row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  gap: 12px;
+}
+
+.team-panel-heading {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.team-panel-heading {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.team-panel-slot-list {
+  display: grid;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+}
+
+.team-role-row {
+  display: grid;
+  min-height: 0;
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-l);
+}
+
+.team-role-row:last-of-type {
+  border-bottom: 0;
+}
+
+.team-role-row:hover {
+  background: color-mix(in srgb, var(--brisk-brand-secondary) 30%, var(--brisk-white));
+}
+
+.team-role-row.editable {
+  cursor: pointer;
+}
+
+.team-role-row.editable:focus-visible {
+  outline: 2px solid var(--brisk-brand-primary);
+  outline-offset: -2px;
+}
+
+.team-role-row-primary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: start;
+  gap: var(--brisk-space-m);
+}
+
+.team-role-main {
+  display: grid;
+  min-width: 0;
+  gap: var(--brisk-space-xxs);
+}
+
+.team-role-name {
+  color: var(--brisk-text-primary);
+}
+
+.team-role-stages,
+.team-role-rate,
+.team-inline-rate,
+.team-invitation-meta,
+.team-picker-helper,
+.team-empty-slot {
+  color: var(--brisk-text-secondary);
+}
+
+.team-role-fill-state,
+.team-invitation-item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.team-role-fill-copy,
+.team-invitation-copy,
+.team-person-option-copy {
+  display: grid;
+  min-width: 0;
+  gap: var(--brisk-space-xxs);
+}
+
+.team-role-person-name {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.team-person-pill-wrap,
+.team-invitation-actions,
+.team-invitation-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.team-person-pill,
+.team-role-status {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
+}
+
+.team-person-pill.studio {
+  background: color-mix(in srgb, var(--brisk-brand-secondary) 58%, var(--brisk-white));
+  color: var(--brisk-brand-primary-click);
+}
+
+.team-person-pill.freelance {
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-secondary);
+}
+
+.team-person-disabled {
+  color: var(--brisk-text-secondary);
+}
+
+.team-person-pill {
+  min-height: 16px;
+  border-color: var(--brisk-border-secondary);
+  font-size: 10px;
+  line-height: 1.2;
+  padding: var(--brisk-space-none) var(--brisk-space-xs);
+}
+
+.team-role-status {
+  border-color: currentColor;
+}
+
+.team-role-status.accepted {
+  background: var(--brisk-green-10);
+  color: var(--brisk-system-success);
+}
+
+.team-role-status.invited,
+.team-role-status.seen {
+  background: var(--brisk-purple-10);
+  color: var(--brisk-purple-70);
+}
+
+.team-invitation-list {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.team-invitation-toggle {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 24px;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-none);
+}
+
+.team-invitation-toggle svg {
+  transition: transform 120ms ease-out;
+}
+
+.team-invitation-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.team-invitation-toggle:hover {
+  color: var(--brisk-brand-primary);
+}
+
+.team-invitation-dropdown {
+  display: grid;
+  gap: var(--brisk-space-xs);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+  padding: var(--brisk-space-s);
+}
+
+.team-invitation-line {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-xs);
+  margin: var(--brisk-space-none);
+}
+
+.team-invitation-line > * + *::before {
+  color: var(--brisk-text-secondary);
+  content: "·";
+  margin-right: var(--brisk-space-xs);
+}
+
+.team-invitation-person {
+  color: var(--brisk-text-primary);
+}
+
+.team-text-button,
+.team-withdraw-button,
+.team-invite-another,
+.team-invite-email-link {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none);
+  text-align: left;
+}
+
+.team-invite-another:disabled,
+.team-invite-another[data-disabled="true"],
+.team-person-option:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.team-withdraw-button {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  color: var(--brisk-text-primary);
+}
+
+.team-person-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-m);
+}
+
+.team-person-option {
+  min-height: 54px;
+  justify-content: flex-start;
+}
+
+.team-person-option:disabled:hover {
+  background: transparent;
+}
+
+.team-picker-helper {
+  margin: var(--brisk-space-none);
+}
+
+.team-invite-email-link {
+  justify-self: start;
+}
+
+.team-popconfirm {
+  display: grid;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-s);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m);
+}
+
+.team-popconfirm.inline {
+  box-shadow: none;
+}
+
+.team-popconfirm p {
+  margin: var(--brisk-space-none);
+}
+
+.team-popconfirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+}
+
+.team-toast {
+  position: fixed;
+  right: var(--brisk-space-xl);
+  bottom: var(--brisk-space-xl);
+  z-index: 120;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.project-detail-panel .team-panel-slot-list {
+  border: 0;
+  border-radius: 0;
+}
+
+.project-detail-panel .team-role-row {
+  grid-template-areas: none;
+  grid-template-columns: 1fr;
+  min-width: 0;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.project-detail-panel .team-role-main,
+.project-detail-panel .team-role-hours,
+.project-detail-panel .team-role-menu-cell {
+  grid-area: auto;
+}
+
+@media (max-width: 760px) {
+  .team-role-row-primary {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .team-person-option,
+  .team-empty-fill-state {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.team-role-row-primary {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.team-role-titleline {
+  display: inline-flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.team-role-dot,
+.team-assigned-indicator,
+.team-history-item {
+  color: var(--brisk-text-secondary);
+}
+
+.team-role-hours-button {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-none) var(--brisk-space-xs);
+}
+
+.team-role-hours-button:not(:disabled):hover {
+  color: var(--brisk-brand-primary-click);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.team-role-hours-button:disabled {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+  padding: var(--brisk-space-none);
+}
+
+.team-role-hours-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  font: inherit;
+  padding: var(--brisk-space-none);
+}
+
+.team-role-row.editable:hover .team-role-hours-chip,
+.team-role-row.editable:focus-visible .team-role-hours-chip {
+  color: var(--brisk-brand-primary-click);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.team-role-hours-input {
+  width: 72px;
+  min-height: 28px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-none) var(--brisk-space-xs);
+}
+
+.team-empty-fill-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-m);
+}
+
+.team-assigned-indicator {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-item-tertiary);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
+}
+
+.team-role-status.withdrawn,
+.team-role-status.declined,
+.team-role-status.expired {
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-secondary);
+}
+
+.team-row-edit-hint {
+  align-self: start;
+  color: var(--brisk-brand-primary-click);
+}
+
+.team-role-editor {
+  width: min(640px, calc(100vw - 48px));
+}
+
+.team-role-settings {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.team-role-settings-row {
+  display: flex;
+  align-items: end;
+  gap: var(--brisk-space-l);
+}
+
+.team-setting-field {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.team-setting-field.grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.team-stage-summary {
+  color: var(--brisk-text-primary);
+}
+
+.team-editor-section,
+.team-current-person {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.team-stage-list.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.team-modal-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.team-danger-link {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-pink-70);
+  padding: var(--brisk-space-none);
+  text-align: left;
+}
+
+.team-segmented-control {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+}
+
+.team-segment {
+  min-height: 32px;
+  border: 0;
+  border-right: 1px solid var(--brisk-border-primary);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-none) var(--brisk-space-l);
+}
+
+.team-segment:last-child {
+  border-right: 0;
+}
+
+.team-segment.active {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.team-fill-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-s);
+}
+
+.team-fill-primary-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+@media (max-width: 760px) {
+  .team-role-settings-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .team-stage-list.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .team-modal-actions.split,
+  .team-modal-action-group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.team-person-option {
+  justify-content: space-between;
+  border: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-white);
+}
+
+.team-person-option:hover {
+  background: var(--brisk-brand-secondary);
+}
+
+.team-person-option.disabled {
+  opacity: 0.5;
+}
+
+.team-person-option.disabled:hover {
+  background: var(--brisk-white);
+}
+
+.team-person-option-copy {
+  flex: 1 1 auto;
+}
+
+.team-person-option-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--brisk-space-xs);
+}
+
+.team-freelancer-select {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-freelancer-select input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.team-checkbox-visual {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-white);
+}
+
+.team-freelancer-select input:checked + .team-checkbox-visual {
+  background: var(--brisk-brand-primary);
+}
+
+.team-freelancer-select input:checked + .team-checkbox-visual::after {
+  color: var(--brisk-text-white);
+  content: "✓";
+}
+
+.team-freelancer-select input:disabled + .team-checkbox-visual {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-item-tertiary);
+}
+
+.team-inline-action {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none);
+  text-align: left;
+}
+
+.team-inline-action:disabled {
+  color: var(--brisk-text-tertiary);
+  cursor: default;
+}
+
+.team-invite-email-link:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.team-invitation-history {
+  display: grid;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: var(--brisk-space-xs);
+  padding-top: var(--brisk-space-s);
+}
+
+.team-history-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}

@@ -1,5 +1,5 @@
-import { VideoReviewScreen } from "@/components/video-review/VideoReviewScreen";
+import { TodayPage } from "@/components/today/TodayPage";
 
 export default function Home() {
-  return <VideoReviewScreen />;
+  return <TodayPage />;
 }

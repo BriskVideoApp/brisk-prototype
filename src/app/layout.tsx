@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "@/components/video-review/video-review.css";
+import "@/components/active-videos/active-videos.css";
+import "@/components/today/today.css";
+import "@/components/project/team/team-panel.css";
 
 export const metadata: Metadata = {
-  title: "Brisk Video Review",
-  description: "Filmmaker video review screen for the Brisk prototype",
+  title: "Brisk Prototype",
+  description: "Studio production screens for the Brisk prototype",
 };
 
 export default function RootLayout({

@@ -59,6 +59,8 @@ brisk-prototype/
 
 ├── Brisk DS/                       ← Yura's components (do not rebuild)
 
+├── Brisk Visuals/                  ← exported DS visual assets: flow icons, logos, illustrations, pictograms
+
 ├── docs/                           ← feature briefs (added as we go)
 
 └── src/
@@ -103,15 +105,19 @@ Before building or modifying any screen, read `Docs/References/screen-inventory.
 - If a component is missing from `Brisk DS/`, ask before creating it locally. Don't silently invent.
 - Use Brisk DS tokens (CSS variables) for every colour, spacing, radius, shadow, and text style. No magic numbers.
 - Use Flow icons only (in `Brisk DS/`). Do not import icons from other libraries.
+- Use exported visual assets from `Brisk Visuals/` for Flow icons, logos, illustrations, and pictograms.
+- Flow icons live in `Brisk Visuals/Flow icons/`. Use these SVGs for production stages before falling back to placeholder or generic icons.
+- Do not recreate Flow icons with generic Phosphor icons, letter tiles, or local approximations.
+- Current production-stage UI uses the circular seven-stage treatment: Brief, Script, Shoot, Storyboard, Media, Edit, Masters. Do not use Style Frames / Styleframes, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
 
 ## Role-switcher requirement
 
 The prototype must include a persistent role switcher in the top bar that lets the user view any screen as:
-- Studio Owner
-- Studio Manager
-- Filmmaker
-- Account Owner (customer)
-- Teammate (customer)
+- Studio Staff
+- Studio Freelancer
+- Customer
+
+V1 keeps the role model deliberately simple - three roles, no granular permissions. The original five-role split (Owner/Manager/Filmmaker on Studio side; Account Owner/Teammate on Customer side) is deferred to V2.
 
 This is a prototype demo affordance only - in production, role is set by the user account.
 
@@ -139,6 +145,7 @@ This is a prototype demo affordance only - in production, role is set by the use
 - Don't rebuild components that already exist in `Brisk DS/`.
 - Don't write tests or set up CI/CD unless asked.
 - Don't use the word "task" for units of work - use "Stage" (see Production Journey skill).
+- Don't use Style Frames / Styleframes as an Active Videos stage. It is redundant for Brisk's current production flow.
 - Don't design Quote, Proposal, or Concept flows - they're not in Brisk yet.
 - Don't ship desktop-only client-facing flows - client surfaces must work on mobile.
 

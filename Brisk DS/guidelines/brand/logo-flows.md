@@ -43,6 +43,8 @@
 | Edits | `Flow=Edits` | `--extra/pink-secondary` | Video construction: story, pacing, music, graphics, polish. |
 | Masters | `Flow=Masters` | `--extra/purple-secondary` | Final delivery: exports, QC checks, captions. Approval = project complete. |
 
+Note: Styleframes assets exist in the DS, but Style Frames / Styleframes is not an Active Videos production stage in the current Brisk prototype.
+
 **Size usage:**
 - S → tab labels, inline flow references
 - M → card headers, row identifiers
@@ -52,7 +54,37 @@
 - `Edited=Yes + Status=true` → flow started or complete
 - `Edited=No` → flow not started (~50% opacity)
 
-**Exact variant name spellings** (do not abbreviate or alter):
+## Exported assets
+
+Current SVG exports live in `Brisk Visuals/Flow icons/`.
+
+Base flow icons:
+- `flow-brief.svg`
+- `flow-script.svg`
+- `flow-shoot.svg`
+- `flow-styleframes.svg`
+- `flow-storyboard.svg`
+- `flow-media.svg`
+- `flow-edits.svg`
+- `flow-masters.svg`
+
+State variants are also available:
+- `*-done.svg`
+- `*-customer-review.svg`
+- `*-chopchop-review.svg`
+
+Current Brisk prototype stage UI uses the circular seven-stage treatment for active production stages:
+- Brief
+- Script
+- Shoot
+- Storyboard
+- Media
+- Edit
+- Masters
+
+Do not use Style Frames / Styleframes in current production stage rows or pickers. Do not use square flow tiles, letter tiles, or generic substitutes for current Brisk stage pickers or progress rows. If updated circular SVG exports are provided, place them beside these assets and wire the prototype to those files.
+
+**Legacy/exported asset variant name spellings** (do not abbreviate or alter when dealing with old exports):
 - "Edit" → `Flow=Edits`
 - "Style Frames" → `Flow=Styleframes`
 - "Master" → `Flow=Masters`
