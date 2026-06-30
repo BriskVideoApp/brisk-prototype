@@ -116,6 +116,20 @@ export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor, onChan
           </span>
           <span className="team-role-stages label-xs">{slot.stages.map((stage) => stageLabels[stage.stageId]).join(", ") || "No stages yet"}</span>
         </div>
+        {canEdit ? (
+          <button
+            className="team-role-card-edit"
+            type="button"
+            aria-label={`Edit ${roleLabel}`}
+            title={`Edit ${roleLabel}`}
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenEditor();
+            }}
+          >
+            <DsIcon name="pencil-simple-ds" size={16} />
+          </button>
+        ) : null}
       </div>
 
       {acceptedPerson && acceptedInvitation ? (

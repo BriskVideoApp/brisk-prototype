@@ -124,7 +124,8 @@
 
 .team-role-menu-button,
 .team-modal-close,
-.team-panel-edit {
+.team-panel-edit,
+.team-role-card-edit {
   display: inline-flex;
   width: 32px;
   height: 32px;
@@ -138,11 +139,13 @@
 
 .team-role-menu-button:not(:disabled):hover,
 .team-modal-close:hover,
-.team-panel-edit:hover {
+.team-panel-edit:hover,
+.team-role-card-edit:hover {
   color: var(--brisk-brand-primary);
 }
 
-.team-panel-edit {
+.team-panel-edit,
+.team-role-card-edit {
   width: 24px;
   height: 24px;
   flex: 0 0 24px;
@@ -328,7 +331,7 @@
 }
 
 .project-detail-panel .team-panel-body {
-  gap: 10px;
+  gap: var(--brisk-space-m);
   padding: 0;
 }
 
@@ -337,41 +340,48 @@
 }
 
 .project-detail-panel .team-role-row {
-  grid-template-areas:
-    "role menu"
-    "person status"
-    "hours hours";
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-height: auto;
   align-items: flex-start;
-  border-bottom: 0;
-  row-gap: 10px;
-  padding: 0;
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m);
+  transition:
+    border-color 100ms ease-in,
+    background 100ms ease-in;
 }
 
 .project-detail-panel .team-role-row:hover {
-  background: transparent;
+  border-color: var(--brisk-border-primary);
+  background: color-mix(in srgb, var(--brisk-brand-secondary) 22%, var(--brisk-white));
 }
 
 .project-detail-panel .team-role-main {
-  grid-area: role;
+  gap: var(--brisk-space-xxs);
 }
 
-.project-detail-panel .team-role-person {
-  grid-area: person;
+.project-detail-panel .team-role-row-primary {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--brisk-space-xs);
 }
 
-.project-detail-panel .team-role-hours {
-  grid-area: hours;
+.project-detail-panel .team-role-fill-state,
+.project-detail-panel .team-invitation-list,
+.project-detail-panel .team-empty-fill-state {
+  border-top: 1px solid var(--brisk-border-secondary);
+  margin-top: var(--brisk-space-xs);
+  padding-top: var(--brisk-space-s);
 }
 
-.project-detail-panel .team-role-row > div:nth-child(4) {
-  grid-area: status;
-  justify-self: end;
+.project-detail-panel .team-role-person-name {
+  font-weight: 400;
 }
 
-.project-detail-panel .team-role-menu-cell {
-  grid-area: menu;
+.project-detail-panel .team-empty-fill-state {
+  align-items: center;
+  justify-content: space-between;
 }
 
 .team-add-role-wrap {
@@ -937,20 +947,31 @@
 .project-detail-panel .team-panel-slot-list {
   border: 0;
   border-radius: 0;
+  gap: var(--brisk-space-s);
+  background: transparent;
+}
+
+.project-detail-panel .team-panel-actions {
+  margin-top: var(--brisk-space-s);
 }
 
 .project-detail-panel .team-role-row {
-  grid-template-areas: none;
-  grid-template-columns: 1fr;
   min-width: 0;
-  padding-right: 0;
-  padding-left: 0;
 }
 
-.project-detail-panel .team-role-main,
-.project-detail-panel .team-role-hours,
-.project-detail-panel .team-role-menu-cell {
-  grid-area: auto;
+.project-detail-panel .team-invitation-dropdown {
+  box-shadow: none;
+}
+
+.project-detail-panel .team-row-edit-hint {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
 }
 
 @media (max-width: 760px) {

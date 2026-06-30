@@ -17,7 +17,6 @@ import type { Invitation, ProjectVideoType, RoleSlot, StageAssignment, TeamPerso
 import { AddRoleButton } from "./AddRoleButton";
 import { RoleEditorModal } from "./RoleEditorModal";
 import { RoleRow } from "./RoleRow";
-import { DsIcon } from "@/components/video-review/DsIcon";
 
 export type TeamPanelAccess = "producerAdmin" | "ownStaff" | "freelancer" | "customer";
 
@@ -292,32 +291,12 @@ export function TeamPanel({
     setRoleEditorSlotId(slotId);
   };
 
-  const openPanelEdit = () => {
-    if (!canEdit) {
-      return;
-    }
-
-    const firstEditableSlot = displayTeam[0] ?? activeTeam[0];
-
-    if (firstEditableSlot) {
-      setRoleEditorSlotId(firstEditableSlot.id);
-      return;
-    }
-
-    setIsRolePickerOpen(true);
-  };
-
   return (
     <section className="team-panel" aria-label={`${projectName} team`}>
       <header className="team-panel-header">
         <span className="team-panel-heading">
           <span className="team-panel-title label-s-semibold">Team</span>
         </span>
-        {canEdit ? (
-          <button className="team-panel-edit" type="button" aria-label="Edit Team" title="Edit Team" onClick={openPanelEdit}>
-            <DsIcon name="pencil-simple-ds" size={16} />
-          </button>
-        ) : null}
       </header>
 
       <div className="team-panel-body">
