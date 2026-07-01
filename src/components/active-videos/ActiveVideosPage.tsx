@@ -15,7 +15,6 @@ import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId } from "@/data/today/mockData";
 import {
-  appendSharedTimeEntry,
   readSharedTimeEntries,
   sharedTimeEntriesEventName,
   toProjectTimeEntry,
@@ -199,32 +198,6 @@ export function ActiveVideosPage() {
       window.removeEventListener("storage", syncSharedEntries);
     };
   }, []);
-
-  const handleLogHours = (project: Project, draft: { stage: StageKey; note: string; hours: number }) => {
-    const roleSlot = getRoleSlotForLoggedStage(project.team, draft.stage);
-
-    if (!roleSlot) {
-      return;
-    }
-
-    const acceptedPerson = getAcceptedPerson(roleSlot);
-    const now = new Date();
-    const dateKey = formatDateInputValue(now);
-
-    appendSharedTimeEntry({
-      id: `logged-${project.id}-${draft.stage}-${now.getTime()}`,
-      projectId: project.id,
-      roleSlotId: roleSlot.id,
-      personId: acceptedPerson?.id ?? todayCurrentUserId,
-      stageId: draft.stage,
-      date: dateKey,
-      startMinutes: now.getHours() * 60 + now.getMinutes(),
-      hours: draft.hours,
-      note: draft.note.trim() || `${getStageLabel(draft.stage)} work logged`,
-      loggedAt: now.toISOString(),
-      createdAt: now.toISOString(),
-    });
-  };
 
   const projects = useMemo(
     () =>
@@ -973,7 +946,6 @@ export function ActiveVideosPage() {
           selectedRole={selectedRole}
           onClose={() => closeProjectPanel()}
           onSaveDeadline={(deadline) => saveProjectDeadline(panelProject.id, deadline)}
-          onLogHours={(draft) => handleLogHours(panelProject, draft)}
         />
       ) : null}
       </div>
@@ -984,20 +956,17 @@ export function ActiveVideosPage() {
 function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
   return (
     <aside className="today-sidebar" aria-label="Primary navigation">
-      <Link className="today-sidebar-logo label-s-semibold" href="/today">
-        Brisk
-      </Link>
       <nav className="today-sidebar-nav" aria-label="Workspace">
+        <Link className="today-sidebar-link active label-s-semibold" href="/active-videos">
+          <DsIcon name="queue" size={16} />
+          Active Videos
+        </Link>
         {selectedRole === "Studio Staff" || selectedRole === "Producer/Admin" ? (
           <Link className="today-sidebar-link label-s-semibold" href="/today">
             <DsIcon name="check-circle" size={16} />
             Today
           </Link>
         ) : null}
-        <Link className="today-sidebar-link active label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Active Videos
-        </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />
           Video Review
@@ -1378,7 +1347,6 @@ function ProjectDetailPanel({
   selectedRole,
   onClose,
   onSaveDeadline,
-  onLogHours,
 }: {
   project: Project;
   tags: string[];
@@ -1389,7 +1357,6 @@ function ProjectDetailPanel({
   selectedRole: PrototypeRole;
   onClose: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
-  onLogHours: (draft: { stage: StageKey; note: string; hours: number }) => void;
 }) {
   const projectHref = `/projects/${project.id}`;
   const unreadMessages = project.unreadMessages ?? 0;
@@ -1399,12 +1366,6 @@ function ProjectDetailPanel({
   const [notes, setNotes] = useState<string[]>([]);
   const [draftNote, setDraftNote] = useState("");
   const [isTimeSpentOpen, setIsTimeSpentOpen] = useState(false);
-  const [isLogHoursOpen, setIsLogHoursOpen] = useState(false);
-  const [logHoursDraft, setLogHoursDraft] = useState({
-    stage: "edit" as StageKey,
-    note: "Completed initial colour polish and rough cut review",
-    hours: 4,
-  });
   const activityItems = getProjectActivityItems(project);
   const clientContact = getClientContact(project);
   const tagsKey = tags.join("\u0001");
@@ -1431,12 +1392,6 @@ function ProjectDetailPanel({
     setIsStatusMenuOpen(false);
     setHasCopiedLink(false);
     setIsTimeSpentOpen(false);
-    setIsLogHoursOpen(false);
-    setLogHoursDraft({
-      stage: "edit",
-      note: "Completed initial colour polish and rough cut review",
-      hours: 4,
-    });
     setNotes([]);
     setDraftNote("");
     setEditingSection(null);
@@ -1532,21 +1487,20 @@ function ProjectDetailPanel({
   };
 
   useEffect(() => {
-    if (!isTimeSpentOpen && !isLogHoursOpen) {
+    if (!isTimeSpentOpen) {
       return;
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsTimeSpentOpen(false);
-        setIsLogHoursOpen(false);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isLogHoursOpen, isTimeSpentOpen]);
+  }, [isTimeSpentOpen]);
 
   return (
     <aside
@@ -1670,9 +1624,9 @@ function ProjectDetailPanel({
             ) : (
               <>
                 <span className="label-s">logged of {panelEstimatedHours || 0}h estimated</span>
-                <button className="project-detail-text-link label-s-semibold" type="button" onClick={() => setIsLogHoursOpen(true)}>
+                <Link className="project-detail-text-link label-s-semibold" href="/today">
                   Log hours
-                </button>
+                </Link>
               </>
             )}
           </div>
@@ -1850,132 +1804,7 @@ function ProjectDetailPanel({
         />
       ) : null}
 
-      {isLogHoursOpen ? (
-        <LogHoursModal
-          project={project}
-          draft={logHoursDraft}
-          onChange={setLogHoursDraft}
-          onClose={() => setIsLogHoursOpen(false)}
-          onSubmit={() => {
-            onLogHours(logHoursDraft);
-            setIsLogHoursOpen(false);
-          }}
-        />
-      ) : null}
     </aside>
-  );
-}
-
-function LogHoursModal({
-  project,
-  draft,
-  onChange,
-  onClose,
-  onSubmit,
-}: {
-  project: Project;
-  draft: { stage: StageKey; note: string; hours: number };
-  onChange: (draft: { stage: StageKey; note: string; hours: number }) => void;
-  onClose: () => void;
-  onSubmit: () => void;
-}) {
-  const [isStageMenuOpen, setIsStageMenuOpen] = useState(false);
-
-  const updateHours = (nextHours: number) => {
-    onChange({ ...draft, hours: Math.max(1, nextHours) });
-  };
-
-  return (
-    <div className="log-hours-modal-backdrop" role="presentation" onClick={onClose}>
-      <section
-        className="log-hours-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={`log-hours-title-${project.id}`}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <button className="log-hours-close" type="button" aria-label="Close log hours" onClick={onClose}>
-          <DsIcon name="x-close-cross" size={20} />
-        </button>
-        <header className="log-hours-header">
-          <h2 className="log-hours-title" id={`log-hours-title-${project.id}`}>
-            Log hours
-          </h2>
-          <span className="log-hours-project heading-3xs">{project.name}</span>
-        </header>
-
-        <div className="log-hours-field">
-          <span className="log-hours-label label-s-semibold">Date</span>
-          <button className="log-hours-date-button" type="button">
-            Today
-          </button>
-        </div>
-
-        <div className="log-hours-field">
-          <span className="log-hours-label label-s-semibold">Stage</span>
-          <div className="log-hours-stage-wrap">
-            <button
-              className="log-hours-stage-trigger"
-              type="button"
-              aria-expanded={isStageMenuOpen}
-              onClick={() => setIsStageMenuOpen((currentValue) => !currentValue)}
-            >
-              {getStageLabel(draft.stage)}
-              <DsIcon name="caret-down" size={18} />
-            </button>
-            {isStageMenuOpen ? (
-              <div className="log-hours-stage-menu" role="menu" aria-label="Choose stage">
-                {stageOrder.map((stage) => (
-                  <button
-                    className="log-hours-stage-option"
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked={draft.stage === stage.key}
-                    key={stage.key}
-                    onClick={() => {
-                      onChange({ ...draft, stage: stage.key });
-                      setIsStageMenuOpen(false);
-                    }}
-                  >
-                    <span className={`log-hours-checkbox ${draft.stage === stage.key ? "checked" : ""}`} aria-hidden="true">
-                      {draft.stage === stage.key ? "✓" : ""}
-                    </span>
-                    {stage.label}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </div>
-
-        <label className="log-hours-field" htmlFor={`log-hours-note-${project.id}`}>
-          <span className="log-hours-label label-s-semibold">Note (optional)</span>
-          <textarea
-            className="log-hours-note"
-            id={`log-hours-note-${project.id}`}
-            value={draft.note}
-            onChange={(event) => onChange({ ...draft, note: event.target.value })}
-          />
-        </label>
-
-        <div className="log-hours-field">
-          <span className="log-hours-label label-s-semibold">Hours</span>
-          <div className="log-hours-stepper">
-            <button className="log-hours-step-button" type="button" aria-label="Decrease hours" onClick={() => updateHours(draft.hours - 1)}>
-              -
-            </button>
-            <strong className="log-hours-step-value">{draft.hours}</strong>
-            <button className="log-hours-step-button" type="button" aria-label="Increase hours" onClick={() => updateHours(draft.hours + 1)}>
-              +
-            </button>
-          </div>
-        </div>
-
-        <button className="log-hours-submit" type="button" onClick={onSubmit}>
-          Log hours
-        </button>
-      </section>
-    </div>
   );
 }
 

@@ -726,17 +726,14 @@ export function VideoReviewScreen() {
 function VideoReviewSidebar() {
   return (
     <aside className="today-sidebar" aria-label="Primary navigation">
-      <Link className="today-sidebar-logo label-s-semibold" href="/today">
-        Brisk
-      </Link>
       <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link label-s-semibold" href="/today">
-          <DsIcon name="check-circle" size={16} />
-          Today
-        </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
           Active Videos
+        </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/today">
+          <DsIcon name="check-circle" size={16} />
+          Today
         </Link>
         <Link className="today-sidebar-link active label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />

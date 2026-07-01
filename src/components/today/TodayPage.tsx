@@ -184,20 +184,17 @@ export function TodayPage() {
 function TodaySidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
   return (
     <aside className="today-sidebar" aria-label="Primary navigation">
-      <Link className="today-sidebar-logo label-s-semibold" href="/">
-        Brisk
-      </Link>
       <nav className="today-sidebar-nav" aria-label="Workspace">
+        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
+          <DsIcon name="queue" size={16} />
+          Active Videos
+        </Link>
         {selectedRole === "Studio Staff" ? (
           <Link className="today-sidebar-link active label-s-semibold" href="/today">
             <DsIcon name="check-circle" size={16} />
             Today
           </Link>
         ) : null}
-        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Active Videos
-        </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />
           Video Review
