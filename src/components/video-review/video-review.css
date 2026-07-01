@@ -1,9 +1,15 @@
 .video-review-shell {
   display: flex;
   height: 100vh;
-  flex-direction: column;
   background: var(--brisk-page-primary);
   overflow: hidden;
+}
+
+.video-review-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 .visually-hidden-file-input {

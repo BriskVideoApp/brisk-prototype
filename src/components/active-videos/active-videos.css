@@ -6,9 +6,15 @@
 .active-videos-shell {
   display: flex;
   min-height: 100vh;
-  flex-direction: column;
   background: var(--brisk-page-primary);
   color: var(--brisk-text-primary);
+}
+
+.active-videos-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
 }
 
 .active-videos-header {

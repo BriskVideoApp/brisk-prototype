@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
+import Link from "next/link";
 import { reviewUsers, reviewVideo } from "@/data/video-review";
 import { DsIcon } from "./DsIcon";
 import type {
@@ -560,40 +561,42 @@ export function VideoReviewScreen() {
 
   return (
     <main className="video-review-shell">
-      <VideoReviewTopBar
-        video={activeVideo}
-        selectedVersionLabel={selectedVersionLabel}
-        toastMessage={toastMessage}
-        uploadInputId={versionUploadInputId}
-        isVersionMenuOpen={isVersionMenuOpen}
-        isMenuOpen={isTopbarMenuOpen}
-        onDelete={deleteVideo}
-        onDismissToast={() => setToastMessage("")}
-        onDownload={downloadVideo}
-        onPrepareUpload={() => {
-          setTimeout(() => setIsVersionMenuOpen(false), 0);
-        }}
-        onSelectVersion={(versionLabel) => {
-          setSelectedVersionLabel(versionLabel);
-          setCurrentTimeSeconds(0);
-          setIsPlaying(false);
-          setPendingFramePin(null);
-          setSelectedCommentId(null);
-          clearDrawingAttachment();
-          setIsVersionMenuOpen(false);
-        }}
-        onToggleVersionMenu={() => setIsVersionMenuOpen((current) => !current)}
-        onToggleMenu={() => setIsTopbarMenuOpen((current) => !current)}
-      />
-      <input
-        className="visually-hidden-file-input"
-        id={versionUploadInputId}
-        type="file"
-        accept="video/*"
-        aria-label="Upload a new version"
-        onChange={uploadVersion}
-      />
-      <section className="review-workspace" aria-label="Video review workspace">
+      <VideoReviewSidebar />
+      <div className="video-review-main">
+        <VideoReviewTopBar
+          video={activeVideo}
+          selectedVersionLabel={selectedVersionLabel}
+          toastMessage={toastMessage}
+          uploadInputId={versionUploadInputId}
+          isVersionMenuOpen={isVersionMenuOpen}
+          isMenuOpen={isTopbarMenuOpen}
+          onDelete={deleteVideo}
+          onDismissToast={() => setToastMessage("")}
+          onDownload={downloadVideo}
+          onPrepareUpload={() => {
+            setTimeout(() => setIsVersionMenuOpen(false), 0);
+          }}
+          onSelectVersion={(versionLabel) => {
+            setSelectedVersionLabel(versionLabel);
+            setCurrentTimeSeconds(0);
+            setIsPlaying(false);
+            setPendingFramePin(null);
+            setSelectedCommentId(null);
+            clearDrawingAttachment();
+            setIsVersionMenuOpen(false);
+          }}
+          onToggleVersionMenu={() => setIsVersionMenuOpen((current) => !current)}
+          onToggleMenu={() => setIsTopbarMenuOpen((current) => !current)}
+        />
+        <input
+          className="visually-hidden-file-input"
+          id={versionUploadInputId}
+          type="file"
+          accept="video/*"
+          aria-label="Upload a new version"
+          onChange={uploadVersion}
+        />
+        <section className="review-workspace" aria-label="Video review workspace">
         <VideoPlayer
           video={activeVideo}
           comments={reviewComments.map((comment) => ({
@@ -714,8 +717,33 @@ export function VideoReviewScreen() {
           onToggleResolved={toggleResolved}
           onCancelConfirm={() => setIsConfirmOpen(false)}
         />
-      </section>
+        </section>
+      </div>
     </main>
+  );
+}
+
+function VideoReviewSidebar() {
+  return (
+    <aside className="today-sidebar" aria-label="Primary navigation">
+      <Link className="today-sidebar-logo label-s-semibold" href="/today">
+        Brisk
+      </Link>
+      <nav className="today-sidebar-nav" aria-label="Workspace">
+        <Link className="today-sidebar-link label-s-semibold" href="/today">
+          <DsIcon name="check-circle" size={16} />
+          Today
+        </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
+          <DsIcon name="queue" size={16} />
+          Active Videos
+        </Link>
+        <Link className="today-sidebar-link active label-s-semibold" href="/review">
+          <DsIcon name="play" size={16} />
+          Video Review
+        </Link>
+      </nav>
+    </aside>
   );
 }
 

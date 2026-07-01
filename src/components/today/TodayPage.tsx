@@ -198,7 +198,7 @@ function TodaySidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
           <DsIcon name="queue" size={16} />
           Active Videos
         </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/">
+        <Link className="today-sidebar-link label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />
           Video Review
         </Link>

@@ -9,6 +9,7 @@ import type {
   UIEvent as ReactUIEvent,
 } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
@@ -765,34 +766,36 @@ export function ActiveVideosPage() {
 
   return (
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
-      <section className="active-videos-header" aria-label="Active Videos header">
-        <h1 className="active-videos-title">Active Videos ({activeVideoProjects.length})</h1>
-        <div className="active-videos-header-actions">
-          <div className="active-role-switcher" role="group" aria-label="View as role">
-            {prototypeRoles.map((role) => (
-              <button
-                className={`active-role-option label-s-semibold ${selectedRole === role ? "selected" : ""}`}
-                type="button"
-                key={role}
-                aria-pressed={selectedRole === role}
-                onClick={() => setSelectedRole(role)}
-              >
-                {role}
-              </button>
-            ))}
+      <ActiveVideosSidebar selectedRole={selectedRole} />
+      <div className="active-videos-main">
+        <section className="active-videos-header" aria-label="Active Videos header">
+          <h1 className="active-videos-title">Active Videos ({activeVideoProjects.length})</h1>
+          <div className="active-videos-header-actions">
+            <div className="active-role-switcher" role="group" aria-label="View as role">
+              {prototypeRoles.map((role) => (
+                <button
+                  className={`active-role-option label-s-semibold ${selectedRole === role ? "selected" : ""}`}
+                  type="button"
+                  key={role}
+                  aria-pressed={selectedRole === role}
+                  onClick={() => setSelectedRole(role)}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+            <label className="active-videos-search label-s" htmlFor="active-videos-search">
+              <span className="sr-only">Search projects</span>
+              <input
+                id="active-videos-search"
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search projects..."
+              />
+            </label>
           </div>
-          <label className="active-videos-search label-s" htmlFor="active-videos-search">
-            <span className="sr-only">Search projects</span>
-            <input
-              id="active-videos-search"
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search projects..."
-            />
-          </label>
-        </div>
-      </section>
+        </section>
 
       <nav className="active-videos-tabs" aria-label="Project status">
         {statusTabs.map((tab) => (
@@ -973,7 +976,34 @@ export function ActiveVideosPage() {
           onLogHours={(draft) => handleLogHours(panelProject, draft)}
         />
       ) : null}
+      </div>
     </main>
+  );
+}
+
+function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
+  return (
+    <aside className="today-sidebar" aria-label="Primary navigation">
+      <Link className="today-sidebar-logo label-s-semibold" href="/today">
+        Brisk
+      </Link>
+      <nav className="today-sidebar-nav" aria-label="Workspace">
+        {selectedRole === "Studio Staff" || selectedRole === "Producer/Admin" ? (
+          <Link className="today-sidebar-link label-s-semibold" href="/today">
+            <DsIcon name="check-circle" size={16} />
+            Today
+          </Link>
+        ) : null}
+        <Link className="today-sidebar-link active label-s-semibold" href="/active-videos">
+          <DsIcon name="queue" size={16} />
+          Active Videos
+        </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/review">
+          <DsIcon name="play" size={16} />
+          Video Review
+        </Link>
+      </nav>
+    </aside>
   );
 }
 
