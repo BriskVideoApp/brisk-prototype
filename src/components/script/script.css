@@ -154,18 +154,6 @@
   padding: 0 var(--brisk-space-m);
 }
 
-.script-status-text {
-  color: var(--brisk-text-tertiary);
-}
-
-.script-status-text.status-approved {
-  color: var(--brisk-system-success);
-}
-
-.script-status-text.status-waiting-on-customer {
-  color: var(--brisk-system-warning);
-}
-
 .script-presence {
   padding-left: var(--brisk-space-xs);
 }
@@ -268,6 +256,11 @@
 .script-menu-choice.active {
   background: var(--brisk-item-secondary);
   color: var(--brisk-text-primary);
+}
+
+.script-menu-text.active {
+  border-color: var(--brisk-system-success);
+  color: var(--brisk-system-success);
 }
 
 .script-menu-toggle {

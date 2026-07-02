@@ -77,7 +77,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [layoutMode, setLayoutMode] = useState<ScriptLayoutMode>("av");
   const [density, setDensity] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
-  const [status, setStatus] = useState<ScriptStatus>("In script");
+  const [, setStatus] = useState<ScriptStatus>("In script");
   const [isScriptApproved, setIsScriptApproved] = useState(false);
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
   const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
@@ -746,10 +746,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           ) : null}
         </div>
         <div className="script-subheader-actions">
-          <span className={`script-status-text label-xs status-${status.toLowerCase().replaceAll(" ", "-")}`}>{status}</span>
-          <button className="script-approve-button label-s-semibold" type="button" onClick={approveScript}>
-            {isScriptApproved ? "Approved" : "Approve script"}
-          </button>
           <button
             className="script-quiet-icon"
             type="button"
@@ -775,6 +771,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             </button>
             {isOptionsOpen ? (
               <div className="script-options-menu">
+                <button
+                  className={`script-menu-text label-xs-semibold ${isScriptApproved ? "active" : ""}`}
+                  type="button"
+                  onClick={approveScript}
+                >
+                  {isScriptApproved ? "Approved" : "Approve script"}
+                </button>
                 <div className="script-options-section">
                   <span className="label-xs-semibold">Density</span>
                   <div className="script-options-row" role="group" aria-label="Density">
