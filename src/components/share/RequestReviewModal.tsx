@@ -25,6 +25,7 @@ type RequestReviewTemplate = {
 type TemplateValues = {
   projectName: string;
   recipientName: string;
+  senderName: string;
   studioName: string;
 };
 
@@ -32,20 +33,20 @@ const requestReviewTemplates: RequestReviewTemplate[] = [
   {
     id: "standardReviewRequest",
     label: "Standard review request",
-    body: ({ projectName, recipientName, studioName }) =>
-      `Hi ${recipientName},\n\n${projectName} is ready for review.\n\nPlease open the project link, leave any comments, and let us know if anything needs changing.\n\nThanks,\n${studioName}`,
+    body: ({ projectName, recipientName, senderName }) =>
+      `Hi ${recipientName},\n\n${projectName} is ready for review.\n\nPlease open the project link, leave any comments, and let us know if anything needs changing.\n\nThanks,\n${senderName}`,
   },
   {
     id: "finalApproval",
     label: "Final approval",
-    body: ({ projectName, recipientName, studioName }) =>
-      `Hi ${recipientName},\n\nThe final version of ${projectName} is ready for approval.\n\nPlease review the latest version and approve it when you are happy for us to finalise delivery.\n\nThanks,\n${studioName}`,
+    body: ({ projectName, recipientName, senderName }) =>
+      `Hi ${recipientName},\n\nThe final version of ${projectName} is ready for approval.\n\nPlease review the latest version and approve it when you are happy for us to finalise delivery.\n\nThanks,\n${senderName}`,
   },
   {
     id: "quickCheckIn",
     label: "Quick check-in",
-    body: ({ projectName, recipientName, studioName }) =>
-      `Hi ${recipientName},\n\nCould you take a quick look at ${projectName} when you have a moment?\n\nA short note is fine if everything is on track.\n\nThanks,\n${studioName}`,
+    body: ({ projectName, recipientName, senderName }) =>
+      `Hi ${recipientName},\n\nCould you take a quick look at ${projectName} when you have a moment?\n\nA short note is fine if everything is on track.\n\nThanks,\n${senderName}`,
   },
 ];
 
@@ -63,15 +64,17 @@ export function RequestReviewModal({
   const [messageBody, setMessageBody] = useState("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const recipientName = recipient === "customer" ? customerName : studioName;
+  const senderName = role === "customer" ? customerName : studioName;
   const selectedTemplate = requestReviewTemplates.find((template) => template.id === selectedTemplateId) ?? requestReviewTemplates[0];
 
   const templateValues = useMemo(
     () => ({
       projectName,
       recipientName,
+      senderName,
       studioName,
     }),
-    [projectName, recipientName, studioName],
+    [projectName, recipientName, senderName, studioName],
   );
 
   useEffect(() => {
