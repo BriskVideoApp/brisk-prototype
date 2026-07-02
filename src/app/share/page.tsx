@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ShareActionRow, type ShareStageContext } from "@/components/share/ShareActionRow";
-import { shareControlScenarios } from "@/data/share/mockData";
 
 const stageOptions: ShareStageContext[] = ["brief", "script", "media", "edit", "masters"];
 const stageLabels: Record<ShareStageContext, string> = {
@@ -40,21 +39,6 @@ export default function ShareDemoPage() {
 
       <section className="share-demo-canvas" aria-label="Selected stage share controls">
         <ShareActionRow context={selectedStage} userRole="Customer" />
-      </section>
-
-      <section className="share-demo-scenarios" aria-label="Share control scenarios">
-        {shareControlScenarios.map((scenario) => (
-          <article className="share-demo-card" key={scenario.id}>
-            <h2 className="heading-3xs">{scenario.title}</h2>
-            <ShareActionRow
-              context={scenario.context}
-              userRole={scenario.userRole}
-              density={scenario.density}
-              initialLinkOpens={scenario.initialLinkOpens}
-              initialAccess={scenario.initialAccess}
-            />
-          </article>
-        ))}
       </section>
     </main>
   );

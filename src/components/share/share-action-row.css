@@ -291,26 +291,6 @@
   padding: var(--brisk-space-3xl);
 }
 
-.share-demo-scenarios {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--brisk-space-xl);
-  padding: var(--brisk-space-2xl);
-}
-
-.share-demo-card {
-  display: grid;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-bg-block-primary);
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-xl);
-}
-
-.share-demo-card h2 {
-  margin: 0;
-}
-
 @media (max-width: 820px) {
   .share-demo-header,
   .share-demo-stage-picker {
@@ -334,9 +314,5 @@
   .share-popover {
     left: 50%;
     transform: translateX(-50%);
-  }
-
-  .share-demo-scenarios {
-    grid-template-columns: 1fr;
   }
 }
