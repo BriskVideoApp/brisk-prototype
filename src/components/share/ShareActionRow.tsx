@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { RequestReviewModal, type RequestReviewRole } from "@/components/share/RequestReviewModal";
+import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export type ShareStageContext = "brief" | "script" | "media" | "edit" | "masters";
@@ -67,7 +67,8 @@ export function ShareActionRow({
   const canUseVideoOnly = context === "edit" || context === "masters";
   const isVideoOnly = linkOpens === "videoOnly";
   const isApproveDisabled = userRole === "Share Link Viewer";
-  const requestReviewRole: RequestReviewRole = userRole === "Customer" ? "customer" : "studio";
+  const isCustomerView = userRole === "Customer";
+  const requestReviewLabel = isCustomerView ? `Send to ${studioName}` : "Request Review";
 
   const linkOptions = useMemo(
     () => [
@@ -126,8 +127,8 @@ export function ShareActionRow({
     }, 2200);
   };
 
-  const handleReviewSent = (recipientName: string) => {
-    setReviewToastMessage(`Review request sent to ${recipientName}`);
+  const showReviewToast = (message: string) => {
+    setReviewToastMessage(message);
 
     if (reviewToastTimeoutRef.current) {
       window.clearTimeout(reviewToastTimeoutRef.current);
@@ -136,6 +137,16 @@ export function ShareActionRow({
     reviewToastTimeoutRef.current = window.setTimeout(() => {
       setReviewToastMessage("");
     }, 2600);
+  };
+
+  const handleReviewSent = (recipientName: string) => {
+    showReviewToast(`Review request sent to ${recipientName}`);
+  };
+
+  const sendToStudio = () => {
+    setIsPopoverOpen(false);
+    setIsRequestReviewOpen(false);
+    showReviewToast(`Sent to ${studioName}`);
   };
 
   const toggleSection = (section: ExpandedSection) => {
@@ -174,8 +185,12 @@ export function ShareActionRow({
           <DsIcon name="link" size={20} />
           Copy Link
         </button>
-        <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsRequestReviewOpen(true)}>
-          Request Review
+        <button
+          className="share-button share-button-secondary label-s-semibold"
+          type="button"
+          onClick={isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true)}
+        >
+          {requestReviewLabel}
         </button>
         <button
           className="share-button share-button-primary label-s-semibold"
@@ -243,9 +258,9 @@ export function ShareActionRow({
         </aside>
       ) : null}
 
-      {isRequestReviewOpen ? (
+      {isRequestReviewOpen && !isCustomerView ? (
         <RequestReviewModal
-          role={requestReviewRole}
+          role="studio"
           projectName={projectName}
           studioName={studioName}
           customerName={customerName}
