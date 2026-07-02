@@ -15,28 +15,22 @@ import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
-  initialScriptSubtabs,
   scriptAiFixtures,
   scriptBrief,
   scriptGenres,
   scriptPresence,
-  scriptStages,
-  scriptTranscriptLines,
   scriptUsers,
   scriptVersions,
   type ScriptComment,
   type ScriptCommentAnchor,
   type ScriptDensity,
   type ScriptElementType,
-  type ScriptGenre,
   type ScriptLayoutMode,
   type ScriptMediaItem,
   type ScriptMediaType,
   type ScriptRole,
   type ScriptRow,
   type ScriptStatus,
-  type ScriptSubtab,
-  type ScriptSubtabId,
   type ScriptVersion,
 } from "@/data/script";
 
@@ -71,8 +65,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [layoutMode, setLayoutMode] = useState<ScriptLayoutMode>("av");
   const [density, setDensity] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
-  const [genre, setGenre] = useState<ScriptGenre>(scriptBrief.genre);
   const [status, setStatus] = useState<ScriptStatus>("In script");
+  const [isScriptApproved, setIsScriptApproved] = useState(false);
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
   const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
   const [rows, setRows] = useState<ScriptRow[]>(() => cloneRows(latestVersion.rows));
@@ -86,17 +80,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     kind: "overall",
     label: "Overall",
   });
-  const [subtabs, setSubtabs] = useState<ScriptSubtab[]>(() => initialScriptSubtabs.map((tab) => ({ ...tab })));
-  const [activeSubtabId, setActiveSubtabId] = useState<ScriptSubtabId>("script");
-  const [isSubtabMenuOpen, setIsSubtabMenuOpen] = useState(false);
-  const [draggingTabId, setDraggingTabId] = useState<ScriptSubtabId | null>(null);
   const [draggingRowId, setDraggingRowId] = useState<string | null>(null);
   const [dropRowId, setDropRowId] = useState<string | null>(null);
   const [openMediaMenuRowId, setOpenMediaMenuRowId] = useState<string | null>(null);
   const [isApprovedEditModalOpen, setIsApprovedEditModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [saveState, setSaveState] = useState<"Saved" | "Saving...">("Saved");
-  const [downstreamPaused, setDownstreamPaused] = useState(false);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
@@ -106,9 +95,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const saveTimeoutRef = useRef<number | null>(null);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
-  const scriptSubtab = subtabs.find((tab) => tab.id === "script");
-  const isScriptApproved = Boolean(scriptSubtab?.approved);
-  const visibleSubtabs = subtabs.filter((tab) => tab.visible && (tab.id !== "transcripts" || scriptBrief.hasDialogueMedia));
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const activeVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1];
   const totalWords = rows.reduce((total, row) => (row.deletedMeta ? total : total + countWords(row.words)), 0);
@@ -476,31 +462,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage(`${version.snapshotName} restored`);
   };
 
-  const toggleSubtabApproval = (tabId: ScriptSubtabId) => {
-    setSubtabs((currentSubtabs) =>
-      currentSubtabs.map((tab) => (tab.id === tabId ? { ...tab, approved: !tab.approved } : tab)),
-    );
-
-    if (tabId === "script" && isScriptApproved) {
-      unapproveScript(false);
-    }
-  };
-
   const approveScript = () => {
-    setSubtabs((currentSubtabs) =>
-      currentSubtabs.map((tab) => (tab.id === "script" ? { ...tab, approved: true } : tab)),
-    );
+    setIsScriptApproved(true);
     setStatus("Approved");
-    setDownstreamPaused(false);
     setToastMessage("Script approved");
   };
 
   const unapproveScript = (shouldDuplicateSnapshot: boolean) => {
-    setSubtabs((currentSubtabs) =>
-      currentSubtabs.map((tab) => (tab.id === "script" ? { ...tab, approved: false } : tab)),
-    );
+    setIsScriptApproved(false);
     setStatus("Waiting on Customer");
-    setDownstreamPaused(true);
 
     if (shouldDuplicateSnapshot) {
       const actor = role === "customer" ? "Customer" : "Studio";
@@ -529,32 +499,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const proceedWithApprovedEdit = () => {
     setIsApprovedEditModalOpen(false);
     unapproveScript(true);
-  };
-
-  const toggleOptionalSubtab = (tabId: ScriptSubtabId) => {
-    setSubtabs((currentSubtabs) =>
-      currentSubtabs.map((tab) => (tab.id === tabId ? { ...tab, visible: !tab.visible } : tab)),
-    );
-  };
-
-  const reorderSubtabs = (targetTabId: ScriptSubtabId) => {
-    if (!draggingTabId || draggingTabId === targetTabId) {
-      return;
-    }
-
-    setSubtabs((currentSubtabs) => {
-      const sourceIndex = currentSubtabs.findIndex((tab) => tab.id === draggingTabId);
-      const targetIndex = currentSubtabs.findIndex((tab) => tab.id === targetTabId);
-
-      if (sourceIndex === -1 || targetIndex === -1) {
-        return currentSubtabs;
-      }
-
-      const nextSubtabs = [...currentSubtabs];
-      const [movingTab] = nextSubtabs.splice(sourceIndex, 1);
-      nextSubtabs.splice(targetIndex, 0, movingTab);
-      return nextSubtabs;
-    });
   };
 
   const updateDocValue = (value: string) => {
@@ -620,78 +564,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   return (
     <main className={`script-shell script-density-${density}`}>
       <ScriptHeader role={role} />
-      <section className="script-stage-strip" aria-label="Project stages">
-        {scriptStages.map((stage) => {
-          const isCurrent = stage.id === "script";
-          const isPausedDownstream = downstreamPaused && (stage.id === "edit" || stage.id === "masters");
-          return (
-            <button
-              className={`script-stage-pill label-xs-semibold ${isCurrent ? "current" : ""} ${isPausedDownstream ? "disabled" : ""}`}
-              type="button"
-              disabled={isPausedDownstream}
-              key={stage.id}
-            >
-              <img src={stage.icon} alt="" />
-              {stage.label}
-            </button>
-          );
-        })}
-      </section>
-
-      <section className="script-subtab-bar" aria-label="Script sub-tabs">
-        <div className="script-subtab-list">
-          {visibleSubtabs.map((tab) => (
-            <div
-              className={`script-subtab ${activeSubtabId === tab.id ? "active" : ""}`}
-              draggable
-              key={tab.id}
-              onDragStart={() => setDraggingTabId(tab.id)}
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={() => reorderSubtabs(tab.id)}
-            >
-              <button
-                className="script-subtab-main label-s-semibold"
-                type="button"
-                aria-pressed={activeSubtabId === tab.id}
-                onClick={() => setActiveSubtabId(tab.id)}
-              >
-                <span className="script-drag-dots" aria-hidden="true">::::</span>
-                {tab.label}
-              </button>
-              <button
-                className={`script-subtab-approval label-xs-semibold ${tab.approved ? "approved" : ""}`}
-                type="button"
-                onClick={() => toggleSubtabApproval(tab.id)}
-              >
-                {tab.approved ? "Un-approve" : "Approve"}
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="script-subtab-menu-wrap">
-          <button
-            className="script-icon-button"
-            type="button"
-            aria-label="More sub-tabs"
-            aria-expanded={isSubtabMenuOpen}
-            onClick={() => setIsSubtabMenuOpen((isOpen) => !isOpen)}
-          >
-            <DsIcon name="dots-three" size={18} />
-          </button>
-          {isSubtabMenuOpen ? (
-            <div className="script-subtab-menu">
-              {subtabs
-                .filter((tab) => tab.optional)
-                .map((tab) => (
-                  <button className="label-s" type="button" key={tab.id} onClick={() => toggleOptionalSubtab(tab.id)}>
-                    {tab.visible ? "Hide" : "Show"} {tab.label}
-                  </button>
-                ))}
-            </div>
-          ) : null}
-        </div>
-      </section>
-
       <section className="script-toolbar" aria-label="Script toolbar">
         {!isCustomer ? (
           <SegmentedControl
@@ -764,78 +636,72 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           <div className="script-version-note label-xs">
             {activeVersion.snapshotName} - Track changes on
           </div>
-          {activeSubtabId === "script" ? (
-            <>
-              {layoutMode === "av" ? (
-                <AvScriptEditor
-                  activeCommentAnchor={activeCommentAnchor}
-                  density={density}
-                  dropRowId={dropRowId}
-                  isApproved={isScriptApproved}
-                  openMediaMenuRowId={openMediaMenuRowId}
-                  rows={rows}
-                  selectedRowIds={selectionState.selectedRowIds}
-                  showChanges={showChanges}
-                  wordInputRefs={wordInputRefs}
-                  onAddMediaItem={addMediaItem}
-                  onAddRowAfter={addRowAfter}
-                  onCaptureSelectionAnchor={captureSelectionAnchor}
-                  onDragEnd={() => {
-                    setDraggingRowId(null);
-                    setDropRowId(null);
-                  }}
-                  onDragOverRow={(rowId) => setDropRowId(rowId)}
-                  onDragStartRow={setDraggingRowId}
-                  onGuardApproved={guardEditable}
-                  onPasteWords={handleWordsPaste}
-                  onReorderRows={(targetRowId) => {
-                    if (draggingRowId) {
-                      reorderRows(draggingRowId, targetRowId);
-                    }
-                  }}
-                  onRestoreRow={restoreRow}
-                  onSelectRow={selectRow}
-                  onSetField={setRowField}
-                  onSetMediaMenuRow={setOpenMediaMenuRowId}
-                  onWordsKeyDown={handleWordsKeyDown}
-                  registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
-                />
-              ) : null}
-              {layoutMode === "simple" ? (
-                <SimpleDocEditor
-                  docValue={docValue}
-                  isApproved={isScriptApproved}
-                  showChanges={showChanges}
-                  rows={rows}
-                  onGuardApproved={guardEditable}
-                  onUpdateDoc={updateDocValue}
-                />
-              ) : null}
-              {layoutMode === "hollywood" ? (
-                <HollywoodEditor
-                  isApproved={isScriptApproved}
-                  rows={rows}
-                  selectedRowIds={selectionState.selectedRowIds}
-                  showChanges={showChanges}
-                  wordInputRefs={wordInputRefs}
-                  onCaptureSelectionAnchor={captureSelectionAnchor}
-                  onGuardApproved={guardEditable}
-                  onSelectRow={selectRow}
-                  onSetField={setRowField}
-                  onSetType={(rowId, elementType) =>
-                    updateRows((currentRows) =>
-                      currentRows.map((row) => (row.id === rowId ? { ...row, elementType } : row)),
-                    )
-                  }
-                  onWordsKeyDown={handleWordsKeyDown}
-                  registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
-                />
-              ) : null}
-              {showChanges ? <RedlineLegend /> : null}
-            </>
-          ) : (
-            <AuxiliarySubtabContent activeSubtabId={activeSubtabId} />
-          )}
+          {layoutMode === "av" ? (
+            <AvScriptEditor
+              activeCommentAnchor={activeCommentAnchor}
+              density={density}
+              dropRowId={dropRowId}
+              isApproved={isScriptApproved}
+              openMediaMenuRowId={openMediaMenuRowId}
+              rows={rows}
+              selectedRowIds={selectionState.selectedRowIds}
+              showChanges={showChanges}
+              wordInputRefs={wordInputRefs}
+              onAddMediaItem={addMediaItem}
+              onAddRowAfter={addRowAfter}
+              onCaptureSelectionAnchor={captureSelectionAnchor}
+              onDragEnd={() => {
+                setDraggingRowId(null);
+                setDropRowId(null);
+              }}
+              onDragOverRow={(rowId) => setDropRowId(rowId)}
+              onDragStartRow={setDraggingRowId}
+              onGuardApproved={guardEditable}
+              onPasteWords={handleWordsPaste}
+              onReorderRows={(targetRowId) => {
+                if (draggingRowId) {
+                  reorderRows(draggingRowId, targetRowId);
+                }
+              }}
+              onRestoreRow={restoreRow}
+              onSelectRow={selectRow}
+              onSetField={setRowField}
+              onSetMediaMenuRow={setOpenMediaMenuRowId}
+              onWordsKeyDown={handleWordsKeyDown}
+              registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
+            />
+          ) : null}
+          {layoutMode === "simple" ? (
+            <SimpleDocEditor
+              docValue={docValue}
+              isApproved={isScriptApproved}
+              showChanges={showChanges}
+              rows={rows}
+              onGuardApproved={guardEditable}
+              onUpdateDoc={updateDocValue}
+            />
+          ) : null}
+          {layoutMode === "hollywood" ? (
+            <HollywoodEditor
+              isApproved={isScriptApproved}
+              rows={rows}
+              selectedRowIds={selectionState.selectedRowIds}
+              showChanges={showChanges}
+              wordInputRefs={wordInputRefs}
+              onCaptureSelectionAnchor={captureSelectionAnchor}
+              onGuardApproved={guardEditable}
+              onSelectRow={selectRow}
+              onSetField={setRowField}
+              onSetType={(rowId, elementType) =>
+                updateRows((currentRows) =>
+                  currentRows.map((row) => (row.id === rowId ? { ...row, elementType } : row)),
+                )
+              }
+              onWordsKeyDown={handleWordsKeyDown}
+              registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
+            />
+          ) : null}
+          {showChanges ? <RedlineLegend /> : null}
         </div>
         <CommentRail
           activeAnchor={activeCommentAnchor}
@@ -987,10 +853,6 @@ function ScriptHeader({ role }: { role: ScriptRole }) {
   return (
     <header className="script-header">
       <div>
-        <Link className="project-overview-back label-s-semibold" href="/active-videos">
-          Back to Active Videos
-        </Link>
-        <span className="project-overview-client label-xs-semibold">Script</span>
         <h1 className="script-title">{scriptBrief.projectName}</h1>
       </div>
       <div className="script-role-links" aria-label="View as role">
@@ -1375,26 +1237,6 @@ function HollywoodEditor({
             {showChanges && row.change ? <RowChange change={row.change} /> : null}
           </div>
         ))}
-    </section>
-  );
-}
-
-function AuxiliarySubtabContent({ activeSubtabId }: { activeSubtabId: ScriptSubtabId }) {
-  if (activeSubtabId === "transcripts") {
-    return (
-      <section className="script-aux-panel">
-        <h2>Transcript v2</h2>
-        {scriptTranscriptLines.map((line) => (
-          <p className="paragraph-s" key={line}>{line}</p>
-        ))}
-      </section>
-    );
-  }
-
-  return (
-    <section className="script-aux-panel">
-      <h2>{capitalise(activeSubtabId)}</h2>
-      <p className="paragraph-s">This tab is available for approval in V1. Content can be added in the next prototype pass.</p>
     </section>
   );
 }
