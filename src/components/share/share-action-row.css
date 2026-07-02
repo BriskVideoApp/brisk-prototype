@@ -14,7 +14,7 @@
 .share-action-buttons {
   display: flex;
   align-items: center;
-  gap: var(--brisk-space-2xl);
+  gap: var(--brisk-space-m);
 }
 
 .share-button {
@@ -34,7 +34,7 @@
 }
 
 .share-button-tertiary {
-  border: 0;
+  border: 1px solid var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
 }
 
@@ -202,7 +202,7 @@
 }
 
 .share-density-compact .share-action-buttons {
-  gap: var(--brisk-space-l);
+  gap: var(--brisk-space-m);
 }
 
 .share-density-compact .share-button {
