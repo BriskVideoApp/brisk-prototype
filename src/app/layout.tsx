@@ -5,6 +5,7 @@ import "@/components/active-videos/active-videos.css";
 import "@/components/today/today.css";
 import "@/components/project/team/team-panel.css";
 import "@/components/share/share-action-row.css";
+import "@/components/script/script.css";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
