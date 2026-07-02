@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import Link from "next/link";
 import { reviewUsers, reviewVideo } from "@/data/video-review";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
 import type {
   CommentFilter,
@@ -858,16 +859,16 @@ function VideoReviewTopBar({
       </div>
 
       <div className="topbar-actions" aria-label="Review actions">
-        <button className="group-button label-s-semibold" type="button">
-          <DsIcon name="link" size={16} />
-          Copy link
-        </button>
-        <button className="group-button label-s-semibold" type="button">
-          Request review
-        </button>
-        <button className="group-button approve-button label-s-semibold" type="button">
-          Approve
-        </button>
+        <ShareActionRow
+          context="edit"
+          userRole="Studio Staff"
+          density="compact"
+          initialLinkOpens="videoOnly"
+          initialAccess="canComment"
+          projectName={video.fileName}
+          studioName="Brisk Studios"
+          customerName="Jess T."
+        />
         <div className="topbar-more-wrap">
           <button
             className="icon-button more-button"

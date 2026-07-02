@@ -26,6 +26,7 @@
   color: var(--brisk-brand-primary-click);
   gap: var(--brisk-space-s);
   padding: var(--brisk-space-s) var(--brisk-space-l);
+  white-space: nowrap;
 }
 
 .share-button:hover:not(:disabled),

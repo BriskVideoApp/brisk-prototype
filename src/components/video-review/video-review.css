@@ -30,7 +30,7 @@
   justify-content: space-between;
   border: 1px solid var(--brisk-border-primary);
   background: var(--brisk-bg-block-primary);
-  padding: 0 26px;
+  padding: 0 var(--brisk-space-xl);
 }
 
 .topbar-left,
@@ -108,7 +108,6 @@
 
 .icon-button,
 .version-pill,
-.group-button,
 .more-button,
 .speed-button,
 .composer-tools button,
@@ -131,7 +130,6 @@
 
 .icon-button:hover,
 .version-pill:hover,
-.group-button:hover,
 .more-button:hover,
 .speed-button:hover,
 .composer-tools button:hover,
@@ -208,36 +206,24 @@
 }
 
 .topbar-actions {
-  gap: 0;
+  gap: var(--brisk-space-s);
 }
 
-.group-button {
-  display: inline-flex;
-  height: 38px;
-  align-items: center;
-  gap: 6px;
-  border-right: 0;
-  padding: 0 15px;
+.review-topbar .share-density-compact .share-action-buttons {
+  gap: var(--brisk-space-s);
 }
 
-.group-button:first-child {
-  border-radius: var(--brisk-radius-s) 0 0 var(--brisk-radius-s);
+.review-topbar .share-density-compact .share-button {
+  min-height: 34px;
+  padding: var(--brisk-space-xs) var(--brisk-space-m);
 }
 
-.approve-button {
-  border-right: 1px solid var(--brisk-border-primary);
-  border-radius: 0 var(--brisk-radius-s) var(--brisk-radius-s) 0;
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
-}
-
-.approve-button:hover {
-  background: var(--brisk-brand-primary-click);
-  box-shadow: var(--brisk-shadow-s);
+.review-topbar .share-density-compact .share-button-primary {
+  min-width: 104px;
 }
 
 .more-button {
-  margin-left: 8px;
+  margin-left: 0;
 }
 
 .topbar-more-wrap {
