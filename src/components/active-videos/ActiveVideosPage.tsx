@@ -94,7 +94,7 @@ const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   deadline: { label: "Deadline", width: 150 },
   hours: { label: "Hours", width: 220 },
   team: { label: "Team", width: 90 },
-  actions: { label: "Actions", width: 60 },
+  actions: { label: "Actions", width: 86 },
 };
 
 const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team"];
@@ -2762,6 +2762,9 @@ function ProjectDataCell({
         >
           <DsIcon name="dots-three" size={18} />
         </button>
+        <span className="row-open-chevron" aria-hidden="true">
+          <DsIcon name="caret-right" size={14} />
+        </span>
         {isMenuOpen ? (
           <div className="row-actions-menu">
             {[

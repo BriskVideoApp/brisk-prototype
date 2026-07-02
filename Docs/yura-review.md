@@ -77,3 +77,12 @@ Notes for DS review:
 - Row hours are shown as highlighted text and can be edited inline; the role editor remains available by clicking elsewhere on the row.
 - Staff/freelance pills, the role editor modal, popconfirm, and toast are local prototype treatments that should be replaced by `d-Tag-Badge`/`d-Chips`, `d-Modal`, `d-Popconfirm`, and `d-Notification toast` once React DS exports are available.
 - Avatar initials were removed from Team rows and the picker for V1.1.
+
+## Active Videos row affordance
+
+Updated the Active Videos project list row pattern:
+
+- Every row now has an always-visible right-edge chevron using the existing Flow `caret-right` icon, placed in the fixed actions area.
+- Row hover uses a neutral Brisk block-secondary wash across the full row width, with the chevron darkening on hover and selected rows.
+- The hover-only ellipsis action remains available, now sitting beside the resting chevron instead of being the only visible row affordance.
+- This pattern currently applies to the Active Videos project table, which is the only list in this pass where a row opens the project side peek.

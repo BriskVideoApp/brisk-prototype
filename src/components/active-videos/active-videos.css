@@ -578,12 +578,12 @@
 }
 
 .active-videos-table:not(.is-column-dragging) .active-project-row:hover td {
-  background: color-mix(in srgb, var(--brisk-brand-secondary) 40%, transparent);
+  background: color-mix(in srgb, var(--brisk-bg-block-secondary) 72%, var(--brisk-bg-block-primary));
 }
 
 .active-videos-table:not(.is-column-dragging) .active-project-row:hover td.column-actions,
 .active-videos-table:not(.is-column-dragging) .active-project-row:hover td.project-cell {
-  background: color-mix(in srgb, var(--brisk-brand-secondary) 40%, var(--brisk-bg-block-primary));
+  background: color-mix(in srgb, var(--brisk-bg-block-secondary) 72%, var(--brisk-bg-block-primary));
 }
 
 .active-videos-table .active-project-row.selected td,
@@ -1415,6 +1415,8 @@
 .row-actions-wrap {
   position: relative;
   display: flex;
+  align-items: center;
+  gap: 4px;
   justify-content: flex-end;
 }
 
@@ -1429,15 +1431,31 @@
   background: var(--brisk-white);
   color: var(--brisk-text-primary);
   opacity: 0;
+  pointer-events: none;
 }
 
 .active-project-row:hover .row-menu-button,
 .row-menu-button[aria-expanded="true"] {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .row-menu-button:hover {
   box-shadow: var(--brisk-shadow-s);
+}
+
+.row-open-chevron {
+  display: inline-flex;
+  width: 14px;
+  align-items: center;
+  justify-content: center;
+  color: var(--brisk-text-secondary);
+  transition: color 100ms ease-in;
+}
+
+.active-project-row:hover .row-open-chevron,
+.active-project-row.selected .row-open-chevron {
+  color: var(--brisk-text-primary);
 }
 
 .row-actions-menu {
