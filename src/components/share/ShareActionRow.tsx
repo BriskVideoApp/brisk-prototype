@@ -125,9 +125,11 @@ export function ShareActionRow({
     copyToastTimeoutRef.current = window.setTimeout(() => {
       setHasCopied(false);
     }, 2200);
+
+    showActionToast("Link copied");
   };
 
-  const showReviewToast = (message: string) => {
+  const showActionToast = (message: string) => {
     setReviewToastMessage(message);
 
     if (reviewToastTimeoutRef.current) {
@@ -140,13 +142,19 @@ export function ShareActionRow({
   };
 
   const handleReviewSent = (recipientName: string) => {
-    showReviewToast(`Review request sent to ${recipientName}`);
+    showActionToast(`Review request sent to ${recipientName}`);
   };
 
   const sendToStudio = () => {
     setIsPopoverOpen(false);
     setIsRequestReviewOpen(false);
-    showReviewToast(`Sent to ${studioName}`);
+    showActionToast(`Sent to ${studioName}`);
+  };
+
+  const approveProject = () => {
+    setIsPopoverOpen(false);
+    setIsRequestReviewOpen(false);
+    showActionToast("Approved");
   };
 
   const toggleSection = (section: ExpandedSection) => {
@@ -197,6 +205,7 @@ export function ShareActionRow({
           type="button"
           disabled={isApproveDisabled}
           data-tooltip={isApproveDisabled ? "Sign in to approve" : undefined}
+          onClick={approveProject}
         >
           <DsIcon name="thumbs-up-like-fill" size={20} />
           Approve
