@@ -11,6 +11,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type MutableRefObject,
 } from "react";
+import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
@@ -64,10 +65,13 @@ type FloatingToolbarState = {
   y: number;
 };
 
-type OverviewFilter = "all" | "unresolved";
-
 type ScriptPageProps = {
   initialRole: ScriptRole;
+};
+
+const overallCommentAnchor: ScriptCommentAnchor = {
+  kind: "overall",
+  label: "Overall",
 };
 
 export function ScriptPage({ initialRole }: ScriptPageProps) {
@@ -88,19 +92,19 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     lastRowId: null,
     selectedRowIds: new Set<string>(),
   });
-  const [activeCommentAnchor, setActiveCommentAnchor] = useState<ScriptCommentAnchor>({
-    kind: "overall",
-    label: "Overall",
-  });
+  const [activeCommentAnchor, setActiveCommentAnchor] = useState<ScriptCommentAnchor>(overallCommentAnchor);
   const [comments, setComments] = useState<ScriptComment[]>(() => cloneComments(initialScriptComments));
   const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
-  const [commentDraft, setCommentDraft] = useState("");
-  const [commentVisibility, setCommentVisibility] = useState<ScriptComment["visibility"]>("external");
   const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
-  const [overviewFilter, setOverviewFilter] = useState<OverviewFilter>("unresolved");
   const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [areIntroCardsDismissed, setAreIntroCardsDismissed] = useState(false);
+  const [alwaysHideIntroCards, setAlwaysHideIntroCards] = useState(false);
+  const [hasEditedThisSession, setHasEditedThisSession] = useState(false);
+  const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
+  const [confirmingDeleteRowId, setConfirmingDeleteRowId] = useState<string | null>(null);
+  const [highlightedRowId, setHighlightedRowId] = useState<string | null>(null);
   const [draggingRowId, setDraggingRowId] = useState<string | null>(null);
   const [dropRowId, setDropRowId] = useState<string | null>(null);
   const [openMediaMenuRowId, setOpenMediaMenuRowId] = useState<string | null>(null);
@@ -143,21 +147,14 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     [comments, isCustomer],
   );
   const commentsByRow = useMemo(() => groupCommentsByRow(visibleComments), [visibleComments]);
-  const overviewComments = useMemo(
-    () =>
-      overviewFilter === "all"
-        ? visibleComments
-        : visibleComments.filter((comment) => !comment.resolved),
-    [overviewFilter, visibleComments],
-  );
   const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
   const shouldShowAi = !isCustomer || showAiToCustomer;
   const enabledSubtabLabels = optionalSubtabs.filter((tab) => enabledSubtabs.has(tab.id));
+  const shouldShowIntroCards = layoutMode === "av" && !areIntroCardsDismissed && !alwaysHideIntroCards;
 
   useEffect(() => {
     if (isCustomer) {
       setLayoutMode("av");
-      setCommentVisibility("external");
     }
   }, [isCustomer]);
 
@@ -199,6 +196,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       const isRedo =
         ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z" && event.shiftKey) ||
         ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "y");
+      const target = event.target;
+      const isEditingField = target instanceof HTMLTextAreaElement || target instanceof HTMLInputElement;
+      const isDeleteSelectedRows =
+        event.key === "Backspace" && !isEditingField && selectionState.selectedRowIds.size > 0;
 
       if (isUndo) {
         event.preventDefault();
@@ -208,6 +209,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       if (isRedo) {
         event.preventDefault();
         redoRows();
+      }
+
+      if (isDeleteSelectedRows) {
+        event.preventDefault();
+        deleteSelectedRows();
       }
     };
 
@@ -281,6 +287,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     if (value.trim()) {
       setHasTypedThisSession(true);
     }
+    setHasEditedThisSession(true);
 
     updateRows((currentRows) =>
       currentRows.map((row) =>
@@ -362,6 +369,58 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
   };
 
+  const deleteRowById = (rowId: string, shouldSkipConfirm = false) => {
+    const row = rows.find((currentRow) => currentRow.id === rowId);
+
+    if (!row) {
+      return;
+    }
+
+    const hasContent = Boolean(row.words.trim() || row.visuals.trim() || row.media.length > 0);
+
+    if (hasContent && !shouldSkipConfirm) {
+      setOpenRowMenuId(rowId);
+      setConfirmingDeleteRowId(rowId);
+      return;
+    }
+
+    updateRows((currentRows) =>
+      currentRows.map((currentRow) =>
+        currentRow.id === rowId
+          ? {
+              ...currentRow,
+              deletedMeta: {
+                person: "Tom",
+                time: "just now",
+              },
+            }
+          : currentRow,
+      ),
+    );
+    setOpenRowMenuId(null);
+    setConfirmingDeleteRowId(null);
+    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+  };
+
+  const duplicateRowById = (rowId: string) => {
+    updateRows((currentRows) => {
+      const rowIndex = currentRows.findIndex((currentRow) => currentRow.id === rowId);
+
+      if (rowIndex === -1) {
+        return currentRows;
+      }
+
+      const copy = {
+        ...cloneRow(currentRows[rowIndex]),
+        id: `row-copy-${Date.now()}`,
+        deletedMeta: undefined,
+      };
+
+      return [...currentRows.slice(0, rowIndex + 1), copy, ...currentRows.slice(rowIndex + 1)];
+    });
+    setOpenRowMenuId(null);
+  };
+
   const duplicateSelectedRows = () => {
     if (selectedRows.length === 0) {
       return;
@@ -388,6 +447,18 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const handleWordsKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => {
+    if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === "Backspace") {
+      event.preventDefault();
+      deleteRowById(row.id, true);
+      return;
+    }
+
+    if (event.key === "Backspace" && selectionState.selectedRowIds.size > 1 && selectionState.selectedRowIds.has(row.id)) {
+      event.preventDefault();
+      deleteSelectedRows();
+      return;
+    }
+
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       addRowAfter(row.id);
@@ -413,6 +484,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     event.preventDefault();
     setHasTypedThisSession(true);
+    setHasEditedThisSession(true);
     updateRows((currentRows) => {
       const rowIndex = currentRows.findIndex((currentRow) => currentRow.id === row.id);
 
@@ -602,6 +674,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     if (value.trim()) {
       setHasTypedThisSession(true);
     }
+    setHasEditedThisSession(true);
 
     updateRows((currentRows) => {
       const paragraphs = value.split(/\n{2,}/u);
@@ -678,6 +751,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const openCommentsForRow = (rowId: string) => {
+    setActiveCommentAnchor({
+      kind: "row",
+      label: getRowLabel(rowId, rows),
+      rowId,
+    });
     setOpenCommentRowId(rowId);
     setIsCommentComposerOpen(false);
     setIsCommentsOverviewOpen(false);
@@ -694,31 +772,28 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsCommentsOverviewOpen(false);
   };
 
-  const submitComment = () => {
-    const trimmedDraft = commentDraft.trim();
+  const mergeScopedComments = (previousScope: ScriptComment[], nextScope: ScriptComment[]) => {
+    const previousIds = new Set(previousScope.map((comment) => comment.id));
 
-    if (!trimmedDraft) {
+    setComments((currentComments) => [
+      ...currentComments.filter((comment) => !previousIds.has(comment.id)),
+      ...cloneComments(nextScope),
+    ]);
+  };
+
+  const selectCommentAnchor = (comment: ScriptComment) => {
+    const rowId = comment.anchor.rowId;
+
+    if (!rowId) {
       return;
     }
 
-    const newComment: ScriptComment = {
-      id: `script-comment-${Date.now()}`,
-      authorId: currentUserId,
-      visibility: isCustomer ? "external" : commentVisibility,
-      anchor: activeCommentAnchor,
-      createdAgo: "Just now",
-      body: trimmedDraft,
-      resolved: false,
-      replies: [],
-    };
-
-    setComments((currentComments) => [...currentComments, newComment]);
-    setCommentDraft("");
-    setIsCommentComposerOpen(false);
-
-    if (newComment.anchor.rowId) {
-      setOpenCommentRowId(newComment.anchor.rowId);
-    }
+    rowRefs.current.get(rowId)?.scrollIntoView({ block: "center", behavior: "smooth" });
+    setHighlightedRowId(rowId);
+    window.setTimeout(() => setHighlightedRowId(null), 1500);
+    setActiveCommentAnchor(comment.anchor);
+    setOpenCommentRowId(rowId);
+    setIsCommentsOverviewOpen(false);
   };
 
   return (
@@ -759,7 +834,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             aria-label="Comments overview"
             aria-expanded={isCommentsOverviewOpen}
             onClick={() => {
-              setIsCommentsOverviewOpen((isOpen) => !isOpen);
+              setIsCommentsOverviewOpen((isOpen) => {
+                const nextIsOpen = !isOpen;
+
+                if (nextIsOpen) {
+                  setActiveCommentAnchor(overallCommentAnchor);
+                }
+
+                return nextIsOpen;
+              });
               setOpenCommentRowId(null);
               setIsCommentComposerOpen(false);
             }}
@@ -814,6 +897,14 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                     Show AI to customer
                   </label>
                 ) : null}
+                <label className="script-menu-toggle label-xs-semibold">
+                  <input
+                    type="checkbox"
+                    checked={alwaysHideIntroCards}
+                    onChange={(event) => setAlwaysHideIntroCards(event.target.checked)}
+                  />
+                  Always hide intro cards
+                </label>
                 <div className="script-options-section">
                   <span className="label-xs-semibold">Sub-tabs</span>
                   {optionalSubtabs.map((tab) => (
@@ -846,21 +937,30 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               dropRowId={dropRowId}
               hasTypedThisSession={hasTypedThisSession}
               isApproved={isScriptApproved}
+              highlightedRowId={highlightedRowId}
               openMediaMenuRowId={openMediaMenuRowId}
+              openRowMenuId={openRowMenuId}
+              confirmingDeleteRowId={confirmingDeleteRowId}
               rows={rows}
               selectedRowIds={selectionState.selectedRowIds}
+              shouldShowIntroCards={shouldShowIntroCards}
+              hasEditedThisSession={hasEditedThisSession}
               showChanges={showChanges}
               wordInputRefs={wordInputRefs}
               visualInputRefs={visualInputRefs}
               onAddMediaItem={addMediaItem}
               onAddRowAfter={addRowAfter}
+              onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
               onCaptureSelectionAnchor={captureSelectionAnchor}
+              onDeleteRow={deleteRowById}
+              onDismissIntroCards={() => setAreIntroCardsDismissed(true)}
               onDragEnd={() => {
                 setDraggingRowId(null);
                 setDropRowId(null);
               }}
               onDragOverRow={(rowId) => setDropRowId(rowId)}
               onDragStartRow={setDraggingRowId}
+              onDuplicateRow={duplicateRowById}
               onGuardApproved={guardEditable}
               onOpenComposerForRow={openComposerForRow}
               onOpenCommentsForRow={openCommentsForRow}
@@ -874,6 +974,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onSelectRow={selectRow}
               onSetField={setRowField}
               onSetMediaMenuRow={setOpenMediaMenuRowId}
+              onSetOpenRowMenu={(rowId) => {
+                setOpenRowMenuId(rowId);
+                setConfirmingDeleteRowId(null);
+              }}
               onWordsKeyDown={handleWordsKeyDown}
               registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
             />
@@ -894,41 +998,37 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
 
         {(openCommentRowId || isCommentComposerOpen || isCommentsOverviewOpen) ? (
-          <CommentMargin
-            activeAnchor={activeCommentAnchor}
-            canPostInternal={!isCustomer}
-            commentDraft={commentDraft}
-            commentVisibility={commentVisibility}
-            comments={visibleOpenComments}
-            isComposerOpen={isCommentComposerOpen}
-            isOverviewOpen={isCommentsOverviewOpen}
-            overviewComments={overviewComments}
-            overviewFilter={overviewFilter}
-            usersById={new Map(scriptUsers.map((user) => [user.id, user]))}
-            onClose={() => {
-              setOpenCommentRowId(null);
-              setIsCommentComposerOpen(false);
-              setIsCommentsOverviewOpen(false);
-            }}
-            onCommentDraftChange={setCommentDraft}
-            onCommentVisibilityChange={setCommentVisibility}
-            onOverviewFilterChange={setOverviewFilter}
-            onSelectComment={(comment) => {
-              const rowId = comment.anchor.rowId;
-              if (rowId) {
-                rowRefs.current.get(rowId)?.scrollIntoView({ block: "center", behavior: "smooth" });
-                setOpenCommentRowId(rowId);
+          <div className={`script-comment-popover ${isCommentsOverviewOpen ? "overview" : "inline"}`}>
+            <CommentRail
+              activeAnchor={isCommentsOverviewOpen ? overallCommentAnchor : activeCommentAnchor}
+              comments={isCommentsOverviewOpen ? visibleComments : visibleOpenComments}
+              composerAnchor={isCommentsOverviewOpen ? overallCommentAnchor : activeCommentAnchor}
+              composerPlacement={isCommentsOverviewOpen ? "top" : "bottom"}
+              currentUserId={currentUserId}
+              users={scriptUsers}
+              canPostInternal={!isCustomer}
+              canSeeInternal={!isCustomer}
+              filterMode={isCustomer ? "customer" : "studio"}
+              title="Comments"
+              onClose={() => {
+                setOpenCommentRowId(null);
+                setIsCommentComposerOpen(false);
                 setIsCommentsOverviewOpen(false);
+              }}
+              onCommentsChange={(nextScopedComments) =>
+                mergeScopedComments(isCommentsOverviewOpen ? visibleComments : visibleOpenComments, nextScopedComments)
               }
-            }}
-            onSubmitComment={submitComment}
-          />
+              onSelectComment={selectCommentAnchor}
+            />
+          </div>
         ) : null}
       </section>
 
       <footer className={`script-word-footer word-${wordState}`}>
-        <span>
-          {totalWords} words · ~{approxSeconds}s · Target {scriptBrief.targetDurationSeconds}s
+        <span className="script-word-footer-inner">
+          <span className="script-word-footer-copy">
+            <strong>{totalWords}</strong> words · <span className="script-word-duration">~{approxSeconds}s</span> · Target {scriptBrief.targetDurationSeconds}s
+          </span>
         </span>
       </footer>
 
@@ -1151,24 +1251,64 @@ function FloatingFormatToolbar({
   );
 }
 
+function ScriptIntroCards({ isFaded, onDismiss }: { isFaded: boolean; onDismiss: () => void }) {
+  return (
+    <div className={`script-column-intro ${isFaded ? "faded" : ""}`} aria-label="Script column guidance">
+      <section className="script-intro-card words">
+        <div className="script-intro-heading">
+          <span className="script-intro-icon">
+            <DsIcon name="pencil-simple" size={18} />
+          </span>
+          <h2>Words</h2>
+        </div>
+        <p>Write the words of your script here. One sentence per row. 150 words = 1 minute.</p>
+        <button className="script-intro-dismiss" type="button" aria-label="Dismiss intro cards" onClick={onDismiss}>
+          <DsIcon name="x-close-cross" size={12} />
+        </button>
+      </section>
+      <section className="script-intro-card visuals">
+        <div className="script-intro-heading">
+          <span className="script-intro-icon">
+            <DsIcon name="image-square" size={18} />
+          </span>
+          <h2>Visuals</h2>
+        </div>
+        <p>Describe the visuals for each line. Add media, links or references.</p>
+        <button className="script-intro-dismiss" type="button" aria-label="Dismiss intro cards" onClick={onDismiss}>
+          <DsIcon name="x-close-cross" size={12} />
+        </button>
+      </section>
+    </div>
+  );
+}
+
 function AvScriptEditor({
   commentsByRow,
   density,
   dropRowId,
   hasTypedThisSession,
   isApproved,
+  highlightedRowId,
   openMediaMenuRowId,
+  openRowMenuId,
+  confirmingDeleteRowId,
   rows,
   selectedRowIds,
+  shouldShowIntroCards,
+  hasEditedThisSession,
   showChanges,
   wordInputRefs,
   visualInputRefs,
   onAddMediaItem,
   onAddRowAfter,
+  onCancelRowDelete,
   onCaptureSelectionAnchor,
+  onDeleteRow,
+  onDismissIntroCards,
   onDragEnd,
   onDragOverRow,
   onDragStartRow,
+  onDuplicateRow,
   onGuardApproved,
   onOpenComposerForRow,
   onOpenCommentsForRow,
@@ -1178,6 +1318,7 @@ function AvScriptEditor({
   onSelectRow,
   onSetField,
   onSetMediaMenuRow,
+  onSetOpenRowMenu,
   onWordsKeyDown,
   registerRowRef,
 }: {
@@ -1186,18 +1327,27 @@ function AvScriptEditor({
   dropRowId: string | null;
   hasTypedThisSession: boolean;
   isApproved: boolean;
+  highlightedRowId: string | null;
   openMediaMenuRowId: string | null;
+  openRowMenuId: string | null;
+  confirmingDeleteRowId: string | null;
   rows: ScriptRow[];
   selectedRowIds: Set<string>;
+  shouldShowIntroCards: boolean;
+  hasEditedThisSession: boolean;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   visualInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
   onAddRowAfter: (rowId: string | null) => void;
+  onCancelRowDelete: () => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
+  onDeleteRow: (rowId: string, shouldSkipConfirm?: boolean) => void;
+  onDismissIntroCards: () => void;
   onDragEnd: () => void;
   onDragOverRow: (rowId: string) => void;
   onDragStartRow: (rowId: string) => void;
+  onDuplicateRow: (rowId: string) => void;
   onGuardApproved: () => boolean;
   onOpenComposerForRow: (row: ScriptRow) => void;
   onOpenCommentsForRow: (rowId: string) => void;
@@ -1207,11 +1357,13 @@ function AvScriptEditor({
   onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
   onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
   onSetMediaMenuRow: (rowId: string | null) => void;
+  onSetOpenRowMenu: (rowId: string | null) => void;
   onWordsKeyDown: (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
 }) {
   return (
     <section className={`script-av-surface ${density}`} aria-label="AV script editor">
+      {shouldShowIntroCards ? <ScriptIntroCards isFaded={hasEditedThisSession} onDismiss={onDismissIntroCards} /> : null}
       {rows.map((row, index) => {
         const rowComments = commentsByRow.get(row.id) ?? [];
         const hasAnchor = rowComments.length > 0 || row.media.length > 0;
@@ -1226,7 +1378,7 @@ function AvScriptEditor({
           </div>
         ) : (
           <div
-            className={`script-row ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""}`}
+            className={`script-row ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
             draggable
             key={row.id}
             ref={(node) => registerRowRef(row.id, node)}
@@ -1253,6 +1405,51 @@ function AvScriptEditor({
               <button className="script-add-between" type="button" aria-label={`Insert row after ${getRowLabel(row.id, rows)}`} onClick={() => onAddRowAfter(row.id)}>
                 <DsIcon name="plus" size={12} />
               </button>
+              <span className="script-row-menu-wrap">
+                <button
+                  className="script-row-menu-button"
+                  type="button"
+                  aria-label={`Open menu for ${getRowLabel(row.id, rows)}`}
+                  aria-expanded={openRowMenuId === row.id}
+                  onClick={() => onSetOpenRowMenu(openRowMenuId === row.id ? null : row.id)}
+                >
+                  <DsIcon name="dots-three" size={13} />
+                </button>
+                {openRowMenuId === row.id ? (
+                  <span className="script-row-menu">
+                    {confirmingDeleteRowId === row.id ? (
+                      <span className="script-row-delete-confirm label-xs-semibold">
+                        Delete?
+                        <button type="button" onClick={() => onDeleteRow(row.id, true)}>
+                          Yes
+                        </button>
+                        <button type="button" onClick={onCancelRowDelete}>
+                          No
+                        </button>
+                      </span>
+                    ) : (
+                      <>
+                        <button className="label-xs-semibold" type="button" onClick={() => onDeleteRow(row.id)}>
+                          Delete row
+                        </button>
+                        <button className="label-xs-semibold" type="button" onClick={() => onDuplicateRow(row.id)}>
+                          Duplicate row
+                        </button>
+                        <button
+                          className="label-xs-semibold"
+                          type="button"
+                          onClick={() => {
+                            onOpenComposerForRow(row);
+                            onSetOpenRowMenu(null);
+                          }}
+                        >
+                          Comment on row
+                        </button>
+                      </>
+                    )}
+                  </span>
+                ) : null}
+              </span>
             </div>
             <div className="script-row-words">
               <textarea
@@ -1381,133 +1578,6 @@ function SimpleDocEditor({
         </div>
       ) : null}
     </section>
-  );
-}
-
-function CommentMargin({
-  activeAnchor,
-  canPostInternal,
-  commentDraft,
-  commentVisibility,
-  comments,
-  isComposerOpen,
-  isOverviewOpen,
-  overviewComments,
-  overviewFilter,
-  usersById,
-  onClose,
-  onCommentDraftChange,
-  onCommentVisibilityChange,
-  onOverviewFilterChange,
-  onSelectComment,
-  onSubmitComment,
-}: {
-  activeAnchor: ScriptCommentAnchor;
-  canPostInternal: boolean;
-  commentDraft: string;
-  commentVisibility: ScriptComment["visibility"];
-  comments: ScriptComment[];
-  isComposerOpen: boolean;
-  isOverviewOpen: boolean;
-  overviewComments: ScriptComment[];
-  overviewFilter: OverviewFilter;
-  usersById: Map<string, (typeof scriptUsers)[number]>;
-  onClose: () => void;
-  onCommentDraftChange: (value: string) => void;
-  onCommentVisibilityChange: (value: ScriptComment["visibility"]) => void;
-  onOverviewFilterChange: (value: OverviewFilter) => void;
-  onSelectComment: (comment: ScriptComment) => void;
-  onSubmitComment: () => void;
-}) {
-  if (isOverviewOpen) {
-    return (
-      <aside className="script-comment-margin overview" aria-label="Comments overview">
-        <div className="script-comment-head">
-          <strong className="label-s-semibold">Comments</strong>
-          <button className="script-quiet-icon" type="button" aria-label="Close comments overview" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={12} />
-          </button>
-        </div>
-        <div className="script-comment-tabs" role="group" aria-label="Comment filter">
-          <button className={`label-xs-semibold ${overviewFilter === "all" ? "active" : ""}`} type="button" onClick={() => onOverviewFilterChange("all")}>
-            All
-          </button>
-          <button className={`label-xs-semibold ${overviewFilter === "unresolved" ? "active" : ""}`} type="button" onClick={() => onOverviewFilterChange("unresolved")}>
-            Unresolved
-          </button>
-        </div>
-        <div className="script-comment-list">
-          {overviewComments.map((comment) => (
-            <CommentCard comment={comment} key={comment.id} usersById={usersById} onSelect={() => onSelectComment(comment)} />
-          ))}
-        </div>
-      </aside>
-    );
-  }
-
-  return (
-    <aside className="script-comment-margin" aria-label="Script comments">
-      <div className="script-comment-head">
-        <strong className="label-s-semibold">{activeAnchor.label}</strong>
-        <button className="script-quiet-icon" type="button" aria-label="Close comments" onClick={onClose}>
-          <DsIcon name="x-close-cross" size={12} />
-        </button>
-      </div>
-      {activeAnchor.snippet ? <p className="script-comment-snippet label-xs">"{activeAnchor.snippet}"</p> : null}
-      {comments.length > 0 ? (
-        <div className="script-comment-list">
-          {comments.map((comment) => (
-            <CommentCard comment={comment} key={comment.id} usersById={usersById} />
-          ))}
-        </div>
-      ) : null}
-      {isComposerOpen ? (
-        <div className="script-comment-composer">
-          {canPostInternal ? (
-            <select className="script-comment-visibility label-xs-semibold" value={commentVisibility} onChange={(event) => onCommentVisibilityChange(event.target.value as ScriptComment["visibility"])}>
-              <option value="external">Customer</option>
-              <option value="internal">Internal</option>
-            </select>
-          ) : null}
-          <textarea
-            className="script-comment-input label-s"
-            placeholder="Comment..."
-            value={commentDraft}
-            onChange={(event) => onCommentDraftChange(event.target.value)}
-          />
-          <button className="script-approve-button label-xs-semibold" type="button" onClick={onSubmitComment}>
-            Post
-          </button>
-        </div>
-      ) : null}
-    </aside>
-  );
-}
-
-function CommentCard({
-  comment,
-  usersById,
-  onSelect,
-}: {
-  comment: ScriptComment;
-  usersById: Map<string, (typeof scriptUsers)[number]>;
-  onSelect?: () => void;
-}) {
-  const user = usersById.get(comment.authorId);
-
-  return (
-    <button className={`script-comment-card ${comment.visibility}`} type="button" onClick={onSelect}>
-      <span className={`avatar ${user?.avatarTone ?? "sand"}`} aria-hidden="true">
-        {user?.initials ?? "?"}
-      </span>
-      <span>
-        <span className="script-comment-meta label-xs-semibold">
-          {user?.name ?? "Unknown"} <span>{comment.createdAgo}</span>
-          {comment.visibility === "internal" ? <em>Internal</em> : null}
-        </span>
-        <span className="paragraph-s">{comment.body}</span>
-      </span>
-    </button>
   );
 }
 

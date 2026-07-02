@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { CommentFilter, CommentVisibility, Reaction, ReactionEmoji, User } from "@/components/video-review/types";
@@ -36,6 +36,11 @@ type CommentRailProps = {
   canPostInternal: boolean;
   canSeeInternal: boolean;
   filterMode: "studio" | "customer";
+  composerAnchor?: ScriptCommentAnchor;
+  composerPlacement?: "top" | "bottom";
+  title?: string;
+  onClose?: () => void;
+  onCommentsChange?: (comments: ScriptComment[]) => void;
   onSelectComment?: (comment: ScriptComment) => void;
 };
 
@@ -49,10 +54,15 @@ export function CommentRail({
   canPostInternal,
   canSeeInternal,
   filterMode,
+  composerAnchor,
+  composerPlacement = "bottom",
+  title,
+  onClose,
+  onCommentsChange,
   onSelectComment,
 }: CommentRailProps) {
-  const [comments, setComments] = useState(initialComments);
-  const [activeFilter, setActiveFilter] = useState<CommentFilter>("unresolved");
+  const [localComments, setLocalComments] = useState(initialComments);
+  const [activeFilter, setActiveFilter] = useState<CommentFilter>("all");
   const [composerBody, setComposerBody] = useState("");
   const [composerVisibility, setComposerVisibility] = useState<CommentVisibility>("external");
   const [isPostingMenuOpen, setIsPostingMenuOpen] = useState(false);
@@ -64,6 +74,8 @@ export function CommentRail({
   const [openCommentMenuId, setOpenCommentMenuId] = useState<string | null>(null);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const comments = onCommentsChange ? initialComments : localComments;
+  const activeComposerAnchor = composerAnchor ?? activeAnchor;
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
   const visibleBaseComments = useMemo(
     () => (canSeeInternal ? comments : comments.filter((comment) => comment.visibility === "external")),
@@ -77,6 +89,21 @@ export function CommentRail({
   const canSkipPrevious = selectedVisibleIndex > 0;
   const canSkipNext =
     visibleComments.length > 0 && (selectedVisibleIndex === -1 || selectedVisibleIndex < visibleComments.length - 1);
+
+  useEffect(() => {
+    if (!onCommentsChange) {
+      setLocalComments(initialComments);
+    }
+  }, [initialComments, onCommentsChange]);
+
+  const updateComments = (updater: (currentComments: ScriptComment[]) => ScriptComment[]) => {
+    if (onCommentsChange) {
+      onCommentsChange(updater(initialComments));
+      return;
+    }
+
+    setLocalComments(updater);
+  };
 
   const selectComment = (comment: ScriptComment) => {
     setSelectedCommentId(comment.id);
@@ -107,20 +134,20 @@ export function CommentRail({
       id: `script-comment-${Date.now()}`,
       authorId: currentUserId,
       visibility: composerVisibility,
-      anchor: activeAnchor,
+      anchor: activeComposerAnchor,
       createdAgo: "Just now",
       body: trimmedBody,
       resolved: false,
       replies: [],
     };
 
-    setComments((current) => [...current, newComment]);
+    updateComments((current) => [...current, newComment]);
     setComposerBody("");
     setSelectedCommentId(newComment.id);
   };
 
   const toggleResolved = (commentId: string) => {
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) => (comment.id === commentId ? { ...comment, resolved: !comment.resolved } : comment)),
     );
     setExpandedResolvedIds((current) => {
@@ -131,13 +158,13 @@ export function CommentRail({
   };
 
   const resolveAll = () => {
-    setComments((current) => current.map((comment) => ({ ...comment, resolved: true })));
+    updateComments((current) => current.map((comment) => ({ ...comment, resolved: true })));
     setIsConfirmOpen(false);
     setExpandedResolvedIds(new Set());
   };
 
   const deleteComment = (commentId: string) => {
-    setComments((current) => current.filter((comment) => comment.id !== commentId));
+    updateComments((current) => current.filter((comment) => comment.id !== commentId));
     setOpenCommentMenuId(null);
 
     if (selectedCommentId === commentId) {
@@ -158,7 +185,7 @@ export function CommentRail({
       return;
     }
 
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) =>
         comment.id === commentId ? { ...comment, body: trimmedDraft, createdAgo: "Just now" } : comment,
       ),
@@ -174,7 +201,7 @@ export function CommentRail({
       return;
     }
 
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) =>
         comment.id === commentId
           ? {
@@ -201,7 +228,7 @@ export function CommentRail({
       return;
     }
 
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) =>
         comment.id === commentId
           ? { ...comment, visibility: comment.visibility === "internal" ? "external" : "internal" }
@@ -211,7 +238,7 @@ export function CommentRail({
   };
 
   const toggleReaction = (commentId: string, emoji: ReactionEmoji) => {
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) =>
         comment.id === commentId ? { ...comment, reactions: toggleReactionInList(comment.reactions, emoji, currentUserId) } : comment,
       ),
@@ -219,7 +246,7 @@ export function CommentRail({
   };
 
   const toggleReplyReaction = (commentId: string, replyId: string, emoji: ReactionEmoji) => {
-    setComments((current) =>
+    updateComments((current) =>
       current.map((comment) =>
         comment.id === commentId
           ? {
@@ -236,11 +263,11 @@ export function CommentRail({
   };
 
   return (
-    <aside className="comment-panel script-comment-panel" aria-label="Script comments">
+    <aside className={`comment-panel script-comment-panel composer-${composerPlacement}`} aria-label="Script comments">
       <div className="comment-panel-top">
         <div className="comment-header">
           <div className="comment-title-row">
-            <h1 className="heading-3xs">Comments ({visibleComments.length})</h1>
+            <h1 className="heading-3xs">{title ?? `Comments (${visibleComments.length})`}</h1>
             <div className="comment-header-actions">
               <div className="skip-comment-actions" aria-label="Skip between visible comments">
                 <button
@@ -270,6 +297,11 @@ export function CommentRail({
                 >
                   <DsIcon name="checks" size={15} />
                 </button>
+                {onClose ? (
+                  <button className="header-menu-button script-comment-panel-close" type="button" aria-label="Close comments" onClick={onClose}>
+                    <DsIcon name="x-close-cross" size={13} />
+                  </button>
+                ) : null}
               </div>
             </div>
           </div>
@@ -280,6 +312,28 @@ export function CommentRail({
           />
         </div>
       </div>
+
+      {composerPlacement === "top" ? (
+        <CommentComposer
+          anchor={activeComposerAnchor}
+          body={composerBody}
+          canPostInternal={canPostInternal}
+          isPostingMenuOpen={isPostingMenuOpen}
+          users={users}
+          visibility={composerVisibility}
+          onBodyChange={setComposerBody}
+          onMentionUser={(user) => {
+            const spacer = composerBody.trim() ? " " : "";
+            setComposerBody(`${composerBody}${spacer}@${user.name} `);
+          }}
+          onSetVisibility={(visibility) => {
+            setComposerVisibility(visibility);
+            setIsPostingMenuOpen(false);
+          }}
+          onSubmit={submitComment}
+          onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
+        />
+      ) : null}
 
       <div className="comment-list">
         {visibleComments.length > 0 ? (
@@ -328,20 +382,27 @@ export function CommentRail({
         )}
       </div>
 
-      <CommentComposer
-        anchor={activeAnchor}
-        body={composerBody}
-        canPostInternal={canPostInternal}
-        isPostingMenuOpen={isPostingMenuOpen}
-        visibility={composerVisibility}
-        onBodyChange={setComposerBody}
-        onSetVisibility={(visibility) => {
-          setComposerVisibility(visibility);
-          setIsPostingMenuOpen(false);
-        }}
-        onSubmit={submitComment}
-        onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
-      />
+      {composerPlacement === "bottom" ? (
+        <CommentComposer
+          anchor={activeComposerAnchor}
+          body={composerBody}
+          canPostInternal={canPostInternal}
+          isPostingMenuOpen={isPostingMenuOpen}
+          users={users}
+          visibility={composerVisibility}
+          onBodyChange={setComposerBody}
+          onMentionUser={(user) => {
+            const spacer = composerBody.trim() ? " " : "";
+            setComposerBody(`${composerBody}${spacer}@${user.name} `);
+          }}
+          onSetVisibility={(visibility) => {
+            setComposerVisibility(visibility);
+            setIsPostingMenuOpen(false);
+          }}
+          onSubmit={submitComment}
+          onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
+        />
+      ) : null}
 
       {isConfirmOpen ? (
         <ResolveAllModal
@@ -622,8 +683,10 @@ function CommentComposer({
   body,
   canPostInternal,
   isPostingMenuOpen,
+  users,
   visibility,
   onBodyChange,
+  onMentionUser,
   onSetVisibility,
   onSubmit,
   onTogglePostingMenu,
@@ -632,8 +695,10 @@ function CommentComposer({
   body: string;
   canPostInternal: boolean;
   isPostingMenuOpen: boolean;
+  users: User[];
   visibility: CommentVisibility;
   onBodyChange: (body: string) => void;
+  onMentionUser: (user: User) => void;
   onSetVisibility: (visibility: CommentVisibility) => void;
   onSubmit: () => void;
   onTogglePostingMenu: () => void;
@@ -678,6 +743,13 @@ function CommentComposer({
           onChange={(event) => onBodyChange(event.target.value)}
           onKeyDown={submitWithKeyboard}
         />
+        <div className="mention-row" aria-label="Mention team members">
+          {users.slice(0, 4).map((user) => (
+            <button className="mention-chip label-xs-semibold" type="button" key={user.id} onClick={() => onMentionUser(user)}>
+              @{user.name.split(" ")[0]}
+            </button>
+          ))}
+        </div>
         <div className="composer-toolbar">
           <div className="composer-tools">
             <button type="button" data-tooltip="Attach file" aria-label="Attach file">
