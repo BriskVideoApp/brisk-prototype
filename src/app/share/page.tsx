@@ -38,7 +38,13 @@ export default function ShareDemoPage() {
       </header>
 
       <section className="share-demo-canvas" aria-label="Selected stage share controls">
-        <ShareActionRow context={selectedStage} userRole="Customer" />
+        <ShareActionRow
+          context={selectedStage}
+          userRole="Studio Staff"
+          projectName="Launch Film - Sales Narrative"
+          studioName="Brisk Studios"
+          customerName="Avery Taylor"
+        />
       </section>
     </main>
   );

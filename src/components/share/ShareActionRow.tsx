@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { RequestReviewModal, type RequestReviewRole } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export type ShareStageContext = "brief" | "script" | "media" | "edit" | "masters";
@@ -15,6 +16,9 @@ export type ShareActionRowProps = {
   density?: ShareDensity;
   initialLinkOpens?: ShareLinkOpens;
   initialAccess?: ShareAccess;
+  projectName?: string;
+  studioName?: string;
+  customerName?: string;
 };
 
 type ExpandedSection = "linkOpens" | "access";
@@ -45,18 +49,25 @@ export function ShareActionRow({
   density = "comfortable",
   initialLinkOpens = "stageOnly",
   initialAccess = "canComment",
+  projectName = "Launch Film - Sales Narrative",
+  studioName = "Brisk Studios",
+  customerName = "Avery Taylor",
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
+  const reviewToastTimeoutRef = useRef<number | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<ExpandedSection[]>([]);
   const [linkOpens, setLinkOpens] = useState<ShareLinkOpens>(initialLinkOpens);
   const [access, setAccess] = useState<ShareAccess>(initialLinkOpens === "videoOnly" ? "viewOnly" : initialAccess);
   const [hasCopied, setHasCopied] = useState(false);
+  const [reviewToastMessage, setReviewToastMessage] = useState("");
   const stageLabel = stageLabels[context];
   const canUseVideoOnly = context === "edit" || context === "masters";
   const isVideoOnly = linkOpens === "videoOnly";
   const isApproveDisabled = userRole === "Share Link Viewer";
+  const requestReviewRole: RequestReviewRole = userRole === "Customer" ? "customer" : "studio";
 
   const linkOptions = useMemo(
     () => [
@@ -86,6 +97,10 @@ export function ShareActionRow({
       if (copyToastTimeoutRef.current) {
         window.clearTimeout(copyToastTimeoutRef.current);
       }
+
+      if (reviewToastTimeoutRef.current) {
+        window.clearTimeout(reviewToastTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -109,6 +124,18 @@ export function ShareActionRow({
     copyToastTimeoutRef.current = window.setTimeout(() => {
       setHasCopied(false);
     }, 2200);
+  };
+
+  const handleReviewSent = (recipientName: string) => {
+    setReviewToastMessage(`Review request sent to ${recipientName}`);
+
+    if (reviewToastTimeoutRef.current) {
+      window.clearTimeout(reviewToastTimeoutRef.current);
+    }
+
+    reviewToastTimeoutRef.current = window.setTimeout(() => {
+      setReviewToastMessage("");
+    }, 2600);
   };
 
   const toggleSection = (section: ExpandedSection) => {
@@ -147,7 +174,7 @@ export function ShareActionRow({
           <DsIcon name="link" size={20} />
           Copy Link
         </button>
-        <button className="share-button share-button-secondary label-s-semibold" type="button">
+        <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsRequestReviewOpen(true)}>
           Request Review
         </button>
         <button
@@ -160,6 +187,11 @@ export function ShareActionRow({
           Approve
         </button>
       </div>
+      {reviewToastMessage ? (
+        <span className="share-request-toast label-xs-semibold" role="status">
+          {reviewToastMessage}
+        </span>
+      ) : null}
 
       {isPopoverOpen ? (
         <aside className="share-popover" aria-label="Copy link settings" onPointerDown={(event) => event.stopPropagation()}>
@@ -209,6 +241,17 @@ export function ShareActionRow({
             ) : null}
           </ShareOptionSection>
         </aside>
+      ) : null}
+
+      {isRequestReviewOpen ? (
+        <RequestReviewModal
+          role={requestReviewRole}
+          projectName={projectName}
+          studioName={studioName}
+          customerName={customerName}
+          onClose={() => setIsRequestReviewOpen(false)}
+          onSent={handleReviewSent}
+        />
       ) : null}
     </div>
   );

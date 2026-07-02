@@ -7,6 +7,7 @@ Added prototype components under `src/components/share/`:
 - `ShareActionRow`
 - `ShareOptionSection`
 - `ShareRadioOption`
+- `RequestReviewModal`
 
 Notes for DS review:
 
@@ -16,6 +17,8 @@ Notes for DS review:
 - The radio rows are fully clickable and use local radio styling until the DS radio list is available as a React component.
 - `Video only` is available only on Edit and Masters, and forces Access to `View only`.
 - Share-link viewers see Approve disabled with the tooltip copy `Sign in to approve`.
+- The Request Review modal reuses the Share controls border, radius, and elevation treatment. It is local prototype markup until React DS exports exist for `d-Modal`, `d-Select`, `d-Radio list`, `d-Text area`, and `d-Notification toast`.
+- The modal includes a nested email preview modal for the happy path only.
 
 ## Today tab prototype
 
