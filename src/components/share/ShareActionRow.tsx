@@ -229,14 +229,14 @@ function ShareOptionSection({
 }) {
   return (
     <section className={`share-option-section ${isExpanded ? "expanded" : ""}`}>
-      <div className="share-option-summary">
+      <button className="share-option-summary" type="button" aria-expanded={isExpanded} onClick={onToggle}>
         <span className="share-option-title label-s-semibold">
           {title}: <strong>{value}</strong>
         </span>
-        <button className="share-option-toggle label-s-semibold" type="button" onClick={onToggle}>
+        <span className="share-option-toggle label-s-semibold" aria-hidden="true">
           {isExpanded ? "Hide" : "Change"}
-        </button>
-      </div>
+        </span>
+      </button>
       {isExpanded ? <div className="share-radio-list">{children}</div> : null}
     </section>
   );
