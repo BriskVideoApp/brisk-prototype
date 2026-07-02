@@ -127,6 +127,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const toastTimeoutRef = useRef<number | null>(null);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
+  const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const simpleDocRef = useRef<HTMLTextAreaElement | null>(null);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const activeVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1];
@@ -185,6 +186,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       setToastMessage("");
     }, 3000);
   }, [toastMessage]);
+
+  useEffect(() => {
+    wordInputRefs.current.forEach(resizeTextAreaToContent);
+    visualInputRefs.current.forEach(resizeTextAreaToContent);
+    resizeTextAreaToContent(simpleDocRef.current);
+  }, [rows, layoutMode, density]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -844,6 +851,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               selectedRowIds={selectionState.selectedRowIds}
               showChanges={showChanges}
               wordInputRefs={wordInputRefs}
+              visualInputRefs={visualInputRefs}
               onAddMediaItem={addMediaItem}
               onAddRowAfter={addRowAfter}
               onCaptureSelectionAnchor={captureSelectionAnchor}
@@ -1154,6 +1162,7 @@ function AvScriptEditor({
   selectedRowIds,
   showChanges,
   wordInputRefs,
+  visualInputRefs,
   onAddMediaItem,
   onAddRowAfter,
   onCaptureSelectionAnchor,
@@ -1182,6 +1191,7 @@ function AvScriptEditor({
   selectedRowIds: Set<string>;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
+  visualInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
   onAddRowAfter: (rowId: string | null) => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
@@ -1258,6 +1268,7 @@ function AvScriptEditor({
                   }
                 }}
                 onChange={(event) => onSetField(row.id, "words", event.target.value)}
+                onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
                 onKeyDown={(event) => onWordsKeyDown(event, row)}
                 onKeyUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
                 onMouseUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
@@ -1271,6 +1282,7 @@ function AvScriptEditor({
                 className="script-cell-input visuals label-s"
                 placeholder={shouldShowPlaceholder ? "Describe the visuals or drop in media." : ""}
                 readOnly={isApproved}
+                ref={(node) => registerTextArea(visualInputRefs.current, row.id, node)}
                 rows={2}
                 value={row.visuals}
                 onMouseDown={() => {
@@ -1279,6 +1291,7 @@ function AvScriptEditor({
                   }
                 }}
                 onChange={(event) => onSetField(row.id, "visuals", event.target.value)}
+                onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
               />
               <div className="script-media-strip">
                 {row.media.map((mediaItem) => (
@@ -1357,6 +1370,7 @@ function SimpleDocEditor({
           }
         }}
         onChange={(event) => onUpdateDoc(event.target.value)}
+        onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
         onKeyUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
         onMouseUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
         onSelect={(event) => onCaptureSelectionAnchor(event.currentTarget)}
@@ -1666,9 +1680,19 @@ function registerRowRef(refs: Map<string, HTMLDivElement>, rowId: string, node: 
 function registerTextArea(refs: Map<string, HTMLTextAreaElement>, rowId: string, node: HTMLTextAreaElement | null) {
   if (node) {
     refs.set(rowId, node);
+    resizeTextAreaToContent(node);
   } else {
     refs.delete(rowId);
   }
+}
+
+function resizeTextAreaToContent(node: HTMLTextAreaElement | null) {
+  if (!node) {
+    return;
+  }
+
+  node.style.height = "auto";
+  node.style.height = `${node.scrollHeight}px`;
 }
 
 function getMarkedText(mark: "bold" | "link", selectedText: string) {

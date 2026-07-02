@@ -395,11 +395,21 @@
 .script-comment-input {
   display: block;
   width: 100%;
-  resize: vertical;
   border: 0;
   background: transparent;
   color: var(--brisk-text-primary);
   outline: 0;
+}
+
+.script-cell-input,
+.script-doc-textarea {
+  resize: none;
+  overflow: hidden;
+}
+
+.script-ai-input,
+.script-comment-input {
+  resize: vertical;
 }
 
 .script-cell-input {
