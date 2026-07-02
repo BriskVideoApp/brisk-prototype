@@ -45,6 +45,7 @@ const iconPaths = {
   "eye": "/brisk-icons/eye.svg",
   "film-slate": "/brisk-icons/film-slate.svg",
   "hand": "/brisk-icons/hand.svg",
+  "thumbs-up-like-fill": "/brisk-icons/thumbs-up-like-fill.svg",
   "x-close-cross": "/brisk-icons/x-close-cross.svg",
   "check-circle": "/brisk-icons/check-circle.svg",
 } as const;

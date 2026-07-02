@@ -1,5 +1,22 @@
 # Yura Review Log
 
+## Share controls prototype
+
+Added prototype components under `src/components/share/`:
+
+- `ShareActionRow`
+- `ShareOptionSection`
+- `ShareRadioOption`
+
+Notes for DS review:
+
+- The share controls use local prototype markup styled with Brisk tokens because this repo does not currently expose React `d-Button`, `d-Popover`, `d-Radio list`, `d-Tooltip`, or `d-Notification toast` components.
+- Button hierarchy follows the latest review note: Copy Link as tertiary, Request Review as secondary, and Approve as the primary filled action.
+- The Copy Link popover keeps the screenshot layout while using Brisk tokenised borders, radius, and hard elevation instead of the softer Figma shadow.
+- The radio rows are fully clickable and use local radio styling until the DS radio list is available as a React component.
+- `Video only` is available only on Edit and Masters, and forces Access to `View only`.
+- Share-link viewers see Approve disabled with the tooltip copy `Sign in to approve`.
+
 ## Today tab prototype
 
 Added prototype components under `src/components/today/`:
