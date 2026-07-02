@@ -1,7 +1,7 @@
 import type { CommentVisibility, Reaction, User } from "@/components/video-review/types";
 
 export type ScriptRole = "studio" | "customer";
-export type ScriptLayoutMode = "av" | "simple" | "hollywood";
+export type ScriptLayoutMode = "av" | "simple";
 export type ScriptDensity = "compact" | "comfortable";
 export type ScriptStatus = "In script" | "Waiting on Customer" | "Approved";
 export type ScriptSubtabId = "script" | "transcripts" | "notes" | "storyboard";
@@ -148,8 +148,6 @@ export const scriptUsers: User[] = [
 
 export const scriptPresence = [
   { id: "presence-jess", name: "Jess T.", initials: "JT", tone: "pink" },
-  { id: "presence-marcus", name: "Marcus L.", initials: "ML", tone: "cyan" },
-  { id: "presence-priya", name: "Priya N.", initials: "PN", tone: "yellow" },
 ] as const;
 
 export const initialScriptSubtabs: ScriptSubtab[] = [
@@ -359,16 +357,6 @@ export const scriptVersions: ScriptVersion[] = [
 
 export const initialScriptComments: ScriptComment[] = [
   {
-    id: "script-comment-overall-jess",
-    authorId: "user-jess",
-    visibility: "external",
-    anchor: { kind: "overall", label: "Overall" },
-    createdAgo: "1h",
-    body: "Overall this is much clearer. The family angle feels stronger and the structure is easy to follow.",
-    resolved: false,
-    replies: [],
-  },
-  {
     id: "script-comment-row-02",
     authorId: "user-david",
     visibility: "external",
@@ -393,23 +381,6 @@ export const initialScriptComments: ScriptComment[] = [
     body: "Team note: keep this phrase. It maps neatly to the product promise.",
     resolved: false,
     replies: [],
-  },
-  {
-    id: "script-comment-row-10",
-    authorId: "user-priya",
-    visibility: "external",
-    anchor: { kind: "row", label: "Row 10", rowId: "row-10" },
-    createdAgo: "2h",
-    body: "This can be resolved. The stage language now feels simple enough for the client review.",
-    resolved: true,
-    replies: [
-      {
-        id: "script-reply-01",
-        authorId: "user-tom",
-        createdAgo: "1h",
-        body: "Agree. I will keep this in the next pass.",
-      },
-    ],
   },
 ];
 

@@ -6,12 +6,11 @@ import {
   useMemo,
   useRef,
   useState,
-  type ChangeEvent,
   type ClipboardEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type MutableRefObject,
 } from "react";
-import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
@@ -24,13 +23,14 @@ import {
   type ScriptComment,
   type ScriptCommentAnchor,
   type ScriptDensity,
-  type ScriptElementType,
+  type ScriptGenre,
   type ScriptLayoutMode,
   type ScriptMediaItem,
   type ScriptMediaType,
   type ScriptRole,
   type ScriptRow,
   type ScriptStatus,
+  type ScriptSubtabId,
   type ScriptVersion,
 } from "@/data/script";
 
@@ -38,10 +38,13 @@ const currentUserId = "user-tom";
 const layoutModes: Array<{ value: ScriptLayoutMode; label: string }> = [
   { value: "av", label: "AV Script" },
   { value: "simple", label: "Simple Doc" },
-  { value: "hollywood", label: "Hollywood" },
 ];
 const densityModes: ScriptDensity[] = ["compact", "comfortable"];
-const screenplayTypes: ScriptElementType[] = ["scene", "action", "character", "dialogue", "parenthetical", "transition"];
+const optionalSubtabs: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }> = [
+  { id: "transcripts", label: "Transcripts" },
+  { id: "notes", label: "Notes" },
+  { id: "storyboard", label: "Storyboard" },
+];
 const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Parameters<typeof DsIcon>[0]["name"] }> = [
   { type: "upload", label: "Upload file", icon: "upload-simple" },
   { type: "library", label: "Add from your Media", icon: "play" },
@@ -53,6 +56,15 @@ type SelectionState = {
   lastRowId: string | null;
   selectedRowIds: Set<string>;
 };
+
+type FloatingToolbarState = {
+  visible: boolean;
+  rowId: string | null;
+  x: number;
+  y: number;
+};
+
+type OverviewFilter = "all" | "unresolved";
 
 type ScriptPageProps = {
   initialRole: ScriptRole;
@@ -80,6 +92,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     kind: "overall",
     label: "Overall",
   });
+  const [comments, setComments] = useState<ScriptComment[]>(() => cloneComments(initialScriptComments));
+  const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
+  const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
+  const [commentDraft, setCommentDraft] = useState("");
+  const [commentVisibility, setCommentVisibility] = useState<ScriptComment["visibility"]>("external");
+  const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
+  const [overviewFilter, setOverviewFilter] = useState<OverviewFilter>("unresolved");
+  const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [draggingRowId, setDraggingRowId] = useState<string | null>(null);
   const [dropRowId, setDropRowId] = useState<string | null>(null);
   const [openMediaMenuRowId, setOpenMediaMenuRowId] = useState<string | null>(null);
@@ -92,21 +113,50 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [showAiToCustomer, setShowAiToCustomer] = useState(scriptBrief.showAiToCustomer);
   const [aiSources, setAiSources] = useState(["Brief", "Transcript v2", "Past scripts"]);
   const [aiResponse, setAiResponse] = useState<string>(scriptAiFixtures[0]);
+  const [aiGenre, setAiGenre] = useState<ScriptGenre>(scriptBrief.genre);
+  const [hasTypedThisSession, setHasTypedThisSession] = useState(() =>
+    latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
+  );
+  const [floatingToolbar, setFloatingToolbar] = useState<FloatingToolbarState>({
+    visible: false,
+    rowId: null,
+    x: 0,
+    y: 0,
+  });
   const saveTimeoutRef = useRef<number | null>(null);
+  const toastTimeoutRef = useRef<number | null>(null);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
+  const simpleDocRef = useRef<HTMLTextAreaElement | null>(null);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const activeVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1];
+  const visibleRows = rows.filter((row) => !row.deletedMeta);
+  const docValue = visibleRows.map((row) => row.words).join("\n\n");
   const totalWords = rows.reduce((total, row) => (row.deletedMeta ? total : total + countWords(row.words)), 0);
   const approxSeconds = Math.round(totalWords / 2.5);
   const targetWords = scriptBrief.targetDurationSeconds * 2.5;
   const wordDelta = Math.abs(totalWords - targetWords);
   const wordState = wordDelta <= 10 ? "good" : wordDelta <= 25 ? "warning" : "danger";
+  const visibleComments = useMemo(
+    () => (isCustomer ? comments.filter((comment) => comment.visibility === "external") : comments),
+    [comments, isCustomer],
+  );
+  const commentsByRow = useMemo(() => groupCommentsByRow(visibleComments), [visibleComments]);
+  const overviewComments = useMemo(
+    () =>
+      overviewFilter === "all"
+        ? visibleComments
+        : visibleComments.filter((comment) => !comment.resolved),
+    [overviewFilter, visibleComments],
+  );
+  const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
   const shouldShowAi = !isCustomer || showAiToCustomer;
+  const enabledSubtabLabels = optionalSubtabs.filter((tab) => enabledSubtabs.has(tab.id));
 
   useEffect(() => {
     if (isCustomer) {
       setLayoutMode("av");
+      setCommentVisibility("external");
     }
   }, [isCustomer]);
 
@@ -115,8 +165,26 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       if (saveTimeoutRef.current) {
         window.clearTimeout(saveTimeoutRef.current);
       }
+
+      if (toastTimeoutRef.current) {
+        window.clearTimeout(toastTimeoutRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!toastMessage) {
+      return;
+    }
+
+    if (toastTimeoutRef.current) {
+      window.clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastMessage("");
+    }, 3000);
+  }, [toastMessage]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -139,9 +207,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
-
-  const visibleRows = rows.filter((row) => !row.deletedMeta);
-  const docValue = visibleRows.map((row) => row.words).join("\n\n");
 
   const guardEditable = () => {
     if (!isScriptApproved) {
@@ -206,6 +271,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const setRowField = (rowId: string, field: "words" | "visuals", value: string) => {
+    if (value.trim()) {
+      setHasTypedThisSession(true);
+    }
+
     updateRows((currentRows) =>
       currentRows.map((row) =>
         row.id === rowId
@@ -252,6 +321,17 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           : row,
       ),
     );
+  };
+
+  const deleteEmptyRow = (row: ScriptRow) => {
+    const currentIndex = rows.findIndex((currentRow) => currentRow.id === row.id);
+    const previousRow = rows.slice(0, currentIndex).reverse().find((currentRow) => !currentRow.deletedMeta);
+
+    updateRows((currentRows) => currentRows.filter((currentRow) => currentRow.id !== row.id));
+
+    if (previousRow) {
+      window.setTimeout(() => wordInputRefs.current.get(previousRow.id)?.focus(), 0);
+    }
   };
 
   const deleteSelectedRows = () => {
@@ -301,15 +381,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const handleWordsKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => {
-    if (layoutMode === "hollywood" && event.key === "Tab") {
-      event.preventDefault();
-      cycleElementType(row.id);
-      return;
-    }
-
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       addRowAfter(row.id);
+      return;
+    }
+
+    if (event.key === "Backspace" && !row.words.trim() && visibleRows.length > 1) {
+      event.preventDefault();
+      deleteEmptyRow(row);
     }
   };
 
@@ -325,6 +405,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
 
     event.preventDefault();
+    setHasTypedThisSession(true);
     updateRows((currentRows) => {
       const rowIndex = currentRows.findIndex((currentRow) => currentRow.id === row.id);
 
@@ -344,20 +425,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         ...currentRows.slice(rowIndex + 1),
       ];
     });
-  };
-
-  const cycleElementType = (rowId: string) => {
-    updateRows((currentRows) =>
-      currentRows.map((row) => {
-        if (row.id !== rowId) {
-          return row;
-        }
-
-        const currentIndex = screenplayTypes.indexOf(row.elementType);
-        const nextType = screenplayTypes[(currentIndex + 1) % screenplayTypes.length];
-        return { ...row, elementType: nextType };
-      }),
-    );
   };
 
   const selectRow = (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -398,15 +465,38 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     const selectedText = target.value.slice(target.selectionStart, target.selectionEnd).trim();
 
     if (!selectedText) {
+      setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
       return;
     }
 
+    const position = getFloatingToolbarPosition(target);
+    setFloatingToolbar({ visible: true, rowId: row.id, ...position });
     setActiveCommentAnchor({
       kind: "selection",
       label: getRowLabel(row.id, rows),
       rowId: row.id,
       snippet: selectedText.length > 44 ? `${selectedText.slice(0, 44)}...` : selectedText,
     });
+    setOpenCommentRowId(row.id);
+    setIsCommentComposerOpen(true);
+  };
+
+  const captureDocSelectionAnchor = (target: HTMLTextAreaElement) => {
+    const selectedText = target.value.slice(target.selectionStart, target.selectionEnd).trim();
+
+    if (!selectedText) {
+      setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+      return;
+    }
+
+    const position = getFloatingToolbarPosition(target);
+    setFloatingToolbar({ visible: true, rowId: null, ...position });
+    setActiveCommentAnchor({
+      kind: "selection",
+      label: "Document",
+      snippet: selectedText.length > 44 ? `${selectedText.slice(0, 44)}...` : selectedText,
+    });
+    setIsCommentComposerOpen(true);
   };
 
   const addMediaItem = (rowId: string, type: ScriptMediaType) => {
@@ -502,6 +592,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const updateDocValue = (value: string) => {
+    if (value.trim()) {
+      setHasTypedThisSession(true);
+    }
+
     updateRows((currentRows) => {
       const paragraphs = value.split(/\n{2,}/u);
       const nextRows = currentRows.map((row, index) => ({
@@ -522,14 +616,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     });
   };
 
-  const applyRichTextMark = (mark: "bold" | "italic" | "strike" | "heading" | "bullet" | "number" | "link") => {
-    const activeRowId = selectionState.lastRowId ?? visibleRows[0]?.id;
-
-    if (!activeRowId) {
-      return;
-    }
-
-    const input = wordInputRefs.current.get(activeRowId);
+  const applyTextMark = (mark: "bold" | "link") => {
+    const activeRowId = floatingToolbar.rowId ?? selectionState.lastRowId;
+    const input = activeRowId ? wordInputRefs.current.get(activeRowId) : simpleDocRef.current;
 
     if (!input) {
       return;
@@ -541,7 +630,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     const selectedText = value.slice(start, end) || "selected text";
     const replacement = getMarkedText(mark, selectedText);
     const nextValue = `${value.slice(0, start)}${replacement}${value.slice(end)}`;
-    setRowField(activeRowId, "words", nextValue);
+
+    if (activeRowId) {
+      setRowField(activeRowId, "words", nextValue);
+    } else {
+      updateDocValue(nextValue);
+    }
+
     window.setTimeout(() => input.focus(), 0);
   };
 
@@ -561,86 +656,185 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setAiResponse("Inserted two suggested lines under the current row.");
   };
 
+  const toggleEnabledSubtab = (tabId: Exclude<ScriptSubtabId, "script">) => {
+    setEnabledSubtabs((currentSubtabs) => {
+      const nextSubtabs = new Set(currentSubtabs);
+
+      if (nextSubtabs.has(tabId)) {
+        nextSubtabs.delete(tabId);
+      } else {
+        nextSubtabs.add(tabId);
+      }
+
+      return nextSubtabs;
+    });
+  };
+
+  const openCommentsForRow = (rowId: string) => {
+    setOpenCommentRowId(rowId);
+    setIsCommentComposerOpen(false);
+    setIsCommentsOverviewOpen(false);
+  };
+
+  const openComposerForRow = (row: ScriptRow) => {
+    setActiveCommentAnchor({
+      kind: "row",
+      label: getRowLabel(row.id, rows),
+      rowId: row.id,
+    });
+    setOpenCommentRowId(row.id);
+    setIsCommentComposerOpen(true);
+    setIsCommentsOverviewOpen(false);
+  };
+
+  const submitComment = () => {
+    const trimmedDraft = commentDraft.trim();
+
+    if (!trimmedDraft) {
+      return;
+    }
+
+    const newComment: ScriptComment = {
+      id: `script-comment-${Date.now()}`,
+      authorId: currentUserId,
+      visibility: isCustomer ? "external" : commentVisibility,
+      anchor: activeCommentAnchor,
+      createdAgo: "Just now",
+      body: trimmedDraft,
+      resolved: false,
+      replies: [],
+    };
+
+    setComments((currentComments) => [...currentComments, newComment]);
+    setCommentDraft("");
+    setIsCommentComposerOpen(false);
+
+    if (newComment.anchor.rowId) {
+      setOpenCommentRowId(newComment.anchor.rowId);
+    }
+  };
+
   return (
-    <main className={`script-shell script-density-${density}`}>
-      <ScriptHeader role={role} />
-      <section className="script-toolbar" aria-label="Script toolbar">
-        {!isCustomer ? (
-          <SegmentedControl
-            label="Layout"
-            options={layoutModes}
-            value={layoutMode}
-            onChange={(value) => setLayoutMode(value)}
-          />
-        ) : null}
-        <ToggleButton active={showChanges} label="Show changes" onClick={() => setShowChanges((isVisible) => !isVisible)} />
-        <div className="script-density-toggle" role="group" aria-label="Density">
-          {densityModes.map((mode) => (
-            <button
-              className={`script-toolbar-button label-xs-semibold ${density === mode ? "active" : ""}`}
-              type="button"
-              key={mode}
-              onClick={() => setDensity(mode)}
-            >
-              {capitalise(mode)}
-            </button>
-          ))}
-        </div>
-        <label className="script-select-wrap label-xs-semibold">
-          Version
-          <select className="script-select label-xs-semibold" value={selectedVersionId} onChange={(event) => selectVersion(event.target.value)}>
+    <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"}`}>
+      <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
+
+      <section className="script-subheader" aria-label="Script controls">
+        <div className="script-subheader-left">
+          {!isCustomer ? (
+            <SegmentedControl
+              label="Layout"
+              options={layoutModes}
+              value={layoutMode}
+              onChange={(value) => setLayoutMode(value)}
+            />
+          ) : null}
+          <select className="script-version-select label-xs-semibold" value={selectedVersionId} onChange={(event) => selectVersion(event.target.value)}>
             {versions.map((version) => (
               <option key={version.id} value={version.id}>
                 {version.label} {version.approvedSnapshot ? "approved" : "current"}
               </option>
             ))}
           </select>
-        </label>
-        <span className={`script-status-pill label-xs-semibold status-${status.toLowerCase().replaceAll(" ", "-")}`}>
-          {status}
-        </span>
-        <span className="script-save-state label-xs-semibold">{saveState}</span>
-        <div className="script-presence" aria-label="Live presence">
-          {scriptPresence.map((person) => (
-            <span className={`avatar ${person.tone}`} aria-label={person.name} key={person.id}>
-              {person.initials}
-            </span>
-          ))}
+          {!isCustomer ? (
+            <div className="script-presence" aria-label="Live collaborator">
+              {scriptPresence.slice(0, 1).map((person) => (
+                <span className={`avatar ${person.tone}`} aria-label={person.name} key={person.id}>
+                  {person.initials}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
-        <div className="script-toolbar-spacer" />
-        {selectedRows.length > 0 ? (
-          <div className="script-bulk-actions" aria-label="Selected row actions">
-            <span className="label-xs-semibold">{selectedRows.length} selected</span>
-            <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => moveSelectedRows(-1)}>
-              Move up
+        <div className="script-subheader-actions">
+          <span className={`script-status-text label-xs status-${status.toLowerCase().replaceAll(" ", "-")}`}>{status}</span>
+          <button className="script-approve-button label-s-semibold" type="button" onClick={approveScript}>
+            {isScriptApproved ? "Approved" : "Approve script"}
+          </button>
+          <button
+            className="script-quiet-icon"
+            type="button"
+            aria-label="Comments overview"
+            aria-expanded={isCommentsOverviewOpen}
+            onClick={() => {
+              setIsCommentsOverviewOpen((isOpen) => !isOpen);
+              setOpenCommentRowId(null);
+              setIsCommentComposerOpen(false);
+            }}
+          >
+            <DsIcon name="chat-circle" size={16} />
+          </button>
+          <div className="script-options-wrap">
+            <button
+              className="script-quiet-icon"
+              type="button"
+              aria-label="More script options"
+              aria-expanded={isOptionsOpen}
+              onClick={() => setIsOptionsOpen((isOpen) => !isOpen)}
+            >
+              <DsIcon name="dots-three" size={16} />
             </button>
-            <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => moveSelectedRows(1)}>
-              Move down
-            </button>
-            <button className="script-toolbar-button label-xs-semibold" type="button" onClick={duplicateSelectedRows}>
-              Copy
-            </button>
-            <button className="script-toolbar-button danger label-xs-semibold" type="button" onClick={deleteSelectedRows}>
-              Delete
-            </button>
+            {isOptionsOpen ? (
+              <div className="script-options-menu">
+                <div className="script-options-section">
+                  <span className="label-xs-semibold">Density</span>
+                  <div className="script-options-row" role="group" aria-label="Density">
+                    {densityModes.map((mode) => (
+                      <button
+                        className={`script-menu-choice label-xs-semibold ${density === mode ? "active" : ""}`}
+                        type="button"
+                        key={mode}
+                        onClick={() => setDensity(mode)}
+                      >
+                        {capitalise(mode)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <label className="script-menu-toggle label-xs-semibold">
+                  <input type="checkbox" checked={showChanges} onChange={(event) => setShowChanges(event.target.checked)} />
+                  Show changes
+                </label>
+                {!isCustomer ? (
+                  <label className="script-menu-toggle label-xs-semibold">
+                    <input
+                      type="checkbox"
+                      checked={showAiToCustomer}
+                      onChange={(event) => setShowAiToCustomer(event.target.checked)}
+                    />
+                    Show AI to customer
+                  </label>
+                ) : null}
+                <div className="script-options-section">
+                  <span className="label-xs-semibold">Sub-tabs</span>
+                  {optionalSubtabs.map((tab) => (
+                    <label className="script-menu-toggle label-xs-semibold" key={tab.id}>
+                      <input
+                        type="checkbox"
+                        checked={enabledSubtabs.has(tab.id)}
+                        onChange={() => toggleEnabledSubtab(tab.id)}
+                      />
+                      {tab.label}
+                    </label>
+                  ))}
+                </div>
+                <button className="script-menu-text label-xs-semibold" type="button">
+                  Version history
+                </button>
+                <span className="script-save-note label-xs">Save state: {saveState}</span>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-        <button className="script-approve-button label-s-semibold" type="button" onClick={approveScript}>
-          {isScriptApproved ? "Approved" : "Approve script"}
-        </button>
+        </div>
       </section>
 
-      <section className="script-body">
+      <section className={`script-body ${isAiPanelOpen ? "ai-open" : ""}`}>
         <div className="script-editor-column">
-          <RichTextToolbar onApply={applyRichTextMark} onUndo={undoRows} onRedo={redoRows} />
-          <div className="script-version-note label-xs">
-            {activeVersion.snapshotName} - Track changes on
-          </div>
           {layoutMode === "av" ? (
             <AvScriptEditor
-              activeCommentAnchor={activeCommentAnchor}
+              commentsByRow={commentsByRow}
               density={density}
               dropRowId={dropRowId}
+              hasTypedThisSession={hasTypedThisSession}
               isApproved={isScriptApproved}
               openMediaMenuRowId={openMediaMenuRowId}
               rows={rows}
@@ -657,6 +851,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onDragOverRow={(rowId) => setDropRowId(rowId)}
               onDragStartRow={setDraggingRowId}
               onGuardApproved={guardEditable}
+              onOpenComposerForRow={openComposerForRow}
+              onOpenCommentsForRow={openCommentsForRow}
               onPasteWords={handleWordsPaste}
               onReorderRows={(targetRowId) => {
                 if (draggingRowId) {
@@ -673,148 +869,153 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           ) : null}
           {layoutMode === "simple" ? (
             <SimpleDocEditor
+              docRef={simpleDocRef}
               docValue={docValue}
               isApproved={isScriptApproved}
               showChanges={showChanges}
               rows={rows}
+              onCaptureSelectionAnchor={captureDocSelectionAnchor}
               onGuardApproved={guardEditable}
               onUpdateDoc={updateDocValue}
             />
           ) : null}
-          {layoutMode === "hollywood" ? (
-            <HollywoodEditor
-              isApproved={isScriptApproved}
-              rows={rows}
-              selectedRowIds={selectionState.selectedRowIds}
-              showChanges={showChanges}
-              wordInputRefs={wordInputRefs}
-              onCaptureSelectionAnchor={captureSelectionAnchor}
-              onGuardApproved={guardEditable}
-              onSelectRow={selectRow}
-              onSetField={setRowField}
-              onSetType={(rowId, elementType) =>
-                updateRows((currentRows) =>
-                  currentRows.map((row) => (row.id === rowId ? { ...row, elementType } : row)),
-                )
-              }
-              onWordsKeyDown={handleWordsKeyDown}
-              registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
-            />
-          ) : null}
           {showChanges ? <RedlineLegend /> : null}
         </div>
-        <CommentRail
-          activeAnchor={activeCommentAnchor}
-          canPostInternal={!isCustomer}
-          canSeeInternal={!isCustomer}
-          comments={initialScriptComments}
-          currentUserId={currentUserId}
-          filterMode={isCustomer ? "customer" : "studio"}
-          users={scriptUsers}
-          onSelectComment={(comment) => {
-            const rowId = comment.anchor.rowId;
 
-            if (rowId) {
-              rowRefs.current.get(rowId)?.scrollIntoView({ block: "center", behavior: "smooth" });
-            }
-          }}
-        />
+        {(openCommentRowId || isCommentComposerOpen || isCommentsOverviewOpen) ? (
+          <CommentMargin
+            activeAnchor={activeCommentAnchor}
+            canPostInternal={!isCustomer}
+            commentDraft={commentDraft}
+            commentVisibility={commentVisibility}
+            comments={visibleOpenComments}
+            isComposerOpen={isCommentComposerOpen}
+            isOverviewOpen={isCommentsOverviewOpen}
+            overviewComments={overviewComments}
+            overviewFilter={overviewFilter}
+            usersById={new Map(scriptUsers.map((user) => [user.id, user]))}
+            onClose={() => {
+              setOpenCommentRowId(null);
+              setIsCommentComposerOpen(false);
+              setIsCommentsOverviewOpen(false);
+            }}
+            onCommentDraftChange={setCommentDraft}
+            onCommentVisibilityChange={setCommentVisibility}
+            onOverviewFilterChange={setOverviewFilter}
+            onSelectComment={(comment) => {
+              const rowId = comment.anchor.rowId;
+              if (rowId) {
+                rowRefs.current.get(rowId)?.scrollIntoView({ block: "center", behavior: "smooth" });
+                setOpenCommentRowId(rowId);
+                setIsCommentsOverviewOpen(false);
+              }
+            }}
+            onSubmitComment={submitComment}
+          />
+        ) : null}
       </section>
 
       <footer className={`script-word-footer word-${wordState}`}>
-        <div className="script-word-footer-main">
-          <span className="script-word-state-dot" aria-hidden="true" />
-          <strong>Total: {totalWords} Words</strong>
-          <span>(Approx {approxSeconds} seconds)</span>
-          <span>Target: {scriptBrief.targetDurationSeconds} seconds</span>
-        </div>
-        <button className="script-toolbar-button label-s-semibold" type="button" onClick={() => addRowAfter(visibleRows.at(-1)?.id ?? null)}>
-          <DsIcon name="plus" size={16} />
-          Add row
-        </button>
+        <span>
+          {totalWords} words · ~{approxSeconds}s · Target {scriptBrief.targetDurationSeconds}s
+        </span>
       </footer>
+
+      <FloatingFormatToolbar
+        state={floatingToolbar}
+        onApply={applyTextMark}
+        onRedo={redoRows}
+        onUndo={undoRows}
+      />
 
       {shouldShowAi ? (
         <>
-          {!isAiPanelOpen ? (
-            <button className="script-ai-fab label-s-semibold" type="button" onClick={() => setIsAiPanelOpen(true)}>
-              ChopChop AI
+          {!isAiPanelOpen || isAiPanelMinimised ? (
+            <button
+              className="script-ai-fab"
+              type="button"
+              aria-label="Open ChopChop AI"
+              onClick={() => {
+                setIsAiPanelOpen(true);
+                setIsAiPanelMinimised(false);
+              }}
+            >
+              ✦
             </button>
           ) : null}
-          {isAiPanelOpen ? (
-            <aside className={`script-ai-panel ${isAiPanelMinimised ? "minimised" : ""}`} aria-label="ChopChop AI panel">
+          {isAiPanelOpen && !isAiPanelMinimised ? (
+            <aside className="script-ai-panel" aria-label="ChopChop AI panel">
               <div className="script-ai-header">
                 <h2 className="heading-3xs">ChopChop AI</h2>
                 <div className="script-ai-actions">
-                  {!isCustomer ? (
-                    <label className="script-ai-toggle label-xs-semibold">
-                      <input
-                        type="checkbox"
-                        checked={showAiToCustomer}
-                        onChange={(event) => setShowAiToCustomer(event.target.checked)}
-                      />
-                      Show AI to customer
-                    </label>
-                  ) : null}
-                  <button className="script-icon-button" type="button" aria-label="Minimise AI" onClick={() => setIsAiPanelMinimised((value) => !value)}>
-                    {isAiPanelMinimised ? "+" : "-"}
+                  <button className="script-quiet-icon" type="button" aria-label="Minimise AI" onClick={() => setIsAiPanelMinimised(true)}>
+                    -
                   </button>
-                  <button className="script-icon-button" type="button" aria-label="Close AI" onClick={() => setIsAiPanelOpen(false)}>
+                  <button className="script-quiet-icon" type="button" aria-label="Close AI" onClick={() => setIsAiPanelOpen(false)}>
                     <DsIcon name="x-close-cross" size={14} />
                   </button>
                 </div>
               </div>
-              {!isAiPanelMinimised ? (
-                <>
-                  <div className="script-ai-sources" aria-label="AI input sources">
-                    {aiSources.map((source) => (
-                      <button
-                        className="script-source-chip label-xs-semibold"
-                        type="button"
-                        key={source}
-                        onClick={() => setAiSources((currentSources) => currentSources.filter((item) => item !== source))}
-                      >
-                        {source}
-                        <DsIcon name="x-close-cross" size={10} />
-                      </button>
+              <div className="script-ai-tools">
+                <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => setAiResponse(scriptAiFixtures[2])}>
+                  Suggest visuals
+                </button>
+                <label className="script-select-wrap label-xs-semibold">
+                  Genre
+                  <select className="script-select label-xs-semibold" value={aiGenre} onChange={(event) => setAiGenre(event.target.value as ScriptGenre)}>
+                    {scriptGenres.map((genre) => (
+                      <option key={genre}>{genre}</option>
                     ))}
-                    <button className="script-source-chip add label-xs-semibold" type="button" onClick={() => setAiSources((currentSources) => [...currentSources, "Brand notes"])}>
-                      + Add source
-                    </button>
-                  </div>
-                  <div className="script-ai-command-grid">
-                    {["Generate script", "Rewrite selection", "Give feedback", "Suggest visuals", "Paper edit"].map((action) => (
-                      <button
-                        className="script-toolbar-button label-xs-semibold"
-                        type="button"
-                        key={action}
-                        disabled={action === "Paper edit" && !aiSources.some((source) => source.includes("Transcript"))}
-                        onClick={() => setAiResponse(`${action}: ${scriptAiFixtures[1]}`)}
-                      >
-                        {action}
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    className="script-ai-input label-s"
-                    placeholder="Ask for a rewrite, a note, or a visual idea..."
-                    value={aiPrompt}
-                    onChange={(event) => setAiPrompt(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" && !event.shiftKey) {
-                        event.preventDefault();
-                        setAiResponse(aiPrompt.trim() || scriptAiFixtures[2]);
-                      }
-                    }}
-                  />
-                  <div className="script-ai-response">
-                    <p className="paragraph-s">{aiResponse}</p>
-                    <button className="script-toolbar-button label-xs-semibold" type="button" onClick={insertAiLines}>
-                      Insert
-                    </button>
-                  </div>
-                </>
-              ) : null}
+                  </select>
+                </label>
+              </div>
+              <div className="script-ai-sources" aria-label="AI input sources">
+                {aiSources.map((source) => (
+                  <button
+                    className="script-source-chip label-xs-semibold"
+                    type="button"
+                    key={source}
+                    onClick={() => setAiSources((currentSources) => currentSources.filter((item) => item !== source))}
+                  >
+                    {source}
+                    <DsIcon name="x-close-cross" size={10} />
+                  </button>
+                ))}
+                <button className="script-source-chip add label-xs-semibold" type="button" onClick={() => setAiSources((currentSources) => [...currentSources, "Brand notes"])}>
+                  + Add source
+                </button>
+              </div>
+              <div className="script-ai-command-grid">
+                {["Generate script", "Rewrite selection", "Give feedback", "Paper edit"].map((action) => (
+                  <button
+                    className="script-toolbar-button label-xs-semibold"
+                    type="button"
+                    key={action}
+                    disabled={action === "Paper edit" && !aiSources.some((source) => source.includes("Transcript"))}
+                    onClick={() => setAiResponse(`${action}: ${scriptAiFixtures[1]}`)}
+                  >
+                    {action}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="script-ai-input label-s"
+                placeholder="Ask for a rewrite, a note, or a visual idea..."
+                value={aiPrompt}
+                onChange={(event) => setAiPrompt(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    setAiResponse(aiPrompt.trim() || scriptAiFixtures[2]);
+                  }
+                }}
+              />
+              <div className="script-ai-response">
+                <p className="paragraph-s">{aiResponse}</p>
+                <button className="script-toolbar-button label-xs-semibold" type="button" onClick={insertAiLines}>
+                  Insert
+                </button>
+              </div>
             </aside>
           ) : null}
         </>
@@ -838,21 +1039,32 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       ) : null}
 
       {toastMessage ? (
-        <div className="toast-message script-toast label-s-semibold" role="status">
+        <div className="script-toast label-s-semibold" role="status">
           {toastMessage}
-          <button type="button" aria-label="Dismiss notification" onClick={() => setToastMessage("")}>
-            Got it
-          </button>
         </div>
       ) : null}
     </main>
   );
 }
 
-function ScriptHeader({ role }: { role: ScriptRole }) {
+function ScriptHeader({
+  enabledSubtabLabels,
+  role,
+}: {
+  enabledSubtabLabels: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }>;
+  role: ScriptRole;
+}) {
   return (
     <header className="script-header">
-      <div>
+      <div className="script-title-stack">
+        <nav className="script-subtab-links" aria-label="Script sub-tabs">
+          <span>Script</span>
+          {enabledSubtabLabels.map((tab) => (
+            <button type="button" key={tab.id}>
+              {tab.label}
+            </button>
+          ))}
+        </nav>
         <h1 className="script-title">{scriptBrief.projectName}</h1>
       </div>
       <div className="script-role-links" aria-label="View as role">
@@ -882,7 +1094,7 @@ function SegmentedControl<TValue extends string>({
     <div className="script-segmented-wrap" aria-label={label}>
       {options.map((option) => (
         <button
-          className={`script-toolbar-button label-xs-semibold ${value === option.value ? "active" : ""}`}
+          className={`script-segmented-button label-xs-semibold ${value === option.value ? "active" : ""}`}
           type="button"
           key={option.value}
           aria-pressed={value === option.value}
@@ -895,50 +1107,33 @@ function SegmentedControl<TValue extends string>({
   );
 }
 
-function ToggleButton({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return (
-    <button className={`script-toolbar-button label-xs-semibold ${active ? "active" : ""}`} type="button" aria-pressed={active} onClick={onClick}>
-      {label}
-    </button>
-  );
-}
-
-function RichTextToolbar({
+function FloatingFormatToolbar({
+  state,
   onApply,
-  onUndo,
   onRedo,
+  onUndo,
 }: {
-  onApply: (mark: "bold" | "italic" | "strike" | "heading" | "bullet" | "number" | "link") => void;
-  onUndo: () => void;
+  state: FloatingToolbarState;
+  onApply: (mark: "bold" | "link") => void;
   onRedo: () => void;
+  onUndo: () => void;
 }) {
+  if (!state.visible) {
+    return null;
+  }
+
   return (
-    <div className="script-rich-toolbar" aria-label="Rich text tools">
-      <button className="script-icon-button label-xs-semibold" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
+    <div className="script-floating-toolbar" style={{ left: state.x, top: state.y }} aria-label="Selection formatting tools">
+      <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onMouseDown={(event) => event.preventDefault()} onClick={onUndo}>
         <DsIcon name="arrow-counter-clockwise" size={16} />
       </button>
-      <button className="script-icon-button label-xs-semibold" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
+      <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onMouseDown={(event) => event.preventDefault()} onClick={onRedo}>
         <DsIcon name="arrow-clockwise" size={16} />
       </button>
-      <button className="script-format-button label-xs-semibold" type="button" aria-label="Bold" onClick={() => onApply("bold")}>
+      <button className="script-format-button label-xs-semibold" type="button" aria-label="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("bold")}>
         B
       </button>
-      <button className="script-format-button italic label-xs-semibold" type="button" aria-label="Italic" onClick={() => onApply("italic")}>
-        I
-      </button>
-      <button className="script-format-button strike label-xs-semibold" type="button" aria-label="Strikethrough" onClick={() => onApply("strike")}>
-        S
-      </button>
-      <button className="script-format-button label-xs-semibold" type="button" aria-label="Heading" onClick={() => onApply("heading")}>
-        H
-      </button>
-      <button className="script-format-button label-xs-semibold" type="button" aria-label="Bulleted list" onClick={() => onApply("bullet")}>
-        *
-      </button>
-      <button className="script-format-button label-xs-semibold" type="button" aria-label="Numbered list" onClick={() => onApply("number")}>
-        1.
-      </button>
-      <button className="script-icon-button" type="button" data-tooltip="Auto-link" aria-label="Auto-link" onClick={() => onApply("link")}>
+      <button className="script-quiet-icon" type="button" data-tooltip="Link" aria-label="Link" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("link")}>
         <DsIcon name="link" size={16} />
       </button>
     </div>
@@ -946,9 +1141,10 @@ function RichTextToolbar({
 }
 
 function AvScriptEditor({
-  activeCommentAnchor,
+  commentsByRow,
   density,
   dropRowId,
+  hasTypedThisSession,
   isApproved,
   openMediaMenuRowId,
   rows,
@@ -962,6 +1158,8 @@ function AvScriptEditor({
   onDragOverRow,
   onDragStartRow,
   onGuardApproved,
+  onOpenComposerForRow,
+  onOpenCommentsForRow,
   onPasteWords,
   onReorderRows,
   onRestoreRow,
@@ -971,15 +1169,16 @@ function AvScriptEditor({
   onWordsKeyDown,
   registerRowRef,
 }: {
-  activeCommentAnchor: ScriptCommentAnchor;
+  commentsByRow: Map<string, ScriptComment[]>;
   density: ScriptDensity;
   dropRowId: string | null;
+  hasTypedThisSession: boolean;
   isApproved: boolean;
   openMediaMenuRowId: string | null;
   rows: ScriptRow[];
   selectedRowIds: Set<string>;
   showChanges: boolean;
-  wordInputRefs: React.MutableRefObject<Map<string, HTMLTextAreaElement>>;
+  wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
   onAddRowAfter: (rowId: string | null) => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
@@ -987,6 +1186,8 @@ function AvScriptEditor({
   onDragOverRow: (rowId: string) => void;
   onDragStartRow: (rowId: string) => void;
   onGuardApproved: () => boolean;
+  onOpenComposerForRow: (row: ScriptRow) => void;
+  onOpenCommentsForRow: (rowId: string) => void;
   onPasteWords: (event: ClipboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   onReorderRows: (targetRowId: string) => void;
   onRestoreRow: (rowId: string) => void;
@@ -997,153 +1198,145 @@ function AvScriptEditor({
   registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
 }) {
   return (
-    <section className="script-av-surface" aria-label="AV script editor">
-      <div className="script-guide-grid">
-        <div className="script-guide-card words">
-          <h2>Words</h2>
-          <p className="paragraph-s">Write one sentence per row. 150 words equals 1 minute.</p>
-        </div>
-        <div className="script-guide-card visuals">
-          <div className="script-visual-header">
-            <h2>Visuals + Media</h2>
-            <button
-              className="script-visual-pill label-xs-semibold"
-              type="button"
-              data-tooltip="Describe the visuals and add media for each line of your script."
-            >
-              + Visuals
-            </button>
-            <button className="script-toolbar-button label-xs-semibold" type="button">
-              Suggest visuals
-            </button>
-            <label className="script-select-wrap label-xs-semibold">
-              Genre
-              <select className="script-select label-xs-semibold" defaultValue={scriptBrief.genre}>
-                {scriptGenres.map((genre) => (
-                  <option key={genre}>{genre}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <p className="paragraph-s">Describe the visual direction, attach references, or add media options for each line.</p>
-        </div>
-      </div>
+    <section className={`script-av-surface ${density}`} aria-label="AV script editor">
+      {rows.map((row, index) => {
+        const rowComments = commentsByRow.get(row.id) ?? [];
+        const hasAnchor = rowComments.length > 0 || row.media.length > 0;
+        const shouldShowPlaceholder = index === 0 && !hasTypedThisSession && !row.words.trim() && !row.visuals.trim();
 
-      <div className={`script-row-list ${density}`}>
-        {rows.map((row) =>
-          row.deletedMeta ? (
-            <div className="script-deleted-row-pill" key={row.id}>
-              <span className="label-s-semibold">Row deleted by {row.deletedMeta.person} {row.deletedMeta.time}</span>
-              <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => onRestoreRow(row.id)}>
-                Restore
+        return row.deletedMeta ? (
+          <div className="script-deleted-row-pill" key={row.id}>
+            <span className="label-s-semibold">Row deleted by {row.deletedMeta.person} {row.deletedMeta.time}</span>
+            <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => onRestoreRow(row.id)}>
+              Restore
+            </button>
+          </div>
+        ) : (
+          <div
+            className={`script-row ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""}`}
+            draggable
+            key={row.id}
+            ref={(node) => registerRowRef(row.id, node)}
+            onDragStart={() => onDragStartRow(row.id)}
+            onDragOver={(event) => {
+              event.preventDefault();
+              onDragOverRow(row.id);
+            }}
+            onDrop={() => onReorderRows(row.id)}
+            onDragEnd={onDragEnd}
+          >
+            <div className="script-row-gutter">
+              <button className="script-row-number label-xs-semibold" type="button" onClick={(event) => onSelectRow(row.id, event)}>
+                {getRowNumber(row.id, rows)}
+              </button>
+              <span className="script-row-drag" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
+              <button className="script-add-between" type="button" aria-label={`Insert row after ${getRowLabel(row.id, rows)}`} onClick={() => onAddRowAfter(row.id)}>
+                <DsIcon name="plus" size={12} />
               </button>
             </div>
-          ) : (
-            <div
-              className={`script-row-card ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""}`}
-              draggable
-              key={row.id}
-              ref={(node) => registerRowRef(row.id, node)}
-              onDragStart={() => onDragStartRow(row.id)}
-              onDragOver={(event) => {
-                event.preventDefault();
-                onDragOverRow(row.id);
-              }}
-              onDrop={() => onReorderRows(row.id)}
-              onDragEnd={onDragEnd}
-            >
-              <button className="script-add-between label-xs-semibold" type="button" onClick={() => onAddRowAfter(row.id)}>
-                <DsIcon name="plus" size={14} />
-              </button>
-              <div className="script-row-controls">
-                <button className="script-row-number label-xs-semibold" type="button" onClick={(event) => onSelectRow(row.id, event)}>
-                  {getRowNumber(row.id, rows)}
-                </button>
-                <span className="script-row-drag" aria-hidden="true">::::</span>
-              </div>
-              <div className="script-row-words">
-                <textarea
-                  className="script-row-textarea words label-s"
-                  readOnly={isApproved}
-                  ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
-                  value={row.words}
-                  onMouseDown={() => {
-                    if (isApproved) {
-                      onGuardApproved();
-                    }
-                  }}
-                  onChange={(event) => onSetField(row.id, "words", event.target.value)}
-                  onKeyDown={(event) => onWordsKeyDown(event, row)}
-                  onPaste={(event) => onPasteWords(event, row)}
-                  onSelect={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
-                />
-                <span className="script-row-word-count label-xs-semibold">{countWords(row.words)} words</span>
-                {showChanges && row.change ? <RowChange change={row.change} /> : null}
-              </div>
-              <div className="script-row-visuals">
-                <textarea
-                  className="script-row-textarea visuals label-s"
-                  readOnly={isApproved}
-                  value={row.visuals}
-                  onMouseDown={() => {
-                    if (isApproved) {
-                      onGuardApproved();
-                    }
-                  }}
-                  onChange={(event) => onSetField(row.id, "visuals", event.target.value)}
-                />
-                <div className="script-media-strip">
-                  {row.media.map((mediaItem) => (
-                    <MediaThumb key={mediaItem.id} mediaItem={mediaItem} />
-                  ))}
-                  <div className="script-media-menu-wrap">
-                    <button
-                      className="script-media-add"
-                      type="button"
-                      aria-label={`Add media to ${getRowLabel(row.id, rows)}`}
-                      aria-expanded={openMediaMenuRowId === row.id}
-                      onClick={() => (isApproved ? onGuardApproved() : onSetMediaMenuRow(openMediaMenuRowId === row.id ? null : row.id))}
-                    >
-                      <DsIcon name="plus" size={16} />
-                    </button>
-                    {openMediaMenuRowId === row.id ? (
-                      <div className="script-media-menu">
-                        {mediaMenuOptions.map((option) => (
-                          <button className="label-s" type="button" key={option.type} onClick={() => onAddMediaItem(row.id, option.type)}>
-                            <DsIcon name={option.icon} size={20} />
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
+            <div className="script-row-words">
+              <textarea
+                className={`script-cell-input words label-s ${rowComments.some((comment) => comment.anchor.kind === "selection") ? "has-selection-comment" : ""}`}
+                placeholder={shouldShowPlaceholder ? "Write one sentence per row. 150 words = 1 minute." : ""}
+                readOnly={isApproved}
+                ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
+                rows={2}
+                value={row.words}
+                onMouseDown={() => {
+                  if (isApproved) {
+                    onGuardApproved();
+                  }
+                }}
+                onChange={(event) => onSetField(row.id, "words", event.target.value)}
+                onKeyDown={(event) => onWordsKeyDown(event, row)}
+                onKeyUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+                onMouseUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+                onPaste={(event) => onPasteWords(event, row)}
+                onSelect={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+              />
+              {showChanges && row.change ? <RowChange change={row.change} /> : null}
+            </div>
+            <div className="script-row-visuals">
+              <textarea
+                className="script-cell-input visuals label-s"
+                placeholder={shouldShowPlaceholder ? "Describe the visuals or drop in media." : ""}
+                readOnly={isApproved}
+                rows={2}
+                value={row.visuals}
+                onMouseDown={() => {
+                  if (isApproved) {
+                    onGuardApproved();
+                  }
+                }}
+                onChange={(event) => onSetField(row.id, "visuals", event.target.value)}
+              />
+              <div className="script-media-strip">
+                {row.media.map((mediaItem) => (
+                  <MediaThumb key={mediaItem.id} mediaItem={mediaItem} />
+                ))}
+                <div className="script-media-menu-wrap">
+                  <button
+                    className="script-media-add"
+                    type="button"
+                    aria-label={`Add media to ${getRowLabel(row.id, rows)}`}
+                    aria-expanded={openMediaMenuRowId === row.id}
+                    onClick={() => (isApproved ? onGuardApproved() : onSetMediaMenuRow(openMediaMenuRowId === row.id ? null : row.id))}
+                  >
+                    <DsIcon name="plus" size={14} />
+                  </button>
+                  {openMediaMenuRowId === row.id ? (
+                    <div className="script-media-menu">
+                      {mediaMenuOptions.map((option) => (
+                        <button className="label-s" type="button" key={option.type} onClick={() => onAddMediaItem(row.id, option.type)}>
+                          <DsIcon name={option.icon} size={18} />
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-                {activeCommentAnchor.rowId === row.id ? (
-                  <span className="script-active-anchor label-xs-semibold">
-                    Commenting on {activeCommentAnchor.kind === "selection" ? `"${activeCommentAnchor.snippet}"` : getRowLabel(row.id, rows)}
-                  </span>
-                ) : null}
               </div>
             </div>
-          ),
-        )}
-      </div>
+            <div className="script-row-comment-gutter">
+              {rowComments.length > 0 ? (
+                <button className="script-comment-marker" type="button" aria-label={`Open comments for ${getRowLabel(row.id, rows)}`} onClick={() => onOpenCommentsForRow(row.id)}>
+                  <DsIcon name="chat-circle" size={15} />
+                </button>
+              ) : null}
+              <button className="script-comment-add" type="button" aria-label={`Comment on ${getRowLabel(row.id, rows)}`} onClick={() => onOpenComposerForRow(row)}>
+                <DsIcon name="chat-circle" size={15} />
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </section>
   );
 }
 
 function SimpleDocEditor({
+  docRef,
   docValue,
   isApproved,
   rows,
   showChanges,
+  onCaptureSelectionAnchor,
   onGuardApproved,
   onUpdateDoc,
 }: {
+  docRef: MutableRefObject<HTMLTextAreaElement | null>;
   docValue: string;
   isApproved: boolean;
   rows: ScriptRow[];
   showChanges: boolean;
+  onCaptureSelectionAnchor: (target: HTMLTextAreaElement) => void;
   onGuardApproved: () => boolean;
   onUpdateDoc: (value: string) => void;
 }) {
@@ -1151,7 +1344,9 @@ function SimpleDocEditor({
     <section className="script-doc-surface" aria-label="Simple document editor">
       <textarea
         className="script-doc-textarea paragraph-s"
+        placeholder="Start writing..."
         readOnly={isApproved}
+        ref={docRef}
         value={docValue}
         onMouseDown={() => {
           if (isApproved) {
@@ -1159,6 +1354,9 @@ function SimpleDocEditor({
           }
         }}
         onChange={(event) => onUpdateDoc(event.target.value)}
+        onKeyUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
+        onMouseUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
+        onSelect={(event) => onCaptureSelectionAnchor(event.currentTarget)}
       />
       {showChanges ? (
         <div className="script-doc-redline">
@@ -1169,75 +1367,130 @@ function SimpleDocEditor({
   );
 }
 
-function HollywoodEditor({
-  isApproved,
-  rows,
-  selectedRowIds,
-  showChanges,
-  wordInputRefs,
-  onCaptureSelectionAnchor,
-  onGuardApproved,
-  onSelectRow,
-  onSetField,
-  onSetType,
-  onWordsKeyDown,
-  registerRowRef,
+function CommentMargin({
+  activeAnchor,
+  canPostInternal,
+  commentDraft,
+  commentVisibility,
+  comments,
+  isComposerOpen,
+  isOverviewOpen,
+  overviewComments,
+  overviewFilter,
+  usersById,
+  onClose,
+  onCommentDraftChange,
+  onCommentVisibilityChange,
+  onOverviewFilterChange,
+  onSelectComment,
+  onSubmitComment,
 }: {
-  isApproved: boolean;
-  rows: ScriptRow[];
-  selectedRowIds: Set<string>;
-  showChanges: boolean;
-  wordInputRefs: React.MutableRefObject<Map<string, HTMLTextAreaElement>>;
-  onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
-  onGuardApproved: () => boolean;
-  onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
-  onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
-  onSetType: (rowId: string, elementType: ScriptElementType) => void;
-  onWordsKeyDown: (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
-  registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
+  activeAnchor: ScriptCommentAnchor;
+  canPostInternal: boolean;
+  commentDraft: string;
+  commentVisibility: ScriptComment["visibility"];
+  comments: ScriptComment[];
+  isComposerOpen: boolean;
+  isOverviewOpen: boolean;
+  overviewComments: ScriptComment[];
+  overviewFilter: OverviewFilter;
+  usersById: Map<string, (typeof scriptUsers)[number]>;
+  onClose: () => void;
+  onCommentDraftChange: (value: string) => void;
+  onCommentVisibilityChange: (value: ScriptComment["visibility"]) => void;
+  onOverviewFilterChange: (value: OverviewFilter) => void;
+  onSelectComment: (comment: ScriptComment) => void;
+  onSubmitComment: () => void;
 }) {
+  if (isOverviewOpen) {
+    return (
+      <aside className="script-comment-margin overview" aria-label="Comments overview">
+        <div className="script-comment-head">
+          <strong className="label-s-semibold">Comments</strong>
+          <button className="script-quiet-icon" type="button" aria-label="Close comments overview" onClick={onClose}>
+            <DsIcon name="x-close-cross" size={12} />
+          </button>
+        </div>
+        <div className="script-comment-tabs" role="group" aria-label="Comment filter">
+          <button className={`label-xs-semibold ${overviewFilter === "all" ? "active" : ""}`} type="button" onClick={() => onOverviewFilterChange("all")}>
+            All
+          </button>
+          <button className={`label-xs-semibold ${overviewFilter === "unresolved" ? "active" : ""}`} type="button" onClick={() => onOverviewFilterChange("unresolved")}>
+            Unresolved
+          </button>
+        </div>
+        <div className="script-comment-list">
+          {overviewComments.map((comment) => (
+            <CommentCard comment={comment} key={comment.id} usersById={usersById} onSelect={() => onSelectComment(comment)} />
+          ))}
+        </div>
+      </aside>
+    );
+  }
+
   return (
-    <section className="script-hollywood-surface" aria-label="Hollywood script editor">
-      {rows
-        .filter((row) => !row.deletedMeta)
-        .map((row) => (
-          <div
-            className={`script-screenplay-row ${row.elementType} ${selectedRowIds.has(row.id) ? "selected" : ""}`}
-            key={row.id}
-            ref={(node) => registerRowRef(row.id, node)}
-          >
-            <button className="script-row-number label-xs-semibold" type="button" onClick={(event) => onSelectRow(row.id, event)}>
-              {getRowNumber(row.id, rows)}
-            </button>
-            <select
-              className="script-element-select label-xs-semibold"
-              value={row.elementType}
-              onChange={(event: ChangeEvent<HTMLSelectElement>) => onSetType(row.id, event.target.value as ScriptElementType)}
-            >
-              {screenplayTypes.map((type) => (
-                <option key={type} value={type}>
-                  {capitalise(type)}
-                </option>
-              ))}
+    <aside className="script-comment-margin" aria-label="Script comments">
+      <div className="script-comment-head">
+        <strong className="label-s-semibold">{activeAnchor.label}</strong>
+        <button className="script-quiet-icon" type="button" aria-label="Close comments" onClick={onClose}>
+          <DsIcon name="x-close-cross" size={12} />
+        </button>
+      </div>
+      {activeAnchor.snippet ? <p className="script-comment-snippet label-xs">"{activeAnchor.snippet}"</p> : null}
+      {comments.length > 0 ? (
+        <div className="script-comment-list">
+          {comments.map((comment) => (
+            <CommentCard comment={comment} key={comment.id} usersById={usersById} />
+          ))}
+        </div>
+      ) : null}
+      {isComposerOpen ? (
+        <div className="script-comment-composer">
+          {canPostInternal ? (
+            <select className="script-comment-visibility label-xs-semibold" value={commentVisibility} onChange={(event) => onCommentVisibilityChange(event.target.value as ScriptComment["visibility"])}>
+              <option value="external">Customer</option>
+              <option value="internal">Internal</option>
             </select>
-            <textarea
-              className="script-screenplay-textarea label-s"
-              readOnly={isApproved}
-              ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
-              value={formatScreenplayValue(row)}
-              onMouseDown={() => {
-                if (isApproved) {
-                  onGuardApproved();
-                }
-              }}
-              onChange={(event) => onSetField(row.id, "words", event.target.value)}
-              onKeyDown={(event) => onWordsKeyDown(event, row)}
-              onSelect={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
-            />
-            {showChanges && row.change ? <RowChange change={row.change} /> : null}
-          </div>
-        ))}
-    </section>
+          ) : null}
+          <textarea
+            className="script-comment-input label-s"
+            placeholder="Comment..."
+            value={commentDraft}
+            onChange={(event) => onCommentDraftChange(event.target.value)}
+          />
+          <button className="script-approve-button label-xs-semibold" type="button" onClick={onSubmitComment}>
+            Post
+          </button>
+        </div>
+      ) : null}
+    </aside>
+  );
+}
+
+function CommentCard({
+  comment,
+  usersById,
+  onSelect,
+}: {
+  comment: ScriptComment;
+  usersById: Map<string, (typeof scriptUsers)[number]>;
+  onSelect?: () => void;
+}) {
+  const user = usersById.get(comment.authorId);
+
+  return (
+    <button className={`script-comment-card ${comment.visibility}`} type="button" onClick={onSelect}>
+      <span className={`avatar ${user?.avatarTone ?? "sand"}`} aria-hidden="true">
+        {user?.initials ?? "?"}
+      </span>
+      <span>
+        <span className="script-comment-meta label-xs-semibold">
+          {user?.name ?? "Unknown"} <span>{comment.createdAgo}</span>
+          {comment.visibility === "internal" ? <em>Internal</em> : null}
+        </span>
+        <span className="paragraph-s">{comment.body}</span>
+      </span>
+    </button>
   );
 }
 
@@ -1245,11 +1498,10 @@ function MediaThumb({ mediaItem }: { mediaItem: ScriptMediaItem }) {
   return (
     <span className={`script-media-thumb ${mediaItem.tone}`}>
       <span className="script-media-thumb-icon">
-        <DsIcon name={mediaItem.type === "link" ? "link" : mediaItem.type === "upload" ? "upload-simple" : "image-square"} size={14} />
+        <DsIcon name={mediaItem.type === "link" ? "link" : mediaItem.type === "upload" ? "upload-simple" : "image-square"} size={12} />
       </span>
       <span>
         <strong className="label-xs-semibold">{mediaItem.label}</strong>
-        <small className="label-xs">{mediaItem.meta}</small>
       </span>
     </span>
   );
@@ -1294,6 +1546,24 @@ function cloneRow(row: ScriptRow): ScriptRow {
   };
 }
 
+function cloneComments(comments: ScriptComment[]) {
+  return comments.map((comment) => ({
+    ...comment,
+    anchor: { ...comment.anchor },
+    reactions: comment.reactions?.map((reaction) => ({
+      ...reaction,
+      selectedBy: [...reaction.selectedBy],
+    })),
+    replies: comment.replies.map((reply) => ({
+      ...reply,
+      reactions: reply.reactions?.map((reaction) => ({
+        ...reaction,
+        selectedBy: [...reaction.selectedBy],
+      })),
+    })),
+  }));
+}
+
 function createEmptyRow(index: number): ScriptRow {
   return {
     id: `row-${Date.now()}-${index}`,
@@ -1322,6 +1592,22 @@ function createMediaItem(type: ScriptMediaType, index: number): ScriptMediaItem 
 
 function countWords(value: string) {
   return value.trim().split(/\s+/u).filter(Boolean).length;
+}
+
+function groupCommentsByRow(comments: ScriptComment[]) {
+  const commentsByRow = new Map<string, ScriptComment[]>();
+
+  comments.forEach((comment) => {
+    const rowId = comment.anchor.rowId;
+
+    if (!rowId) {
+      return;
+    }
+
+    commentsByRow.set(rowId, [...(commentsByRow.get(rowId) ?? []), comment]);
+  });
+
+  return commentsByRow;
 }
 
 function getRowsInRange(rows: ScriptRow[], firstRowId: string, secondRowId: string) {
@@ -1382,44 +1668,20 @@ function registerTextArea(refs: Map<string, HTMLTextAreaElement>, rowId: string,
   }
 }
 
-function getMarkedText(mark: "bold" | "italic" | "strike" | "heading" | "bullet" | "number" | "link", selectedText: string) {
+function getMarkedText(mark: "bold" | "link", selectedText: string) {
   if (mark === "bold") {
     return `**${selectedText}**`;
-  }
-
-  if (mark === "italic") {
-    return `_${selectedText}_`;
-  }
-
-  if (mark === "strike") {
-    return `~~${selectedText}~~`;
-  }
-
-  if (mark === "heading") {
-    return `## ${selectedText}`;
-  }
-
-  if (mark === "bullet") {
-    return `- ${selectedText}`;
-  }
-
-  if (mark === "number") {
-    return `1. ${selectedText}`;
   }
 
   return `[${selectedText}](https://example.com)`;
 }
 
-function formatScreenplayValue(row: ScriptRow) {
-  if (row.elementType === "scene" || row.elementType === "character" || row.elementType === "transition") {
-    return row.words.toUpperCase();
-  }
-
-  if (row.elementType === "parenthetical" && !row.words.startsWith("(")) {
-    return `(${row.words})`;
-  }
-
-  return row.words;
+function getFloatingToolbarPosition(target: HTMLTextAreaElement) {
+  const rect = target.getBoundingClientRect();
+  return {
+    x: Math.min(window.innerWidth - 210, Math.max(16, rect.left + 24)),
+    y: Math.max(8, rect.top - 48),
+  };
 }
 
 function capitalise(value: string) {
