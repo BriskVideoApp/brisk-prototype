@@ -62,7 +62,6 @@ export function RequestReviewModal({
   const [recipient, setRecipient] = useState<RequestReviewRecipient>(defaultRecipient);
   const [selectedTemplateId, setSelectedTemplateId] = useState<RequestReviewTemplateId>("standardReviewRequest");
   const [messageBody, setMessageBody] = useState("");
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const recipientName = recipient === "customer" ? customerName : studioName;
   const senderName = role === "customer" ? customerName : studioName;
   const selectedTemplate = requestReviewTemplates.find((template) => template.id === selectedTemplateId) ?? requestReviewTemplates[0];
@@ -151,24 +150,11 @@ export function RequestReviewModal({
           <p className="request-review-helper label-xs">
             Sent as an email and in-app message to {recipientName}.
           </p>
-          <button className="request-review-preview-link label-s-semibold" type="button" onClick={() => setIsPreviewOpen(true)}>
-            Preview email ↗
-          </button>
         </div>
 
         <button className="request-review-send label-s-semibold" type="button" onClick={sendRequest}>
           Request review
         </button>
-
-        {isPreviewOpen ? (
-          <EmailPreviewModal
-            messageBody={messageBody}
-            projectName={projectName}
-            recipientName={recipientName}
-            studioName={studioName}
-            onClose={() => setIsPreviewOpen(false)}
-          />
-        ) : null}
       </section>
     </div>
   );
@@ -194,48 +180,5 @@ function RecipientRadio({
       <span className="share-radio-control" aria-hidden="true" />
       <span>{label}</span>
     </button>
-  );
-}
-
-function EmailPreviewModal({
-  messageBody,
-  projectName,
-  recipientName,
-  studioName,
-  onClose,
-}: {
-  messageBody: string;
-  projectName: string;
-  recipientName: string;
-  studioName: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className="request-review-preview-backdrop" role="presentation">
-      <section className="request-review-preview-modal" role="dialog" aria-modal="true" aria-labelledby="request-review-preview-title">
-        <header className="request-review-header">
-          <h3 className="request-review-title" id="request-review-preview-title">
-            Email preview
-          </h3>
-          <button className="request-review-close" type="button" aria-label="Close email preview" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </header>
-
-        <article className="request-review-email">
-          <header className="request-review-email-header">
-            <span className="label-xs-semibold">To: {recipientName}</span>
-            <strong className="heading-3xs">Review request: {projectName}</strong>
-          </header>
-          <p className="request-review-email-body label-s">{messageBody}</p>
-          <button className="request-review-email-link label-s-semibold" type="button">
-            Open project
-          </button>
-          <footer className="request-review-email-footer label-xs">
-            Sent by {studioName} through Brisk.
-          </footer>
-        </article>
-      </section>
-    </div>
   );
 }

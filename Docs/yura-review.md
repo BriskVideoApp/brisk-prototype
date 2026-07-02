@@ -18,7 +18,6 @@ Notes for DS review:
 - `Video only` is available only on Edit and Masters, and forces Access to `View only`.
 - Share-link viewers see Approve disabled with the tooltip copy `Sign in to approve`.
 - The Request Review modal reuses the Share controls border, radius, and elevation treatment. It is local prototype markup until React DS exports exist for `d-Modal`, `d-Select`, `d-Radio list`, `d-Text area`, and `d-Notification toast`.
-- The modal includes a nested email preview modal for the happy path only.
 
 ## Today tab prototype
 
