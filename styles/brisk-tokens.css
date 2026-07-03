@@ -75,5 +75,5 @@
   --brisk-space-3xl: 40px;
   --brisk-shadow-s: 2px 2px 0 var(--brisk-black);
   --brisk-shadow-m: 4px 4px 0 var(--brisk-black);
-  --font-brisk: "Plus Jakarta Sans", Arial, sans-serif;
+  --font-brisk: var(--font-brisk-loaded), "Plus Jakarta Sans", Arial, sans-serif;
 }

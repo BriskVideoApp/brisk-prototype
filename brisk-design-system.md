@@ -42,6 +42,13 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 - Known issue: text is not vertically centred inside small tag components. The kit applies negative spacing as a workaround. Keep this workaround in place for tags.
 - Heading and body scale: use kit text styles only.
 
+## Type rendering
+
+- Do NOT set `text-rendering: geometricPrecision` anywhere.
+- Do NOT set `-webkit-font-smoothing` or `-moz-osx-font-smoothing` anywhere.
+- Leave all text rendering at browser defaults. Plus Jakarta Sans is designed for default subpixel antialiasing and looks harsh and thin under `antialiased` or `grayscale`.
+- If the app's type ever looks thin or grey compared to the DS reference, the first place to check is font-smoothing overrides.
+
 ## Icons
 
 Brisk uses two icon categories. Do not mix them.

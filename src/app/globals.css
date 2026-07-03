@@ -1,5 +1,4 @@
 @import "../../styles/brisk-tokens.css";
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -71,7 +70,7 @@
   --brisk-space-3xl: 40px;
   --brisk-shadow-s: 2px 2px 0 var(--brisk-black);
   --brisk-shadow-m: 4px 4px 0 var(--brisk-black);
-  --font-brisk: "Plus Jakarta Sans", Arial, sans-serif;
+  --font-brisk: var(--font-brisk-loaded), "Plus Jakarta Sans", Arial, sans-serif;
 }
 
 * {
@@ -86,8 +85,6 @@ body {
   color: var(--brisk-text-primary);
   font-family: var(--font-brisk);
   font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
 }
 
 button,
