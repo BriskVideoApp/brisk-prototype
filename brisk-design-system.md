@@ -1,13 +1,3 @@
-# Skill: Brisk Design System
-
-## How to use this skill
-
-- This skill lives in your `brisk-prototype` repo as `brisk-design-system.md`. Codex reads it on every session.
-- Pair it with Yura's component library in the `Brisk DS/` folder.
-
-## Skill file content
-
-```markdown
 # Brisk Design System Skill
 
 You are designing screens for **Brisk**, a multi-tenant SaaS platform for video production teams. Apply the rules below to every component, layout, and screen you generate. These rules override generic design defaults.
@@ -54,10 +44,38 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 
 ## Icons
 
-- Use **Flow icons** only. The full library lives in the `Brisk DS/` folder.
-- Do not generate or substitute SVGs from other sources.
-- If an icon is missing, ask before adding one from elsewhere.
-- Current production-stage UI uses the circular seven-stage treatment for Brisk stages: Brief, Script, Shoot, Storyboard, Media, Edit, Masters. Do not use Styleframes, square flow tiles, letter tiles, or generic substitute icons for current stage pickers or progress rows.
+Brisk uses two icon categories. Do not mix them.
+
+### Stage icons (Brief, Script, Shoot, Storyboard, Media, Edit, Masters)
+These are the workflow progress icons rendered on Active Videos and any other stage-progress surface.
+
+- Rendered by the `StageChip` component in `src/components/active-videos/ActiveVideosPage.tsx`.
+- Glyphs come through `DsIcon`, which maps icon names to SVGs in `/public/brisk-icons/`.
+- Current stage-to-SVG mapping:
+  - Brief - `/public/brisk-icons/clipboard-text.svg`
+  - Script - `/public/brisk-icons/pen-nib.svg`
+  - Shoot - `/public/brisk-icons/video-camera-ds.svg`
+  - Storyboard - `/public/brisk-icons/grid-four.svg`
+  - Media - `/public/brisk-icons/image-square.svg`
+  - Edit - `/public/brisk-icons/stage-edit.svg`
+  - Masters - `/public/brisk-icons/film-strip.svg`
+- State variants (drive the circle colour and fill):
+  - `not_started` - grey outline, no fill
+  - `in_progress` - green filled
+  - `waiting` - coloured filled (orange, pink, etc depending on waiting reason)
+  - `done` - green filled with tick or completed treatment
+- **Do NOT use the legacy SVGs previously in `Brisk Visuals/Flow icons/`.** Those have been archived and must not be referenced by any new code.
+- When adding a new stage or a new state, extend `StageChip` and the `/public/brisk-icons/` set. Do not import SVGs from `Brisk Visuals/`.
+
+### General UI icons
+All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
+
+- Come from the DS icon library in `Brisk DS/`.
+- Import via the `<DsIcon />` component. Never inline SVG paths, never reference an icon by file path.
+- Default size: 16px in dense surfaces, 20px in headers, 24px only for hero moments.
+- Default colour: `--gray-60` for passive, `--gray-90` for active, `--brand-primary` only inside primary buttons.
+- Banned: Lucide, Heroicons, Feather, Font Awesome, Material Icons, Unicode glyphs, emoji-as-icon. Emoji are allowed in user-generated content only.
+- If the DS doesn't have the icon you need, raise a request in `Docs/yura-review.md` and use text until it exists.
 
 ## Components
 
@@ -112,5 +130,53 @@ Every interactive element must define:
 
 ## Punctuation
 
-- Never use em dashes (—). Use hyphens (-) instead.
-```
+- Never use em dashes. Use hyphens instead.
+
+## Reference examples
+
+These live pages in the prototype are the source of truth for visual style. When building any new surface, reuse from these first. If a design decision on a new page contradicts one of these references, the reference wins.
+
+### Active Videos
+
+![Active Videos overview](Docs/References/brisk/Brisk%20-%20active-videos-overview.png)
+![Active Videos sidebar and row rhythm](Docs/References/brisk/Brisk%20-%20active-videos-sidebar.png)
+![Active Videos status pills](Docs/References/brisk/Brisk%20-%20active-videos-status-pills.png)
+
+Use as the reference for:
+- Row rhythm and hairline weight (single hairline in `--gray-10`, no card outlines around list items).
+- Header CTA hierarchy on top-level pages (role toggle top-right, search top-right, filter tabs on a hairline below the title).
+- Status pill treatment (soft pill shape, `--brand-secondary` background, `--gray-90` text, no border).
+- Progress icon system (coloured filled circle when active, grey outline when inactive, dashed connector line between).
+- Typography ramp: h1 32px Semibold, tab labels 14px Regular, row primary 14px Semibold, row secondary 13px Regular `--gray-60`.
+
+### Video Review
+
+![Video Review overview](Docs/References/brisk/Brisk%20-%20video-review-overview.png)
+![Video Review comment panel](Docs/References/brisk/Brisk%20-%20video-review-comment-panel.png)
+
+Use as the reference for:
+- Header CTA hierarchy on detail pages (two secondary buttons plus one primary purple - never two primaries).
+- Comment component: composer, thread, filters (All / Unresolved / Team / Client), reactions, reply, resolve, mention, edit, delete.
+- Internal vs external comment card colours (external = soft cream, internal = soft lavender, Overall pill treatment).
+- Presence avatar cluster.
+- Dark player + light rail contrast pattern for any media-first surface (V2, not V1).
+
+### Today
+
+![Today summary strip](Docs/References/brisk/Brisk%20-%20today-summary-strip.png)
+![Today empty state](Docs/References/brisk/Brisk%20-%20today-empty-state.png)
+
+Use as the reference for:
+- Summary strip / footer bar treatment (single line, muted, no button chrome, colour only when a value is out of range).
+- Empty state pattern.
+- Card and hairline spacing for personal-productivity surfaces.
+
+### How to use these references
+
+Before building a new surface:
+1. Open the reference page in the running prototype.
+2. Screenshot the relevant pattern.
+3. Describe the styling rules back to yourself (or Codex) in one paragraph.
+4. Match those rules first. Only invent new patterns if none of the references apply.
+
+If a reference component isn't cleanly extractable from its source page, raise a ticket to isolate it before starting a new surface. Do not copy-paste and fork.

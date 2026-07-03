@@ -37,7 +37,7 @@ import {
 
 const currentUserId = "user-tom";
 const layoutModes: Array<{ value: ScriptLayoutMode; label: string }> = [
-  { value: "av", label: "AV Script" },
+  { value: "av", label: "Script" },
   { value: "simple", label: "Simple Doc" },
 ];
 const densityModes: ScriptDensity[] = ["compact", "comfortable"];
@@ -63,6 +63,14 @@ type FloatingToolbarState = {
   rowId: string | null;
   x: number;
   y: number;
+};
+
+type DocHistoryEntry = {
+  id: string;
+  title: string;
+  detail: string;
+  actor: string;
+  time: string;
 };
 
 type ScriptPageProps = {
@@ -97,6 +105,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
   const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
+  const [isDocHistoryOpen, setIsDocHistoryOpen] = useState(false);
+  const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
   const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const [areIntroCardsDismissed, setAreIntroCardsDismissed] = useState(false);
@@ -137,7 +147,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const activeVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1];
   const visibleRows = rows.filter((row) => !row.deletedMeta);
   const docValue = visibleRows.map((row) => row.words).join("\n\n");
-  const totalWords = rows.reduce((total, row) => (row.deletedMeta ? total : total + countWords(row.words)), 0);
+  const totalWords = visibleRows.reduce((total, row) => total + countWords(row.words), 0);
   const approxSeconds = Math.round(totalWords / 2.5);
   const targetWords = scriptBrief.targetDurationSeconds * 2.5;
   const wordDelta = Math.abs(totalWords - targetWords);
@@ -324,19 +334,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     });
   };
 
-  const restoreRow = (rowId: string) => {
-    updateRows((currentRows) =>
-      currentRows.map((row) =>
-        row.id === rowId
-          ? {
-              ...row,
-              deletedMeta: undefined,
-            }
-          : row,
-      ),
-    );
-  };
-
   const deleteEmptyRow = (row: ScriptRow) => {
     const currentIndex = rows.findIndex((currentRow) => currentRow.id === row.id);
     const previousRow = rows.slice(0, currentIndex).reverse().find((currentRow) => !currentRow.deletedMeta);
@@ -348,24 +345,45 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
   };
 
+  const addDocHistoryEntry = (entry: Omit<DocHistoryEntry, "id">) => {
+    setDocHistoryEntries((currentEntries) => [
+      {
+        ...entry,
+        id: `doc-history-${Date.now()}-${currentEntries.length}`,
+      },
+      ...currentEntries,
+    ]);
+  };
+
+  const openDocHistory = () => {
+    setIsDocHistoryOpen(true);
+    setIsOptionsOpen(false);
+    setOpenCommentRowId(null);
+    setIsCommentComposerOpen(false);
+    setIsCommentsOverviewOpen(false);
+  };
+
   const deleteSelectedRows = () => {
     if (selectedRows.length === 0) {
       return;
     }
 
-    updateRows((currentRows) =>
-      currentRows.map((row) =>
-        selectionState.selectedRowIds.has(row.id)
-          ? {
-              ...row,
-              deletedMeta: {
-                person: "Tom",
-                time: "just now",
-              },
-            }
-          : row,
-      ),
-    );
+    if (!guardEditable()) {
+      return;
+    }
+
+    const deletedRowLabels = selectedRows.map((row) => getRowLabel(row.id, rows));
+
+    pushRows(cloneRows(rows).filter((row) => !selectionState.selectedRowIds.has(row.id)));
+    addDocHistoryEntry({
+      title: selectedRows.length === 1 ? `${deletedRowLabels[0]} deleted` : `${selectedRows.length} rows deleted`,
+      detail:
+        selectedRows.length === 1
+          ? `${deletedRowLabels[0]} was removed from the document.`
+          : `${deletedRowLabels.join(", ")} were removed from the document.`,
+      actor: "Tom",
+      time: "just now",
+    });
     setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
   };
 
@@ -378,25 +396,26 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     const hasContent = Boolean(row.words.trim() || row.visuals.trim() || row.media.length > 0);
 
+    if (!guardEditable()) {
+      return;
+    }
+
     if (hasContent && !shouldSkipConfirm) {
       setOpenRowMenuId(rowId);
       setConfirmingDeleteRowId(rowId);
       return;
     }
 
-    updateRows((currentRows) =>
-      currentRows.map((currentRow) =>
-        currentRow.id === rowId
-          ? {
-              ...currentRow,
-              deletedMeta: {
-                person: "Tom",
-                time: "just now",
-              },
-            }
-          : currentRow,
-      ),
-    );
+    const rowLabel = getRowLabel(rowId, rows);
+    const rowPreview = row.words.trim() ? `Deleted line: "${truncateText(row.words.trim(), 72)}"` : "Empty row removed.";
+
+    pushRows(cloneRows(rows).filter((currentRow) => currentRow.id !== rowId));
+    addDocHistoryEntry({
+      title: `${rowLabel} deleted`,
+      detail: rowPreview,
+      actor: "Tom",
+      time: "just now",
+    });
     setOpenRowMenuId(null);
     setConfirmingDeleteRowId(null);
     setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
@@ -839,6 +858,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
                 if (nextIsOpen) {
                   setActiveCommentAnchor(overallCommentAnchor);
+                  setIsDocHistoryOpen(false);
                 }
 
                 return nextIsOpen;
@@ -918,8 +938,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                     </label>
                   ))}
                 </div>
-                <button className="script-menu-text label-xs-semibold" type="button">
-                  Version history
+                <button className="script-menu-text label-xs-semibold" type="button" onClick={openDocHistory}>
+                  Document history
                 </button>
                 <span className="script-save-note label-xs">Save state: {saveState}</span>
               </div>
@@ -941,7 +961,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               openMediaMenuRowId={openMediaMenuRowId}
               openRowMenuId={openRowMenuId}
               confirmingDeleteRowId={confirmingDeleteRowId}
-              rows={rows}
+              rows={visibleRows}
               selectedRowIds={selectionState.selectedRowIds}
               shouldShowIntroCards={shouldShowIntroCards}
               hasEditedThisSession={hasEditedThisSession}
@@ -970,7 +990,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   reorderRows(draggingRowId, targetRowId);
                 }
               }}
-              onRestoreRow={restoreRow}
               onSelectRow={selectRow}
               onSetField={setRowField}
               onSetMediaMenuRow={setOpenMediaMenuRowId}
@@ -988,7 +1007,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               docValue={docValue}
               isApproved={isScriptApproved}
               showChanges={showChanges}
-              rows={rows}
+              rows={visibleRows}
               onCaptureSelectionAnchor={captureDocSelectionAnchor}
               onGuardApproved={guardEditable}
               onUpdateDoc={updateDocValue}
@@ -1021,6 +1040,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onSelectComment={selectCommentAnchor}
             />
           </div>
+        ) : null}
+
+        {isDocHistoryOpen ? (
+          <DocumentHistoryPanel
+            entries={docHistoryEntries}
+            selectedVersionId={selectedVersionId}
+            versions={versions}
+            onClose={() => setIsDocHistoryOpen(false)}
+            onSelectVersion={selectVersion}
+          />
         ) : null}
       </section>
 
@@ -1314,7 +1343,6 @@ function AvScriptEditor({
   onOpenCommentsForRow,
   onPasteWords,
   onReorderRows,
-  onRestoreRow,
   onSelectRow,
   onSetField,
   onSetMediaMenuRow,
@@ -1353,7 +1381,6 @@ function AvScriptEditor({
   onOpenCommentsForRow: (rowId: string) => void;
   onPasteWords: (event: ClipboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   onReorderRows: (targetRowId: string) => void;
-  onRestoreRow: (rowId: string) => void;
   onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
   onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
   onSetMediaMenuRow: (rowId: string | null) => void;
@@ -1369,14 +1396,7 @@ function AvScriptEditor({
         const hasAnchor = rowComments.length > 0 || row.media.length > 0;
         const shouldShowPlaceholder = index === 0 && !hasTypedThisSession && !row.words.trim() && !row.visuals.trim();
 
-        return row.deletedMeta ? (
-          <div className="script-deleted-row-pill" key={row.id}>
-            <span className="label-s-semibold">Row deleted by {row.deletedMeta.person} {row.deletedMeta.time}</span>
-            <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => onRestoreRow(row.id)}>
-              Restore
-            </button>
-          </div>
-        ) : (
+        return (
           <div
             className={`script-row ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
             draggable
@@ -1613,6 +1633,76 @@ function RedlineLegend() {
   );
 }
 
+function DocumentHistoryPanel({
+  entries,
+  selectedVersionId,
+  versions,
+  onClose,
+  onSelectVersion,
+}: {
+  entries: DocHistoryEntry[];
+  selectedVersionId: string;
+  versions: ScriptVersion[];
+  onClose: () => void;
+  onSelectVersion: (versionId: string) => void;
+}) {
+  return (
+    <aside className="script-doc-history-panel" aria-label="Document history">
+      <header className="script-doc-history-header">
+        <div>
+          <h2>Document history</h2>
+        </div>
+        <button className="script-quiet-icon" type="button" aria-label="Close document history" onClick={onClose}>
+          <DsIcon name="x-close-cross" size={13} />
+        </button>
+      </header>
+
+      <div className="script-doc-history-list">
+        <section className="script-doc-history-section" aria-label="Today">
+          <h3 className="label-xs-semibold">Today</h3>
+          {entries.length > 0 ? (
+            entries.map((entry) => (
+              <article className="script-doc-history-entry" key={entry.id}>
+                <span className="script-doc-history-dot" aria-hidden="true" />
+                <div>
+                  <h4>{entry.title}</h4>
+                  <p>{entry.detail}</p>
+                  <span className="label-xs">{entry.actor} · {entry.time}</span>
+                </div>
+              </article>
+            ))
+          ) : (
+            <p className="script-doc-history-empty label-s">No edits in this session yet.</p>
+          )}
+        </section>
+
+        <section className="script-doc-history-section" aria-label="Versions">
+          <h3 className="label-xs-semibold">Versions</h3>
+          {[...versions].reverse().map((version) => {
+            const isSelected = version.id === selectedVersionId;
+
+            return (
+              <button
+                className={`script-doc-version-button ${isSelected ? "active" : ""}`}
+                type="button"
+                key={version.id}
+                aria-current={isSelected ? "true" : undefined}
+                onClick={() => onSelectVersion(version.id)}
+              >
+                <span>
+                  <strong>{version.snapshotName}</strong>
+                  <span className="label-xs">{version.createdBy} · {version.createdAt}</span>
+                </span>
+                {isSelected ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
+              </button>
+            );
+          })}
+        </section>
+      </div>
+    </aside>
+  );
+}
+
 function cloneVersions(versions: ScriptVersion[]) {
   return versions.map((version) => ({
     ...version,
@@ -1679,6 +1769,10 @@ function createMediaItem(type: ScriptMediaType, index: number): ScriptMediaItem 
 
 function countWords(value: string) {
   return value.trim().split(/\s+/u).filter(Boolean).length;
+}
+
+function truncateText(value: string, maxLength: number) {
+  return value.length > maxLength ? `${value.slice(0, maxLength - 3)}...` : value;
 }
 
 function groupCommentsByRow(comments: ScriptComment[]) {

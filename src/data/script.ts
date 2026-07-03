@@ -1,4 +1,5 @@
 import type { CommentVisibility, Reaction, User } from "@/components/video-review/types";
+import type { DsIconName } from "@/components/video-review/DsIcon";
 
 export type ScriptRole = "studio" | "customer";
 export type ScriptLayoutMode = "av" | "simple";
@@ -157,14 +158,14 @@ export const initialScriptSubtabs: ScriptSubtab[] = [
   { id: "storyboard", label: "Storyboard", visible: false, approved: false, optional: true },
 ];
 
-export const scriptStages: Array<{ id: ScriptStageId; label: string; icon: string }> = [
-  { id: "brief", label: "Brief", icon: "/brisk-visuals/flow-icons/flow-brief-done.svg" },
-  { id: "script", label: "Script", icon: "/brisk-visuals/flow-icons/flow-script.svg" },
-  { id: "shoot", label: "Shoot", icon: "/brisk-visuals/flow-icons/flow-shoot.svg" },
-  { id: "storyboard", label: "Storyboard", icon: "/brisk-visuals/flow-icons/flow-storyboard.svg" },
-  { id: "media", label: "Media", icon: "/brisk-visuals/flow-icons/flow-media.svg" },
-  { id: "edit", label: "Edit", icon: "/brisk-visuals/flow-icons/flow-edits.svg" },
-  { id: "masters", label: "Masters", icon: "/brisk-visuals/flow-icons/flow-masters.svg" },
+export const scriptStages: Array<{ id: ScriptStageId; label: string; icon: DsIconName }> = [
+  { id: "brief", label: "Brief", icon: "clipboard-text" },
+  { id: "script", label: "Script", icon: "pen-nib" },
+  { id: "shoot", label: "Shoot", icon: "video-camera-ds" },
+  { id: "storyboard", label: "Storyboard", icon: "grid-four" },
+  { id: "media", label: "Media", icon: "image-square" },
+  { id: "edit", label: "Edit", icon: "stage-edit" },
+  { id: "masters", label: "Masters", icon: "film-strip" },
 ];
 
 export const scriptTranscriptLines = [
