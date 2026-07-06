@@ -156,8 +156,7 @@
   gap: var(--brisk-space-s);
 }
 
-.script-version-panel-wrap,
-.script-version-menu-wrap {
+.script-version-panel-wrap {
   position: relative;
 }
 
@@ -172,54 +171,6 @@
   color: var(--brisk-text-primary);
   gap: var(--brisk-space-l);
   padding: 0 var(--brisk-space-m);
-}
-
-.script-version-menu {
-  position: absolute;
-  top: calc(100% + var(--brisk-space-s));
-  left: 0;
-  z-index: 50;
-  display: grid;
-  width: 260px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-m);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  gap: var(--brisk-space-none);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-}
-
-.script-version-menu button {
-  min-height: 36px;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  padding: 0 var(--brisk-space-s);
-  text-align: left;
-}
-
-.script-version-menu button:hover:not(:disabled) {
-  background: var(--brisk-brand-secondary);
-}
-
-.script-version-menu button:disabled {
-  color: var(--brisk-gray-40);
-  cursor: not-allowed;
-}
-
-.script-version-menu .delete:not(:disabled) {
-  color: var(--brisk-system-error);
-}
-
-.script-menu-section {
-  display: grid;
-  gap: var(--brisk-space-xs);
-}
-
-.script-menu-section-title {
-  color: var(--brisk-gray-60);
-  padding: 0 var(--brisk-space-s);
 }
 
 .script-toolbar-button,
@@ -1299,7 +1250,11 @@
 }
 
 .script-versions-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid var(--brisk-border-primary);
+  gap: var(--brisk-space-m);
   padding: var(--brisk-space-l);
 }
 
@@ -1515,13 +1470,21 @@ button.script-version-row-body:focus-visible {
   right: 0;
   z-index: 20;
   display: grid;
-  width: 164px;
+  width: 204px;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-m);
   gap: var(--brisk-space-xs);
   padding: var(--brisk-space-s);
+}
+
+.script-version-row-menu .script-menu-switch-row {
+  padding: 0 var(--brisk-space-s);
+}
+
+.script-version-row-menu .script-menu-divider {
+  margin: var(--brisk-space-xs) 0;
 }
 
 .script-version-row:nth-last-child(-n + 2) .script-version-row-menu {

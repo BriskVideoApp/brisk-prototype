@@ -145,7 +145,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
   const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
-  const [isScriptMenuOpen, setIsScriptMenuOpen] = useState(false);
   const [areVisualsVisible, setAreVisualsVisible] = useState(false);
   const [isScriptInternal, setIsScriptInternal] = useState(false);
   const [, setHasEditedThisSession] = useState(false);
@@ -712,7 +711,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     loadRowsFromVersion(version);
     setSaveState("Saved");
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const returnToCurrentVersion = () => {
@@ -744,7 +742,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setPreviewVersionId(null);
     setRestoreCandidateId(null);
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const createNewScriptDocument = () => {
@@ -765,7 +762,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage("New script created");
     setPreviewVersionId(null);
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const duplicateVersion = (versionId: string) => {
@@ -802,14 +798,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     if (version.approvedSnapshot) {
       setToastMessage("Approved versions can't be deleted. Un-approve first.");
       setIsVersionsPanelOpen(false);
-      setIsScriptMenuOpen(false);
       return;
     }
 
     if (versions.length <= 1) {
       setToastMessage("Keep at least one script version");
       setIsVersionsPanelOpen(false);
-      setIsScriptMenuOpen(false);
       return;
     }
 
@@ -831,7 +825,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       setToastMessage("Script deleted");
       setIsVersionsPanelOpen(false);
-      setIsScriptMenuOpen(false);
     }
   };
 
@@ -858,7 +851,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsScriptInternal(true);
     setToastMessage(isScriptInternal ? "Script is already internal" : "Set as Internal");
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const openRestoreConfirmation = (versionId: string) => {
@@ -870,7 +862,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     setRestoreCandidateId(version.id);
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const restoreVersionAsNew = () => {
@@ -1042,7 +1033,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setActiveCommentAnchor(overallCommentAnchor);
     setIsCommentsOverviewOpen(true);
     setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
     setOpenCommentRowId(null);
     setIsCommentComposerOpen(false);
     setFloatingCommentPosition(null);
@@ -1063,7 +1053,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 aria-expanded={isVersionsPanelOpen}
                 onClick={() => {
                   setIsVersionsPanelOpen((isOpen) => !isOpen);
-                  setIsScriptMenuOpen(false);
                   setIsCommentsOverviewOpen(false);
                   setOpenCommentRowId(null);
                   setIsCommentComposerOpen(false);
@@ -1079,52 +1068,18 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   isCustomer={isCustomer}
                   previewVersionId={previewVersionId}
                   selectedVersionId={selectedVersionId}
+                  showChanges={showChanges}
                   versionMetaById={versionMetaById}
                   versions={versions}
+                  onCreateScript={createNewScriptDocument}
                   onDeleteVersion={deleteVersion}
                   onDuplicateVersion={duplicateVersion}
                   onRenameVersion={renameVersion}
                   onRestoreVersion={openRestoreConfirmation}
+                  onSetInternal={setScriptInternal}
+                  onToggleShowChanges={setShowChanges}
                   onViewVersion={previewVersionForReadOnly}
                 />
-              ) : null}
-            </div>
-            <div className="script-version-menu-wrap">
-              <button
-                className="script-quiet-icon"
-                type="button"
-                aria-label="Script options"
-                aria-expanded={isScriptMenuOpen}
-                onClick={() => {
-                  setIsScriptMenuOpen((isOpen) => !isOpen);
-                  setIsVersionsPanelOpen(false);
-                }}
-              >
-                <DsIcon name="dots-three" size={16} />
-              </button>
-              {isScriptMenuOpen ? (
-                <div className="script-version-menu">
-                  <div className="script-menu-section" aria-label="View">
-                    <span className="script-menu-section-title label-xs-semibold">View</span>
-                    <label className="script-menu-switch-row label-xs-semibold">
-                      <span className="script-menu-switch-label">Show changes</span>
-                      <input type="checkbox" checked={showChanges} onChange={(event) => setShowChanges(event.target.checked)} />
-                      <span className="script-menu-switch-track" aria-hidden="true">
-                        <span className="script-menu-switch-thumb" />
-                      </span>
-                    </label>
-                  </div>
-                  <span className="script-menu-divider" aria-hidden="true" />
-                  <div className="script-menu-section" aria-label="Script">
-                    <span className="script-menu-section-title label-xs-semibold">Script</span>
-                    <button className="label-xs-semibold" type="button" onClick={createNewScriptDocument}>
-                      New script
-                    </button>
-                    <button className="label-xs-semibold" type="button" onClick={setScriptInternal}>
-                      Set as Internal
-                    </button>
-                  </div>
-                </div>
               ) : null}
             </div>
             <span className="script-save-note label-xs">
@@ -1994,24 +1949,32 @@ function VersionsPanel({
   isCustomer,
   previewVersionId,
   selectedVersionId,
+  showChanges,
   versionMetaById,
   versions,
+  onCreateScript,
   onDeleteVersion,
   onDuplicateVersion,
   onRenameVersion,
   onRestoreVersion,
+  onSetInternal,
+  onToggleShowChanges,
   onViewVersion,
 }: {
   entries: DocHistoryEntry[];
   isCustomer: boolean;
   previewVersionId: string | null;
   selectedVersionId: string;
+  showChanges: boolean;
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
+  onCreateScript: () => void;
   onDeleteVersion: (versionId: string) => void;
   onDuplicateVersion: (versionId: string) => void;
   onRenameVersion: (versionId: string, nextLabel: string) => void;
   onRestoreVersion: (versionId: string) => void;
+  onSetInternal: () => void;
+  onToggleShowChanges: (showChanges: boolean) => void;
   onViewVersion: (versionId: string) => void;
 }) {
   const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
@@ -2077,10 +2040,20 @@ function VersionsPanel({
     onDuplicateVersion(versionId);
   };
 
+  const setInternalFromMenu = () => {
+    setOpenVersionMenuId(null);
+    onSetInternal();
+  };
+
   return (
     <aside className="script-versions-panel" aria-label="Versions">
       <header className="script-versions-panel-header">
         <h2>Versions</h2>
+        {!isCustomer ? (
+          <Button size="S" type="button" variant="secondary" onClick={onCreateScript}>
+            New script
+          </Button>
+        ) : null}
       </header>
 
       <div className="script-versions-panel-content">
@@ -2179,6 +2152,14 @@ function VersionsPanel({
                         </button>
                         {isVersionMenuOpen ? (
                           <span className="script-version-row-menu">
+                            <label className="script-menu-switch-row label-xs-semibold">
+                              <span className="script-menu-switch-label">Show changes</span>
+                              <input type="checkbox" checked={showChanges} onChange={(event) => onToggleShowChanges(event.target.checked)} />
+                              <span className="script-menu-switch-track" aria-hidden="true">
+                                <span className="script-menu-switch-thumb" />
+                              </span>
+                            </label>
+                            <span className="script-menu-divider" aria-hidden="true" />
                             <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
                               Restore
                             </button>
@@ -2187,6 +2168,9 @@ function VersionsPanel({
                             </button>
                             <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
                               Rename
+                            </button>
+                            <button className="label-xs-semibold" type="button" onClick={setInternalFromMenu}>
+                              Set as Internal
                             </button>
                             <button
                               className="delete label-xs-semibold"
