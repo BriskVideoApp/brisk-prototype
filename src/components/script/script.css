@@ -597,6 +597,10 @@
   background: color-mix(in srgb, var(--brisk-extra-stars) 16%, var(--brisk-white));
 }
 
+.script-row.empty-state-row {
+  padding-top: var(--brisk-space-xl);
+}
+
 .script-row-gutter {
   position: relative;
   display: flex;
@@ -754,6 +758,27 @@
 .script-row-words {
   grid-column: 2;
   border-right: 0;
+}
+
+.script-empty-row-copy {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-s);
+  margin-bottom: var(--brisk-space-l);
+}
+
+.script-empty-row-copy h3,
+.script-empty-row-copy p {
+  margin: 0;
+}
+
+.script-empty-row-copy h3 {
+  color: var(--brisk-text-primary);
+}
+
+.script-empty-row-copy p {
+  max-width: 520px;
+  color: var(--brisk-text-secondary);
 }
 
 .script-row.visuals-visible .script-row-visuals {

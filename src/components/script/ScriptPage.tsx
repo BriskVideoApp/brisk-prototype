@@ -1760,12 +1760,12 @@ function AvScriptEditor({
           anchorType: "row",
           anchorRef: row.id,
         };
-  const hasAnchor = rowComments.length > 0 || row.media.length > 0;
-        const shouldShowPlaceholder = isEmptyScript && index === 0 && !hasTypedThisSession;
+        const hasAnchor = rowComments.length > 0 || row.media.length > 0;
+        const shouldShowEmptyState = isEmptyScript && index === 0 && !hasTypedThisSession;
 
         return (
           <div
-            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
+            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""} ${shouldShowEmptyState ? "empty-state-row" : ""}`}
             draggable
             key={row.id}
             ref={(node) => registerRowRef(row.id, node)}
@@ -1798,9 +1798,23 @@ function AvScriptEditor({
               </span>
             </div>
             <div className="script-row-words">
+              {shouldShowEmptyState ? (
+                <div className="script-empty-row-copy">
+                  <h3 className="label-s-semibold">Start the script</h3>
+                  <p className="paragraph-s">A fresh script is ready for the opening voiceover, interview beat or screen direction.</p>
+                  <Button
+                    size="S"
+                    type="button"
+                    variant="primary"
+                    onClick={() => wordInputRefs.current.get(row.id)?.focus()}
+                  >
+                    Start writing
+                  </Button>
+                </div>
+              ) : null}
               <textarea
                 className={`script-cell-input words label-s ${rowComments.some((comment) => comment.anchor.kind === "selection") ? "has-selection-comment" : ""}`}
-                placeholder={shouldShowPlaceholder ? "Start typing. Press Enter for a new line." : ""}
+                placeholder={shouldShowEmptyState ? "Write the opening line..." : ""}
                 readOnly={isApproved}
                 ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
                 rows={1}
