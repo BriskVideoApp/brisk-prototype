@@ -69,6 +69,11 @@ type SelectionState = {
   selectedRowIds: Set<string>;
 };
 
+type TextRange = {
+  start: number;
+  end: number;
+};
+
 type FloatingToolbarState = {
   visible: boolean;
   rowId: string | null;
@@ -642,9 +647,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const captureSelectionAnchor = (row: ScriptRow, target: HTMLTextAreaElement) => {
-    const selectedText = target.value.slice(target.selectionStart, target.selectionEnd).trim();
+    const selection = getTrimmedSelection(target);
 
-    if (!selectedText) {
+    if (!selection) {
       setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
       return;
     }
@@ -655,7 +660,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       kind: "selection",
       label: getRowLabel(row.id, rows),
       rowId: row.id,
-      snippet: selectedText.length > 44 ? `${selectedText.slice(0, 44)}...` : selectedText,
+      snippet: selection.text.length > 44 ? `${selection.text.slice(0, 44)}...` : selection.text,
+      range: { start: selection.start, end: selection.end },
     });
     setOpenCommentRowId(row.id);
     setIsCommentComposerOpen(true);
@@ -663,9 +669,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const captureDocSelectionAnchor = (target: HTMLTextAreaElement) => {
-    const selectedText = target.value.slice(target.selectionStart, target.selectionEnd).trim();
+    const selection = getTrimmedSelection(target);
 
-    if (!selectedText) {
+    if (!selection) {
       setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
       return;
     }
@@ -675,7 +681,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setActiveCommentAnchor({
       kind: "selection",
       label: "Document",
-      snippet: selectedText.length > 44 ? `${selectedText.slice(0, 44)}...` : selectedText,
+      snippet: selection.text.length > 44 ? `${selection.text.slice(0, 44)}...` : selection.text,
     });
     setIsCommentComposerOpen(true);
     setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
@@ -1762,6 +1768,7 @@ function AvScriptEditor({
         };
         const hasAnchor = rowComments.length > 0 || row.media.length > 0;
         const shouldShowEmptyState = isEmptyScript && index === 0 && !hasTypedThisSession;
+        const selectionHighlightRanges = getSelectionHighlightRanges(row, rowComments);
 
         return (
           <div
@@ -1812,8 +1819,11 @@ function AvScriptEditor({
                   </Button>
                 </div>
               ) : null}
+              {selectionHighlightRanges.length > 0 ? (
+                <SelectionHighlightOverlay ranges={selectionHighlightRanges} words={row.words} />
+              ) : null}
               <textarea
-                className={`script-cell-input words label-s ${rowComments.some((comment) => comment.anchor.kind === "selection") ? "has-selection-comment" : ""}`}
+                className="script-cell-input words label-s"
                 placeholder={shouldShowEmptyState ? "Write the opening line..." : ""}
                 readOnly={isApproved}
                 ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
@@ -2100,6 +2110,34 @@ function MediaThumb({ mediaItem }: { mediaItem: ScriptMediaItem }) {
   );
 }
 
+function SelectionHighlightOverlay({ ranges, words }: { ranges: TextRange[]; words: string }) {
+  const parts: Array<{ highlighted: boolean; key: string; text: string }> = [];
+  let cursor = 0;
+
+  ranges.forEach((range, index) => {
+    if (range.start > cursor) {
+      parts.push({ highlighted: false, key: `copy-${index}`, text: words.slice(cursor, range.start) });
+    }
+
+    parts.push({ highlighted: true, key: `highlight-${index}`, text: words.slice(range.start, range.end) });
+    cursor = range.end;
+  });
+
+  if (cursor < words.length) {
+    parts.push({ highlighted: false, key: "copy-tail", text: words.slice(cursor) });
+  }
+
+  return (
+    <div className="script-selection-highlight-overlay label-s" aria-hidden="true">
+      {parts.map((part) => (
+        <span className={part.highlighted ? "script-selection-highlight-mark" : undefined} key={part.key}>
+          {part.text}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function RowChange({ change }: { change: NonNullable<ScriptRow["change"]> }) {
   return (
     <p className="script-row-change label-xs">
@@ -2345,7 +2383,10 @@ function cloneRow(row: ScriptRow): ScriptRow {
 function cloneComments(comments: ScriptComment[]) {
   return comments.map((comment) => ({
     ...comment,
-    anchor: { ...comment.anchor },
+    anchor: {
+      ...comment.anchor,
+      range: comment.anchor.range ? { ...comment.anchor.range } : undefined,
+    },
     reactions: comment.reactions?.map((reaction) => ({
       ...reaction,
       selectedBy: [...reaction.selectedBy],
@@ -2358,6 +2399,26 @@ function cloneComments(comments: ScriptComment[]) {
       })),
     })),
   }));
+}
+
+function getTrimmedSelection(target: HTMLTextAreaElement) {
+  const rawStart = target.selectionStart;
+  const rawEnd = target.selectionEnd;
+  const rawSelection = target.value.slice(rawStart, rawEnd);
+  const text = rawSelection.trim();
+
+  if (!text) {
+    return null;
+  }
+
+  const leadingTrimLength = rawSelection.length - rawSelection.trimStart().length;
+  const trailingTrimLength = rawSelection.length - rawSelection.trimEnd().length;
+
+  return {
+    end: rawEnd - trailingTrimLength,
+    start: rawStart + leadingTrimLength,
+    text,
+  };
 }
 
 function createEmptyRow(index: number): ScriptRow {
@@ -2408,6 +2469,98 @@ function groupCommentsByRow(comments: ScriptComment[]) {
   });
 
   return commentsByRow;
+}
+
+function getSelectionHighlightRanges(row: ScriptRow, comments: ScriptComment[]) {
+  const ranges: TextRange[] = [];
+
+  comments.forEach((comment) => {
+    if (comment.anchor.kind !== "selection") {
+      return;
+    }
+
+    const range = getValidTextRange(row.words, comment.anchor.range);
+
+    if (range) {
+      ranges.push(range);
+      return;
+    }
+
+    const fallbackRange = findSnippetRange(row.words, comment.anchor.snippet);
+
+    if (fallbackRange) {
+      ranges.push(fallbackRange);
+    }
+  });
+
+  return mergeTextRanges(ranges);
+}
+
+function getValidTextRange(value: string, range?: TextRange) {
+  if (!range || range.start < 0 || range.end <= range.start || range.end > value.length) {
+    return null;
+  }
+
+  return range;
+}
+
+function findSnippetRange(value: string, snippet?: string) {
+  const normalisedSnippet = normaliseSelectionSnippet(snippet);
+
+  if (!normalisedSnippet) {
+    return null;
+  }
+
+  const directIndex = value.indexOf(normalisedSnippet);
+
+  if (directIndex !== -1) {
+    return { start: directIndex, end: directIndex + normalisedSnippet.length };
+  }
+
+  const lowerValue = value.toLocaleLowerCase();
+  const lowerSnippet = normalisedSnippet.toLocaleLowerCase();
+  const insensitiveIndex = lowerValue.indexOf(lowerSnippet);
+
+  if (insensitiveIndex === -1) {
+    return null;
+  }
+
+  return { start: insensitiveIndex, end: insensitiveIndex + normalisedSnippet.length };
+}
+
+function normaliseSelectionSnippet(snippet?: string) {
+  if (!snippet) {
+    return "";
+  }
+
+  const withoutTruncation = snippet.trim().replace(/\.\.\.$/u, "").trim();
+
+  if (
+    (withoutTruncation.startsWith("\"") && withoutTruncation.endsWith("\"")) ||
+    (withoutTruncation.startsWith("'") && withoutTruncation.endsWith("'"))
+  ) {
+    return withoutTruncation.slice(1, -1).trim();
+  }
+
+  return withoutTruncation;
+}
+
+function mergeTextRanges(ranges: TextRange[]) {
+  const sortedRanges = [...ranges].sort((first, second) => first.start - second.start || first.end - second.end);
+  const mergedRanges: TextRange[] = [];
+
+  sortedRanges.forEach((range) => {
+    const previousRange = mergedRanges[mergedRanges.length - 1];
+
+    if (!previousRange || range.start > previousRange.end) {
+      mergedRanges.push({ ...range });
+      return;
+    }
+
+    previousRange.end = Math.max(previousRange.end, range.end);
+  });
+
+  return mergedRanges;
 }
 
 function getRowsInRange(rows: ScriptRow[], firstRowId: string, secondRowId: string) {

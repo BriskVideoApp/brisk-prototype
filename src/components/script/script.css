@@ -836,7 +836,33 @@
 }
 
 .script-cell-input.words {
+  position: relative;
+  z-index: 1;
   font-weight: 400;
+}
+
+.script-selection-highlight-overlay {
+  position: absolute;
+  top: 0;
+  right: var(--brisk-space-xl);
+  left: var(--brisk-space-xl);
+  z-index: 0;
+  min-height: 24px;
+  color: transparent;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+
+.script-selection-highlight-mark {
+  color: transparent;
+  text-decoration-line: underline;
+  text-decoration-color: var(--brisk-extra-stars);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
 }
 
 .script-cell-input.visuals {
@@ -859,13 +885,6 @@
 .script-cell-input:read-only,
 .script-doc-textarea:read-only {
   color: var(--brisk-text-secondary);
-}
-
-.script-cell-input.has-selection-comment {
-  text-decoration-line: underline;
-  text-decoration-color: var(--brisk-extra-stars);
-  text-decoration-thickness: 3px;
-  text-underline-offset: 4px;
 }
 
 .script-row-change {

@@ -60,6 +60,10 @@ export type ScriptCommentAnchor = {
   label: string;
   rowId?: string;
   snippet?: string;
+  range?: {
+    start: number;
+    end: number;
+  };
 };
 
 export type ScriptComment = {
