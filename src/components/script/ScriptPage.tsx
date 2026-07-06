@@ -121,7 +121,7 @@ const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
 export function ScriptPage({ initialRole }: ScriptPageProps) {
   const latestVersion = scriptVersions[scriptVersions.length - 1];
-  const [role] = useState<ScriptRole>(initialRole);
+  const role = initialRole;
   const isCustomer = role === "customer";
   const [layoutMode, setLayoutMode] = useState<ScriptLayoutMode>("av");
   const [density] = useState<ScriptDensity>("compact");
