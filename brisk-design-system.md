@@ -42,6 +42,11 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 - Known issue: text is not vertically centred inside small tag components. The kit applies negative spacing as a workaround. Keep this workaround in place for tags.
 - Heading and body scale: use kit text styles only.
 
+### Terminology
+- "Stage icons" = the 7 workflow icons (Brief, Script, Shoot, Storyboard, Media, Edit, Masters). Rendered exclusively by StageChip.
+- "DS icons" (or "General UI icons") = everything else. Imported via the DsIcon component.
+- Do NOT use the term "Flow icons" - it was legacy shorthand that caused confusion between the two categories. If someone (human or AI) refers to Flow icons, ask them to clarify which of the two above they mean.
+
 ## Type rendering
 
 - Do NOT set `text-rendering: geometricPrecision` anywhere.

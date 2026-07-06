@@ -319,13 +319,8 @@ export function CommentRail({
           body={composerBody}
           canPostInternal={canPostInternal}
           isPostingMenuOpen={isPostingMenuOpen}
-          users={users}
           visibility={composerVisibility}
           onBodyChange={setComposerBody}
-          onMentionUser={(user) => {
-            const spacer = composerBody.trim() ? " " : "";
-            setComposerBody(`${composerBody}${spacer}@${user.name} `);
-          }}
           onSetVisibility={(visibility) => {
             setComposerVisibility(visibility);
             setIsPostingMenuOpen(false);
@@ -388,13 +383,8 @@ export function CommentRail({
           body={composerBody}
           canPostInternal={canPostInternal}
           isPostingMenuOpen={isPostingMenuOpen}
-          users={users}
           visibility={composerVisibility}
           onBodyChange={setComposerBody}
-          onMentionUser={(user) => {
-            const spacer = composerBody.trim() ? " " : "";
-            setComposerBody(`${composerBody}${spacer}@${user.name} `);
-          }}
           onSetVisibility={(visibility) => {
             setComposerVisibility(visibility);
             setIsPostingMenuOpen(false);
@@ -433,8 +423,8 @@ function CommentFilters({
       : [
           { label: "All", value: "all" },
           { label: "Unresolved", value: "unresolved" },
-          { label: "Internal", value: "internal" },
-          { label: "External", value: "external" },
+          { label: "Team", value: "internal" },
+          { label: "Client", value: "external" },
         ];
 
   return (
@@ -683,10 +673,8 @@ function CommentComposer({
   body,
   canPostInternal,
   isPostingMenuOpen,
-  users,
   visibility,
   onBodyChange,
-  onMentionUser,
   onSetVisibility,
   onSubmit,
   onTogglePostingMenu,
@@ -695,10 +683,8 @@ function CommentComposer({
   body: string;
   canPostInternal: boolean;
   isPostingMenuOpen: boolean;
-  users: User[];
   visibility: CommentVisibility;
   onBodyChange: (body: string) => void;
-  onMentionUser: (user: User) => void;
   onSetVisibility: (visibility: CommentVisibility) => void;
   onSubmit: () => void;
   onTogglePostingMenu: () => void;
@@ -721,15 +707,15 @@ function CommentComposer({
           disabled={!canPostInternal}
           onClick={canPostInternal ? onTogglePostingMenu : undefined}
         >
-          {isInternal ? "Posting internally" : "Posting externally"} {canPostInternal ? <DsIcon name="caret-down" size={12} /> : null}
+          {isInternal ? "Posting to Team" : "Posting to Client"} {canPostInternal ? <DsIcon name="caret-down" size={12} /> : null}
         </button>
         {isPostingMenuOpen ? (
           <div className="posting-menu">
             <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
-              Posting externally
+              Posting to Client
             </button>
             <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
-              Posting internally
+              Posting to Team
             </button>
           </div>
         ) : null}
@@ -743,13 +729,6 @@ function CommentComposer({
           onChange={(event) => onBodyChange(event.target.value)}
           onKeyDown={submitWithKeyboard}
         />
-        <div className="mention-row" aria-label="Mention team members">
-          {users.slice(0, 4).map((user) => (
-            <button className="mention-chip label-xs-semibold" type="button" key={user.id} onClick={() => onMentionUser(user)}>
-              @{user.name.split(" ")[0]}
-            </button>
-          ))}
-        </div>
         <div className="composer-toolbar">
           <div className="composer-tools">
             <button type="button" data-tooltip="Attach file" aria-label="Attach file">
@@ -813,10 +792,10 @@ function VisibilityToggle({
       className={`visibility-toggle label-xs-semibold ${isInternal ? "internal" : "external"}`}
       type="button"
       disabled={!canToggle}
-      data-tooltip={canToggle ? (isInternal ? "Switch to external" : "Switch to internal") : undefined}
+      data-tooltip={canToggle ? (isInternal ? "Switch to Client" : "Switch to Team") : undefined}
       onClick={onToggle}
     >
-      {isInternal ? "Internal" : "External"}
+      {isInternal ? "Team" : "Client"}
     </button>
   );
 }

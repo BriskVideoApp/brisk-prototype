@@ -70,6 +70,7 @@ export type ScriptComment = {
   createdAgo: string;
   body: string;
   resolved: boolean;
+  unreadMentionUserIds?: string[];
   reactions?: Reaction[];
   replies: Array<{
     id: string;
@@ -381,6 +382,27 @@ export const initialScriptComments: ScriptComment[] = [
     createdAgo: "38m",
     body: "Team note: keep this phrase. It maps neatly to the product promise.",
     resolved: false,
+    unreadMentionUserIds: ["user-tom"],
+    replies: [],
+  },
+  {
+    id: "script-comment-row-03-resolved-01",
+    authorId: "user-jess",
+    visibility: "external",
+    anchor: { kind: "row", label: "Row 03", rowId: "row-03" },
+    createdAgo: "1d",
+    body: "Planning desk direction works well here. Resolved after the latest pass.",
+    resolved: true,
+    replies: [],
+  },
+  {
+    id: "script-comment-row-03-resolved-02",
+    authorId: "user-priya",
+    visibility: "internal",
+    anchor: { kind: "row", label: "Row 03", rowId: "row-03" },
+    createdAgo: "20h",
+    body: "Brand board reference is now aligned with the treatment.",
+    resolved: true,
     replies: [],
   },
 ];

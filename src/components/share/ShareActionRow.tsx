@@ -19,6 +19,7 @@ export type ShareActionRowProps = {
   projectName?: string;
   studioName?: string;
   customerName?: string;
+  onApprove?: () => void;
 };
 
 type ExpandedSection = "linkOpens" | "access";
@@ -52,6 +53,7 @@ export function ShareActionRow({
   projectName = "Launch Film - Sales Narrative",
   studioName = "Brisk Studios",
   customerName = "Avery Taylor",
+  onApprove,
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
@@ -154,6 +156,11 @@ export function ShareActionRow({
   const approveProject = () => {
     setIsPopoverOpen(false);
     setIsRequestReviewOpen(false);
+    if (onApprove) {
+      onApprove();
+      return;
+    }
+
     showActionToast("Approved");
   };
 

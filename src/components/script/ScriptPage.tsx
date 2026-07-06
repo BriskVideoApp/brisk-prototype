@@ -11,14 +11,16 @@ import {
   type MouseEvent as ReactMouseEvent,
   type MutableRefObject,
 } from "react";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
   scriptAiFixtures,
   scriptBrief,
   scriptGenres,
-  scriptPresence,
   scriptUsers,
   scriptVersions,
   type ScriptComment,
@@ -40,7 +42,6 @@ const layoutModes: Array<{ value: ScriptLayoutMode; label: string }> = [
   { value: "av", label: "Script" },
   { value: "simple", label: "Simple Doc" },
 ];
-const densityModes: ScriptDensity[] = ["compact", "comfortable"];
 const optionalSubtabs: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }> = [
   { id: "transcripts", label: "Transcripts" },
   { id: "notes", label: "Notes" },
@@ -52,6 +53,16 @@ const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Para
   { type: "stock", label: "Stock footage search", icon: "image-square" },
   { type: "link", label: "Add link", icon: "link" },
 ];
+const scriptSurfaceId = "mock-project-script";
+const emptyScriptRowId = "script-empty-row";
+const emptyScriptPlaceholderRow: ScriptRow = {
+  id: emptyScriptRowId,
+  words: "",
+  visuals: "",
+  durationSeconds: 0,
+  elementType: "action",
+  media: [],
+};
 
 type SelectionState = {
   lastRowId: string | null;
@@ -73,6 +84,22 @@ type DocHistoryEntry = {
   time: string;
 };
 
+type ScriptVersionMeta = {
+  isMaster: boolean;
+};
+
+type ScriptRowUniversalAnchor = {
+  surfaceType: "script";
+  surfaceId: string;
+  anchorType: "row";
+  anchorRef: string;
+};
+
+type FloatingCommentPosition = {
+  left: number;
+  top: number;
+};
+
 type ScriptPageProps = {
   initialRole: ScriptRole;
 };
@@ -82,16 +109,24 @@ const overallCommentAnchor: ScriptCommentAnchor = {
   label: "Overall",
 };
 
+const defaultVersionMeta: ScriptVersionMeta = {
+  isMaster: false,
+};
+const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
+
 export function ScriptPage({ initialRole }: ScriptPageProps) {
   const latestVersion = scriptVersions[scriptVersions.length - 1];
   const [role] = useState<ScriptRole>(initialRole);
   const isCustomer = role === "customer";
   const [layoutMode, setLayoutMode] = useState<ScriptLayoutMode>("av");
-  const [density, setDensity] = useState<ScriptDensity>("compact");
+  const [density] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
   const [isScriptApproved, setIsScriptApproved] = useState(false);
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
+  const [versionMetaById, setVersionMetaById] = useState<Record<string, ScriptVersionMeta>>(() =>
+    createInitialVersionMeta(scriptVersions, latestVersion.id),
+  );
   const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
   const [rows, setRows] = useState<ScriptRow[]>(() => cloneRows(latestVersion.rows));
   const [rowHistory, setRowHistory] = useState<ScriptRow[][]>(() => [cloneRows(latestVersion.rows)]);
@@ -104,14 +139,17 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [comments, setComments] = useState<ScriptComment[]>(() => cloneComments(initialScriptComments));
   const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
+  const [floatingCommentPosition, setFloatingCommentPosition] = useState<FloatingCommentPosition | null>(null);
   const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
-  const [isDocHistoryOpen, setIsDocHistoryOpen] = useState(false);
+  const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
+  const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
+  const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
   const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
-  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const [areIntroCardsDismissed, setAreIntroCardsDismissed] = useState(false);
-  const [alwaysHideIntroCards, setAlwaysHideIntroCards] = useState(false);
-  const [hasEditedThisSession, setHasEditedThisSession] = useState(false);
+  const [isScriptMenuOpen, setIsScriptMenuOpen] = useState(false);
+  const [areVisualsVisible, setAreVisualsVisible] = useState(false);
+  const [isScriptInternal, setIsScriptInternal] = useState(false);
+  const [, setHasEditedThisSession] = useState(false);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
   const [confirmingDeleteRowId, setConfirmingDeleteRowId] = useState<string | null>(null);
   const [highlightedRowId, setHighlightedRowId] = useState<string | null>(null);
@@ -121,10 +159,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isApprovedEditModalOpen, setIsApprovedEditModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [saveState, setSaveState] = useState<"Saved" | "Saving...">("Saved");
+  const [lastSavedAt, setLastSavedAt] = useState(initialSavedAt);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
-  const [showAiToCustomer, setShowAiToCustomer] = useState(scriptBrief.showAiToCustomer);
+  const [showAiToCustomer] = useState(scriptBrief.showAiToCustomer);
   const [aiSources, setAiSources] = useState(["Brief", "Transcript v2", "Past scripts"]);
   const [aiResponse, setAiResponse] = useState<string>(scriptAiFixtures[0]);
   const [aiGenre, setAiGenre] = useState<ScriptGenre>(scriptBrief.genre);
@@ -144,14 +183,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const simpleDocRef = useRef<HTMLTextAreaElement | null>(null);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
-  const activeVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1];
   const visibleRows = rows.filter((row) => !row.deletedMeta);
   const docValue = visibleRows.map((row) => row.words).join("\n\n");
   const totalWords = visibleRows.reduce((total, row) => total + countWords(row.words), 0);
-  const approxSeconds = Math.round(totalWords / 2.5);
+  const actualDurationSeconds = Math.ceil((totalWords / 150) * 60);
+  const targetDurationSeconds = scriptBrief.targetDurationSeconds;
   const targetWords = scriptBrief.targetDurationSeconds * 2.5;
   const wordDelta = Math.abs(totalWords - targetWords);
   const wordState = wordDelta <= 10 ? "good" : wordDelta <= 25 ? "warning" : "danger";
+  const durationDeltaText = wordState === "good" ? "" : formatFooterDelta(actualDurationSeconds - targetDurationSeconds, totalWords - targetWords);
+  const wordStatusIcon = wordState === "good" ? "check" : "alert-triangle";
   const visibleComments = useMemo(
     () => (isCustomer ? comments.filter((comment) => comment.visibility === "external") : comments),
     [comments, isCustomer],
@@ -160,7 +201,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
   const shouldShowAi = !isCustomer || showAiToCustomer;
   const enabledSubtabLabels = optionalSubtabs.filter((tab) => enabledSubtabs.has(tab.id));
-  const shouldShowIntroCards = layoutMode === "av" && !areIntroCardsDismissed && !alwaysHideIntroCards;
+  const hasVisualsContent = visibleRows.some((row) => row.visuals.trim() || row.media.length > 0);
+  const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1] ?? latestVersion;
+  const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
+  const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
+  const isPreviewingVersion = previewVersion !== null;
 
   useEffect(() => {
     if (isCustomer) {
@@ -232,6 +277,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   });
 
   const guardEditable = () => {
+    if (isPreviewingVersion) {
+      return false;
+    }
+
     if (!isScriptApproved) {
       return true;
     }
@@ -249,11 +298,22 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     saveTimeoutRef.current = window.setTimeout(() => {
       setSaveState("Saved");
+      setLastSavedAt(new Date());
     }, 650);
   };
 
   const pushRows = (nextRows: ScriptRow[]) => {
     setRows(nextRows);
+    setVersions((currentVersions) =>
+      currentVersions.map((version) =>
+        version.id === selectedVersionId
+          ? {
+              ...version,
+              rows: cloneRows(nextRows),
+            }
+          : version,
+      ),
+    );
     setRowHistory((currentHistory) => {
       const trimmedHistory = currentHistory.slice(0, historyIndex + 1);
       const nextHistory = [...trimmedHistory, cloneRows(nextRows)];
@@ -299,8 +359,21 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
     setHasEditedThisSession(true);
 
-    updateRows((currentRows) =>
-      currentRows.map((row) =>
+    updateRows((currentRows) => {
+      if (currentRows.length === 0 && rowId === emptyScriptRowId) {
+        return [
+          {
+            ...emptyScriptPlaceholderRow,
+            [field]: value,
+            change: {
+              added: field === "words" ? "Edited just now" : undefined,
+              author: "Tom",
+            },
+          },
+        ];
+      }
+
+      return currentRows.map((row) =>
         row.id === rowId
           ? {
               ...row,
@@ -312,14 +385,18 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               },
             }
           : row,
-      ),
-    );
+      );
+    });
+  };
+
+  const focusRowWords = (rowId: string) => {
+    window.setTimeout(() => wordInputRefs.current.get(rowId)?.focus(), 0);
   };
 
   const addRowAfter = (rowId: string | null) => {
-    updateRows((currentRows) => {
-      const newRow = createEmptyRow(currentRows.length + 1);
+    const newRow = createEmptyRow(rows.length + 1);
 
+    updateRows((currentRows) => {
       if (!rowId) {
         return [...currentRows, newRow];
       }
@@ -332,6 +409,22 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       return [...currentRows.slice(0, rowIndex + 1), newRow, ...currentRows.slice(rowIndex + 1)];
     });
+    focusRowWords(newRow.id);
+  };
+
+  const addRowBefore = (rowId: string) => {
+    const newRow = createEmptyRow(rows.length + 1);
+
+    updateRows((currentRows) => {
+      const rowIndex = currentRows.findIndex((row) => row.id === rowId);
+
+      if (rowIndex === -1) {
+        return [newRow, ...currentRows];
+      }
+
+      return [...currentRows.slice(0, rowIndex), newRow, ...currentRows.slice(rowIndex)];
+    });
+    focusRowWords(newRow.id);
   };
 
   const deleteEmptyRow = (row: ScriptRow) => {
@@ -347,20 +440,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
   const addDocHistoryEntry = (entry: Omit<DocHistoryEntry, "id">) => {
     setDocHistoryEntries((currentEntries) => [
-      {
-        ...entry,
-        id: `doc-history-${Date.now()}-${currentEntries.length}`,
-      },
+      createDocHistoryEntry(entry, currentEntries.length),
       ...currentEntries,
     ]);
-  };
-
-  const openDocHistory = () => {
-    setIsDocHistoryOpen(true);
-    setIsOptionsOpen(false);
-    setOpenCommentRowId(null);
-    setIsCommentComposerOpen(false);
-    setIsCommentsOverviewOpen(false);
   };
 
   const deleteSelectedRows = () => {
@@ -577,6 +659,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     });
     setOpenCommentRowId(row.id);
     setIsCommentComposerOpen(true);
+    setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
   };
 
   const captureDocSelectionAnchor = (target: HTMLTextAreaElement) => {
@@ -595,6 +678,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       snippet: selectedText.length > 44 ? `${selectedText.slice(0, 44)}...` : selectedText,
     });
     setIsCommentComposerOpen(true);
+    setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
   };
 
   const addMediaItem = (rowId: string, type: ScriptMediaType) => {
@@ -635,24 +719,231 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setDropRowId(null);
   };
 
-  const selectVersion = (versionId: string) => {
+  const loadRowsFromVersion = (version: ScriptVersion) => {
+    const nextRows = cloneRows(version.rows);
+
+    setRows(nextRows);
+    setRowHistory([cloneRows(nextRows)]);
+    setHistoryIndex(0);
+    setHasTypedThisSession(nextRows.some((row) => row.words.trim() || row.visuals.trim()));
+    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+  };
+
+  const previewVersionForReadOnly = (versionId: string) => {
+    const version = versions.find((item) => item.id === versionId);
+
+    if (!version || version.id === selectedVersionId) {
+      return;
+    }
+
+    setPreviewVersionId(version.id);
+    loadRowsFromVersion(version);
+    setSaveState("Saved");
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const returnToCurrentVersion = () => {
+    loadRowsFromVersion(selectedVersion);
+    setPreviewVersionId(null);
+    setRestoreCandidateId(null);
+  };
+
+  const createScriptVersion = (label: string, nextRows: ScriptRow[], snapshotName: string): ScriptVersion => ({
+    id: `${label}-${Date.now()}`,
+    label,
+    snapshotName,
+    approvedSnapshot: false,
+    createdBy: role === "customer" ? "Customer" : "Studio",
+    createdAt: formatSnapshotDate(new Date()),
+    rows: cloneRows(nextRows),
+  });
+
+  const activateVersion = (version: ScriptVersion, nextRows: ScriptRow[], message: string) => {
+    setSelectedVersionId(version.id);
+    setRows(cloneRows(nextRows));
+    setRowHistory([cloneRows(nextRows)]);
+    setHistoryIndex(0);
+    setHasTypedThisSession(nextRows.some((row) => row.words.trim() || row.visuals.trim()));
+    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+    setSaveState("Saved");
+    setLastSavedAt(new Date());
+    setToastMessage(message);
+    setPreviewVersionId(null);
+    setRestoreCandidateId(null);
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const createNewScriptDocument = () => {
+    const nextRows: ScriptRow[] = [];
+
+    setRows(cloneRows(nextRows));
+    setRowHistory([cloneRows(nextRows)]);
+    setHistoryIndex(0);
+    setHasTypedThisSession(false);
+    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+    addDocHistoryEntry({
+      title: "Tom created a new script",
+      detail: "Started a fresh script document.",
+      actor: "Tom",
+      time: "Just now",
+    });
+    markSaving();
+    setToastMessage("New script created");
+    setPreviewVersionId(null);
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const duplicateVersion = (versionId: string) => {
+    const sourceVersion = versions.find((version) => version.id === versionId);
+
+    if (!sourceVersion) {
+      return;
+    }
+
+    const nextLabel = getNextVersionLabel(versions);
+    const nextVersion = createScriptVersion(nextLabel, sourceVersion.rows, `${getVersionHistoryBaseTitle(sourceVersion)} copy`);
+
+    setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [nextVersion.id]: { ...defaultVersionMeta },
+    }));
+    addDocHistoryEntry({
+      title: `Tom duplicated ${getVersionHistoryBaseTitle(sourceVersion)}`,
+      detail: "Duplicated the selected script version.",
+      actor: "Tom",
+      time: "Just now",
+    });
+    activateVersion(nextVersion, sourceVersion.rows, "Script duplicated");
+  };
+
+  const deleteVersion = (versionId: string) => {
     const version = versions.find((item) => item.id === versionId);
 
     if (!version) {
       return;
     }
 
-    setSelectedVersionId(version.id);
-    setRows(cloneRows(version.rows));
-    setRowHistory([cloneRows(version.rows)]);
-    setHistoryIndex(0);
-    setSaveState("Saved");
-    setToastMessage(`${version.snapshotName} restored`);
+    if (version.approvedSnapshot) {
+      setToastMessage("Approved versions can't be deleted. Un-approve first.");
+      setIsVersionsPanelOpen(false);
+      setIsScriptMenuOpen(false);
+      return;
+    }
+
+    if (versions.length <= 1) {
+      setToastMessage("Keep at least one script version");
+      setIsVersionsPanelOpen(false);
+      setIsScriptMenuOpen(false);
+      return;
+    }
+
+    const selectedIndex = versions.findIndex((currentVersion) => currentVersion.id === versionId);
+    const fallbackVersion = versions[selectedIndex - 1] ?? versions[selectedIndex + 1] ?? versions[0];
+
+    setVersions((currentVersions) => currentVersions.filter((currentVersion) => currentVersion.id !== versionId));
+    setVersionMetaById((currentMeta) => {
+      const nextMeta = { ...currentMeta };
+      delete nextMeta[versionId];
+      return nextMeta;
+    });
+    if (versionId === selectedVersionId) {
+      activateVersion(fallbackVersion, fallbackVersion.rows, "Script deleted");
+    } else {
+      if (previewVersionId === versionId) {
+        returnToCurrentVersion();
+      }
+
+      setToastMessage("Script deleted");
+      setIsVersionsPanelOpen(false);
+      setIsScriptMenuOpen(false);
+    }
+  };
+
+  const renameVersion = (versionId: string) => {
+    const version = versions.find((item) => item.id === versionId);
+
+    if (!version) {
+      return;
+    }
+
+    const nextLabel = window.prompt("Rename script", version.label);
+    const trimmedLabel = nextLabel?.trim();
+
+    if (!trimmedLabel) {
+      setIsScriptMenuOpen(false);
+      return;
+    }
+
+    setVersions((currentVersions) =>
+      currentVersions.map((currentVersion) =>
+        currentVersion.id === versionId
+          ? {
+              ...currentVersion,
+              label: trimmedLabel,
+              snapshotName: `${trimmedLabel} - ${getVersionMarkerText(currentVersion, versionMetaById[currentVersion.id] ?? defaultVersionMeta)}`,
+            }
+          : currentVersion,
+      ),
+    );
+    setToastMessage("Script renamed");
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const setScriptInternal = () => {
+    setIsScriptInternal(true);
+    setToastMessage(isScriptInternal ? "Script is already internal" : "Set as Internal");
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const openRestoreConfirmation = (versionId: string) => {
+    const version = versions.find((item) => item.id === versionId);
+
+    if (!version || version.id === selectedVersionId) {
+      return;
+    }
+
+    setRestoreCandidateId(version.id);
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+  };
+
+  const restoreVersionAsNew = () => {
+    if (!restoreCandidate) {
+      return;
+    }
+
+    const nextLabel = getNextVersionLabel(versions);
+    const nextVersion = createScriptVersion(nextLabel, restoreCandidate.rows, `Script ${nextLabel} - Current`);
+
+    setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [nextVersion.id]: { ...defaultVersionMeta },
+    }));
+    addDocHistoryEntry({
+      title: `Tom restored ${restoreCandidate.label} as ${nextLabel}`,
+      detail: "Restored an older script as the current version.",
+      actor: "Tom",
+      time: "Just now",
+    });
+    activateVersion(nextVersion, restoreCandidate.rows, `${nextLabel} restored`);
   };
 
   const approveScript = () => {
     setIsScriptApproved(true);
     setStatus("Approved");
+    addDocHistoryEntry({
+      title: "Tom approved script",
+      detail: "Approval recorded for this version.",
+      actor: "Tom",
+      time: "Just now",
+    });
     setToastMessage("Script approved");
   };
 
@@ -674,6 +965,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       };
 
       setVersions((currentVersions) => [...currentVersions, snapshot]);
+      setVersionMetaById((currentMeta) => ({
+        ...currentMeta,
+        [snapshot.id]: { ...defaultVersionMeta },
+      }));
+      addDocHistoryEntry({
+        title: `${actor} edited an approved script`,
+        detail: "A new editable snapshot was created.",
+        actor,
+        time: "Just now",
+      });
       setSelectedVersionId(snapshot.id);
     }
 
@@ -755,40 +1056,27 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setAiResponse("Inserted two suggested lines under the current row.");
   };
 
-  const toggleEnabledSubtab = (tabId: Exclude<ScriptSubtabId, "script">) => {
-    setEnabledSubtabs((currentSubtabs) => {
-      const nextSubtabs = new Set(currentSubtabs);
-
-      if (nextSubtabs.has(tabId)) {
-        nextSubtabs.delete(tabId);
-      } else {
-        nextSubtabs.add(tabId);
-      }
-
-      return nextSubtabs;
-    });
+  const focusCommentComposer = () => {
+    window.setTimeout(() => {
+      document.querySelector<HTMLTextAreaElement>(".floating-comment-shell .composer-input")?.focus();
+    }, 0);
   };
 
-  const openCommentsForRow = (rowId: string) => {
-    setActiveCommentAnchor({
-      kind: "row",
-      label: getRowLabel(rowId, rows),
-      rowId,
-    });
-    setOpenCommentRowId(rowId);
-    setIsCommentComposerOpen(false);
-    setIsCommentsOverviewOpen(false);
-  };
+  const openUniversalRowAnchor = (anchor: ScriptRowUniversalAnchor, triggerRect: DOMRect) => {
+    if (anchor.surfaceType !== "script" || anchor.surfaceId !== scriptSurfaceId || anchor.anchorType !== "row") {
+      return;
+    }
 
-  const openComposerForRow = (row: ScriptRow) => {
     setActiveCommentAnchor({
       kind: "row",
-      label: getRowLabel(row.id, rows),
-      rowId: row.id,
+      label: getRowLabel(anchor.anchorRef, rows),
+      rowId: anchor.anchorRef,
     });
-    setOpenCommentRowId(row.id);
+    setOpenCommentRowId(anchor.anchorRef);
     setIsCommentComposerOpen(true);
+    setFloatingCommentPosition(getFloatingCommentPosition(triggerRect));
     setIsCommentsOverviewOpen(false);
+    focusCommentComposer();
   };
 
   const mergeScopedComments = (previousScope: ScriptComment[], nextScope: ScriptComment[]) => {
@@ -815,8 +1103,18 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsCommentsOverviewOpen(false);
   };
 
+  const openAllComments = () => {
+    setActiveCommentAnchor(overallCommentAnchor);
+    setIsCommentsOverviewOpen(true);
+    setIsVersionsPanelOpen(false);
+    setIsScriptMenuOpen(false);
+    setOpenCommentRowId(null);
+    setIsCommentComposerOpen(false);
+    setFloatingCommentPosition(null);
+  };
+
   return (
-    <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"}`}>
+    <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
 
       <section className="script-subheader" aria-label="Script controls">
@@ -829,151 +1127,143 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onChange={(value) => setLayoutMode(value)}
             />
           ) : null}
-          <select className="script-version-select label-xs-semibold" value={selectedVersionId} onChange={(event) => selectVersion(event.target.value)}>
-            {versions.map((version) => (
-              <option key={version.id} value={version.id}>
-                {version.label} {version.approvedSnapshot ? "approved" : "current"}
-              </option>
-            ))}
-          </select>
-          {!isCustomer ? (
-            <div className="script-presence" aria-label="Live collaborator">
-              {scriptPresence.slice(0, 1).map((person) => (
-                <span className={`avatar ${person.tone}`} aria-label={person.name} key={person.id}>
-                  {person.initials}
-                </span>
-              ))}
+          <div className="script-version-control">
+            <div className="script-version-panel-wrap">
+              <button
+                className="script-current-version-button label-xs-semibold"
+                type="button"
+                aria-label="Open versions"
+                aria-expanded={isVersionsPanelOpen}
+                onClick={() => {
+                  setIsVersionsPanelOpen((isOpen) => !isOpen);
+                  setIsScriptMenuOpen(false);
+                  setIsCommentsOverviewOpen(false);
+                  setOpenCommentRowId(null);
+                  setIsCommentComposerOpen(false);
+                  setFloatingCommentPosition(null);
+                }}
+              >
+                <span>{getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}</span>
+                <DsIcon name="caret-down" size={14} />
+              </button>
+              {isVersionsPanelOpen ? (
+                <VersionsPanel
+                  entries={docHistoryEntries}
+                  isCustomer={isCustomer}
+                  previewVersionId={previewVersionId}
+                  selectedVersionId={selectedVersionId}
+                  versionMetaById={versionMetaById}
+                  versions={versions}
+                  onDeleteVersion={deleteVersion}
+                  onDuplicateVersion={duplicateVersion}
+                  onRenameVersion={renameVersion}
+                  onRestoreVersion={openRestoreConfirmation}
+                  onViewVersion={previewVersionForReadOnly}
+                />
+              ) : null}
             </div>
-          ) : null}
+            <div className="script-version-menu-wrap">
+              <button
+                className="script-quiet-icon"
+                type="button"
+                aria-label="Script options"
+                aria-expanded={isScriptMenuOpen}
+                onClick={() => {
+                  setIsScriptMenuOpen((isOpen) => !isOpen);
+                  setIsVersionsPanelOpen(false);
+                }}
+              >
+                <DsIcon name="dots-three" size={16} />
+              </button>
+              {isScriptMenuOpen ? (
+                <div className="script-version-menu">
+                  <div className="script-menu-section" aria-label="View">
+                    <span className="script-menu-section-title label-xs-semibold">View</span>
+                    <label className="script-menu-switch-row label-xs-semibold">
+                      <span className="script-menu-switch-label">Show changes</span>
+                      <input type="checkbox" checked={showChanges} onChange={(event) => setShowChanges(event.target.checked)} />
+                      <span className="script-menu-switch-track" aria-hidden="true">
+                        <span className="script-menu-switch-thumb" />
+                      </span>
+                    </label>
+                  </div>
+                  <span className="script-menu-divider" aria-hidden="true" />
+                  <div className="script-menu-section" aria-label="Script">
+                    <span className="script-menu-section-title label-xs-semibold">Script</span>
+                    <button className="label-xs-semibold" type="button" onClick={createNewScriptDocument}>
+                      New script
+                    </button>
+                    <button className="label-xs-semibold" type="button" onClick={setScriptInternal}>
+                      Set as Internal
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+            <span className="script-save-note label-xs">
+              {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
+            </span>
+          </div>
         </div>
         <div className="script-subheader-actions">
+          <ShareActionRow
+            context="script"
+            userRole={isCustomer ? "Customer" : "Studio Staff"}
+            density="compact"
+            initialLinkOpens="stageOnly"
+            initialAccess="canComment"
+            projectName={scriptBrief.projectName}
+            studioName={scriptBrief.studioName}
+            customerName={scriptBrief.customerName}
+            onApprove={approveScript}
+          />
           <button
             className="script-quiet-icon"
             type="button"
-            aria-label="Comments overview"
+            aria-label="All comments"
             aria-expanded={isCommentsOverviewOpen}
-            onClick={() => {
-              setIsCommentsOverviewOpen((isOpen) => {
-                const nextIsOpen = !isOpen;
-
-                if (nextIsOpen) {
-                  setActiveCommentAnchor(overallCommentAnchor);
-                  setIsDocHistoryOpen(false);
-                }
-
-                return nextIsOpen;
-              });
-              setOpenCommentRowId(null);
-              setIsCommentComposerOpen(false);
-            }}
+            onClick={openAllComments}
           >
             <DsIcon name="chat-circle" size={16} />
           </button>
-          <div className="script-options-wrap">
-            <button
-              className="script-quiet-icon"
-              type="button"
-              aria-label="More script options"
-              aria-expanded={isOptionsOpen}
-              onClick={() => setIsOptionsOpen((isOpen) => !isOpen)}
-            >
-              <DsIcon name="dots-three" size={16} />
-            </button>
-            {isOptionsOpen ? (
-              <div className="script-options-menu">
-                <button
-                  className={`script-menu-text label-xs-semibold ${isScriptApproved ? "active" : ""}`}
-                  type="button"
-                  onClick={approveScript}
-                >
-                  {isScriptApproved ? "Approved" : "Approve script"}
-                </button>
-                <div className="script-options-section">
-                  <span className="label-xs-semibold">Density</span>
-                  <div className="script-options-row" role="group" aria-label="Density">
-                    {densityModes.map((mode) => (
-                      <button
-                        className={`script-menu-choice label-xs-semibold ${density === mode ? "active" : ""}`}
-                        type="button"
-                        key={mode}
-                        onClick={() => setDensity(mode)}
-                      >
-                        {capitalise(mode)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <label className="script-menu-toggle label-xs-semibold">
-                  <input type="checkbox" checked={showChanges} onChange={(event) => setShowChanges(event.target.checked)} />
-                  Show changes
-                </label>
-                {!isCustomer ? (
-                  <label className="script-menu-toggle label-xs-semibold">
-                    <input
-                      type="checkbox"
-                      checked={showAiToCustomer}
-                      onChange={(event) => setShowAiToCustomer(event.target.checked)}
-                    />
-                    Show AI to customer
-                  </label>
-                ) : null}
-                <label className="script-menu-toggle label-xs-semibold">
-                  <input
-                    type="checkbox"
-                    checked={alwaysHideIntroCards}
-                    onChange={(event) => setAlwaysHideIntroCards(event.target.checked)}
-                  />
-                  Always hide intro cards
-                </label>
-                <div className="script-options-section">
-                  <span className="label-xs-semibold">Sub-tabs</span>
-                  {optionalSubtabs.map((tab) => (
-                    <label className="script-menu-toggle label-xs-semibold" key={tab.id}>
-                      <input
-                        type="checkbox"
-                        checked={enabledSubtabs.has(tab.id)}
-                        onChange={() => toggleEnabledSubtab(tab.id)}
-                      />
-                      {tab.label}
-                    </label>
-                  ))}
-                </div>
-                <button className="script-menu-text label-xs-semibold" type="button" onClick={openDocHistory}>
-                  Document history
-                </button>
-                <span className="script-save-note label-xs">Save state: {saveState}</span>
-              </div>
-            ) : null}
-          </div>
         </div>
       </section>
 
-      <section className={`script-body ${isAiPanelOpen ? "ai-open" : ""}`}>
+      <section className={`script-body ${isAiPanelOpen ? "ai-open" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
         <div className="script-editor-column">
+          {previewVersion ? (
+            <VersionPreviewBanner
+              version={previewVersion}
+              versionMeta={versionMetaById[previewVersion.id] ?? defaultVersionMeta}
+              onRestore={() => openRestoreConfirmation(previewVersion.id)}
+              onReturn={returnToCurrentVersion}
+            />
+          ) : null}
           {layoutMode === "av" ? (
             <AvScriptEditor
               commentsByRow={commentsByRow}
               density={density}
               dropRowId={dropRowId}
               hasTypedThisSession={hasTypedThisSession}
-              isApproved={isScriptApproved}
+              isApproved={isScriptApproved || isPreviewingVersion}
               highlightedRowId={highlightedRowId}
               openMediaMenuRowId={openMediaMenuRowId}
               openRowMenuId={openRowMenuId}
               confirmingDeleteRowId={confirmingDeleteRowId}
               rows={visibleRows}
+              areVisualsVisible={areVisualsVisible}
               selectedRowIds={selectionState.selectedRowIds}
-              shouldShowIntroCards={shouldShowIntroCards}
-              hasEditedThisSession={hasEditedThisSession}
+              hasVisualsContent={hasVisualsContent}
               showChanges={showChanges}
               wordInputRefs={wordInputRefs}
               visualInputRefs={visualInputRefs}
               onAddMediaItem={addMediaItem}
               onAddRowAfter={addRowAfter}
+              onAddRowBefore={addRowBefore}
               onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
               onCaptureSelectionAnchor={captureSelectionAnchor}
               onDeleteRow={deleteRowById}
-              onDismissIntroCards={() => setAreIntroCardsDismissed(true)}
+              onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
               onDragEnd={() => {
                 setDraggingRowId(null);
                 setDropRowId(null);
@@ -981,9 +1271,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onDragOverRow={(rowId) => setDropRowId(rowId)}
               onDragStartRow={setDraggingRowId}
               onDuplicateRow={duplicateRowById}
-              onGuardApproved={guardEditable}
-              onOpenComposerForRow={openComposerForRow}
-              onOpenCommentsForRow={openCommentsForRow}
+              onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
+              onOpenRowAnnotation={openUniversalRowAnchor}
               onPasteWords={handleWordsPaste}
               onReorderRows={(targetRowId) => {
                 if (draggingRowId) {
@@ -1005,58 +1294,76 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             <SimpleDocEditor
               docRef={simpleDocRef}
               docValue={docValue}
-              isApproved={isScriptApproved}
+              isApproved={isScriptApproved || isPreviewingVersion}
               showChanges={showChanges}
               rows={visibleRows}
               onCaptureSelectionAnchor={captureDocSelectionAnchor}
-              onGuardApproved={guardEditable}
+              onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
               onUpdateDoc={updateDocValue}
             />
           ) : null}
           {showChanges ? <RedlineLegend /> : null}
         </div>
 
-        {(openCommentRowId || isCommentComposerOpen || isCommentsOverviewOpen) ? (
-          <div className={`script-comment-popover ${isCommentsOverviewOpen ? "overview" : "inline"}`}>
+        {isCommentsOverviewOpen ? (
+          <div className="script-comment-popover overview">
             <CommentRail
-              activeAnchor={isCommentsOverviewOpen ? overallCommentAnchor : activeCommentAnchor}
-              comments={isCommentsOverviewOpen ? visibleComments : visibleOpenComments}
-              composerAnchor={isCommentsOverviewOpen ? overallCommentAnchor : activeCommentAnchor}
-              composerPlacement={isCommentsOverviewOpen ? "top" : "bottom"}
+              activeAnchor={overallCommentAnchor}
+              comments={visibleComments}
+              composerAnchor={overallCommentAnchor}
+              composerPlacement="top"
               currentUserId={currentUserId}
               users={scriptUsers}
               canPostInternal={!isCustomer}
               canSeeInternal={!isCustomer}
               filterMode={isCustomer ? "customer" : "studio"}
-              title="Comments"
+              title={`Comments (${visibleComments.length})`}
               onClose={() => {
                 setOpenCommentRowId(null);
                 setIsCommentComposerOpen(false);
+                setFloatingCommentPosition(null);
                 setIsCommentsOverviewOpen(false);
               }}
               onCommentsChange={(nextScopedComments) =>
-                mergeScopedComments(isCommentsOverviewOpen ? visibleComments : visibleOpenComments, nextScopedComments)
+                mergeScopedComments(visibleComments, nextScopedComments)
               }
               onSelectComment={selectCommentAnchor}
             />
           </div>
         ) : null}
 
-        {isDocHistoryOpen ? (
-          <DocumentHistoryPanel
-            entries={docHistoryEntries}
-            selectedVersionId={selectedVersionId}
-            versions={versions}
-            onClose={() => setIsDocHistoryOpen(false)}
-            onSelectVersion={selectVersion}
+        {!isCommentsOverviewOpen && (openCommentRowId || isCommentComposerOpen) && floatingCommentPosition ? (
+          <FloatingCommentShell
+            anchor={activeCommentAnchor}
+            canPostInternal={!isCustomer}
+            comments={visibleOpenComments}
+            currentUserId={currentUserId}
+            position={floatingCommentPosition}
+            users={scriptUsers}
+            onCommentsChange={(nextScopedComments) => mergeScopedComments(visibleOpenComments, nextScopedComments)}
+            onDismiss={() => {
+              setOpenCommentRowId(null);
+              setIsCommentComposerOpen(false);
+              setFloatingCommentPosition(null);
+            }}
           />
         ) : null}
+
       </section>
 
       <footer className={`script-word-footer word-${wordState}`}>
         <span className="script-word-footer-inner">
           <span className="script-word-footer-copy">
-            <strong>{totalWords}</strong> words · <span className="script-word-duration">~{approxSeconds}s</span> · Target {scriptBrief.targetDurationSeconds}s
+            <span className="script-word-count">{totalWords} words</span>
+            <span className="script-word-separator" aria-hidden="true">·</span>
+            <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
+              <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
+              <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
+            </span>
+            <span className="script-word-status-icon">
+              <DsIcon name={wordStatusIcon} size={16} />
+            </span>
+            {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
           </span>
         </span>
       </footer>
@@ -1178,6 +1485,26 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
       ) : null}
 
+      {restoreCandidate ? (
+        <div className="script-modal-backdrop" role="presentation">
+          <section className="script-edit-modal" role="dialog" aria-modal="true" aria-labelledby="script-restore-title">
+            <h2 id="script-restore-title">Restore {restoreCandidate.label} as a new version?</h2>
+            <p>
+              Your current {selectedVersion.label} will be preserved in the history. {restoreCandidate.label} will be duplicated
+              and become the new current version ({getNextVersionLabel(versions)}).
+            </p>
+            <div className="script-modal-actions">
+              <Button size="S" type="button" variant="secondary" onClick={() => setRestoreCandidateId(null)}>
+                Cancel
+              </Button>
+              <Button size="S" type="button" variant="primary" onClick={restoreVersionAsNew}>
+                Restore as {getNextVersionLabel(versions)}
+              </Button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
       {toastMessage ? (
         <div className="script-toast label-s-semibold" role="status">
           {toastMessage}
@@ -1280,33 +1607,56 @@ function FloatingFormatToolbar({
   );
 }
 
-function ScriptIntroCards({ isFaded, onDismiss }: { isFaded: boolean; onDismiss: () => void }) {
+function ScriptColumnHeaders({
+  areVisualsVisible,
+  hasVisualsContent,
+  onToggleVisuals,
+}: {
+  areVisualsVisible: boolean;
+  hasVisualsContent: boolean;
+  onToggleVisuals: () => void;
+}) {
   return (
-    <div className={`script-column-intro ${isFaded ? "faded" : ""}`} aria-label="Script column guidance">
-      <section className="script-intro-card words">
-        <div className="script-intro-heading">
-          <span className="script-intro-icon">
-            <DsIcon name="pencil-simple" size={18} />
-          </span>
-          <h2>Words</h2>
+    <div className={`script-column-headers ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="Script column guidance">
+      <section className="script-column-header words">
+        <div className="script-column-header-main">
+          <h2>
+            Words
+          </h2>
+          {!areVisualsVisible ? (
+            <Button
+              className="script-visuals-header-toggle"
+              size="S"
+              type="button"
+              variant="secondary"
+              onClick={onToggleVisuals}
+            >
+              <span>Show Visuals</span>
+              <DsIcon name="caret-right" size={12} />
+            </Button>
+          ) : null}
         </div>
-        <p>Write the words of your script here. One sentence per row. 150 words = 1 minute.</p>
-        <button className="script-intro-dismiss" type="button" aria-label="Dismiss intro cards" onClick={onDismiss}>
-          <DsIcon name="x-close-cross" size={12} />
-        </button>
       </section>
-      <section className="script-intro-card visuals">
-        <div className="script-intro-heading">
-          <span className="script-intro-icon">
-            <DsIcon name="image-square" size={18} />
-          </span>
-          <h2>Visuals</h2>
-        </div>
-        <p>Describe the visuals for each line. Add media, links or references.</p>
-        <button className="script-intro-dismiss" type="button" aria-label="Dismiss intro cards" onClick={onDismiss}>
-          <DsIcon name="x-close-cross" size={12} />
-        </button>
-      </section>
+      {areVisualsVisible ? (
+        <section className="script-column-header visuals">
+          <div className="script-column-header-main">
+            <h2>
+              Visuals
+            </h2>
+            <Button
+              className="script-visuals-header-toggle"
+              size="S"
+              type="button"
+              variant="secondary"
+              onClick={onToggleVisuals}
+            >
+              <span>Hide Visuals</span>
+              <DsIcon name="caret-left" size={12} />
+            </Button>
+          </div>
+          <p className={hasVisualsContent ? "faded" : ""}>Describe the visuals for each line. Add media, links or references.</p>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -1322,25 +1672,25 @@ function AvScriptEditor({
   openRowMenuId,
   confirmingDeleteRowId,
   rows,
+  areVisualsVisible,
   selectedRowIds,
-  shouldShowIntroCards,
-  hasEditedThisSession,
+  hasVisualsContent,
   showChanges,
   wordInputRefs,
   visualInputRefs,
   onAddMediaItem,
   onAddRowAfter,
+  onAddRowBefore,
   onCancelRowDelete,
   onCaptureSelectionAnchor,
   onDeleteRow,
-  onDismissIntroCards,
+  onToggleVisuals,
   onDragEnd,
   onDragOverRow,
   onDragStartRow,
   onDuplicateRow,
   onGuardApproved,
-  onOpenComposerForRow,
-  onOpenCommentsForRow,
+  onOpenRowAnnotation,
   onPasteWords,
   onReorderRows,
   onSelectRow,
@@ -1360,25 +1710,25 @@ function AvScriptEditor({
   openRowMenuId: string | null;
   confirmingDeleteRowId: string | null;
   rows: ScriptRow[];
+  areVisualsVisible: boolean;
   selectedRowIds: Set<string>;
-  shouldShowIntroCards: boolean;
-  hasEditedThisSession: boolean;
+  hasVisualsContent: boolean;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   visualInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
   onAddRowAfter: (rowId: string | null) => void;
+  onAddRowBefore: (rowId: string) => void;
   onCancelRowDelete: () => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
   onDeleteRow: (rowId: string, shouldSkipConfirm?: boolean) => void;
-  onDismissIntroCards: () => void;
+  onToggleVisuals: () => void;
   onDragEnd: () => void;
   onDragOverRow: (rowId: string) => void;
   onDragStartRow: (rowId: string) => void;
   onDuplicateRow: (rowId: string) => void;
   onGuardApproved: () => boolean;
-  onOpenComposerForRow: (row: ScriptRow) => void;
-  onOpenCommentsForRow: (rowId: string) => void;
+  onOpenRowAnnotation: (anchor: ScriptRowUniversalAnchor, triggerRect: DOMRect) => void;
   onPasteWords: (event: ClipboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   onReorderRows: (targetRowId: string) => void;
   onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
@@ -1388,17 +1738,34 @@ function AvScriptEditor({
   onWordsKeyDown: (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
 }) {
+  const isEmptyScript = rows.length === 0;
+  const editorRows = isEmptyScript ? [emptyScriptPlaceholderRow] : rows;
+
   return (
-    <section className={`script-av-surface ${density}`} aria-label="AV script editor">
-      {shouldShowIntroCards ? <ScriptIntroCards isFaded={hasEditedThisSession} onDismiss={onDismissIntroCards} /> : null}
-      {rows.map((row, index) => {
+    <section className={`script-av-surface ${density} ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="AV script editor">
+      <ScriptColumnHeaders
+        areVisualsVisible={areVisualsVisible}
+        hasVisualsContent={hasVisualsContent}
+        onToggleVisuals={onToggleVisuals}
+      />
+      {editorRows.map((row, index) => {
         const rowComments = commentsByRow.get(row.id) ?? [];
-        const hasAnchor = rowComments.length > 0 || row.media.length > 0;
-        const shouldShowPlaceholder = index === 0 && !hasTypedThisSession && !row.words.trim() && !row.visuals.trim();
+        const hasComments = rowComments.length > 0;
+        const hasUnresolvedComments = rowComments.some((comment) => !comment.resolved);
+        const hasUnreadMention = rowComments.some((comment) => comment.unreadMentionUserIds?.includes(currentUserId));
+        const annotationState = !hasComments ? "none" : hasUnresolvedComments ? "unresolved" : "resolved";
+        const rowUniversalAnchor: ScriptRowUniversalAnchor = {
+          surfaceType: "script",
+          surfaceId: scriptSurfaceId,
+          anchorType: "row",
+          anchorRef: row.id,
+        };
+  const hasAnchor = rowComments.length > 0 || row.media.length > 0;
+        const shouldShowPlaceholder = isEmptyScript && index === 0 && !hasTypedThisSession;
 
         return (
           <div
-            className={`script-row ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
+            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
             draggable
             key={row.id}
             ref={(node) => registerRowRef(row.id, node)}
@@ -1412,24 +1779,82 @@ function AvScriptEditor({
           >
             <div className="script-row-gutter">
               <button className="script-row-number label-xs-semibold" type="button" onClick={(event) => onSelectRow(row.id, event)}>
-                {getRowNumber(row.id, rows)}
+                {getRowNumber(row.id, editorRows)}
               </button>
-              <span className="script-row-drag" aria-hidden="true">
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
-                <span />
+              <span className="script-row-hover-controls">
+                <button
+                  className="script-row-drag-button"
+                  type="button"
+                  draggable
+                  aria-label={`Drag ${getRowLabel(row.id, editorRows)}`}
+                  onClick={(event) => event.preventDefault()}
+                  onDragStart={(event) => {
+                    event.dataTransfer.effectAllowed = "move";
+                    onDragStartRow(row.id);
+                  }}
+                >
+                  <DsIcon name="dots-six-vertical" size={16} />
+                </button>
               </span>
-              <button className="script-add-between" type="button" aria-label={`Insert row after ${getRowLabel(row.id, rows)}`} onClick={() => onAddRowAfter(row.id)}>
-                <DsIcon name="plus" size={12} />
-              </button>
-              <span className="script-row-menu-wrap">
+            </div>
+            <div className="script-row-words">
+              <textarea
+                className={`script-cell-input words label-s ${rowComments.some((comment) => comment.anchor.kind === "selection") ? "has-selection-comment" : ""}`}
+                placeholder={shouldShowPlaceholder ? "Start typing. Press Enter for a new line." : ""}
+                readOnly={isApproved}
+                ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
+                rows={1}
+                value={row.words}
+                onMouseDown={() => {
+                  if (isApproved) {
+                    onGuardApproved();
+                  }
+                }}
+                onChange={(event) => onSetField(row.id, "words", event.target.value)}
+                onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
+                onKeyDown={(event) => onWordsKeyDown(event, row)}
+                onKeyUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+                onMouseUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+                onPaste={(event) => onPasteWords(event, row)}
+                onSelect={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
+              />
+              {showChanges && row.change ? <RowChange change={row.change} /> : null}
+            </div>
+            {areVisualsVisible ? (
+              <div className="script-row-visuals">
+                <textarea
+                  className="script-cell-input visuals label-s"
+                  placeholder=""
+                  readOnly={isApproved}
+                  ref={(node) => registerTextArea(visualInputRefs.current, row.id, node)}
+                  rows={1}
+                  value={row.visuals}
+                  onMouseDown={() => {
+                    if (isApproved) {
+                      onGuardApproved();
+                    }
+                  }}
+                  onChange={(event) => onSetField(row.id, "visuals", event.target.value)}
+                  onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
+                />
+                <VisualMediaStrip
+                  isApproved={isApproved}
+                  media={row.media}
+                  openMediaMenuRowId={openMediaMenuRowId}
+                  row={row}
+                  rows={editorRows}
+                  onAddMediaItem={onAddMediaItem}
+                  onGuardApproved={onGuardApproved}
+                  onSetMediaMenuRow={onSetMediaMenuRow}
+                />
+              </div>
+            ) : null}
+            <div className="script-row-comment-gutter">
+              <span className="script-row-menu-wrap script-row-action-menu-wrap">
                 <button
                   className="script-row-menu-button"
                   type="button"
-                  aria-label={`Open menu for ${getRowLabel(row.id, rows)}`}
+                  aria-label={`Open menu for ${getRowLabel(row.id, editorRows)}`}
                   aria-expanded={openRowMenuId === row.id}
                   onClick={() => onSetOpenRowMenu(openRowMenuId === row.id ? null : row.id)}
                 >
@@ -1449,102 +1874,52 @@ function AvScriptEditor({
                       </span>
                     ) : (
                       <>
+                        <button
+                          className="label-xs-semibold"
+                          type="button"
+                          onClick={() => {
+                            onDuplicateRow(row.id);
+                            onSetOpenRowMenu(null);
+                          }}
+                        >
+                          Duplicate row
+                        </button>
                         <button className="label-xs-semibold" type="button" onClick={() => onDeleteRow(row.id)}>
                           Delete row
-                        </button>
-                        <button className="label-xs-semibold" type="button" onClick={() => onDuplicateRow(row.id)}>
-                          Duplicate row
                         </button>
                         <button
                           className="label-xs-semibold"
                           type="button"
                           onClick={() => {
-                            onOpenComposerForRow(row);
+                            onAddRowBefore(row.id);
                             onSetOpenRowMenu(null);
                           }}
                         >
-                          Comment on row
+                          Insert above
+                        </button>
+                        <button
+                          className="label-xs-semibold"
+                          type="button"
+                          onClick={() => {
+                            onAddRowAfter(row.id);
+                            onSetOpenRowMenu(null);
+                          }}
+                        >
+                          Insert below
                         </button>
                       </>
                     )}
                   </span>
                 ) : null}
               </span>
-            </div>
-            <div className="script-row-words">
-              <textarea
-                className={`script-cell-input words label-s ${rowComments.some((comment) => comment.anchor.kind === "selection") ? "has-selection-comment" : ""}`}
-                placeholder={shouldShowPlaceholder ? "Write one sentence per row. 150 words = 1 minute." : ""}
-                readOnly={isApproved}
-                ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
-                rows={2}
-                value={row.words}
-                onMouseDown={() => {
-                  if (isApproved) {
-                    onGuardApproved();
-                  }
-                }}
-                onChange={(event) => onSetField(row.id, "words", event.target.value)}
-                onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
-                onKeyDown={(event) => onWordsKeyDown(event, row)}
-                onKeyUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
-                onMouseUp={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
-                onPaste={(event) => onPasteWords(event, row)}
-                onSelect={(event) => onCaptureSelectionAnchor(row, event.currentTarget)}
-              />
-              {showChanges && row.change ? <RowChange change={row.change} /> : null}
-            </div>
-            <div className="script-row-visuals">
-              <textarea
-                className="script-cell-input visuals label-s"
-                placeholder={shouldShowPlaceholder ? "Describe the visuals or drop in media." : ""}
-                readOnly={isApproved}
-                ref={(node) => registerTextArea(visualInputRefs.current, row.id, node)}
-                rows={2}
-                value={row.visuals}
-                onMouseDown={() => {
-                  if (isApproved) {
-                    onGuardApproved();
-                  }
-                }}
-                onChange={(event) => onSetField(row.id, "visuals", event.target.value)}
-                onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
-              />
-              <div className="script-media-strip">
-                {row.media.map((mediaItem) => (
-                  <MediaThumb key={mediaItem.id} mediaItem={mediaItem} />
-                ))}
-                <div className="script-media-menu-wrap">
-                  <button
-                    className="script-media-add"
-                    type="button"
-                    aria-label={`Add media to ${getRowLabel(row.id, rows)}`}
-                    aria-expanded={openMediaMenuRowId === row.id}
-                    onClick={() => (isApproved ? onGuardApproved() : onSetMediaMenuRow(openMediaMenuRowId === row.id ? null : row.id))}
-                  >
-                    <DsIcon name="plus" size={14} />
-                  </button>
-                  {openMediaMenuRowId === row.id ? (
-                    <div className="script-media-menu">
-                      {mediaMenuOptions.map((option) => (
-                        <button className="label-s" type="button" key={option.type} onClick={() => onAddMediaItem(row.id, option.type)}>
-                          <DsIcon name={option.icon} size={18} />
-                          {option.label}
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-            <div className="script-row-comment-gutter">
-              {rowComments.length > 0 ? (
-                <button className="script-comment-marker" type="button" aria-label={`Open comments for ${getRowLabel(row.id, rows)}`} onClick={() => onOpenCommentsForRow(row.id)}>
-                  <DsIcon name="chat-circle" size={15} />
-                </button>
-              ) : null}
-              <button className="script-comment-add" type="button" aria-label={`Comment on ${getRowLabel(row.id, rows)}`} onClick={() => onOpenComposerForRow(row)}>
-                <DsIcon name="chat-circle" size={15} />
+              <button
+                className={`script-annotation-pin ${annotationState} ${hasUnreadMention ? "has-unread-mention" : ""}`}
+                type="button"
+                aria-label={`${hasComments ? `Open ${rowComments.length} comments` : "Add comment"} for ${getRowLabel(row.id, editorRows)}`}
+                data-comment-count={rowComments.length}
+                onClick={(event) => onOpenRowAnnotation(rowUniversalAnchor, event.currentTarget.getBoundingClientRect())}
+              >
+                <DsIcon name="chat-circle" size={16} />
               </button>
             </div>
           </div>
@@ -1601,6 +1976,103 @@ function SimpleDocEditor({
   );
 }
 
+function VisualMediaStrip({
+  isApproved,
+  media,
+  openMediaMenuRowId,
+  row,
+  rows,
+  onAddMediaItem,
+  onGuardApproved,
+  onSetMediaMenuRow,
+}: {
+  isApproved: boolean;
+  media: ScriptMediaItem[];
+  openMediaMenuRowId: string | null;
+  row: ScriptRow;
+  rows: ScriptRow[];
+  onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
+  onGuardApproved: () => boolean;
+  onSetMediaMenuRow: (rowId: string | null) => void;
+}) {
+  return (
+    <div className={`script-media-strip ${media.length > 0 ? "has-media" : "empty"}`}>
+      {media.length > 0 ? (
+        media.map((mediaItem) => <VisualAssetCard key={mediaItem.id} mediaItem={mediaItem} />)
+      ) : (
+        <AddVisualPlaceholder
+          isApproved={isApproved}
+          isOpen={openMediaMenuRowId === row.id}
+          row={row}
+          rows={rows}
+          onAddMediaItem={onAddMediaItem}
+          onGuardApproved={onGuardApproved}
+          onSetMediaMenuRow={onSetMediaMenuRow}
+        />
+      )}
+    </div>
+  );
+}
+
+function VisualAssetCard({ mediaItem }: { mediaItem: ScriptMediaItem }) {
+  return (
+    <span className="script-visual-asset">
+      <VisualThumbnailPlaceholder mediaItem={mediaItem} />
+      <MediaThumb mediaItem={mediaItem} />
+    </span>
+  );
+}
+
+function VisualThumbnailPlaceholder({ mediaItem }: { mediaItem: ScriptMediaItem }) {
+  return (
+    <span className={`script-visual-thumbnail ${mediaItem.tone}`} aria-hidden="true">
+      <DsIcon name={mediaItem.type === "link" ? "link" : mediaItem.type === "upload" ? "upload-simple" : "image-square"} size={20} />
+    </span>
+  );
+}
+
+function AddVisualPlaceholder({
+  isApproved,
+  isOpen,
+  row,
+  rows,
+  onAddMediaItem,
+  onGuardApproved,
+  onSetMediaMenuRow,
+}: {
+  isApproved: boolean;
+  isOpen: boolean;
+  row: ScriptRow;
+  rows: ScriptRow[];
+  onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
+  onGuardApproved: () => boolean;
+  onSetMediaMenuRow: (rowId: string | null) => void;
+}) {
+  return (
+    <div className="script-media-menu-wrap script-visual-empty-wrap">
+      <button
+        className="script-media-add script-visual-empty"
+        type="button"
+        aria-label={`Add visual to ${getRowLabel(row.id, rows)}`}
+        aria-expanded={isOpen}
+        onClick={() => (isApproved ? onGuardApproved() : onSetMediaMenuRow(isOpen ? null : row.id))}
+      >
+        <DsIcon name="plus" size={14} />
+      </button>
+      {isOpen ? (
+        <div className="script-media-menu">
+          {mediaMenuOptions.map((option) => (
+            <button className="label-s" type="button" key={option.type} onClick={() => onAddMediaItem(row.id, option.type)}>
+              <DsIcon name={option.icon} size={18} />
+              {option.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function MediaThumb({ mediaItem }: { mediaItem: ScriptMediaItem }) {
   return (
     <span className={`script-media-thumb ${mediaItem.tone}`}>
@@ -1633,81 +2105,214 @@ function RedlineLegend() {
   );
 }
 
-function DocumentHistoryPanel({
+function VersionsPanel({
   entries,
+  isCustomer,
+  previewVersionId,
   selectedVersionId,
+  versionMetaById,
   versions,
-  onClose,
-  onSelectVersion,
+  onDeleteVersion,
+  onDuplicateVersion,
+  onRenameVersion,
+  onRestoreVersion,
+  onViewVersion,
 }: {
   entries: DocHistoryEntry[];
+  isCustomer: boolean;
+  previewVersionId: string | null;
   selectedVersionId: string;
+  versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
-  onClose: () => void;
-  onSelectVersion: (versionId: string) => void;
+  onDeleteVersion: (versionId: string) => void;
+  onDuplicateVersion: (versionId: string) => void;
+  onRenameVersion: (versionId: string) => void;
+  onRestoreVersion: (versionId: string) => void;
+  onViewVersion: (versionId: string) => void;
 }) {
   return (
-    <aside className="script-doc-history-panel" aria-label="Document history">
-      <header className="script-doc-history-header">
-        <div>
-          <h2>Document history</h2>
-        </div>
-        <button className="script-quiet-icon" type="button" aria-label="Close document history" onClick={onClose}>
-          <DsIcon name="x-close-cross" size={13} />
-        </button>
+    <aside className="script-versions-panel" aria-label="Versions">
+      <header className="script-versions-panel-header">
+        <h2>Versions</h2>
       </header>
 
-      <div className="script-doc-history-list">
-        <section className="script-doc-history-section" aria-label="Today">
-          <h3 className="label-xs-semibold">Today</h3>
-          {entries.length > 0 ? (
-            entries.map((entry) => (
-              <article className="script-doc-history-entry" key={entry.id}>
-                <span className="script-doc-history-dot" aria-hidden="true" />
-                <div>
-                  <h4>{entry.title}</h4>
-                  <p>{entry.detail}</p>
-                  <span className="label-xs">{entry.actor} · {entry.time}</span>
-                </div>
-              </article>
-            ))
-          ) : (
-            <p className="script-doc-history-empty label-s">No edits in this session yet.</p>
-          )}
-        </section>
+      <div className="script-versions-panel-content">
+        {!isCustomer ? (
+          <section className="script-versions-section" aria-label="Today">
+            <h3 className="label-xs-semibold">Today</h3>
+            {entries.length > 0 ? (
+              <div className="script-version-activity-list">
+                {entries.map((entry) => (
+                  <article className="script-version-activity-entry" key={entry.id}>
+                    <span className="avatar mini">T</span>
+                    <span className="script-version-activity-copy label-s-semibold">
+                      {entry.title} · <span>{entry.time}</span>
+                    </span>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="script-version-empty label-s">No edits in this session yet.</p>
+            )}
+          </section>
+        ) : null}
 
-        <section className="script-doc-history-section" aria-label="Versions">
+        <section className="script-versions-section" aria-label="Saved versions">
           <h3 className="label-xs-semibold">Versions</h3>
-          {[...versions].reverse().map((version) => {
-            const isSelected = version.id === selectedVersionId;
+          <div className="script-version-list">
+            {[...versions].reverse().map((version) => {
+              const isCurrent = version.id === selectedVersionId;
+              const isPreviewing = version.id === previewVersionId;
+              const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
+              const isApproved = version.approvedSnapshot;
 
-            return (
-              <button
-                className={`script-doc-version-button ${isSelected ? "active" : ""}`}
-                type="button"
-                key={version.id}
-                aria-current={isSelected ? "true" : undefined}
-                onClick={() => onSelectVersion(version.id)}
-              >
-                <span>
-                  <strong>{version.snapshotName}</strong>
-                  <span className="label-xs">{version.createdBy} · {version.createdAt}</span>
-                </span>
-                {isSelected ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-              </button>
-            );
-          })}
+              return (
+                <article
+                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""}`}
+                  aria-current={isCurrent ? "true" : undefined}
+                  key={version.id}
+                >
+                  <span className="script-version-row-copy">
+                    <strong>{getVersionHistoryTitle(version, versionMeta)}</strong>
+                    <span className="script-version-row-meta label-s">
+                      <span className="script-version-approver-tag label-xs-semibold">{version.createdBy}</span>
+                      <span>{version.createdAt}</span>
+                    </span>
+                  </span>
+                  <span className="script-version-row-side">
+                    {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
+                    {!isCustomer && !isCurrent ? (
+                      <span className="script-version-row-actions">
+                        <Button size="S" type="button" variant="secondary" onClick={() => onViewVersion(version.id)}>
+                          View
+                        </Button>
+                        <Button size="S" type="button" variant="tertiary" onClick={() => onRestoreVersion(version.id)}>
+                          Restore
+                        </Button>
+                        {!isApproved ? (
+                          <details className="script-version-row-more">
+                            <summary className="script-quiet-icon" aria-label={`More actions for ${version.label}`}>
+                              <DsIcon name="dots-three" size={14} />
+                            </summary>
+                            <div className="script-version-row-menu">
+                              <button className="label-xs-semibold" type="button" onClick={() => onRenameVersion(version.id)}>
+                                Rename
+                              </button>
+                              <button className="label-xs-semibold" type="button" onClick={() => onDuplicateVersion(version.id)}>
+                                Duplicate
+                              </button>
+                              <button className="delete label-xs-semibold" type="button" onClick={() => onDeleteVersion(version.id)}>
+                                Delete
+                              </button>
+                            </div>
+                          </details>
+                        ) : null}
+                      </span>
+                    ) : null}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
         </section>
       </div>
     </aside>
   );
 }
 
+function VersionPreviewBanner({
+  version,
+  versionMeta,
+  onRestore,
+  onReturn,
+}: {
+  version: ScriptVersion;
+  versionMeta: ScriptVersionMeta;
+  onRestore: () => void;
+  onReturn: () => void;
+}) {
+  return (
+    <div className="script-version-preview-banner" role="status">
+      <span className="label-s-semibold">Viewing {getVersionButtonLabel(version, versionMeta)}</span>
+      <button className="label-xs-semibold" type="button" onClick={onReturn}>
+        Return to current
+      </button>
+      <button className="label-xs-semibold" type="button" onClick={onRestore}>
+        Restore this version
+      </button>
+    </div>
+  );
+}
 function cloneVersions(versions: ScriptVersion[]) {
   return versions.map((version) => ({
     ...version,
     rows: cloneRows(version.rows),
   }));
+}
+
+function createDocHistoryEntry(entry: Omit<DocHistoryEntry, "id">, index: number): DocHistoryEntry {
+  return {
+    ...entry,
+    id: `doc-history-${Date.now()}-${index}`,
+  };
+}
+
+function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: string) {
+  return versions.reduce<Record<string, ScriptVersionMeta>>((metaById, version) => {
+    metaById[version.id] = {
+      isMaster: version.id === masterVersionId,
+    };
+
+    return metaById;
+  }, {});
+}
+
+function getVersionMarkerText(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  if (versionMeta.isMaster) {
+    return "Master";
+  }
+
+  return version.approvedSnapshot ? getApprovedVersionMarker(version) : "current";
+}
+
+function getApprovedVersionMarker(version: ScriptVersion) {
+  const baseTitle = getVersionHistoryBaseTitle(version);
+  const suffix = version.snapshotName.startsWith(`${baseTitle} - `)
+    ? version.snapshotName.slice(`${baseTitle} - `.length)
+    : "";
+
+  return suffix || "approved";
+}
+
+function getVersionButtonLabel(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  return `${version.label} - ${formatVersionMarkerForHistory(getVersionMarkerText(version, versionMeta))}`;
+}
+
+function getVersionHistoryTitle(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  const markerText = getVersionMarkerText(version, versionMeta);
+
+  if (version.approvedSnapshot && markerText === "approved") {
+    return version.snapshotName;
+  }
+
+  return `${getVersionHistoryBaseTitle(version)} - ${formatVersionMarkerForHistory(markerText)}`;
+}
+
+function getVersionHistoryBaseTitle(version: ScriptVersion) {
+  return version.snapshotName.replace(/\s-\s(?:Current|Master|Internal|Studio approved|Customer approved|approved)$/iu, "");
+}
+
+function formatVersionMarkerForHistory(markerText: string) {
+  return markerText.charAt(0).toUpperCase() + markerText.slice(1);
+}
+
+function getNextVersionLabel(versions: ScriptVersion[]) {
+  const highestVersionNumber = versions.reduce((highestNumber, version) => {
+    const versionNumber = Number.parseInt(version.label.replace(/^v/u, ""), 10);
+    return Number.isNaN(versionNumber) ? highestNumber : Math.max(highestNumber, versionNumber);
+  }, 0);
+
+  return `v${highestVersionNumber + 1}`;
 }
 
 function cloneRows(rows: ScriptRow[]) {
@@ -1875,10 +2480,50 @@ function getFloatingToolbarPosition(target: HTMLTextAreaElement) {
   };
 }
 
-function capitalise(value: string) {
-  return `${value.slice(0, 1).toUpperCase()}${value.slice(1)}`;
+function getFloatingCommentPosition(rect: DOMRect): FloatingCommentPosition {
+  const shellWidth = 360;
+  const shellHeight = 460;
+  const viewportPadding = 16;
+  const triggerGap = 12;
+  const preferredLeft = rect.right + triggerGap;
+  const hasRoomRight = preferredLeft + shellWidth <= window.innerWidth - viewportPadding;
+  const left = hasRoomRight
+    ? preferredLeft
+    : Math.max(viewportPadding, rect.left - shellWidth - triggerGap);
+  const top = Math.min(
+    Math.max(viewportPadding, rect.top - viewportPadding),
+    Math.max(viewportPadding, window.innerHeight - shellHeight - viewportPadding),
+  );
+
+  return { left, top };
 }
 
 function formatSnapshotDate(date: Date) {
   return new Intl.DateTimeFormat("en-AU", { day: "2-digit", month: "short" }).format(date);
+}
+
+function formatSavedTime(date: Date) {
+  return new Intl.DateTimeFormat("en-AU", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Australia/Sydney" })
+    .format(date)
+    .toLowerCase()
+    .replace(/\s(am|pm)$/u, "$1");
+}
+
+function formatFooterDuration(totalSeconds: number) {
+  const safeSeconds = Math.max(0, Math.ceil(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function formatFooterDelta(secondsDelta: number, wordsDelta: number) {
+  const direction = secondsDelta >= 0 ? "over" : "under";
+  const absoluteSecondsDelta = Math.abs(secondsDelta);
+
+  if (absoluteSecondsDelta < 30) {
+    return `${absoluteSecondsDelta}s ${direction}`;
+  }
+
+  return `${Math.round(Math.abs(wordsDelta))} words ${direction}`;
 }
