@@ -13,7 +13,6 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
@@ -119,7 +118,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const role = initialRole;
   const isCustomer = role === "customer";
   const [density] = useState<ScriptDensity>("compact");
-  const [showChanges, setShowChanges] = useState(false);
+  const [showChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
   const [isScriptApproved, setIsScriptApproved] = useState(false);
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
@@ -146,7 +145,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
   const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
   const [areVisualsVisible, setAreVisualsVisible] = useState(false);
-  const [isScriptInternal, setIsScriptInternal] = useState(false);
   const [, setHasEditedThisSession] = useState(false);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
   const [confirmingDeleteRowId, setConfirmingDeleteRowId] = useState<string | null>(null);
@@ -738,6 +736,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
     setSaveState("Saved");
     setLastSavedAt(new Date());
+    setIsScriptApproved(version.approvedSnapshot);
     setToastMessage(message);
     setPreviewVersionId(null);
     setRestoreCandidateId(null);
@@ -752,6 +751,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setHistoryIndex(0);
     setHasTypedThisSession(false);
     setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+    setIsScriptApproved(false);
     addDocHistoryEntry({
       title: "Tom created a new script",
       detail: "Started a fresh script document.",
@@ -762,30 +762,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage("New script created");
     setPreviewVersionId(null);
     setIsVersionsPanelOpen(false);
-  };
-
-  const duplicateVersion = (versionId: string) => {
-    const sourceVersion = versions.find((version) => version.id === versionId);
-
-    if (!sourceVersion) {
-      return;
-    }
-
-    const nextLabel = getNextVersionLabel(versions);
-    const nextVersion = createScriptVersion(nextLabel, sourceVersion.rows, `${getVersionHistoryBaseTitle(sourceVersion)} copy`);
-
-    setVersions((currentVersions) => [...currentVersions, nextVersion]);
-    setVersionMetaById((currentMeta) => ({
-      ...currentMeta,
-      [nextVersion.id]: { ...defaultVersionMeta },
-    }));
-    addDocHistoryEntry({
-      title: `Tom duplicated ${getVersionHistoryBaseTitle(sourceVersion)}`,
-      detail: "Duplicated the selected script version.",
-      actor: "Tom",
-      time: "Just now",
-    });
-    activateVersion(nextVersion, sourceVersion.rows, "Script duplicated");
   };
 
   const deleteVersion = (versionId: string) => {
@@ -847,12 +823,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     );
   };
 
-  const setScriptInternal = () => {
-    setIsScriptInternal(true);
-    setToastMessage(isScriptInternal ? "Script is already internal" : "Set as Internal");
-    setIsVersionsPanelOpen(false);
-  };
-
   const openRestoreConfirmation = (versionId: string) => {
     const version = versions.find((item) => item.id === versionId);
 
@@ -887,10 +857,27 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const approveScript = () => {
+    const approvedAt = formatSnapshotDate(new Date());
+
     setIsScriptApproved(true);
     setStatus("Approved");
+    setEnabledSubtabs(new Set(optionalSubtabs.map((tab) => tab.id)));
+    setVersions((currentVersions) =>
+      currentVersions.map((version) =>
+        version.id === selectedVersionId
+          ? {
+              ...version,
+              approvedSnapshot: true,
+              approvedBy: "Tom",
+              approvedAt,
+              displayName: undefined,
+              snapshotName: `${version.label} - Approved`,
+            }
+          : version,
+      ),
+    );
     addDocHistoryEntry({
-      title: "Tom approved script",
+      title: `Tom approved on ${approvedAt}`,
       detail: "Approval recorded for this version.",
       actor: "Tom",
       time: "Just now",
@@ -904,14 +891,19 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     if (shouldDuplicateSnapshot) {
       const actor = role === "customer" ? "Customer" : "Studio";
-      const snapshotName = `Script v${versions.length + 1} (${actor} Edit) - ${formatSnapshotDate(new Date())}`;
+      const editLabel = role === "customer" ? "Client Edit" : "Studio Edit";
+      const snapshotDate = formatSnapshotDate(new Date());
+      const snapshotLabel = `${selectedVersion.label} (${editLabel})`;
+      const snapshotName = `${snapshotLabel} - ${snapshotDate}`;
       const snapshot: ScriptVersion = {
-        id: `v${versions.length + 1}`,
-        label: `v${versions.length + 1}`,
+        id: `${snapshotLabel.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "")}-${Date.now()}`,
+        label: snapshotLabel,
         snapshotName,
         approvedSnapshot: false,
+        approvedBy: undefined,
+        approvedAt: undefined,
         createdBy: actor,
-        createdAt: formatSnapshotDate(new Date()),
+        createdAt: snapshotDate,
         rows: cloneRows(rows),
       };
 
@@ -1038,6 +1030,24 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setFloatingCommentPosition(null);
   };
 
+  const copyCurrentVersionLink = async () => {
+    const shareUrl = `https://share.brisk.prototype/script/${selectedVersion.label}`;
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+      }
+    } catch {
+      // Prototype-only: keep feedback visible if local clipboard permissions are blocked.
+    }
+
+    setToastMessage(`Link copied for script ${selectedVersion.label}`);
+  };
+
+  const requestCurrentVersionReview = () => {
+    setToastMessage(`Review requested for script ${selectedVersion.label}`);
+  };
+
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
@@ -1068,16 +1078,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   isCustomer={isCustomer}
                   previewVersionId={previewVersionId}
                   selectedVersionId={selectedVersionId}
-                  showChanges={showChanges}
                   versionMetaById={versionMetaById}
                   versions={versions}
                   onCreateScript={createNewScriptDocument}
                   onDeleteVersion={deleteVersion}
-                  onDuplicateVersion={duplicateVersion}
                   onRenameVersion={renameVersion}
                   onRestoreVersion={openRestoreConfirmation}
-                  onSetInternal={setScriptInternal}
-                  onToggleShowChanges={setShowChanges}
                   onViewVersion={previewVersionForReadOnly}
                 />
               ) : null}
@@ -1088,16 +1094,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           </div>
         </div>
         <div className="script-subheader-actions">
-          <ShareActionRow
-            context="script"
-            userRole={isCustomer ? "Customer" : "Studio Staff"}
-            density="compact"
-            initialLinkOpens="stageOnly"
-            initialAccess="canComment"
-            projectName={scriptBrief.projectName}
-            studioName={scriptBrief.studioName}
-            customerName={scriptBrief.customerName}
+          <ScriptActionCluster
+            isApproved={isScriptApproved}
+            isPreviewing={isPreviewingVersion}
+            subtabLabel="script"
+            versionLabel={selectedVersion.label}
             onApprove={approveScript}
+            onCopyLink={copyCurrentVersionLink}
+            onRequestReview={requestCurrentVersionReview}
+            onUnapprove={() => unapproveScript(true)}
           />
           <button
             className="script-quiet-icon"
@@ -1411,6 +1416,77 @@ function ScriptHeader({
         </Link>
       </div>
     </header>
+  );
+}
+
+function ScriptActionCluster({
+  isApproved,
+  isPreviewing,
+  subtabLabel,
+  versionLabel,
+  onApprove,
+  onCopyLink,
+  onRequestReview,
+  onUnapprove,
+}: {
+  isApproved: boolean;
+  isPreviewing: boolean;
+  subtabLabel: string;
+  versionLabel: string;
+  onApprove: () => void;
+  onCopyLink: () => void;
+  onRequestReview: () => void;
+  onUnapprove: () => void;
+}) {
+  const targetLabel = `${subtabLabel} ${versionLabel}`;
+  const disabledTitle = isPreviewing ? "Return to current to approve or share." : undefined;
+
+  return (
+    <div className="share-action-row share-density-compact script-action-cluster" aria-label={`${targetLabel} actions`}>
+      <div className="share-action-buttons">
+        <button
+          className="share-button share-button-tertiary label-s-semibold"
+          disabled={isPreviewing}
+          title={disabledTitle}
+          type="button"
+          onClick={onCopyLink}
+        >
+          <DsIcon name="link" size={20} />
+          Copy link {targetLabel}
+        </button>
+        <button
+          className="share-button share-button-secondary label-s-semibold"
+          disabled={isPreviewing}
+          title={disabledTitle}
+          type="button"
+          onClick={onRequestReview}
+        >
+          Request review of {targetLabel}
+        </button>
+        {isApproved && !isPreviewing ? (
+          <span className="script-approved-pill-wrap">
+            <button className="script-approved-pill label-s-semibold" type="button" onClick={onUnapprove}>
+              <DsIcon name="check" size={14} />
+              {capitaliseLabel(subtabLabel)} approved
+            </button>
+            <button className="script-unapprove-link label-xs-semibold" type="button" onClick={onUnapprove}>
+              Un-approve
+            </button>
+          </span>
+        ) : (
+          <button
+            className="share-button share-button-primary label-s-semibold"
+            disabled={isPreviewing}
+            title={disabledTitle}
+            type="button"
+            onClick={onApprove}
+          >
+            <DsIcon name="thumbs-up-like-fill" size={20} />
+            Approve {targetLabel}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -1949,32 +2025,24 @@ function VersionsPanel({
   isCustomer,
   previewVersionId,
   selectedVersionId,
-  showChanges,
   versionMetaById,
   versions,
   onCreateScript,
   onDeleteVersion,
-  onDuplicateVersion,
   onRenameVersion,
   onRestoreVersion,
-  onSetInternal,
-  onToggleShowChanges,
   onViewVersion,
 }: {
   entries: DocHistoryEntry[];
   isCustomer: boolean;
   previewVersionId: string | null;
   selectedVersionId: string;
-  showChanges: boolean;
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
   onCreateScript: () => void;
   onDeleteVersion: (versionId: string) => void;
-  onDuplicateVersion: (versionId: string) => void;
   onRenameVersion: (versionId: string, nextLabel: string) => void;
   onRestoreVersion: (versionId: string) => void;
-  onSetInternal: () => void;
-  onToggleShowChanges: (showChanges: boolean) => void;
   onViewVersion: (versionId: string) => void;
 }) {
   const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
@@ -2035,16 +2103,6 @@ function VersionsPanel({
     }
   };
 
-  const duplicateVersionFromMenu = (versionId: string) => {
-    setOpenVersionMenuId(null);
-    onDuplicateVersion(versionId);
-  };
-
-  const setInternalFromMenu = () => {
-    setOpenVersionMenuId(null);
-    onSetInternal();
-  };
-
   return (
     <aside className="script-versions-panel" aria-label="Versions">
       <header className="script-versions-panel-header">
@@ -2088,6 +2146,7 @@ function VersionsPanel({
               const isVersionMenuOpen = openVersionMenuId === version.id;
               const canDeleteVersion = !version.approvedSnapshot;
               const versionTitle = getVersionHistoryTitle(version, versionMeta);
+              const approvedAt = version.approvedAt ?? version.createdAt;
               const rowCopy = (
                 <span className="script-version-row-copy">
                   {isRenaming ? (
@@ -2116,10 +2175,19 @@ function VersionsPanel({
                       {versionTitle}
                     </strong>
                   )}
-                  <span className="script-version-row-meta label-s">
-                    <span className="script-version-approver-tag label-xs-semibold">{version.createdBy}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{version.createdAt}</span>
+                  <span className={`script-version-row-meta label-s ${version.approvedSnapshot ? "approved" : ""}`}>
+                    {version.approvedSnapshot ? (
+                      <>
+                        <span className="script-version-approved-meta">
+                          <DsIcon name="check" size={12} />
+                          Approved
+                        </span>
+                        <span aria-hidden="true">·</span>
+                        <span>{approvedAt}</span>
+                      </>
+                    ) : (
+                      <span>{version.createdAt}</span>
+                    )}
                   </span>
                 </span>
               );
@@ -2152,25 +2220,11 @@ function VersionsPanel({
                         </button>
                         {isVersionMenuOpen ? (
                           <span className="script-version-row-menu">
-                            <label className="script-menu-switch-row label-xs-semibold">
-                              <span className="script-menu-switch-label">Show changes</span>
-                              <input type="checkbox" checked={showChanges} onChange={(event) => onToggleShowChanges(event.target.checked)} />
-                              <span className="script-menu-switch-track" aria-hidden="true">
-                                <span className="script-menu-switch-thumb" />
-                              </span>
-                            </label>
-                            <span className="script-menu-divider" aria-hidden="true" />
                             <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
                               Restore
                             </button>
-                            <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
-                              Duplicate
-                            </button>
                             <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
                               Rename
-                            </button>
-                            <button className="label-xs-semibold" type="button" onClick={setInternalFromMenu}>
-                              Set as Internal
                             </button>
                             <button
                               className="delete label-xs-semibold"
@@ -2247,20 +2301,15 @@ function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: st
 }
 
 function getVersionMarkerText(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  if (version.approvedSnapshot) {
+    return "Approved";
+  }
+
   if (versionMeta.isMaster) {
     return "Master";
   }
 
-  return version.approvedSnapshot ? getApprovedVersionMarker(version) : "current";
-}
-
-function getApprovedVersionMarker(version: ScriptVersion) {
-  const baseTitle = getVersionHistoryBaseTitle(version);
-  const suffix = version.snapshotName.startsWith(`${baseTitle} - `)
-    ? version.snapshotName.slice(`${baseTitle} - `.length)
-    : "";
-
-  return suffix || "approved";
+  return "";
 }
 
 function getVersionButtonLabel(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
@@ -2268,7 +2317,9 @@ function getVersionButtonLabel(version: ScriptVersion, versionMeta: ScriptVersio
     return version.displayName;
   }
 
-  return `${version.label} - ${formatVersionMarkerForHistory(getVersionMarkerText(version, versionMeta))}`;
+  const markerText = getVersionMarkerText(version, versionMeta);
+
+  return markerText ? `${version.label} - ${markerText}` : version.label;
 }
 
 function getVersionHistoryTitle(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
@@ -2278,11 +2329,7 @@ function getVersionHistoryTitle(version: ScriptVersion, versionMeta: ScriptVersi
 
   const markerText = getVersionMarkerText(version, versionMeta);
 
-  if (version.approvedSnapshot && markerText === "approved") {
-    return version.snapshotName;
-  }
-
-  return `${getVersionHistoryBaseTitle(version)} - ${formatVersionMarkerForHistory(markerText)}`;
+  return markerText ? `${getVersionHistoryBaseTitle(version)} - ${markerText}` : getVersionHistoryBaseTitle(version);
 }
 
 function getVersionHistoryBaseTitle(version: ScriptVersion) {
@@ -2290,11 +2337,9 @@ function getVersionHistoryBaseTitle(version: ScriptVersion) {
     return version.displayName;
   }
 
-  return version.snapshotName.replace(/\s-\s(?:Current|Master|Internal|Studio approved|Customer approved|approved)$/iu, "");
-}
-
-function formatVersionMarkerForHistory(markerText: string) {
-  return markerText.charAt(0).toUpperCase() + markerText.slice(1);
+  return version.snapshotName
+    .replace(/^Script\s+/iu, "")
+    .replace(/\s-\s(?:Current|Master|Internal|Studio approved|Customer approved|Approved|approved)$/iu, "");
 }
 
 function getNextVersionLabel(versions: ScriptVersion[]) {
@@ -2304,6 +2349,10 @@ function getNextVersionLabel(versions: ScriptVersion[]) {
   }, 0);
 
   return `v${highestVersionNumber + 1}`;
+}
+
+function capitaliseLabel(label: string) {
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 function cloneRows(rows: ScriptRow[]) {

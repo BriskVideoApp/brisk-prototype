@@ -241,6 +241,57 @@
   white-space: nowrap;
 }
 
+.script-action-cluster .share-button:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.script-approved-pill-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.script-approved-pill {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border: 1px solid var(--brisk-green-60);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-white);
+  color: var(--brisk-green-60);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.script-approved-pill:hover,
+.script-approved-pill:focus-visible {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.script-unapprove-link {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  opacity: 0;
+  padding: var(--brisk-space-none);
+  pointer-events: none;
+}
+
+.script-approved-pill-wrap:hover .script-unapprove-link,
+.script-approved-pill-wrap:focus-within .script-unapprove-link {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.script-unapprove-link:hover,
+.script-unapprove-link:focus-visible {
+  color: var(--brisk-brand-primary);
+}
+
 .script-menu-switch-row {
   display: flex;
   align-items: center;
@@ -1281,7 +1332,7 @@
 
 .script-versions-section h3 {
   margin: 0;
-  color: var(--brisk-text-tertiary);
+  color: var(--brisk-gray-60);
   padding: 0 var(--brisk-space-l);
   text-transform: uppercase;
 }
@@ -1392,6 +1443,10 @@ button.script-version-row-body:focus-visible {
   white-space: nowrap;
 }
 
+.script-version-row-meta.approved {
+  color: var(--brisk-green-60);
+}
+
 .script-version-rename-input {
   width: min(100%, 320px);
   min-height: 32px;
@@ -1408,12 +1463,11 @@ button.script-version-row-body:focus-visible {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.script-version-approver-tag {
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  padding: 2px var(--brisk-space-s);
+.script-version-approved-meta {
+  display: inline-flex;
+  align-items: center;
+  color: var(--brisk-green-60);
+  gap: var(--brisk-space-xs);
 }
 
 .script-version-row-side,

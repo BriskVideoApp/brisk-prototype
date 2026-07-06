@@ -43,6 +43,8 @@ export type ScriptVersion = {
   displayName?: string;
   snapshotName: string;
   approvedSnapshot: boolean;
+  approvedBy?: string;
+  approvedAt?: string;
   createdBy: "Studio" | "Customer";
   createdAt: string;
   rows: ScriptRow[];
@@ -324,8 +326,10 @@ export const scriptVersions: ScriptVersion[] = [
   {
     id: "v1",
     label: "v1",
-    snapshotName: "Script v1 - Customer approved",
+    snapshotName: "v1 - Approved",
     approvedSnapshot: true,
+    approvedBy: "Tom",
+    approvedAt: "12 Jun",
     createdBy: "Customer",
     createdAt: "12 Jun",
     rows: baseRows.map((row) => ({
@@ -338,8 +342,10 @@ export const scriptVersions: ScriptVersion[] = [
   {
     id: "v2",
     label: "v2",
-    snapshotName: "Script v2 - Studio approved",
+    snapshotName: "v2 - Approved",
     approvedSnapshot: true,
+    approvedBy: "Tom",
+    approvedAt: "18 Jun",
     createdBy: "Studio",
     createdAt: "18 Jun",
     rows: baseRows.map((row) => ({
