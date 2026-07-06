@@ -27,7 +27,6 @@ import {
   type ScriptCommentAnchor,
   type ScriptDensity,
   type ScriptGenre,
-  type ScriptLayoutMode,
   type ScriptMediaItem,
   type ScriptMediaType,
   type ScriptRole,
@@ -38,10 +37,6 @@ import {
 } from "@/data/script";
 
 const currentUserId = "user-tom";
-const layoutModes: Array<{ value: ScriptLayoutMode; label: string }> = [
-  { value: "av", label: "Script" },
-  { value: "simple", label: "Simple Doc" },
-];
 const optionalSubtabs: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }> = [
   { id: "transcripts", label: "Transcripts" },
   { id: "notes", label: "Notes" },
@@ -123,7 +118,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const latestVersion = scriptVersions[scriptVersions.length - 1];
   const role = initialRole;
   const isCustomer = role === "customer";
-  const [layoutMode, setLayoutMode] = useState<ScriptLayoutMode>("av");
   const [density] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
@@ -186,10 +180,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
-  const simpleDocRef = useRef<HTMLTextAreaElement | null>(null);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
-  const docValue = visibleRows.map((row) => row.words).join("\n\n");
   const totalWords = visibleRows.reduce((total, row) => total + countWords(row.words), 0);
   const actualDurationSeconds = Math.ceil((totalWords / 150) * 60);
   const targetDurationSeconds = scriptBrief.targetDurationSeconds;
@@ -211,12 +203,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const isPreviewingVersion = previewVersion !== null;
-
-  useEffect(() => {
-    if (isCustomer) {
-      setLayoutMode("av");
-    }
-  }, [isCustomer]);
 
   useEffect(() => {
     return () => {
@@ -247,8 +233,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   useEffect(() => {
     wordInputRefs.current.forEach(resizeTextAreaToContent);
     visualInputRefs.current.forEach(resizeTextAreaToContent);
-    resizeTextAreaToContent(simpleDocRef.current);
-  }, [rows, layoutMode, density]);
+  }, [rows, density]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -668,25 +653,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
   };
 
-  const captureDocSelectionAnchor = (target: HTMLTextAreaElement) => {
-    const selection = getTrimmedSelection(target);
-
-    if (!selection) {
-      setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
-      return;
-    }
-
-    const position = getFloatingToolbarPosition(target);
-    setFloatingToolbar({ visible: true, rowId: null, ...position });
-    setActiveCommentAnchor({
-      kind: "selection",
-      label: "Document",
-      snippet: selection.text.length > 44 ? `${selection.text.slice(0, 44)}...` : selection.text,
-    });
-    setIsCommentComposerOpen(true);
-    setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
-  };
-
   const addMediaItem = (rowId: string, type: ScriptMediaType) => {
     updateRows((currentRows) =>
       currentRows.map((row) =>
@@ -996,35 +962,14 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     unapproveScript(true);
   };
 
-  const updateDocValue = (value: string) => {
-    if (value.trim()) {
-      setHasTypedThisSession(true);
-    }
-    setHasEditedThisSession(true);
-
-    updateRows((currentRows) => {
-      const paragraphs = value.split(/\n{2,}/u);
-      const nextRows = currentRows.map((row, index) => ({
-        ...row,
-        words: paragraphs[index] ?? "",
-      }));
-
-      if (paragraphs.length > nextRows.length) {
-        paragraphs.slice(nextRows.length).forEach((paragraph, index) => {
-          nextRows.push({
-            ...createEmptyRow(nextRows.length + index + 1),
-            words: paragraph,
-          });
-        });
-      }
-
-      return nextRows;
-    });
-  };
-
   const applyTextMark = (mark: "bold" | "link") => {
     const activeRowId = floatingToolbar.rowId ?? selectionState.lastRowId;
-    const input = activeRowId ? wordInputRefs.current.get(activeRowId) : simpleDocRef.current;
+
+    if (!activeRowId) {
+      return;
+    }
+
+    const input = wordInputRefs.current.get(activeRowId);
 
     if (!input) {
       return;
@@ -1037,11 +982,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     const replacement = getMarkedText(mark, selectedText);
     const nextValue = `${value.slice(0, start)}${replacement}${value.slice(end)}`;
 
-    if (activeRowId) {
-      setRowField(activeRowId, "words", nextValue);
-    } else {
-      updateDocValue(nextValue);
-    }
+    setRowField(activeRowId, "words", nextValue);
 
     window.setTimeout(() => input.focus(), 0);
   };
@@ -1125,14 +1066,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       <section className="script-subheader" aria-label="Script controls">
         <div className="script-subheader-left">
-          {!isCustomer ? (
-            <SegmentedControl
-              label="Layout"
-              options={layoutModes}
-              value={layoutMode}
-              onChange={(value) => setLayoutMode(value)}
-            />
-          ) : null}
           <div className="script-version-control">
             <div className="script-version-panel-wrap">
               <button
@@ -1245,69 +1178,55 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               onReturn={returnToCurrentVersion}
             />
           ) : null}
-          {layoutMode === "av" ? (
-            <AvScriptEditor
-              commentsByRow={commentsByRow}
-              density={density}
-              dropRowId={dropRowId}
-              hasTypedThisSession={hasTypedThisSession}
-              isApproved={isScriptApproved || isPreviewingVersion}
-              highlightedRowId={highlightedRowId}
-              openMediaMenuRowId={openMediaMenuRowId}
-              openRowMenuId={openRowMenuId}
-              confirmingDeleteRowId={confirmingDeleteRowId}
-              rows={visibleRows}
-              areVisualsVisible={areVisualsVisible}
-              selectedRowIds={selectionState.selectedRowIds}
-              hasVisualsContent={hasVisualsContent}
-              showChanges={showChanges}
-              wordInputRefs={wordInputRefs}
-              visualInputRefs={visualInputRefs}
-              onAddMediaItem={addMediaItem}
-              onAddRowAfter={addRowAfter}
-              onAddRowBefore={addRowBefore}
-              onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
-              onCaptureSelectionAnchor={captureSelectionAnchor}
-              onDeleteRow={deleteRowById}
-              onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
-              onDragEnd={() => {
-                setDraggingRowId(null);
-                setDropRowId(null);
-              }}
-              onDragOverRow={(rowId) => setDropRowId(rowId)}
-              onDragStartRow={setDraggingRowId}
-              onDuplicateRow={duplicateRowById}
-              onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
-              onOpenRowAnnotation={openUniversalRowAnchor}
-              onPasteWords={handleWordsPaste}
-              onReorderRows={(targetRowId) => {
-                if (draggingRowId) {
-                  reorderRows(draggingRowId, targetRowId);
-                }
-              }}
-              onSelectRow={selectRow}
-              onSetField={setRowField}
-              onSetMediaMenuRow={setOpenMediaMenuRowId}
-              onSetOpenRowMenu={(rowId) => {
-                setOpenRowMenuId(rowId);
-                setConfirmingDeleteRowId(null);
-              }}
-              onWordsKeyDown={handleWordsKeyDown}
-              registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
-            />
-          ) : null}
-          {layoutMode === "simple" ? (
-            <SimpleDocEditor
-              docRef={simpleDocRef}
-              docValue={docValue}
-              isApproved={isScriptApproved || isPreviewingVersion}
-              showChanges={showChanges}
-              rows={visibleRows}
-              onCaptureSelectionAnchor={captureDocSelectionAnchor}
-              onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
-              onUpdateDoc={updateDocValue}
-            />
-          ) : null}
+          <AvScriptEditor
+            commentsByRow={commentsByRow}
+            density={density}
+            dropRowId={dropRowId}
+            hasTypedThisSession={hasTypedThisSession}
+            isApproved={isScriptApproved || isPreviewingVersion}
+            highlightedRowId={highlightedRowId}
+            openMediaMenuRowId={openMediaMenuRowId}
+            openRowMenuId={openRowMenuId}
+            confirmingDeleteRowId={confirmingDeleteRowId}
+            rows={visibleRows}
+            areVisualsVisible={areVisualsVisible}
+            selectedRowIds={selectionState.selectedRowIds}
+            hasVisualsContent={hasVisualsContent}
+            showChanges={showChanges}
+            wordInputRefs={wordInputRefs}
+            visualInputRefs={visualInputRefs}
+            onAddMediaItem={addMediaItem}
+            onAddRowAfter={addRowAfter}
+            onAddRowBefore={addRowBefore}
+            onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
+            onCaptureSelectionAnchor={captureSelectionAnchor}
+            onDeleteRow={deleteRowById}
+            onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
+            onDragEnd={() => {
+              setDraggingRowId(null);
+              setDropRowId(null);
+            }}
+            onDragOverRow={(rowId) => setDropRowId(rowId)}
+            onDragStartRow={setDraggingRowId}
+            onDuplicateRow={duplicateRowById}
+            onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
+            onOpenRowAnnotation={openUniversalRowAnchor}
+            onPasteWords={handleWordsPaste}
+            onReorderRows={(targetRowId) => {
+              if (draggingRowId) {
+                reorderRows(draggingRowId, targetRowId);
+              }
+            }}
+            onSelectRow={selectRow}
+            onSetField={setRowField}
+            onSetMediaMenuRow={setOpenMediaMenuRowId}
+            onSetOpenRowMenu={(rowId) => {
+              setOpenRowMenuId(rowId);
+              setConfirmingDeleteRowId(null);
+            }}
+            onWordsKeyDown={handleWordsKeyDown}
+            registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
+          />
           {showChanges ? <RedlineLegend /> : null}
         </div>
 
@@ -1549,34 +1468,6 @@ function ScriptHeader({
         </Link>
       </div>
     </header>
-  );
-}
-
-function SegmentedControl<TValue extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: Array<{ value: TValue; label: string }>;
-  value: TValue;
-  onChange: (value: TValue) => void;
-}) {
-  return (
-    <div className="script-segmented-wrap" aria-label={label}>
-      {options.map((option) => (
-        <button
-          className={`script-segmented-button label-xs-semibold ${value === option.value ? "active" : ""}`}
-          type="button"
-          key={option.value}
-          aria-pressed={value === option.value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
   );
 }
 
@@ -1949,53 +1840,6 @@ function AvScriptEditor({
           </div>
         );
       })}
-    </section>
-  );
-}
-
-function SimpleDocEditor({
-  docRef,
-  docValue,
-  isApproved,
-  rows,
-  showChanges,
-  onCaptureSelectionAnchor,
-  onGuardApproved,
-  onUpdateDoc,
-}: {
-  docRef: MutableRefObject<HTMLTextAreaElement | null>;
-  docValue: string;
-  isApproved: boolean;
-  rows: ScriptRow[];
-  showChanges: boolean;
-  onCaptureSelectionAnchor: (target: HTMLTextAreaElement) => void;
-  onGuardApproved: () => boolean;
-  onUpdateDoc: (value: string) => void;
-}) {
-  return (
-    <section className="script-doc-surface" aria-label="Simple document editor">
-      <textarea
-        className="script-doc-textarea paragraph-s"
-        placeholder="Start writing..."
-        readOnly={isApproved}
-        ref={docRef}
-        value={docValue}
-        onMouseDown={() => {
-          if (isApproved) {
-            onGuardApproved();
-          }
-        }}
-        onChange={(event) => onUpdateDoc(event.target.value)}
-        onInput={(event) => resizeTextAreaToContent(event.currentTarget)}
-        onKeyUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
-        onMouseUp={(event) => onCaptureSelectionAnchor(event.currentTarget)}
-        onSelect={(event) => onCaptureSelectionAnchor(event.currentTarget)}
-      />
-      {showChanges ? (
-        <div className="script-doc-redline">
-          {rows.map((row) => (row.change ? <RowChange change={row.change} key={row.id} /> : null))}
-        </div>
-      ) : null}
     </section>
   );
 }

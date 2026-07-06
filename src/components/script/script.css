@@ -68,7 +68,6 @@
 .script-subheader,
 .script-subheader-left,
 .script-subheader-actions,
-.script-segmented-wrap,
 .script-media-strip,
 .script-ai-header,
 .script-ai-actions,
@@ -107,7 +106,6 @@
 }
 
 .script-role-links:hover,
-.script-segmented-wrap:hover,
 .script-current-version-button:hover,
 .script-select:hover,
 .script-comment-visibility:hover {
@@ -137,32 +135,6 @@
   min-height: 38px;
 }
 
-.script-segmented-wrap {
-  overflow: hidden;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-}
-
-.script-segmented-button {
-  min-height: 32px;
-  border: 0;
-  border-left: 1px solid var(--brisk-border-primary);
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  padding: 0 var(--brisk-space-m);
-}
-
-.script-segmented-button:first-child {
-  border-left: 0;
-}
-
-.script-segmented-button.active {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-primary);
-}
-
-.script-segmented-button:not(.active):hover,
 .script-role-link:not(.active):hover {
   background: var(--brisk-item-tertiary);
   color: var(--brisk-text-primary);
@@ -795,7 +767,6 @@
 }
 
 .script-cell-input,
-.script-doc-textarea,
 .script-ai-input,
 .script-comment-input {
   display: block;
@@ -807,7 +778,7 @@
 }
 
 .script-cell-input,
-.script-doc-textarea {
+.script-cell-input {
   resize: none;
   overflow: hidden;
 }
@@ -870,7 +841,6 @@
 }
 
 .script-cell-input::placeholder,
-.script-doc-textarea::placeholder,
 .script-ai-input::placeholder,
 .script-comment-input::placeholder {
   color: var(--brisk-text-tertiary);
@@ -882,8 +852,7 @@
   font-weight: 400;
 }
 
-.script-cell-input:read-only,
-.script-doc-textarea:read-only {
+.script-cell-input:read-only {
   color: var(--brisk-text-secondary);
 }
 
@@ -1123,29 +1092,6 @@
   border-radius: var(--brisk-radius-full);
   background: var(--brisk-brand-primary);
   content: "";
-}
-
-.script-doc-surface {
-  margin: 0 auto;
-  max-width: 820px;
-  border: 0;
-  border-radius: 0;
-  background: var(--brisk-white);
-  padding: var(--brisk-space-2xl);
-}
-
-.script-doc-textarea {
-  min-height: 680px;
-  color: var(--brisk-text-primary);
-  font-size: 16px;
-  line-height: 1.75;
-}
-
-.script-doc-redline {
-  display: grid;
-  border-top: 1px solid var(--brisk-border-primary);
-  gap: var(--brisk-space-s);
-  padding-top: var(--brisk-space-l);
 }
 
 .script-floating-toolbar {
