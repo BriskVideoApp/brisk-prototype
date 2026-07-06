@@ -40,6 +40,7 @@ export type ScriptRow = {
 export type ScriptVersion = {
   id: string;
   label: string;
+  displayName?: string;
   snapshotName: string;
   approvedSnapshot: boolean;
   createdBy: "Studio" | "Customer";

@@ -768,30 +768,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsScriptMenuOpen(false);
   };
 
-  const duplicateVersion = (versionId: string) => {
-    const sourceVersion = versions.find((version) => version.id === versionId);
-
-    if (!sourceVersion) {
-      return;
-    }
-
-    const nextLabel = getNextVersionLabel(versions);
-    const nextVersion = createScriptVersion(nextLabel, sourceVersion.rows, `${getVersionHistoryBaseTitle(sourceVersion)} copy`);
-
-    setVersions((currentVersions) => [...currentVersions, nextVersion]);
-    setVersionMetaById((currentMeta) => ({
-      ...currentMeta,
-      [nextVersion.id]: { ...defaultVersionMeta },
-    }));
-    addDocHistoryEntry({
-      title: `Tom duplicated ${getVersionHistoryBaseTitle(sourceVersion)}`,
-      detail: "Duplicated the selected script version.",
-      actor: "Tom",
-      time: "Just now",
-    });
-    activateVersion(nextVersion, sourceVersion.rows, "Script duplicated");
-  };
-
   const deleteVersion = (versionId: string) => {
     const version = versions.find((item) => item.id === versionId);
 
@@ -835,18 +811,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
   };
 
-  const renameVersion = (versionId: string) => {
-    const version = versions.find((item) => item.id === versionId);
-
-    if (!version) {
-      return;
-    }
-
-    const nextLabel = window.prompt("Rename script", version.label);
-    const trimmedLabel = nextLabel?.trim();
+  const renameVersion = (versionId: string, nextLabel: string) => {
+    const trimmedLabel = nextLabel.trim();
 
     if (!trimmedLabel) {
-      setIsScriptMenuOpen(false);
       return;
     }
 
@@ -855,15 +823,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         currentVersion.id === versionId
           ? {
               ...currentVersion,
-              label: trimmedLabel,
-              snapshotName: `${trimmedLabel} - ${getVersionMarkerText(currentVersion, versionMetaById[currentVersion.id] ?? defaultVersionMeta)}`,
+              displayName: trimmedLabel,
             }
           : currentVersion,
       ),
     );
-    setToastMessage("Script renamed");
-    setIsVersionsPanelOpen(false);
-    setIsScriptMenuOpen(false);
   };
 
   const setScriptInternal = () => {
@@ -1094,7 +1058,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   versionMetaById={versionMetaById}
                   versions={versions}
                   onDeleteVersion={deleteVersion}
-                  onDuplicateVersion={duplicateVersion}
                   onRenameVersion={renameVersion}
                   onRestoreVersion={openRestoreConfirmation}
                   onViewVersion={previewVersionForReadOnly}
@@ -2009,7 +1972,6 @@ function VersionsPanel({
   versionMetaById,
   versions,
   onDeleteVersion,
-  onDuplicateVersion,
   onRenameVersion,
   onRestoreVersion,
   onViewVersion,
@@ -2021,11 +1983,50 @@ function VersionsPanel({
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
   onDeleteVersion: (versionId: string) => void;
-  onDuplicateVersion: (versionId: string) => void;
-  onRenameVersion: (versionId: string) => void;
+  onRenameVersion: (versionId: string, nextLabel: string) => void;
   onRestoreVersion: (versionId: string) => void;
   onViewVersion: (versionId: string) => void;
 }) {
+  const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
+  const [renameDraft, setRenameDraft] = useState("");
+  const renameInputRef = useRef<HTMLInputElement | null>(null);
+  const isCancellingRenameRef = useRef(false);
+
+  useEffect(() => {
+    if (renamingVersionId) {
+      renameInputRef.current?.focus();
+      renameInputRef.current?.select();
+    }
+  }, [renamingVersionId]);
+
+  const startRename = (version: ScriptVersion, versionMeta: ScriptVersionMeta) => {
+    isCancellingRenameRef.current = false;
+    setRenamingVersionId(version.id);
+    setRenameDraft(getVersionButtonLabel(version, versionMeta));
+  };
+
+  const saveRename = (versionId: string) => {
+    if (isCancellingRenameRef.current) {
+      isCancellingRenameRef.current = false;
+      return;
+    }
+
+    const trimmedDraft = renameDraft.trim();
+
+    if (trimmedDraft) {
+      onRenameVersion(versionId, trimmedDraft);
+    }
+
+    setRenamingVersionId(null);
+    setRenameDraft("");
+  };
+
+  const cancelRename = () => {
+    isCancellingRenameRef.current = true;
+    setRenamingVersionId(null);
+    setRenameDraft("");
+  };
+
   return (
     <aside className="script-versions-panel" aria-label="Versions">
       <header className="script-versions-panel-header">
@@ -2060,7 +2061,7 @@ function VersionsPanel({
               const isCurrent = version.id === selectedVersionId;
               const isPreviewing = version.id === previewVersionId;
               const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
-              const isApproved = version.approvedSnapshot;
+              const isRenaming = renamingVersionId === version.id;
 
               return (
                 <article
@@ -2069,7 +2070,29 @@ function VersionsPanel({
                   key={version.id}
                 >
                   <span className="script-version-row-copy">
-                    <strong>{getVersionHistoryTitle(version, versionMeta)}</strong>
+                    {isRenaming ? (
+                      <input
+                        ref={renameInputRef}
+                        aria-label={`Rename ${getVersionButtonLabel(version, versionMeta)}`}
+                        className="script-version-rename-input label-s-semibold"
+                        value={renameDraft}
+                        onBlur={() => saveRename(version.id)}
+                        onChange={(event) => setRenameDraft(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            saveRename(version.id);
+                          }
+
+                          if (event.key === "Escape") {
+                            event.preventDefault();
+                            cancelRename();
+                          }
+                        }}
+                      />
+                    ) : (
+                      <strong>{getVersionHistoryTitle(version, versionMeta)}</strong>
+                    )}
                     <span className="script-version-row-meta label-s">
                       <span className="script-version-approver-tag label-xs-semibold">{version.createdBy}</span>
                       <span>{version.createdAt}</span>
@@ -2077,31 +2100,25 @@ function VersionsPanel({
                   </span>
                   <span className="script-version-row-side">
                     {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-                    {!isCustomer && !isCurrent ? (
+                    {!isCustomer ? (
                       <span className="script-version-row-actions">
-                        <Button size="S" type="button" variant="secondary" onClick={() => onViewVersion(version.id)}>
-                          View
+                        {!isCurrent ? (
+                          <>
+                            <Button size="S" type="button" variant="secondary" onClick={() => onViewVersion(version.id)}>
+                              View
+                            </Button>
+                            <Button size="S" type="button" variant="tertiary" onClick={() => onRestoreVersion(version.id)}>
+                              Restore
+                            </Button>
+                          </>
+                        ) : null}
+                        <Button size="S" type="button" variant="tertiary" onClick={() => startRename(version, versionMeta)}>
+                          Rename
                         </Button>
-                        <Button size="S" type="button" variant="tertiary" onClick={() => onRestoreVersion(version.id)}>
-                          Restore
-                        </Button>
-                        {!isApproved ? (
-                          <details className="script-version-row-more">
-                            <summary className="script-quiet-icon" aria-label={`More actions for ${version.label}`}>
-                              <DsIcon name="dots-three" size={14} />
-                            </summary>
-                            <div className="script-version-row-menu">
-                              <button className="label-xs-semibold" type="button" onClick={() => onRenameVersion(version.id)}>
-                                Rename
-                              </button>
-                              <button className="label-xs-semibold" type="button" onClick={() => onDuplicateVersion(version.id)}>
-                                Duplicate
-                              </button>
-                              <button className="delete label-xs-semibold" type="button" onClick={() => onDeleteVersion(version.id)}>
-                                Delete
-                              </button>
-                            </div>
-                          </details>
+                        {!isCurrent ? (
+                          <Button size="S" type="button" variant="tertiary" onClick={() => onDeleteVersion(version.id)}>
+                            Delete
+                          </Button>
                         ) : null}
                       </span>
                     ) : null}
@@ -2181,10 +2198,18 @@ function getApprovedVersionMarker(version: ScriptVersion) {
 }
 
 function getVersionButtonLabel(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  if (version.displayName) {
+    return version.displayName;
+  }
+
   return `${version.label} - ${formatVersionMarkerForHistory(getVersionMarkerText(version, versionMeta))}`;
 }
 
 function getVersionHistoryTitle(version: ScriptVersion, versionMeta: ScriptVersionMeta) {
+  if (version.displayName) {
+    return version.displayName;
+  }
+
   const markerText = getVersionMarkerText(version, versionMeta);
 
   if (version.approvedSnapshot && markerText === "approved") {
@@ -2195,6 +2220,10 @@ function getVersionHistoryTitle(version: ScriptVersion, versionMeta: ScriptVersi
 }
 
 function getVersionHistoryBaseTitle(version: ScriptVersion) {
+  if (version.displayName) {
+    return version.displayName;
+  }
+
   return version.snapshotName.replace(/\s-\s(?:Current|Master|Internal|Studio approved|Customer approved|approved)$/iu, "");
 }
 
