@@ -1524,6 +1524,11 @@ button.script-version-row-body:focus-visible {
   padding: var(--brisk-space-s);
 }
 
+.script-version-row:nth-last-child(-n + 2) .script-version-row-menu {
+  top: auto;
+  bottom: calc(100% + var(--brisk-space-s));
+}
+
 .script-version-row-menu button {
   min-height: 28px;
   border: 0;
