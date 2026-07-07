@@ -249,6 +249,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const isPreviewingVersion = previewVersion !== null;
+  const dropdownVersion = previewVersion ?? selectedVersion;
+  const dropdownVersionMeta = versionMetaById[dropdownVersion.id] ?? defaultVersionMeta;
 
   useEffect(() => {
     return () => {
@@ -811,7 +813,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setPreviewVersionId(version.id);
     loadRowsFromVersion(version);
     setSaveState("Saved");
-    setIsVersionsPanelOpen(false);
   };
 
   const returnToCurrentVersion = () => {
@@ -1301,7 +1302,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 />
               ) : (
                 <button
-                  className="script-current-version-button label-xs-semibold"
+                  className={`script-current-version-button label-xs-semibold ${isPreviewingVersion ? "previewing" : ""}`}
                   type="button"
                   aria-label="Open versions"
                   aria-expanded={isVersionsPanelOpen}
@@ -1314,7 +1315,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                     setFloatingCommentPosition(null);
                   }}
                 >
-                  <span>{getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}</span>
+                  <span>{getVersionButtonLabel(dropdownVersion, dropdownVersionMeta)}</span>
                   <DsIcon name="caret-down" size={14} />
                 </button>
               )}

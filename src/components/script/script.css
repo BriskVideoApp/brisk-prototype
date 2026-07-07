@@ -173,6 +173,15 @@
   padding: 0 var(--brisk-space-m);
 }
 
+.script-current-version-button.previewing {
+  border: 2px solid var(--brisk-system-warning);
+  background: var(--brisk-orange-10);
+}
+
+.script-current-version-button.previewing .ds-icon {
+  color: var(--brisk-system-warning);
+}
+
 .script-current-version-menu-wrap {
   position: relative;
   display: inline-flex;
