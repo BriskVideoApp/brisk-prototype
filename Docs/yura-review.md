@@ -1,5 +1,21 @@
 # Yura Review Log
 
+## Script AI panel prototype
+
+Added prototype components under `src/components/script-ai/`:
+
+- `ScriptAiPanel`
+- `SourceChips`
+- local typed models for AI sources, messages, suggestion chips, slash commands, and insert requests
+
+Notes for DS review:
+
+- The chat-first AI panel uses local prototype markup styled with Brisk tokens because this repo does not currently expose React DS components for draggable floating panels, chat thread rows, slash-command menus, source chips, or file-upload controls.
+- Sources are rendered as removable pill chips, with `+ Add source` mocked as an uploaded-source chip.
+- Message actions use inline Insert and Copy text actions until a shared chat action pattern exists.
+- The minimised state remains a visible strip with sources, per the Script tab spec. This should become a DS panel-minimised treatment if that pattern is standardised.
+- Insert behaviour is prototype-only: selected text is replaced, whole-script generation creates a new script version, visual suggestions update the active row's visual field, and paper edit rows insert beneath the active row.
+
 ## Share controls prototype
 
 Added prototype components under `src/components/share/`:

@@ -13,20 +13,18 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
+import { ScriptAiPanel, type ScriptAiInsertRequest, type ScriptAiRowDraft } from "@/components/script-ai/ScriptAiPanel";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
-  scriptAiFixtures,
   scriptBrief,
-  scriptGenres,
   scriptUsers,
   scriptVersions,
   type ScriptComment,
   type ScriptCommentAnchor,
   type ScriptDensity,
-  type ScriptGenre,
   type ScriptMediaItem,
   type ScriptMediaType,
   type ScriptRole,
@@ -204,11 +202,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [lastSavedAt, setLastSavedAt] = useState(initialSavedAt);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState("");
   const [showAiToCustomer] = useState(scriptBrief.showAiToCustomer);
-  const [aiSources, setAiSources] = useState(["Brief", "Transcript v2", "Past scripts"]);
-  const [aiResponse, setAiResponse] = useState<string>(scriptAiFixtures[0]);
-  const [aiGenre, setAiGenre] = useState<ScriptGenre>(scriptBrief.genre);
   const [hasTypedThisSession, setHasTypedThisSession] = useState(() =>
     latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
   );
@@ -229,6 +223,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const isCancellingCurrentVersionRenameRef = useRef(false);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
+  const aiSelectionContext = {
+    activeRowLabel:
+      activeCommentAnchor.rowId
+        ? getRowLabel(activeCommentAnchor.rowId, rows)
+        : selectionState.lastRowId
+          ? getRowLabel(selectionState.lastRowId, rows)
+          : null,
+    hasScriptContent: visibleRows.some((row) => row.words.trim() || row.visuals.trim()),
+    selectedText: activeCommentAnchor.kind === "selection" ? activeCommentAnchor.snippet ?? null : null,
+  };
   const totalWords = visibleRows.reduce((total, row) => total + countWords(row.words), 0);
   const actualDurationSeconds = Math.ceil((totalWords / 150) * 60);
   const targetDurationSeconds = scriptBrief.targetDurationSeconds;
@@ -1202,20 +1206,91 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     focusCommentComposer();
   };
 
-  const insertAiLines = () => {
+  const handleAiInsert = (request: ScriptAiInsertRequest) => {
+    if (request.mode === "replace_selection") {
+      replaceSelectedTextWithAi(request.text);
+      return;
+    }
+
+    if (request.mode === "replace_script_new_version") {
+      createScriptDocumentFromAi(request.rows);
+      return;
+    }
+
+    if (request.mode === "replace_row_visuals") {
+      replaceActiveRowVisuals(request.visuals);
+      return;
+    }
+
+    insertAiRowsAfterActive(request.rows);
+  };
+
+  const replaceSelectedTextWithAi = (text: string) => {
+    if (activeCommentAnchor.kind !== "selection" || !activeCommentAnchor.rowId || !activeCommentAnchor.range) {
+      setToastMessage("Select script text before replacing it.");
+      return;
+    }
+
+    updateRows((currentRows) =>
+      currentRows.map((row) => {
+        if (row.id !== activeCommentAnchor.rowId) {
+          return row;
+        }
+
+        return {
+          ...row,
+          words: `${row.words.slice(0, activeCommentAnchor.range!.start)}${text}${row.words.slice(activeCommentAnchor.range!.end)}`,
+        };
+      }),
+    );
+    setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+    setToastMessage("Selection replaced by ChopChop AI.");
+  };
+
+  const createScriptDocumentFromAi = (draftRows: ScriptAiRowDraft[]) => {
+    const nextRows = createRowsFromAiDrafts(draftRows);
+    const nextLabel = getNextVersionLabel(versions);
+    const nextVersion = createScriptVersion(nextLabel, nextRows, `Script ${nextLabel} - AI draft`);
+
+    setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [nextVersion.id]: { ...defaultVersionMeta },
+    }));
+    addDocHistoryEntry({
+      title: `Tom created ${nextLabel} with ChopChop AI`,
+      detail: "Generated a fresh script version from the brief.",
+      actor: "Tom",
+      time: "Just now",
+    });
+    activateVersion(nextVersion, nextRows, `${nextLabel} created from ChopChop AI`);
+  };
+
+  const replaceActiveRowVisuals = (visuals: string) => {
+    const activeRowId = activeCommentAnchor.rowId ?? selectionState.lastRowId ?? rows[0]?.id;
+
+    if (!activeRowId) {
+      setToastMessage("Choose a script row before inserting visuals.");
+      return;
+    }
+
+    updateRows((currentRows) =>
+      currentRows.map((row) => (row.id === activeRowId ? { ...row, visuals } : row)),
+    );
+    setAreVisualsVisible(true);
+    setToastMessage("Visual direction inserted.");
+  };
+
+  const insertAiRowsAfterActive = (draftRows: ScriptAiRowDraft[]) => {
     updateRows((currentRows) => {
-      const activeRowId = selectionState.lastRowId ?? currentRows[0]?.id;
+      const activeRowId = activeCommentAnchor.rowId ?? selectionState.lastRowId ?? currentRows[0]?.id;
       const activeIndex = activeRowId ? currentRows.findIndex((row) => row.id === activeRowId) : currentRows.length - 1;
       const insertIndex = activeIndex === -1 ? currentRows.length : activeIndex + 1;
-      const aiRows = scriptAiFixtures.slice(0, 2).map((line, index) => ({
-        ...createEmptyRow(currentRows.length + index + 1),
-        words: line,
-        visuals: "AI suggested visual direction ready for refinement.",
-      }));
+      const aiRows = createRowsFromAiDrafts(draftRows, currentRows.length);
 
       return [...currentRows.slice(0, insertIndex), ...aiRows, ...currentRows.slice(insertIndex)];
     });
-    setAiResponse("Inserted two suggested lines under the current row.");
+    setToastMessage("ChopChop AI rows inserted.");
   };
 
   const focusCommentComposer = () => {
@@ -1671,7 +1746,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       {shouldShowAi ? (
         <>
-          {!isAiPanelOpen || isAiPanelMinimised ? (
+          {!isAiPanelOpen ? (
             <button
               className="script-ai-fab"
               type="button"
@@ -1684,81 +1759,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               ✦
             </button>
           ) : null}
-          {isAiPanelOpen && !isAiPanelMinimised ? (
-            <aside className="script-ai-panel" aria-label="ChopChop AI panel">
-              <div className="script-ai-header">
-                <h2 className="heading-3xs">ChopChop AI</h2>
-                <div className="script-ai-actions">
-                  <button className="script-quiet-icon" type="button" aria-label="Minimise AI" onClick={() => setIsAiPanelMinimised(true)}>
-                    -
-                  </button>
-                  <button className="script-quiet-icon" type="button" aria-label="Close AI" onClick={() => setIsAiPanelOpen(false)}>
-                    <DsIcon name="x-close-cross" size={14} />
-                  </button>
-                </div>
-              </div>
-              <div className="script-ai-tools">
-                <button className="script-toolbar-button label-xs-semibold" type="button" onClick={() => setAiResponse(scriptAiFixtures[2])}>
-                  Suggest visuals
-                </button>
-                <label className="script-select-wrap label-xs-semibold">
-                  Genre
-                  <select className="script-select label-xs-semibold" value={aiGenre} onChange={(event) => setAiGenre(event.target.value as ScriptGenre)}>
-                    {scriptGenres.map((genre) => (
-                      <option key={genre}>{genre}</option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <div className="script-ai-sources" aria-label="AI input sources">
-                {aiSources.map((source) => (
-                  <button
-                    className="script-source-chip label-xs-semibold"
-                    type="button"
-                    key={source}
-                    onClick={() => setAiSources((currentSources) => currentSources.filter((item) => item !== source))}
-                  >
-                    {source}
-                    <DsIcon name="x-close-cross" size={10} />
-                  </button>
-                ))}
-                <button className="script-source-chip add label-xs-semibold" type="button" onClick={() => setAiSources((currentSources) => [...currentSources, "Brand notes"])}>
-                  + Add source
-                </button>
-              </div>
-              <div className="script-ai-command-grid">
-                {["Generate script", "Rewrite selection", "Give feedback", "Paper edit"].map((action) => (
-                  <button
-                    className="script-toolbar-button label-xs-semibold"
-                    type="button"
-                    key={action}
-                    disabled={action === "Paper edit" && !aiSources.some((source) => source.includes("Transcript"))}
-                    onClick={() => setAiResponse(`${action}: ${scriptAiFixtures[1]}`)}
-                  >
-                    {action}
-                  </button>
-                ))}
-              </div>
-              <textarea
-                className="script-ai-input label-s"
-                placeholder="Ask for a rewrite, a note, or a visual idea..."
-                value={aiPrompt}
-                onChange={(event) => setAiPrompt(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    setAiResponse(aiPrompt.trim() || scriptAiFixtures[2]);
-                  }
-                }}
-              />
-              <div className="script-ai-response">
-                <p className="paragraph-s">{aiResponse}</p>
-                <button className="script-toolbar-button label-xs-semibold" type="button" onClick={insertAiLines}>
-                  Insert
-                </button>
-              </div>
-            </aside>
-          ) : null}
+          <ScriptAiPanel
+            genre={scriptBrief.genre}
+            isMinimised={isAiPanelMinimised}
+            isOpen={isAiPanelOpen}
+            selectionContext={aiSelectionContext}
+            onClose={() => setIsAiPanelOpen(false)}
+            onInsert={handleAiInsert}
+            onMinimise={setIsAiPanelMinimised}
+          />
         </>
       ) : null}
 
@@ -2968,6 +2977,14 @@ function createEmptyRow(index: number): ScriptRow {
     elementType: "action",
     media: [],
   };
+}
+
+function createRowsFromAiDrafts(draftRows: ScriptAiRowDraft[], baseIndex = 0): ScriptRow[] {
+  return draftRows.map((draftRow, index) => ({
+    ...createEmptyRow(baseIndex + index + 1),
+    words: draftRow.words,
+    visuals: draftRow.visuals,
+  }));
 }
 
 function createMediaItem(type: ScriptMediaType, index: number): ScriptMediaItem {
