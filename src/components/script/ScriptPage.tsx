@@ -1194,7 +1194,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   selectedVersionId={selectedVersionId}
                   versionMetaById={versionMetaById}
                   versions={versions}
-                  onCreateScript={createNewScriptDocument}
                   onDeleteVersion={deleteVersion}
                   onDuplicateVersion={duplicateVersion}
                   onRenameVersion={renameVersion}
@@ -2217,7 +2216,6 @@ function VersionsPanel({
   selectedVersionId,
   versionMetaById,
   versions,
-  onCreateScript,
   onDeleteVersion,
   onDuplicateVersion,
   onRenameVersion,
@@ -2230,7 +2228,6 @@ function VersionsPanel({
   selectedVersionId: string;
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
-  onCreateScript: () => void;
   onDeleteVersion: (versionId: string) => void;
   onDuplicateVersion: (versionId: string) => void;
   onRenameVersion: (versionId: string, nextLabel: string) => void;
@@ -2302,15 +2299,6 @@ function VersionsPanel({
 
   return (
     <aside className="script-versions-panel" aria-label="Versions">
-      <header className="script-versions-panel-header">
-        <h2>Versions</h2>
-        {!isCustomer ? (
-          <Button size="S" type="button" variant="secondary" onClick={onCreateScript}>
-            New script
-          </Button>
-        ) : null}
-      </header>
-
       <div className="script-versions-panel-content">
         {!isCustomer ? (
           <section className="script-versions-section" aria-label="Today">

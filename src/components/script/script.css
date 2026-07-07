@@ -1338,22 +1338,6 @@
   box-shadow: var(--brisk-shadow-m);
 }
 
-.script-versions-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--brisk-border-primary);
-  gap: var(--brisk-space-m);
-  padding: var(--brisk-space-l);
-}
-
-.script-versions-panel-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
 .script-versions-panel-content {
   display: grid;
   min-height: 0;
