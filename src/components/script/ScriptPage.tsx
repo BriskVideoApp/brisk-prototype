@@ -1604,7 +1604,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       </section>
 
       <section
-        className={`script-body ${isAiPanelOpen ? "ai-open" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
+        className={`script-body ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
         ref={scriptBodyRef}
       >
         <div className="script-editor-column">

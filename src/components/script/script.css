@@ -510,10 +510,6 @@
   background: var(--brisk-white);
 }
 
-.script-body.ai-open {
-  padding-right: 400px;
-}
-
 .script-body.comments-overview-open {
   padding-right: 0;
 }
@@ -2343,10 +2339,6 @@ button.script-version-row-body:focus-visible {
 }
 
 @media (max-width: 1120px) {
-  .script-body.ai-open {
-    padding-right: 0;
-  }
-
   .script-column-headers.visuals-visible,
   .script-row.visuals-visible {
     max-width: 860px;
