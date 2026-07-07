@@ -1952,10 +1952,10 @@ function ScriptColumnHeaders({
           </h2>
           <div className="script-words-header-toolbar" aria-label="Text history">
             <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
-              <DsIcon name="arrow-counter-clockwise" size={16} />
+              <DsIcon name="arrow-counter-clockwise" size={12} />
             </button>
             <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
-              <DsIcon name="arrow-clockwise" size={16} />
+              <DsIcon name="arrow-clockwise" size={12} />
             </button>
           </div>
           {!areVisualsVisible ? (

@@ -570,6 +570,13 @@
   gap: var(--brisk-space-xs);
 }
 
+.script-words-header-toolbar .script-quiet-icon {
+  width: 24px;
+  min-height: 24px;
+  gap: 0;
+  padding: 0;
+}
+
 .script-visuals-header-toggle {
   display: inline-flex;
   min-height: calc(var(--brisk-space-xl) + var(--brisk-space-xs));
