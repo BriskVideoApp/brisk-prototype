@@ -173,6 +173,21 @@
   padding: 0 var(--brisk-space-m);
 }
 
+.script-current-version-menu-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.script-current-version-menu {
+  top: calc(100% + var(--brisk-space-s));
+  right: auto;
+  left: 0;
+}
+
+.script-current-version-rename-input {
+  min-height: 32px;
+}
+
 .script-toolbar-button,
 .script-approve-button,
 .script-quiet-icon,

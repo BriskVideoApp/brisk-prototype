@@ -142,6 +142,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
   const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
+  const [isCurrentVersionMenuOpen, setIsCurrentVersionMenuOpen] = useState(false);
+  const [isRenamingCurrentVersion, setIsRenamingCurrentVersion] = useState(false);
+  const [currentVersionRenameDraft, setCurrentVersionRenameDraft] = useState("");
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
@@ -179,6 +182,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
+  const currentVersionRenameInputRef = useRef<HTMLInputElement | null>(null);
+  const isCancellingCurrentVersionRenameRef = useRef(false);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
   const totalWords = visibleRows.reduce((total, row) => total + countWords(row.words), 0);
@@ -233,6 +238,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     wordInputRefs.current.forEach(resizeTextAreaToContent);
     visualInputRefs.current.forEach(resizeTextAreaToContent);
   }, [rows, density]);
+
+  useEffect(() => {
+    if (isRenamingCurrentVersion) {
+      currentVersionRenameInputRef.current?.focus();
+      currentVersionRenameInputRef.current?.select();
+    }
+  }, [isRenamingCurrentVersion]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -743,6 +755,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setPreviewVersionId(null);
     setRestoreCandidateId(null);
     setIsVersionsPanelOpen(false);
+    setIsCurrentVersionMenuOpen(false);
   };
 
   const createNewScriptDocument = () => {
@@ -764,6 +777,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage("New script created");
     setPreviewVersionId(null);
     setIsVersionsPanelOpen(false);
+    setIsCurrentVersionMenuOpen(false);
   };
 
   const duplicateVersion = (versionId: string) => {
@@ -847,6 +861,36 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           : currentVersion,
       ),
     );
+  };
+
+  const startCurrentVersionRename = () => {
+    isCancellingCurrentVersionRenameRef.current = false;
+    setIsCurrentVersionMenuOpen(false);
+    setIsVersionsPanelOpen(false);
+    setCurrentVersionRenameDraft(getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta));
+    setIsRenamingCurrentVersion(true);
+  };
+
+  const saveCurrentVersionRename = () => {
+    if (isCancellingCurrentVersionRenameRef.current) {
+      isCancellingCurrentVersionRenameRef.current = false;
+      return;
+    }
+
+    const trimmedDraft = currentVersionRenameDraft.trim();
+
+    if (trimmedDraft) {
+      renameVersion(selectedVersion.id, trimmedDraft);
+    }
+
+    setIsRenamingCurrentVersion(false);
+    setCurrentVersionRenameDraft("");
+  };
+
+  const cancelCurrentVersionRename = () => {
+    isCancellingCurrentVersionRenameRef.current = true;
+    setIsRenamingCurrentVersion(false);
+    setCurrentVersionRenameDraft("");
   };
 
   const openRestoreConfirmation = (versionId: string) => {
@@ -1051,6 +1095,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setActiveCommentAnchor(overallCommentAnchor);
     setIsCommentsOverviewOpen(true);
     setIsVersionsPanelOpen(false);
+    setIsCurrentVersionMenuOpen(false);
     setOpenCommentRowId(null);
     setIsCommentComposerOpen(false);
     setFloatingCommentPosition(null);
@@ -1073,6 +1118,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const requestCurrentVersionReview = () => {
     setIsRequestReviewOpen(true);
     setIsVersionsPanelOpen(false);
+    setIsCurrentVersionMenuOpen(false);
     setIsCommentsOverviewOpen(false);
     setOpenCommentRowId(null);
     setIsCommentComposerOpen(false);
@@ -1091,22 +1137,45 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         <div className="script-subheader-left">
           <div className="script-version-control">
             <div className="script-version-panel-wrap">
-              <button
-                className="script-current-version-button label-xs-semibold"
-                type="button"
-                aria-label="Open versions"
-                aria-expanded={isVersionsPanelOpen}
-                onClick={() => {
-                  setIsVersionsPanelOpen((isOpen) => !isOpen);
-                  setIsCommentsOverviewOpen(false);
-                  setOpenCommentRowId(null);
-                  setIsCommentComposerOpen(false);
-                  setFloatingCommentPosition(null);
-                }}
-              >
-                <span>{getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}</span>
-                <DsIcon name="caret-down" size={14} />
-              </button>
+              {isRenamingCurrentVersion ? (
+                <input
+                  ref={currentVersionRenameInputRef}
+                  aria-label={`Rename ${getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+                  className="script-version-rename-input script-current-version-rename-input label-xs-semibold"
+                  value={currentVersionRenameDraft}
+                  onBlur={saveCurrentVersionRename}
+                  onChange={(event) => setCurrentVersionRenameDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      saveCurrentVersionRename();
+                    }
+
+                    if (event.key === "Escape") {
+                      event.preventDefault();
+                      cancelCurrentVersionRename();
+                    }
+                  }}
+                />
+              ) : (
+                <button
+                  className="script-current-version-button label-xs-semibold"
+                  type="button"
+                  aria-label="Open versions"
+                  aria-expanded={isVersionsPanelOpen}
+                  onClick={() => {
+                    setIsVersionsPanelOpen((isOpen) => !isOpen);
+                    setIsCurrentVersionMenuOpen(false);
+                    setIsCommentsOverviewOpen(false);
+                    setOpenCommentRowId(null);
+                    setIsCommentComposerOpen(false);
+                    setFloatingCommentPosition(null);
+                  }}
+                >
+                  <span>{getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}</span>
+                  <DsIcon name="caret-down" size={14} />
+                </button>
+              )}
               {isVersionsPanelOpen ? (
                 <VersionsPanel
                   entries={docHistoryEntries}
@@ -1122,6 +1191,43 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   onRestoreVersion={openRestoreConfirmation}
                   onViewVersion={previewVersionForReadOnly}
                 />
+              ) : null}
+            </div>
+            <div className="script-current-version-menu-wrap">
+              <button
+                className="script-version-row-menu-button"
+                type="button"
+                aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+                aria-expanded={isCurrentVersionMenuOpen}
+                onClick={() => {
+                  setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
+                  setIsVersionsPanelOpen(false);
+                  setIsCommentsOverviewOpen(false);
+                }}
+              >
+                <DsIcon name="dots-three" size={14} />
+              </button>
+              {isCurrentVersionMenuOpen ? (
+                <span className="script-version-row-menu script-current-version-menu">
+                  <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
+                    Duplicate
+                  </button>
+                  <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
+                    Rename
+                  </button>
+                  <button
+                    className="delete label-xs-semibold"
+                    disabled={selectedVersion.approvedSnapshot}
+                    title={selectedVersion.approvedSnapshot ? "Approved versions can't be deleted. Un-approve first." : undefined}
+                    type="button"
+                    onClick={() => {
+                      setIsCurrentVersionMenuOpen(false);
+                      deleteVersion(selectedVersion.id);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </span>
               ) : null}
             </div>
             <span className="script-save-note label-xs">
@@ -2272,46 +2378,48 @@ function VersionsPanel({
                   )}
                   <span className="script-version-row-side">
                     {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-                    <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
-                      <button
-                        className="script-version-row-menu-button"
-                        type="button"
-                        aria-label={`Open menu for ${versionTitle}`}
-                        aria-expanded={isVersionMenuOpen}
-                        onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
-                      >
-                        <DsIcon name="dots-three" size={14} />
-                      </button>
-                      {isVersionMenuOpen ? (
-                        <span className="script-version-row-menu">
-                          {!isCustomer ? (
-                            <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
-                              Restore
+                    {!isCurrent ? (
+                      <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
+                        <button
+                          className="script-version-row-menu-button"
+                          type="button"
+                          aria-label={`Open menu for ${versionTitle}`}
+                          aria-expanded={isVersionMenuOpen}
+                          onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
+                        >
+                          <DsIcon name="dots-three" size={14} />
+                        </button>
+                        {isVersionMenuOpen ? (
+                          <span className="script-version-row-menu">
+                            {!isCustomer ? (
+                              <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
+                                Restore
+                              </button>
+                            ) : null}
+                            <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
+                              Duplicate
                             </button>
-                          ) : null}
-                          <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
-                            Duplicate
-                          </button>
-                          <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
-                            Rename
-                          </button>
-                          {!isCustomer ? (
-                            <button
-                              className="delete label-xs-semibold"
-                              disabled={!canDeleteVersion}
-                              title={!canDeleteVersion ? "Approved versions can't be deleted. Un-approve first." : undefined}
-                              type="button"
-                              onClick={() => {
-                                setOpenVersionMenuId(null);
-                                onDeleteVersion(version.id);
-                              }}
-                            >
-                              Delete
+                            <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
+                              Rename
                             </button>
-                          ) : null}
-                        </span>
-                      ) : null}
-                    </span>
+                            {!isCustomer ? (
+                              <button
+                                className="delete label-xs-semibold"
+                                disabled={!canDeleteVersion}
+                                title={!canDeleteVersion ? "Approved versions can't be deleted. Un-approve first." : undefined}
+                                type="button"
+                                onClick={() => {
+                                  setOpenVersionMenuId(null);
+                                  onDeleteVersion(version.id);
+                                }}
+                              >
+                                Delete
+                              </button>
+                            ) : null}
+                          </span>
+                        ) : null}
+                      </span>
+                    ) : null}
                   </span>
                 </article>
               );
