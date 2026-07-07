@@ -208,8 +208,12 @@
 .script-toolbar-button:hover:not(:disabled),
 .script-approve-button:hover:not(:disabled),
 .script-quiet-icon:hover:not(:disabled),
+.script-quiet-icon.active,
+.script-quiet-icon[aria-pressed="true"],
 .script-format-button:hover:not(:disabled),
 .script-media-add:hover:not(:disabled) {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary);
   box-shadow: var(--brisk-shadow-s);
 }
 
@@ -1157,9 +1161,7 @@
 }
 
 .script-comment-popover.overview {
-  top: 0;
   right: 0;
-  bottom: 0;
   z-index: 120;
   width: 430px;
   max-height: none;
@@ -1178,7 +1180,7 @@
 
 .script-comment-popover.overview .comment-panel {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   max-height: none;
   border: 0;
   border-left: 1px solid var(--brisk-border-primary);

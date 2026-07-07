@@ -212,8 +212,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     x: 0,
     y: 0,
   });
+  const [commentsPanelTop, setCommentsPanelTop] = useState(0);
   const saveTimeoutRef = useRef<number | null>(null);
   const toastTimeoutRef = useRef<number | null>(null);
+  const scriptBodyRef = useRef<HTMLElement | null>(null);
   const rowRefs = useRef(new Map<string, HTMLDivElement>());
   const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
@@ -269,6 +271,26 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   }, [toastMessage]);
 
   useEffect(() => {
+    if (!isCommentsOverviewOpen) {
+      return;
+    }
+
+    const updateCommentsPanelTop = () => {
+      const bodyTop = scriptBodyRef.current?.getBoundingClientRect().top ?? 0;
+      setCommentsPanelTop(Math.max(0, Math.round(bodyTop)));
+    };
+
+    updateCommentsPanelTop();
+    window.addEventListener("resize", updateCommentsPanelTop);
+    window.addEventListener("scroll", updateCommentsPanelTop, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", updateCommentsPanelTop);
+      window.removeEventListener("scroll", updateCommentsPanelTop);
+    };
+  }, [isCommentsOverviewOpen]);
+
+  useEffect(() => {
     wordInputRefs.current.forEach(resizeTextAreaToContent);
     visualInputRefs.current.forEach(resizeTextAreaToContent);
   }, [rows, density]);
@@ -304,6 +326,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       if (isDeleteSelectedRows) {
         event.preventDefault();
         deleteSelectedRows();
+      }
+
+      if (event.key === "Escape" && isCommentsOverviewOpen) {
+        event.preventDefault();
+        setIsCommentsOverviewOpen(false);
       }
     };
 
@@ -1189,6 +1216,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const openAllComments = () => {
+    if (isCommentsOverviewOpen) {
+      setIsCommentsOverviewOpen(false);
+      return;
+    }
+
+    const bodyTop = scriptBodyRef.current?.getBoundingClientRect().top ?? 0;
+    setCommentsPanelTop(Math.max(0, Math.round(bodyTop)));
     setActiveCommentAnchor(overallCommentAnchor);
     setIsCommentsOverviewOpen(true);
     setIsVersionsPanelOpen(false);
@@ -1369,10 +1403,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             onUnapprove={() => unapproveScript(true)}
           />
           <button
-            className="script-quiet-icon"
+            className={`script-quiet-icon ${isCommentsOverviewOpen ? "active" : ""}`}
             type="button"
             aria-label="Comments"
             aria-expanded={isCommentsOverviewOpen}
+            aria-pressed={isCommentsOverviewOpen}
             data-tooltip="Comments"
             onClick={openAllComments}
           >
@@ -1381,7 +1416,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
       </section>
 
-      <section className={`script-body ${isAiPanelOpen ? "ai-open" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
+      <section
+        className={`script-body ${isAiPanelOpen ? "ai-open" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
+        ref={scriptBodyRef}
+      >
         <div className="script-editor-column">
           {previewVersion ? (
             <VersionPreviewBanner
@@ -1444,7 +1482,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
 
         {isCommentsOverviewOpen ? (
-          <div className="script-comment-popover overview">
+          <div
+            className="script-comment-popover overview"
+            style={{
+              height: `calc(100vh - ${commentsPanelTop}px)`,
+              top: `${commentsPanelTop}px`,
+            }}
+          >
             <CommentRail
               activeAnchor={overallCommentAnchor}
               comments={visibleComments}
