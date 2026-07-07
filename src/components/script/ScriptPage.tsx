@@ -1472,31 +1472,60 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             </span>
           </div>
         </div>
-        <div className="script-subheader-actions">
-          <ScriptActionCluster
-            approvedAt={selectedVersion.approvedAt}
-            approvedBy={selectedVersion.approvedBy}
-            isApproved={isScriptApproved}
-            isPreviewing={isPreviewingVersion}
-            subtabLabel="script"
-            versionLabel={selectedVersion.label}
-            onApprove={approveScript}
-            onCopyLink={copyCurrentVersionLink}
-            onRequestReview={requestCurrentVersionReview}
-            onUnapprove={() => unapproveScript(true)}
-          />
-          <button
-            className={`script-quiet-icon ${isCommentsOverviewOpen ? "active" : ""}`}
-            type="button"
-            aria-label="Comments"
-            aria-expanded={isCommentsOverviewOpen}
-            aria-pressed={isCommentsOverviewOpen}
-            data-tooltip="Comments"
-            onClick={openAllComments}
-          >
-            <DsIcon name="chat-circle" size={16} />
-          </button>
-        </div>
+        {!isCommentsOverviewOpen ? (
+          <div className="script-subheader-actions">
+            <ScriptActionCluster
+              approvedAt={selectedVersion.approvedAt}
+              approvedBy={selectedVersion.approvedBy}
+              isApproved={isScriptApproved}
+              isPreviewing={isPreviewingVersion}
+              subtabLabel="script"
+              versionLabel={selectedVersion.label}
+              onApprove={approveScript}
+              onCopyLink={copyCurrentVersionLink}
+              onRequestReview={requestCurrentVersionReview}
+              onUnapprove={() => unapproveScript(true)}
+            />
+            <button
+              className="script-quiet-icon"
+              type="button"
+              aria-label="Comments"
+              aria-expanded={isCommentsOverviewOpen}
+              aria-pressed={isCommentsOverviewOpen}
+              data-tooltip="Comments"
+              onClick={openAllComments}
+            >
+              <DsIcon name="chat-circle" size={16} />
+            </button>
+          </div>
+        ) : null}
+        {isCommentsOverviewOpen ? (
+          <div className="script-comments-sidebar-actions" aria-label="Comments share controls">
+            <ScriptActionCluster
+              approvedAt={selectedVersion.approvedAt}
+              approvedBy={selectedVersion.approvedBy}
+              isApproved={isScriptApproved}
+              isPreviewing={isPreviewingVersion}
+              subtabLabel="script"
+              versionLabel={selectedVersion.label}
+              onApprove={approveScript}
+              onCopyLink={copyCurrentVersionLink}
+              onRequestReview={requestCurrentVersionReview}
+              onUnapprove={() => unapproveScript(true)}
+            />
+            <button
+              className="script-quiet-icon active"
+              type="button"
+              aria-label="Comments"
+              aria-expanded={isCommentsOverviewOpen}
+              aria-pressed={isCommentsOverviewOpen}
+              data-tooltip="Comments"
+              onClick={openAllComments}
+            >
+              <DsIcon name="chat-circle" size={16} />
+            </button>
+          </div>
+        ) : null}
       </section>
 
       <section

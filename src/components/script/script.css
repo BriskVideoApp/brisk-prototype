@@ -147,6 +147,35 @@
   min-height: 38px;
 }
 
+.script-comments-sidebar-actions {
+  position: absolute;
+  top: 0;
+  right: -430px;
+  display: flex;
+  width: 430px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--brisk-white);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.script-comments-sidebar-actions .script-action-cluster {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.script-comments-sidebar-actions .share-action-buttons {
+  flex-wrap: nowrap;
+}
+
+.script-comments-sidebar-actions .script-quiet-icon {
+  width: 38px;
+  min-height: 38px;
+  flex: 0 0 auto;
+}
+
 .script-role-link:not(.active):hover {
   background: var(--brisk-item-tertiary);
   color: var(--brisk-text-primary);
@@ -2160,8 +2189,17 @@ button.script-version-row-body:focus-visible {
 
   .script-role-links,
   .script-subheader-left,
-  .script-subheader-actions {
+  .script-subheader-actions,
+  .script-comments-sidebar-actions {
     align-self: flex-start;
+  }
+
+  .script-comments-sidebar-actions {
+    position: static;
+    width: auto;
+    height: auto;
+    justify-content: flex-start;
+    padding: 0;
   }
 
   .script-body.comments-overview-open {
