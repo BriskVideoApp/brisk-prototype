@@ -2039,7 +2039,7 @@ function AvScriptEditor({
 
         return (
           <div
-            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""} ${shouldShowEmptyState ? "empty-state-row" : ""}`}
+            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
             draggable
             key={row.id}
             ref={(node) => registerRowRef(row.id, node)}
@@ -2072,20 +2072,6 @@ function AvScriptEditor({
               </span>
             </div>
             <div className="script-row-words">
-              {shouldShowEmptyState ? (
-                <div className="script-empty-row-copy">
-                  <h3 className="label-s-semibold">Start the script</h3>
-                  <p className="paragraph-s">A fresh script is ready for the opening voiceover, interview beat or screen direction.</p>
-                  <Button
-                    size="S"
-                    type="button"
-                    variant="primary"
-                    onClick={() => wordInputRefs.current.get(row.id)?.focus()}
-                  >
-                    Start writing
-                  </Button>
-                </div>
-              ) : null}
               {selectionHighlightRanges.length > 0 ? (
                 <SelectionHighlightOverlay ranges={selectionHighlightRanges} words={row.words} />
               ) : null}
