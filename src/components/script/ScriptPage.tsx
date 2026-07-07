@@ -738,6 +738,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     if (!selection) {
       setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+      setActiveCommentAnchor((currentAnchor) =>
+        currentAnchor.kind === "selection" && currentAnchor.rowId === row.id
+          ? {
+              kind: "row",
+              label: getRowLabel(row.id, rows),
+              rowId: row.id,
+            }
+          : currentAnchor,
+      );
       return;
     }
 
@@ -750,9 +759,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       snippet: selection.text.length > 44 ? `${selection.text.slice(0, 44)}...` : selection.text,
       range: { start: selection.start, end: selection.end },
     });
-    setOpenCommentRowId(row.id);
-    setIsCommentComposerOpen(true);
-    setFloatingCommentPosition(getFloatingCommentPosition(target.getBoundingClientRect()));
   };
 
   const addMediaItem = (rowId: string, type: ScriptMediaType) => {
@@ -1171,11 +1177,33 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       return;
     }
 
-    setActiveCommentAnchor({
-      kind: "row",
-      label: getRowLabel(anchor.anchorRef, rows),
-      rowId: anchor.anchorRef,
-    });
+    const row = rows.find((candidate) => candidate.id === anchor.anchorRef);
+    const target = wordInputRefs.current.get(anchor.anchorRef);
+    const selection = target ? getTrimmedSelection(target) : null;
+    const liveSelectionAnchor =
+      row && selection
+        ? ({
+            kind: "selection",
+            label: getRowLabel(row.id, rows),
+            rowId: row.id,
+            snippet: selection.text.length > 44 ? `${selection.text.slice(0, 44)}...` : selection.text,
+            range: { start: selection.start, end: selection.end },
+          } satisfies ScriptCommentAnchor)
+        : null;
+    const selectedTextAnchor =
+      activeCommentAnchor.kind === "selection" && activeCommentAnchor.rowId === anchor.anchorRef
+        ? activeCommentAnchor
+        : null;
+    const nextAnchor =
+      liveSelectionAnchor ??
+      selectedTextAnchor ??
+      ({
+        kind: "row",
+        label: getRowLabel(anchor.anchorRef, rows),
+        rowId: anchor.anchorRef,
+      } satisfies ScriptCommentAnchor);
+
+    setActiveCommentAnchor(nextAnchor);
     setOpenCommentRowId(anchor.anchorRef);
     setIsCommentComposerOpen(true);
     setFloatingCommentPosition(getFloatingCommentPosition(triggerRect));
@@ -2180,6 +2208,7 @@ function AvScriptEditor({
                 type="button"
                 aria-label={`${hasComments ? `Open ${rowComments.length} comments` : "Add comment"} for ${getRowLabel(row.id, editorRows)}`}
                 data-comment-count={rowComments.length}
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={(event) => onOpenRowAnnotation(rowUniversalAnchor, event.currentTarget.getBoundingClientRect())}
               >
                 <DsIcon name="chat-circle" size={16} />
