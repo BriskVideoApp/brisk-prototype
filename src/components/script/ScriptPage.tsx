@@ -15,7 +15,7 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
-import { DsIcon } from "@/components/video-review/DsIcon";
+import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
   scriptAiFixtures,
@@ -86,6 +86,41 @@ type DocHistoryEntry = {
 
 type ScriptVersionMeta = {
   isMaster: boolean;
+  latestAction?: VersionLatestAction;
+};
+
+type VersionRoleLabel = "Studio" | "Customer";
+
+type VersionLatestAction =
+  | {
+      kind: "edited";
+      time: string;
+    }
+  | {
+      kind: "shared";
+      target: VersionRoleLabel;
+      date: string;
+    }
+  | {
+      kind: "viewed";
+      actor: VersionRoleLabel;
+      date: string;
+    }
+  | {
+      kind: "commented";
+      actor: VersionRoleLabel;
+      count: number;
+      date: string;
+    }
+  | {
+      kind: "silent";
+      date: string;
+    };
+
+type VersionStateLine = {
+  icon: DsIconName;
+  text: string;
+  tone: "muted" | "approved" | "attention" | "quiet";
 };
 
 type ScriptRowUniversalAnchor = {
@@ -230,7 +265,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     toastTimeoutRef.current = window.setTimeout(() => {
       setToastMessage("");
-    }, 3000);
+    }, 4000);
   }, [toastMessage]);
 
   useEffect(() => {
@@ -290,6 +325,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const markSaving = () => {
+    const savingVersionId = selectedVersionId;
     setSaveState("Saving...");
 
     if (saveTimeoutRef.current) {
@@ -297,8 +333,19 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
 
     saveTimeoutRef.current = window.setTimeout(() => {
+      const savedAt = new Date();
       setSaveState("Saved");
-      setLastSavedAt(new Date());
+      setLastSavedAt(savedAt);
+      setVersionMetaById((currentMeta) => ({
+        ...currentMeta,
+        [savingVersionId]: {
+          ...(currentMeta[savingVersionId] ?? defaultVersionMeta),
+          latestAction: {
+            kind: "edited",
+            time: formatSavedTime(savedAt),
+          },
+        },
+      }));
     }, 650);
   };
 
@@ -443,6 +490,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       createDocHistoryEntry(entry, currentEntries.length),
       ...currentEntries,
     ]);
+  };
+
+  const setSelectedVersionLatestAction = (latestAction: VersionLatestAction) => {
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [selectedVersionId]: {
+        ...(currentMeta[selectedVersionId] ?? defaultVersionMeta),
+        latestAction,
+      },
+    }));
   };
 
   const deleteSelectedRows = () => {
@@ -819,7 +876,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
 
     if (version.approvedSnapshot) {
-      setToastMessage("Approved versions can't be deleted. Un-approve first.");
+      setToastMessage("The approved version can't be deleted. Un-approve or approve a different version first.");
       setIsVersionsPanelOpen(false);
       return;
     }
@@ -934,7 +991,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const approveScript = () => {
-    const approvedAt = selectedVersion.approvedAt ?? selectedVersion.createdAt ?? formatSnapshotDate(new Date());
+    const approvedAt = formatSnapshotDate(new Date());
+    const previouslyApprovedVersion = versions.find((version) => version.approvedSnapshot && version.id !== selectedVersionId);
 
     setIsScriptApproved(true);
     setStatus("Approved");
@@ -950,16 +1008,33 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               displayName: undefined,
               snapshotName: `${version.label} - Approved`,
             }
-          : version,
+          : {
+              ...version,
+              approvedSnapshot: false,
+              approvedBy: undefined,
+              approvedAt: undefined,
+            },
       ),
     );
+    if (previouslyApprovedVersion) {
+      addDocHistoryEntry({
+        title: `Tom un-approved ${previouslyApprovedVersion.label}`,
+        detail: `${previouslyApprovedVersion.label} is no longer marked approved.`,
+        actor: "Tom",
+        time: "Just now",
+      });
+    }
     addDocHistoryEntry({
-      title: `Tom approved on ${approvedAt}`,
+      title: `Tom approved ${selectedVersion.label}`,
       detail: "Approval recorded for this version.",
       actor: "Tom",
       time: "Just now",
     });
-    setToastMessage("Script approved");
+    setToastMessage(
+      previouslyApprovedVersion
+        ? `${selectedVersion.label} approved. ${previouslyApprovedVersion.label} no longer marked approved.`
+        : `${selectedVersion.label} approved.`,
+    );
   };
 
   const unapproveScript = (shouldDuplicateSnapshot: boolean) => {
@@ -1081,6 +1156,21 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       ...currentComments.filter((comment) => !previousIds.has(comment.id)),
       ...cloneComments(nextScope),
     ]);
+
+    if (nextScope.length > previousScope.length) {
+      const actor: VersionRoleLabel = role === "customer" ? "Customer" : "Studio";
+      const commentCount = nextScope.filter((comment) => {
+        const author = scriptUsers.find((user) => user.id === comment.authorId);
+        return actor === "Customer" ? author?.team === "customer" : author?.team === "studio";
+      }).length;
+
+      setSelectedVersionLatestAction({
+        kind: "commented",
+        actor,
+        count: Math.max(commentCount, 1),
+        date: formatSnapshotDate(new Date()),
+      });
+    }
   };
 
   const selectCommentAnchor = (comment: ScriptComment) => {
@@ -1133,6 +1223,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const handleReviewRequestSent = (recipientName: string) => {
+    setSelectedVersionLatestAction({
+      kind: "shared",
+      target: recipientName.toLowerCase().includes("internal") ? "Studio" : "Customer",
+      date: formatSnapshotDate(new Date()),
+    });
     setToastMessage(`Review request sent to ${recipientName}`);
   };
 
@@ -1187,7 +1282,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 <VersionsPanel
                   entries={docHistoryEntries}
                   isCustomer={isCustomer}
+                  lastSavedAt={lastSavedAt}
                   previewVersionId={previewVersionId}
+                  saveState={saveState}
                   selectedVersionId={selectedVersionId}
                   versionMetaById={versionMetaById}
                   versions={versions}
@@ -1241,7 +1338,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   <button
                     className="delete label-xs-semibold"
                     disabled={selectedVersion.approvedSnapshot}
-                    title={selectedVersion.approvedSnapshot ? "Approved versions can't be deleted. Un-approve first." : undefined}
+                    title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
                     type="button"
                     onClick={() => {
                       setIsCurrentVersionMenuOpen(false);
@@ -2207,7 +2304,9 @@ function RedlineLegend() {
 function VersionsPanel({
   entries,
   isCustomer,
+  lastSavedAt,
   previewVersionId,
+  saveState,
   selectedVersionId,
   versionMetaById,
   versions,
@@ -2219,7 +2318,9 @@ function VersionsPanel({
 }: {
   entries: DocHistoryEntry[];
   isCustomer: boolean;
+  lastSavedAt: Date;
   previewVersionId: string | null;
+  saveState: "Saved" | "Saving...";
   selectedVersionId: string;
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
@@ -2324,9 +2425,14 @@ function VersionsPanel({
               const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
               const isRenaming = renamingVersionId === version.id;
               const isVersionMenuOpen = openVersionMenuId === version.id;
-              const canDeleteVersion = !version.approvedSnapshot;
               const versionTitle = getVersionHistoryTitle(version, versionMeta);
-              const approvedAt = version.approvedAt ?? version.createdAt;
+              const versionStateLine = getVersionStateLine({
+                isCurrent,
+                isSaving: saveState === "Saving...",
+                lastSavedAt,
+                version,
+                versionMeta,
+              });
               const rowCopy = (
                 <span className="script-version-row-copy">
                   {isRenaming ? (
@@ -2355,19 +2461,9 @@ function VersionsPanel({
                       {versionTitle}
                     </strong>
                   )}
-                  <span className={`script-version-row-meta label-s ${version.approvedSnapshot ? "approved" : ""}`}>
-                    {version.approvedSnapshot ? (
-                      <>
-                        <span className="script-version-approved-meta">
-                          <DsIcon name="check" size={12} />
-                          Approved
-                        </span>
-                        <span aria-hidden="true">·</span>
-                        <span>{approvedAt}</span>
-                      </>
-                    ) : (
-                      <span>{version.createdAt}</span>
-                    )}
+                  <span className={`script-version-row-meta label-s ${versionStateLine.tone}`}>
+                    <DsIcon name={versionStateLine.icon} size={12} />
+                    <span>{versionStateLine.text}</span>
                   </span>
                 </span>
               );
@@ -2411,9 +2507,11 @@ function VersionsPanel({
                             <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
                               Rename
                             </button>
-                            {!isCustomer && canDeleteVersion ? (
+                            {!isCustomer ? (
                               <button
                                 className="delete label-xs-semibold"
+                                disabled={version.approvedSnapshot}
+                                title={version.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
                                 type="button"
                                 onClick={() => {
                                   setOpenVersionMenuId(null);
@@ -2462,8 +2560,13 @@ function VersionPreviewBanner({
   );
 }
 function cloneVersions(versions: ScriptVersion[]) {
+  const currentApprovedVersionId = [...versions].reverse().find((version) => version.approvedSnapshot)?.id;
+
   return versions.map((version) => ({
     ...version,
+    approvedSnapshot: version.id === currentApprovedVersionId,
+    approvedBy: version.id === currentApprovedVersionId ? version.approvedBy : undefined,
+    approvedAt: version.id === currentApprovedVersionId ? version.approvedAt : undefined,
     rows: cloneRows(version.rows),
   }));
 }
@@ -2479,10 +2582,109 @@ function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: st
   return versions.reduce<Record<string, ScriptVersionMeta>>((metaById, version) => {
     metaById[version.id] = {
       isMaster: version.id === masterVersionId,
+      latestAction: getInitialVersionLatestAction(version),
     };
 
     return metaById;
   }, {});
+}
+
+function getInitialVersionLatestAction(version: ScriptVersion): VersionLatestAction {
+  if (version.id === "v1") {
+    return {
+      kind: "commented",
+      actor: "Customer",
+      count: 3,
+      date: version.approvedAt ?? version.createdAt,
+    };
+  }
+
+  if (version.id === "v2") {
+    return {
+      kind: "shared",
+      target: "Customer",
+      date: version.approvedAt ?? version.createdAt,
+    };
+  }
+
+  return {
+    kind: "edited",
+    time: "12:31pm",
+  };
+}
+
+function getVersionStateLine({
+  isCurrent,
+  isSaving,
+  lastSavedAt,
+  version,
+  versionMeta,
+}: {
+  isCurrent: boolean;
+  isSaving: boolean;
+  lastSavedAt: Date;
+  version: ScriptVersion;
+  versionMeta: ScriptVersionMeta;
+}): VersionStateLine {
+  if (version.approvedSnapshot) {
+    return {
+      icon: "check",
+      text: `Approved · ${version.approvedAt ?? version.createdAt}`,
+      tone: "approved",
+    };
+  }
+
+  if (isCurrent) {
+    return isSaving
+      ? {
+          icon: "pencil-simple",
+          text: "Editing · Just now",
+          tone: "muted",
+        }
+      : {
+          icon: "pencil-simple",
+          text: `Last edit · ${formatSavedTime(lastSavedAt)}`,
+          tone: "muted",
+        };
+  }
+
+  const latestAction = versionMeta.latestAction ?? {
+    kind: "edited",
+    time: version.createdAt,
+  };
+
+  switch (latestAction.kind) {
+    case "shared":
+      return {
+        icon: "link",
+        text: `Shared with ${latestAction.target} · ${latestAction.date}`,
+        tone: "muted",
+      };
+    case "viewed":
+      return {
+        icon: "eye",
+        text: `Viewed by ${latestAction.actor} · ${latestAction.date}`,
+        tone: "muted",
+      };
+    case "commented":
+      return {
+        icon: "chat-circle",
+        text: `${latestAction.count} ${latestAction.count === 1 ? "comment" : "comments"} from ${latestAction.actor} · ${latestAction.date}`,
+        tone: "attention",
+      };
+    case "silent":
+      return {
+        icon: "arrows-clockwise",
+        text: `Shared ${latestAction.date} · no response`,
+        tone: "quiet",
+      };
+    case "edited":
+      return {
+        icon: "pencil-simple",
+        text: `Last edit · ${latestAction.time}`,
+        tone: "muted",
+      };
+  }
 }
 
 function getVersionMarkerText(version: ScriptVersion, versionMeta: ScriptVersionMeta) {

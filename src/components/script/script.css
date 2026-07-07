@@ -1488,6 +1488,14 @@ button.script-version-row-body:focus-visible {
   color: var(--brisk-green-60);
 }
 
+.script-version-row-meta.attention {
+  color: var(--brisk-orange-40);
+}
+
+.script-version-row-meta.quiet {
+  color: var(--brisk-gray-40);
+}
+
 .script-version-rename-input {
   width: min(100%, 320px);
   min-height: 32px;
@@ -1502,13 +1510,6 @@ button.script-version-row-body:focus-visible {
   outline: 2px solid var(--brisk-brand-primary);
   outline-offset: 2px;
   box-shadow: var(--brisk-shadow-s);
-}
-
-.script-version-approved-meta {
-  display: inline-flex;
-  align-items: center;
-  color: var(--brisk-green-60);
-  gap: var(--brisk-space-xs);
 }
 
 .script-version-row-side,
