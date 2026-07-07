@@ -119,7 +119,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const role = initialRole;
   const isCustomer = role === "customer";
   const [density] = useState<ScriptDensity>("compact");
-  const [showChanges] = useState(false);
+  const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
   const [isScriptApproved, setIsScriptApproved] = useState(false);
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
@@ -780,6 +780,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsCurrentVersionMenuOpen(false);
   };
 
+  const createNewScriptDocumentFromMenu = () => {
+    setIsCurrentVersionMenuOpen(false);
+    createNewScriptDocument();
+  };
+
+  const toggleShowChangesFromMenu = () => {
+    setShowChanges((isShowingChanges) => !isShowingChanges);
+    setIsCurrentVersionMenuOpen(false);
+  };
+
   const duplicateVersion = (versionId: string) => {
     const sourceVersion = versions.find((version) => version.id === versionId);
 
@@ -1209,6 +1219,22 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               </button>
               {isCurrentVersionMenuOpen ? (
                 <span className="script-version-row-menu script-current-version-menu">
+                  {!isCustomer ? (
+                    <>
+                      <button
+                        className="label-xs-semibold"
+                        type="button"
+                        aria-pressed={showChanges}
+                        onClick={toggleShowChangesFromMenu}
+                      >
+                        Show changes
+                      </button>
+                      <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
+                        New script
+                      </button>
+                      <span className="script-menu-divider" aria-hidden="true" />
+                    </>
+                  ) : null}
                   <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
                     Duplicate
                   </button>

@@ -1603,6 +1603,11 @@ button.script-version-row-body:focus-visible {
   background: var(--brisk-brand-secondary);
 }
 
+.script-version-row-menu button[aria-pressed="true"] {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
 .script-version-row-menu button:disabled {
   color: var(--brisk-gray-40);
   cursor: not-allowed;
