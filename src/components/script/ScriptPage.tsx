@@ -766,6 +766,30 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsVersionsPanelOpen(false);
   };
 
+  const duplicateVersion = (versionId: string) => {
+    const sourceVersion = versions.find((version) => version.id === versionId);
+
+    if (!sourceVersion) {
+      return;
+    }
+
+    const nextLabel = getNextVersionLabel(versions);
+    const nextVersion = createScriptVersion(nextLabel, sourceVersion.rows, `${getVersionHistoryBaseTitle(sourceVersion)} copy`);
+
+    setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [nextVersion.id]: { ...defaultVersionMeta },
+    }));
+    addDocHistoryEntry({
+      title: `Tom duplicated ${getVersionHistoryBaseTitle(sourceVersion)}`,
+      detail: "Duplicated the selected script version.",
+      actor: "Tom",
+      time: "Just now",
+    });
+    activateVersion(nextVersion, sourceVersion.rows, "Script duplicated");
+  };
+
   const deleteVersion = (versionId: string) => {
     const version = versions.find((item) => item.id === versionId);
 
@@ -1093,6 +1117,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   versions={versions}
                   onCreateScript={createNewScriptDocument}
                   onDeleteVersion={deleteVersion}
+                  onDuplicateVersion={duplicateVersion}
                   onRenameVersion={renameVersion}
                   onRestoreVersion={openRestoreConfirmation}
                   onViewVersion={previewVersionForReadOnly}
@@ -2062,6 +2087,7 @@ function VersionsPanel({
   versions,
   onCreateScript,
   onDeleteVersion,
+  onDuplicateVersion,
   onRenameVersion,
   onRestoreVersion,
   onViewVersion,
@@ -2074,6 +2100,7 @@ function VersionsPanel({
   versions: ScriptVersion[];
   onCreateScript: () => void;
   onDeleteVersion: (versionId: string) => void;
+  onDuplicateVersion: (versionId: string) => void;
   onRenameVersion: (versionId: string, nextLabel: string) => void;
   onRestoreVersion: (versionId: string) => void;
   onViewVersion: (versionId: string) => void;
@@ -2134,6 +2161,11 @@ function VersionsPanel({
     if (!isCurrent) {
       onRestoreVersion(versionId);
     }
+  };
+
+  const duplicateVersionFromMenu = (versionId: string) => {
+    setOpenVersionMenuId(null);
+    onDuplicateVersion(versionId);
   };
 
   return (
@@ -2240,25 +2272,30 @@ function VersionsPanel({
                   )}
                   <span className="script-version-row-side">
                     {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-                    {!isCustomer ? (
-                      <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
-                        <button
-                          className="script-version-row-menu-button"
-                          type="button"
-                          aria-label={`Open menu for ${versionTitle}`}
-                          aria-expanded={isVersionMenuOpen}
-                          onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
-                        >
-                          <DsIcon name="dots-three" size={14} />
-                        </button>
-                        {isVersionMenuOpen ? (
-                          <span className="script-version-row-menu">
+                    <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
+                      <button
+                        className="script-version-row-menu-button"
+                        type="button"
+                        aria-label={`Open menu for ${versionTitle}`}
+                        aria-expanded={isVersionMenuOpen}
+                        onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
+                      >
+                        <DsIcon name="dots-three" size={14} />
+                      </button>
+                      {isVersionMenuOpen ? (
+                        <span className="script-version-row-menu">
+                          {!isCustomer ? (
                             <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
                               Restore
                             </button>
-                            <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
-                              Rename
-                            </button>
+                          ) : null}
+                          <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
+                            Duplicate
+                          </button>
+                          <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
+                            Rename
+                          </button>
+                          {!isCustomer ? (
                             <button
                               className="delete label-xs-semibold"
                               disabled={!canDeleteVersion}
@@ -2271,10 +2308,10 @@ function VersionsPanel({
                             >
                               Delete
                             </button>
-                          </span>
-                        ) : null}
-                      </span>
-                    ) : null}
+                          ) : null}
+                        </span>
+                      ) : null}
+                    </span>
                   </span>
                 </article>
               );

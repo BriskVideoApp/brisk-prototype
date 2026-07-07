@@ -1515,6 +1515,11 @@ button.script-version-row-body:focus-visible {
   pointer-events: auto;
 }
 
+.script-shell.customer .script-version-row-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .script-version-row-menu-button {
   display: inline-flex;
   width: 28px;
