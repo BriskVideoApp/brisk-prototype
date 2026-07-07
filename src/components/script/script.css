@@ -597,13 +597,20 @@
   display: inline-flex;
   align-items: center;
   gap: var(--brisk-space-xs);
+  margin-left: auto;
 }
 
 .script-words-header-toolbar .script-quiet-icon {
   width: 24px;
   min-height: 24px;
+  max-height: 24px;
   gap: 0;
   padding: 0;
+}
+
+.script-words-header-toolbar .script-quiet-icon .ds-icon {
+  width: 12px;
+  height: 12px;
 }
 
 .script-visuals-header-toggle {
@@ -616,7 +623,6 @@
   background: var(--brisk-white);
   color: var(--brisk-text-primary);
   gap: var(--brisk-space-xxs);
-  margin-left: auto;
   padding: 0 var(--brisk-space-s);
   font-size: 12px;
   font-weight: 600;
