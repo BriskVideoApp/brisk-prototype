@@ -123,6 +123,12 @@ type VersionStateLine = {
   tone: "muted" | "approved" | "attention" | "quiet";
 };
 
+type VersionAuditEntry = {
+  date: string;
+  time: string;
+  action: string;
+};
+
 type ScriptRowUniversalAnchor = {
   surfaceType: "script";
   surfaceId: string;
@@ -2377,6 +2383,7 @@ function VersionsPanel({
   const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
   const [renameDraft, setRenameDraft] = useState("");
   const [openVersionMenuId, setOpenVersionMenuId] = useState<string | null>(null);
+  const [expandedVersionId, setExpandedVersionId] = useState<string | null>(null);
   const renameInputRef = useRef<HTMLInputElement | null>(null);
   const isCancellingRenameRef = useRef(false);
 
@@ -2469,6 +2476,7 @@ function VersionsPanel({
               const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
               const isRenaming = renamingVersionId === version.id;
               const isVersionMenuOpen = openVersionMenuId === version.id;
+              const isExpanded = expandedVersionId === version.id;
               const versionTitle = getVersionHistoryTitle(version, versionMeta);
               const versionStateLine = getVersionStateLine({
                 isCurrent,
@@ -2511,65 +2519,94 @@ function VersionsPanel({
                   </span>
                 </span>
               );
+              const auditEntries = getVersionAuditEntries(version, versionMeta);
+              const expansionId = `script-version-history-${version.id}`;
 
               return (
                 <article
-                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""}`}
+                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""} ${isExpanded ? "expanded" : ""}`}
                   aria-current={isCurrent ? "true" : undefined}
                   key={version.id}
                 >
-                  {!isCustomer && !isCurrent ? (
-                    <button className="script-version-row-body" type="button" onClick={() => viewVersion(version.id, isCurrent)}>
-                      {rowCopy}
-                    </button>
-                  ) : (
-                    <span className="script-version-row-body">{rowCopy}</span>
-                  )}
-                  <span className="script-version-row-side">
-                    {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-                    {!isCurrent ? (
-                      <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
+                  <div className="script-version-row-main">
+                    {!isCustomer && !isCurrent ? (
+                      <button className="script-version-row-body" type="button" onClick={() => viewVersion(version.id, isCurrent)}>
+                        {rowCopy}
+                      </button>
+                    ) : (
+                      <span className="script-version-row-body">{rowCopy}</span>
+                    )}
+                    <span className="script-version-row-side">
+                      {!isCustomer ? (
                         <button
-                          className="script-version-row-menu-button"
+                          className="script-version-row-expand-button"
                           type="button"
-                          aria-label={`Open menu for ${versionTitle}`}
-                          aria-expanded={isVersionMenuOpen}
-                          onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
+                          aria-controls={expansionId}
+                          aria-expanded={isExpanded}
+                          aria-label={`${isExpanded ? "Collapse" : "Expand"} history for ${versionTitle}`}
+                          onClick={() => {
+                            setOpenVersionMenuId(null);
+                            setExpandedVersionId(isExpanded ? null : version.id);
+                          }}
                         >
-                          <DsIcon name="dots-three" size={14} />
+                          <DsIcon name="caret-down" size={16} />
                         </button>
-                        {isVersionMenuOpen ? (
-                          <span className="script-version-row-menu">
-                            {!isCustomer ? (
-                              <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
-                                Restore
+                      ) : null}
+                      {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
+                      {!isCurrent ? (
+                        <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
+                          <button
+                            className="script-version-row-menu-button"
+                            type="button"
+                            aria-label={`Open menu for ${versionTitle}`}
+                            aria-expanded={isVersionMenuOpen}
+                            onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
+                          >
+                            <DsIcon name="dots-three" size={14} />
+                          </button>
+                          {isVersionMenuOpen ? (
+                            <span className="script-version-row-menu">
+                              {!isCustomer ? (
+                                <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
+                                  Restore
+                                </button>
+                              ) : null}
+                              <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
+                                Duplicate
                               </button>
-                            ) : null}
-                            <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
-                              Duplicate
-                            </button>
-                            <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
-                              Rename
-                            </button>
-                            {!isCustomer ? (
-                              <button
-                                className="delete label-xs-semibold"
-                                disabled={version.approvedSnapshot}
-                                title={version.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
-                                type="button"
-                                onClick={() => {
-                                  setOpenVersionMenuId(null);
-                                  onDeleteVersion(version.id);
-                                }}
-                              >
-                                Delete
+                              <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
+                                Rename
                               </button>
-                            ) : null}
-                          </span>
-                        ) : null}
-                      </span>
-                    ) : null}
-                  </span>
+                              {!isCustomer ? (
+                                <button
+                                  className="delete label-xs-semibold"
+                                  disabled={version.approvedSnapshot}
+                                  title={version.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
+                                  type="button"
+                                  onClick={() => {
+                                    setOpenVersionMenuId(null);
+                                    onDeleteVersion(version.id);
+                                  }}
+                                >
+                                  Delete
+                                </button>
+                              ) : null}
+                            </span>
+                          ) : null}
+                        </span>
+                      ) : null}
+                    </span>
+                  </div>
+                  {!isCustomer && isExpanded ? (
+                    <ol className="script-version-history" id={expansionId}>
+                      {auditEntries.map((entry) => (
+                        <li className="script-version-history-entry" key={`${version.id}-${entry.date}-${entry.time}-${entry.action}`}>
+                          <span className="script-version-history-time">{entry.date} · {entry.time}</span>
+                          <span className="script-version-history-action">{entry.action}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : null}
                 </article>
               );
             })}
@@ -2729,6 +2766,108 @@ function getVersionStateLine({
         tone: "muted",
       };
   }
+}
+
+function getVersionAuditEntries(version: ScriptVersion, versionMeta: ScriptVersionMeta): VersionAuditEntry[] {
+  const label = getVersionHistoryBaseTitle(version);
+  const createdAction =
+    version.id === "v1"
+      ? "Tom created v1"
+      : version.id === "v2"
+        ? "Tom created v2 from v1"
+        : version.id === "v3"
+          ? "Tom created v3 from v2"
+          : `Tom created ${label}`;
+  const entries: VersionAuditEntry[] = [
+    {
+      date: version.createdAt,
+      time: "9:12am",
+      action: createdAction,
+    },
+  ];
+
+  if (version.id === "v1") {
+    entries.push(
+      {
+        date: version.createdAt,
+        time: "10:04am",
+        action: "Tom shared with Customer",
+      },
+      {
+        date: version.createdAt,
+        time: "11:18am",
+        action: "Viewed by Customer",
+      },
+      {
+        date: version.createdAt,
+        time: "12:05pm",
+        action: "3 comments from Customer",
+      },
+      {
+        date: version.createdAt,
+        time: "12:42pm",
+        action: "Tom replied to 2 comments",
+      },
+    );
+  }
+
+  if (version.id === "v2") {
+    entries.push(
+      {
+        date: version.createdAt,
+        time: "10:21am",
+        action: "Tom edited rows 04, 07, 12",
+      },
+      {
+        date: version.createdAt,
+        time: "11:03am",
+        action: "Tom shared with Customer",
+      },
+    );
+  }
+
+  if (version.id === "v3") {
+    entries.push(
+      {
+        date: version.createdAt,
+        time: "9:46am",
+        action: "Tom edited rows 04, 05",
+      },
+      {
+        date: version.createdAt,
+        time: "12:31pm",
+        action: "Tom renamed to 'Master'",
+      },
+    );
+  }
+
+  const latestAction = versionMeta.latestAction;
+
+  if (latestAction?.kind === "shared" && !entries.some((entry) => entry.action === `Tom shared with ${latestAction.target}`)) {
+    entries.push({
+      date: latestAction.date,
+      time: "11:03am",
+      action: `Tom shared with ${latestAction.target}`,
+    });
+  }
+
+  if (latestAction?.kind === "commented" && !entries.some((entry) => entry.action.includes(`comments from ${latestAction.actor}`))) {
+    entries.push({
+      date: latestAction.date,
+      time: "12:05pm",
+      action: `${latestAction.count} ${latestAction.count === 1 ? "comment" : "comments"} from ${latestAction.actor}`,
+    });
+  }
+
+  if (version.approvedSnapshot) {
+    entries.push({
+      date: version.approvedAt ?? version.createdAt,
+      time: "4:39pm",
+      action: `Tom approved ${label}`,
+    });
+  }
+
+  return entries;
 }
 
 function getVersionMarkerText(version: ScriptVersion, versionMeta: ScriptVersionMeta) {

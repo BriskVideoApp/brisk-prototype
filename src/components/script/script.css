@@ -1495,11 +1495,7 @@
 }
 
 .script-version-row {
-  display: flex;
   min-height: 56px;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--brisk-space-m);
 }
 
 .script-version-row.current {
@@ -1508,6 +1504,13 @@
 
 .script-version-row.previewing {
   background: var(--brisk-orange-10);
+}
+
+.script-version-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-m);
 }
 
 .script-version-row-body {
@@ -1599,6 +1602,37 @@ button.script-version-row-body:focus-visible {
   gap: var(--brisk-space-xs);
 }
 
+.script-version-row-expand-button {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-gray-60);
+  padding: var(--brisk-space-none);
+}
+
+.script-version-row-expand-button:hover,
+.script-version-row-expand-button:focus-visible {
+  color: var(--brisk-gray-90);
+}
+
+.script-version-row-expand-button:focus-visible {
+  outline: 2px solid var(--brisk-brand-primary);
+  outline-offset: 2px;
+}
+
+.script-version-row-expand-button .ds-icon {
+  transition: transform 120ms ease;
+}
+
+.script-version-row-expand-button[aria-expanded="true"] .ds-icon {
+  transform: rotate(180deg);
+}
+
 .script-version-row-actions {
   position: relative;
   opacity: 0;
@@ -1642,6 +1676,32 @@ button.script-version-row-body:focus-visible {
 .script-version-row-menu-button:focus-visible {
   outline: 2px solid var(--brisk-brand-primary);
   outline-offset: 2px;
+}
+
+.script-version-history {
+  display: grid;
+  gap: var(--brisk-space-xs);
+  margin: var(--brisk-space-m) 0 0;
+  padding: 0 0 0 calc(12px + var(--brisk-space-s) + var(--brisk-space-s));
+}
+
+.script-version-history-entry {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: var(--brisk-space-m);
+  color: var(--brisk-gray-90);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.script-version-history-time {
+  color: var(--brisk-gray-60);
+  white-space: nowrap;
+}
+
+.script-version-history-action {
+  min-width: 0;
 }
 
 .script-version-row-menu {
