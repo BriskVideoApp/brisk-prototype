@@ -193,7 +193,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const wordDelta = Math.abs(totalWords - targetWords);
   const wordState = wordDelta <= 10 ? "good" : wordDelta <= 25 ? "warning" : "danger";
   const durationDeltaText = wordState === "good" ? "" : formatFooterDelta(actualDurationSeconds - targetDurationSeconds, totalWords - targetWords);
-  const wordStatusIcon = wordState === "good" ? "check" : "alert-triangle";
   const visibleComments = useMemo(
     () => (isCustomer ? comments.filter((comment) => comment.visibility === "external") : comments),
     [comments, isCustomer],
@@ -1401,9 +1400,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
               <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
               <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
-            </span>
-            <span className="script-word-status-icon">
-              <DsIcon name={wordStatusIcon} size={16} />
             </span>
             {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
           </span>

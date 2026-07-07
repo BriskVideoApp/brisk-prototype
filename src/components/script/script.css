@@ -1737,19 +1737,10 @@ button.script-version-row-body:focus-visible {
   align-items: center;
 }
 
-.script-word-status-icon {
-  display: inline-flex;
-  align-items: center;
-  color: var(--brisk-system-success);
-  margin-left: var(--brisk-space-s);
-}
-
-.script-word-footer.word-warning .script-word-status-icon,
 .script-word-footer.word-warning .script-word-delta {
   color: var(--brisk-system-warning);
 }
 
-.script-word-footer.word-danger .script-word-status-icon,
 .script-word-footer.word-danger .script-word-delta {
   color: var(--brisk-system-error);
 }
