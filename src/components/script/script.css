@@ -1226,6 +1226,83 @@
   min-height: 72px;
 }
 
+.script-comment-popover .comment-composer.overall .composer-box {
+  position: relative;
+  display: grid;
+  min-height: 156px;
+  grid-template-rows: auto minmax(72px, 1fr) auto;
+}
+
+.script-comment-popover .overall-composer-line {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+  color: var(--brisk-gray-60);
+  padding: var(--brisk-space-m) var(--brisk-space-m) 0;
+}
+
+.script-comment-popover .overall-composer-label {
+  color: var(--brisk-gray-90);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.script-comment-popover .overall-composer-line .posting-menu-wrap {
+  display: inline-flex;
+}
+
+.script-comment-popover .overall-composer-line .posting-toggle {
+  display: inline-flex;
+  min-height: 18px;
+  align-items: center;
+  color: var(--brisk-gray-60);
+  font-size: 13px;
+  font-weight: 400;
+  gap: var(--brisk-space-xxs);
+  padding: 0;
+}
+
+.script-comment-popover .comment-composer.overall .posting-menu {
+  top: calc(100% + var(--brisk-space-xs));
+  bottom: auto;
+}
+
+.script-comment-popover .comment-composer.overall .composer-input {
+  min-height: 72px;
+  border-bottom: 0;
+  border-radius: 0;
+  color: var(--brisk-gray-90);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: var(--brisk-space-s) var(--brisk-space-m) var(--brisk-space-none);
+}
+
+.script-comment-popover .comment-composer.overall .composer-input::placeholder {
+  color: var(--brisk-gray-40);
+}
+
+.script-comment-popover .comment-composer.overall .composer-toolbar {
+  min-height: 36px;
+  justify-content: flex-end;
+  padding: var(--brisk-space-none) var(--brisk-space-s) var(--brisk-space-s);
+}
+
+.script-comment-popover .comment-composer.overall .send-button {
+  min-width: 32px;
+  min-height: 32px;
+  border-color: var(--brisk-brand-primary);
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-white);
+}
+
+.script-comment-popover .comment-composer.overall .send-button:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-secondary);
+  color: var(--brisk-text-tertiary);
+}
+
 .floating-comment-shell {
   position: fixed;
   top: var(--floating-comment-top);

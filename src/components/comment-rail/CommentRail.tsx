@@ -690,6 +690,8 @@ function CommentComposer({
   onTogglePostingMenu: () => void;
 }) {
   const isInternal = visibility === "internal";
+  const isOverallComposer = anchor.kind === "overall";
+  const audienceLabel = isInternal ? "Studio" : "Customer";
   const canSubmit = body.trim().length > 0;
   const submitWithKeyboard = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && event.metaKey) {
@@ -699,52 +701,84 @@ function CommentComposer({
   };
 
   return (
-    <section className={`comment-composer ${isInternal ? "internal" : ""}`} aria-label="Add comment">
-      <div className="posting-menu-wrap">
-        <button
-          className="posting-toggle label-xs"
-          type="button"
-          disabled={!canPostInternal}
-          onClick={canPostInternal ? onTogglePostingMenu : undefined}
-        >
-          {isInternal ? "Posting to Team" : "Posting to Client"} {canPostInternal ? <DsIcon name="caret-down" size={12} /> : null}
-        </button>
-        {isPostingMenuOpen ? (
-          <div className="posting-menu">
-            <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
-              Posting to Client
-            </button>
-            <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
-              Posting to Team
-            </button>
+    <section className={`comment-composer ${isInternal ? "internal" : ""} ${isOverallComposer ? "overall" : ""}`} aria-label="Add comment">
+      {!isOverallComposer ? (
+        <div className="posting-menu-wrap">
+          <button
+            className="posting-toggle label-xs"
+            type="button"
+            disabled={!canPostInternal}
+            onClick={canPostInternal ? onTogglePostingMenu : undefined}
+          >
+            {isInternal ? "Posting to Team" : "Posting to Client"} {canPostInternal ? <DsIcon name="caret-down" size={12} /> : null}
+          </button>
+          {isPostingMenuOpen ? (
+            <div className="posting-menu">
+              <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
+                Posting to Client
+              </button>
+              <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
+                Posting to Team
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+      <div className={`composer-box ${isInternal ? "internal" : ""}`}>
+        {isOverallComposer ? (
+          <div className="overall-composer-line">
+            <span className="overall-composer-label">Overall comment</span>
+            <span aria-hidden="true">·</span>
+            <span className="posting-menu-wrap">
+              <button
+                className="posting-toggle label-xs"
+                type="button"
+                disabled={!canPostInternal}
+                onClick={canPostInternal ? onTogglePostingMenu : undefined}
+              >
+                to {audienceLabel} {canPostInternal ? <DsIcon name="caret-down" size={12} /> : null}
+              </button>
+              {isPostingMenuOpen ? (
+                <div className="posting-menu">
+                  <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
+                    to Customer
+                  </button>
+                  <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
+                    to Studio
+                  </button>
+                </div>
+              ) : null}
+            </span>
           </div>
         ) : null}
-      </div>
-      <div className={`composer-box ${isInternal ? "internal" : ""}`}>
         <textarea
           className="composer-input label-s"
-          placeholder={`Comment on ${formatAnchorLabel(anchor)}...`}
+          placeholder={isOverallComposer ? "Add an overall comment..." : `Comment on ${formatAnchorLabel(anchor)}...`}
           rows={3}
           value={body}
           onChange={(event) => onBodyChange(event.target.value)}
           onKeyDown={submitWithKeyboard}
         />
         <div className="composer-toolbar">
-          <div className="composer-tools">
-            <button type="button" data-tooltip="Attach file" aria-label="Attach file">
-              <DsIcon name="paperclip" size={16} />
-            </button>
-            <button type="button" data-tooltip="Record your screen and voice" aria-label="Record your screen and voice">
-              <DsIcon name="video-camera" size={16} />
-            </button>
-            <button type="button" data-tooltip="Mark up selection" aria-label="Mark up selection">
-              <DsIcon name="pencil-simple" size={16} />
-            </button>
-          </div>
+          {!isOverallComposer ? (
+            <div className="composer-tools">
+              <button type="button" data-tooltip="Attach file" aria-label="Attach file">
+                <DsIcon name="paperclip" size={16} />
+              </button>
+              <button type="button" data-tooltip="Record your screen and voice" aria-label="Record your screen and voice">
+                <DsIcon name="video-camera" size={16} />
+              </button>
+              <button type="button" data-tooltip="Mark up selection" aria-label="Mark up selection">
+                <DsIcon name="pencil-simple" size={16} />
+              </button>
+            </div>
+          ) : null}
           <div className="composer-send">
-            <span className="anchor-chip label-xs-semibold">
-              @{formatAnchorLabel(anchor)}
-            </span>
+            {!isOverallComposer ? (
+              <span className="anchor-chip label-xs-semibold">
+                @{formatAnchorLabel(anchor)}
+              </span>
+            ) : null}
             <button
               className={`send-button ${isInternal ? "internal" : ""}`}
               type="button"
