@@ -794,7 +794,7 @@ function CommentComposer({
           </div>
         </div>
       </div>
-      <p className="composer-hint label-xs">Cmd+Enter to send</p>
+      {!isOverallComposer ? <p className="composer-hint label-xs">Cmd+Enter to send</p> : null}
     </section>
   );
 }
