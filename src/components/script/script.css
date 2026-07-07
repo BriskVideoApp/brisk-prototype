@@ -16,6 +16,7 @@
 }
 
 .script-header {
+  position: relative;
   display: flex;
   min-height: 118px;
   align-items: flex-start;
@@ -122,6 +123,17 @@
   background: var(--brisk-white);
   gap: var(--brisk-space-l);
   padding: var(--brisk-space-m) var(--brisk-space-2xl);
+}
+
+.script-shell.comments-overview-open .script-header::after,
+.script-shell.comments-overview-open .script-subheader::after {
+  position: absolute;
+  right: -430px;
+  bottom: -1px;
+  width: 430px;
+  height: 1px;
+  background: var(--brisk-border-primary);
+  content: "";
 }
 
 .script-subheader-left,
@@ -2104,6 +2116,11 @@ button.script-version-row-body:focus-visible {
   .script-subheader {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .script-shell.comments-overview-open .script-header::after,
+  .script-shell.comments-overview-open .script-subheader::after {
+    content: none;
   }
 
   .script-title {
