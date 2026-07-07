@@ -38,6 +38,7 @@ type CommentRailProps = {
   filterMode: "studio" | "customer";
   composerAnchor?: ScriptCommentAnchor;
   composerPlacement?: "top" | "bottom";
+  showComposer?: boolean;
   title?: string;
   onClose?: () => void;
   onCommentsChange?: (comments: ScriptComment[]) => void;
@@ -56,6 +57,7 @@ export function CommentRail({
   filterMode,
   composerAnchor,
   composerPlacement = "bottom",
+  showComposer = true,
   title,
   onClose,
   onCommentsChange,
@@ -89,6 +91,7 @@ export function CommentRail({
   const canSkipPrevious = selectedVisibleIndex > 0;
   const canSkipNext =
     visibleComments.length > 0 && (selectedVisibleIndex === -1 || selectedVisibleIndex < visibleComments.length - 1);
+  const composerClass = showComposer ? `composer-${composerPlacement}` : "composer-none";
 
   useEffect(() => {
     if (!onCommentsChange) {
@@ -263,7 +266,7 @@ export function CommentRail({
   };
 
   return (
-    <aside className={`comment-panel script-comment-panel composer-${composerPlacement}`} aria-label="Script comments">
+    <aside className={`comment-panel script-comment-panel ${composerClass}`} aria-label="Script comments">
       <div className="comment-panel-top">
         <div className="comment-header">
           <div className="comment-title-row">
@@ -313,7 +316,7 @@ export function CommentRail({
         </div>
       </div>
 
-      {composerPlacement === "top" ? (
+      {showComposer && composerPlacement === "top" ? (
         <CommentComposer
           anchor={activeComposerAnchor}
           body={composerBody}
@@ -377,7 +380,7 @@ export function CommentRail({
         )}
       </div>
 
-      {composerPlacement === "bottom" ? (
+      {showComposer && composerPlacement === "bottom" ? (
         <CommentComposer
           anchor={activeComposerAnchor}
           body={composerBody}

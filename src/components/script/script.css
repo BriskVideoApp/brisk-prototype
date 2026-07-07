@@ -1205,6 +1205,10 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
+.script-comment-popover .script-comment-panel.composer-none {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
 .script-comment-popover .comment-panel-top {
   border-bottom-color: var(--brisk-border-primary);
 }

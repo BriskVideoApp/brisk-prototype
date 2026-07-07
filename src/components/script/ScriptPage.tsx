@@ -1498,6 +1498,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               composerAnchor={overallCommentAnchor}
               composerPlacement="top"
               currentUserId={currentUserId}
+              showComposer={false}
               users={scriptUsers}
               canPostInternal={!isCustomer}
               canSeeInternal={!isCustomer}
