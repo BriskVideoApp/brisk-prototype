@@ -70,7 +70,11 @@ type ScriptAiPanelProps = {
   onMinimise: (isMinimised: boolean) => void;
 };
 
-const sessionPositionKey = "brisk-script-ai-position";
+const sessionPositionKey = "brisk-script-ai-position-bottom-right-v2";
+const defaultPanelWidth = 404;
+const defaultPanelRightOffset = 48;
+const defaultPanelBottomOffset = 60;
+const defaultEmptyPanelHeight = 222;
 
 const initialSources: ScriptAiSource[] = [
   { id: "brief", label: "Brief", kind: "brief", attached: true },
@@ -140,9 +144,11 @@ export function ScriptAiPanel({
     }
 
     const handlePointerMove = (event: PointerEvent) => {
+      const panelHeight = panelRef.current?.offsetHeight ?? defaultEmptyPanelHeight;
+
       setPosition({
-        x: Math.max(12, Math.min(window.innerWidth - 404, event.clientX - dragOffset.x)),
-        y: Math.max(12, Math.min(window.innerHeight - 160, event.clientY - dragOffset.y)),
+        x: Math.max(12, Math.min(window.innerWidth - defaultPanelWidth, event.clientX - dragOffset.x)),
+        y: Math.max(12, Math.min(window.innerHeight - panelHeight - 12, event.clientY - dragOffset.y)),
       });
     };
 
@@ -495,7 +501,7 @@ function SourcesControl({
 
 function getInitialPanelPosition(): PanelPosition {
   if (typeof window === "undefined") {
-    return { x: 824, y: 104 };
+    return { x: 824, y: 320 };
   }
 
   const storedPosition = sessionStorage.getItem(sessionPositionKey);
@@ -513,8 +519,8 @@ function getInitialPanelPosition(): PanelPosition {
   }
 
   return {
-    x: Math.max(12, window.innerWidth - 436),
-    y: 104,
+    x: Math.max(12, window.innerWidth - defaultPanelWidth - defaultPanelRightOffset),
+    y: Math.max(12, window.innerHeight - defaultEmptyPanelHeight - defaultPanelBottomOffset),
   };
 }
 
