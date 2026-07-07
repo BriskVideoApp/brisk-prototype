@@ -1574,6 +1574,10 @@ button.script-version-row-body:focus-visible {
 }
 
 .script-version-row-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-s);
   min-height: 28px;
   border: 0;
   border-radius: var(--brisk-radius-xs);

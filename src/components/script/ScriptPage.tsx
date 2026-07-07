@@ -1224,7 +1224,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                         aria-pressed={showChanges}
                         onClick={toggleShowChangesFromMenu}
                       >
-                        Show changes
+                        <span>{showChanges ? "Hide changes" : "Show changes"}</span>
+                        {showChanges ? <DsIcon name="check" size={12} /> : null}
                       </button>
                       <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
                         New script
