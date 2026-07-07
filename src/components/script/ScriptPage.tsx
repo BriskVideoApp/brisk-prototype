@@ -2540,6 +2540,7 @@ function VersionsPanel({
                 version,
                 versionMeta,
               });
+              const auditGroups = groupVersionAuditEntriesByDay(getVersionAuditEntries(version, versionMeta));
               const rowCopy = (
                 <span className="script-version-row-copy">
                   <strong className="label-s-semibold" title={versionTitle}>
@@ -2551,7 +2552,6 @@ function VersionsPanel({
                   </span>
                 </span>
               );
-              const auditEntries = getVersionAuditEntries(version, versionMeta);
               const expansionId = `script-version-history-${version.id}`;
 
               return (
@@ -2588,10 +2588,17 @@ function VersionsPanel({
                   </div>
                   {!isCustomer && isExpanded ? (
                     <ol className="script-version-history" id={expansionId}>
-                      {auditEntries.map((entry) => (
-                        <li className="script-version-history-entry" key={`${version.id}-${entry.date}-${entry.time}-${entry.action}`}>
-                          <span className="script-version-history-time">{entry.date} · {entry.time}</span>
-                          <span className="script-version-history-action">{entry.action}</span>
+                      {auditGroups.map((group) => (
+                        <li className="script-version-history-day" key={`${version.id}-${group.date}`}>
+                          <span className="script-version-history-day-label">{group.date.toUpperCase()}</span>
+                          <ol className="script-version-history-day-entries">
+                            {group.entries.map((entry) => (
+                              <li className="script-version-history-entry" key={`${version.id}-${entry.date}-${entry.time}-${entry.action}`}>
+                                <span className="script-version-history-time">{entry.time}</span>
+                                <span className="script-version-history-action">{entry.action}</span>
+                              </li>
+                            ))}
+                          </ol>
                         </li>
                       ))}
                     </ol>
@@ -2604,6 +2611,25 @@ function VersionsPanel({
       </div>
     </aside>
   );
+}
+
+function groupVersionAuditEntriesByDay(entries: VersionAuditEntry[]): { date: string; entries: VersionAuditEntry[] }[] {
+  const groups: { date: string; entries: VersionAuditEntry[] }[] = [];
+
+  entries.forEach((entry) => {
+    const currentGroup = groups[groups.length - 1];
+    if (currentGroup?.date === entry.date) {
+      currentGroup.entries.push(entry);
+      return;
+    }
+
+    groups.push({
+      date: entry.date,
+      entries: [entry],
+    });
+  });
+
+  return groups;
 }
 
 function VersionPreviewBanner({

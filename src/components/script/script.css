@@ -1498,7 +1498,7 @@
   left: 0;
   z-index: 80;
   display: grid;
-  width: min(520px, calc(100vw - (var(--brisk-space-xl) * 2)));
+  width: 360px;
   max-height: calc(100vh - 160px);
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
@@ -1751,15 +1751,34 @@ button.script-version-row-body:focus-visible {
 
 .script-version-history {
   display: grid;
-  gap: var(--brisk-space-xs);
+  gap: var(--brisk-space-s);
   margin: var(--brisk-space-m) 0 0;
   padding: 0 0 0 calc(12px + var(--brisk-space-s) + var(--brisk-space-s));
 }
 
-.script-version-history-entry {
+.script-version-history-day {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
-  gap: var(--brisk-space-m);
+  gap: var(--brisk-space-xs);
+}
+
+.script-version-history-day-label {
+  color: var(--brisk-gray-60);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 16px;
+  text-transform: uppercase;
+}
+
+.script-version-history-day-entries {
+  display: grid;
+  gap: var(--brisk-space-xxs);
+}
+
+.script-version-history-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--brisk-space-xs);
   color: var(--brisk-gray-90);
   font-size: 12px;
   font-weight: 400;
@@ -1767,12 +1786,15 @@ button.script-version-row-body:focus-visible {
 }
 
 .script-version-history-time {
+  flex: 0 0 56px;
   color: var(--brisk-gray-60);
   white-space: nowrap;
 }
 
 .script-version-history-action {
+  flex: 1 1 auto;
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .script-version-row-menu {
@@ -1855,11 +1877,17 @@ button.script-version-row-body:focus-visible {
 }
 
 .script-doc-version-current {
-  border: 1px solid var(--brisk-border-primary);
+  border: 0;
   border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
+  background: transparent;
   color: var(--brisk-brand-primary);
-  padding: 2px var(--brisk-space-s);
+  box-shadow: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 16px;
+  padding: 0 var(--brisk-space-xs);
+  text-transform: uppercase;
 }
 
 .script-redline-legend {
@@ -2394,7 +2422,7 @@ button.script-version-row-body:focus-visible {
   .script-versions-panel {
     right: auto;
     left: 0;
-    width: auto;
+    width: 360px;
   }
 
   .script-comment-popover.overview {

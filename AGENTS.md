@@ -96,8 +96,19 @@ Before building or modifying any screen, read `Docs/References/screen-inventory.
 - TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
 - Server components by default; add `"use client"` only when needed.
 - Keep components small and readable. The developer will read this code.
-- Run `npm run build` before declaring work complete.
 - Commit early and often. One commit per logical change.
+
+## Verification rules (critical - read before every session)
+
+**During a live dev session, DO NOT run `npm run build`.** A production build overwrites the `.next/` folder with production artefacts, which poisons the running dev server and causes stale-cache errors (`Cannot find module './[number].js'`, `__webpack_modules__[moduleId] is not a function`, `ENOENT: no such file or directory, .next/server/...`, 500 Internal Server Error). The operator then has to kill the server, delete `.next`, and restart from scratch.
+
+Use this verification ladder instead:
+
+1. **`npx tsc --noEmit`** - type-check without emitting files. Safe to run any time.
+2. **Runtime check via the running dev server** - curl the affected route (`curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/[route]`) and confirm it returns 200, not 500. This catches hydration errors, client-only crashes, and stale-import bugs that `tsc` misses.
+3. **Only run `npm run build` when the operator explicitly asks** for a production-build check before handing off to a developer. If a production check is unavoidable mid-session, warn the operator first and be ready to guide the operator through `rm -rf .next && npm run dev` afterwards.
+
+`tsc` + a runtime HTTP check is the minimum bar for "work complete". `npm run build` passing is neither necessary nor sufficient - it doesn't catch hydration errors, and it breaks the dev server.
 
 ## Design system rules
 
