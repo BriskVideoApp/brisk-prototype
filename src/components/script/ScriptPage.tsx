@@ -2411,11 +2411,9 @@ function VersionsPanel({
                             <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
                               Rename
                             </button>
-                            {!isCustomer ? (
+                            {!isCustomer && canDeleteVersion ? (
                               <button
                                 className="delete label-xs-semibold"
-                                disabled={!canDeleteVersion}
-                                title={!canDeleteVersion ? "Approved versions can't be deleted. Un-approve first." : undefined}
                                 type="button"
                                 onClick={() => {
                                   setOpenVersionMenuId(null);
