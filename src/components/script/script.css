@@ -74,8 +74,6 @@
 .script-ai-actions,
 .script-ai-input-actions,
 .script-ai-message-actions,
-.script-ai-suggestion-chips,
-.script-ai-sources,
 .script-modal-actions,
 .script-comment-head,
 .script-comment-tabs {
@@ -1994,7 +1992,7 @@ button.script-version-row-body:focus-visible {
 }
 
 .script-ai-panel.chat-first {
-  grid-template-rows: auto auto minmax(160px, 1fr) auto auto auto;
+  grid-template-rows: auto minmax(0, auto) auto;
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-l);
 }
@@ -2026,12 +2024,14 @@ button.script-version-row-body:focus-visible {
 }
 
 .script-ai-actions,
-.script-ai-sources,
 .script-ai-message-actions,
-.script-ai-suggestion-chips,
 .script-ai-input-actions {
   flex-wrap: wrap;
   gap: var(--brisk-space-s);
+}
+
+.script-ai-input-actions {
+  justify-content: space-between;
 }
 
 .script-ai-thread {
@@ -2039,8 +2039,14 @@ button.script-version-row-body:focus-visible {
   min-height: 0;
   align-content: start;
   gap: var(--brisk-space-m);
+  max-height: min(420px, calc(100vh - 320px));
   overflow-y: auto;
   padding-right: var(--brisk-space-xs);
+}
+
+.script-ai-sources-control {
+  position: relative;
+  display: inline-flex;
 }
 
 .script-source-chip {
@@ -2060,6 +2066,47 @@ button.script-version-row-body:focus-visible {
   color: var(--brisk-text-primary);
 }
 
+.script-ai-sources-popover {
+  position: absolute;
+  bottom: calc(100% + var(--brisk-space-s));
+  left: 0;
+  z-index: 3;
+  display: grid;
+  width: 240px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-s);
+}
+
+.script-ai-source-row,
+.script-ai-add-source {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-s);
+  padding: 0 var(--brisk-space-s);
+}
+
+.script-ai-source-row button {
+  display: inline-flex;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-tertiary);
+  padding: 0;
+}
+
+.script-ai-add-source {
+  justify-content: flex-start;
+  color: var(--brisk-brand-primary);
+}
+
 .script-ai-message {
   display: grid;
   gap: var(--brisk-space-s);
@@ -2073,42 +2120,24 @@ button.script-version-row-body:focus-visible {
   background: var(--brisk-item-tertiary);
 }
 
-.script-ai-message p,
-.script-ai-genre {
+.script-ai-message p {
   margin: 0;
 }
 
-.script-ai-message-actions button,
-.script-ai-slash-menu button {
+.script-ai-message-actions button {
   border: 0;
   background: transparent;
   color: var(--brisk-brand-primary);
   padding: 0;
 }
 
-.script-ai-message-actions button:hover,
-.script-ai-slash-menu button:hover {
+.script-ai-message-actions button:hover {
   color: var(--brisk-brand-primary-click);
   text-decoration: underline;
 }
 
-.script-ai-typing,
-.script-ai-genre {
+.script-ai-typing {
   color: var(--brisk-text-tertiary);
-}
-
-.script-ai-suggestion-chip {
-  min-height: 30px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  padding: 0 var(--brisk-space-m);
-}
-
-.script-ai-suggestion-chip:hover {
-  background: var(--brisk-brand-secondary);
-  box-shadow: var(--brisk-shadow-s);
 }
 
 .script-ai-input-wrap {
@@ -2148,35 +2177,6 @@ button.script-version-row-body:focus-visible {
   background: var(--brisk-gray-10);
   color: var(--brisk-text-tertiary);
   cursor: not-allowed;
-}
-
-.script-ai-slash-menu {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + var(--brisk-space-s));
-  left: 0;
-  z-index: 2;
-  display: grid;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-s);
-}
-
-.script-ai-slash-menu button {
-  display: flex;
-  justify-content: space-between;
-  color: var(--brisk-text-primary);
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-s);
-  text-align: left;
-  text-decoration: none;
-}
-
-.script-ai-slash-menu button span:last-child {
-  color: var(--brisk-text-tertiary);
-  font-weight: 400;
 }
 
 .script-modal-backdrop {

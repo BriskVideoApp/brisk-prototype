@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ScriptGenre } from "@/data/script";
 
@@ -19,21 +19,12 @@ export type ScriptAiMessage = {
   insertRequest?: ScriptAiInsertRequest;
 };
 
-export type ScriptAiSuggestionChip = {
-  id: string;
-  label: string;
-  context: "empty_script" | "script_content" | "text_selected" | "transcript_attached";
-  command: SlashCommandId;
-};
-
-export type SlashCommandId =
+type ScriptAiIntent =
   | "generate"
   | "rewrite"
   | "feedback"
   | "paperedit"
-  | "visuals"
-  | "genre"
-  | "insert";
+  | "visuals";
 
 export type ScriptAiInsertRequest =
   | {
@@ -83,19 +74,9 @@ const sessionPositionKey = "brisk-script-ai-position";
 
 const initialSources: ScriptAiSource[] = [
   { id: "brief", label: "Brief", kind: "brief", attached: true },
-  { id: "transcript-v2", label: "Transcript v2", kind: "transcript", attached: true },
+  { id: "current-transcripts", label: "Current transcripts", kind: "transcript", attached: true },
   { id: "past-scripts", label: "Past scripts", kind: "past_scripts", attached: true },
-  { id: "brand-brain", label: "Brand Brain", kind: "brand_brain", attached: true },
-];
-
-const slashCommands: Array<{ id: SlashCommandId; label: string; hint: string }> = [
-  { id: "generate", label: "/generate", hint: "Draft a full script" },
-  { id: "rewrite", label: "/rewrite", hint: "Rewrite the selected text" },
-  { id: "feedback", label: "/feedback", hint: "Review the script" },
-  { id: "paperedit", label: "/paperedit", hint: "Build from transcript" },
-  { id: "visuals", label: "/visuals", hint: "Suggest visual direction" },
-  { id: "genre", label: "/genre [name]", hint: "Override the inferred genre" },
-  { id: "insert", label: "/insert", hint: "Insert the latest suggestion" },
+  { id: "brand", label: "Brand", kind: "brand_brain", attached: true },
 ];
 
 const generatedRows: ScriptAiRowDraft[] = [
@@ -134,28 +115,15 @@ export function ScriptAiPanel({
   onMinimise,
 }: ScriptAiPanelProps) {
   const [sources, setSources] = useState<ScriptAiSource[]>(initialSources);
-  const [messages, setMessages] = useState<ScriptAiMessage[]>([
-    {
-      id: "ai-welcome",
-      role: "assistant",
-      body: "I can help draft, rewrite, tighten or suggest visuals for this script. I am using the brief, transcript and past scripts as context.",
-      createdAt: "Just now",
-    },
-  ]);
+  const [messages, setMessages] = useState<ScriptAiMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [isSlashMenuOpen, setIsSlashMenuOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isSourcesPopoverOpen, setIsSourcesPopoverOpen] = useState(false);
   const [position, setPosition] = useState<PanelPosition>(() => getInitialPanelPosition());
   const [dragOffset, setDragOffset] = useState<PanelPosition | null>(null);
-  const [genreOverride, setGenreOverride] = useState<string | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const threadRef = useRef<HTMLDivElement | null>(null);
-  const hasTranscript = sources.some((source) => source.kind === "transcript" && source.attached);
-  const activeGenre = genreOverride ?? genre;
-  const suggestionChips = useMemo(
-    () => getSuggestionChips(selectionContext, hasTranscript),
-    [hasTranscript, selectionContext],
-  );
+  const placeholder = getInputPlaceholder(selectionContext);
 
   useEffect(() => {
     threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight });
@@ -192,18 +160,11 @@ export function ScriptAiPanel({
     return null;
   }
 
-  const submitPrompt = (prompt: string, command?: SlashCommandId) => {
+  const submitPrompt = (prompt: string) => {
     const trimmedPrompt = prompt.trim();
 
     if (!trimmedPrompt) {
       return;
-    }
-
-    const resolvedCommand = command ?? inferCommand(trimmedPrompt);
-    const genreCommandValue = resolvedCommand === "genre" ? trimmedPrompt.replace(/^\/genre\s*/i, "").trim() : "";
-
-    if (genreCommandValue) {
-      setGenreOverride(genreCommandValue);
     }
 
     const userMessage: ScriptAiMessage = {
@@ -215,20 +176,15 @@ export function ScriptAiPanel({
 
     setMessages((current) => [...current, userMessage]);
     setInputValue("");
-    setIsSlashMenuOpen(false);
     setIsTyping(true);
 
     window.setTimeout(() => {
       setMessages((current) => [
         ...current,
-        createAssistantReply(resolvedCommand, selectionContext, genreCommandValue || activeGenre),
+        createAssistantReply(inferIntent(trimmedPrompt, selectionContext), selectionContext, genre),
       ]);
       setIsTyping(false);
     }, 450);
-  };
-
-  const runSuggestion = (chip: ScriptAiSuggestionChip) => {
-    submitPrompt(chip.label, chip.command);
   };
 
   const addSource = () => {
@@ -268,7 +224,13 @@ export function ScriptAiPanel({
         <button className="script-ai-minimised-main label-xs-semibold" type="button" onClick={() => onMinimise(false)}>
           ChopChop AI
         </button>
-        <SourceChips sources={sources} onAddSource={addSource} onRemoveSource={removeSource} />
+        <SourcesControl
+          isOpen={isSourcesPopoverOpen}
+          sources={sources}
+          onAddSource={addSource}
+          onRemoveSource={removeSource}
+          onToggle={() => setIsSourcesPopoverOpen((isOpen) => !isOpen)}
+        />
       </aside>
     );
   }
@@ -292,61 +254,35 @@ export function ScriptAiPanel({
         </div>
       </header>
 
-      <SourceChips sources={sources} onAddSource={addSource} onRemoveSource={removeSource} />
-
-      <div className="script-ai-thread" ref={threadRef} aria-label="ChopChop AI chat thread">
-        {messages.map((message) => (
-          <article className={`script-ai-message ${message.role}`} key={message.id}>
-            <p className="paragraph-s">{message.body}</p>
-            {message.role === "assistant" ? (
-              <div className="script-ai-message-actions">
-                {message.insertRequest ? (
-                  <button className="label-xs-semibold" type="button" onClick={() => onInsert(message.insertRequest!)}>
-                    Insert
+      {messages.length > 0 || isTyping ? (
+        <div className="script-ai-thread" ref={threadRef} aria-label="ChopChop AI chat thread">
+          {messages.map((message) => (
+            <article className={`script-ai-message ${message.role}`} key={message.id}>
+              <p className="paragraph-s">{message.body}</p>
+              {message.role === "assistant" ? (
+                <div className="script-ai-message-actions">
+                  {message.insertRequest ? (
+                    <button className="label-xs-semibold" type="button" onClick={() => onInsert(message.insertRequest!)}>
+                      Insert
+                    </button>
+                  ) : null}
+                  <button className="label-xs-semibold" type="button" onClick={() => copyMessage(message.body)}>
+                    Copy
                   </button>
-                ) : null}
-                <button className="label-xs-semibold" type="button" onClick={() => copyMessage(message.body)}>
-                  Copy
-                </button>
-              </div>
-            ) : null}
-          </article>
-        ))}
-        {isTyping ? <p className="script-ai-typing label-xs">ChopChop AI is thinking...</p> : null}
-      </div>
-
-      <div className="script-ai-suggestion-chips" aria-label="Suggested prompts">
-        {suggestionChips.map((chip) => (
-          <button className="script-ai-suggestion-chip label-xs-semibold" type="button" key={chip.id} onClick={() => runSuggestion(chip)}>
-            {chip.label}
-          </button>
-        ))}
-      </div>
+                </div>
+              ) : null}
+            </article>
+          ))}
+          {isTyping ? <p className="script-ai-typing label-xs">ChopChop AI is thinking…</p> : null}
+        </div>
+      ) : null}
 
       <div className="script-ai-input-wrap">
-        {isSlashMenuOpen ? (
-          <div className="script-ai-slash-menu" role="menu" aria-label="AI slash commands">
-            {slashCommands.map((command) => (
-              <button
-                className="label-xs-semibold"
-                type="button"
-                key={command.id}
-                onClick={() => submitPrompt(command.label, command.id)}
-              >
-                <span>{command.label}</span>
-                <span>{command.hint}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
         <textarea
           className="script-ai-input label-s"
-          placeholder="Ask for a rewrite, a script, or a visual idea..."
+          placeholder={placeholder}
           value={inputValue}
-          onChange={(event) => {
-            setInputValue(event.target.value);
-            setIsSlashMenuOpen(event.target.value.trim() === "/");
-          }}
+          onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={(event) => handleInputKeyDown(event, submitPrompt, inputValue)}
           onPaste={() => {
             if (!sources.some((source) => source.id === "pasted-image")) {
@@ -358,9 +294,13 @@ export function ScriptAiPanel({
           }}
         />
         <div className="script-ai-input-actions">
-          <button className="script-quiet-icon" type="button" data-tooltip="Attach file" aria-label="Attach file" onClick={addSource}>
-            <DsIcon name="paperclip" size={14} />
-          </button>
+          <SourcesControl
+            isOpen={isSourcesPopoverOpen}
+            sources={sources}
+            onAddSource={addSource}
+            onRemoveSource={removeSource}
+            onToggle={() => setIsSourcesPopoverOpen((isOpen) => !isOpen)}
+          />
           <button
             className="script-ai-send-button label-xs-semibold"
             type="button"
@@ -372,7 +312,6 @@ export function ScriptAiPanel({
           </button>
         </div>
       </div>
-      <p className="script-ai-genre label-xs">Genre inferred from brief: {activeGenre}</p>
     </aside>
   );
 
@@ -381,32 +320,47 @@ export function ScriptAiPanel({
   }
 }
 
-function SourceChips({
+function SourcesControl({
+  isOpen,
   sources,
   onAddSource,
   onRemoveSource,
+  onToggle,
 }: {
+  isOpen: boolean;
   sources: ScriptAiSource[];
   onAddSource: () => void;
   onRemoveSource: (sourceId: string) => void;
+  onToggle: () => void;
 }) {
   return (
-    <div className="script-ai-sources" aria-label="AI input sources">
-      {sources.map((source) => (
-        <button
-          className="script-source-chip label-xs-semibold"
-          type="button"
-          key={source.id}
-          onClick={() => onRemoveSource(source.id)}
-        >
-          {source.label}
-          <DsIcon name="x-close-cross" size={10} />
-        </button>
-      ))}
-      <button className="script-source-chip add label-xs-semibold" type="button" onClick={onAddSource}>
+    <div className="script-ai-sources-control">
+      <button
+        className="script-source-chip add label-xs-semibold"
+        type="button"
+        aria-label={`+ Sources (${sources.length})`}
+        aria-expanded={isOpen}
+        onClick={onToggle}
+      >
         <DsIcon name="plus" size={12} />
-        Add source
+        Sources ({sources.length})
       </button>
+      {isOpen ? (
+        <div className="script-ai-sources-popover" aria-label="AI sources">
+          {sources.map((source) => (
+            <span className="script-ai-source-row" key={source.id}>
+              <span className="label-xs-semibold">{source.label}</span>
+              <button type="button" aria-label={`Remove ${source.label}`} onClick={() => onRemoveSource(source.id)}>
+                <DsIcon name="x-close-cross" size={10} />
+              </button>
+            </span>
+          ))}
+          <button className="script-ai-add-source label-xs-semibold" type="button" onClick={onAddSource}>
+            <DsIcon name="plus" size={12} />
+            Add source
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -436,48 +390,34 @@ function getInitialPanelPosition(): PanelPosition {
   };
 }
 
-function getSuggestionChips(selectionContext: ScriptAiSelectionContext, hasTranscript: boolean): ScriptAiSuggestionChip[] {
-  const chips: ScriptAiSuggestionChip[] = selectionContext.hasScriptContent
-    ? [
-        { id: "feedback", label: "Give feedback", context: "script_content", command: "feedback" },
-        { id: "visuals", label: "Suggest visuals", context: "script_content", command: "visuals" },
-        { id: "tighten", label: "Tighten to target duration", context: "script_content", command: "rewrite" },
-      ]
-    : [
-        { id: "generate", label: "Generate script", context: "empty_script", command: "generate" },
-        { id: "draft", label: "Draft from brief", context: "empty_script", command: "generate" },
-        { id: "concepts", label: "Suggest concepts", context: "empty_script", command: "feedback" },
-      ];
-
+function getInputPlaceholder(selectionContext: ScriptAiSelectionContext) {
   if (selectionContext.selectedText) {
-    chips.unshift(
-      { id: "rewrite-selection", label: "Rewrite selection", context: "text_selected", command: "rewrite" },
-      { id: "punchier", label: "Make punchier", context: "text_selected", command: "rewrite" },
-      { id: "tone", label: "Fix tone", context: "text_selected", command: "rewrite" },
-      { id: "selection-visual", label: "Suggest visual for this line", context: "text_selected", command: "visuals" },
-    );
+    return "Rewrite selection, or ask anything…";
   }
 
-  if (hasTranscript) {
-    chips.push({ id: "paperedit", label: "Paper edit from transcript", context: "transcript_attached", command: "paperedit" });
+  if (!selectionContext.hasScriptContent) {
+    return "Ask ChopChop AI to draft your script…";
   }
 
-  return chips.slice(0, 5);
+  return "Ask ChopChop AI…";
 }
 
-function inferCommand(prompt: string): SlashCommandId {
+function inferIntent(prompt: string, selectionContext: ScriptAiSelectionContext): ScriptAiIntent {
   const normalisedPrompt = prompt.toLowerCase();
-
-  if (normalisedPrompt.startsWith("/")) {
-    const command = normalisedPrompt.slice(1).split(" ")[0];
-    return slashCommands.some((item) => item.id === command) ? (command as SlashCommandId) : "feedback";
-  }
 
   if (normalisedPrompt.includes("visual")) {
     return "visuals";
   }
 
+  if (normalisedPrompt.includes("paper edit") || normalisedPrompt.includes("transcript")) {
+    return "paperedit";
+  }
+
   if (normalisedPrompt.includes("rewrite") || normalisedPrompt.includes("tone") || normalisedPrompt.includes("punch")) {
+    return "rewrite";
+  }
+
+  if (selectionContext.selectedText) {
     return "rewrite";
   }
 
@@ -488,7 +428,7 @@ function inferCommand(prompt: string): SlashCommandId {
   return "feedback";
 }
 
-function createAssistantReply(command: SlashCommandId, selectionContext: ScriptAiSelectionContext, genre: string): ScriptAiMessage {
+function createAssistantReply(command: ScriptAiIntent, selectionContext: ScriptAiSelectionContext, genre: string): ScriptAiMessage {
   const timestamp = Date.now();
   const selectedText = selectionContext.selectedText ?? "this line";
 
@@ -529,18 +469,9 @@ function createAssistantReply(command: SlashCommandId, selectionContext: ScriptA
     return {
       id: `ai-assistant-${timestamp}`,
       role: "assistant",
-      body: "Paper edit from Transcript v2: lead with Avery's handover quote, then use Maya's calm, clear and human line as the emotional pivot.",
+      body: "Paper edit from current transcripts: lead with Avery's handover quote, then use Maya's calm, clear and human line as the emotional pivot.",
       createdAt: "Just now",
       insertRequest: { mode: "insert_after_active", rows: paperEditRows },
-    };
-  }
-
-  if (command === "genre") {
-    return {
-      id: `ai-assistant-${timestamp}`,
-      role: "assistant",
-      body: `Genre noted. I will treat the next response as ${genre}.`,
-      createdAt: "Just now",
     };
   }
 
@@ -564,7 +495,7 @@ function makePunchier(text: string) {
 
 function handleInputKeyDown(
   event: KeyboardEvent<HTMLTextAreaElement>,
-  submitPrompt: (prompt: string, command?: SlashCommandId) => void,
+  submitPrompt: (prompt: string) => void,
   inputValue: string,
 ) {
   if (event.key === "Enter" && !event.shiftKey) {
