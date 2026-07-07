@@ -14,6 +14,7 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
+import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   initialScriptComments,
@@ -139,6 +140,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
   const [floatingCommentPosition, setFloatingCommentPosition] = useState<FloatingCommentPosition | null>(null);
   const [isCommentsOverviewOpen, setIsCommentsOverviewOpen] = useState(false);
+  const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
@@ -1045,7 +1047,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const requestCurrentVersionReview = () => {
-    setToastMessage(`Review requested for script ${selectedVersion.label}`);
+    setIsRequestReviewOpen(true);
+    setIsVersionsPanelOpen(false);
+    setIsCommentsOverviewOpen(false);
+    setOpenCommentRowId(null);
+    setIsCommentComposerOpen(false);
+    setFloatingCommentPosition(null);
+  };
+
+  const handleReviewRequestSent = (recipientName: string) => {
+    setToastMessage(`Review request sent to ${recipientName}`);
   };
 
   return (
@@ -1379,6 +1390,17 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             </div>
           </section>
         </div>
+      ) : null}
+
+      {isRequestReviewOpen ? (
+        <RequestReviewModal
+          role={isCustomer ? "customer" : "studio"}
+          projectName={scriptBrief.projectName}
+          studioName={scriptBrief.studioName}
+          customerName={scriptBrief.customerName}
+          onClose={() => setIsRequestReviewOpen(false)}
+          onSent={handleReviewRequestSent}
+        />
       ) : null}
 
       {toastMessage ? (
