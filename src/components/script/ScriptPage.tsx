@@ -1515,6 +1515,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           <AvScriptEditor
             commentsByRow={commentsByRow}
             density={density}
+            draggingRowId={draggingRowId}
             dropRowId={dropRowId}
             hasTypedThisSession={hasTypedThisSession}
             isApproved={isScriptApproved || isPreviewingVersion}
@@ -1998,6 +1999,7 @@ function ScriptColumnHeaders({
 function AvScriptEditor({
   commentsByRow,
   density,
+  draggingRowId,
   dropRowId,
   hasTypedThisSession,
   isApproved,
@@ -2039,6 +2041,7 @@ function AvScriptEditor({
 }: {
   commentsByRow: Map<string, ScriptComment[]>;
   density: ScriptDensity;
+  draggingRowId: string | null;
   dropRowId: string | null;
   hasTypedThisSession: boolean;
   isApproved: boolean;
@@ -2109,7 +2112,7 @@ function AvScriptEditor({
 
         return (
           <div
-            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
+            className={`script-row ${areVisualsVisible ? "visuals-visible" : "words-only"} ${selectedRowIds.has(row.id) ? "selected" : ""} ${draggingRowId === row.id ? "dragging" : ""} ${dropRowId === row.id ? "drop-target" : ""} ${hasAnchor ? "has-anchor" : ""} ${highlightedRowId === row.id ? "highlighted" : ""}`}
             draggable
             key={row.id}
             ref={(node) => registerRowRef(row.id, node)}

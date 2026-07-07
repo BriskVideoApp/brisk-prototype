@@ -726,6 +726,16 @@
   padding: 0;
 }
 
+.script-row-drag-button {
+  cursor: grab;
+}
+
+.script-row.dragging,
+.script-row.dragging .script-row-drag-button,
+.script-row-drag-button:active {
+  cursor: grabbing;
+}
+
 .script-row-menu-wrap {
   position: relative;
 }
