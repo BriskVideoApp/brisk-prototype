@@ -336,6 +336,15 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         deleteSelectedRows();
       }
 
+      if (event.key === "Escape" && floatingToolbar.visible) {
+        event.preventDefault();
+        setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+
+        if (target instanceof HTMLTextAreaElement) {
+          target.setSelectionRange(target.selectionEnd, target.selectionEnd);
+        }
+      }
+
       if (event.key === "Escape" && isCommentsOverviewOpen) {
         event.preventDefault();
         setIsCommentsOverviewOpen(false);
@@ -345,6 +354,29 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
+
+  useEffect(() => {
+    if (!floatingToolbar.visible) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      if (target.closest(".script-floating-toolbar") || target.closest(".script-cell-input.words")) {
+        return;
+      }
+
+      setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => window.removeEventListener("pointerdown", handlePointerDown);
+  }, [floatingToolbar.visible]);
 
   const guardEditable = () => {
     if (isPreviewingVersion) {
@@ -1150,6 +1182,26 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     window.setTimeout(() => input.focus(), 0);
   };
 
+  const openSelectionComment = () => {
+    if (activeCommentAnchor.kind !== "selection" || !activeCommentAnchor.rowId) {
+      return;
+    }
+
+    const rowId = activeCommentAnchor.rowId;
+    const input = wordInputRefs.current.get(rowId);
+
+    if (!input) {
+      return;
+    }
+
+    setOpenCommentRowId(rowId);
+    setIsCommentComposerOpen(true);
+    setFloatingCommentPosition(getFloatingCommentPosition(input.getBoundingClientRect()));
+    setIsCommentsOverviewOpen(false);
+    setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+    focusCommentComposer();
+  };
+
   const insertAiLines = () => {
     updateRows((currentRows) => {
       const activeRowId = selectionState.lastRowId ?? currentRows[0]?.id;
@@ -1481,6 +1533,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             onAddRowAfter={addRowAfter}
             onAddRowBefore={addRowBefore}
             onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
+            onApplyTextMark={applyTextMark}
             onCaptureSelectionAnchor={captureSelectionAnchor}
             onDeleteRow={deleteRowById}
             onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
@@ -1494,6 +1547,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
             onOpenRowAnnotation={openUniversalRowAnchor}
             onPasteWords={handleWordsPaste}
+            onRedo={redoRows}
             onReorderRows={(targetRowId) => {
               if (draggingRowId) {
                 reorderRows(draggingRowId, targetRowId);
@@ -1506,6 +1560,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               setOpenRowMenuId(rowId);
               setConfirmingDeleteRowId(null);
             }}
+            onUndo={undoRows}
             onWordsKeyDown={handleWordsKeyDown}
             registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
           />
@@ -1579,11 +1634,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </span>
       </footer>
 
-      <FloatingFormatToolbar
+      <FloatingSelectionCommentButton
         state={floatingToolbar}
-        onApply={applyTextMark}
-        onRedo={redoRows}
-        onUndo={undoRows}
+        onComment={openSelectionComment}
       />
 
       {shouldShowAi ? (
@@ -1847,34 +1900,22 @@ function ScriptActionCluster({
   );
 }
 
-function FloatingFormatToolbar({
+function FloatingSelectionCommentButton({
   state,
-  onApply,
-  onRedo,
-  onUndo,
+  onComment,
 }: {
   state: FloatingToolbarState;
-  onApply: (mark: "bold" | "link") => void;
-  onRedo: () => void;
-  onUndo: () => void;
+  onComment: () => void;
 }) {
   if (!state.visible) {
     return null;
   }
 
   return (
-    <div className="script-floating-toolbar" style={{ left: state.x, top: state.y }} aria-label="Selection formatting tools">
-      <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onMouseDown={(event) => event.preventDefault()} onClick={onUndo}>
-        <DsIcon name="arrow-counter-clockwise" size={16} />
-      </button>
-      <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onMouseDown={(event) => event.preventDefault()} onClick={onRedo}>
-        <DsIcon name="arrow-clockwise" size={16} />
-      </button>
-      <button className="script-format-button label-xs-semibold" type="button" aria-label="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("bold")}>
-        B
-      </button>
-      <button className="script-quiet-icon" type="button" data-tooltip="Link" aria-label="Link" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("link")}>
-        <DsIcon name="link" size={16} />
+    <div className="script-floating-toolbar" style={{ left: state.x, top: state.y }} aria-label="Selection actions">
+      <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
+        <DsIcon name="chat-circle" size={14} />
+        Comment
       </button>
     </div>
   );
@@ -1883,11 +1924,17 @@ function FloatingFormatToolbar({
 function ScriptColumnHeaders({
   areVisualsVisible,
   hasVisualsContent,
+  onApplyTextMark,
+  onRedo,
   onToggleVisuals,
+  onUndo,
 }: {
   areVisualsVisible: boolean;
   hasVisualsContent: boolean;
+  onApplyTextMark: (mark: "bold" | "link") => void;
+  onRedo: () => void;
   onToggleVisuals: () => void;
+  onUndo: () => void;
 }) {
   return (
     <div className={`script-column-headers ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="Script column guidance">
@@ -1896,6 +1943,20 @@ function ScriptColumnHeaders({
           <h2>
             Words
           </h2>
+          <div className="script-words-header-toolbar" aria-label="Text formatting">
+            <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
+              <DsIcon name="arrow-counter-clockwise" size={16} />
+            </button>
+            <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
+              <DsIcon name="arrow-clockwise" size={16} />
+            </button>
+            <button className="script-format-button label-xs-semibold" type="button" aria-label="Bold" onClick={() => onApplyTextMark("bold")}>
+              B
+            </button>
+            <button className="script-quiet-icon" type="button" data-tooltip="Link" aria-label="Link" onClick={() => onApplyTextMark("link")}>
+              <DsIcon name="link" size={16} />
+            </button>
+          </div>
           {!areVisualsVisible ? (
             <Button
               className="script-visuals-header-toggle"
@@ -1955,6 +2016,7 @@ function AvScriptEditor({
   onAddRowAfter,
   onAddRowBefore,
   onCancelRowDelete,
+  onApplyTextMark,
   onCaptureSelectionAnchor,
   onDeleteRow,
   onToggleVisuals,
@@ -1965,11 +2027,13 @@ function AvScriptEditor({
   onGuardApproved,
   onOpenRowAnnotation,
   onPasteWords,
+  onRedo,
   onReorderRows,
   onSelectRow,
   onSetField,
   onSetMediaMenuRow,
   onSetOpenRowMenu,
+  onUndo,
   onWordsKeyDown,
   registerRowRef,
 }: {
@@ -1993,6 +2057,7 @@ function AvScriptEditor({
   onAddRowAfter: (rowId: string | null) => void;
   onAddRowBefore: (rowId: string) => void;
   onCancelRowDelete: () => void;
+  onApplyTextMark: (mark: "bold" | "link") => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
   onDeleteRow: (rowId: string, shouldSkipConfirm?: boolean) => void;
   onToggleVisuals: () => void;
@@ -2003,11 +2068,13 @@ function AvScriptEditor({
   onGuardApproved: () => boolean;
   onOpenRowAnnotation: (anchor: ScriptRowUniversalAnchor, triggerRect: DOMRect) => void;
   onPasteWords: (event: ClipboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
+  onRedo: () => void;
   onReorderRows: (targetRowId: string) => void;
   onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
   onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
   onSetMediaMenuRow: (rowId: string | null) => void;
   onSetOpenRowMenu: (rowId: string | null) => void;
+  onUndo: () => void;
   onWordsKeyDown: (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
 }) {
@@ -2019,7 +2086,10 @@ function AvScriptEditor({
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
         hasVisualsContent={hasVisualsContent}
+        onApplyTextMark={onApplyTextMark}
+        onRedo={onRedo}
         onToggleVisuals={onToggleVisuals}
+        onUndo={onUndo}
       />
       {editorRows.map((row, index) => {
         const rowComments = commentsByRow.get(row.id) ?? [];
@@ -3080,9 +3150,11 @@ function getMarkedText(mark: "bold" | "link", selectedText: string) {
 
 function getFloatingToolbarPosition(target: HTMLTextAreaElement) {
   const rect = target.getBoundingClientRect();
+  const shouldFlipBelow = rect.top < 56;
+
   return {
-    x: Math.min(window.innerWidth - 210, Math.max(16, rect.left + 24)),
-    y: Math.max(8, rect.top - 48),
+    x: Math.min(window.innerWidth - 16, Math.max(16, rect.left + rect.width / 2)),
+    y: shouldFlipBelow ? rect.bottom + 8 : rect.top - 40,
   };
 }
 
