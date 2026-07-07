@@ -1603,8 +1603,7 @@ button.script-version-row-body:focus-visible {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.script-version-row-side,
-.script-version-row-actions {
+.script-version-row-side {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
@@ -1640,25 +1639,6 @@ button.script-version-row-body:focus-visible {
 
 .script-version-row-expand-button[aria-expanded="true"] .ds-icon {
   transform: rotate(180deg);
-}
-
-.script-version-row-actions {
-  position: relative;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
-}
-
-.script-version-row:hover .script-version-row-actions,
-.script-version-row:focus-within .script-version-row-actions,
-.script-version-row-actions.menu-open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.script-shell.customer .script-version-row-actions {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .script-version-row-menu-button {

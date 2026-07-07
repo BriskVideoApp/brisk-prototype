@@ -1329,10 +1329,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                   selectedVersionId={selectedVersionId}
                   versionMetaById={versionMetaById}
                   versions={versions}
-                  onDeleteVersion={deleteVersion}
-                  onDuplicateVersion={duplicateVersion}
-                  onRenameVersion={renameVersion}
-                  onRestoreVersion={openRestoreConfirmation}
                   onViewVersion={previewVersionForReadOnly}
                 />
               ) : null}
@@ -2361,10 +2357,6 @@ function VersionsPanel({
   selectedVersionId,
   versionMetaById,
   versions,
-  onDeleteVersion,
-  onDuplicateVersion,
-  onRenameVersion,
-  onRestoreVersion,
   onViewVersion,
 }: {
   entries: DocHistoryEntry[];
@@ -2375,74 +2367,14 @@ function VersionsPanel({
   selectedVersionId: string;
   versionMetaById: Record<string, ScriptVersionMeta>;
   versions: ScriptVersion[];
-  onDeleteVersion: (versionId: string) => void;
-  onDuplicateVersion: (versionId: string) => void;
-  onRenameVersion: (versionId: string, nextLabel: string) => void;
-  onRestoreVersion: (versionId: string) => void;
   onViewVersion: (versionId: string) => void;
 }) {
-  const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
-  const [renameDraft, setRenameDraft] = useState("");
-  const [openVersionMenuId, setOpenVersionMenuId] = useState<string | null>(null);
   const [expandedVersionId, setExpandedVersionId] = useState<string | null>(null);
-  const renameInputRef = useRef<HTMLInputElement | null>(null);
-  const isCancellingRenameRef = useRef(false);
-
-  useEffect(() => {
-    if (renamingVersionId) {
-      renameInputRef.current?.focus();
-      renameInputRef.current?.select();
-    }
-  }, [renamingVersionId]);
-
-  const startRename = (version: ScriptVersion, versionMeta: ScriptVersionMeta) => {
-    isCancellingRenameRef.current = false;
-    setOpenVersionMenuId(null);
-    setRenamingVersionId(version.id);
-    setRenameDraft(getVersionButtonLabel(version, versionMeta));
-  };
-
-  const saveRename = (versionId: string) => {
-    if (isCancellingRenameRef.current) {
-      isCancellingRenameRef.current = false;
-      return;
-    }
-
-    const trimmedDraft = renameDraft.trim();
-
-    if (trimmedDraft) {
-      onRenameVersion(versionId, trimmedDraft);
-    }
-
-    setRenamingVersionId(null);
-    setRenameDraft("");
-  };
-
-  const cancelRename = () => {
-    isCancellingRenameRef.current = true;
-    setRenamingVersionId(null);
-    setRenameDraft("");
-  };
 
   const viewVersion = (versionId: string, isCurrent: boolean) => {
-    setOpenVersionMenuId(null);
-
     if (!isCurrent) {
       onViewVersion(versionId);
     }
-  };
-
-  const restoreVersion = (versionId: string, isCurrent: boolean) => {
-    setOpenVersionMenuId(null);
-
-    if (!isCurrent) {
-      onRestoreVersion(versionId);
-    }
-  };
-
-  const duplicateVersionFromMenu = (versionId: string) => {
-    setOpenVersionMenuId(null);
-    onDuplicateVersion(versionId);
   };
 
   return (
@@ -2475,8 +2407,6 @@ function VersionsPanel({
               const isCurrent = version.id === selectedVersionId;
               const isPreviewing = version.id === previewVersionId;
               const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
-              const isRenaming = renamingVersionId === version.id;
-              const isVersionMenuOpen = openVersionMenuId === version.id;
               const isExpanded = expandedVersionId === version.id;
               const versionTitle = getVersionHistoryTitle(version, versionMeta);
               const versionStateLine = getVersionStateLine({
@@ -2488,32 +2418,9 @@ function VersionsPanel({
               });
               const rowCopy = (
                 <span className="script-version-row-copy">
-                  {isRenaming ? (
-                    <input
-                      ref={renameInputRef}
-                      aria-label={`Rename ${getVersionButtonLabel(version, versionMeta)}`}
-                      className="script-version-rename-input label-s-semibold"
-                      value={renameDraft}
-                      onClick={(event) => event.stopPropagation()}
-                      onBlur={() => saveRename(version.id)}
-                      onChange={(event) => setRenameDraft(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault();
-                          saveRename(version.id);
-                        }
-
-                        if (event.key === "Escape") {
-                          event.preventDefault();
-                          cancelRename();
-                        }
-                      }}
-                    />
-                  ) : (
-                    <strong className="label-s-semibold" title={versionTitle}>
-                      {versionTitle}
-                    </strong>
-                  )}
+                  <strong className="label-s-semibold" title={versionTitle}>
+                    {versionTitle}
+                  </strong>
                   <span className={`script-version-row-meta label-s ${versionStateLine.tone}`}>
                     <DsIcon name={versionStateLine.icon} size={12} />
                     <span>{versionStateLine.text}</span>
@@ -2546,7 +2453,6 @@ function VersionsPanel({
                           aria-expanded={isExpanded}
                           aria-label={`${isExpanded ? "Collapse" : "Expand"} history for ${versionTitle}`}
                           onClick={() => {
-                            setOpenVersionMenuId(null);
                             setExpandedVersionId(isExpanded ? null : version.id);
                           }}
                         >
@@ -2554,48 +2460,6 @@ function VersionsPanel({
                         </button>
                       ) : null}
                       {isCurrent ? <span className="script-doc-version-current label-xs-semibold">Current</span> : null}
-                      {!isCurrent ? (
-                        <span className={`script-version-row-actions ${isVersionMenuOpen ? "menu-open" : ""}`}>
-                          <button
-                            className="script-version-row-menu-button"
-                            type="button"
-                            aria-label={`Open menu for ${versionTitle}`}
-                            aria-expanded={isVersionMenuOpen}
-                            onClick={() => setOpenVersionMenuId(isVersionMenuOpen ? null : version.id)}
-                          >
-                            <DsIcon name="dots-three" size={14} />
-                          </button>
-                          {isVersionMenuOpen ? (
-                            <span className="script-version-row-menu">
-                              {!isCustomer ? (
-                                <button className="label-xs-semibold" disabled={isCurrent} type="button" onClick={() => restoreVersion(version.id, isCurrent)}>
-                                  Restore
-                                </button>
-                              ) : null}
-                              <button className="label-xs-semibold" type="button" onClick={() => duplicateVersionFromMenu(version.id)}>
-                                Duplicate
-                              </button>
-                              <button className="label-xs-semibold" type="button" onClick={() => startRename(version, versionMeta)}>
-                                Rename
-                              </button>
-                              {!isCustomer ? (
-                                <button
-                                  className="delete label-xs-semibold"
-                                  disabled={version.approvedSnapshot}
-                                  title={version.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
-                                  type="button"
-                                  onClick={() => {
-                                    setOpenVersionMenuId(null);
-                                    onDeleteVersion(version.id);
-                                  }}
-                                >
-                                  Delete
-                                </button>
-                              ) : null}
-                            </span>
-                          ) : null}
-                        </span>
-                      ) : null}
                     </span>
                   </div>
                   {!isCustomer && isExpanded ? (
