@@ -760,24 +760,22 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
   const createNewScriptDocument = () => {
     const nextRows: ScriptRow[] = [];
+    const nextLabel = getNextVersionLabel(versions);
+    const nextVersion = createScriptVersion(nextLabel, nextRows, `Script ${nextLabel} - Current`);
 
-    setRows(cloneRows(nextRows));
-    setRowHistory([cloneRows(nextRows)]);
-    setHistoryIndex(0);
-    setHasTypedThisSession(false);
-    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
-    setIsScriptApproved(false);
+    setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    setVersionMetaById((currentMeta) => ({
+      ...currentMeta,
+      [nextVersion.id]: { ...defaultVersionMeta },
+    }));
+    setStatus("In script");
     addDocHistoryEntry({
-      title: "Tom created a new script",
-      detail: "Started a fresh script document.",
+      title: `Tom created ${nextLabel}`,
+      detail: "Started a fresh script version.",
       actor: "Tom",
       time: "Just now",
     });
-    markSaving();
-    setToastMessage("New script created");
-    setPreviewVersionId(null);
-    setIsVersionsPanelOpen(false);
-    setIsCurrentVersionMenuOpen(false);
+    activateVersion(nextVersion, nextRows, `${nextLabel} created`);
   };
 
   const createNewScriptDocumentFromMenu = () => {
