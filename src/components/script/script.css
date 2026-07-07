@@ -249,6 +249,29 @@
   opacity: 0.72;
 }
 
+.script-action-cluster [data-tooltip],
+.script-subheader-actions > .script-quiet-icon[data-tooltip] {
+  --tooltip-bottom: calc(100% + var(--brisk-space-s));
+  --tooltip-left: 50%;
+  --tooltip-right: auto;
+  --tooltip-x: -50%;
+  --tooltip-y: var(--brisk-space-xs);
+  position: relative;
+}
+
+.script-action-cluster [data-tooltip]::after,
+.script-subheader-actions > .script-quiet-icon[data-tooltip]::after {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-black);
+  color: var(--brisk-text-white);
+}
+
+.script-share-icon-button {
+  width: 38px;
+  min-width: 38px;
+  padding: var(--brisk-space-s);
+}
+
 .script-approved-pill-wrap {
   display: inline-flex;
   align-items: center;

@@ -857,7 +857,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   };
 
   const approveScript = () => {
-    const approvedAt = formatSnapshotDate(new Date());
+    const approvedAt = selectedVersion.approvedAt ?? selectedVersion.createdAt ?? formatSnapshotDate(new Date());
 
     setIsScriptApproved(true);
     setStatus("Approved");
@@ -1095,6 +1095,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
         <div className="script-subheader-actions">
           <ScriptActionCluster
+            approvedAt={selectedVersion.approvedAt}
+            approvedBy={selectedVersion.approvedBy}
             isApproved={isScriptApproved}
             isPreviewing={isPreviewingVersion}
             subtabLabel="script"
@@ -1107,8 +1109,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           <button
             className="script-quiet-icon"
             type="button"
-            aria-label="All comments"
+            aria-label="Comments"
             aria-expanded={isCommentsOverviewOpen}
+            data-tooltip="Comments"
             onClick={openAllComments}
           >
             <DsIcon name="chat-circle" size={16} />
@@ -1420,6 +1423,8 @@ function ScriptHeader({
 }
 
 function ScriptActionCluster({
+  approvedAt,
+  approvedBy,
   isApproved,
   isPreviewing,
   subtabLabel,
@@ -1429,6 +1434,8 @@ function ScriptActionCluster({
   onRequestReview,
   onUnapprove,
 }: {
+  approvedAt?: string;
+  approvedBy?: string;
   isApproved: boolean;
   isPreviewing: boolean;
   subtabLabel: string;
@@ -1439,33 +1446,37 @@ function ScriptActionCluster({
   onUnapprove: () => void;
 }) {
   const targetLabel = `${subtabLabel} ${versionLabel}`;
-  const disabledTitle = isPreviewing ? "Return to current to approve or share." : undefined;
+  const disabledTooltip = "Return to current to approve or share.";
+  const copyTooltip = `Copy link to ${targetLabel}`;
+  const reviewTooltip = `Request review of ${targetLabel}`;
+  const approveTooltip = `Approve ${targetLabel}`;
+  const approvedTooltip = `Approved on ${approvedAt ?? "21 Jun"} by ${approvedBy ?? "Tom"}.`;
 
   return (
     <div className="share-action-row share-density-compact script-action-cluster" aria-label={`${targetLabel} actions`}>
       <div className="share-action-buttons">
         <button
-          className="share-button share-button-tertiary label-s-semibold"
+          aria-label={copyTooltip}
+          className="share-button share-button-tertiary script-share-icon-button label-s-semibold"
+          data-tooltip={isPreviewing ? disabledTooltip : copyTooltip}
           disabled={isPreviewing}
-          title={disabledTitle}
           type="button"
           onClick={onCopyLink}
         >
           <DsIcon name="link" size={20} />
-          Copy link {targetLabel}
         </button>
         <button
           className="share-button share-button-secondary label-s-semibold"
+          data-tooltip={isPreviewing ? disabledTooltip : reviewTooltip}
           disabled={isPreviewing}
-          title={disabledTitle}
           type="button"
           onClick={onRequestReview}
         >
-          Request review of {targetLabel}
+          Request review
         </button>
         {isApproved && !isPreviewing ? (
           <span className="script-approved-pill-wrap">
-            <button className="script-approved-pill label-s-semibold" type="button" onClick={onUnapprove}>
+            <button className="script-approved-pill label-s-semibold" data-tooltip={approvedTooltip} type="button" onClick={onUnapprove}>
               <DsIcon name="check" size={14} />
               {capitaliseLabel(subtabLabel)} approved
             </button>
@@ -1476,13 +1487,13 @@ function ScriptActionCluster({
         ) : (
           <button
             className="share-button share-button-primary label-s-semibold"
+            data-tooltip={isPreviewing ? disabledTooltip : approveTooltip}
             disabled={isPreviewing}
-            title={disabledTitle}
             type="button"
             onClick={onApprove}
           >
             <DsIcon name="thumbs-up-like-fill" size={20} />
-            Approve {targetLabel}
+            Approve
           </button>
         )}
       </div>
