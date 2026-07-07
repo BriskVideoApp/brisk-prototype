@@ -1534,7 +1534,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             onAddRowAfter={addRowAfter}
             onAddRowBefore={addRowBefore}
             onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
-            onApplyTextMark={applyTextMark}
             onCaptureSelectionAnchor={captureSelectionAnchor}
             onDeleteRow={deleteRowById}
             onToggleVisuals={() => setAreVisualsVisible((isVisible) => !isVisible)}
@@ -1637,6 +1636,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       <FloatingSelectionCommentButton
         state={floatingToolbar}
+        onApply={applyTextMark}
         onComment={openSelectionComment}
       />
 
@@ -1903,9 +1903,11 @@ function ScriptActionCluster({
 
 function FloatingSelectionCommentButton({
   state,
+  onApply,
   onComment,
 }: {
   state: FloatingToolbarState;
+  onApply: (mark: "bold" | "link") => void;
   onComment: () => void;
 }) {
   if (!state.visible) {
@@ -1914,6 +1916,12 @@ function FloatingSelectionCommentButton({
 
   return (
     <div className="script-floating-toolbar" style={{ left: state.x, top: state.y }} aria-label="Selection actions">
+      <button className="script-selection-icon-button label-xs-semibold" type="button" aria-label="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("bold")}>
+        B
+      </button>
+      <button className="script-selection-icon-button" type="button" data-tooltip="Link" aria-label="Link" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("link")}>
+        <DsIcon name="link" size={14} />
+      </button>
       <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
         <DsIcon name="chat-circle" size={14} />
         Comment
@@ -1925,14 +1933,12 @@ function FloatingSelectionCommentButton({
 function ScriptColumnHeaders({
   areVisualsVisible,
   hasVisualsContent,
-  onApplyTextMark,
   onRedo,
   onToggleVisuals,
   onUndo,
 }: {
   areVisualsVisible: boolean;
   hasVisualsContent: boolean;
-  onApplyTextMark: (mark: "bold" | "link") => void;
   onRedo: () => void;
   onToggleVisuals: () => void;
   onUndo: () => void;
@@ -1944,18 +1950,12 @@ function ScriptColumnHeaders({
           <h2>
             Words
           </h2>
-          <div className="script-words-header-toolbar" aria-label="Text formatting">
+          <div className="script-words-header-toolbar" aria-label="Text history">
             <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
               <DsIcon name="arrow-counter-clockwise" size={16} />
             </button>
             <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
               <DsIcon name="arrow-clockwise" size={16} />
-            </button>
-            <button className="script-format-button label-xs-semibold" type="button" aria-label="Bold" onClick={() => onApplyTextMark("bold")}>
-              B
-            </button>
-            <button className="script-quiet-icon" type="button" data-tooltip="Link" aria-label="Link" onClick={() => onApplyTextMark("link")}>
-              <DsIcon name="link" size={16} />
             </button>
           </div>
           {!areVisualsVisible ? (
@@ -2018,7 +2018,6 @@ function AvScriptEditor({
   onAddRowAfter,
   onAddRowBefore,
   onCancelRowDelete,
-  onApplyTextMark,
   onCaptureSelectionAnchor,
   onDeleteRow,
   onToggleVisuals,
@@ -2060,7 +2059,6 @@ function AvScriptEditor({
   onAddRowAfter: (rowId: string | null) => void;
   onAddRowBefore: (rowId: string) => void;
   onCancelRowDelete: () => void;
-  onApplyTextMark: (mark: "bold" | "link") => void;
   onCaptureSelectionAnchor: (row: ScriptRow, target: HTMLTextAreaElement) => void;
   onDeleteRow: (rowId: string, shouldSkipConfirm?: boolean) => void;
   onToggleVisuals: () => void;
@@ -2089,7 +2087,6 @@ function AvScriptEditor({
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
         hasVisualsContent={hasVisualsContent}
-        onApplyTextMark={onApplyTextMark}
         onRedo={onRedo}
         onToggleVisuals={onToggleVisuals}
         onUndo={onUndo}
