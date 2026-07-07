@@ -11,7 +11,7 @@ Added prototype components under `src/components/script-ai/`:
 Notes for DS review:
 
 - The chat-first AI panel uses local prototype markup styled with Brisk tokens because this repo does not currently expose React DS components for draggable floating panels, chat thread rows, compact source popovers, or file-upload controls.
-- Sources sit behind a single `+ Sources (n)` chip. The popover lists attached sources with remove actions, and `Add source` is mocked as an uploaded-source chip.
+- Sources sit behind a single `+ Sources (n)` chip. The popover uses the comment posting-menu treatment, lets users search and toggle attached sources, and `Add source` is mocked as an uploaded-source row.
 - Message actions use inline Insert and Copy text actions until a shared chat action pattern exists.
 - The minimised state remains a visible strip with sources, per the Script tab spec. This should become a DS panel-minimised treatment if that pattern is standardised.
 - Insert behaviour is prototype-only: selected text is replaced, whole-script generation creates a new script version, visual suggestions update the active row's visual field, and paper edit rows insert beneath the active row.

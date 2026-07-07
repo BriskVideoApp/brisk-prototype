@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ScriptGenre } from "@/data/script";
 
 export type ScriptAiSource = {
   id: string;
   label: string;
-  kind: "brief" | "transcript" | "past_scripts" | "brand_brain" | "upload";
+  kind: "brief" | "transcript" | "past_scripts" | "brand_brain" | "script" | "comments" | "upload";
   attached: boolean;
 };
 
@@ -74,9 +74,11 @@ const sessionPositionKey = "brisk-script-ai-position";
 
 const initialSources: ScriptAiSource[] = [
   { id: "brief", label: "Brief", kind: "brief", attached: true },
-  { id: "current-transcripts", label: "Current transcripts", kind: "transcript", attached: true },
+  { id: "transcript-v2", label: "Transcript v2", kind: "transcript", attached: true },
   { id: "past-scripts", label: "Past scripts", kind: "past_scripts", attached: true },
-  { id: "brand", label: "Brand", kind: "brand_brain", attached: true },
+  { id: "brand-brain", label: "Brand Brain", kind: "brand_brain", attached: true },
+  { id: "current-script", label: "Current script", kind: "script", attached: true },
+  { id: "client-comments", label: "Client comments", kind: "comments", attached: true },
 ];
 
 const generatedRows: ScriptAiRowDraft[] = [
@@ -123,7 +125,6 @@ export function ScriptAiPanel({
   const [dragOffset, setDragOffset] = useState<PanelPosition | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const threadRef = useRef<HTMLDivElement | null>(null);
-  const placeholder = getInputPlaceholder(selectionContext);
 
   useEffect(() => {
     threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight });
@@ -200,6 +201,19 @@ export function ScriptAiPanel({
     ]);
   };
 
+  const toggleSource = (sourceId: string) => {
+    setSources((current) =>
+      current.map((source) =>
+        source.id === sourceId
+          ? {
+              ...source,
+              attached: !source.attached,
+            }
+          : source,
+      ),
+    );
+  };
+
   const startDrag = (event: ReactMouseEvent<HTMLElement>) => {
     const panelRect = panelRef.current?.getBoundingClientRect();
 
@@ -228,8 +242,9 @@ export function ScriptAiPanel({
           isOpen={isSourcesPopoverOpen}
           sources={sources}
           onAddSource={addSource}
-          onRemoveSource={removeSource}
+          onToggleSource={toggleSource}
           onToggle={() => setIsSourcesPopoverOpen((isOpen) => !isOpen)}
+          onClose={() => setIsSourcesPopoverOpen(false)}
         />
       </aside>
     );
@@ -280,7 +295,7 @@ export function ScriptAiPanel({
       <div className="script-ai-input-wrap">
         <textarea
           className="script-ai-input label-s"
-          placeholder={placeholder}
+          placeholder="Ask ChopChop AI…"
           value={inputValue}
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={(event) => handleInputKeyDown(event, submitPrompt, inputValue)}
@@ -298,8 +313,9 @@ export function ScriptAiPanel({
             isOpen={isSourcesPopoverOpen}
             sources={sources}
             onAddSource={addSource}
-            onRemoveSource={removeSource}
+            onToggleSource={toggleSource}
             onToggle={() => setIsSourcesPopoverOpen((isOpen) => !isOpen)}
+            onClose={() => setIsSourcesPopoverOpen(false)}
           />
           <button
             className="script-ai-send-button label-xs-semibold"
@@ -314,50 +330,162 @@ export function ScriptAiPanel({
       </div>
     </aside>
   );
-
-  function removeSource(sourceId: string) {
-    setSources((current) => current.filter((source) => source.id !== sourceId));
-  }
 }
 
 function SourcesControl({
   isOpen,
   sources,
   onAddSource,
-  onRemoveSource,
+  onToggleSource,
   onToggle,
+  onClose,
 }: {
   isOpen: boolean;
   sources: ScriptAiSource[];
   onAddSource: () => void;
-  onRemoveSource: (sourceId: string) => void;
+  onToggleSource: (sourceId: string) => void;
   onToggle: () => void;
+  onClose: () => void;
 }) {
+  const [query, setQuery] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const controlRef = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const attachedCount = sources.filter((source) => source.attached).length;
+  const filteredSources = useMemo(() => {
+    const normalisedQuery = query.trim().toLowerCase();
+
+    if (!normalisedQuery) {
+      return sources;
+    }
+
+    return sources.filter((source) => source.label.toLowerCase().includes(normalisedQuery));
+  }, [query, sources]);
+  const chipLabel = attachedCount > 0 ? `Sources (${attachedCount})` : "Sources";
+  const chipAriaLabel = attachedCount > 0 ? `+ Sources (${attachedCount})` : "+ Sources";
+
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery("");
+      setActiveIndex(0);
+      return;
+    }
+
+    searchInputRef.current?.focus();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+
+      if (target instanceof Node && controlRef.current?.contains(target)) {
+        return;
+      }
+
+      onClose();
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    setActiveIndex((currentIndex) => Math.min(currentIndex, Math.max(filteredSources.length - 1, 0)));
+  }, [filteredSources.length]);
+
+  const handlePickerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveIndex((currentIndex) => (filteredSources.length === 0 ? 0 : (currentIndex + 1) % filteredSources.length));
+      return;
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveIndex((currentIndex) =>
+        filteredSources.length === 0 ? 0 : (currentIndex - 1 + filteredSources.length) % filteredSources.length,
+      );
+      return;
+    }
+
+    if (event.key === "Enter" && filteredSources[activeIndex]) {
+      event.preventDefault();
+      onToggleSource(filteredSources[activeIndex].id);
+    }
+  };
+
   return (
-    <div className="script-ai-sources-control">
+    <div className="script-ai-sources-control" ref={controlRef}>
       <button
         className="script-source-chip add label-xs-semibold"
         type="button"
-        aria-label={`+ Sources (${sources.length})`}
+        aria-label={chipAriaLabel}
         aria-expanded={isOpen}
         onClick={onToggle}
       >
         <DsIcon name="plus" size={12} />
-        Sources ({sources.length})
+        {chipLabel}
       </button>
       {isOpen ? (
-        <div className="script-ai-sources-popover" aria-label="AI sources">
-          {sources.map((source) => (
-            <span className="script-ai-source-row" key={source.id}>
-              <span className="label-xs-semibold">{source.label}</span>
-              <button type="button" aria-label={`Remove ${source.label}`} onClick={() => onRemoveSource(source.id)}>
-                <DsIcon name="x-close-cross" size={10} />
-              </button>
+        <div className="script-ai-sources-popover" role="listbox" aria-label="AI sources" onKeyDown={handlePickerKeyDown}>
+          <input
+            className="script-ai-source-search label-s"
+            ref={searchInputRef}
+            placeholder="Search sources…"
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <div className="script-ai-source-options">
+            {filteredSources.length > 0 ? (
+              filteredSources.map((source, index) => (
+                <button
+                  className={`script-ai-source-row label-s ${index === activeIndex ? "active" : ""}`}
+                  type="button"
+                  key={source.id}
+                  role="option"
+                  aria-selected={source.attached}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => onToggleSource(source.id)}
+                >
+                  <span className="script-ai-source-label">
+                    <span className="script-ai-source-token" aria-hidden="true">
+                      @
+                    </span>
+                    {source.label}
+                  </span>
+                  {source.attached ? <DsIcon name="check" size={14} /> : null}
+                </button>
+              ))
+            ) : (
+              <p className="script-ai-source-empty label-s">No sources found.</p>
+            )}
+          </div>
+          <button
+            className="script-ai-add-source label-s"
+            type="button"
+            onClick={() => {
+              onAddSource();
+              setQuery("");
+            }}
+          >
+            <span className="script-ai-source-label">
+              <span className="script-ai-source-token" aria-hidden="true">
+                +
+              </span>
+              Add source
             </span>
-          ))}
-          <button className="script-ai-add-source label-xs-semibold" type="button" onClick={onAddSource}>
-            <DsIcon name="plus" size={12} />
-            Add source
           </button>
         </div>
       ) : null}
@@ -388,18 +516,6 @@ function getInitialPanelPosition(): PanelPosition {
     x: Math.max(12, window.innerWidth - 436),
     y: 104,
   };
-}
-
-function getInputPlaceholder(selectionContext: ScriptAiSelectionContext) {
-  if (selectionContext.selectedText) {
-    return "Rewrite selection, or ask anything…";
-  }
-
-  if (!selectionContext.hasScriptContent) {
-    return "Ask ChopChop AI to draft your script…";
-  }
-
-  return "Ask ChopChop AI…";
 }
 
 function inferIntent(prompt: string, selectionContext: ScriptAiSelectionContext): ScriptAiIntent {
@@ -469,7 +585,7 @@ function createAssistantReply(command: ScriptAiIntent, selectionContext: ScriptA
     return {
       id: `ai-assistant-${timestamp}`,
       role: "assistant",
-      body: "Paper edit from current transcripts: lead with Avery's handover quote, then use Maya's calm, clear and human line as the emotional pivot.",
+      body: "Paper edit from Transcript v2: lead with Avery's handover quote, then use Maya's calm, clear and human line as the emotional pivot.",
       createdAt: "Just now",
       insertRequest: { mode: "insert_after_active", rows: paperEditRows },
     };
