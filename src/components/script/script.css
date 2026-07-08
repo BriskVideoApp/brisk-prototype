@@ -1996,12 +1996,11 @@ button.script-version-row-body:focus-visible {
   width: 52px;
   height: 52px;
   align-items: center;
-  border: 1px solid var(--brisk-border-primary);
+  border: 0;
   border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
+  background: transparent;
   color: var(--brisk-brand-primary);
   justify-content: center;
-  box-shadow: var(--brisk-shadow-s);
   padding: 0;
 }
 
@@ -2017,11 +2016,11 @@ button.script-version-row-body:focus-visible {
 
 .script-ai-fab:hover,
 .script-ai-fab:focus-visible {
-  box-shadow: var(--brisk-shadow-m);
+  outline: 2px solid var(--brisk-focus-ring);
+  outline-offset: 3px;
 }
 
 .script-ai-fab:active {
-  box-shadow: none;
   transform: translate(1px, 1px);
 }
 
