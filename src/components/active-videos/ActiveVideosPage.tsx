@@ -968,6 +968,10 @@ function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) 
             Today
           </Link>
         ) : null}
+        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
+          <DsIcon name="film-script" size={16} />
+          Script
+        </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />
           Video Review

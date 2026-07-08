@@ -736,6 +736,10 @@ function VideoReviewSidebar() {
           <DsIcon name="check-circle" size={16} />
           Today
         </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
+          <DsIcon name="film-script" size={16} />
+          Script
+        </Link>
         <Link className="today-sidebar-link active label-s-semibold" href="/review">
           <DsIcon name="play" size={16} />
           Video Review

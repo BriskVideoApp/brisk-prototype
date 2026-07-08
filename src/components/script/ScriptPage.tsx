@@ -1505,6 +1505,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
+      <ScriptSidebar />
       <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
 
       <section
@@ -1921,6 +1922,31 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
       ) : null}
     </main>
+  );
+}
+
+function ScriptSidebar() {
+  return (
+    <aside className="today-sidebar script-sidebar" aria-label="Primary navigation">
+      <nav className="today-sidebar-nav" aria-label="Workspace">
+        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
+          <DsIcon name="queue" size={16} />
+          Active Videos
+        </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/today">
+          <DsIcon name="check-circle" size={16} />
+          Today
+        </Link>
+        <Link className="today-sidebar-link active label-s-semibold" href="/projects/mock-project/script?role=studio">
+          <DsIcon name="film-script" size={16} />
+          Script
+        </Link>
+        <Link className="today-sidebar-link label-s-semibold" href="/review">
+          <DsIcon name="play" size={16} />
+          Video Review
+        </Link>
+      </nav>
+    </aside>
   );
 }
 

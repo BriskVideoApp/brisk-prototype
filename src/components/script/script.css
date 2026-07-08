@@ -4,15 +4,25 @@
 }
 
 .script-shell {
+  --today-sidebar-width: calc(var(--brisk-space-3xl) * 6);
   position: relative;
   min-height: 100vh;
   background: var(--brisk-white);
   color: var(--brisk-text-primary);
   padding: var(--brisk-space-none) var(--brisk-space-none) 96px;
+  padding-left: var(--today-sidebar-width);
 }
 
 .script-shell.comments-overview-open {
   padding-right: 430px;
+}
+
+.script-sidebar {
+  position: fixed;
+  z-index: 48;
+  top: 0;
+  bottom: 0;
+  left: 0;
 }
 
 .script-header {
