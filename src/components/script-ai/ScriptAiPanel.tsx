@@ -242,6 +242,7 @@ export function ScriptAiPanel({
         aria-label="ChopChop AI minimised"
       >
         <button className="script-ai-minimised-main label-xs-semibold" type="button" onClick={() => onMinimise(false)}>
+          <DsIcon name="chopchop-ai" size={16} />
           ChopChop AI
         </button>
         <SourcesControl

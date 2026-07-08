@@ -19,6 +19,7 @@ import {
   sharedTimeEntriesEventName,
   toProjectTimeEntry,
 } from "@/data/timeEntries/sharedTimeEntries";
+import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, ProjectDeadline, RoleSlot, StageKey, StageStatus, TeamPerson, TimeEntry } from "./types";
@@ -1561,11 +1562,7 @@ function ProjectDetailPanel({
             <a className="project-detail-action-button label-s-semibold" href={`${projectHref}/chat`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="chat-circle" size={20} />
-                {unreadMessages > 0 ? (
-                  <span className="quick-action-badge label-xs-semibold" aria-label={`${unreadMessages} unread messages`}>
-                    {unreadMessages}
-                  </span>
-                ) : null}
+                <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
               </span>
               Open chat
             </a>
@@ -2466,11 +2463,7 @@ function ProjectCell({
               onClick={(event) => event.stopPropagation()}
             >
               <DsIcon name="chat-circle" size={20} />
-              {unreadMessages > 0 ? (
-                <span className="quick-action-badge label-xs-semibold" aria-label={`${unreadMessages} unread messages`}>
-                  {unreadMessages}
-                </span>
-              ) : null}
+              <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
             </a>
             <a
               className="project-quick-action"

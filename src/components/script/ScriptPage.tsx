@@ -7,11 +7,13 @@ import {
   useRef,
   useState,
   type ClipboardEvent,
+  type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type MutableRefObject,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { ScriptAiPanel, type ScriptAiInsertRequest, type ScriptAiRowDraft } from "@/components/script-ai/ScriptAiPanel";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
@@ -182,6 +184,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
   const [isCurrentVersionMenuOpen, setIsCurrentVersionMenuOpen] = useState(false);
+  const [isToolbarTopRegionActive, setIsToolbarTopRegionActive] = useState(false);
+  const [isToolbarRowHovered, setIsToolbarRowHovered] = useState(false);
+  const [isToolbarDismissedFromTop, setIsToolbarDismissedFromTop] = useState(false);
+  const [isEditorFocused, setIsEditorFocused] = useState(true);
   const [isRenamingCurrentVersion, setIsRenamingCurrentVersion] = useState(false);
   const [currentVersionRenameDraft, setCurrentVersionRenameDraft] = useState("");
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
@@ -248,13 +254,22 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
   const shouldShowAi = !isCustomer || showAiToCustomer;
   const enabledSubtabLabels = optionalSubtabs.filter((tab) => enabledSubtabs.has(tab.id));
-  const hasVisualsContent = visibleRows.some((row) => row.visuals.trim() || row.media.length > 0);
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1] ?? latestVersion;
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const isPreviewingVersion = previewVersion !== null;
   const dropdownVersion = previewVersion ?? selectedVersion;
   const dropdownVersionMeta = versionMetaById[dropdownVersion.id] ?? defaultVersionMeta;
+  const hasToolbarMenuOpen =
+    isVersionsPanelOpen ||
+    isCurrentVersionMenuOpen ||
+    isCommentsOverviewOpen ||
+    isRequestReviewOpen ||
+    isRenamingCurrentVersion ||
+    isApprovedEditModalOpen;
+  const isScriptToolbarVisible =
+    hasToolbarMenuOpen ||
+    (!isToolbarDismissedFromTop && (isToolbarTopRegionActive || isToolbarRowHovered || !isEditorFocused));
 
   useEffect(() => {
     return () => {
@@ -265,6 +280,47 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       if (toastTimeoutRef.current) {
         window.clearTimeout(toastTimeoutRef.current);
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      const nextIsTopRegionActive = event.clientY <= 80;
+      const toolbarRect = document.querySelector(".script-subheader")?.getBoundingClientRect();
+      const nextIsToolbarRowHovered = Boolean(
+        toolbarRect &&
+          event.clientX >= toolbarRect.left &&
+          event.clientX <= toolbarRect.right &&
+          event.clientY >= toolbarRect.top &&
+          event.clientY <= toolbarRect.bottom,
+      );
+
+      setIsToolbarTopRegionActive((wasTopRegionActive) => {
+        if (!wasTopRegionActive && (nextIsTopRegionActive || nextIsToolbarRowHovered)) {
+          setIsToolbarDismissedFromTop(false);
+        }
+
+        return nextIsTopRegionActive;
+      });
+      setIsToolbarRowHovered((wasToolbarRowHovered) => {
+        if (!wasToolbarRowHovered && nextIsToolbarRowHovered) {
+          setIsToolbarDismissedFromTop(false);
+        }
+
+        return nextIsToolbarRowHovered;
+      });
+    };
+
+    const handlePointerLeave = () => {
+      setIsToolbarTopRegionActive(false);
+      setIsToolbarRowHovered(false);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave);
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
     };
   }, []);
 
@@ -347,6 +403,11 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         if (target instanceof HTMLTextAreaElement) {
           target.setSelectionRange(target.selectionEnd, target.selectionEnd);
         }
+      }
+
+      if (event.key === "Escape" && isToolbarTopRegionActive && !hasToolbarMenuOpen) {
+        event.preventDefault();
+        setIsToolbarDismissedFromTop(true);
       }
 
       if (event.key === "Escape" && isCommentsOverviewOpen) {
@@ -1427,11 +1488,34 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage(`Review request sent to ${recipientName}`);
   };
 
+  const isWritingSurfaceInput = (target: EventTarget | null) =>
+    target instanceof HTMLTextAreaElement && target.classList.contains("script-cell-input");
+
+  const handleScriptBodyFocusCapture = (event: ReactFocusEvent<HTMLElement>) => {
+    if (isWritingSurfaceInput(event.target)) {
+      setIsEditorFocused(true);
+    }
+  };
+
+  const handleScriptBodyBlurCapture = () => {
+    window.setTimeout(() => {
+      setIsEditorFocused(isWritingSurfaceInput(document.activeElement));
+    }, 0);
+  };
+
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
 
-      <section className="script-subheader" aria-label="Script controls">
+      <section
+        className={`script-subheader ${isScriptToolbarVisible ? "toolbar-visible" : "toolbar-hidden"}`}
+        aria-label="Script controls"
+        onMouseEnter={() => {
+          setIsToolbarDismissedFromTop(false);
+          setIsToolbarRowHovered(true);
+        }}
+        onMouseLeave={() => setIsToolbarRowHovered(false)}
+      >
         <div className="script-subheader-left">
           <div className="script-version-control">
             <div className="script-version-panel-wrap">
@@ -1542,6 +1626,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 </span>
               ) : null}
             </div>
+            <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
             <span className="script-save-note label-xs">
               {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
             </span>
@@ -1606,6 +1691,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       <section
         className={`script-body ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
         ref={scriptBodyRef}
+        onBlurCapture={handleScriptBodyBlurCapture}
+        onFocusCapture={handleScriptBodyFocusCapture}
       >
         <div className="script-editor-column">
           {previewVersion ? (
@@ -1630,7 +1717,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             rows={visibleRows}
             areVisualsVisible={areVisualsVisible}
             selectedRowIds={selectionState.selectedRowIds}
-            hasVisualsContent={hasVisualsContent}
             showChanges={showChanges}
             wordInputRefs={wordInputRefs}
             visualInputRefs={visualInputRefs}
@@ -1651,7 +1737,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             onGuardApproved={isPreviewingVersion ? () => false : guardEditable}
             onOpenRowAnnotation={openUniversalRowAnchor}
             onPasteWords={handleWordsPaste}
-            onRedo={redoRows}
             onReorderRows={(targetRowId) => {
               if (draggingRowId) {
                 reorderRows(draggingRowId, targetRowId);
@@ -1664,7 +1749,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               setOpenRowMenuId(rowId);
               setConfirmingDeleteRowId(null);
             }}
-            onUndo={undoRows}
             onWordsKeyDown={handleWordsKeyDown}
             registerRowRef={(rowId, node) => registerRowRef(rowRefs.current, rowId, node)}
           />
@@ -1740,6 +1824,10 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       <FloatingSelectionCommentButton
         state={floatingToolbar}
+        onAi={() => {
+          setIsAiPanelOpen(true);
+          setIsAiPanelMinimised(false);
+        }}
         onApply={applyTextMark}
         onComment={openSelectionComment}
       />
@@ -1756,6 +1844,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 setIsAiPanelMinimised(false);
               }}
             >
+              <span className="script-ai-fab-tooltip label-xs-semibold" role="tooltip">
+                Brisk AI
+              </span>
               <img
                 alt=""
                 className="script-ai-fab-image"
@@ -1843,14 +1934,15 @@ function ScriptHeader({
   return (
     <header className="script-header">
       <div className="script-title-stack">
-        <nav className="script-subtab-links" aria-label="Script sub-tabs">
-          <span>Script</span>
-          {enabledSubtabLabels.map((tab) => (
-            <button type="button" key={tab.id}>
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+        {enabledSubtabLabels.length > 0 ? (
+          <nav className="script-subtab-links" aria-label="Script sub-tabs">
+            {enabledSubtabLabels.map((tab) => (
+              <button type="button" key={tab.id}>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        ) : null}
         <h1 className="script-title">{scriptBrief.projectName}</h1>
       </div>
       <div className="script-role-links" aria-label="View as role">
@@ -1946,10 +2038,12 @@ function ScriptActionCluster({
 
 function FloatingSelectionCommentButton({
   state,
+  onAi,
   onApply,
   onComment,
 }: {
   state: FloatingToolbarState;
+  onAi: () => void;
   onApply: (mark: "bold" | "link") => void;
   onComment: () => void;
 }) {
@@ -1965,6 +2059,10 @@ function FloatingSelectionCommentButton({
       <button className="script-selection-icon-button" type="button" data-tooltip="Link" aria-label="Link" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("link")}>
         <DsIcon name="link" size={14} />
       </button>
+      <button className="script-selection-ai-button label-xs-semibold" type="button" aria-label="Ask AI" onMouseDown={(event) => event.preventDefault()} onClick={onAi}>
+        <DsIcon name="chopchop-ai" size={14} />
+        AI
+      </button>
       <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
         <DsIcon name="chat-circle" size={14} />
         Comment
@@ -1973,34 +2071,39 @@ function FloatingSelectionCommentButton({
   );
 }
 
-function ScriptColumnHeaders({
-  areVisualsVisible,
-  hasVisualsContent,
+function ScriptHistoryControls({
   onRedo,
-  onToggleVisuals,
   onUndo,
 }: {
-  areVisualsVisible: boolean;
-  hasVisualsContent: boolean;
   onRedo: () => void;
-  onToggleVisuals: () => void;
   onUndo: () => void;
+}) {
+  return (
+    <div className="script-history-controls" aria-label="Text history">
+      <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
+        <DsIcon name="arrow-counter-clockwise" size={12} />
+      </button>
+      <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
+        <DsIcon name="arrow-clockwise" size={12} />
+      </button>
+    </div>
+  );
+}
+
+function ScriptColumnHeaders({
+  areVisualsVisible,
+  onToggleVisuals,
+}: {
+  areVisualsVisible: boolean;
+  onToggleVisuals: () => void;
 }) {
   return (
     <div className={`script-column-headers ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="Script column guidance">
       <section className="script-column-header words">
         <div className="script-column-header-main">
-          <h2>
+          <h2 className="script-column-title-with-tooltip" data-tooltip="Write the words of your script in this column - could be titles on screen, dialogue, voiceover etc. 150 words = 1 minute.">
             Words
           </h2>
-          <div className="script-words-header-toolbar" aria-label="Text history">
-            <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
-              <DsIcon name="arrow-counter-clockwise" size={12} />
-            </button>
-            <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
-              <DsIcon name="arrow-clockwise" size={12} />
-            </button>
-          </div>
           {!areVisualsVisible ? (
             <Button
               className="script-visuals-header-toggle"
@@ -2018,7 +2121,7 @@ function ScriptColumnHeaders({
       {areVisualsVisible ? (
         <section className="script-column-header visuals">
           <div className="script-column-header-main">
-            <h2>
+            <h2 className="script-column-title-with-tooltip" data-tooltip="Describe the visuals for each line. Add media, links or references.">
               Visuals
             </h2>
             <Button
@@ -2032,7 +2135,6 @@ function ScriptColumnHeaders({
               <DsIcon name="caret-left" size={12} />
             </Button>
           </div>
-          <p className={hasVisualsContent ? "faded" : ""}>Describe the visuals for each line. Add media, links or references.</p>
         </section>
       ) : null}
     </div>
@@ -2053,7 +2155,6 @@ function AvScriptEditor({
   rows,
   areVisualsVisible,
   selectedRowIds,
-  hasVisualsContent,
   showChanges,
   wordInputRefs,
   visualInputRefs,
@@ -2071,13 +2172,11 @@ function AvScriptEditor({
   onGuardApproved,
   onOpenRowAnnotation,
   onPasteWords,
-  onRedo,
   onReorderRows,
   onSelectRow,
   onSetField,
   onSetMediaMenuRow,
   onSetOpenRowMenu,
-  onUndo,
   onWordsKeyDown,
   registerRowRef,
 }: {
@@ -2094,7 +2193,6 @@ function AvScriptEditor({
   rows: ScriptRow[];
   areVisualsVisible: boolean;
   selectedRowIds: Set<string>;
-  hasVisualsContent: boolean;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
   visualInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
@@ -2112,13 +2210,11 @@ function AvScriptEditor({
   onGuardApproved: () => boolean;
   onOpenRowAnnotation: (anchor: ScriptRowUniversalAnchor, triggerRect: DOMRect) => void;
   onPasteWords: (event: ClipboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
-  onRedo: () => void;
   onReorderRows: (targetRowId: string) => void;
   onSelectRow: (rowId: string, event: ReactMouseEvent<HTMLButtonElement>) => void;
   onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
   onSetMediaMenuRow: (rowId: string | null) => void;
   onSetOpenRowMenu: (rowId: string | null) => void;
-  onUndo: () => void;
   onWordsKeyDown: (event: ReactKeyboardEvent<HTMLTextAreaElement>, row: ScriptRow) => void;
   registerRowRef: (rowId: string, node: HTMLDivElement | null) => void;
 }) {
@@ -2129,17 +2225,16 @@ function AvScriptEditor({
     <section className={`script-av-surface ${density} ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="AV script editor">
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
-        hasVisualsContent={hasVisualsContent}
-        onRedo={onRedo}
         onToggleVisuals={onToggleVisuals}
-        onUndo={onUndo}
       />
       {editorRows.map((row, index) => {
         const rowComments = commentsByRow.get(row.id) ?? [];
         const hasComments = rowComments.length > 0;
         const hasUnresolvedComments = rowComments.some((comment) => !comment.resolved);
-        const hasUnreadMention = rowComments.some((comment) => comment.unreadMentionUserIds?.includes(currentUserId));
         const annotationState = !hasComments ? "none" : hasUnresolvedComments ? "unresolved" : "resolved";
+        const commentTooltip = hasComments
+          ? `${rowComments.length} ${rowComments.length === 1 ? "comment" : "comments"}`
+          : `Add comment for ${getRowLabel(row.id, editorRows)}`;
         const rowUniversalAnchor: ScriptRowUniversalAnchor = {
           surfaceType: "script",
           surfaceId: scriptSurfaceId,
@@ -2303,14 +2398,19 @@ function AvScriptEditor({
                 ) : null}
               </span>
               <button
-                className={`script-annotation-pin ${annotationState} ${hasUnreadMention ? "has-unread-mention" : ""}`}
+                className={`script-annotation-pin ${annotationState}`}
                 type="button"
-                aria-label={`${hasComments ? `Open ${rowComments.length} comments` : "Add comment"} for ${getRowLabel(row.id, editorRows)}`}
+                aria-label={`${commentTooltip}${hasComments ? ` for ${getRowLabel(row.id, editorRows)}` : ""}`}
                 data-comment-count={rowComments.length}
+                data-tooltip={commentTooltip}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={(event) => onOpenRowAnnotation(rowUniversalAnchor, event.currentTarget.getBoundingClientRect())}
               >
                 <DsIcon name="chat-circle" size={16} />
+                <CommentCountBadge
+                  count={rowComments.length}
+                  label={`${rowComments.length} ${rowComments.length === 1 ? "comment" : "comments"}`}
+                />
               </button>
             </div>
           </div>
@@ -2342,8 +2442,12 @@ function VisualMediaStrip({
   return (
     <div className={`script-media-strip ${media.length > 0 ? "has-media" : "empty"}`}>
       {media.length > 0 ? (
-        media.map((mediaItem) => <VisualAssetCard key={mediaItem.id} mediaItem={mediaItem} />)
-      ) : (
+        <div className="script-media-preview-row">
+          {media.map((mediaItem) => <VisualThumbnailPlaceholder key={mediaItem.id} mediaItem={mediaItem} />)}
+        </div>
+      ) : null}
+      <div className="script-media-chip-row">
+        {media.map((mediaItem) => <MediaThumb key={mediaItem.id} mediaItem={mediaItem} />)}
         <AddVisualPlaceholder
           isApproved={isApproved}
           isOpen={openMediaMenuRowId === row.id}
@@ -2353,17 +2457,8 @@ function VisualMediaStrip({
           onGuardApproved={onGuardApproved}
           onSetMediaMenuRow={onSetMediaMenuRow}
         />
-      )}
+      </div>
     </div>
-  );
-}
-
-function VisualAssetCard({ mediaItem }: { mediaItem: ScriptMediaItem }) {
-  return (
-    <span className="script-visual-asset">
-      <VisualThumbnailPlaceholder mediaItem={mediaItem} />
-      <MediaThumb mediaItem={mediaItem} />
-    </span>
   );
 }
 

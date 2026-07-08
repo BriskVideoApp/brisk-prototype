@@ -1,5 +1,18 @@
 # Yura Review Log
 
+## ChopChop AI helper icon
+
+Added prototype DS icon asset:
+
+- `public/brisk-icons/chopchop-ai.svg`
+
+Notes for DS review:
+
+- The icon is a 24 by 24 `currentColor` SVG used through `DsIcon`.
+- It follows the requested AI helper reference: an outlined speech bubble with two message strokes and a four-point spark, rendered through the shared `DsIcon` mask.
+- The Script tab now uses the same icon for the floating ChopChop AI opener, the text-selection AI action, and the minimised panel reopen control.
+- Please review the final bubble proportions and sparkle cutout before adding it to the Brisk DS source set.
+
 ## Script AI panel prototype
 
 Added prototype components under `src/components/script-ai/`:
