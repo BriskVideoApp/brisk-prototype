@@ -1760,7 +1760,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 alt=""
                 className="script-ai-fab-image"
                 draggable={false}
-                src="/brisk-icons/chopchop-ai.png?v=2"
+                src="/brisk-icons/chopchop-ai.svg?v=4"
               />
             </button>
           ) : null}
