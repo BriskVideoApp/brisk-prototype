@@ -43,6 +43,7 @@ const iconPaths = {
   "check": "/brisk-icons/check.svg",
   "checks": "/brisk-icons/checks.svg",
   "chat-circle": "/brisk-icons/chat-circle.svg",
+  "chopchop-ai": "/brisk-icons/chopchop-ai.svg?v=3",
   "heart": "/brisk-icons/heart.svg",
   "arrows-clockwise": "/brisk-icons/arrows-clockwise.svg",
   "fire-simple": "/brisk-icons/fire-simple.svg",

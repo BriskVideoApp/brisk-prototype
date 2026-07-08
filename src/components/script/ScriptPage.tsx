@@ -1756,7 +1756,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
                 setIsAiPanelMinimised(false);
               }}
             >
-              ✦
+              <img
+                alt=""
+                className="script-ai-fab-image"
+                draggable={false}
+                src="/brisk-icons/chopchop-ai.png?v=2"
+              />
             </button>
           ) : null}
           <ScriptAiPanel

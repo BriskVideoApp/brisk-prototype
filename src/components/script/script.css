@@ -1989,17 +1989,40 @@ button.script-version-row-body:focus-visible {
 
 .script-ai-fab {
   position: fixed;
+  display: inline-flex;
   right: var(--brisk-space-2xl);
   bottom: 60px;
   z-index: 38;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
+  align-items: center;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-full);
   background: var(--brisk-white);
-  color: var(--brisk-text-primary);
+  color: var(--brisk-brand-primary);
+  justify-content: center;
   box-shadow: var(--brisk-shadow-s);
   padding: 0;
+}
+
+.script-ai-fab-image {
+  display: block;
+  width: 52px;
+  height: 52px;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.script-ai-fab:hover,
+.script-ai-fab:focus-visible {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.script-ai-fab:active {
+  box-shadow: none;
+  transform: translate(1px, 1px);
 }
 
 .script-ai-panel {
