@@ -10,6 +10,7 @@ const iconPaths = {
   "dots-six-vertical": "/brisk-icons/dots-six-vertical.svg",
   "download-simple": "/brisk-icons/download-simple.svg",
   "link": "/brisk-icons/link.svg",
+  "lightbulb": "/brisk-icons/lightbulb.svg",
   "link-simple-horizontal": "/brisk-icons/link-simple-horizontal.svg",
   "upload-simple": "/brisk-icons/upload-simple.svg",
   "arrow-counter-clockwise": "/brisk-icons/arrow-counter-clockwise.svg",

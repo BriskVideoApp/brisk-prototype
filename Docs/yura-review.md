@@ -1,5 +1,37 @@
 # Yura Review Log
 
+## Brief stage scaffold prototype
+
+Added prototype components under `src/components/brief/`:
+
+- `BriefPage`
+- `BriefLandingScreen`
+- `BriefLandingThread`
+- `BriefStepShell`
+- `BriefAiChatPanel`
+- `BriefRichInput`
+- `BriefBasicsSection`
+- `BriefPurposeAudienceSection`
+- `BriefLookAndFeelSection`
+- `BriefContentProductionSection`
+- `BriefSummaryPage`
+- `BriefLoglineBlock`
+- `ConfidenceChip`
+- `BriefCommentsBlock`
+- `BriefApproveButton`
+
+Notes for DS review:
+
+- The Brief stage uses local prototype markup styled with Brisk tokens because this repo does not currently expose React DS exports for `d-Card`, `d-Textarea`, `d-Dropdown`, `d-Chips`, `d-Upload file`, `d-Comment`, or a shared AI chat panel.
+- The landing screen is a local prototype entry state with a large centred prompt, word counter, upload/link controls and pinned footer. It should be reviewed against any future DS pattern for AI-assisted intake screens.
+- The chat panel follows the Script AI panel behaviour: expanded chat-first panel, compact `Brisk AI` minimised strip, and an unread dot when a new AI message arrives while collapsed.
+- `BriefRichInput` is shared by the landing screen and the step chat panel so text, document, link and reference-video attachment behaviour stays consistent across both surfaces.
+- The confidence chip system is local for V1: green `Confident`, yellow `Guess`, red `Missing`, with click-to-confirm on yellow chips and a hover tooltip on every state.
+- The step footer uses local 6-step navigation to match the Brief flow: The basics, Purpose and audience, Look and feel, Content and production, Deliverables and timing, and Brief Summary. Message notes now live inside Description.
+- The Brief Summary pins the logline and approval action locally until a shared sticky summary/header pattern exists in the DS.
+- The Look and feel section adds local prototype controls for tone multi-select, reference video cards, and a brand kit picker. These should be reviewed against future shared DS patterns for multi-select menus, rich upload rows, and brand kit cards.
+- The Content and production section adds local pill-toggle treatments for live footage and voiceover, plus prototype voice preview cards. These follow the Brief field-row confidence pattern and should be reviewed against any future DS audio-picker component.
+
 ## ChopChop AI helper icon
 
 Added prototype DS icon asset:
@@ -12,6 +44,18 @@ Notes for DS review:
 - It follows the requested AI helper reference: an outlined speech bubble with two message strokes and a four-point spark, rendered through the shared `DsIcon` mask.
 - The Script tab now uses the same icon for the floating ChopChop AI opener, the text-selection AI action, and the minimised panel reopen control.
 - Please review the final bubble proportions and sparkle cutout before adding it to the Brisk DS source set.
+
+## Brief video type knowledge card
+
+Added prototype DS icon asset:
+
+- `public/brisk-icons/lightbulb.svg`
+
+Notes for DS review:
+
+- The Brief video type card uses the DS Lightbulb source asset through the shared `DsIcon` wrapper.
+- The card and picker are local prototype markup styled with Brisk tokens until a shared knowledge-card and rich-picker pattern exists in the React DS exports.
+- Please review whether the Brief stage should use a formal knowledge-card component for AI-selected field explanations.
 
 ## Script AI panel prototype
 
