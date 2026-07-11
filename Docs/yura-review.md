@@ -14,6 +14,7 @@ Added prototype components under `src/components/brief/`:
 - `BriefPurposeAudienceSection`
 - `BriefLookAndFeelSection`
 - `BriefContentProductionSection`
+- `BriefDeliverablesSection`
 - `BriefSummaryPage`
 - `BriefLoglineBlock`
 - `ConfidenceChip`
@@ -31,6 +32,7 @@ Notes for DS review:
 - The Brief Summary pins the logline and approval action locally until a shared sticky summary/header pattern exists in the DS.
 - The Look and feel section adds local prototype controls for tone multi-select, reference video cards, and a brand kit picker. These should be reviewed against future shared DS patterns for multi-select menus, rich upload rows, and brand kit cards.
 - The Content and production section adds local pill-toggle treatments for live footage and voiceover, plus prototype voice preview cards. These follow the Brief field-row confidence pattern and should be reviewed against any future DS audio-picker component.
+- The Deliverables and timing section adds a local deliverables table with inline platform, format, duration and captions controls, plus a date picker. This should be reviewed against a future shared editable-table component.
 
 ## ChopChop AI helper icon
 

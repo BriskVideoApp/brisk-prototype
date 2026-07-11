@@ -11,6 +11,7 @@ export type ConfidenceState = "confident" | "guess" | "missing";
 export type BriefFieldId =
   | "workingTitle"
   | "videoType"
+  | "platform"
   | "description"
   | "purpose"
   | "audience"
@@ -19,7 +20,9 @@ export type BriefFieldId =
   | "brandKit"
   | "liveFootage"
   | "voiceover"
-  | "callToAction";
+  | "callToAction"
+  | "deliverables"
+  | "deadline";
 
 export type BriefFieldSource = "client_input" | "ai_inferred" | "manual_edit" | "missing";
 
@@ -233,6 +236,14 @@ export const initialBriefFields: BriefFields = {
     source: "missing",
     required: true,
   },
+  platform: {
+    id: "platform",
+    label: "Platform",
+    value: "",
+    confidence: "missing",
+    source: "missing",
+    required: true,
+  },
   description: {
     id: "description",
     label: "Description",
@@ -299,7 +310,23 @@ export const initialBriefFields: BriefFields = {
   },
   callToAction: {
     id: "callToAction",
-    label: "What do we want them to do next? (Call To Action)",
+    label: "What do we want them to do next?",
+    value: "",
+    confidence: "missing",
+    source: "missing",
+    required: true,
+  },
+  deliverables: {
+    id: "deliverables",
+    label: "What versions do you need?",
+    value: "",
+    confidence: "missing",
+    source: "missing",
+    required: true,
+  },
+  deadline: {
+    id: "deadline",
+    label: "When do you need it by?",
     value: "",
     confidence: "missing",
     source: "missing",
@@ -338,6 +365,14 @@ export const fallbackBriefDraft: BriefDraft = {
       id: "videoType",
       label: "Video type",
       value: "Brand Film",
+      confidence: "guess",
+      source: "ai_inferred",
+      required: true,
+    },
+    platform: {
+      id: "platform",
+      label: "Platform",
+      value: "YouTube (Main)",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
@@ -402,15 +437,32 @@ export const fallbackBriefDraft: BriefDraft = {
     voiceover: {
       id: "voiceover",
       label: "Do you want a voiceover?",
-      value: "No, or we'll do our own",
+      value: "We'll do our own",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
     },
     callToAction: {
       id: "callToAction",
-      label: "What do we want them to do next? (Call To Action)",
+      label: "What do we want them to do next?",
       value: "Book a session",
+      confidence: "guess",
+      source: "ai_inferred",
+      required: true,
+    },
+    deliverables: {
+      id: "deliverables",
+      label: "What versions do you need?",
+      value:
+        '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"YouTube (Main)","format":"Landscape","customFormat":"","duration":"3m","customMinutes":"","customSeconds":"","captions":true,"isMain":true},{"id":"reels-cutdown","name":"Reels cutdown","subtitle":"Short social variation","platform":"Instagram (Reels)","format":"Vertical","customFormat":"","duration":"30s","customMinutes":"","customSeconds":"","captions":true,"isMain":false}]',
+      confidence: "guess",
+      source: "ai_inferred",
+      required: true,
+    },
+    deadline: {
+      id: "deadline",
+      label: "When do you need it by?",
+      value: "2026-08-01",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
@@ -437,6 +489,14 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           id: "videoType",
           label: "Video type",
           value: "Short-form / Reels",
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        platform: {
+          id: "platform",
+          label: "Platform",
+          value: "Instagram (Reels)",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -501,15 +561,32 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         voiceover: {
           id: "voiceover",
           label: "Do you want a voiceover?",
-          value: "No, or we'll do our own",
+          value: "We'll do our own",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
         },
         callToAction: {
           id: "callToAction",
-          label: "What do we want them to do next? (Call To Action)",
+          label: "What do we want them to do next?",
           value: "Learn more",
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        deliverables: {
+          id: "deliverables",
+          label: "What versions do you need?",
+          value:
+            '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"YouTube (Main)","format":"Landscape","customFormat":"","duration":"3m","customMinutes":"","customSeconds":"","captions":true,"isMain":true},{"id":"reels-cutdown","name":"Reels cutdown","subtitle":"Short social variation","platform":"Instagram (Reels)","format":"Vertical","customFormat":"","duration":"30s","customMinutes":"","customSeconds":"","captions":true,"isMain":false}]',
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        deadline: {
+          id: "deadline",
+          label: "When do you need it by?",
+          value: "2026-08-01",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -535,6 +612,14 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           id: "videoType",
           label: "Video type",
           value: "Documentary",
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        platform: {
+          id: "platform",
+          label: "Platform",
+          value: "YouTube (Main)",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -599,15 +684,32 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         voiceover: {
           id: "voiceover",
           label: "Do you want a voiceover?",
-          value: "No, or we'll do our own",
+          value: "We'll do our own",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
         },
         callToAction: {
           id: "callToAction",
-          label: "What do we want them to do next? (Call To Action)",
+          label: "What do we want them to do next?",
           value: "Contact us",
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        deliverables: {
+          id: "deliverables",
+          label: "What versions do you need?",
+          value:
+            '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"YouTube (Main)","format":"Landscape","customFormat":"","duration":"3m","customMinutes":"","customSeconds":"","captions":true,"isMain":true},{"id":"reels-cutdown","name":"Reels cutdown","subtitle":"Short social variation","platform":"Instagram (Reels)","format":"Vertical","customFormat":"","duration":"30s","customMinutes":"","customSeconds":"","captions":true,"isMain":false}]',
+          confidence: "guess",
+          source: "ai_inferred",
+          required: true,
+        },
+        deadline: {
+          id: "deadline",
+          label: "When do you need it by?",
+          value: "2026-08-01",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -624,6 +726,7 @@ export const fieldRegenerationValues: Record<BriefFieldId, string[]> = {
     "Clearer Next Steps",
   ],
   videoType: ["Brand Film", "Explainer", "Case Study / Testimonial", "Product / Demo"],
+  platform: ["YouTube (Main)", "Your website", "LinkedIn", "Instagram (Reels)"],
   description: [
     "A concise brand film that introduces the campaign, names the customer problem and gives the audience a clear reason to act.",
     "A customer-facing film that combines plain-language explanation with a polished visual rhythm suited to sales and launch channels.",
@@ -660,7 +763,7 @@ export const fieldRegenerationValues: Record<BriefFieldId, string[]> = {
     "Shoot new|You shoot",
   ],
   voiceover: [
-    "No, or we'll do our own",
+    "We'll do our own",
     "Yes|Male voiceover|Alex",
     "Yes|Female voiceover|Kai",
   ],
@@ -668,5 +771,15 @@ export const fieldRegenerationValues: Record<BriefFieldId, string[]> = {
     "Book a session",
     "Learn more",
     "Contact us",
+  ],
+  deliverables: [
+    '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"YouTube (Main)","format":"Landscape","customFormat":"","duration":"3m","customMinutes":"","customSeconds":"","captions":true,"isMain":true},{"id":"reels-cutdown","name":"Reels cutdown","subtitle":"Short social variation","platform":"Instagram (Reels)","format":"Vertical","customFormat":"","duration":"30s","customMinutes":"","customSeconds":"","captions":true,"isMain":false}]',
+    '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"Your website","format":"Landscape","customFormat":"","duration":"2m","customMinutes":"","customSeconds":"","captions":true,"isMain":true},{"id":"linkedin-cutdown","name":"LinkedIn cutdown","subtitle":"Professional social version","platform":"LinkedIn","format":"Square","customFormat":"","duration":"60s","customMinutes":"","customSeconds":"","captions":true,"isMain":false}]',
+    '[{"id":"main-video","name":"Main Video","subtitle":"Primary campaign asset","platform":"YouTube (Main)","format":"Landscape","customFormat":"","duration":"3m","customMinutes":"","customSeconds":"","captions":true,"isMain":true}]',
+  ],
+  deadline: [
+    "2026-08-01",
+    "2026-08-08",
+    "2026-07-25",
   ],
 };

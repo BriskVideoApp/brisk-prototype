@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -89,6 +88,25 @@ type VoiceArtist = {
   duration: string;
 };
 
+type DeliverableRow = {
+  id: string;
+  name: string;
+  subtitle: string;
+  notes: string;
+  platform: string;
+  format: string;
+  customFormat: string;
+  duration: string;
+  customMinutes: string;
+  customSeconds: string;
+  captions: boolean;
+  captionOptions?: DeliverableCaptionOption[];
+  deadline: string;
+  isMain: boolean;
+};
+
+type DeliverableCaptionOption = "SRT file" | "Baked in captions" | "None";
+
 const referenceVideoTagSets = [
   ["Energetic", "Product-led", "Clean edit", "Bold titles"],
   ["Warm", "Interview-led", "Natural light", "Human"],
@@ -154,6 +172,79 @@ const briefCallToActionOptions = [
   "Something else",
 ] as const;
 
+const deliverablePlatformGroups = [
+  {
+    label: "Professional & internal",
+    options: ["Your website", "Training/Internal", "Event"],
+  },
+  {
+    label: "Social video",
+    options: [
+      "Facebook",
+      "YouTube (Main)",
+      "Instagram (Reels)",
+      "LinkedIn",
+      "X (Twitter)",
+      "TikTok",
+    ],
+  },
+  {
+    label: "Broadcasting & custom",
+    options: ["TV Commercials", "Custom/Other"],
+  },
+] as const;
+
+const deliverablePlatformIconMap: Record<string, DsIconName> = {
+  "Your website": "link",
+  "Training/Internal": "clipboard-text",
+  Event: "film-slate",
+  Facebook: "image-square",
+  "YouTube (Main)": "play",
+  "Instagram (Reels)": "film-strip",
+  LinkedIn: "columns",
+  "X (Twitter)": "x-close-cross",
+  TikTok: "speaker-high",
+  "TV Commercials": "video-camera",
+  "Custom/Other": "grid-four",
+};
+
+const deliverableFormatOptions = [
+  { label: "Landscape", helper: "16:9", iconClass: "landscape" },
+  { label: "Vertical", helper: "9:16", iconClass: "vertical" },
+  { label: "Square", helper: "1:1", iconClass: "square" },
+  { label: "Custom", helper: "Custom ratio", iconClass: "custom" },
+] as const;
+
+const deliverableDurationOptions = [
+  { label: "15s", helper: "Reels length" },
+  { label: "30s", helper: "Short social" },
+  { label: "45s", helper: "Extended social" },
+  { label: "60s", helper: "Standard format" },
+  { label: "1m 30s", helper: "Mid-length" },
+  { label: "2m", helper: "Long-form" },
+  { label: "3m", helper: "YouTube content" },
+  { label: "4m", helper: "Deep dive" },
+  { label: "5m", helper: "Tutorial length" },
+  { label: "10m", helper: "Full presentation" },
+  { label: "15m", helper: "Webinar/Course" },
+  { label: "Custom", helper: "Set minutes and seconds" },
+] as const;
+
+const deliverableCaptionOptions: Array<{ label: DeliverableCaptionOption; tooltip: string }> = [
+  {
+    label: "SRT file",
+    tooltip: "A separate subtitle file you can upload with the video.",
+  },
+  {
+    label: "Baked in captions",
+    tooltip: "Captions burned into the video file so they always appear.",
+  },
+  {
+    label: "None",
+    tooltip: "No captions or subtitle file included.",
+  },
+];
+
 export function BriefPage({ project }: BriefPageProps) {
   const [briefMode, setBriefMode] = useState<BriefMode>("landing");
   const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
@@ -169,55 +260,10 @@ export function BriefPage({ project }: BriefPageProps) {
   const activeStep = briefSteps[activeStepIndex] ?? briefSteps[0];
   const isSummaryStep = activeStepId === "summary";
   const isApproveDisabled = Object.values(briefFields).some(
-    (field) => field.required && field.confidence === "missing",
+    (field) => field.id !== "deadline" && field.required && field.confidence === "missing",
   );
-  const summarySectionNodes = useMemo(
-    () =>
-      briefSteps
-        .filter((step) => step.id !== "summary")
-        .map((step) => ({
-          step,
-          node:
-            step.id === "basics" ? (
-              <BriefBasicsSection
-                fields={briefFields}
-                summaryMode
-                onConfirmField={confirmBriefField}
-                onFieldChange={updateBriefField}
-                onRegenerateField={regenerateBriefField}
-              />
-            ) : step.id === "purposeAudience" ? (
-              <BriefPurposeAudienceSection
-                fields={briefFields}
-                summaryMode
-                onConfirmField={confirmBriefField}
-                onFieldChange={updateBriefField}
-                onRegenerateField={regenerateBriefField}
-              />
-            ) : step.id === "lookFeel" ? (
-              <BriefLookAndFeelSection
-                fields={briefFields}
-                summaryMode
-                onConfirmField={confirmBriefField}
-                onFieldChange={updateBriefField}
-                onRegenerateField={regenerateBriefField}
-              />
-            ) : step.id === "contentProduction" ? (
-              <BriefContentProductionSection
-                fields={briefFields}
-                summaryMode
-                onConfirmField={confirmBriefField}
-                onFieldChange={updateBriefField}
-                onRegenerateField={regenerateBriefField}
-              />
-            ) : (
-              <BriefSummaryPlaceholder
-                stepLabel={step.label}
-                copy={isPlaceholderStepId(step.id) ? placeholderStepCopy[step.id] : ""}
-              />
-            ),
-        })),
-    [briefFields],
+  const missingRequiredFields = Object.values(briefFields).filter(
+    (field) => field.id !== "deadline" && field.required && field.confidence === "missing",
   );
 
   function appendChatMessages(nextMessages: ChatMessage[]) {
@@ -506,11 +552,7 @@ export function BriefPage({ project }: BriefPageProps) {
         ) : (
           <>
             <BriefHeader
-              activeStepLabel={activeStep.label}
-              onConfirmTitle={confirmBriefField}
-              onRegenerateTitle={regenerateBriefField}
               onTitleChange={updateBriefField}
-              project={project}
               titleField={briefFields.workingTitle}
             />
             <BriefStepShell
@@ -562,18 +604,32 @@ export function BriefPage({ project }: BriefPageProps) {
                   onRegenerateField={regenerateBriefField}
                 />
               ) : null}
+              {activeStepId === "deliverablesTiming" ? (
+                <BriefDeliverablesSection
+                  fields={briefFields}
+                  onConfirmField={confirmBriefField}
+                  onFieldChange={updateBriefField}
+                  onRegenerateField={regenerateBriefField}
+                />
+              ) : null}
               {activeStepId !== "basics" &&
               activeStepId !== "purposeAudience" &&
               activeStepId !== "lookFeel" &&
               activeStepId !== "contentProduction" &&
+              activeStepId !== "deliverablesTiming" &&
               activeStepId !== "summary" ? (
                 <BriefPlaceholderSection stepLabel={activeStep.label} copy={placeholderStepCopy[activeStepId]} />
               ) : null}
               {activeStepId === "summary" ? (
                 <BriefSummaryPage
+                  fields={briefFields}
                   logline={logline}
-                  sections={summarySectionNodes}
+                  missingFields={missingRequiredFields}
+                  onConfirmField={confirmBriefField}
+                  onFieldChange={updateBriefField}
+                  onGoToStep={setActiveStepId}
                   onLoglineChange={updateLogline}
+                  onRegenerateField={regenerateBriefField}
                   onRegenerateLogline={regenerateLogline}
                 />
               ) : null}
@@ -615,18 +671,10 @@ function BriefSidebar({ projectId }: { projectId: string }) {
 }
 
 function BriefHeader({
-  activeStepLabel,
-  onConfirmTitle,
-  onRegenerateTitle,
   onTitleChange,
-  project,
   titleField,
 }: {
-  activeStepLabel: string;
-  onConfirmTitle: (fieldId: BriefFieldId) => void;
-  onRegenerateTitle: (fieldId: BriefFieldId) => void;
   onTitleChange: (fieldId: BriefFieldId, value: string) => void;
-  project: Project;
   titleField: BriefField;
 }) {
   const titleValue = titleField.value || "Untitled brief";
@@ -634,19 +682,6 @@ function BriefHeader({
   return (
     <header className="brief-header">
       <div className="brief-title-stack">
-        <div className="brief-header-top-row">
-          <div className="brief-header-breadcrumbs">
-            <Link className="brief-back-link label-s-semibold" href="/active-videos">
-              Back to Active Videos
-            </Link>
-            <div className="brief-meta-row">
-              <span className="brief-client-badge label-xs-semibold">{project.clientBadge}</span>
-              <span className="brief-stage-label label-xs-semibold">Brief</span>
-              <span className="brief-current-step label-xs">{activeStepLabel}</span>
-            </div>
-          </div>
-          <BriefFieldActions field={titleField} onConfirm={onConfirmTitle} onRegenerate={onRegenerateTitle} />
-        </div>
         <h1 className="brief-editable-title">
           <span className="brief-title-prefix" data-tooltip="System-generated job number">
             Loom003
@@ -1494,6 +1529,12 @@ function BriefBasicsSection({
             onChange={(value) => onFieldChange("videoType", value)}
           />
         </BriefFieldRow>
+        <BriefFieldRow field={fields.platform} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+          <BriefDeliverablePlatformSelect
+            value={fields.platform.value}
+            onChange={(value) => onFieldChange("platform", value)}
+          />
+        </BriefFieldRow>
       </div>
     </section>
   );
@@ -1752,7 +1793,7 @@ function BriefCallToActionSelect({
       <button
         className={`brief-purpose-trigger label-s ${value ? "" : "is-placeholder"}`}
         type="button"
-        aria-label="What do we want them to do next? (Call To Action)"
+        aria-label="What do we want them to do next?"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((current) => !current)}
       >
@@ -1778,8 +1819,7 @@ function BriefAudienceList({
   value: string;
 }) {
   const parsedAudiences = parseAudienceList(value);
-  const [isAddingAudience, setIsAddingAudience] = useState(false);
-  const audiences = isAddingAudience ? [...parsedAudiences, ""] : parsedAudiences;
+  const audiences = parsedAudiences;
 
   function updateAudience(index: number, nextValue: string) {
     const nextAudiences = audiences.map((audience, audienceIndex) =>
@@ -1788,19 +1828,11 @@ function BriefAudienceList({
 
     onChange(serialiseAudienceList(nextAudiences));
 
-    if (index > parsedAudiences.length - 1 && nextValue.trim()) {
-      setIsAddingAudience(false);
-    }
-  }
-
-  function addAudience() {
-    setIsAddingAudience(true);
   }
 
   function removeAudience(index: number) {
     const nextAudiences = audiences.filter((_, audienceIndex) => audienceIndex !== index);
 
-    setIsAddingAudience(false);
     onChange(serialiseAudienceList(nextAudiences));
   }
 
@@ -1834,10 +1866,6 @@ function BriefAudienceList({
           </div>
         );
       })}
-      <button className="brief-add-inline-button label-xs-semibold" type="button" onClick={addAudience}>
-        <DsIcon name="plus" size={12} />
-        Add audience
-      </button>
     </div>
   );
 }
@@ -1940,6 +1968,541 @@ function BriefContentProductionSection({
   );
 }
 
+function BriefDeliverablesSection({
+  fields,
+  onConfirmField,
+  onFieldChange,
+  onRegenerateField,
+  summaryMode = false,
+}: {
+  fields: BriefFields;
+  onConfirmField: (fieldId: BriefFieldId) => void;
+  onFieldChange: (fieldId: BriefFieldId, value: string) => void;
+  onRegenerateField: (fieldId: BriefFieldId) => void;
+  summaryMode?: boolean;
+}) {
+  return (
+    <section
+      className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
+      aria-label={summaryMode ? undefined : "Deliverables and timing"}
+      aria-labelledby={summaryMode ? "brief-deliverables-title" : undefined}
+    >
+      {summaryMode ? (
+        <BriefSectionHeader
+          hideCopy
+          hideEyebrow
+          titleId="brief-deliverables-title"
+          title="Deliverables and timing"
+        />
+      ) : null}
+      <div className="brief-field-list">
+        <BriefFieldRow field={fields.deliverables} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+          <BriefDeliverablesTable
+            fallbackDeadline={fields.deadline.value}
+            value={fields.deliverables.value}
+            onChange={(value) => onFieldChange("deliverables", value)}
+          />
+        </BriefFieldRow>
+      </div>
+    </section>
+  );
+}
+
+function BriefDeliverablesTable({
+  fallbackDeadline,
+  onChange,
+  value,
+}: {
+  fallbackDeadline: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const rows = parseDeliverables(value, fallbackDeadline);
+  const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
+  const [openNotesRowIds, setOpenNotesRowIds] = useState<string[]>([]);
+
+  function updateRows(nextRows: DeliverableRow[]) {
+    onChange(serialiseDeliverables(nextRows));
+  }
+
+  function updateRow(rowId: string, updates: Partial<DeliverableRow>) {
+    updateRows(rows.map((row) => (row.id === rowId ? { ...row, ...updates } : row)));
+  }
+
+  function addRow() {
+    const previousRow = rows[rows.length - 1];
+    const rowNames = ["Reels cutdown", "Square cut", "Shorts cut", "Paid social cut"];
+    const nextName = rowNames[Math.max(0, rows.length - 1)] ?? `Version ${rows.length + 1}`;
+
+    updateRows([...rows, createBlankDeliverableRow(nextName, previousRow?.deadline ?? fallbackDeadline)]);
+  }
+
+  function duplicateRow(row: DeliverableRow) {
+    updateRows([
+      ...rows,
+      {
+        ...row,
+        id: `deliverable-${Date.now()}`,
+        isMain: false,
+        name: row.name ? `${row.name} copy` : "Version copy",
+      },
+    ]);
+    setOpenMenuRowId(null);
+  }
+
+  function removeRow(rowId: string) {
+    updateRows(rows.filter((row) => row.id !== rowId || row.isMain));
+    setOpenMenuRowId(null);
+  }
+
+  function toggleNotes(rowId: string) {
+    setOpenNotesRowIds((current) =>
+      current.includes(rowId) ? current.filter((currentRowId) => currentRowId !== rowId) : [...current, rowId],
+    );
+    setOpenMenuRowId(null);
+  }
+
+  return (
+    <div className="brief-deliverables-control">
+      <div className="brief-deliverables-table-wrap">
+        <table className="brief-deliverables-table">
+          <thead>
+            <tr>
+              <BriefDeliverablesHeader title="Deliverable" />
+              <BriefDeliverablesHeader title="Format" />
+              <BriefDeliverablesHeader title="Duration" />
+              <BriefDeliverablesHeader title="Captions" />
+              <BriefDeliverablesHeader title="Deadline" />
+              <th aria-label="Version actions" />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr className={row.isMain ? "is-main" : ""} key={row.id}>
+                <td className="brief-deliverable-name-cell">
+                  {row.isMain ? (
+                    <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
+                  ) : (
+                    <label className="brief-deliverable-name-edit">
+                      <input
+                        className="brief-deliverable-name-input label-s-semibold"
+                        aria-label="Deliverable name"
+                        value={row.name}
+                        onChange={(event) => updateRow(row.id, { name: event.target.value })}
+                      />
+                      <DsIcon name="pencil-simple" size={13} />
+                    </label>
+                  )}
+                  {openNotesRowIds.includes(row.id) || row.notes ? (
+                    <textarea
+                      className="brief-deliverable-notes-input label-xs"
+                      aria-label={`${row.name || "Version"} notes`}
+                      placeholder="Add notes for this version"
+                      rows={2}
+                      value={row.notes}
+                      onChange={(event) => updateRow(row.id, { notes: event.target.value })}
+                    />
+                  ) : null}
+                </td>
+                <td>
+                  <BriefDeliverableFormatControl
+                    row={row}
+                    onChange={(updates) => updateRow(row.id, updates)}
+                  />
+                </td>
+                <td>
+                  <BriefDeliverableDurationControl
+                    row={row}
+                    onChange={(updates) => updateRow(row.id, updates)}
+                  />
+                </td>
+                <td>
+                  <BriefDeliverableCaptionsControl
+                    row={row}
+                    onChange={(updates) => updateRow(row.id, updates)}
+                  />
+                </td>
+                <td>
+                  <BriefDeliverableDeadlineControl
+                    value={row.deadline}
+                    onChange={(deadline) => updateRow(row.id, { deadline })}
+                  />
+                </td>
+                <td>
+                  <div className="brief-deliverable-actions">
+                    <button
+                      className="brief-deliverable-menu-button"
+                      type="button"
+                      aria-label={`Open menu for ${row.name || "version"}`}
+                      aria-expanded={openMenuRowId === row.id}
+                      onClick={() => setOpenMenuRowId(openMenuRowId === row.id ? null : row.id)}
+                    >
+                      <DsIcon name="dots-three" size={14} />
+                    </button>
+                    {openMenuRowId === row.id ? (
+                      <span className="brief-deliverable-menu">
+                        <button className="label-xs-semibold" type="button" onClick={() => toggleNotes(row.id)}>
+                          {openNotesRowIds.includes(row.id) || row.notes ? "Hide notes" : "Notes"}
+                        </button>
+                        <button className="label-xs-semibold" type="button" onClick={() => duplicateRow(row)}>
+                          Duplicate
+                        </button>
+                        {!row.isMain ? (
+                          <button className="delete label-xs-semibold" type="button" onClick={() => removeRow(row.id)}>
+                            Delete
+                          </button>
+                        ) : null}
+                      </span>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+        + Add version
+      </button>
+    </div>
+  );
+}
+
+function BriefDeliverablesHeader({
+  title,
+  tooltip,
+}: {
+  title: string;
+  tooltip?: string;
+}) {
+  return (
+    <th scope="col">
+      <span
+        className="brief-deliverables-heading"
+        data-tooltip={tooltip}
+        tabIndex={tooltip ? 0 : undefined}
+      >
+        {title}
+      </span>
+    </th>
+  );
+}
+
+function BriefDeliverablePlatformSelect({
+  onChange,
+  value,
+}: {
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
+
+  function selectPlatform(platform: string) {
+    onChange(platform);
+    setIsPlatformMenuOpen(false);
+  }
+
+  return (
+    <div className="brief-platform-select">
+      <button
+        className={`brief-platform-trigger label-s${value ? "" : " is-placeholder"}`}
+        type="button"
+        aria-expanded={isPlatformMenuOpen}
+        aria-label="Platform"
+        onClick={() => setIsPlatformMenuOpen((isOpen) => !isOpen)}
+      >
+        <span>{value || "Choose platform"}</span>
+        <DsIcon name="caret-down" size={12} />
+      </button>
+      {isPlatformMenuOpen ? (
+        <div className="brief-platform-menu" role="listbox" aria-label="Choose platform">
+          {deliverablePlatformGroups.map((group) => (
+            <div className="brief-platform-group" key={group.label}>
+              <span className="brief-platform-group-label label-xs-semibold">{group.label.toUpperCase()}</span>
+              {group.options.map((option) => (
+                <button
+                  className={`brief-platform-option label-s${option === value ? " selected" : ""}`}
+                  key={option}
+                  type="button"
+                  role="option"
+                  aria-selected={option === value}
+                  onClick={() => selectPlatform(option)}
+                >
+                  <span className="brief-platform-icon" aria-hidden="true">
+                    <DsIcon name={deliverablePlatformIconMap[option] ?? "grid-four"} size={13} />
+                  </span>
+                  <span>{option}</span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function BriefDeliverableFormatControl({
+  onChange,
+  row,
+}: {
+  onChange: (updates: Partial<DeliverableRow>) => void;
+  row: DeliverableRow;
+}) {
+  const selectedFormat = deliverableFormatOptions.find((format) => format.label === row.format) ?? deliverableFormatOptions[0];
+  const [isFormatMenuOpen, setIsFormatMenuOpen] = useState(false);
+
+  function selectFormat(format: string) {
+    onChange({ format, customFormat: "" });
+    setIsFormatMenuOpen(false);
+  }
+
+  return (
+    <div className="brief-deliverable-inline-control">
+      <div className="brief-format-select">
+        <button
+          className="brief-format-trigger label-xs-semibold"
+          type="button"
+          aria-expanded={isFormatMenuOpen}
+          aria-label="Format"
+          onClick={() => setIsFormatMenuOpen((isOpen) => !isOpen)}
+        >
+          <span className={`brief-aspect-icon ${selectedFormat.iconClass}`} aria-hidden="true" />
+          <span>{selectedFormat.label}</span>
+          <DsIcon name="caret-down" size={12} />
+        </button>
+        {isFormatMenuOpen ? (
+          <div className="brief-format-menu" role="listbox" aria-label="Choose format">
+            {deliverableFormatOptions.map((format) => (
+              <button
+                className={`brief-format-option label-s${format.label === row.format ? " selected" : ""}`}
+                key={format.label}
+                type="button"
+                role="option"
+                aria-selected={format.label === row.format}
+                onClick={() => selectFormat(format.label)}
+              >
+                {format.label !== "Custom" ? (
+                  <span className={`brief-aspect-icon ${format.iconClass}`} aria-hidden="true" />
+                ) : null}
+                <span>{format.label} ({format.helper})</span>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      {row.format === "Custom" ? (
+        <input
+          className="brief-table-mini-input label-xs"
+          aria-label="Custom format"
+          placeholder="4:5"
+          value={row.customFormat}
+          onChange={(event) => onChange({ customFormat: event.target.value })}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function BriefDeliverableDurationControl({
+  onChange,
+  row,
+}: {
+  onChange: (updates: Partial<DeliverableRow>) => void;
+  row: DeliverableRow;
+}) {
+  const selectedDuration =
+    deliverableDurationOptions.find((duration) => duration.label === row.duration) ?? deliverableDurationOptions[0];
+  const [isDurationMenuOpen, setIsDurationMenuOpen] = useState(false);
+
+  function selectDuration(duration: string) {
+    onChange({
+      duration,
+      customMinutes: duration === "Custom" ? row.customMinutes : "",
+      customSeconds: duration === "Custom" ? row.customSeconds : "",
+    });
+    setIsDurationMenuOpen(false);
+  }
+
+  return (
+    <div className="brief-deliverable-inline-control">
+      <div className="brief-duration-select">
+        <button
+          className="brief-duration-trigger"
+          type="button"
+          aria-expanded={isDurationMenuOpen}
+          aria-label="Duration"
+          onClick={() => setIsDurationMenuOpen((isOpen) => !isOpen)}
+        >
+          <span className="brief-duration-value label-xs-semibold">{selectedDuration.label}</span>
+          <DsIcon name="caret-down" size={12} />
+        </button>
+        {isDurationMenuOpen ? (
+          <div className="brief-duration-menu" role="listbox" aria-label="Choose duration">
+            {deliverableDurationOptions.map((duration) => (
+              <button
+                className={`brief-duration-option${duration.label === row.duration ? " selected" : ""}`}
+                key={duration.label}
+                type="button"
+                role="option"
+                aria-selected={duration.label === row.duration}
+                onClick={() => selectDuration(duration.label)}
+              >
+                <span className="brief-duration-value label-s-semibold">{duration.label}</span>
+                <span className="brief-duration-helper label-s">{duration.helper}</span>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      {row.duration === "Custom" ? (
+        <div className="brief-custom-duration">
+          <input
+            className="brief-table-mini-input label-xs"
+            aria-label="Custom minutes"
+            inputMode="numeric"
+            placeholder="min"
+            value={row.customMinutes}
+            onChange={(event) => onChange({ customMinutes: event.target.value })}
+          />
+          <input
+            className="brief-table-mini-input label-xs"
+            aria-label="Custom seconds"
+            inputMode="numeric"
+            placeholder="sec"
+            value={row.customSeconds}
+            onChange={(event) => onChange({ customSeconds: event.target.value })}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function BriefDeliverableCaptionsControl({
+  onChange,
+  row,
+}: {
+  onChange: (updates: Partial<DeliverableRow>) => void;
+  row: DeliverableRow;
+}) {
+  const [isCaptionsMenuOpen, setIsCaptionsMenuOpen] = useState(false);
+  const selectedOptions = getDeliverableCaptionOptions(row);
+
+  function toggleCaptionOption(option: DeliverableCaptionOption) {
+    const nextOptions = getNextDeliverableCaptionOptions(selectedOptions, option);
+
+    onChange({
+      captionOptions: nextOptions,
+      captions: nextOptions.some((captionOption) => captionOption !== "None"),
+    });
+  }
+
+  return (
+    <div className="brief-captions-multi">
+      <button
+        className="brief-captions-trigger label-xs-semibold"
+        type="button"
+        aria-expanded={isCaptionsMenuOpen}
+        aria-label="Caption options"
+        onClick={() => setIsCaptionsMenuOpen((isOpen) => !isOpen)}
+      >
+        <span>{formatDeliverableCaptionSummary(row)}</span>
+        <DsIcon name="caret-down" size={12} />
+      </button>
+      {isCaptionsMenuOpen ? (
+        <div className="brief-captions-menu" role="listbox" aria-label="Choose caption options">
+          {deliverableCaptionOptions.map((option) => {
+            const isSelected = selectedOptions.includes(option.label);
+
+            return (
+              <button
+                className={`brief-captions-option label-xs-semibold${isSelected ? " selected" : ""}`}
+                data-tooltip={option.tooltip}
+                key={option.label}
+                type="button"
+                role="option"
+                aria-selected={isSelected}
+                onClick={() => toggleCaptionOption(option.label)}
+              >
+                <span className="brief-captions-check" aria-hidden="true">
+                  {isSelected ? <DsIcon name="check" size={12} /> : null}
+                </span>
+                <span>{option.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function BriefDeliverableDeadlineControl({
+  onChange,
+  value,
+}: {
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const readableDate = formatBriefDate(value);
+
+  return (
+    <div className="brief-deliverable-deadline">
+      <button
+        className={`brief-date-pill label-xs-semibold${readableDate ? "" : " is-placeholder"}`}
+        type="button"
+        onClick={() => dateInputRef.current?.showPicker()}
+      >
+        {readableDate || "+ Add date"}
+      </button>
+      <input
+        ref={dateInputRef}
+        className="brief-date-native"
+        type="date"
+        aria-label="Deliverable deadline"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
+function BriefDeadlineField({
+  onChange,
+  value,
+}: {
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  const readableDate = formatBriefDate(value);
+
+  return (
+    <div className="brief-deadline-control">
+      <div className="brief-date-picker-wrap">
+        <button
+          className={`brief-date-display label-s${readableDate ? "" : " is-placeholder"}`}
+          type="button"
+          onClick={() => dateInputRef.current?.showPicker()}
+        >
+          <span>{readableDate || "Choose date"}</span>
+          <DsIcon name="caret-down" size={12} />
+        </button>
+        <input
+          ref={dateInputRef}
+          className="brief-date-native"
+          type="date"
+          aria-label="Deadline"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      </div>
+    </div>
+  );
+}
+
 function BriefLiveFootageToggle({
   onChange,
   value,
@@ -1955,11 +2518,11 @@ function BriefLiveFootageToggle({
   }> = [
     {
       label: "Use existing",
-      description: "We will use existing footage for the video project",
+      description: "Faster, cheaper. Best if you already have great footage.",
     },
     {
       label: "Shoot new",
-      description: "We will use new footage for this video project",
+      description: "Best for fresh, on-brand visuals. Adds time and budget.",
     },
   ];
   const shooterOptions: Array<{
@@ -1968,11 +2531,11 @@ function BriefLiveFootageToggle({
   }> = [
     {
       label: "You shoot",
-      description: "You will shoot the footage.",
+      description: "You handle the crew, kit, and location.",
     },
     {
       label: "ChopChop shoots",
-      description: "ChopChop will shoot the footage for you.",
+      description: "We handle everything - crew, kit, location, direction.",
     },
   ];
 
@@ -2006,19 +2569,22 @@ function BriefLiveFootageToggle({
         ))}
       </div>
       {isShootingNew ? (
-        <div className="brief-pill-toggle-group" aria-label="Who will shoot the footage" role="group">
-          {shooterOptions.map((option) => (
-            <button
-              className={`brief-pill-toggle brief-pill-toggle-described ${shooterChoice === option.label ? "selected" : ""}`}
-              key={option.label}
-              type="button"
-              aria-pressed={shooterChoice === option.label}
-              onClick={() => selectShooterChoice(option.label)}
-            >
-              <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
-              <span className="brief-pill-toggle-description label-xs">{option.description}</span>
-            </button>
-          ))}
+        <div className="brief-live-footage-shooter-block">
+          <span className="brief-live-footage-sub-label label-xs-semibold">Who's shooting it?</span>
+          <div className="brief-pill-toggle-group" aria-label="Who will shoot the footage" role="group">
+            {shooterOptions.map((option) => (
+              <button
+                className={`brief-pill-toggle brief-pill-toggle-described ${shooterChoice === option.label ? "selected" : ""}`}
+                key={option.label}
+                type="button"
+                aria-pressed={shooterChoice === option.label}
+                onClick={() => selectShooterChoice(option.label)}
+              >
+                <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
+                <span className="brief-pill-toggle-description label-xs">{option.description}</span>
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
@@ -2036,10 +2602,10 @@ function BriefVoiceoverControl({
   const [voiceoverChoice, soundChoice, artistChoice] = parseVoiceoverValue(value);
   const wantsVoiceover = voiceoverChoice === "Yes";
 
-  function selectVoiceoverChoice(nextChoice: "Yes" | "No, or we'll do our own") {
+  function selectVoiceoverChoice(nextChoice: "Yes" | "No" | "We'll do our own") {
     setPlayingVoice("");
 
-    if (nextChoice === "No, or we'll do our own") {
+    if (nextChoice !== "Yes") {
       onChange(nextChoice);
       return;
     }
@@ -2062,7 +2628,7 @@ function BriefVoiceoverControl({
   return (
     <div className="brief-voiceover-control">
       <div className="brief-pill-toggle-group" aria-label="Voiceover preference" role="group">
-        {(["Yes", "No, or we'll do our own"] as const).map((option) => (
+        {(["Yes", "No", "We'll do our own"] as const).map((option) => (
           <button
             className={`brief-pill-toggle label-s-semibold ${voiceoverChoice === option ? "selected" : ""}`}
             key={option}
@@ -2340,33 +2906,87 @@ function BriefMultiSelect({
   options: readonly string[];
   value: string;
 }) {
-  const selectedValues = parseMultiSelectValue(value);
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedValues = parseMultiSelectValue(value).slice(0, 3);
+  const canAddTone = selectedValues.length < 3;
 
   function toggleOption(option: string) {
     const nextValues = selectedValues.includes(option)
       ? selectedValues.filter((selectedValue) => selectedValue !== option)
-      : [...selectedValues, option];
+      : canAddTone
+        ? [...selectedValues, option]
+        : selectedValues;
 
     onChange(nextValues.join(", "));
   }
 
-  return (
-    <div className="brief-tone-chip-picker" aria-label={ariaLabel} role="group">
-      {options.map((option) => {
-        const isSelected = selectedValues.includes(option);
+  function addOption(option: string) {
+    if (selectedValues.includes(option) || !canAddTone) {
+      return;
+    }
 
-        return (
+    onChange([...selectedValues, option].join(", "));
+    setIsOpen(false);
+  }
+
+  return (
+    <div
+      className="brief-tone-chip-picker"
+      aria-label={ariaLabel}
+      role="group"
+      onBlur={(event) => {
+        const nextFocus = event.relatedTarget;
+        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
+          setIsOpen(false);
+        }
+      }}
+    >
+      <div className="brief-tone-chip-row">
+        {selectedValues.map((option) => (
           <button
-            className={`brief-tone-chip label-xs-semibold ${isSelected ? "selected" : ""}`}
+            className="brief-tone-chip selected label-xs-semibold"
             key={option}
             type="button"
-            aria-pressed={isSelected}
+            aria-label={`Remove ${option}`}
             onClick={() => toggleOption(option)}
           >
             {option}
+            <DsIcon name="x-close-cross" size={10} />
           </button>
-        );
-      })}
+        ))}
+        {canAddTone ? (
+          <button
+            className="brief-tone-chip brief-tone-chip-add label-xs-semibold"
+            type="button"
+            aria-expanded={isOpen}
+            onClick={() => setIsOpen((currentValue) => !currentValue)}
+          >
+            <DsIcon name="plus" size={12} />
+            Add tone
+          </button>
+        ) : null}
+      </div>
+      {isOpen ? (
+        <div className="brief-tone-popover" aria-label="Choose tone" role="listbox" aria-multiselectable="true">
+          {options.map((option) => {
+            const isSelected = selectedValues.includes(option);
+
+            return (
+              <button
+                className={`brief-tone-chip label-xs-semibold ${isSelected ? "selected" : ""}`}
+                key={option}
+                type="button"
+                disabled={isSelected}
+                aria-selected={isSelected}
+                role="option"
+                onClick={() => addOption(option)}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -2411,8 +3031,12 @@ function BriefVideoTypeMultiSelect({
         : selectedValues;
 
     onChange(nextValues.join(", "));
-    if (nextValues.length >= 2) {
-      setIsOpen(false);
+  }
+
+  function handleTriggerKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setIsOpen((currentValue) => !currentValue);
     }
   }
 
@@ -2427,7 +3051,15 @@ function BriefVideoTypeMultiSelect({
       }}
     >
       {selectedValues.length > 0 ? (
-        <div className="brief-video-type-card-list">
+        <div
+          className="brief-video-type-card-list"
+          role="button"
+          tabIndex={0}
+          aria-expanded={isOpen}
+          aria-label="Choose video type"
+          onClick={() => setIsOpen((currentValue) => !currentValue)}
+          onKeyDown={handleTriggerKeyDown}
+        >
           {selectedValues.map((selectedValue) => {
             const selectedType = briefVideoTypeDetails.find((videoType) => videoType.name === selectedValue);
             const iconName = videoTypeIconMap[selectedValue] ?? "film-strip";
@@ -2444,7 +3076,10 @@ function BriefVideoTypeMultiSelect({
                       className="brief-video-type-card-remove"
                       type="button"
                       aria-label={`Remove ${selectedType?.name ?? selectedValue}`}
-                      onClick={() => toggleType(selectedValue)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        toggleType(selectedValue);
+                      }}
                     >
                       <DsIcon name="x-close-cross" size={12} />
                     </button>
@@ -2456,20 +3091,19 @@ function BriefVideoTypeMultiSelect({
           })}
         </div>
       ) : (
-        <p className="brief-empty-field-copy label-s">Add up to 2 video types.</p>
-      )}
-
-      {canAddType ? (
-        <button
-          className="brief-video-type-add label-s-semibold"
-          type="button"
+        <div
+          className="brief-video-type-empty-trigger label-s"
+          role="button"
+          tabIndex={0}
           aria-expanded={isOpen}
+          aria-label="Choose video type"
           onClick={() => setIsOpen((currentValue) => !currentValue)}
+          onKeyDown={handleTriggerKeyDown}
         >
-          <DsIcon name="plus" size={14} />
-          Add video type
-        </button>
-      ) : null}
+          Choose video type
+          <DsIcon name="caret-down" size={16} />
+        </div>
+      )}
 
       {isOpen ? (
         <div
@@ -2569,13 +3203,17 @@ function parseLiveFootageValue(value: string): ["Use existing" | "Shoot new" | "
 function parseVoiceoverValue(
   value: string,
 ): [
-  "Yes" | "No, or we'll do our own" | "",
+  "Yes" | "No" | "We'll do our own" | "",
   "Male voiceover" | "Female voiceover" | "",
   string,
 ] {
   const [voiceoverChoice = "", soundChoice = "", artistChoice = ""] = value.split("|");
   const normalisedVoiceoverChoice =
-    voiceoverChoice === "Yes" || voiceoverChoice === "No, or we'll do our own" ? voiceoverChoice : "";
+    voiceoverChoice === "Yes" || voiceoverChoice === "No" || voiceoverChoice === "We'll do our own"
+      ? voiceoverChoice
+      : voiceoverChoice === "No, or we'll do our own"
+        ? "We'll do our own"
+        : "";
   const normalisedSoundChoice =
     soundChoice === "Male voiceover" || soundChoice === "Female voiceover" ? soundChoice : "";
 
@@ -2659,6 +3297,159 @@ function getMockReferenceDuration(source: string) {
   const seconds = ((seed * 7) % 50) + 10;
 
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function isDeliverableCaptionOption(value: string): value is DeliverableCaptionOption {
+  return deliverableCaptionOptions.some((option) => option.label === value);
+}
+
+function getDeliverableCaptionOptions(row: DeliverableRow): DeliverableCaptionOption[] {
+  const validOptions = (row.captionOptions ?? []).filter(isDeliverableCaptionOption);
+
+  if (validOptions.length > 0) {
+    return validOptions.includes("None") && validOptions.length > 1 ? ["None"] : validOptions;
+  }
+
+  return row.captions ? ["Baked in captions"] : ["None"];
+}
+
+function getNextDeliverableCaptionOptions(
+  currentOptions: DeliverableCaptionOption[],
+  option: DeliverableCaptionOption,
+): DeliverableCaptionOption[] {
+  if (option === "None") {
+    return ["None"];
+  }
+
+  const withoutNone = currentOptions.filter((currentOption) => currentOption !== "None");
+  const nextOptions = withoutNone.includes(option)
+    ? withoutNone.filter((currentOption) => currentOption !== option)
+    : [...withoutNone, option];
+
+  return nextOptions.length > 0 ? nextOptions : ["None"];
+}
+
+function formatDeliverableCaptionSummary(row: DeliverableRow) {
+  return getDeliverableCaptionOptions(row).join(", ");
+}
+
+function parseDeliverables(value: string, fallbackDeadline = ""): DeliverableRow[] {
+  if (!value.trim()) {
+    return [createMainDeliverableRow(fallbackDeadline)];
+  }
+
+  try {
+    const parsedValue: unknown = JSON.parse(value);
+
+    if (!Array.isArray(parsedValue)) {
+      return [createMainDeliverableRow(fallbackDeadline)];
+    }
+
+    const parsedRows = parsedValue
+      .filter(isDeliverableRow)
+      .map((row, rowIndex) => normaliseDeliverableRow(row, fallbackDeadline, rowIndex));
+
+    return parsedRows.length > 0 ? parsedRows : [createMainDeliverableRow(fallbackDeadline)];
+  } catch {
+    return [createMainDeliverableRow(fallbackDeadline)];
+  }
+}
+
+function serialiseDeliverables(rows: DeliverableRow[]) {
+  const usableRows = rows.filter((row) => row.name.trim() || row.platform.trim() || row.isMain);
+
+  return usableRows.length > 0 ? JSON.stringify(usableRows) : "";
+}
+
+function isDeliverableRow(value: unknown): value is DeliverableRow {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const maybeRow = value as Partial<DeliverableRow>;
+
+  return (
+    typeof maybeRow.id === "string" &&
+    typeof maybeRow.name === "string" &&
+    typeof maybeRow.subtitle === "string" &&
+    (typeof maybeRow.notes === "undefined" || typeof maybeRow.notes === "string") &&
+    typeof maybeRow.platform === "string" &&
+    typeof maybeRow.format === "string" &&
+    typeof maybeRow.customFormat === "string" &&
+    typeof maybeRow.duration === "string" &&
+    typeof maybeRow.customMinutes === "string" &&
+    typeof maybeRow.customSeconds === "string" &&
+    typeof maybeRow.captions === "boolean" &&
+    (typeof maybeRow.captionOptions === "undefined" ||
+      (Array.isArray(maybeRow.captionOptions) &&
+        maybeRow.captionOptions.every((captionOption) => typeof captionOption === "string"))) &&
+    (typeof maybeRow.deadline === "undefined" || typeof maybeRow.deadline === "string") &&
+    typeof maybeRow.isMain === "boolean"
+  );
+}
+
+function normaliseDeliverableRow(row: DeliverableRow, fallbackDeadline = "", rowIndex = 0): DeliverableRow {
+  const captionOptions = getDeliverableCaptionOptions(row);
+
+  return {
+    ...row,
+    captionOptions,
+    captions: captionOptions.some((captionOption) => captionOption !== "None"),
+    notes: row.notes ?? "",
+    deadline: row.deadline || fallbackDeadline,
+    name: row.name || (rowIndex === 0 ? "Main Video" : `Version ${rowIndex + 1}`),
+  };
+}
+
+function createMainDeliverableRow(deadline = ""): DeliverableRow {
+  return {
+    id: "main-video",
+    name: "Main Video",
+    subtitle: "Primary campaign asset",
+    notes: "",
+    platform: "YouTube (Main)",
+    format: "Landscape",
+    customFormat: "",
+    duration: "3m",
+    customMinutes: "",
+    customSeconds: "",
+    captions: true,
+    captionOptions: ["Baked in captions"],
+    deadline,
+    isMain: true,
+  };
+}
+
+function createBlankDeliverableRow(name = "Reels cutdown", deadline = ""): DeliverableRow {
+  return {
+    id: `deliverable-${Date.now()}`,
+    name,
+    subtitle: "",
+    notes: "",
+    platform: "",
+    format: "Landscape",
+    customFormat: "",
+    duration: "30s",
+    customMinutes: "",
+    customSeconds: "",
+    captions: true,
+    captionOptions: ["Baked in captions"],
+    deadline,
+    isMain: false,
+  };
+}
+
+function formatBriefDate(value: string) {
+  const [yearValue, monthValue, dayValue] = value.split("-").map(Number);
+
+  if (!yearValue || !monthValue || !dayValue) {
+    return "";
+  }
+
+  const date = new Date(yearValue, monthValue - 1, dayValue);
+  const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
+
+  return `${dayValue} ${month}, ${yearValue}`;
 }
 
 function getMockReferenceTags(source: string) {
@@ -2753,84 +3544,634 @@ function BriefPlaceholderSection({ copy, stepLabel }: { copy: string; stepLabel:
 }
 
 function BriefSummaryPage({
+  fields,
   logline,
-  sections,
+  missingFields,
+  onConfirmField,
+  onFieldChange,
+  onGoToStep,
   onLoglineChange,
+  onRegenerateField,
   onRegenerateLogline,
 }: {
+  fields: BriefFields;
   logline: Logline;
-  sections: Array<{ step: { id: BriefStepId; label: string; index: number }; node: ReactNode }>;
+  missingFields: BriefField[];
+  onConfirmField: (fieldId: BriefFieldId) => void;
+  onFieldChange: (fieldId: BriefFieldId, value: string) => void;
+  onGoToStep: (stepId: BriefStepId) => void;
   onLoglineChange: (value: string) => void;
+  onRegenerateField: (fieldId: BriefFieldId) => void;
   onRegenerateLogline: () => void;
 }) {
+  const [editingFieldId, setEditingFieldId] = useState<BriefFieldId | "logline" | null>(null);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [expandedProductionField, setExpandedProductionField] = useState<"liveFootage" | "voiceover" | null>(null);
+  const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
+  const firstMissingStepId = missingFields[0] ? getStepIdForField(missingFields[0].id) : null;
+
+  function regenerateSection(fieldIds: BriefFieldId[]) {
+    fieldIds.forEach((fieldId) => onRegenerateField(fieldId));
+  }
+
+  function stopEditing() {
+    setEditingFieldId(null);
+  }
+
+  function handleEditKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    if (event.key === "Enter" && event.currentTarget instanceof HTMLInputElement) {
+      event.currentTarget.blur();
+    }
+
+    if (event.key === "Escape") {
+      setEditingFieldId(null);
+    }
+  }
+
   return (
     <section className="brief-summary-page" aria-labelledby="brief-summary-title">
-      <div className="brief-summary-sticky">
-        <div className="brief-summary-head">
-          <div>
-            <span className="brief-section-eyebrow label-xs-semibold">Step 6</span>
-            <h2 id="brief-summary-title">Brief Summary</h2>
-          </div>
-        </div>
-        <BriefLoglineBlock
-          logline={logline}
-          onChange={onLoglineChange}
-          onRegenerate={onRegenerateLogline}
-        />
-      </div>
+      <h2 id="brief-summary-title" className="sr-only">
+        Brief Summary
+      </h2>
+      <BriefSummaryLogline
+        isEditing={editingFieldId === "logline"}
+        logline={logline}
+        onChange={onLoglineChange}
+        onEdit={() => setEditingFieldId("logline")}
+        onKeyDown={handleEditKeyDown}
+        onRegenerate={onRegenerateLogline}
+        onStopEditing={stopEditing}
+      />
       <div className="brief-summary-sections">
-        {sections.map(({ step, node }) => (
-          <div className="brief-summary-section" key={step.id}>
-            {node}
-          </div>
-        ))}
+        <BriefSummaryContainer
+          title="The basics"
+          onDeepEdit={() => onGoToStep("basics")}
+          onRegenerate={() => regenerateSection(["description", "videoType", "platform"])}
+        >
+          <BriefSummaryReadField field={fields.description} onConfirm={onConfirmField}>
+            {editingFieldId === "description" ? (
+              <textarea
+                autoFocus
+                className="brief-summary-inline-textarea label-s"
+                value={fields.description.value}
+                onBlur={stopEditing}
+                onChange={(event) => onFieldChange("description", event.target.value)}
+                onKeyDown={handleEditKeyDown}
+              />
+            ) : (
+              <div className="brief-summary-description">
+                <button
+                  className={`brief-summary-description-text label-s ${isDescriptionExpanded ? "expanded" : ""}`}
+                  type="button"
+                  onClick={() => setEditingFieldId("description")}
+                >
+                  {fields.description.value || "— Not set —"}
+                </button>
+                {fields.description.value.length > 180 ? (
+                  <button
+                    className="brief-summary-show-more label-xs-semibold"
+                    type="button"
+                    onClick={() => setIsDescriptionExpanded((isExpanded) => !isExpanded)}
+                  >
+                    {isDescriptionExpanded ? "Show less" : "Show more"}
+                  </button>
+                ) : null}
+              </div>
+            )}
+          </BriefSummaryReadField>
+          <BriefSummaryReadField field={fields.videoType} onConfirm={onConfirmField}>
+            <BriefVideoTypeMultiSelect
+              value={fields.videoType.value}
+              onChange={(value) => onFieldChange("videoType", value)}
+            />
+          </BriefSummaryReadField>
+          <BriefSummaryReadField field={fields.platform} onConfirm={onConfirmField}>
+            {editingFieldId === "platform" ? (
+              <BriefDeliverablePlatformSelect
+                value={fields.platform.value}
+                onChange={(value) => {
+                  onFieldChange("platform", value);
+                  stopEditing();
+                }}
+              />
+            ) : (
+              <BriefSummaryValueButton value={fields.platform.value} onClick={() => setEditingFieldId("platform")} />
+            )}
+          </BriefSummaryReadField>
+        </BriefSummaryContainer>
+
+        <BriefSummaryContainer
+          title="Purpose and audience"
+          onDeepEdit={() => onGoToStep("purposeAudience")}
+          onRegenerate={() => regenerateSection(["purpose", "audience", "callToAction"])}
+        >
+          <BriefSummaryPair
+            editingFieldId={editingFieldId}
+            field={fields.purpose}
+            onChange={onFieldChange}
+            onConfirm={onConfirmField}
+            onEdit={setEditingFieldId}
+            onKeyDown={handleEditKeyDown}
+            onStopEditing={stopEditing}
+          >
+            <BriefPurposeSelect value={fields.purpose.value} onChange={(value) => onFieldChange("purpose", value)} />
+          </BriefSummaryPair>
+          <BriefSummaryPair
+            editingFieldId={editingFieldId}
+            field={fields.audience}
+            onChange={onFieldChange}
+            onConfirm={onConfirmField}
+            onEdit={setEditingFieldId}
+            onKeyDown={handleEditKeyDown}
+            onStopEditing={stopEditing}
+          />
+          <BriefSummaryPair
+            editingFieldId={editingFieldId}
+            field={fields.callToAction}
+            label="CTA"
+            onChange={onFieldChange}
+            onConfirm={onConfirmField}
+            onEdit={setEditingFieldId}
+            onKeyDown={handleEditKeyDown}
+            onStopEditing={stopEditing}
+          >
+            <BriefCallToActionSelect
+              value={fields.callToAction.value}
+              onChange={(value) => onFieldChange("callToAction", value)}
+            />
+          </BriefSummaryPair>
+        </BriefSummaryContainer>
+
+        <BriefSummaryContainer
+          title="Look and feel"
+          onDeepEdit={() => onGoToStep("lookFeel")}
+          onRegenerate={() => regenerateSection(["feeling", "referenceVideos", "brandKit"])}
+        >
+          <BriefSummaryReadField field={fields.feeling} onConfirm={onConfirmField}>
+            {editingFieldId === "feeling" ? (
+              <BriefMultiSelect
+                ariaLabel="Tone options"
+                options={briefToneOptions}
+                value={fields.feeling.value}
+                onChange={(value) => onFieldChange("feeling", value)}
+              />
+            ) : (
+              <button className="brief-summary-chip-row" type="button" onClick={() => setEditingFieldId("feeling")}>
+                {parseMultiSelectValue(fields.feeling.value).length > 0 ? (
+                  parseMultiSelectValue(fields.feeling.value).map((tone) => (
+                    <span className="brief-tone-chip selected label-s-semibold" key={tone}>
+                      {tone}
+                    </span>
+                  ))
+                ) : (
+                  <BriefSummaryEmptyValue />
+                )}
+              </button>
+            )}
+          </BriefSummaryReadField>
+          <BriefSummaryReadField field={fields.referenceVideos} onConfirm={onConfirmField}>
+            <BriefReferenceVideosField
+              value={fields.referenceVideos.value}
+              onChange={(value) => onFieldChange("referenceVideos", value)}
+            />
+          </BriefSummaryReadField>
+          <BriefSummaryReadField field={fields.brandKit} onConfirm={onConfirmField}>
+            <BriefBrandKitPicker
+              value={fields.brandKit.value}
+              onChange={(value) => onFieldChange("brandKit", value)}
+            />
+          </BriefSummaryReadField>
+        </BriefSummaryContainer>
+
+        <BriefSummaryContainer
+          title="Content and production"
+          onDeepEdit={() => onGoToStep("contentProduction")}
+          onRegenerate={() => regenerateSection(["liveFootage", "voiceover"])}
+        >
+          <BriefSummaryReadField field={fields.liveFootage} onConfirm={onConfirmField}>
+            {expandedProductionField === "liveFootage" ? (
+              <BriefLiveFootageToggle
+                value={fields.liveFootage.value}
+                onChange={(value) => onFieldChange("liveFootage", value)}
+              />
+            ) : (
+              <BriefSummaryValueButton
+                value={formatLiveFootageSummary(fields.liveFootage.value)}
+                onClick={() => setExpandedProductionField("liveFootage")}
+              />
+            )}
+          </BriefSummaryReadField>
+          <BriefSummaryReadField field={fields.voiceover} onConfirm={onConfirmField}>
+            {expandedProductionField === "voiceover" ? (
+              <BriefVoiceoverControl
+                value={fields.voiceover.value}
+                onChange={(value) => onFieldChange("voiceover", value)}
+              />
+            ) : (
+              <BriefSummaryValueButton
+                value={formatVoiceoverSummary(fields.voiceover.value)}
+                onClick={() => setExpandedProductionField("voiceover")}
+              />
+            )}
+          </BriefSummaryReadField>
+        </BriefSummaryContainer>
+
+        <BriefSummaryContainer
+          title="Deliverables and timing"
+          onDeepEdit={() => onGoToStep("deliverablesTiming")}
+          onRegenerate={() => regenerateSection(["deliverables"])}
+        >
+          <BriefSummaryReadField field={fields.deliverables} onConfirm={onConfirmField}>
+            <BriefSummaryDeliverablesTable
+              editingCell={editingDeliverableCell}
+              fallbackDeadline={fields.deadline.value}
+              onChange={(value) => onFieldChange("deliverables", value)}
+              onEditCell={setEditingDeliverableCell}
+              value={fields.deliverables.value}
+            />
+          </BriefSummaryReadField>
+        </BriefSummaryContainer>
       </div>
+      {missingFields.length > 0 ? (
+        <div className="brief-summary-approval-note label-xs-semibold">
+          {missingFields.length} fields still need attention.
+          {firstMissingStepId ? (
+            <button type="button" onClick={() => onGoToStep(firstMissingStepId)}>
+              Jump to first missing
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }
 
-function BriefLoglineBlock({
+function BriefSummaryLogline({
+  isEditing,
   logline,
   onChange,
+  onEdit,
+  onKeyDown,
   onRegenerate,
+  onStopEditing,
 }: {
+  isEditing: boolean;
   logline: Logline;
   onChange: (value: string) => void;
+  onEdit: () => void;
+  onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onRegenerate: () => void;
+  onStopEditing: () => void;
 }) {
-  const statusCopy =
-    logline.status === "out_of_sync"
-      ? "Out of sync"
-      : logline.status === "synced"
-        ? "Synced"
-        : "Not generated";
+  const statusCopy = logline.status === "out_of_sync" ? "Out of sync" : logline.status === "synced" ? "Synced" : "";
+  const displayValue = logline.text || "AI is writing your one-line pitch...";
 
   return (
-    <section className={`brief-logline-block ${logline.status}`} aria-label="AI-generated logline">
-      <div className="brief-logline-meta">
+    <section className="brief-summary-logline" aria-label="Logline">
+      <div className="brief-summary-logline-top">
         <span className="label-xs-semibold">Logline</span>
-        <span className={`brief-logline-state label-xs-semibold ${logline.status}`}>{statusCopy}</span>
+        <span>
+          {statusCopy ? <span className={`brief-logline-state label-xs-semibold ${logline.status}`}>{statusCopy}</span> : null}
+          <button
+            className="brief-field-regenerate"
+            type="button"
+            aria-label="Regenerate logline"
+            data-tooltip="Regenerate logline"
+            onClick={onRegenerate}
+          >
+            <DsIcon name="arrows-clockwise" size={15} />
+          </button>
+        </span>
       </div>
-      <div className="brief-logline-control">
+      {isEditing ? (
         <input
-          className="brief-logline-input"
+          autoFocus
+          className="brief-summary-logline-input"
           value={logline.text}
           aria-label="Brief logline"
-          placeholder="Brisk AI will generate a one-sentence pitch after the basics are drafted."
+          onBlur={onStopEditing}
           onChange={(event) => onChange(event.target.value)}
+          onKeyDown={onKeyDown}
         />
-        <button
-          className="brief-field-regenerate"
-          type="button"
-          aria-label="Regenerate logline"
-          data-tooltip="Regenerate logline"
-          onClick={onRegenerate}
-        >
-          <DsIcon name="arrows-clockwise" size={15} />
+      ) : (
+        <button className={`brief-summary-logline-value ${logline.text ? "" : "is-placeholder"}`} type="button" onClick={onEdit}>
+          {displayValue}
         </button>
-      </div>
+      )}
     </section>
   );
+}
+
+function BriefSummaryContainer({
+  children,
+  onDeepEdit,
+  onRegenerate,
+  title,
+}: {
+  children: ReactNode;
+  onDeepEdit: () => void;
+  onRegenerate: () => void;
+  title: string;
+}) {
+  return (
+    <section className="brief-summary-card" aria-labelledby={`summary-${slugify(title)}`}>
+      <header className="brief-summary-card-header">
+        <h3 id={`summary-${slugify(title)}`}>{title}</h3>
+        <div className="brief-summary-card-actions">
+          <button
+            className="brief-field-regenerate"
+            type="button"
+            aria-label={`Regenerate ${title}`}
+            data-tooltip={`Regenerate ${title}`}
+            onClick={onRegenerate}
+          >
+            <DsIcon name="arrows-clockwise" size={15} />
+          </button>
+          <button
+            className="brief-summary-edit-section"
+            type="button"
+            aria-label={`Edit ${title}`}
+            data-tooltip={`Edit ${title}`}
+            onClick={onDeepEdit}
+          >
+            <DsIcon name="pencil-simple" size={15} />
+          </button>
+        </div>
+      </header>
+      <div className="brief-summary-card-body">{children}</div>
+    </section>
+  );
+}
+
+function BriefSummaryReadField({
+  children,
+  field,
+  label,
+  onConfirm,
+}: {
+  children: ReactNode;
+  field: BriefField;
+  label?: string;
+  onConfirm: (fieldId: BriefFieldId) => void;
+}) {
+  return (
+    <div className="brief-summary-read-field">
+      <div className="brief-summary-field-label">
+        <span className="label-s-semibold">{label ?? field.label}</span>
+        <BriefSummaryConfidenceChip field={field} onConfirm={onConfirm} />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function BriefSummaryConfidenceChip({
+  field,
+  onConfirm,
+}: {
+  field: BriefField;
+  onConfirm: (fieldId: BriefFieldId) => void;
+}) {
+  const confidence = confidenceChipLabels[field.confidence];
+
+  return field.confidence === "guess" ? (
+    <button
+      className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`}
+      type="button"
+      title={confidence.helper}
+      onClick={() => onConfirm(field.id)}
+    >
+      {confidence.label}
+    </button>
+  ) : (
+    <span className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`} title={confidence.helper}>
+      {confidence.label}
+    </span>
+  );
+}
+
+function BriefSummaryPair({
+  children,
+  editingFieldId,
+  field,
+  label,
+  onChange,
+  onConfirm,
+  onEdit,
+  onKeyDown,
+  onStopEditing,
+}: {
+  children?: ReactNode;
+  editingFieldId: BriefFieldId | "logline" | null;
+  field: BriefField;
+  label?: string;
+  onChange: (fieldId: BriefFieldId, value: string) => void;
+  onConfirm: (fieldId: BriefFieldId) => void;
+  onEdit: (fieldId: BriefFieldId) => void;
+  onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onStopEditing: () => void;
+}) {
+  const isEditing = editingFieldId === field.id;
+
+  return (
+    <div className="brief-summary-pair">
+      <div className="brief-summary-pair-label">
+        <span className="label-s-semibold">{label ?? field.label}</span>
+        <BriefSummaryConfidenceChip field={field} onConfirm={onConfirm} />
+      </div>
+      <div className="brief-summary-pair-value">
+        {isEditing ? (
+          children ?? (
+            <input
+              autoFocus
+              className="brief-summary-inline-input label-s"
+              value={field.value}
+              onBlur={onStopEditing}
+              onChange={(event) => onChange(field.id, event.target.value)}
+              onKeyDown={onKeyDown}
+            />
+          )
+        ) : (
+          <BriefSummaryValueButton value={field.value} onClick={() => onEdit(field.id)} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BriefSummaryValueButton({
+  onClick,
+  value,
+}: {
+  onClick: () => void;
+  value: string;
+}) {
+  return value.trim() ? (
+    <button className="brief-summary-value-button label-s" type="button" onClick={onClick}>
+      {value}
+    </button>
+  ) : (
+    <button className="brief-summary-empty-button label-s" type="button" onClick={onClick}>
+      <BriefSummaryEmptyValue />
+    </button>
+  );
+}
+
+function BriefSummaryEmptyValue() {
+  return (
+    <span className="brief-summary-empty-value">
+      — Not set — <span>+ Add</span>
+    </span>
+  );
+}
+
+function BriefSummaryDeliverablesTable({
+  editingCell,
+  fallbackDeadline,
+  onChange,
+  onEditCell,
+  value,
+}: {
+  editingCell: string | null;
+  fallbackDeadline: string;
+  onChange: (value: string) => void;
+  onEditCell: (cellId: string | null) => void;
+  value: string;
+}) {
+  const rows = parseDeliverables(value, fallbackDeadline);
+
+  function updateRows(nextRows: DeliverableRow[]) {
+    onChange(serialiseDeliverables(nextRows));
+  }
+
+  function updateRow(rowId: string, updates: Partial<DeliverableRow>) {
+    updateRows(rows.map((row) => (row.id === rowId ? { ...row, ...updates } : row)));
+  }
+
+  function addRow() {
+    const previousRow = rows[rows.length - 1];
+    const rowNames = ["Reels cutdown", "Square cut", "Shorts cut", "Paid social cut"];
+    const nextName = rowNames[Math.max(0, rows.length - 1)] ?? `Version ${rows.length + 1}`;
+
+    updateRows([...rows, createBlankDeliverableRow(nextName, previousRow?.deadline ?? fallbackDeadline)]);
+  }
+
+  return (
+    <div className="brief-summary-deliverables">
+      <table className="brief-deliverables-table brief-deliverables-table-summary">
+        <thead>
+          <tr>
+            <BriefDeliverablesHeader title="Deliverable" />
+            <BriefDeliverablesHeader title="Format" />
+            <BriefDeliverablesHeader title="Duration" />
+            <BriefDeliverablesHeader title="Captions" />
+            <BriefDeliverablesHeader title="Deadline" />
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr className={row.isMain ? "is-main" : ""} key={row.id}>
+              <td>
+                <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
+              </td>
+              <td>
+                {editingCell === `${row.id}:format` ? (
+                  <BriefDeliverableFormatControl
+                    row={row}
+                    onChange={(updates) => {
+                      updateRow(row.id, updates);
+                      onEditCell(null);
+                    }}
+                  />
+                ) : (
+                  <button className="brief-summary-static-chip label-xs-semibold" type="button" onClick={() => onEditCell(`${row.id}:format`)}>
+                    {row.format || "—"}
+                  </button>
+                )}
+              </td>
+              <td>
+                {editingCell === `${row.id}:duration` ? (
+                  <BriefDeliverableDurationControl
+                    row={row}
+                    onChange={(updates) => {
+                      updateRow(row.id, updates);
+                      onEditCell(null);
+                    }}
+                  />
+                ) : (
+                  <button className="brief-summary-static-chip label-xs-semibold" type="button" onClick={() => onEditCell(`${row.id}:duration`)}>
+                    {row.duration || "—"}
+                  </button>
+                )}
+              </td>
+              <td>
+                {editingCell === `${row.id}:captions` ? (
+                  <BriefDeliverableCaptionsControl
+                    row={row}
+                    onChange={(updates) => updateRow(row.id, updates)}
+                  />
+                ) : (
+                  <button
+                    className="brief-summary-static-chip label-xs-semibold"
+                    type="button"
+                    aria-label={`Captions ${formatDeliverableCaptionSummary(row)}`}
+                    onClick={() => onEditCell(`${row.id}:captions`)}
+                  >
+                    {formatDeliverableCaptionSummary(row)}
+                  </button>
+                )}
+              </td>
+              <td>
+                <BriefDeliverableDeadlineControl
+                  value={row.deadline}
+                  onChange={(deadline) => updateRow(row.id, { deadline })}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+        + Add version
+      </button>
+    </div>
+  );
+}
+
+function formatLiveFootageSummary(value: string) {
+  const [footageChoice, shooterChoice] = parseLiveFootageValue(value);
+
+  return [footageChoice, footageChoice === "Shoot new" ? shooterChoice : ""].filter(Boolean).join(". ");
+}
+
+function formatVoiceoverSummary(value: string) {
+  const [choice, sound, voice] = parseVoiceoverValue(value);
+
+  if (choice !== "Yes") {
+    return choice;
+  }
+
+  return [choice, sound, voice ? `${voice} (AI voice)` : ""].filter(Boolean).join(". ");
+}
+
+function getStepIdForField(fieldId: BriefFieldId): BriefStepId {
+  if (fieldId === "purpose" || fieldId === "audience" || fieldId === "callToAction") {
+    return "purposeAudience";
+  }
+
+  if (fieldId === "feeling" || fieldId === "referenceVideos" || fieldId === "brandKit") {
+    return "lookFeel";
+  }
+
+  if (fieldId === "liveFootage" || fieldId === "voiceover") {
+    return "contentProduction";
+  }
+
+  if (fieldId === "deliverables" || fieldId === "deadline") {
+    return "deliverablesTiming";
+  }
+
+  return "basics";
 }
 
 function BriefSummaryPlaceholder({ copy, stepLabel }: { copy: string; stepLabel: string }) {
@@ -2874,6 +4215,7 @@ function cloneBriefFields(fields: BriefFields): BriefFields {
   return {
     workingTitle: { ...fields.workingTitle },
     videoType: { ...fields.videoType },
+    platform: { ...fields.platform },
     description: { ...fields.description },
     purpose: { ...fields.purpose },
     audience: { ...fields.audience },
@@ -2883,6 +4225,8 @@ function cloneBriefFields(fields: BriefFields): BriefFields {
     liveFootage: { ...fields.liveFootage },
     voiceover: { ...fields.voiceover },
     callToAction: { ...fields.callToAction },
+    deliverables: { ...fields.deliverables },
+    deadline: { ...fields.deadline },
   };
 }
 
