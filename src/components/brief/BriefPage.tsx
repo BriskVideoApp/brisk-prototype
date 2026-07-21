@@ -30,6 +30,7 @@ import {
   type BriefFields,
   type BriefStepId,
   type ChatMessage,
+  type ConfidenceState,
   type InputAttachment,
   type Logline,
 } from "@/data/brief";
@@ -55,6 +56,47 @@ const placeholderStepCopy: Record<Exclude<BriefStepId, "basics" | "summary">, st
   deliverablesTiming: "Outputs, formats, timings and approval dates will be shaped here.",
 };
 
+type BriefSectionTone = "basics" | "purpose" | "look" | "production" | "deliverables" | "summary";
+
+type BriefSectionIntroModel = {
+  step: number;
+  title: string;
+  tone: BriefSectionTone;
+};
+
+const briefSectionIntros: Record<BriefStepId, BriefSectionIntroModel> = {
+  basics: {
+    step: 1,
+    title: "The basics",
+    tone: "basics",
+  },
+  purposeAudience: {
+    step: 2,
+    title: "Purpose and audience",
+    tone: "purpose",
+  },
+  lookFeel: {
+    step: 3,
+    title: "Look and feel",
+    tone: "look",
+  },
+  contentProduction: {
+    step: 4,
+    title: "Content and production",
+    tone: "production",
+  },
+  deliverablesTiming: {
+    step: 5,
+    title: "Deliverables and timing",
+    tone: "deliverables",
+  },
+  summary: {
+    step: 6,
+    title: "Brief Summary",
+    tone: "summary",
+  },
+};
+
 const briefToneOptions = [
   "Cinematic / Epic",
   "Corporate / Professional",
@@ -66,6 +108,7 @@ const briefToneOptions = [
   "Playful",
   "Powerful",
   "Urgent",
+  "Something else",
 ] as const;
 
 type ReferenceVideoCard = {
@@ -376,7 +419,7 @@ export function BriefPage({ project }: BriefPageProps) {
   function applyBriefDraft(draft: BriefDraft) {
     setBriefFields(cloneBriefFields(draft.fields));
     setLogline({
-      text: draft.logline,
+      text: sentenceCase(draft.logline),
       status: "synced",
       lastRegeneratedAt: "Just now",
     });
@@ -448,7 +491,7 @@ export function BriefPage({ project }: BriefPageProps) {
 
   function regenerateLogline() {
     setLogline({
-      text: createLoglineFromFields(briefFields),
+      text: sentenceCase(createLoglineFromFields(briefFields)),
       status: "synced",
       lastRegeneratedAt: "Just now",
     });
@@ -527,6 +570,16 @@ export function BriefPage({ project }: BriefPageProps) {
     setSourcePrompt("");
   }
 
+  function jumpToStepFromLanding(stepId: BriefStepId) {
+    if (chatMessages.length === 0) {
+      setChatMessages([...initialChatMessages]);
+    }
+
+    setBriefMode("steps");
+    setActiveStepId(stepId);
+    setIsChatCollapsed(true);
+  }
+
   const chatPanel = (
     <BriefAiChatPanel
       isCollapsed={isChatCollapsed}
@@ -546,6 +599,7 @@ export function BriefPage({ project }: BriefPageProps) {
             messages={chatMessages}
             onDraft={draftLandingBrief}
             onRewind={rewindLandingConversation}
+            onSelectStep={jumpToStepFromLanding}
             onSkip={skipAiAndFillManually}
             onSubmit={submitLandingPrompt}
           />
@@ -568,8 +622,8 @@ export function BriefPage({ project }: BriefPageProps) {
                   </Button>
                 )
               }
-              onChatWithAi={resetToLanding}
               onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
+              onStartWithAi={resetToLanding}
               onSelectStep={setActiveStepId}
             >
               {activeStepId === "basics" ? (
@@ -705,8 +759,8 @@ function BriefStepShell({
   chatPanel,
   children,
   footerAction,
-  onChatWithAi,
   onBack,
+  onStartWithAi,
   onSelectStep,
 }: {
   activeStepId: BriefStepId;
@@ -714,8 +768,8 @@ function BriefStepShell({
   chatPanel: ReactNode;
   children: ReactNode;
   footerAction: ReactNode;
-  onChatWithAi: () => void;
   onBack?: () => void;
+  onStartWithAi: () => void;
   onSelectStep: (stepId: BriefStepId) => void;
 }) {
   return (
@@ -729,16 +783,13 @@ function BriefStepShell({
       <footer className="brief-step-footer">
         <div className="brief-step-footer-inner">
           <span className="brief-footer-side">
-            <button className="brief-reset-intake label-s-semibold" type="button" onClick={onChatWithAi}>
-              Chat with Brisk AI
-            </button>
             {onBack ? (
               <Button size="S" type="button" variant="secondary" onClick={onBack}>
                 Back
               </Button>
             ) : null}
           </span>
-          <BriefStepDots activeStepIndex={activeStepIndex} onSelectStep={onSelectStep} />
+          <BriefStepDots activeStepIndex={activeStepIndex} onSelectStep={onSelectStep} onStartWithAi={onStartWithAi} />
           <span className="brief-footer-side right">{footerAction}</span>
         </div>
       </footer>
@@ -749,16 +800,28 @@ function BriefStepShell({
 function BriefStepDots({
   activeStepIndex,
   onSelectStep,
+  onStartWithAi,
 }: {
-  activeStepIndex: number;
+  activeStepIndex: number | null;
   onSelectStep: (stepId: BriefStepId) => void;
+  onStartWithAi: () => void;
 }) {
   return (
     <nav className="brief-step-dots" aria-label="Brief steps">
+      <button
+        className={`brief-step-dot brief-step-dot-ai label-xs-semibold ${activeStepIndex === null ? "active" : ""}`}
+        type="button"
+        aria-current={activeStepIndex === null ? "step" : undefined}
+        data-tooltip="Start with AI"
+        onClick={onStartWithAi}
+      >
+        <DsIcon name="sparkle" size={14} />
+        <span className="sr-only">Start with AI</span>
+      </button>
       {briefSteps.map((step, index) => (
         <button
           className={`brief-step-dot label-xs-semibold ${index === activeStepIndex ? "active" : ""} ${
-            index < activeStepIndex ? "complete" : ""
+            activeStepIndex !== null && index < activeStepIndex ? "complete" : ""
           } ${step.id === "summary" ? "summary" : ""}`}
           key={step.id}
           type="button"
@@ -778,6 +841,7 @@ function BriefLandingScreen({
   messages,
   onDraft,
   onRewind,
+  onSelectStep,
   onSkip,
   onSubmit,
 }: {
@@ -785,6 +849,7 @@ function BriefLandingScreen({
   messages: ChatMessage[];
   onDraft: () => void;
   onRewind: (messageId: string) => void;
+  onSelectStep: (stepId: BriefStepId) => void;
   onSkip: () => void;
   onSubmit: (submission: BriefAiSubmit) => void;
 }) {
@@ -945,9 +1010,12 @@ function BriefLandingScreen({
         <button className="brief-landing-back label-s-semibold" type="button" onClick={handleBack}>
           Back
         </button>
-        <button className="brief-landing-skip label-s-semibold" type="button" onClick={onSkip}>
-          Skip AI, fill in manually
-        </button>
+        <div className="brief-landing-footer-centre">
+          <button className="brief-landing-skip label-s-semibold" type="button" onClick={onSkip}>
+            Skip AI, fill in manually
+          </button>
+          <BriefStepDots activeStepIndex={null} onSelectStep={onSelectStep} onStartWithAi={() => undefined} />
+        </div>
         <button
           className="brief-landing-next label-s-semibold"
           type="button"
@@ -1501,7 +1569,7 @@ function BriefBasicsSection({
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "The basics"}
-      aria-labelledby={summaryMode ? "brief-basics-title" : undefined}
+      aria-labelledby={summaryMode ? "brief-basics-title" : "brief-basics-step-title"}
     >
       {summaryMode ? (
         <BriefSectionHeader
@@ -1510,7 +1578,12 @@ function BriefBasicsSection({
           titleId="brief-basics-title"
           title="The basics"
         />
-      ) : null}
+      ) : (
+        <BriefSectionIntro
+          intro={briefSectionIntros.basics}
+          titleId="brief-basics-step-title"
+        />
+      )}
       <div className="brief-field-list">
         <BriefFieldRow field={fields.description} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
           <div className="brief-textarea-wrap">
@@ -1564,6 +1637,26 @@ function BriefSectionHeader({
   );
 }
 
+function BriefSectionIntro({
+  intro,
+  titleId,
+}: {
+  intro: BriefSectionIntroModel;
+  titleId?: string;
+}) {
+  return (
+    <header className={`brief-section-intro tone-${intro.tone}`}>
+      <span className="brief-section-intro-accent" aria-hidden="true" />
+      <div className="brief-section-intro-main">
+        <div className="brief-section-intro-copy">
+          <span className="brief-section-step-chip label-xs-semibold">Step {intro.step} of 6</span>
+          <h2 id={titleId}>{intro.title}</h2>
+        </div>
+      </div>
+    </header>
+  );
+}
+
 function BriefPurposeAudienceSection({
   fields,
   onConfirmField,
@@ -1581,7 +1674,7 @@ function BriefPurposeAudienceSection({
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "Purpose and audience"}
-      aria-labelledby={summaryMode ? "brief-purpose-audience-title" : undefined}
+      aria-labelledby={summaryMode ? "brief-purpose-audience-title" : "brief-purpose-audience-step-title"}
     >
       {summaryMode ? (
         <BriefSectionHeader
@@ -1590,7 +1683,12 @@ function BriefPurposeAudienceSection({
           titleId="brief-purpose-audience-title"
           title="Purpose and audience"
         />
-      ) : null}
+      ) : (
+        <BriefSectionIntro
+          intro={briefSectionIntros.purposeAudience}
+          titleId="brief-purpose-audience-step-title"
+        />
+      )}
       <div className="brief-field-list">
         <BriefFieldRow field={fields.purpose} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
           <BriefPurposeSelect value={fields.purpose.value} onChange={(value) => onFieldChange("purpose", value)} />
@@ -1818,8 +1916,7 @@ function BriefAudienceList({
   onChange: (value: string) => void;
   value: string;
 }) {
-  const parsedAudiences = parseAudienceList(value);
-  const audiences = parsedAudiences;
+  const audiences = parseAudienceList(value);
 
   function updateAudience(index: number, nextValue: string) {
     const nextAudiences = audiences.map((audience, audienceIndex) =>
@@ -1827,7 +1924,10 @@ function BriefAudienceList({
     );
 
     onChange(serialiseAudienceList(nextAudiences));
+  }
 
+  function addAudience() {
+    onChange(serialiseAudienceList([...audiences, ""]));
   }
 
   function removeAudience(index: number) {
@@ -1866,6 +1966,10 @@ function BriefAudienceList({
           </div>
         );
       })}
+      <button className="brief-audience-add label-xs-semibold" type="button" onClick={addAudience}>
+        <DsIcon name="plus" size={12} />
+        <span>Add audience</span>
+      </button>
     </div>
   );
 }
@@ -1887,7 +1991,7 @@ function BriefLookAndFeelSection({
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "Look and feel"}
-      aria-labelledby={summaryMode ? "brief-look-feel-title" : undefined}
+      aria-labelledby={summaryMode ? "brief-look-feel-title" : "brief-look-feel-step-title"}
     >
       {summaryMode ? (
         <BriefSectionHeader
@@ -1896,7 +2000,12 @@ function BriefLookAndFeelSection({
           titleId="brief-look-feel-title"
           title="Look and feel"
         />
-      ) : null}
+      ) : (
+        <BriefSectionIntro
+          intro={briefSectionIntros.lookFeel}
+          titleId="brief-look-feel-step-title"
+        />
+      )}
       <div className="brief-field-list">
         <BriefFieldRow field={fields.feeling} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
           <BriefMultiSelect
@@ -1940,7 +2049,7 @@ function BriefContentProductionSection({
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "Content and production"}
-      aria-labelledby={summaryMode ? "brief-content-production-title" : undefined}
+      aria-labelledby={summaryMode ? "brief-content-production-title" : "brief-content-production-step-title"}
     >
       {summaryMode ? (
         <BriefSectionHeader
@@ -1949,7 +2058,12 @@ function BriefContentProductionSection({
           titleId="brief-content-production-title"
           title="Content and production"
         />
-      ) : null}
+      ) : (
+        <BriefSectionIntro
+          intro={briefSectionIntros.contentProduction}
+          titleId="brief-content-production-step-title"
+        />
+      )}
       <div className="brief-field-list">
         <BriefFieldRow field={fields.liveFootage} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
           <BriefLiveFootageToggle
@@ -1985,7 +2099,7 @@ function BriefDeliverablesSection({
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "Deliverables and timing"}
-      aria-labelledby={summaryMode ? "brief-deliverables-title" : undefined}
+      aria-labelledby={summaryMode ? "brief-deliverables-title" : "brief-deliverables-step-title"}
     >
       {summaryMode ? (
         <BriefSectionHeader
@@ -1994,7 +2108,12 @@ function BriefDeliverablesSection({
           titleId="brief-deliverables-title"
           title="Deliverables and timing"
         />
-      ) : null}
+      ) : (
+        <BriefSectionIntro
+          intro={briefSectionIntros.deliverablesTiming}
+          titleId="brief-deliverables-step-title"
+        />
+      )}
       <div className="brief-field-list">
         <BriefFieldRow field={fields.deliverables} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
           <BriefDeliverablesTable
@@ -2031,7 +2150,7 @@ function BriefDeliverablesTable({
 
   function addRow() {
     const previousRow = rows[rows.length - 1];
-    const rowNames = ["Reels cutdown", "Square cut", "Shorts cut", "Paid social cut"];
+    const rowNames = ["Platform cutdown", "Square cut", "Shorts cut", "Paid social cut"];
     const nextName = rowNames[Math.max(0, rows.length - 1)] ?? `Version ${rows.length + 1}`;
 
     updateRows([...rows, createBlankDeliverableRow(nextName, previousRow?.deadline ?? fallbackDeadline)]);
@@ -2069,6 +2188,7 @@ function BriefDeliverablesTable({
           <thead>
             <tr>
               <BriefDeliverablesHeader title="Deliverable" />
+              <BriefDeliverablesHeader title="Platform" />
               <BriefDeliverablesHeader title="Format" />
               <BriefDeliverablesHeader title="Duration" />
               <BriefDeliverablesHeader title="Captions" />
@@ -2103,6 +2223,12 @@ function BriefDeliverablesTable({
                       onChange={(event) => updateRow(row.id, { notes: event.target.value })}
                     />
                   ) : null}
+                </td>
+                <td>
+                  <BriefDeliverablePlatformSelect
+                    value={row.platform}
+                    onChange={(platform) => updateRow(row.id, { platform })}
+                  />
                 </td>
                 <td>
                   <BriefDeliverableFormatControl
@@ -2162,7 +2288,8 @@ function BriefDeliverablesTable({
         </table>
       </div>
       <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
-        + Add version
+        <DsIcon name="plus" size={14} />
+        <span>Add version</span>
       </button>
     </div>
   );
@@ -2189,13 +2316,21 @@ function BriefDeliverablesHeader({
 }
 
 function BriefDeliverablePlatformSelect({
+  autoOpen = false,
   onChange,
   value,
 }: {
+  autoOpen?: boolean;
   onChange: (value: string) => void;
   value: string;
 }) {
   const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsPlatformMenuOpen(true);
+    }
+  }, [autoOpen]);
 
   function selectPlatform(platform: string) {
     onChange(platform);
@@ -2243,14 +2378,22 @@ function BriefDeliverablePlatformSelect({
 }
 
 function BriefDeliverableFormatControl({
+  autoOpen = false,
   onChange,
   row,
 }: {
+  autoOpen?: boolean;
   onChange: (updates: Partial<DeliverableRow>) => void;
   row: DeliverableRow;
 }) {
   const selectedFormat = deliverableFormatOptions.find((format) => format.label === row.format) ?? deliverableFormatOptions[0];
   const [isFormatMenuOpen, setIsFormatMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsFormatMenuOpen(true);
+    }
+  }, [autoOpen]);
 
   function selectFormat(format: string) {
     onChange({ format, customFormat: "" });
@@ -2305,15 +2448,26 @@ function BriefDeliverableFormatControl({
 }
 
 function BriefDeliverableDurationControl({
+  autoOpen = false,
   onChange,
   row,
 }: {
+  autoOpen?: boolean;
   onChange: (updates: Partial<DeliverableRow>) => void;
   row: DeliverableRow;
 }) {
   const selectedDuration =
     deliverableDurationOptions.find((duration) => duration.label === row.duration) ?? deliverableDurationOptions[0];
+  const selectedDurationLabel = row.duration
+    ? formatDurationLabel(row.duration)
+    : formatDurationLabel(selectedDuration.label);
   const [isDurationMenuOpen, setIsDurationMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsDurationMenuOpen(true);
+    }
+  }, [autoOpen]);
 
   function selectDuration(duration: string) {
     onChange({
@@ -2334,7 +2488,7 @@ function BriefDeliverableDurationControl({
           aria-label="Duration"
           onClick={() => setIsDurationMenuOpen((isOpen) => !isOpen)}
         >
-          <span className="brief-duration-value label-xs-semibold">{selectedDuration.label}</span>
+          <span className="brief-duration-value label-xs-semibold">{selectedDurationLabel}</span>
           <DsIcon name="caret-down" size={12} />
         </button>
         {isDurationMenuOpen ? (
@@ -2348,7 +2502,7 @@ function BriefDeliverableDurationControl({
                 aria-selected={duration.label === row.duration}
                 onClick={() => selectDuration(duration.label)}
               >
-                <span className="brief-duration-value label-s-semibold">{duration.label}</span>
+                <span className="brief-duration-value label-s-semibold">{formatDurationLabel(duration.label)}</span>
                 <span className="brief-duration-helper label-s">{duration.helper}</span>
               </button>
             ))}
@@ -2514,15 +2668,18 @@ function BriefLiveFootageToggle({
   const isShootingNew = footageChoice === "Shoot new";
   const footageOptions: Array<{
     description: string;
-    label: "Use existing" | "Shoot new";
+    label: string;
+    value: "Use existing" | "Shoot new";
   }> = [
     {
-      label: "Use existing",
-      description: "Faster, cheaper. Best if you already have great footage.",
+      label: "Use existing footage",
+      value: "Use existing",
+      description: "Best if you already have your own footage or photos.",
     },
     {
-      label: "Shoot new",
-      description: "Best for fresh, on-brand visuals. Adds time and budget.",
+      label: "Shoot new footage",
+      value: "Shoot new",
+      description: "Capture new footage from scratch with a dedicated shoot.",
     },
   ];
   const shooterOptions: Array<{
@@ -2557,11 +2714,11 @@ function BriefLiveFootageToggle({
       <div className="brief-pill-toggle-group" aria-label="Live footage source" role="group">
         {footageOptions.map((option) => (
           <button
-            className={`brief-pill-toggle brief-pill-toggle-described ${footageChoice === option.label ? "selected" : ""}`}
-            key={option.label}
+            className={`brief-pill-toggle brief-pill-toggle-described ${footageChoice === option.value ? "selected" : ""}`}
+            key={option.value}
             type="button"
-            aria-pressed={footageChoice === option.label}
-            onClick={() => selectFootageChoice(option.label)}
+            aria-pressed={footageChoice === option.value}
+            onClick={() => selectFootageChoice(option.value)}
           >
             <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
             <span className="brief-pill-toggle-description label-xs">{option.description}</span>
@@ -2627,10 +2784,12 @@ function BriefVoiceoverControl({
 
   return (
     <div className="brief-voiceover-control">
-      <div className="brief-pill-toggle-group" aria-label="Voiceover preference" role="group">
+      <div className="brief-voiceover-choice-group" aria-label="Voiceover preference" role="group">
         {(["Yes", "No", "We'll do our own"] as const).map((option) => (
           <button
-            className={`brief-pill-toggle label-s-semibold ${voiceoverChoice === option ? "selected" : ""}`}
+            className={`brief-pill-toggle brief-voiceover-choice-card label-s-semibold ${
+              voiceoverChoice === option ? "selected" : ""
+            }`}
             key={option}
             type="button"
             aria-pressed={voiceoverChoice === option}
@@ -2991,6 +3150,81 @@ function BriefMultiSelect({
   );
 }
 
+function BriefInlineSelect({
+  autoOpen = false,
+  ariaLabel,
+  getOptionLabel = getShortOptionLabel,
+  onChange,
+  onCommit,
+  options,
+  placeholder,
+  value,
+}: {
+  autoOpen?: boolean;
+  ariaLabel: string;
+  getOptionLabel?: (option: string) => string;
+  onChange: (value: string) => void;
+  onCommit?: () => void;
+  options: readonly string[];
+  placeholder: string;
+  value: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const displayValue = value.trim() ? getOptionLabel(value) : placeholder;
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsOpen(true);
+    }
+  }, [autoOpen]);
+
+  function selectOption(option: string) {
+    onChange(option);
+    setIsOpen(false);
+    onCommit?.();
+  }
+
+  return (
+    <div
+      className="brief-inline-select"
+      onBlur={(event) => {
+        const nextFocus = event.relatedTarget;
+
+        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
+          setIsOpen(false);
+        }
+      }}
+    >
+      <button
+        className={`brief-inline-select-trigger label-s ${value.trim() ? "" : "is-placeholder"}`}
+        type="button"
+        aria-expanded={isOpen}
+        aria-label={ariaLabel}
+        onClick={() => setIsOpen((currentValue) => !currentValue)}
+      >
+        <span>{displayValue}</span>
+        <DsIcon name="caret-down" size={12} />
+      </button>
+      {isOpen ? (
+        <div className="brief-inline-select-menu" role="listbox" aria-label={ariaLabel}>
+          {options.map((option) => (
+            <button
+              className={`brief-inline-select-option label-s ${option === value ? "selected" : ""}`}
+              key={option}
+              type="button"
+              role="option"
+              aria-selected={option === value}
+              onClick={() => selectOption(option)}
+            >
+              {getOptionLabel(option)}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 const videoTypeIconMap: Record<string, DsIconName> = {
   Animation: "grid-four",
   "AI Video": "chopchop-ai",
@@ -3151,8 +3385,7 @@ function parseAudienceList(value: string) {
 
   const audiences = value
     .split("\n")
-    .map((line) => line.replace(/^(Primary audience|Secondary audience|Audience \d+):\s*/i, "").trim())
-    .filter(Boolean);
+    .map((line) => line.replace(/^(Primary audience|Secondary audience|Audience \d+):\s*/i, "").trim());
 
   if (audiences.length === 1 && audiences[0].includes(". ")) {
     const splitAudience = audiences[0]
@@ -3169,16 +3402,23 @@ function parseAudienceList(value: string) {
 }
 
 function serialiseAudienceList(audiences: string[]) {
-  return audiences
-    .map((audience, index) => ({ label: getAudienceLabel(index), value: audience.trim() }))
-    .filter((audience) => audience.value)
-    .map((audience) => `${audience.label}: ${audience.value}`)
-    .join("\n");
+  const normalisedAudiences = audiences
+    .map((audience, index) => ({ label: getAudienceLabel(index), value: audience.trim() }));
+
+  if (normalisedAudiences.length <= 1 && !normalisedAudiences.some((audience) => audience.value)) {
+    return "";
+  }
+
+  return normalisedAudiences.map((audience) => `${audience.label}: ${audience.value}`).join("\n");
 }
 
 function getAudienceLabel(index: number) {
   if (index === 0) {
     return "Primary audience";
+  }
+
+  if (index === 1) {
+    return "Secondary audience";
   }
 
   return `Audience ${index + 1}`;
@@ -3189,7 +3429,11 @@ function getAudiencePlaceholder(index: number) {
     return "Primary audience";
   }
 
-  return "";
+  if (index === 1) {
+    return "Secondary audience";
+  }
+
+  return `Audience ${index + 1}`;
 }
 
 function parseLiveFootageValue(value: string): ["Use existing" | "Shoot new" | "", "You shoot" | "ChopChop shoots" | ""] {
@@ -3289,6 +3533,99 @@ function createReferenceVideoFromFile(file: File): ReferenceVideoCard {
     duration: getMockReferenceDuration(file.name),
     tags: getMockReferenceTags(file.name),
   };
+}
+
+function getReferenceDisplayTitle(video: ReferenceVideoCard) {
+  const title = video.title.trim();
+  const host = getVideoHost(video.source);
+
+  if (title && title !== "Video reference" && title !== `${host} reference`) {
+    return title;
+  }
+
+  return getReadableTitleFromUrl(video.source) || `${host} reference video`;
+}
+
+function getReferenceExternalHref(source: string) {
+  try {
+    const url = new URL(source);
+
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return url.toString();
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
+function getReadableTitleFromUrl(source: string) {
+  try {
+    const url = new URL(source);
+    const pathParts = url.pathname.split("/").filter(Boolean);
+    const possibleSlug = pathParts[pathParts.length - 1] ?? "";
+
+    if (!possibleSlug || /^[a-z0-9_-]{8,}$/i.test(possibleSlug)) {
+      return "";
+    }
+
+    return sentenceCase(possibleSlug.replace(/[-_]+/g, " "));
+  } catch {
+    return source.includes(".") ? "" : source;
+  }
+}
+
+function getReferenceEmbedUrl(source: string) {
+  try {
+    const url = new URL(source);
+    const hostname = url.hostname.toLowerCase();
+
+    if (hostname.includes("youtube.com")) {
+      const videoId = url.searchParams.get("v") ?? url.pathname.split("/").filter(Boolean).pop();
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+    }
+
+    if (hostname.includes("youtu.be")) {
+      const videoId = url.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+    }
+
+    if (hostname.includes("vimeo.com")) {
+      const videoId = url.pathname.split("/").filter(Boolean).pop();
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : "";
+    }
+
+    if (hostname.includes("loom.com")) {
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      const videoId = pathParts[pathParts.length - 1];
+      return videoId ? `https://www.loom.com/embed/${videoId}` : "";
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
+function getReferenceVideoUrl(source: string) {
+  const trimmedSource = source.trim();
+
+  if (!/\.(mp4|m4v|mov|ogg|webm)(?:[?#].*)?$/iu.test(trimmedSource)) {
+    return "";
+  }
+
+  if (trimmedSource.startsWith("/") || trimmedSource.startsWith("blob:")) {
+    return trimmedSource;
+  }
+
+  try {
+    const url = new URL(trimmedSource);
+
+    return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : "";
+  } catch {
+    return "";
+  }
 }
 
 function getMockReferenceDuration(source: string) {
@@ -3420,7 +3757,7 @@ function createMainDeliverableRow(deadline = ""): DeliverableRow {
   };
 }
 
-function createBlankDeliverableRow(name = "Reels cutdown", deadline = ""): DeliverableRow {
+function createBlankDeliverableRow(name = "Platform cutdown", deadline = ""): DeliverableRow {
   return {
     id: `deliverable-${Date.now()}`,
     name,
@@ -3461,7 +3798,6 @@ function getMockReferenceTags(source: string) {
 function BriefFieldRow({
   children,
   field,
-  onConfirm,
   onRegenerate,
 }: {
   children: ReactNode;
@@ -3469,58 +3805,54 @@ function BriefFieldRow({
   onConfirm: (fieldId: BriefFieldId) => void;
   onRegenerate: (fieldId: BriefFieldId) => void;
 }) {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+
+  function focusFieldControl() {
+    const focusable = rowRef.current?.querySelector<HTMLElement>(
+      "input, textarea, select, button:not(.brief-status-dot)",
+    );
+    focusable?.focus();
+  }
+
   return (
-    <div className="brief-field-row">
+    <div className="brief-field-row" ref={rowRef}>
       <div className="brief-field-meta">
         <label className="label-s-semibold">{field.label}</label>
-        <BriefFieldActions field={field} onConfirm={onConfirm} onRegenerate={onRegenerate} />
+        <BriefFieldStatusDot field={field} onEdit={focusFieldControl} onRegenerate={onRegenerate} />
       </div>
       <div className="brief-field-control">{children}</div>
     </div>
   );
 }
 
-function BriefFieldActions({
+function BriefFieldStatusDot({
   field,
-  onConfirm,
+  onEdit,
   onRegenerate,
 }: {
   field: BriefField;
-  onConfirm: (fieldId: BriefFieldId) => void;
+  onEdit: () => void;
   onRegenerate: (fieldId: BriefFieldId) => void;
 }) {
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const confidence = confidenceChipLabels[field.confidence];
-  const canConfirm = field.confidence === "guess";
+  const statusLabel = field.confidence === "guess" ? "Uncertain" : confidence.label;
+
+  function handleRegenerate() {
+    setIsRegenerating(true);
+    onRegenerate(field.id);
+    window.setTimeout(() => setIsRegenerating(false), 420);
+  }
 
   return (
-    <div className="brief-field-actions">
-      {canConfirm ? (
-        <button
-          className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`}
-          type="button"
-          title={confidence.helper}
-          onClick={() => onConfirm(field.id)}
-        >
-          {confidence.label}
-        </button>
-      ) : (
-        <span
-          className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`}
-          title={confidence.helper}
-        >
-          {confidence.label}
-        </span>
-      )}
-      <button
-        className="brief-field-regenerate"
-        type="button"
-        aria-label={`Regenerate ${field.label}`}
-        data-tooltip={`Regenerate ${field.label}`}
-        onClick={() => onRegenerate(field.id)}
-      >
-        <DsIcon name="arrows-clockwise" size={15} />
-      </button>
-    </div>
+    <BriefStatusDotControl
+      isRegenerating={isRegenerating}
+      label={field.label}
+      onEdit={onEdit}
+      onRegenerate={handleRegenerate}
+      status={confidence.state}
+      statusLabel={statusLabel}
+    />
   );
 }
 
@@ -3564,15 +3896,12 @@ function BriefSummaryPage({
   onRegenerateField: (fieldId: BriefFieldId) => void;
   onRegenerateLogline: () => void;
 }) {
-  const [editingFieldId, setEditingFieldId] = useState<BriefFieldId | "logline" | null>(null);
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [expandedProductionField, setExpandedProductionField] = useState<"liveFootage" | "voiceover" | null>(null);
+  const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
   const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
-  const firstMissingStepId = missingFields[0] ? getStepIdForField(missingFields[0].id) : null;
-
-  function regenerateSection(fieldIds: BriefFieldId[]) {
-    fieldIds.forEach((fieldId) => onRegenerateField(fieldId));
-  }
+  const deliverableRows = parseDeliverables(fields.deliverables.value, fields.deadline.value);
+  const primaryDeliverable = deliverableRows[0] ?? createMainDeliverableRow(fields.deadline.value);
+  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable);
+  const summaryMissingCount = countSummaryMissingSlots(summaryModel, deliverableRows, fields, logline);
 
   function stopEditing() {
     setEditingFieldId(null);
@@ -3588,278 +3917,1146 @@ function BriefSummaryPage({
     }
   }
 
+  function jumpToStep(target: BriefStepId) {
+    onGoToStep(target);
+  }
+
+  function jumpToFirstMissing() {
+    const firstMissing = document.querySelector<HTMLElement>(
+      ".brief-summary-page .brief-summary-spec-chip.is-missing, .brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-summary-static-chip.is-missing",
+    );
+
+    firstMissing?.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstMissing?.focus();
+  }
+
   return (
     <section className="brief-summary-page" aria-labelledby="brief-summary-title">
-      <h2 id="brief-summary-title" className="sr-only">
-        Brief Summary
-      </h2>
+      <BriefSectionIntro
+        intro={briefSectionIntros.summary}
+        titleId="brief-summary-title"
+      />
       <BriefSummaryLogline
-        isEditing={editingFieldId === "logline"}
+        deliverableRows={deliverableRows}
+        editingFieldId={editingFieldId}
+        fields={fields}
         logline={logline}
-        onChange={onLoglineChange}
-        onEdit={() => setEditingFieldId("logline")}
+        model={summaryModel}
+        primaryDeliverable={primaryDeliverable}
+        onChange={onFieldChange}
+        onConfirm={onConfirmField}
+        onEdit={setEditingFieldId}
         onKeyDown={handleEditKeyDown}
         onRegenerate={onRegenerateLogline}
         onStopEditing={stopEditing}
       />
-      <div className="brief-summary-sections">
-        <BriefSummaryContainer
-          title="The basics"
-          onDeepEdit={() => onGoToStep("basics")}
-          onRegenerate={() => regenerateSection(["description", "videoType", "platform"])}
-        >
-          <BriefSummaryReadField field={fields.description} onConfirm={onConfirmField}>
-            {editingFieldId === "description" ? (
-              <textarea
-                autoFocus
-                className="brief-summary-inline-textarea label-s"
-                value={fields.description.value}
-                onBlur={stopEditing}
-                onChange={(event) => onFieldChange("description", event.target.value)}
-                onKeyDown={handleEditKeyDown}
-              />
-            ) : (
-              <div className="brief-summary-description">
-                <button
-                  className={`brief-summary-description-text label-s ${isDescriptionExpanded ? "expanded" : ""}`}
-                  type="button"
-                  onClick={() => setEditingFieldId("description")}
-                >
-                  {fields.description.value || "— Not set —"}
-                </button>
-                {fields.description.value.length > 180 ? (
-                  <button
-                    className="brief-summary-show-more label-xs-semibold"
-                    type="button"
-                    onClick={() => setIsDescriptionExpanded((isExpanded) => !isExpanded)}
-                  >
-                    {isDescriptionExpanded ? "Show less" : "Show more"}
-                  </button>
-                ) : null}
-              </div>
-            )}
-          </BriefSummaryReadField>
-          <BriefSummaryReadField field={fields.videoType} onConfirm={onConfirmField}>
-            <BriefVideoTypeMultiSelect
-              value={fields.videoType.value}
-              onChange={(value) => onFieldChange("videoType", value)}
-            />
-          </BriefSummaryReadField>
-          <BriefSummaryReadField field={fields.platform} onConfirm={onConfirmField}>
-            {editingFieldId === "platform" ? (
-              <BriefDeliverablePlatformSelect
-                value={fields.platform.value}
-                onChange={(value) => {
-                  onFieldChange("platform", value);
-                  stopEditing();
-                }}
-              />
-            ) : (
-              <BriefSummaryValueButton value={fields.platform.value} onClick={() => setEditingFieldId("platform")} />
-            )}
-          </BriefSummaryReadField>
-        </BriefSummaryContainer>
-
-        <BriefSummaryContainer
-          title="Purpose and audience"
-          onDeepEdit={() => onGoToStep("purposeAudience")}
-          onRegenerate={() => regenerateSection(["purpose", "audience", "callToAction"])}
-        >
-          <BriefSummaryPair
-            editingFieldId={editingFieldId}
-            field={fields.purpose}
-            onChange={onFieldChange}
-            onConfirm={onConfirmField}
-            onEdit={setEditingFieldId}
-            onKeyDown={handleEditKeyDown}
-            onStopEditing={stopEditing}
-          >
-            <BriefPurposeSelect value={fields.purpose.value} onChange={(value) => onFieldChange("purpose", value)} />
-          </BriefSummaryPair>
-          <BriefSummaryPair
-            editingFieldId={editingFieldId}
-            field={fields.audience}
-            onChange={onFieldChange}
-            onConfirm={onConfirmField}
-            onEdit={setEditingFieldId}
-            onKeyDown={handleEditKeyDown}
-            onStopEditing={stopEditing}
-          />
-          <BriefSummaryPair
-            editingFieldId={editingFieldId}
-            field={fields.callToAction}
-            label="CTA"
-            onChange={onFieldChange}
-            onConfirm={onConfirmField}
-            onEdit={setEditingFieldId}
-            onKeyDown={handleEditKeyDown}
-            onStopEditing={stopEditing}
-          >
-            <BriefCallToActionSelect
-              value={fields.callToAction.value}
-              onChange={(value) => onFieldChange("callToAction", value)}
-            />
-          </BriefSummaryPair>
-        </BriefSummaryContainer>
-
-        <BriefSummaryContainer
-          title="Look and feel"
-          onDeepEdit={() => onGoToStep("lookFeel")}
-          onRegenerate={() => regenerateSection(["feeling", "referenceVideos", "brandKit"])}
-        >
-          <BriefSummaryReadField field={fields.feeling} onConfirm={onConfirmField}>
-            {editingFieldId === "feeling" ? (
-              <BriefMultiSelect
-                ariaLabel="Tone options"
-                options={briefToneOptions}
-                value={fields.feeling.value}
-                onChange={(value) => onFieldChange("feeling", value)}
-              />
-            ) : (
-              <button className="brief-summary-chip-row" type="button" onClick={() => setEditingFieldId("feeling")}>
-                {parseMultiSelectValue(fields.feeling.value).length > 0 ? (
-                  parseMultiSelectValue(fields.feeling.value).map((tone) => (
-                    <span className="brief-tone-chip selected label-s-semibold" key={tone}>
-                      {tone}
-                    </span>
-                  ))
-                ) : (
-                  <BriefSummaryEmptyValue />
-                )}
-              </button>
-            )}
-          </BriefSummaryReadField>
-          <BriefSummaryReadField field={fields.referenceVideos} onConfirm={onConfirmField}>
-            <BriefReferenceVideosField
-              value={fields.referenceVideos.value}
-              onChange={(value) => onFieldChange("referenceVideos", value)}
-            />
-          </BriefSummaryReadField>
-          <BriefSummaryReadField field={fields.brandKit} onConfirm={onConfirmField}>
-            <BriefBrandKitPicker
-              value={fields.brandKit.value}
-              onChange={(value) => onFieldChange("brandKit", value)}
-            />
-          </BriefSummaryReadField>
-        </BriefSummaryContainer>
-
-        <BriefSummaryContainer
-          title="Content and production"
-          onDeepEdit={() => onGoToStep("contentProduction")}
-          onRegenerate={() => regenerateSection(["liveFootage", "voiceover"])}
-        >
-          <BriefSummaryReadField field={fields.liveFootage} onConfirm={onConfirmField}>
-            {expandedProductionField === "liveFootage" ? (
-              <BriefLiveFootageToggle
-                value={fields.liveFootage.value}
-                onChange={(value) => onFieldChange("liveFootage", value)}
-              />
-            ) : (
-              <BriefSummaryValueButton
-                value={formatLiveFootageSummary(fields.liveFootage.value)}
-                onClick={() => setExpandedProductionField("liveFootage")}
-              />
-            )}
-          </BriefSummaryReadField>
-          <BriefSummaryReadField field={fields.voiceover} onConfirm={onConfirmField}>
-            {expandedProductionField === "voiceover" ? (
-              <BriefVoiceoverControl
-                value={fields.voiceover.value}
-                onChange={(value) => onFieldChange("voiceover", value)}
-              />
-            ) : (
-              <BriefSummaryValueButton
-                value={formatVoiceoverSummary(fields.voiceover.value)}
-                onClick={() => setExpandedProductionField("voiceover")}
-              />
-            )}
-          </BriefSummaryReadField>
-        </BriefSummaryContainer>
-
-        <BriefSummaryContainer
-          title="Deliverables and timing"
-          onDeepEdit={() => onGoToStep("deliverablesTiming")}
-          onRegenerate={() => regenerateSection(["deliverables"])}
-        >
-          <BriefSummaryReadField field={fields.deliverables} onConfirm={onConfirmField}>
-            <BriefSummaryDeliverablesTable
-              editingCell={editingDeliverableCell}
-              fallbackDeadline={fields.deadline.value}
-              onChange={(value) => onFieldChange("deliverables", value)}
-              onEditCell={setEditingDeliverableCell}
-              value={fields.deliverables.value}
-            />
-          </BriefSummaryReadField>
-        </BriefSummaryContainer>
+      <BriefSummarySpecStrip specGroups={summaryModel.specGroups} onJump={jumpToStep} />
+      <div className="brief-summary-deliverables-panel">
+        <BriefSummaryCardHead
+          index="03"
+          title="Additional versions"
+          status="confident"
+          statusLabel="Additional versions"
+          onRegenerate={() => undefined}
+        />
+        <BriefSummaryDeliverablesTable
+          editingCell={editingDeliverableCell}
+          fallbackDeadline={fields.deadline.value}
+          onChange={(value) => onFieldChange("deliverables", value)}
+          onEditCell={setEditingDeliverableCell}
+          primaryDeadline={primaryDeliverable.deadline || fields.deadline.value}
+          value={fields.deliverables.value}
+        />
       </div>
-      {missingFields.length > 0 ? (
+      {summaryMissingCount > 0 ? (
         <div className="brief-summary-approval-note label-xs-semibold">
-          {missingFields.length} fields still need attention.
-          {firstMissingStepId ? (
-            <button type="button" onClick={() => onGoToStep(firstMissingStepId)}>
-              Jump to first missing
-            </button>
-          ) : null}
+          <span>
+            <strong>{summaryMissingCount}</strong>{" "}
+            {summaryMissingCount === 1 ? "thing to confirm before you approve." : "things to confirm before you approve."}
+          </span>
+          <button type="button" onClick={jumpToFirstMissing}>
+            Start here
+          </button>
         </div>
       ) : null}
     </section>
   );
 }
 
+function BriefSummaryCardHead({
+  index,
+  onRegenerate,
+  status,
+  statusLabel,
+  title,
+}: {
+  index: string;
+  onRegenerate: () => void;
+  status: ConfidenceState;
+  statusLabel: string;
+  title: string;
+}) {
+  return (
+    <div className="brief-summary-card-head">
+      <span className="brief-summary-card-title">
+        <span className="brief-summary-card-number label-xs-semibold" aria-hidden="true">
+          {index}
+        </span>
+        <span className="brief-summary-section-label label-xs-semibold">{title}</span>
+      </span>
+      <BriefSummaryStatusDot label={statusLabel} status={status} onRegenerate={onRegenerate} />
+    </div>
+  );
+}
+
+type BriefSummaryEditTarget =
+  | BriefFieldId
+  | "logline"
+  | "durationSlot"
+  | "deadlineSlot"
+  | "referenceTitleSlot"
+  | "toneOneSlot"
+  | "toneTwoSlot"
+  | "voiceGenderSlot"
+  | "voiceNameSlot"
+  | "voiceKindSlot";
+
+type BriefSummarySpecId =
+  | "brand-kit"
+  | "captions"
+  | "deadline"
+  | "duration"
+  | "format"
+  | "platform"
+  | "shoot-mode"
+  | "video-type"
+  | "voiceover";
+
+type BriefSummarySpec = {
+  id: BriefSummarySpecId;
+  icon: DsIconName;
+  required: boolean;
+  value: string;
+  subValue: string;
+  target: BriefStepId;
+};
+
+type BriefSummarySpecGroup = {
+  label: string;
+  specs: BriefSummarySpec[];
+};
+
+type WrittenSummaryModel = {
+  audience: string;
+  brandKit: string;
+  brandKitProse: string;
+  callToAction: string;
+  deadline: string;
+  deadlineCountdown: string;
+  deliverablesInline: string;
+  duration: string;
+  durationsJoined: string;
+  platform: string;
+  purpose: string;
+  referenceTitle: string;
+  referenceUrl: string;
+  shootMode: string;
+  shootModeProse: string;
+  footageSource: string;
+  specGroups: BriefSummarySpecGroup[];
+  toneOne: string;
+  toneTwo: string;
+  versionsLabel: string;
+  videoType: string;
+  videoTypeProse: string;
+  voiceGender: string;
+  voiceKind: string;
+  voiceName: string;
+  voiceSpecValue: string;
+  voiceSpecSubValue: string;
+};
+
+function BriefSummarySpecStrip({
+  onJump,
+  specGroups,
+}: {
+  onJump: (target: BriefStepId) => void;
+  specGroups: BriefSummarySpecGroup[];
+}) {
+  const status: ConfidenceState = specGroups.some((group) =>
+    group.specs.some((spec) => spec.required && !spec.value.trim()),
+  )
+    ? "missing"
+    : "confident";
+
+  return (
+    <div className="brief-summary-spec-groups" aria-label="Brief quick specs">
+      <BriefSummaryCardHead
+        index="02"
+        title="Details"
+        status={status}
+        statusLabel="Summary specs"
+        onRegenerate={() => undefined}
+      />
+      <div className="brief-summary-spec-body">
+        {specGroups.map((group) => (
+          <section className="brief-summary-spec-group" key={group.label} aria-label={group.label}>
+            {group.label !== "PRODUCTION" && group.label !== "MAIN VIDEO" ? (
+              <span className="brief-summary-section-label label-xs-semibold">{group.label}</span>
+            ) : null}
+            <div className="brief-summary-spec-strip">
+              {group.specs.map((spec) => {
+                const isMissing = !spec.value.trim();
+                const missingClass = isMissing ? (spec.required ? "is-missing" : "is-optional-missing") : "";
+
+                return (
+                  <button
+                    className={`brief-summary-spec-chip ${missingClass}`}
+                    key={spec.id}
+                    type="button"
+                    onClick={() => onJump(spec.target)}
+                  >
+                    <span className="brief-summary-spec-icon" aria-hidden="true">
+                      <DsIcon name={spec.icon} size={18} />
+                    </span>
+                    <span className="brief-summary-spec-copy">
+                      <strong>{isMissing ? getMissingSummarySpecLabel(spec) : spec.value}</strong>
+                      <span>{isMissing ? (spec.required ? "Required" : "Optional") : spec.subValue}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function getMissingSummarySpecLabel(spec: BriefSummarySpec) {
+  const labels: Record<BriefSummarySpecId, string> = {
+    "brand-kit": "brand kit",
+    captions: "captions",
+    deadline: "deadline",
+    duration: "duration",
+    format: "format",
+    platform: "platform",
+    "shoot-mode": "shoot mode",
+    "video-type": "video type",
+    voiceover: "voiceover",
+  };
+
+  return `${spec.required ? "+ Add" : "Add"} ${labels[spec.id]}`;
+}
+
+function BriefSummaryReferenceLink({
+  field,
+  onConfirm,
+  video,
+}: {
+  field: BriefField;
+  onConfirm: (fieldId: BriefFieldId) => void;
+  video: ReferenceVideoCard;
+}) {
+  const title = getReferenceDisplayTitle(video);
+  const href = getReferenceExternalHref(video.source) || "#brief-summary-reference-video";
+  const isExternal = href.startsWith("http");
+  const isGuess = field.confidence === "guess";
+
+  return (
+    <a
+      className={`brief-written-slot hero brief-summary-reference-link ${isGuess ? "is-guess" : ""}`}
+      href={href}
+      rel={isExternal ? "noreferrer" : undefined}
+      target={isExternal ? "_blank" : undefined}
+      onClick={(event) => {
+        if (!isGuess) {
+          return;
+        }
+
+        event.preventDefault();
+        onConfirm(field.id);
+      }}
+    >
+      {title}
+    </a>
+  );
+}
+
+function BriefSummaryReferenceVideos({ videos }: { videos: ReferenceVideoCard[] }) {
+  return (
+    <div id="brief-summary-reference-video" className="brief-summary-reference-videos" aria-label="Reference videos">
+      {videos.map((video, index) => (
+        <BriefSummaryReferenceVideo video={video} index={index} key={video.id} />
+      ))}
+    </div>
+  );
+}
+
+function BriefSummaryReferenceVideo({ index, video }: { index: number; video: ReferenceVideoCard }) {
+  const embedUrl = getReferenceEmbedUrl(video.source);
+  const videoUrl = getReferenceVideoUrl(video.source);
+  const title = getReferenceDisplayTitle(video);
+
+  return (
+    <article className="brief-summary-reference-video" aria-label={`Reference video ${index + 1}: ${title}`}>
+      <div className="brief-summary-reference-media">
+        {embedUrl ? (
+          <iframe
+            title={title}
+            src={embedUrl}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        ) : videoUrl ? (
+          <video controls preload="metadata" src={videoUrl} aria-label={title} />
+        ) : (
+          <div className="brief-summary-reference-placeholder">
+            <DsIcon name="play" size={20} />
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function BriefWrittenSlot({
+  className,
+  editingFieldId,
+  editor,
+  editTarget,
+  field,
+  label,
+  onConfirm,
+  onEdit,
+  onStopEditing,
+  value,
+}: {
+  className?: "hero" | "supporting";
+  editingFieldId: BriefSummaryEditTarget | null;
+  editor: ReactNode;
+  editTarget: BriefSummaryEditTarget;
+  field: BriefField;
+  label: string;
+  onConfirm: (fieldId: BriefFieldId) => void;
+  onEdit: (fieldId: BriefSummaryEditTarget) => void;
+  onStopEditing: () => void;
+  value: string;
+}) {
+  const isEditing = editingFieldId === editTarget;
+  const isGuess = field.confidence === "guess";
+  const isMissing = !value.trim();
+  const tooltipLabel = isMissing ? `Add ${label}` : isGuess ? `Confirm ${label}` : `Edit ${label}`;
+  const editorRef = useRef<HTMLSpanElement | null>(null);
+
+  useEffect(() => {
+    if (!isEditing) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (target instanceof Node && editorRef.current?.contains(target)) {
+        return;
+      }
+
+      onStopEditing();
+    }
+
+    function handleKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        onStopEditing();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isEditing, onStopEditing]);
+
+  if (isEditing) {
+    return (
+      <span className="brief-written-inline-editor" ref={editorRef}>
+        {editor}
+      </span>
+    );
+  }
+
+  return (
+    <button
+      className={`brief-written-slot ${className ?? ""} ${isGuess ? "is-guess" : ""} ${isMissing ? "is-missing" : ""}`}
+      type="button"
+      aria-label={isMissing ? label : isGuess ? `Confirm ${label}` : `Edit ${label}`}
+      onClick={() => {
+        if (!isMissing && isGuess) {
+          onConfirm(field.id);
+          return;
+        }
+
+        onEdit(editTarget);
+      }}
+    >
+      {value.trim() ? value : <BriefWrittenMissingPill prose />}
+      <span className="brief-written-slot-tooltip label-xs-semibold">{tooltipLabel}</span>
+    </button>
+  );
+}
+
+function BriefWrittenMissingPill({ prose = false }: { prose?: boolean }) {
+  return (
+    <span className="brief-written-missing-pill" aria-hidden="true">
+      {prose ? "…" : ""}
+    </span>
+  );
+}
+
+function createWrittenSummaryModel(
+  fields: BriefFields,
+  deliverableRows: DeliverableRow[],
+  primaryDeliverable: DeliverableRow,
+): WrittenSummaryModel {
+  const videoTypes = parseMultiSelectValue(fields.videoType.value);
+  const tones = parseMultiSelectValue(fields.feeling.value);
+  const referenceVideos = parseReferenceVideos(fields.referenceVideos.value);
+  const referenceVideo = referenceVideos[0];
+  const audiences = parseAudienceList(fields.audience.value).filter(Boolean);
+  const [footageChoice, shooterChoice] = parseLiveFootageValue(fields.liveFootage.value);
+  const [voiceChoice, soundChoice, artistChoice] = parseVoiceoverValue(fields.voiceover.value);
+  const voiceArtist = voiceArtists.find((artist) => artist.name === artistChoice);
+  const voiceKind = voiceArtist?.group === "Human artists" ? "human artist" : artistChoice ? "AI voice" : "";
+  const voiceGender = soundChoice.replace(" voiceover", "");
+  const platform = fields.platform.value || primaryDeliverable.platform;
+  const deadlineValue = primaryDeliverable.deadline || fields.deadline.value;
+  const deadline = formatBriefDate(deadlineValue);
+  const shortDeadline = formatBriefShortDate(deadlineValue);
+  const deadlineCountdown = formatDeadlineCountdown(deadlineValue);
+  const duration = primaryDeliverable.duration === "Custom"
+    ? formatCustomDuration(primaryDeliverable)
+    : formatDurationLabel(primaryDeliverable.duration);
+  const videoType = videoTypes.length > 0 ? videoTypes.join(" + ") : fields.videoType.value;
+  const shootMode =
+    footageChoice === "Shoot new"
+      ? "Shoot new footage"
+      : footageChoice === "Use existing"
+        ? "Use existing footage"
+        : "";
+  const shootModeDetail = footageChoice === "Shoot new" ? shooterChoice : "Shoot mode";
+  const footageSource = shootMode;
+  const voiceSpecValue = artistChoice || (voiceChoice === "No" ? "None" : voiceChoice === "We'll do our own" ? "Own" : "");
+  const voiceSpecSubValue = artistChoice ? [sentenceCase(voiceKind), sentenceCase(voiceGender)].filter(Boolean).join(", ") : "Voiceover";
+  const platformDisplay = formatPlatformForSentence(platform);
+  const captionsState = getDeliverableCaptionOptions(primaryDeliverable).includes("Baked in captions")
+    ? "Captions on"
+    : "Captions off";
+  const durationsJoined = deliverableRows
+    .map((row) => (row.duration === "Custom" ? formatCustomDuration(row) : formatDurationLabel(row.duration)))
+    .filter(Boolean)
+    .join(" + ");
+  const safeReferenceTitle = referenceVideo ? getReferenceDisplayTitle(referenceVideo) : "";
+
+  return {
+    audience: proseCase(joinWithAnd(audiences)),
+    brandKit: fields.brandKit.value,
+    brandKitProse: proseCase(fields.brandKit.value),
+    callToAction: proseCase(getShortOptionLabel(fields.callToAction.value)),
+    deadline,
+    deadlineCountdown,
+    deliverablesInline: formatDeliverablesInline(deliverableRows),
+    duration,
+    durationsJoined,
+    platform: platformDisplay,
+    purpose: proseCase(getShortOptionLabel(fields.purpose.value)),
+    referenceTitle: safeReferenceTitle,
+    referenceUrl: referenceVideo?.source ?? "",
+    shootMode,
+    shootModeProse: sentenceCase(proseCase(shootMode)),
+    footageSource,
+    specGroups: [
+      {
+        label: "MAIN VIDEO",
+        specs: [
+          {
+            id: "duration",
+            icon: "film-slate",
+            required: true,
+            value: duration,
+            subValue: "Duration",
+            target: "deliverablesTiming",
+          },
+          {
+            id: "platform",
+            icon: "play",
+            required: true,
+            value: platformDisplay,
+            subValue: "Platform",
+            target: "deliverablesTiming",
+          },
+          {
+            id: "format",
+            icon: "image-square",
+            required: true,
+            value: primaryDeliverable.format,
+            subValue: "Format",
+            target: "deliverablesTiming",
+          },
+          {
+            id: "captions",
+            icon: "chat-circle",
+            required: true,
+            value: captionsState,
+            subValue: "Captions".trim(),
+            target: "deliverablesTiming",
+          },
+          {
+            id: "deadline",
+            icon: "push-pin-simple",
+            required: true,
+            value: shortDeadline,
+            subValue: deadlineCountdown || "Deadline",
+            target: "deliverablesTiming",
+          },
+        ],
+      },
+      {
+        label: "PRODUCTION",
+        specs: [
+          {
+            id: "video-type",
+            icon: "film-strip",
+            required: true,
+            value: videoType,
+            subValue: "Video type",
+            target: "basics",
+          },
+          {
+            id: "shoot-mode",
+            icon: "video-camera",
+            required: true,
+            value: shootMode,
+            subValue: shootModeDetail,
+            target: "contentProduction",
+          },
+          {
+            id: "voiceover",
+            icon: "speaker-high",
+            required: false,
+            value: voiceSpecValue,
+            subValue: voiceSpecSubValue,
+            target: "contentProduction",
+          },
+          {
+            id: "brand-kit",
+            icon: "image-square",
+            required: false,
+            value: fields.brandKit.value,
+            subValue: "Brand kit",
+            target: "lookFeel",
+          },
+        ],
+      },
+    ],
+    toneOne: proseCase(tones[0] ?? ""),
+    toneTwo: proseCase(tones[1] ?? ""),
+    versionsLabel: `${deliverableRows.length} ${deliverableRows.length === 1 ? "version" : "versions"}`,
+    videoType,
+    videoTypeProse: proseCase(videoType),
+    voiceGender,
+    voiceKind,
+    voiceName: artistChoice,
+    voiceSpecValue,
+    voiceSpecSubValue,
+  };
+}
+
+function getShortOptionLabel(value: string) {
+  return value.split(" - ")[0]?.trim() ?? value;
+}
+
+function proseCase(value: string) {
+  const preserveWords = new Set([
+    "AI",
+    "B2B",
+    "ChopChop",
+    "Facebook",
+    "Instagram",
+    "LinkedIn",
+    "Loom",
+    "SRT",
+    "TikTok",
+    "TV",
+    "X",
+    "YouTube",
+  ]);
+
+  return value
+    .split(/(\s+|\/)/)
+    .map((part) => {
+      if (!part.trim() || part === "/") {
+        return part;
+      }
+
+      const cleanPart = part.replace(/[().,]/g, "");
+
+      if (preserveWords.has(cleanPart) || /[A-Z].*[A-Z]/.test(cleanPart)) {
+        return part;
+      }
+
+      return part.toLowerCase();
+    })
+    .join("");
+}
+
+function sentenceCase(value: string) {
+  if (!value.trim()) {
+    return "";
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function formatBriefShortDate(value: string) {
+  const date = parseBriefDateValue(value);
+
+  if (!date) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(date);
+}
+
+function formatDeadlineCountdown(value: string) {
+  const targetDate = parseBriefDateValue(value);
+
+  if (!targetDate) {
+    return "";
+  }
+
+  const today = new Date();
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const targetStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  const dayDifference = Math.round((targetStart.getTime() - todayStart.getTime()) / 86_400_000);
+
+  if (dayDifference === 0) {
+    return "today";
+  }
+
+  if (dayDifference === 1) {
+    return "tomorrow";
+  }
+
+  if (dayDifference > 1) {
+    return `${dayDifference} days away`;
+  }
+
+  if (dayDifference === -1) {
+    return "yesterday";
+  }
+
+  return `${Math.abs(dayDifference)} days ago`;
+}
+
+function parseBriefDateValue(value: string) {
+  const [yearValue, monthValue, dayValue] = value.split("-").map(Number);
+
+  if (!yearValue || !monthValue || !dayValue) {
+    return null;
+  }
+
+  return new Date(yearValue, monthValue - 1, dayValue);
+}
+
+function countSummaryMissingSlots(
+  model: WrittenSummaryModel,
+  rows: DeliverableRow[],
+  fields: BriefFields,
+  logline: Logline,
+) {
+  const loglineValues = [
+    model.duration,
+    model.videoType,
+    model.audience,
+    model.purpose,
+    model.callToAction,
+    model.toneOne,
+    model.toneTwo,
+    model.referenceTitle,
+  ];
+  const loglineSourceFields = [
+    fields.deliverables,
+    fields.videoType,
+    fields.audience,
+    fields.purpose,
+    fields.callToAction,
+    fields.feeling,
+    fields.referenceVideos,
+  ];
+  const loglineNeedsAttention =
+    logline.status === "out_of_sync" ||
+    loglineValues.some((value) => !value.trim()) ||
+    loglineSourceFields.some((field) => field.confidence === "guess");
+  const specValues = model.specGroups
+    .flatMap((group) => group.specs)
+    .filter((spec) => spec.required && !["duration", "video-type"].includes(spec.id))
+    .map((spec) => spec.value);
+  const rowValues = rows.filter((row) => !row.isMain).flatMap((row) => [
+    row.name,
+    row.platform,
+    row.format,
+    row.duration,
+    formatDeliverableCaptionSummary(row),
+  ]);
+
+  return (loglineNeedsAttention ? 1 : 0) + [...specValues, ...rowValues].filter((value) => !value.trim()).length;
+}
+
+function formatDeliverablesInline(rows: DeliverableRow[]) {
+  const deliverableSummaries = rows.map((row) => {
+    const platform = formatPlatformForSentence(row.platform);
+    const format = row.customFormat || row.format;
+    const duration = row.duration === "Custom" ? formatCustomDuration(row) : formatDurationLabel(row.duration);
+    const captions = formatCaptionsForSentence(row);
+    const details = [platform, duration, format.toLowerCase(), captions].filter(Boolean).join(", ");
+
+    return `1× ${row.name} (${details})`;
+  });
+
+  return joinWithAnd(deliverableSummaries);
+}
+
+function joinWithAnd(items: string[]) {
+  if (items.length <= 1) {
+    return items[0] ?? "";
+  }
+
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
+  }
+
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
+function formatPlatformForSentence(value: string) {
+  const cleanValue = value.replace(/\s+\(Main\)$/u, "");
+
+  if (value === "YouTube (Main)") {
+    return "YouTube";
+  }
+
+  if (value === "Instagram (Reels)") {
+    return "Instagram";
+  }
+
+  return cleanValue;
+}
+
+function formatCaptionsForSentence(row: DeliverableRow) {
+  const options = getDeliverableCaptionOptions(row);
+
+  if (options.includes("None")) {
+    return "captions off";
+  }
+
+  if (options.includes("SRT file") && options.includes("Baked in captions")) {
+    return "SRT file and baked-in captions";
+  }
+
+  if (options.includes("SRT file")) {
+    return "SRT file";
+  }
+
+  return "captions on";
+}
+
+function formatCustomDuration(row: DeliverableRow) {
+  const minutes = row.customMinutes ? formatDurationPart(row.customMinutes, "min", "mins") : "";
+  const seconds = row.customSeconds ? formatDurationPart(row.customSeconds, "sec", "secs") : "";
+
+  return [minutes, seconds].filter(Boolean).join(" ") || "Custom";
+}
+
+function formatDurationLabel(value: string) {
+  if (!value.trim() || value === "Custom") {
+    return value;
+  }
+
+  return value
+    .replace(/(\d+)m/gu, (_, amount: string) => formatDurationPart(amount, "min", "mins"))
+    .replace(/(\d+)s/gu, (_, amount: string) => formatDurationPart(amount, "sec", "secs"));
+}
+
+function formatDurationPart(amount: string, singular: string, plural: string) {
+  return `${amount} ${amount === "1" ? singular : plural}`;
+}
+
 function BriefSummaryLogline({
-  isEditing,
+  deliverableRows,
+  editingFieldId,
+  fields,
   logline,
+  model,
   onChange,
+  onConfirm,
   onEdit,
   onKeyDown,
   onRegenerate,
   onStopEditing,
+  primaryDeliverable,
 }: {
-  isEditing: boolean;
+  deliverableRows: DeliverableRow[];
+  editingFieldId: BriefSummaryEditTarget | null;
+  fields: BriefFields;
   logline: Logline;
-  onChange: (value: string) => void;
-  onEdit: () => void;
+  model: WrittenSummaryModel;
+  onChange: (fieldId: BriefFieldId, value: string) => void;
+  onConfirm: (fieldId: BriefFieldId) => void;
+  onEdit: (fieldId: BriefSummaryEditTarget) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onRegenerate: () => void;
   onStopEditing: () => void;
+  primaryDeliverable: DeliverableRow;
 }) {
-  const statusCopy = logline.status === "out_of_sync" ? "Out of sync" : logline.status === "synced" ? "Synced" : "";
-  const displayValue = logline.text || "AI is writing your one-line pitch...";
+  const referenceVideos = parseReferenceVideos(fields.referenceVideos.value).slice(0, 3);
+  const referenceVideo = referenceVideos[0];
+  const extraReferenceCount = Math.max(referenceVideos.length - 1, 0);
+  const status = getSummaryLoglineConfidence(fields, model, logline);
+  const selectedVideoType = parseMultiSelectValue(fields.videoType.value)[0] ?? "";
+  const selectedTones = parseMultiSelectValue(fields.feeling.value);
+
+  function updatePrimaryDeliverable(updates: Partial<DeliverableRow>) {
+    const rows = deliverableRows.length > 0 ? deliverableRows : [primaryDeliverable];
+    const nextRows = rows.map((row, index) => (index === 0 || row.isMain ? { ...row, ...updates } : row));
+
+    onChange("deliverables", serialiseDeliverables(nextRows));
+  }
+
+  function updateToneAtIndex(index: number, nextTone: string) {
+    const nextTones = [...selectedTones];
+
+    nextTones[index] = nextTone;
+    onChange("feeling", nextTones.filter(Boolean).slice(0, 3).join(", "));
+  }
 
   return (
     <section className="brief-summary-logline" aria-label="Logline">
-      <div className="brief-summary-logline-top">
-        <span className="label-xs-semibold">Logline</span>
-        <span>
-          {statusCopy ? <span className={`brief-logline-state label-xs-semibold ${logline.status}`}>{statusCopy}</span> : null}
-          <button
-            className="brief-field-regenerate"
-            type="button"
-            aria-label="Regenerate logline"
-            data-tooltip="Regenerate logline"
-            onClick={onRegenerate}
-          >
-            <DsIcon name="arrows-clockwise" size={15} />
-          </button>
-        </span>
+      <BriefSummaryCardHead index="01" title="Logline" status={status} statusLabel="Logline" onRegenerate={onRegenerate} />
+      <div className="brief-summary-logline-prose">
+        <p>
+          A{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="durationSlot"
+            editingFieldId={editingFieldId}
+            field={fields.deliverables}
+            label="Duration"
+            value={model.duration}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefDeliverableDurationControl
+                autoOpen
+                row={primaryDeliverable}
+                onChange={(updates) => {
+                  updatePrimaryDeliverable(updates);
+
+                  if (updates.duration !== "Custom") {
+                    onStopEditing();
+                  }
+                }}
+              />
+            }
+          />{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="videoType"
+            editingFieldId={editingFieldId}
+            field={fields.videoType}
+            label="Video type"
+            value={model.videoTypeProse}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefInlineSelect
+                autoOpen
+                ariaLabel="Choose video type"
+                options={briefVideoTypeDetails.map((videoType) => videoType.name)}
+                placeholder="Choose video type"
+                value={selectedVideoType}
+                onChange={(value) => onChange("videoType", value)}
+                onCommit={onStopEditing}
+              />
+            }
+          />{" "}
+          for{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="audience"
+            editingFieldId={editingFieldId}
+            field={fields.audience}
+            label="Audience"
+            value={model.audience}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <input
+                autoFocus
+                className="brief-summary-inline-input label-s"
+                value={fields.audience.value}
+                onBlur={onStopEditing}
+                onChange={(event) => onChange("audience", event.target.value)}
+                onKeyDown={onKeyDown}
+              />
+            }
+          />{" "}
+          that raises{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="purpose"
+            editingFieldId={editingFieldId}
+            field={fields.purpose}
+            label="Purpose"
+            value={model.purpose}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefInlineSelect
+                autoOpen
+                ariaLabel="Choose purpose"
+                options={briefPurposeOptions}
+                placeholder="Choose purpose"
+                value={fields.purpose.value}
+                onChange={(value) => onChange("purpose", value)}
+                onCommit={onStopEditing}
+              />
+            }
+          />{" "}
+          and drives them to{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="callToAction"
+            editingFieldId={editingFieldId}
+            field={fields.callToAction}
+            label="Call to action"
+            value={model.callToAction}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefInlineSelect
+                autoOpen
+                ariaLabel="Choose call to action"
+                options={briefCallToActionOptions}
+                placeholder="Choose call to action"
+                value={fields.callToAction.value}
+                onChange={(value) => onChange("callToAction", value)}
+                onCommit={onStopEditing}
+              />
+            }
+          />
+          . It feels{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="toneOneSlot"
+            editingFieldId={editingFieldId}
+            field={fields.feeling}
+            label="Tone"
+            value={model.toneOne}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefInlineSelect
+                autoOpen
+                ariaLabel="Choose first tone"
+                options={briefToneOptions}
+                placeholder="Choose tone"
+                value={selectedTones[0] ?? ""}
+                onChange={(value) => updateToneAtIndex(0, value)}
+                onCommit={onStopEditing}
+              />
+            }
+          />{" "}
+          and{" "}
+          <BriefWrittenSlot
+            className="hero"
+            editTarget="toneTwoSlot"
+            editingFieldId={editingFieldId}
+            field={fields.feeling}
+            label="Tone"
+            value={model.toneTwo}
+            onConfirm={onConfirm}
+            onEdit={onEdit}
+            onStopEditing={onStopEditing}
+            editor={
+              <BriefInlineSelect
+                autoOpen
+                ariaLabel="Choose second tone"
+                options={briefToneOptions}
+                placeholder="Choose tone"
+                value={selectedTones[1] ?? ""}
+                onChange={(value) => updateToneAtIndex(1, value)}
+                onCommit={onStopEditing}
+              />
+            }
+          />
+          , styled after{" "}
+          {referenceVideo ? (
+            <>
+              <BriefSummaryReferenceLink field={fields.referenceVideos} onConfirm={onConfirm} video={referenceVideo} />
+              {extraReferenceCount > 0
+                ? ` and ${extraReferenceCount} more reference${extraReferenceCount === 1 ? "" : "s"}`
+                : null}
+            </>
+          ) : (
+            <BriefWrittenSlot
+              className="hero"
+              editTarget="referenceTitleSlot"
+              editingFieldId={editingFieldId}
+              field={fields.referenceVideos}
+              label="Reference"
+              value={model.referenceTitle}
+              onConfirm={onConfirm}
+              onEdit={onEdit}
+              onStopEditing={onStopEditing}
+              editor={
+                <BriefReferenceVideosField
+                  value={fields.referenceVideos.value}
+                  onChange={(value) => onChange("referenceVideos", value)}
+                />
+              }
+            />
+          )}
+          .
+        </p>
+        {referenceVideos.length > 0 ? <BriefSummaryReferenceVideos videos={referenceVideos} /> : null}
       </div>
-      {isEditing ? (
-        <input
-          autoFocus
-          className="brief-summary-logline-input"
-          value={logline.text}
-          aria-label="Brief logline"
-          onBlur={onStopEditing}
-          onChange={(event) => onChange(event.target.value)}
-          onKeyDown={onKeyDown}
-        />
-      ) : (
-        <button className={`brief-summary-logline-value ${logline.text ? "" : "is-placeholder"}`} type="button" onClick={onEdit}>
-          {displayValue}
-        </button>
-      )}
     </section>
   );
+}
+
+function BriefSummaryStatusDot({
+  label,
+  onRegenerate,
+  status,
+}: {
+  label: string;
+  onRegenerate: () => void;
+  status: ConfidenceState;
+}) {
+  const [isRegenerating, setIsRegenerating] = useState(false);
+  const statusLabel = status === "guess" ? "Uncertain" : confidenceChipLabels[status].label;
+
+  function handleRegenerate() {
+    setIsRegenerating(true);
+    onRegenerate();
+    window.setTimeout(() => setIsRegenerating(false), 420);
+  }
+
+  return (
+    <BriefStatusDotControl
+      isRegenerating={isRegenerating}
+      label={label}
+      onRegenerate={handleRegenerate}
+      status={status}
+      statusLabel={statusLabel}
+    />
+  );
+}
+
+function BriefStatusDotControl({
+  isRegenerating,
+  label,
+  onEdit,
+  onRegenerate,
+  status,
+  statusLabel,
+}: {
+  isRegenerating: boolean;
+  label: string;
+  onEdit?: () => void;
+  onRegenerate: () => void;
+  status: ConfidenceState;
+  statusLabel: string;
+}) {
+  const statusCopy =
+    status === "missing"
+      ? "Brisk AI needs more brief details before it can complete this."
+      : status === "guess"
+        ? "Brisk AI made a best guess. Refresh to regenerate this from the current brief."
+        : "Brisk AI is confident based on the current brief.";
+  const actionLabel = status === "missing" ? "Ask AI to try again" : "Refresh AI";
+
+  return (
+    <span className="brief-status-dot-wrap">
+      <button
+        className={`brief-status-dot confidence-${status} ${isRegenerating ? "is-regenerating" : ""}`}
+        type="button"
+        aria-label={`${actionLabel} for ${label}. Currently ${statusLabel}.`}
+        onClick={onRegenerate}
+      >
+        <DsIcon name="sparkle" size={12} />
+      </button>
+      <span className="brief-status-tooltip" role="tooltip">
+        <span className="brief-status-tooltip-copy label-xs-semibold">{statusCopy}</span>
+        <span className="brief-status-tooltip-actions">
+          {onEdit ? (
+            <button className="brief-status-tooltip-action" type="button" onClick={onEdit}>
+              <DsIcon name="pencil-simple" size={13} />
+              <span>Edit</span>
+            </button>
+          ) : null}
+          <button className="brief-status-tooltip-action" type="button" onClick={onRegenerate}>
+            <span className={`brief-status-tooltip-icon ${isRegenerating ? "is-regenerating" : ""}`}>
+              <DsIcon name="arrow-clockwise" size={14} />
+            </span>
+            <span>{actionLabel}</span>
+          </button>
+        </span>
+      </span>
+    </span>
+  );
+}
+
+function getSummaryLoglineConfidence(fields: BriefFields, model: WrittenSummaryModel, logline: Logline): ConfidenceState {
+  const requiredValues = [
+    model.duration,
+    model.videoTypeProse,
+    model.audience,
+    model.purpose,
+    model.callToAction,
+    model.toneOne,
+    model.toneTwo,
+    model.referenceTitle,
+  ];
+
+  if (requiredValues.some((value) => !value.trim())) {
+    return "missing";
+  }
+
+  const sourceFields = [
+    fields.deliverables,
+    fields.videoType,
+    fields.audience,
+    fields.purpose,
+    fields.callToAction,
+    fields.feeling,
+    fields.referenceVideos,
+  ];
+
+  if (logline.status === "out_of_sync" || sourceFields.some((field) => field.confidence === "guess")) {
+    return "guess";
+  }
+
+  return "confident";
 }
 
 function BriefSummaryContainer({
@@ -3908,45 +5105,31 @@ function BriefSummaryReadField({
   field,
   label,
   onConfirm,
+  onRegenerate,
 }: {
   children: ReactNode;
   field: BriefField;
   label?: string;
   onConfirm: (fieldId: BriefFieldId) => void;
+  onRegenerate: (fieldId: BriefFieldId) => void;
 }) {
+  const readFieldRef = useRef<HTMLDivElement | null>(null);
+
+  function focusReadFieldControl() {
+    const focusable = readFieldRef.current?.querySelector<HTMLElement>(
+      "input, textarea, select, button:not(.brief-status-dot)",
+    );
+    focusable?.focus();
+  }
+
   return (
-    <div className="brief-summary-read-field">
+    <div className="brief-summary-read-field" ref={readFieldRef}>
       <div className="brief-summary-field-label">
         <span className="label-s-semibold">{label ?? field.label}</span>
-        <BriefSummaryConfidenceChip field={field} onConfirm={onConfirm} />
+        <BriefFieldStatusDot field={field} onEdit={focusReadFieldControl} onRegenerate={onRegenerate} />
       </div>
       {children}
     </div>
-  );
-}
-
-function BriefSummaryConfidenceChip({
-  field,
-  onConfirm,
-}: {
-  field: BriefField;
-  onConfirm: (fieldId: BriefFieldId) => void;
-}) {
-  const confidence = confidenceChipLabels[field.confidence];
-
-  return field.confidence === "guess" ? (
-    <button
-      className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`}
-      type="button"
-      title={confidence.helper}
-      onClick={() => onConfirm(field.id)}
-    >
-      {confidence.label}
-    </button>
-  ) : (
-    <span className={`brief-confidence-chip confidence-${confidence.state} label-xs-semibold`} title={confidence.helper}>
-      {confidence.label}
-    </span>
   );
 }
 
@@ -3959,6 +5142,7 @@ function BriefSummaryPair({
   onConfirm,
   onEdit,
   onKeyDown,
+  onRegenerate,
   onStopEditing,
 }: {
   children?: ReactNode;
@@ -3969,6 +5153,7 @@ function BriefSummaryPair({
   onConfirm: (fieldId: BriefFieldId) => void;
   onEdit: (fieldId: BriefFieldId) => void;
   onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onRegenerate: (fieldId: BriefFieldId) => void;
   onStopEditing: () => void;
 }) {
   const isEditing = editingFieldId === field.id;
@@ -3977,7 +5162,7 @@ function BriefSummaryPair({
     <div className="brief-summary-pair">
       <div className="brief-summary-pair-label">
         <span className="label-s-semibold">{label ?? field.label}</span>
-        <BriefSummaryConfidenceChip field={field} onConfirm={onConfirm} />
+        <BriefFieldStatusDot field={field} onEdit={() => onEdit(field.id)} onRegenerate={onRegenerate} />
       </div>
       <div className="brief-summary-pair-value">
         {isEditing ? (
@@ -4020,7 +5205,7 @@ function BriefSummaryValueButton({
 function BriefSummaryEmptyValue() {
   return (
     <span className="brief-summary-empty-value">
-      — Not set — <span>+ Add</span>
+      - Not set - <span>+ Add</span>
     </span>
   );
 }
@@ -4030,15 +5215,18 @@ function BriefSummaryDeliverablesTable({
   fallbackDeadline,
   onChange,
   onEditCell,
+  primaryDeadline,
   value,
 }: {
   editingCell: string | null;
   fallbackDeadline: string;
   onChange: (value: string) => void;
   onEditCell: (cellId: string | null) => void;
+  primaryDeadline: string;
   value: string;
 }) {
   const rows = parseDeliverables(value, fallbackDeadline);
+  const additionalRows = rows.filter((row) => !row.isMain);
 
   function updateRows(nextRows: DeliverableRow[]) {
     onChange(serialiseDeliverables(nextRows));
@@ -4049,99 +5237,194 @@ function BriefSummaryDeliverablesTable({
   }
 
   function addRow() {
-    const previousRow = rows[rows.length - 1];
-    const rowNames = ["Reels cutdown", "Square cut", "Shorts cut", "Paid social cut"];
-    const nextName = rowNames[Math.max(0, rows.length - 1)] ?? `Version ${rows.length + 1}`;
+    const rowNames = ["Platform cutdown", "Square cut", "Shorts cut", "Paid social cut"];
+    const nextName = rowNames[additionalRows.length] ?? `Version ${additionalRows.length + 2}`;
 
-    updateRows([...rows, createBlankDeliverableRow(nextName, previousRow?.deadline ?? fallbackDeadline)]);
+    updateRows([...rows, createBlankDeliverableRow(nextName, "")]);
   }
 
   return (
     <div className="brief-summary-deliverables">
-      <table className="brief-deliverables-table brief-deliverables-table-summary">
-        <thead>
-          <tr>
-            <BriefDeliverablesHeader title="Deliverable" />
-            <BriefDeliverablesHeader title="Format" />
-            <BriefDeliverablesHeader title="Duration" />
-            <BriefDeliverablesHeader title="Captions" />
-            <BriefDeliverablesHeader title="Deadline" />
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr className={row.isMain ? "is-main" : ""} key={row.id}>
-              <td>
-                <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
-              </td>
-              <td>
-                {editingCell === `${row.id}:format` ? (
-                  <BriefDeliverableFormatControl
-                    row={row}
-                    onChange={(updates) => {
-                      updateRow(row.id, updates);
-                      onEditCell(null);
-                    }}
-                  />
-                ) : (
-                  <button className="brief-summary-static-chip label-xs-semibold" type="button" onClick={() => onEditCell(`${row.id}:format`)}>
-                    {row.format || "—"}
-                  </button>
-                )}
-              </td>
-              <td>
-                {editingCell === `${row.id}:duration` ? (
-                  <BriefDeliverableDurationControl
-                    row={row}
-                    onChange={(updates) => {
-                      updateRow(row.id, updates);
-                      onEditCell(null);
-                    }}
-                  />
-                ) : (
-                  <button className="brief-summary-static-chip label-xs-semibold" type="button" onClick={() => onEditCell(`${row.id}:duration`)}>
-                    {row.duration || "—"}
-                  </button>
-                )}
-              </td>
-              <td>
-                {editingCell === `${row.id}:captions` ? (
-                  <BriefDeliverableCaptionsControl
-                    row={row}
-                    onChange={(updates) => updateRow(row.id, updates)}
-                  />
-                ) : (
-                  <button
-                    className="brief-summary-static-chip label-xs-semibold"
-                    type="button"
-                    aria-label={`Captions ${formatDeliverableCaptionSummary(row)}`}
-                    onClick={() => onEditCell(`${row.id}:captions`)}
-                  >
-                    {formatDeliverableCaptionSummary(row)}
-                  </button>
-                )}
-              </td>
-              <td>
-                <BriefDeliverableDeadlineControl
-                  value={row.deadline}
-                  onChange={(deadline) => updateRow(row.id, { deadline })}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
-        + Add version
-      </button>
+      {additionalRows.length > 0 ? (
+        <>
+          <table className="brief-deliverables-table brief-deliverables-table-summary">
+            <thead>
+              <tr>
+                <BriefDeliverablesHeader title="Deliverable" />
+                <BriefDeliverablesHeader title="Platform" />
+                <BriefDeliverablesHeader title="Format" />
+                <BriefDeliverablesHeader title="Duration" />
+                <BriefDeliverablesHeader title="Captions" />
+                <BriefDeliverablesHeader title="Deadline" />
+              </tr>
+            </thead>
+            <tbody>
+              {additionalRows.map((row, index) => (
+                <tr key={row.id}>
+                  <td>
+                    <span className="brief-summary-deliverable-name">
+                      <span className="brief-summary-deliverable-number label-xs-semibold" aria-hidden="true">
+                        {index + 1}
+                      </span>
+                      <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
+                    </span>
+                  </td>
+                  <td>
+                    {editingCell === `${row.id}:platform` ? (
+                      <BriefDeliverablePlatformSelect
+                        autoOpen
+                        value={row.platform}
+                        onChange={(platform) => {
+                          updateRow(row.id, { platform });
+                          onEditCell(null);
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className={`brief-summary-static-chip label-xs-semibold ${row.platform ? "" : "is-missing"}`}
+                        type="button"
+                        onClick={() => onEditCell(`${row.id}:platform`)}
+                      >
+                        {row.platform ? formatPlatformForSentence(row.platform) : "+ Add platform"}
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {editingCell === `${row.id}:format` ? (
+                      <BriefDeliverableFormatControl
+                        autoOpen
+                        row={row}
+                        onChange={(updates) => {
+                          updateRow(row.id, updates);
+                          onEditCell(null);
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className={`brief-summary-static-chip label-xs-semibold ${row.format ? "" : "is-missing"}`}
+                        type="button"
+                        onClick={() => onEditCell(`${row.id}:format`)}
+                      >
+                        {row.format || "+ Add format"}
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {editingCell === `${row.id}:duration` ? (
+                      <BriefDeliverableDurationControl
+                        autoOpen
+                        row={row}
+                        onChange={(updates) => {
+                          updateRow(row.id, updates);
+                          onEditCell(null);
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className={`brief-summary-static-chip label-xs-semibold ${row.duration ? "" : "is-missing"}`}
+                        type="button"
+                        onClick={() => onEditCell(`${row.id}:duration`)}
+                      >
+                        {row.duration ? formatDurationLabel(row.duration) : "+ Add duration"}
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {editingCell === `${row.id}:captions` ? (
+                      <BriefDeliverableCaptionsControl
+                        row={row}
+                        onChange={(updates) => updateRow(row.id, updates)}
+                      />
+                    ) : (
+                      <button
+                        className="brief-summary-static-chip label-xs-semibold"
+                        type="button"
+                        aria-label={`Captions ${formatDeliverableCaptionSummary(row)}`}
+                        onClick={() => onEditCell(`${row.id}:captions`)}
+                      >
+                        {formatDeliverableCaptionSummary(row)}
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <BriefSummaryDeadlineValue
+                      isInherited={!row.deadline}
+                      label={row.deadline ? formatBriefDate(row.deadline) : "Same as Main Video"}
+                      value={row.deadline || primaryDeadline}
+                      onChange={(deadline) => updateRow(row.id, { deadline })}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+            <DsIcon name="plus" size={14} />
+            <span>Add version</span>
+          </button>
+        </>
+      ) : (
+        <div className="brief-summary-empty-versions">
+          <span className="label-s-semibold">No extra versions yet.</span>
+          <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+            <DsIcon name="plus" size={14} />
+            <span>Add cutdown</span>
+          </button>
+          <span className="label-xs">Reels, square cut, or social ad?</span>
+        </div>
+      )}
     </div>
+  );
+}
+
+function BriefSummaryDeadlineValue({
+  isInherited,
+  label,
+  onChange,
+  value,
+}: {
+  isInherited: boolean;
+  label: string;
+  onChange: (deadline: string) => void;
+  value: string;
+}) {
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  function openDatePicker() {
+    dateInputRef.current?.showPicker();
+  }
+
+  return (
+    <span className="brief-summary-deadline-value">
+      <button
+        className={`brief-summary-static-chip label-xs-semibold ${isInherited ? "is-tertiary" : ""}`}
+        type="button"
+        onClick={openDatePicker}
+      >
+        {label}
+      </button>
+      <input
+        ref={dateInputRef}
+        className="brief-date-native"
+        type="date"
+        aria-label="Additional version deadline"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </span>
   );
 }
 
 function formatLiveFootageSummary(value: string) {
   const [footageChoice, shooterChoice] = parseLiveFootageValue(value);
+  const footageLabel =
+    footageChoice === "Shoot new"
+      ? "Shoot new footage"
+      : footageChoice === "Use existing"
+        ? "Use existing footage"
+        : "";
 
-  return [footageChoice, footageChoice === "Shoot new" ? shooterChoice : ""].filter(Boolean).join(". ");
+  return [footageLabel, footageChoice === "Shoot new" ? shooterChoice : ""].filter(Boolean).join(". ");
 }
 
 function formatVoiceoverSummary(value: string) {
@@ -4304,15 +5587,40 @@ function getDraftForPrompt(
 }
 
 function getClarifyingAudienceAnswer(messages: ChatMessage[]) {
-  const clientMessages = messages.filter((message) => message.role === "client");
-
-  return clientMessages[1]?.body.trim() ?? "";
+  return getClarifyingAnswerAfterQuestion(messages, briefClarifyingQuestions[0] ?? "");
 }
 
 function getClarifyingDescriptionNotes(messages: ChatMessage[]) {
-  const clientMessages = messages.filter((message) => message.role === "client");
+  const descriptionQuestion =
+    briefClarifyingQuestions.find((question) => {
+      const normalisedQuestion = question.toLowerCase();
 
-  return clientMessages[3]?.body.trim() ?? "";
+      return (
+        normalisedQuestion.includes("must") ||
+        normalisedQuestion.includes("include") ||
+        normalisedQuestion.includes("avoid")
+      );
+    }) ??
+    briefClarifyingQuestions[briefClarifyingQuestions.length - 1] ??
+    "";
+
+  return getClarifyingAnswerAfterQuestion(messages, descriptionQuestion);
+}
+
+function getClarifyingAnswerAfterQuestion(messages: ChatMessage[], question: string) {
+  if (!question.trim()) {
+    return "";
+  }
+
+  const questionIndex = messages.findIndex((message) => message.role === "ai" && message.body.includes(question));
+
+  if (questionIndex === -1) {
+    return "";
+  }
+
+  const answer = messages.slice(questionIndex + 1).find((message) => message.role === "client");
+
+  return answer?.body.trim() ?? "";
 }
 
 function getReferenceVideoAttachments(messages: ChatMessage[]) {
@@ -4459,7 +5767,7 @@ function createLoglineFromFields(fields: BriefFields) {
   const description = fields.description.value || "turns source notes into a clear story";
   const trimmedDescription = description.length > 112 ? `${description.slice(0, 109).trim()}...` : description;
 
-  return `${workingTitle} is a ${videoType.toLowerCase()} that ${trimmedDescription.charAt(0).toLowerCase()}${trimmedDescription.slice(1)}`;
+  return sentenceCase(`${workingTitle} is a ${videoType.toLowerCase()} that ${trimmedDescription.charAt(0).toLowerCase()}${trimmedDescription.slice(1)}`);
 }
 
 function countWords(value: string) {

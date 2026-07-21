@@ -55,6 +55,7 @@ const iconPaths = {
   "thumbs-up-like-fill": "/brisk-icons/thumbs-up-like-fill.svg",
   "x-close-cross": "/brisk-icons/x-close-cross.svg",
   "check-circle": "/brisk-icons/check-circle.svg",
+  "sparkle": "/brisk-icons/sparkle.svg",
 } as const;
 
 export type DsIconName = keyof typeof iconPaths;
