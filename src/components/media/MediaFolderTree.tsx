@@ -43,11 +43,13 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
   if (props.collapsed) {
     return (
       <aside className="media-folder-rail is-collapsed" aria-label="Media folders">
-        <button className="media-rail-collapse" type="button" aria-label="Expand folders" data-tooltip="Expand folders" onClick={props.onToggleCollapsed}>
+        <button className="media-rail-collapse" type="button" aria-label="Expand folders" aria-describedby="media-expand-folders-tooltip" onClick={props.onToggleCollapsed}>
           <DsIcon name="caret-right" size={18} />
+          <span className="media-rail-tooltip" id="media-expand-folders-tooltip" role="tooltip">Expand folders</span>
         </button>
-        <button className="media-all-collapsed is-selected" type="button" aria-label="All media" data-tooltip="All media" onClick={() => props.onSelect(null)}>
+        <button className="media-all-collapsed is-selected" type="button" aria-label="All media" aria-describedby="media-all-tooltip" onClick={() => props.onSelect(null)}>
           <DsIcon name="folder-open" size={20} />
+          <span className="media-rail-tooltip" id="media-all-tooltip" role="tooltip">All media</span>
         </button>
       </aside>
     );

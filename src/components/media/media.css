@@ -40,10 +40,12 @@
 }
 
 .media-folder-rail.is-collapsed {
+  z-index: 2;
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: var(--brisk-space-m);
+  overflow: visible;
   padding: var(--brisk-space-l) var(--brisk-space-s);
 }
 
@@ -108,17 +110,40 @@
   color: var(--brisk-text-primary);
 }
 
-.media-folder-rail.is-collapsed [data-tooltip]::after {
+.media-rail-tooltip {
+  position: absolute;
   top: 50%;
-  bottom: auto;
   left: calc(100% + var(--brisk-space-s));
-  --tooltip-x: 0;
+  z-index: 90;
+  width: max-content;
+  max-width: 260px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+  opacity: 0;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+  pointer-events: none;
+  text-align: left;
   transform: translate(var(--brisk-space-xs), -50%);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease;
+  visibility: hidden;
+  white-space: nowrap;
 }
 
-.media-folder-rail.is-collapsed [data-tooltip]:hover::after,
-.media-folder-rail.is-collapsed [data-tooltip]:focus-visible::after {
+.media-rail-collapse:hover .media-rail-tooltip,
+.media-rail-collapse:focus-visible .media-rail-tooltip,
+.media-all-collapsed:hover .media-rail-tooltip,
+.media-all-collapsed:focus-visible .media-rail-tooltip {
+  opacity: 1;
   transform: translate(var(--brisk-space-none), -50%);
+  visibility: visible;
 }
 
 .media-folder-heading [data-tooltip]::after {
