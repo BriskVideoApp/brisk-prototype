@@ -32,17 +32,29 @@ export function MediaStagePage({ project }: { project: Project }) {
   const toastTimeoutRef = useRef<number | null>(null);
   const dragDepthRef = useRef(0);
 
-  const descendantFolderIds = useMemo(() => getDescendantFolderIds(folders, selectedFolderId), [folders, selectedFolderId]);
   const visibleAssets = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
     return [...assets]
-      .filter((asset) => selectedFolderId === null || descendantFolderIds.has(asset.folderId ?? ""))
+      .filter((asset) => selectedFolderId === null || asset.folderId === selectedFolderId)
       .filter((asset) => typeFilter === "all" || asset.kind === typeFilter)
       .filter((asset) => !normalisedQuery || asset.name.toLowerCase().includes(normalisedQuery))
       .sort((left, right) => compareAssets(left, right, sort));
-  }, [assets, descendantFolderIds, query, selectedFolderId, sort, typeFilter]);
+  }, [assets, query, selectedFolderId, sort, typeFilter]);
+  const childFolders = useMemo(
+    () => selectedFolderId === null
+      ? []
+      : folders.filter((folder) => folder.parentId === selectedFolderId).sort((left, right) => left.name.localeCompare(right.name)),
+    [folders, selectedFolderId],
+  );
+  const folderPath = useMemo(() => getFolderPath(folders, selectedFolderId), [folders, selectedFolderId]);
   const activeAsset = assets.find((asset) => asset.id === activeAssetId) ?? null;
   const selectedFolderName = folders.find((folder) => folder.id === selectedFolderId)?.name ?? "All media";
+
+  const selectFolder = (folderId: string | null) => {
+    setSelectedFolderId(folderId);
+    setActiveAssetId(null);
+    setSelectedAssetIds(new Set());
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -198,7 +210,7 @@ export function MediaStagePage({ project }: { project: Project }) {
           folders={folders}
           selectedFolderId={selectedFolderId}
           collapsed={isRailCollapsed}
-          onSelect={setSelectedFolderId}
+          onSelect={selectFolder}
           onAdd={addFolder}
           onRename={(folderId, name) => setFolders((current) => current.map((folder) => folder.id === folderId ? { ...folder, name: name.trim() || folder.name } : folder))}
           onMove={moveFolder}
@@ -231,6 +243,8 @@ export function MediaStagePage({ project }: { project: Project }) {
           />
           <MediaAssetGrid
             assets={visibleAssets}
+            folders={childFolders}
+            folderPath={folderPath}
             viewMode={viewMode}
             selectedAssetIds={selectedAssetIds}
             activeAssetId={activeAssetId}
@@ -248,6 +262,7 @@ export function MediaStagePage({ project }: { project: Project }) {
             onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])}
             onDeselectAll={() => setSelectedAssetIds(new Set())}
             onUpload={() => uploadInputRef.current?.click()}
+            onFolderOpen={selectFolder}
           />
         </section>
         {activeAsset ? (
@@ -303,6 +318,20 @@ function getDescendantFolderIds(folders: MediaFolder[], rootId: string | null) {
     });
   }
   return ids;
+}
+
+function getFolderPath(folders: MediaFolder[], selectedFolderId: string | null) {
+  const path: MediaFolder[] = [];
+  let currentId = selectedFolderId;
+
+  while (currentId) {
+    const folder = folders.find((item) => item.id === currentId);
+    if (!folder) break;
+    path.unshift(folder);
+    currentId = folder.parentId;
+  }
+
+  return path;
 }
 
 function compareAssets(left: MediaAsset, right: MediaAsset, sort: MediaSort) {
