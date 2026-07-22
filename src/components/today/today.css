@@ -4,7 +4,7 @@
 }
 
 .today-shell {
-  --today-sidebar-width: calc(var(--brisk-space-3xl) * 6);
+  --today-sidebar-width: calc(var(--brisk-space-3xl) * 4);
   --today-rail-width: calc(var(--brisk-space-3xl) * 8);
   --today-header-height: 118px;
   display: flex;
@@ -153,27 +153,6 @@
   padding: var(--brisk-space-s) var(--brisk-space-l);
 }
 
-.today-role-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--brisk-space-xs);
-}
-
-.today-role-option {
-  min-height: 28px;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-tertiary);
-  padding: var(--brisk-space-none) var(--brisk-space-s);
-}
-
-.today-role-option:hover,
-.today-role-option.selected {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-}
-
 .today-workspace {
   display: grid;
   min-height: calc(100vh - var(--today-header-height));
@@ -226,13 +205,13 @@
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-bg-elevated-primary);
-  box-shadow: var(--brisk-shadow-s);
+  box-shadow: var(--brisk-shadow-m);
   color: var(--brisk-text-primary);
   content: attr(data-tooltip);
   font-family: var(--font-brisk);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.35;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
   opacity: 0;
   padding: var(--brisk-space-s) var(--brisk-space-m);
   pointer-events: none;
@@ -362,7 +341,6 @@
   --today-flow-icon-colour: var(--brisk-text-primary);
 }
 
-.today-flow-icon-storyboard,
 .today-flow-icon-edit {
   --today-flow-icon-fill: var(--brisk-extra-pink-secondary);
   --today-flow-icon-colour: var(--brisk-text-primary);

@@ -81,7 +81,6 @@ type StoredColumnState = {
 };
 
 const statusTabs: StatusTab[] = ["All", "Queued", "In Production", "Completed", "Paused", "Archived"];
-const prototypeRoles: PrototypeRole[] = ["Producer/Admin", "Studio Staff", "Studio Freelancer", "Customer"];
 const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
 const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
 const projectColumnWidth = 280;
@@ -106,11 +105,34 @@ const stageOrder: { key: StageKey; label: string; icon: StageIconName }[] = [
   { key: "brief", label: "Brief", icon: "clipboard-text" },
   { key: "script", label: "Script", icon: "pen-nib" },
   { key: "shoot", label: "Shoot", icon: "video-camera-ds" },
-  { key: "storyboard", label: "Storyboard", icon: "grid-four" },
   { key: "media", label: "Media", icon: "image-square" },
   { key: "edit", label: "Edit", icon: "stage-edit" },
   { key: "masters", label: "Masters", icon: "film-strip" },
 ];
+
+function getProjectFlowHref(projectId: string) {
+  return `/projects/${projectId}/stages/brief`;
+}
+
+function getProjectStageHref(projectId: string, stage: StageKey) {
+  if (stage === "brief") {
+    return getProjectFlowHref(projectId);
+  }
+
+  if (stage === "script") {
+    return `/projects/${projectId}/script`;
+  }
+
+  if (stage === "edit") {
+    return "/review";
+  }
+
+  return "";
+}
+
+function getProjectStageLinkLabel(stage: StageKey, label: string) {
+  return stage === "edit" ? "Video Review" : label;
+}
 
 const filterLabels: Record<FilterKey, string> = {
   client: "Client",
@@ -141,7 +163,7 @@ export function ActiveVideosPage() {
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
-  const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Producer/Admin");
+  const selectedRole: PrototypeRole = "Producer/Admin";
   const [query, setQuery] = useState("");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -742,22 +764,9 @@ export function ActiveVideosPage() {
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
       <ActiveVideosSidebar selectedRole={selectedRole} />
       <div className="active-videos-main">
-        <section className="active-videos-header" aria-label="Active Videos header">
-          <h1 className="active-videos-title">Active Videos ({activeVideoProjects.length})</h1>
+        <section className="active-videos-header" aria-label="Videos header">
+          <h1 className="active-videos-title">Videos ({activeVideoProjects.length})</h1>
           <div className="active-videos-header-actions">
-            <div className="active-role-switcher" role="group" aria-label="View as role">
-              {prototypeRoles.map((role) => (
-                <button
-                  className={`active-role-option label-s-semibold ${selectedRole === role ? "selected" : ""}`}
-                  type="button"
-                  key={role}
-                  aria-pressed={selectedRole === role}
-                  onClick={() => setSelectedRole(role)}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
             <label className="active-videos-search label-s" htmlFor="active-videos-search">
               <span className="sr-only">Search projects</span>
               <input
@@ -836,7 +845,7 @@ export function ActiveVideosPage() {
         </section>
       ) : null}
 
-      <section className="active-videos-table-frame" aria-label="Active Videos table">
+      <section className="active-videos-table-frame" aria-label="Videos table">
         <div
           className={`active-videos-scroll ${isTableScrolledX ? "has-horizontal-scroll" : ""}`}
           ref={tableScrollRef}
@@ -908,7 +917,8 @@ export function ActiveVideosPage() {
                   droppedColumn={droppedColumn}
                   isMenuOpen={openMenuProjectId === project.id}
                   isSelected={isProjectPanelOpen && panelProjectId === project.id}
-                  onOpenPanel={() => openProjectPanel(project.id)}
+                  onOpenProject={() => router.push(getProjectFlowHref(project.id))}
+                  onOpenDetails={() => openProjectPanel(project.id)}
                   onToggleMenu={() =>
                     setOpenMenuProjectId((current) => (current === project.id ? null : project.id))
                   }
@@ -960,7 +970,7 @@ function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) 
       <nav className="today-sidebar-nav" aria-label="Workspace">
         <Link className="today-sidebar-link active label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
-          Active Videos
+          Videos
         </Link>
         {selectedRole === "Studio Staff" || selectedRole === "Producer/Admin" ? (
           <Link className="today-sidebar-link label-s-semibold" href="/today">
@@ -968,14 +978,6 @@ function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) 
             Today
           </Link>
         ) : null}
-        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
-          <DsIcon name="film-script" size={16} />
-          Script
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/review">
-          <DsIcon name="play" size={16} />
-          Video Review
-        </Link>
       </nav>
     </aside>
   );
@@ -1363,7 +1365,8 @@ function ProjectDetailPanel({
   onClose: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
 }) {
-  const projectHref = `/projects/${project.id}`;
+  const projectBaseHref = `/projects/${project.id}`;
+  const projectFlowHref = getProjectFlowHref(project.id);
   const unreadMessages = project.unreadMessages ?? 0;
   const [panelStatus, setPanelStatus] = useState<Project["status"]>(project.status);
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
@@ -1422,7 +1425,7 @@ function ProjectDetailPanel({
 
   const copyProjectLink = () => {
     if (typeof window !== "undefined" && navigator.clipboard) {
-      void navigator.clipboard.writeText(`${window.location.origin}${projectHref}`);
+      void navigator.clipboard.writeText(`${window.location.origin}${projectFlowHref}`);
     }
     setHasCopiedLink(true);
     window.setTimeout(() => setHasCopiedLink(false), 1400);
@@ -1560,17 +1563,17 @@ function ProjectDetailPanel({
       <div className={`project-detail-panel-body ${isSwitching ? "switching" : ""}`}>
         <section className="project-detail-section">
           <div className="project-detail-actions">
-            <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectHref}>
+            <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
               Open full project
             </a>
-            <a className="project-detail-action-button label-s-semibold" href={`${projectHref}/chat`}>
+            <a className="project-detail-action-button label-s-semibold" href={`${projectBaseHref}/chat`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="chat-circle" size={20} />
                 <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
               </span>
               Open chat
             </a>
-            <a className="project-detail-action-button label-s-semibold" href={`${projectHref}/client-queue`}>
+            <a className="project-detail-action-button label-s-semibold" href={`${projectBaseHref}/client-queue`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="queue" size={20} />
               </span>
@@ -1674,7 +1677,7 @@ function ProjectDetailPanel({
                 </div>
               );
             })}
-            <a className="project-detail-view-all label-s-semibold" href={`${projectHref}/activity`}>
+            <a className="project-detail-view-all label-s-semibold" href={`${projectBaseHref}/activity`}>
               View all
             </a>
           </div>
@@ -1715,7 +1718,7 @@ function ProjectDetailPanel({
               <a className="project-detail-client-link label-s-semibold" href={`mailto:${panelClientEmail}`}>
                 {panelClientEmail}
               </a>
-              <a className="project-detail-client-link label-s-semibold" href={`${projectHref}/client-portal`}>
+              <a className="project-detail-client-link label-s-semibold" href={`${projectBaseHref}/client-portal`}>
                 Open client portal
               </a>
               <span className="project-detail-client-meta label-xs">
@@ -2316,7 +2319,8 @@ function ProjectRow({
   droppedColumn,
   isMenuOpen,
   isSelected,
-  onOpenPanel,
+  onOpenDetails,
+  onOpenProject,
   onToggleMenu,
 }: {
   project: Project;
@@ -2339,10 +2343,12 @@ function ProjectRow({
   droppedColumn: DataColumnKey | null;
   isMenuOpen: boolean;
   isSelected: boolean;
-  onOpenPanel: () => void;
+  onOpenDetails: () => void;
+  onOpenProject: () => void;
   onToggleMenu: () => void;
 }) {
-  const projectHref = `/projects/${project.id}`;
+  const projectBaseHref = `/projects/${project.id}`;
+  const projectFlowHref = getProjectFlowHref(project.id);
   const latestUpdateFullDate = formatFullTimestamp(project.latestUpdate.timestamp);
   const latestUpdateAccessibleLabel = `${project.latestUpdate.label} · ${latestUpdateFullDate}`;
 
@@ -2359,12 +2365,20 @@ function ProjectRow({
           return;
         }
 
-        onOpenPanel();
+        const cell = target instanceof HTMLElement ? target.closest("td") : null;
+
+        if (cell?.classList.contains("project-cell") || cell?.classList.contains("column-progress")) {
+          onOpenProject();
+          return;
+        }
+
+        onOpenDetails();
       }}
     >
       <ProjectCell
         project={project}
-        projectHref={projectHref}
+        projectBaseHref={projectBaseHref}
+        projectFlowHref={projectFlowHref}
         tags={tags}
         tagOptions={tagOptions}
         tagClasses={tagClasses}
@@ -2389,6 +2403,7 @@ function ProjectRow({
           onToggleDeadline={onToggleDeadline}
           onSaveDeadline={onSaveDeadline}
           isMenuOpen={isMenuOpen}
+          onOpenDetails={onOpenDetails}
           onToggleMenu={onToggleMenu}
         />
       ))}
@@ -2398,7 +2413,8 @@ function ProjectRow({
 
 function ProjectCell({
   project,
-  projectHref,
+  projectBaseHref,
+  projectFlowHref,
   tags,
   tagOptions,
   tagClasses,
@@ -2409,7 +2425,8 @@ function ProjectCell({
   onCreateTag,
 }: {
   project: Project;
-  projectHref: string;
+  projectBaseHref: string;
+  projectFlowHref: string;
   tags: string[];
   tagOptions: string[];
   tagClasses: Record<string, TagClass>;
@@ -2455,13 +2472,13 @@ function ProjectCell({
       <div className="project-cell-inner">
         <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
         <div className="project-title-row">
-          <a className="project-title heading-3xs" href={projectHref} onClick={(event) => event.stopPropagation()}>
+          <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
             {project.name}
           </a>
           <div className="project-quick-actions" aria-label={`Quick actions for ${project.name}`}>
             <a
               className="project-quick-action"
-              href={`${projectHref}/chat`}
+              href={`${projectBaseHref}/chat`}
               aria-label={chatTooltip}
               data-tooltip={chatTooltip}
               onClick={(event) => event.stopPropagation()}
@@ -2471,7 +2488,7 @@ function ProjectCell({
             </a>
             <a
               className="project-quick-action"
-              href={`${projectHref}/client-queue`}
+              href={`${projectBaseHref}/client-queue`}
               aria-label="Go to client queue"
               data-tooltip="Go to client queue"
               onClick={(event) => event.stopPropagation()}
@@ -2628,6 +2645,7 @@ function ProjectDataCell({
   onToggleDeadline,
   onSaveDeadline,
   isMenuOpen,
+  onOpenDetails,
   onToggleMenu,
 }: {
   columnKey: DataColumnKey;
@@ -2642,6 +2660,7 @@ function ProjectDataCell({
   onToggleDeadline: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
   isMenuOpen: boolean;
+  onOpenDetails: () => void;
   onToggleMenu: () => void;
 }) {
   const columnClassName = [
@@ -2759,9 +2778,18 @@ function ProjectDataCell({
         >
           <DsIcon name="dots-three" size={18} />
         </button>
-        <span className="row-open-chevron" aria-hidden="true">
+        <button
+          className="row-open-chevron"
+          type="button"
+          aria-label={`Open details for ${project.name}`}
+          data-tooltip="Open details"
+          onClick={(event) => {
+            event.stopPropagation();
+            onOpenDetails();
+          }}
+        >
           <DsIcon name="caret-right" size={14} />
-        </span>
+        </button>
         {isMenuOpen ? (
           <div className="row-actions-menu">
             {[
@@ -2905,19 +2933,36 @@ function StageChip({
   projectId: string;
   showConnector: boolean;
 }) {
+  const stageHref = getProjectStageHref(projectId, stage.key);
+  const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
+  const chipContent = (
+    <span className="stage-icon-surface" aria-hidden="true">
+      <DsIcon name={stage.icon} size={21} />
+    </span>
+  );
+
   return (
     <div className="stage-step">
-      <a
-        className={`stage-chip stage-${status.state}`}
-        href={`/projects/${projectId}/stages/${stage.key}`}
-        aria-label={`Open ${stage.label} stage`}
-        data-tooltip={getStageTooltip(stage.label, status.state)}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <span className="stage-icon-surface" aria-hidden="true">
-          <DsIcon name={stage.icon} size={21} />
+      {stageHref ? (
+        <a
+          className={`stage-chip stage-${status.state}`}
+          href={stageHref}
+          aria-label={`Open ${stageLabel}`}
+          data-tooltip={getStageTooltip(stage.label, status.state)}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {chipContent}
+        </a>
+      ) : (
+        <span
+          className={`stage-chip stage-${status.state} is-static`}
+          aria-label={`${stage.label} stage`}
+          data-tooltip={getStageTooltip(stage.label, status.state)}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {chipContent}
         </span>
-      </a>
+      )}
       <span className="stage-label label-xs">{stage.label}</span>
       <span className="stage-age label-xs">{status.daysAgo !== undefined ? `${status.daysAgo}d ago` : "\u00a0"}</span>
       {showConnector ? <span className="stage-connector" aria-hidden="true" /> : null}

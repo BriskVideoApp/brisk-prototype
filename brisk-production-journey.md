@@ -14,20 +14,19 @@ You are designing for video production teams using **Brisk**. Filmmakers think i
 
 ## Production phases and stages
 
-Brisk projects flow through three production phases, made up of seven named stages. Always reference the correct phase and stage when designing a feature.
+Brisk projects flow through three production phases, made up of six named stages. Always reference the correct phase and stage when designing a feature.
 
 ### Pre-production
 1. **Brief** - Client submits or producer captures the project brief.
-2. **Script** - Written narrative or interview structure.
-3. **Storyboard** - Sequence plan, shot list, scene order. Used when needed (e.g. animations, planned shoots).
+2. **Script** - Written narrative, interview structure, shot structure, or scene plan.
 
 ### Production
-4. **Shoot** - Filming sessions, interviews, b-roll capture, on-set workflow.
-5. **Media** - Ingest, backup, organisation of captured assets. Transcripts generated here.
+3. **Shoot** - Filming sessions, interviews, b-roll capture, on-set workflow.
+4. **Media** - Ingest, backup, organisation of captured assets. Transcripts generated here.
 
 ### Post-production
-6. **Edit** - Rough cut through fine cut, versioning, revisions, paper edits, colour, audio, captions.
-7. **Masters** - Final exports, delivery files, social cutdowns, file handover, archive.
+5. **Edit** - Rough cut through fine cut, versioning, revisions, paper edits, colour, audio, captions.
+6. **Masters** - Final exports, delivery files, social cutdowns, file handover, archive.
 
 When designing, ask: which phase and stage(s) does this feature serve?
 
@@ -37,8 +36,7 @@ When designing, ask: which phase and stage(s) does this feature serve?
 
 - **Project** - one production engagement, from brief to archive.
 - **Brief** - the source-of-truth for what's being made.
-- **Script** - structured shot or interview-based plan.
-- **Storyboard** - sequence plan for animations or planned shoots (optional per project).
+- **Script** - structured shot, scene, animation, or interview-based plan.
 - **Shot list / Schedule** - production planning artefacts (optional per project).
 - **Asset** - any file: footage, audio, image, document.
 - **Version** - a numbered cut or deliverable iteration.

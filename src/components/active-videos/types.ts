@@ -1,4 +1,4 @@
-export type StageKey = "brief" | "script" | "shoot" | "storyboard" | "media" | "edit" | "masters";
+export type StageKey = "brief" | "script" | "shoot" | "media" | "edit" | "masters";
 
 export type ProjectVideoType = "liveAction" | "animation";
 

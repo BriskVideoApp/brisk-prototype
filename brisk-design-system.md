@@ -43,7 +43,7 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 - Heading and body scale: use kit text styles only.
 
 ### Terminology
-- "Stage icons" = the 7 workflow icons (Brief, Script, Shoot, Storyboard, Media, Edit, Masters). Rendered exclusively by StageChip.
+- "Stage icons" = the 6 workflow icons (Brief, Script, Shoot, Media, Edit, Masters). Rendered exclusively by StageChip.
 - "DS icons" (or "General UI icons") = everything else. Imported via the DsIcon component.
 - Do NOT use the term "Flow icons" - it was legacy shorthand that caused confusion between the two categories. If someone (human or AI) refers to Flow icons, ask them to clarify which of the two above they mean.
 
@@ -58,7 +58,7 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 
 Brisk uses two icon categories. Do not mix them.
 
-### Stage icons (Brief, Script, Shoot, Storyboard, Media, Edit, Masters)
+### Stage icons (Brief, Script, Shoot, Media, Edit, Masters)
 These are the workflow progress icons rendered on Active Videos and any other stage-progress surface.
 
 - Rendered by the `StageChip` component in `src/components/active-videos/ActiveVideosPage.tsx`.
@@ -67,7 +67,6 @@ These are the workflow progress icons rendered on Active Videos and any other st
   - Brief - `/public/brisk-icons/clipboard-text.svg`
   - Script - `/public/brisk-icons/pen-nib.svg`
   - Shoot - `/public/brisk-icons/video-camera-ds.svg`
-  - Storyboard - `/public/brisk-icons/grid-four.svg`
   - Media - `/public/brisk-icons/image-square.svg`
   - Edit - `/public/brisk-icons/stage-edit.svg`
   - Masters - `/public/brisk-icons/film-strip.svg`

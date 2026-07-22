@@ -7,18 +7,20 @@ import {
   useRef,
   useState,
   type ClipboardEvent,
-  type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
   type MutableRefObject,
+  type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
+import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ScriptAiPanel, type ScriptAiInsertRequest, type ScriptAiRowDraft } from "@/components/script-ai/ScriptAiPanel";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { activeVideoProjects } from "@/data/active-videos/mockData";
 import {
   initialScriptComments,
   scriptBrief,
@@ -40,7 +42,6 @@ const currentUserId = "user-tom";
 const optionalSubtabs: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }> = [
   { id: "transcripts", label: "Transcripts" },
   { id: "notes", label: "Notes" },
-  { id: "storyboard", label: "Storyboard" },
 ];
 const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Parameters<typeof DsIcon>[0]["name"] }> = [
   { type: "upload", label: "Upload file", icon: "upload-simple" },
@@ -50,6 +51,7 @@ const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Para
 ];
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
+const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
 const emptyScriptPlaceholderRow: ScriptRow = {
   id: emptyScriptRowId,
   words: "",
@@ -184,16 +186,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
   const [isCurrentVersionMenuOpen, setIsCurrentVersionMenuOpen] = useState(false);
-  const [isToolbarTopRegionActive, setIsToolbarTopRegionActive] = useState(false);
-  const [isToolbarRowHovered, setIsToolbarRowHovered] = useState(false);
-  const [isToolbarDismissedFromTop, setIsToolbarDismissedFromTop] = useState(false);
-  const [isEditorFocused, setIsEditorFocused] = useState(true);
   const [isRenamingCurrentVersion, setIsRenamingCurrentVersion] = useState(false);
   const [currentVersionRenameDraft, setCurrentVersionRenameDraft] = useState("");
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
-  const [enabledSubtabs, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
+  const [, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
   const [areVisualsVisible, setAreVisualsVisible] = useState(false);
   const [, setHasEditedThisSession] = useState(false);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
@@ -253,23 +251,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const commentsByRow = useMemo(() => groupCommentsByRow(visibleComments), [visibleComments]);
   const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
   const shouldShowAi = !isCustomer || showAiToCustomer;
-  const enabledSubtabLabels = optionalSubtabs.filter((tab) => enabledSubtabs.has(tab.id));
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1] ?? latestVersion;
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const isPreviewingVersion = previewVersion !== null;
   const dropdownVersion = previewVersion ?? selectedVersion;
   const dropdownVersionMeta = versionMetaById[dropdownVersion.id] ?? defaultVersionMeta;
-  const hasToolbarMenuOpen =
-    isVersionsPanelOpen ||
-    isCurrentVersionMenuOpen ||
-    isCommentsOverviewOpen ||
-    isRequestReviewOpen ||
-    isRenamingCurrentVersion ||
-    isApprovedEditModalOpen;
-  const isScriptToolbarVisible =
-    hasToolbarMenuOpen ||
-    (!isToolbarDismissedFromTop && (isToolbarTopRegionActive || isToolbarRowHovered || !isEditorFocused));
 
   useEffect(() => {
     return () => {
@@ -280,47 +267,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       if (toastTimeoutRef.current) {
         window.clearTimeout(toastTimeoutRef.current);
       }
-    };
-  }, []);
-
-  useEffect(() => {
-    const handlePointerMove = (event: PointerEvent) => {
-      const nextIsTopRegionActive = event.clientY <= 80;
-      const toolbarRect = document.querySelector(".script-subheader")?.getBoundingClientRect();
-      const nextIsToolbarRowHovered = Boolean(
-        toolbarRect &&
-          event.clientX >= toolbarRect.left &&
-          event.clientX <= toolbarRect.right &&
-          event.clientY >= toolbarRect.top &&
-          event.clientY <= toolbarRect.bottom,
-      );
-
-      setIsToolbarTopRegionActive((wasTopRegionActive) => {
-        if (!wasTopRegionActive && (nextIsTopRegionActive || nextIsToolbarRowHovered)) {
-          setIsToolbarDismissedFromTop(false);
-        }
-
-        return nextIsTopRegionActive;
-      });
-      setIsToolbarRowHovered((wasToolbarRowHovered) => {
-        if (!wasToolbarRowHovered && nextIsToolbarRowHovered) {
-          setIsToolbarDismissedFromTop(false);
-        }
-
-        return nextIsToolbarRowHovered;
-      });
-    };
-
-    const handlePointerLeave = () => {
-      setIsToolbarTopRegionActive(false);
-      setIsToolbarRowHovered(false);
-    };
-
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerleave", handlePointerLeave);
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerleave", handlePointerLeave);
     };
   }, []);
 
@@ -403,11 +349,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         if (target instanceof HTMLTextAreaElement) {
           target.setSelectionRange(target.selectionEnd, target.selectionEnd);
         }
-      }
-
-      if (event.key === "Escape" && isToolbarTopRegionActive && !hasToolbarMenuOpen) {
-        event.preventDefault();
-        setIsToolbarDismissedFromTop(true);
       }
 
       if (event.key === "Escape" && isCommentsOverviewOpen) {
@@ -1488,212 +1429,168 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage(`Review request sent to ${recipientName}`);
   };
 
-  const isWritingSurfaceInput = (target: EventTarget | null) =>
-    target instanceof HTMLTextAreaElement && target.classList.contains("script-cell-input");
+  const scriptToolbarActions = (
+    <div className="script-toolbar-action-zone" aria-label="Script controls">
+      <div className="script-toolbar-version-zone">
+        <div className="script-version-control">
+          <div className="script-version-panel-wrap">
+            {isRenamingCurrentVersion ? (
+              <input
+                ref={currentVersionRenameInputRef}
+                aria-label={`Rename ${getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+                className="script-version-rename-input script-current-version-rename-input label-xs-semibold"
+                value={currentVersionRenameDraft}
+                onBlur={saveCurrentVersionRename}
+                onChange={(event) => setCurrentVersionRenameDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    saveCurrentVersionRename();
+                  }
 
-  const handleScriptBodyFocusCapture = (event: ReactFocusEvent<HTMLElement>) => {
-    if (isWritingSurfaceInput(event.target)) {
-      setIsEditorFocused(true);
-    }
-  };
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    cancelCurrentVersionRename();
+                  }
+                }}
+              />
+            ) : (
+              <button
+                className={`script-current-version-button label-xs-semibold ${isPreviewingVersion ? "previewing" : ""}`}
+                type="button"
+                aria-label="Open versions"
+                aria-expanded={isVersionsPanelOpen}
+                onClick={() => {
+                  setIsVersionsPanelOpen((isOpen) => !isOpen);
+                  setIsCurrentVersionMenuOpen(false);
+                  setIsCommentsOverviewOpen(false);
+                  setOpenCommentRowId(null);
+                  setIsCommentComposerOpen(false);
+                  setFloatingCommentPosition(null);
+                }}
+              >
+                <span>{getVersionButtonLabel(dropdownVersion, dropdownVersionMeta)}</span>
+                <DsIcon name="caret-down" size={14} />
+              </button>
+            )}
+            {isVersionsPanelOpen ? (
+              <VersionsPanel
+                entries={docHistoryEntries}
+                isCustomer={isCustomer}
+                lastSavedAt={lastSavedAt}
+                previewVersionId={previewVersionId}
+                saveState={saveState}
+                selectedVersionId={selectedVersionId}
+                versionMetaById={versionMetaById}
+                versions={versions}
+                onViewVersion={previewVersionForReadOnly}
+              />
+            ) : null}
+          </div>
+          <div className="script-current-version-menu-wrap">
+            <button
+              className="script-version-row-menu-button"
+              type="button"
+              aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+              aria-expanded={isCurrentVersionMenuOpen}
+              onClick={() => {
+                setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
+                setIsVersionsPanelOpen(false);
+                setIsCommentsOverviewOpen(false);
+              }}
+            >
+              <DsIcon name="dots-three" size={14} />
+            </button>
+            {isCurrentVersionMenuOpen ? (
+              <span className="script-version-row-menu script-current-version-menu">
+                {!isCustomer ? (
+                  <>
+                    <button
+                      className="label-xs-semibold"
+                      type="button"
+                      aria-pressed={showChanges}
+                      onClick={toggleShowChangesFromMenu}
+                    >
+                      <span>{showChanges ? "Hide changes" : "Show changes"}</span>
+                      {showChanges ? <DsIcon name="check" size={12} /> : null}
+                    </button>
+                    <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
+                      New script
+                    </button>
+                    <span className="script-menu-divider" aria-hidden="true" />
+                  </>
+                ) : null}
+                <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
+                  Duplicate
+                </button>
+                <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
+                  Rename
+                </button>
+                <button
+                  className="delete label-xs-semibold"
+                  disabled={selectedVersion.approvedSnapshot}
+                  title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
+                  type="button"
+                  onClick={() => {
+                    setIsCurrentVersionMenuOpen(false);
+                    deleteVersion(selectedVersion.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </span>
+            ) : null}
+          </div>
+          <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
+          <span className="script-save-note label-xs">
+            {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 
-  const handleScriptBodyBlurCapture = () => {
-    window.setTimeout(() => {
-      setIsEditorFocused(isWritingSurfaceInput(document.activeElement));
-    }, 0);
-  };
+  const scriptToolbarCommentsButton = (
+      <button
+        className={`script-quiet-icon script-toolbar-comments-button ${isCommentsOverviewOpen ? "active" : ""}`}
+        type="button"
+        aria-label="Comments"
+        aria-expanded={isCommentsOverviewOpen}
+        aria-pressed={isCommentsOverviewOpen}
+        data-tooltip="Comments"
+        onClick={openAllComments}
+      >
+        <DsIcon name="chat-circle" size={16} />
+      </button>
+  );
+
+  const scriptDecisionActions = (
+    <div className="script-word-footer-actions" aria-label="Script review actions">
+      <ScriptActionCluster
+        approvedAt={selectedVersion.approvedAt}
+        approvedBy={selectedVersion.approvedBy}
+        isApproved={isScriptApproved}
+        isPreviewing={isPreviewingVersion}
+        subtabLabel="script"
+        versionLabel={selectedVersion.label}
+        onApprove={approveScript}
+        onCopyLink={copyCurrentVersionLink}
+        onRequestReview={requestCurrentVersionReview}
+        onUnapprove={() => unapproveScript(true)}
+      />
+    </div>
+  );
 
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <ScriptSidebar />
-      <ScriptHeader enabledSubtabLabels={enabledSubtabLabels} role={role} />
-
-      <section
-        className={`script-subheader ${isScriptToolbarVisible ? "toolbar-visible" : "toolbar-hidden"}`}
-        aria-label="Script controls"
-        onMouseEnter={() => {
-          setIsToolbarDismissedFromTop(false);
-          setIsToolbarRowHovered(true);
-        }}
-        onMouseLeave={() => setIsToolbarRowHovered(false)}
-      >
-        <div className="script-subheader-left">
-          <div className="script-version-control">
-            <div className="script-version-panel-wrap">
-              {isRenamingCurrentVersion ? (
-                <input
-                  ref={currentVersionRenameInputRef}
-                  aria-label={`Rename ${getVersionButtonLabel(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
-                  className="script-version-rename-input script-current-version-rename-input label-xs-semibold"
-                  value={currentVersionRenameDraft}
-                  onBlur={saveCurrentVersionRename}
-                  onChange={(event) => setCurrentVersionRenameDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      saveCurrentVersionRename();
-                    }
-
-                    if (event.key === "Escape") {
-                      event.preventDefault();
-                      cancelCurrentVersionRename();
-                    }
-                  }}
-                />
-              ) : (
-                <button
-                  className={`script-current-version-button label-xs-semibold ${isPreviewingVersion ? "previewing" : ""}`}
-                  type="button"
-                  aria-label="Open versions"
-                  aria-expanded={isVersionsPanelOpen}
-                  onClick={() => {
-                    setIsVersionsPanelOpen((isOpen) => !isOpen);
-                    setIsCurrentVersionMenuOpen(false);
-                    setIsCommentsOverviewOpen(false);
-                    setOpenCommentRowId(null);
-                    setIsCommentComposerOpen(false);
-                    setFloatingCommentPosition(null);
-                  }}
-                >
-                  <span>{getVersionButtonLabel(dropdownVersion, dropdownVersionMeta)}</span>
-                  <DsIcon name="caret-down" size={14} />
-                </button>
-              )}
-              {isVersionsPanelOpen ? (
-                <VersionsPanel
-                  entries={docHistoryEntries}
-                  isCustomer={isCustomer}
-                  lastSavedAt={lastSavedAt}
-                  previewVersionId={previewVersionId}
-                  saveState={saveState}
-                  selectedVersionId={selectedVersionId}
-                  versionMetaById={versionMetaById}
-                  versions={versions}
-                  onViewVersion={previewVersionForReadOnly}
-                />
-              ) : null}
-            </div>
-            <div className="script-current-version-menu-wrap">
-              <button
-                className="script-version-row-menu-button"
-                type="button"
-                aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
-                aria-expanded={isCurrentVersionMenuOpen}
-                onClick={() => {
-                  setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
-                  setIsVersionsPanelOpen(false);
-                  setIsCommentsOverviewOpen(false);
-                }}
-              >
-                <DsIcon name="dots-three" size={14} />
-              </button>
-              {isCurrentVersionMenuOpen ? (
-                <span className="script-version-row-menu script-current-version-menu">
-                  {!isCustomer ? (
-                    <>
-                      <button
-                        className="label-xs-semibold"
-                        type="button"
-                        aria-pressed={showChanges}
-                        onClick={toggleShowChangesFromMenu}
-                      >
-                        <span>{showChanges ? "Hide changes" : "Show changes"}</span>
-                        {showChanges ? <DsIcon name="check" size={12} /> : null}
-                      </button>
-                      <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
-                        New script
-                      </button>
-                      <span className="script-menu-divider" aria-hidden="true" />
-                    </>
-                  ) : null}
-                  <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
-                    Duplicate
-                  </button>
-                  <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
-                    Rename
-                  </button>
-                  <button
-                    className="delete label-xs-semibold"
-                    disabled={selectedVersion.approvedSnapshot}
-                    title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
-                    type="button"
-                    onClick={() => {
-                      setIsCurrentVersionMenuOpen(false);
-                      deleteVersion(selectedVersion.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </span>
-              ) : null}
-            </div>
-            <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
-            <span className="script-save-note label-xs">
-              {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
-            </span>
-          </div>
-        </div>
-        {!isCommentsOverviewOpen ? (
-          <div className="script-subheader-actions">
-            <ScriptActionCluster
-              approvedAt={selectedVersion.approvedAt}
-              approvedBy={selectedVersion.approvedBy}
-              isApproved={isScriptApproved}
-              isPreviewing={isPreviewingVersion}
-              subtabLabel="script"
-              versionLabel={selectedVersion.label}
-              onApprove={approveScript}
-              onCopyLink={copyCurrentVersionLink}
-              onRequestReview={requestCurrentVersionReview}
-              onUnapprove={() => unapproveScript(true)}
-            />
-            <button
-              className="script-quiet-icon"
-              type="button"
-              aria-label="Comments"
-              aria-expanded={isCommentsOverviewOpen}
-              aria-pressed={isCommentsOverviewOpen}
-              data-tooltip="Comments"
-              onClick={openAllComments}
-            >
-              <DsIcon name="chat-circle" size={16} />
-            </button>
-          </div>
-        ) : null}
-        {isCommentsOverviewOpen ? (
-          <div className="script-comments-sidebar-actions" aria-label="Comments share controls">
-            <ScriptActionCluster
-              approvedAt={selectedVersion.approvedAt}
-              approvedBy={selectedVersion.approvedBy}
-              isApproved={isScriptApproved}
-              isPreviewing={isPreviewingVersion}
-              subtabLabel="script"
-              versionLabel={selectedVersion.label}
-              onApprove={approveScript}
-              onCopyLink={copyCurrentVersionLink}
-              onRequestReview={requestCurrentVersionReview}
-              onUnapprove={() => unapproveScript(true)}
-            />
-            <button
-              className="script-quiet-icon active"
-              type="button"
-              aria-label="Comments"
-              aria-expanded={isCommentsOverviewOpen}
-              aria-pressed={isCommentsOverviewOpen}
-              data-tooltip="Comments"
-              onClick={openAllComments}
-            >
-              <DsIcon name="chat-circle" size={16} />
-            </button>
-          </div>
-        ) : null}
-      </section>
+      {projectStageHeaderProject ? (
+        <ProjectStageHeader activeStage="script" project={projectStageHeaderProject} />
+      ) : null}
 
       <section
         className={`script-body ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
         ref={scriptBodyRef}
-        onBlurCapture={handleScriptBodyBlurCapture}
-        onFocusCapture={handleScriptBodyFocusCapture}
       >
         <div className="script-editor-column">
           {previewVersion ? (
@@ -1717,6 +1614,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             confirmingDeleteRowId={confirmingDeleteRowId}
             rows={visibleRows}
             areVisualsVisible={areVisualsVisible}
+            scriptToolbarActions={scriptToolbarActions}
+            scriptToolbarCommentsButton={scriptToolbarCommentsButton}
             selectedRowIds={selectionState.selectedRowIds}
             showChanges={showChanges}
             wordInputRefs={wordInputRefs}
@@ -1810,8 +1709,8 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       </section>
 
       <footer className={`script-word-footer word-${wordState}`}>
-        <span className="script-word-footer-inner">
-          <span className="script-word-footer-copy">
+        <div className="script-word-footer-inner">
+          <div className="script-word-footer-copy">
             <span className="script-word-count">{totalWords} words</span>
             <span className="script-word-separator" aria-hidden="true">·</span>
             <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
@@ -1819,8 +1718,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
             </span>
             {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
-          </span>
-        </span>
+          </div>
+          {scriptDecisionActions}
+        </div>
       </footer>
 
       <FloatingSelectionCommentButton
@@ -1848,12 +1748,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               <span className="script-ai-fab-tooltip label-xs-semibold" role="tooltip">
                 Brisk AI
               </span>
-              <img
-                alt=""
-                className="script-ai-fab-image"
-                draggable={false}
-                src="/brisk-icons/chopchop-ai.svg?v=4"
-              />
+              <span className="script-ai-fab-icon" aria-hidden="true">
+                <DsIcon name="sparkle" size={22} />
+              </span>
             </button>
           ) : null}
           <ScriptAiPanel
@@ -1931,55 +1828,14 @@ function ScriptSidebar() {
       <nav className="today-sidebar-nav" aria-label="Workspace">
         <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
-          Active Videos
+          Videos
         </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/today">
           <DsIcon name="check-circle" size={16} />
           Today
         </Link>
-        <Link className="today-sidebar-link active label-s-semibold" href="/projects/mock-project/script?role=studio">
-          <DsIcon name="film-script" size={16} />
-          Script
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/review">
-          <DsIcon name="play" size={16} />
-          Video Review
-        </Link>
       </nav>
     </aside>
-  );
-}
-
-function ScriptHeader({
-  enabledSubtabLabels,
-  role,
-}: {
-  enabledSubtabLabels: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }>;
-  role: ScriptRole;
-}) {
-  return (
-    <header className="script-header">
-      <div className="script-title-stack">
-        {enabledSubtabLabels.length > 0 ? (
-          <nav className="script-subtab-links" aria-label="Script sub-tabs">
-            {enabledSubtabLabels.map((tab) => (
-              <button type="button" key={tab.id}>
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        ) : null}
-        <h1 className="script-title">{scriptBrief.projectName}</h1>
-      </div>
-      <div className="script-role-links" aria-label="View as role">
-        <Link className={`script-role-link label-xs-semibold ${role === "studio" ? "active" : ""}`} href="/projects/mock-project/script?role=studio">
-          Studio
-        </Link>
-        <Link className={`script-role-link label-xs-semibold ${role === "customer" ? "active" : ""}`} href="/projects/mock-project/script?role=customer">
-          Customer
-        </Link>
-      </div>
-    </header>
   );
 }
 
@@ -2118,30 +1974,39 @@ function ScriptHistoryControls({
 
 function ScriptColumnHeaders({
   areVisualsVisible,
+  scriptToolbarActions,
+  scriptToolbarCommentsButton,
   onToggleVisuals,
 }: {
   areVisualsVisible: boolean;
+  scriptToolbarActions: ReactNode;
+  scriptToolbarCommentsButton: ReactNode;
   onToggleVisuals: () => void;
 }) {
   return (
     <div className={`script-column-headers ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="Script column guidance">
+      <div className="script-column-toolbar-row" aria-label="Script controls">
+        {scriptToolbarActions}
+        <div className="script-toolbar-trailing-actions">
+          {scriptToolbarCommentsButton}
+          <Button
+            className="script-visuals-header-toggle script-toolbar-visuals-toggle"
+            size="S"
+            type="button"
+            variant="secondary"
+            onClick={onToggleVisuals}
+          >
+            <span>{areVisualsVisible ? "Hide Visuals" : "Show Visuals"}</span>
+            <DsIcon name={areVisualsVisible ? "caret-left" : "caret-right"} size={12} />
+          </Button>
+        </div>
+      </div>
       <section className="script-column-header words">
         <div className="script-column-header-main">
           <h2 className="script-column-title-with-tooltip" data-tooltip="Write the words of your script in this column - could be titles on screen, dialogue, voiceover etc. 150 words = 1 minute.">
             Words
           </h2>
-          {!areVisualsVisible ? (
-            <Button
-              className="script-visuals-header-toggle"
-              size="S"
-              type="button"
-              variant="secondary"
-              onClick={onToggleVisuals}
-            >
-              <span>Show Visuals</span>
-              <DsIcon name="caret-right" size={12} />
-            </Button>
-          ) : null}
+          <div className="script-column-header-actions" />
         </div>
       </section>
       {areVisualsVisible ? (
@@ -2150,16 +2015,6 @@ function ScriptColumnHeaders({
             <h2 className="script-column-title-with-tooltip" data-tooltip="Describe the visuals for each line. Add media, links or references.">
               Visuals
             </h2>
-            <Button
-              className="script-visuals-header-toggle"
-              size="S"
-              type="button"
-              variant="secondary"
-              onClick={onToggleVisuals}
-            >
-              <span>Hide Visuals</span>
-              <DsIcon name="caret-left" size={12} />
-            </Button>
           </div>
         </section>
       ) : null}
@@ -2180,6 +2035,8 @@ function AvScriptEditor({
   confirmingDeleteRowId,
   rows,
   areVisualsVisible,
+  scriptToolbarActions,
+  scriptToolbarCommentsButton,
   selectedRowIds,
   showChanges,
   wordInputRefs,
@@ -2218,6 +2075,8 @@ function AvScriptEditor({
   confirmingDeleteRowId: string | null;
   rows: ScriptRow[];
   areVisualsVisible: boolean;
+  scriptToolbarActions: ReactNode;
+  scriptToolbarCommentsButton: ReactNode;
   selectedRowIds: Set<string>;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
@@ -2251,6 +2110,8 @@ function AvScriptEditor({
     <section className={`script-av-surface ${density} ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="AV script editor">
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
+        scriptToolbarActions={scriptToolbarActions}
+        scriptToolbarCommentsButton={scriptToolbarCommentsButton}
         onToggleVisuals={onToggleVisuals}
       />
       {editorRows.map((row, index) => {
@@ -2628,7 +2489,7 @@ function VersionsPanel({
   };
 
   return (
-    <aside className="script-versions-panel" aria-label="Versions">
+    <aside className={`script-versions-panel ${previewVersionId ? "has-preview" : ""}`} aria-label="Versions">
       <div className="script-versions-panel-content">
         {!isCustomer ? (
           <section className="script-versions-section" aria-label="Today">
@@ -2656,6 +2517,7 @@ function VersionsPanel({
             {[...versions].reverse().map((version) => {
               const isCurrent = version.id === selectedVersionId;
               const isPreviewing = version.id === previewVersionId;
+              const isSelected = isPreviewing || (!previewVersionId && isCurrent);
               const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
               const isExpanded = expandedVersionId === version.id;
               const versionTitle = getVersionHistoryTitle(version, versionMeta);
@@ -2682,7 +2544,7 @@ function VersionsPanel({
 
               return (
                 <article
-                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""} ${isExpanded ? "expanded" : ""}`}
+                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""} ${isSelected ? "selected" : ""} ${isExpanded ? "expanded" : ""}`}
                   aria-current={isCurrent ? "true" : undefined}
                   key={version.id}
                 >

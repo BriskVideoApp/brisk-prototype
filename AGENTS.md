@@ -119,7 +119,7 @@ Use this verification ladder instead:
 - Use exported visual assets from `Brisk Visuals/` for Flow icons, logos, illustrations, and pictograms.
 - Flow icons live in `Brisk Visuals/Flow icons/`. Use these SVGs for production stages before falling back to placeholder or generic icons.
 - Do not recreate Flow icons with generic Phosphor icons, letter tiles, or local approximations.
-- Current production-stage UI uses the circular seven-stage treatment: Brief, Script, Shoot, Storyboard, Media, Edit, Masters. Do not use Style Frames / Styleframes, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
+- Current production-stage UI uses the circular six-stage treatment: Brief, Script, Shoot, Media, Edit, Masters. Do not use Style Frames / Styleframes, Storyboard, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
 
 ## Role-switcher requirement
 

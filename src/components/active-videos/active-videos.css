@@ -42,37 +42,6 @@
   gap: 16px;
 }
 
-.active-role-switcher {
-  position: relative;
-  z-index: 100;
-  display: inline-flex;
-  align-items: center;
-  border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-bg-block-primary);
-  gap: 6px;
-}
-
-.active-role-option {
-  height: 28px;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-tertiary);
-  font-size: 12px;
-  line-height: 16px;
-  padding: 0 8px;
-}
-
-.active-role-option:hover {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-}
-
-.active-role-option.selected {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-}
-
 .active-videos-search {
   display: flex;
   width: 260px;
@@ -958,10 +927,10 @@
   --tooltip-left: 0;
   --tooltip-right: auto;
   --tooltip-x: 0;
-  border: 0;
-  background: var(--brisk-text-primary);
-  box-shadow: none;
-  color: var(--brisk-white);
+  border: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
 }
 
 .status-pill {
@@ -1247,6 +1216,14 @@
   transform: translate(-1px, -1px);
 }
 
+.stage-chip.is-static {
+  cursor: default;
+}
+
+.stage-chip.is-static:hover {
+  transform: none;
+}
+
 .stage-not_started {
   color: var(--brisk-text-tertiary);
 }
@@ -1446,16 +1423,30 @@
 
 .row-open-chevron {
   display: inline-flex;
-  width: 14px;
+  width: 28px;
+  min-height: 28px;
   align-items: center;
   justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
   color: var(--brisk-text-secondary);
+  cursor: pointer;
+  padding: 0;
   transition: color 100ms ease-in;
 }
 
 .active-project-row:hover .row-open-chevron,
 .active-project-row.selected .row-open-chevron {
   color: var(--brisk-text-primary);
+}
+
+.row-open-chevron:hover,
+.row-open-chevron:focus-visible {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-s);
+  outline: 0;
 }
 
 .row-actions-menu {

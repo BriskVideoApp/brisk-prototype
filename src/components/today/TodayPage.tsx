@@ -16,8 +16,7 @@ import type { Project, StageKey } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
 
-const prototypeRoles: PrototypeRole[] = ["Studio Staff", "Studio Freelancer", "Customer"];
-const stageOptions: StageKey[] = ["brief", "script", "shoot", "storyboard", "media", "edit", "masters"];
+const stageOptions: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const defaultBlockHours = 2;
 const weekDayCount = 5;
 const maxEntryHours = 24;
@@ -35,7 +34,6 @@ const stageIconByStage: Record<StageKey, DsIconName> = {
   brief: "clipboard-text",
   script: "pen-nib",
   shoot: "video-camera-ds",
-  storyboard: "grid-four",
   media: "image-square",
   edit: "stage-edit",
   masters: "film-strip",
@@ -53,7 +51,7 @@ type EntryTotals = {
 };
 
 export function TodayPage() {
-  const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
+  const selectedRole: PrototypeRole = "Studio Staff";
   const [weekOffset, setWeekOffset] = useState(0);
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
@@ -132,10 +130,8 @@ export function TodayPage() {
       <TodaySidebar selectedRole={selectedRole} />
       <section className="today-main" aria-label="Today workspace">
         <TodayHeader
-          selectedRole={selectedRole}
           weekDays={weekDays}
           weekTotals={weekTotals}
-          onRoleChange={setSelectedRole}
           onPreviousWeek={() => setWeekOffset((currentOffset) => currentOffset - 1)}
           onNextWeek={() => setWeekOffset((currentOffset) => currentOffset + 1)}
           onThisWeek={() => setWeekOffset(0)}
@@ -187,7 +183,7 @@ function TodaySidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
       <nav className="today-sidebar-nav" aria-label="Workspace">
         <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
-          Active Videos
+          Videos
         </Link>
         {selectedRole === "Studio Staff" ? (
           <Link className="today-sidebar-link active label-s-semibold" href="/today">
@@ -195,32 +191,20 @@ function TodaySidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
             Today
           </Link>
         ) : null}
-        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
-          <DsIcon name="film-script" size={16} />
-          Script
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/review">
-          <DsIcon name="play" size={16} />
-          Video Review
-        </Link>
       </nav>
     </aside>
   );
 }
 
 function TodayHeader({
-  selectedRole,
   weekDays,
   weekTotals,
-  onRoleChange,
   onPreviousWeek,
   onNextWeek,
   onThisWeek,
 }: {
-  selectedRole: PrototypeRole;
   weekDays: WeekDay[];
   weekTotals: EntryTotals;
-  onRoleChange: (role: PrototypeRole) => void;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   onThisWeek: () => void;
@@ -249,19 +233,6 @@ function TodayHeader({
         <span className="today-week-total label-s-semibold">
           {formatHours(weekTotals.planned)} planned · {formatHours(weekTotals.done)} done
         </span>
-        <div className="today-role-switcher" role="group" aria-label="View as role">
-          {prototypeRoles.map((role) => (
-            <button
-              className={`today-role-option label-s-semibold ${selectedRole === role ? "selected" : ""}`}
-              type="button"
-              key={role}
-              aria-pressed={selectedRole === role}
-              onClick={() => onRoleChange(role)}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
       </div>
     </header>
   );
@@ -699,7 +670,7 @@ function TodayUnavailable({ selectedRole }: { selectedRole: PrototypeRole }) {
         {selectedRole} users do not log Brisk time here. The Today nav item is hidden for this role.
       </p>
       <Link className="today-secondary-link label-s-semibold" href="/active-videos">
-        Go to Active Videos
+        Go to Videos
       </Link>
     </section>
   );

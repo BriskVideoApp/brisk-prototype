@@ -42,32 +42,6 @@
   letter-spacing: 0;
 }
 
-.project-overview-role-switcher {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-}
-
-.project-overview-role {
-  min-height: 34px;
-  border: 0;
-  border-left: 1px solid var(--brisk-border-primary);
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  padding: 0 12px;
-}
-
-.project-overview-role:first-child {
-  border-left: 0;
-}
-
-.project-overview-role.selected {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-primary);
-}
-
 .project-overview-grid {
   display: grid;
   max-width: 1120px;

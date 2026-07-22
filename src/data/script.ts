@@ -5,8 +5,8 @@ export type ScriptRole = "studio" | "customer";
 export type ScriptLayoutMode = "av" | "simple";
 export type ScriptDensity = "compact" | "comfortable";
 export type ScriptStatus = "In script" | "Waiting on Customer" | "Approved";
-export type ScriptSubtabId = "script" | "transcripts" | "notes" | "storyboard";
-export type ScriptStageId = "brief" | "script" | "shoot" | "storyboard" | "media" | "edit" | "masters";
+export type ScriptSubtabId = "script" | "transcripts" | "notes";
+export type ScriptStageId = "brief" | "script" | "shoot" | "media" | "edit" | "masters";
 export type ScriptGenre = "Documentary" | "Explainer" | "Character animation" | "Brand film" | "Scripted" | "AI video";
 export type ScriptMediaType = "upload" | "library" | "stock" | "link";
 export type ScriptElementType = "scene" | "action" | "character" | "dialogue" | "parenthetical" | "transition";
@@ -163,14 +163,12 @@ export const initialScriptSubtabs: ScriptSubtab[] = [
   { id: "script", label: "Script", visible: true, approved: false },
   { id: "transcripts", label: "Transcripts", visible: true, approved: true },
   { id: "notes", label: "Notes", visible: false, approved: false, optional: true },
-  { id: "storyboard", label: "Storyboard", visible: false, approved: false, optional: true },
 ];
 
 export const scriptStages: Array<{ id: ScriptStageId; label: string; icon: DsIconName }> = [
   { id: "brief", label: "Brief", icon: "clipboard-text" },
   { id: "script", label: "Script", icon: "pen-nib" },
   { id: "shoot", label: "Shoot", icon: "video-camera-ds" },
-  { id: "storyboard", label: "Storyboard", icon: "grid-four" },
   { id: "media", label: "Media", icon: "image-square" },
   { id: "edit", label: "Edit", icon: "stage-edit" },
   { id: "masters", label: "Masters", icon: "film-strip" },

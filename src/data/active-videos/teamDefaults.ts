@@ -9,7 +9,7 @@ import type {
   TimeEntry,
 } from "@/components/active-videos/types";
 
-export const stageKeys: StageKey[] = ["brief", "script", "shoot", "storyboard", "media", "edit", "masters"];
+export const stageKeys: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 
 export const teamRoleOptions: TeamRole[] = [
   "producer",
@@ -41,7 +41,6 @@ export const stageLabels: Record<StageKey, string> = {
   brief: "Brief",
   script: "Script",
   shoot: "Shoot",
-  storyboard: "Storyboard",
   media: "Media",
   edit: "Edit",
   masters: "Masters",
@@ -190,7 +189,7 @@ export const defaultRoleStages: Record<ProjectVideoType, Partial<Record<TeamRole
   animation: {
     producer: ["brief", "script", "masters"],
     editor: ["media", "edit"],
-    motionDesigner: ["storyboard", "edit"],
+    motionDesigner: ["script", "edit"],
   },
 };
 
@@ -198,12 +197,12 @@ export const fallbackRoleStages: Record<TeamRole, StageKey[]> = {
   producer: ["brief", "script", "masters"],
   editor: ["media", "edit"],
   shooter: ["shoot"],
-  motionDesigner: ["storyboard", "edit"],
-  animator: ["storyboard", "edit"],
+  motionDesigner: ["script", "edit"],
+  animator: ["script", "edit"],
   director: ["brief", "script", "shoot"],
   colourist: ["edit"],
   soundDesigner: ["edit", "masters"],
-  vfxArtist: ["storyboard", "edit"],
+  vfxArtist: ["script", "edit"],
   custom: [],
 };
 

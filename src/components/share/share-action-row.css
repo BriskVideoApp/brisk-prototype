@@ -441,29 +441,6 @@
   gap: var(--brisk-space-l);
 }
 
-.share-demo-role-switcher {
-  display: inline-flex;
-  align-items: center;
-  background: var(--brisk-bg-block-primary);
-  border-radius: var(--brisk-radius-xs);
-  gap: var(--brisk-space-xs);
-}
-
-.share-demo-role-option {
-  min-height: 28px;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-tertiary);
-  padding: var(--brisk-space-none) var(--brisk-space-s);
-}
-
-.share-demo-role-option:hover,
-.share-demo-role-option.selected {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-}
-
 .share-demo-stage-picker {
   display: flex;
   align-items: center;

@@ -14,6 +14,7 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
+import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import {
   briefClarifyingQuestions,
   briefDraftOptions,
@@ -591,8 +592,9 @@ export function BriefPage({ project }: BriefPageProps) {
 
   return (
     <main className="brief-shell">
-      <BriefSidebar projectId={project.id} />
+      <BriefSidebar />
       <div className="brief-main">
+        <ProjectStageHeader activeStage="brief" project={project} />
         {briefMode === "landing" ? (
           <BriefLandingScreen
             canDraft={clarifyingAnswerCount >= briefClarifyingQuestions.length && hasStartedClarifying && !hasDraftedBrief}
@@ -604,152 +606,105 @@ export function BriefPage({ project }: BriefPageProps) {
             onSubmit={submitLandingPrompt}
           />
         ) : (
-          <>
-            <BriefHeader
-              onTitleChange={updateBriefField}
-              titleField={briefFields.workingTitle}
-            />
-            <BriefStepShell
-              activeStepId={activeStepId}
-              activeStepIndex={activeStepIndex}
-              chatPanel={chatPanel}
-              footerAction={
-                isSummaryStep ? (
-                  <BriefApproveButton disabled={isApproveDisabled} onApprove={approveBrief} />
-                ) : (
-                  <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
-                    Next
-                  </Button>
-                )
-              }
-              onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
-              onStartWithAi={resetToLanding}
-              onSelectStep={setActiveStepId}
-            >
-              {activeStepId === "basics" ? (
-                <BriefBasicsSection
-                  fields={briefFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onRegenerateField={regenerateBriefField}
-                />
-              ) : null}
-              {activeStepId === "purposeAudience" ? (
-                <BriefPurposeAudienceSection
-                  fields={briefFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onRegenerateField={regenerateBriefField}
-                />
-              ) : null}
-              {activeStepId === "lookFeel" ? (
-                <BriefLookAndFeelSection
-                  fields={briefFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onRegenerateField={regenerateBriefField}
-                />
-              ) : null}
-              {activeStepId === "contentProduction" ? (
-                <BriefContentProductionSection
-                  fields={briefFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onRegenerateField={regenerateBriefField}
-                />
-              ) : null}
-              {activeStepId === "deliverablesTiming" ? (
-                <BriefDeliverablesSection
-                  fields={briefFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onRegenerateField={regenerateBriefField}
-                />
-              ) : null}
-              {activeStepId !== "basics" &&
-              activeStepId !== "purposeAudience" &&
-              activeStepId !== "lookFeel" &&
-              activeStepId !== "contentProduction" &&
-              activeStepId !== "deliverablesTiming" &&
-              activeStepId !== "summary" ? (
-                <BriefPlaceholderSection stepLabel={activeStep.label} copy={placeholderStepCopy[activeStepId]} />
-              ) : null}
-              {activeStepId === "summary" ? (
-                <BriefSummaryPage
-                  fields={briefFields}
-                  logline={logline}
-                  missingFields={missingRequiredFields}
-                  onConfirmField={confirmBriefField}
-                  onFieldChange={updateBriefField}
-                  onGoToStep={setActiveStepId}
-                  onLoglineChange={updateLogline}
-                  onRegenerateField={regenerateBriefField}
-                  onRegenerateLogline={regenerateLogline}
-                />
-              ) : null}
-            </BriefStepShell>
-          </>
+          <BriefStepShell
+            activeStepId={activeStepId}
+            activeStepIndex={activeStepIndex}
+            chatPanel={chatPanel}
+            footerAction={
+              isSummaryStep ? (
+                <BriefApproveButton disabled={isApproveDisabled} onApprove={approveBrief} />
+              ) : (
+                <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
+                  Next
+                </Button>
+              )
+            }
+            onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
+            onStartWithAi={resetToLanding}
+            onSelectStep={setActiveStepId}
+          >
+            {activeStepId === "basics" ? (
+              <BriefBasicsSection
+                fields={briefFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onRegenerateField={regenerateBriefField}
+              />
+            ) : null}
+            {activeStepId === "purposeAudience" ? (
+              <BriefPurposeAudienceSection
+                fields={briefFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onRegenerateField={regenerateBriefField}
+              />
+            ) : null}
+            {activeStepId === "lookFeel" ? (
+              <BriefLookAndFeelSection
+                fields={briefFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onRegenerateField={regenerateBriefField}
+              />
+            ) : null}
+            {activeStepId === "contentProduction" ? (
+              <BriefContentProductionSection
+                fields={briefFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onRegenerateField={regenerateBriefField}
+              />
+            ) : null}
+            {activeStepId === "deliverablesTiming" ? (
+              <BriefDeliverablesSection
+                fields={briefFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onRegenerateField={regenerateBriefField}
+              />
+            ) : null}
+            {activeStepId !== "basics" &&
+            activeStepId !== "purposeAudience" &&
+            activeStepId !== "lookFeel" &&
+            activeStepId !== "contentProduction" &&
+            activeStepId !== "deliverablesTiming" &&
+            activeStepId !== "summary" ? (
+              <BriefPlaceholderSection stepLabel={activeStep.label} copy={placeholderStepCopy[activeStepId]} />
+            ) : null}
+            {activeStepId === "summary" ? (
+              <BriefSummaryPage
+                fields={briefFields}
+                logline={logline}
+                missingFields={missingRequiredFields}
+                onConfirmField={confirmBriefField}
+                onFieldChange={updateBriefField}
+                onGoToStep={setActiveStepId}
+                onLoglineChange={updateLogline}
+                onRegenerateField={regenerateBriefField}
+                onRegenerateLogline={regenerateLogline}
+              />
+            ) : null}
+          </BriefStepShell>
         )}
       </div>
     </main>
   );
 }
 
-function BriefSidebar({ projectId }: { projectId: string }) {
+function BriefSidebar() {
   return (
     <aside className="today-sidebar brief-sidebar" aria-label="Primary navigation">
       <nav className="today-sidebar-nav" aria-label="Workspace">
         <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
-          Active Videos
+          Videos
         </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/today">
           <DsIcon name="check-circle" size={16} />
           Today
         </Link>
-        <Link className="today-sidebar-link active label-s-semibold" href={`/projects/${projectId}/stages/brief`}>
-          <DsIcon name="clipboard-text" size={16} />
-          Brief
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
-          <DsIcon name="film-script" size={16} />
-          Script
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/review">
-          <DsIcon name="play" size={16} />
-          Video Review
-        </Link>
       </nav>
     </aside>
-  );
-}
-
-function BriefHeader({
-  onTitleChange,
-  titleField,
-}: {
-  onTitleChange: (fieldId: BriefFieldId, value: string) => void;
-  titleField: BriefField;
-}) {
-  const titleValue = titleField.value || "Untitled brief";
-
-  return (
-    <header className="brief-header">
-      <div className="brief-title-stack">
-        <h1 className="brief-editable-title">
-          <span className="brief-title-prefix" data-tooltip="System-generated job number">
-            Loom003
-          </span>
-          <span className="brief-title-separator"> - </span>
-          <input
-            className="brief-title-input"
-            aria-label="Working title"
-            value={titleValue}
-            onChange={(event) => onTitleChange("workingTitle", event.target.value)}
-          />
-        </h1>
-      </div>
-    </header>
   );
 }
 
@@ -4993,7 +4948,7 @@ function BriefStatusDotControl({
       : status === "guess"
         ? "Brisk AI made a best guess. Refresh to regenerate this from the current brief."
         : "Brisk AI is confident based on the current brief.";
-  const actionLabel = status === "missing" ? "Ask AI to try again" : "Refresh AI";
+  const actionLabel = "Refresh AI";
 
   return (
     <span className="brief-status-dot-wrap">
@@ -5011,7 +4966,7 @@ function BriefStatusDotControl({
           {onEdit ? (
             <button className="brief-status-tooltip-action" type="button" onClick={onEdit}>
               <DsIcon name="pencil-simple" size={13} />
-              <span>Edit</span>
+              <span>Change answer</span>
             </button>
           ) : null}
           <button className="brief-status-tooltip-action" type="button" onClick={onRegenerate}>

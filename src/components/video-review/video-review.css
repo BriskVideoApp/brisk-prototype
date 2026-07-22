@@ -1,4 +1,5 @@
 .video-review-shell {
+  --today-sidebar-width: calc(var(--brisk-space-3xl) * 4);
   display: flex;
   height: 100vh;
   background: var(--brisk-page-primary);
@@ -10,6 +11,7 @@
   min-width: 0;
   flex: 1;
   flex-direction: column;
+  padding-bottom: 57px;
 }
 
 .visually-hidden-file-input {
@@ -21,16 +23,47 @@
 }
 
 .review-topbar {
-  position: relative;
-  z-index: 20;
+  position: fixed;
+  z-index: 60;
+  right: 0;
+  bottom: 0;
+  left: var(--today-sidebar-width);
   display: flex;
   height: 57px;
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
   border: 1px solid var(--brisk-border-primary);
-  background: var(--brisk-bg-block-primary);
+  border-right: 0;
+  border-color: transparent;
+  background: transparent;
   padding: 0 var(--brisk-space-xl);
+  transition:
+    background 200ms ease,
+    border-color 200ms ease;
+}
+
+.review-topbar:hover,
+.review-topbar:focus-within {
+  border-color: var(--brisk-border-primary);
+  border-right-color: transparent;
+  background: var(--brisk-bg-block-primary);
+}
+
+.review-topbar > * {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(var(--brisk-space-xs));
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.review-topbar:hover > *,
+.review-topbar:focus-within > * {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .topbar-left,
@@ -74,15 +107,15 @@
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-bg-elevated-primary);
-  box-shadow: var(--brisk-shadow-s);
+  box-shadow: var(--brisk-shadow-m);
   color: var(--brisk-text-primary);
   content: attr(data-tooltip);
   font-family: var(--font-brisk);
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.35;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
   opacity: 0;
-  padding: 8px 10px;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
   pointer-events: none;
   text-align: left;
   transform: translate(var(--tooltip-x, -50%), var(--tooltip-y, 3px));
@@ -165,7 +198,8 @@
 
 .version-menu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: auto;
+  bottom: calc(100% + 6px);
   left: 0;
   z-index: 9;
   display: grid;
@@ -232,8 +266,9 @@
 
 .topbar-more-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: auto;
   right: 0;
+  bottom: calc(100% + 8px);
   z-index: 8;
   display: grid;
   width: 146px;
@@ -267,7 +302,7 @@
 
 .review-workspace {
   display: grid;
-  height: calc(100vh - 57px);
+  height: 100%;
   min-height: 0;
   flex: 1;
   grid-template-columns: minmax(0, 70%) minmax(410px, 30%);
@@ -1087,10 +1122,10 @@
   --tooltip-right: auto;
   --tooltip-left: 0;
   --tooltip-x: 0;
-  border: 0;
-  background: var(--brisk-text-primary);
-  box-shadow: none;
-  color: var(--brisk-white);
+  border: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
 }
 
 .timecode-chip {

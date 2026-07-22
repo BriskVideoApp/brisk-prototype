@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import Link from "next/link";
+import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { reviewUsers, reviewVideo } from "@/data/video-review";
+import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
 import type {
@@ -21,6 +23,7 @@ import type {
 
 const currentUserId = "user-tom";
 const versionUploadInputId = "video-version-upload";
+const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
 const playbackSpeeds = [0.5, 1, 1.5, 2] as const;
 const reactionOptions: Array<{ emoji: ReactionEmoji; label: string }> = [
   { emoji: "❤️", label: "Love" },
@@ -564,6 +567,7 @@ export function VideoReviewScreen() {
     <main className="video-review-shell">
       <VideoReviewSidebar />
       <div className="video-review-main">
+        {projectStageHeaderProject ? <ProjectStageHeader activeStage="edit" project={projectStageHeaderProject} /> : null}
         <VideoReviewTopBar
           video={activeVideo}
           selectedVersionLabel={selectedVersionLabel}
@@ -730,19 +734,11 @@ function VideoReviewSidebar() {
       <nav className="today-sidebar-nav" aria-label="Workspace">
         <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
           <DsIcon name="queue" size={16} />
-          Active Videos
+          Videos
         </Link>
         <Link className="today-sidebar-link label-s-semibold" href="/today">
           <DsIcon name="check-circle" size={16} />
           Today
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/projects/mock-project/script?role=studio">
-          <DsIcon name="film-script" size={16} />
-          Script
-        </Link>
-        <Link className="today-sidebar-link active label-s-semibold" href="/review">
-          <DsIcon name="play" size={16} />
-          Video Review
         </Link>
       </nav>
     </aside>
