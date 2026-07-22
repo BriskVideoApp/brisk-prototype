@@ -123,6 +123,10 @@ function getProjectStageHref(projectId: string, stage: StageKey) {
     return `/projects/${projectId}/script`;
   }
 
+  if (stage === "media") {
+    return `/projects/${projectId}/stages/media`;
+  }
+
   if (stage === "edit") {
     return "/review";
   }

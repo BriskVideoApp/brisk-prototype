@@ -9,6 +9,7 @@ import "@/components/project/project-stage-header.css";
 import "@/components/share/share-action-row.css";
 import "@/components/script/script.css";
 import "@/components/brief/brief.css";
+import "@/components/media/media.css";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",

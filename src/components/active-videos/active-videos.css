@@ -727,6 +727,15 @@
   border: 1px solid transparent;
   background: transparent;
   color: var(--brisk-text-secondary);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.active-project-row:hover .project-plus-action,
+.project-cell:focus-within .project-plus-action,
+.project-cell-tag-menu-open .project-plus-action {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .project-plus-action:hover {
