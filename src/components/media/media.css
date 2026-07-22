@@ -167,6 +167,12 @@
   gap: var(--brisk-space-xs);
 }
 
+.media-all-folder-section {
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  margin-bottom: var(--brisk-space-s);
+  padding-bottom: var(--brisk-space-m);
+}
+
 .media-folder-item {
   display: flex;
   width: 100%;

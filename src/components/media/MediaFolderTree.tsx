@@ -69,10 +69,12 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
         </div>
       </div>
       <div className="media-folder-list" onDragOver={(event) => event.preventDefault()} onDrop={(event) => dropFolder(event, null)}>
-        <button className={`media-folder-item ${props.selectedFolderId === null ? "is-selected" : ""}`} type="button" onClick={() => props.onSelect(null)}>
-          <DsIcon name="folder-open" size={18} />
-          <span className="label-s-semibold">All media</span>
-        </button>
+        <div className="media-all-folder-section">
+          <button className={`media-folder-item ${props.selectedFolderId === null ? "is-selected" : ""}`} type="button" onClick={() => props.onSelect(null)}>
+            <DsIcon name="folder-open" size={18} />
+            <span className="label-s-semibold">All media</span>
+          </button>
+        </div>
         {props.folders.length === 0 ? (
           <div className="media-folder-empty">
             <p className="label-s">Create a folder to organise your media, or just start uploading.</p>
