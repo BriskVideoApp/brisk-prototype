@@ -168,7 +168,7 @@
 }
 
 .media-all-folder-section {
-  border-bottom: 1px solid var(--brisk-border-secondary);
+  border-bottom: 1px solid var(--brisk-border-primary);
   margin-bottom: var(--brisk-space-s);
   padding-bottom: var(--brisk-space-m);
 }
