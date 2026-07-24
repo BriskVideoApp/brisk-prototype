@@ -1552,7 +1552,7 @@ function ProjectDetailPanel({
             <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
               Open full project
             </a>
-            <a className="project-detail-action-button label-s-semibold" href={`${projectBaseHref}/chat`}>
+            <a className="project-detail-action-button label-s-semibold" href={`/chat?project=${encodeURIComponent(project.id)}`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="chat-circle" size={20} />
                 <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
@@ -2464,7 +2464,7 @@ function ProjectCell({
           <div className="project-quick-actions" aria-label={`Quick actions for ${project.name}`}>
             <a
               className="project-quick-action"
-              href={`${projectBaseHref}/chat`}
+              href={`/chat?project=${encodeURIComponent(project.id)}`}
               aria-label={chatTooltip}
               data-tooltip={chatTooltip}
               onClick={(event) => event.stopPropagation()}

@@ -43,14 +43,18 @@ import {
   recentCalls,
 } from "@/data/chat";
 
-export function ChatPage() {
+export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
   const { selectedRole } = usePrototypeRole();
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
   const [dmConversations, setDmConversations] = useState(directConversations);
   const [activeView, setActiveView] = useState<ChatRailView>("projects");
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>("loom-launch-film");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() =>
+    initialProjectId && initialProjects.some((project) => project.id === initialProjectId)
+      ? initialProjectId
+      : "loom-launch-film",
+  );
   const [selectedClientName, setSelectedClientName] = useState<string | null>(null);
   const [selectedCompanyChatClientName, setSelectedCompanyChatClientName] = useState<string | null>(null);
   const [selectedDmId, setSelectedDmId] = useState<string | null>(null);
