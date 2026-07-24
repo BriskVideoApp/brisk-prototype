@@ -719,10 +719,7 @@ function getComposerPlaceholder(
   }
 
   const clientPossessive = makePossessive(project.clientName);
-  const connectorDetail = project.connectors[source].detail;
-  const destination = source === "email" && connectorDetail.startsWith("project-code@")
-    ? `${project.code.toLowerCase()}@in.briskapp.com`
-    : connectorDetail;
+  const destination = project.connectors[source].detail;
 
   if (source === "slack") {
     return `${basePlaceholder} and send to ${clientPossessive} ${destination} Slack channel`;
@@ -736,7 +733,7 @@ function getComposerPlaceholder(
     return `${basePlaceholder} and send to ${clientPossessive} Microsoft Teams channel`;
   }
 
-  return `${basePlaceholder} and email to ${destination}`;
+  return `${basePlaceholder} and send email to customers`;
 }
 
 function makePossessive(name: string) {
