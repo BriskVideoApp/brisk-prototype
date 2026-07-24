@@ -2171,19 +2171,6 @@ button.script-version-row-body:focus-visible {
   outline-offset: 2px;
 }
 
-.script-customer-visibility-button {
-  --tooltip-top: calc(100% + var(--brisk-space-s));
-  --tooltip-bottom: auto;
-  --tooltip-left: 50%;
-  --tooltip-x: -50%;
-  position: relative;
-}
-
-.script-customer-visibility-button[aria-pressed="true"] {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary);
-}
-
 .script-version-history {
   display: grid;
   gap: var(--brisk-space-s);

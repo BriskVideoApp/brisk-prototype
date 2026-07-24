@@ -1522,18 +1522,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               />
             ) : null}
           </div>
-          {!isCustomer ? (
-            <button
-              className="script-version-row-menu-button script-customer-visibility-button"
-              type="button"
-              aria-label={isVisibleToCustomer ? `Hide from ${scriptCustomerName}` : `Show to ${scriptCustomerName}`}
-              aria-pressed={isVisibleToCustomer}
-              data-tooltip={isVisibleToCustomer ? `Hide from ${scriptCustomerName}` : `Show to ${scriptCustomerName}`}
-              onClick={() => setIsVisibleToCustomer((isVisible) => !isVisible)}
-            >
-              <DsIcon name="eye" size={16} />
-            </button>
-          ) : null}
           {renderScriptCurrentVersionMenu()}
         </div>
       </div>
@@ -1583,6 +1571,18 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             <span className="script-menu-divider" aria-hidden="true" />
             {!isCustomer ? (
               <>
+                <button
+                  className="label-xs-semibold"
+                  type="button"
+                  aria-pressed={isVisibleToCustomer}
+                  onClick={() => {
+                    setIsVisibleToCustomer((isVisible) => !isVisible);
+                    setIsCurrentVersionMenuOpen(false);
+                  }}
+                >
+                  <span>{isVisibleToCustomer ? `Hide from ${scriptCustomerName}` : `Show to ${scriptCustomerName}`}</span>
+                  <DsIcon name="eye" size={14} />
+                </button>
                 <button
                   className="label-xs-semibold"
                   type="button"
