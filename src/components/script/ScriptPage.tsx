@@ -1487,66 +1487,71 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               />
             ) : null}
           </div>
-          <div className="script-current-version-menu-wrap">
-            <button
-              className="script-version-row-menu-button"
-              type="button"
-              aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
-              aria-expanded={isCurrentVersionMenuOpen}
-              onClick={() => {
-                setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
-                setIsVersionsPanelOpen(false);
-                setIsCommentsOverviewOpen(false);
-              }}
-            >
-              <DsIcon name="dots-three" size={14} />
-            </button>
-            {isCurrentVersionMenuOpen ? (
-              <span className="script-version-row-menu script-current-version-menu">
-                {!isCustomer ? (
-                  <>
-                    <button
-                      className="label-xs-semibold"
-                      type="button"
-                      aria-pressed={showChanges}
-                      onClick={toggleShowChangesFromMenu}
-                    >
-                      <span>{showChanges ? "Hide changes" : "Show changes"}</span>
-                      {showChanges ? <DsIcon name="check" size={12} /> : null}
-                    </button>
-                    <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
-                      New script
-                    </button>
-                    <span className="script-menu-divider" aria-hidden="true" />
-                  </>
-                ) : null}
-                <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
-                  Duplicate
-                </button>
-                <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
-                  Rename
-                </button>
-                <button
-                  className="delete label-xs-semibold"
-                  disabled={selectedVersion.approvedSnapshot}
-                  title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
-                  type="button"
-                  onClick={() => {
-                    setIsCurrentVersionMenuOpen(false);
-                    deleteVersion(selectedVersion.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </span>
-            ) : null}
-          </div>
-          <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
-          <span className="script-save-note label-xs">
-            {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
-          </span>
         </div>
       </div>
+    </div>
+  );
+
+  const scriptFooterDocumentControls = (
+    <div className="script-footer-document-controls" aria-label="Script document controls">
+      <div className="script-current-version-menu-wrap">
+        <button
+          className="script-version-row-menu-button"
+          type="button"
+          aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+          aria-expanded={isCurrentVersionMenuOpen}
+          onClick={() => {
+            setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
+            setIsVersionsPanelOpen(false);
+            setIsCommentsOverviewOpen(false);
+          }}
+        >
+          <DsIcon name="dots-three" size={14} />
+        </button>
+        {isCurrentVersionMenuOpen ? (
+          <span className="script-version-row-menu script-current-version-menu">
+            {!isCustomer ? (
+              <>
+                <button
+                  className="label-xs-semibold"
+                  type="button"
+                  aria-pressed={showChanges}
+                  onClick={toggleShowChangesFromMenu}
+                >
+                  <span>{showChanges ? "Hide changes" : "Show changes"}</span>
+                  {showChanges ? <DsIcon name="check" size={12} /> : null}
+                </button>
+                <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
+                  New script
+                </button>
+                <span className="script-menu-divider" aria-hidden="true" />
+              </>
+            ) : null}
+            <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
+              Duplicate
+            </button>
+            <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
+              Rename
+            </button>
+            <button
+              className="delete label-xs-semibold"
+              disabled={selectedVersion.approvedSnapshot}
+              title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
+              type="button"
+              onClick={() => {
+                setIsCurrentVersionMenuOpen(false);
+                deleteVersion(selectedVersion.id);
+              }}
+            >
+              Delete
+            </button>
+          </span>
+        ) : null}
+      </div>
+      <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
+      <span className="script-save-note label-xs">
+        {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
+      </span>
     </div>
   );
 
@@ -1710,14 +1715,17 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       <footer className={`script-word-footer word-${wordState}`}>
         <div className="script-word-footer-inner">
-          <div className="script-word-footer-copy">
-            <span className="script-word-count">{totalWords} words</span>
-            <span className="script-word-separator" aria-hidden="true">·</span>
-            <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
-              <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
-              <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
-            </span>
-            {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
+          <div className="script-word-footer-status">
+            <div className="script-word-footer-copy">
+              <span className="script-word-count">{totalWords} words</span>
+              <span className="script-word-separator" aria-hidden="true">·</span>
+              <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
+                <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
+                <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
+              </span>
+              {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
+            </div>
+            {scriptFooterDocumentControls}
           </div>
           {scriptDecisionActions}
         </div>
