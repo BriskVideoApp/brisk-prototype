@@ -20,6 +20,9 @@ export type ShareActionRowProps = {
   studioName?: string;
   customerName?: string;
   onApprove?: () => void;
+  showApprove?: boolean;
+  copyLinkIconOnly?: boolean;
+  approveLabel?: string;
 };
 
 type ExpandedSection = "linkOpens" | "access";
@@ -54,6 +57,9 @@ export function ShareActionRow({
   studioName = "Brisk Studios",
   customerName = "Avery Taylor",
   onApprove,
+  showApprove = true,
+  copyLinkIconOnly = false,
+  approveLabel = "Approve",
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
@@ -192,13 +198,14 @@ export function ShareActionRow({
     <div className={`share-action-row share-density-${density}`} ref={rootRef}>
       <div className="share-action-buttons" aria-label={`${stageLabel} share actions`}>
         <button
-          className="share-button share-button-tertiary label-s-semibold"
+          className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
           type="button"
+          aria-label="Copy Link"
           aria-expanded={isPopoverOpen}
           onClick={() => setIsPopoverOpen((isOpen) => !isOpen)}
         >
           <DsIcon name="link" size={20} />
-          Copy Link
+          {copyLinkIconOnly ? null : "Copy Link"}
         </button>
         <button
           className="share-button share-button-secondary label-s-semibold"
@@ -207,16 +214,18 @@ export function ShareActionRow({
         >
           {requestReviewLabel}
         </button>
-        <button
-          className="share-button share-button-primary label-s-semibold"
-          type="button"
-          disabled={isApproveDisabled}
-          data-tooltip={isApproveDisabled ? "Sign in to approve" : undefined}
-          onClick={approveProject}
-        >
-          <DsIcon name="thumbs-up-like-fill" size={20} />
-          Approve
-        </button>
+        {showApprove ? (
+          <button
+            className="share-button share-button-primary label-s-semibold"
+            type="button"
+            disabled={isApproveDisabled}
+            data-tooltip={isApproveDisabled ? "Sign in to approve" : undefined}
+            onClick={approveProject}
+          >
+            <DsIcon name="thumbs-up-like-fill" size={20} />
+            {approveLabel}
+          </button>
+        ) : null}
       </div>
       {reviewToastMessage ? (
         <span className="share-request-toast label-xs-semibold" role="status">

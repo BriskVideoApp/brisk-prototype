@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
+import { ProjectMemberSettings } from "@/components/chat/ChatOverlays";
+import { CommentAvatar } from "@/components/comments/CommentPrimitives";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { chatClients, chatProjects, chatUsers } from "@/data/chat";
 
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
@@ -33,21 +39,60 @@ const stageStateLabels: Record<StageStatus["state"], string> = {
 
 export function ProjectStageHeader({ actions, activeStage, project }: ProjectStageHeaderProps) {
   const currentStageKey = activeStage ?? getCurrentProjectStage(project).key;
+  const { selectedRole } = usePrototypeRole();
+  const [isAccessOpen, setIsAccessOpen] = useState(false);
+  const [accessProject, setAccessProject] = useState(() => chatProjects.find((candidate) => candidate.id === project.id) ?? null);
+  const accessMembers = accessProject
+    ? accessProject.memberIds
+        .map((memberId) => chatUsers.find((user) => user.id === memberId))
+        .filter((user): user is (typeof chatUsers)[number] => Boolean(user))
+    : [];
+  const visibleAccessMembers = accessMembers.slice(0, 5);
+  const remainingAccessMembers = Math.max(0, accessMembers.length - visibleAccessMembers.length);
+  const client = accessProject ? chatClients.find((candidate) => candidate.name === accessProject.clientName) : null;
+  const companyUsers = client ? chatUsers.filter((user) => client.userIds.includes(user.id)) : [];
 
   return (
-    <header className="project-stage-header" aria-label="Project stage progress">
-      <div className="project-stage-brand-strip" aria-label={`${project.clientBadge} / ${project.name}`}>
-        <div className="project-stage-identity">
-          <span className="project-stage-client-badge label-xs-semibold">{project.clientBadge}</span>
-          <span className="project-stage-identity-divider" aria-hidden="true">
-            /
-          </span>
-          <span className="project-stage-project-title">{project.name}</span>
+    <>
+      <header className="project-stage-header" aria-label="Project stage progress">
+        <div className="project-stage-brand-strip" aria-label={`${project.clientBadge} / ${project.name}`}>
+          <div className="project-stage-identity">
+            <Link
+              className="project-stage-dashboard-link"
+              href="/active-videos"
+              aria-label="Back to dashboard"
+              data-tooltip="Back to dashboard"
+            >
+              <DsIcon name="arrow-left" size={18} />
+            </Link>
+            <span className="project-stage-client-badge label-xs-semibold">{project.clientBadge}</span>
+            <span className="project-stage-identity-divider" aria-hidden="true">
+              /
+            </span>
+            <span className="project-stage-project-title">{project.name}</span>
+          </div>
+          {accessProject || actions ? (
+            <div className="project-stage-header-actions">
+              {accessProject ? (
+                <button
+                  className="project-stage-access-button"
+                  type="button"
+                  aria-label={`${selectedRole === "Studio Staff" ? "Manage" : "View"} people with access to this project`}
+                  title={`${selectedRole === "Studio Staff" ? "Manage" : "View"} people with access`}
+                  onClick={() => setIsAccessOpen(true)}
+                >
+                  <span className="project-stage-access-stack" aria-hidden="true">
+                    {visibleAccessMembers.map((user) => <CommentAvatar compact key={user.id} user={user} />)}
+                    {remainingAccessMembers > 0 ? <span className="project-stage-access-more label-xs-semibold">+{remainingAccessMembers}</span> : null}
+                  </span>
+                </button>
+              ) : null}
+              {actions}
+            </div>
+          ) : null}
         </div>
-        {actions ? <div className="project-stage-header-actions">{actions}</div> : null}
-      </div>
-      <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
-        <ol className="project-stage-track" aria-label="Production stages">
+        <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
+          <ol className="project-stage-track" aria-label="Production stages">
           {projectHeaderStages.map((stage, index) => {
             const status = project.stages[stage.key];
             const href = getProjectStageHref(project.id, stage.key);
@@ -90,9 +135,20 @@ export function ProjectStageHeader({ actions, activeStage, project }: ProjectSta
               </li>
             );
           })}
-        </ol>
-      </div>
-    </header>
+          </ol>
+        </div>
+      </header>
+      {isAccessOpen && accessProject ? (
+        <ProjectMemberSettings
+          project={accessProject}
+          users={chatUsers}
+          companyUsers={companyUsers}
+          canManage={selectedRole === "Studio Staff"}
+          onClose={() => setIsAccessOpen(false)}
+          onProjectChange={setAccessProject}
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -109,8 +165,16 @@ function getProjectStageHref(projectId: string, stage: StageKey) {
     return `/projects/${projectId}/script`;
   }
 
+  if (stage === "media") {
+    return `/projects/${projectId}/stages/media`;
+  }
+
   if (stage === "edit") {
     return "/review";
+  }
+
+  if (stage === "masters") {
+    return `/projects/${projectId}/stages/masters`;
   }
 
   return "";

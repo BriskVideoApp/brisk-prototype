@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent, MouseEvent } from "react";
+import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { CommentFilter, CommentVisibility, Reaction, ReactionEmoji, User } from "@/components/video-review/types";
 import type { ScriptComment, ScriptCommentAnchor } from "@/data/script";
@@ -546,7 +547,7 @@ function CommentThread({
       }}
     >
       <div className="comment-row">
-        <Avatar user={author} />
+        <CommentAvatar user={author} />
         <div className="comment-body">
           <div className="comment-meta">
             <div className="author-line">
@@ -625,7 +626,7 @@ function CommentThread({
                 <span className="reply-corner" aria-hidden="true">
                   <DsIcon name="caret-right" size={12} />
                 </span>
-                <Avatar user={replyAuthor} compact />
+                <CommentAvatar user={replyAuthor} compact />
                 <div className="reply-message">
                   <div className="reply-meta">
                     <span className="label-xs-semibold">{replyAuthor.name}</span>
@@ -1043,14 +1044,6 @@ function ResolveAllModal({
         </div>
       </div>
     </div>
-  );
-}
-
-function Avatar({ user, compact = false }: { user: User; compact?: boolean }) {
-  return (
-    <span className={`avatar ${user.avatarTone} ${compact ? "compact" : ""}`} aria-label={user.name}>
-      {user.initials}
-    </span>
   );
 }
 

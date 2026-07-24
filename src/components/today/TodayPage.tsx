@@ -11,6 +11,8 @@ import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, snapToQuarter, stageLabels } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId, todayReferenceDate, todayTimeEntries } from "@/data/today/mockData";
 import { readSharedTimeEntries, sharedTimeEntriesEventName, toTodayTimeEntry } from "@/data/timeEntries/sharedTimeEntries";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, StageKey } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
@@ -51,7 +53,7 @@ type EntryTotals = {
 };
 
 export function TodayPage() {
-  const selectedRole: PrototypeRole = "Studio Staff";
+  const { selectedRole } = usePrototypeRole();
   const [weekOffset, setWeekOffset] = useState(0);
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
@@ -127,7 +129,7 @@ export function TodayPage() {
 
   return (
     <main className="today-shell">
-      <TodaySidebar selectedRole={selectedRole} />
+      <WorkspaceSidebar activeItem="today" />
       <section className="today-main" aria-label="Today workspace">
         <TodayHeader
           weekDays={weekDays}
@@ -174,25 +176,6 @@ export function TodayPage() {
         ) : null}
       </section>
     </main>
-  );
-}
-
-function TodaySidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
-  return (
-    <aside className="today-sidebar" aria-label="Primary navigation">
-      <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Videos
-        </Link>
-        {selectedRole === "Studio Staff" ? (
-          <Link className="today-sidebar-link active label-s-semibold" href="/today">
-            <DsIcon name="check-circle" size={16} />
-            Today
-          </Link>
-        ) : null}
-      </nav>
-    </aside>
   );
 }
 

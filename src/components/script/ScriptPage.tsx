@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useEffect,
   useMemo,
@@ -15,12 +14,14 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ScriptAiPanel, type ScriptAiInsertRequest, type ScriptAiRowDraft } from "@/components/script-ai/ScriptAiPanel";
 import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { chatProjects } from "@/data/chat";
 import {
   initialScriptComments,
   scriptBrief,
@@ -52,6 +53,7 @@ const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Para
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
 const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
+const scriptCustomerName = chatProjects.find((project) => project.id === projectStageHeaderProject?.id)?.clientName ?? "customer";
 const emptyScriptPlaceholderRow: ScriptRow = {
   id: emptyScriptRowId,
   words: "",
@@ -186,6 +188,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [isRequestReviewOpen, setIsRequestReviewOpen] = useState(false);
   const [isVersionsPanelOpen, setIsVersionsPanelOpen] = useState(false);
   const [isCurrentVersionMenuOpen, setIsCurrentVersionMenuOpen] = useState(false);
+  const [isVisibleToCustomer, setIsVisibleToCustomer] = useState(true);
   const [isRenamingCurrentVersion, setIsRenamingCurrentVersion] = useState(false);
   const [currentVersionRenameDraft, setCurrentVersionRenameDraft] = useState("");
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
@@ -1013,6 +1016,38 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setIsRenamingCurrentVersion(true);
   };
 
+  const downloadCurrentVersion = () => {
+    const versionName = getVersionButtonLabel(
+      selectedVersion,
+      versionMetaById[selectedVersion.id] ?? defaultVersionMeta,
+    );
+    const scriptBody = rows
+      .map((row, index) => {
+        const lineNumber = String(index + 1).padStart(2, "0");
+        return row.visuals.trim()
+          ? `${lineNumber}  ${row.words}\n    Visuals: ${row.visuals}`
+          : `${lineNumber}  ${row.words}`;
+      })
+      .join("\n\n");
+    const fileName = `${projectStageHeaderProject.name}-${versionName}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    const blob = new Blob(
+      [`${projectStageHeaderProject.name}\n${versionName}\n\n${scriptBody}\n`],
+      { type: "text/plain;charset=utf-8" },
+    );
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+
+    anchor.href = url;
+    anchor.download = `${fileName}.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setIsCurrentVersionMenuOpen(false);
+    setToastMessage(`Downloading ${versionName}`);
+  };
+
   const saveCurrentVersionRename = () => {
     if (isCancellingCurrentVersionRenameRef.current) {
       isCancellingCurrentVersionRenameRef.current = false;
@@ -1487,77 +1522,121 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               />
             ) : null}
           </div>
-          <div className="script-current-version-menu-wrap">
-            <button
-              className="script-version-row-menu-button"
-              type="button"
-              aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
-              aria-expanded={isCurrentVersionMenuOpen}
-              onClick={() => {
-                setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
-                setIsVersionsPanelOpen(false);
-                setIsCommentsOverviewOpen(false);
-              }}
-            >
-              <DsIcon name="dots-three" size={14} />
-            </button>
-            {isCurrentVersionMenuOpen ? (
-              <span className="script-version-row-menu script-current-version-menu">
-                {!isCustomer ? (
-                  <>
-                    <button
-                      className="label-xs-semibold"
-                      type="button"
-                      aria-pressed={showChanges}
-                      onClick={toggleShowChangesFromMenu}
-                    >
-                      <span>{showChanges ? "Hide changes" : "Show changes"}</span>
-                      {showChanges ? <DsIcon name="check" size={12} /> : null}
-                    </button>
-                    <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
-                      New script
-                    </button>
-                    <span className="script-menu-divider" aria-hidden="true" />
-                  </>
-                ) : null}
-                <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
-                  Duplicate
-                </button>
-                <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
-                  Rename
-                </button>
-                <button
-                  className="delete label-xs-semibold"
-                  disabled={selectedVersion.approvedSnapshot}
-                  title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
-                  type="button"
-                  onClick={() => {
-                    setIsCurrentVersionMenuOpen(false);
-                    deleteVersion(selectedVersion.id);
-                  }}
-                >
-                  Delete
-                </button>
-              </span>
-            ) : null}
-          </div>
-          <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
-          <span className="script-save-note label-xs">
-            {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
-          </span>
+          {renderScriptCurrentVersionMenu()}
         </div>
       </div>
     </div>
   );
 
+  function renderScriptCurrentVersionMenu() {
+    return (
+      <div className="script-current-version-menu-wrap" aria-label="Script document controls">
+        <button
+          className="script-version-row-menu-button"
+          type="button"
+          aria-label={`Open menu for ${getVersionHistoryTitle(selectedVersion, versionMetaById[selectedVersion.id] ?? defaultVersionMeta)}`}
+          aria-expanded={isCurrentVersionMenuOpen}
+          onClick={() => {
+            setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
+            setIsVersionsPanelOpen(false);
+            setIsCommentsOverviewOpen(false);
+          }}
+        >
+          <DsIcon name="dots-three" size={14} />
+        </button>
+        {isCurrentVersionMenuOpen ? (
+          <span className="script-version-row-menu script-current-version-menu">
+            <button
+              className="label-xs-semibold"
+              type="button"
+              onClick={() => {
+                undoRows();
+                setIsCurrentVersionMenuOpen(false);
+              }}
+            >
+              <span>Undo</span>
+              <DsIcon name="arrow-counter-clockwise" size={12} />
+            </button>
+            <button
+              className="label-xs-semibold"
+              type="button"
+              onClick={() => {
+                redoRows();
+                setIsCurrentVersionMenuOpen(false);
+              }}
+            >
+              <span>Redo</span>
+              <DsIcon name="arrow-clockwise" size={12} />
+            </button>
+            <span className="script-menu-divider" aria-hidden="true" />
+            {!isCustomer ? (
+              <>
+                <button
+                  className="label-xs-semibold"
+                  type="button"
+                  aria-pressed={isVisibleToCustomer}
+                  onClick={() => {
+                    setIsVisibleToCustomer((isVisible) => !isVisible);
+                    setIsCurrentVersionMenuOpen(false);
+                  }}
+                >
+                  <span>{isVisibleToCustomer ? `Hide from ${scriptCustomerName}` : `Show to ${scriptCustomerName}`}</span>
+                  <DsIcon name="eye" size={14} />
+                </button>
+                <button
+                  className="label-xs-semibold"
+                  type="button"
+                  aria-pressed={showChanges}
+                  onClick={toggleShowChangesFromMenu}
+                >
+                  <span>{showChanges ? "Hide changes" : "Show changes"}</span>
+                  {showChanges ? <DsIcon name="check" size={12} /> : null}
+                </button>
+                <button className="label-xs-semibold" type="button" onClick={createNewScriptDocumentFromMenu}>
+                  New script
+                </button>
+                <span className="script-menu-divider" aria-hidden="true" />
+              </>
+            ) : null}
+            <button className="label-xs-semibold" type="button" onClick={() => duplicateVersion(selectedVersion.id)}>
+              Duplicate
+            </button>
+            <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
+              Rename
+            </button>
+            <button className="label-xs-semibold" type="button" onClick={downloadCurrentVersion}>
+              Download
+            </button>
+            <button
+              className="delete label-xs-semibold"
+              disabled={selectedVersion.approvedSnapshot}
+              title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
+              type="button"
+              onClick={() => {
+                setIsCurrentVersionMenuOpen(false);
+                deleteVersion(selectedVersion.id);
+              }}
+            >
+              Delete
+            </button>
+            <span className="script-menu-divider" aria-hidden="true" />
+            <span className="script-menu-save-status label-xs">
+              {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
+            </span>
+          </span>
+        ) : null}
+      </div>
+    );
+  }
+
   const scriptToolbarCommentsButton = (
       <button
         className={`script-quiet-icon script-toolbar-comments-button ${isCommentsOverviewOpen ? "active" : ""}`}
         type="button"
-        aria-label="Comments"
+        aria-label="Show all comments"
         aria-expanded={isCommentsOverviewOpen}
         aria-pressed={isCommentsOverviewOpen}
-        data-tooltip="Comments"
+        data-tooltip="Show all comments"
         onClick={openAllComments}
       >
         <DsIcon name="chat-circle" size={16} />
@@ -1583,7 +1662,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
-      <ScriptSidebar />
+      <WorkspaceSidebar className="script-sidebar" />
       {projectStageHeaderProject ? (
         <ProjectStageHeader activeStage="script" project={projectStageHeaderProject} />
       ) : null}
@@ -1710,14 +1789,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
       <footer className={`script-word-footer word-${wordState}`}>
         <div className="script-word-footer-inner">
-          <div className="script-word-footer-copy">
-            <span className="script-word-count">{totalWords} words</span>
-            <span className="script-word-separator" aria-hidden="true">·</span>
-            <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
-              <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
-              <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
-            </span>
-            {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
+          <div className="script-word-footer-status">
+            <div className="script-word-footer-copy">
+              <span className="script-word-count">{totalWords} words</span>
+              <span className="script-word-separator" aria-hidden="true">·</span>
+              <span className="script-duration-pair" data-tooltip="Based on 150 words per minute.">
+                <span className="script-duration-actual">{formatFooterDuration(actualDurationSeconds)}</span>
+                <span className="script-duration-target"> / {formatFooterDuration(targetDurationSeconds)}</span>
+              </span>
+              {durationDeltaText ? <span className="script-word-delta">{durationDeltaText}</span> : null}
+            </div>
           </div>
           {scriptDecisionActions}
         </div>
@@ -1819,23 +1900,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </div>
       ) : null}
     </main>
-  );
-}
-
-function ScriptSidebar() {
-  return (
-    <aside className="today-sidebar script-sidebar" aria-label="Primary navigation">
-      <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Videos
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/today">
-          <DsIcon name="check-circle" size={16} />
-          Today
-        </Link>
-      </nav>
-    </aside>
   );
 }
 
@@ -1948,25 +2012,6 @@ function FloatingSelectionCommentButton({
       <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
         <DsIcon name="chat-circle" size={14} />
         Comment
-      </button>
-    </div>
-  );
-}
-
-function ScriptHistoryControls({
-  onRedo,
-  onUndo,
-}: {
-  onRedo: () => void;
-  onUndo: () => void;
-}) {
-  return (
-    <div className="script-history-controls" aria-label="Text history">
-      <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
-        <DsIcon name="arrow-counter-clockwise" size={12} />
-      </button>
-      <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
-        <DsIcon name="arrow-clockwise" size={12} />
       </button>
     </div>
   );
