@@ -1510,6 +1510,29 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         </button>
         {isCurrentVersionMenuOpen ? (
           <span className="script-version-row-menu script-current-version-menu">
+            <button
+              className="label-xs-semibold"
+              type="button"
+              onClick={() => {
+                undoRows();
+                setIsCurrentVersionMenuOpen(false);
+              }}
+            >
+              <span>Undo</span>
+              <DsIcon name="arrow-counter-clockwise" size={12} />
+            </button>
+            <button
+              className="label-xs-semibold"
+              type="button"
+              onClick={() => {
+                redoRows();
+                setIsCurrentVersionMenuOpen(false);
+              }}
+            >
+              <span>Redo</span>
+              <DsIcon name="arrow-clockwise" size={12} />
+            </button>
+            <span className="script-menu-divider" aria-hidden="true" />
             {!isCustomer ? (
               <>
                 <button
@@ -1545,13 +1568,13 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             >
               Delete
             </button>
+            <span className="script-menu-divider" aria-hidden="true" />
+            <span className="script-menu-save-status label-xs">
+              {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
+            </span>
           </span>
         ) : null}
       </div>
-      <ScriptHistoryControls onRedo={redoRows} onUndo={undoRows} />
-      <span className="script-save-note label-xs">
-        {saveState === "Saving..." ? "Saving..." : `Saved · ${formatSavedTime(lastSavedAt)}`}
-      </span>
     </div>
   );
 
@@ -1956,25 +1979,6 @@ function FloatingSelectionCommentButton({
       <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
         <DsIcon name="chat-circle" size={14} />
         Comment
-      </button>
-    </div>
-  );
-}
-
-function ScriptHistoryControls({
-  onRedo,
-  onUndo,
-}: {
-  onRedo: () => void;
-  onUndo: () => void;
-}) {
-  return (
-    <div className="script-history-controls" aria-label="Text history">
-      <button className="script-quiet-icon" type="button" data-tooltip="Undo" aria-label="Undo" onClick={onUndo}>
-        <DsIcon name="arrow-counter-clockwise" size={12} />
-      </button>
-      <button className="script-quiet-icon" type="button" data-tooltip="Redo" aria-label="Redo" onClick={onRedo}>
-        <DsIcon name="arrow-clockwise" size={12} />
       </button>
     </div>
   );

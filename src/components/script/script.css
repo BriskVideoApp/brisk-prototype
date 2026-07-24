@@ -193,13 +193,6 @@
   box-shadow: var(--brisk-shadow-m);
 }
 
-.script-save-note {
-  display: inline-flex;
-  align-items: center;
-  color: var(--brisk-gray-60);
-  white-space: nowrap;
-}
-
 .script-action-cluster .share-button:disabled {
   border-color: var(--brisk-border-secondary);
   background: var(--brisk-item-tertiary);
@@ -208,7 +201,6 @@
   opacity: 0.72;
 }
 
-.script-history-controls .script-quiet-icon[data-tooltip],
 .script-toolbar-comments-button[data-tooltip] {
   --tooltip-top: calc(100% + var(--brisk-space-s));
   --tooltip-bottom: auto;
@@ -230,7 +222,6 @@
 }
 
 .script-action-cluster [data-tooltip]::after,
-.script-history-controls .script-quiet-icon[data-tooltip]::after,
 .script-toolbar-comments-button[data-tooltip]::after {
   border-color: var(--brisk-border-primary);
   background: var(--brisk-bg-elevated-primary);
@@ -610,25 +601,6 @@
 .script-column-title-with-tooltip[data-tooltip]:focus-visible::after {
   opacity: 1;
   transform: translate(var(--tooltip-x), var(--brisk-space-none));
-}
-
-.script-history-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--brisk-space-xs);
-}
-
-.script-history-controls .script-quiet-icon {
-  width: 24px;
-  min-height: 24px;
-  max-height: 24px;
-  gap: 0;
-  padding: 0;
-}
-
-.script-history-controls .script-quiet-icon .ds-icon {
-  width: 12px;
-  height: 12px;
 }
 
 .script-visuals-header-toggle {
@@ -2267,6 +2239,15 @@ button.script-version-row-body:focus-visible {
   margin: var(--brisk-space-xs) 0;
 }
 
+.script-menu-save-status {
+  display: flex;
+  min-height: 28px;
+  align-items: center;
+  color: var(--brisk-text-secondary);
+  padding: 0 var(--brisk-space-s);
+  white-space: nowrap;
+}
+
 .script-version-row:nth-last-child(-n + 2) .script-version-row-menu {
   top: auto;
   bottom: calc(100% + var(--brisk-space-s));
@@ -2433,12 +2414,6 @@ button.script-version-row-body:focus-visible {
 .script-footer-document-controls .script-current-version-menu {
   top: auto;
   bottom: calc(100% + var(--brisk-space-s));
-}
-
-.script-footer-document-controls .script-history-controls .script-quiet-icon[data-tooltip] {
-  --tooltip-top: auto;
-  --tooltip-bottom: calc(100% + var(--brisk-space-s));
-  --tooltip-y: var(--brisk-space-xs);
 }
 
 .script-word-footer-actions {
