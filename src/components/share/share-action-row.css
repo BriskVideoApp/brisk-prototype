@@ -51,6 +51,12 @@
   color: var(--brisk-text-white);
 }
 
+.share-button-icon-only {
+  width: 44px;
+  min-width: 44px;
+  padding: var(--brisk-space-s);
+}
+
 .share-button-primary:hover:not(:disabled) {
   background: var(--brisk-brand-primary-click);
   border-color: var(--brisk-brand-primary-click);

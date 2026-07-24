@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
-import Link from "next/link";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { reviewUsers, reviewVideo } from "@/data/video-review";
+import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
+import { CommentAvatar } from "@/components/comments/CommentPrimitives";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
@@ -17,6 +18,8 @@ import type {
   Reaction,
   ReactionEmoji,
   ReviewComment,
+  ReviewVersion,
+  ReviewVersionStatus,
   User,
   Video,
 } from "./types";
@@ -48,13 +51,6 @@ const quickReactionOptions = [
 ].filter((reaction): reaction is { emoji: ReactionEmoji; label: string } => Boolean(reaction));
 const reactionLibraryOptions = reactionOptions;
 
-type LocalVideoVersion = {
-  label: string;
-  fileName: string;
-  sourceUrl: string;
-  durationSeconds: number;
-};
-
 export function VideoReviewScreen() {
   const [reviewComments, setReviewComments] = useState(reviewVideo.comments);
   const [activeFilter, setActiveFilter] = useState<CommentFilter>("unresolved");
@@ -62,10 +58,11 @@ export function VideoReviewScreen() {
     () => new Set(reviewVideo.comments.filter((comment) => comment.resolved).map((comment) => comment.id)),
   );
   const [expandedResolvedIds, setExpandedResolvedIds] = useState(new Set<string>());
-  const [isTopbarMenuOpen, setIsTopbarMenuOpen] = useState(false);
-  const [isVersionMenuOpen, setIsVersionMenuOpen] = useState(false);
-  const [selectedVersionLabel, setSelectedVersionLabel] = useState(reviewVideo.versionLabel);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedVersionLabel, setSelectedVersionLabel] = useState(reviewVersions[0]?.label ?? reviewVideo.versionLabel);
+  const [versionStatuses, setVersionStatuses] = useState<Record<string, ReviewVersionStatus>>(() =>
+    Object.fromEntries(reviewVersions.map((version) => [version.label, version.status])),
+  );
+  const [isCompareMode, setIsCompareMode] = useState(false);
   const [hasAnchor, setHasAnchor] = useState(true);
   const [composerBody, setComposerBody] = useState("");
   const [composerVisibility, setComposerVisibility] = useState<CommentVisibility>("external");
@@ -81,7 +78,9 @@ export function VideoReviewScreen() {
   const [editDraft, setEditDraft] = useState("");
   const [openCommentMenuId, setOpenCommentMenuId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
-  const [localVideoVersions, setLocalVideoVersions] = useState<LocalVideoVersion[]>([]);
+  const [videoVersions, setVideoVersions] = useState<ReviewVersion[]>(() =>
+    reviewVersions.map((version) => ({ ...version })),
+  );
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [drawingPaths, setDrawingPaths] = useState<DrawingPath[]>([]);
   const [activeDrawingPath, setActiveDrawingPath] = useState<DrawingPath | null>(null);
@@ -103,7 +102,6 @@ export function VideoReviewScreen() {
       activeFilter,
     ),
   );
-  const unresolvedCount = comments.filter((comment) => !comment.resolved).length;
   const selectedVisibleIndex = selectedCommentId
     ? comments.findIndex((comment) => comment.id === selectedCommentId)
     : -1;
@@ -113,25 +111,25 @@ export function VideoReviewScreen() {
   const selectedComment = selectedCommentId
     ? reviewComments.find((comment) => comment.id === selectedCommentId)
     : undefined;
-  const selectedLocalVideo = localVideoVersions.find((version) => version.label === selectedVersionLabel);
+  const allReviewVersions = videoVersions;
+  const selectedReviewVersion = allReviewVersions.find((version) => version.label === selectedVersionLabel) ?? allReviewVersions[0];
+  const selectedVersionStatus = selectedReviewVersion
+    ? (versionStatuses[selectedReviewVersion.label] ?? selectedReviewVersion.status)
+    : "in_review";
   const hasDrawingAttachment = drawingPaths.length > 0 || activeDrawingPath !== null;
   const pendingDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
   const selectedDrawingPaths = pendingFramePin ? [] : (selectedComment?.drawingPaths ?? []);
   const activeFramePin = pendingFramePin ?? selectedComment?.framePin ?? null;
-  const activeVideo: Video = selectedLocalVideo
+  const activeVideo: Video = selectedReviewVersion
     ? {
         ...reviewVideo,
-        fileName: selectedLocalVideo.fileName,
-        versionLabel: selectedLocalVideo.label,
-        versions: localVideoVersions.map((version) => version.label),
-        durationSeconds: selectedLocalVideo.durationSeconds,
-        sourceUrl: selectedLocalVideo.sourceUrl,
+        fileName: selectedReviewVersion.fileName,
+        versionLabel: selectedReviewVersion.label,
+        versions: allReviewVersions.map((version) => version.label),
+        durationSeconds: selectedReviewVersion.durationSeconds,
+        sourceUrl: selectedReviewVersion.sourceUrl,
       }
-    : {
-        ...reviewVideo,
-        versionLabel: "",
-        versions: [],
-      };
+    : reviewVideo;
 
   useEffect(() => {
     return () => {
@@ -337,16 +335,6 @@ export function VideoReviewScreen() {
     setToastMessage("Comment deleted");
   };
 
-  const downloadVideo = () => {
-    setIsTopbarMenuOpen(false);
-    setToastMessage("Download started");
-  };
-
-  const deleteVideo = () => {
-    setIsTopbarMenuOpen(false);
-    setToastMessage("Video deleted");
-  };
-
   const uploadVersion = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
@@ -354,20 +342,30 @@ export function VideoReviewScreen() {
       return;
     }
 
-    const nextLabel = `v${localVideoVersions.length + 1}`;
+    const nextNumber = Math.max(0, ...allReviewVersions.map((version) => version.number)) + 1;
+    const nextLabel = `v${nextNumber}`;
     const sourceUrl = URL.createObjectURL(file);
 
     localVideoUrlsRef.current.push(sourceUrl);
-    setLocalVideoVersions((current) => [
+    setVideoVersions((current) => [
       ...current,
       {
         label: nextLabel,
+        number: nextNumber,
         fileName: file.name,
         sourceUrl,
         durationSeconds: reviewVideo.durationSeconds,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: "Tom Evans",
+        codec: "H.264 High",
+        resolution: "1920 × 1080",
+        fileSize: formatFileSize(file.size),
+        status: "in_review",
       },
     ]);
+    setVersionStatuses((current) => ({ ...current, [nextLabel]: "in_review" }));
     setSelectedVersionLabel(nextLabel);
+    setIsCompareMode(false);
     setCurrentTimeSeconds(0);
     setIsPlaying(false);
     setPendingFramePin(null);
@@ -377,8 +375,8 @@ export function VideoReviewScreen() {
     event.target.value = "";
   };
 
-  const updateLocalVideoDuration = (durationSeconds: number) => {
-    setLocalVideoVersions((current) =>
+  const updateVideoDuration = (durationSeconds: number) => {
+    setVideoVersions((current) =>
       current.map((version) =>
         version.label === selectedVersionLabel
           ? {
@@ -388,6 +386,82 @@ export function VideoReviewScreen() {
           : version,
       ),
     );
+  };
+
+  const approveSelectedVersion = () => {
+    if (!selectedReviewVersion) {
+      return;
+    }
+
+    setVersionStatuses((current) => ({ ...current, [selectedReviewVersion.label]: "approved" }));
+    setToastMessage(`V${selectedReviewVersion.number} approved`);
+  };
+
+  const selectReviewVersion = (versionLabel: string) => {
+    setSelectedVersionLabel(versionLabel);
+    setCurrentTimeSeconds(0);
+    setIsPlaying(false);
+    setPendingFramePin(null);
+    setSelectedCommentId(null);
+    setIsCompareMode(false);
+    clearDrawingAttachment();
+  };
+
+  const replaceReviewVersionFile = (version: ReviewVersion, file: File) => {
+    const sourceUrl = URL.createObjectURL(file);
+
+    localVideoUrlsRef.current.push(sourceUrl);
+    setVideoVersions((current) =>
+      current.map((currentVersion) =>
+        currentVersion.label === version.label
+          ? {
+              ...currentVersion,
+              fileName: file.name,
+              sourceUrl,
+              fileSize: formatFileSize(file.size),
+              uploadedAt: new Date().toISOString(),
+              uploadedBy: "Tom Evans",
+              status: "in_review",
+            }
+          : currentVersion,
+      ),
+    );
+    setVersionStatuses((current) => ({ ...current, [version.label]: "in_review" }));
+    selectReviewVersion(version.label);
+    setToastMessage(`V${version.number} file replaced`);
+  };
+
+  const deleteReviewVersion = (version: ReviewVersion) => {
+    if (allReviewVersions.length <= 1) {
+      setToastMessage("Keep at least one version");
+      return;
+    }
+
+    const remainingVersions = allReviewVersions
+      .filter((currentVersion) => currentVersion.label !== version.label)
+      .sort((left, right) => right.number - left.number);
+
+    setVideoVersions(remainingVersions);
+    setVersionStatuses((current) => {
+      const nextStatuses = { ...current };
+      delete nextStatuses[version.label];
+      return nextStatuses;
+    });
+
+    if (version.sourceUrl?.startsWith("blob:")) {
+      URL.revokeObjectURL(version.sourceUrl);
+      localVideoUrlsRef.current = localVideoUrlsRef.current.filter((sourceUrl) => sourceUrl !== version.sourceUrl);
+    }
+
+    if (selectedVersionLabel === version.label) {
+      selectReviewVersion(remainingVersions[0].label);
+    }
+
+    if (remainingVersions.length < 2) {
+      setIsCompareMode(false);
+    }
+
+    setToastMessage(`V${version.number} deleted`);
   };
 
   const toggleReaction = (commentId: string, emoji: ReactionEmoji) => {
@@ -432,12 +506,6 @@ export function VideoReviewScreen() {
       next.add(commentId);
       return next;
     });
-  };
-
-  const resolveAll = () => {
-    setResolvedIds(new Set(reviewComments.map((comment) => comment.id)));
-    setExpandedResolvedIds(new Set());
-    setIsConfirmOpen(false);
   };
 
   const removeAnchor = () => {
@@ -565,34 +633,9 @@ export function VideoReviewScreen() {
 
   return (
     <main className="video-review-shell">
-      <VideoReviewSidebar />
+      <WorkspaceSidebar className="review-sidebar" />
       <div className="video-review-main">
         {projectStageHeaderProject ? <ProjectStageHeader activeStage="edit" project={projectStageHeaderProject} /> : null}
-        <VideoReviewTopBar
-          video={activeVideo}
-          selectedVersionLabel={selectedVersionLabel}
-          toastMessage={toastMessage}
-          uploadInputId={versionUploadInputId}
-          isVersionMenuOpen={isVersionMenuOpen}
-          isMenuOpen={isTopbarMenuOpen}
-          onDelete={deleteVideo}
-          onDismissToast={() => setToastMessage("")}
-          onDownload={downloadVideo}
-          onPrepareUpload={() => {
-            setTimeout(() => setIsVersionMenuOpen(false), 0);
-          }}
-          onSelectVersion={(versionLabel) => {
-            setSelectedVersionLabel(versionLabel);
-            setCurrentTimeSeconds(0);
-            setIsPlaying(false);
-            setPendingFramePin(null);
-            setSelectedCommentId(null);
-            clearDrawingAttachment();
-            setIsVersionMenuOpen(false);
-          }}
-          onToggleVersionMenu={() => setIsVersionMenuOpen((current) => !current)}
-          onToggleMenu={() => setIsTopbarMenuOpen((current) => !current)}
-        />
         <input
           className="visually-hidden-file-input"
           id={versionUploadInputId}
@@ -602,73 +645,88 @@ export function VideoReviewScreen() {
           onChange={uploadVersion}
         />
         <section className="review-workspace" aria-label="Video review workspace">
-        <VideoPlayer
-          video={activeVideo}
-          comments={reviewComments.map((comment) => ({
-            ...comment,
-            resolved: resolvedIds.has(comment.id),
-          }))}
-          currentTimeSeconds={currentTimeSeconds}
-          isPlaying={isPlaying}
-          selectedCommentId={selectedCommentId}
-          activeDrawingPath={activeDrawingPath}
-          activeFramePin={activeFramePin}
-          composerBody={composerBody}
-          drawingPaths={drawingPaths}
-          selectedDrawingPaths={selectedDrawingPaths}
-          isDrawingMode={isDrawingMode}
-          pendingFramePin={pendingFramePin}
-          onComposerBodyChange={setComposerBody}
-          onPlaceFramePin={placeFramePin}
-          onCancelFramePin={cancelFramePin}
-          onStartDrawing={(point) => {
-            setIsPlaying(false);
-            setActiveDrawingPath({
-              id: `drawing-${Date.now()}`,
-              points: [point],
-            });
-          }}
-          onUpdateDrawing={(point) => {
-            setActiveDrawingPath((currentPath) =>
-              currentPath
-                ? {
-                    ...currentPath,
-                    points: [...currentPath.points, point],
-                  }
-                : currentPath,
-            );
-          }}
-          onEndDrawing={finishDrawing}
-          onClearDrawing={clearCurrentDrawing}
-          onDoneDrawing={finishDrawingMode}
-          onSubmitComposer={submitComposer}
-          onUndoDrawing={undoLastDrawingStroke}
-          onSelectComment={selectComment}
-          onSkipNextComment={() => skipComment(1)}
-          onSkipPreviousComment={() => skipComment(-1)}
-          onSeek={setCurrentTimeSeconds}
-          onTimeChange={setCurrentTimeSeconds}
-          onDurationChange={updateLocalVideoDuration}
-          onSetPlaying={setIsPlaying}
-          onTogglePlay={() => {
-            setIsPlaying((current) => {
-              const nextIsPlaying = !current;
+        <div className="review-media-pane">
+          <VideoPlayer
+            video={activeVideo}
+            comments={reviewComments.map((comment) => ({
+              ...comment,
+              resolved: resolvedIds.has(comment.id),
+            }))}
+            currentTimeSeconds={currentTimeSeconds}
+            isPlaying={isPlaying}
+            isCompareMode={isCompareMode}
+            versionStatus={selectedVersionStatus}
+            selectedCommentId={selectedCommentId}
+            activeDrawingPath={activeDrawingPath}
+            activeFramePin={activeFramePin}
+            composerBody={composerBody}
+            drawingPaths={drawingPaths}
+            selectedDrawingPaths={selectedDrawingPaths}
+            isDrawingMode={isDrawingMode}
+            pendingFramePin={pendingFramePin}
+            onComposerBodyChange={setComposerBody}
+            onPlaceFramePin={placeFramePin}
+            onCancelFramePin={cancelFramePin}
+            onStartDrawing={(point) => {
+              setIsPlaying(false);
+              setActiveDrawingPath({
+                id: `drawing-${Date.now()}`,
+                points: [point],
+              });
+            }}
+            onUpdateDrawing={(point) => {
+              setActiveDrawingPath((currentPath) =>
+                currentPath
+                  ? {
+                      ...currentPath,
+                      points: [...currentPath.points, point],
+                    }
+                  : currentPath,
+              );
+            }}
+            onEndDrawing={finishDrawing}
+            onClearDrawing={clearCurrentDrawing}
+            onDoneDrawing={finishDrawingMode}
+            onSubmitComposer={submitComposer}
+            onUndoDrawing={undoLastDrawingStroke}
+            onSelectComment={selectComment}
+            onSkipNextComment={() => skipComment(1)}
+            onSkipPreviousComment={() => skipComment(-1)}
+            onSeek={setCurrentTimeSeconds}
+            onTimeChange={setCurrentTimeSeconds}
+            onDurationChange={updateVideoDuration}
+            onSetPlaying={setIsPlaying}
+            onTogglePlay={() => {
+              setIsPlaying((current) => {
+                const nextIsPlaying = !current;
 
-              if (nextIsPlaying) {
-                setSelectedCommentId(null);
-              }
+                if (nextIsPlaying) {
+                  setSelectedCommentId(null);
+                }
 
-              return nextIsPlaying;
-            });
-          }}
-        />
+                return nextIsPlaying;
+              });
+            }}
+          />
+          <ReviewVersionLibrary
+            versions={allReviewVersions}
+            statuses={versionStatuses}
+            selectedVersionLabel={selectedVersionLabel}
+            uploadInputId={versionUploadInputId}
+            isCompareMode={isCompareMode}
+            onDelete={deleteReviewVersion}
+            onDownload={(version) => setToastMessage(`Downloading ${version.fileName}`)}
+            onReplace={replaceReviewVersionFile}
+            onSelectVersion={selectReviewVersion}
+            onToggleCompare={() => setIsCompareMode((current) => !current)}
+          />
+        </div>
         <CommentPanel
           activeFilter={activeFilter}
           canSkipNext={canSkipNext}
           canSkipPrevious={canSkipPrevious}
           comments={comments}
           visibleCommentsCount={comments.length}
-          unresolvedCount={unresolvedCount}
           usersById={usersById}
           currentTimeSeconds={currentTimeSeconds}
           composerBody={composerBody}
@@ -682,7 +740,6 @@ export function VideoReviewScreen() {
           hasDrawingAttachment={hasDrawingAttachment}
           hasFramePinAttachment={pendingFramePin !== null}
           isDrawingMode={isDrawingMode}
-          isConfirmOpen={isConfirmOpen}
           isPostingMenuOpen={isPostingMenuOpen}
           openCommentMenuId={openCommentMenuId}
           replyingCommentId={replyingCommentId}
@@ -695,12 +752,8 @@ export function VideoReviewScreen() {
           onEditDraftChange={setEditDraft}
           onExpandResolved={expandResolved}
           onOpenReply={openReply}
-          onOpenConfirm={() => {
-            setIsConfirmOpen(true);
-          }}
           onRemoveAnchor={removeAnchor}
           onRegisterCommentRef={registerCommentRef}
-          onResolveAll={resolveAll}
           onSelectComment={selectComment}
           onSetComposerVisibility={(visibility) => {
             setComposerVisibility(visibility);
@@ -720,180 +773,28 @@ export function VideoReviewScreen() {
           onToggleReaction={toggleReaction}
           onToggleReplyReaction={toggleReplyReaction}
           onToggleResolved={toggleResolved}
-          onCancelConfirm={() => setIsConfirmOpen(false)}
         />
+        <footer className="review-action-footer" aria-label="Edit review actions">
+          <div className="review-action-footer-inner">
+            {toastMessage ? <Toast message={toastMessage} onDismiss={() => setToastMessage("")} /> : null}
+            <ShareActionRow
+              context="edit"
+              userRole="Studio Staff"
+              initialLinkOpens="videoOnly"
+              initialAccess="canComment"
+              projectName={activeVideo.fileName}
+              studioName="Brisk Studios"
+              customerName="Jess T."
+              copyLinkIconOnly
+              approveLabel="Approve this version"
+              showApprove={selectedVersionStatus !== "approved"}
+              onApprove={approveSelectedVersion}
+            />
+          </div>
+        </footer>
         </section>
       </div>
     </main>
-  );
-}
-
-function VideoReviewSidebar() {
-  return (
-    <aside className="today-sidebar" aria-label="Primary navigation">
-      <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Videos
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/today">
-          <DsIcon name="check-circle" size={16} />
-          Today
-        </Link>
-      </nav>
-    </aside>
-  );
-}
-
-function VideoReviewTopBar({
-  video,
-  selectedVersionLabel,
-  toastMessage,
-  uploadInputId,
-  isVersionMenuOpen,
-  isMenuOpen,
-  onDelete,
-  onDismissToast,
-  onDownload,
-  onPrepareUpload,
-  onSelectVersion,
-  onToggleMenu,
-  onToggleVersionMenu,
-}: {
-  video: Video;
-  selectedVersionLabel: string;
-  toastMessage: string;
-  uploadInputId: string;
-  isVersionMenuOpen: boolean;
-  isMenuOpen: boolean;
-  onDelete: () => void;
-  onDismissToast: () => void;
-  onDownload: () => void;
-  onPrepareUpload: () => void;
-  onSelectVersion: (versionLabel: string) => void;
-  onToggleMenu: () => void;
-  onToggleVersionMenu: () => void;
-}) {
-  const hasNoVersions = video.versions.length === 0;
-  const hasVersions = video.versions.length > 0;
-  const openUploadWithKeyboard = (event: KeyboardEvent<HTMLLabelElement>) => {
-    if (event.key !== "Enter" && event.key !== " ") {
-      return;
-    }
-
-    event.preventDefault();
-    onPrepareUpload();
-
-    const uploadInput = document.getElementById(uploadInputId);
-
-    if (uploadInput instanceof HTMLInputElement) {
-      uploadInput.click();
-    }
-  };
-
-  return (
-    <header className="review-topbar">
-      <div className="topbar-left">
-        <button className="icon-button" type="button" aria-label="Back to project">
-          <DsIcon name="arrow-left" size={18} />
-        </button>
-        <span className="file-name label-s-semibold">{video.fileName}</span>
-        <div className="version-control-wrap">
-          {hasNoVersions ? (
-            <label
-              className="version-pill upload-pill label-s-semibold"
-              htmlFor={uploadInputId}
-              role="button"
-              tabIndex={0}
-              onClick={onPrepareUpload}
-              onKeyDown={openUploadWithKeyboard}
-            >
-              <DsIcon name="upload-simple" size={16} />
-              Upload
-            </label>
-          ) : null}
-          {hasVersions ? (
-            <>
-              <button
-                className="version-pill label-s-semibold"
-                type="button"
-                aria-label="Choose version"
-                aria-expanded={isVersionMenuOpen}
-                onClick={onToggleVersionMenu}
-              >
-                {selectedVersionLabel}
-                <DsIcon name="caret-down" size={14} />
-              </button>
-              {isVersionMenuOpen ? (
-                <div className="version-menu">
-                  {video.versions.map((versionLabel) => {
-                    const isSelected = versionLabel === selectedVersionLabel;
-                    return (
-                      <button
-                        className={`version-menu-item label-s-semibold ${isSelected ? "selected" : ""}`}
-                        type="button"
-                        key={versionLabel}
-                        onClick={() => onSelectVersion(versionLabel)}
-                      >
-                        <span>{versionLabel}</span>
-                        {isSelected ? <DsIcon name="check" size={13} /> : null}
-                      </button>
-                    );
-                  })}
-                  <label
-                    className="version-menu-item add upload-menu-item label-s-semibold"
-                    htmlFor={uploadInputId}
-                    role="button"
-                    tabIndex={0}
-                    onClick={onPrepareUpload}
-                    onKeyDown={openUploadWithKeyboard}
-                  >
-                    + Add new version
-                  </label>
-                </div>
-              ) : null}
-            </>
-          ) : null}
-          {toastMessage ? <Toast message={toastMessage} onDismiss={onDismissToast} /> : null}
-        </div>
-      </div>
-
-      <div className="topbar-actions" aria-label="Review actions">
-        <ShareActionRow
-          context="edit"
-          userRole="Studio Staff"
-          density="compact"
-          initialLinkOpens="videoOnly"
-          initialAccess="canComment"
-          projectName={video.fileName}
-          studioName="Brisk Studios"
-          customerName="Jess T."
-        />
-        <div className="topbar-more-wrap">
-          <button
-            className="icon-button more-button"
-            type="button"
-            aria-label="More actions"
-            aria-expanded={isMenuOpen}
-            onClick={onToggleMenu}
-          >
-            <DsIcon name="dots-three" size={18} />
-          </button>
-          {isMenuOpen ? (
-            <div className="topbar-more-menu">
-              <button className="label-s-semibold" type="button" onClick={onDownload}>
-                <DsIcon name="download-simple" size={15} />
-                Download
-              </button>
-              <button className="delete label-s-semibold" type="button" onClick={onDelete}>
-                <DsIcon name="trash-simple" size={15} />
-                Delete
-              </button>
-            </div>
-          ) : null}
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -902,6 +803,8 @@ function VideoPlayer({
   comments,
   currentTimeSeconds,
   isPlaying,
+  isCompareMode,
+  versionStatus,
   selectedCommentId,
   activeDrawingPath,
   activeFramePin,
@@ -933,6 +836,8 @@ function VideoPlayer({
   comments: ReviewComment[];
   currentTimeSeconds: number;
   isPlaying: boolean;
+  isCompareMode: boolean;
+  versionStatus: ReviewVersionStatus;
   selectedCommentId: string | null;
   activeDrawingPath: DrawingPath | null;
   activeFramePin: FramePin | null;
@@ -1085,12 +990,30 @@ function VideoPlayer({
 
   return (
     <section className="video-column" ref={columnRef} aria-label={`${video.fileName} video player`}>
+      <div className="review-player-statusbar">
+        <span className={`review-version-status label-s-semibold is-${versionStatus}`}>
+          {video.versionLabel.toUpperCase()} · {formatVersionStatus(versionStatus)}
+        </span>
+        {versionStatus === "approved" ? (
+          <div className="review-player-status-actions">
+            <span className="review-approved-message label-s-semibold">
+              <DsIcon name="check" size={16} />
+              Version approved
+            </span>
+          </div>
+        ) : null}
+      </div>
       <div
-        className={`video-frame ${isDrawingMode ? "drawing-active" : ""}`}
+        className={`video-frame ${isDrawingMode ? "drawing-active" : ""} ${isCompareMode ? "is-comparing" : ""}`}
         ref={frameRef}
         onPointerDown={placePinFromPointer}
       >
-        {video.sourceUrl ? (
+        {isCompareMode ? (
+          <div className="review-compare-view" aria-label="Side-by-side comparison of V1 and V2">
+            <CompareFrame label="V1" />
+            <CompareFrame label="V2" />
+          </div>
+        ) : video.sourceUrl ? (
           <video
             className="review-video"
             ref={videoRef}
@@ -1112,7 +1035,7 @@ function VideoPlayer({
             <div className="soft-orb" />
           </div>
         )}
-        <svg
+        {!isCompareMode ? <svg
           className="drawing-layer"
           viewBox="0 0 1000 562.5"
           preserveAspectRatio="none"
@@ -1152,11 +1075,11 @@ function VideoPlayer({
           {[...selectedDrawingPaths, ...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])].map((path) => (
             <path className="drawing-stroke" d={formatDrawingPath(path.points)} key={path.id} />
           ))}
-        </svg>
-        {!isDrawingMode && !activeFramePin ? (
+        </svg> : null}
+        {!isCompareMode && !isDrawingMode && !activeFramePin ? (
           <div className="frame-comment-prompt label-s-semibold">Click to add a comment</div>
         ) : null}
-        {activeFramePin ? (
+        {!isCompareMode && activeFramePin ? (
           <button
             className={`frame-comment-dot ${pendingFramePin ? "pending" : ""}`}
             type="button"
@@ -1167,7 +1090,7 @@ function VideoPlayer({
             }}
           />
         ) : null}
-        {pendingFramePin ? (
+        {!isCompareMode && pendingFramePin ? (
           <div
             className="frame-note-popover"
             style={{
@@ -1217,7 +1140,7 @@ function VideoPlayer({
             <p className="frame-note-hint label-xs">Use @ to mention others</p>
           </div>
         ) : null}
-        {isDrawingMode ? (
+        {!isCompareMode && isDrawingMode ? (
           <div className="drawing-toolbar" aria-label="Drawing options">
             <span className="drawing-toolbar-label label-xs-semibold">Draw on screen</span>
             <button
@@ -1330,6 +1253,156 @@ function VideoPlayer({
   );
 }
 
+function CompareFrame({ label }: { label: string }) {
+  return (
+    <div className="review-compare-frame">
+      <span className="review-compare-label label-xs-semibold">{label}</span>
+      <div className="review-compare-orb" aria-hidden="true">MY</div>
+    </div>
+  );
+}
+
+function ReviewVersionLibrary({
+  versions,
+  statuses,
+  selectedVersionLabel,
+  uploadInputId,
+  isCompareMode,
+  onDelete,
+  onDownload,
+  onReplace,
+  onSelectVersion,
+  onToggleCompare,
+}: {
+  versions: ReviewVersion[];
+  statuses: Record<string, ReviewVersionStatus>;
+  selectedVersionLabel: string;
+  uploadInputId: string;
+  isCompareMode: boolean;
+  onDelete: (version: ReviewVersion) => void;
+  onDownload: (version: ReviewVersion) => void;
+  onReplace: (version: ReviewVersion, file: File) => void;
+  onSelectVersion: (versionLabel: string) => void;
+  onToggleCompare: () => void;
+}) {
+  const orderedVersions = [...versions].sort((left, right) => right.number - left.number);
+  const nextVersionNumber = Math.max(0, ...versions.map((version) => version.number)) + 1;
+  const openUploadWithKeyboard = (event: KeyboardEvent<HTMLLabelElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    const input = document.getElementById(uploadInputId);
+
+    if (input instanceof HTMLInputElement) {
+      input.click();
+    }
+  };
+
+  return (
+    <section className="review-version-library" aria-labelledby="review-version-library-title">
+      <div className="review-version-library-header">
+        <div>
+          <span className="review-version-eyebrow label-xs-semibold">FILES</span>
+          <h2 id="review-version-library-title">Versions</h2>
+          <p className="label-s">Every cut stays together beneath the player.</p>
+        </div>
+        <label
+          className="review-upload-version label-s-semibold"
+          htmlFor={uploadInputId}
+          role="button"
+          tabIndex={0}
+          onKeyDown={openUploadWithKeyboard}
+        >
+          <DsIcon name="upload-simple" size={16} />
+          Upload V{nextVersionNumber}
+        </label>
+      </div>
+
+      <button
+        className={`review-compare-button label-s-semibold ${isCompareMode ? "active" : ""}`}
+        type="button"
+        disabled={versions.length < 2}
+        aria-pressed={isCompareMode}
+        onClick={onToggleCompare}
+      >
+        <DsIcon name="columns" size={16} />
+        {isCompareMode ? "Exit V1 and V2 comparison" : "Compare V1 and V2"}
+      </button>
+
+      <div className="review-version-file-list">
+        {orderedVersions.map((version) => {
+          const status = statuses[version.label] ?? version.status;
+          const isSelected = version.label === selectedVersionLabel;
+
+          return (
+            <article className={`review-version-file ${isSelected ? "selected" : ""}`} key={version.label}>
+              <button className="review-version-file-select" type="button" onClick={() => onSelectVersion(version.label)}>
+                <span className="review-version-file-thumb"><DsIcon name="play" size={18} /></span>
+                <span className="review-version-file-copy">
+                  <span className="review-version-file-title label-s-semibold">
+                    V{version.number} · {formatVersionStatus(status)}
+                  </span>
+                  <span className="label-s">{version.fileName}</span>
+                  <span className="label-xs">{formatReviewDate(version.uploadedAt)} · {version.uploadedBy} · {version.resolution} · {version.fileSize}</span>
+                </span>
+              </button>
+              <div className="review-version-file-actions">
+                {!isSelected ? (
+                  <button type="button" aria-label={`Set V${version.number} as current`} data-tooltip="Set as current" onClick={() => onSelectVersion(version.label)}>
+                    <DsIcon name="eye" size={15} />
+                  </button>
+                ) : <span className="review-current-version label-xs-semibold">Current</span>}
+                <button type="button" aria-label={`Download V${version.number}`} data-tooltip="Download" onClick={() => onDownload(version)}>
+                  <DsIcon name="download" size={15} />
+                </button>
+                <label
+                  className="review-version-file-action"
+                  htmlFor={`replace-${version.label}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Replace file for V${version.number}`}
+                  data-tooltip="Replace file"
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    document.getElementById(`replace-${version.label}`)?.click();
+                  }}
+                >
+                  <DsIcon name="arrows-clockwise" size={15} />
+                </label>
+                <input
+                  className="visually-hidden-file-input"
+                  id={`replace-${version.label}`}
+                  type="file"
+                  accept="video/*"
+                  aria-label={`Choose replacement file for V${version.number}`}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) onReplace(version, file);
+                    event.target.value = "";
+                  }}
+                />
+                <button
+                  className="delete"
+                  type="button"
+                  aria-label={`Delete V${version.number}`}
+                  data-tooltip={versions.length <= 1 ? "Keep at least one version" : "Delete"}
+                  disabled={versions.length <= 1}
+                  onClick={() => onDelete(version)}
+                >
+                  <DsIcon name="trash-simple" size={15} />
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function ScrubBar({
   video,
   comments,
@@ -1392,7 +1465,6 @@ function CommentPanel({
   editDraft,
   highlightedCommentId,
   visibleCommentsCount,
-  unresolvedCount,
   usersById,
   expandedResolvedIds,
   isEditingOverallComment,
@@ -1400,13 +1472,11 @@ function CommentPanel({
   hasDrawingAttachment,
   hasFramePinAttachment,
   isDrawingMode,
-  isConfirmOpen,
   isPostingMenuOpen,
   openCommentMenuId,
   replyingCommentId,
   replyDraft,
   selectedCommentId,
-  onCancelConfirm,
   onCancelEditComment,
   onChangeFilter,
   onComposerBodyChange,
@@ -1414,10 +1484,8 @@ function CommentPanel({
   onEditDraftChange,
   onExpandResolved,
   onOpenReply,
-  onOpenConfirm,
   onRemoveAnchor,
   onRegisterCommentRef,
-  onResolveAll,
   onSelectComment,
   onSetComposerVisibility,
   onSetOpenCommentMenu,
@@ -1446,7 +1514,6 @@ function CommentPanel({
   editDraft: string;
   highlightedCommentId: string | null;
   visibleCommentsCount: number;
-  unresolvedCount: number;
   usersById: Map<string, User>;
   expandedResolvedIds: Set<string>;
   isEditingOverallComment: boolean;
@@ -1454,13 +1521,11 @@ function CommentPanel({
   hasDrawingAttachment: boolean;
   hasFramePinAttachment: boolean;
   isDrawingMode: boolean;
-  isConfirmOpen: boolean;
   isPostingMenuOpen: boolean;
   openCommentMenuId: string | null;
   replyingCommentId: string | null;
   replyDraft: string;
   selectedCommentId: string | null;
-  onCancelConfirm: () => void;
   onCancelEditComment: () => void;
   onChangeFilter: (filter: CommentFilter) => void;
   onComposerBodyChange: (body: string) => void;
@@ -1468,10 +1533,8 @@ function CommentPanel({
   onEditDraftChange: (body: string) => void;
   onExpandResolved: (commentId: string) => void;
   onOpenReply: (commentId: string) => void;
-  onOpenConfirm: () => void;
   onRemoveAnchor: () => void;
   onRegisterCommentRef: (commentId: string, node: HTMLElement | null) => void;
-  onResolveAll: () => void;
   onSelectComment: (comment: ReviewComment) => void;
   onSetComposerVisibility: (visibility: CommentVisibility) => void;
   onSetOpenCommentMenu: (commentId: string | null) => void;
@@ -1504,7 +1567,9 @@ function CommentPanel({
                   disabled={!canSkipPrevious}
                   onClick={onSkipPrevious}
                 >
-                  ↑
+                  <span className="comment-skip-icon is-up" aria-hidden="true">
+                    <DsIcon name="caret-left" size={18} />
+                  </span>
                 </button>
                 <button
                   className="header-menu-button"
@@ -1513,16 +1578,9 @@ function CommentPanel({
                   disabled={!canSkipNext}
                   onClick={onSkipNext}
                 >
-                  ↓
-                </button>
-                <button
-                  className="header-menu-button double-tick-button"
-                  type="button"
-                  data-tooltip="Resolve all comments"
-                  aria-label="Resolve all comments"
-                  onClick={onOpenConfirm}
-                >
-                  <DsIcon name="checks" size={15} />
+                  <span className="comment-skip-icon is-down" aria-hidden="true">
+                    <DsIcon name="caret-right" size={18} />
+                  </span>
                 </button>
               </div>
             </div>
@@ -1587,13 +1645,6 @@ function CommentPanel({
         onTogglePostingMenu={onTogglePostingMenu}
       />
 
-      {isConfirmOpen ? (
-        <ResolveAllModal
-          unresolvedCount={unresolvedCount}
-          onCancel={onCancelConfirm}
-          onResolveAll={onResolveAll}
-        />
-      ) : null}
     </aside>
   );
 }
@@ -1736,7 +1787,7 @@ function CommentThread({
       }}
     >
       <div className="comment-row">
-        <Avatar user={author} />
+        <CommentAvatar user={author} />
         <div className="comment-body">
           <div className="comment-meta">
             <div className="author-line">
@@ -1834,7 +1885,7 @@ function CommentThread({
                 <span className="reply-corner" aria-hidden="true">
                   <DsIcon name="caret-right" size={12} />
                 </span>
-                <Avatar user={replyAuthor} compact />
+                <CommentAvatar user={replyAuthor} compact />
                 <div className="reply-message">
                   <div className="reply-meta">
                     <span className="label-xs-semibold">{replyAuthor.name}</span>
@@ -2257,34 +2308,6 @@ function Toast({
   );
 }
 
-function ResolveAllModal({
-  unresolvedCount,
-  onCancel,
-  onResolveAll,
-}: {
-  unresolvedCount: number;
-  onCancel: () => void;
-  onResolveAll: () => void;
-}) {
-  return (
-    <div className="modal-backdrop" role="presentation">
-      <div className="resolve-modal" role="dialog" aria-modal="true" aria-labelledby="resolve-all-title">
-        <h2 className="heading-3xs" id="resolve-all-title">
-          Resolve all {unresolvedCount} unresolved comments?
-        </h2>
-        <div className="resolve-modal-actions">
-          <button className="modal-cancel-button label-s-semibold" type="button" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="modal-resolve-button label-s-semibold" type="button" onClick={onResolveAll}>
-            Resolve all
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function TimecodeChip({
   seconds,
   prefix,
@@ -2334,14 +2357,6 @@ function VisibilityToggle({
     >
       {isInternal ? "Team" : "Client"}
     </button>
-  );
-}
-
-function Avatar({ user, compact = false }: { user: User; compact?: boolean }) {
-  return (
-    <span className={`avatar ${user.avatarTone} ${compact ? "compact" : ""}`} aria-label={user.name}>
-      {user.initials}
-    </span>
   );
 }
 
@@ -2447,6 +2462,34 @@ function formatDrawingPath(points: DrawingPoint[]) {
   return points
     .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
     .join(" ");
+}
+
+function formatVersionStatus(status: ReviewVersionStatus) {
+  if (status === "approved") {
+    return "Approved";
+  }
+
+  if (status === "changes_requested") {
+    return "Changes requested";
+  }
+
+  return "In review";
+}
+
+function formatReviewDate(value: string) {
+  return new Intl.DateTimeFormat("en-AU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function formatFileSize(bytes: number) {
+  if (bytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 function formatTime(totalSeconds: number) {

@@ -3953,22 +3953,19 @@ button.brief-confidence-chip {
   padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
-.brief-summary-approval-note strong {
+.brief-summary-approval-note .brief-summary-missing-count {
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-xs);
+  background: transparent;
   color: var(--brisk-system-error);
-}
-
-.brief-summary-approval-note button {
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  color: var(--brisk-brand-primary-click);
   cursor: pointer;
-  padding: var(--brisk-space-xxs) var(--brisk-space-xs);
+  font: inherit;
+  padding: var(--brisk-space-none);
   text-decoration: none;
 }
 
-.brief-summary-approval-note button:hover,
-.brief-summary-approval-note button:focus {
+.brief-summary-approval-note .brief-summary-missing-count:hover,
+.brief-summary-approval-note .brief-summary-missing-count:focus-visible {
   border-color: var(--brisk-brand-primary);
   box-shadow: var(--brisk-shadow-s);
   outline: 0;

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useEffect,
   useRef,
@@ -12,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
@@ -592,7 +592,7 @@ export function BriefPage({ project }: BriefPageProps) {
 
   return (
     <main className="brief-shell">
-      <BriefSidebar />
+      <WorkspaceSidebar className="brief-sidebar" />
       <div className="brief-main">
         <ProjectStageHeader activeStage="brief" project={project} />
         {briefMode === "landing" ? (
@@ -688,23 +688,6 @@ export function BriefPage({ project }: BriefPageProps) {
         )}
       </div>
     </main>
-  );
-}
-
-function BriefSidebar() {
-  return (
-    <aside className="today-sidebar brief-sidebar" aria-label="Primary navigation">
-      <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Videos
-        </Link>
-        <Link className="today-sidebar-link label-s-semibold" href="/today">
-          <DsIcon name="check-circle" size={16} />
-          Today
-        </Link>
-      </nav>
-    </aside>
   );
 }
 
@@ -3926,12 +3909,16 @@ function BriefSummaryPage({
       {summaryMissingCount > 0 ? (
         <div className="brief-summary-approval-note label-xs-semibold">
           <span>
-            <strong>{summaryMissingCount}</strong>{" "}
+            <button
+              className="brief-summary-missing-count"
+              type="button"
+              aria-label={`Go to the first of ${summaryMissingCount} ${summaryMissingCount === 1 ? "item" : "items"} to confirm`}
+              onClick={jumpToFirstMissing}
+            >
+              {summaryMissingCount}
+            </button>{" "}
             {summaryMissingCount === 1 ? "thing to confirm before you approve." : "things to confirm before you approve."}
           </span>
-          <button type="button" onClick={jumpToFirstMissing}>
-            Start here
-          </button>
         </div>
       ) : null}
     </section>

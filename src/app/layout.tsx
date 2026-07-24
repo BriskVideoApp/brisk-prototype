@@ -10,6 +10,9 @@ import "@/components/share/share-action-row.css";
 import "@/components/script/script.css";
 import "@/components/brief/brief.css";
 import "@/components/media/media.css";
+import "@/components/masters/masters.css";
+import "@/components/navigation/workspace-sidebar.css";
+import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -30,7 +33,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AU" className={plusJakartaSans.variable} suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <PrototypeRoleProvider>{children}</PrototypeRoleProvider>
+      </body>
     </html>
   );
 }

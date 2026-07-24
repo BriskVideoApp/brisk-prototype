@@ -20,6 +20,8 @@ import {
   toProjectTimeEntry,
 } from "@/data/timeEntries/sharedTimeEntries";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
+import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, ProjectDeadline, RoleSlot, StageKey, StageStatus, TeamPerson, TimeEntry } from "./types";
@@ -28,7 +30,6 @@ type StatusTab = "All" | Project["status"];
 type FilterKey = "client" | "teammate" | "tags" | "status" | "deadline";
 type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hours" | "team" | "actions";
 type TableColumnKey = "project" | DataColumnKey;
-type PrototypeRole = "Producer/Admin" | "Studio Staff" | "Studio Freelancer" | "Customer";
 type StageIconName = Parameters<typeof DsIcon>[0]["name"];
 type DeadlineCategory = "Overdue" | "Due Soon" | "On Track";
 type TagClass = "critical" | "high-priority" | "in-review" | "neutral" | "green" | "peach" | "cream";
@@ -163,11 +164,11 @@ const tagColourOptions: { className: TagClass; label: string }[] = [
 ];
 
 export function ActiveVideosPage() {
+  const { selectedRole } = usePrototypeRole();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
-  const selectedRole: PrototypeRole = "Producer/Admin";
   const [query, setQuery] = useState("");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -766,7 +767,7 @@ export function ActiveVideosPage() {
 
   return (
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
-      <ActiveVideosSidebar selectedRole={selectedRole} />
+      <WorkspaceSidebar activeItem="videos" />
       <div className="active-videos-main">
         <section className="active-videos-header" aria-label="Videos header">
           <h1 className="active-videos-title">Videos ({activeVideoProjects.length})</h1>
@@ -965,25 +966,6 @@ export function ActiveVideosPage() {
       ) : null}
       </div>
     </main>
-  );
-}
-
-function ActiveVideosSidebar({ selectedRole }: { selectedRole: PrototypeRole }) {
-  return (
-    <aside className="today-sidebar" aria-label="Primary navigation">
-      <nav className="today-sidebar-nav" aria-label="Workspace">
-        <Link className="today-sidebar-link active label-s-semibold" href="/active-videos">
-          <DsIcon name="queue" size={16} />
-          Videos
-        </Link>
-        {selectedRole === "Studio Staff" || selectedRole === "Producer/Admin" ? (
-          <Link className="today-sidebar-link label-s-semibold" href="/today">
-            <DsIcon name="check-circle" size={16} />
-            Today
-          </Link>
-        ) : null}
-      </nav>
-    </aside>
   );
 }
 
@@ -3316,10 +3298,6 @@ function getTeamPanelAccess(role: PrototypeRole): TeamPanelAccess {
 
   if (role === "Studio Freelancer") {
     return "freelancer";
-  }
-
-  if (role === "Studio Staff") {
-    return "ownStaff";
   }
 
   return "producerAdmin";

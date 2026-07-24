@@ -120,6 +120,30 @@ textarea:focus-visible {
   letter-spacing: 0;
 }
 
+.headings-2xs-bold {
+  font-family: var(--font-brisk);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0;
+}
+
+.headings-xs-bold {
+  font-family: var(--font-brisk);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0;
+}
+
+.headings-s-bold {
+  font-family: var(--font-brisk);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: 0;
+}
+
 .label-xs {
   font-family: var(--font-brisk);
   font-size: 12px;

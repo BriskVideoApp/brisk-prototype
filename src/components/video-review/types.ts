@@ -66,3 +66,19 @@ export type Video = {
   sourceUrl?: string;
   comments: ReviewComment[];
 };
+
+export type ReviewVersionStatus = "in_review" | "approved" | "changes_requested";
+
+export type ReviewVersion = {
+  label: string;
+  number: number;
+  fileName: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  codec: string;
+  resolution: string;
+  fileSize: string;
+  durationSeconds: number;
+  status: ReviewVersionStatus;
+  sourceUrl?: string;
+};

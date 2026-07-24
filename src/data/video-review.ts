@@ -1,4 +1,4 @@
-import type { ReviewComment, User, Video } from "@/components/video-review/types";
+import type { ReviewComment, ReviewVersion, User, Video } from "@/components/video-review/types";
 
 export const reviewUsers: User[] = [
   {
@@ -194,3 +194,30 @@ export const reviewVideo: Video = {
   stage: "Edit",
   comments: reviewComments,
 };
+
+export const reviewVersions: ReviewVersion[] = [
+  {
+    label: "v1",
+    number: 1,
+    fileName: "MYLOT006_Customer_Story_V1.mp4",
+    uploadedAt: "2026-07-18T14:20:00+10:00",
+    uploadedBy: "David Ryan",
+    codec: "H.264 High",
+    resolution: "1920 × 1080",
+    fileSize: "486 MB",
+    durationSeconds: 120,
+    status: "in_review",
+  },
+  {
+    label: "v2",
+    number: 2,
+    fileName: "MYLOT006_Customer_Story_V2.mp4",
+    uploadedAt: "2026-07-22T09:45:00+10:00",
+    uploadedBy: "David Ryan",
+    codec: "H.264 High",
+    resolution: "1920 × 1080",
+    fileSize: "492 MB",
+    durationSeconds: 120,
+    status: "in_review",
+  },
+];
