@@ -8,6 +8,7 @@ import "@/components/project/team/team-panel.css";
 import "@/components/project/project-stage-header.css";
 import "@/components/share/share-action-row.css";
 import "@/components/script/script.css";
+import "@/components/script-transcripts/script-transcripts.css";
 import "@/components/brief/brief.css";
 import "@/components/media/media.css";
 import "@/components/masters/masters.css";

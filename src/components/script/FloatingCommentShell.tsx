@@ -12,7 +12,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { CommentVisibility, Reaction, ReactionEmoji, User } from "@/components/video-review/types";
 import type { ScriptComment, ScriptCommentAnchor } from "@/data/script";
 
-type FloatingCommentPosition = {
+export type FloatingCommentPosition = {
   left: number;
   top: number;
 };
@@ -50,6 +50,24 @@ const quickReactionOptions = [
   reactionOptions.find((reaction) => reaction.emoji === "❤️"),
 ].filter((reaction): reaction is { emoji: ReactionEmoji; label: string } => Boolean(reaction));
 const reactionLibraryOptions = reactionOptions;
+
+export function getFloatingCommentPosition(rect: DOMRect): FloatingCommentPosition {
+  const shellWidth = 360;
+  const shellHeight = 460;
+  const viewportPadding = 16;
+  const triggerGap = 12;
+  const preferredLeft = rect.right + triggerGap;
+  const hasRoomRight = preferredLeft + shellWidth <= window.innerWidth - viewportPadding;
+  const left = hasRoomRight
+    ? preferredLeft
+    : Math.max(viewportPadding, rect.left - shellWidth - triggerGap);
+  const top = Math.min(
+    Math.max(viewportPadding, rect.top - viewportPadding),
+    Math.max(viewportPadding, window.innerHeight - shellHeight - viewportPadding),
+  );
+
+  return { left, top };
+}
 
 export function FloatingCommentShell({
   anchor,

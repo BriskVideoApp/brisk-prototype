@@ -646,7 +646,7 @@ export function VideoReviewScreen() {
         />
         <section className="review-workspace" aria-label="Video review workspace">
         <div className="review-media-pane">
-          <VideoPlayer
+          <InlinePlayer
             video={activeVideo}
             comments={reviewComments.map((comment) => ({
               ...comment,
@@ -798,7 +798,7 @@ export function VideoReviewScreen() {
   );
 }
 
-function VideoPlayer({
+export function InlinePlayer({
   video,
   comments,
   currentTimeSeconds,

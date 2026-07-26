@@ -11,6 +11,12 @@ export type ScriptAiSource = {
   attached: boolean;
 };
 
+export type ScriptAiPanelPreset = {
+  id: string;
+  sources: ScriptAiSource[];
+  promptChips: string[];
+};
+
 export type ScriptAiMessage = {
   id: string;
   role: "user" | "assistant";
@@ -65,6 +71,7 @@ type ScriptAiPanelProps = {
   isMinimised: boolean;
   isOpen: boolean;
   selectionContext: ScriptAiSelectionContext;
+  preset?: ScriptAiPanelPreset;
   onClose: () => void;
   onInsert: (request: ScriptAiInsertRequest) => void;
   onMinimise: (isMinimised: boolean) => void;
@@ -116,6 +123,7 @@ export function ScriptAiPanel({
   isMinimised,
   isOpen,
   selectionContext,
+  preset,
   onClose,
   onInsert,
   onMinimise,
@@ -129,6 +137,11 @@ export function ScriptAiPanel({
   const [dragOffset, setDragOffset] = useState<PanelPosition | null>(null);
   const panelRef = useRef<HTMLElement | null>(null);
   const threadRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setSources((preset?.sources ?? initialSources).map((source) => ({ ...source })));
+    setInputValue("");
+  }, [preset?.id, preset?.sources]);
 
   useEffect(() => {
     threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight });
@@ -300,6 +313,20 @@ export function ScriptAiPanel({
       ) : null}
 
       <div className="script-ai-input-wrap">
+        {preset?.promptChips.length ? (
+          <div className="script-ai-prompt-chips" aria-label="Transcript prompts">
+            {preset.promptChips.map((prompt) => (
+              <button
+                className="script-source-chip label-xs-semibold"
+                key={prompt}
+                type="button"
+                onClick={() => setInputValue(prompt)}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <textarea
           className="script-ai-input label-s"
           placeholder="Ask ChopChop AI…"

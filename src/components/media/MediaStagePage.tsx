@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent } from "react";
+import { useRouter } from "next/navigation";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type { Project } from "@/components/active-videos/types";
@@ -13,6 +14,7 @@ import { MediaInspector, type MediaInspectorTab } from "./MediaInspector";
 import { MediaUploadDropZone } from "./MediaUploadDropZone";
 
 export function MediaStagePage({ project }: { project: Project }) {
+  const router = useRouter();
   const [assets, setAssets] = useState(() => mediaAssets.filter((asset) => asset.projectId === project.id));
   const [folders, setFolders] = useState(() => mediaFolders.filter((folder) => folder.projectId === project.id));
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -139,6 +141,17 @@ export function MediaStagePage({ project }: { project: Project }) {
     setInspectorTab(tab);
   };
 
+  const openTranscript = (asset: MediaAsset) => {
+    if (asset.transcriptStatus !== "ready") {
+      openInspectorTab(asset, "transcript");
+      return;
+    }
+
+    router.push(
+      `/projects/${project.id}/script?subtab=transcripts&clip=${encodeURIComponent(asset.id)}#transcript-${encodeURIComponent(asset.id)}`,
+    );
+  };
+
   const shareAsset = async (asset: MediaAsset) => {
     try {
       await navigator.clipboard?.writeText(`https://share.brisk.prototype/media/${asset.id}`);
@@ -250,7 +263,7 @@ export function MediaStagePage({ project }: { project: Project }) {
             activeAssetId={activeAssetId}
             onActivate={activateAsset}
             onComment={(asset) => openInspectorTab(asset, "comments")}
-            onTranscript={(asset) => openInspectorTab(asset, "transcript")}
+            onTranscript={openTranscript}
             onShare={(asset) => void shareAsset(asset)}
             onDownload={(asset) => showToast(`Downloading ${asset.name}.`)}
             onDelete={(asset) => setDeleteAssetIds([asset.id])}
@@ -275,7 +288,7 @@ export function MediaStagePage({ project }: { project: Project }) {
             onRename={(assetId, name) => setAssets((current) => current.map((asset) => asset.id === assetId ? { ...asset, name: name.trim() || asset.name } : asset))}
             onClose={() => setActiveAssetId(null)}
             onComment={(asset) => openInspectorTab(asset, "comments")}
-            onTranscript={(asset) => openInspectorTab(asset, "transcript")}
+            onTranscript={openTranscript}
             onShare={(asset) => void shareAsset(asset)}
             onDownload={(asset) => showToast(`Downloading ${asset.name}.`)}
             onDelete={(asset) => setDeleteAssetIds([asset.id])}

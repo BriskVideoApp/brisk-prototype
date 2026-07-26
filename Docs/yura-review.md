@@ -1,5 +1,32 @@
 # Yura Review Log
 
+## Script transcripts prototype
+
+Added prototype components under `src/components/script-transcripts/`:
+
+- `ScriptSubtabBar`
+- `TranscriptsPanel`
+- `TranscriptClipBlock`
+- `TranscriptInlinePlayer`
+- `TranscriptClipMenu`
+
+Added shared app-level primitives under `src/components/script/`:
+
+- `FloatingSelectionToolbar`
+- `ScriptAnnotationPin`
+
+Notes for DS review:
+
+- The draggable Script sub-tab bar restores the app's previous native drag treatment and uses Brisk tokens. The React DS exports do not currently include a draggable `d-Tabs` implementation.
+- `TranscriptInlinePlayer` is an adapter around the existing Edit `InlinePlayer` exported from `VideoReviewScreen`. It does not introduce another playback implementation. Please review whether the player should move into a dedicated DS or shared-app package with compact video and audio variants.
+- `FloatingSelectionToolbar` extracts the selection-action treatment that was private to the Script editor. Script and Transcripts now share the same positioned toolbar primitive. Please review it against the DS floating-toolbar treatment.
+- `ScriptAnnotationPin` extracts the Script row comment trigger and count treatment so Script and transcript rows use the same annotation affordance and `FloatingCommentShell` thread.
+- `TranscriptClipMenu` wraps the same popover treatment for Rename, Delete and Hide transcript actions behind the standard three-dot trigger.
+- The All and Highlights only control uses the existing local segmented-control treatment because there is no React export for `d-Segmented control` in this repository.
+- Transcript selection comments reuse `FloatingCommentShell` with an extended anchor containing clip, paragraph and character-range metadata. External remains the default visibility.
+- `ScriptAiPanel` now accepts an optional attached-source and prompt-chip preset. The transcript paper-edit entry point uses that extension rather than creating a second AI panel.
+- The focus flash, sticky transcript action header, clip-block layout and Highlights footer are local prototype compositions built entirely from Brisk tokens. They should be reviewed for promotion if these patterns are needed outside Script.
+
 ## Brief stage scaffold prototype
 
 Added prototype components under `src/components/brief/`:

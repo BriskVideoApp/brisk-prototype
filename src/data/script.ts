@@ -1,11 +1,12 @@
 import type { CommentVisibility, Reaction, User } from "@/components/video-review/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
+import type { TranscriptTextRange } from "@/data/transcripts";
 
 export type ScriptRole = "studio" | "customer";
 export type ScriptLayoutMode = "av" | "simple";
 export type ScriptDensity = "compact" | "comfortable";
 export type ScriptStatus = "In script" | "Waiting on Customer" | "Approved";
-export type ScriptSubtabId = "script" | "transcripts" | "notes";
+export type ScriptSubtabId = "script" | "transcripts";
 export type ScriptStageId = "brief" | "script" | "shoot" | "media" | "edit" | "masters";
 export type ScriptGenre = "Documentary" | "Explainer" | "Character animation" | "Brand film" | "Scripted" | "AI video";
 export type ScriptMediaType = "upload" | "library" | "stock" | "link";
@@ -35,6 +36,17 @@ export type ScriptRow = {
     person: string;
     time: string;
   };
+  source?: {
+    kind: "transcript";
+    sourceKey: string;
+    clipId: string;
+    paragraphId: string;
+    sourceFilename: string;
+    speakerName: string;
+    startTimeSeconds: number;
+    endTimeSeconds: number;
+    range: TranscriptTextRange;
+  };
 };
 
 export type ScriptVersion = {
@@ -55,7 +67,6 @@ export type ScriptSubtab = {
   label: string;
   visible: boolean;
   approved: boolean;
-  optional?: boolean;
 };
 
 export type ScriptCommentAnchor = {
@@ -67,6 +78,8 @@ export type ScriptCommentAnchor = {
     start: number;
     end: number;
   };
+  clipId?: string;
+  paragraphId?: string;
 };
 
 export type ScriptComment = {
@@ -162,7 +175,6 @@ export const scriptPresence = [
 export const initialScriptSubtabs: ScriptSubtab[] = [
   { id: "script", label: "Script", visible: true, approved: false },
   { id: "transcripts", label: "Transcripts", visible: true, approved: true },
-  { id: "notes", label: "Notes", visible: false, approved: false, optional: true },
 ];
 
 export const scriptStages: Array<{ id: ScriptStageId; label: string; icon: DsIconName }> = [

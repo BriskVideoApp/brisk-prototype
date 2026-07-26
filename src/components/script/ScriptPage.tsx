@@ -12,18 +12,35 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
-import { ScriptAiPanel, type ScriptAiInsertRequest, type ScriptAiRowDraft } from "@/components/script-ai/ScriptAiPanel";
-import { FloatingCommentShell } from "@/components/script/FloatingCommentShell";
+import {
+  ScriptAiPanel,
+  type ScriptAiInsertRequest,
+  type ScriptAiPanelPreset,
+  type ScriptAiRowDraft,
+} from "@/components/script-ai/ScriptAiPanel";
+import {
+  FloatingCommentShell,
+  getFloatingCommentPosition,
+  type FloatingCommentPosition,
+} from "@/components/script/FloatingCommentShell";
+import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
+import {
+  FloatingSelectionToolbar,
+  type FloatingSelectionToolbarState,
+} from "@/components/script/FloatingSelectionToolbar";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
+import { ScriptSubtabBar } from "@/components/script-transcripts/ScriptSubtabBar";
+import { TranscriptsPanel } from "@/components/script-transcripts/TranscriptsPanel";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { chatProjects } from "@/data/chat";
+import { mediaAssets } from "@/data/media";
 import {
   initialScriptComments,
+  initialScriptSubtabs,
   scriptBrief,
   scriptUsers,
   scriptVersions,
@@ -35,15 +52,13 @@ import {
   type ScriptRole,
   type ScriptRow,
   type ScriptStatus,
+  type ScriptSubtab,
   type ScriptSubtabId,
   type ScriptVersion,
 } from "@/data/script";
+import { transcriptClips, type TranscriptClip, type TranscriptWordsRowPayload } from "@/data/transcripts";
 
 const currentUserId = "user-tom";
-const optionalSubtabs: Array<{ id: Exclude<ScriptSubtabId, "script">; label: string }> = [
-  { id: "transcripts", label: "Transcripts" },
-  { id: "notes", label: "Notes" },
-];
 const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Parameters<typeof DsIcon>[0]["name"] }> = [
   { type: "upload", label: "Upload file", icon: "upload-simple" },
   { type: "library", label: "Add from your Media", icon: "play" },
@@ -73,11 +88,8 @@ type TextRange = {
   end: number;
 };
 
-type FloatingToolbarState = {
-  visible: boolean;
+type ScriptFloatingToolbarState = FloatingSelectionToolbarState & {
   rowId: string | null;
-  x: number;
-  y: number;
 };
 
 type DocHistoryEntry = {
@@ -140,13 +152,10 @@ type ScriptRowUniversalAnchor = {
   anchorRef: string;
 };
 
-type FloatingCommentPosition = {
-  left: number;
-  top: number;
-};
-
 type ScriptPageProps = {
   initialRole: ScriptRole;
+  initialSubtab: ScriptSubtabId;
+  initialTranscriptClipId: string | null;
 };
 
 const overallCommentAnchor: ScriptCommentAnchor = {
@@ -159,7 +168,7 @@ const defaultVersionMeta: ScriptVersionMeta = {
 };
 const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
-export function ScriptPage({ initialRole }: ScriptPageProps) {
+export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId }: ScriptPageProps) {
   const latestVersion = scriptVersions[scriptVersions.length - 1];
   const role = initialRole;
   const isCustomer = role === "customer";
@@ -180,6 +189,9 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     selectedRowIds: new Set<string>(),
   });
   const [activeCommentAnchor, setActiveCommentAnchor] = useState<ScriptCommentAnchor>(overallCommentAnchor);
+  const [subtabs, setSubtabs] = useState<ScriptSubtab[]>(() => initialScriptSubtabs.map((subtab) => ({ ...subtab })));
+  const [activeSubtabId, setActiveSubtabId] = useState<ScriptSubtabId>(initialSubtab);
+  const [draggingSubtabId, setDraggingSubtabId] = useState<ScriptSubtabId | null>(null);
   const [comments, setComments] = useState<ScriptComment[]>(() => cloneComments(initialScriptComments));
   const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
@@ -194,7 +206,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [previewVersionId, setPreviewVersionId] = useState<string | null>(null);
   const [restoreCandidateId, setRestoreCandidateId] = useState<string | null>(null);
   const [docHistoryEntries, setDocHistoryEntries] = useState<DocHistoryEntry[]>([]);
-  const [, setEnabledSubtabs] = useState<Set<Exclude<ScriptSubtabId, "script">>>(new Set());
   const [areVisualsVisible, setAreVisualsVisible] = useState(false);
   const [, setHasEditedThisSession] = useState(false);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
@@ -209,11 +220,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   const [lastSavedAt, setLastSavedAt] = useState(initialSavedAt);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
+  const [aiPanelPreset, setAiPanelPreset] = useState<ScriptAiPanelPreset | undefined>(undefined);
   const [showAiToCustomer] = useState(scriptBrief.showAiToCustomer);
   const [hasTypedThisSession, setHasTypedThisSession] = useState(() =>
     latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
   );
-  const [floatingToolbar, setFloatingToolbar] = useState<FloatingToolbarState>({
+  const [floatingToolbar, setFloatingToolbar] = useState<ScriptFloatingToolbarState>({
     visible: false,
     rowId: null,
     x: 0,
@@ -252,8 +264,19 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     [comments, isCustomer],
   );
   const commentsByRow = useMemo(() => groupCommentsByRow(visibleComments), [visibleComments]);
+  const visibleSubtabs = subtabs.filter(
+    (subtab) => subtab.visible && (subtab.id !== "transcripts" || scriptBrief.hasDialogueMedia),
+  );
+  const projectTranscriptClips = useMemo(
+    () => transcriptClips.filter((clip) => clip.projectId === projectStageHeaderProject?.id),
+    [],
+  );
+  const sentTranscriptSourceKeys = useMemo(
+    () => new Set(rows.flatMap((row) => row.source?.kind === "transcript" ? [row.source.sourceKey] : [])),
+    [rows],
+  );
   const visibleOpenComments = openCommentRowId ? commentsByRow.get(openCommentRowId) ?? [] : [];
-  const shouldShowAi = !isCustomer || showAiToCustomer;
+  const shouldShowAi = activeSubtabId === "transcripts" || !isCustomer || showAiToCustomer;
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1] ?? latestVersion;
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
@@ -286,6 +309,16 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
       setToastMessage("");
     }, 4000);
   }, [toastMessage]);
+
+  useEffect(() => {
+    const syncSubtabFromUrl = () => {
+      const nextSubtab = getScriptSubtabFromLocation();
+      setActiveSubtabId(nextSubtab);
+    };
+
+    window.addEventListener("popstate", syncSubtabFromUrl);
+    return () => window.removeEventListener("popstate", syncSubtabFromUrl);
+  }, []);
 
   useEffect(() => {
     if (!isCommentsOverviewOpen) {
@@ -452,6 +485,47 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     }
 
     pushRows(updater(cloneRows(rows)));
+  };
+
+  const appendTranscriptRows = (payloads: TranscriptWordsRowPayload[]) => {
+    const existingSourceKeys = new Set(
+      rows.flatMap((row) => row.source?.kind === "transcript" ? [row.source.sourceKey] : []),
+    );
+    const uniquePayloads = payloads.filter((payload) => !existingSourceKeys.has(payload.sourceKey));
+
+    if (uniquePayloads.length === 0) {
+      setToastMessage("Those transcript ranges are already in the Words column.");
+      return;
+    }
+
+    console.info("[Brisk prototype] Transcript Words row payload", uniquePayloads);
+    updateRows((currentRows) => [
+      ...currentRows,
+      ...uniquePayloads.map((payload, index): ScriptRow => ({
+        id: `transcript-row-${Date.now()}-${index}`,
+        words: payload.words,
+        visuals: "",
+        durationSeconds: Math.max(1, payload.endTimeSeconds - payload.startTimeSeconds),
+        elementType: "dialogue",
+        media: [],
+        source: {
+          kind: "transcript",
+          sourceKey: payload.sourceKey,
+          clipId: payload.clipId,
+          paragraphId: payload.paragraphId,
+          sourceFilename: payload.sourceFilename,
+          speakerName: payload.speakerName,
+          startTimeSeconds: payload.startTimeSeconds,
+          endTimeSeconds: payload.endTimeSeconds,
+          range: { ...payload.range },
+        },
+      })),
+    ]);
+    setToastMessage(
+      uniquePayloads.length === 1
+        ? "Transcript range added to the Words column."
+        : `${uniquePayloads.length} transcript ranges added to the Words column.`,
+    );
   };
 
   const undoRows = () => {
@@ -1109,7 +1183,6 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
 
     setIsScriptApproved(true);
     setStatus("Approved");
-    setEnabledSubtabs(new Set(optionalSubtabs.map((tab) => tab.id)));
     setVersions((currentVersions) =>
       currentVersions.map((version) =>
         version.id === selectedVersionId
@@ -1464,6 +1537,77 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
     setToastMessage(`Review request sent to ${recipientName}`);
   };
 
+  const activateScriptSubtab = (subtabId: ScriptSubtabId) => {
+    setActiveSubtabId(subtabId);
+    setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+    setOpenCommentRowId(null);
+    setIsCommentComposerOpen(false);
+    setFloatingCommentPosition(null);
+    setIsCommentsOverviewOpen(false);
+
+    const url = new URL(window.location.href);
+    const wasTranscriptTarget = url.searchParams.get("subtab") === "transcripts";
+    url.searchParams.set("subtab", subtabId);
+
+    if (subtabId !== "transcripts") {
+      url.searchParams.delete("clip");
+      url.hash = "";
+    } else if (!wasTranscriptTarget) {
+      url.searchParams.delete("clip");
+      url.hash = "";
+    }
+
+    window.history.pushState({}, "", url);
+  };
+
+  const reorderScriptSubtabs = (targetSubtabId: ScriptSubtabId) => {
+    if (!draggingSubtabId || draggingSubtabId === targetSubtabId) {
+      setDraggingSubtabId(null);
+      return;
+    }
+
+    setSubtabs((currentSubtabs) => {
+      const sourceIndex = currentSubtabs.findIndex((subtab) => subtab.id === draggingSubtabId);
+      const targetIndex = currentSubtabs.findIndex((subtab) => subtab.id === targetSubtabId);
+
+      if (sourceIndex === -1 || targetIndex === -1) {
+        return currentSubtabs;
+      }
+
+      const nextSubtabs = [...currentSubtabs];
+      const [movingSubtab] = nextSubtabs.splice(sourceIndex, 1);
+      nextSubtabs.splice(targetIndex, 0, movingSubtab);
+      return nextSubtabs;
+    });
+    setDraggingSubtabId(null);
+  };
+
+  const openTranscriptPaperEdit = (clips: TranscriptClip[]) => {
+    const assetsById = new Map(mediaAssets.map((asset) => [asset.id, asset]));
+    const transcriptSources = clips.map((clip) => ({
+      id: clip.id,
+      label: assetsById.get(clip.mediaAssetId)?.name ?? clip.id,
+      kind: "transcript" as const,
+      attached: true,
+    }));
+
+    setAiPanelPreset({
+      id: `transcript-paper-edit-${Date.now()}`,
+      sources: [
+        { id: "brief", label: "Project brief", kind: "brief", attached: true },
+        ...transcriptSources,
+      ],
+      promptChips: [
+        "Paper edit from transcripts",
+        "Summarise transcripts",
+        "Pull best quotes",
+        "Suggest structure for the edit",
+      ],
+    });
+    setIsAiPanelOpen(true);
+    setIsAiPanelMinimised(false);
+  };
+
   const scriptToolbarActions = (
     <div className="script-toolbar-action-zone" aria-label="Script controls">
       <div className="script-toolbar-version-zone">
@@ -1661,16 +1805,28 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
   );
 
   return (
-    <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
+    <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${activeSubtabId === "transcripts" ? "transcripts-active" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <WorkspaceSidebar className="script-sidebar" />
       {projectStageHeaderProject ? (
         <ProjectStageHeader activeStage="script" project={projectStageHeaderProject} />
       ) : null}
 
+      <ScriptSubtabBar
+        activeSubtabId={activeSubtabId}
+        draggingSubtabId={draggingSubtabId}
+        subtabs={visibleSubtabs}
+        onActivate={activateScriptSubtab}
+        onDragEnd={() => setDraggingSubtabId(null)}
+        onDragStart={setDraggingSubtabId}
+        onReorder={reorderScriptSubtabs}
+      />
+
       <section
         className={`script-body ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
         ref={scriptBodyRef}
       >
+        {activeSubtabId === "script" ? (
+          <>
         <div className="script-editor-column">
           {previewVersion ? (
             <VersionPreviewBanner
@@ -1784,10 +1940,21 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             }}
           />
         ) : null}
-
+          </>
+        ) : activeSubtabId === "transcripts" ? (
+          <TranscriptsPanel
+            clips={scriptBrief.hasDialogueMedia ? projectTranscriptClips : []}
+            comments={visibleComments}
+            initialFocusAssetId={initialTranscriptClipId}
+            isCustomer={isCustomer}
+            sentSourceKeys={sentTranscriptSourceKeys}
+            onCommentsChange={mergeScopedComments}
+            onSendRows={appendTranscriptRows}
+          />
+        ) : null}
       </section>
 
-      <footer className={`script-word-footer word-${wordState}`}>
+      {activeSubtabId === "script" ? <footer className={`script-word-footer word-${wordState}`}>
         <div className="script-word-footer-inner">
           <div className="script-word-footer-status">
             <div className="script-word-footer-copy">
@@ -1802,17 +1969,43 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
           </div>
           {scriptDecisionActions}
         </div>
-      </footer>
+      </footer> : null}
 
-      <FloatingSelectionCommentButton
+      {activeSubtabId === "script" ? <FloatingSelectionToolbar
         state={floatingToolbar}
-        onAi={() => {
-          setIsAiPanelOpen(true);
-          setIsAiPanelMinimised(false);
-        }}
-        onApply={applyTextMark}
-        onComment={openSelectionComment}
-      />
+        actions={[
+          {
+            id: "bold",
+            label: "Bold",
+            symbol: "B",
+            onSelect: () => applyTextMark("bold"),
+          },
+          {
+            id: "link",
+            label: "Link",
+            icon: "link",
+            onSelect: () => applyTextMark("link"),
+          },
+          {
+            id: "ai",
+            label: "AI",
+            icon: "chopchop-ai",
+            showLabel: true,
+            onSelect: () => {
+              setAiPanelPreset(undefined);
+              setIsAiPanelOpen(true);
+              setIsAiPanelMinimised(false);
+            },
+          },
+          {
+            id: "comment",
+            label: "Comment",
+            icon: "chat-circle",
+            showLabel: true,
+            onSelect: openSelectionComment,
+          },
+        ]}
+      /> : null}
 
       {shouldShowAi ? (
         <>
@@ -1822,6 +2015,12 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
               type="button"
               aria-label="Open ChopChop AI"
               onClick={() => {
+                if (activeSubtabId === "transcripts") {
+                  openTranscriptPaperEdit(projectTranscriptClips);
+                  return;
+                }
+
+                setAiPanelPreset(undefined);
                 setIsAiPanelOpen(true);
                 setIsAiPanelMinimised(false);
               }}
@@ -1838,6 +2037,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
             genre={scriptBrief.genre}
             isMinimised={isAiPanelMinimised}
             isOpen={isAiPanelOpen}
+            preset={aiPanelPreset}
             selectionContext={aiSelectionContext}
             onClose={() => setIsAiPanelOpen(false)}
             onInsert={handleAiInsert}
@@ -1978,41 +2178,6 @@ function ScriptActionCluster({
           </button>
         )}
       </div>
-    </div>
-  );
-}
-
-function FloatingSelectionCommentButton({
-  state,
-  onAi,
-  onApply,
-  onComment,
-}: {
-  state: FloatingToolbarState;
-  onAi: () => void;
-  onApply: (mark: "bold" | "link") => void;
-  onComment: () => void;
-}) {
-  if (!state.visible) {
-    return null;
-  }
-
-  return (
-    <div className="script-floating-toolbar" style={{ left: state.x, top: state.y }} aria-label="Selection actions">
-      <button className="script-selection-icon-button label-xs-semibold" type="button" aria-label="Bold" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("bold")}>
-        B
-      </button>
-      <button className="script-selection-icon-button" type="button" data-tooltip="Link" aria-label="Link" onMouseDown={(event) => event.preventDefault()} onClick={() => onApply("link")}>
-        <DsIcon name="link" size={14} />
-      </button>
-      <button className="script-selection-ai-button label-xs-semibold" type="button" aria-label="Ask AI" onMouseDown={(event) => event.preventDefault()} onClick={onAi}>
-        <DsIcon name="chopchop-ai" size={14} />
-        AI
-      </button>
-      <button className="script-selection-comment-button label-xs-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={onComment}>
-        <DsIcon name="chat-circle" size={14} />
-        Comment
-      </button>
     </div>
   );
 }
@@ -2161,12 +2326,7 @@ function AvScriptEditor({
       />
       {editorRows.map((row, index) => {
         const rowComments = commentsByRow.get(row.id) ?? [];
-        const hasComments = rowComments.length > 0;
         const hasUnresolvedComments = rowComments.some((comment) => !comment.resolved);
-        const annotationState = !hasComments ? "none" : hasUnresolvedComments ? "unresolved" : "resolved";
-        const commentTooltip = hasComments
-          ? `${rowComments.length} ${rowComments.length === 1 ? "comment" : "comments"}`
-          : `Add comment for ${getRowLabel(row.id, editorRows)}`;
         const rowUniversalAnchor: ScriptRowUniversalAnchor = {
           surfaceType: "script",
           surfaceId: scriptSurfaceId,
@@ -2329,21 +2489,12 @@ function AvScriptEditor({
                   </span>
                 ) : null}
               </span>
-              <button
-                className={`script-annotation-pin ${annotationState}`}
-                type="button"
-                aria-label={`${commentTooltip}${hasComments ? ` for ${getRowLabel(row.id, editorRows)}` : ""}`}
-                data-comment-count={rowComments.length}
-                data-tooltip={commentTooltip}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={(event) => onOpenRowAnnotation(rowUniversalAnchor, event.currentTarget.getBoundingClientRect())}
-              >
-                <DsIcon name="chat-circle" size={16} />
-                <CommentCountBadge
-                  count={rowComments.length}
-                  label={`${rowComments.length} ${rowComments.length === 1 ? "comment" : "comments"}`}
-                />
-              </button>
+              <ScriptAnnotationPin
+                count={rowComments.length}
+                hasUnresolved={hasUnresolvedComments}
+                label={getRowLabel(row.id, editorRows)}
+                onOpen={(triggerRect) => onOpenRowAnnotation(rowUniversalAnchor, triggerRect)}
+              />
             </div>
           </div>
         );
@@ -2973,6 +3124,11 @@ function capitaliseLabel(label: string) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+function getScriptSubtabFromLocation(): ScriptSubtabId {
+  const subtab = new URL(window.location.href).searchParams.get("subtab");
+  return subtab === "transcripts" ? subtab : "script";
+}
+
 function cloneRows(rows: ScriptRow[]) {
   return rows.map(cloneRow);
 }
@@ -2983,6 +3139,12 @@ function cloneRow(row: ScriptRow): ScriptRow {
     media: row.media.map((mediaItem) => ({ ...mediaItem })),
     change: row.change ? { ...row.change } : undefined,
     deletedMeta: row.deletedMeta ? { ...row.deletedMeta } : undefined,
+    source: row.source
+      ? {
+          ...row.source,
+          range: { ...row.source.range },
+        }
+      : undefined,
   };
 }
 
@@ -3261,24 +3423,6 @@ function getFloatingToolbarPosition(target: HTMLTextAreaElement) {
     x: Math.min(window.innerWidth - 16, Math.max(16, rect.left + rect.width / 2)),
     y: shouldFlipBelow ? rect.bottom + 8 : rect.top - 40,
   };
-}
-
-function getFloatingCommentPosition(rect: DOMRect): FloatingCommentPosition {
-  const shellWidth = 360;
-  const shellHeight = 460;
-  const viewportPadding = 16;
-  const triggerGap = 12;
-  const preferredLeft = rect.right + triggerGap;
-  const hasRoomRight = preferredLeft + shellWidth <= window.innerWidth - viewportPadding;
-  const left = hasRoomRight
-    ? preferredLeft
-    : Math.max(viewportPadding, rect.left - shellWidth - triggerGap);
-  const top = Math.min(
-    Math.max(viewportPadding, rect.top - viewportPadding),
-    Math.max(viewportPadding, window.innerHeight - shellHeight - viewportPadding),
-  );
-
-  return { left, top };
 }
 
 function formatSnapshotDate(date: Date) {
