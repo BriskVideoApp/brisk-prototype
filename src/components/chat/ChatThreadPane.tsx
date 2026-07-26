@@ -27,6 +27,7 @@ type ChatThreadPaneProps = {
   onToggleReaction: (messageId: string, emoji: ReactionEmoji, label: string) => void;
   onDeleteMessage: (messageId: string) => void;
   onEditMessage: (messageId: string, body: string) => void;
+  onMarkUnread: (messageId: string) => void;
   onNotify: (message: string) => void;
 };
 
@@ -44,6 +45,7 @@ export function ChatThreadPane({
   onToggleReaction,
   onDeleteMessage,
   onEditMessage,
+  onMarkUnread,
   onNotify,
 }: ChatThreadPaneProps) {
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
@@ -59,9 +61,14 @@ export function ChatThreadPane({
           <h2>Thread</h2>
           <span className="label-xs">{project.code}</span>
         </div>
-        <button className="chat-thread-close label-s-semibold" type="button" onClick={onClose}>
-          <DsIcon name="x-close-cross" size={16} />
-          Close
+        <button
+          className="chat-icon-button"
+          type="button"
+          aria-label="Close thread"
+          title="Close thread"
+          onClick={onClose}
+        >
+          <DsIcon name="x-close-cross" size={18} />
         </button>
       </header>
 
@@ -87,6 +94,7 @@ export function ChatThreadPane({
                     onToggleReaction={onToggleReaction}
                     onDeleteMessage={onDeleteMessage}
                     onEditMessage={onEditMessage}
+                    onMarkUnread={onMarkUnread}
                     onNotify={onNotify}
                   />
                   {isParent ? (

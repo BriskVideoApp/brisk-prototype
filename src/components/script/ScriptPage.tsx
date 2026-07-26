@@ -1639,7 +1639,7 @@ export function ScriptPage({ initialRole }: ScriptPageProps) {
         data-tooltip="Show all comments"
         onClick={openAllComments}
       >
-        <DsIcon name="chat-circle" size={16} />
+        <DsIcon name="chats" size={16} />
       </button>
   );
 
@@ -2033,7 +2033,6 @@ function ScriptColumnHeaders({
       <div className="script-column-toolbar-row" aria-label="Script controls">
         {scriptToolbarActions}
         <div className="script-toolbar-trailing-actions">
-          {scriptToolbarCommentsButton}
           <Button
             className="script-visuals-header-toggle script-toolbar-visuals-toggle"
             size="S"
@@ -2044,6 +2043,7 @@ function ScriptColumnHeaders({
             <span>{areVisualsVisible ? "Hide Visuals" : "Show Visuals"}</span>
             <DsIcon name={areVisualsVisible ? "caret-left" : "caret-right"} size={12} />
           </Button>
+          {scriptToolbarCommentsButton}
         </div>
       </div>
       <section className="script-column-header words">

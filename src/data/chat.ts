@@ -148,7 +148,12 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 2,
     preferredSource: "email",
     connectors: connectors({
-      whatsapp: { enabled: true, connected: true, detail: "Loom marketing WhatsApp" },
+      whatsapp: {
+        enabled: true,
+        connected: true,
+        detail: "Sarah Kim",
+        audience: { kind: "individual", contactName: "Sarah", possessiveAdjective: "Her" },
+      },
       slack: { enabled: true, connected: true, detail: "#north-star-launch-film" },
       teams: { enabled: true, connected: true, detail: "Loom launch shared channel" },
     }),

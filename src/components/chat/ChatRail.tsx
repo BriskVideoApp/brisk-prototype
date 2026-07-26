@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { ChatClient, ChatClientStatus, ChatProject } from "@/components/chat/types";
@@ -8,6 +9,10 @@ import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext
 
 export type ChatRailView = "projects" | "dms" | "mentions" | "groups" | "threads" | "calls";
 export type ChatCustomerFilter = ChatClientStatus | "All";
+export type ChatRailReadTarget =
+  | { type: "all" }
+  | { type: "client"; clientName: string }
+  | { type: "project"; projectId: string };
 
 type ChatRailProps = {
   workspaceName: string;
@@ -25,6 +30,8 @@ type ChatRailProps = {
   onViewSelect: (view: ChatRailView) => void;
   onCustomerFilterChange: (filter: ChatCustomerFilter) => void;
   onUnreadOnlyChange: (showUnreadOnly: boolean) => void;
+  onMarkRead: (target: ChatRailReadTarget) => void;
+  onGlobalMarkRead: (view: Exclude<ChatRailView, "projects">) => void;
   onSearchOpen: () => void;
 };
 
@@ -57,9 +64,14 @@ export function ChatRail({
   onViewSelect,
   onCustomerFilterChange,
   onUnreadOnlyChange,
+  onMarkRead,
+  onGlobalMarkRead,
   onSearchOpen,
 }: ChatRailProps) {
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [globalUnreadCounts, setGlobalUnreadCounts] = useState<Record<string, number>>(
+    () => Object.fromEntries(globalItems.map((item) => [item.id, item.count])),
+  );
   const showClients = role === "Studio Staff";
   const clientStatusByName = new Map(clients.map((client) => [client.name, client.status]));
   const lifecycleProjects = showClients && customerFilter !== "All"
@@ -129,21 +141,33 @@ export function ChatRail({
       {showGlobalNavigation ? (
         <>
           <nav className="chat-rail-global" aria-label="Global conversations">
-            {visibleGlobalItems.map((item) => (
-              <button
-                className={`chat-rail-global-item label-s-semibold ${activeView === item.id ? "active" : ""}`}
-                type="button"
-                key={item.id}
-                aria-pressed={activeView === item.id}
-                onClick={() => onViewSelect(item.id)}
-              >
-                <span className="chat-rail-global-item-copy">
-                  <DsIcon name={item.icon} size={16} />
-                  <span>{item.label}</span>
-                </span>
-                {item.count > 0 ? <span className="chat-count-badge label-xs-semibold">{item.count}</span> : null}
-              </button>
-            ))}
+            {visibleGlobalItems.map((item) => {
+              const unreadCount = globalUnreadCounts[item.id] ?? 0;
+
+              return (
+                <div className="chat-rail-global-row" key={item.id}>
+                  <button
+                    className={`chat-rail-global-item label-s-semibold ${activeView === item.id ? "active" : ""}`}
+                    type="button"
+                    aria-pressed={activeView === item.id}
+                    onClick={() => onViewSelect(item.id)}
+                  >
+                    <span className="chat-rail-global-item-copy">
+                      <DsIcon name={item.icon} size={16} />
+                      <span>{item.label}</span>
+                    </span>
+                  </button>
+                  <ChatUnreadControl
+                    count={unreadCount}
+                    ariaLabel={`Mark ${unreadCount} unread ${item.label.toLowerCase()} as read`}
+                    onMarkRead={() => {
+                      setGlobalUnreadCounts((current) => ({ ...current, [item.id]: 0 }));
+                      onGlobalMarkRead(item.id);
+                    }}
+                  />
+                </div>
+              );
+            })}
           </nav>
 
           <div className="chat-rail-divider" />
@@ -154,23 +178,25 @@ export function ChatRail({
         className="chat-rail-projects"
         aria-label={showClients ? "Client conversations" : "Project conversations"}
       >
-        <button
-          className={`chat-project-pill all-projects label-s-semibold ${
-            activeView === "projects" && activeProjectId === null && activeClientName === null
-              ? "active"
-              : ""
-          }`}
-          type="button"
-          onClick={() => onProjectSelect(null)}
-        >
-          {totalUnreadCount > 0 ? (
-            <span className="chat-unread-badge label-xs-semibold" aria-label={`${totalUnreadCount} unread`}>
-              {totalUnreadCount}
-            </span>
-          ) : null}
-          <DsIcon name="folder-open" size={16} />
-          <span>All projects</span>
-        </button>
+        <div className="chat-project-pill-row">
+          <button
+            className={`chat-project-pill all-projects label-s-semibold ${
+              activeView === "projects" && activeProjectId === null && activeClientName === null
+                ? "active"
+                : ""
+            }`}
+            type="button"
+            onClick={() => onProjectSelect(null)}
+          >
+            <DsIcon name="folder-open" size={16} />
+            <span>All projects</span>
+          </button>
+          <ChatUnreadControl
+            count={totalUnreadCount}
+            ariaLabel={`Mark all ${totalUnreadCount} unread messages as read`}
+            onMarkRead={() => onMarkRead({ type: "all" })}
+          />
+        </div>
 
         <div className="chat-project-list-divider" aria-hidden="true" />
 
@@ -179,24 +205,22 @@ export function ChatRail({
               const isActive = activeView === "projects" && activeClientName === client.name;
 
               return (
-                <button
-                  className={`chat-project-pill chat-client-pill label-s-semibold ${isActive ? "active" : ""}`}
-                  type="button"
-                  key={client.name}
-                  title={`${client.name} - ${client.projectCount} ${client.projectCount === 1 ? "project" : "projects"}`}
-                  aria-pressed={isActive}
-                  onClick={() => onClientSelect(client.name)}
-                >
-                  {client.unreadCount + (companyUnreadCounts[client.name] ?? 0) > 0 ? (
-                    <span
-                      className="chat-unread-badge label-xs-semibold"
-                      aria-label={`${client.unreadCount + (companyUnreadCounts[client.name] ?? 0)} unread`}
-                    >
-                      {client.unreadCount + (companyUnreadCounts[client.name] ?? 0)}
-                    </span>
-                  ) : null}
-                  <span className="chat-project-pill-name">{client.name}</span>
-                </button>
+                <div className="chat-project-pill-row" key={client.name}>
+                  <button
+                    className={`chat-project-pill chat-client-pill label-s-semibold ${isActive ? "active" : ""}`}
+                    type="button"
+                    title={`${client.name} - ${client.projectCount} ${client.projectCount === 1 ? "project" : "projects"}`}
+                    aria-pressed={isActive}
+                    onClick={() => onClientSelect(client.name)}
+                  >
+                    <span className="chat-project-pill-name">{client.name}</span>
+                  </button>
+                  <ChatUnreadControl
+                    count={client.unreadCount + (companyUnreadCounts[client.name] ?? 0)}
+                    ariaLabel={`Mark ${client.unreadCount + (companyUnreadCounts[client.name] ?? 0)} unread messages from ${client.name} as read`}
+                    onMarkRead={() => onMarkRead({ type: "client", clientName: client.name })}
+                  />
+                </div>
               );
             })
           : visibleProjects.map((project) => {
@@ -204,22 +228,23 @@ export function ChatRail({
               const isActive = activeView === "projects" && activeProjectId === project.id;
 
               return (
-                <button
-                  className={`chat-project-pill label-s-semibold ${isActive ? "active" : ""}`}
-                  type="button"
-                  key={project.id}
-                  title={`${project.code} ${project.title}`}
-                  aria-pressed={isActive}
-                  onClick={() => onProjectSelect(project.id)}
-                >
-                  {unreadCount > 0 ? (
-                    <span className="chat-unread-badge label-xs-semibold" aria-label={`${unreadCount} unread`}>
-                      {unreadCount}
-                    </span>
-                  ) : null}
-                  <span className="chat-project-pill-code">{project.code}</span>
-                  <span className="chat-project-pill-name">{project.clientName}</span>
-                </button>
+                <div className="chat-project-pill-row" key={project.id}>
+                  <button
+                    className={`chat-project-pill label-s-semibold ${isActive ? "active" : ""}`}
+                    type="button"
+                    title={`${project.code} ${project.title}`}
+                    aria-pressed={isActive}
+                    onClick={() => onProjectSelect(project.id)}
+                  >
+                    <span className="chat-project-pill-code">{project.code}</span>
+                    <span className="chat-project-pill-name">{project.clientName}</span>
+                  </button>
+                  <ChatUnreadControl
+                    count={unreadCount}
+                    ariaLabel={`Mark ${unreadCount} unread messages in ${project.code} as read`}
+                    onMarkRead={() => onMarkRead({ type: "project", projectId: project.id })}
+                  />
+                </div>
               );
             })}
       </div>

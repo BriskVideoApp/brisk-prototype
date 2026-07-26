@@ -146,7 +146,6 @@ export function ChatCallLauncher({
           >
             <header className="chat-call-preview-header">
               <div>
-                <p className="label-xs">Start a call</p>
                 <h2 id="chat-call-preview-title">{contextName}</h2>
               </div>
               <button
@@ -236,21 +235,21 @@ export function ChatCallLauncher({
               <div className="chat-call-device-grid">
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="headphones" size={16} /> Microphone</span>
-                  <select aria-label="Microphone">
+                  <select className="label-s" aria-label="Microphone">
                     <option>MacBook microphone</option>
                     <option>Studio headset</option>
                   </select>
                 </label>
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="speaker-high" size={16} /> Speaker</span>
-                  <select aria-label="Speaker">
+                  <select className="label-s" aria-label="Speaker">
                     <option>MacBook speakers</option>
                     <option>Studio headset</option>
                   </select>
                 </label>
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="video-camera" size={16} /> Camera</span>
-                  <select aria-label="Camera">
+                  <select className="label-s" aria-label="Camera">
                     <option>FaceTime HD camera</option>
                     <option>External camera</option>
                   </select>

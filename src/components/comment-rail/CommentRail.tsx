@@ -76,7 +76,6 @@ export function CommentRail({
   const [expandedResolvedIds, setExpandedResolvedIds] = useState(new Set<string>());
   const [openCommentMenuId, setOpenCommentMenuId] = useState<string | null>(null);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const comments = onCommentsChange ? initialComments : localComments;
   const activeComposerAnchor = composerAnchor ?? activeAnchor;
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
@@ -85,13 +84,6 @@ export function CommentRail({
     [canSeeInternal, comments],
   );
   const visibleComments = sortCommentsForRail(getFilteredComments(visibleBaseComments, activeFilter));
-  const unresolvedCount = visibleBaseComments.filter((comment) => !comment.resolved).length;
-  const selectedVisibleIndex = selectedCommentId
-    ? visibleComments.findIndex((comment) => comment.id === selectedCommentId)
-    : -1;
-  const canSkipPrevious = selectedVisibleIndex > 0;
-  const canSkipNext =
-    visibleComments.length > 0 && (selectedVisibleIndex === -1 || selectedVisibleIndex < visibleComments.length - 1);
   const composerClass = showComposer ? `composer-${composerPlacement}` : "composer-none";
 
   useEffect(() => {
@@ -112,19 +104,6 @@ export function CommentRail({
   const selectComment = (comment: ScriptComment) => {
     setSelectedCommentId(comment.id);
     onSelectComment?.(comment);
-  };
-
-  const skipComment = (direction: -1 | 1) => {
-    if (visibleComments.length === 0) {
-      return;
-    }
-
-    const baseIndex = selectedVisibleIndex === -1 ? (direction === 1 ? -1 : visibleComments.length) : selectedVisibleIndex;
-    const nextComment = visibleComments[baseIndex + direction];
-
-    if (nextComment) {
-      selectComment(nextComment);
-    }
   };
 
   const submitComment = () => {
@@ -159,12 +138,6 @@ export function CommentRail({
       next.delete(commentId);
       return next;
     });
-  };
-
-  const resolveAll = () => {
-    updateComments((current) => current.map((comment) => ({ ...comment, resolved: true })));
-    setIsConfirmOpen(false);
-    setExpandedResolvedIds(new Set());
   };
 
   const deleteComment = (commentId: string) => {
@@ -273,34 +246,7 @@ export function CommentRail({
           <div className="comment-title-row">
             <h1 className="heading-3xs">{title ?? `Comments (${visibleComments.length})`}</h1>
             <div className="comment-header-actions">
-              <div className="skip-comment-actions" aria-label="Skip between visible comments">
-                <button
-                  className="header-menu-button"
-                  type="button"
-                  aria-label="Previous visible comment"
-                  disabled={!canSkipPrevious}
-                  onClick={() => skipComment(-1)}
-                >
-                  ↑
-                </button>
-                <button
-                  className="header-menu-button"
-                  type="button"
-                  aria-label="Next visible comment"
-                  disabled={!canSkipNext}
-                  onClick={() => skipComment(1)}
-                >
-                  ↓
-                </button>
-                <button
-                  className="header-menu-button double-tick-button"
-                  type="button"
-                  data-tooltip="Resolve all comments"
-                  aria-label="Resolve all comments"
-                  onClick={() => setIsConfirmOpen(true)}
-                >
-                  <DsIcon name="checks" size={15} />
-                </button>
+              <div className="skip-comment-actions">
                 {onClose ? (
                   <button className="header-menu-button script-comment-panel-close" type="button" aria-label="Close comments" onClick={onClose}>
                     <DsIcon name="x-close-cross" size={13} />
@@ -398,13 +344,6 @@ export function CommentRail({
         />
       ) : null}
 
-      {isConfirmOpen ? (
-        <ResolveAllModal
-          unresolvedCount={unresolvedCount}
-          onCancel={() => setIsConfirmOpen(false)}
-          onResolveAll={resolveAll}
-        />
-      ) : null}
     </aside>
   );
 }
@@ -1015,34 +954,6 @@ function InlineReplyComposer({
         onKeyDown={submitOnEnter}
       />
       <p className="label-xs">Enter to reply - Shift+Enter for a new line</p>
-    </div>
-  );
-}
-
-function ResolveAllModal({
-  unresolvedCount,
-  onCancel,
-  onResolveAll,
-}: {
-  unresolvedCount: number;
-  onCancel: () => void;
-  onResolveAll: () => void;
-}) {
-  return (
-    <div className="modal-backdrop" role="presentation">
-      <div className="resolve-modal" role="dialog" aria-modal="true" aria-labelledby="script-resolve-title">
-        <h2 className="heading-3xs" id="script-resolve-title">
-          Resolve all {unresolvedCount} unresolved comments?
-        </h2>
-        <div className="resolve-modal-actions">
-          <button className="modal-cancel-button label-s-semibold" type="button" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="modal-resolve-button label-s-semibold" type="button" onClick={onResolveAll}>
-            Resolve all
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

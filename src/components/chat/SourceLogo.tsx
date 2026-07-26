@@ -45,7 +45,7 @@ export function SourceLogo({
   const details = sourceDetails[source];
   const tooltipId = useId();
   const tooltipCopy = project && direction
-    ? getSourceTooltipCopy(source, direction, project, senderName)
+    ? getSourceTooltipCopy(source, direction, project)
     : null;
 
   return (
@@ -95,7 +95,6 @@ function getSourceTooltipCopy(
   source: ChatSource,
   direction: SourceDirection,
   project: ChatProject,
-  senderName?: string,
 ): SourceTooltipCopy {
   const clientName = project.clientName;
 
@@ -122,113 +121,20 @@ function getSourceTooltipCopy(
   }
 
   const connector = project.connectors[source];
-  const destination = source === "email" && connector.detail.startsWith("project-code@")
-    ? `${project.code.toLowerCase()}@in.briskapp.com`
-    : connector.detail;
-  const clientPossessive = makePossessive(clientName);
-
-  if (source === "slack") {
-    if (direction === "inbound") {
-      return {
-        title: `Received from ${clientPossessive} Slack workspace`,
-        summary: `This message was written in ${destination} in ${clientPossessive} Slack workspace. Brisk copied it into this External chat so the ${clientName} team and your studio team can read and reply here.`,
-        explanation: `If you reply using the message box below while Slack is selected, Brisk will post your reply to ${destination} in ${clientPossessive} Slack workspace and keep a copy in this External chat. Internal messages are never sent to Slack.`,
-      };
-    }
-
-    if (direction === "composer") {
-      return {
-        title: `Send to ${clientPossessive} Slack workspace`,
-        summary: `When you send this message, Brisk will add it to this External chat and post it to ${destination} in ${clientPossessive} Slack workspace. Everyone with access to that channel will be able to read it.`,
-        explanation: "Replies written in Slack will be copied back into this chat. Internal messages are never sent to Slack.",
-      };
-    }
-
-    return {
-      title: `Sent to ${clientPossessive} Slack workspace`,
-      summary: `This message was written in Brisk and posted to ${destination} in ${clientPossessive} Slack workspace. Everyone with access to that channel can read it, including people who do not use Brisk.`,
-      explanation: `If you reply using the message box below while Slack is selected, Brisk will post your reply to ${destination} in ${clientPossessive} Slack workspace and keep a copy in this External chat. Replies written in Slack will also appear here.`,
-    };
-  }
-
-  if (source === "email") {
-    if (direction === "inbound") {
-      return {
-        title: `Received through ${clientPossessive} project email conversation`,
-        summary: `This message was sent to ${destination} and copied into this External chat. Your studio can read and reply to it in Brisk.`,
-        explanation: `If you reply using the message box below while Email is selected, Brisk will email your reply to the ${clientName} recipients connected to this project and keep a copy in this External chat. Their email replies will also appear here.`,
-      };
-    }
-
-    if (direction === "composer") {
-      return {
-        title: `Send by email to ${clientName}`,
-        summary: `When you send this message, Brisk will add it to this External chat and email it to the ${clientName} recipients connected to this project, using ${destination}.`,
-        explanation: "Their email replies will be copied back into this chat. Internal messages are never sent by email.",
-      };
-    }
-
-    return {
-      title: `Sent by email to ${clientName}`,
-      summary: `This message was written in Brisk and emailed to the ${clientName} recipients connected to this project, using ${destination}.`,
-      explanation: `If you reply using the message box below while Email is selected, Brisk will email your reply to the ${clientName} recipients connected to this project and keep a copy in this External chat. Their email replies will also appear here.`,
-    };
-  }
-
-  if (source === "whatsapp") {
-    const audience = connector.audience ?? { kind: "shared" as const };
-    const isIndividual = audience.kind === "individual";
-    const connectedName = isIndividual ? audience.contactName : clientName;
-    const connectedPossessive = makePossessive(connectedName);
-    const replyOwner = isIndividual ? audience.possessiveAdjective : "Their team’s";
-    const replyDestination = isIndividual ? audience.possessiveAdjective.toLowerCase() : "their";
-
-    if (direction === "inbound") {
-      return {
-        title: `${connectedPossessive} WhatsApp is connected`,
-        summary: `${replyOwner} WhatsApp replies appear here.`,
-        explanation: `Reply here and Brisk will send it to ${replyDestination} WhatsApp too.`,
-      };
-    }
-
-    if (direction === "composer") {
-      return {
-        title: `Send to ${connectedPossessive} WhatsApp`,
-        summary: `Brisk will keep this message here and send it to ${replyDestination} WhatsApp too.`,
-        explanation: `${replyOwner} WhatsApp replies will appear here. Internal chat never leaves Brisk.`,
-      };
-    }
-
-    return {
-      title: `Sent to ${connectedPossessive} WhatsApp`,
-      summary: `Brisk kept this message here and sent it to ${replyDestination} WhatsApp too.`,
-      explanation: `${replyOwner} WhatsApp replies appear here.`,
-    };
-  }
-
-  if (direction === "inbound") {
-    return {
-      title: `Received from ${clientPossessive} Microsoft Teams organisation`,
-      summary: `This message was written in ${destination} in ${clientPossessive} Microsoft Teams organisation. Brisk copied it into this External chat so both teams can read and reply here.`,
-      explanation: `If you reply using the message box below while Microsoft Teams is selected, Brisk will post your reply to ${destination} in ${clientPossessive} Microsoft Teams organisation and keep a copy in this External chat. Internal messages are never sent to Microsoft Teams.`,
-    };
-  }
-
-  if (direction === "composer") {
-    return {
-      title: `Send to ${clientPossessive} Microsoft Teams organisation`,
-      summary: `When you send this message, Brisk will add it to this External chat and post it to ${destination} in ${clientPossessive} Microsoft Teams organisation.`,
-      explanation: "Replies written in Microsoft Teams will be copied back into this chat. Internal messages are never sent to Microsoft Teams.",
-    };
-  }
+  const audience = connector.audience ?? { kind: "shared" as const };
+  const isIndividual = audience.kind === "individual";
+  const connectedName = isIndividual ? audience.contactName : clientName;
+  const connectorName = source === "email" ? "email" : sourceDetails[source].label;
+  const replyOwner = isIndividual ? audience.possessiveAdjective : "Their team's";
+  const replyDestination = isIndividual ? audience.possessiveAdjective.toLowerCase() : "their";
 
   return {
-    title: `Sent to ${clientPossessive} Microsoft Teams organisation`,
-    summary: `This message was written in Brisk and posted to ${destination} in ${clientPossessive} Microsoft Teams organisation. Everyone with access to that channel can read it.`,
-    explanation: `If you reply using the message box below while Microsoft Teams is selected, Brisk will post your reply to ${destination} in ${clientPossessive} Microsoft Teams organisation and keep a copy in this External chat. Replies written in Microsoft Teams will also appear here.`,
+    title: `${makePossessive(connectedName)} ${connectorName} is connected`,
+    summary: `${replyOwner} ${connectorName} replies appear here.`,
+    explanation: `Reply here and Brisk will send it to ${replyDestination} ${connectorName} too.`,
   };
 }
 
 function makePossessive(name: string) {
-  return name.toLowerCase().endsWith("s") ? `${name}’` : `${name}’s`;
+  return name.toLowerCase().endsWith("s") ? `${name}'` : `${name}'s`;
 }

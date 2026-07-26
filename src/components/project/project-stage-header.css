@@ -63,7 +63,7 @@
   top: calc(100% + var(--brisk-space-s));
   right: auto;
   bottom: auto;
-  left: 50%;
+  left: 0;
   z-index: 70;
   width: max-content;
   border: 1px solid var(--brisk-border-primary);
@@ -78,7 +78,7 @@
   opacity: 0;
   padding: var(--brisk-space-xs) var(--brisk-space-s);
   pointer-events: none;
-  transform: translate(-50%, calc(var(--brisk-space-xxs) * -1));
+  transform: translate(var(--brisk-space-none), calc(var(--brisk-space-xxs) * -1));
   transition: opacity 120ms ease, transform 120ms ease;
   white-space: nowrap;
 }
@@ -86,7 +86,7 @@
 .project-stage-dashboard-link:hover::after,
 .project-stage-dashboard-link:focus-visible::after {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translate(var(--brisk-space-none), var(--brisk-space-none));
 }
 
 .project-stage-header-actions {

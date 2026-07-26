@@ -38,6 +38,7 @@ type ChatMessageListProps = {
   onToggleReaction: (messageId: string, emoji: ReactionEmoji, label: string) => void;
   onDeleteMessage: (messageId: string) => void;
   onEditMessage: (messageId: string, body: string) => void;
+  onMarkUnread: (messageId: string) => void;
   onFilesDropped: (files: File[]) => void;
   onNotify: (message: string) => void;
 };
@@ -71,6 +72,7 @@ export function ChatMessageList({
   onToggleReaction,
   onDeleteMessage,
   onEditMessage,
+  onMarkUnread,
   onFilesDropped,
   onNotify,
 }: ChatMessageListProps) {
@@ -174,6 +176,7 @@ export function ChatMessageList({
                     onToggleReaction={onToggleReaction}
                     onDeleteMessage={onDeleteMessage}
                     onEditMessage={onEditMessage}
+                    onMarkUnread={onMarkUnread}
                     onNotify={onNotify}
                   />
                 );
@@ -194,7 +197,6 @@ export function ChatDateDivider({ createdAt }: { createdAt: string }) {
         {formatMessageDate(createdAt)}
         <DsIcon name="caret-down" size={12} />
       </span>
-      <span className="chat-date-divider-line" aria-hidden="true" />
     </div>
   );
 }
@@ -213,6 +215,7 @@ type ChatMessageCardProps = {
   onToggleReaction?: (messageId: string, emoji: ReactionEmoji, label: string) => void;
   onDeleteMessage?: (messageId: string) => void;
   onEditMessage?: (messageId: string, body: string) => void;
+  onMarkUnread?: (messageId: string) => void;
   onNotify?: (message: string) => void;
 };
 
@@ -228,6 +231,7 @@ export function ChatMessageCard({
   parentContext = false,
   onOpenThread,
   onToggleReaction,
+  onMarkUnread,
   onNotify,
 }: ChatMessageCardProps) {
   const [isReactionPickerOpen, setIsReactionPickerOpen] = useState(false);
@@ -440,9 +444,9 @@ export function ChatMessageCard({
               data-message-action
               data-tooltip="Mark unread"
               aria-label="Mark unread"
-              onClick={() => onNotify?.("Message marked as unread")}
+              onClick={() => onMarkUnread?.(message.id)}
             >
-              <DsIcon name="envelope-simple" size={15} />
+              <DsIcon name="eye-slash" size={15} />
             </button>
           </div>
         ) : null}
