@@ -96,7 +96,8 @@
 
 .script-current-version-button {
   display: inline-flex;
-  min-height: 32px;
+  height: var(--brisk-space-2xl);
+  min-height: var(--brisk-space-2xl);
   align-items: center;
   justify-content: space-between;
   border: 1px solid var(--brisk-border-primary);
@@ -609,7 +610,8 @@
 
 .script-visuals-header-toggle {
   display: inline-flex;
-  min-height: calc(var(--brisk-space-xl) + var(--brisk-space-xs));
+  height: var(--brisk-space-2xl);
+  min-height: var(--brisk-space-2xl);
   align-items: center;
   justify-content: center;
   border: 1px solid var(--brisk-border-primary);

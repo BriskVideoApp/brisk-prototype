@@ -12,6 +12,7 @@ import type {
   ConversationPreview,
 } from "@/components/chat/types";
 import { formatCompactDate } from "@/components/chat/chat-utils";
+import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 
 type ChatGlobalViewProps = {
   view: Exclude<ChatRailView, "projects" | "calls">;
@@ -24,6 +25,7 @@ type ChatGlobalViewProps = {
   customerContext?: boolean;
   onConversationSelect: (conversationId: string) => void;
   onGroupConversationSelect: (conversationId: string) => void;
+  onConversationMarkRead: (view: "dms" | "groups", conversationId: string) => void;
   onMessageSelect: (message: ChatMessage, openThread?: boolean) => void;
 };
 
@@ -38,6 +40,7 @@ export function ChatGlobalView({
   customerContext = false,
   onConversationSelect,
   onGroupConversationSelect,
+  onConversationMarkRead,
   onMessageSelect,
 }: ChatGlobalViewProps) {
   const [query, setQuery] = useState("");
@@ -76,18 +79,18 @@ export function ChatGlobalView({
             const sender = usersById.get(conversation.lastSenderId);
 
             return (
-              <button
-                className="chat-conversation-card"
-                type="button"
-                key={conversation.id}
-                onClick={() => {
-                  if (view === "dms") {
-                    onConversationSelect(conversation.id);
-                  } else {
-                    onGroupConversationSelect(conversation.id);
-                  }
-                }}
-              >
+              <div className="chat-conversation-card-row" key={conversation.id}>
+                <button
+                  className="chat-conversation-card"
+                  type="button"
+                  onClick={() => {
+                    if (view === "dms") {
+                      onConversationSelect(conversation.id);
+                    } else {
+                      onGroupConversationSelect(conversation.id);
+                    }
+                  }}
+                >
                 <span className="chat-conversation-members">
                   {conversation.memberIds.slice(0, 4).map((memberId) => {
                     const member = usersById.get(memberId);
@@ -101,10 +104,13 @@ export function ChatGlobalView({
                   </span>
                 </span>
                 <time className="label-xs">{formatCompactDate(conversation.createdAt)}</time>
-                {conversation.unread > 0 ? (
-                  <span className="chat-count-badge light label-xs-semibold">{conversation.unread}</span>
-                ) : null}
-              </button>
+                </button>
+                <ChatUnreadControl
+                  count={conversation.unread}
+                  ariaLabel={`Mark ${conversation.unread} unread messages in ${conversation.title} as read`}
+                  onMarkRead={() => onConversationMarkRead(view, conversation.id)}
+                />
+              </div>
             );
           })}
         </div>

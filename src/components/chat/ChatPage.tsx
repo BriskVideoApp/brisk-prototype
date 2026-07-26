@@ -15,9 +15,14 @@ import {
 } from "@/components/chat/ChatOverlays";
 import { ChatProjectList } from "@/components/chat/ChatProjectList";
 import { ChatRail } from "@/components/chat/ChatRail";
-import type { ChatCustomerFilter, ChatRailView } from "@/components/chat/ChatRail";
+import type {
+  ChatCustomerFilter,
+  ChatRailReadTarget,
+  ChatRailView,
+} from "@/components/chat/ChatRail";
 import { ChatMessageList } from "@/components/chat/ChatMessageList";
 import { ChatThreadPane } from "@/components/chat/ChatThreadPane";
+import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
@@ -38,7 +43,7 @@ import {
   chatUsers,
   chatWorkspace,
   directConversations,
-  groupConversations,
+  groupConversations as initialGroupConversations,
   groupMessages,
   recentCalls,
 } from "@/data/chat";
@@ -49,6 +54,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
   const [projects, setProjects] = useState(initialProjects);
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
   const [dmConversations, setDmConversations] = useState(directConversations);
+  const [groupConversationList, setGroupConversationList] = useState(initialGroupConversations);
   const [activeView, setActiveView] = useState<ChatRailView>("projects");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() =>
     initialProjectId && initialProjects.some((project) => project.id === initialProjectId)
@@ -173,6 +179,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
     };
   }, [accessibleProjects, effectiveCurrentUserId, messages, selectedCompanyChatClientName]);
   const activeProjectChat = selectedProject ?? selectedCompanyChatProject;
+  const activeProjectChatId = activeProjectChat?.id ?? null;
   const visibleMessages = activeProjectChat
     ? messages
         .filter(
@@ -228,7 +235,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
   const selectedGroup = selectedGroupId
-    ? groupConversations.find((conversation) => conversation.id === selectedGroupId) ?? null
+    ? groupConversationList.find((conversation) => conversation.id === selectedGroupId) ?? null
     : null;
   const selectedGroupProject: ChatProject | null = selectedGroup
     ? {
@@ -266,6 +273,221 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
     setToast(message);
     window.setTimeout(() => setToast(null), 2400);
   }, []);
+
+  const markRailTargetRead = useCallback(
+    (target: ChatRailReadTarget) => {
+      const matchesProject = (project: ChatProject) =>
+        target.type === "all" ||
+        (target.type === "client" && project.clientName === target.clientName) ||
+        (target.type === "project" && project.id === target.projectId);
+
+      setProjects((current) =>
+        current.map((project) =>
+          matchesProject(project)
+            ? { ...project, externalUnread: 0, internalUnread: 0 }
+            : project,
+        ),
+      );
+
+      if (target.type !== "project") {
+        const companyChatIds = new Set(
+          accessibleProjects
+            .filter((project) => target.type === "all" || project.clientName === target.clientName)
+            .map((project) => getCompanyChatId(project.clientName)),
+        );
+
+        setMessages((current) =>
+          current.map((message) =>
+            companyChatIds.has(message.projectId) && !message.readBy.includes(effectiveCurrentUserId)
+              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
+              : message,
+          ),
+        );
+      }
+
+      notify(target.type === "all" ? "All messages marked as read" : "Messages marked as read");
+    },
+    [accessibleProjects, effectiveCurrentUserId, notify],
+  );
+
+  const markProjectChannelRead = useCallback(
+    (project: ChatProject, channel: ChatChannel) => {
+      const storedProject = projects.some((candidate) => candidate.id === project.id);
+
+      if (storedProject) {
+        setProjects((current) =>
+          current.map((candidate) =>
+            candidate.id === project.id
+              ? {
+                  ...candidate,
+                  externalUnread: channel === "external" ? 0 : candidate.externalUnread,
+                  internalUnread: channel === "internal" ? 0 : candidate.internalUnread,
+                }
+              : candidate,
+          ),
+        );
+      } else {
+        setMessages((current) =>
+          current.map((message) =>
+            message.projectId === project.id &&
+            message.channel === channel &&
+            !message.readBy.includes(effectiveCurrentUserId)
+              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
+              : message,
+          ),
+        );
+      }
+
+      notify(`${channel === "external" ? "External" : "Internal"} messages marked as read`);
+    },
+    [effectiveCurrentUserId, notify, projects],
+  );
+
+  useEffect(() => {
+    if (activeView !== "projects" || !activeProjectChatId) {
+      return;
+    }
+
+    setProjects((current) =>
+      current.map((project) =>
+        project.id === activeProjectChatId
+          ? {
+              ...project,
+              externalUnread: activeChannel === "external" ? 0 : project.externalUnread,
+              internalUnread: activeChannel === "internal" ? 0 : project.internalUnread,
+            }
+          : project,
+      ),
+    );
+    setMessages((current) =>
+      current.map((message) =>
+        message.projectId === activeProjectChatId &&
+        message.channel === activeChannel &&
+        !message.readBy.includes(effectiveCurrentUserId)
+          ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
+          : message,
+      ),
+    );
+  }, [
+    activeChannel,
+    activeProjectChatId,
+    activeView,
+    effectiveCurrentUserId,
+  ]);
+
+  const markMessageUnread = useCallback(
+    (messageId: string) => {
+      const message = messages.find((candidate) => candidate.id === messageId);
+
+      if (!message || !message.readBy.includes(effectiveCurrentUserId)) {
+        notify("Message is already unread");
+        return;
+      }
+
+      setMessages((current) =>
+        current.map((candidate) =>
+          candidate.id === messageId
+            ? {
+                ...candidate,
+                readBy: candidate.readBy.filter((userId) => userId !== effectiveCurrentUserId),
+              }
+            : candidate,
+        ),
+      );
+
+      if (projects.some((project) => project.id === message.projectId)) {
+        setProjects((current) =>
+          current.map((project) =>
+            project.id === message.projectId
+              ? {
+                  ...project,
+                  externalUnread:
+                    message.channel === "external"
+                      ? project.externalUnread + 1
+                      : project.externalUnread,
+                  internalUnread:
+                    message.channel === "internal"
+                      ? project.internalUnread + 1
+                      : project.internalUnread,
+                }
+              : project,
+          ),
+        );
+      } else if (dmConversations.some((conversation) => conversation.id === message.projectId)) {
+        setDmConversations((current) =>
+          current.map((conversation) =>
+            conversation.id === message.projectId
+              ? { ...conversation, unread: conversation.unread + 1 }
+              : conversation,
+          ),
+        );
+      } else if (groupConversationList.some((conversation) => conversation.id === message.projectId)) {
+        setGroupConversationList((current) =>
+          current.map((conversation) =>
+            conversation.id === message.projectId
+              ? { ...conversation, unread: conversation.unread + 1 }
+              : conversation,
+          ),
+        );
+      }
+
+      notify("Message marked as unread");
+    },
+    [
+      dmConversations,
+      effectiveCurrentUserId,
+      groupConversationList,
+      messages,
+      notify,
+      projects,
+    ],
+  );
+
+  const markConversationRead = useCallback(
+    (view: "dms" | "groups", conversationId: string) => {
+      if (view === "dms") {
+        setDmConversations((current) =>
+          current.map((conversation) =>
+            conversation.id === conversationId ? { ...conversation, unread: 0 } : conversation,
+          ),
+        );
+      } else {
+        setGroupConversationList((current) =>
+          current.map((conversation) =>
+            conversation.id === conversationId ? { ...conversation, unread: 0 } : conversation,
+          ),
+        );
+      }
+
+      notify("Messages marked as read");
+    },
+    [notify],
+  );
+
+  const markGlobalViewRead = useCallback(
+    (view: Exclude<ChatRailView, "projects">) => {
+      if (view === "dms") {
+        setDmConversations((current) =>
+          current.map((conversation) => ({ ...conversation, unread: 0 })),
+        );
+      } else if (view === "groups") {
+        setGroupConversationList((current) =>
+          current.map((conversation) => ({ ...conversation, unread: 0 })),
+        );
+      } else if (view === "mentions" || view === "threads") {
+        setMessages((current) =>
+          current.map((message) =>
+            !message.readBy.includes(effectiveCurrentUserId)
+              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
+              : message,
+          ),
+        );
+      }
+
+      notify("Messages marked as read");
+    },
+    [effectiveCurrentUserId, notify],
+  );
 
   useEffect(() => {
     if (isCustomer) {
@@ -828,6 +1050,8 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
             setSelectedCompanyChatClientName(null);
             setThreadParentId(null);
           }}
+          onMarkRead={markRailTargetRead}
+          onGlobalMarkRead={markGlobalViewRead}
           onSearchOpen={() => setIsSearchOpen(true)}
         />
 
@@ -873,24 +1097,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
             ) : null}
             {selectedDmUser && activeView === "dms" ? (
               <CommentAvatar user={selectedDmUser} compact />
-            ) : (
-              <span className="chat-header-project-icon">
-              <DsIcon
-                name={
-                  activeView === "calls"
-                    ? "headphones"
-                    : activeView === "dms"
-                    ? "message-circle"
-                    : activeView === "groups"
-                      ? "users-three"
-                      : activeView === "mentions"
-                        ? "push-pin-simple"
-                        : "chat-circle"
-                }
-                size={20}
-              />
-              </span>
-            )}
+            ) : null}
             <div>
               <h1>
                 {activeView === "dms" && selectedDm
@@ -1032,6 +1239,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                 onToggleReaction={toggleReaction}
                 onDeleteMessage={deleteMessage}
                 onEditMessage={editMessage}
+                onMarkUnread={markMessageUnread}
                 onFilesDropped={setPendingDroppedFiles}
                 onNotify={notify}
               />
@@ -1062,6 +1270,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                 onToggleReaction={toggleReaction}
                 onDeleteMessage={deleteMessage}
                 onEditMessage={editMessage}
+                onMarkUnread={markMessageUnread}
                 onNotify={notify}
               />
             ) : null}
@@ -1082,6 +1291,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                 onToggleReaction={toggleReaction}
                 onDeleteMessage={deleteMessage}
                 onEditMessage={editMessage}
+                onMarkUnread={markMessageUnread}
                 onFilesDropped={setPendingDroppedFiles}
                 onNotify={notify}
               />
@@ -1112,6 +1322,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                 onToggleReaction={toggleReaction}
                 onDeleteMessage={deleteMessage}
                 onEditMessage={editMessage}
+                onMarkUnread={markMessageUnread}
                 onNotify={notify}
               />
             ) : null}
@@ -1120,38 +1331,52 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
           <>
             {!isCustomer ? (
               <div className={`chat-channel-tabs ${activeChannel}`} role="tablist" aria-label="Chat channel">
-                <button
-                  className={`chat-channel-tab external ${activeChannel === "external" ? "active" : ""}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeChannel === "external"}
-                  onClick={() => {
-                    setActiveChannel("external");
-                    setThreadParentId(null);
-                  }}
-                >
-                  <span className="chat-channel-tab-copy">
-                    <strong className="label-s-semibold">External</strong>
-                    <small className="label-xs">Chat with the client</small>
-                  </span>
-                  <span className="chat-tab-count label-xs-semibold">{activeProjectChat.externalUnread}</span>
-                </button>
-                <button
-                  className={`chat-channel-tab internal ${activeChannel === "internal" ? "active" : ""}`}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeChannel === "internal"}
-                  onClick={() => {
-                    setActiveChannel("internal");
-                    setThreadParentId(null);
-                  }}
-                >
-                  <span className="chat-channel-tab-copy">
-                    <strong className="label-s-semibold">Internal</strong>
-                    <small className="label-xs">{chatWorkspace.name} only</small>
-                  </span>
-                  <span className="chat-tab-count label-xs-semibold">{activeProjectChat.internalUnread}</span>
-                </button>
+                <div className="chat-channel-tab-slot">
+                  <button
+                    className={`chat-channel-tab external ${activeChannel === "external" ? "active" : ""}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeChannel === "external"}
+                    onClick={() => {
+                      setActiveChannel("external");
+                      setThreadParentId(null);
+                    }}
+                  >
+                    <span className="chat-channel-tab-copy">
+                      <strong className="label-s-semibold">External</strong>
+                      <small className="label-xs">Chat with the client</small>
+                    </span>
+                  </button>
+                  <ChatUnreadControl
+                    className="tab"
+                    count={activeProjectChat.externalUnread}
+                    ariaLabel={`Mark ${activeProjectChat.externalUnread} unread External messages as read`}
+                    onMarkRead={() => markProjectChannelRead(activeProjectChat, "external")}
+                  />
+                </div>
+                <div className="chat-channel-tab-slot">
+                  <button
+                    className={`chat-channel-tab internal ${activeChannel === "internal" ? "active" : ""}`}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeChannel === "internal"}
+                    onClick={() => {
+                      setActiveChannel("internal");
+                      setThreadParentId(null);
+                    }}
+                  >
+                    <span className="chat-channel-tab-copy">
+                      <strong className="label-s-semibold">Internal</strong>
+                      <small className="label-xs">{chatWorkspace.name} only</small>
+                    </span>
+                  </button>
+                  <ChatUnreadControl
+                    className="tab"
+                    count={activeProjectChat.internalUnread}
+                    ariaLabel={`Mark ${activeProjectChat.internalUnread} unread Internal messages as read`}
+                    onMarkRead={() => markProjectChannelRead(activeProjectChat, "internal")}
+                  />
+                </div>
               </div>
             ) : null}
 
@@ -1181,6 +1406,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                   onToggleReaction={toggleReaction}
                   onDeleteMessage={deleteMessage}
                   onEditMessage={editMessage}
+                  onMarkUnread={markMessageUnread}
                   onFilesDropped={setPendingDroppedFiles}
                   onNotify={notify}
                 />
@@ -1211,6 +1437,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
                   onToggleReaction={toggleReaction}
                   onDeleteMessage={deleteMessage}
                   onEditMessage={editMessage}
+                  onMarkUnread={markMessageUnread}
                   onNotify={notify}
                 />
               ) : null}
@@ -1230,6 +1457,9 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
               }
             }}
             onCustomerSettings={() => setIsCustomerSettingsOpen(true)}
+            onProjectMarkRead={(projectId) =>
+              markRailTargetRead({ type: "project", projectId })
+            }
           />
         ) : (
           <ChatGlobalView
@@ -1239,10 +1469,11 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
             messages={messages}
             users={chatUsers}
             directConversations={visibleDmConversations}
-            groupConversations={groupConversations}
+            groupConversations={groupConversationList}
             customerContext={isCustomer}
             onConversationSelect={selectDirectConversation}
             onGroupConversationSelect={selectGroupConversation}
+            onConversationMarkRead={markConversationRead}
             onMessageSelect={selectSearchResult}
           />
         )}

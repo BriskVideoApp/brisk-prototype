@@ -10,6 +10,7 @@ import type {
   ChatUser,
 } from "@/components/chat/types";
 import { formatCompactDate, getLastProjectMessage } from "@/components/chat/chat-utils";
+import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 
 type ProjectListFilter = ChatProjectStatus | "All";
 
@@ -22,6 +23,7 @@ type ChatProjectListProps = {
   onProjectSelect: (projectId: string) => void;
   onCompanyChat: () => void;
   onCustomerSettings: () => void;
+  onProjectMarkRead: (projectId: string) => void;
 };
 
 const listFilters: ProjectListFilter[] = ["In Production", "Queued", "Completed", "All"];
@@ -35,6 +37,7 @@ export function ChatProjectList({
   onProjectSelect,
   onCompanyChat,
   onCustomerSettings,
+  onProjectMarkRead,
 }: ChatProjectListProps) {
   const [filter, setFilter] = useState<ProjectListFilter>("In Production");
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
@@ -100,12 +103,12 @@ export function ChatProjectList({
           const unread = project.externalUnread + project.internalUnread;
 
           return (
-            <button
-              className="chat-project-card"
-              type="button"
-              key={project.id}
-              onClick={() => onProjectSelect(project.id)}
-            >
+            <div className="chat-project-card-row" key={project.id}>
+              <button
+                className="chat-project-card"
+                type="button"
+                onClick={() => onProjectSelect(project.id)}
+              >
               <span className="chat-project-card-icon">
                 <DsIcon name="chat-circle" size={20} />
               </span>
@@ -134,12 +137,16 @@ export function ChatProjectList({
                       {formatCompactDate(lastMessage.createdAt)}
                     </span>
                   ) : null}
-                  {unread > 0 ? (
-                    <span className="chat-count-badge light label-xs-semibold">{unread}</span>
-                  ) : null}
                 </span>
               </span>
-            </button>
+              </button>
+              <ChatUnreadControl
+                className="card"
+                count={unread}
+                ariaLabel={`Mark ${unread} unread messages in ${project.code} as read`}
+                onMarkRead={() => onProjectMarkRead(project.id)}
+              />
+            </div>
           );
         })}
       </div>
@@ -148,11 +155,7 @@ export function ChatProjectList({
         <div className="chat-empty-state">
           <span className="chat-empty-icon"><DsIcon name="chat-circle" size={24} /></span>
           <h2>No projects here yet</h2>
-          <p>Your projects will show here. Create your first project to start chatting.</p>
-          <button className="chat-primary-button label-s-semibold" type="button">
-            <DsIcon name="plus" size={16} />
-            New project
-          </button>
+          <p>Your projects will show here. Create a project from the Videos dashboard to start chatting.</p>
         </div>
       ) : null}
     </section>
