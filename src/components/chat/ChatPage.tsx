@@ -48,7 +48,13 @@ import {
   recentCalls,
 } from "@/data/chat";
 
-export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
+type ChatPageProps = {
+  initialProjectId?: string | null;
+  embedded?: boolean;
+  clientName?: string;
+};
+
+export function ChatPage({ initialProjectId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
@@ -56,11 +62,17 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
   const [dmConversations, setDmConversations] = useState(directConversations);
   const [groupConversationList, setGroupConversationList] = useState(initialGroupConversations);
   const [activeView, setActiveView] = useState<ChatRailView>("projects");
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() =>
-    initialProjectId && initialProjects.some((project) => project.id === initialProjectId)
-      ? initialProjectId
-      : "loom-launch-film",
-  );
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() => {
+    if (initialProjectId === null) {
+      return null;
+    }
+
+    if (initialProjectId && initialProjects.some((project) => project.id === initialProjectId)) {
+      return initialProjectId;
+    }
+
+    return initialProjectId === undefined ? "loom-launch-film" : null;
+  });
   const [selectedClientName, setSelectedClientName] = useState<string | null>(null);
   const [selectedCompanyChatClientName, setSelectedCompanyChatClientName] = useState<string | null>(null);
   const [selectedDmId, setSelectedDmId] = useState<string | null>(null);
@@ -86,13 +98,18 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
         : chatWorkspace.currentUserId;
   const isCustomer = selectedRole === "Customer";
   const isStudioStaff = selectedRole === "Studio Staff";
-  const accessibleProjects = useMemo(
-    () =>
-      isCustomer
-        ? projects.filter((project) => project.clientMemberIds.includes(effectiveCurrentUserId))
-        : projects,
-    [effectiveCurrentUserId, isCustomer, projects],
-  );
+  const accessibleProjects = useMemo(() => {
+    const roleProjects = isCustomer
+      ? projects.filter((project) => project.clientMemberIds.includes(effectiveCurrentUserId))
+      : projects;
+
+    return clientName
+      ? roleProjects.filter((project) => project.clientName === clientName)
+      : roleProjects;
+  }, [clientName, effectiveCurrentUserId, isCustomer, projects]);
+  const accessibleClients = clientName
+    ? clients.filter((client) => client.name === clientName)
+    : clients;
   const customerStatusByName = useMemo(
     () => new Map(clients.map((client) => [client.name, client.status])),
     [clients],
@@ -1017,9 +1034,9 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
     : null;
 
   return (
-    <div className={`chat-workspace-shell ${isCustomer ? "customer-view" : ""}`}>
-      <WorkspaceSidebar activeItem="chat" />
-      <main className={`chat-shell ${isCustomer ? "customer-view" : ""}`}>
+    <div className={`chat-workspace-shell ${isCustomer ? "customer-view" : ""} ${embedded ? "embedded" : ""}`}>
+      {embedded ? null : <WorkspaceSidebar activeItem="chat" />}
+      <main className={`chat-shell ${isCustomer ? "customer-view" : ""} ${embedded ? "embedded" : ""}`}>
         <ChatRail
           workspaceName={chatWorkspace.name}
           role={selectedRole}
@@ -1027,7 +1044,7 @@ export function ChatPage({ initialProjectId }: { initialProjectId?: string }) {
           activeClientName={activeRailClientName}
           activeView={activeView}
           projects={accessibleProjects}
-          clients={clients}
+          clients={accessibleClients}
           customerFilter={customerFilter}
           showUnreadOnly={showUnreadOnly}
           companyUnreadCounts={companyUnreadCounts}

@@ -22,15 +22,16 @@ import {
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import type { Project, ProjectDeadline, RoleSlot, StageKey, StageStatus, TeamPerson, TimeEntry } from "./types";
+import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
+import type { Project, ProjectDeadline, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
 
 type StatusTab = "All" | Project["status"];
 type FilterKey = "client" | "teammate" | "tags" | "status" | "deadline";
 type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hours" | "team" | "actions";
 type TableColumnKey = "project" | DataColumnKey;
-type StageIconName = Parameters<typeof DsIcon>[0]["name"];
 type DeadlineCategory = "Overdue" | "Due Soon" | "On Track";
 type TagClass = "critical" | "high-priority" | "in-review" | "neutral" | "green" | "peach" | "cream";
 type ProjectPanelEditSection = "hours" | "deadline" | "client" | "tags" | "notes";
@@ -102,41 +103,8 @@ const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 const dataColumnKeys = new Set<DataColumnKey>(defaultColumnOrder);
 
-const stageOrder: { key: StageKey; label: string; icon: StageIconName }[] = [
-  { key: "brief", label: "Brief", icon: "clipboard-text" },
-  { key: "script", label: "Script", icon: "pen-nib" },
-  { key: "shoot", label: "Shoot", icon: "video-camera-ds" },
-  { key: "media", label: "Media", icon: "image-square" },
-  { key: "edit", label: "Edit", icon: "stage-edit" },
-  { key: "masters", label: "Masters", icon: "film-strip" },
-];
-
 function getProjectFlowHref(projectId: string) {
   return `/projects/${projectId}/stages/brief`;
-}
-
-function getProjectStageHref(projectId: string, stage: StageKey) {
-  if (stage === "brief") {
-    return getProjectFlowHref(projectId);
-  }
-
-  if (stage === "script") {
-    return `/projects/${projectId}/script`;
-  }
-
-  if (stage === "media") {
-    return `/projects/${projectId}/stages/media`;
-  }
-
-  if (stage === "edit") {
-    return "/review";
-  }
-
-  return "";
-}
-
-function getProjectStageLinkLabel(stage: StageKey, label: string) {
-  return stage === "edit" ? "Video Review" : label;
 }
 
 const filterLabels: Record<FilterKey, string> = {
@@ -165,6 +133,7 @@ const tagColourOptions: { className: TagClass; label: string }[] = [
 
 export function ActiveVideosPage() {
   const { selectedRole } = usePrototypeRole();
+  const { completionRecords } = useProjectCompletion();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
@@ -229,12 +198,29 @@ export function ActiveVideosPage() {
 
   const projects = useMemo(
     () =>
-      activeVideoProjects.map((project) => ({
-        ...project,
-        timeEntries: [...project.timeEntries, ...(extraProjectTimeEntries[project.id] ?? [])],
-      })),
-    [extraProjectTimeEntries],
+      activeVideoProjects.map((project) => {
+        const completion = completionRecords[project.id];
+        return {
+          ...project,
+          status: completion ? "Completed" as const : project.status,
+          deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
+          deliveredBy: completion?.deliveredBy ?? project.deliveredBy,
+          stages: completion
+            ? Object.fromEntries(stageOrder.map((stage) => [stage.key, { state: "done" as const }])) as Project["stages"]
+            : project.stages,
+          latestUpdate: completion
+            ? { label: `Delivered ${formatDeliveredDate(completion.deliveredAt)}`, daysAgo: 0, timestamp: completion.deliveredAt }
+            : project.latestUpdate,
+          timeEntries: [...project.timeEntries, ...(extraProjectTimeEntries[project.id] ?? [])],
+        };
+      }),
+    [completionRecords, extraProjectTimeEntries],
   );
+
+  const statusCounts = useMemo(() => Object.fromEntries(statusTabs.map((tab) => [
+    tab,
+    tab === "All" ? projects.length : projects.filter((project) => project.status === tab).length,
+  ])) as Record<StatusTab, number>, [projects]);
 
   const clientOptions = useMemo(() => getUniqueOptions(projects.map((project) => project.clientBadge)), [projects]);
   const teammateOptions = useMemo(
@@ -770,7 +756,7 @@ export function ActiveVideosPage() {
       <WorkspaceSidebar activeItem="videos" />
       <div className="active-videos-main">
         <section className="active-videos-header" aria-label="Videos header">
-          <h1 className="active-videos-title">Videos ({activeVideoProjects.length})</h1>
+          <h1 className="active-videos-title">Videos ({projects.length})</h1>
           <div className="active-videos-header-actions">
             <label className="active-videos-search label-s" htmlFor="active-videos-search">
               <span className="sr-only">Search projects</span>
@@ -793,7 +779,7 @@ export function ActiveVideosPage() {
             key={tab}
             onClick={() => setSelectedTab(tab)}
           >
-            {getStatusLabel(tab)}
+            {getStatusLabel(tab)} ({statusCounts[tab]})
           </button>
         ))}
         <button
@@ -1569,16 +1555,14 @@ function ProjectDetailPanel({
         </section>
 
         <section className="project-detail-section">
-          <div className="project-panel-progress-track" aria-label={`${project.name} large stage progress`}>
-            {stageOrder.map((stage, index) => (
-              <StageChip
-                key={stage.key}
-                stage={stage}
-                status={project.stages[stage.key]}
-                projectId={project.id}
-                showConnector={index < stageOrder.length - 1}
-              />
-            ))}
+          <div className="project-panel-progress-track">
+            <StageProgress
+              projectId={project.id}
+              projectName={project.name}
+              stages={project.stages}
+              studioName="North Star Films"
+              customerName={project.clientName}
+            />
           </div>
         </section>
 
@@ -2661,16 +2645,17 @@ function ProjectDataCell({
   if (columnKey === "progress") {
     return (
       <td className={columnClassName}>
-        <div className="stage-track" aria-label={`${project.name} stage progress`}>
-          {stageOrder.map((stage, index) => (
-            <StageChip
-              key={stage.key}
-              stage={stage}
-              status={project.stages[stage.key]}
-              projectId={project.id}
-              showConnector={index < stageOrder.length - 1}
-            />
-          ))}
+        <div className="project-progress-cell">
+          <StageProgress
+            projectId={project.id}
+            projectName={project.name}
+            stages={project.stages}
+            studioName="North Star Films"
+            customerName={project.clientName}
+          />
+          {project.status === "Completed" && project.deliveredAt ? (
+            <span className="project-delivered-date label-xs-semibold">Delivered {formatDeliveredDate(project.deliveredAt)}</span>
+          ) : null}
         </div>
       </td>
     );
@@ -2908,54 +2893,6 @@ function LatestUpdateCell({
   );
 }
 
-function StageChip({
-  stage,
-  status,
-  projectId,
-  showConnector,
-}: {
-  stage: { key: StageKey; label: string; icon: StageIconName };
-  status: StageStatus;
-  projectId: string;
-  showConnector: boolean;
-}) {
-  const stageHref = getProjectStageHref(projectId, stage.key);
-  const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
-  const chipContent = (
-    <span className="stage-icon-surface" aria-hidden="true">
-      <DsIcon name={stage.icon} size={21} />
-    </span>
-  );
-
-  return (
-    <div className="stage-step">
-      {stageHref ? (
-        <a
-          className={`stage-chip stage-${status.state}`}
-          href={stageHref}
-          aria-label={`Open ${stageLabel}`}
-          data-tooltip={getStageTooltip(stage.label, status.state)}
-          onClick={(event) => event.stopPropagation()}
-        >
-          {chipContent}
-        </a>
-      ) : (
-        <span
-          className={`stage-chip stage-${status.state} is-static`}
-          aria-label={`${stage.label} stage`}
-          data-tooltip={getStageTooltip(stage.label, status.state)}
-          onClick={(event) => event.stopPropagation()}
-        >
-          {chipContent}
-        </span>
-      )}
-      <span className="stage-label label-xs">{stage.label}</span>
-      <span className="stage-age label-xs">{status.daysAgo !== undefined ? `${status.daysAgo}d ago` : "\u00a0"}</span>
-      {showConnector ? <span className="stage-connector" aria-hidden="true" /> : null}
-    </div>
-  );
-}
-
 function getFilterOptions(filterKey: FilterKey, clients: string[], teammates: string[], tags: string[]) {
   if (filterKey === "client") {
     return clients;
@@ -3169,6 +3106,10 @@ function getStatusLabel(status: StatusTab) {
   }
 
   return status;
+}
+
+function formatDeliveredDate(value: string) {
+  return new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
 }
 
 function getDeadlineCategory(deadline: ProjectDeadline | undefined) {
@@ -3695,38 +3636,6 @@ function getLatestUpdateLabelParts(label: string) {
     action: words.slice(0, 2).join(" "),
     detail: words.slice(2).join(" "),
   };
-}
-
-function getStageStateLabel(state: StageStatus["state"]) {
-  if (state === "not_started") {
-    return "Step not started";
-  }
-
-  if (state === "in_progress") {
-    return "Waiting for Studio";
-  }
-
-  if (state === "waiting") {
-    return "Waiting for Client Action";
-  }
-
-  return "Approved";
-}
-
-function getStageTooltip(stageLabel: string, state: StageStatus["state"]) {
-  if (state === "done") {
-    return `${stageLabel} approved`;
-  }
-
-  if (state === "waiting") {
-    return `${stageLabel} waiting on client`;
-  }
-
-  if (state === "in_progress") {
-    return `${stageLabel} waiting on Studio`;
-  }
-
-  return `${stageLabel} not started`;
 }
 
 function getTagClass(option: string, tagClasses: Record<string, TagClass>) {

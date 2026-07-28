@@ -6,6 +6,7 @@ import type { Project, StageKey, StageStatus } from "@/components/active-videos/
 import { ProjectMemberSettings } from "@/components/chat/ChatOverlays";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { chatClients, chatProjects, chatUsers } from "@/data/chat";
 
@@ -38,6 +39,8 @@ const stageStateLabels: Record<StageStatus["state"], string> = {
 };
 
 export function ProjectStageHeader({ actions, activeStage, project }: ProjectStageHeaderProps) {
+  const { completionRecords } = useProjectCompletion();
+  const isProjectDelivered = project.status === "Completed" || Boolean(completionRecords[project.id]);
   const currentStageKey = activeStage ?? getCurrentProjectStage(project).key;
   const { selectedRole } = usePrototypeRole();
   const [isAccessOpen, setIsAccessOpen] = useState(false);
@@ -94,7 +97,7 @@ export function ProjectStageHeader({ actions, activeStage, project }: ProjectSta
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
           <ol className="project-stage-track" aria-label="Production stages">
           {projectHeaderStages.map((stage, index) => {
-            const status = project.stages[stage.key];
+            const status: StageStatus = isProjectDelivered ? { state: "done" } : project.stages[stage.key];
             const href = getProjectStageHref(project.id, stage.key);
             const isCurrentStage = stage.key === currentStageKey;
             const chipContent = (

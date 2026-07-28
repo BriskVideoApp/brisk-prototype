@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type PrototypeRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
@@ -10,11 +10,22 @@ type PrototypeRoleContextValue = {
 };
 
 const PrototypeRoleContext = createContext<PrototypeRoleContextValue | null>(null);
+const roleStorageKey = "brisk-prototype-role";
+const prototypeRoles: PrototypeRole[] = ["Studio Staff", "Studio Freelancer", "Customer"];
 
 export function PrototypeRoleProvider({ children }: { children: React.ReactNode }) {
   const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
+  useEffect(() => {
+    const storedRole = window.localStorage.getItem(roleStorageKey);
+    if (prototypeRoles.includes(storedRole as PrototypeRole)) setSelectedRole(storedRole as PrototypeRole);
+  }, []);
+
+  const selectRole = (role: PrototypeRole) => {
+    setSelectedRole(role);
+    window.localStorage.setItem(roleStorageKey, role);
+  };
   const value = useMemo(
-    () => ({ selectedRole, setSelectedRole }),
+    () => ({ selectedRole, setSelectedRole: selectRole }),
     [selectedRole],
   );
 

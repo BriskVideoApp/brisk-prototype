@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title description">
+  <title id="title">Good Citizens purple thumbnail</title>
+  <desc id="description">A branded mock video thumbnail with a calm portrait silhouette and bold title space.</desc>
+  <rect width="640" height="360" fill="#111019"/>
+  <circle cx="486" cy="180" r="132" fill="#8b2cff"/>
+  <circle cx="486" cy="132" r="48" fill="#fd9ac8"/>
+  <path d="M396 298c12-74 48-112 90-112s78 38 90 112" fill="#6de5fa"/>
+  <rect x="42" y="50" width="240" height="14" rx="7" fill="#6de5fa"/>
+  <rect x="42" y="84" width="320" height="34" rx="8" fill="#ffffff"/>
+  <rect x="42" y="132" width="266" height="34" rx="8" fill="#ffffff"/>
+  <rect x="42" y="286" width="98" height="30" rx="8" fill="#fdce5d"/>
+</svg>

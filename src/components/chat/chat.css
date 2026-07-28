@@ -12,6 +12,11 @@
   min-height: 0;
 }
 
+.chat-workspace-shell.embedded,
+.chat-shell.embedded {
+  height: 100%;
+}
+
 .chat-shell {
   --chat-rail-width: 264px;
   --chat-thread-width: 400px;

@@ -1,12 +1,25 @@
 import type { Project } from "@/components/active-videos/types";
 import { createDefaultRoleSlots, createMockTimeEntries } from "./teamDefaults";
 
-type ProjectSeed = Omit<Project, "deadlineAt" | "isCritical" | "team" | "timeEntries"> & {
+type ProjectSeed = Omit<Project, "clientName" | "deadlineAt" | "isCritical" | "team" | "timeEntries"> & {
   teamPeopleIds: string[];
   timeEntryIntensity?: number;
   hours?: { logged: number; estimated: number };
   team?: { id: string; initials: string; photoUrl?: string };
   teamScenario?: Parameters<typeof createDefaultRoleSlots>[0]["scenario"];
+};
+
+const clientNamesByBadge: Record<string, string> = {
+  LOOM: "Loom",
+  DEEL: "Deel",
+  HIMS: "Hims",
+  NOTN: "Notion",
+  OPEN: "OpenAI",
+  PHOG: "PostHog",
+  RAMP: "Ramp",
+  CNVA: "Canva",
+  LINR: "Linear",
+  FIGM: "Figma",
 };
 
 const projectSeeds: ProjectSeed[] = [
@@ -31,7 +44,7 @@ const projectSeeds: ProjectSeed[] = [
       timerStartedAt: "2026-06-22T09:30:00+10:00",
       finalDueAt: "2026-07-04T17:00:00+10:00",
     },
-    status: "Queued",
+    status: "In Production",
     stages: {
       brief: { state: "done", daysAgo: 2 },
       script: { state: "done", daysAgo: 1 },
@@ -162,6 +175,8 @@ const projectSeeds: ProjectSeed[] = [
       finalDueAt: "2026-06-28T17:00:00+10:00",
     },
     status: "Completed",
+    deliveredAt: "2026-06-14T11:30:00+10:00",
+    deliveredBy: "client-openai-1",
     stages: {
       brief: { state: "done", daysAgo: 25 },
       script: { state: "done", daysAgo: 22 },
@@ -341,6 +356,7 @@ export const activeVideoProjects: Project[] = projectSeeds.map(({ teamPeopleIds,
 
   return {
     ...project,
+    clientName: clientNamesByBadge[project.clientBadge] ?? project.clientBadge,
     deadlineAt: project.deadline?.finalDueAt ?? project.deadline?.dueAt ?? project.latestUpdate.timestamp,
     isCritical: project.tags?.includes("Critical") ?? false,
     team,

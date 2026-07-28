@@ -22,7 +22,7 @@ export type ChatProjectUpdate =
 
 export type ChatConnectorSource = Exclude<ChatSource, "brisk">;
 
-export type ChatProjectStatus = "In Production" | "Queued" | "Completed";
+export type ChatProjectStatus = "In Production" | "Queued" | "Completed" | "Paused" | "Archived";
 
 export type ChatClientStatus = "Active" | "Inactive" | "Archived";
 

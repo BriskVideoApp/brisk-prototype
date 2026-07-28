@@ -6,6 +6,7 @@ import type {
   ChatUser,
   ConversationPreview,
 } from "@/components/chat/types";
+import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { mediaAssets } from "@/data/media";
 
 const loomEditPosterUrl = requireMediaThumbnail("media-05");
@@ -389,6 +390,23 @@ export const chatProjects: ChatProject[] = [
     preferredSource: "email",
     connectors: connectors(),
   },
+  ...customerDashboardProjects
+    .filter((project) => project.id !== "loom-launch-film" && project.id !== "loom-customer-stories")
+    .map<ChatProject>((project) => ({
+      id: project.id,
+      code: project.code,
+      title: project.name,
+      clientName: "Loom",
+      status: project.status,
+      memberIds: ["user-tom", "user-david", "user-marcus", "user-jess", "user-sarah"],
+      clientMemberIds: ["user-jess", "user-sarah"],
+      externalUnread: project.unreadMessages,
+      internalUnread: 0,
+      preferredSource: "slack",
+      connectors: connectors({
+        slack: { enabled: true, connected: true, detail: "#loom-video-production" },
+      }),
+    })),
 ];
 
 export const chatMessages: ChatMessage[] = [

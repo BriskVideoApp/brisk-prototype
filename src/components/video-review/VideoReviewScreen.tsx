@@ -4,11 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
+import type { RecutBrief } from "@/data/masters";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
+import { ReviewCommentComposer } from "./ReviewCommentComposer";
 import type {
   CommentFilter,
   CommentVisibility,
@@ -25,6 +27,7 @@ import type {
 } from "./types";
 
 const currentUserId = "user-tom";
+type RecutHandoff = { childDeliverableId: string; childName: string; brief: RecutBrief };
 const versionUploadInputId = "video-version-upload";
 const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
 const playbackSpeeds = [0.5, 1, 1.5, 2] as const;
@@ -85,6 +88,7 @@ export function VideoReviewScreen() {
   const [drawingPaths, setDrawingPaths] = useState<DrawingPath[]>([]);
   const [activeDrawingPath, setActiveDrawingPath] = useState<DrawingPath | null>(null);
   const [pendingFramePin, setPendingFramePin] = useState<FramePin | null>(null);
+  const [recutHandoff, setRecutHandoff] = useState<RecutHandoff | null>(null);
   const localVideoUrlsRef = useRef<string[]>([]);
   const commentRefs = useRef(new Map<string, HTMLElement>());
   const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -130,6 +134,17 @@ export function VideoReviewScreen() {
         sourceUrl: selectedReviewVersion.sourceUrl,
       }
     : reviewVideo;
+
+  useEffect(() => {
+    if (!window.location.search.includes("recut=")) return;
+    const storedBrief = window.sessionStorage.getItem("brisk-recut-brief");
+    if (!storedBrief) return;
+    try {
+      setRecutHandoff(JSON.parse(storedBrief) as RecutHandoff);
+    } catch {
+      window.sessionStorage.removeItem("brisk-recut-brief");
+    }
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -467,7 +482,7 @@ export function VideoReviewScreen() {
   const toggleReaction = (commentId: string, emoji: ReactionEmoji) => {
     setReviewComments((current) =>
       current.map((comment) =>
-        comment.id === commentId ? { ...comment, reactions: toggleReactionInList(comment.reactions, emoji) } : comment,
+        comment.id === commentId ? { ...comment, reactions: toggleReviewReactionInList(comment.reactions, emoji) } : comment,
       ),
     );
   };
@@ -479,7 +494,7 @@ export function VideoReviewScreen() {
           ? {
               ...comment,
               replies: comment.replies.map((reply) =>
-                reply.id === replyId ? { ...reply, reactions: toggleReactionInList(reply.reactions, emoji) } : reply,
+                reply.id === replyId ? { ...reply, reactions: toggleReviewReactionInList(reply.reactions, emoji) } : reply,
               ),
             }
           : comment,
@@ -664,6 +679,7 @@ export function VideoReviewScreen() {
             selectedDrawingPaths={selectedDrawingPaths}
             isDrawingMode={isDrawingMode}
             pendingFramePin={pendingFramePin}
+            recutBrief={recutHandoff?.brief}
             onComposerBodyChange={setComposerBody}
             onPlaceFramePin={placeFramePin}
             onCancelFramePin={cancelFramePin}
@@ -813,6 +829,7 @@ export function InlinePlayer({
   selectedDrawingPaths,
   isDrawingMode,
   pendingFramePin,
+  recutBrief,
   onComposerBodyChange,
   onCancelFramePin,
   onPlaceFramePin,
@@ -846,6 +863,7 @@ export function InlinePlayer({
   selectedDrawingPaths: DrawingPath[];
   isDrawingMode: boolean;
   pendingFramePin: FramePin | null;
+  recutBrief?: RecutBrief;
   onComposerBodyChange: (body: string) => void;
   onCancelFramePin: () => void;
   onPlaceFramePin: (framePin: FramePin) => void;
@@ -991,9 +1009,13 @@ export function InlinePlayer({
   return (
     <section className="video-column" ref={columnRef} aria-label={`${video.fileName} video player`}>
       <div className="review-player-statusbar">
-        <span className={`review-version-status label-s-semibold is-${versionStatus}`}>
-          {video.versionLabel.toUpperCase()} · {formatVersionStatus(versionStatus)}
-        </span>
+        {recutBrief ? (
+          <span className="review-recut-banner label-s-semibold">Recut brief · {recutBrief.marks.length} {recutBrief.marks.length === 1 ? "mark" : "marks"} · target {recutBrief.targetDurationSec}s</span>
+        ) : (
+          <span className={`review-version-status label-s-semibold is-${versionStatus}`}>
+            {video.versionLabel.toUpperCase()} · {formatVersionStatus(versionStatus)}
+          </span>
+        )}
         {versionStatus === "approved" ? (
           <div className="review-player-status-actions">
             <span className="review-approved-message label-s-semibold">
@@ -1172,6 +1194,7 @@ export function InlinePlayer({
           comments={comments}
           currentTimeSeconds={currentTimeSeconds}
           selectedCommentId={selectedCommentId}
+          recutBrief={recutBrief}
           onSeek={onSeek}
           onSelectComment={onSelectComment}
         />
@@ -1408,6 +1431,7 @@ function ScrubBar({
   comments,
   currentTimeSeconds,
   selectedCommentId,
+  recutBrief,
   onSeek,
   onSelectComment,
 }: {
@@ -1415,6 +1439,7 @@ function ScrubBar({
   comments: ReviewComment[];
   currentTimeSeconds: number;
   selectedCommentId: string | null;
+  recutBrief?: RecutBrief;
   onSeek: (seconds: number) => void;
   onSelectComment: (comment: ReviewComment) => void;
 }) {
@@ -1431,6 +1456,22 @@ function ScrubBar({
       <div className="scrub-bar" aria-label="Video timeline" role="slider" onPointerDown={seekFromPointer}>
         <div className="scrub-progress" style={{ width: `${progress}%` }} />
         <div className="playhead" style={{ left: `${progress}%` }} />
+        {recutBrief?.marks.map((mark) => (
+          <button
+            className={`review-recut-mark mark-${mark.verb}`}
+            type="button"
+            key={mark.id}
+            aria-label={`${mark.verb} from ${formatTime(mark.inSec)} to ${formatTime(mark.outSec)}`}
+            style={{
+              left: `${(mark.inSec / video.durationSeconds) * 100}%`,
+              width: `${Math.max(0.8, ((mark.outSec - mark.inSec) / video.durationSeconds) * 100)}%`,
+            }}
+            onPointerDown={(event) => {
+              event.stopPropagation();
+              onSeek(mark.inSec);
+            }}
+          />
+        ))}
         {comments.filter(hasTimecode).map((comment) => (
           <button
             className={`comment-pin ${comment.visibility} ${selectedCommentId === comment.id ? "selected" : ""}`}
@@ -1592,7 +1633,7 @@ function CommentPanel({
       <div className="comment-list">
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <CommentThread
+            <ReviewCommentThread
               comment={comment}
               isExpandedResolved={expandedResolvedIds.has(comment.id)}
               editDraft={editDraft}
@@ -1627,7 +1668,7 @@ function CommentPanel({
         )}
       </div>
 
-      <CommentComposer
+      <ReviewCommentComposer
         body={composerBody}
         currentTimeSeconds={currentTimeSeconds}
         visibility={composerVisibility}
@@ -1679,7 +1720,7 @@ function CommentFilters({
   );
 }
 
-function CommentThread({
+export function ReviewCommentThread({
   comment,
   editDraft,
   isEditing,
@@ -1948,139 +1989,6 @@ function shouldIgnoreCommentSelection(event: MouseEvent<HTMLElement>) {
   }
 
   return Boolean(target.closest("button, a, input, textarea, select, [role='button']"));
-}
-
-function CommentComposer({
-  body,
-  currentTimeSeconds,
-  hasAnchor,
-  hasDrawingAttachment,
-  hasFramePinAttachment,
-  isDrawingMode,
-  isEditingOverallComment,
-  isPostingMenuOpen,
-  visibility,
-  onBodyChange,
-  onRemoveAnchor,
-  onSetVisibility,
-  onSubmit,
-  onToggleDrawingMode,
-  onTogglePostingMenu,
-}: {
-  body: string;
-  currentTimeSeconds: number;
-  hasAnchor: boolean;
-  hasDrawingAttachment: boolean;
-  hasFramePinAttachment: boolean;
-  isDrawingMode: boolean;
-  isEditingOverallComment: boolean;
-  isPostingMenuOpen: boolean;
-  visibility: CommentVisibility;
-  onBodyChange: (body: string) => void;
-  onRemoveAnchor: () => void;
-  onSetVisibility: (visibility: CommentVisibility) => void;
-  onSubmit: () => void;
-  onToggleDrawingMode: () => void;
-  onTogglePostingMenu: () => void;
-}) {
-  const isInternal = visibility === "internal";
-  const canSubmit = body.trim().length > 0 || hasDrawingAttachment;
-  const submitWithKeyboard = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    const isSubmitKey = event.key === "Enter" && (!event.shiftKey || event.metaKey);
-
-    if (isSubmitKey) {
-      event.preventDefault();
-      onSubmit();
-    }
-  };
-
-  return (
-    <section className={`comment-composer ${isInternal ? "internal" : ""}`} aria-label="Add comment">
-      <div className="posting-menu-wrap">
-        <button className="posting-toggle label-xs" type="button" onClick={onTogglePostingMenu}>
-          {isInternal ? "Posting to Team" : "Posting to Client"} <DsIcon name="caret-down" size={12} />
-        </button>
-        {isPostingMenuOpen ? (
-          <div className="posting-menu">
-            <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
-              Posting to Client
-            </button>
-            <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
-              Posting to Team
-            </button>
-          </div>
-        ) : null}
-      </div>
-      <div className={`composer-box ${isInternal ? "internal" : ""}`}>
-        <textarea
-          className="composer-input label-s"
-          placeholder={hasAnchor ? `Comment on ${formatTime(currentTimeSeconds)}...` : "Add your overall comment..."}
-          rows={3}
-          value={body}
-          onChange={(event) => onBodyChange(event.target.value)}
-          onKeyDown={submitWithKeyboard}
-        />
-        <div className="composer-toolbar">
-          <div className="composer-tools">
-            <button type="button" data-tooltip="Attach file" aria-label="Attach file">
-              <DsIcon name="paperclip" size={16} />
-            </button>
-            <button type="button" data-tooltip="Record your screen and voice" aria-label="Record your screen and voice">
-              <DsIcon name="video-camera" size={16} />
-            </button>
-            <button
-              className={isDrawingMode ? "active" : ""}
-              type="button"
-              data-tooltip={isDrawingMode ? "Drawing mode is on" : "Draw on screen"}
-              aria-label={isDrawingMode ? "Turn off drawing mode" : "Draw on screen"}
-              aria-pressed={isDrawingMode}
-              onClick={onToggleDrawingMode}
-            >
-              <DsIcon name="pencil-simple" size={16} />
-            </button>
-          </div>
-          {hasDrawingAttachment ? (
-            <div className="composer-attachment-pill label-xs-semibold">
-              <DsIcon name="pencil-simple" size={13} />
-              Drawing on frame
-            </div>
-          ) : null}
-          {hasFramePinAttachment ? (
-            <div className="composer-attachment-pill point label-xs-semibold">
-              <span className="composer-point-dot" />
-              Point pinned
-            </div>
-          ) : null}
-          <div className="composer-send">
-            {hasAnchor ? (
-              <button
-                className="anchor-chip label-xs-semibold"
-                type="button"
-                data-tooltip="Remove timecode to make an overall comment"
-                aria-label="Remove timecode to make an overall comment"
-                onClick={onRemoveAnchor}
-              >
-                @{formatTime(currentTimeSeconds)}
-                <DsIcon name="x-close-cross" size={11} />
-              </button>
-            ) : null}
-            <button
-              className={`send-button ${isInternal ? "internal" : ""} ${
-                isEditingOverallComment ? "update-comment-button label-xs-semibold" : ""
-              }`}
-              type="button"
-              disabled={!canSubmit}
-              aria-label={isEditingOverallComment ? "Update overall comment" : "Send comment"}
-              onClick={onSubmit}
-            >
-              {isEditingOverallComment ? "Update" : <DsIcon name="paper-plane-tilt" size={17} />}
-            </button>
-          </div>
-        </div>
-      </div>
-      <p className="composer-hint label-xs">Cmd+Enter to send</p>
-    </section>
-  );
 }
 
 function CommentEditDeleteActions({
@@ -2412,7 +2320,7 @@ function getUser(usersById: Map<string, User>, id: string) {
   return user;
 }
 
-function toggleReactionInList(reactions: Reaction[] | undefined, emoji: ReactionEmoji) {
+export function toggleReviewReactionInList(reactions: Reaction[] | undefined, emoji: ReactionEmoji) {
   const reactionOption = reactionOptions.find((reaction) => reaction.emoji === emoji);
 
   if (!reactionOption) {

@@ -86,6 +86,7 @@ export type TimeEntry = {
 export type Project = {
   id: string;
   clientBadge: string;
+  clientName: string;
   name: string;
   videoType: ProjectVideoType;
   videoLengthSeconds: number;
@@ -100,6 +101,8 @@ export type Project = {
   unreadMessages?: number;
   deadline?: ProjectDeadline;
   status: "Queued" | "In Production" | "Completed" | "Paused" | "Archived";
+  deliveredAt?: string;
+  deliveredBy?: string;
   stages: Record<StageKey, StageStatus>;
   team: RoleSlot[];
   timeEntries: TimeEntry[];

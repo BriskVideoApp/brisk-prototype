@@ -8,6 +8,27 @@
   overflow: hidden;
 }
 
+.review-recut-banner {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-yellow-10);
+  color: var(--brisk-yellow-60);
+  padding: var(--brisk-space-xs) var(--brisk-space-m);
+}
+
+.review-recut-mark {
+  position: absolute;
+  top: var(--brisk-space-none);
+  z-index: 4;
+  height: 100%;
+  min-width: var(--brisk-space-xs);
+  border: var(--brisk-space-none);
+  border-radius: var(--brisk-radius-full);
+  background: var(--recut-mark-colour);
+  padding: var(--brisk-space-none);
+}
+
 .video-review-main {
   display: flex;
   min-width: 0;

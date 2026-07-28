@@ -57,9 +57,11 @@
   --brisk-player-bg: #111019;
   --brisk-player-panel: #171421;
   --brisk-radius-none: 0;
+  --brisk-radius-xxs: 2px;
   --brisk-radius-xs: 4px;
   --brisk-radius-s: 8px;
   --brisk-radius-m: 12px;
+  --brisk-radius-l: calc(var(--brisk-radius-m) + var(--brisk-radius-xs));
   --brisk-radius-full: 999px;
   --brisk-space-none: 0;
   --brisk-space-xxs: 2px;
@@ -144,6 +146,14 @@ textarea:focus-visible {
   letter-spacing: 0;
 }
 
+.headings-m-bold {
+  font-family: var(--font-brisk);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+  letter-spacing: 0;
+}
+
 .label-xs {
   font-family: var(--font-brisk);
   font-size: 12px;
@@ -173,6 +183,14 @@ textarea:focus-visible {
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
+  letter-spacing: 0;
+}
+
+.label-m-semibold {
+  font-family: var(--font-brisk);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
   letter-spacing: 0;
 }
 

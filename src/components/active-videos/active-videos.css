@@ -2259,3 +2259,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.project-progress-cell {
+  display: grid;
+  align-items: start;
+  gap: var(--brisk-space-xs);
+}
+
+.project-delivered-date {
+  color: var(--brisk-green-60);
+}

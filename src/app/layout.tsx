@@ -13,7 +13,9 @@ import "@/components/brief/brief.css";
 import "@/components/media/media.css";
 import "@/components/masters/masters.css";
 import "@/components/navigation/workspace-sidebar.css";
+import "@/components/customer-dashboard/customer-dashboard.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
+import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -35,7 +37,9 @@ export default function RootLayout({
   return (
     <html lang="en-AU" className={plusJakartaSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <PrototypeRoleProvider>{children}</PrototypeRoleProvider>
+        <PrototypeRoleProvider>
+          <ProjectCompletionProvider>{children}</ProjectCompletionProvider>
+        </PrototypeRoleProvider>
       </body>
     </html>
   );

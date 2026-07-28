@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import type { DsIconName } from "@/components/video-review/DsIcon";
 
-type WorkspaceSidebarItem = "videos" | "today" | "chat";
+type WorkspaceSidebarItem = "dashboard" | "videos" | "today" | "chat";
 
 type WorkspaceSidebarProps = {
   activeItem?: WorkspaceSidebarItem;
@@ -28,7 +29,7 @@ export function WorkspaceSidebar({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [recentPages, setRecentPages] = useState<RecentPage[]>([]);
-  const { selectedRole, setSelectedRole } = usePrototypeRole();
+  const { selectedRole } = usePrototypeRole();
   const pathname = usePathname();
   const navigationId = useId();
   const historyMenuId = useId();
@@ -138,6 +139,14 @@ export function WorkspaceSidebar({
       </div>
       <nav id={navigationId} className="today-sidebar-nav" aria-label="Workspace">
         <Link
+          className={`today-sidebar-link label-s-semibold ${activeItem === "dashboard" ? "active" : ""}`}
+          href="/customer-dashboard"
+          title={isCollapsed ? "Dashboard" : undefined}
+        >
+          <DsIcon name="grid-four" size={16} />
+          <span className="workspace-sidebar-link-label">Dashboard</span>
+        </Link>
+        <Link
           className={`today-sidebar-link label-s-semibold ${activeItem === "videos" ? "active" : ""}`}
           href="/active-videos"
           title={isCollapsed ? "Videos" : undefined}
@@ -164,23 +173,31 @@ export function WorkspaceSidebar({
           <span className="workspace-sidebar-link-label">Chat</span>
         </Link>
       </nav>
-      <section className="workspace-role-control" aria-label="Prototype role">
-        <p className="label-xs-semibold">Prototype view</p>
-        <div className="workspace-role-options" role="group" aria-label="View pages as role">
-          {prototypeRoles.map((role) => (
-            <button
-              className={`label-xs-semibold ${selectedRole === role ? "active" : ""}`}
-              type="button"
-              key={role}
-              aria-pressed={selectedRole === role}
-              onClick={() => setSelectedRole(role)}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
-      </section>
+      <PrototypeRoleSwitcher />
     </aside>
+  );
+}
+
+function PrototypeRoleSwitcher() {
+  const { selectedRole, setSelectedRole } = usePrototypeRole();
+
+  return (
+    <section className="workspace-role-control" aria-label="Prototype role">
+      <p className="label-xs-semibold">Prototype view</p>
+      <div className="workspace-role-options" role="group" aria-label="View pages as role">
+        {prototypeRoles.map((role) => (
+          <button
+            className={`label-xs-semibold ${selectedRole === role ? "active" : ""}`}
+            type="button"
+            key={role}
+            aria-pressed={selectedRole === role}
+            onClick={() => setSelectedRole(role)}
+          >
+            {role}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -194,6 +211,9 @@ function readRecentPages(): RecentPage[] {
 }
 
 function getPageLabel(pathname: string, activeItem?: WorkspaceSidebarItem) {
+  if (activeItem === "dashboard" || pathname === "/customer-dashboard") {
+    return "Dashboard";
+  }
   if (activeItem === "videos" || pathname === "/active-videos") {
     return "Videos";
   }
@@ -214,7 +234,10 @@ function getPageLabel(pathname: string, activeItem?: WorkspaceSidebarItem) {
   return titleCase(pathname.split("/").filter(Boolean).at(-1) ?? "Brisk");
 }
 
-function getPageIcon(pathname: string): "queue" | "check-circle" | "chat-circle" | "folder-open" {
+function getPageIcon(pathname: string): DsIconName {
+  if (pathname === "/customer-dashboard") {
+    return "grid-four";
+  }
   if (pathname === "/active-videos") {
     return "queue";
   }

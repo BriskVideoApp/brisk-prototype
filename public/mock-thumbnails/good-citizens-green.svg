@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title description">
+  <title id="title">Good Citizens green thumbnail</title>
+  <desc id="description">A fresh branded mock video thumbnail with green colour blocking and a portrait.</desc>
+  <rect width="640" height="360" fill="#24b553"/>
+  <circle cx="496" cy="170" r="148" fill="#111019"/>
+  <circle cx="496" cy="126" r="50" fill="#fd9ac8"/>
+  <path d="M398 304c14-84 50-128 98-128s84 44 98 128" fill="#fdce5d"/>
+  <rect x="38" y="50" width="250" height="34" rx="8" fill="#ffffff"/>
+  <rect x="38" y="98" width="300" height="34" rx="8" fill="#ffffff"/>
+  <rect x="38" y="286" width="104" height="30" rx="8" fill="#8b2cff"/>
+</svg>

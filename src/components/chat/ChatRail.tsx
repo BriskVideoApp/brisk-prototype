@@ -81,7 +81,7 @@ export function ChatRail({
     ? lifecycleProjects.filter((project) => project.externalUnread + project.internalUnread > 0)
     : lifecycleProjects;
   const visibleGlobalItems = role === "Customer"
-    ? globalItems.filter((item) => item.id === "mentions" || item.id === "threads")
+    ? globalItems.filter((item) => item.id !== "calls")
     : globalItems;
   const showGlobalNavigation = visibleGlobalItems.length > 0;
   const allVisibleClients = Array.from(

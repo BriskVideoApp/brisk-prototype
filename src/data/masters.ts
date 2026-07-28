@@ -1,4 +1,6 @@
-export type MastersRole = "Studio Staff" | "Customer";
+import type { CommentReply, Reaction } from "@/components/video-review/types";
+
+export type MastersRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
 export type DeliverablePlatform =
   | "YouTube (Main)"
@@ -14,12 +16,34 @@ export type DeliverablePlatform =
 export type DeliverableFormat = "16:9" | "9:16" | "1:1" | string;
 export type DeliverableCaption = "SRT file" | "Baked in captions" | "None";
 export type DeliverableStatus =
-  | "Requested"
-  | "Not started"
-  | "In progress"
-  | "Ready for review"
-  | "Approved"
-  | "Delivered";
+  | "not_started"
+  | "waiting_for_studio"
+  | "waiting_for_customer"
+  | "approved"
+  | "delivered";
+
+export type RecutMarkVerb = "keep" | "cut" | "trim" | "move";
+
+export type RecutMark = {
+  id: string;
+  inSec: number;
+  outSec: number;
+  verb: RecutMarkVerb;
+  note?: string;
+  createdBy: string;
+  createdAt: string;
+};
+
+export type RecutBrief = {
+  parentDeliverableId: string;
+  targetDurationSec: number;
+  targetAspect: string;
+  marks: RecutMark[];
+  notes?: string;
+  source: "timeline" | "transcript";
+  createdBy: string;
+  createdAt: string;
+};
 
 export type MastersVersion = {
   id: string;
@@ -44,6 +68,50 @@ export type MastersComment = {
   body: string;
   createdAgo: string;
   resolved: boolean;
+  reactions?: Reaction[];
+  replies?: CommentReply[];
+  drawingPaths?: Array<{
+    id: string;
+    points: Array<{ x: number; y: number }>;
+  }>;
+};
+
+export type MastersSrtLine = {
+  id: string;
+  startSeconds: number;
+  endSeconds: number;
+  text: string;
+};
+
+export type MastersSrtAttachment = {
+  status: "ready";
+  filename: string;
+  language: string;
+  source: "auto-generated" | "uploaded";
+  lines: MastersSrtLine[];
+};
+
+export type MastersThumbnailAttachment = {
+  status: "ready";
+  imageUrl: string;
+  platform: ThumbnailPlatform;
+  frameSeconds: number;
+  copy: string;
+  source: "auto-generated" | "regenerated" | "uploaded";
+};
+
+export type ThumbnailPlatform =
+  | "YouTube"
+  | "LinkedIn"
+  | "Instagram (feed)"
+  | "Instagram (reel)"
+  | "TikTok"
+  | "Custom";
+
+export type MastersGraphicsKit = {
+  font: string;
+  colours: string[];
+  logoUrl: string;
 };
 
 export type MastersDeliverable = {
@@ -61,10 +129,28 @@ export type MastersDeliverable = {
   approvedVersionId?: string;
   currentVersionId?: string;
   comments: MastersComment[];
+  unreadCommentCount: number;
   isRequested?: boolean;
   addedBy: "filmmaker" | "client-request";
   kind: "video" | "captions";
+  srt?: MastersSrtAttachment;
+  thumbnail?: MastersThumbnailAttachment;
+  createdAt?: string;
+  recutBrief?: RecutBrief;
 };
+
+export const mastersGraphicsKit: MastersGraphicsKit = {
+  font: "Plus Jakarta Sans",
+  colours: ["#8b2cff", "#6de5fa", "#fdce5d", "#24b553"],
+  logoUrl: "/assets/logos/brisk.svg",
+};
+
+export const mastersThumbnailVariantUrls = [
+  "/mock-thumbnails/good-citizens-purple.svg",
+  "/mock-thumbnails/good-citizens-cyan.svg",
+  "/mock-thumbnails/good-citizens-yellow.svg",
+  "/mock-thumbnails/good-citizens-green.svg",
+] as const;
 
 const mainComments: MastersComment[] = [
   {
@@ -99,6 +185,45 @@ const mainComments: MastersComment[] = [
   },
 ];
 
+export function createMockSrt(id: string, filename: string, durationSeconds: number): MastersSrtAttachment {
+  const segment = Math.max(2, Math.floor(durationSeconds / 4));
+  return {
+    status: "ready",
+    filename,
+    language: "English",
+    source: "auto-generated",
+    lines: [
+      { id: `${id}-1`, startSeconds: 0, endSeconds: segment, text: "Meet Maya, bringing calm and clarity to every decision." },
+      { id: `${id}-2`, startSeconds: segment, endSeconds: segment * 2, text: "One guided place keeps the people and the paperwork connected." },
+      { id: `${id}-3`, startSeconds: segment * 2, endSeconds: segment * 3, text: "Everyone can see what is happening now and what comes next." },
+      { id: `${id}-4`, startSeconds: segment * 3, endSeconds: durationSeconds, text: "Good Citizens. Work that moves people forward." },
+    ],
+  };
+}
+
+export function createMockThumbnail(
+  platform: DeliverablePlatform,
+  frameSeconds = 0,
+): MastersThumbnailAttachment {
+  const thumbnailPlatform: ThumbnailPlatform = platform === "YouTube (Main)"
+    ? "YouTube"
+    : platform === "Instagram"
+      ? "Instagram (reel)"
+      : platform === "LinkedIn"
+        ? "LinkedIn"
+        : platform === "TikTok"
+          ? "TikTok"
+          : "Custom";
+  return {
+    status: "ready",
+    imageUrl: mastersThumbnailVariantUrls[0],
+    platform: thumbnailPlatform,
+    frameSeconds,
+    copy: "Clarity for every care decision",
+    source: "auto-generated",
+  };
+}
+
 export const initialMastersDeliverables: MastersDeliverable[] = [
   {
     id: "masters-main-video",
@@ -109,12 +234,21 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     duration: "3 mins",
     captions: ["SRT file"],
     deadline: "2026-08-07",
-    status: "Delivered",
-    approvedVersionId: "main-v2",
+    status: "waiting_for_customer",
     currentVersionId: "main-v2",
     addedBy: "filmmaker",
     kind: "video",
+    srt: createMockSrt("main-caption", "Good_Citizens_Main_Master_en-AU.srt", 180),
+    thumbnail: {
+      status: "ready",
+      imageUrl: mastersThumbnailVariantUrls[0],
+      platform: "YouTube",
+      frameSeconds: 42,
+      copy: "Care decisions, made clearer",
+      source: "auto-generated",
+    },
     comments: mainComments,
+    unreadCommentCount: 2,
     versions: [
       {
         id: "main-v1",
@@ -140,39 +274,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "8.7 GB",
         durationSeconds: 180,
         shadePath: "Shade/Good Citizens/Masters/Main Video/V2",
-        approved: true,
-      },
-    ],
-  },
-  {
-    id: "masters-main-srt",
-    briefDeliverableId: "main-video",
-    parentDeliverableId: "masters-main-video",
-    name: "SRT file",
-    platform: "YouTube (Main)",
-    format: "16:9",
-    duration: "English",
-    captions: ["SRT file"],
-    deadline: "2026-08-07",
-    status: "Delivered",
-    approvedVersionId: "srt-v1",
-    currentVersionId: "srt-v1",
-    addedBy: "filmmaker",
-    kind: "captions",
-    comments: [],
-    versions: [
-      {
-        id: "srt-v1",
-        number: 1,
-        filename: "Good_Citizens_Main_Master_en-AU.srt",
-        uploadedAt: "2026-07-22T15:22:00+10:00",
-        uploadedBy: "David Ryan",
-        codec: "UTF-8 subtitles",
-        resolution: "Timed text",
-        fileSize: "34 KB",
-        durationSeconds: 180,
-        shadePath: "Shade/Good Citizens/Masters/Main Video/Captions",
-        approved: true,
+        approved: false,
       },
     ],
   },
@@ -185,10 +287,19 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     duration: "30 secs",
     captions: ["Baked in captions"],
     deadline: "2026-08-12",
-    status: "Ready for review",
+    status: "waiting_for_customer",
     currentVersionId: "cutdown-v1",
     addedBy: "filmmaker",
     kind: "video",
+    srt: createMockSrt("cutdown-caption", "Good_Citizens_Instagram_30s_en-AU.srt", 30),
+    thumbnail: {
+      status: "ready",
+      imageUrl: mastersThumbnailVariantUrls[1],
+      platform: "Instagram (reel)",
+      frameSeconds: 8,
+      copy: "The next step, made simple",
+      source: "regenerated",
+    },
     comments: [
       {
         id: "masters-comment-4",
@@ -201,6 +312,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         resolved: false,
       },
     ],
+    unreadCommentCount: 1,
     versions: [
       {
         id: "cutdown-v1",
@@ -226,10 +338,20 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     duration: "30 secs",
     captions: ["None"],
     deadline: "2026-08-15",
-    status: "Not started",
+    status: "not_started",
     addedBy: "filmmaker",
     kind: "video",
+    srt: createMockSrt("square-caption", "Good_Citizens_LinkedIn_30s_en-AU.srt", 30),
+    thumbnail: {
+      status: "ready",
+      imageUrl: mastersThumbnailVariantUrls[2],
+      platform: "LinkedIn",
+      frameSeconds: 12,
+      copy: "Clarity for every care decision",
+      source: "auto-generated",
+    },
     comments: [],
+    unreadCommentCount: 0,
     versions: [],
   },
 ];
