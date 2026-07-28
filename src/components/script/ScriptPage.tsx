@@ -1783,7 +1783,7 @@ export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId
         data-tooltip="Show all comments"
         onClick={openAllComments}
       >
-        <DsIcon name="chats" size={16} />
+        <DsIcon name="chat-circle" size={16} />
       </button>
   );
 

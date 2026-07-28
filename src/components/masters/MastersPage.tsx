@@ -9,9 +9,12 @@ import {
   type ChangeEvent,
   type KeyboardEvent,
   type PointerEvent,
+  type ReactNode,
 } from "react";
 import type { Project } from "@/components/active-videos/types";
+import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
   useProjectCompletion,
@@ -56,6 +59,14 @@ type CommentFilter = "all" | "unresolved" | "internal" | "external";
 type RequestTab = "cutdown" | "reformat" | "script";
 type AssetInspector = { deliverableId: string; type: "captions" | "thumbnail" | "versions" };
 type RecutDraftRange = { inSec: number; outSec: number };
+type DownloadSelection = { deliverableId: string; versionId?: string };
+type DownloadableAsset = {
+  id: "video" | "thumbnail" | "captions";
+  label: string;
+  filename: string;
+  detail: string;
+  icon: "video-camera" | "image-square" | "file-text";
+};
 
 const mastersStudioName = "North Star Films";
 
@@ -95,9 +106,9 @@ export function MastersPage({ project }: { project: Project }) {
   const [isMuted, setIsMuted] = useState(false);
   const [toast, setToast] = useState<{ message: string; canUndo?: boolean } | null>(null);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
-  const [openVersionMenuId, setOpenVersionMenuId] = useState<string | null>(null);
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [downloadSelection, setDownloadSelection] = useState<DownloadSelection | null>(null);
   const [bulkApproveStep, setBulkApproveStep] = useState<"confirm" | "success" | null>(null);
   const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   const [isConfettiVisible, setIsConfettiVisible] = useState(false);
@@ -122,6 +133,7 @@ export function MastersPage({ project }: { project: Project }) {
   const [activeDrawingPath, setActiveDrawingPath] = useState<DrawingPath | null>(null);
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const [markUpDeliverableId, setMarkUpDeliverableId] = useState<string | null>(null);
+  const [recutSourcePickerTargetId, setRecutSourcePickerTargetId] = useState<string | null>(null);
   const [recutPanelDeliverableId, setRecutPanelDeliverableId] = useState<string | null>(null);
   const [recutMarks, setRecutMarks] = useState<RecutMark[]>([]);
   const [recutMarkHistory, setRecutMarkHistory] = useState<RecutMark[][]>([]);
@@ -138,6 +150,8 @@ export function MastersPage({ project }: { project: Project }) {
   const uploadModeRef = useRef<"new-version" | "replace">("new-version");
   const thumbnailUploadInputRef = useRef<HTMLInputElement>(null);
   const thumbnailUploadTargetIdRef = useRef<string | null>(null);
+  const recutSourceUploadInputRef = useRef<HTMLInputElement>(null);
+  const recutSourceUploadTargetIdRef = useRef<string | null>(null);
   const pendingExpandedScrollIdRef = useRef<string | null>(null);
 
   const isFilmmaker = role !== "Customer";
@@ -151,9 +165,15 @@ export function MastersPage({ project }: { project: Project }) {
     : 0;
   const expandedDeliverable = deliverables.find((deliverable) => deliverable.id === expandedDeliverableId);
   const commentsDeliverable = deliverables.find((deliverable) => deliverable.id === commentsDeliverableId);
-  const assetDeliverable = deliverables.find((deliverable) => deliverable.id === assetInspector?.deliverableId);
   const markUpDeliverable = deliverables.find((deliverable) => deliverable.id === markUpDeliverableId);
-  const recutPanelDeliverable = deliverables.find((deliverable) => deliverable.id === recutPanelDeliverableId);
+  const markUpSourceDeliverable = markUpDeliverable ? getRecutSource(markUpDeliverable, deliverables) : undefined;
+  const markUpSourceVersion = markUpSourceDeliverable
+    ? getPresentedVersion(markUpSourceDeliverable, selectedVersionByDeliverable)
+    : undefined;
+  const recutSourcePickerTarget = deliverables.find((deliverable) => deliverable.id === recutSourcePickerTargetId);
+  const downloadDeliverable = deliverables.find((deliverable) => deliverable.id === downloadSelection?.deliverableId);
+  const downloadVersion = downloadDeliverable?.versions.find((version) => version.id === downloadSelection?.versionId)
+    ?? (downloadDeliverable ? getPresentedVersion(downloadDeliverable, selectedVersionByDeliverable) : undefined);
   const orderedDeliverables = useMemo(() => orderDeliverables(deliverables, collapsedParentIds), [collapsedParentIds, deliverables]);
   const readyDeliverables = deliverables.filter(
     (deliverable) => deliverable.status === "waiting_for_customer" && deliverable.versions.length > 0,
@@ -240,7 +260,32 @@ export function MastersPage({ project }: { project: Project }) {
 
   const closeMenus = () => {
     setOpenRowMenuId(null);
-    setOpenVersionMenuId(null);
+  };
+
+  const openDownloadSelection = (deliverableId: string, versionId?: string) => {
+    setDownloadSelection({ deliverableId, versionId });
+    closeMenus();
+  };
+
+  const markApprovedAssetDelivered = (deliverableId: string) => {
+    setDeliverables((current) => current.map((deliverable) =>
+      deliverable.id === deliverableId && deliverable.status === "approved"
+        ? { ...deliverable, status: "delivered" }
+        : deliverable,
+    ));
+  };
+
+  const downloadSelectedAssets = (assetIds: DownloadableAsset["id"][]) => {
+    if (!downloadDeliverable) return;
+    const wasApproved = downloadDeliverable.status === "approved";
+    const assets = getDownloadableAssets(downloadDeliverable, downloadVersion)
+      .filter((asset) => assetIds.includes(asset.id));
+    assets.forEach((asset) => downloadPrototypeFile(asset.filename, showToast));
+    markApprovedAssetDelivered(downloadDeliverable.id);
+    setDownloadSelection(null);
+    showToast(wasApproved
+      ? `${assets.length} ${assets.length === 1 ? "asset" : "assets"} downloading. ${downloadDeliverable.name} is now delivered.`
+      : `${assets.length} ${assets.length === 1 ? "asset" : "assets"} downloading.`);
   };
 
   const expandDeliverable = (deliverableId: string) => {
@@ -325,7 +370,6 @@ export function MastersPage({ project }: { project: Project }) {
   const selectVersion = (deliverableId: string, versionId: string) => {
     setSelectedVersionByDeliverable((current) => ({ ...current, [deliverableId]: versionId }));
     setExpandedDeliverableId(deliverableId);
-    setOpenVersionMenuId(null);
     setCurrentTimeSeconds(0);
     setIsPlaying(false);
   };
@@ -482,7 +526,46 @@ export function MastersPage({ project }: { project: Project }) {
 
   const downloadSrt = (deliverable: MastersDeliverable) => {
     if (!deliverable.srt) return;
+    const wasApproved = deliverable.status === "approved";
     downloadTextFile(deliverable.srt.filename, formatSrtFile(deliverable.srt.lines), "application/x-subrip", showToast);
+    markApprovedAssetDelivered(deliverable.id);
+    if (wasApproved) showToast(`${deliverable.name} is now delivered.`);
+  };
+
+  const downloadThumbnail = (deliverable: MastersDeliverable) => {
+    const thumbnailAsset = getDownloadableAssets(deliverable).find((asset) => asset.id === "thumbnail");
+    if (!thumbnailAsset) return;
+    const wasApproved = deliverable.status === "approved";
+    downloadPrototypeFile(thumbnailAsset.filename, showToast);
+    markApprovedAssetDelivered(deliverable.id);
+    if (wasApproved) showToast(`${deliverable.name} is now delivered.`);
+  };
+
+  const copyThumbnailImage = async (deliverable: MastersDeliverable) => {
+    const imageUrl = deliverable.thumbnail?.imageUrl;
+    if (!imageUrl) return;
+
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      if (navigator.clipboard?.write && typeof ClipboardItem !== "undefined") {
+        await navigator.clipboard.write([new ClipboardItem({ [blob.type || "image/png"]: blob })]);
+      } else {
+        await navigator.clipboard?.writeText(imageUrl);
+      }
+      showToast("Thumbnail copied.");
+    } catch {
+      await navigator.clipboard?.writeText(imageUrl);
+      showToast("Thumbnail link copied.");
+    }
+  };
+
+  const deleteThumbnail = (deliverableId: string) => {
+    setDeliverables((current) => current.map((deliverable) =>
+      deliverable.id === deliverableId ? { ...deliverable, thumbnail: undefined } : deliverable,
+    ));
+    setAssetInspector(null);
+    showToast("Thumbnail deleted.");
   };
 
   const openThumbnailGenerator = (deliverableId: string, focusCopy = false) => {
@@ -517,6 +600,63 @@ export function MastersPage({ project }: { project: Project }) {
     setThumbnailGenerator(null);
     openAssetInspector(deliverableId, "thumbnail");
     showToast("Generated thumbnail attached.");
+  };
+
+  const selectRecutSource = (targetId: string, sourceId: string) => {
+    setDeliverables((current) => current.map((deliverable) =>
+      deliverable.id === targetId
+        ? { ...deliverable, recutSourceDeliverableId: sourceId, recutSourceUpload: undefined }
+        : deliverable,
+    ));
+    setRecutSourcePickerTargetId(null);
+    setCurrentTimeSeconds(0);
+    setRecutMarks([]);
+    setRecutMarkHistory([]);
+    setRecutMarkFuture([]);
+    setDraftRecutRange(null);
+    setSelectedRecutMarkId(null);
+    showToast("Re-cut source changed.");
+  };
+
+  const openRecutSourceUpload = (targetId: string) => {
+    recutSourceUploadTargetIdRef.current = targetId;
+    window.setTimeout(() => recutSourceUploadInputRef.current?.click(), 0);
+  };
+
+  const uploadRecutSource = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const targetId = recutSourceUploadTargetIdRef.current;
+    const target = deliverables.find((deliverable) => deliverable.id === targetId);
+    if (!file || !target) return;
+    const defaultSource = getDefaultRecutSource(target, deliverables);
+    const durationSeconds = defaultSource ? getDeliverableDurationSeconds(defaultSource) : 180;
+    const uploadedSource: MastersVersion = {
+      id: `${target.id}-source-${Date.now()}`,
+      number: 1,
+      filename: file.name,
+      uploadedAt: new Date().toISOString(),
+      uploadedBy: role === "Customer" ? "Jess Taylor" : "Tom Evans",
+      codec: "H.264 High",
+      resolution: target.format === "9:16" ? "1080 × 1920" : "3840 × 2160",
+      fileSize: formatFileSize(file.size),
+      durationSeconds,
+      shadePath: `Shade/${project.name}/Masters/${target.name}/Source`,
+      approved: true,
+    };
+    setDeliverables((current) => current.map((deliverable) =>
+      deliverable.id === target.id
+        ? { ...deliverable, recutSourceDeliverableId: undefined, recutSourceUpload: uploadedSource }
+        : deliverable,
+    ));
+    setRecutSourcePickerTargetId(null);
+    setCurrentTimeSeconds(0);
+    setRecutMarks([]);
+    setRecutMarkHistory([]);
+    setRecutMarkFuture([]);
+    setDraftRecutRange(null);
+    setSelectedRecutMarkId(null);
+    event.target.value = "";
+    showToast(`${file.name} selected as the re-cut source.`);
   };
 
   const deleteVersion = (deliverableId: string, versionId: string) => {
@@ -615,6 +755,7 @@ export function MastersPage({ project }: { project: Project }) {
       isRequested: true,
       addedBy: "client-request",
       kind: "video",
+      recutSourceDeliverableId: source.id,
     };
     setDeliverables((current) => [...current, requested]);
     setExpandedDeliverableId(id);
@@ -679,22 +820,42 @@ export function MastersPage({ project }: { project: Project }) {
 
   const startRecutMarkup = (deliverable: MastersDeliverable) => {
     const source = getRecutSource(deliverable, deliverables);
-    const duration = getDeliverableDurationSeconds(source);
-    setExpandedDeliverableId(source.id);
-    setMarkUpDeliverableId(source.id);
+    const sourceVersion = getPresentedVersion(source, selectedVersionByDeliverable);
+    if (source.id === deliverable.id || !sourceVersion) {
+      setRecutSourcePickerTargetId(deliverable.id);
+      showToast("Choose a completed video or upload a source before marking up this cut-down.");
+      return;
+    }
+    const targetDuration = durationLabelToSeconds(deliverable.duration);
+    setExpandedDeliverableId(deliverable.id);
+    setMarkUpDeliverableId(deliverable.id);
     setRecutPanelDeliverableId(null);
     setCommentsDeliverableId(null);
     setAssetInspector(null);
-    setRecutMarks([]);
+    setRecutMarks(deliverable.recutBrief ? structuredClone(deliverable.recutBrief.marks) : []);
     setRecutMarkHistory([]);
     setRecutMarkFuture([]);
     setDraftRecutRange(null);
     setSelectedRecutMarkId(null);
-    setRecutTargetDuration(duration);
-    setRecutTargetAspect(source.format);
-    setRecutName(getAutoRecutName(duration, source.format, source.name));
-    setRecutNotes("");
+    setRecutTargetDuration(deliverable.recutBrief?.targetDurationSec ?? targetDuration);
+    setRecutTargetAspect(deliverable.recutBrief?.targetAspect ?? deliverable.format);
+    setRecutName(deliverable.name);
+    setRecutNotes(deliverable.recutBrief?.notes ?? "");
     setIsPlaying(false);
+    setCurrentTimeSeconds(deliverable.recutBrief?.marks[0]?.inSec ?? 0);
+    closeMenus();
+  };
+
+  const openRecutBrief = (deliverable: MastersDeliverable) => {
+    if (!deliverable.recutBrief) return;
+    setExpandedDeliverableId(deliverable.id);
+    setRecutPanelDeliverableId(deliverable.id);
+    setCommentsDeliverableId(null);
+    setAssetInspector(null);
+    setMarkUpDeliverableId(null);
+    setDraftRecutRange(null);
+    setSelectedRecutMarkId(deliverable.recutBrief.marks[0]?.id ?? null);
+    setCurrentTimeSeconds(deliverable.recutBrief.marks[0]?.inSec ?? 0);
     closeMenus();
   };
 
@@ -741,7 +902,9 @@ export function MastersPage({ project }: { project: Project }) {
 
   const addRecutMark = (verb: RecutMarkVerb) => {
     if (!draftRecutRange) return;
-    const sourceDuration = markUpDeliverable ? getDeliverableDurationSeconds(markUpDeliverable) : Number.POSITIVE_INFINITY;
+    const sourceDuration = markUpDeliverable
+      ? getDeliverableDurationSeconds(getRecutSource(markUpDeliverable, deliverables))
+      : Number.POSITIVE_INFINITY;
     const inSec = Math.min(Math.min(draftRecutRange.inSec, draftRecutRange.outSec), Math.max(0, sourceDuration - 1));
     const outSec = Math.min(sourceDuration, Math.max(draftRecutRange.inSec, draftRecutRange.outSec));
     const now = new Date().toISOString();
@@ -790,44 +953,31 @@ export function MastersPage({ project }: { project: Project }) {
       return;
     }
     const createdAt = new Date().toISOString();
-    const childId = `recut-${Date.now()}`;
     const sortedMarks = [...recutMarks].sort((left, right) => left.inSec - right.inSec);
-    const child: MastersDeliverable = {
-      id: childId,
-      briefDeliverableId: `recut-brief-${childId}`,
-      parentDeliverableId: markUpDeliverable.id,
-      name: recutName.trim() || getAutoRecutName(recutTargetDuration, recutTargetAspect, markUpDeliverable.name),
-      platform: markUpDeliverable.platform,
-      format: recutTargetAspect,
-      duration: formatRecutDuration(recutTargetDuration),
-      captions: ["None"],
-      status: "waiting_for_studio",
-      versions: [],
-      comments: [],
-      unreadCommentCount: 0,
-      addedBy: role === "Customer" ? "client-request" : "filmmaker",
-      kind: "video",
-      thumbnail: markUpDeliverable.thumbnail ? { ...markUpDeliverable.thumbnail } : undefined,
-      createdAt,
-      recutBrief: {
-        parentDeliverableId: markUpDeliverable.id,
-        targetDurationSec: recutTargetDuration,
-        targetAspect: recutTargetAspect,
-        marks: sortedMarks,
-        notes: recutNotes.trim() || undefined,
-        source: "timeline",
-        createdBy: role === "Customer" ? "client-jess-taylor" : "studio-tom-evans",
-        createdAt,
-      },
-    };
-    setDeliverables((current) => insertRecutChild(current, child));
-    setCollapsedParentIds((current) => {
-      const next = new Set(current);
-      next.delete(markUpDeliverable.id);
-      return next;
-    });
-    setExpandedDeliverableId(child.id);
-    setRecutPanelDeliverableId(child.id);
+    const source = getRecutSource(markUpDeliverable, deliverables);
+    setDeliverables((current) => current.map((deliverable) =>
+      deliverable.id === markUpDeliverable.id
+        ? {
+            ...deliverable,
+            name: recutName.trim() || deliverable.name,
+            format: recutTargetAspect,
+            duration: formatRecutDuration(recutTargetDuration),
+            status: "waiting_for_studio",
+            recutBrief: {
+              sourceDeliverableId: source.id,
+              targetDurationSec: recutTargetDuration,
+              targetAspect: recutTargetAspect,
+              marks: sortedMarks,
+              notes: recutNotes.trim() || undefined,
+              source: "timeline",
+              createdBy: role === "Customer" ? "client-jess-taylor" : "studio-tom-evans",
+              createdAt,
+            },
+          }
+        : deliverable,
+    ));
+    setExpandedDeliverableId(markUpDeliverable.id);
+    setRecutPanelDeliverableId(markUpDeliverable.id);
     setMarkUpDeliverableId(null);
     setDraftRecutRange(null);
     setSelectedRecutMarkId(null);
@@ -837,19 +987,9 @@ export function MastersPage({ project }: { project: Project }) {
     window.sessionStorage.setItem("brisk-studio-notification", JSON.stringify({
       message: `New recut brief from ${project.clientName} on ${markUpDeliverable.name} - ${sortedMarks.length} ${sortedMarks.length === 1 ? "mark" : "marks"}, target ${recutTargetDuration}s`,
       createdAt,
-      deliverableId: child.id,
+      deliverableId: markUpDeliverable.id,
     }));
     showToast(`Recut sent to editor - ${sortedMarks.length} ${sortedMarks.length === 1 ? "mark" : "marks"}`);
-  };
-
-  const openRecutInEdit = (deliverable: MastersDeliverable) => {
-    if (!deliverable.recutBrief) return;
-    window.sessionStorage.setItem("brisk-recut-brief", JSON.stringify({
-      childDeliverableId: deliverable.id,
-      childName: deliverable.name,
-      brief: deliverable.recutBrief,
-    }));
-    window.location.assign(`/review?recut=${encodeURIComponent(deliverable.id)}`);
   };
 
   useEffect(() => {
@@ -858,6 +998,12 @@ export function MastersPage({ project }: { project: Project }) {
       const target = event.target;
       if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) return;
       const key = event.key.toLowerCase();
+      if (event.metaKey && key === "z") {
+        event.preventDefault();
+        if (event.shiftKey) redoLastRecutChange();
+        else undoLastRecutChange();
+        return;
+      }
       const verbByKey: Partial<Record<string, RecutMarkVerb>> = { k: "keep", x: "cut", t: "trim" };
       if (draftRecutRange && verbByKey[key]) {
         event.preventDefault();
@@ -878,7 +1024,9 @@ export function MastersPage({ project }: { project: Project }) {
 
   return (
     <main className="masters-shell">
-      <ProjectStageHeader
+      <WorkspaceSidebar className="masters-sidebar" />
+      <div className="masters-main">
+        <ProjectStageHeader
         project={project}
         activeStage="masters"
         actions={isFilmmaker && isProjectDelivered && undoSeconds === 0 ? (
@@ -903,7 +1051,7 @@ export function MastersPage({ project }: { project: Project }) {
         ) : null}
       />
 
-      {isProjectDelivered && completionRecord && !isBannerDismissed ? (
+        {isProjectDelivered && completionRecord && !isBannerDismissed ? (
         <div className="masters-delivered-banner" role="status">
           <span>{isClient ? "🎉 Project delivered. Thanks for your work with North Star Films." : `🎉 Project delivered to ${project.clientName}.`}</span>
           <button type="button" aria-label="Dismiss delivered message" onClick={() => setIsBannerDismissed(true)}>
@@ -912,31 +1060,53 @@ export function MastersPage({ project }: { project: Project }) {
         </div>
       ) : null}
 
-      {isConfettiVisible ? <ConfettiBurst /> : null}
+        {isConfettiVisible ? <ConfettiBurst /> : null}
 
-      <section className={`masters-register-workspace ${commentsDeliverable || assetDeliverable || markUpDeliverable || recutPanelDeliverable ? "has-comments-rail" : ""}`}>
+        <section className="masters-register-workspace">
         <section className="masters-register">
           <section className="masters-delivery-register" aria-label="Deliverables register" role="table">
             <div className="masters-register-column-header" role="row">
-              <span role="columnheader">Deliverable</span>
-              <span role="columnheader">Details</span>
+              <span role="columnheader">Video</span>
+              <span role="columnheader">Assets</span>
+              <span role="columnheader">Comments</span>
               <span role="columnheader">Status</span>
               <span role="columnheader">Action</span>
+              <span role="columnheader" aria-label="More actions" />
             </div>
             {deliverables.length ? (
               <div className="masters-deliverable-list" role="rowgroup">
                 {orderedDeliverables.map((deliverable) => {
                   const selectedVersion = getPresentedVersion(deliverable, selectedVersionByDeliverable);
-                  const sourceDeliverable = deliverable.recutBrief && !selectedVersion
-                    ? getRecutSource(deliverable, deliverables)
+                  const recutSource = getRecutSource(deliverable, deliverables);
+                  const recutSourceVersion = getPresentedVersion(recutSource, selectedVersionByDeliverable);
+                  const recutSourceRow = deliverables.find((item) => item.id === (
+                    deliverable.recutSourceDeliverableId ?? deliverable.recutBrief?.sourceDeliverableId
+                  ));
+                  const isMarkingUpTarget = markUpDeliverableId === deliverable.id;
+                  const sourceDeliverable = isMarkingUpTarget || (deliverable.recutBrief && !selectedVersion)
+                    ? recutSource
                     : deliverable;
-                  const playbackVersion = selectedVersion
-                    ?? getPresentedVersion(sourceDeliverable, selectedVersionByDeliverable);
+                  const playbackVersion = isMarkingUpTarget
+                    ? recutSourceVersion
+                    : selectedVersion ?? getPresentedVersion(sourceDeliverable, selectedVersionByDeliverable);
                   const childCount = deliverables.filter((item) => item.parentDeliverableId === deliverable.id).length;
                   const childrenExpanded = !collapsedParentIds.has(deliverable.id);
                   const expanded = deliverable.id === expandedDeliverableId;
+                  const hasRecutSource = Boolean(recutSourceVersion)
+                    && !deliverable.parentDeliverableId
+                    && recutSource.id !== deliverable.id;
+                  const recutActionLabel = selectedVersion || !hasRecutSource
+                    ? null
+                    : isMarkingUpTarget
+                      ? "Continue mark-up"
+                      : deliverable.recutBrief
+                        ? "View re-cut brief"
+                        : "Mark up for re-cut";
                   return (
-                    <div className={`masters-deliverable-item ${expanded ? "expanded" : ""}`} key={deliverable.id}>
+                    <div
+                      className={`masters-deliverable-item ${expanded ? "expanded" : ""}`}
+                      key={deliverable.id}
+                    >
                       <DeliverableRow
                         deliverable={deliverable}
                         expanded={expanded}
@@ -944,14 +1114,13 @@ export function MastersPage({ project }: { project: Project }) {
                         childrenExpanded={childCount > 0 && childrenExpanded}
                         selectedVersion={selectedVersion}
                         commentCount={deliverable.comments.filter((comment) => role !== "Customer" || comment.visibility === "external").length}
-                        unreadCommentCount={deliverable.unreadCommentCount}
                         isFilmmaker={isFilmmaker}
                         customerName={project.clientName}
                         studioName={mastersStudioName}
                         editingName={editingNameId === deliverable.id}
                         commentsOpen={commentsDeliverableId === deliverable.id}
-                        versionsOpen={openVersionMenuId === deliverable.id}
                         rowMenuOpen={openRowMenuId === deliverable.id}
+                        recutSourceName={recutSourceRow?.name}
                         onChangeName={(name) => setDeliverables((current) => current.map((item) =>
                           item.id === deliverable.id ? { ...item, name } : item,
                         ))}
@@ -961,23 +1130,28 @@ export function MastersPage({ project }: { project: Project }) {
                           closeMenus();
                         }}
                         onDownload={() => {
-                          if (selectedVersion) downloadPrototypeFile(selectedVersion.filename, showToast);
-                          closeMenus();
+                          if (selectedVersion) openDownloadSelection(deliverable.id, selectedVersion.id);
                         }}
                         onEditName={() => {
                           setEditingNameId(editingNameId === deliverable.id ? null : deliverable.id);
                           closeMenus();
                         }}
                         onMoveFocus={(direction) => moveRowFocus(deliverable.id, direction)}
+                        onAddAsset={() => {
+                          closeMenus();
+                          openThumbnailGenerator(deliverable.id);
+                        }}
                         onOpenCaptions={() => openAssetInspector(deliverable.id, "captions")}
                         onOpenThumbnail={() => openAssetInspector(deliverable.id, "thumbnail")}
-                        canMarkUpRecut={Boolean(selectedVersion)
-                          && !deliverable.parentDeliverableId
-                          && (isFilmmaker || deliverable.status === "approved" || deliverable.status === "delivered")
-                          && markUpDeliverableId !== sourceDeliverable.id}
-                        onMarkUpRecut={() => {
-                          closeMenus();
-                          startRecutMarkup(deliverable);
+                        recutActionLabel={recutActionLabel}
+                        onRecutAction={() => {
+                          if (isMarkingUpTarget) {
+                            setExpandedDeliverableId(deliverable.id);
+                          } else if (deliverable.recutBrief) {
+                            openRecutBrief(deliverable);
+                          } else {
+                            startRecutMarkup(deliverable);
+                          }
                         }}
                         onReplace={() => {
                           closeMenus();
@@ -985,23 +1159,17 @@ export function MastersPage({ project }: { project: Project }) {
                         }}
                         onSelect={() => expandDeliverable(deliverable.id)}
                         onToggleChildren={() => toggleParentChildren(deliverable.id)}
-                        onSelectVersion={(versionId) => selectVersion(deliverable.id, versionId)}
                         onShare={() => {
                           void copyShareLink(deliverable.id, showToast);
                           closeMenus();
                         }}
                         onToggleComments={() => toggleDeliverableComments(deliverable.id)}
-                        onToggleVersions={() => {
-                          setOpenVersionMenuId(openVersionMenuId === deliverable.id ? null : deliverable.id);
-                          setOpenRowMenuId(null);
-                        }}
                         onUpload={() => {
                           closeMenus();
                           openUpload(deliverable.id);
                         }}
                         onToggleRowMenu={() => {
                           setOpenRowMenuId(openRowMenuId === deliverable.id ? null : deliverable.id);
-                          setOpenVersionMenuId(null);
                         }}
                       />
                       {expanded ? (
@@ -1010,6 +1178,7 @@ export function MastersPage({ project }: { project: Project }) {
                           sourceDeliverable={sourceDeliverable}
                           version={playbackVersion}
                           role={role}
+                          customerName={project.clientName}
                           isFilmmaker={isFilmmaker}
                           currentTimeSeconds={currentTimeSeconds}
                           isPlaying={isPlaying}
@@ -1020,8 +1189,146 @@ export function MastersPage({ project }: { project: Project }) {
                           selectedDrawingPaths={
                             deliverable.comments.find((comment) => comment.id === selectedCommentId)?.drawingPaths ?? []
                           }
-                          isMarkUpMode={markUpDeliverableId === sourceDeliverable.id}
-                          recutMarks={markUpDeliverableId === sourceDeliverable.id
+                          isMarkUpMode={isMarkingUpTarget}
+                          recutSourceName={markUpSourceDeliverable?.name}
+                          recutSourceVersionNumber={markUpSourceVersion?.number}
+                          onChangeRecutSource={() => setRecutSourcePickerTargetId(deliverable.id)}
+                          sidePanel={isMarkingUpTarget ? (
+                            <aside className="masters-comments-rail masters-recut-panel masters-inline-side-panel masters-inline-recut-panel" aria-label={`${deliverable.name} recut mark-up`}>
+                              <RecutMarkupPanel
+                                marks={recutMarks}
+                                selectedMarkId={selectedRecutMarkId}
+                                targetDuration={recutTargetDuration}
+                                targetAspect={recutTargetAspect}
+                                name={recutName}
+                                notes={recutNotes}
+                                onCancel={cancelRecutMarkup}
+                                onChangeName={setRecutName}
+                                onChangeNotes={setRecutNotes}
+                                onChangeTargetAspect={setRecutTargetAspect}
+                                onDeleteMark={deleteRecutMark}
+                                onFinishEdit={() => setSelectedRecutMarkId(null)}
+                                onPrepareEdit={rememberRecutMarks}
+                                onSelectMark={(mark) => {
+                                  setDraftRecutRange(null);
+                                  setSelectedRecutMarkId(mark.id);
+                                  setCurrentTimeSeconds(mark.inSec);
+                                }}
+                                onSubmit={submitRecut}
+                                onUpdateMark={updateRecutMark}
+                              />
+                            </aside>
+                          ) : recutPanelDeliverableId === deliverable.id && deliverable.recutBrief ? (
+                            <aside className="masters-comments-rail masters-recut-panel masters-inline-side-panel masters-inline-brief-panel" aria-label={`${deliverable.name} recut brief`}>
+                              <RecutBriefPanel
+                                deliverable={deliverable}
+                                selectedMarkId={selectedRecutMarkId}
+                                onSelectMark={(mark) => {
+                                  setSelectedRecutMarkId(mark.id);
+                                  setCurrentTimeSeconds(mark.inSec);
+                                }}
+                                onClose={() => setRecutPanelDeliverableId(null)}
+                                onEditBrief={() => startRecutMarkup(deliverable)}
+                              />
+                            </aside>
+                          ) : assetInspector?.deliverableId === deliverable.id ? (
+                            <aside className="masters-comments-rail masters-asset-inspector masters-inline-side-panel" aria-label={`${deliverable.name} ${assetInspector.type}`}>
+                              <header className="masters-comments-rail-header">
+                                <div>
+                                  <h2>{assetInspector.type === "captions" ? "Captions (SRT)" : assetInspector.type === "versions" ? `Versions (${deliverable.versions.length})` : "Thumbnail"}</h2>
+                                  <span className="label-xs">{deliverable.name}</span>
+                                </div>
+                                <button type="button" aria-label="Close inspector" onClick={() => setAssetInspector(null)}><DsIcon name="x-close-cross" size={16} /></button>
+                              </header>
+                              {assetInspector.type === "captions" && deliverable.srt ? (
+                                <SrtInspector
+                                  key={`${deliverable.id}-${deliverable.srt.filename}`}
+                                  attachment={deliverable.srt}
+                                  isEditable={isFilmmaker}
+                                  onDownload={() => downloadSrt(deliverable)}
+                                  onSave={(lines) => saveCaptions(deliverable.id, lines)}
+                                  onSeek={(seconds) => { setExpandedDeliverableId(deliverable.id); setCurrentTimeSeconds(seconds); }}
+                                />
+                              ) : assetInspector.type === "thumbnail" && deliverable.thumbnail ? (
+                                <ThumbnailInspector
+                                  deliverable={deliverable}
+                                  onCopy={() => void copyThumbnailImage(deliverable)}
+                                  onDelete={() => deleteThumbnail(deliverable.id)}
+                                  onDownload={() => downloadThumbnail(deliverable)}
+                                  onEditCopy={() => openThumbnailGenerator(deliverable.id, true)}
+                                  onRegenerate={() => openThumbnailGenerator(deliverable.id)}
+                                  onReplace={() => openThumbnailUpload(deliverable.id)}
+                                />
+                              ) : assetInspector.type === "versions" ? (
+                                <VersionsPanel
+                                  deliverable={deliverable}
+                                  selectedVersionId={getPresentedVersion(deliverable, selectedVersionByDeliverable)?.id}
+                                  isFilmmaker={isFilmmaker}
+                                  onDelete={(versionId) => deleteVersion(deliverable.id, versionId)}
+                                  onDownload={(version) => openDownloadSelection(deliverable.id, version.id)}
+                                  onApprove={(versionId) => approveDeliverable(deliverable.id, versionId)}
+                                  onUnapprove={(versionId) => unapproveDeliverable(deliverable.id, versionId)}
+                                  onSelect={(versionId) => selectVersion(deliverable.id, versionId)}
+                                  onSetCurrent={(versionId) => setCurrentVersion(deliverable.id, versionId)}
+                                  onUpload={() => openUpload(deliverable.id)}
+                                />
+                              ) : null}
+                            </aside>
+                          ) : commentsDeliverableId === deliverable.id ? (
+                            <aside className="masters-comments-rail masters-inline-side-panel" aria-label={`${deliverable.name} comments`}>
+                              <header className="masters-comments-rail-header">
+                                <div>
+                                  <h2>Comments ({deliverable.comments.length})</h2>
+                                  <span className="label-xs">{deliverable.name}</span>
+                                </div>
+                                <button type="button" aria-label="Close comments" onClick={() => toggleDeliverableComments(deliverable.id)}>
+                                  <DsIcon name="x-close-cross" size={16} />
+                                </button>
+                              </header>
+                              <CommentsPanel
+                                comments={deliverable.comments}
+                                filter={commentFilter}
+                                role={role}
+                                selectedCommentId={selectedCommentId}
+                                onFilter={setCommentFilter}
+                                onCommentsChange={(comments) => setDeliverables((current) => current.map((item) =>
+                                  item.id === deliverable.id ? { ...item, comments } : item,
+                                ))}
+                                onSelect={(comment) => {
+                                  setSelectedCommentId(comment.id);
+                                  if (typeof comment.timecodeSeconds === "number") {
+                                    setHasCommentAnchor(true);
+                                    setCurrentTimeSeconds(comment.timecodeSeconds);
+                                  }
+                                }}
+                              />
+                              <ReviewCommentComposer
+                                body={commentDraft}
+                                currentTimeSeconds={currentTimeSeconds}
+                                visibility={commentVisibility}
+                                hasAnchor={hasCommentAnchor}
+                                hasDrawingAttachment={hasDrawingAttachment}
+                                hasFramePinAttachment={false}
+                                isDrawingMode={isDrawingMode}
+                                isEditingOverallComment={false}
+                                isPostingMenuOpen={isPostingMenuOpen}
+                                onBodyChange={setCommentDraft}
+                                onRemoveAnchor={() => setHasCommentAnchor(false)}
+                                onSetVisibility={(visibility) => {
+                                  setCommentVisibility(visibility);
+                                  setIsPostingMenuOpen(false);
+                                }}
+                                onSubmit={postComment}
+                                onToggleDrawingMode={() => {
+                                  setHasCommentAnchor(true);
+                                  setIsPlaying(false);
+                                  setIsDrawingMode((current) => !current);
+                                }}
+                                onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
+                              />
+                            </aside>
+                          ) : undefined}
+                          recutMarks={isMarkingUpTarget
                             ? recutMarks
                             : deliverable.recutBrief && deliverable.versions.length === 0
                               ? deliverable.recutBrief.marks
@@ -1034,9 +1341,7 @@ export function MastersPage({ project }: { project: Project }) {
                           onUnapprove={() => {
                             if (playbackVersion) unapproveDeliverable(deliverable.id, playbackVersion.id);
                           }}
-                          onDownload={(versionToDownload) => downloadPrototypeFile(versionToDownload.filename, showToast)}
-                          onCancelRecutMarkup={cancelRecutMarkup}
-                          onSubmitRecut={submitRecut}
+                          onDownload={(versionToDownload) => openDownloadSelection(deliverable.id, versionToDownload.id)}
                           onBeginRecutInstruction={() => {
                             setDraftRecutRange(null);
                             setSelectedRecutMarkId(null);
@@ -1110,144 +1415,6 @@ export function MastersPage({ project }: { project: Project }) {
           </section>
         </section>
 
-        {markUpDeliverable ? (
-          <aside className="masters-comments-rail masters-recut-panel" aria-label={`${markUpDeliverable.name} recut mark-up`}>
-            <RecutMarkupPanel
-              parent={markUpDeliverable}
-              marks={recutMarks}
-              selectedMarkId={selectedRecutMarkId}
-              targetDuration={recutTargetDuration}
-              targetAspect={recutTargetAspect}
-              name={recutName}
-              notes={recutNotes}
-              onCancel={cancelRecutMarkup}
-              onChangeName={setRecutName}
-              onChangeNotes={setRecutNotes}
-              onChangeTargetAspect={(aspect) => {
-                setRecutTargetAspect(aspect);
-                setRecutName(getAutoRecutName(recutTargetDuration, aspect, markUpDeliverable.name));
-              }}
-              onChangeTargetDuration={(duration) => {
-                setRecutTargetDuration(duration);
-                setRecutName(getAutoRecutName(duration, recutTargetAspect, markUpDeliverable.name));
-              }}
-              onDeleteMark={deleteRecutMark}
-              onPrepareEdit={rememberRecutMarks}
-              onSelectMark={(mark) => {
-                setDraftRecutRange(null);
-                setSelectedRecutMarkId(mark.id);
-                setCurrentTimeSeconds(mark.inSec);
-              }}
-              onSubmit={submitRecut}
-              onUpdateMark={updateRecutMark}
-            />
-          </aside>
-        ) : recutPanelDeliverable?.recutBrief ? (
-          <aside className="masters-comments-rail masters-recut-panel" aria-label={`${recutPanelDeliverable.name} recut brief`}>
-            <RecutBriefPanel
-              deliverable={recutPanelDeliverable}
-              isFilmmaker={isFilmmaker}
-              selectedMarkId={selectedRecutMarkId}
-              onSelectMark={(mark) => {
-                setSelectedRecutMarkId(mark.id);
-                setCurrentTimeSeconds(mark.inSec);
-              }}
-              onOpenInEdit={() => openRecutInEdit(recutPanelDeliverable)}
-            />
-          </aside>
-        ) : assetInspector && assetDeliverable ? (
-          <aside className="masters-comments-rail masters-asset-inspector" aria-label={`${assetDeliverable.name} ${assetInspector.type}`}>
-            <header className="masters-comments-rail-header">
-              <div>
-                <h2>{assetInspector.type === "captions" ? "Captions (SRT)" : assetInspector.type === "versions" ? `Versions (${assetDeliverable.versions.length})` : "Thumbnail"}</h2>
-                <span className="label-xs">{assetDeliverable.name}</span>
-              </div>
-              <button type="button" aria-label="Close inspector" onClick={() => setAssetInspector(null)}><DsIcon name="x-close-cross" size={16} /></button>
-            </header>
-            {assetInspector.type === "captions" && assetDeliverable.srt ? (
-              <SrtInspector
-                key={`${assetDeliverable.id}-${assetDeliverable.srt.filename}`}
-                attachment={assetDeliverable.srt}
-                isEditable={isFilmmaker}
-                onDownload={() => downloadSrt(assetDeliverable)}
-                onSave={(lines) => saveCaptions(assetDeliverable.id, lines)}
-                onSeek={(seconds) => { setExpandedDeliverableId(assetDeliverable.id); setCurrentTimeSeconds(seconds); }}
-              />
-            ) : assetInspector.type === "thumbnail" && assetDeliverable.thumbnail ? (
-              <ThumbnailInspector
-                deliverable={assetDeliverable}
-                isFilmmaker={isFilmmaker}
-                onEditCopy={() => openThumbnailGenerator(assetDeliverable.id, true)}
-                onRegenerate={() => openThumbnailGenerator(assetDeliverable.id)}
-                onReplace={() => openThumbnailUpload(assetDeliverable.id)}
-              />
-            ) : assetInspector.type === "versions" ? (
-              <VersionsPanel
-                deliverable={assetDeliverable}
-                selectedVersionId={getPresentedVersion(assetDeliverable, selectedVersionByDeliverable)?.id}
-                isFilmmaker={isFilmmaker}
-                onDelete={(versionId) => deleteVersion(assetDeliverable.id, versionId)}
-                onDownload={(version) => downloadPrototypeFile(version.filename, showToast)}
-                onApprove={(versionId) => approveDeliverable(assetDeliverable.id, versionId)}
-                onUnapprove={(versionId) => unapproveDeliverable(assetDeliverable.id, versionId)}
-                onSelect={(versionId) => selectVersion(assetDeliverable.id, versionId)}
-                onSetCurrent={(versionId) => setCurrentVersion(assetDeliverable.id, versionId)}
-                onUpload={() => openUpload(assetDeliverable.id)}
-              />
-            ) : null}
-          </aside>
-        ) : commentsDeliverable ? (
-          <aside className="masters-comments-rail" aria-label={`${commentsDeliverable.name} comments`}>
-            <header className="masters-comments-rail-header">
-              <div>
-                <h2>Comments ({commentsDeliverable.comments.length})</h2>
-                <span className="label-xs">{commentsDeliverable.name}</span>
-              </div>
-            </header>
-            <CommentsPanel
-              comments={commentsDeliverable.comments}
-              filter={commentFilter}
-              role={role}
-              selectedCommentId={selectedCommentId}
-              onFilter={setCommentFilter}
-              onCommentsChange={(comments) => setDeliverables((current) => current.map((deliverable) =>
-                deliverable.id === commentsDeliverable.id ? { ...deliverable, comments } : deliverable,
-              ))}
-              onSelect={(comment) => {
-                setSelectedCommentId(comment.id);
-                if (typeof comment.timecodeSeconds === "number") {
-                  setHasCommentAnchor(true);
-                  setCurrentTimeSeconds(comment.timecodeSeconds);
-                }
-              }}
-            />
-            <ReviewCommentComposer
-              body={commentDraft}
-              currentTimeSeconds={currentTimeSeconds}
-              visibility={commentVisibility}
-              hasAnchor={hasCommentAnchor}
-              hasDrawingAttachment={hasDrawingAttachment}
-              hasFramePinAttachment={false}
-              isDrawingMode={isDrawingMode}
-              isEditingOverallComment={false}
-              isPostingMenuOpen={isPostingMenuOpen}
-              onBodyChange={setCommentDraft}
-              onRemoveAnchor={() => setHasCommentAnchor(false)}
-              onSetVisibility={(visibility) => {
-                setCommentVisibility(visibility);
-                setIsPostingMenuOpen(false);
-              }}
-              onSubmit={postComment}
-              onToggleDrawingMode={() => {
-                setHasCommentAnchor(true);
-                setIsPlaying(false);
-                setIsDrawingMode((current) => !current);
-              }}
-              onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
-            />
-          </aside>
-        ) : null}
-
         <footer className="masters-action-footer" aria-label="Masters actions">
           <div className="masters-action-footer-inner">
             <button className="masters-footer-share" type="button" aria-label="Copy share link" onClick={() => copyShareLink("all-deliverables", showToast)}>
@@ -1278,7 +1445,7 @@ export function MastersPage({ project }: { project: Project }) {
                   disabled={readyDeliverables.length === 0}
                   onClick={() => setBulkApproveStep("confirm")}
                 >
-                  <DsIcon name="thumbs-up-like-fill" size={20} />Approve all
+                  <DsIcon name="thumbs-up-like-fill" size={20} />Approve all ready
                 </button>
               </span>
             ) : null}
@@ -1286,8 +1453,9 @@ export function MastersPage({ project }: { project: Project }) {
         </footer>
       </section>
 
-      {isFilmmaker ? <input ref={uploadInputRef} className="sr-only" type="file" onChange={uploadVersion} /> : null}
+        {isFilmmaker ? <input ref={uploadInputRef} className="sr-only" type="file" onChange={uploadVersion} /> : null}
       <input ref={thumbnailUploadInputRef} className="sr-only" type="file" accept="image/*" onChange={replaceThumbnail} />
+      <input ref={recutSourceUploadInputRef} className="sr-only" type="file" accept="video/*" onChange={uploadRecutSource} />
       {bulkApproveStep ? (
         <BulkApproveDialog
           deliverables={readyDeliverables}
@@ -1295,6 +1463,29 @@ export function MastersPage({ project }: { project: Project }) {
           onCancel={() => setBulkApproveStep(null)}
           onConfirm={approveAllReady}
           onDownload={() => downloadPrototypeFile(`${project.name}-Masters.zip`, showToast)}
+        />
+      ) : null}
+      {downloadDeliverable ? (
+        <DownloadAssetsDialog
+          deliverable={downloadDeliverable}
+          version={downloadVersion}
+          onCancel={() => setDownloadSelection(null)}
+          onDownload={downloadSelectedAssets}
+        />
+      ) : null}
+      {recutSourcePickerTarget ? (
+        <RecutSourceDialog
+          target={recutSourcePickerTarget}
+          currentSource={getRecutSource(recutSourcePickerTarget, deliverables)}
+          sources={deliverables.filter((deliverable) =>
+            deliverable.id !== recutSourcePickerTarget.id
+            && !deliverable.parentDeliverableId
+            && deliverable.kind === "video"
+            && deliverable.versions.length > 0,
+          )}
+          onCancel={() => setRecutSourcePickerTargetId(null)}
+          onSelect={(sourceId) => selectRecutSource(recutSourcePickerTarget.id, sourceId)}
+          onUpload={() => openRecutSourceUpload(recutSourcePickerTarget.id)}
         />
       ) : null}
       {requestSourceId ? (
@@ -1333,12 +1524,13 @@ export function MastersPage({ project }: { project: Project }) {
           onConfirm={() => deleteDeliverable(deleteConfirmId)}
         />
       ) : null}
-      {toast ? (
+        {toast ? (
         <div className="masters-toast label-s-semibold" role="status">
           <span>{toast.message}</span>
           {toast.canUndo && undoSeconds > 0 ? <button type="button" onClick={undoApproval}>Undo</button> : null}
         </div>
-      ) : null}
+        ) : null}
+      </div>
     </main>
   );
 }
@@ -1350,15 +1542,15 @@ function DeliverableRow({
   childrenExpanded,
   selectedVersion,
   commentCount,
-  unreadCommentCount,
   isFilmmaker,
   customerName,
   studioName,
   editingName,
   commentsOpen,
-  versionsOpen,
   rowMenuOpen,
+  recutSourceName,
   onChangeName,
+  onAddAsset,
   onApprove,
   onDelete,
   onDownload,
@@ -1366,15 +1558,13 @@ function DeliverableRow({
   onMoveFocus,
   onOpenCaptions,
   onOpenThumbnail,
-  canMarkUpRecut,
-  onMarkUpRecut,
+  recutActionLabel,
+  onRecutAction,
   onReplace,
   onSelect,
   onToggleChildren,
-  onSelectVersion,
   onShare,
   onToggleComments,
-  onToggleVersions,
   onUpload,
   onToggleRowMenu,
 }: {
@@ -1384,15 +1574,15 @@ function DeliverableRow({
   childrenExpanded: boolean;
   selectedVersion?: MastersVersion;
   commentCount: number;
-  unreadCommentCount: number;
   isFilmmaker: boolean;
   customerName: string;
   studioName: string;
   editingName: boolean;
   commentsOpen: boolean;
-  versionsOpen: boolean;
   rowMenuOpen: boolean;
+  recutSourceName?: string;
   onChangeName: (name: string) => void;
+  onAddAsset: () => void;
   onApprove: () => void;
   onDelete: () => void;
   onDownload: () => void;
@@ -1400,18 +1590,17 @@ function DeliverableRow({
   onMoveFocus: (direction: -1 | 1) => void;
   onOpenCaptions: () => void;
   onOpenThumbnail: () => void;
-  canMarkUpRecut: boolean;
-  onMarkUpRecut: () => void;
+  recutActionLabel: string | null;
+  onRecutAction: () => void;
   onReplace: () => void;
   onSelect: () => void;
   onToggleChildren: () => void;
-  onSelectVersion: (versionId: string) => void;
   onShare: () => void;
   onToggleComments: () => void;
-  onToggleVersions: () => void;
   onUpload: () => void;
   onToggleRowMenu: () => void;
 }) {
+  const hasThumbnail = Boolean(deliverable.thumbnail);
   const hasCaptions = Boolean(deliverable.srt && deliverable.captions.some((caption) => caption !== "None"));
   const primaryAction = getDeliverablePrimaryAction(deliverable.status, selectedVersion, isFilmmaker);
   const primaryActionIsDownload = primaryAction?.kind === "download";
@@ -1426,7 +1615,7 @@ function DeliverableRow({
   return (
     <article
       id={`masters-row-${deliverable.id}`}
-      className={`masters-deliverable-row ${expanded ? "expanded" : ""} ${childrenExpanded ? "children-expanded" : ""} ${deliverable.parentDeliverableId ? "is-child" : ""}`}
+      className={`masters-deliverable-row ${expanded ? "expanded" : ""} ${childrenExpanded ? "children-expanded" : ""} ${deliverable.parentDeliverableId ? "is-child" : ""} ${recutSourceName ? "is-recut-child" : ""}`}
       role="row"
       tabIndex={0}
       aria-selected={expanded}
@@ -1453,11 +1642,15 @@ function DeliverableRow({
           {deliverable.parentDeliverableId ? <span className="masters-child-connector" aria-hidden="true">└</span> : null}
           <DsIcon name="caret-right" size={16} />
         </button>
-        <DeliverableThumbnail
-          deliverable={deliverable}
-          version={selectedVersion}
-          onOpen={onOpenThumbnail}
-        />
+        {recutSourceName ? (
+          <span
+            className="masters-recut-source-connector"
+            aria-label={`Derived from ${recutSourceName}`}
+            data-tooltip={`Derived from ${recutSourceName}`}
+          >
+            <DsIcon name="arrow-bend-up-right" size={18} />
+          </span>
+        ) : null}
         <div className="masters-row-name-zone">
           <div className="masters-row-name-line">
             {editingName ? (
@@ -1476,63 +1669,56 @@ function DeliverableRow({
         </div>
       </div>
 
-      <div className="masters-row-details" role="cell">
+      <div className="masters-row-assets" role="cell" aria-label={`${deliverable.name} assets`}>
+        {hasThumbnail ? (
+          <button
+            className="masters-asset-tile"
+            type="button"
+            aria-label={`Open thumbnail for ${deliverable.name}`}
+            onClick={(event) => { event.stopPropagation(); onOpenThumbnail(); }}
+          >
+            <span className="masters-asset-tile-preview">
+              <img src={deliverable.thumbnail?.imageUrl} alt="" />
+            </span>
+            <span className="label-xs-semibold">Thumbnail</span>
+          </button>
+        ) : null}
+        {hasCaptions ? (
+          <button
+            className="masters-asset-tile"
+            type="button"
+            aria-label={`Open captions for ${deliverable.name}`}
+            onClick={(event) => { event.stopPropagation(); onOpenCaptions(); }}
+          >
+            <span className="masters-asset-tile-preview is-icon"><DsIcon name="file-text" size={16} /></span>
+            <span className="label-xs-semibold">Captions</span>
+          </button>
+        ) : null}
+        {isFilmmaker ? (
+          <button
+            className="masters-asset-tile is-empty"
+            type="button"
+            onClick={(event) => { event.stopPropagation(); onAddAsset(); }}
+          >
+            <DsIcon name="plus" size={14} />
+            <span className="label-xs-semibold">Add asset</span>
+          </button>
+        ) : null}
+      </div>
+
+      <div className="masters-row-comments" role="cell">
         <button
-          className={`masters-detail-pill ${commentCount > 0 ? "active" : "ghosted"} ${commentsOpen ? "selected" : ""}`}
+          className={`masters-comments-button ${commentCount > 0 ? "active" : "ghosted"} ${commentsOpen ? "selected" : ""}`}
           type="button"
           aria-label={`${commentsOpen ? "Close" : "Open"} comments for ${deliverable.name}`}
           aria-expanded={commentsOpen}
+          data-tooltip={commentCount > 0 ? `${commentCount} ${commentCount === 1 ? "comment" : "comments"}` : "No comments"}
           onClick={(event) => { event.stopPropagation(); onToggleComments(); }}
         >
-          <DsIcon name="chat-circle" size={16} />
-          <span className="label-xs-semibold">Comments</span>
+          <DsIcon name="chat-circle" size={20} />
           {commentCount > 0 ? (
-            <span className={`masters-detail-count label-xs-semibold ${unreadCommentCount > 0 ? "unread" : ""}`}>
-              {commentCount}
-            </span>
+            <span className="masters-comments-count label-xs-semibold">{commentCount}</span>
           ) : null}
-        </button>
-
-        <div className="masters-row-versions-wrap">
-          <button
-            className={`masters-detail-pill ${selectedVersion ? "active" : "ghosted"} ${versionsOpen ? "selected" : ""}`}
-            type="button"
-            disabled={!selectedVersion}
-            aria-label={`${versionsOpen ? "Close" : "Open"} versions for ${deliverable.name}`}
-            aria-expanded={versionsOpen}
-            onClick={(event) => { event.stopPropagation(); onToggleVersions(); }}
-          >
-            <DsIcon name="copy" size={16} />
-            <span className="label-xs-semibold">Versions</span>
-            {selectedVersion ? <span className="masters-detail-value label-xs-semibold">V{selectedVersion.number}</span> : null}
-          </button>
-          {versionsOpen ? (
-            <div className="masters-row-versions-menu" onClick={(event) => event.stopPropagation()}>
-              {[...deliverable.versions].reverse().map((version) => (
-                <button
-                  className={version.id === selectedVersion?.id ? "selected" : ""}
-                  type="button"
-                  key={version.id}
-                  onClick={() => onSelectVersion(version.id)}
-                >
-                  <span className="label-xs-semibold">V{version.number}</span>
-                  <span className="label-xs">{formatShortDate(version.uploadedAt)}</span>
-                  <small className="label-xs">{version.uploadedBy}</small>
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
-
-        <button
-          className={`masters-detail-pill ${hasCaptions ? "active" : "ghosted"}`}
-          type="button"
-          disabled={!hasCaptions}
-          aria-label={`${hasCaptions ? "Open" : "No"} captions for ${deliverable.name}`}
-          onClick={(event) => { event.stopPropagation(); onOpenCaptions(); }}
-        >
-          <DsIcon name="file-text" size={16} />
-          <span className="label-xs-semibold">Captions</span>
         </button>
       </div>
 
@@ -1541,6 +1727,19 @@ function DeliverableRow({
       </div>
 
       <div className="masters-row-actions" role="cell">
+        {recutActionLabel ? (
+          <button
+            className="masters-row-recut-action label-s-semibold"
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onRecutAction();
+            }}
+          >
+            <DsIcon name="stage-edit" size={14} />
+            {recutActionLabel}
+          </button>
+        ) : null}
         {primaryAction ? (
         <button
           className={`masters-row-primary-action ${primaryAction.style} label-s-semibold`}
@@ -1551,6 +1750,9 @@ function DeliverableRow({
           {primaryAction.label}
         </button>
         ) : null}
+      </div>
+
+      <div className="masters-row-overflow" role="cell">
         <div className="masters-row-menu-wrap">
           <button
             className="masters-row-menu-button"
@@ -1567,18 +1769,13 @@ function DeliverableRow({
                 <button className="label-xs-semibold" type="button" onClick={onDownload}><DsIcon name="download" size={14} />Download</button>
               ) : null}
               <button className="label-xs-semibold" type="button" onClick={onShare}><DsIcon name="link" size={14} />Copy share link</button>
-              {canMarkUpRecut ? (
-                <button className="label-xs-semibold" type="button" onClick={onMarkUpRecut}>
-                  <DsIcon name="stage-edit" size={14} />Mark up a re-cut
-                </button>
-              ) : null}
               {isFilmmaker ? (
                 <>
                   <button className="label-xs-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={14} />Upload new version</button>
                   {selectedVersion ? <button className="label-xs-semibold" type="button" onClick={onReplace}><DsIcon name="arrows-clockwise" size={14} />Replace file</button> : null}
                   <button className="label-xs-semibold" type="button" onClick={onEditName}><DsIcon name="pencil-simple" size={14} />Rename</button>
                   <span className="masters-row-menu-divider" role="separator" />
-                  <button className="delete label-xs-semibold" type="button" onClick={onDelete}><DsIcon name="trash" size={14} />Delete deliverable</button>
+                  <button className="delete label-xs-semibold" type="button" onClick={onDelete}><DsIcon name="trash" size={14} />Delete asset</button>
                 </>
               ) : null}
             </div>
@@ -1589,41 +1786,12 @@ function DeliverableRow({
   );
 }
 
-function DeliverableThumbnail({
-  deliverable,
-  version,
-  onOpen,
-}: {
-  deliverable: MastersDeliverable;
-  version?: MastersVersion;
-  onOpen: () => void;
-}) {
-  const thumbnail = deliverable.thumbnail;
-  return (
-    <span className="masters-thumbnail-asset-wrap" data-tooltip="Edit thumbnail">
-      <button
-        className={`masters-row-thumbnail ${thumbnail ? "has-generated-thumbnail" : version ? "has-poster" : "placeholder"}`}
-        type="button"
-        aria-label={`Open thumbnail for ${deliverable.name}`}
-        onClick={(event) => { event.stopPropagation(); onOpen(); }}
-      >
-        {thumbnail
-          ? <img src={thumbnail.imageUrl} alt="" />
-          : deliverable.kind === "captions"
-            ? <DsIcon name="file-text" size={18} />
-            : version
-              ? <DsIcon name="play" size={18} />
-              : <span className="label-xs-semibold">{deliverable.format}</span>}
-      </button>
-    </span>
-  );
-}
-
 function ExpandedDeliverable({
   deliverable,
   sourceDeliverable,
   version,
   role,
+  customerName,
   isFilmmaker,
   currentTimeSeconds,
   isPlaying,
@@ -1633,6 +1801,10 @@ function ExpandedDeliverable({
   activeDrawingPath,
   selectedDrawingPaths,
   isMarkUpMode,
+  recutSourceName,
+  recutSourceVersionNumber,
+  onChangeRecutSource,
+  sidePanel,
   recutMarks,
   draftRecutRange,
   selectedRecutMarkId,
@@ -1643,8 +1815,6 @@ function ExpandedDeliverable({
   onClearDrawing,
   onDoneDrawing,
   onDownload,
-  onCancelRecutMarkup,
-  onSubmitRecut,
   onBeginRecutInstruction,
   onChangeDraftRecutRange,
   onChooseRecutVerb,
@@ -1668,6 +1838,7 @@ function ExpandedDeliverable({
   sourceDeliverable: MastersDeliverable;
   version?: MastersVersion;
   role: MastersRole;
+  customerName: string;
   isFilmmaker: boolean;
   currentTimeSeconds: number;
   isPlaying: boolean;
@@ -1677,6 +1848,10 @@ function ExpandedDeliverable({
   activeDrawingPath: DrawingPath | null;
   selectedDrawingPaths: DrawingPath[];
   isMarkUpMode: boolean;
+  recutSourceName?: string;
+  recutSourceVersionNumber?: number;
+  onChangeRecutSource: () => void;
+  sidePanel?: ReactNode;
   recutMarks: RecutMark[];
   draftRecutRange: RecutDraftRange | null;
   selectedRecutMarkId: string | null;
@@ -1687,8 +1862,6 @@ function ExpandedDeliverable({
   onClearDrawing: () => void;
   onDoneDrawing: () => void;
   onDownload: (version: MastersVersion) => void;
-  onCancelRecutMarkup: () => void;
-  onSubmitRecut: () => void;
   onBeginRecutInstruction: () => void;
   onChangeDraftRecutRange: (range: RecutDraftRange | null) => void;
   onChooseRecutVerb: (verb: RecutMarkVerb) => void;
@@ -1712,11 +1885,11 @@ function ExpandedDeliverable({
 
   return (
     <section
-      className="masters-expanded-panel"
+      className={`masters-expanded-panel ${isMarkUpMode ? "is-recut-workspace" : ""}`}
       id={`masters-expanded-${deliverable.id}`}
-      aria-label={`${deliverable.name} delivery details`}
+      aria-label={isMarkUpMode ? `Create re-cut brief for ${deliverable.name}` : `${deliverable.name} delivery details`}
     >
-      <div className="masters-expanded-layout">
+      <div className={`masters-expanded-layout ${sidePanel ? "has-side-panel" : ""}`}>
         <div className="masters-expanded-preview">
           {version ? (
             <CompactPlayer
@@ -1732,6 +1905,9 @@ function ExpandedDeliverable({
               activeDrawingPath={activeDrawingPath}
               selectedDrawingPaths={selectedDrawingPaths}
               isMarkUpMode={isMarkUpMode}
+              recutSourceName={recutSourceName}
+              recutSourceVersionNumber={recutSourceVersionNumber}
+              onChangeRecutSource={onChangeRecutSource}
               recutMarks={recutMarks}
               draftRecutRange={draftRecutRange}
               selectedRecutMarkId={selectedRecutMarkId}
@@ -1786,34 +1962,28 @@ function ExpandedDeliverable({
                 </button>
               ) : null}
             </div>
-          ) : (
+          ) : !isMarkUpMode && version && !version.approved ? (
             <div className="masters-expanded-actions">
-              {version && !version.approved ? (
-                <button
-                  className="masters-primary-button label-s-semibold"
-                  type="button"
-                  onClick={onApprove}
-                >
-                  <DsIcon name="check" size={16} />Approve this version
-                </button>
-              ) : null}
-              {version?.approved ? (
-                <button className="masters-secondary-button label-s-semibold" type="button" onClick={onUnapprove}>
-                  <DsIcon name="arrow-counter-clockwise" size={16} />Unapprove this version
-                </button>
-              ) : null}
-              {version?.approved ? (
-                <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}>
-                  <DsIcon name="download" size={16} />Download
-                </button>
-              ) : null}
+              <ShareActionRow
+                context="masters"
+                userRole={role}
+                initialLinkOpens="videoOnly"
+                initialAccess="canComment"
+                projectName={deliverable.name}
+                studioName={mastersStudioName}
+                customerName={customerName}
+                showCopyLink={false}
+                approveLabel="Approve this version"
+                onApprove={onApprove}
+              />
             </div>
-          )}
-          {isMarkUpMode ? (
-            <div className="masters-markup-player-actions">
-              <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancelRecutMarkup}>Cancel</button>
-              <button className="masters-primary-button label-s-semibold" type="button" disabled={recutMarks.length === 0 || recutMarks.some((mark) => mark.verb === "trim" && !mark.note?.trim())} onClick={onSubmitRecut}>
-                Send to editor
+          ) : !isMarkUpMode && version?.approved ? (
+            <div className="masters-expanded-actions">
+              <button className="masters-secondary-button label-s-semibold" type="button" onClick={onUnapprove}>
+                <DsIcon name="arrow-counter-clockwise" size={16} />Unapprove this version
+              </button>
+              <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}>
+                <DsIcon name="download" size={16} />Download
               </button>
             </div>
           ) : null}
@@ -1832,7 +2002,7 @@ function ExpandedDeliverable({
             </details>
           ) : null}
         </div>
-
+        {sidePanel}
       </div>
     </section>
   );
@@ -1851,12 +2021,15 @@ function CompactPlayer({
   activeDrawingPath,
   selectedDrawingPaths,
   isMarkUpMode,
+  recutSourceName,
+  recutSourceVersionNumber,
   recutMarks,
   draftRecutRange,
   selectedRecutMarkId,
   canUndoRecut,
   canRedoRecut,
   onClearDrawing,
+  onChangeRecutSource,
   onDoneDrawing,
   onEndDrawing,
   onBeginRecutInstruction,
@@ -1888,12 +2061,15 @@ function CompactPlayer({
   activeDrawingPath: DrawingPath | null;
   selectedDrawingPaths: DrawingPath[];
   isMarkUpMode: boolean;
+  recutSourceName?: string;
+  recutSourceVersionNumber?: number;
   recutMarks: RecutMark[];
   draftRecutRange: RecutDraftRange | null;
   selectedRecutMarkId: string | null;
   canUndoRecut: boolean;
   canRedoRecut: boolean;
   onClearDrawing: () => void;
+  onChangeRecutSource: () => void;
   onDoneDrawing: () => void;
   onEndDrawing: () => void;
   onBeginRecutInstruction: () => void;
@@ -1946,11 +2122,44 @@ function CompactPlayer({
     outSec: Math.max(range.inSec, range.outSec),
   });
 
+  useEffect(() => {
+    const handleSkipShortcut = (event: globalThis.KeyboardEvent) => {
+      const target = event.target;
+      if (
+        event.metaKey
+        || event.ctrlKey
+        || event.altKey
+        || (target instanceof HTMLElement
+          && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)))
+      ) return;
+
+      if (event.key.toLowerCase() === "j") {
+        event.preventDefault();
+        onSeek(Math.max(0, currentTimeSeconds - 10));
+      }
+      if (event.key.toLowerCase() === "l") {
+        event.preventDefault();
+        onSeek(Math.min(duration, currentTimeSeconds + 10));
+      }
+    };
+
+    window.addEventListener("keydown", handleSkipShortcut);
+    return () => window.removeEventListener("keydown", handleSkipShortcut);
+  }, [currentTimeSeconds, duration, onSeek]);
+
   return (
     <div className={`masters-compact-player ${isMarkUpMode ? "is-marking-up" : ""}`} key={`${contextDeliverable.id}-${version.id}`}>
-      <div className="masters-compact-player-top">
+      <div className={`masters-compact-player-top ${isMarkUpMode ? "is-marking-up" : ""}`}>
         {isMarkUpMode ? (
-          <span className="masters-markup-banner label-xs-semibold">Add instructions for the editor</span>
+          <div className="masters-markup-source-control">
+            <div>
+              <span className="label-xs">Source video</span>
+              <strong className="label-s-semibold">
+                {recutSourceName ?? deliverable.name}{recutSourceVersionNumber ? ` · V${recutSourceVersionNumber}` : ""}
+              </strong>
+            </div>
+            <button className="label-xs-semibold" type="button" onClick={onChangeRecutSource}>Change source</button>
+          </div>
         ) : contextDeliverable.recutBrief && contextDeliverable.versions.length === 0 ? (
           <span className="masters-recut-brief-chip label-xs-semibold">Recut brief - awaiting V1 · target {contextDeliverable.recutBrief.targetDurationSec}s</span>
         ) : (
@@ -2010,30 +2219,8 @@ function CompactPlayer({
         {isMarkUpMode ? (
           <div className="masters-recut-simple-toolbar">
             <div>
-              <strong className="label-s-semibold">Choose a section</strong>
+              <strong className="label-s-semibold">Mark up this video</strong>
               <span className="label-xs">Click the timeline below and drag the start and end points.</span>
-            </div>
-            <div className="masters-recut-simple-actions">
-              <button
-                className="masters-recut-history-button"
-                type="button"
-                aria-label="Undo last recut change"
-                data-tooltip="Undo"
-                disabled={!canUndoRecut}
-                onClick={onUndoRecut}
-              >
-                <DsIcon name="arrow-counter-clockwise" size={16} />
-              </button>
-              <button
-                className="masters-recut-history-button"
-                type="button"
-                aria-label="Redo last recut change"
-                data-tooltip="Redo"
-                disabled={!canRedoRecut}
-                onClick={onRedoRecut}
-              >
-                <DsIcon name="arrow-clockwise" size={16} />
-              </button>
             </div>
           </div>
         ) : null}
@@ -2242,6 +2429,32 @@ function CompactPlayer({
             ))}
           </div>
           <span className="label-xs">{formatTime(duration)}</span>
+          {isMarkUpMode ? (
+            <div className="masters-recut-timeline-history" aria-label="Markup history">
+              <button
+                className="masters-recut-history-button"
+                type="button"
+                aria-label="Undo markup"
+                aria-keyshortcuts="Meta+Z"
+                data-tooltip="Undo markup"
+                disabled={!canUndoRecut}
+                onClick={onUndoRecut}
+              >
+                <DsIcon name="arrow-counter-clockwise" size={16} />
+              </button>
+              <button
+                className="masters-recut-history-button"
+                type="button"
+                aria-label="Redo markup"
+                aria-keyshortcuts="Meta+Shift+Z"
+                data-tooltip="Redo markup"
+                disabled={!canRedoRecut}
+                onClick={onRedoRecut}
+              >
+                <DsIcon name="arrow-clockwise" size={16} />
+              </button>
+            </div>
+          ) : null}
         </div>
         {isMarkUpMode && !isSelectingRecutRange && (draftRecutRange || selectedRecutMark) ? (
           <div className="masters-recut-action-step">
@@ -2278,12 +2491,32 @@ function CompactPlayer({
           </div>
         ) : null}
         <div className="masters-control-row">
-          <div>
-            <button type="button" aria-label="Step back five seconds" onClick={() => onSeek(Math.max(0, currentTimeSeconds - 5))}><DsIcon name="arrow-counter-clockwise" size={16} /></button>
+          <div className="masters-playback-controls">
+            <button
+              className="masters-skip-button"
+              type="button"
+              aria-label="Back 10 seconds"
+              aria-keyshortcuts="J"
+              data-tooltip="Back 10s (J)"
+              onClick={() => onSeek(Math.max(0, currentTimeSeconds - 10))}
+            >
+              <span aria-hidden="true" className="masters-skip-glyph label-s">⏮</span>
+              <span aria-hidden="true" className="masters-skip-seconds label-xs-semibold">10</span>
+            </button>
             <button className="play" type="button" aria-label={isPlaying ? "Pause" : "Play"} onClick={onTogglePlaying}><DsIcon name={isPlaying ? "pause" : "play"} size={16} /></button>
-            <button type="button" aria-label="Step forward five seconds" onClick={() => onSeek(Math.min(duration, currentTimeSeconds + 5))}><DsIcon name="arrow-clockwise" size={16} /></button>
+            <button
+              className="masters-skip-button"
+              type="button"
+              aria-label="Forward 10 seconds"
+              aria-keyshortcuts="L"
+              data-tooltip="Forward 10s (L)"
+              onClick={() => onSeek(Math.min(duration, currentTimeSeconds + 10))}
+            >
+              <span aria-hidden="true" className="masters-skip-seconds label-xs-semibold">10</span>
+              <span aria-hidden="true" className="masters-skip-glyph label-s">⏭</span>
+            </button>
           </div>
-          <div>
+          <div className="masters-player-utility-controls">
             <button type="button" aria-label={isMuted ? "Unmute" : "Mute"} onClick={onToggleMuted}><DsIcon name="speaker-high" size={16} /></button>
             <button type="button" aria-label="Fullscreen"><DsIcon name="frame-corners" size={16} /></button>
           </div>
@@ -2578,7 +2811,6 @@ function toReviewComment(comment: MastersComment): ReviewComment {
 }
 
 function RecutMarkupPanel({
-  parent,
   marks,
   selectedMarkId,
   targetDuration,
@@ -2589,14 +2821,13 @@ function RecutMarkupPanel({
   onChangeName,
   onChangeNotes,
   onChangeTargetAspect,
-  onChangeTargetDuration,
   onDeleteMark,
+  onFinishEdit,
   onPrepareEdit,
   onSelectMark,
   onSubmit,
   onUpdateMark,
 }: {
-  parent: MastersDeliverable;
   marks: RecutMark[];
   selectedMarkId: string | null;
   targetDuration: number;
@@ -2607,8 +2838,8 @@ function RecutMarkupPanel({
   onChangeName: (name: string) => void;
   onChangeNotes: (notes: string) => void;
   onChangeTargetAspect: (aspect: string) => void;
-  onChangeTargetDuration: (duration: number) => void;
   onDeleteMark: (markId: string) => void;
+  onFinishEdit: () => void;
   onPrepareEdit: () => void;
   onSelectMark: (mark: RecutMark) => void;
   onSubmit: () => void;
@@ -2624,17 +2855,6 @@ function RecutMarkupPanel({
         <button type="button" aria-label="Cancel recut mark-up" onClick={onCancel}><DsIcon name="x-close-cross" size={16} /></button>
       </header>
       <div className="masters-recut-panel-body">
-        <label className="masters-recut-target label-s-semibold">
-          <span>Target:</span>
-          <input
-            type="number"
-            min={1}
-            max={getDeliverableDurationSeconds(parent)}
-            value={targetDuration}
-            onChange={(event) => onChangeTargetDuration(Math.max(1, Number(event.target.value) || 1))}
-          />
-          <span>sec</span>
-        </label>
         <div className="masters-recut-mark-list">
           {marks.length ? marks.map((mark) => (
             <article className={`masters-recut-mark-card mark-${mark.verb} ${selectedMarkId === mark.id ? "selected" : ""}`} key={mark.id}>
@@ -2648,15 +2868,26 @@ function RecutMarkupPanel({
                     <label className="label-xs">Start <input type="number" min={0} step={0.04} value={mark.inSec} onFocus={onPrepareEdit} onChange={(event) => onUpdateMark(mark.id, { inSec: Number(event.target.value) })} /></label>
                     <label className="label-xs">End <input type="number" min={mark.inSec + 0.04} step={0.04} value={mark.outSec} onFocus={onPrepareEdit} onChange={(event) => onUpdateMark(mark.id, { outSec: Number(event.target.value) })} /></label>
                   </div>
-                  <textarea
-                    className="label-s"
-                    rows={2}
-                    required={mark.verb === "trim"}
-                    placeholder={mark.verb === "trim" ? "Tell the editor what should happen here..." : "Add a note..."}
-                    value={mark.note ?? ""}
-                    onFocus={onPrepareEdit}
-                    onChange={(event) => onUpdateMark(mark.id, { note: event.target.value })}
-                  />
+                  <div className="masters-recut-note-composer">
+                    <textarea
+                      className="label-s"
+                      rows={2}
+                      required={mark.verb === "trim"}
+                      placeholder={mark.verb === "trim" ? "Tell the editor what should happen here..." : "Add a note..."}
+                      value={mark.note ?? ""}
+                      onFocus={onPrepareEdit}
+                      onChange={(event) => onUpdateMark(mark.id, { note: event.target.value })}
+                    />
+                    <button
+                      className="send-button"
+                      type="button"
+                      aria-label="Save instruction note"
+                      disabled={mark.verb === "trim" && !mark.note?.trim()}
+                      onClick={onFinishEdit}
+                    >
+                      <DsIcon name="paper-plane-tilt" size={17} />
+                    </button>
+                  </div>
                 </div>
               ) : mark.note ? <p className="label-s">“{mark.note}”</p> : null}
               <div className="masters-recut-card-actions">
@@ -2690,19 +2921,26 @@ function RecutMarkupPanel({
   );
 }
 
-function RecutBriefPanel({ deliverable, isFilmmaker, selectedMarkId, onSelectMark, onOpenInEdit }: {
+function RecutBriefPanel({
+  deliverable,
+  selectedMarkId,
+  onSelectMark,
+  onClose,
+  onEditBrief,
+}: {
   deliverable: MastersDeliverable;
-  isFilmmaker: boolean;
   selectedMarkId: string | null;
   onSelectMark: (mark: RecutMark) => void;
-  onOpenInEdit: () => void;
+  onClose: () => void;
+  onEditBrief: () => void;
 }) {
   const brief = deliverable.recutBrief;
   if (!brief) return null;
   return (
     <>
       <header className="masters-comments-rail-header">
-        <div><h2>Recut Brief</h2><span className="label-xs">{brief.marks.length} {brief.marks.length === 1 ? "mark" : "marks"} · target {brief.targetDurationSec}s</span></div>
+        <div><h2>Re-cut brief</h2><span className="label-xs">{brief.marks.length} {brief.marks.length === 1 ? "mark" : "marks"} · target {brief.targetDurationSec}s</span></div>
+        <button type="button" aria-label="Close re-cut brief" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button>
       </header>
       <div className="masters-recut-panel-body read-only">
         <div className="masters-recut-brief-summary">
@@ -2723,7 +2961,11 @@ function RecutBriefPanel({ deliverable, isFilmmaker, selectedMarkId, onSelectMar
         </div>
         {brief.notes ? <div className="masters-recut-overall-notes"><strong className="label-xs-semibold">Overall notes</strong><p className="label-s">{brief.notes}</p></div> : null}
       </div>
-      {isFilmmaker ? <footer className="masters-recut-panel-footer"><button className="masters-primary-button label-s-semibold" type="button" onClick={onOpenInEdit}>Open in Edit tab</button></footer> : null}
+      <footer className="masters-recut-panel-footer">
+        <button className="masters-secondary-button label-s-semibold" type="button" onClick={onEditBrief}>
+          <DsIcon name="pencil-simple" size={14} />Edit brief
+        </button>
+      </footer>
     </>
   );
 }
@@ -2755,6 +2997,7 @@ function SrtInspector({
               {formatTime(line.startSeconds)} - {formatTime(line.endSeconds)}
             </button>
             <input
+              className="label-xs"
               value={line.text}
               readOnly={!isEditable}
               aria-label={`Caption at ${formatTime(line.startSeconds)}`}
@@ -2777,38 +3020,60 @@ function SrtInspector({
 
 function ThumbnailInspector({
   deliverable,
-  isFilmmaker,
+  onCopy,
+  onDelete,
+  onDownload,
   onEditCopy,
   onRegenerate,
   onReplace,
 }: {
   deliverable: MastersDeliverable;
-  isFilmmaker: boolean;
+  onCopy: () => void;
+  onDelete: () => void;
+  onDownload: () => void;
   onEditCopy: () => void;
   onRegenerate: () => void;
   onReplace: () => void;
 }) {
   const thumbnail = deliverable.thumbnail;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   if (!thumbnail) return null;
+  const runMenuAction = (action: () => void) => {
+    setIsMenuOpen(false);
+    action();
+  };
+
   return (
     <div className="masters-thumbnail-inspector">
       <div className="masters-thumbnail-preview">
         <img src={thumbnail.imageUrl} alt={`${deliverable.name} thumbnail`} />
         <strong>{thumbnail.copy}</strong>
       </div>
-      <dl className="masters-thumbnail-details label-xs">
-        <div><dt>Status</dt><dd>Ready</dd></div>
-        <div><dt>Platform</dt><dd>{thumbnail.platform}</dd></div>
-        <div><dt>Source frame</dt><dd>{formatTime(thumbnail.frameSeconds)}</dd></div>
-        <div><dt>Created</dt><dd>{thumbnail.source === "regenerated" ? "Regenerated with Brisk AI" : thumbnail.source === "uploaded" ? "Uploaded" : "Generated with Brisk AI"}</dd></div>
-      </dl>
-      {isFilmmaker ? (
-        <div className="masters-thumbnail-inspector-actions">
-          <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onRegenerate}>Regenerate thumbnail</button>
-          <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onReplace}>Replace with upload</button>
-          <button className="masters-tertiary-button label-xs-semibold" type="button" onClick={onEditCopy}>Edit copy</button>
+      <div className="masters-thumbnail-inspector-actions">
+        <button className="masters-primary-button masters-thumbnail-download label-s-semibold" type="button" onClick={onDownload}>
+          <DsIcon name="download" size={14} />Download thumbnail
+        </button>
+        <div className="masters-row-menu-wrap masters-thumbnail-menu-wrap">
+          <button
+            className="masters-row-menu-button"
+            type="button"
+            aria-label="More thumbnail actions"
+            aria-expanded={isMenuOpen}
+            onClick={() => setIsMenuOpen((current) => !current)}
+          >
+            <DsIcon name="dots-three" size={16} />
+          </button>
+          {isMenuOpen ? (
+            <div className="masters-row-menu masters-thumbnail-menu" role="menu">
+              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onRegenerate)}><DsIcon name="sparkle" size={14} />Regenerate with AI</button>
+              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onEditCopy)}><DsIcon name="pencil-simple" size={14} />Edit copy</button>
+              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onReplace)}><DsIcon name="upload-simple" size={14} />Replace with upload</button>
+              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onCopy)}><DsIcon name="copy" size={14} />Copy image</button>
+              <button className="delete label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onDelete)}><DsIcon name="trash" size={14} />Delete thumbnail</button>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }
@@ -2900,6 +3165,116 @@ function ThumbnailGeneratorDialog({
   );
 }
 
+function DownloadAssetsDialog({
+  deliverable,
+  version,
+  onCancel,
+  onDownload,
+}: {
+  deliverable: MastersDeliverable;
+  version?: MastersVersion;
+  onCancel: () => void;
+  onDownload: (assetIds: DownloadableAsset["id"][]) => void;
+}) {
+  const assets = getDownloadableAssets(deliverable, version);
+  const [selectedIds, setSelectedIds] = useState<DownloadableAsset["id"][]>(() => assets.map((asset) => asset.id));
+  const allSelected = selectedIds.length === assets.length;
+
+  return (
+    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
+      <section className="masters-modal masters-download-assets-modal" role="dialog" aria-modal="true" aria-labelledby="download-assets-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="masters-modal-header">
+          <div>
+            <h2 id="download-assets-title">Download assets</h2>
+            <p className="label-s">Choose some or all of the files for {deliverable.name}.</p>
+          </div>
+          <button type="button" aria-label="Close download assets" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
+        </div>
+        <div className="masters-download-assets-toolbar">
+          <span className="label-xs-semibold">{selectedIds.length} of {assets.length} selected</span>
+          <button className="label-xs-semibold" type="button" onClick={() => setSelectedIds(allSelected ? [] : assets.map((asset) => asset.id))}>
+            {allSelected ? "Clear all" : "Select all"}
+          </button>
+        </div>
+        <ul className="masters-approval-list">
+          {assets.map((asset) => {
+            const checked = selectedIds.includes(asset.id);
+            return (
+              <li key={asset.id}>
+                <label className="masters-approval-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => setSelectedIds((current) => checked ? current.filter((id) => id !== asset.id) : [...current, asset.id])}
+                  />
+                  <span aria-hidden="true">{checked ? <DsIcon name="check" size={13} /> : null}</span>
+                  <span className="masters-download-asset-copy">
+                    <span className="masters-download-asset-icon" aria-hidden="true"><DsIcon name={asset.icon} size={18} /></span>
+                    <span><strong className="label-s-semibold">{asset.label}</strong><small className="label-xs">{asset.filename} · {asset.detail}</small></span>
+                  </span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="masters-modal-actions">
+          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
+          <button className="masters-primary-button label-s-semibold" type="button" disabled={selectedIds.length === 0} onClick={() => onDownload(selectedIds)}>
+            <DsIcon name="download" size={16} />Download selected ({selectedIds.length})
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function RecutSourceDialog({
+  target,
+  currentSource,
+  sources,
+  onCancel,
+  onSelect,
+  onUpload,
+}: {
+  target: MastersDeliverable;
+  currentSource: MastersDeliverable;
+  sources: MastersDeliverable[];
+  onCancel: () => void;
+  onSelect: (sourceId: string) => void;
+  onUpload: () => void;
+}) {
+  return (
+    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
+      <section className="masters-modal masters-recut-source-modal" role="dialog" aria-modal="true" aria-labelledby="recut-source-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="masters-modal-header">
+          <div>
+            <h2 id="recut-source-title">Choose a source video</h2>
+            <p className="label-s">The mark-up will stay attached to {target.name}.</p>
+          </div>
+          <button type="button" aria-label="Close source picker" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
+        </div>
+        <div className="masters-recut-source-options">
+          {sources.map((source) => {
+            const version = getPresentedVersion(source, {});
+            const selected = source.id === currentSource.id && !target.recutSourceUpload;
+            return (
+              <button className={selected ? "selected" : ""} type="button" key={source.id} onClick={() => onSelect(source.id)}>
+                <span className="masters-download-asset-icon"><DsIcon name="video-camera" size={16} /></span>
+                <span><strong className="label-s-semibold">{source.name}</strong><small className="label-xs">{version ? `V${version.number} · ${source.format} · ${source.duration}` : source.duration}</small></span>
+                {selected ? <DsIcon name="check" size={16} /> : null}
+              </button>
+            );
+          })}
+        </div>
+        <div className="masters-modal-actions">
+          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
+          <button className="masters-primary-button label-s-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={16} />Upload a different source</button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function BulkApproveDialog({
   deliverables,
   isSuccess,
@@ -2938,10 +3313,10 @@ function BulkApproveDialog({
     <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
       <section className="masters-modal" role="dialog" aria-modal="true" aria-labelledby="bulk-approve-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="masters-modal-header">
-          <h2 id="bulk-approve-title">Approve and finalise this project?</h2>
+          <h2 id="bulk-approve-title">Approve all ready deliverables?</h2>
           <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
         </div>
-        <p className="label-s">This marks all deliverables as delivered and finalises the project.</p>
+        <p className="label-s">Only deliverables ready for review are listed below. Not started deliverables will remain unchanged.</p>
         <ul className="masters-approval-list">
           {deliverables.map((deliverable) => {
             const latest = deliverable.versions[deliverable.versions.length - 1];
@@ -2964,7 +3339,7 @@ function BulkApproveDialog({
         <div className="masters-modal-actions">
           <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
           <button className="masters-primary-button label-s-semibold" type="button" disabled={selectedIds.length === 0} onClick={() => onConfirm(selectedIds)}>
-            <DsIcon name="checks" size={16} />Approve and finalise
+            <DsIcon name="checks" size={16} />Approve all ready
           </button>
         </div>
       </section>
@@ -3012,10 +3387,10 @@ function DeleteDeliverableDialog({
           <h2 id="delete-deliverable-title">Delete {deliverableName}?</h2>
           <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
         </div>
-        <p className="label-s">This removes the deliverable, its versions, and comments from this project.</p>
+        <p className="label-s">This removes the asset, its versions, and comments from this project.</p>
         <div className="masters-modal-actions">
           <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-danger-button label-s-semibold" type="button" onClick={onConfirm}>Delete deliverable</button>
+          <button className="masters-danger-button label-s-semibold" type="button" onClick={onConfirm}>Delete asset</button>
         </div>
       </section>
     </div>
@@ -3124,31 +3499,74 @@ function getDeliverableDurationSeconds(deliverable: MastersDeliverable) {
   return currentVersion?.durationSeconds ?? durationLabelToSeconds(deliverable.duration);
 }
 function getRecutSource(deliverable: MastersDeliverable, deliverables: MastersDeliverable[]) {
-  if (!deliverable.parentDeliverableId) return deliverable;
-  return deliverables.find((item) => item.id === deliverable.parentDeliverableId) ?? deliverable;
+  if (deliverable.recutSourceUpload) {
+    return {
+      ...deliverable,
+      id: `${deliverable.id}-uploaded-source`,
+      name: deliverable.recutSourceUpload.filename,
+      duration: formatRecutDuration(deliverable.recutSourceUpload.durationSeconds),
+      versions: [deliverable.recutSourceUpload],
+      currentVersionId: deliverable.recutSourceUpload.id,
+      approvedVersionId: deliverable.recutSourceUpload.id,
+      comments: [],
+      unreadCommentCount: 0,
+      thumbnail: undefined,
+      srt: undefined,
+      recutBrief: undefined,
+      recutSourceDeliverableId: undefined,
+      recutSourceUpload: undefined,
+    };
+  }
+  const sourceId = deliverable.recutSourceDeliverableId
+    ?? deliverable.recutBrief?.sourceDeliverableId
+    ?? deliverable.parentDeliverableId;
+  if (sourceId) return deliverables.find((item) => item.id === sourceId) ?? deliverable;
+  return getDefaultRecutSource(deliverable, deliverables) ?? deliverable;
 }
-function getAutoRecutName(duration: number, aspect: string, parentName: string) {
-  return `${duration}s ${aspect} from ${parentName}`;
+function getDefaultRecutSource(deliverable: MastersDeliverable, deliverables: MastersDeliverable[]) {
+  if (deliverable.name === "Main Video" || deliverable.briefDeliverableId === "main-video") return undefined;
+  return deliverables.find((item) => item.id !== deliverable.id && item.name === "Main Video" && item.versions.length > 0)
+    ?? deliverables.find((item) => item.id !== deliverable.id && !item.parentDeliverableId && item.kind === "video" && item.versions.length > 0);
 }
 function formatRecutDuration(duration: number) {
   return duration === 1 ? "1 sec" : `${duration} secs`;
 }
-function insertRecutChild(deliverables: MastersDeliverable[], child: MastersDeliverable) {
-  const parentIndex = deliverables.findIndex((deliverable) => deliverable.id === child.parentDeliverableId);
-  if (parentIndex === -1) return [...deliverables, child];
-  let insertIndex = parentIndex + 1;
-  while (insertIndex < deliverables.length && deliverables[insertIndex].parentDeliverableId === child.parentDeliverableId) insertIndex += 1;
-  return [...deliverables.slice(0, insertIndex), child, ...deliverables.slice(insertIndex)];
-}
 function orderDeliverables(deliverables: MastersDeliverable[], collapsedParentIds: Set<string>) {
-  const parents = deliverables.filter((deliverable) => !deliverable.parentDeliverableId);
-  return parents.flatMap((parent) => {
-    if (collapsedParentIds.has(parent.id)) return [parent];
-    const children = deliverables
-      .filter((deliverable) => deliverable.parentDeliverableId === parent.id)
-      .sort((left, right) => (left.createdAt ?? "").localeCompare(right.createdAt ?? ""));
-    return [parent, ...children];
-  });
+  const roots = deliverables.filter((deliverable) => !deliverable.parentDeliverableId);
+  const rootIds = new Set(roots.map((deliverable) => deliverable.id));
+  const sourceParentId = (deliverable: MastersDeliverable) => {
+    if (deliverable.recutSourceUpload) return undefined;
+    const sourceId = deliverable.recutSourceDeliverableId ?? deliverable.recutBrief?.sourceDeliverableId;
+    return sourceId && sourceId !== deliverable.id && rootIds.has(sourceId) ? sourceId : undefined;
+  };
+  const ordered: MastersDeliverable[] = [];
+  const visited = new Set<string>();
+
+  const appendWithDerivedRecuts = (deliverable: MastersDeliverable) => {
+    if (visited.has(deliverable.id)) return;
+    visited.add(deliverable.id);
+    ordered.push(deliverable);
+
+    if (!collapsedParentIds.has(deliverable.id)) {
+      deliverables
+        .filter((item) => item.parentDeliverableId === deliverable.id)
+        .sort((left, right) => (left.createdAt ?? "").localeCompare(right.createdAt ?? ""))
+        .forEach((item) => {
+          if (!visited.has(item.id)) {
+            visited.add(item.id);
+            ordered.push(item);
+          }
+        });
+    }
+
+    roots
+      .filter((item) => sourceParentId(item) === deliverable.id)
+      .forEach(appendWithDerivedRecuts);
+  };
+
+  roots.filter((deliverable) => !sourceParentId(deliverable)).forEach(appendWithDerivedRecuts);
+  roots.forEach(appendWithDerivedRecuts);
+  return ordered;
 }
 function getUnassignedRecutRangeAtTime(marks: RecutMark[], duration: number, time: number): RecutDraftRange {
   const sortedMarks = [...marks].sort((left, right) => left.inSec - right.inSec);
@@ -3168,6 +3586,39 @@ function formatDrawingPath(points: DrawingPoint[]) {
   return points
     .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
     .join(" ");
+}
+function getDownloadableAssets(deliverable: MastersDeliverable, version?: MastersVersion): DownloadableAsset[] {
+  const assets: DownloadableAsset[] = [];
+  if (deliverable.thumbnail) {
+    const thumbnailFilename = deliverable.thumbnail.imageUrl.split("/").at(-1)?.split("?")[0]
+      || `${deliverable.name.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replaceAll(/^-|-$/g, "")}-thumbnail.jpg`;
+    assets.push({
+      id: "thumbnail",
+      label: "Thumbnail",
+      filename: thumbnailFilename,
+      detail: `${deliverable.thumbnail.platform} · ${deliverable.thumbnail.source.replaceAll("-", " ")}`,
+      icon: "image-square",
+    });
+  }
+  if (version) {
+    assets.push({
+      id: "video",
+      label: `Video V${version.number}`,
+      filename: version.filename,
+      detail: `${version.resolution} · ${version.fileSize}`,
+      icon: "video-camera",
+    });
+  }
+  if (deliverable.srt) {
+    assets.push({
+      id: "captions",
+      label: "Captions",
+      filename: deliverable.srt.filename,
+      detail: `${deliverable.srt.language} · SRT`,
+      icon: "file-text",
+    });
+  }
+  return assets;
 }
 function quantiseToFrame(seconds: number) { return Math.round(seconds * 25) / 25; }
 function slugStatus(status: DeliverableStatus) { return status.replaceAll("_", "-"); }

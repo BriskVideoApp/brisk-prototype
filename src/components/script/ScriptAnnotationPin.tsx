@@ -1,4 +1,3 @@
-import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function ScriptAnnotationPin({
@@ -34,10 +33,9 @@ export function ScriptAnnotationPin({
       }}
     >
       <DsIcon name="chat-circle" size={16} />
-      <CommentCountBadge
-        count={count}
-        label={`${count} ${count === 1 ? "comment" : "comments"}`}
-      />
+      {count > 0 ? (
+        <span className="script-comment-count label-xs-semibold" aria-hidden="true">{count}</span>
+      ) : null}
     </button>
   );
 }

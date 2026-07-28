@@ -173,7 +173,7 @@ export function ChatGlobalView({
                 onClick={() => onMessageSelect(message, view === "threads")}
               >
                 <span className="chat-global-message-project">
-                  <span className="chat-project-card-icon"><DsIcon name="chat-circle" size={16} /></span>
+                  <span className="chat-project-card-icon"><DsIcon name="chats" size={16} /></span>
                   <span>
                     <strong className="label-xs-semibold">{project.code}</strong>
                     <small className="label-xs">{project.title}</small>

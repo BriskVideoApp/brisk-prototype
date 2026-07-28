@@ -69,7 +69,7 @@ type MediaAssetActionsProps = {
 export function MediaAssetActions({ asset, compact = false, onComment, onTranscript, onShare, onDownload, onDelete }: MediaAssetActionsProps) {
   const canTranscribe = asset.kind === "video" || asset.kind === "audio";
   const actions = [
-    { label: "Comment", icon: "message-circle" as const, action: onComment, disabled: false },
+    { label: "Comment", icon: "chat-circle" as const, action: onComment, disabled: false },
     { label: "Transcript", icon: "file-text" as const, action: onTranscript, disabled: !canTranscribe },
     { label: "Share", icon: "link" as const, action: onShare, disabled: false },
     { label: "Download", icon: "download" as const, action: onDownload, disabled: false },

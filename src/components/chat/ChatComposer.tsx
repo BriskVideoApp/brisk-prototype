@@ -424,7 +424,7 @@ export function ChatComposer({
                     key={candidate.id}
                     onClick={() => addProjectMention(candidate)}
                   >
-                    <DsIcon name="chat-circle" size={16} />
+                    <DsIcon name="chats" size={16} />
                     <span>
                       <strong className="label-s-semibold">{candidate.code}</strong>
                       <small className="label-xs">{candidate.title}</small>

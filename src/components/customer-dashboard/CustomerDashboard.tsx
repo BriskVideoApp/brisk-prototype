@@ -377,7 +377,7 @@ export function CustomerDashboard() {
                 setChatProjectId(null);
               }}
             >
-              <DsIcon name="chat-circle" size={20} />
+              <DsIcon name="chats" size={20} />
               <CommentCountBadge count={8} label="8 unread messages" />
             </button>
           </div>
@@ -814,7 +814,7 @@ function ProductionCard({
         <div className="customer-production-card-header-side">
           <div className="customer-production-card-actions">
             <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
-              <DsIcon name="chat-circle" size={18} />
+              <DsIcon name="chats" size={18} />
               <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
             </button>
             <div className="customer-project-menu-wrap">
@@ -931,7 +931,7 @@ function QueueProjectRow({
       </time>
       <div className="customer-queue-actions" role="cell">
         <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
-          <DsIcon name="chat-circle" size={18} />
+          <DsIcon name="chats" size={18} />
           <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
         </button>
         <div className="customer-project-menu-wrap">

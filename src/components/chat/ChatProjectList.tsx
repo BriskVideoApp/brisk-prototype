@@ -70,7 +70,7 @@ export function ChatProjectList({
           {showCompanyChat ? (
             <>
               <button className="chat-secondary-button label-s-semibold" type="button" onClick={onCompanyChat}>
-                <DsIcon name="chat-circle" size={16} />
+                <DsIcon name="chats" size={16} />
                 Company chat
               </button>
               <button className="chat-icon-button" type="button" aria-label={`Open ${clientName} settings`} onClick={onCustomerSettings}>
@@ -110,7 +110,7 @@ export function ChatProjectList({
                 onClick={() => onProjectSelect(project.id)}
               >
               <span className="chat-project-card-icon">
-                <DsIcon name="chat-circle" size={20} />
+                <DsIcon name="chats" size={20} />
               </span>
               <span className="chat-project-card-content">
                 <span className="chat-project-card-title-row">
@@ -153,7 +153,7 @@ export function ChatProjectList({
 
       {visibleProjects.length === 0 ? (
         <div className="chat-empty-state">
-          <span className="chat-empty-icon"><DsIcon name="chat-circle" size={24} /></span>
+          <span className="chat-empty-icon"><DsIcon name="chats" size={24} /></span>
           <h2>No projects here yet</h2>
           <p>Your projects will show here. Create a project from the Videos dashboard to start chatting.</p>
         </div>

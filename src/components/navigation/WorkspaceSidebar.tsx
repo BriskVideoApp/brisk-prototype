@@ -169,7 +169,7 @@ export function WorkspaceSidebar({
           href="/chat"
           title={isCollapsed ? "Chat" : undefined}
         >
-          <DsIcon name="chat-circle" size={16} />
+          <DsIcon name="chats" size={16} />
           <span className="workspace-sidebar-link-label">Chat</span>
         </Link>
       </nav>
@@ -245,7 +245,7 @@ function getPageIcon(pathname: string): DsIconName {
     return "check-circle";
   }
   if (pathname === "/chat") {
-    return "chat-circle";
+    return "chats";
   }
   return "folder-open";
 }

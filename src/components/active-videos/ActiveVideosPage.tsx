@@ -1540,7 +1540,7 @@ function ProjectDetailPanel({
             </a>
             <a className="project-detail-action-button label-s-semibold" href={`/chat?project=${encodeURIComponent(project.id)}`}>
               <span className="project-detail-action-icon">
-                <DsIcon name="chat-circle" size={20} />
+                <DsIcon name="chats" size={20} />
                 <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
               </span>
               Open chat
@@ -2453,7 +2453,7 @@ function ProjectCell({
               data-tooltip={chatTooltip}
               onClick={(event) => event.stopPropagation()}
             >
-              <DsIcon name="chat-circle" size={20} />
+              <DsIcon name="chats" size={20} />
               <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
             </a>
             <a

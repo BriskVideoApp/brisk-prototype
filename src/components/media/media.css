@@ -749,8 +749,8 @@
   justify-content: center;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-full);
-  background: var(--brisk-extra-pink-secondary);
-  color: var(--brisk-text-primary);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
   padding: var(--brisk-space-none) var(--brisk-space-xs);
 }
 

@@ -41,7 +41,7 @@ const globalItems: Array<{
   count: number;
   icon: DsIconName;
 }> = [
-  { id: "dms", label: "DMs", count: 2, icon: "chat-circle-text" },
+  { id: "dms", label: "DMs", count: 2, icon: "chats" },
   { id: "mentions", label: "Mentions", count: 4, icon: "at-mail" },
   { id: "groups", label: "Groups", count: 3, icon: "users-three" },
   { id: "threads", label: "Threads", count: 6, icon: "chat-centered-dots" },
@@ -124,7 +124,7 @@ export function ChatRail({
       <div className="chat-rail-top">
         <div className="chat-rail-brand">
           <span className="chat-rail-brand-mark">
-            <DsIcon name="chat-circle" size={20} />
+            <DsIcon name="chats" size={20} />
           </span>
           <span className="label-s-semibold">{workspaceName}</span>
         </div>

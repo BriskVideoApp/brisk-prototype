@@ -35,7 +35,7 @@ export type RecutMark = {
 };
 
 export type RecutBrief = {
-  parentDeliverableId: string;
+  sourceDeliverableId: string;
   targetDurationSec: number;
   targetAspect: string;
   marks: RecutMark[];
@@ -137,6 +137,8 @@ export type MastersDeliverable = {
   thumbnail?: MastersThumbnailAttachment;
   createdAt?: string;
   recutBrief?: RecutBrief;
+  recutSourceDeliverableId?: string;
+  recutSourceUpload?: MastersVersion;
 };
 
 export const mastersGraphicsKit: MastersGraphicsKit = {
@@ -291,6 +293,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     currentVersionId: "cutdown-v1",
     addedBy: "filmmaker",
     kind: "video",
+    recutSourceDeliverableId: "masters-main-video",
     srt: createMockSrt("cutdown-caption", "Good_Citizens_Instagram_30s_en-AU.srt", 30),
     thumbnail: {
       status: "ready",
@@ -341,6 +344,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     status: "not_started",
     addedBy: "filmmaker",
     kind: "video",
+    recutSourceDeliverableId: "masters-main-video",
     srt: createMockSrt("square-caption", "Good_Citizens_LinkedIn_30s_en-AU.srt", 30),
     thumbnail: {
       status: "ready",

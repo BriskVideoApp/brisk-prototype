@@ -137,7 +137,7 @@ export function ChatMessageList({
 
       {messages.length === 0 ? (
         <div className={`chat-empty-chat ${surface}`}>
-          <span><DsIcon name="chat-circle" size={24} /></span>
+          <span><DsIcon name="chats" size={24} /></span>
           <h2>
             {surface === "direct"
               ? "No messages yet"
@@ -348,7 +348,7 @@ export function ChatMessageCard({
         >
           {message.deepLinkStage ? (
             <span className="chat-linked-comment-icon">
-              <DsIcon name="chat-circle-text" size={24} />
+              <DsIcon name="chat-circle" size={24} />
             </span>
           ) : null}
           <div className={message.deepLinkStage ? "chat-linked-comment-body" : undefined}>

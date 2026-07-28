@@ -4349,7 +4349,7 @@ function createWrittenSummaryModel(
           },
           {
             id: "captions",
-            icon: "chat-circle",
+            icon: "file-text",
             required: true,
             value: captionsState,
             subValue: "Captions".trim(),

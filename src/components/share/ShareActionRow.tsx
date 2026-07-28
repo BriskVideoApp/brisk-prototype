@@ -21,6 +21,7 @@ export type ShareActionRowProps = {
   customerName?: string;
   onApprove?: () => void;
   showApprove?: boolean;
+  showCopyLink?: boolean;
   copyLinkIconOnly?: boolean;
   approveLabel?: string;
 };
@@ -58,6 +59,7 @@ export function ShareActionRow({
   customerName = "Avery Taylor",
   onApprove,
   showApprove = true,
+  showCopyLink = true,
   copyLinkIconOnly = false,
   approveLabel = "Approve",
 }: ShareActionRowProps) {
@@ -197,16 +199,18 @@ export function ShareActionRow({
   return (
     <div className={`share-action-row share-density-${density}`} ref={rootRef}>
       <div className="share-action-buttons" aria-label={`${stageLabel} share actions`}>
-        <button
-          className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
-          type="button"
-          aria-label="Copy Link"
-          aria-expanded={isPopoverOpen}
-          onClick={() => setIsPopoverOpen((isOpen) => !isOpen)}
-        >
-          <DsIcon name="link" size={20} />
-          {copyLinkIconOnly ? null : "Copy Link"}
-        </button>
+        {showCopyLink ? (
+          <button
+            className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
+            type="button"
+            aria-label="Copy Link"
+            aria-expanded={isPopoverOpen}
+            onClick={() => setIsPopoverOpen((isOpen) => !isOpen)}
+          >
+            <DsIcon name="link" size={20} />
+            {copyLinkIconOnly ? null : "Copy Link"}
+          </button>
+        ) : null}
         <button
           className="share-button share-button-secondary label-s-semibold"
           type="button"

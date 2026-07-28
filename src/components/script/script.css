@@ -1185,6 +1185,23 @@
   color: var(--brisk-gray-90);
 }
 
+.script-comment-count {
+  position: absolute;
+  top: calc(var(--brisk-space-xs) * -1);
+  right: calc(var(--brisk-space-xs) * -1);
+  display: inline-flex;
+  min-width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  font-size: 10px;
+  line-height: 1;
+}
+
 .script-annotation-pin[data-tooltip]::after {
   top: calc(100% + var(--brisk-space-xs));
   right: 0;
