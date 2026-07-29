@@ -6,6 +6,7 @@ import "@/components/active-videos/active-videos.css";
 import "@/components/today/today.css";
 import "@/components/project/team/team-panel.css";
 import "@/components/project/project-stage-header.css";
+import "@/components/project/project-files.css";
 import "@/components/share/share-action-row.css";
 import "@/components/script/script.css";
 import "@/components/script-transcripts/script-transcripts.css";
@@ -14,8 +15,10 @@ import "@/components/media/media.css";
 import "@/components/masters/masters.css";
 import "@/components/navigation/workspace-sidebar.css";
 import "@/components/customer-dashboard/customer-dashboard.css";
+import "@/components/brand-kits/brand-kits.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
+import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -38,7 +41,9 @@ export default function RootLayout({
     <html lang="en-AU" className={plusJakartaSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <PrototypeRoleProvider>
-          <ProjectCompletionProvider>{children}</ProjectCompletionProvider>
+          <ProjectCompletionProvider>
+            <ProjectFilesProvider>{children}</ProjectFilesProvider>
+          </ProjectCompletionProvider>
         </PrototypeRoleProvider>
       </body>
     </html>

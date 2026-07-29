@@ -46,6 +46,48 @@
   outline: 0;
 }
 
+.workspace-navigation-control[data-tooltip] {
+  position: relative;
+}
+
+.workspace-navigation-control[data-tooltip]::after {
+  position: absolute;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: calc(100% + var(--brisk-space-s));
+  z-index: 80;
+  width: max-content;
+  max-width: calc(var(--brisk-space-3xl) * 4);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
+  content: attr(data-tooltip);
+  font-family: var(--font-brisk);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  opacity: 0;
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+  pointer-events: none;
+  transform: translate(var(--brisk-space-xs), -50%);
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+
+.workspace-navigation-control[data-tooltip]:hover::after,
+.workspace-navigation-control[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(var(--brisk-space-none), -50%);
+}
+
+.workspace-navigation-control[data-tooltip]:hover,
+.workspace-navigation-control[data-tooltip]:focus-visible {
+  z-index: 90;
+}
+
 .workspace-history-forward .ds-icon {
   transform: rotate(180deg);
 }

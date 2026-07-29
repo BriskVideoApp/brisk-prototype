@@ -83,6 +83,18 @@ export type TimeEntry = {
   loggedAt: string;
 };
 
+export type ProjectFileLocation = {
+  url: string;
+  label?: string;
+  notes?: string;
+  last_confirmed_at: string | null;
+  last_confirmed_by: string | null;
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+};
+
 export type Project = {
   id: string;
   clientBadge: string;
@@ -103,6 +115,7 @@ export type Project = {
   status: "Queued" | "In Production" | "Completed" | "Paused" | "Archived";
   deliveredAt?: string;
   deliveredBy?: string;
+  file_locations: ProjectFileLocation[];
   stages: Record<StageKey, StageStatus>;
   team: RoleSlot[];
   timeEntries: TimeEntry[];

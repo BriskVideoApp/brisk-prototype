@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import {
+  prototypeCustomerSlug,
+  usePrototypeRole,
+  type PrototypeRole,
+} from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
-type WorkspaceSidebarItem = "dashboard" | "videos" | "today" | "chat";
+type WorkspaceSidebarItem = "dashboard" | "brandKits" | "videos" | "today" | "chat";
 
 type WorkspaceSidebarProps = {
   activeItem?: WorkspaceSidebarItem;
@@ -34,6 +38,13 @@ export function WorkspaceSidebar({
   const navigationId = useId();
   const historyMenuId = useId();
   const historyControlRef = useRef<HTMLDivElement>(null);
+  const brandKitHref = selectedRole === "Customer"
+    ? `/brand-kits/${prototypeCustomerSlug}`
+    : "/brand-kits";
+  const brandKitLabel = selectedRole === "Customer" ? "Brand Kit" : "Brand Kits";
+  const visibleHistoryPages = recentPages
+    .filter((page) => page.href !== pathname)
+    .filter((page) => canRoleSeeRecentPage(page.href, selectedRole));
   const sidebarClassName = [
     "today-sidebar",
     "workspace-sidebar",
@@ -81,25 +92,32 @@ export function WorkspaceSidebar({
     <aside className={sidebarClassName} aria-label="Primary navigation">
       <div className="workspace-sidebar-header">
         <div className="workspace-history-controls" aria-label="Navigation history">
-          <button type="button" aria-label="Go back" title="Back" onClick={() => window.history.back()}>
+          <button
+            className="workspace-navigation-control"
+            type="button"
+            aria-label="Go back"
+            data-tooltip="Back"
+            onClick={() => window.history.back()}
+          >
             <DsIcon name="arrow-left" size={18} />
           </button>
           <button
-            className="workspace-history-forward"
+            className="workspace-history-forward workspace-navigation-control"
             type="button"
             aria-label="Go forward"
-            title="Forward"
+            data-tooltip="Forward"
             onClick={() => window.history.forward()}
           >
             <DsIcon name="arrow-left" size={18} />
           </button>
           <div className="workspace-history-control" ref={historyControlRef}>
             <button
+              className="workspace-navigation-control"
               type="button"
               aria-label="Show history"
               aria-controls={historyMenuId}
               aria-expanded={isHistoryOpen}
-              title="History"
+              data-tooltip="Recent pages"
               onClick={() => setIsHistoryOpen((current) => !current)}
             >
               <DsIcon name="clock-clockwise" size={18} />
@@ -108,7 +126,7 @@ export function WorkspaceSidebar({
               <section id={historyMenuId} className="workspace-history-menu" aria-label="Recent pages">
                 <p className="label-s-semibold">Recent</p>
                 <div className="workspace-history-list">
-                  {recentPages.length > 1 ? recentPages.slice(1).map((page) => (
+                  {visibleHistoryPages.length > 0 ? visibleHistoryPages.map((page) => (
                     <Link
                       className="label-s-semibold"
                       href={page.href}
@@ -127,11 +145,12 @@ export function WorkspaceSidebar({
           </div>
         </div>
         <button
-          className="workspace-sidebar-toggle"
+          className="workspace-sidebar-toggle workspace-navigation-control"
           type="button"
           aria-controls={navigationId}
           aria-expanded={!isCollapsed}
           aria-label={isCollapsed ? "Expand navigation" : "Collapse navigation"}
+          data-tooltip={isCollapsed ? "Expand navigation" : "Collapse navigation"}
           onClick={() => setIsCollapsed((current) => !current)}
         >
           <DsIcon name={isCollapsed ? "caret-right" : "caret-left"} size={18} />
@@ -145,6 +164,14 @@ export function WorkspaceSidebar({
         >
           <DsIcon name="grid-four" size={16} />
           <span className="workspace-sidebar-link-label">Dashboard</span>
+        </Link>
+        <Link
+          className={`today-sidebar-link label-s-semibold ${activeItem === "brandKits" ? "active" : ""}`}
+          href={brandKitHref}
+          title={isCollapsed ? brandKitLabel : undefined}
+        >
+          <DsIcon name="frame-corners" size={16} />
+          <span className="workspace-sidebar-link-label">{brandKitLabel}</span>
         </Link>
         <Link
           className={`today-sidebar-link label-s-semibold ${activeItem === "videos" ? "active" : ""}`}
@@ -173,12 +200,12 @@ export function WorkspaceSidebar({
           <span className="workspace-sidebar-link-label">Chat</span>
         </Link>
       </nav>
-      <PrototypeRoleSwitcher />
+      <RoleSwitcher />
     </aside>
   );
 }
 
-function PrototypeRoleSwitcher() {
+export function RoleSwitcher() {
   const { selectedRole, setSelectedRole } = usePrototypeRole();
 
   return (
@@ -217,6 +244,9 @@ function getPageLabel(pathname: string, activeItem?: WorkspaceSidebarItem) {
   if (activeItem === "videos" || pathname === "/active-videos") {
     return "Videos";
   }
+  if (activeItem === "brandKits" || pathname.startsWith("/brand-kits")) {
+    return "Brand Kits";
+  }
   if (activeItem === "today" || pathname === "/" || pathname === "/today") {
     return "Today";
   }
@@ -241,6 +271,9 @@ function getPageIcon(pathname: string): DsIconName {
   if (pathname === "/active-videos") {
     return "queue";
   }
+  if (pathname.startsWith("/brand-kits")) {
+    return "frame-corners";
+  }
   if (pathname === "/" || pathname === "/today") {
     return "check-circle";
   }
@@ -248,6 +281,23 @@ function getPageIcon(pathname: string): DsIconName {
     return "chats";
   }
   return "folder-open";
+}
+
+function canRoleSeeRecentPage(pathname: string, role: PrototypeRole) {
+  if (role !== "Customer") {
+    return true;
+  }
+
+  if (/^\/projects\/[^/]+\/files(?:\/|$)/u.test(pathname)) {
+    return false;
+  }
+
+  if (!pathname.startsWith("/brand-kits/")) {
+    return true;
+  }
+
+  return pathname === `/brand-kits/${prototypeCustomerSlug}`
+    || pathname.startsWith(`/brand-kits/${prototypeCustomerSlug}/`);
 }
 
 function titleCase(value: string) {

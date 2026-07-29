@@ -1,7 +1,7 @@
-import type { Project } from "@/components/active-videos/types";
+import type { Project, ProjectFileLocation } from "@/components/active-videos/types";
 import { createDefaultRoleSlots, createMockTimeEntries } from "./teamDefaults";
 
-type ProjectSeed = Omit<Project, "clientName" | "deadlineAt" | "isCritical" | "team" | "timeEntries"> & {
+type ProjectSeed = Omit<Project, "clientName" | "deadlineAt" | "file_locations" | "isCritical" | "team" | "timeEntries"> & {
   teamPeopleIds: string[];
   timeEntryIntensity?: number;
   hours?: { logged: number; estimated: number };
@@ -20,6 +20,98 @@ const clientNamesByBadge: Record<string, string> = {
   CNVA: "Canva",
   LINR: "Linear",
   FIGM: "Figma",
+};
+
+const fileLocationsByProjectId: Record<string, ProjectFileLocation[]> = {
+  "loom-launch-film": [
+    {
+      url: "https://app.lucidlink.com/projects/loom-launch-film",
+      label: "Working files",
+      notes: "Current edit files and renders. Latest exports live in /04_Exports.",
+      last_confirmed_at: "2026-07-24T15:40:00+10:00",
+      last_confirmed_by: "user-sarah",
+      created_at: "2026-06-18T10:15:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-24T15:40:00+10:00",
+      updated_by: "user-sarah",
+    },
+    {
+      url: "https://drive.google.com/drive/folders/loom-masters",
+      label: "Masters",
+      notes: "Approved masters and delivery paperwork.",
+      last_confirmed_at: "2026-07-21T09:25:00+10:00",
+      last_confirmed_by: "user-tom",
+      created_at: "2026-07-18T16:20:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-21T09:25:00+10:00",
+      updated_by: "user-tom",
+    },
+  ],
+  "deel-customer-story": [
+    {
+      url: "https://www.dropbox.com/home/Deel/APAC-Customer-Story",
+      label: "Project files",
+      notes: "Camera originals are in /01_Raw and project files are in /03_Edit.",
+      last_confirmed_at: "2026-07-22T11:30:00+10:00",
+      last_confirmed_by: "user-sarah",
+      created_at: "2026-06-09T13:10:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-22T11:30:00+10:00",
+      updated_by: "user-sarah",
+    },
+  ],
+  "hims-product-education": [
+    {
+      url: "https://drive.google.com/drive/folders/hims-sleep-series",
+      label: "Working files",
+      notes: "Shared production folder for all three episodes.",
+      last_confirmed_at: null,
+      last_confirmed_by: null,
+      created_at: "2026-06-12T09:45:00+10:00",
+      created_by: "user-maddie",
+      updated_at: "2026-06-12T09:45:00+10:00",
+      updated_by: "user-maddie",
+    },
+  ],
+  "notion-workflows": [
+    {
+      url: "https://app.shade.inc/project/notion-workflows",
+      label: "Raw footage",
+      notes: "Proxy media and camera originals are grouped by shoot day.",
+      last_confirmed_at: "2026-07-18T14:05:00+10:00",
+      last_confirmed_by: "user-jordan",
+      created_at: "2026-06-02T12:30:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-18T14:05:00+10:00",
+      updated_by: "user-jordan",
+    },
+  ],
+  "openai-partner-update": [
+    {
+      url: "https://app.frame.io/projects/openai-partner-update",
+      label: "Review exports",
+      notes: "Approved review exports only. Working project files remain on the studio NAS.",
+      last_confirmed_at: "2026-07-15T10:10:00+10:00",
+      last_confirmed_by: "user-tom",
+      created_at: "2026-05-20T10:00:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-15T10:10:00+10:00",
+      updated_by: "user-tom",
+    },
+  ],
+  "posthog-onboarding": [
+    {
+      url: "https://northstarfilms.sharepoint.com/sites/posthog-onboarding",
+      label: "Archive",
+      notes: "Final archive, source graphics and signed-off masters.",
+      last_confirmed_at: "2026-07-08T16:45:00+10:00",
+      last_confirmed_by: "user-tom",
+      created_at: "2026-05-03T11:20:00+10:00",
+      created_by: "user-tom",
+      updated_at: "2026-07-08T16:45:00+10:00",
+      updated_by: "user-tom",
+    },
+  ],
 };
 
 const projectSeeds: ProjectSeed[] = [
@@ -358,6 +450,7 @@ export const activeVideoProjects: Project[] = projectSeeds.map(({ teamPeopleIds,
     ...project,
     clientName: clientNamesByBadge[project.clientBadge] ?? project.clientBadge,
     deadlineAt: project.deadline?.finalDueAt ?? project.deadline?.dueAt ?? project.latestUpdate.timestamp,
+    file_locations: fileLocationsByProjectId[project.id] ?? [],
     isCritical: project.tags?.includes("Critical") ?? false,
     team,
     timeEntries: createMockTimeEntries(project.id, team, timeEntryIntensity),

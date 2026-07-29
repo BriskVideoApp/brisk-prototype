@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import type { Project } from "@/components/active-videos/types";
+import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
 import { TeamPanel } from "./team/TeamPanel";
 
 export function ProjectOverviewPage({ project }: { project: Project }) {
+  const customer = getBrandKitCustomerByBadge(project.clientBadge);
+
   return (
     <main className="project-overview-shell">
       <header className="project-overview-header">
@@ -15,6 +18,14 @@ export function ProjectOverviewPage({ project }: { project: Project }) {
           <span className="project-overview-client label-xs-semibold">{project.clientBadge}</span>
           <h1 className="project-overview-title">{project.name}</h1>
         </div>
+        {customer ? (
+          <Link className="project-overview-brand-kit label-s-semibold" href={`/brand-kits/${customer.slug}`}>
+            <span className="project-overview-brand-mark">
+              <img src={customer.logoUrl} alt="" />
+            </span>
+            {customer.name}&apos;s Brand Kit
+          </Link>
+        ) : null}
       </header>
 
       <section className="project-overview-grid">

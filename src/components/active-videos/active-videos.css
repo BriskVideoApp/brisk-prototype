@@ -369,6 +369,10 @@
   z-index: 50;
 }
 
+.active-videos-table td.project-cell:has(.project-files-quick-menu[open]) {
+  z-index: 50;
+}
+
 .active-videos-scroll.has-horizontal-scroll .active-videos-table th.column-project,
 .active-videos-scroll.has-horizontal-scroll .active-videos-table td.project-cell {
   box-shadow: 4px 0 8px -4px rgba(0, 0, 0, 0.08);
@@ -655,6 +659,81 @@
   --tooltip-bottom: calc(100% + 12px);
   --tooltip-left: 50%;
   --tooltip-x: -50%;
+}
+
+.project-files-quick-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.project-files-quick-menu summary {
+  list-style: none;
+}
+
+.project-files-quick-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-files-quick-menu[open] .project-quick-action {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.project-files-quick-popover {
+  position: absolute;
+  top: calc(100% + var(--brisk-space-s));
+  left: 50%;
+  z-index: 70;
+  display: grid;
+  width: calc(var(--brisk-space-3xl) * 6);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-s);
+  transform: translateX(-50%);
+}
+
+.project-files-quick-heading {
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+}
+
+.project-files-quick-location {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-s);
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s);
+  text-decoration: none;
+}
+
+.project-files-quick-location:hover,
+.project-files-quick-location:focus-visible {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-brand-secondary);
+  outline: 0;
+}
+
+.project-files-quick-location > span {
+  display: grid;
+  min-width: 0;
+}
+
+.project-files-quick-location strong,
+.project-files-quick-location small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-files-quick-location small {
+  color: var(--brisk-text-secondary);
 }
 
 .quick-action-badge {

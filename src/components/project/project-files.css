@@ -1,0 +1,347 @@
+.project-files-shell,
+.project-files-shell * {
+  font-family: var(--font-brisk);
+}
+
+.project-files-shell {
+  --project-files-sidebar-width: calc(var(--brisk-space-3xl) * 4);
+  display: flex;
+  min-height: 100vh;
+  background: var(--brisk-page-primary);
+  color: var(--brisk-text-primary);
+}
+
+.project-files-sidebar {
+  flex: 0 0 var(--project-files-sidebar-width);
+}
+
+.project-files-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  background: var(--brisk-page-primary);
+}
+
+.project-files-content {
+  display: grid;
+  width: min(100%, calc(var(--brisk-space-3xl) * 22));
+  align-self: center;
+  gap: var(--brisk-space-xl);
+  padding: var(--brisk-space-2xl);
+}
+
+.project-files-heading-row,
+.project-file-location-heading,
+.project-file-location-title,
+.project-file-location-open-actions,
+.project-file-location-edit-actions,
+.project-files-add-heading,
+.project-files-add-button,
+.project-files-open-button,
+.project-files-copy-button,
+.project-files-confirm-action {
+  display: flex;
+  align-items: center;
+}
+
+.project-files-heading-row {
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.project-files-kicker {
+  color: var(--brisk-brand-primary-click);
+  letter-spacing: 0.06em;
+}
+
+.project-files-heading-row h1 {
+  margin: var(--brisk-space-xs) var(--brisk-space-none);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.project-files-heading-row p {
+  margin: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+}
+
+.project-files-count {
+  flex: 0 0 auto;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-xs) var(--brisk-space-m);
+}
+
+.project-files-empty,
+.project-files-add-panel,
+.project-file-location-card {
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-white);
+}
+
+.project-files-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-m);
+  box-shadow: var(--brisk-shadow-m);
+  padding: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+}
+
+.project-files-empty-icon {
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.project-files-empty h2,
+.project-files-add-heading h2,
+.project-file-location-heading h2 {
+  margin: var(--brisk-space-none);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+.project-files-empty > p {
+  max-width: calc(var(--brisk-space-3xl) * 15);
+  margin: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+}
+
+.project-file-location-list {
+  display: grid;
+  gap: var(--brisk-space-l);
+}
+
+.project-file-location-card {
+  display: grid;
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-xl);
+}
+
+.project-file-location-heading {
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.project-file-location-title {
+  min-width: 0;
+  align-items: flex-start;
+  gap: var(--brisk-space-m);
+}
+
+.project-file-location-title > div {
+  min-width: 0;
+}
+
+.project-file-location-number {
+  display: inline-flex;
+  width: var(--brisk-space-xl);
+  height: var(--brisk-space-xl);
+  flex: 0 0 var(--brisk-space-xl);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.project-file-location-url {
+  display: block;
+  overflow: hidden;
+  max-width: calc(var(--brisk-space-3xl) * 12);
+  margin-top: var(--brisk-space-xs);
+  color: var(--brisk-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-file-location-edit-actions {
+  flex: 0 0 auto;
+  gap: var(--brisk-space-m);
+}
+
+.project-files-text-action,
+.project-files-confirm-action {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none);
+}
+
+.project-files-text-action:hover,
+.project-files-confirm-action:hover {
+  text-decoration: underline;
+}
+
+.project-files-text-action.is-remove {
+  color: var(--brisk-system-error);
+}
+
+.project-file-location-open-actions {
+  align-items: stretch;
+  gap: var(--brisk-space-m);
+}
+
+.project-files-open-button {
+  min-height: var(--brisk-space-3xl);
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-text-white);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+  text-decoration: none;
+}
+
+.project-files-open-button:hover,
+.project-files-open-button:focus-visible {
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
+  outline: 0;
+  transform: translate(calc(var(--brisk-space-xxs) * -1), calc(var(--brisk-space-xxs) * -1));
+}
+
+.project-files-open-button:active {
+  box-shadow: none;
+  transform: none;
+}
+
+.project-files-copy-button,
+.project-files-add-button {
+  justify-content: center;
+  gap: var(--brisk-space-s);
+}
+
+.project-file-location-meta {
+  margin: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+}
+
+.project-files-confirm-action {
+  width: fit-content;
+  gap: var(--brisk-space-xs);
+}
+
+.project-file-location-notes,
+.project-file-location-form,
+.project-file-location-edit-form {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.project-file-location-notes textarea {
+  width: 100%;
+  min-height: calc(var(--brisk-space-3xl) * 2);
+  resize: vertical;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-m);
+}
+
+.project-file-location-notes textarea:hover {
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.project-file-location-notes textarea::placeholder {
+  color: var(--brisk-text-tertiary);
+}
+
+.project-file-location-notes-readonly {
+  color: var(--brisk-text-primary);
+}
+
+.project-file-location-notes-readonly.is-empty {
+  color: var(--brisk-text-tertiary);
+}
+
+.project-file-location-form {
+  width: min(100%, calc(var(--brisk-space-3xl) * 15));
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: end;
+  gap: var(--brisk-space-m);
+}
+
+.project-file-location-form-action {
+  grid-column: 1 / -1;
+}
+
+.project-file-location-edit-form {
+  border-top: 1px solid var(--brisk-border-secondary);
+  padding-top: var(--brisk-space-l);
+}
+
+.project-files-add-panel {
+  display: grid;
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-xl);
+}
+
+.project-files-add-heading {
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.project-files-add-button {
+  width: fit-content;
+}
+
+@media (max-width: 760px) {
+  .project-files-shell {
+    --project-files-sidebar-width: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  }
+
+  .project-files-sidebar {
+    width: var(--project-files-sidebar-width);
+    flex-basis: var(--project-files-sidebar-width);
+  }
+
+  .project-files-content {
+    padding: var(--brisk-space-l);
+  }
+
+  .project-files-empty,
+  .project-file-location-card,
+  .project-files-add-panel {
+    padding: var(--brisk-space-l);
+  }
+
+  .project-files-heading-row,
+  .project-file-location-heading,
+  .project-file-location-open-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-file-location-form {
+    grid-template-columns: 1fr;
+  }
+
+  .project-file-location-form-action {
+    grid-column: auto;
+  }
+
+  .project-files-open-button,
+  .project-files-copy-button {
+    width: 100%;
+  }
+}

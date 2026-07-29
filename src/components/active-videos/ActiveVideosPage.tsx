@@ -23,10 +23,12 @@ import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
+import { useProjectFiles } from "@/components/project/ProjectFilesContext";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
-import type { Project, ProjectDeadline, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
+import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
+import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
 
 type StatusTab = "All" | Project["status"];
 type FilterKey = "client" | "teammate" | "tags" | "status" | "deadline";
@@ -132,8 +134,9 @@ const tagColourOptions: { className: TagClass; label: string }[] = [
 ];
 
 export function ActiveVideosPage() {
-  const { selectedRole } = usePrototypeRole();
+  const { hasLoadedRole, selectedRole } = usePrototypeRole();
   const { completionRecords } = useProjectCompletion();
+  const { fileLocationsByProjectId } = useProjectFiles();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
@@ -885,6 +888,9 @@ export function ActiveVideosPage() {
                 <ProjectRow
                   key={project.id}
                   project={project}
+                  fileLocations={fileLocationsByProjectId[project.id] ?? []}
+                  hasLoadedRole={hasLoadedRole}
+                  selectedRole={selectedRole}
                   tags={projectTags[project.id] ?? []}
                   tagOptions={tagOptions}
                   tagClasses={tagClasses}
@@ -2270,6 +2276,9 @@ function ProjectPanelDeadline({
 
 function ProjectRow({
   project,
+  fileLocations,
+  hasLoadedRole,
+  selectedRole,
   tags,
   tagOptions,
   tagClasses,
@@ -2294,6 +2303,9 @@ function ProjectRow({
   onToggleMenu,
 }: {
   project: Project;
+  fileLocations: ProjectFileLocation[];
+  hasLoadedRole: boolean;
+  selectedRole: PrototypeRole;
   tags: string[];
   tagOptions: string[];
   tagClasses: Record<string, TagClass>;
@@ -2317,7 +2329,6 @@ function ProjectRow({
   onOpenProject: () => void;
   onToggleMenu: () => void;
 }) {
-  const projectBaseHref = `/projects/${project.id}`;
   const projectFlowHref = getProjectFlowHref(project.id);
   const latestUpdateFullDate = formatFullTimestamp(project.latestUpdate.timestamp);
   const latestUpdateAccessibleLabel = `${project.latestUpdate.label} · ${latestUpdateFullDate}`;
@@ -2347,8 +2358,10 @@ function ProjectRow({
     >
       <ProjectCell
         project={project}
-        projectBaseHref={projectBaseHref}
+        fileLocations={fileLocations}
+        hasLoadedRole={hasLoadedRole}
         projectFlowHref={projectFlowHref}
+        selectedRole={selectedRole}
         tags={tags}
         tagOptions={tagOptions}
         tagClasses={tagClasses}
@@ -2383,8 +2396,10 @@ function ProjectRow({
 
 function ProjectCell({
   project,
-  projectBaseHref,
+  fileLocations,
+  hasLoadedRole,
   projectFlowHref,
+  selectedRole,
   tags,
   tagOptions,
   tagClasses,
@@ -2395,8 +2410,10 @@ function ProjectCell({
   onCreateTag,
 }: {
   project: Project;
-  projectBaseHref: string;
+  fileLocations: ProjectFileLocation[];
+  hasLoadedRole: boolean;
   projectFlowHref: string;
+  selectedRole: PrototypeRole;
   tags: string[];
   tagOptions: string[];
   tagClasses: Record<string, TagClass>;
@@ -2415,6 +2432,12 @@ function ProjectCell({
     unreadMessages > 0
       ? `Open chat (${unreadMessages} unread)`
       : "Open chat";
+  const primaryFileLocation = fileLocations[0];
+  const fileTooltip = primaryFileLocation
+    ? fileLocations.length > 1
+      ? `Open project files (${fileLocations.length} locations)`
+      : getFileLocationTooltip(primaryFileLocation)
+    : "";
 
   useEffect(() => {
     if (!isTagMenuOpen) {
@@ -2456,11 +2479,54 @@ function ProjectCell({
               <DsIcon name="chats" size={20} />
               <CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} />
             </a>
+            {hasLoadedRole && selectedRole !== "Customer" && primaryFileLocation ? (
+              fileLocations.length === 1 ? (
+                <a
+                  className="project-quick-action"
+                  href={getFileLocationHref(primaryFileLocation.url)}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={fileTooltip}
+                  data-tooltip={fileTooltip}
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <DsIcon name="folder" size={20} />
+                </a>
+              ) : (
+                <details className="project-files-quick-menu" onClick={(event) => event.stopPropagation()}>
+                  <summary
+                    className="project-quick-action"
+                    aria-label={fileTooltip}
+                    data-tooltip={fileTooltip}
+                  >
+                    <DsIcon name="folder" size={20} />
+                  </summary>
+                  <div className="project-files-quick-popover" aria-label="Project file locations">
+                    <span className="project-files-quick-heading label-xs-semibold">Project Files</span>
+                    {fileLocations.map((location, index) => (
+                      <a
+                        className="project-files-quick-location"
+                        href={getFileLocationHref(location.url)}
+                        target="_blank"
+                        rel="noopener"
+                        key={`${location.created_at}-${index}`}
+                      >
+                        <DsIcon name="folder-open" size={16} />
+                        <span>
+                          <strong className="label-s-semibold">{getFileLocationDisplayLabel(location)}</strong>
+                          <small className="label-xs">{getFileLocationTooltip(location)}</small>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </details>
+              )
+            ) : null}
             <a
               className="project-quick-action"
-              href={`${projectBaseHref}/client-queue`}
-              aria-label="Go to client queue"
-              data-tooltip="Go to client queue"
+              href="/customer-dashboard"
+              aria-label="Go to client dashboard"
+              data-tooltip="Go to client dashboard"
               onClick={(event) => event.stopPropagation()}
             >
               <DsIcon name="queue" size={20} />
@@ -2633,6 +2699,7 @@ function ProjectDataCell({
   onOpenDetails: () => void;
   onToggleMenu: () => void;
 }) {
+  const router = useRouter();
   const columnClassName = [
     `column-${columnKey}`,
     isDragging ? "column-is-dragging" : "",
@@ -2710,7 +2777,14 @@ function ProjectDataCell({
               <span className="hours-copy label-s-semibold">
                 {formatHours(loggedHours)} <span>/</span> {formatHours(estimatedHours)}
               </span>
-              <button className="hours-button label-s-semibold" type="button" onClick={(event) => event.stopPropagation()}>
+              <button
+                className="hours-button label-s-semibold"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  router.push("/today");
+                }}
+              >
                 + Log
               </button>
             </>

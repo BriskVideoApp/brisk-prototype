@@ -9,11 +9,13 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { chatClients, chatProjects, chatUsers } from "@/data/chat";
+import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
 
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
   project: Project;
   activeStage?: StageKey;
+  activeUtility?: "files" | "chat" | "people" | "settings";
 };
 
 type ProjectHeaderStage = {
@@ -38,11 +40,11 @@ const stageStateLabels: Record<StageStatus["state"], string> = {
   waiting: "waiting",
 };
 
-export function ProjectStageHeader({ actions, activeStage, project }: ProjectStageHeaderProps) {
+export function ProjectStageHeader({ actions, activeStage, activeUtility, project }: ProjectStageHeaderProps) {
   const { completionRecords } = useProjectCompletion();
   const isProjectDelivered = project.status === "Completed" || Boolean(completionRecords[project.id]);
   const currentStageKey = activeStage ?? getCurrentProjectStage(project).key;
-  const { selectedRole } = usePrototypeRole();
+  const { hasLoadedRole, selectedRole } = usePrototypeRole();
   const [isAccessOpen, setIsAccessOpen] = useState(false);
   const [accessProject, setAccessProject] = useState(() => chatProjects.find((candidate) => candidate.id === project.id) ?? null);
   const accessMembers = accessProject
@@ -54,6 +56,7 @@ export function ProjectStageHeader({ actions, activeStage, project }: ProjectSta
   const remainingAccessMembers = Math.max(0, accessMembers.length - visibleAccessMembers.length);
   const client = accessProject ? chatClients.find((candidate) => candidate.name === accessProject.clientName) : null;
   const companyUsers = client ? chatUsers.filter((user) => client.userIds.includes(user.id)) : [];
+  const brandKitCustomer = getBrandKitCustomerByBadge(project.clientBadge);
 
   return (
     <>
@@ -74,8 +77,55 @@ export function ProjectStageHeader({ actions, activeStage, project }: ProjectSta
             </span>
             <span className="project-stage-project-title">{project.name}</span>
           </div>
-          {accessProject || actions ? (
-            <div className="project-stage-header-actions">
+          <div className="project-stage-header-actions">
+              <nav className="project-stage-utility-tabs" aria-label="Project utilities">
+                {hasLoadedRole && selectedRole !== "Customer" ? (
+                  <Link
+                    className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "files" ? "is-active" : ""}`}
+                    href={`/projects/${project.id}/files`}
+                    aria-current={activeUtility === "files" ? "page" : undefined}
+                  >
+                    <DsIcon name="folder" size={16} />
+                    Files
+                  </Link>
+                ) : null}
+                <Link
+                  className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "chat" ? "is-active" : ""}`}
+                  href={`/chat?project=${encodeURIComponent(project.id)}`}
+                  aria-current={activeUtility === "chat" ? "page" : undefined}
+                >
+                  <DsIcon name="chats" size={16} />
+                  Chat
+                </Link>
+                {accessProject ? (
+                  <button
+                    className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "people" ? "is-active" : ""}`}
+                    type="button"
+                    aria-pressed={activeUtility === "people"}
+                    onClick={() => setIsAccessOpen(true)}
+                  >
+                    <DsIcon name="users-three" size={16} />
+                    People
+                  </button>
+                ) : null}
+                <Link
+                  className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "settings" ? "is-active" : ""}`}
+                  href={`/projects/${project.id}`}
+                  aria-current={activeUtility === "settings" ? "page" : undefined}
+                >
+                  <DsIcon name="settings" size={16} />
+                  Settings
+                </Link>
+              </nav>
+              {brandKitCustomer ? (
+                <Link
+                  className="project-stage-brand-kit-link label-xs-semibold"
+                  href={`/brand-kits/${brandKitCustomer.slug}`}
+                >
+                  <DsIcon name="sparkle" size={16} />
+                  {brandKitCustomer.name}&apos;s Brand Kit
+                </Link>
+              ) : null}
               {accessProject ? (
                 <button
                   className="project-stage-access-button"
@@ -91,8 +141,7 @@ export function ProjectStageHeader({ actions, activeStage, project }: ProjectSta
                 </button>
               ) : null}
               {actions}
-            </div>
-          ) : null}
+          </div>
         </div>
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
           <ol className="project-stage-track" aria-label="Production stages">
