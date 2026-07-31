@@ -42,6 +42,7 @@ type BrandKitContextValue = {
     profile: BrandProfile,
     relationship: BrandRelationship,
   ) => SubBrand;
+  updateSubBrands: (subBrands: SubBrand[]) => void;
 };
 
 const BrandKitContext = createContext<BrandKitContextValue | null>(null);
@@ -122,14 +123,10 @@ export function BrandKitProvider({
     setAutoDetectedSections(source === "manual" ? new Set() : new Set(profileSections));
     setBanner(
       source === "quick"
-        ? role === "client"
-          ? "We've pulled in what we could find. Edit anything below, or upload your logo pack, fonts, and guidelines to finish."
-          : "We've pulled in what we could find. Edit anything below, or upload the customer's logo pack, fonts, and guidelines to finish."
+        ? "We've pulled in what we could find. Use + in Logos, Fonts, Visual Assets and Brand Guidelines to upload to each section. Add Colours and Voice & Tone in their own sections."
         : source === "deep"
-          ? "Brand Kit built from the uploads. Add more anytime."
-          : role === "client"
-            ? "Start with the essentials. Add your colours, fonts, logos and guidelines below."
-            : "Start with the essentials. Add the customer's colours, fonts, logos and guidelines below.",
+          ? "Brand Kit built from the uploads. Use + in any section to add or replace its assets."
+          : "Start with the essentials. Use + in each section to add its colours, fonts, logos, visual assets and guidelines.",
     );
   };
 
@@ -165,6 +162,10 @@ export function BrandKitProvider({
     return nextSubBrand;
   };
 
+  const updateSubBrands = (nextSubBrands: SubBrand[]) => {
+    setSubBrands(nextSubBrands);
+  };
+
   const value = useMemo<BrandKitContextValue>(
     () => ({
       customer,
@@ -179,6 +180,7 @@ export function BrandKitProvider({
       updateSection,
       completeSetup,
       addBrand,
+      updateSubBrands,
     }),
     [
       autoDetectedSections,

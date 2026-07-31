@@ -14,7 +14,7 @@ export type BrandColour = {
 };
 
 export type BrandFont = {
-  role: "heading" | "body" | "mono";
+  role: string;
   family: string;
   source: "google" | "adobe" | "custom";
 };
@@ -26,13 +26,20 @@ export type BrandImagery = {
   kind: "photo" | "broll" | "illustration";
 };
 
+export type BrandGuidelineFile = {
+  id: string;
+  name: string;
+  size: string;
+  url: string;
+};
+
 export type BrandProfile = {
   logos: BrandLogo[];
   colours: BrandColour[];
   fonts: BrandFont[];
   imagery: BrandImagery[];
   voice: { summary: string; tags: string[] };
-  guidelines: { pdfUrl?: string; aiSummary?: string };
+  guidelines: { files?: BrandGuidelineFile[]; pdfUrl?: string; aiSummary?: string };
 };
 
 export type EditorFile = {
@@ -135,6 +142,53 @@ function makeImagery(prefix: string): BrandImagery[] {
   ];
 }
 
+function makeMockPdfDataUrl(title: string, summary: string) {
+  const escapePdfText = (value: string) => value.replace(/([\\()])/gu, "\\$1");
+  const stream = [
+    "BT",
+    "/F1 22 Tf",
+    `72 720 Td (${escapePdfText(title)}) Tj`,
+    "/F1 11 Tf",
+    `0 -36 Td (${escapePdfText(summary)}) Tj`,
+    "ET",
+  ].join("\n");
+  const objects = [
+    "1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+    "2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+    "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n",
+    "4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+    `5 0 obj\n<< /Length ${stream.length} >>\nstream\n${stream}\nendstream\nendobj\n`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = objects.map((object) => {
+    const offset = pdf.length;
+    pdf += object;
+    return offset;
+  });
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  pdf += offsets.map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`).join("");
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+  return `data:application/pdf;charset=utf-8,${encodeURIComponent(pdf)}`;
+}
+
+export function makeGuidelineFiles(prefix: string, name: string): BrandGuidelineFile[] {
+  return [
+    {
+      id: `${prefix}-brand-guidelines`,
+      name: `${name}-brand-guidelines.pdf`,
+      size: "2.4 MB",
+      url: makeMockPdfDataUrl(`${name} Brand Guidelines`, "Logo, colour, typography and layout guidance."),
+    },
+    {
+      id: `${prefix}-content-guidelines`,
+      name: `${name}-content-guidelines.pdf`,
+      size: "806 KB",
+      url: makeMockPdfDataUrl(`${name} Content Guidelines`, "Voice, imagery and content principles."),
+    },
+  ];
+}
+
 export const mockBrandProfilesBySlug: Record<string, BrandProfile> = {
   loom: {
     logos: makeLogos("loom", "Loom"),
@@ -155,6 +209,7 @@ export const mockBrandProfilesBySlug: Record<string, BrandProfile> = {
       tags: ["Warm", "Direct", "Useful", "Optimistic"],
     },
     guidelines: {
+      files: makeGuidelineFiles("loom", "Loom"),
       aiSummary: "Use generous space, high-contrast product imagery and purple as a focused accent. Keep the Loom mark clear of busy photography and favour natural, candid team moments.",
     },
   },
@@ -420,6 +475,9 @@ export function cloneBrandProfile(profile: BrandProfile): BrandProfile {
     fonts: profile.fonts.map((font) => ({ ...font })),
     imagery: profile.imagery.map((image) => ({ ...image })),
     voice: { summary: profile.voice.summary, tags: [...profile.voice.tags] },
-    guidelines: { ...profile.guidelines },
+    guidelines: {
+      ...profile.guidelines,
+      files: profile.guidelines.files?.map((file) => ({ ...file })),
+    },
   };
 }

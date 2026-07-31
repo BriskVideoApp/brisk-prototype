@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   useEffect,
   useRef,
   useState,
+  type CSSProperties,
   type DragEvent,
   type ReactNode,
 } from "react";
@@ -29,55 +31,105 @@ import type {
   SetupMode,
   SetupSource,
 } from "./BrandKitContext";
+import {
+  ActionMenu,
+  UploadProgress,
+  type BrandMenuItem,
+} from "./AssetManagement";
 
 export function BrandTile({
   action,
-  autoDetected = false,
   children,
   className = "",
+  disabled = false,
+  dropOverlayLabel,
   id,
+  onDropFiles,
+  progress,
   title,
 }: {
   action?: ReactNode;
-  autoDetected?: boolean;
   children: ReactNode;
   className?: string;
+  disabled?: boolean;
+  dropOverlayLabel?: string;
   id?: string;
+  onDropFiles?: (files: File[]) => void;
+  progress?: number;
   title: string;
 }) {
+  const [isDragging, setIsDragging] = useState(false);
+
   return (
-    <article className={`brand-tile ${className}`} id={id}>
-      <header className="brand-tile-header">
-        <div>
-          <h2 className="headings-2xs-bold">{title}</h2>
-          {autoDetected ? (
-            <span className="brand-auto-tag label-xs-semibold">Auto-detected · edit to override</span>
+    <div
+      aria-disabled={disabled || undefined}
+      className={`brand-tile-slot ${className} ${disabled ? "is-disabled" : ""}`}
+      inert={disabled || undefined}
+    >
+      <article
+        className={`brand-tile ${className} ${isDragging ? "is-dragging" : ""}`}
+        id={id}
+        onDragEnter={onDropFiles ? (event) => {
+          event.preventDefault();
+          setIsDragging(true);
+        } : undefined}
+        onDragOver={onDropFiles ? (event) => event.preventDefault() : undefined}
+        onDragLeave={onDropFiles ? (event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsDragging(false);
+        } : undefined}
+        onDrop={onDropFiles ? (event) => {
+          event.preventDefault();
+          setIsDragging(false);
+          const files = Array.from(event.dataTransfer.files);
+          if (files.length > 0) onDropFiles(files);
+        } : undefined}
+      >
+        {isDragging && dropOverlayLabel ? (
+          <div className="brand-tile-drop-overlay" aria-hidden="true">
+            <DsIcon name="upload-simple" size={32} />
+            <span className="headings-xs-bold">{dropOverlayLabel}</span>
+          </div>
+        ) : null}
+        <header className="brand-tile-header">
+          <div>
+            <h2 className="headings-2xs-bold">{title}</h2>
+          </div>
+          {!disabled && action ? (
+            <div className="brand-tile-action">{action}</div>
           ) : null}
-        </div>
-        {action ? <div className="brand-tile-action">{action}</div> : null}
-      </header>
-      <div className="brand-tile-body">{children}</div>
-    </article>
+        </header>
+        {typeof progress === "number" ? <UploadProgress label={title} value={progress} /> : null}
+        <div className="brand-tile-body">{children}</div>
+      </article>
+    </div>
   );
 }
 
 export function HeroTile({
   action,
-  autoDetected,
   children,
+  dropOverlayLabel,
   isClientView = false,
+  onDropFiles,
+  progress,
+  title = "Brand Kit",
 }: {
   action?: ReactNode;
-  autoDetected?: boolean;
   children: ReactNode;
+  dropOverlayLabel?: string;
   isClientView?: boolean;
+  onDropFiles?: (files: File[]) => void;
+  progress?: number;
+  title?: string;
 }) {
   return (
     <BrandTile
       action={action}
-      autoDetected={autoDetected}
       className={`brand-hero-tile ${isClientView ? "is-client-view" : ""}`}
-      title="Brand Kit"
+      dropOverlayLabel={dropOverlayLabel}
+      onDropFiles={onDropFiles}
+      progress={progress}
+      title={title}
     >
       {children}
     </BrandTile>
@@ -106,48 +158,89 @@ export function TileActionButton({
   );
 }
 
+const emptyTileIllustrations = {
+  colours: "/brisk-visuals/brand-kit-colours-empty-state-purple-shadow.png",
+  fonts: "/brisk-visuals/brand-kit-fonts-empty-state-purple-shadow.png",
+  guidelines: "/brisk-visuals/brand-kit-guidelines-empty-state-purple-shadow.png",
+  imagery: "/brisk-visuals/brand-kit-imagery-empty-state-purple-shadow.png",
+  logos: "/brisk-visuals/brand-kit-logos-empty-state-purple-shadow.png",
+  motion: "/brisk-visuals/brand-kit-empty-state-purple-shadow.png",
+  "sub-brands": "/brisk-visuals/brand-kit-sub-brands-empty-state-purple-shadow.png",
+  voice: "/brisk-visuals/brand-kit-voice-empty-state-purple-shadow.png",
+} as const;
+
+type EmptyTileVisual = "default" | keyof typeof emptyTileIllustrations;
+
 export function EmptyTile({
   action,
   copy,
   icon,
+  note,
+  secondaryAction,
   title,
+  visual = "default",
 }: {
-  action:
+  action?:
     | { label: string; onClick: () => void; onFiles?: never; accept?: never; multiple?: never }
     | { label: string; onFiles: (files: File[]) => void; accept: string; multiple?: boolean; onClick?: never };
   copy: string;
   icon: DsIconName;
+  note?: string;
+  secondaryAction?: { label: string; onClick: () => void };
   title?: string;
+  visual?: EmptyTileVisual;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const isUploadAction = "onFiles" in action;
+  const isUploadAction = Boolean(action && "onFiles" in action);
+  const illustrationSrc = visual === "default" ? null : emptyTileIllustrations[visual];
 
   const handleFiles = (files: FileList | null) => {
-    if (typeof action.onFiles !== "function" || !files?.length) return;
+    if (!action || typeof action.onFiles !== "function" || !files?.length) return;
     action.onFiles(Array.from(files));
     if (inputRef.current) inputRef.current.value = "";
   };
 
   return (
     <div className="brand-empty-tile">
-      <span className="brand-empty-icon" aria-hidden="true">
-        <DsIcon name={icon} size={24} />
+      <span className={`brand-empty-visual is-${visual}`} aria-hidden="true">
+        {illustrationSrc ? (
+          <Image
+            alt=""
+            className={`brand-empty-illustration is-${visual}`}
+            height={512}
+            src={illustrationSrc}
+            width={512}
+          />
+        ) : null}
+        {visual === "default" ? <DsIcon name={icon} size={32} /> : null}
       </span>
       {title ? <strong className="label-m-semibold">{title}</strong> : null}
       <p className="paragraph-s">{copy}</p>
-      <Button
-        size="S"
-        onClick={() => {
-          if (isUploadAction) {
-            inputRef.current?.click();
-          } else {
-            action.onClick();
-          }
-        }}
-      >
-        {action.label}
-      </Button>
-      {isUploadAction ? (
+      {action ? (
+        <Button
+          size="S"
+          onClick={() => {
+            if (isUploadAction) {
+              inputRef.current?.click();
+            } else if (typeof action.onClick === "function") {
+              action.onClick();
+            }
+          }}
+        >
+          {action.label}
+        </Button>
+      ) : null}
+      {secondaryAction ? (
+        <button
+          className="brand-text-button brand-empty-secondary-action label-s-semibold"
+          type="button"
+          onClick={secondaryAction.onClick}
+        >
+          {secondaryAction.label}
+        </button>
+      ) : null}
+      {note ? <p className="brand-empty-note paragraph-s">{note}</p> : null}
+      {action && isUploadAction ? (
         <input
           ref={inputRef}
           className="sr-only"
@@ -205,23 +298,87 @@ export function TileUploadButton({
 
 export function ColourSwatch({
   colour,
+  editorOpen,
   editable,
   onChange,
   onCopy,
+  onDelete,
+  onEditorClose,
+  onEditorOpen,
+  onSetPrimary,
 }: {
   colour: BrandColour;
+  editorOpen?: boolean;
   editable: boolean;
   onChange: (nextColour: BrandColour) => void;
   onCopy: (hex: string) => void;
+  onDelete?: () => void;
+  onEditorClose?: () => void;
+  onEditorOpen?: () => void;
+  onSetPrimary?: () => void;
 }) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [hexDraft, setHexDraft] = useState(colour.hex.toUpperCase());
+  const pickerAnchorRef = useRef<HTMLDivElement>(null);
   const pickerColour = normalisePickerColour(colour.hex);
   const hsv = hexToHsv(pickerColour);
+  const pickerIsVisible = editable && (editorOpen ?? isPickerOpen);
+  const swatchForeground = getColourForeground(colour.hex);
+  const colourMenuItems: BrandMenuItem[] = [
+    {
+      label: "Edit",
+      icon: "pencil-simple-ds",
+      onSelect: () => {
+        setIsPickerOpen(true);
+        onEditorOpen?.();
+      },
+    },
+    {
+      label: "Copy HEX",
+      icon: "copy",
+      onSelect: () => onCopy(colour.hex),
+    },
+  ];
+
+  if (onSetPrimary) {
+    colourMenuItems.push({
+      label: "Set as primary",
+      icon: "bookmark",
+      onSelect: onSetPrimary,
+    });
+  }
+
+  if (onDelete) {
+    colourMenuItems.push({
+      label: "Delete",
+      destructive: true,
+      onSelect: onDelete,
+    });
+  }
 
   useEffect(() => {
     setHexDraft(colour.hex.toUpperCase());
   }, [colour.hex]);
+
+  useEffect(() => {
+    if (!pickerIsVisible) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (pickerAnchorRef.current?.contains(event.target as Node)) return;
+      setIsPickerOpen(false);
+      onEditorClose?.();
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setIsPickerOpen(false);
+      onEditorClose?.();
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [onEditorClose, pickerIsVisible]);
 
   const applyHex = (hex: string) => {
     const nextHex = hex.toUpperCase();
@@ -242,30 +399,29 @@ export function ColourSwatch({
 
   return (
     <div className="colour-swatch">
-      <div className="colour-picker-anchor">
+      <div
+        className="colour-picker-anchor"
+        ref={pickerAnchorRef}
+        style={{ "--colour-swatch-foreground": swatchForeground } as CSSProperties}
+      >
+        <button
+          className="colour-swatch-copy"
+          type="button"
+          aria-label={`Copy ${colour.name ?? colour.hex} ${colour.hex}`}
+          onClick={() => onCopy(colour.hex)}
+        >
+          <span className="colour-swatch-colour" style={{ backgroundColor: colour.hex }} />
+          <span className="colour-swatch-hex label-xs-semibold">{colour.hex}</span>
+        </button>
         {editable ? (
-          <button
-            className="colour-swatch-copy"
-            type="button"
-            aria-label={`Edit ${colour.name ?? colour.role} colour`}
-            aria-expanded={isPickerOpen}
-            onClick={() => setIsPickerOpen(true)}
-          >
-            <span className="colour-swatch-colour" style={{ backgroundColor: colour.hex }} />
-            <span className="colour-swatch-copy-icon"><DsIcon name="pencil-simple-ds" size={14} /></span>
-          </button>
-        ) : (
-          <button
-            className="colour-swatch-copy"
-            type="button"
-            aria-label={`Copy ${colour.name ?? colour.hex} ${colour.hex}`}
-            onClick={() => onCopy(colour.hex)}
-          >
-            <span className="colour-swatch-colour" style={{ backgroundColor: colour.hex }} />
-            <span className="colour-swatch-copy-icon"><DsIcon name="copy" size={14} /></span>
-          </button>
-        )}
-        {editable && isPickerOpen ? (
+          <span className="colour-swatch-hover-actions">
+            <ActionMenu
+              items={colourMenuItems}
+              label={`Actions for ${colour.name ?? colour.hex}`}
+            />
+          </span>
+        ) : null}
+        {pickerIsVisible ? (
           <div className="brisk-colour-picker" role="dialog" aria-label={`Edit ${colour.name ?? colour.role} colour`}>
             <label className="brisk-colour-picker-hex">
               <span className="label-xs-semibold">Hex</span>
@@ -319,136 +475,47 @@ export function ColourSwatch({
             <div className="brisk-colour-picker-footer">
               <span className="brisk-colour-preview" style={{ backgroundColor: pickerColour }} />
               <span className="label-s-semibold">{pickerColour}</span>
-              <Button size="S" variant="secondary" onClick={() => setIsPickerOpen(false)}>Done</Button>
+              <Button size="S" variant="secondary" onClick={() => {
+                setIsPickerOpen(false);
+                onEditorClose?.();
+              }}>Done</Button>
             </div>
           </div>
         ) : null}
-      </div>
-      <div className="colour-swatch-meta">
-        <span className="label-xs-semibold">{colour.name ?? colour.role}</span>
-        {editable ? (
-          <input
-            className="brand-inline-input label-xs"
-            aria-label={`${colour.name ?? colour.role} hex colour`}
-            value={colour.hex}
-            onChange={(event) => onChange({ ...colour, hex: event.target.value.toUpperCase() })}
-          />
-        ) : (
-          <button className="colour-swatch-hex label-xs" type="button" onClick={() => onCopy(colour.hex)}>
-            {colour.hex}
-          </button>
-        )}
       </div>
     </div>
   );
 }
 
-const fontSourceLabels: Record<BrandFont["source"], string> = {
-  google: "Google Fonts",
-  adobe: "Adobe Fonts",
-  custom: "Custom upload",
-};
-
 export function FontPreview({
-  editable,
+  actions,
   font,
-  onChange,
-  onRemove,
-  onUpload,
 }: {
-  editable: boolean;
+  actions?: ReactNode;
   font: BrandFont;
-  onChange: (font: BrandFont) => void;
-  onRemove: () => void;
-  onUpload: (file: File) => void;
 }) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const normalisedRole = font.role.toLowerCase();
+  const sample = normalisedRole === "heading"
+    ? "Clear ideas, beautifully told"
+    : normalisedRole === "mono"
+      ? "Aa Bb Cc 0123456789"
+      : "The quick brown fox…";
 
   return (
     <div className="font-preview">
-      <span className="font-preview-aa" style={{ fontFamily: font.family }}>Aa</span>
-      <div className="font-preview-meta">
-        <div className="font-preview-heading">
-          {editable ? (
-            <select
-              className="font-preview-select label-xs-semibold"
-              aria-label={`${font.family || "Font"} role`}
-              value={font.role}
-              onChange={(event) => onChange({
-                ...font,
-                role: event.target.value as BrandFont["role"],
-              })}
-            >
-              <option value="heading">Heading</option>
-              <option value="body">Body</option>
-              <option value="mono">Mono</option>
-            </select>
-          ) : (
-            <span className="label-xs-semibold">{capitalise(font.role)}</span>
-          )}
-          {editable ? (
-            <span className="font-preview-actions">
-              <button
-                className="font-preview-action"
-                type="button"
-                aria-label={`Replace ${font.family || font.role} font`}
-                data-tooltip="Replace font"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <DsIcon name="upload-simple" size={14} />
-              </button>
-              <button
-                className="font-preview-action"
-                type="button"
-                aria-label={`Remove ${font.family || font.role} font`}
-                data-tooltip="Remove font"
-                onClick={onRemove}
-              >
-                <DsIcon name="trash-simple" size={14} />
-              </button>
-              <input
-                ref={fileInputRef}
-                className="sr-only"
-                type="file"
-                accept=".otf,.ttf,.woff,.woff2"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) onUpload(file);
-                  event.target.value = "";
-                }}
-              />
-            </span>
-          ) : null}
-        </div>
-        {editable ? (
-          <input
-            className="brand-inline-input label-s-semibold"
-            aria-label={`${font.role} font family`}
-            value={font.family}
-            placeholder="Choose or enter a font"
-            onChange={(event) => onChange({ ...font, family: event.target.value })}
-          />
-        ) : (
-          <strong className="label-s-semibold">{font.family}</strong>
-        )}
-        {editable ? (
-          <select
-            className="font-preview-select font-preview-source label-xs"
-            aria-label={`${font.family || font.role} source`}
-            value={font.source}
-            onChange={(event) => onChange({
-              ...font,
-              source: event.target.value as BrandFont["source"],
-            })}
-          >
-            {Object.entries(fontSourceLabels).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-        ) : (
-          <span className="label-xs">{fontSourceLabels[font.source]}</span>
-        )}
+      <span className="font-preview-role label-xs-semibold">{capitalise(font.role)}</span>
+      <div className="font-preview-control-row">
+        <strong className="font-preview-family" style={{ fontFamily: font.family }}>
+          {font.family}
+        </strong>
+        {actions}
       </div>
+      <span
+        className={`font-preview-sample ${normalisedRole === "heading" ? "headings-xs-bold" : "paragraph-s"}`}
+        style={{ fontFamily: font.family }}
+      >
+        {sample}
+      </span>
     </div>
   );
 }
@@ -477,15 +544,17 @@ export function LogoVariant({
 
 export function SubBrandCard({
   customerSlug,
+  href,
   subBrand,
 }: {
   customerSlug: string;
-  subBrand: SubBrand;
+  href?: string;
+  subBrand: Pick<SubBrand, "lastUpdated" | "logoUrl" | "name" | "relationship" | "slug">;
 }) {
   return (
     <Link
       className="sub-brand-card"
-      href={`/brand-kits/${customerSlug}/${subBrand.slug}${subBrand.relationship === "master" ? "?relationship=master" : ""}`}
+      href={href ?? `/brand-kits/${customerSlug}/${subBrand.slug}${subBrand.relationship === "master" ? "?relationship=master" : ""}`}
     >
       <span className="sub-brand-logo">
         <img src={subBrand.logoUrl} alt="" />
@@ -503,16 +572,18 @@ export function SubBrandCard({
 
 export type DetectedUpload = {
   file: File;
-  kind: "Logo" | "Guidelines" | "Font" | "Image" | "Video" | "File";
+  kind: "Logo" | "Guidelines" | "Font" | "Image" | "Video" | "Archive" | "File";
 };
 
 export function UploadZone({
   files,
   onFilesChange,
+  showFileList = true,
   uploadKind = "all",
 }: {
   files: DetectedUpload[];
   onFilesChange: (files: DetectedUpload[]) => void;
+  showFileList?: boolean;
   uploadKind?: "all" | "guidelines";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -565,10 +636,10 @@ export function UploadZone({
         <p className="paragraph-s">
           {uploadKind === "guidelines"
             ? "Drop a PDF here, or browse to choose one."
-            : "ZIPs, folders, PDFs, fonts, images and videos are supported."}
+            : "Upload whatever you have: brand guidelines, logos, fonts, imagery, videos and source files."}
         </p>
         <Button size="S" variant="secondary" onClick={() => inputRef.current?.click()}>
-          Browse
+          {uploadKind === "guidelines" ? "Browse" : "Browse files"}
         </Button>
         <input
           ref={inputRef}
@@ -584,7 +655,7 @@ export function UploadZone({
           }}
         />
       </div>
-      {files.length > 0 ? (
+      {showFileList && files.length > 0 ? (
         <div className="upload-file-list" aria-label="Detected files">
           {files.map((upload) => (
             <div className="upload-file-row" key={`${upload.file.name}-${upload.file.size}`}>
@@ -611,22 +682,28 @@ export function UploadZone({
 export function SetupModal({
   customerName,
   initialMode = "quick",
+  initialFiles = [],
   brandRelationship,
   isCustomerView = false,
   onClose,
   onComplete,
+  onProcessingStart,
 }: {
   customerName: string;
   initialMode?: SetupMode;
+  initialFiles?: File[];
   brandRelationship?: BrandRelationship;
   isCustomerView?: boolean;
   onClose: () => void;
   onComplete: (profile: BrandProfile, source: SetupSource, name?: string) => void;
+  onProcessingStart?: () => void;
 }) {
   const [mode, setMode] = useState<SetupMode>(initialMode);
   const [website, setWebsite] = useState("");
   const [subBrandName, setSubBrandName] = useState("");
-  const [files, setFiles] = useState<DetectedUpload[]>([]);
+  const [files, setFiles] = useState<DetectedUpload[]>(() =>
+    initialFiles.map((file) => ({ file, kind: detectFileKind(file) })),
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -635,6 +712,7 @@ export function SetupModal({
     }
 
     setIsLoading(true);
+    onProcessingStart?.();
     const profile = mode === "quick"
       ? await getBrandFromSources(website, files.map((upload) => upload.file))
       : await getBrandFromFiles(files.map((upload) => upload.file));
@@ -667,13 +745,15 @@ export function SetupModal({
         <header className="brand-modal-header">
           <div>
             <h2 className="headings-xs-bold" id="setup-modal-title">
-              {brandRelationship ? "Add a brand" : `Set up ${customerName}'s Brand Kit`}
+              {brandRelationship ? "Add a brand" : "Build Brand Kit"}
             </h2>
-            <p className="paragraph-s">
-              {mode === "quick"
-                ? `Start with ${isCustomerView ? "your" : "their"} website, brand guidelines, or both.`
-                : "Build the kit from the files you already have."}
-            </p>
+            {brandRelationship ? (
+              <p className="paragraph-s">
+                {mode === "quick"
+                  ? `Start with ${isCustomerView ? "your" : "their"} website, brand guidelines, or both.`
+                  : "Build the kit from the files you already have."}
+              </p>
+            ) : null}
           </div>
           <button className="brand-modal-close" type="button" aria-label="Close" onClick={onClose}>
             <DsIcon name="x-close-cross" size={18} />
@@ -688,6 +768,18 @@ export function SetupModal({
                 Reading {isCustomerView ? "your" : "their"} brand…
               </strong>
               <p className="paragraph-s">Finding logos, colours, fonts and brand cues.</p>
+            </div>
+          ) : mode === "quick" && !brandRelationship ? (
+            <div className="brand-setup-form">
+              <UploadZone files={files} onFilesChange={setFiles} />
+              <Input
+                label={isCustomerView ? "Or add your website" : "Or add their website"}
+                value={website}
+                onChange={(event) => setWebsite(event.target.value)}
+                placeholder={isCustomerView ? "yourcompany.com" : "theircompany.com"}
+                size="M"
+              />
+              <Button onClick={handleSubmit}>Build Brand Kit</Button>
             </div>
           ) : mode === "quick" ? (
             <div className="brand-setup-form">
@@ -746,6 +838,17 @@ export function SetupModal({
 
 function normalisePickerColour(value: string) {
   return /^#[0-9a-f]{6}$/iu.test(value) ? value : "#FFFFFF";
+}
+
+function getColourForeground(value: string) {
+  const hex = normalisePickerColour(value);
+  const red = Number.parseInt(hex.slice(1, 3), 16);
+  const green = Number.parseInt(hex.slice(3, 5), 16);
+  const blue = Number.parseInt(hex.slice(5, 7), 16);
+  const perceivedLightness = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+  return perceivedLightness > 154
+    ? "var(--brisk-text-primary)"
+    : "var(--brisk-text-white)";
 }
 
 function clamp(value: number) {
@@ -825,6 +928,9 @@ function detectFileKind(file: File): DetectedUpload["kind"] {
   }
   if (/\.(mp4|mov|m4v|webm)$/u.test(name)) {
     return "Video";
+  }
+  if (/\.zip$/u.test(name)) {
+    return "Archive";
   }
   return "File";
 }
