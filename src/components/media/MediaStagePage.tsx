@@ -6,12 +6,23 @@ import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type { Project } from "@/components/active-videos/types";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { mediaAssets, mediaFolders, mediaTranscriptNotes, type MediaAsset, type MediaFolder } from "@/data/media";
+import {
+  mediaAssets,
+  mediaCloudFiles,
+  mediaFolders,
+  mediaTranscriptNotes,
+  type MediaAsset,
+  type MediaCloudFile,
+  type MediaCloudProvider,
+  type MediaFolder,
+} from "@/data/media";
 import { MediaAssetGrid } from "./MediaAssetGrid";
+import { MediaCloudPicker } from "./MediaCloudPicker";
 import { MediaFilterBar, type MediaSort, type MediaTypeFilter, type MediaViewMode } from "./MediaFilterBar";
 import { MediaFolderTree } from "./MediaFolderTree";
 import { MediaInspector, type MediaInspectorTab } from "./MediaInspector";
 import { MediaUploadDropZone } from "./MediaUploadDropZone";
+import { MediaUploadMenu } from "./MediaUploadMenu";
 
 export function MediaStagePage({ project }: { project: Project }) {
   const router = useRouter();
@@ -28,6 +39,8 @@ export function MediaStagePage({ project }: { project: Project }) {
   const [activeAssetId, setActiveAssetId] = useState<string | null>(null);
   const [inspectorTab, setInspectorTab] = useState<MediaInspectorTab>("details");
   const [isDropZoneActive, setIsDropZoneActive] = useState(false);
+  const [isUploadMenuOpen, setIsUploadMenuOpen] = useState(false);
+  const [cloudProvider, setCloudProvider] = useState<MediaCloudProvider | null>(null);
   const [toast, setToast] = useState("");
   const [deleteAssetIds, setDeleteAssetIds] = useState<string[]>([]);
   const uploadInputRef = useRef<HTMLInputElement>(null);
@@ -186,6 +199,36 @@ export function MediaStagePage({ project }: { project: Project }) {
     }, 1500);
   };
 
+  const handleCloudImport = (files: MediaCloudFile[]) => {
+    if (files.length === 0 || !cloudProvider) return;
+    const providerName = cloudProvider === "google-drive" ? "Google Drive" : "Dropbox";
+    const startedAt = Date.now();
+    const importingAssets: MediaAsset[] = files.map((file, index) => ({
+      id: `cloud-import-${startedAt}-${index}`,
+      projectId: project.id,
+      folderId: selectedFolderId,
+      name: file.name,
+      kind: file.kind,
+      status: "uploading",
+      uploadedAt: new Date().toISOString(),
+      sizeLabel: file.sizeLabel,
+      durationLabel: file.durationLabel,
+      ownerName: "Tom Evans",
+      transcriptStatus: "none",
+      commentCount: 0,
+      thumbnailUrl: file.thumbnailUrl,
+    }));
+
+    setAssets((current) => [...importingAssets, ...current]);
+    setCloudProvider(null);
+    showToast(`Importing ${files.length} ${files.length === 1 ? "file" : "files"} from ${providerName}...`, 4200);
+    window.setTimeout(() => {
+      const importedIds = new Set(importingAssets.map((asset) => asset.id));
+      setAssets((current) => current.map((asset) => importedIds.has(asset.id) ? { ...asset, status: "ready" } : asset));
+      showToast(`${files.length} ${files.length === 1 ? "file" : "files"} imported from ${providerName}.`);
+    }, 1500);
+  };
+
   const handleDragEnter = (event: DragEvent) => {
     event.preventDefault();
     dragDepthRef.current += 1;
@@ -234,10 +277,27 @@ export function MediaStagePage({ project }: { project: Project }) {
         <section className="media-main-area">
           <div className="media-main-actions">
             <div className="media-action-buttons">
-              <button className="media-primary-button label-s-semibold" type="button" onClick={() => uploadInputRef.current?.click()}><DsIcon name="plus" size={16} />Upload</button>
+              <MediaUploadMenu
+                open={isUploadMenuOpen}
+                onOpenChange={setIsUploadMenuOpen}
+                onComputerUpload={() => uploadInputRef.current?.click()}
+                onCloudImport={(provider) => {
+                  setIsUploadMenuOpen(false);
+                  setCloudProvider(provider);
+                }}
+              />
               <button className="media-secondary-button label-s-semibold" type="button" onClick={() => addFolder(selectedFolderId)}><DsIcon name="folder-plus" size={16} />New folder</button>
               <button className="media-tertiary-button label-s-semibold" type="button" onClick={() => showToast("Preparing all media for download.")}><DsIcon name="download" size={16} />Download all</button>
-              <input ref={uploadInputRef} className="sr-only" type="file" multiple onChange={(event) => handleFiles(Array.from(event.target.files ?? []))} />
+              <input
+                ref={uploadInputRef}
+                className="sr-only"
+                type="file"
+                multiple
+                onChange={(event) => {
+                  handleFiles(Array.from(event.target.files ?? []));
+                  event.currentTarget.value = "";
+                }}
+              />
             </div>
             <div className="media-storage-meter" aria-label="12.4 GB of 100 GB used">
               <div><span /></div>
@@ -274,7 +334,7 @@ export function MediaStagePage({ project }: { project: Project }) {
             }}
             onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])}
             onDeselectAll={() => setSelectedAssetIds(new Set())}
-            onUpload={() => uploadInputRef.current?.click()}
+            onUpload={() => setIsUploadMenuOpen(true)}
             onFolderOpen={selectFolder}
           />
         </section>
@@ -299,6 +359,13 @@ export function MediaStagePage({ project }: { project: Project }) {
         <ShareActionRow context="media" userRole="Studio Staff" projectName={project.name} studioName="Brisk Studios" customerName="Avery Taylor" density="compact" />
       </footer>
       <MediaUploadDropZone active={isDropZoneActive} folderName={selectedFolderName} />
+      <MediaCloudPicker
+        provider={cloudProvider}
+        files={mediaCloudFiles}
+        folderName={selectedFolderName}
+        onClose={() => setCloudProvider(null)}
+        onImport={handleCloudImport}
+      />
       {toast ? <div className="media-toast label-s-semibold" role="status">{toast}</div> : null}
       {deleteAssetIds.length > 0 ? (
         <div className="media-modal-backdrop" role="presentation">

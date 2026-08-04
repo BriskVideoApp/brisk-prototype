@@ -28,6 +28,21 @@ export type MediaTranscriptNote = {
   text: string;
 };
 
+export type MediaCloudProvider = "google-drive" | "dropbox";
+
+export type MediaCloudFile = {
+  id: string;
+  provider: MediaCloudProvider;
+  name: string;
+  kind: MediaAsset["kind"];
+  sizeLabel: string;
+  durationLabel?: string;
+  modifiedLabel: string;
+  sourcePath: string;
+  ownerName: string;
+  thumbnailUrl?: string;
+};
+
 export const mediaFolders: MediaFolder[] = [
   { id: "interviews", projectId: "loom-launch-film", parentId: null, name: "Customer interviews" },
   { id: "product-captures", projectId: "loom-launch-film", parentId: null, name: "Product captures" },
@@ -39,6 +54,21 @@ const loomImage = "https://images.unsplash.com/photo-1556761175-b413da4baf72?aut
 const officeImage = "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80";
 const productImage = "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80";
 const detailImage = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80";
+
+export const mediaCloudFiles: MediaCloudFile[] = [
+  { id: "drive-01", provider: "google-drive", name: "Founder-interview-selects.mov", kind: "video", sizeLabel: "2.8 GB", durationLabel: "12:48", modifiedLabel: "Today, 9:42am", sourcePath: "My Drive / Loom launch", ownerName: "Maddie Lee", thumbnailUrl: loomImage },
+  { id: "drive-02", provider: "google-drive", name: "Product-demo-clean.mp4", kind: "video", sizeLabel: "1.4 GB", durationLabel: "05:16", modifiedLabel: "Yesterday", sourcePath: "My Drive / Loom launch / Product", ownerName: "Sam Chen", thumbnailUrl: productImage },
+  { id: "drive-03", provider: "google-drive", name: "Customer-story-room-tone.wav", kind: "audio", sizeLabel: "86.2 MB", durationLabel: "03:42", modifiedLabel: "Yesterday", sourcePath: "Shared with me", ownerName: "Avery Taylor" },
+  { id: "drive-04", provider: "google-drive", name: "Campaign-notes.pdf", kind: "document", sizeLabel: "4.7 MB", modifiedLabel: "30 Jul 2026", sourcePath: "My Drive / Loom launch", ownerName: "Tom Evans" },
+  { id: "drive-05", provider: "google-drive", name: "Launch-film-key-art.jpg", kind: "image", sizeLabel: "12.3 MB", modifiedLabel: "29 Jul 2026", sourcePath: "Shared with me", ownerName: "Avery Taylor", thumbnailUrl: detailImage },
+  { id: "drive-06", provider: "google-drive", name: "Interview-release-forms.zip", kind: "other", sizeLabel: "18.1 MB", modifiedLabel: "28 Jul 2026", sourcePath: "My Drive / Production", ownerName: "Maddie Lee" },
+  { id: "dropbox-01", provider: "dropbox", name: "Office-b-roll-camera-a.mov", kind: "video", sizeLabel: "3.6 GB", durationLabel: "09:21", modifiedLabel: "Today, 10:06am", sourcePath: "Dropbox / Loom / Shoot day one", ownerName: "Sam Chen", thumbnailUrl: officeImage },
+  { id: "dropbox-02", provider: "dropbox", name: "Dashboard-close-ups.mov", kind: "video", sizeLabel: "2.1 GB", durationLabel: "04:32", modifiedLabel: "Today, 8:18am", sourcePath: "Dropbox / Loom / Product", ownerName: "Maddie Lee", thumbnailUrl: productImage },
+  { id: "dropbox-03", provider: "dropbox", name: "Interview-lapel-backup.wav", kind: "audio", sizeLabel: "742.8 MB", durationLabel: "18:56", modifiedLabel: "Yesterday", sourcePath: "Dropbox / Loom / Audio", ownerName: "Sam Chen" },
+  { id: "dropbox-04", provider: "dropbox", name: "Loom-brand-assets.zip", kind: "other", sizeLabel: "224.6 MB", modifiedLabel: "31 Jul 2026", sourcePath: "Dropbox / Client supplied", ownerName: "Avery Taylor" },
+  { id: "dropbox-05", provider: "dropbox", name: "Campaign-storyboard.pdf", kind: "document", sizeLabel: "9.8 MB", modifiedLabel: "30 Jul 2026", sourcePath: "Dropbox / Loom / Pre-production", ownerName: "Tom Evans" },
+  { id: "dropbox-06", provider: "dropbox", name: "Studio-lighting-reference.jpg", kind: "image", sizeLabel: "6.4 MB", modifiedLabel: "28 Jul 2026", sourcePath: "Dropbox / References", ownerName: "Maddie Lee", thumbnailUrl: detailImage },
+];
 
 export const mediaAssets: MediaAsset[] = [
   { id: "media-01", projectId: "loom-launch-film", folderId: "interviews", name: "Mia-interview-camera-a.mov", kind: "video", status: "ready", uploadedAt: "2026-07-08T14:24:00+10:00", sizeLabel: "4.8 GB", durationLabel: "18:42", ownerName: "Maddie Lee", transcriptStatus: "ready", commentCount: 4, linkedScriptRowId: "script-03", thumbnailUrl: loomImage },
