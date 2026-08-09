@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
@@ -3107,60 +3108,15 @@ function BriefInlineSelect({
   placeholder: string;
   value: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const displayValue = value.trim() ? getOptionLabel(value) : placeholder;
-
-  useEffect(() => {
-    if (autoOpen) {
-      setIsOpen(true);
-    }
-  }, [autoOpen]);
-
-  function selectOption(option: string) {
-    onChange(option);
-    setIsOpen(false);
-    onCommit?.();
-  }
-
-  return (
-    <div
-      className="brief-inline-select"
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <button
-        className={`brief-inline-select-trigger label-s ${value.trim() ? "" : "is-placeholder"}`}
-        type="button"
-        aria-expanded={isOpen}
-        aria-label={ariaLabel}
-        onClick={() => setIsOpen((currentValue) => !currentValue)}
-      >
-        <span>{displayValue}</span>
-        <DsIcon name="caret-down" size={12} />
-      </button>
-      {isOpen ? (
-        <div className="brief-inline-select-menu" role="listbox" aria-label={ariaLabel}>
-          {options.map((option) => (
-            <button
-              className={`brief-inline-select-option label-s ${option === value ? "selected" : ""}`}
-              key={option}
-              type="button"
-              role="option"
-              aria-selected={option === value}
-              onClick={() => selectOption(option)}
-            >
-              {getOptionLabel(option)}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <BriskSelect
+    ariaLabel={ariaLabel}
+    autoOpen={autoOpen}
+    clearable={false}
+    options={options.map((option) => ({ value: option, label: getOptionLabel(option) }))}
+    placeholder={placeholder}
+    value={value}
+    onChange={(nextValue) => { onChange(nextValue); onCommit?.(); }}
+  />;
 }
 
 const videoTypeIconMap: Record<string, DsIconName> = {

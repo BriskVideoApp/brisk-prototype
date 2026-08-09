@@ -27,6 +27,7 @@ import {
   type FloatingCommentPosition,
 } from "@/components/script/FloatingCommentShell";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
+import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import {
   FloatingSelectionToolbar,
   type FloatingSelectionToolbarState,
@@ -59,11 +60,11 @@ import {
 import { transcriptClips, type TranscriptClip, type TranscriptWordsRowPayload } from "@/data/transcripts";
 
 const currentUserId = "user-tom";
-const mediaMenuOptions: Array<{ type: ScriptMediaType; label: string; icon: Parameters<typeof DsIcon>[0]["name"] }> = [
-  { type: "upload", label: "Upload file", icon: "upload-simple" },
-  { type: "library", label: "Add from your Media", icon: "play" },
-  { type: "stock", label: "Stock footage search", icon: "image-square" },
-  { type: "link", label: "Add link", icon: "link" },
+const mediaMenuOptions: Array<ScriptMediaPickerOption<ScriptMediaType>> = [
+  { value: "upload", label: "Upload file", icon: "upload-simple" },
+  { value: "library", label: "Add from your Media", icon: "play" },
+  { value: "stock", label: "Stock footage search", icon: "image-square" },
+  { value: "link", label: "Add link", icon: "link" },
 ];
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
@@ -2570,29 +2571,16 @@ function AddVisualPlaceholder({
   onGuardApproved: () => boolean;
   onSetMediaMenuRow: (rowId: string | null) => void;
 }) {
-  return (
-    <div className="script-media-menu-wrap script-visual-empty-wrap">
-      <button
-        className="script-media-add script-visual-empty"
-        type="button"
-        aria-label={`Add visual to ${getRowLabel(row.id, rows)}`}
-        aria-expanded={isOpen}
-        onClick={() => (isApproved ? onGuardApproved() : onSetMediaMenuRow(isOpen ? null : row.id))}
-      >
-        <DsIcon name="plus" size={14} />
-      </button>
-      {isOpen ? (
-        <div className="script-media-menu">
-          {mediaMenuOptions.map((option) => (
-            <button className="label-s" type="button" key={option.type} onClick={() => onAddMediaItem(row.id, option.type)}>
-              <DsIcon name={option.icon} size={18} />
-              {option.label}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <div className="script-visual-empty-wrap">
+    <ScriptMediaPicker
+      isOpen={isOpen}
+      options={mediaMenuOptions}
+      triggerLabel={`Add visual to ${getRowLabel(row.id, rows)}`}
+      triggerClassName="script-visual-empty"
+      onOpenChange={(nextOpen) => { if (isApproved) onGuardApproved(); else onSetMediaMenuRow(nextOpen ? row.id : null); }}
+      onSelect={(type) => onAddMediaItem(row.id, type)}
+    />
+  </div>;
 }
 
 function MediaThumb({ mediaItem }: { mediaItem: ScriptMediaItem }) {

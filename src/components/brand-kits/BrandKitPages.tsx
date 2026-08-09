@@ -15,6 +15,7 @@ import {
   brandKitCustomers,
   createManualBrandProfile,
   makeGuidelineFiles,
+  mockAudioAsset,
   type BrandColour,
   type BrandGuidelineFile,
   type BrandImagery,
@@ -66,6 +67,7 @@ type TargetedUploadKind =
   | "photo"
   | "broll"
   | "illustration"
+  | "audio"
   | "guidelines";
 
 type SelectedAssetKind = "logo" | "imagery" | "font" | "sub-brand" | "editor-file";
@@ -103,6 +105,7 @@ const uploadAccept: Record<TargetedUploadKind, string> = {
   photo: ".png,.jpg,.jpeg,.webp",
   broll: ".mp4,.mov,.m4v,.webm",
   illustration: ".svg,.png,.jpg,.jpeg,.webp",
+  audio: ".mp3,.wav,.m4a,.aac,.ogg",
   guidelines: ".pdf,application/pdf",
 };
 
@@ -110,12 +113,14 @@ const imageryUploadLabels: Record<BrandImagery["kind"], string> = {
   photo: "Upload photos",
   broll: "Upload footage",
   illustration: "Upload icons and graphics",
+  audio: "Upload audio",
 };
 
 const imageryEmptyCopy: Record<BrandImagery["kind"], string> = {
   photo: "No photo assets yet.",
   broll: "No footage assets yet.",
   illustration: "No icons or graphics yet.",
+  audio: "No audio assets yet.",
 };
 
 function detectTargetedUploadKind(file: File, fallback: TargetedUploadKind): TargetedUploadKind {
@@ -123,6 +128,7 @@ function detectTargetedUploadKind(file: File, fallback: TargetedUploadKind): Tar
   if (/\.(otf|ttf|woff2?)$/u.test(name)) return "fonts";
   if (/\.pdf$/u.test(name) || /guideline|brandbook/u.test(name)) return "guidelines";
   if (/\.(aep|mogrt|zip)$/u.test(name)) return "motion";
+  if (/\.(aac|m4a|mp3|ogg|wav)$/u.test(name)) return "audio";
   if (/\.(mp4|mov|m4v|webm)$/u.test(name)) return fallback === "motion" ? "motion" : "broll";
   if (/logo/u.test(name) || (/\.svg$/u.test(name) && fallback !== "illustration")) return "logos";
   if (/illustration|graphic|artwork/u.test(name)) return "illustration";
@@ -134,7 +140,7 @@ function detectTargetedUploadKind(file: File, fallback: TargetedUploadKind): Tar
 }
 
 function targetedUploadTileLabel(kind: TargetedUploadKind) {
-  if (["photo", "broll", "illustration"].includes(kind)) return "Visual Assets";
+  if (["photo", "broll", "illustration", "audio"].includes(kind)) return "Visual Assets";
   if (kind === "logos") return "Logos";
   if (kind === "fonts") return "Fonts";
   if (kind === "guidelines") return "Brand Guidelines";
@@ -487,7 +493,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
   const [showInlineSetupWebsite, setShowInlineSetupWebsite] = useState(false);
   const [selectedLogo, setSelectedLogo] = useState<BrandLogo | null>(null);
   const [selectedImagery, setSelectedImagery] = useState<BrandImagery | null>(null);
-  const [imageryFilter, setImageryFilter] = useState<"photo" | "broll" | "illustration">("photo");
+  const [imageryFilter, setImageryFilter] = useState<BrandImagery["kind"]>("photo");
   const [editingColourIndex, setEditingColourIndex] = useState<number | null>(null);
   const [fontModalOpen, setFontModalOpen] = useState(false);
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
@@ -525,6 +531,10 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
     ?? editorVersions[0];
   const visibleSubBrands = showAllSubBrands ? subBrands : subBrands.slice(0, 3);
   const brandColours = profile?.colours ?? [];
+  const filteredImagery = profile?.imagery.filter((image) => image.kind === imageryFilter) ?? [];
+  const visibleImagery = imageryFilter === "audio" && filteredImagery.length === 0
+    ? [mockAudioAsset]
+    : filteredImagery;
   const canViewCustomer = isGuest || role !== "client" || customer.slug === prototypeCustomerSlug;
   const canManageBrands = !isGuest && (canEdit || role === "client");
   const canManageMotion = canEdit && role !== "client";
@@ -803,9 +813,10 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
     const existingImagery = profile?.imagery.filter((image) => image.kind !== kind) ?? [];
     const uploadedImagery: BrandImagery[] = files.map((file, index) => ({
       id: `uploaded-${kind}-${Date.now()}-${index}`,
-      label: file.name.replace(/\.[^.]+$/u, ""),
+      label: kind === "audio" ? file.name : file.name.replace(/\.[^.]+$/u, ""),
       url: kind === "broll" ? customer.motionPreview.posterUrl : URL.createObjectURL(file),
       kind,
+      format: kind === "audio" ? file.name.split(".").pop()?.toUpperCase() : undefined,
     }));
     updateSection("imagery", [...existingImagery, ...uploadedImagery]);
     notify("Uploaded to Visual Assets.");
@@ -1580,7 +1591,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
             className="brand-imagery-tile"
             disabled={!tilesEnabled}
             onDropFiles={canEdit ? (files) => handleTileUpload(imageryFilter, files) : undefined}
-            progress={uploadProgress && ["photo", "broll", "illustration"].includes(uploadProgress.kind)
+            progress={uploadProgress && ["photo", "broll", "illustration", "audio"].includes(uploadProgress.kind)
               ? uploadProgress.value
               : undefined}
             title="Visual Assets"
@@ -1591,6 +1602,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                   ["photo", "Photos"],
                   ["broll", "Footage"],
                   ["illustration", "Icons and graphics"],
+                  ["audio", "Audio"],
                 ] as const).map(([value, label]) => (
                   <button
                     className={`label-xs-semibold ${imageryFilter === value ? "active" : ""}`}
@@ -1604,14 +1616,28 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
               </div>
               {profile?.imagery.length ? (
                 <div className="brand-imagery-grid">
-                  {profile.imagery
-                    .filter((image) => image.kind === imageryFilter)
-                    .map((image) => (
+                  {visibleImagery.map((image) => (
                       <ManagedAsset key={image.id}>
-                        <button className="brand-imagery-asset" type="button" onClick={() => setSelectedImagery(image)}>
-                          <img src={image.url} alt={image.label} />
-                          {image.kind === "broll" ? <DsIcon name="play" size={16} /> : null}
-                        </button>
+                        {image.kind === "audio" ? (
+                          <button
+                            className="brand-imagery-asset is-audio"
+                            type="button"
+                            onClick={() => notify(`${image.label} selected`)}
+                          >
+                            <DsIcon name="file-audio" size={24} />
+                            <span className="brand-audio-asset-copy">
+                              <strong className="label-s-semibold">{image.label}</strong>
+                              <small className="label-xs">
+                                {[image.format ?? "Audio", image.duration].filter(Boolean).join(" · ")}
+                              </small>
+                            </span>
+                          </button>
+                        ) : (
+                          <button className="brand-imagery-asset" type="button" onClick={() => setSelectedImagery(image)}>
+                            <img src={image.url} alt={image.label} />
+                            {image.kind === "broll" ? <DsIcon name="play" size={16} /> : null}
+                          </button>
+                        )}
                         {canEdit ? (
                           <AssetActions
                             onDownload={() => notify(`${image.label} download started`)}
@@ -1655,7 +1681,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                         ) : null}
                       </ManagedAsset>
                     ))}
-                  {profile.imagery.every((image) => image.kind !== imageryFilter) ? (
+                  {visibleImagery.length === 0 ? (
                     <p className="brand-imagery-empty paragraph-s">{imageryEmptyCopy[imageryFilter]}</p>
                   ) : null}
                 </div>
@@ -1667,7 +1693,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                     onFiles: (files) => handleTargetedUpload(imageryFilter, files),
                   }}
                   copy={imageryEmptyCopy[imageryFilter]}
-                  icon="image-square"
+                  icon={imageryFilter === "audio" ? "file-audio" : "image-square"}
                   visual="imagery"
                 />
               )}
@@ -1793,7 +1819,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
             disabled={!tilesEnabled}
             onDropFiles={canEdit ? (files) => handleTileUpload("guidelines", files) : undefined}
             progress={uploadProgress?.kind === "guidelines" ? uploadProgress.value : undefined}
-            title="Brand Guidelines"
+            title="Brand Guidelines + Documents"
           >
             {selectedGuideline ? (
               <div className="guidelines-file-asset">

@@ -16,6 +16,8 @@ import "@/components/masters/masters.css";
 import "@/components/navigation/workspace-sidebar.css";
 import "@/components/customer-dashboard/customer-dashboard.css";
 import "@/components/brand-kits/brand-kits.css";
+import "@/components/form/brisk-select.css";
+import "@/components/shoot/shoot.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";

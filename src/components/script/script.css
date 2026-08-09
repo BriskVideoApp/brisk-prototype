@@ -198,6 +198,13 @@
   box-shadow: var(--brisk-shadow-m);
 }
 
+.script-media-menu.is-portal {
+  position: fixed;
+  right: auto;
+  z-index: 300;
+  max-width: calc(100vw - (var(--brisk-space-m) * 2));
+}
+
 .script-action-cluster .share-button:disabled {
   border-color: var(--brisk-border-secondary);
   background: var(--brisk-item-tertiary);

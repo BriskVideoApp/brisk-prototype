@@ -1755,6 +1755,44 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
+.brand-imagery-asset.is-audio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: var(--brisk-bg-block-secondary);
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-l);
+}
+
+.brand-imagery-asset.is-audio > .ds-icon {
+  position: static;
+  width: var(--brisk-space-2xl);
+  height: var(--brisk-space-2xl);
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+}
+
+.brand-audio-asset-copy {
+  display: grid;
+  max-width: 100%;
+  gap: var(--brisk-space-xxs);
+  text-align: left;
+}
+
+.brand-audio-asset-copy strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brand-audio-asset-copy small {
+  color: var(--brisk-text-secondary);
+}
+
 .brand-imagery-grid img {
   width: 100%;
   height: 100%;

@@ -23,7 +23,18 @@ export type BrandImagery = {
   id: string;
   label: string;
   url: string;
-  kind: "photo" | "broll" | "illustration";
+  kind: "photo" | "broll" | "illustration" | "audio";
+  format?: string;
+  duration?: string;
+};
+
+export const mockAudioAsset: BrandImagery = {
+  id: "mock-brand-audio",
+  label: "Brand sonic logo.mp3",
+  url: "data:audio/mpeg;base64,",
+  kind: "audio",
+  format: "MP3",
+  duration: "02:14",
 };
 
 export type BrandGuidelineFile = {
@@ -139,6 +150,7 @@ function makeImagery(prefix: string): BrandImagery[] {
     { id: `${prefix}-product`, label: "Product in context", url: productImage, kind: "photo" },
     { id: `${prefix}-studio`, label: "Signature office b-roll", url: studioImage, kind: "broll" },
     { id: `${prefix}-portrait`, label: "Customer portrait", url: portraitImage, kind: "broll" },
+    { ...mockAudioAsset, id: `${prefix}-brand-audio` },
   ];
 }
 

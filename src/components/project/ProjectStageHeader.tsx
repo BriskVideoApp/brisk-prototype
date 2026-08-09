@@ -16,6 +16,7 @@ type ProjectStageHeaderProps = {
   project: Project;
   activeStage?: StageKey;
   activeUtility?: "files" | "chat" | "people" | "settings";
+  showUtilities?: boolean;
 };
 
 type ProjectHeaderStage = {
@@ -40,7 +41,7 @@ const stageStateLabels: Record<StageStatus["state"], string> = {
   waiting: "waiting",
 };
 
-export function ProjectStageHeader({ actions, activeStage, activeUtility, project }: ProjectStageHeaderProps) {
+export function ProjectStageHeader({ actions, activeStage, activeUtility, project, showUtilities = true }: ProjectStageHeaderProps) {
   const { completionRecords } = useProjectCompletion();
   const isProjectDelivered = project.status === "Completed" || Boolean(completionRecords[project.id]);
   const currentStageKey = activeStage ?? getCurrentProjectStage(project).key;
@@ -78,7 +79,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, projec
             <span className="project-stage-project-title">{project.name}</span>
           </div>
           <div className="project-stage-header-actions">
-              <nav className="project-stage-utility-tabs" aria-label="Project utilities">
+              {showUtilities ? <nav className="project-stage-utility-tabs" aria-label="Project utilities">
                 {hasLoadedRole && selectedRole !== "Customer" ? (
                   <Link
                     className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "files" ? "is-active" : ""}`}
@@ -116,7 +117,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, projec
                   <DsIcon name="settings" size={16} />
                   Settings
                 </Link>
-              </nav>
+              </nav> : null}
               {brandKitCustomer ? (
                 <Link
                   className="project-stage-brand-kit-link label-xs-semibold"
@@ -215,6 +216,10 @@ function getProjectStageHref(projectId: string, stage: StageKey) {
 
   if (stage === "script") {
     return `/projects/${projectId}/script`;
+  }
+
+  if (stage === "shoot") {
+    return `/projects/${projectId}/stages/shoot`;
   }
 
   if (stage === "media") {

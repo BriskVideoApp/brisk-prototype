@@ -36,6 +36,7 @@ function applyUploadedFiles(profile: BrandProfile, files: File[]) {
   const logoFiles = files.filter((file) => /\.(svg|png)$/iu.test(file.name) && /logo|mark|lockup|wordmark/iu.test(file.name));
   const imageFiles = files.filter((file) => /\.(png|jpe?g|webp)$/iu.test(file.name) && !logoFiles.includes(file));
   const videoFiles = files.filter((file) => /\.(mp4|mov|m4v|webm)$/iu.test(file.name));
+  const audioFiles = files.filter((file) => /\.(aac|m4a|mp3|ogg|wav)$/iu.test(file.name));
   const guidelinesFiles = files.filter((file) => /\.pdf$/iu.test(file.name));
 
   if (fontFiles.length > 0) {
@@ -58,7 +59,7 @@ function applyUploadedFiles(profile: BrandProfile, files: File[]) {
     }));
   }
 
-  if (imageFiles.length > 0 || videoFiles.length > 0) {
+  if (imageFiles.length > 0 || videoFiles.length > 0 || audioFiles.length > 0) {
     profile.imagery = [
       ...imageFiles.map((file, index) => ({
         id: `uploaded-photo-${index}`,
@@ -71,6 +72,13 @@ function applyUploadedFiles(profile: BrandProfile, files: File[]) {
         label: file.name.replace(/\.[^.]+$/u, ""),
         url: URL.createObjectURL(file),
         kind: "broll" as const,
+      })),
+      ...audioFiles.map((file, index) => ({
+        id: `uploaded-audio-${index}`,
+        label: file.name,
+        url: URL.createObjectURL(file),
+        kind: "audio" as const,
+        format: file.name.split(".").pop()?.toUpperCase(),
       })),
     ];
   }

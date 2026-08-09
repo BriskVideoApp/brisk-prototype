@@ -44,6 +44,7 @@ const iconPaths = {
   "film-strip": "/brisk-icons/film-strip.svg",
   "grid-four": "/brisk-icons/grid-four.svg",
   "image-square": "/brisk-icons/image-square.svg",
+  "info": "/brisk-icons/info.svg",
   "bezier-curve": "/brisk-icons/bezier-curve.svg",
   "book-open": "/brisk-icons/book-open.svg",
   "circles-three": "/brisk-icons/circles-three.svg",
@@ -86,6 +87,13 @@ const iconPaths = {
   "x-close-cross": "/brisk-icons/x-close-cross.svg",
   "check-circle": "/brisk-icons/check-circle.svg",
   "sparkle": "/brisk-icons/sparkle.svg",
+  "weather-sun": "/brisk-icons/weather-sun.svg",
+  "weather-cloud": "/brisk-icons/weather-cloud.svg",
+  "weather-rain": "/brisk-icons/weather-rain.svg",
+  "fork-knife": "/brisk-icons/fork-knife.svg",
+  "car-simple": "/brisk-icons/car-simple.svg",
+  "coffee": "/brisk-icons/coffee.svg",
+  "printer": "/brisk-icons/printer.svg",
 } as const;
 
 export type DsIconName = keyof typeof iconPaths;
