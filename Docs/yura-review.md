@@ -1,5 +1,29 @@
 # Yura Review Log
 
+## Studio Onboard shell prototype
+
+Added prototype components under `src/components/studio-onboard/`:
+
+- `StudioOnboardScreen`
+- `StudioOnboardHeader`
+- `StudioOnboardProgress`
+- `StudioSignIn`
+
+Notes for DS review:
+
+- The onboarding route reuses the exported Brisk DS `Button` and `Input` plus existing Brisk and Google logo assets from the DS source.
+- `StudioOnboardProgress` is a local four-step progress treatment adapted from the Brief step dots because the React DS exports do not currently include the documented onboarding or step-progress component.
+- Available progress circles are interactive and replace separate Back links. Follow-up and Review unlock only after their preceding answer has been submitted.
+- The sign-in card and sidebar-free onboarding shell are local compositions built only from Brisk tokens. Please review whether these should become shared authentication and onboarding shell patterns.
+- `StudioAiQuestion` reuses the DS `Input`, the Brief composer structure, and the same Flow upload, send and remove icons. The documented `d-Textarea` and `d-Upload file` are still not exported as React components, so the textarea shell and attachment list are local tokenised compositions for review.
+- Uploaded file sources use the Brief attachment-chip treatment and remain removable before analysis. The visible website field stays separate from the composer as required by the onboarding flow.
+- `StudioAiFollowUp` uses the Brief's spacious clarifying-question hierarchy with local selectable chips and a conditional DS `Input` revealed by the `Something else` chip. Selecting an answer activates Continue and unlocks the Review progress circle. The React DS does not currently export `d-Chips` or a disabled-state Button prop, so the selectable answers and Continue action are local tokenised controls for review.
+- Three deterministic scenarios are typed in `src/data/studio-onboard.ts`. They route full-service, animation and post-production answers to one contextual follow-up without adding an open-ended chat flow.
+- `GeneratedStudioSetup` presents the four recommended setup areas as local tokenised card compositions. It reuses the canonical Brief video-type data, Brief section names, required-field count and the same shared video-type icon map now used by `BriefPage`.
+- Identity, video-type, Brief and workflow edit actions are visible for the generated-summary review pass. Their editing surfaces remain the next dedicated implementation pass.
+- Google and work-email magic-link actions are mocked. Microsoft and password sign-in are intentionally excluded from V1.
+- The prototype role switcher is intentionally absent during Studio onboarding and will appear only inside the later Customer portal demonstration.
+
 ## Script transcripts prototype
 
 Added prototype components under `src/components/script-transcripts/`:

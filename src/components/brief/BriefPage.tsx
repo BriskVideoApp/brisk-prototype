@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -31,6 +32,8 @@ import {
   type BriefFieldId,
   type BriefFields,
   type BriefStepId,
+  type BriefVideoTypeDetail,
+  type BriefVideoTypeId,
   type ChatMessage,
   type ConfidenceState,
   type InputAttachment,
@@ -39,6 +42,7 @@ import {
 
 type BriefPageProps = {
   project: Project;
+  studioName?: string;
 };
 
 type BriefMode = "landing" | "steps";
@@ -61,6 +65,8 @@ const placeholderStepCopy: Record<Exclude<BriefStepId, "basics" | "summary">, st
 type BriefSectionTone = "basics" | "purpose" | "look" | "production" | "deliverables" | "summary";
 
 type BriefSectionIntroModel = {
+  guidance?: string;
+  required?: boolean;
   step: number;
   title: string;
   tone: BriefSectionTone;
@@ -96,6 +102,32 @@ const briefSectionIntros: Record<BriefStepId, BriefSectionIntroModel> = {
     step: 6,
     title: "Brief Summary",
     tone: "summary",
+  },
+};
+
+const briefGuidedExperienceIntros: Record<BriefStepId, BriefSectionIntroModel> = {
+  basics: {
+    ...briefSectionIntros.basics,
+    guidance: "Tell us what you are making and where it will be used.",
+  },
+  purposeAudience: {
+    ...briefSectionIntros.purposeAudience,
+    guidance: "Tell us what the video needs to achieve and who it is for.",
+  },
+  lookFeel: {
+    ...briefSectionIntros.lookFeel,
+    guidance: "Show us the tone, references and brand direction.",
+  },
+  contentProduction: {
+    ...briefSectionIntros.contentProduction,
+    guidance: "Tell us what will be filmed and what production support is needed.",
+  },
+  deliverablesTiming: {
+    ...briefSectionIntros.deliverablesTiming,
+    guidance: "Confirm the versions, formats and timing you need.",
+  },
+  summary: {
+    ...briefSectionIntros.summary,
   },
 };
 
@@ -163,7 +195,7 @@ const referenceVideoTagSets = [
 const brandKitOptions: BrandKitOption[] = [
   {
     name: "House kit",
-    description: "Default Brisk production styling with clean typography, confident purple accents and flexible motion rules.",
+    description: "Default production styling with clean typography, confident accents and flexible motion rules.",
     thumbnailLabel: "House",
   },
   {
@@ -290,7 +322,59 @@ const deliverableCaptionOptions: Array<{ label: DeliverableCaptionOption; toolti
   },
 ];
 
-export function BriefPage({ project }: BriefPageProps) {
+export type BriefConfigurableOption = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+export function getBriefConfigurableOptions(
+  fieldId: BriefFieldId,
+): BriefConfigurableOption[] {
+  if (fieldId === "videoType") {
+    return briefVideoTypeDetails
+      .map((videoType) => ({
+        value: videoType.name,
+        label: videoType.name,
+        description: videoType.summary,
+      }));
+  }
+
+  if (fieldId === "platform") {
+    return deliverablePlatformGroups.flatMap((group) => group.options.map((option) => ({
+      value: option,
+      label: option,
+      description: group.label,
+    })));
+  }
+
+  if (fieldId === "purpose") {
+    return briefPurposeOptions.map((option) => {
+      const [label, description] = option.split(" - ");
+      return { value: option, label, description };
+    });
+  }
+
+  if (fieldId === "callToAction") {
+    return briefCallToActionOptions.map((option) => ({ value: option, label: option }));
+  }
+
+  if (fieldId === "feeling") {
+    return briefToneOptions.map((option) => ({ value: option, label: option }));
+  }
+
+  if (fieldId === "brandKit") {
+    return brandKitOptions.map((option) => ({
+      value: option.name,
+      label: option.name,
+      description: option.description,
+    }));
+  }
+
+  return [];
+}
+
+export function BriefPage({ project, studioName = "Northstar Films" }: BriefPageProps) {
   const [briefMode, setBriefMode] = useState<BriefMode>("landing");
   const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
   const [briefFields, setBriefFields] = useState<BriefFields>(() => cloneBriefFields(initialBriefFields));
@@ -586,6 +670,7 @@ export function BriefPage({ project }: BriefPageProps) {
     <BriefAiChatPanel
       isCollapsed={isChatCollapsed}
       messages={chatMessages}
+      studioName={studioName}
       onSubmit={submitChat}
       onToggleCollapsed={toggleChat}
     />
@@ -605,6 +690,7 @@ export function BriefPage({ project }: BriefPageProps) {
             onSelectStep={jumpToStepFromLanding}
             onSkip={skipAiAndFillManually}
             onSubmit={submitLandingPrompt}
+            studioName={studioName}
           />
         ) : (
           <BriefStepShell
@@ -654,6 +740,7 @@ export function BriefPage({ project }: BriefPageProps) {
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
                 onRegenerateField={regenerateBriefField}
+                studioName={studioName}
               />
             ) : null}
             {activeStepId === "deliverablesTiming" ? (
@@ -683,12 +770,152 @@ export function BriefPage({ project }: BriefPageProps) {
                 onLoglineChange={updateLogline}
                 onRegenerateField={regenerateBriefField}
                 onRegenerateLogline={regenerateLogline}
+                studioName={studioName}
               />
             ) : null}
           </BriefStepShell>
         )}
       </div>
     </main>
+  );
+}
+
+export function BriefGuidedExperience({
+  doneLabel,
+  excludedFieldIds = [],
+  excludedOptionValues = {},
+  fields,
+  onDone,
+  onEditFieldOptions,
+  onFieldsChange,
+  onToggleFieldExcluded,
+  readOnly = false,
+  studioName,
+  videoTypeAction,
+  videoTypeIds,
+}: {
+  doneLabel: string;
+  excludedFieldIds?: readonly BriefFieldId[];
+  excludedOptionValues?: Partial<Record<BriefFieldId, readonly string[]>>;
+  fields: BriefFields;
+  onDone: () => void;
+  onEditFieldOptions?: (fieldId: BriefFieldId) => void;
+  onFieldsChange?: (fields: BriefFields) => void;
+  onToggleFieldExcluded?: (fieldId: BriefFieldId) => void;
+  readOnly?: boolean;
+  studioName: string;
+  videoTypeAction?: ReactNode;
+  videoTypeIds: readonly BriefVideoTypeId[];
+}) {
+  const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
+  const [logline, setLogline] = useState<Logline>({ text: "", status: "not_generated" });
+  const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
+  const missingRequiredFields = Object.values(fields).filter((field) => field.required && field.confidence === "missing");
+  const videoTypeOptions = briefVideoTypeDetails.filter((videoType) => videoTypeIds.includes(videoType.name));
+
+  function updateField(fieldId: BriefFieldId, value: string) {
+    if (readOnly || !onFieldsChange) {
+      return;
+    }
+
+    onFieldsChange({
+      ...fields,
+      [fieldId]: {
+        ...fields[fieldId],
+        value,
+        confidence: value.trim() ? "confident" : "missing",
+        source: value.trim() ? "manual_edit" : "missing",
+      },
+    });
+  }
+
+  function confirmField(fieldId: BriefFieldId) {
+    updateField(fieldId, fields[fieldId].value);
+  }
+
+  function regenerateField(fieldId: BriefFieldId) {
+    const nextValue = fieldRegenerationValues[fieldId].find((value) => value.trim()) ?? fields[fieldId].value;
+    updateField(fieldId, nextValue);
+  }
+
+  function goToRelativeStep(direction: -1 | 1) {
+    const nextStep = briefSteps[activeStepIndex + direction];
+
+    if (nextStep) {
+      setActiveStepId(nextStep.id);
+    }
+  }
+
+  return (
+    <section className={`brief-guided-experience ${readOnly ? "read-only" : "editable"} ${onToggleFieldExcluded ? "exclusion-mode" : ""}`} aria-label="Client Brief">
+      <div className="brief-guided-experience-stage">
+        <div
+          className="brief-guided-experience-content"
+          aria-readonly={readOnly || undefined}
+          inert={readOnly && (!onToggleFieldExcluded || activeStepId === "summary") ? true : undefined}
+        >
+          {activeStepId === "basics" ? (
+            <BriefBasicsSection
+              excludedFieldIds={excludedFieldIds}
+              excludedOptionValues={excludedOptionValues}
+              fields={fields}
+              intro={briefGuidedExperienceIntros.basics}
+              onEditFieldOptions={onEditFieldOptions}
+              onToggleFieldExcluded={onToggleFieldExcluded}
+              videoTypeAction={videoTypeAction}
+              videoTypeOptions={videoTypeOptions}
+              onConfirmField={confirmField}
+              onFieldChange={updateField}
+              onRegenerateField={regenerateField}
+            />
+          ) : null}
+          {activeStepId === "purposeAudience" ? (
+            <BriefPurposeAudienceSection excludedFieldIds={excludedFieldIds} excludedOptionValues={excludedOptionValues} fields={fields} intro={briefGuidedExperienceIntros.purposeAudience} onConfirmField={confirmField} onEditFieldOptions={onEditFieldOptions} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
+          ) : null}
+          {activeStepId === "lookFeel" ? (
+            <BriefLookAndFeelSection excludedFieldIds={excludedFieldIds} excludedOptionValues={excludedOptionValues} fields={fields} intro={briefGuidedExperienceIntros.lookFeel} onConfirmField={confirmField} onEditFieldOptions={onEditFieldOptions} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
+          ) : null}
+          {activeStepId === "contentProduction" ? (
+            <BriefContentProductionSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.contentProduction} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} studioName={studioName} />
+          ) : null}
+          {activeStepId === "deliverablesTiming" ? (
+            <BriefDeliverablesSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.deliverablesTiming} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
+          ) : null}
+          {activeStepId === "summary" ? (
+            <BriefSummaryPage
+              fields={fields}
+              intro={briefGuidedExperienceIntros.summary}
+              logline={logline}
+              missingFields={missingRequiredFields}
+              onConfirmField={confirmField}
+              onFieldChange={updateField}
+              onGoToStep={setActiveStepId}
+              onLoglineChange={(value) => {
+                if (!readOnly) setLogline((currentLogline) => ({ ...currentLogline, text: value }));
+              }}
+              onRegenerateField={regenerateField}
+              onRegenerateLogline={() => undefined}
+              studioName={studioName}
+            />
+          ) : null}
+        </div>
+      </div>
+      <footer className="brief-step-footer brief-guided-experience-footer">
+        <div className="brief-step-footer-inner">
+          <span className="brief-footer-side">
+            {activeStepIndex > 0 ? <Button size="S" variant="secondary" onClick={() => goToRelativeStep(-1)}>Back</Button> : null}
+          </span>
+          <BriefStepDots activeStepIndex={activeStepIndex} showAi={false} onSelectStep={setActiveStepId} onStartWithAi={() => setActiveStepId("basics")} />
+          <span className="brief-footer-side right">
+            {activeStepId === "summary" ? (
+              <Button className="brief-client-primary-action" size="S" variant="primary" onClick={onDone}>{doneLabel}</Button>
+            ) : (
+              <Button className="brief-client-primary-action" size="S" variant="primary" onClick={() => goToRelativeStep(1)}>Next</Button>
+            )}
+          </span>
+        </div>
+      </footer>
+    </section>
   );
 }
 
@@ -740,23 +967,27 @@ function BriefStepDots({
   activeStepIndex,
   onSelectStep,
   onStartWithAi,
+  showAi = true,
 }: {
   activeStepIndex: number | null;
   onSelectStep: (stepId: BriefStepId) => void;
   onStartWithAi: () => void;
+  showAi?: boolean;
 }) {
   return (
     <nav className="brief-step-dots" aria-label="Brief steps">
-      <button
-        className={`brief-step-dot brief-step-dot-ai label-xs-semibold ${activeStepIndex === null ? "active" : ""}`}
-        type="button"
-        aria-current={activeStepIndex === null ? "step" : undefined}
-        data-tooltip="Start with AI"
-        onClick={onStartWithAi}
-      >
-        <DsIcon name="sparkle" size={14} />
-        <span className="sr-only">Start with AI</span>
-      </button>
+      {showAi ? (
+        <button
+          className={`brief-step-dot brief-step-dot-ai label-xs-semibold ${activeStepIndex === null ? "active" : ""}`}
+          type="button"
+          aria-current={activeStepIndex === null ? "step" : undefined}
+          data-tooltip="Start with AI"
+          onClick={onStartWithAi}
+        >
+          <DsIcon name="sparkle" size={14} />
+          <span className="sr-only">Start with AI</span>
+        </button>
+      ) : null}
       {briefSteps.map((step, index) => (
         <button
           className={`brief-step-dot label-xs-semibold ${index === activeStepIndex ? "active" : ""} ${
@@ -783,6 +1014,7 @@ function BriefLandingScreen({
   onSelectStep,
   onSkip,
   onSubmit,
+  studioName,
 }: {
   canDraft: boolean;
   messages: ChatMessage[];
@@ -791,6 +1023,7 @@ function BriefLandingScreen({
   onSelectStep: (stepId: BriefStepId) => void;
   onSkip: () => void;
   onSubmit: (submission: BriefAiSubmit) => void;
+  studioName: string;
 }) {
   const [inputValue, setInputValue] = useState("");
   const [attachments, setAttachments] = useState<InputAttachment[]>([]);
@@ -925,7 +1158,7 @@ function BriefLandingScreen({
           What video are we making?
         </h1>
         {isClarifying ? (
-          <BriefClarifyingThread messages={messages} onDeleteMessage={deleteMessage} onEditMessage={editMessage} />
+          <BriefClarifyingThread messages={messages} onDeleteMessage={deleteMessage} onEditMessage={editMessage} studioName={studioName} />
         ) : null}
         <BriefRichInput
           attachments={attachments}
@@ -972,10 +1205,12 @@ function BriefClarifyingThread({
   messages,
   onDeleteMessage,
   onEditMessage,
+  studioName,
 }: {
   messages: ChatMessage[];
   onDeleteMessage: (message: ChatMessage) => void;
   onEditMessage: (message: ChatMessage) => void;
+  studioName: string;
 }) {
   const [openMenuMessageId, setOpenMenuMessageId] = useState<string | null>(null);
   const threadRef = useRef<HTMLDivElement>(null);
@@ -1009,7 +1244,7 @@ function BriefClarifyingThread({
             <div className="brief-clarifying-message-header">
               {shouldShowRole ? (
                 <span className="brief-landing-message-role label-xs-semibold">
-                  {message.role === "ai" ? "Brisk AI" : "You"}
+                  {message.role === "ai" ? studioName : "Client"}
                 </span>
               ) : (
                 <span aria-hidden="true" />
@@ -1080,11 +1315,13 @@ function BriefAiChatPanel({
   messages,
   onSubmit,
   onToggleCollapsed,
+  studioName,
 }: {
   isCollapsed: boolean;
   messages: ChatMessage[];
   onSubmit: (submission: BriefAiSubmit) => void;
   onToggleCollapsed: (isCollapsed: boolean) => void;
+  studioName: string;
 }) {
   const [inputValue, setInputValue] = useState("");
   const [attachments, setAttachments] = useState<InputAttachment[]>([]);
@@ -1118,23 +1355,23 @@ function BriefAiChatPanel({
   }
 
   return (
-    <aside className="brief-ai-panel chat-first" aria-label="Brisk AI panel">
+    <aside className="brief-ai-panel chat-first" aria-label={`${studioName} assistant panel`}>
       <header className="brief-ai-header">
         <div className="brief-ai-title-row">
           <DsIcon name="chopchop-ai" size={18} />
-          <h2 className="heading-3xs">Brisk AI</h2>
+          <h2 className="heading-3xs">{studioName}</h2>
         </div>
         <button
           className="brief-quiet-icon"
           type="button"
-          aria-label="Collapse Brisk AI"
+          aria-label={`Collapse ${studioName} assistant`}
           onClick={() => onToggleCollapsed(true)}
         >
           -
         </button>
       </header>
 
-      <div className="brief-ai-thread" aria-label="Brisk AI chat thread">
+      <div className="brief-ai-thread" aria-label={`${studioName} assistant chat thread`}>
         {messages.map((message) => (
           <article className={`brief-ai-message ${message.role}`} key={message.id}>
             <p className="paragraph-s">{message.body}</p>
@@ -1286,7 +1523,7 @@ function BriefRichInput({
         <textarea
           ref={textareaRef}
           className={`brief-rich-textarea ${variant} label-s`}
-          aria-label={variant === "landing" ? "Describe the video brief" : "Message Brisk AI"}
+          aria-label={variant === "landing" ? "Describe the video brief" : "Message studio assistant"}
           placeholder={usesLandingIntroPlaceholder ? "" : placeholder}
           value={value}
           onChange={(event) => onValueChange(limitWords(event.target.value, maxBriefWords))}
@@ -1491,19 +1728,36 @@ function MessageAttachmentChip({ attachment }: { attachment: InputAttachment }) 
   );
 }
 
+type BriefFieldExclusionProps = {
+  excludedFieldIds?: readonly BriefFieldId[];
+  excludedOptionValues?: Partial<Record<BriefFieldId, readonly string[]>>;
+  onEditFieldOptions?: (fieldId: BriefFieldId) => void;
+  onToggleFieldExcluded?: (fieldId: BriefFieldId) => void;
+};
+
 function BriefBasicsSection({
+  excludedFieldIds = [],
+  excludedOptionValues = {},
   fields,
+  intro = briefSectionIntros.basics,
   onConfirmField,
   onFieldChange,
   onRegenerateField,
+  onEditFieldOptions,
+  onToggleFieldExcluded,
   summaryMode = false,
+  videoTypeAction,
+  videoTypeOptions = briefVideoTypeDetails,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
-}) {
+  videoTypeAction?: ReactNode;
+  videoTypeOptions?: readonly BriefVideoTypeDetail[];
+} & BriefFieldExclusionProps) {
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -1519,12 +1773,12 @@ function BriefBasicsSection({
         />
       ) : (
         <BriefSectionIntro
-          intro={briefSectionIntros.basics}
+          intro={intro}
           titleId="brief-basics-step-title"
         />
       )}
       <div className="brief-field-list">
-        <BriefFieldRow field={fields.description} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.description} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <div className="brief-textarea-wrap">
             <textarea
               className="brief-textarea label-s"
@@ -1535,14 +1789,25 @@ function BriefBasicsSection({
             />
           </div>
         </BriefFieldRow>
-        <BriefFieldRow field={fields.videoType} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow
+          canEditOptions
+          excludedFieldIds={excludedFieldIds}
+          field={fields.videoType}
+          metaAction={videoTypeAction}
+          onConfirm={onConfirmField}
+          onEditFieldOptions={onEditFieldOptions}
+          onRegenerate={onRegenerateField}
+          onToggleFieldExcluded={onToggleFieldExcluded}
+        >
           <BriefVideoTypeMultiSelect
+            options={videoTypeOptions.filter((option) => !excludedOptionValues.videoType?.includes(option.name))}
             value={fields.videoType.value}
             onChange={(value) => onFieldChange("videoType", value)}
           />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.platform} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow canEditOptions excludedFieldIds={excludedFieldIds} field={fields.platform} onConfirm={onConfirmField} onEditFieldOptions={onEditFieldOptions} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefDeliverablePlatformSelect
+            excludedOptions={excludedOptionValues.platform}
             value={fields.platform.value}
             onChange={(value) => onFieldChange("platform", value)}
           />
@@ -1588,8 +1853,12 @@ function BriefSectionIntro({
       <span className="brief-section-intro-accent" aria-hidden="true" />
       <div className="brief-section-intro-main">
         <div className="brief-section-intro-copy">
-          <span className="brief-section-step-chip label-xs-semibold">Step {intro.step} of 6</span>
+          <div className="brief-section-step-row">
+            <span className="brief-section-step-chip label-xs-semibold">Step {intro.step} of 6</span>
+            {intro.required === false ? <span className="brief-section-optional label-xs-semibold">Optional</span> : null}
+          </div>
           <h2 id={titleId}>{intro.title}</h2>
+          {intro.guidance ? <p className="brief-section-guidance paragraph-s">{intro.guidance}</p> : null}
         </div>
       </div>
     </header>
@@ -1597,18 +1866,24 @@ function BriefSectionIntro({
 }
 
 function BriefPurposeAudienceSection({
+  excludedFieldIds = [],
+  excludedOptionValues = {},
   fields,
+  intro = briefSectionIntros.purposeAudience,
   onConfirmField,
   onFieldChange,
   onRegenerateField,
+  onEditFieldOptions,
+  onToggleFieldExcluded,
   summaryMode = false,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
-}) {
+} & BriefFieldExclusionProps) {
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -1624,22 +1899,23 @@ function BriefPurposeAudienceSection({
         />
       ) : (
         <BriefSectionIntro
-          intro={briefSectionIntros.purposeAudience}
+          intro={intro}
           titleId="brief-purpose-audience-step-title"
         />
       )}
       <div className="brief-field-list">
-        <BriefFieldRow field={fields.purpose} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
-          <BriefPurposeSelect value={fields.purpose.value} onChange={(value) => onFieldChange("purpose", value)} />
+        <BriefFieldRow canEditOptions excludedFieldIds={excludedFieldIds} field={fields.purpose} onConfirm={onConfirmField} onEditFieldOptions={onEditFieldOptions} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
+          <BriefPurposeSelect excludedOptions={excludedOptionValues.purpose} value={fields.purpose.value} onChange={(value) => onFieldChange("purpose", value)} />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.audience} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.audience} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefAudienceList
             value={fields.audience.value}
             onChange={(value) => onFieldChange("audience", value)}
           />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.callToAction} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow canEditOptions excludedFieldIds={excludedFieldIds} field={fields.callToAction} onConfirm={onConfirmField} onEditFieldOptions={onEditFieldOptions} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefCallToActionSelect
+            excludedOptions={excludedOptionValues.callToAction}
             value={fields.callToAction.value}
             onChange={(value) => onFieldChange("callToAction", value)}
           />
@@ -1650,9 +1926,11 @@ function BriefPurposeAudienceSection({
 }
 
 function BriefPurposeSelect({
+  excludedOptions = [],
   onChange,
   value,
 }: {
+  excludedOptions?: readonly string[];
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -1666,7 +1944,7 @@ function BriefPurposeSelect({
   };
   const menu = isOpen ? (
     <div className="brief-purpose-menu" role="listbox" aria-label="Purpose options">
-      {briefPurposeOptions.map((option) => (
+      {briefPurposeOptions.filter((option) => !excludedOptions.includes(option)).map((option) => (
         <button
           className="brief-purpose-option label-s"
           key={option}
@@ -1751,9 +2029,11 @@ function BriefPurposeOptionLabel({ option }: { option: string }) {
 }
 
 function BriefCallToActionSelect({
+  excludedOptions = [],
   onChange,
   value,
 }: {
+  excludedOptions?: readonly string[];
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -1767,7 +2047,7 @@ function BriefCallToActionSelect({
   };
   const menu = isOpen ? (
     <div className="brief-purpose-menu" role="listbox" aria-label="Call to action options">
-      {briefCallToActionOptions.map((option) => (
+      {briefCallToActionOptions.filter((option) => !excludedOptions.includes(option)).map((option) => (
         <button
           className="brief-purpose-option label-s"
           key={option}
@@ -1914,18 +2194,24 @@ function BriefAudienceList({
 }
 
 function BriefLookAndFeelSection({
+  excludedFieldIds = [],
+  excludedOptionValues = {},
   fields,
+  intro = briefSectionIntros.lookFeel,
   onConfirmField,
   onFieldChange,
   onRegenerateField,
+  onEditFieldOptions,
+  onToggleFieldExcluded,
   summaryMode = false,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
-}) {
+} & BriefFieldExclusionProps) {
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -1941,27 +2227,28 @@ function BriefLookAndFeelSection({
         />
       ) : (
         <BriefSectionIntro
-          intro={briefSectionIntros.lookFeel}
+          intro={intro}
           titleId="brief-look-feel-step-title"
         />
       )}
       <div className="brief-field-list">
-        <BriefFieldRow field={fields.feeling} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow canEditOptions excludedFieldIds={excludedFieldIds} field={fields.feeling} onConfirm={onConfirmField} onEditFieldOptions={onEditFieldOptions} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefMultiSelect
             ariaLabel="Tone options"
-            options={briefToneOptions}
+            options={briefToneOptions.filter((option) => !excludedOptionValues.feeling?.includes(option))}
             value={fields.feeling.value}
             onChange={(value) => onFieldChange("feeling", value)}
           />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.referenceVideos} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.referenceVideos} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefReferenceVideosField
             value={fields.referenceVideos.value}
             onChange={(value) => onFieldChange("referenceVideos", value)}
           />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.brandKit} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow canEditOptions excludedFieldIds={excludedFieldIds} field={fields.brandKit} onConfirm={onConfirmField} onEditFieldOptions={onEditFieldOptions} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefBrandKitPicker
+            excludedOptions={excludedOptionValues.brandKit}
             value={fields.brandKit.value}
             onChange={(value) => onFieldChange("brandKit", value)}
           />
@@ -1972,18 +2259,24 @@ function BriefLookAndFeelSection({
 }
 
 function BriefContentProductionSection({
+  excludedFieldIds = [],
   fields,
+  intro = briefSectionIntros.contentProduction,
   onConfirmField,
   onFieldChange,
   onRegenerateField,
+  onToggleFieldExcluded,
   summaryMode = false,
+  studioName,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
-}) {
+  studioName: string;
+} & BriefFieldExclusionProps) {
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -1999,18 +2292,19 @@ function BriefContentProductionSection({
         />
       ) : (
         <BriefSectionIntro
-          intro={briefSectionIntros.contentProduction}
+          intro={intro}
           titleId="brief-content-production-step-title"
         />
       )}
       <div className="brief-field-list">
-        <BriefFieldRow field={fields.liveFootage} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.liveFootage} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefLiveFootageToggle
+            studioName={studioName}
             value={fields.liveFootage.value}
             onChange={(value) => onFieldChange("liveFootage", value)}
           />
         </BriefFieldRow>
-        <BriefFieldRow field={fields.voiceover} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.voiceover} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefVoiceoverControl
             value={fields.voiceover.value}
             onChange={(value) => onFieldChange("voiceover", value)}
@@ -2022,18 +2316,22 @@ function BriefContentProductionSection({
 }
 
 function BriefDeliverablesSection({
+  excludedFieldIds = [],
   fields,
+  intro = briefSectionIntros.deliverablesTiming,
   onConfirmField,
   onFieldChange,
   onRegenerateField,
+  onToggleFieldExcluded,
   summaryMode = false,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
-}) {
+} & BriefFieldExclusionProps) {
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
@@ -2049,12 +2347,12 @@ function BriefDeliverablesSection({
         />
       ) : (
         <BriefSectionIntro
-          intro={briefSectionIntros.deliverablesTiming}
+          intro={intro}
           titleId="brief-deliverables-step-title"
         />
       )}
       <div className="brief-field-list">
-        <BriefFieldRow field={fields.deliverables} onConfirm={onConfirmField} onRegenerate={onRegenerateField}>
+        <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.deliverables} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefDeliverablesTable
             fallbackDeadline={fields.deadline.value}
             value={fields.deliverables.value}
@@ -2256,10 +2554,12 @@ function BriefDeliverablesHeader({
 
 function BriefDeliverablePlatformSelect({
   autoOpen = false,
+  excludedOptions = [],
   onChange,
   value,
 }: {
   autoOpen?: boolean;
+  excludedOptions?: readonly string[];
   onChange: (value: string) => void;
   value: string;
 }) {
@@ -2293,7 +2593,7 @@ function BriefDeliverablePlatformSelect({
           {deliverablePlatformGroups.map((group) => (
             <div className="brief-platform-group" key={group.label}>
               <span className="brief-platform-group-label label-xs-semibold">{group.label.toUpperCase()}</span>
-              {group.options.map((option) => (
+              {group.options.filter((option) => !excludedOptions.includes(option)).map((option) => (
                 <button
                   className={`brief-platform-option label-s${option === value ? " selected" : ""}`}
                   key={option}
@@ -2598,9 +2898,11 @@ function BriefDeadlineField({
 
 function BriefLiveFootageToggle({
   onChange,
+  studioName,
   value,
 }: {
   onChange: (value: string) => void;
+  studioName: string;
   value: string;
 }) {
   const [footageChoice, shooterChoice] = parseLiveFootageValue(value);
@@ -2623,15 +2925,18 @@ function BriefLiveFootageToggle({
   ];
   const shooterOptions: Array<{
     description: string;
-    label: "You shoot" | "ChopChop shoots";
+    label: string;
+    value: "Client shoots" | "Studio shoots";
   }> = [
     {
-      label: "You shoot",
-      description: "You handle the crew, kit, and location.",
+      label: "Client shoots",
+      value: "Client shoots",
+      description: "The client handles the crew, kit and location.",
     },
     {
-      label: "ChopChop shoots",
-      description: "We handle everything - crew, kit, location, direction.",
+      label: `${studioName} shoots`,
+      value: "Studio shoots",
+      description: `${studioName} handles the crew, kit, location and direction.`,
     },
   ];
 
@@ -2641,10 +2946,10 @@ function BriefLiveFootageToggle({
       return;
     }
 
-    onChange(`Shoot new|${shooterChoice || "ChopChop shoots"}`);
+    onChange(`Shoot new|${shooterChoice || "Studio shoots"}`);
   }
 
-  function selectShooterChoice(nextChoice: "You shoot" | "ChopChop shoots") {
+  function selectShooterChoice(nextChoice: "Client shoots" | "Studio shoots") {
     onChange(`Shoot new|${nextChoice}`);
   }
 
@@ -2670,11 +2975,11 @@ function BriefLiveFootageToggle({
           <div className="brief-pill-toggle-group" aria-label="Who will shoot the footage" role="group">
             {shooterOptions.map((option) => (
               <button
-                className={`brief-pill-toggle brief-pill-toggle-described ${shooterChoice === option.label ? "selected" : ""}`}
-                key={option.label}
+                className={`brief-pill-toggle brief-pill-toggle-described ${shooterChoice === option.value ? "selected" : ""}`}
+                key={option.value}
                 type="button"
-                aria-pressed={shooterChoice === option.label}
-                onClick={() => selectShooterChoice(option.label)}
+                aria-pressed={shooterChoice === option.value}
+                onClick={() => selectShooterChoice(option.value)}
               >
                 <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
                 <span className="brief-pill-toggle-description label-xs">{option.description}</span>
@@ -2932,14 +3237,17 @@ function BriefReferenceVideosField({
 }
 
 function BriefBrandKitPicker({
+  excludedOptions = [],
   onChange,
   value,
 }: {
+  excludedOptions?: readonly string[];
   onChange: (value: string) => void;
   value: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const activeKit = brandKitOptions.find((kit) => kit.name === value) ?? brandKitOptions[0];
+  const availableKits = brandKitOptions.filter((kit) => !excludedOptions.includes(kit.name));
+  const activeKit = availableKits.find((kit) => kit.name === value) ?? availableKits[0] ?? brandKitOptions[0];
 
   function selectKit(nextValue: string) {
     onChange(nextValue);
@@ -2969,7 +3277,7 @@ function BriefBrandKitPicker({
       </article>
       {isOpen ? (
         <div className="brief-brand-kit-menu" role="listbox" aria-label="Brand kit options">
-          {brandKitOptions.map((kit) => (
+          {availableKits.map((kit) => (
             <button
               className={`brief-brand-kit-option ${kit.name === activeKit.name ? "selected" : ""}`}
               key={kit.name}
@@ -3119,32 +3427,13 @@ function BriefInlineSelect({
   />;
 }
 
-const videoTypeIconMap: Record<string, DsIconName> = {
-  Animation: "grid-four",
-  "AI Video": "chopchop-ai",
-  "Brand Film": "lightbulb",
-  "Case Study / Testimonial": "chat-circle",
-  "Commercial / TVC": "fire-simple",
-  Documentary: "film-strip",
-  Event: "push-pin-simple",
-  Explainer: "clipboard-text",
-  "Fashion / Lookbook": "image-square",
-  "Internal Comms": "paperclip",
-  "Live Action": "video-camera",
-  "Music Video": "play",
-  Podcast: "speaker-high",
-  "Product / Demo": "picture-in-picture",
-  "Real Estate": "columns",
-  "Short-Form / Reels": "film-slate",
-  "Training / How To": "checks",
-  "Wedding / Events": "heart",
-};
-
 function BriefVideoTypeMultiSelect({
   onChange,
+  options = briefVideoTypeDetails,
   value,
 }: {
   onChange: (value: string) => void;
+  options?: readonly BriefVideoTypeDetail[];
   value: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -3240,7 +3529,7 @@ function BriefVideoTypeMultiSelect({
           aria-multiselectable="true"
           role="listbox"
         >
-          {briefVideoTypeDetails.map((videoType) => (
+          {options.map((videoType) => (
             <button
               className={`brief-video-type-option label-s ${selectedValues.includes(videoType.name) ? "selected" : ""}`}
               key={videoType.name}
@@ -3330,10 +3619,15 @@ function getAudiencePlaceholder(index: number) {
   return `Audience ${index + 1}`;
 }
 
-function parseLiveFootageValue(value: string): ["Use existing" | "Shoot new" | "", "You shoot" | "ChopChop shoots" | ""] {
+function parseLiveFootageValue(value: string): ["Use existing" | "Shoot new" | "", "Client shoots" | "Studio shoots" | ""] {
   const [footageChoice = "", shooterChoice = ""] = value.split("|");
   const normalisedFootageChoice = footageChoice === "Use existing" || footageChoice === "Shoot new" ? footageChoice : "";
-  const normalisedShooterChoice = shooterChoice === "You shoot" || shooterChoice === "ChopChop shoots" ? shooterChoice : "";
+  const normalisedShooterChoice =
+    shooterChoice === "Client shoots" || shooterChoice === "You shoot"
+      ? "Client shoots"
+      : shooterChoice === "Studio shoots"
+        ? "Studio shoots"
+        : "";
 
   return [normalisedFootageChoice, normalisedShooterChoice];
 }
@@ -3690,16 +3984,27 @@ function getMockReferenceTags(source: string) {
 }
 
 function BriefFieldRow({
+  canEditOptions = false,
   children,
+  excludedFieldIds = [],
   field,
+  metaAction,
   onRegenerate,
+  onEditFieldOptions,
+  onToggleFieldExcluded,
 }: {
+  canEditOptions?: boolean;
   children: ReactNode;
+  excludedFieldIds?: readonly BriefFieldId[];
   field: BriefField;
+  metaAction?: ReactNode;
   onConfirm: (fieldId: BriefFieldId) => void;
+  onEditFieldOptions?: (fieldId: BriefFieldId) => void;
   onRegenerate: (fieldId: BriefFieldId) => void;
+  onToggleFieldExcluded?: (fieldId: BriefFieldId) => void;
 }) {
   const rowRef = useRef<HTMLDivElement | null>(null);
+  const isExcluded = excludedFieldIds.includes(field.id);
 
   function focusFieldControl() {
     const focusable = rowRef.current?.querySelector<HTMLElement>(
@@ -3708,13 +4013,37 @@ function BriefFieldRow({
     focusable?.focus();
   }
 
+  if (isExcluded && !onToggleFieldExcluded) {
+    return null;
+  }
+
   return (
-    <div className="brief-field-row" ref={rowRef}>
+    <div className={`brief-field-row ${isExcluded ? "is-excluded" : ""}`} ref={rowRef}>
       <div className="brief-field-meta">
         <label className="label-s-semibold">{field.label}</label>
-        <BriefFieldStatusDot field={field} onEdit={focusFieldControl} onRegenerate={onRegenerate} />
+        <div className="brief-field-meta-side">
+          {metaAction}
+          {onToggleFieldExcluded ? (
+            <>
+              {canEditOptions && onEditFieldOptions && !isExcluded ? (
+                <Button size="S" variant="ghost" onClick={() => onEditFieldOptions(field.id)}>
+                  Edit options
+                </Button>
+              ) : null}
+              <Button
+                size="S"
+                variant="ghost"
+                onClick={() => onToggleFieldExcluded(field.id)}
+              >
+                {isExcluded ? "Restore" : "Exclude"}
+              </Button>
+            </>
+          ) : (
+            <BriefFieldStatusDot field={field} onEdit={focusFieldControl} onRegenerate={onRegenerate} />
+          )}
+        </div>
       </div>
-      <div className="brief-field-control">{children}</div>
+      <div className="brief-field-control" inert={isExcluded ? true : undefined}>{children}</div>
     </div>
   );
 }
@@ -3771,6 +4100,7 @@ function BriefPlaceholderSection({ copy, stepLabel }: { copy: string; stepLabel:
 
 function BriefSummaryPage({
   fields,
+  intro = briefSectionIntros.summary,
   logline,
   missingFields,
   onConfirmField,
@@ -3779,8 +4109,10 @@ function BriefSummaryPage({
   onLoglineChange,
   onRegenerateField,
   onRegenerateLogline,
+  studioName,
 }: {
   fields: BriefFields;
+  intro?: BriefSectionIntroModel;
   logline: Logline;
   missingFields: BriefField[];
   onConfirmField: (fieldId: BriefFieldId) => void;
@@ -3789,12 +4121,13 @@ function BriefSummaryPage({
   onLoglineChange: (value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   onRegenerateLogline: () => void;
+  studioName: string;
 }) {
   const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
   const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
   const deliverableRows = parseDeliverables(fields.deliverables.value, fields.deadline.value);
   const primaryDeliverable = deliverableRows[0] ?? createMainDeliverableRow(fields.deadline.value);
-  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable);
+  const summaryModel = createWrittenSummaryModel(fields, deliverableRows, primaryDeliverable, studioName);
   const summaryMissingCount = countSummaryMissingSlots(summaryModel, deliverableRows, fields, logline);
 
   function stopEditing() {
@@ -3827,7 +4160,7 @@ function BriefSummaryPage({
   return (
     <section className="brief-summary-page" aria-labelledby="brief-summary-title">
       <BriefSectionIntro
-        intro={briefSectionIntros.summary}
+        intro={intro}
         titleId="brief-summary-title"
       />
       <BriefSummaryLogline
@@ -4218,6 +4551,7 @@ function createWrittenSummaryModel(
   fields: BriefFields,
   deliverableRows: DeliverableRow[],
   primaryDeliverable: DeliverableRow,
+  studioName: string,
 ): WrittenSummaryModel {
   const videoTypes = parseMultiSelectValue(fields.videoType.value);
   const tones = parseMultiSelectValue(fields.feeling.value);
@@ -4244,7 +4578,11 @@ function createWrittenSummaryModel(
       : footageChoice === "Use existing"
         ? "Use existing footage"
         : "";
-  const shootModeDetail = footageChoice === "Shoot new" ? shooterChoice : "Shoot mode";
+  const shootModeDetail = footageChoice === "Shoot new"
+    ? shooterChoice === "Studio shoots"
+      ? `${studioName} shoots`
+      : shooterChoice
+    : "Shoot mode";
   const footageSource = shootMode;
   const voiceSpecValue = artistChoice || (voiceChoice === "No" ? "None" : voiceChoice === "We'll do our own" ? "Own" : "");
   const voiceSpecSubValue = artistChoice ? [sentenceCase(voiceKind), sentenceCase(voiceGender)].filter(Boolean).join(", ") : "Voiceover";
@@ -4380,7 +4718,6 @@ function proseCase(value: string) {
   const preserveWords = new Set([
     "AI",
     "B2B",
-    "ChopChop",
     "Facebook",
     "Instagram",
     "LinkedIn",
@@ -4887,11 +5224,11 @@ function BriefStatusDotControl({
 }) {
   const statusCopy =
     status === "missing"
-      ? "Brisk AI needs more brief details before it can complete this."
+      ? "More brief details are needed before this can be completed."
       : status === "guess"
-        ? "Brisk AI made a best guess. Refresh to regenerate this from the current brief."
-        : "Brisk AI is confident based on the current brief.";
-  const actionLabel = "Refresh AI";
+        ? "This is a best guess. Refresh it using the current brief."
+        : "This is based on the current brief.";
+  const actionLabel = "Refresh suggestion";
 
   return (
     <span className="brief-status-dot-wrap">
@@ -5545,7 +5882,7 @@ function createChatMessage(role: ChatMessage["role"], body: string, meta: Partia
     id: `brief-${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     role,
     body,
-    createdAt: role === "ai" ? "Brisk AI" : "Just now",
+    createdAt: "Just now",
     ...meta,
   };
 }

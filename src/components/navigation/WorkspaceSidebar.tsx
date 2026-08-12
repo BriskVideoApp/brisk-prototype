@@ -11,7 +11,7 @@ import {
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
-type WorkspaceSidebarItem = "dashboard" | "brandKits" | "videos" | "today" | "chat";
+type WorkspaceSidebarItem = "dashboard" | "brandKits" | "videos" | "today" | "chat" | "studioOnboard";
 
 type WorkspaceSidebarProps = {
   activeItem?: WorkspaceSidebarItem;
@@ -166,6 +166,14 @@ export function WorkspaceSidebar({
           <span className="workspace-sidebar-link-label">Dashboard</span>
         </Link>
         <Link
+          className={`today-sidebar-link label-s-semibold ${activeItem === "studioOnboard" || pathname === "/studio-onboard" ? "active" : ""}`}
+          href="/studio-onboard"
+          title={isCollapsed ? "Studio onboard" : undefined}
+        >
+          <DsIcon name="sparkle" size={16} />
+          <span className="workspace-sidebar-link-label">Studio onboard</span>
+        </Link>
+        <Link
           className={`today-sidebar-link label-s-semibold ${activeItem === "brandKits" ? "active" : ""}`}
           href={brandKitHref}
           title={isCollapsed ? brandKitLabel : undefined}
@@ -253,6 +261,9 @@ function getPageLabel(pathname: string, activeItem?: WorkspaceSidebarItem) {
   if (activeItem === "chat" || pathname === "/chat") {
     return "Chat";
   }
+  if (activeItem === "studioOnboard" || pathname === "/studio-onboard") {
+    return "Studio onboard";
+  }
 
   const projectMatch = pathname.match(/^\/projects\/([^/]+)\/([^/]+)/);
   if (projectMatch) {
@@ -279,6 +290,9 @@ function getPageIcon(pathname: string): DsIconName {
   }
   if (pathname === "/chat") {
     return "chats";
+  }
+  if (pathname === "/studio-onboard") {
+    return "sparkle";
   }
   return "folder-open";
 }

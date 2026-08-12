@@ -106,7 +106,7 @@ export type BriefVideoTypeDetail = {
   description: string;
 };
 
-export const briefVideoTypeDetails: BriefVideoTypeDetail[] = [
+export const briefVideoTypeDetails = [
   {
     name: "Animation",
     summary: "Motion graphics or character-led video for abstract ideas and complex processes.",
@@ -215,7 +215,9 @@ export const briefVideoTypeDetails: BriefVideoTypeDetail[] = [
     description:
       "Personal event films - weddings, milestones, celebrations. Emotional, story-led, cut to music that means something to the people in it. High craft on a personal scale.",
   },
-];
+] as const satisfies readonly BriefVideoTypeDetail[];
+
+export type BriefVideoTypeId = (typeof briefVideoTypeDetails)[number]["name"];
 
 export const briefVideoTypes = briefVideoTypeDetails.map((videoType) => videoType.name);
 
@@ -334,6 +336,12 @@ export const initialBriefFields: BriefFields = {
   },
 };
 
+export function createInitialBriefFields(): BriefFields {
+  return Object.fromEntries(
+    Object.entries(initialBriefFields).map(([fieldId, field]) => [fieldId, { ...field }]),
+  ) as BriefFields;
+}
+
 export const initialChatMessages: ChatMessage[] = [
   {
     id: "brief-ai-welcome",
@@ -429,7 +437,7 @@ export const fallbackBriefDraft: BriefDraft = {
     liveFootage: {
       id: "liveFootage",
       label: "Are we shooting live footage?",
-      value: "Shoot new|ChopChop shoots",
+      value: "Shoot new|Studio shoots",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
@@ -553,7 +561,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         liveFootage: {
           id: "liveFootage",
           label: "Are we shooting live footage?",
-          value: "Shoot new|ChopChop shoots",
+          value: "Shoot new|Studio shoots",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -676,7 +684,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         liveFootage: {
           id: "liveFootage",
           label: "Are we shooting live footage?",
-          value: "Shoot new|ChopChop shoots",
+          value: "Shoot new|Studio shoots",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -759,7 +767,7 @@ export const fieldRegenerationValues: Record<BriefFieldId, string[]> = {
   ],
   liveFootage: [
     "Use existing",
-    "Shoot new|ChopChop shoots",
+    "Shoot new|Studio shoots",
     "Shoot new|You shoot",
   ],
   voiceover: [

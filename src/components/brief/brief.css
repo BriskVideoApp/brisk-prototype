@@ -925,6 +925,23 @@
   gap: var(--brisk-space-s);
 }
 
+.brief-section-step-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.brief-section-optional {
+  color: var(--brisk-text-secondary);
+}
+
+.brief-section-guidance {
+  max-width: calc(var(--brisk-space-3xl) * 18);
+  margin: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+}
+
 .brief-section-step-chip {
   display: inline-flex;
   width: fit-content;
@@ -986,6 +1003,12 @@
 
 .brief-field-meta {
   justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.brief-field-meta-side {
+  display: flex;
+  align-items: center;
   gap: var(--brisk-space-l);
 }
 
@@ -4077,6 +4100,62 @@ button.brief-confidence-chip {
   justify-content: space-between;
   gap: var(--brisk-space-xl);
   padding: var(--brisk-space-m) var(--brisk-space-2xl);
+}
+
+.brief-guided-experience {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  background: var(--brisk-white);
+}
+
+.brief-guided-experience-stage {
+  display: grid;
+  width: min(100%, calc(var(--brisk-space-3xl) * 30));
+  flex: 1;
+  align-content: start;
+  gap: var(--brisk-space-2xl);
+  margin: var(--brisk-space-none) auto;
+  padding: var(--brisk-space-xl) var(--brisk-space-2xl) calc(var(--brisk-space-3xl) * 2);
+}
+
+.brief-guided-experience-content {
+  min-width: 0;
+}
+
+.brief-guided-experience.exclusion-mode .brief-field-row.is-excluded {
+  color: var(--brisk-text-secondary);
+}
+
+.brief-guided-experience.exclusion-mode .brief-field-row.is-excluded > .brief-field-meta > label,
+.brief-guided-experience.exclusion-mode .brief-field-row.is-excluded > .brief-field-control {
+  opacity: 0.45;
+}
+
+.brief-guided-experience.exclusion-mode .brief-field-row.is-excluded > .brief-field-control {
+  pointer-events: none;
+}
+
+.brief-guided-experience.read-only .brief-guided-experience-stage {
+  cursor: default;
+}
+
+.brief-guided-experience.read-only .brief-field-control,
+.brief-guided-experience.read-only .brief-status-dot-wrap {
+  pointer-events: none;
+}
+
+.brief-guided-experience-footer {
+  margin-top: auto;
+}
+
+@media (max-width: 800px) {
+  .brief-guided-experience-stage {
+    padding-right: var(--brisk-space-l);
+    padding-left: var(--brisk-space-l);
+  }
+
 }
 
 .brief-footer-side {
