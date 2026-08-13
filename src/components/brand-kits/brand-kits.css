@@ -176,6 +176,11 @@
   object-fit: contain;
 }
 
+.brand-logo-initials {
+  color: var(--brisk-text-secondary);
+  letter-spacing: 0.04em;
+}
+
 .customer-brand-mini-colour,
 .customer-brand-mini-font {
   min-width: 0;

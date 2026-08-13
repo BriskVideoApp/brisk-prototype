@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
 import type { RecutBrief } from "@/data/masters";
+import type { Project } from "@/components/active-videos/types";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
@@ -29,7 +29,6 @@ import type {
 const currentUserId = "user-tom";
 type RecutHandoff = { childDeliverableId: string; childName: string; brief: RecutBrief };
 const versionUploadInputId = "video-version-upload";
-const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
 const playbackSpeeds = [0.5, 1, 1.5, 2] as const;
 const reactionOptions: Array<{ emoji: ReactionEmoji; label: string }> = [
   { emoji: "❤️", label: "Love" },
@@ -54,7 +53,8 @@ const quickReactionOptions = [
 ].filter((reaction): reaction is { emoji: ReactionEmoji; label: string } => Boolean(reaction));
 const reactionLibraryOptions = reactionOptions;
 
-export function VideoReviewScreen() {
+export function VideoReviewScreen({ project }: { project: Project }) {
+  const { selectedRole } = usePrototypeRole();
   const [reviewComments, setReviewComments] = useState(reviewVideo.comments);
   const [activeFilter, setActiveFilter] = useState<CommentFilter>("unresolved");
   const [resolvedIds, setResolvedIds] = useState(
@@ -648,9 +648,8 @@ export function VideoReviewScreen() {
 
   return (
     <main className="video-review-shell">
-      <WorkspaceSidebar className="review-sidebar" />
       <div className="video-review-main">
-        {projectStageHeaderProject ? <ProjectStageHeader activeStage="edit" project={projectStageHeaderProject} /> : null}
+        <ProjectStageHeader activeStage="edit" project={project} />
         <input
           className="visually-hidden-file-input"
           id={versionUploadInputId}
@@ -795,7 +794,7 @@ export function VideoReviewScreen() {
             {toastMessage ? <Toast message={toastMessage} onDismiss={() => setToastMessage("")} /> : null}
             <ShareActionRow
               context="edit"
-              userRole="Studio Staff"
+              userRole={selectedRole}
               initialLinkOpens="videoOnly"
               initialAccess="canComment"
               projectName={activeVideo.fileName}

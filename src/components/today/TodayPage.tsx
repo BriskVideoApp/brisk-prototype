@@ -11,7 +11,6 @@ import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, snapToQuarter, stageLabels } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId, todayReferenceDate, todayTimeEntries } from "@/data/today/mockData";
 import { readSharedTimeEntries, sharedTimeEntriesEventName, toTodayTimeEntry } from "@/data/timeEntries/sharedTimeEntries";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, StageKey } from "@/components/active-videos/types";
@@ -129,7 +128,6 @@ export function TodayPage() {
 
   return (
     <main className="today-shell">
-      <WorkspaceSidebar activeItem="today" />
       <section className="today-main" aria-label="Today workspace">
         <TodayHeader
           weekDays={weekDays}

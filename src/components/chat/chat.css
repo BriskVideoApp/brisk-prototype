@@ -712,6 +712,15 @@
   color: var(--brisk-text-primary);
 }
 
+.chat-secondary-button.is-disabled,
+.chat-secondary-button.is-disabled:hover {
+  background: var(--brisk-bg-block-secondary);
+  box-shadow: none;
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+  transform: none;
+}
+
 .chat-primary-button {
   background: var(--brisk-brand-primary);
   color: var(--brisk-white);
@@ -1335,6 +1344,13 @@
 
 .chat-project-update-card:hover {
   box-shadow: var(--brisk-shadow-m);
+}
+
+.chat-project-update-card.is-static,
+.chat-project-update-card.is-static:hover {
+  box-shadow: none;
+  color: var(--brisk-text-secondary);
+  cursor: default;
 }
 
 .chat-project-update-card:active {

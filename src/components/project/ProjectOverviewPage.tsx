@@ -1,12 +1,21 @@
 "use client";
 
+"use client";
+
 import Link from "next/link";
 import type { Project } from "@/components/active-videos/types";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
-import { TeamPanel } from "./team/TeamPanel";
+import { TeamPanel, type TeamPanelAccess } from "./team/TeamPanel";
 
 export function ProjectOverviewPage({ project }: { project: Project }) {
+  const { selectedRole } = usePrototypeRole();
   const customer = getBrandKitCustomerByBadge(project.clientBadge);
+  const access: TeamPanelAccess = selectedRole === "Studio Staff"
+    ? "producerAdmin"
+    : selectedRole === "Studio Freelancer"
+      ? "freelancer"
+      : "customer";
 
   return (
     <main className="project-overview-shell">
@@ -21,7 +30,11 @@ export function ProjectOverviewPage({ project }: { project: Project }) {
         {customer ? (
           <Link className="project-overview-brand-kit label-s-semibold" href={`/brand-kits/${customer.slug}`}>
             <span className="project-overview-brand-mark">
-              <img src={customer.logoUrl} alt="" />
+              {customer.logoUrl ? (
+                <img src={customer.logoUrl} alt="" />
+              ) : (
+                <span className="label-xs-semibold">{customer.badge}</span>
+              )}
             </span>
             {customer.name}&apos;s Brand Kit
           </Link>
@@ -36,7 +49,7 @@ export function ProjectOverviewPage({ project }: { project: Project }) {
           videoLengthSeconds={project.videoLengthSeconds}
           initialTeam={project.team}
           timeEntries={project.timeEntries}
-          access="producerAdmin"
+          access={access}
         />
       </section>
     </main>

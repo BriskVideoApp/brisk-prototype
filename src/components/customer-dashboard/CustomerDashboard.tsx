@@ -7,8 +7,8 @@ import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { ChatPage } from "@/components/chat/ChatPage";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { getDemoProjectDestination, isDemoProject } from "@/data/projects";
 import {
   customerDashboardActivity,
   customerDashboardFallbackThumbnailUrl,
@@ -342,7 +342,6 @@ export function CustomerDashboard() {
 
   return (
     <main className="customer-dashboard-shell">
-      <WorkspaceSidebar activeItem="dashboard" />
       <div className="customer-dashboard-main">
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
@@ -760,18 +759,30 @@ function ActivityPanel() {
         <span className="customer-activity-filter label-xs-semibold">All</span>
       </div>
       <div className="customer-activity-list">
-        {customerDashboardActivity.slice(0, 10).map((activity) => (
-          <Link className="customer-activity-row" href={activity.href} key={activity.id}>
-            <span className="customer-activity-icon"><DsIcon name={activity.icon} size={16} /></span>
-            <span className="customer-activity-copy label-xs">
-              <span>
-                <strong>{activity.actor}</strong> {activity.action} {activity.object}
+        {customerDashboardActivity.slice(0, 10).map((activity) => {
+          const activityContent = (
+            <>
+              <span className="customer-activity-icon"><DsIcon name={activity.icon} size={16} /></span>
+              <span className="customer-activity-copy label-xs">
+                <span>
+                  <strong>{activity.actor}</strong> {activity.action} {activity.object}
+                </span>
+                <span>{activity.projectLabel} · {formatRelativeTime(activity.timestamp)}</span>
               </span>
-              <span>{activity.projectLabel} · {formatRelativeTime(activity.timestamp)}</span>
-            </span>
-            <DsIcon name="caret-right" size={13} />
-          </Link>
-        ))}
+              {isDemoProject(activity.projectId) ? <DsIcon name="caret-right" size={13} /> : <span className="customer-demo-indicator" title="Demo not available" />}
+            </>
+          );
+
+          return isDemoProject(activity.projectId) ? (
+            <Link className="customer-activity-row" href={activity.href} key={activity.id}>
+              {activityContent}
+            </Link>
+          ) : (
+            <div className="customer-activity-row is-static" aria-disabled="true" title="Demo not available" key={activity.id}>
+              {activityContent}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -799,9 +810,7 @@ function ProductionCard({
       <div className="customer-production-card-top">
         <div className="customer-production-card-copy">
           <span className="customer-project-code label-xs-semibold">{project.code}</span>
-          <Link className="customer-production-card-title headings-2xs-bold" href={`/projects/${project.id}/stages/brief`}>
-            {project.name}
-          </Link>
+          <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" project={project} />
           <span className="customer-latest-action label-xs">
             {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
           </span>
@@ -902,7 +911,7 @@ function QueueProjectRow({
       <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span>
       <div className="customer-queue-project" role="cell">
         <span className="customer-project-code label-xs-semibold">{project.code}</span>
-        <Link className="heading-3xs" href={`/projects/${project.id}/stages/brief`}>{project.name}</Link>
+        <CustomerProjectDestination className="heading-3xs" project={project} />
         <span className="customer-latest-action label-xs">
           {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
         </span>
@@ -1034,11 +1043,39 @@ function ProjectActionsMenu({
           </button>
         </div>
       ) : null}
-      <Link className="label-s-semibold" href={`/projects/${project.id}/stages/brief`} role="menuitem">
-        <DsIcon name="folder-open" size={16} />
-        Open project
-      </Link>
+      {getDemoProjectDestination(project.id, "brief") ? (
+        <Link className="label-s-semibold" href={getDemoProjectDestination(project.id, "brief")?.href ?? ""} role="menuitem">
+          <DsIcon name="folder-open" size={16} />
+          Open project
+        </Link>
+      ) : (
+        <span className="customer-project-menu-disabled label-s-semibold" role="menuitem" aria-disabled="true">
+          <DsIcon name="folder-open" size={16} />
+          Demo not available
+        </span>
+      )}
     </div>
+  );
+}
+
+function CustomerProjectDestination({
+  className,
+  project,
+}: {
+  className: string;
+  project: CustomerDashboardProject;
+}) {
+  const destination = getDemoProjectDestination(project.id, "brief");
+
+  if (destination) {
+    return <Link className={className} href={destination.href}>{project.name}</Link>;
+  }
+
+  return (
+    <span className={`${className} is-static`} aria-disabled="true" title="Demo not available">
+      {project.name}
+      <small className="customer-demo-unavailable label-xs">Demo not available</small>
+    </span>
   );
 }
 

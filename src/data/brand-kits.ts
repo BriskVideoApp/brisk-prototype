@@ -71,7 +71,7 @@ export type BrandRelationship = "master" | "sub-brand";
 export type SubBrand = {
   slug: string;
   name: string;
-  logoUrl: string;
+  logoUrl: string | null;
   lastUpdated: string;
   relationship: BrandRelationship;
   profile: BrandProfile;
@@ -82,7 +82,7 @@ export type BrandKitCustomer = {
   name: string;
   badge: string;
   website: string;
-  logoUrl: string;
+  logoUrl: string | null;
   lastUpdated: string;
   profile: BrandProfile | null;
   clientCanEdit: boolean;
@@ -104,25 +104,29 @@ const motionVideo = "https://videos.pexels.com/video-files/853800/853800-hd_1920
 
 const logoUrls = {
   loom: "https://cdn.simpleicons.org/loom",
-  deel: "https://cdn.simpleicons.org/deel",
+  deel: null,
   notion: "https://cdn.simpleicons.org/notion",
-  hims: "https://cdn.simpleicons.org/hims",
-  openai: "https://cdn.simpleicons.org/openai",
+  hims: null,
+  openai: null,
   posthog: "https://cdn.simpleicons.org/posthog",
-  ramp: "https://cdn.simpleicons.org/ramp",
-  canva: "https://cdn.simpleicons.org/canva",
+  ramp: null,
+  canva: null,
   linear: "https://cdn.simpleicons.org/linear",
   figma: "https://cdn.simpleicons.org/figma",
 } as const;
 
 function makeLogos(brand: keyof typeof logoUrls, name: string): BrandLogo[] {
+  const logoUrl = logoUrls[brand];
+
+  if (!logoUrl) return [];
+
   return [
     {
       id: `${brand}-horizontal-dark`,
       label: `${name} horizontal - dark`,
       variant: "dark",
       format: "svg",
-      url: logoUrls[brand],
+      url: logoUrl,
       layout: "horizontal",
     },
     {
@@ -130,7 +134,7 @@ function makeLogos(brand: keyof typeof logoUrls, name: string): BrandLogo[] {
       label: `${name} horizontal - light`,
       variant: "light",
       format: "svg",
-      url: logoUrls[brand],
+      url: logoUrl,
       layout: "horizontal",
     },
     {
@@ -138,7 +142,7 @@ function makeLogos(brand: keyof typeof logoUrls, name: string): BrandLogo[] {
       label: `${name} mark - mono`,
       variant: "mono",
       format: "png",
-      url: logoUrls[brand],
+      url: logoUrl,
       layout: "mark",
     },
   ];
@@ -312,7 +316,7 @@ function makeSubBrand(
   return {
     slug,
     name,
-    logoUrl: logoUrls[parentSlug as keyof typeof logoUrls] ?? logoUrls.loom,
+    logoUrl: logoUrls[parentSlug as keyof typeof logoUrls] ?? null,
     lastUpdated: "18 Jul 2026",
     relationship: "sub-brand",
     profile,

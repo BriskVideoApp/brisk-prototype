@@ -25,8 +25,8 @@ import { ChatThreadPane } from "@/components/chat/ChatThreadPane";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { getDemoProjectDestination } from "@/data/projects";
 import type {
   ChatAttachment,
   ChatChannel,
@@ -1035,7 +1035,6 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
 
   return (
     <div className={`chat-workspace-shell ${isCustomer ? "customer-view" : ""} ${embedded ? "embedded" : ""}`}>
-      {embedded ? null : <WorkspaceSidebar activeItem="chat" />}
       <main className={`chat-shell ${isCustomer ? "customer-view" : ""} ${embedded ? "embedded" : ""}`}>
         <ChatRail
           workspaceName={chatWorkspace.name}
@@ -1213,12 +1212,18 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
             ) : null}
             {selectedProject && activeView === "projects" && !isCustomer ? (
               <>
-                <Link
-                  className="chat-secondary-button label-s-semibold"
-                  href={`/projects/${selectedProject.id}/stages/brief`}
-                >
-                  Go to project
-                </Link>
+                {getDemoProjectDestination(selectedProject.id, "brief") ? (
+                  <Link
+                    className="chat-secondary-button label-s-semibold"
+                    href={getDemoProjectDestination(selectedProject.id, "brief")?.href ?? ""}
+                  >
+                    Go to project
+                  </Link>
+                ) : (
+                  <span className="chat-secondary-button is-disabled label-s-semibold" aria-disabled="true">
+                    Demo not available
+                  </span>
+                )}
                 <button
                   className="chat-icon-button"
                   type="button"

@@ -1,43 +1,42 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 export type PrototypeRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
 type PrototypeRoleContextValue = {
   selectedRole: PrototypeRole;
   hasLoadedRole: boolean;
+  allPages: boolean;
   setSelectedRole: (role: PrototypeRole) => void;
+  setAllPages: (allPages: boolean) => void;
 };
 
 const PrototypeRoleContext = createContext<PrototypeRoleContextValue | null>(null);
-const roleStorageKey = "brisk-prototype-role";
-const prototypeRoles: PrototypeRole[] = ["Studio Staff", "Studio Freelancer", "Customer"];
+export const prototypeRoles: readonly PrototypeRole[] = [
+  "Studio Staff",
+  "Studio Freelancer",
+  "Customer",
+];
+export const prototypeRoleLabels: Record<PrototypeRole, string> = {
+  "Studio Staff": "Studio",
+  "Studio Freelancer": "Freelancer",
+  Customer: "Client",
+};
 export const prototypeCustomerSlug = "loom";
 
 export function PrototypeRoleProvider({ children }: { children: React.ReactNode }) {
   const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
-  const [hasLoadedRole, setHasLoadedRole] = useState(false);
-
-  useEffect(() => {
-    try {
-      const storedRole = window.localStorage.getItem(roleStorageKey);
-
-      if (prototypeRoles.includes(storedRole as PrototypeRole)) {
-        setSelectedRole(storedRole as PrototypeRole);
-      }
-    } finally {
-      setHasLoadedRole(true);
-    }
-  }, []);
-
-  const selectRole = (role: PrototypeRole) => {
-    setSelectedRole(role);
-    window.localStorage.setItem(roleStorageKey, role);
-  };
+  const [allPages, setAllPages] = useState(false);
   const value = useMemo(
-    () => ({ selectedRole, hasLoadedRole, setSelectedRole: selectRole }),
-    [hasLoadedRole, selectedRole],
+    () => ({
+      selectedRole,
+      hasLoadedRole: true,
+      allPages,
+      setSelectedRole,
+      setAllPages,
+    }),
+    [allPages, selectedRole],
   );
 
   return (

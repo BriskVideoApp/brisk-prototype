@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import "@/components/video-review/video-review.css";
 import "@/components/active-videos/active-videos.css";
@@ -19,9 +20,11 @@ import "@/components/brand-kits/brand-kits.css";
 import "@/components/form/brisk-select.css";
 import "@/components/shoot/shoot.css";
 import "@/components/studio-onboard/studio-onboard.css";
+import "@/components/navigation/app-shell.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
+import { AppShell } from "@/components/navigation/AppShell";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -45,7 +48,11 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <PrototypeRoleProvider>
           <ProjectCompletionProvider>
-            <ProjectFilesProvider>{children}</ProjectFilesProvider>
+            <ProjectFilesProvider>
+              <Suspense fallback={children}>
+                <AppShell>{children}</AppShell>
+              </Suspense>
+            </ProjectFilesProvider>
           </ProjectCompletionProvider>
         </PrototypeRoleProvider>
       </body>

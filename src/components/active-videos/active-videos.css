@@ -617,6 +617,22 @@
   color: var(--brisk-brand-primary-click);
 }
 
+.project-title.is-static {
+  display: grid;
+  color: var(--brisk-text-secondary);
+  cursor: default;
+  gap: var(--brisk-space-xxs);
+}
+
+.project-title.is-static:hover {
+  color: var(--brisk-text-secondary);
+}
+
+.project-demo-unavailable {
+  color: var(--brisk-text-tertiary);
+  font-weight: 500;
+}
+
 .project-title-row {
   display: flex;
   max-width: 100%;
@@ -1861,6 +1877,14 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
+.project-detail-action-button.is-disabled,
+.project-detail-action-button.is-disabled:hover {
+  background: var(--brisk-bg-block-secondary);
+  box-shadow: none;
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+}
+
 .project-detail-action-icon {
   position: relative;
   display: inline-flex;
@@ -2100,6 +2124,14 @@
 .project-detail-client-link:hover,
 .project-detail-copy-link:hover {
   text-decoration: underline;
+}
+
+.project-detail-view-all.is-disabled,
+.project-detail-client-link.is-disabled,
+.project-detail-copy-link:disabled {
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+  text-decoration: none;
 }
 
 .project-detail-client-card,

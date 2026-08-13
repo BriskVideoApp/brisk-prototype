@@ -13,7 +13,6 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect } from "@/components/form/BriskSelect";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
@@ -678,7 +677,6 @@ export function BriefPage({ project, studioName = "Northstar Films" }: BriefPage
 
   return (
     <main className="brief-shell">
-      <WorkspaceSidebar className="brief-sidebar" />
       <div className="brief-main">
         <ProjectStageHeader activeStage="brief" project={project} />
         {briefMode === "landing" ? (

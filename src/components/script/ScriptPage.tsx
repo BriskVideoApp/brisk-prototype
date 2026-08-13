@@ -12,8 +12,9 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import type { Project } from "@/components/active-videos/types";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import {
   ScriptAiPanel,
@@ -36,7 +37,6 @@ import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { ScriptSubtabBar } from "@/components/script-transcripts/ScriptSubtabBar";
 import { TranscriptsPanel } from "@/components/script-transcripts/TranscriptsPanel";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { chatProjects } from "@/data/chat";
 import { mediaAssets } from "@/data/media";
 import {
@@ -68,8 +68,6 @@ const mediaMenuOptions: Array<ScriptMediaPickerOption<ScriptMediaType>> = [
 ];
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
-const projectStageHeaderProject = activeVideoProjects.find((project) => project.id === "loom-launch-film") ?? activeVideoProjects[0];
-const scriptCustomerName = chatProjects.find((project) => project.id === projectStageHeaderProject?.id)?.clientName ?? "customer";
 const emptyScriptPlaceholderRow: ScriptRow = {
   id: emptyScriptRowId,
   words: "",
@@ -154,7 +152,7 @@ type ScriptRowUniversalAnchor = {
 };
 
 type ScriptPageProps = {
-  initialRole: ScriptRole;
+  project: Project;
   initialSubtab: ScriptSubtabId;
   initialTranscriptClipId: string | null;
 };
@@ -169,10 +167,12 @@ const defaultVersionMeta: ScriptVersionMeta = {
 };
 const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
-export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId }: ScriptPageProps) {
+export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: ScriptPageProps) {
+  const { selectedRole } = usePrototypeRole();
   const latestVersion = scriptVersions[scriptVersions.length - 1];
-  const role = initialRole;
+  const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
   const isCustomer = role === "customer";
+  const scriptCustomerName = chatProjects.find((candidate) => candidate.id === project.id)?.clientName ?? "customer";
   const [density] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
@@ -269,8 +269,8 @@ export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId
     (subtab) => subtab.visible && (subtab.id !== "transcripts" || scriptBrief.hasDialogueMedia),
   );
   const projectTranscriptClips = useMemo(
-    () => transcriptClips.filter((clip) => clip.projectId === projectStageHeaderProject?.id),
-    [],
+    () => transcriptClips.filter((clip) => clip.projectId === project.id),
+    [project.id],
   );
   const sentTranscriptSourceKeys = useMemo(
     () => new Set(rows.flatMap((row) => row.source?.kind === "transcript" ? [row.source.sourceKey] : [])),
@@ -1104,12 +1104,12 @@ export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId
           : `${lineNumber}  ${row.words}`;
       })
       .join("\n\n");
-    const fileName = `${projectStageHeaderProject.name}-${versionName}`
+    const fileName = `${project.name}-${versionName}`
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
     const blob = new Blob(
-      [`${projectStageHeaderProject.name}\n${versionName}\n\n${scriptBody}\n`],
+      [`${project.name}\n${versionName}\n\n${scriptBody}\n`],
       { type: "text/plain;charset=utf-8" },
     );
     const url = URL.createObjectURL(blob);
@@ -1807,10 +1807,7 @@ export function ScriptPage({ initialRole, initialSubtab, initialTranscriptClipId
 
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${activeSubtabId === "transcripts" ? "transcripts-active" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
-      <WorkspaceSidebar className="script-sidebar" />
-      {projectStageHeaderProject ? (
-        <ProjectStageHeader activeStage="script" project={projectStageHeaderProject} />
-      ) : null}
+      <ProjectStageHeader activeStage="script" project={project} />
 
       <ScriptSubtabBar
         activeSubtabId={activeSubtabId}

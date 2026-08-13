@@ -12,7 +12,6 @@ import {
   type ReactNode,
 } from "react";
 import type { Project } from "@/components/active-videos/types";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -1024,7 +1023,6 @@ export function MastersPage({ project }: { project: Project }) {
 
   return (
     <main className="masters-shell">
-      <WorkspaceSidebar className="masters-sidebar" />
       <div className="masters-main">
         <ProjectStageHeader
         project={project}

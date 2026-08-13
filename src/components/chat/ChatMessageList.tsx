@@ -9,6 +9,10 @@ import {
 } from "@/components/comments/CommentPrimitives";
 import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import {
+  getDemoProjectDestination,
+  type DemoProjectExperience,
+} from "@/data/projects";
 import type {
   ChatAttachment,
   ChatChannel,
@@ -266,13 +270,8 @@ export function ChatMessageCard({
     };
 
     if (projectUpdate.kind === "review") {
-      return (
-        <a
-          className={`chat-project-update-card ${highlighted ? "highlighted" : ""}`}
-          href={getProjectUpdateHref(project.id, projectUpdate.asset)}
-          id={`chat-message-${message.id}`}
-          aria-label={`${projectUpdate.ctaLabel}: ${projectUpdate.context}`}
-        >
+      const projectUpdateContent = (
+        <>
           <img src={projectUpdate.thumbnailUrl} alt="" />
           <span className="chat-project-update-copy">
             <strong className="label-s-semibold">{stripEventEmoji(projectUpdate.action)}</strong>
@@ -282,9 +281,30 @@ export function ChatMessageCard({
             </time>
           </span>
           <span className="chat-project-update-cta label-s-semibold">
-            {projectUpdate.ctaLabel}
+            {getProjectUpdateHref(project.id, projectUpdate.asset) ? projectUpdate.ctaLabel : "Demo not available"}
           </span>
+        </>
+      );
+      const projectUpdateHref = getProjectUpdateHref(project.id, projectUpdate.asset);
+
+      return projectUpdateHref ? (
+        <a
+          className={`chat-project-update-card ${highlighted ? "highlighted" : ""}`}
+          href={projectUpdateHref}
+          id={`chat-message-${message.id}`}
+          aria-label={`${projectUpdate.ctaLabel}: ${projectUpdate.context}`}
+        >
+          {projectUpdateContent}
         </a>
+      ) : (
+        <div
+          className={`chat-project-update-card is-static ${highlighted ? "highlighted" : ""}`}
+          id={`chat-message-${message.id}`}
+          aria-disabled="true"
+          title="Demo not available"
+        >
+          {projectUpdateContent}
+        </div>
       );
     }
 
@@ -607,15 +627,13 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
 }
 
 function getProjectUpdateHref(projectId: string, asset: "Script" | "Edit" | "Masters") {
-  if (asset === "Script") {
-    return `/projects/${projectId}/script`;
-  }
+  const experienceByAsset: Record<typeof asset, DemoProjectExperience> = {
+    Script: "script",
+    Edit: "edit",
+    Masters: "masters",
+  };
 
-  if (asset === "Masters") {
-    return `/projects/${projectId}/stages/masters`;
-  }
-
-  return "/review";
+  return getDemoProjectDestination(projectId, experienceByAsset[asset])?.href ?? null;
 }
 
 function stripEventEmoji(copy: string) {

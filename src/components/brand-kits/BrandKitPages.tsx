@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import {
   prototypeCustomerSlug,
   usePrototypeRole,
@@ -350,18 +349,18 @@ function getBrandTintVariables(profile: BrandProfile | null) {
 
 export function BrandKitsLandingPage() {
   const router = useRouter();
-  const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
   const [query, setQuery] = useState("");
-  const isStudioView = hasLoadedRole && selectedRole !== "Customer";
+  const isStudioView = hasLoadedRole && (allPages || selectedRole !== "Customer");
   const filteredCustomers = brandKitCustomers.filter((customer) =>
     `${customer.name} ${customer.website}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
 
   useEffect(() => {
-    if (hasLoadedRole && selectedRole === "Customer") {
+    if (hasLoadedRole && selectedRole === "Customer" && !allPages) {
       router.replace(`/brand-kits/${prototypeCustomerSlug}`);
     }
-  }, [hasLoadedRole, router, selectedRole]);
+  }, [allPages, hasLoadedRole, router, selectedRole]);
 
   if (!isStudioView) {
     return <BrandKitPermissionTransition />;
@@ -369,7 +368,6 @@ export function BrandKitsLandingPage() {
 
   return (
     <main className="brand-kits-shell">
-      <WorkspaceSidebar activeItem="brandKits" />
       <div className="brand-kits-main">
         <header className="brand-kits-page-header">
           <div className="brand-kits-title">
@@ -412,7 +410,11 @@ export function CustomerGrid({ customers }: { customers: BrandKitCustomer[] }) {
           >
             <div className="customer-brand-mini-bento" aria-hidden="true">
               <div className="customer-brand-card-mark">
-                <img src={customer.logoUrl} alt="" />
+                {customer.logoUrl ? (
+                  <img src={customer.logoUrl} alt="" />
+                ) : (
+                  <span className="brand-logo-initials label-xs-semibold">{customer.badge}</span>
+                )}
               </div>
               <span
                 className="customer-brand-mini-colour"
@@ -948,7 +950,11 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
         <div className="brand-kit-heading">
           {isGuest ? (
             <div className="brand-guest-logo">
-              <img src={customer.logoUrl} alt={`${customer.name} logo`} />
+              {customer.logoUrl ? (
+                <img src={customer.logoUrl} alt={`${customer.name} logo`} />
+              ) : (
+                <span className="brand-logo-initials label-xs-semibold">{customer.badge}</span>
+              )}
             </div>
           ) : subBrand ? (
             <nav className="brand-breadcrumbs label-xs-semibold" aria-label="Breadcrumb">
@@ -2229,7 +2235,6 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
 
   return (
     <main className="brand-kit-shell">
-      <WorkspaceSidebar activeItem="brandKits" />
       {surface}
     </main>
   );
@@ -2238,7 +2243,6 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
 function BrandKitPermissionTransition() {
   return (
     <main className="brand-kits-shell">
-      <WorkspaceSidebar activeItem="brandKits" />
       <div className="brand-kit-permission-transition" role="status">
         <span className="brand-loading-mark"><DsIcon name="sparkle" size={24} /></span>
         <strong className="label-m-semibold">Opening your Brand Kit…</strong>
@@ -2297,7 +2301,11 @@ function MotionPreview({
       />
       <div className="brand-motion-shade" />
       <div className="brand-motion-wordmark">
-        <img src={customer.logoUrl} alt="" />
+        {customer.logoUrl ? (
+          <img src={customer.logoUrl} alt="" />
+        ) : (
+          <span className="brand-logo-initials label-xs-semibold">{customer.badge}</span>
+        )}
       </div>
       <div className="brand-motion-lower-third">
         <strong>{titleName}</strong>

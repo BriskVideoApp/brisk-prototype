@@ -6,7 +6,6 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import type { Project, ProjectFileLocation } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -27,7 +26,7 @@ const currentFileUserByRole = {
 
 export function ProjectFilesPage({ project }: { project: Project }) {
   const router = useRouter();
-  const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
   const { addFileLocation, fileLocationsByProjectId, removeFileLocation, updateFileLocation } = useProjectFiles();
   const locations = fileLocationsByProjectId[project.id] ?? [];
   const canManage = selectedRole === "Studio Staff";
@@ -35,12 +34,12 @@ export function ProjectFilesPage({ project }: { project: Project }) {
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    if (hasLoadedRole && selectedRole === "Customer") {
+    if (hasLoadedRole && selectedRole === "Customer" && !allPages) {
       router.replace(`/projects/${project.id}/stages/brief`);
     }
-  }, [hasLoadedRole, project.id, router, selectedRole]);
+  }, [allPages, hasLoadedRole, project.id, router, selectedRole]);
 
-  if (!hasLoadedRole || selectedRole === "Customer") return null;
+  if (!hasLoadedRole || (selectedRole === "Customer" && !allPages)) return null;
 
   const saveNewLocation = (url: string, label: string) => {
     const trimmedUrl = url.trim();
@@ -75,7 +74,6 @@ export function ProjectFilesPage({ project }: { project: Project }) {
 
   return (
     <main className="project-files-shell">
-      <WorkspaceSidebar className="project-files-sidebar" />
       <div className="project-files-main">
         <ProjectStageHeader activeUtility="files" project={project} />
         <section className="project-files-content" aria-labelledby="project-files-heading">

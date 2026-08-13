@@ -111,12 +111,14 @@ export const mockBrandProfileProvider: BrandProfileProvider = {
     const profile = cloneBrandProfile(matchedProfile ?? generatedProfile);
 
     if (matchedCustomer && !matchedProfile) {
-      profile.logos = profile.logos.map((logo) => ({
-        ...logo,
-        id: `${matchedCustomer.slug}-${logo.layout}-${logo.variant}`,
-        label: `${matchedCustomer.name} ${logo.layout} - ${logo.variant}`,
-        url: matchedCustomer.logoUrl,
-      }));
+      profile.logos = matchedCustomer.logoUrl
+        ? profile.logos.map((logo) => ({
+            ...logo,
+            id: `${matchedCustomer.slug}-${logo.layout}-${logo.variant}`,
+            label: `${matchedCustomer.name} ${logo.layout} - ${logo.variant}`,
+            url: matchedCustomer.logoUrl as string,
+          }))
+        : [];
       profile.voice = {
         ...profile.voice,
         summary: `${matchedCustomer.name} communicates with clarity and confidence. Keep the message specific, useful and focused on the customer's outcome.`,

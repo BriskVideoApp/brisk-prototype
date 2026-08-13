@@ -1,5 +1,9 @@
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { StageKey, StageStatus } from "@/components/active-videos/types";
+import {
+  getDemoProjectDestination,
+  type DemoProjectExperience,
+} from "@/data/projects";
 
 type StageIconName = Parameters<typeof DsIcon>[0]["name"];
 
@@ -109,27 +113,16 @@ export function StageChip({
 }
 
 function getProjectStageHref(projectId: string, stage: StageKey) {
-  if (stage === "brief") {
-    return `/projects/${projectId}/stages/brief`;
-  }
+  const experienceByStage: Record<StageKey, DemoProjectExperience> = {
+    brief: "brief",
+    script: "script",
+    shoot: "shoot",
+    media: "media",
+    edit: "edit",
+    masters: "masters",
+  };
 
-  if (stage === "script") {
-    return `/projects/${projectId}/script`;
-  }
-
-  if (stage === "media") {
-    return `/projects/${projectId}/stages/media`;
-  }
-
-  if (stage === "edit") {
-    return "/review";
-  }
-
-  if (stage === "masters") {
-    return `/projects/${projectId}/stages/masters`;
-  }
-
-  return "";
+  return getDemoProjectDestination(projectId, experienceByStage[stage])?.href ?? "";
 }
 
 function getProjectStageLinkLabel(stage: StageKey, label: string) {

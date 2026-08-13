@@ -557,7 +557,11 @@ export function SubBrandCard({
       href={href ?? `/brand-kits/${customerSlug}/${subBrand.slug}${subBrand.relationship === "master" ? "?relationship=master" : ""}`}
     >
       <span className="sub-brand-logo">
-        <img src={subBrand.logoUrl} alt="" />
+        {subBrand.logoUrl ? (
+          <img src={subBrand.logoUrl} alt="" />
+        ) : (
+          <span className="brand-logo-initials label-xs-semibold">{getBrandInitials(subBrand.name)}</span>
+        )}
       </span>
       <span>
         <strong className="label-s-semibold">{subBrand.name}</strong>
@@ -568,6 +572,15 @@ export function SubBrandCard({
       <DsIcon name="caret-right" size={16} />
     </Link>
   );
+}
+
+function getBrandInitials(name: string) {
+  return name
+    .split(/\s+/u)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join("");
 }
 
 export type DetectedUpload = {

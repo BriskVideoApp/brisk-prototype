@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type { Project } from "@/components/active-videos/types";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -26,6 +27,7 @@ import { MediaUploadMenu } from "./MediaUploadMenu";
 
 export function MediaStagePage({ project }: { project: Project }) {
   const router = useRouter();
+  const { selectedRole } = usePrototypeRole();
   const [assets, setAssets] = useState(() => mediaAssets.filter((asset) => asset.projectId === project.id));
   const [folders, setFolders] = useState(() => mediaFolders.filter((folder) => folder.projectId === project.id));
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -356,7 +358,7 @@ export function MediaStagePage({ project }: { project: Project }) {
         ) : null}
       </div>
       <footer className="media-stage-footer">
-        <ShareActionRow context="media" userRole="Studio Staff" projectName={project.name} studioName="Brisk Studios" customerName="Avery Taylor" density="compact" />
+        <ShareActionRow context="media" userRole={selectedRole} projectName={project.name} studioName="Brisk Studios" customerName="Avery Taylor" density="compact" />
       </footer>
       <MediaUploadDropZone active={isDropZoneActive} folderName={selectedFolderName} />
       <MediaCloudPicker

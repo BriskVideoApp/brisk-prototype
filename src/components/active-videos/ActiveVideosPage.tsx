@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId } from "@/data/today/mockData";
+import { getDemoProjectDestination } from "@/data/projects";
 import {
   readSharedTimeEntries,
   sharedTimeEntriesEventName,
@@ -21,7 +22,6 @@ import {
 } from "@/data/timeEntries/sharedTimeEntries";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
@@ -106,7 +106,7 @@ const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 const dataColumnKeys = new Set<DataColumnKey>(defaultColumnOrder);
 
 function getProjectFlowHref(projectId: string) {
-  return `/projects/${projectId}/stages/brief`;
+  return getDemoProjectDestination(projectId, "brief")?.href ?? null;
 }
 
 const filterLabels: Record<FilterKey, string> = {
@@ -756,7 +756,6 @@ export function ActiveVideosPage() {
 
   return (
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
-      <WorkspaceSidebar activeItem="videos" />
       <div className="active-videos-main">
         <section className="active-videos-header" aria-label="Videos header">
           <h1 className="active-videos-title">Videos ({projects.length})</h1>
@@ -914,7 +913,11 @@ export function ActiveVideosPage() {
                   droppedColumn={droppedColumn}
                   isMenuOpen={openMenuProjectId === project.id}
                   isSelected={isProjectPanelOpen && panelProjectId === project.id}
-                  onOpenProject={() => router.push(getProjectFlowHref(project.id))}
+                  onOpenProject={() => {
+                    const projectFlowHref = getProjectFlowHref(project.id);
+                    if (projectFlowHref) router.push(projectFlowHref);
+                    else openProjectPanel(project.id);
+                  }}
                   onOpenDetails={() => openProjectPanel(project.id)}
                   onToggleMenu={() =>
                     setOpenMenuProjectId((current) => (current === project.id ? null : project.id))
@@ -1343,7 +1346,6 @@ function ProjectDetailPanel({
   onClose: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
 }) {
-  const projectBaseHref = `/projects/${project.id}`;
   const projectFlowHref = getProjectFlowHref(project.id);
   const unreadMessages = project.unreadMessages ?? 0;
   const [panelStatus, setPanelStatus] = useState<Project["status"]>(project.status);
@@ -1402,6 +1404,8 @@ function ProjectDetailPanel({
   ]);
 
   const copyProjectLink = () => {
+    if (!projectFlowHref) return;
+
     if (typeof window !== "undefined" && navigator.clipboard) {
       void navigator.clipboard.writeText(`${window.location.origin}${projectFlowHref}`);
     }
@@ -1541,9 +1545,15 @@ function ProjectDetailPanel({
       <div className={`project-detail-panel-body ${isSwitching ? "switching" : ""}`}>
         <section className="project-detail-section">
           <div className="project-detail-actions">
-            <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
-              Open full project
-            </a>
+            {projectFlowHref ? (
+              <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
+                Open full project
+              </a>
+            ) : (
+              <span className="project-detail-action-button project-detail-action-primary is-disabled label-s-semibold" aria-disabled="true">
+                Demo not available
+              </span>
+            )}
             <a className="project-detail-action-button label-s-semibold" href={`/chat?project=${encodeURIComponent(project.id)}`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="chats" size={20} />
@@ -1551,12 +1561,12 @@ function ProjectDetailPanel({
               </span>
               Open chat
             </a>
-            <a className="project-detail-action-button label-s-semibold" href={`${projectBaseHref}/client-queue`}>
+            <span className="project-detail-action-button is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
               <span className="project-detail-action-icon">
                 <DsIcon name="queue" size={20} />
               </span>
               Client queue
-            </a>
+            </span>
           </div>
         </section>
 
@@ -1653,9 +1663,9 @@ function ProjectDetailPanel({
                 </div>
               );
             })}
-            <a className="project-detail-view-all label-s-semibold" href={`${projectBaseHref}/activity`}>
-              View all
-            </a>
+            <span className="project-detail-view-all is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
+              Demo not available
+            </span>
           </div>
         </ProjectDetailCollapsibleSection>
 
@@ -1694,9 +1704,9 @@ function ProjectDetailPanel({
               <a className="project-detail-client-link label-s-semibold" href={`mailto:${panelClientEmail}`}>
                 {panelClientEmail}
               </a>
-              <a className="project-detail-client-link label-s-semibold" href={`${projectBaseHref}/client-portal`}>
+              <span className="project-detail-client-link is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
                 Open client portal
-              </a>
+              </span>
               <span className="project-detail-client-meta label-xs">
                 Last contact {formatWorkingAge(clientContact.lastContactAt, latestUpdateReferenceDate)}
               </span>
@@ -1764,8 +1774,8 @@ function ProjectDetailPanel({
       </div>
 
       <div className="project-detail-panel-footer">
-        <button className="project-detail-copy-link label-s-semibold" type="button" onClick={copyProjectLink}>
-          {hasCopiedLink ? "Copied" : "Copy link"}
+        <button className="project-detail-copy-link label-s-semibold" type="button" disabled={!projectFlowHref} onClick={copyProjectLink}>
+          {projectFlowHref ? (hasCopiedLink ? "Copied" : "Copy link") : "Demo not available"}
         </button>
         <button className="project-detail-footer-button label-s-semibold" type="button">
           Mark complete
@@ -2412,7 +2422,7 @@ function ProjectCell({
   project: Project;
   fileLocations: ProjectFileLocation[];
   hasLoadedRole: boolean;
-  projectFlowHref: string;
+  projectFlowHref: string | null;
   selectedRole: PrototypeRole;
   tags: string[];
   tagOptions: string[];
@@ -2465,9 +2475,16 @@ function ProjectCell({
       <div className="project-cell-inner">
         <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
         <div className="project-title-row">
-          <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
-            {project.name}
-          </a>
+          {projectFlowHref ? (
+            <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
+              {project.name}
+            </a>
+          ) : (
+            <span className="project-title is-static heading-3xs" title="Demo not available">
+              {project.name}
+              <small className="project-demo-unavailable label-xs">Demo not available</small>
+            </span>
+          )}
           <div className="project-quick-actions" aria-label={`Quick actions for ${project.name}`}>
             <a
               className="project-quick-action"

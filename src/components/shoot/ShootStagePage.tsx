@@ -18,7 +18,6 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { BriskSelect } from "@/components/form/BriskSelect";
-import { WorkspaceSidebar } from "@/components/navigation/WorkspaceSidebar";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -925,7 +924,6 @@ export function ShootStagePage({ project }: { project: Project }) {
 
   return (
     <main className="shoot-shell">
-      <WorkspaceSidebar className="shoot-sidebar" />
       <div className="shoot-main">
         <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} />
         {hasStartedShootPlan ? <ShootStageNavigation

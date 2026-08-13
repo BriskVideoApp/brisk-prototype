@@ -10,6 +10,10 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { chatClients, chatProjects, chatUsers } from "@/data/chat";
 import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
+import {
+  getDemoProjectDestination,
+  type DemoProjectExperience,
+} from "@/data/projects";
 
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
@@ -66,7 +70,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, projec
           <div className="project-stage-identity">
             <Link
               className="project-stage-dashboard-link"
-              href="/active-videos"
+              href={selectedRole === "Customer" ? "/customer-dashboard" : "/active-videos"}
               aria-label="Back to dashboard"
               data-tooltip="Back to dashboard"
             >
@@ -109,14 +113,16 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, projec
                     People
                   </button>
                 ) : null}
-                <Link
-                  className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "settings" ? "is-active" : ""}`}
-                  href={`/projects/${project.id}`}
-                  aria-current={activeUtility === "settings" ? "page" : undefined}
-                >
-                  <DsIcon name="settings" size={16} />
-                  Settings
-                </Link>
+                {selectedRole === "Studio Staff" ? (
+                  <Link
+                    className={`project-stage-utility-tab label-xs-semibold ${activeUtility === "settings" ? "is-active" : ""}`}
+                    href={`/projects/${project.id}`}
+                    aria-current={activeUtility === "settings" ? "page" : undefined}
+                  >
+                    <DsIcon name="settings" size={16} />
+                    Settings
+                  </Link>
+                ) : null}
               </nav> : null}
               {brandKitCustomer ? (
                 <Link
@@ -210,31 +216,16 @@ function getCurrentProjectStage(project: Project) {
 }
 
 function getProjectStageHref(projectId: string, stage: StageKey) {
-  if (stage === "brief") {
-    return `/projects/${projectId}/stages/brief`;
-  }
+  const experienceByStage: Record<StageKey, DemoProjectExperience> = {
+    brief: "brief",
+    script: "script",
+    shoot: "shoot",
+    media: "media",
+    edit: "edit",
+    masters: "masters",
+  };
 
-  if (stage === "script") {
-    return `/projects/${projectId}/script`;
-  }
-
-  if (stage === "shoot") {
-    return `/projects/${projectId}/stages/shoot`;
-  }
-
-  if (stage === "media") {
-    return `/projects/${projectId}/stages/media`;
-  }
-
-  if (stage === "edit") {
-    return "/review";
-  }
-
-  if (stage === "masters") {
-    return `/projects/${projectId}/stages/masters`;
-  }
-
-  return "";
+  return getDemoProjectDestination(projectId, experienceByStage[stage])?.href ?? "";
 }
 
 function getProjectStageLinkLabel(stage: StageKey, label: string) {
