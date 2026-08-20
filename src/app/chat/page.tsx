@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { ChatPage } from "@/components/chat/ChatPage";
 import "@/components/chat/chat.css";
 
@@ -11,5 +12,5 @@ export default async function ChatRoute({ searchParams }: ChatRouteProps) {
   const params = await searchParams;
   const projectId = Array.isArray(params.project) ? params.project[0] : params.project;
 
-  return <ChatPage initialProjectId={projectId} />;
+  return <Suspense fallback={null}><ChatPage initialProjectId={projectId} /></Suspense>;
 }

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { MediaStagePage } from "@/components/media/MediaStagePage";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -12,5 +13,5 @@ export default async function MediaRoute({ params }: { params: Promise<{ project
 
   if (!project) notFound();
 
-  return <MediaStagePage project={project} />;
+  return <Suspense fallback={null}><MediaStagePage project={project} /></Suspense>;
 }
