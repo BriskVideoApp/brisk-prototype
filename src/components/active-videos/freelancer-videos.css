@@ -1,0 +1,605 @@
+.freelancer-videos-page,
+.freelancer-videos-page * {
+  font-family: var(--font-brisk);
+}
+
+.freelancer-videos-page {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  container-name: freelancer-videos;
+  container-type: inline-size;
+  background: var(--brisk-bg-block-primary);
+  color: var(--brisk-text-primary);
+}
+
+.freelancer-videos-header {
+  display: flex;
+  min-height: 118px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  gap: var(--brisk-space-xl);
+  padding: var(--brisk-space-xl) var(--brisk-space-2xl);
+}
+
+.freelancer-videos-header h1,
+.freelancer-videos-header p {
+  margin: var(--brisk-space-none);
+}
+
+.freelancer-videos-header > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.freelancer-videos-header > div > span {
+  color: var(--brisk-brand-primary-click);
+  text-transform: uppercase;
+}
+
+.freelancer-videos-header p {
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-videos-search {
+  display: flex;
+  width: 280px;
+  height: 44px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-none) var(--brisk-space-m);
+}
+
+.freelancer-videos-search:hover {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.freelancer-videos-search:focus-within {
+  outline: 4px solid var(--brisk-border-primary);
+  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+}
+
+.freelancer-videos-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
+}
+
+.freelancer-videos-search input::placeholder {
+  color: var(--brisk-text-tertiary);
+}
+
+.freelancer-primary-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-l) var(--brisk-space-2xl);
+}
+
+.freelancer-primary-tabs > button,
+.freelancer-offer-controls button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.freelancer-primary-tabs > button:hover,
+.freelancer-offer-controls button:hover {
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
+  color: var(--brisk-text-primary);
+}
+
+.freelancer-primary-tabs > button.is-active,
+.freelancer-offer-controls button.is-active {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-text-white);
+}
+
+.freelancer-primary-tabs > button > span,
+.freelancer-offer-controls button span {
+  display: inline-flex;
+  min-width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-none) var(--brisk-space-xs);
+}
+
+.freelancer-offer-controls {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-bg-block-primary);
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-l) var(--brisk-space-2xl);
+}
+
+.freelancer-payment-filter {
+  display: grid;
+  width: 220px;
+  flex: 0 0 auto;
+  gap: var(--brisk-space-xs);
+  margin-left: auto;
+}
+
+.freelancer-video-table-frame {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  background: var(--brisk-white);
+}
+
+.freelancer-video-table-scroll {
+  height: 100%;
+  overflow-x: auto;
+}
+
+.freelancer-video-table {
+  width: 100%;
+  min-width: 1380px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.freelancer-video-table th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  height: 52px;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: var(--brisk-space-none) var(--brisk-space-m);
+  text-align: left;
+}
+
+.freelancer-video-table th:first-child {
+  left: 0;
+  z-index: 5;
+  border-right: 1px solid var(--brisk-border-primary);
+}
+
+.freelancer-video-table th.column-progress,
+.freelancer-video-table td.column-progress {
+  text-align: center;
+}
+
+.freelancer-video-table th:not(.column-progress),
+.freelancer-video-table td:not(.column-progress) {
+  text-align: left;
+}
+
+.freelancer-video-table th::before,
+.freelancer-video-table th::after {
+  position: absolute;
+  top: 0;
+  z-index: 8;
+  width: 2px;
+  height: 100%;
+  background: var(--brisk-brand-primary);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.freelancer-video-table th::before {
+  left: -1px;
+}
+
+.freelancer-video-table th::after {
+  right: -1px;
+}
+
+.freelancer-video-table th.has-drop-indicator-before::before,
+.freelancer-video-table th.has-drop-indicator-after::after {
+  opacity: 1;
+}
+
+.freelancer-video-table.is-column-dragging .has-drop-indicator-before::before,
+.freelancer-video-table.is-column-dragging .has-drop-indicator-after::after {
+  opacity: 0;
+}
+
+.freelancer-video-table.is-column-dragging th:not(.column-is-dragging):not(.column-video),
+.freelancer-video-table.is-column-dragging td:not(.column-is-dragging):not(.column-video) {
+  opacity: 0.6;
+}
+
+.freelancer-video-table td {
+  height: 132px;
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-l) var(--brisk-space-m);
+  vertical-align: middle;
+}
+
+.freelancer-video-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  border-right: 1px solid var(--brisk-border-primary);
+}
+
+.freelancer-video-table-scroll.has-horizontal-scroll .freelancer-video-table th:first-child,
+.freelancer-video-table-scroll.has-horizontal-scroll .freelancer-video-table td:first-child {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.freelancer-project-identity {
+  min-width: 0;
+}
+
+.freelancer-project-identity .project-title-row {
+  width: 100%;
+}
+
+.freelancer-project-identity .project-title {
+  overflow: hidden;
+  flex: 1 1 auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.freelancer-project-identity .project-quick-actions {
+  margin-left: auto;
+}
+
+.freelancer-video-table tbody tr:hover td {
+  background: var(--brisk-bg-block-secondary);
+}
+
+.freelancer-video-table td > strong,
+.freelancer-video-table td > span,
+.freelancer-video-table td > small {
+  display: block;
+}
+
+.freelancer-video-table td > span,
+.freelancer-video-table td > small {
+  margin-top: var(--brisk-space-xs);
+}
+
+.freelancer-video-table td > small {
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-video-title {
+  display: inline-block;
+  color: var(--brisk-text-primary);
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.freelancer-video-title:not(.is-static):hover {
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xs);
+}
+
+.freelancer-video-title:not(.is-static):focus-visible {
+  border-radius: var(--brisk-radius-xs);
+  outline: 4px solid var(--brisk-border-focus);
+}
+
+.freelancer-title-unavailable {
+  color: var(--brisk-text-tertiary) !important;
+}
+
+.freelancer-progress-cell .stage-track {
+  min-width: 330px;
+}
+
+.freelancer-progress-cell .stage-step {
+  width: 56px;
+}
+
+.freelancer-progress-cell .stage-track {
+  gap: var(--brisk-space-s);
+}
+
+.freelancer-progress-cell .stage-connector {
+  left: 54px;
+  width: 18px;
+}
+
+.freelancer-stage-pills {
+  display: flex !important;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-xs);
+}
+
+.freelancer-stage-pills > span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 0;
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+}
+
+.freelancer-direct-tag,
+.freelancer-payment-badge,
+.freelancer-offer-status {
+  display: inline-flex !important;
+  width: fit-content;
+  align-items: center;
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+}
+
+.freelancer-direct-tag {
+  margin-top: var(--brisk-space-s) !important;
+}
+
+.freelancer-payment-badge.is-invoice_required {
+  background: var(--brisk-orange-10);
+  color: var(--brisk-text-primary);
+}
+
+.freelancer-payment-badge.is-sent_back {
+  background: var(--brisk-pink-10);
+  color: var(--brisk-pink-60);
+}
+
+.freelancer-payment-badge.is-invoice_submitted,
+.freelancer-payment-badge.is-approved {
+  background: var(--brisk-brand-secondary);
+}
+
+.freelancer-payment-badge.is-paid {
+  background: var(--brisk-green-10);
+  color: var(--brisk-green-60);
+}
+
+.freelancer-payment-badge.is-not_ready {
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-inline-action {
+  border: 0;
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  margin-top: var(--brisk-space-s);
+  padding: var(--brisk-space-none);
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xs);
+}
+
+.freelancer-inline-action:hover {
+  text-decoration-thickness: 2px;
+}
+
+.freelancer-inline-action:focus-visible {
+  border-radius: var(--brisk-radius-xs);
+  outline: 4px solid var(--brisk-border-focus);
+}
+
+.freelancer-offer-brief {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+  text-decoration: none;
+}
+
+.freelancer-offer-brief:hover,
+.freelancer-offer-brief:focus-visible {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.freelancer-offer-brief:focus-visible {
+  outline: 4px solid var(--brisk-border-primary);
+  box-shadow: 0 0 0 6px var(--brisk-border-focus), var(--brisk-shadow-m);
+}
+
+.freelancer-demo-unavailable,
+.freelancer-offer-brief.is-disabled {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-secondary);
+  cursor: not-allowed;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.freelancer-offer-grid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 380px));
+  gap: var(--brisk-space-xl);
+  padding: var(--brisk-space-2xl);
+}
+
+.freelancer-offer-card {
+  display: grid;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xxs);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-xl);
+  padding: var(--brisk-space-xl);
+}
+
+.freelancer-offer-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.freelancer-offer-card h2,
+.freelancer-offer-card header span,
+.freelancer-offer-card dl,
+.freelancer-offer-card dt,
+.freelancer-offer-card dd {
+  margin: var(--brisk-space-none);
+}
+
+.freelancer-offer-card header > div > span,
+.freelancer-offer-card dt {
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-offer-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--brisk-space-l);
+}
+
+.freelancer-offer-card dl > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.freelancer-offer-card dl > div:nth-child(2) {
+  grid-column: 1 / -1;
+}
+
+.freelancer-offer-status.is-declined,
+.freelancer-offer-status.is-revoked,
+.freelancer-offer-status.is-expired,
+.freelancer-offer-status.is-withdrawn {
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-offer-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.freelancer-offer-card footer > div {
+  display: flex;
+  gap: var(--brisk-space-s);
+}
+
+.freelancer-videos-empty {
+  display: flex;
+  min-height: 360px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-3xl);
+  text-align: center;
+}
+
+.freelancer-videos-empty > span:first-child {
+  display: inline-flex;
+  width: 64px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.freelancer-videos-empty h2,
+.freelancer-videos-empty p {
+  margin: var(--brisk-space-none);
+}
+
+.freelancer-videos-empty p {
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-videos-toast {
+  position: fixed;
+  right: var(--brisk-space-xl);
+  bottom: var(--brisk-space-xl);
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+@container freelancer-videos (max-width: 720px) {
+  .freelancer-videos-header {
+    align-items: stretch;
+    flex-direction: column;
+    padding: var(--brisk-space-xl);
+  }
+
+  .freelancer-videos-search {
+    width: 100%;
+  }
+
+  .freelancer-payment-filter {
+    width: 100%;
+    margin-left: var(--brisk-space-none);
+  }
+
+  .freelancer-primary-tabs,
+  .freelancer-offer-controls,
+  .freelancer-offer-grid {
+    padding-right: var(--brisk-space-xl);
+    padding-left: var(--brisk-space-xl);
+  }
+
+  .freelancer-offer-controls {
+    overflow-x: auto;
+  }
+
+  .freelancer-offer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .freelancer-offer-card footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .freelancer-offer-card footer > div,
+  .freelancer-offer-card footer button,
+  .freelancer-offer-card footer .freelancer-offer-brief {
+    width: 100%;
+  }
+}

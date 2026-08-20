@@ -8,7 +8,8 @@ export type DemoProjectExperience =
   | "media"
   | "edit"
   | "masters"
-  | "files";
+  | "files"
+  | "costs";
 
 export type DemoProjectDestination = {
   href: string;
@@ -73,6 +74,10 @@ export const demoProjects: readonly DemoProject[] = [
       files: {
         href: "/projects/loom-launch-film/files",
         label: "Files",
+      },
+      costs: {
+        href: "/projects/loom-launch-film/costs",
+        label: "Costs",
       },
     },
   },

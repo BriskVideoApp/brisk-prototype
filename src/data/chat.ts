@@ -436,7 +436,7 @@ export const chatMessages: ChatMessage[] = [
     senderId: "user-tom",
     senderSystem: null,
     senderRole: "team",
-    body: "Yes - company-wide updates, shared planning and anything that is not tied to a specific production can live here.",
+    body: "Yes - Client-wide updates, shared planning and anything that is not tied to a specific production can live here.",
     attachments: [],
     reactions: [],
     sourceChannel: "brisk",

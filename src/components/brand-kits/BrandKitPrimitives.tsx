@@ -789,7 +789,7 @@ export function SetupModal({
                 label={isCustomerView ? "Or add your website" : "Or add their website"}
                 value={website}
                 onChange={(event) => setWebsite(event.target.value)}
-                placeholder={isCustomerView ? "yourcompany.com" : "theircompany.com"}
+                placeholder={isCustomerView ? "yourwebsite.com" : "theirwebsite.com"}
                 size="M"
               />
               <Button onClick={handleSubmit}>Build Brand Kit</Button>
@@ -809,7 +809,7 @@ export function SetupModal({
                 label={isCustomerView ? "Your website" : "Customer's website"}
                 value={website}
                 onChange={(event) => setWebsite(event.target.value)}
-                placeholder={isCustomerView ? "yourcompany.com" : "theircompany.com"}
+                placeholder={isCustomerView ? "yourwebsite.com" : "theirwebsite.com"}
                 size="M"
               />
               <UploadZone files={files} onFilesChange={setFiles} uploadKind="guidelines" />

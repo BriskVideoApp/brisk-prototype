@@ -907,6 +907,27 @@
   text-align: center;
 }
 
+.media-grid-empty h2,
+.media-grid-empty p {
+  margin: 0;
+}
+
+.media-grid-empty p {
+  max-width: 440px;
+}
+
+.media-grid-empty-icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
 .media-selection-bar {
   position: sticky;
   z-index: 35;

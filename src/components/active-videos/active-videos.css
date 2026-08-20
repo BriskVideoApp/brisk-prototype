@@ -354,7 +354,7 @@
 .active-videos-table th.column-project {
   left: 0;
   z-index: 6;
-  width: 280px;
+  width: 300px;
   border-right: 1px solid var(--brisk-border-primary);
 }
 
@@ -529,7 +529,7 @@
 }
 
 .active-videos-table td {
-  height: 124px;
+  height: 156px;
   border-bottom: 1px solid var(--brisk-border-secondary);
   background: var(--brisk-bg-block-primary);
   color: var(--brisk-text-primary);
@@ -1617,6 +1617,72 @@
   background: var(--brisk-bg-block-primary);
   color: var(--brisk-text-secondary);
   padding: 0 32px;
+}
+
+.active-videos-empty.is-first-video,
+.active-videos-empty.is-filtered {
+  min-height: 320px;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--brisk-space-s);
+  color: var(--brisk-text-primary);
+  text-align: center;
+}
+
+.active-videos-empty p {
+  max-width: 440px;
+  margin: 0;
+  color: var(--brisk-text-secondary);
+}
+
+.active-videos-empty-icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.active-videos-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--brisk-space-s);
+  margin-top: var(--brisk-space-s);
+}
+
+.active-videos-empty-primary,
+.active-videos-empty-secondary {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  padding: 0 var(--brisk-space-l);
+  text-decoration: none;
+}
+
+.active-videos-empty-primary {
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-white);
+}
+
+.active-videos-empty-secondary {
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+}
+
+.active-videos-empty-primary:hover,
+.active-videos-empty-primary:focus-visible,
+.active-videos-empty-secondary:hover,
+.active-videos-empty-secondary:focus-visible {
+  box-shadow: var(--brisk-shadow-s);
+  outline: 0;
 }
 
 .project-detail-panel {

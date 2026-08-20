@@ -121,9 +121,9 @@ export const briefVideoTypeDetails = [
   },
   {
     name: "Brand Film",
-    summary: "A cinematic hero piece about who the company is and what it stands for.",
+    summary: "A cinematic hero piece about who the organisation or individual is and what they stand for.",
     description:
-      "A cinematic, emotion-first film about who the company is and what it stands for. Usually a hero piece for a website, launch, or funding round. Big feel, high craft, memorable in one watch. Done well, it can carry a brand for years.",
+      "A cinematic, emotion-first film about who the organisation or individual is and what they stand for. Usually a hero piece for a website, launch, or funding round. Big feel, high craft, memorable in one watch. Done well, it can carry a brand for years.",
   },
   {
     name: "Case Study / Testimonial",

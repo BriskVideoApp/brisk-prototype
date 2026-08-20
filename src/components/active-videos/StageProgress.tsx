@@ -11,7 +11,6 @@ export const stageOrder: Array<{ key: StageKey; label: string; icon: StageIconNa
   { key: "brief", label: "Brief", icon: "clipboard-text" },
   { key: "script", label: "Script", icon: "pen-nib" },
   { key: "shoot", label: "Shoot", icon: "video-camera-ds" },
-  { key: "media", label: "Media", icon: "image-square" },
   { key: "edit", label: "Edit", icon: "stage-edit" },
   { key: "masters", label: "Masters", icon: "film-strip" },
 ];

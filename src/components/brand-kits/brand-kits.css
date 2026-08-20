@@ -118,6 +118,55 @@
   gap: var(--brisk-space-xl);
 }
 
+.brand-kits-directory-empty {
+  display: flex;
+  min-height: 360px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--brisk-space-s);
+  color: var(--brisk-text-primary);
+  text-align: center;
+}
+
+.brand-kits-directory-empty p {
+  max-width: 440px;
+  margin: 0;
+  color: var(--brisk-text-secondary);
+}
+
+.brand-kits-directory-empty-icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.brand-kits-directory-primary {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-white);
+  margin-top: var(--brisk-space-s);
+  padding: 0 var(--brisk-space-l);
+  text-decoration: none;
+}
+
+.brand-kits-directory-primary:hover,
+.brand-kits-directory-primary:focus-visible {
+  box-shadow: var(--brisk-shadow-s);
+  outline: 0;
+}
+
 .customer-brand-card {
   display: grid;
   min-width: 0;

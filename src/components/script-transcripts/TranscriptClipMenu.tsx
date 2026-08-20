@@ -5,10 +5,12 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function TranscriptClipMenu({
   onDelete,
+  onDownload,
   onHide,
   onRename,
 }: {
   onDelete: () => void;
+  onDownload: () => void;
   onHide: () => void;
   onRename: () => void;
 }) {
@@ -58,6 +60,18 @@ export function TranscriptClipMenu({
           >
             <DsIcon name="pencil-simple" size={15} />
             Rename
+          </button>
+          <button
+            className="label-s"
+            role="menuitem"
+            type="button"
+            onClick={() => {
+              onDownload();
+              setIsOpen(false);
+            }}
+          >
+            <DsIcon name="download-simple" size={15} />
+            Download PDF
           </button>
           <button
             className="transcript-menu-danger label-s"

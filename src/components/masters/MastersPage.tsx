@@ -11,8 +11,11 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
@@ -87,9 +90,12 @@ const thumbnailPlatformOptions: ThumbnailPlatform[] = [
 
 export function MastersPage({ project }: { project: Project }) {
   const { selectedRole: role } = usePrototypeRole();
+  const searchParams = useSearchParams();
+  const previewState = searchParams.get("preview");
   const { completionRecords, completeProject, undoProjectCompletion } = useProjectCompletion();
+  const { setProjectStageStatus } = useProjectStageStatus();
   const [deliverables, setDeliverables] = useState<MastersDeliverable[]>(() =>
-    structuredClone(initialMastersDeliverables),
+    previewState === "empty" ? [] : structuredClone(initialMastersDeliverables),
   );
   const [expandedDeliverableId, setExpandedDeliverableId] = useState<string | null>(
     initialMastersDeliverables.find((deliverable) => deliverable.name === "Main Video")?.id
@@ -242,6 +248,12 @@ export function MastersPage({ project }: { project: Project }) {
       approvedDeliverableIds,
       deliverableSnapshots: snapshot,
     });
+    setProjectStageStatus(project.id, "masters", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt: "17 Aug",
+      approvedBy: role === "Customer" ? "Avery Taylor" : "Tom",
+    });
     setClock(Date.now());
     setIsBannerDismissed(false);
     startConfetti();
@@ -252,6 +264,10 @@ export function MastersPage({ project }: { project: Project }) {
     if (!completionRecord || undoSeconds <= 0) return;
     setDeliverables((current) => restoreDeliverableSnapshots(current, completionRecord.deliverableSnapshots));
     undoProjectCompletion(project.id);
+    setProjectStageStatus(project.id, "masters", {
+      state: role === "Customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
     setIsBannerDismissed(false);
     setToast(null);
     showToast("Approval undone.");
@@ -413,6 +429,10 @@ export function MastersPage({ project }: { project: Project }) {
       };
     }));
     if (completionRecord) undoProjectCompletion(project.id);
+    setProjectStageStatus(project.id, "masters", {
+      state: role === "Customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
     setBulkApproveStep(null);
     setIsBannerDismissed(false);
     showToast("Approval removed. This version is ready for review again.");
@@ -1401,13 +1421,13 @@ export function MastersPage({ project }: { project: Project }) {
             ) : (
               <div className="masters-page-empty">
                 <DsIcon name="film-strip" size={28} />
-                <h2>No deliverables yet</h2>
-                <p className="label-s">Add the first output for this project.</p>
+                <h2>{isFilmmaker ? "No deliverables yet" : "No Masters are ready yet"}</h2>
+                <p className="label-s">{isFilmmaker ? "Add the first output for this video." : "The Studio will share approved deliverables here when they are ready."}</p>
                 {isFilmmaker ? (
                   <button className="masters-primary-button label-s-semibold" type="button" onClick={addDeliverable}>
                     <DsIcon name="plus" size={16} />Add deliverable
                   </button>
-                ) : null}
+                ) : <Link className="masters-primary-button label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chats" size={16} />Message the Studio</Link>}
               </div>
             )}
           </section>
@@ -1960,7 +1980,7 @@ function ExpandedDeliverable({
                 </button>
               ) : null}
             </div>
-          ) : !isMarkUpMode && version && !version.approved ? (
+          ) : !isMarkUpMode && version ? (
             <div className="masters-expanded-actions">
               <ShareActionRow
                 context="masters"
@@ -1972,17 +1992,11 @@ function ExpandedDeliverable({
                 customerName={customerName}
                 showCopyLink={false}
                 approveLabel="Approve this version"
+                isApproved={version.approved}
                 onApprove={onApprove}
+                onUnapprove={onUnapprove}
               />
-            </div>
-          ) : !isMarkUpMode && version?.approved ? (
-            <div className="masters-expanded-actions">
-              <button className="masters-secondary-button label-s-semibold" type="button" onClick={onUnapprove}>
-                <DsIcon name="arrow-counter-clockwise" size={16} />Unapprove this version
-              </button>
-              <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}>
-                <DsIcon name="download" size={16} />Download
-              </button>
+              {version.approved ? <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}><DsIcon name="download" size={16} />Download</button> : null}
             </div>
           ) : null}
           {deliverable.recutBrief && deliverable.versions.length > 0 ? (

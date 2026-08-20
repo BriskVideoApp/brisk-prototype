@@ -1110,6 +1110,11 @@
   gap: var(--brisk-space-xs);
 }
 
+.team-setting-hint {
+  max-width: calc(var(--brisk-space-3xl) * 4);
+  color: var(--brisk-text-secondary);
+}
+
 .team-setting-field.grow {
   flex: 1 1 auto;
   min-width: 0;
@@ -1184,6 +1189,50 @@
   gap: var(--brisk-space-s);
 }
 
+.team-payment-basis {
+  display: grid;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-primary);
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-m);
+}
+
+.team-payment-basis-fields {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-m);
+}
+
+.team-flat-rate-field {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.team-money-input {
+  display: flex;
+  width: 144px;
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  padding-left: var(--brisk-space-m);
+}
+
+.team-money-input:hover {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.team-money-input:focus-within {
+  outline: 4px solid var(--brisk-border-focus);
+}
+
+.team-money-input .team-inline-input {
+  min-width: 0;
+  border: 0;
+}
+
 @media (max-width: 760px) {
   .team-role-settings-row {
     align-items: stretch;
@@ -1221,6 +1270,37 @@
 
 .team-person-option-copy {
   flex: 1 1 auto;
+}
+
+.team-staff-option {
+  align-items: flex-start;
+}
+
+.team-capacity-status {
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.team-capacity-status > span {
+  width: var(--brisk-space-s);
+  height: var(--brisk-space-s);
+  border-radius: var(--brisk-radius-full);
+  background: currentColor;
+}
+
+.team-capacity-status.is-plenty {
+  color: var(--brisk-system-success);
+}
+
+.team-capacity-status.is-near {
+  color: var(--brisk-system-warning);
+}
+
+.team-capacity-status.is-full,
+.team-capacity-warning {
+  color: var(--brisk-system-error);
 }
 
 .team-person-option-actions {

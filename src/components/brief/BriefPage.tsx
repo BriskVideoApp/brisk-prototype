@@ -16,6 +16,9 @@ import { BriskSelect } from "@/components/form/BriskSelect";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { StageApprovalControl } from "@/components/share/ShareActionRow";
 import {
   briefClarifyingQuestions,
   briefDraftOptions,
@@ -374,6 +377,10 @@ export function getBriefConfigurableOptions(
 }
 
 export function BriefPage({ project, studioName = "Northstar Films" }: BriefPageProps) {
+  const { selectedRole } = usePrototypeRole();
+  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const briefStageStatus = getProjectStages(project).brief;
+  const isBriefApproved = briefStageStatus.state === "done";
   const [briefMode, setBriefMode] = useState<BriefMode>("landing");
   const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
   const [briefFields, setBriefFields] = useState<BriefFields>(() => cloneBriefFields(initialBriefFields));
@@ -611,6 +618,19 @@ export function BriefPage({ project, studioName = "Northstar Films" }: BriefPage
       fields: briefFields,
       logline,
     });
+    setProjectStageStatus(project.id, "brief", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt: "17 Aug",
+      approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+    });
+  }
+
+  function unapproveBrief() {
+    setProjectStageStatus(project.id, "brief", {
+      state: selectedRole === "Customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
   }
 
   function goToRelativeStep(direction: -1 | 1) {
@@ -697,7 +717,15 @@ export function BriefPage({ project, studioName = "Northstar Films" }: BriefPage
             chatPanel={chatPanel}
             footerAction={
               isSummaryStep ? (
-                <BriefApproveButton disabled={isApproveDisabled} onApprove={approveBrief} />
+                <BriefApproveButton
+                  approved={isBriefApproved}
+                  approvedAt={briefStageStatus.approvedAt}
+                  approvedBy={briefStageStatus.approvedBy ?? (selectedRole === "Customer" ? "Avery Taylor" : "Tom")}
+                  userRole={selectedRole}
+                  disabled={isApproveDisabled}
+                  onApprove={approveBrief}
+                  onUnapprove={unapproveBrief}
+                />
               ) : (
                 <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
                   Next
@@ -5703,27 +5731,34 @@ function BriefSummaryPlaceholder({ copy, stepLabel }: { copy: string; stepLabel:
 }
 
 function BriefApproveButton({
+  approved,
+  approvedAt,
+  approvedBy,
+  userRole,
   disabled,
   onApprove,
+  onUnapprove,
 }: {
+  approved: boolean;
+  approvedAt?: string;
+  approvedBy: string;
+  userRole: "Studio Staff" | "Studio Freelancer" | "Customer";
   disabled: boolean;
   onApprove: () => void;
+  onUnapprove: () => void;
 }) {
   return (
-    <span
-      className="brief-approve-wrap"
-      data-tooltip={disabled ? "Fill in the missing fields to approve" : undefined}
-    >
-      <button
-        className="brief-approve-button label-s-semibold"
-        type="button"
-        disabled={disabled}
-        onClick={onApprove}
-      >
-        <DsIcon name="thumbs-up-like-fill" size={18} />
-        Approve
-      </button>
-    </span>
+    <StageApprovalControl
+      stageLabel="Brief"
+      userRole={userRole}
+      isApproved={approved}
+      approvedAt={approvedAt}
+      approvedBy={approvedBy}
+      disabled={disabled}
+      disabledTooltip="Fill in the missing fields to approve"
+      onApprove={onApprove}
+      onUnapprove={onUnapprove}
+    />
   );
 }
 

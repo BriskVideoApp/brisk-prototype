@@ -1,7 +1,7 @@
 import type { Project, ProjectFileLocation } from "@/components/active-videos/types";
 import { createDefaultRoleSlots, createMockTimeEntries } from "./teamDefaults";
 
-type ProjectSeed = Omit<Project, "clientName" | "deadlineAt" | "file_locations" | "isCritical" | "team" | "timeEntries"> & {
+type ProjectSeed = Omit<Project, "clientId" | "clientName" | "deadlineAt" | "file_locations" | "isCritical" | "team" | "timeEntries"> & {
   teamPeopleIds: string[];
   timeEntryIntensity?: number;
   hours?: { logged: number; estimated: number };
@@ -20,6 +20,19 @@ const clientNamesByBadge: Record<string, string> = {
   CNVA: "Canva",
   LINR: "Linear",
   FIGM: "Figma",
+};
+
+const clientIdsByBadge: Record<string, string> = {
+  LOOM: "loom",
+  DEEL: "deel",
+  HIMS: "hims",
+  NOTN: "notion",
+  OPEN: "openai",
+  PHOG: "posthog",
+  RAMP: "ramp",
+  CNVA: "canva",
+  LINR: "linear",
+  FIGM: "figma",
 };
 
 const fileLocationsByProjectId: Record<string, ProjectFileLocation[]> = {
@@ -126,15 +139,15 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Brief approved by client",
       daysAgo: 2,
-      timestamp: "2026-06-16T10:24:00+10:00",
+      timestamp: "2026-08-11T10:24:00+10:00",
     },
     tags: ["Critical"],
     unreadMessages: 2,
     deadline: {
       stage: "shoot",
-      dueAt: "2026-06-24T17:30:00+10:00",
-      timerStartedAt: "2026-06-22T09:30:00+10:00",
-      finalDueAt: "2026-07-04T17:00:00+10:00",
+      dueAt: "2026-08-19T17:30:00+10:00",
+      timerStartedAt: "2026-08-17T09:30:00+10:00",
+      finalDueAt: "2026-08-29T17:00:00+10:00",
     },
     status: "In Production",
     stages: {
@@ -159,15 +172,15 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Script approved by client",
       daysAgo: 7,
-      timestamp: "2026-06-11T15:15:00+10:00",
+      timestamp: "2026-08-06T15:15:00+10:00",
     },
     tags: ["High Priority", "In Review"],
     unreadMessages: 1,
     deadline: {
       stage: "media",
-      dueAt: "2026-06-22T18:30:00+10:00",
-      timerStartedAt: "2026-06-21T09:00:00+10:00",
-      finalDueAt: "2026-07-12T17:00:00+10:00",
+      dueAt: "2026-08-17T18:30:00+10:00",
+      timerStartedAt: "2026-08-16T09:00:00+10:00",
+      finalDueAt: "2026-09-06T17:00:00+10:00",
     },
     status: "In Production",
     stages: {
@@ -192,15 +205,15 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Maddie shared the shoot internally",
       daysAgo: 1,
-      timestamp: "2026-06-17T09:05:00+10:00",
+      timestamp: "2026-08-12T09:05:00+10:00",
     },
     tags: ["Critical", "High Priority"],
     unreadMessages: 4,
     deadline: {
       stage: "script",
-      dueAt: "2026-06-19T15:00:00+10:00",
-      timerStartedAt: "2026-06-18T09:30:00+10:00",
-      finalDueAt: "2026-06-27T17:00:00+10:00",
+      dueAt: "2026-08-14T15:00:00+10:00",
+      timerStartedAt: "2026-08-13T09:30:00+10:00",
+      finalDueAt: "2026-08-22T17:00:00+10:00",
     },
     status: "In Production",
     stages: {
@@ -225,12 +238,12 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Media organised for edit",
       daysAgo: 3,
-      timestamp: "2026-06-15T11:40:00+10:00",
+      timestamp: "2026-08-10T11:40:00+10:00",
     },
     tags: ["In Review"],
     unreadMessages: 0,
     deadline: {
-      finalDueAt: "2026-07-22T17:00:00+10:00",
+      finalDueAt: "2026-09-16T17:00:00+10:00",
     },
     status: "Paused",
     stages: {
@@ -254,20 +267,20 @@ const projectSeeds: ProjectSeed[] = [
     teamScenario: "directAssignedFreelancer",
     timeEntryIntensity: 1.05,
     latestUpdate: {
-      label: "Fine cut approved by client",
+      label: "Masters delivered",
       daysAgo: 5,
-      timestamp: "2026-06-13T16:20:00+10:00",
+      timestamp: "2026-08-08T16:20:00+10:00",
     },
     tags: ["Critical"],
     unreadMessages: 1,
     deadline: {
       stage: "masters",
-      dueAt: "2026-06-26T12:00:00+10:00",
-      timerStartedAt: "2026-06-19T10:00:00+10:00",
-      finalDueAt: "2026-06-28T17:00:00+10:00",
+      dueAt: "2026-08-21T12:00:00+10:00",
+      timerStartedAt: "2026-08-14T10:00:00+10:00",
+      finalDueAt: "2026-08-23T17:00:00+10:00",
     },
     status: "Completed",
-    deliveredAt: "2026-06-14T11:30:00+10:00",
+    deliveredAt: "2026-08-08T16:20:00+10:00",
     deliveredBy: "client-openai-1",
     stages: {
       brief: { state: "done", daysAgo: 25 },
@@ -291,12 +304,12 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Master ready for download",
       daysAgo: 12,
-      timestamp: "2026-06-06T12:05:00+10:00",
+      timestamp: "2026-08-01T12:05:00+10:00",
     },
     tags: [],
     unreadMessages: 0,
     deadline: {
-      finalDueAt: "2026-06-18T17:00:00+10:00",
+      finalDueAt: "2026-08-13T17:00:00+10:00",
     },
     status: "Archived",
     stages: {
@@ -321,15 +334,15 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Client requested a pause",
       daysAgo: 4,
-      timestamp: "2026-06-14T13:30:00+10:00",
+      timestamp: "2026-08-09T13:30:00+10:00",
     },
     tags: ["In Review"],
     unreadMessages: 3,
     deadline: {
       stage: "shoot",
-      dueAt: "2026-06-20T11:00:00+10:00",
-      timerStartedAt: "2026-06-19T08:45:00+10:00",
-      finalDueAt: "2026-07-03T17:00:00+10:00",
+      dueAt: "2026-08-15T11:00:00+10:00",
+      timerStartedAt: "2026-08-14T08:45:00+10:00",
+      finalDueAt: "2026-08-28T17:00:00+10:00",
     },
     status: "Paused",
     stages: {
@@ -353,15 +366,15 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Creative direction ready",
       daysAgo: 0,
-      timestamp: "2026-06-18T08:45:00+10:00",
+      timestamp: "2026-08-13T08:45:00+10:00",
     },
     tags: ["High Priority"],
     unreadMessages: 1,
     deadline: {
       stage: "script",
-      dueAt: "2026-06-23T16:00:00+10:00",
-      timerStartedAt: "2026-06-22T09:15:00+10:00",
-      finalDueAt: "2026-07-09T17:00:00+10:00",
+      dueAt: "2026-08-18T16:00:00+10:00",
+      timerStartedAt: "2026-08-17T09:15:00+10:00",
+      finalDueAt: "2026-09-03T17:00:00+10:00",
     },
     status: "Queued",
     stages: {
@@ -382,20 +395,19 @@ const projectSeeds: ProjectSeed[] = [
     videoType: "liveAction",
     videoLengthSeconds: 90,
     teamPeopleIds: ["rb", "sc", "jl"],
-    teamScenario: "pendingShooterThree",
     timeEntryIntensity: 1,
     latestUpdate: {
       label: "Jordan resolved edit review comments",
       daysAgo: 6,
-      timestamp: "2026-06-12T14:10:00+10:00",
+      timestamp: "2026-08-07T14:10:00+10:00",
     },
     tags: [],
     unreadMessages: 0,
     deadline: {
       stage: "masters",
-      dueAt: "2026-06-24T14:30:00+10:00",
-      timerStartedAt: "2026-06-20T10:30:00+10:00",
-      finalDueAt: "2026-06-26T17:00:00+10:00",
+      dueAt: "2026-08-19T14:30:00+10:00",
+      timerStartedAt: "2026-08-15T10:30:00+10:00",
+      finalDueAt: "2026-08-21T17:00:00+10:00",
     },
     status: "Completed",
     stages: {
@@ -420,7 +432,7 @@ const projectSeeds: ProjectSeed[] = [
     latestUpdate: {
       label: "Project archived",
       daysAgo: 18,
-      timestamp: "2026-05-31T17:50:00+10:00",
+      timestamp: "2026-07-26T17:50:00+10:00",
     },
     tags: [],
     unreadMessages: 0,
@@ -448,6 +460,7 @@ export const activeVideoProjects: Project[] = projectSeeds.map(({ teamPeopleIds,
 
   return {
     ...project,
+    clientId: clientIdsByBadge[project.clientBadge] ?? project.clientBadge.toLocaleLowerCase("en-AU"),
     clientName: clientNamesByBadge[project.clientBadge] ?? project.clientBadge,
     deadlineAt: project.deadline?.finalDueAt ?? project.deadline?.dueAt ?? project.latestUpdate.timestamp,
     file_locations: fileLocationsByProjectId[project.id] ?? [],

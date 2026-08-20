@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
+import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   ChatMessage,
@@ -24,6 +26,7 @@ type ChatProjectListProps = {
   onCompanyChat: () => void;
   onCustomerSettings: () => void;
   onProjectMarkRead: (projectId: string) => void;
+  role: PrototypeRole;
 };
 
 const listFilters: ProjectListFilter[] = ["In Production", "Queued", "Completed", "All"];
@@ -38,12 +41,11 @@ export function ChatProjectList({
   onCompanyChat,
   onCustomerSettings,
   onProjectMarkRead,
+  role,
 }: ChatProjectListProps) {
   const [filter, setFilter] = useState<ProjectListFilter>("In Production");
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
-  const visibleProjects = projects.filter(
-    (project) => filter === "All" || project.status === filter,
-  );
+  const visibleProjects = projects.filter((project) => filter === "All" || project.status === filter);
   const allMemberIds = [...new Set(projects.flatMap((project) => project.memberIds))];
   const memberIds = allMemberIds.slice(0, 5);
   const remainingMemberCount = Math.max(0, allMemberIds.length - memberIds.length);
@@ -71,7 +73,7 @@ export function ChatProjectList({
             <>
               <button className="chat-secondary-button label-s-semibold" type="button" onClick={onCompanyChat}>
                 <DsIcon name="chats" size={16} />
-                Company chat
+                Client chat
               </button>
               <button className="chat-icon-button" type="button" aria-label={`Open ${clientName} settings`} onClick={onCustomerSettings}>
                 <DsIcon name="settings" size={18} />
@@ -104,41 +106,29 @@ export function ChatProjectList({
 
           return (
             <div className="chat-project-card-row" key={project.id}>
-              <button
-                className="chat-project-card"
-                type="button"
-                onClick={() => onProjectSelect(project.id)}
-              >
-              <span className="chat-project-card-icon">
-                <DsIcon name="chats" size={20} />
-              </span>
-              <span className="chat-project-card-content">
-                <span className="chat-project-card-title-row">
-                  <span className="chat-project-card-heading">
-                    <strong className="chat-project-card-title label-s-semibold">
-                      {project.code} {project.clientName}
-                    </strong>
-                    <small className="label-xs">{project.title}</small>
-                  </span>
-                  <span className="chat-status-chip label-xs-semibold">{project.status}</span>
+              <button className="chat-project-card" type="button" onClick={() => onProjectSelect(project.id)}>
+                <span className="chat-project-card-icon">
+                  <DsIcon name="chats" size={20} />
                 </span>
-                <span className="chat-project-preview-row">
-                  {sender ? <CommentAvatar user={sender} compact /> : null}
-                  <span className="chat-project-preview-copy">
-                    <strong className="label-xs-semibold">
-                      {sender?.name ?? lastMessage?.senderSystem ?? "No messages yet"}
-                    </strong>
-                    <span className="label-s">
-                      {lastMessage?.body ?? "Open this project and start the conversation."}
+                <span className="chat-project-card-content">
+                  <span className="chat-project-card-title-row">
+                    <span className="chat-project-card-heading">
+                      <strong className="chat-project-card-title label-s-semibold">
+                        {project.code} {project.clientName}
+                      </strong>
+                      <small className="label-xs">{project.title}</small>
                     </span>
+                    <span className="chat-status-chip label-xs-semibold">{project.status}</span>
                   </span>
-                  {lastMessage ? (
-                    <span className="chat-project-preview-time label-xs">
-                      {formatCompactDate(lastMessage.createdAt)}
+                  <span className="chat-project-preview-row">
+                    {sender ? <CommentAvatar user={sender} compact /> : null}
+                    <span className="chat-project-preview-copy">
+                      <strong className="label-xs-semibold">{sender?.name ?? lastMessage?.senderSystem ?? "No messages yet"}</strong>
+                      <span className="label-s">{lastMessage?.body ?? "Open this video and start the conversation."}</span>
                     </span>
-                  ) : null}
+                    {lastMessage ? <span className="chat-project-preview-time label-xs">{formatCompactDate(lastMessage.createdAt)}</span> : null}
+                  </span>
                 </span>
-              </span>
               </button>
               <ChatUnreadControl
                 className="card"
@@ -154,8 +144,15 @@ export function ChatProjectList({
       {visibleProjects.length === 0 ? (
         <div className="chat-empty-state">
           <span className="chat-empty-icon"><DsIcon name="chats" size={24} /></span>
-          <h2>No projects here yet</h2>
-          <p>Your projects will show here. Create a project from the Videos dashboard to start chatting.</p>
+          <h2>{role === "Studio Freelancer" ? "No conversations yet" : role === "Customer" ? "No conversations yet" : "No video conversations yet"}</h2>
+          <p>{role === "Studio Freelancer"
+            ? "Project conversations will appear when a Studio invites you."
+            : role === "Customer"
+              ? "Messages from your Studio will appear here."
+              : "Start a video and its Client and team channels will appear here."}</p>
+          <Link className="chat-primary-button label-s-semibold" href={role === "Customer" ? "/customer-dashboard" : "/active-videos"}>
+            {role === "Customer" ? "Back to dashboard" : "Open Videos"}
+          </Link>
         </div>
       ) : null}
     </section>

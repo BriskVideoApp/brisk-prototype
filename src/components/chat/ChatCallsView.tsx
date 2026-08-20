@@ -72,7 +72,7 @@ export function ChatCallsView({
               <span className="sr-only">Project</span>
               <select value={projectFilter} onChange={(event) => setProjectFilter(event.target.value)}>
                 <option value="all">In any project</option>
-                <option value="company">Company calls</option>
+                <option value="company">Client calls</option>
                 {projects.map((project) => (
                   <option value={project.id} key={project.id}>{project.code}</option>
                 ))}

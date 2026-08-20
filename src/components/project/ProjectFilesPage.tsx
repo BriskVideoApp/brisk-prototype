@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import type { Project, ProjectFileLocation } from "@/components/active-videos/types";
@@ -26,9 +26,10 @@ const currentFileUserByRole = {
 
 export function ProjectFilesPage({ project }: { project: Project }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
   const { addFileLocation, fileLocationsByProjectId, removeFileLocation, updateFileLocation } = useProjectFiles();
-  const locations = fileLocationsByProjectId[project.id] ?? [];
+  const locations = searchParams.get("preview") === "empty" ? [] : fileLocationsByProjectId[project.id] ?? [];
   const canManage = selectedRole === "Studio Staff";
   const currentUser = currentFileUserByRole[selectedRole];
   const [isAdding, setIsAdding] = useState(false);

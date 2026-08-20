@@ -1,4 +1,5 @@
 .project-stage-header {
+  --project-stage-active-scale: 1.3;
   --project-stage-chip-size: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
   --project-stage-track-width: calc(var(--brisk-space-3xl) * 22);
   display: grid;
@@ -98,103 +99,34 @@
   gap: var(--brisk-space-m);
 }
 
-.project-stage-utility-tabs {
+.project-stage-costs-link {
   display: inline-flex;
-  min-width: 0;
+  min-height: var(--brisk-space-3xl);
+  flex: 0 0 auto;
   align-items: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  padding: var(--brisk-space-xxs);
-}
-
-.project-stage-utility-tab {
-  display: inline-flex;
-  min-height: calc(var(--brisk-space-xl) + var(--brisk-space-xs));
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: calc(var(--brisk-radius-s) - var(--brisk-space-xxs));
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-xs) var(--brisk-space-s);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.project-stage-utility-tab:hover,
-.project-stage-utility-tab:focus-visible {
-  background: var(--brisk-brand-secondary);
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-bg-block-primary);
   color: var(--brisk-text-primary);
-  outline: 0;
-}
-
-.project-stage-utility-tab.is-active {
-  border-color: var(--brisk-border-primary);
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
-}
-
-.project-stage-brand-kit-link {
-  display: inline-flex;
-  min-height: var(--brisk-space-2xl);
-  align-items: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-xs) var(--brisk-space-s);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
   text-decoration: none;
 }
 
-.project-stage-brand-kit-link:hover {
+.project-stage-costs-link:hover,
+.project-stage-costs-link:focus-visible {
   background: var(--brisk-brand-secondary);
-  box-shadow: var(--brisk-shadow-s);
 }
 
-.project-stage-access-button {
-  display: inline-flex;
-  min-height: var(--brisk-space-2xl);
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--brisk-radius-full);
-  background: transparent;
-  padding: var(--brisk-space-xs) var(--brisk-space-s);
-}
-
-.project-stage-access-button:hover,
-.project-stage-access-button:focus-visible {
-  border-color: var(--brisk-border-primary);
-  background: var(--brisk-bg-block-secondary);
-}
-
-.project-stage-access-button:focus-visible {
+.project-stage-costs-link:focus-visible {
   outline: 2px solid var(--brisk-border-focus);
   outline-offset: 2px;
 }
 
-.project-stage-access-stack {
-  display: inline-flex;
-  align-items: center;
-  padding-left: var(--brisk-space-xs);
-}
-
-.project-stage-access-stack .avatar,
-.project-stage-access-more {
-  margin-left: calc(var(--brisk-space-xs) * -1);
-}
-
-.project-stage-access-more {
-  display: inline-flex;
-  width: calc(var(--brisk-space-xl) - var(--brisk-space-xs));
-  height: calc(var(--brisk-space-xl) - var(--brisk-space-xs));
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-gray-90);
-  color: var(--brisk-white);
+.project-stage-costs-link.is-active {
+  border-color: var(--brisk-brand-primary);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
 }
 
 .project-stage-flow-area {
@@ -205,6 +137,16 @@
   min-width: 0;
   gap: var(--brisk-space-l);
   padding: var(--brisk-space-l) var(--brisk-space-2xl) var(--brisk-space-xl);
+}
+
+.project-stage-flow-navigation {
+  display: grid;
+  width: 100%;
+  min-width: var(--brisk-space-none);
+  grid-template-columns: minmax(var(--brisk-space-none), var(--project-stage-track-width)) auto;
+  align-items: stretch;
+  justify-content: center;
+  gap: var(--brisk-space-2xl);
 }
 
 .project-stage-client-badge {
@@ -244,7 +186,7 @@
   width: 100%;
   max-width: var(--project-stage-track-width);
   min-width: 0;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: start;
   gap: var(--brisk-space-none);
   justify-self: center;
@@ -317,12 +259,43 @@ a.project-stage-chip:focus-visible {
   transition: transform 160ms ease;
 }
 
+.project-stage-media-step {
+  min-width: calc(var(--brisk-space-3xl) * 3);
+  align-self: stretch;
+  border-left: 1px solid var(--brisk-border-secondary);
+  padding-left: var(--brisk-space-2xl);
+}
+
+.project-stage-media-step .project-stage-icon-surface {
+  border-color: var(--brisk-border-primary);
+  border-style: solid;
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  opacity: 1;
+}
+
+.project-stage-media-step .project-stage-chip::before {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-border-primary);
+}
+
+.project-stage-media-step.is-current .project-stage-chip::before,
+.project-stage-media-step a.project-stage-chip:hover::before,
+.project-stage-media-step a.project-stage-chip:focus::before {
+  opacity: 1;
+}
+
+.project-stage-media-step a.project-stage-chip:hover .project-stage-icon-surface,
+.project-stage-media-step a.project-stage-chip:focus .project-stage-icon-surface {
+  transform: translate(calc(var(--brisk-space-xxs) * -1), calc(var(--brisk-space-xxs) * -1));
+}
+
 .project-stage-step.is-not_started .project-stage-icon-surface {
-  border-color: var(--brisk-border-secondary);
-  border-style: dashed;
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-tertiary);
-  opacity: 0.72;
+  border-color: var(--brisk-border-primary);
+  border-style: solid;
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  opacity: 1;
 }
 
 .project-stage-step.is-waiting .project-stage-icon-surface {
@@ -358,6 +331,14 @@ a.project-stage-chip:focus-visible {
 .project-stage-step.is-current .project-stage-label {
   position: relative;
   color: var(--brisk-text-primary);
+  font-weight: 700;
+  transform: scale(var(--project-stage-active-scale));
+  transform-origin: top center;
+}
+
+.project-stage-step.is-current .project-stage-chip {
+  margin-bottom: var(--brisk-space-m);
+  transform: scale(var(--project-stage-active-scale));
 }
 
 .project-stage-step.is-current .project-stage-chip::before {
@@ -370,26 +351,21 @@ a.project-stage-chip:focus-visible {
 }
 
 .project-stage-step.is-current.is-not_started .project-stage-chip::before {
-  background: var(--brisk-border-secondary);
+  background: var(--brisk-border-primary);
 }
 
 .project-stage-step.is-current.is-not_started .project-stage-icon-surface {
   opacity: 1;
 }
 
-.project-stage-step.is-current .project-stage-label::after {
-  position: absolute;
-  right: var(--brisk-space-none);
-  bottom: calc(var(--brisk-space-xs) * -1);
-  left: var(--brisk-space-none);
-  height: var(--brisk-space-xxs);
-  background: var(--brisk-border-primary);
-  content: "";
-}
-
 a.project-stage-chip:hover::before,
 a.project-stage-chip:focus::before {
   transform: translate(var(--brisk-space-xxs), var(--brisk-space-xxs));
+}
+
+.project-stage-step.is-current a.project-stage-chip:hover,
+.project-stage-step.is-current a.project-stage-chip:focus {
+  transform: scale(var(--project-stage-active-scale)) translate(calc(var(--brisk-space-xxs) * -1), calc(var(--brisk-space-xxs) * -1));
 }
 
 .project-stage-label {
@@ -438,13 +414,31 @@ a.project-stage-chip:focus::before {
 
   .project-stage-track {
     display: flex;
+    width: max-content;
+    max-width: none;
+    flex: 0 0 auto;
+    gap: var(--brisk-space-l);
+    overflow: visible;
+    padding-bottom: var(--brisk-space-s);
+  }
+
+  .project-stage-flow-navigation {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
     gap: var(--brisk-space-l);
     overflow-x: auto;
+    padding-top: var(--brisk-space-m);
     padding-bottom: var(--brisk-space-s);
   }
 
   .project-stage-step {
     flex: 0 0 calc(var(--brisk-space-3xl) * 2.5);
+  }
+
+  .project-stage-media-step {
+    flex-basis: calc(var(--brisk-space-3xl) * 3);
+    padding-left: var(--brisk-space-l);
   }
 
   .project-stage-connector {

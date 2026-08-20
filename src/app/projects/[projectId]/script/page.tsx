@@ -8,6 +8,7 @@ type ScriptRouteProps = {
   searchParams: Promise<{
     subtab?: string | string[];
     clip?: string | string[];
+    preview?: string | string[];
   }>;
 };
 
@@ -30,6 +31,7 @@ export default async function ScriptRoute({ params, searchParams }: ScriptRouteP
       project={project}
       initialSubtab={subtab}
       initialTranscriptClipId={clip}
+      initiallyEmpty={getSingleValue(query.preview) === "empty"}
     />
   );
 }

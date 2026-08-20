@@ -11,29 +11,47 @@ export type BriskSelectOption<T extends string = string> = {
   dividerAbove?: boolean;
 };
 
-export function BriskSelect<T extends string>({
-  ariaLabel,
-  autoOpen = false,
-  clearLabel = "Clear selection",
-  clearable = true,
-  onChange,
-  onOpenChange,
-  options,
-  placeholder,
-  searchable = options.length > 7,
-  value,
-}: {
+type BriskSelectSharedProps<T extends string> = {
   ariaLabel: string;
   autoOpen?: boolean;
+  className?: string;
   clearLabel?: string;
   clearable?: boolean;
-  onChange: (value: T | "") => void;
   onOpenChange?: (isOpen: boolean) => void;
   options: ReadonlyArray<BriskSelectOption<T>>;
   placeholder: string;
   searchable?: boolean;
+  triggerClassName?: string;
+};
+
+type BriskSelectSingleProps<T extends string> = BriskSelectSharedProps<T> & {
+  multiple?: false;
+  onChange: (value: T | "") => void;
   value: T | "";
-}) {
+};
+
+type BriskSelectMultipleProps<T extends string> = BriskSelectSharedProps<T> & {
+  multiple: true;
+  onChange: (value: T[]) => void;
+  selectionLabel?: (selectedOptions: ReadonlyArray<BriskSelectOption<T>>) => string;
+  value: T[];
+};
+
+type BriskSelectProps<T extends string> = BriskSelectSingleProps<T> | BriskSelectMultipleProps<T>;
+
+export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
+  const {
+    ariaLabel,
+    autoOpen = false,
+    className = "",
+    clearLabel = "Clear selection",
+    clearable = true,
+    onOpenChange,
+    options,
+    placeholder,
+    triggerClassName = "",
+  } = props;
+  const searchable = props.searchable ?? options.length > 7;
   const listboxId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -43,7 +61,13 @@ export function BriskSelect<T extends string>({
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedValues: T[] = props.multiple ? props.value : props.value ? [props.value] : [];
+  const selectedOptions = options.filter((option) => selectedValues.includes(option.value));
+  const triggerLabel = selectedOptions.length === 0
+    ? placeholder
+    : props.multiple && selectedOptions.length > 1
+      ? props.selectionLabel?.(selectedOptions) ?? `${selectedOptions.length} selected`
+      : selectedOptions[0].label;
   const filteredOptions = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
     return normalisedQuery ? options.filter((option) => option.label.toLowerCase().includes(normalisedQuery)) : options;
@@ -74,7 +98,7 @@ export function BriskSelect<T extends string>({
     });
   };
 
-  const openMenu = (nextActiveIndex = Math.max(0, options.findIndex((option) => option.value === value))) => {
+  const openMenu = (nextActiveIndex = Math.max(0, options.findIndex((option) => selectedValues.includes(option.value)))) => {
     setActiveIndex(nextActiveIndex);
     setQuery("");
     setIsOpen(true);
@@ -89,7 +113,12 @@ export function BriskSelect<T extends string>({
   };
 
   const selectOption = (nextValue: T | "") => {
-    onChange(nextValue);
+    if (props.multiple) {
+      if (!nextValue) props.onChange([]);
+      else props.onChange(selectedValues.includes(nextValue) ? selectedValues.filter((value) => value !== nextValue) : [...selectedValues, nextValue]);
+      return;
+    }
+    props.onChange(nextValue);
     closeMenu(true);
   };
 
@@ -150,9 +179,9 @@ export function BriskSelect<T extends string>({
     }
   };
 
-  return <div className="brisk-select">
+  return <div className={`brisk-select ${className}`}>
     <button
-      className={`brisk-select-trigger label-s ${selectedOption ? "" : "is-placeholder"}`}
+      className={`brisk-select-trigger label-s ${selectedOptions.length ? "" : "is-placeholder"} ${triggerClassName}`}
       ref={triggerRef}
       type="button"
       aria-controls={isOpen ? listboxId : undefined}
@@ -167,16 +196,21 @@ export function BriskSelect<T extends string>({
         }
       }}
     >
-      <span>{selectedOption?.label ?? placeholder}</span>
+      <span>{triggerLabel}</span>
       <DsIcon name="caret-down" size={12} />
     </button>
-    {isOpen ? createPortal(<div className="brisk-select-menu" ref={menuRef} style={menuStyle} role="listbox" id={listboxId} aria-label={ariaLabel} tabIndex={-1} onKeyDown={handleMenuKeyDown}>
+    {isOpen ? createPortal(<div className="brisk-select-menu" ref={menuRef} style={menuStyle} role="listbox" id={listboxId} aria-label={ariaLabel} aria-multiselectable={props.multiple || undefined} tabIndex={-1} onKeyDown={handleMenuKeyDown}>
       {searchable ? <label className="brisk-select-search"><span className="sr-only">Search {ariaLabel.toLowerCase()}</span><DsIcon name="search" size={15} /><input ref={searchRef} type="search" placeholder="Search" value={query} onChange={(event) => { setQuery(event.target.value); setActiveIndex(0); }} /></label> : null}
       <div className="brisk-select-options" ref={optionsRef}>
-        {filteredOptions.map((option, index) => <button className={`brisk-select-option label-s ${option.value === value ? "selected" : ""} ${index === activeIndex ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`} type="button" role="option" aria-selected={option.value === value} data-active={index === activeIndex} key={option.value} onMouseEnter={() => setActiveIndex(index)} onClick={() => selectOption(option.value)}><span className="brisk-select-option-label">{option.icon ? <DsIcon name={option.icon} size={16} /> : null}<span>{option.label}</span></span>{option.value === value ? <DsIcon name="check" size={14} /> : null}</button>)}
+        {filteredOptions.map((option, index) => {
+          const isSelected = selectedValues.includes(option.value);
+          return <button className={`brisk-select-option label-s ${isSelected ? "selected" : ""} ${index === activeIndex ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`} type="button" role="option" aria-selected={isSelected} data-active={index === activeIndex} key={option.value} onMouseEnter={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.stopPropagation(); }} onClick={() => selectOption(option.value)}><span className="brisk-select-option-label">{option.icon ? <DsIcon name={option.icon} size={16} /> : null}<span>{option.label}</span></span>{isSelected ? <DsIcon name="check" size={14} /> : null}</button>;
+        })}
         {filteredOptions.length === 0 ? <span className="brisk-select-empty label-s">No matching options</span> : null}
       </div>
-      {clearable && value ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : null}
+      {props.multiple ? <div className="brisk-select-menu-actions">{clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : <span />}
+        <button className="brisk-select-done label-xs-semibold" type="button" onClick={() => closeMenu(true)}>Done</button>
+      </div> : clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : null}
     </div>, document.body) : null}
   </div>;
 }

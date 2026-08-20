@@ -9,6 +9,7 @@ export type NavigationGroupId =
   | "workspace"
   | "clients"
   | "current-video"
+  | "studio-settings"
   | "setup"
   | "external-previews"
   | "experimental";
@@ -23,6 +24,8 @@ export type NavigationItem = {
   matchQuery?: Readonly<Record<string, string>>;
   external?: boolean;
   reviewOnly?: boolean;
+  sidebarHidden?: boolean;
+  strictRoleVisibility?: boolean;
 };
 
 export type NavigationGroup = {
@@ -52,19 +55,20 @@ const projectIconByExperience: Record<DemoProjectExperience, DsIconName> = {
   edit: "stage-edit",
   masters: "film-strip",
   files: "folder-open",
+  costs: "file-text",
 };
 
 function projectItem(
   experience: DemoProjectExperience,
   roles: readonly PrototypeRole[],
-  options: Pick<NavigationItem, "reviewOnly"> & { id?: string } = {},
+  options: Partial<Pick<NavigationItem, "label" | "reviewOnly" | "sidebarHidden" | "strictRoleVisibility">> & { id?: string } = {},
 ): NavigationItem {
   const destination = primaryDemoProject.destinations[experience];
-  const { id, ...itemOptions } = options;
+  const { id, label, ...itemOptions } = options;
 
   return {
     id: id ?? `demo-project-${experience}`,
-    label: destination.label,
+    label: label ?? destination.label,
     href: destination.href,
     icon: projectIconByExperience[experience],
     roles,
@@ -85,7 +89,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
         label: "Today",
         href: "/today",
         icon: "check-circle",
-        roles: studioOnly,
+        roles: studioRoles,
       },
       {
         id: "videos",
@@ -93,6 +97,14 @@ export const navigationGroups: readonly NavigationGroup[] = [
         href: "/active-videos",
         icon: "queue",
         roles: studioRoles,
+      },
+      {
+        id: "outstanding-invoices",
+        label: "Outstanding invoices",
+        href: "/outstanding-invoices",
+        icon: "file-text",
+        roles: studioOnly,
+        strictRoleVisibility: true,
       },
       {
         id: "client-dashboard",
@@ -112,8 +124,22 @@ export const navigationGroups: readonly NavigationGroup[] = [
   },
   {
     id: "clients",
-    label: "Clients",
+    label: "People & Clients",
     items: [
+      {
+        id: "people",
+        label: "People",
+        href: "/people",
+        icon: "users-three",
+        roles: studioOnly,
+      },
+      {
+        id: "clients",
+        label: "Clients",
+        href: "/clients",
+        icon: "users-three",
+        roles: studioOnly,
+      },
       {
         id: "brand-kits",
         label: "Brand Kits",
@@ -135,16 +161,76 @@ export const navigationGroups: readonly NavigationGroup[] = [
     label: "Current video",
     collapsible: true,
     items: [
-      projectItem("overview", studioOnly),
+      projectItem("overview", studioOnly, { label: "Settings", sidebarHidden: true }),
       projectItem("brief", allRoles),
       projectItem("script", allRoles),
       projectItem("transcripts", allRoles),
       projectItem("shoot", studioRoles),
       projectItem("callSheet", allRoles),
-      projectItem("media", allRoles),
+      projectItem("media", allRoles, { sidebarHidden: true }),
       projectItem("edit", allRoles),
       projectItem("masters", allRoles),
-      projectItem("files", studioRoles),
+      projectItem("files", studioRoles, { sidebarHidden: true }),
+      projectItem("costs", studioOnly, { strictRoleVisibility: true }),
+    ],
+  },
+  {
+    id: "studio-settings",
+    label: "Studio Settings",
+    items: [
+      {
+        id: "studio-settings",
+        label: "Studio settings",
+        href: "/settings/studio",
+        icon: "settings",
+        roles: studioOnly,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "studio-branding",
+        label: "Branding",
+        href: "/settings/studio/branding",
+        icon: "square-logo",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "studio-team-access",
+        label: "Team & access",
+        href: "/settings/studio/team",
+        icon: "users-three",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "studio-production-defaults",
+        label: "Production defaults",
+        href: "/settings/studio/production",
+        icon: "queue",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "plan-billing",
+        label: "Plan & billing",
+        href: "/settings/plan-billing",
+        icon: "settings",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "client-billing",
+        label: "Client billing",
+        href: "/settings/client-billing",
+        icon: "link",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
     ],
   },
   {
@@ -213,11 +299,14 @@ export function getVisibleNavigationGroups(
       label: allPages && group.id === "current-video"
         ? `Demo project - ${primaryDemoProject.navigationLabel}`
         : group.label,
-      items: group.items.filter((item) => {
-        if (allPages) return true;
-        if (item.reviewOnly) return false;
-        return item.roles.includes(selectedRole);
-      }),
+      items: group.items
+        .filter((item) => {
+          if (item.sidebarHidden) return false;
+          return canRoleSeeNavigationItem(item, selectedRole, allPages);
+        })
+        .map((item) => item.id === "videos" && selectedRole === "Studio Freelancer"
+          ? { ...item, label: "My jobs" }
+          : item),
     }))
     .filter((group) => group.items.length > 0);
 }
@@ -248,6 +337,7 @@ export function canRoleSeeNavigationItem(
   selectedRole: PrototypeRole,
   allPages: boolean,
 ) {
+  if (item.strictRoleVisibility && !item.roles.includes(selectedRole)) return false;
   if (allPages) return true;
   if (item.reviewOnly) return false;
   return item.roles.includes(selectedRole);
@@ -255,6 +345,6 @@ export function canRoleSeeNavigationItem(
 
 export function getRoleHome(selectedRole: PrototypeRole) {
   if (selectedRole === "Studio Staff") return "/today";
-  if (selectedRole === "Studio Freelancer") return "/active-videos";
+  if (selectedRole === "Studio Freelancer") return "/today";
   return "/customer-dashboard";
 }

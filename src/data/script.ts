@@ -115,7 +115,7 @@ export const scriptBrief: ScriptBrief = {
   targetDurationSeconds: 60,
   genre: "Documentary",
   customerName: "Avery Taylor",
-  studioName: "Northstar Films",
+  studioName: "North Star Films",
   projectName: "Harbour Health - Care Journey",
   hasDialogueMedia: true,
   showAiToCustomer: false,

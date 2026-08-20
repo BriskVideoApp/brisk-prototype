@@ -1,13 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
 import type { RecutBrief } from "@/data/masters";
 import type { Project } from "@/components/active-videos/types";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
 import { ReviewCommentComposer } from "./ReviewCommentComposer";
@@ -53,17 +56,31 @@ const quickReactionOptions = [
 ].filter((reaction): reaction is { emoji: ReactionEmoji; label: string } => Boolean(reaction));
 const reactionLibraryOptions = reactionOptions;
 
-export function VideoReviewScreen({ project }: { project: Project }) {
+export function VideoReviewScreen({
+  initiallyEmpty = false,
+  project,
+}: {
+  initiallyEmpty?: boolean;
+  project: Project;
+}) {
+  const router = useRouter();
   const { selectedRole } = usePrototypeRole();
-  const [reviewComments, setReviewComments] = useState(reviewVideo.comments);
+  const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
+  const editReadiness = getEditReadiness(project);
+  const editStageStatus = getProjectStages(project).edit;
+  const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
+  const canMarkReadyToEdit = selectedRole !== "Studio Freelancer";
+  const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
+  const initialReviewComments = initialReviewVersions.length === 0 ? [] : reviewVideo.comments;
+  const [reviewComments, setReviewComments] = useState(initialReviewComments);
   const [activeFilter, setActiveFilter] = useState<CommentFilter>("unresolved");
   const [resolvedIds, setResolvedIds] = useState(
-    () => new Set(reviewVideo.comments.filter((comment) => comment.resolved).map((comment) => comment.id)),
+    () => new Set(initialReviewComments.filter((comment) => comment.resolved).map((comment) => comment.id)),
   );
   const [expandedResolvedIds, setExpandedResolvedIds] = useState(new Set<string>());
-  const [selectedVersionLabel, setSelectedVersionLabel] = useState(reviewVersions[0]?.label ?? reviewVideo.versionLabel);
+  const [selectedVersionLabel, setSelectedVersionLabel] = useState(initialReviewVersions[0]?.label ?? "");
   const [versionStatuses, setVersionStatuses] = useState<Record<string, ReviewVersionStatus>>(() =>
-    Object.fromEntries(reviewVersions.map((version) => [version.label, version.status])),
+    Object.fromEntries(initialReviewVersions.map((version) => [version.label, version.status])),
   );
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [hasAnchor, setHasAnchor] = useState(true);
@@ -82,13 +99,14 @@ export function VideoReviewScreen({ project }: { project: Project }) {
   const [openCommentMenuId, setOpenCommentMenuId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [videoVersions, setVideoVersions] = useState<ReviewVersion[]>(() =>
-    reviewVersions.map((version) => ({ ...version })),
+    initialReviewVersions.map((version) => ({ ...version })),
   );
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [drawingPaths, setDrawingPaths] = useState<DrawingPath[]>([]);
   const [activeDrawingPath, setActiveDrawingPath] = useState<DrawingPath | null>(null);
   const [pendingFramePin, setPendingFramePin] = useState<FramePin | null>(null);
   const [recutHandoff, setRecutHandoff] = useState<RecutHandoff | null>(null);
+  const [isReadyConfirmationOpen, setIsReadyConfirmationOpen] = useState(false);
   const localVideoUrlsRef = useRef<string[]>([]);
   const commentRefs = useRef(new Map<string, HTMLElement>());
   const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -134,6 +152,7 @@ export function VideoReviewScreen({ project }: { project: Project }) {
         sourceUrl: selectedReviewVersion.sourceUrl,
       }
     : reviewVideo;
+  const isEditEmpty = allReviewVersions.length === 0;
 
   useEffect(() => {
     if (!window.location.search.includes("recut=")) return;
@@ -409,7 +428,26 @@ export function VideoReviewScreen({ project }: { project: Project }) {
     }
 
     setVersionStatuses((current) => ({ ...current, [selectedReviewVersion.label]: "approved" }));
+    setProjectStageStatus(project.id, "edit", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt: "17 Aug",
+      approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+    });
     setToastMessage(`V${selectedReviewVersion.number} approved`);
+  };
+
+  const unapproveSelectedVersion = () => {
+    if (!selectedReviewVersion) {
+      return;
+    }
+
+    setVersionStatuses((current) => ({ ...current, [selectedReviewVersion.label]: "in_review" }));
+    setProjectStageStatus(project.id, "edit", {
+      state: selectedRole === "Customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
+    setToastMessage(`Approval removed from V${selectedReviewVersion.number}`);
   };
 
   const selectReviewVersion = (versionLabel: string) => {
@@ -647,7 +685,8 @@ export function VideoReviewScreen({ project }: { project: Project }) {
   };
 
   return (
-    <main className="video-review-shell">
+    <>
+      <main className="video-review-shell">
       <div className="video-review-main">
         <ProjectStageHeader activeStage="edit" project={project} />
         <input
@@ -658,8 +697,25 @@ export function VideoReviewScreen({ project }: { project: Project }) {
           aria-label="Upload a new version"
           onChange={uploadVersion}
         />
-        <section className="review-workspace" aria-label="Video review workspace">
-        <div className="review-media-pane">
+        {!editReadiness.ready ? (
+          <section className="review-workspace is-empty" aria-label="Edit readiness">
+            <EditReadinessEmptyState
+              canMarkReady={canMarkReadyToEdit}
+              items={editReadiness.items}
+              onMarkReady={() => setIsReadyConfirmationOpen(true)}
+            />
+          </section>
+        ) : isEditEmpty ? (
+          <section className="review-workspace is-empty" aria-label="Edit stage empty state">
+            <EditEmptyState
+              isCustomer={selectedRole === "Customer"}
+              onMessageStudio={() => router.push(`/chat?project=${encodeURIComponent(project.id)}`)}
+              onUpload={() => document.getElementById(versionUploadInputId)?.click()}
+            />
+          </section>
+        ) : (
+          <section className="review-workspace" aria-label="Video review workspace">
+            <div className="review-media-pane">
           <InlinePlayer
             video={activeVideo}
             comments={reviewComments.map((comment) => ({
@@ -802,14 +858,163 @@ export function VideoReviewScreen({ project }: { project: Project }) {
               customerName="Jess T."
               copyLinkIconOnly
               approveLabel="Approve this version"
-              showApprove={selectedVersionStatus !== "approved"}
+              approvedAt={editStageStatus.approvedAt}
+              approvedBy={editStageStatus.approvedBy}
+              isApproved={selectedVersionStatus === "approved"}
+              showApprove={Boolean(selectedReviewVersion)}
               onApprove={approveSelectedVersion}
+              onUnapprove={unapproveSelectedVersion}
             />
           </div>
-        </footer>
-        </section>
+            </footer>
+          </section>
+        )}
       </div>
-    </main>
+      </main>
+      {isReadyConfirmationOpen ? (
+        <EditReadinessConfirmation
+          items={outstandingEditPrerequisites}
+          onCancel={() => setIsReadyConfirmationOpen(false)}
+          onConfirm={() => {
+            markReadyToEdit(project);
+            setIsReadyConfirmationOpen(false);
+          }}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function EditReadinessEmptyState({
+  canMarkReady,
+  items,
+  onMarkReady,
+}: {
+  canMarkReady: boolean;
+  items: EditReadinessItem[];
+  onMarkReady: () => void;
+}) {
+  return (
+    <div className="review-edit-empty-state">
+      <div className="review-edit-empty-content is-readiness">
+        <span className="review-edit-empty-icon" aria-hidden="true">
+          <DsIcon name="stage-edit" size={28} />
+        </span>
+        <h2 className="headings-xs-bold">Edit isn’t ready yet</h2>
+        <p className="paragraph-s">Approve the previous stages and Media before editing begins.</p>
+        <ul className="review-edit-readiness-list" aria-label="Edit prerequisites">
+          {items.map((item) => (
+            <li className="review-edit-readiness-item label-s" key={item.key}>
+              <span
+                className={`review-edit-readiness-state ${item.approved ? "is-approved" : "is-outstanding"}`}
+                aria-hidden="true"
+              >
+                {item.approved ? <DsIcon name="check" size={14} /> : null}
+              </span>
+              <span>
+                {item.label} {getReadinessStatusLabel(item.status)}
+              </span>
+            </li>
+          ))}
+        </ul>
+        {canMarkReady ? (
+          <Button className="review-edit-empty-action" size="M" onClick={onMarkReady}>
+            Mark ready to edit
+          </Button>
+        ) : (
+          <p className="review-edit-readiness-permission label-xs">
+            Freelancers can’t mark Edit ready.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function EditReadinessConfirmation({
+  items,
+  onCancel,
+  onConfirm,
+}: {
+  items: EditReadinessItem[];
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="request-review-backdrop" role="presentation">
+      <section className="request-review-modal" role="dialog" aria-modal="true" aria-labelledby="edit-readiness-title">
+        <header className="request-review-header">
+          <h2 className="request-review-title" id="edit-readiness-title">
+            Mark ready to edit?
+          </h2>
+          <button className="request-review-close" type="button" aria-label="Close confirmation" onClick={onCancel}>
+            <DsIcon name="x-close-cross" size={16} />
+          </button>
+        </header>
+        <p className="paragraph-s edit-readiness-confirmation-copy">
+          This will approve the outstanding work below and set Edit to Waiting on Brisk.
+        </p>
+        <ul className="edit-readiness-confirmation-list" aria-label="Work that will be approved">
+          {items.map((item) => (
+            <li className="label-s" key={item.key}>
+              <span>{item.label}</span>
+              <span>{getReadinessStatusLabel(item.status)}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="edit-readiness-confirmation-actions">
+          <Button size="M" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button size="M" onClick={onConfirm}>
+            Approve and mark ready
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function getReadinessStatusLabel(status: EditReadinessItem["status"]) {
+  if (status.state === "done") return "approved";
+  if (status.state === "waiting") return "waiting on client";
+  if (status.state === "in_progress") return "waiting on Brisk";
+  return "not started";
+}
+
+function EditEmptyState({
+  isCustomer,
+  onMessageStudio,
+  onUpload,
+}: {
+  isCustomer: boolean;
+  onMessageStudio: () => void;
+  onUpload: () => void;
+}) {
+  return (
+    <div className="review-edit-empty-state">
+      <div className="review-edit-empty-content">
+        <span className="review-edit-empty-icon" aria-hidden="true">
+          <DsIcon name={isCustomer ? "chats" : "upload-simple"} size={28} />
+        </span>
+        <h2 className="headings-xs-bold">
+          {isCustomer ? "No version is ready to review yet" : "No edit versions yet"}
+        </h2>
+        <p className="paragraph-s">
+          {isCustomer
+            ? "The studio will upload the first cut here when it’s ready."
+            : "Upload the first cut to start feedback and approvals."}
+        </p>
+        <Button
+          className="review-edit-empty-action"
+          size="M"
+          onClick={isCustomer ? onMessageStudio : onUpload}
+        >
+          <DsIcon name={isCustomer ? "chats" : "upload-simple"} size={16} />
+          {isCustomer ? "Message the studio" : "Upload V1"}
+        </Button>
+      </div>
+    </div>
   );
 }
 

@@ -189,7 +189,7 @@ export function WorkspaceSidebar({
           <DsIcon name="queue" size={16} />
           <span className="workspace-sidebar-link-label">Videos</span>
         </Link>
-        {selectedRole === "Studio Staff" ? (
+        {selectedRole !== "Customer" ? (
           <Link
             className={`today-sidebar-link label-s-semibold ${activeItem === "today" ? "active" : ""}`}
             href="/today"

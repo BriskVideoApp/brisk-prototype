@@ -6,7 +6,6 @@ import type {
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
   ReactNode,
-  UIEvent as ReactUIEvent,
 } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -24,9 +23,12 @@ import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
+import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
+import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
 import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
 import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
 
@@ -79,31 +81,26 @@ type ColumnSettlingGhostState = {
   width: number;
   height: number;
 };
-type StoredColumnState = {
-  order: DataColumnKey[];
-  hidden: DataColumnKey[];
-};
 
 const statusTabs: StatusTab[] = ["All", "Queued", "In Production", "Completed", "Paused", "Archived"];
 const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
 const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
-const projectColumnWidth = 280;
+const projectColumnWidth = 300;
 const columnOrderStorageKey = "brisk-active-videos-column-order-v2";
 const fixedEndColumn: DataColumnKey = "actions";
 
 const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
-  progress: { label: "Progress", width: 550 },
-  latestUpdate: { label: "Latest Action", width: 240 },
+  progress: { label: "Progress", width: 490 },
+  latestUpdate: { label: "Latest Action", width: 300 },
   status: { label: "Status", width: 150 },
-  deadline: { label: "Deadline", width: 150 },
+  deadline: { label: "Deadline", width: 170 },
   hours: { label: "Hours", width: 220 },
-  team: { label: "Team", width: 90 },
+  team: { label: "Team", width: 68 },
   actions: { label: "Actions", width: 86 },
 };
 
 const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team"];
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
-const dataColumnKeys = new Set<DataColumnKey>(defaultColumnOrder);
 
 function getProjectFlowHref(projectId: string) {
   return getDemoProjectDestination(projectId, "brief")?.href ?? null;
@@ -132,14 +129,25 @@ const tagColourOptions: { className: TagClass; label: string }[] = [
   { className: "peach", label: "Peach" },
   { className: "cream", label: "Cream" },
 ];
-
 export function ActiveVideosPage() {
+  const { hasLoadedRole, selectedRole } = usePrototypeRole();
+
+  if (hasLoadedRole && selectedRole === "Studio Freelancer") {
+    return <FreelancerVideosPage />;
+  }
+
+  return <ActiveVideosWorkspace />;
+}
+
+function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
   const { completionRecords } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
+  const { getProjectStages } = useProjectStageStatus();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
+  const previewState = searchParams.get("preview");
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
   const [query, setQuery] = useState("");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
@@ -162,21 +170,48 @@ export function ActiveVideosPage() {
   const [openDeadlineProjectId, setOpenDeadlineProjectId] = useState<string | null>(null);
   const [areFiltersVisible, setAreFiltersVisible] = useState(false);
   const [openMenuProjectId, setOpenMenuProjectId] = useState<string | null>(null);
-  const [columnOrder, setColumnOrder] = useState<DataColumnKey[]>(defaultColumnOrder);
-  const [hiddenColumns, setHiddenColumns] = useState<DataColumnKey[]>(defaultHiddenColumns);
-  const [hasLoadedColumns, setHasLoadedColumns] = useState(false);
-  const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
-  const [isTableScrolledX, setIsTableScrolledX] = useState(false);
-  const [columnDrag, setColumnDrag] = useState<ColumnDragState | null>(null);
-  const [settlingGhost, setSettlingGhost] = useState<ColumnSettlingGhostState | null>(null);
-  const [droppedColumn, setDroppedColumn] = useState<DataColumnKey | null>(null);
-  const [columnContextMenu, setColumnContextMenu] = useState<ColumnContextMenuState | null>(null);
   const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams));
   const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams) !== null);
   const [isPanelContentSwitching, setIsPanelContentSwitching] = useState(false);
-  const headerRefs = useRef<Partial<Record<TableColumnKey, HTMLTableCellElement>>>({});
-  const tableScrollRef = useRef<HTMLDivElement>(null);
   const panelCloseTimeoutRef = useRef<number | null>(null);
+  const videoTable = useRoleVideoTable<DataColumnKey, "project">({
+    columnConfig,
+    defaultHiddenColumns,
+    defaultOrder: defaultColumnOrder,
+    minimumVisibleColumns: 2,
+    primaryColumnKey: "project",
+    primaryColumnWidth: projectColumnWidth,
+    storageKey: columnOrderStorageKey,
+  });
+  const {
+    columnContextMenu,
+    columnDrag,
+    columnOrder,
+    draggedColumn,
+    droppedColumn,
+    dropIndicatorStyle,
+    getColumnShiftDirection: getSharedColumnShiftDirection,
+    getColumnWidth: getSharedColumnWidth,
+    handleColumnContextMenu,
+    handleColumnPointerDown,
+    handleTableScroll,
+    headerRefs,
+    hiddenColumns,
+    hideColumn,
+    isColumnMenuOpen,
+    isTableScrolledX,
+    moveColumnByStep,
+    pinColumn,
+    resetColumns,
+    setColumnContextMenu,
+    setIsColumnMenuOpen,
+    settlingGhost,
+    tableMinWidth,
+    tableScrollRef,
+    toggleColumnVisibility,
+    visibleDataColumns,
+    visibleTableColumns,
+  } = videoTable;
 
   useEffect(() => {
     const syncSharedEntries = () => {
@@ -199,26 +234,30 @@ export function ActiveVideosPage() {
     };
   }, []);
 
-  const projects = useMemo(
-    () =>
-      activeVideoProjects.map((project) => {
+  const projects = useMemo(() => {
+    if (previewState === "empty") return [];
+
+    return activeVideoProjects.map((project) => {
         const completion = completionRecords[project.id];
+        const projectStages = getProjectStages(project);
         return {
           ...project,
           status: completion ? "Completed" as const : project.status,
           deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
           deliveredBy: completion?.deliveredBy ?? project.deliveredBy,
           stages: completion
-            ? Object.fromEntries(stageOrder.map((stage) => [stage.key, { state: "done" as const }])) as Project["stages"]
-            : project.stages,
+            ? {
+                ...projectStages,
+                ...Object.fromEntries((Object.keys(projectStages) as StageKey[]).map((stage) => [stage, { state: "done" as const }])),
+              }
+            : projectStages,
           latestUpdate: completion
             ? { label: `Delivered ${formatDeliveredDate(completion.deliveredAt)}`, daysAgo: 0, timestamp: completion.deliveredAt }
             : project.latestUpdate,
           timeEntries: [...project.timeEntries, ...(extraProjectTimeEntries[project.id] ?? [])],
         };
-      }),
-    [completionRecords, extraProjectTimeEntries],
-  );
+      });
+  }, [completionRecords, extraProjectTimeEntries, getProjectStages, previewState]);
 
   const statusCounts = useMemo(() => Object.fromEntries(statusTabs.map((tab) => [
     tab,
@@ -234,22 +273,9 @@ export function ActiveVideosPage() {
     () => getUniqueOptions([...tagFilterOptions, ...Object.values(projectTags).flat()]),
     [projectTags],
   );
-  const visibleDataColumns = useMemo(
-    () => columnOrder.filter((columnKey) => !hiddenColumns.includes(columnKey)),
-    [columnOrder, hiddenColumns],
-  );
-  const visibleTableColumns = useMemo<TableColumnKey[]>(() => ["project", ...visibleDataColumns], [visibleDataColumns]);
-  const tableMinWidth = useMemo(
-    () => projectColumnWidth + visibleDataColumns.reduce((total, columnKey) => total + columnConfig[columnKey].width, 0),
-    [visibleDataColumns],
-  );
-  const draggedColumn = columnDrag?.isDragging ? columnDrag.columnKey : null;
-  const dropIndicatorStyle = useMemo(
-    () => getDropIndicatorStyle(columnDrag, visibleTableColumns, headerRefs.current),
-    [columnDrag, visibleTableColumns],
-  );
-
   const filteredProjects = useMemo(() => {
+    if (previewState === "no-results") return [];
+
     const normalisedQuery = query.trim().toLowerCase();
 
     return projects.filter((project) => {
@@ -268,7 +294,16 @@ export function ActiveVideosPage() {
 
       return matchesTab && matchesSearch && matchesClient && matchesTeammate && matchesTags && matchesStatus && matchesDeadline;
     });
-  }, [filters, projectDeadlines, projectTags, projects, query, selectedTab]);
+  }, [filters, previewState, projectDeadlines, projectTags, projects, query, selectedTab]);
+
+  const clearControls = () => {
+    setQuery("");
+    setSelectedTab("All");
+    setFilters({ client: null, teammate: null, tags: [], status: null, deadline: null });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    router.replace(`${url.pathname}${url.search}`);
+  };
 
   const panelProject = useMemo(
     () => projects.find((project) => project.id === panelProjectId) ?? null,
@@ -406,256 +441,6 @@ export function ActiveVideosPage() {
       ...current,
       [projectId]: deadline,
     }));
-  };
-
-  useEffect(() => {
-    const storedOrder = window.localStorage.getItem(columnOrderStorageKey);
-
-    if (!storedOrder) {
-      setHasLoadedColumns(true);
-      return;
-    }
-
-    try {
-      const parsedOrder = JSON.parse(storedOrder) as unknown;
-
-      if (Array.isArray(parsedOrder)) {
-        const validColumns = normaliseColumnOrder(parsedOrder);
-
-        setColumnOrder(validColumns);
-      } else if (isStoredColumnState(parsedOrder)) {
-        setColumnOrder(normaliseColumnOrder(parsedOrder.order));
-        setHiddenColumns(normaliseHiddenColumns(parsedOrder.hidden));
-      }
-    } catch {
-      window.localStorage.removeItem(columnOrderStorageKey);
-    } finally {
-      setHasLoadedColumns(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hasLoadedColumns) {
-      return;
-    }
-
-    window.localStorage.setItem(
-      columnOrderStorageKey,
-      JSON.stringify({ order: columnOrder, hidden: hiddenColumns } satisfies StoredColumnState),
-    );
-  }, [columnOrder, hasLoadedColumns, hiddenColumns]);
-
-  useEffect(() => {
-    if (!droppedColumn) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => setDroppedColumn(null), 300);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [droppedColumn]);
-
-  useEffect(() => {
-    if (!columnDrag) {
-      return;
-    }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      setColumnDrag((current) => {
-        if (!current || event.pointerId !== current.pointerId) {
-          return current;
-        }
-
-        return {
-          ...current,
-          currentX: event.clientX,
-          dropIndex: getDropIndexFromPointer(event.clientX, visibleTableColumns, headerRefs.current),
-          isDragging: true,
-        };
-      });
-    };
-
-    const handlePointerUp = (event: PointerEvent) => {
-      if (event.pointerId !== columnDrag.pointerId) {
-        return;
-      }
-
-      const isValidDrop = columnDrag.isDragging && isPointerInsideElement(event, tableScrollRef.current);
-      const targetLeft = isValidDrop
-        ? getDropLeft(columnDrag.dropIndex, visibleTableColumns, headerRefs.current) ?? columnDrag.originLeft
-        : columnDrag.originLeft;
-
-      settleColumnGhost(columnDrag, targetLeft, setSettlingGhost);
-
-      if (isValidDrop) {
-        moveColumnToIndex(columnDrag.columnKey, columnDrag.dropIndex);
-        setDroppedColumn(columnDrag.columnKey);
-      }
-
-      setColumnDrag(null);
-    };
-
-    const handlePointerCancel = (event: PointerEvent) => {
-      if (event.pointerId === columnDrag.pointerId) {
-        settleColumnGhost(columnDrag, columnDrag.originLeft, setSettlingGhost);
-        setColumnDrag(null);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        settleColumnGhost(columnDrag, columnDrag.originLeft, setSettlingGhost);
-        setColumnDrag(null);
-      }
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-    window.addEventListener("pointercancel", handlePointerCancel);
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-      window.removeEventListener("pointercancel", handlePointerCancel);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [columnDrag, visibleTableColumns]);
-
-  const moveColumnToIndex = (draggedColumnKey: DataColumnKey, targetIndex: number) => {
-    if (draggedColumnKey === fixedEndColumn) {
-      return;
-    }
-
-    setColumnOrder((current) => {
-      if (!current.includes(draggedColumnKey)) {
-        return current;
-      }
-
-      const currentVisibleOrder = current.filter(
-        (columnKey) => columnKey !== fixedEndColumn && !hiddenColumns.includes(columnKey),
-      );
-      const nextVisibleOrder = currentVisibleOrder.filter((columnKey) => columnKey !== draggedColumnKey);
-      const currentIndex = currentVisibleOrder.indexOf(draggedColumnKey);
-      const targetDataIndex = targetIndex - 1;
-      const adjustedTargetIndex = currentIndex < targetDataIndex ? targetDataIndex - 1 : targetDataIndex;
-      const boundedTargetIndex = Math.max(0, Math.min(adjustedTargetIndex, nextVisibleOrder.length));
-
-      nextVisibleOrder.splice(boundedTargetIndex, 0, draggedColumnKey);
-
-      return [
-        ...nextVisibleOrder,
-        fixedEndColumn,
-        ...current.filter((columnKey) => columnKey !== fixedEndColumn && hiddenColumns.includes(columnKey)),
-      ];
-    });
-  };
-
-  const moveColumnByStep = (columnKey: DataColumnKey, step: -1 | 1) => {
-    if (columnKey === fixedEndColumn) {
-      return;
-    }
-
-    setColumnOrder((current) => {
-      const currentVisibleOrder = current.filter(
-        (currentColumnKey) => currentColumnKey !== fixedEndColumn && !hiddenColumns.includes(currentColumnKey),
-      );
-      const currentIndex = currentVisibleOrder.indexOf(columnKey);
-
-      if (currentIndex === -1) {
-        return current;
-      }
-
-      const nextIndex = currentIndex + step;
-
-      if (nextIndex < 0 || nextIndex >= currentVisibleOrder.length) {
-        return current;
-      }
-
-      const nextVisibleOrder = [...currentVisibleOrder];
-      nextVisibleOrder.splice(currentIndex, 1);
-      nextVisibleOrder.splice(nextIndex, 0, columnKey);
-
-      return [
-        ...nextVisibleOrder,
-        fixedEndColumn,
-        ...current.filter((currentColumnKey) => currentColumnKey !== fixedEndColumn && hiddenColumns.includes(currentColumnKey)),
-      ];
-    });
-    setDroppedColumn(columnKey);
-  };
-
-  const pinColumn = (columnKey: DataColumnKey) => {
-    moveColumnToIndex(columnKey, 1);
-    setDroppedColumn(columnKey);
-  };
-
-  const hideColumn = (columnKey: DataColumnKey) => {
-    if (columnKey === fixedEndColumn || visibleDataColumns.length <= 2) {
-      return;
-    }
-
-    setHiddenColumns((current) => (current.includes(columnKey) ? current : [...current, columnKey]));
-    setColumnContextMenu(null);
-  };
-
-  const toggleColumnVisibility = (columnKey: DataColumnKey) => {
-    if (columnKey === fixedEndColumn) {
-      return;
-    }
-
-    const isHidden = hiddenColumns.includes(columnKey);
-
-    if (!isHidden && visibleDataColumns.length <= 2) {
-      return;
-    }
-
-    setHiddenColumns((current) =>
-      isHidden ? current.filter((currentColumnKey) => currentColumnKey !== columnKey) : [...current, columnKey],
-    );
-  };
-
-  const resetColumns = () => {
-    setColumnOrder(defaultColumnOrder);
-    setHiddenColumns(defaultHiddenColumns);
-  };
-
-  const handleTableScroll = (event: ReactUIEvent<HTMLDivElement>) => {
-    setIsTableScrolledX(event.currentTarget.scrollLeft > 0);
-  };
-
-  const handleColumnPointerDown = (event: ReactPointerEvent<HTMLTableCellElement>, columnKey: DataColumnKey) => {
-    if (event.button !== 0 || columnContextMenu) {
-      return;
-    }
-
-    event.currentTarget.setPointerCapture(event.pointerId);
-    const headerRect = event.currentTarget.getBoundingClientRect();
-    const tableRect = tableScrollRef.current?.getBoundingClientRect() ?? headerRect;
-
-    setColumnContextMenu(null);
-    setColumnDrag({
-      columnKey,
-      currentX: event.clientX,
-      dropIndex: getDropIndexFromPointer(event.clientX, visibleTableColumns, headerRefs.current),
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      isDragging: true,
-      originLeft: headerRect.left,
-      originTop: headerRect.top,
-      originWidth: headerRect.width,
-      originHeight: headerRect.height,
-      tableTop: tableRect.top,
-      tableHeight: tableRect.height,
-    });
-  };
-
-  const handleColumnContextMenu = (
-    event: ReactMouseEvent<HTMLTableCellElement>,
-    columnKey: DataColumnKey,
-  ) => {
-    event.preventDefault();
-    setColumnContextMenu({ columnKey, x: event.clientX, y: event.clientY });
   };
 
   useEffect(() => {
@@ -853,7 +638,7 @@ export function ActiveVideosPage() {
                 <col
                   className={`column-${columnKey}`}
                   key={columnKey}
-                  style={{ width: getColumnWidth(columnKey) } as CSSProperties}
+                  style={{ width: getSharedColumnWidth(columnKey) } as CSSProperties}
                 />
               ))}
             </colgroup>
@@ -867,7 +652,7 @@ export function ActiveVideosPage() {
                     dropIndex={columnDrag?.dropIndex ?? null}
                     isDragging={draggedColumn === columnKey}
                     isDropped={droppedColumn === columnKey}
-                    shiftDirection={getColumnShiftDirection(columnKey, visibleTableColumns, columnDrag)}
+                    shiftDirection={getSharedColumnShiftDirection(columnKey)}
                     setHeaderRef={(element) => {
                       if (element) {
                         headerRefs.current[columnKey] = element;
@@ -883,7 +668,7 @@ export function ActiveVideosPage() {
               </tr>
             </thead>
             <tbody>
-          {filteredProjects.map((project) => (
+              {filteredProjects.map((project) => (
                 <ProjectRow
                   key={project.id}
                   project={project}
@@ -927,7 +712,34 @@ export function ActiveVideosPage() {
             </tbody>
           </table>
           {filteredProjects.length === 0 ? (
-            <div className="active-videos-empty label-s-semibold">No active videos match these filters.</div>
+            projects.length === 0 ? (
+              <div className="active-videos-empty is-first-video">
+                <span className="active-videos-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={28} /></span>
+                <h2 className="headings-xs-bold">
+                  {selectedRole === "Studio Freelancer" ? "No invited videos yet" : "No videos yet"}
+                </h2>
+                <p className="paragraph-s">
+                  {selectedRole === "Studio Freelancer"
+                    ? "Videos will appear here when a Studio adds you to the team."
+                    : selectedRole === "Customer"
+                      ? "Videos shared by your Studio will appear in your Client dashboard."
+                      : "Add a Client, then start their first video."}
+                </p>
+                <div className="active-videos-empty-actions">
+                  <Link className="active-videos-empty-primary label-s-semibold" href={selectedRole === "Studio Freelancer" ? "/chat" : selectedRole === "Customer" ? "/customer-dashboard" : "/clients"}>
+                    {selectedRole === "Studio Freelancer" ? "Open Chat" : selectedRole === "Customer" ? "Back to dashboard" : "Add Client"}
+                  </Link>
+                  {selectedRole === "Studio Staff" ? <Link className="active-videos-empty-secondary label-s-semibold" href="/studio-onboard">Studio onboarding</Link> : null}
+                </div>
+              </div>
+            ) : (
+              <div className="active-videos-empty is-filtered">
+                <span className="active-videos-empty-icon" aria-hidden="true"><DsIcon name="search" size={28} /></span>
+                <h2 className="headings-xs-bold">No videos match these controls</h2>
+                <p className="paragraph-s">Try another search, status or production-stage filter.</p>
+                <button className="active-videos-empty-secondary label-s-semibold" type="button" onClick={clearControls}>Clear controls</button>
+              </div>
+            )
           ) : null}
         </div>
       </section>
@@ -3008,83 +2820,12 @@ function getUniqueOptions(values: string[]) {
   return Array.from(new Set(values)).sort((first, second) => first.localeCompare(second));
 }
 
-function isStoredColumnState(value: unknown): value is StoredColumnState {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
-  const possibleState = value as Partial<StoredColumnState>;
-
-  return Array.isArray(possibleState.order) && Array.isArray(possibleState.hidden);
-}
-
-function normaliseColumnOrder(value: unknown) {
-  if (!Array.isArray(value)) {
-    return defaultColumnOrder;
-  }
-
-  const validColumns = value.filter((columnKey): columnKey is DataColumnKey =>
-    dataColumnKeys.has(columnKey as DataColumnKey),
-  );
-  const dedupedColumns = Array.from(new Set(validColumns));
-  const missingColumns = defaultColumnOrder.filter((columnKey) => !dedupedColumns.includes(columnKey));
-
-  return [...dedupedColumns, ...missingColumns];
-}
-
-function normaliseHiddenColumns(value: unknown) {
-  if (!Array.isArray(value)) {
-    return defaultHiddenColumns;
-  }
-
-  return Array.from(
-    new Set(
-      value.filter(
-        (columnKey): columnKey is DataColumnKey =>
-          dataColumnKeys.has(columnKey as DataColumnKey) && columnKey !== fixedEndColumn,
-      ),
-    ),
-  );
-}
-
 function getValidProjectId(projectId: string | null) {
   if (!projectId || !activeVideoProjects.some((project) => project.id === projectId)) {
     return null;
   }
 
   return projectId;
-}
-
-function getColumnWidth(columnKey: TableColumnKey) {
-  if (columnKey === "project") {
-    return projectColumnWidth;
-  }
-
-  return columnConfig[columnKey].width;
-}
-
-function getDropIndexFromPointer(
-  pointerX: number,
-  visibleColumns: TableColumnKey[],
-  headerElements: Partial<Record<TableColumnKey, HTMLTableCellElement>>,
-) {
-  const candidateColumns = visibleColumns.filter((columnKey): columnKey is DataColumnKey => columnKey !== "project");
-
-  for (const columnKey of candidateColumns) {
-    const element = headerElements[columnKey];
-
-    if (!element) {
-      continue;
-    }
-
-    const rect = element.getBoundingClientRect();
-
-    if (pointerX < rect.left + rect.width / 2) {
-      return Math.max(1, visibleColumns.indexOf(columnKey));
-    }
-  }
-
-  return visibleColumns.length;
 }
 
 function getColumnShiftDirection(
@@ -3112,83 +2853,6 @@ function getColumnShiftDirection(
   }
 
   return null;
-}
-
-function getDropIndicatorStyle(
-  columnDrag: ColumnDragState | null,
-  visibleColumns: TableColumnKey[],
-  headerElements: Partial<Record<TableColumnKey, HTMLTableCellElement>>,
-) {
-  if (!columnDrag?.isDragging) {
-    return null;
-  }
-
-  const dropIndex = Math.max(1, Math.min(columnDrag.dropIndex, visibleColumns.length - 1));
-  const targetColumn = visibleColumns[dropIndex];
-  const previousColumn = visibleColumns[dropIndex - 1];
-  const targetElement = targetColumn ? headerElements[targetColumn] : null;
-  const previousElement = previousColumn ? headerElements[previousColumn] : null;
-  const targetRect = targetElement?.getBoundingClientRect();
-  const previousRect = previousElement?.getBoundingClientRect();
-  const left = targetRect?.left ?? previousRect?.right;
-
-  if (left === undefined) {
-    return null;
-  }
-
-  return {
-    left,
-    top: columnDrag.tableTop,
-    height: columnDrag.tableHeight,
-  } as CSSProperties;
-}
-
-function getDropLeft(
-  dropIndex: number,
-  visibleColumns: TableColumnKey[],
-  headerElements: Partial<Record<TableColumnKey, HTMLTableCellElement>>,
-) {
-  const boundedDropIndex = Math.max(1, Math.min(dropIndex, visibleColumns.length - 1));
-  const targetColumn = visibleColumns[boundedDropIndex];
-  const previousColumn = visibleColumns[boundedDropIndex - 1];
-  const targetRect = targetColumn ? headerElements[targetColumn]?.getBoundingClientRect() : null;
-  const previousRect = previousColumn ? headerElements[previousColumn]?.getBoundingClientRect() : null;
-
-  return targetRect?.left ?? previousRect?.right;
-}
-
-function settleColumnGhost(
-  columnDrag: ColumnDragState,
-  endLeft: number,
-  setSettlingGhost: (state: ColumnSettlingGhostState | null) => void,
-) {
-  const startLeft = columnDrag.originLeft + columnDrag.currentX - columnDrag.startX;
-
-  setSettlingGhost({
-    label: columnConfig[columnDrag.columnKey].label,
-    startLeft,
-    endLeft,
-    top: columnDrag.originTop,
-    width: columnDrag.originWidth,
-    height: columnDrag.originHeight,
-  });
-
-  window.setTimeout(() => setSettlingGhost(null), 220);
-}
-
-function isPointerInsideElement(event: PointerEvent, element: HTMLElement | null) {
-  if (!element) {
-    return false;
-  }
-
-  const rect = element.getBoundingClientRect();
-
-  return (
-    event.clientX >= rect.left &&
-    event.clientX <= rect.right &&
-    event.clientY >= rect.top &&
-    event.clientY <= rect.bottom
-  );
 }
 
 function getStatusLabel(status: StatusTab) {

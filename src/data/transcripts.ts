@@ -16,6 +16,7 @@ export type TranscriptClip = {
   projectId: string;
   mediaAssetId: string;
   language: string;
+  createdAt: string;
   paragraphs: TranscriptParagraph[];
 };
 
@@ -158,6 +159,7 @@ function createTranscriptClip(
     projectId: "loom-launch-film",
     mediaAssetId,
     language: "en-AU",
+    createdAt: "2026-07-08T15:00:00+10:00",
     paragraphs: seeds.map(([speakerName, startTimeSeconds, endTimeSeconds, text], index) => ({
       id: `${id}-paragraph-${String(index + 1).padStart(2, "0")}`,
       speakerName,

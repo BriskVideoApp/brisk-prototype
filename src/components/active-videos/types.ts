@@ -18,9 +18,18 @@ export type InvitationStatus = "invited" | "seen" | "accepted" | "declined" | "e
 
 export type InvitationDeclineReason = "role_filled" | "manual" | "unavailable";
 
+export type InvitationPaymentBasis = "hourly" | "flat";
+
+export type InvitationPaymentTerms = {
+  basis: InvitationPaymentBasis;
+  flatRate?: number;
+};
+
 export type StageStatus = {
   state: "not_started" | "in_progress" | "waiting" | "done";
   daysAgo?: number;
+  approvedAt?: string;
+  approvedBy?: string;
 };
 
 export type ProjectDeadline = {
@@ -58,6 +67,8 @@ export type Invitation = {
   sentAt: string;
   respondedAt?: string;
   rateSnapshot?: number;
+  paymentBasis?: InvitationPaymentBasis;
+  flatRateSnapshot?: number;
   declinedReason?: InvitationDeclineReason;
   assignmentMethod?: "invited" | "direct";
 };
@@ -97,6 +108,7 @@ export type ProjectFileLocation = {
 
 export type Project = {
   id: string;
+  clientId: string;
   clientBadge: string;
   clientName: string;
   name: string;

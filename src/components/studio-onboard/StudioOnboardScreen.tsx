@@ -16,6 +16,9 @@ import { StudioAiQuestion } from "@/components/studio-onboard/StudioAiQuestion";
 import { StudioPreviewLogo } from "@/components/studio-onboard/StudioClientPortalPreview";
 import { GeneratedStudioSetup } from "@/components/studio-onboard/GeneratedStudioSetup";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { ClientPicker } from "@/components/clients/ClientPrimitives";
+import { useInvitations } from "@/components/invitations/InvitationContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import {
   briefVideoTypeDetails,
   createInitialBriefFields,
@@ -48,6 +51,7 @@ const studioOnboardSteps: readonly StudioOnboardStep[] = [
 
 export function StudioOnboardScreen() {
   const router = useRouter();
+  const { applyOnboardingSetup } = useStudioSettings();
   const [view, setView] = useState<StudioOnboardView>("sign-in");
   const [signInMethod, setSignInMethod] = useState<StudioSignInMethod | null>(null);
   const [workEmail, setWorkEmail] = useState("");
@@ -180,6 +184,7 @@ export function StudioOnboardScreen() {
           onManualSetupResolved={() => setOpenManualSetupOnReview(false)}
           onReviewDraftChange={setReviewDraft}
           onUseSetup={() => {
+            if (reviewDraft) applyOnboardingSetup(reviewDraft);
             router.push("/active-videos");
           }}
         />
@@ -380,23 +385,25 @@ function StudioAiSetupShell({
 
 function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
   const router = useRouter();
+  const { openInvitePerson } = useInvitations();
   const initialVideoTypeId: BriefVideoTypeId = draft.videoTypeIds[0] ?? "Brand Film";
   const [screen, setScreen] = useState<"setup" | "portal-preview" | "complete">("setup");
   const [projectName, setProjectName] = useState("Good Citizens Impact Story");
-  const [customerName, setCustomerName] = useState("Good Citizens");
+  const [customerName, setCustomerName] = useState("");
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
+  const [clientWasCreated, setClientWasCreated] = useState(false);
   const [briefMode, setBriefMode] = useState<"preview" | "edit" | null>(null);
   const [projectBriefFields, setProjectBriefFields] = useState(createInitialBriefFields);
   const [projectBriefConfiguration, setProjectBriefConfiguration] = useState(() =>
     cloneStudioBriefConfiguration(draft.briefConfiguration));
   const [isRecommendedBriefSelected, setIsRecommendedBriefSelected] = useState(true);
-  const [teamInviteMessage, setTeamInviteMessage] = useState("");
   const selectedVideoType = briefVideoTypeDetails.find((videoType) => videoType.name === initialVideoTypeId)
     ?? briefVideoTypeDetails[0];
   const briefSummary = `A client-facing ${selectedVideoType.name.toLocaleLowerCase("en-AU")} about ${customerName || "your client"}’s community impact programme.`;
   const canPreviewPortal = projectName.trim().length > 0 && customerName.trim().length > 0;
 
   function inviteTeam() {
-    setTeamInviteMessage("You can invite your team from People after onboarding.");
+    openInvitePerson({ role: "Studio Staff" });
   }
 
   function useRecommendedBrief() {
@@ -468,14 +475,15 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
           <span className="label-xs-semibold">Setup complete</span>
           <h1 className="headings-m-bold" id="studio-onboarding-complete-heading">Your studio is ready</h1>
           <p className="paragraph-s">
-            {projectName} is ready in Brief for {customerName}.
+            {projectName} is ready in Brief for {customerName}. {clientWasCreated
+              ? <>We&apos;ve created {customerName}&apos;s portal.</>
+              : <>We&apos;ve connected {customerName}&apos;s existing portal.</>}
           </p>
         </div>
         <div className="studio-onboarding-complete-actions">
-          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite your team</Button>
+          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite Studio Staff</Button>
           <Button size="M" variant="primary" onClick={() => router.push("/active-videos")}>Open Active Videos</Button>
         </div>
-        {teamInviteMessage ? <p className="studio-first-project-team-message label-xs" role="status">{teamInviteMessage}</p> : null}
       </section>
     );
   }
@@ -486,6 +494,11 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
         <header className="studio-first-project-portal-heading">
           <span className="label-xs-semibold"><DsIcon name="eye" size={14} /> This is what your clients see</span>
           <h1 className="headings-s-bold" id="studio-first-project-portal-heading">Client portal preview</h1>
+          <p className="paragraph-s" role="status">
+            {clientWasCreated
+              ? `We've created ${customerName}'s portal.`
+              : `${customerName}'s existing portal is connected to this project.`}
+          </p>
         </header>
 
         <article className={`studio-first-project-portal studio-client-accent-${draft.brandAccentId}`}>
@@ -523,10 +536,9 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
 
         <footer className="studio-first-project-portal-actions">
           <Button size="M" variant="secondary" onClick={() => setScreen("setup")}>Back to project</Button>
-          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite your team</Button>
+          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite Studio Staff</Button>
           <Button size="M" variant="primary" onClick={() => setScreen("complete")}>Finish setup</Button>
         </footer>
-        {teamInviteMessage ? <p className="studio-first-project-team-message label-xs" role="status">{teamInviteMessage}</p> : null}
       </section>
     );
   }
@@ -544,7 +556,16 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
           <section className="studio-first-project-section" aria-labelledby="studio-first-project-details-heading">
             <h2 className="headings-xs-bold" id="studio-first-project-details-heading">Project details</h2>
             <Input label="Project name" value={projectName} onChange={(event) => setProjectName(event.target.value)} />
-            <Input label="Customer name" value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
+            <ClientPicker
+              initialQuery="Good Citizens"
+              value={selectedClientId}
+              onChange={(client) => {
+                setSelectedClientId(client.id);
+                setCustomerName(client.name);
+                setClientWasCreated(false);
+              }}
+              onClientCreated={() => setClientWasCreated(true)}
+            />
             <div className="studio-first-project-meta">
               <div>
                 <span className="label-xs">Video type</span>
@@ -608,8 +629,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
 
       <footer className="studio-first-project-actions">
         <div>
-          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite your team</Button>
-          {teamInviteMessage ? <span className="studio-first-project-team-message label-xs" role="status">{teamInviteMessage}</span> : null}
+          <Button size="M" variant="secondary" onClick={inviteTeam}>Invite Studio Staff</Button>
         </div>
         <Button size="M" variant="primary" onClick={() => {
           if (canPreviewPortal) {

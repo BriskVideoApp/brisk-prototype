@@ -7,6 +7,7 @@ import type {
 } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, snapToQuarter, stageLabels } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId, todayReferenceDate, todayTimeEntries } from "@/data/today/mockData";
@@ -16,6 +17,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, StageKey } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
+import { FreelancerTodayPage } from "./FreelancerTodayPage";
 
 const stageOptions: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const defaultBlockHours = 2;
@@ -53,6 +55,19 @@ type EntryTotals = {
 
 export function TodayPage() {
   const { selectedRole } = usePrototypeRole();
+
+  if (selectedRole === "Studio Freelancer") {
+    return <FreelancerTodayPage />;
+  }
+
+  return <StudioTodayPage />;
+}
+
+function StudioTodayPage() {
+  const { selectedRole } = usePrototypeRole();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const previewState = searchParams.get("preview");
   const [weekOffset, setWeekOffset] = useState(0);
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
@@ -126,6 +141,15 @@ export function TodayPage() {
     updateEntry(entryId, (entry) => ({ ...entry, hours: snapToQuarter(Math.max(minEntryHours, nextHours)) }));
   };
 
+  const addPreviewEntry = (date: string) => {
+    const firstProject = projectCards[0];
+    if (!firstProject) return;
+    createEntry(firstProject, date);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    router.replace(`${url.pathname}${url.search}`);
+  };
+
   return (
     <main className="today-shell">
       <section className="today-main" aria-label="Today workspace">
@@ -137,20 +161,36 @@ export function TodayPage() {
           onThisWeek={() => setWeekOffset(0)}
         />
 
-        {selectedRole === "Studio Staff" ? (
+        {selectedRole === "Studio Staff" ? previewState === "empty" ? (
+          <section className="today-page-empty">
+            <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={28} /></span>
+            <h2 className="headings-xs-bold">No active videos assigned to you</h2>
+            <p className="paragraph-s">Videos you own or are assigned to will appear here.</p>
+            <Link className="today-page-empty-button label-s-semibold" href="/active-videos">Open Videos</Link>
+          </section>
+        ) : (
           <div className="today-workspace">
             <ProjectRail projectCards={projectCards} />
-            <WeekGrid
-              entriesByDay={entriesByDay}
-              projectCards={projectCards}
-              todoLanePercent={todoLanePercent}
-              weekDays={weekDays}
-              onTodoLanePercentChange={setTodoLanePercent}
-              onDropProjectCard={createEntry}
-              onMoveEntry={moveEntry}
-              onResizeEntry={resizeEntry}
-              onOpenEditor={(entry, rect) => openEditorForEntry(entry.id, rect.left, rect.bottom)}
-            />
+            {previewState === "no-results" || previewState === "complete" ? (
+              <section className="today-page-empty is-workspace">
+                <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name={previewState === "complete" ? "check-circle" : "clock-clockwise"} size={28} /></span>
+                <h2 className="headings-xs-bold">{previewState === "complete" ? "You’re clear for today" : "Plan your day"}</h2>
+                <p className="paragraph-s">{previewState === "complete" ? "Everything you planned for today is complete." : "Drag an active video into Today, or add a time entry to get started."}</p>
+                <button className="today-page-empty-button label-s-semibold" type="button" onClick={() => addPreviewEntry(previewState === "complete" ? weekDays.find((day) => day.date > todayReferenceDate)?.date ?? todayReferenceDate : todayReferenceDate)}>{previewState === "complete" ? "Plan tomorrow" : "Add time"}</button>
+              </section>
+            ) : (
+              <WeekGrid
+                entriesByDay={entriesByDay}
+                projectCards={projectCards}
+                todoLanePercent={todoLanePercent}
+                weekDays={weekDays}
+                onTodoLanePercentChange={setTodoLanePercent}
+                onDropProjectCard={createEntry}
+                onMoveEntry={moveEntry}
+                onResizeEntry={resizeEntry}
+                onOpenEditor={(entry, rect) => openEditorForEntry(entry.id, rect.left, rect.bottom)}
+              />
+            )}
           </div>
         ) : (
           <TodayUnavailable selectedRole={selectedRole} />

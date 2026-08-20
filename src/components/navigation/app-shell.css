@@ -10,51 +10,12 @@
 }
 
 .app-shell-workspace {
+  position: relative;
   display: grid;
   min-width: var(--brisk-space-none);
   min-height: var(--brisk-space-none);
-  grid-template-rows: auto minmax(var(--brisk-space-none), 1fr);
+  grid-template-rows: minmax(var(--brisk-space-none), 1fr);
   overflow: hidden;
-}
-
-.app-shell-preview-bar {
-  position: relative;
-  z-index: 70;
-  display: flex;
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--brisk-border-primary);
-  background: var(--brisk-bg-block-primary);
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-s) var(--brisk-space-xl);
-}
-
-.app-shell-current-page,
-.app-shell-current-page > div {
-  display: flex;
-  min-width: var(--brisk-space-none);
-  align-items: center;
-}
-
-.app-shell-current-page {
-  gap: var(--brisk-space-m);
-}
-
-.app-shell-current-page > div {
-  align-items: flex-start;
-  flex-direction: column;
-  gap: var(--brisk-space-xxs);
-}
-
-.app-shell-current-page span {
-  color: var(--brisk-text-tertiary);
-}
-
-.app-shell-current-page strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .app-shell-content {
@@ -63,7 +24,6 @@
   overflow: auto;
 }
 
-.app-shell-mobile-menu,
 .app-sidebar-mobile-close {
   display: none;
 }
@@ -198,6 +158,34 @@
   flex: 0 0 auto;
 }
 
+.app-sidebar-role-preview {
+  margin-top: var(--brisk-space-none);
+}
+
+.app-sidebar-role-preview .role-preview-control {
+  width: 100%;
+  align-items: stretch;
+  flex-direction: column;
+  gap: var(--brisk-space-s);
+}
+
+.app-sidebar-role-preview .role-preview-options {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(var(--brisk-space-none), 1fr));
+}
+
+.app-sidebar-role-preview .role-preview-options button {
+  min-width: var(--brisk-space-none);
+  padding-right: var(--brisk-space-xs);
+  padding-left: var(--brisk-space-xs);
+}
+
+.app-sidebar-role-preview .role-preview-all-pages {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 .app-sidebar-history-row {
   gap: var(--brisk-space-xs);
   margin-top: var(--brisk-space-l);
@@ -211,8 +199,7 @@
 .app-sidebar-history-controls button,
 .app-sidebar-collapse,
 .app-sidebar-group-toggle,
-.app-sidebar-mobile-close,
-.app-shell-mobile-menu {
+.app-sidebar-mobile-close {
   display: inline-flex;
   width: var(--brisk-space-2xl);
   height: var(--brisk-space-2xl);
@@ -233,9 +220,7 @@
 .app-sidebar-group-toggle:hover,
 .app-sidebar-group-toggle:focus-visible,
 .app-sidebar-mobile-close:hover,
-.app-sidebar-mobile-close:focus-visible,
-.app-shell-mobile-menu:hover,
-.app-shell-mobile-menu:focus-visible {
+.app-sidebar-mobile-close:focus-visible {
   border-color: var(--brisk-border-primary);
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-s);
@@ -365,6 +350,17 @@
   box-shadow: none;
 }
 
+button.app-sidebar-link {
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.app-sidebar-project-tools + .app-sidebar-group {
+  margin-top: var(--brisk-space-l);
+}
+
 .app-sidebar-copy {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,6 +378,7 @@
 .app-sidebar.is-collapsed .app-sidebar-copy,
 .app-sidebar.is-collapsed .app-sidebar-group-toggle,
 .app-sidebar.is-collapsed .app-sidebar-history-controls,
+.app-sidebar.is-collapsed .app-sidebar-role-preview,
 .app-sidebar.is-collapsed .app-sidebar-review-note {
   display: none;
 }
@@ -475,8 +472,7 @@
     overflow: visible;
   }
 
-  .app-sidebar,
-  .app-shell-preview-bar {
+  .app-sidebar {
     display: none;
   }
 
@@ -516,6 +512,7 @@
 
   .app-sidebar.is-collapsed .app-sidebar-group-toggle,
   .app-sidebar.is-collapsed .app-sidebar-history-controls,
+  .app-sidebar.is-collapsed .app-sidebar-role-preview,
   .app-sidebar.is-collapsed .app-sidebar-review-note {
     display: flex;
   }
@@ -544,8 +541,7 @@
     display: none;
   }
 
-  .app-sidebar-mobile-close,
-  .app-shell-mobile-menu {
+  .app-sidebar-mobile-close {
     display: inline-flex;
   }
 
@@ -561,12 +557,6 @@
 }
 
 @media (max-width: 720px) {
-  .app-shell-preview-bar {
-    align-items: stretch;
-    flex-direction: column;
-    padding: var(--brisk-space-s) var(--brisk-space-m);
-  }
-
   .role-preview-control {
     width: 100%;
     align-items: stretch;

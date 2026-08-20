@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
   addMinutes,
@@ -35,8 +37,18 @@ function getWeatherIcon(weather: string): DsIconName {
 }
 
 export function SharedCallSheetPage({ project, previewMode, printMode, viewerId }: { project: Project; previewMode: boolean; printMode: boolean; viewerId?: string }) {
+  const { selectedRole } = usePrototypeRole();
+  const searchParams = useSearchParams();
+  const isEmptyPreview = searchParams.get("preview") === "empty";
+  const requestedDayId = searchParams.get("day");
+  const printAllDays = searchParams.get("all") === "1";
   const [callSheet, setCallSheet] = useState(() => ensureShotNumbers(getInitialCallSheet(project)));
-  const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project).days[0]?.id ?? "day-1");
+  const [selectedDayId, setSelectedDayId] = useState(() => {
+    const initialCallSheet = getInitialCallSheet(project);
+    return initialCallSheet.days.some((day) => day.id === requestedDayId)
+      ? requestedDayId ?? "day-1"
+      : initialCallSheet.days[0]?.id ?? "day-1";
+  });
   const [hasLoaded, setHasLoaded] = useState(false);
   const [copyStatus, setCopyStatus] = useState("Copy link");
   const [showPreviewBar, setShowPreviewBar] = useState(previewMode && !printMode);
@@ -51,7 +63,15 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
             next.visibleOptionalSections = ["notice", ...next.visibleOptionalSections];
           }
           setCallSheet(next);
-          setSelectedDayId((current) => next.days.some((day) => day.id === current) ? current : next.days[0]?.id ?? "day-1");
+          setSelectedDayId((current) => {
+            if (requestedDayId && next.days.some((day) => day.id === requestedDayId)) {
+              return requestedDayId;
+            }
+
+            return next.days.some((day) => day.id === current)
+              ? current
+              : next.days[0]?.id ?? "day-1";
+          });
         }
       } finally {
         setHasLoaded(true);
@@ -60,7 +80,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
     loadStoredCallSheet();
     window.addEventListener("storage", loadStoredCallSheet);
     return () => window.removeEventListener("storage", loadStoredCallSheet);
-  }, [project.id]);
+  }, [project.id, requestedDayId]);
 
   useEffect(() => {
     if (!printMode || !hasLoaded) return;
@@ -78,7 +98,9 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
   }, [previewMode, printMode]);
 
   const currentDay = callSheet.days.find((day) => day.id === selectedDayId) ?? callSheet.days[0];
-  const visibleDays = printMode ? callSheet.days : currentDay ? [currentDay] : [];
+  const visibleDays = printMode && printAllDays
+    ? callSheet.days
+    : currentDay ? [currentDay] : [];
   const viewer = viewerId ? callSheet.people.find((person) => person.id === viewerId) : undefined;
 
   const copyShareLink = async () => {
@@ -116,7 +138,8 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
             <summary className="label-s-semibold"><DsIcon name="link-simple-horizontal" size={16} />Share<DsIcon name="caret-down" size={13} /></summary>
             <div className="shared-preview-share-menu">
               <button className="label-s-semibold" type="button" onClick={copyShareLink}><DsIcon name="copy" size={16} />{copyStatus}</button>
-              <a className="label-s-semibold" href={`/share/call-sheet/${project.id}?print=1`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />Download PDF</a>
+              <a className="label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(selectedDayId)}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />Download selected day</a>
+              {callSheet.days.length > 1 ? <a className="label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&all=1`} target="_blank" rel="noreferrer"><DsIcon name="file-text" size={16} />Download all shoot days</a> : null}
               <button className="label-s-semibold" type="button" onClick={() => window.print()}><DsIcon name="printer" size={16} />Print</button>
             </div>
           </details>
@@ -130,7 +153,17 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
         </div>
       </header>
 
-      <div className="shared-call-sheet-content">
+      {isEmptyPreview ? (
+        <section className="shared-call-sheet-empty">
+          <span className="shared-call-sheet-empty-icon" aria-hidden="true"><DsIcon name="clipboard-text" size={28} /></span>
+          <h1>{selectedRole === "Customer" ? "The call sheet is still being prepared" : "This call sheet isn’t ready yet"}</h1>
+          <p className="paragraph-s">{selectedRole === "Customer" ? "Production will share the schedule, location and call details here when they are ready." : "Add the schedule, location and key contacts before sharing it."}</p>
+          <div className="shared-call-sheet-empty-actions">
+            <Link className="shared-primary-action label-s-semibold" href={selectedRole === "Customer" ? "/customer-dashboard" : `/projects/${project.id}/stages/shoot`}>{selectedRole === "Customer" ? "Back to project" : "Open Shoot"}</Link>
+            {selectedRole === "Customer" ? <Link className="shared-secondary-action label-s-semibold" href={`/chat?project=${project.id}`}>Message production</Link> : null}
+          </div>
+        </section>
+      ) : <div className="shared-call-sheet-content">
         <header className="shared-project-heading">
           <p className="label-xs-semibold">{project.clientName}</p>
           <h1>{callSheet.projectName}</h1>
@@ -138,6 +171,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
         {visibleDays.map((day, index) => (
           <SharedDay
             callSheet={callSheet}
+            clientName={project.clientName}
             day={day}
             viewer={viewer && isAssignedToDay(viewer.shootDayIds, day.id) ? viewer : undefined}
             printIndex={printMode ? index : undefined}
@@ -145,7 +179,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
             key={day.id}
           />
         ))}
-      </div>
+      </div>}
 
       <footer className="shared-call-sheet-footer">
         <span>{callSheet.studioName}</span>
@@ -155,7 +189,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
   );
 }
 
-function SharedDay({ callSheet, day, viewer, printIndex, onSelectDay }: { callSheet: CallSheet; day: ShootDay; viewer?: CallSheet["people"][number]; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
+function SharedDay({ callSheet, clientName, day, viewer, printIndex, onSelectDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; viewer?: CallSheet["people"][number]; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
   const daySwitcherRef = useRef<HTMLElement>(null);
   const activeDayButtonRef = useRef<HTMLButtonElement>(null);
   const location = callSheet.locations.find((item) => item.id === day.primaryLocationId);
@@ -178,6 +212,23 @@ function SharedDay({ callSheet, day, viewer, printIndex, onSelectDay }: { callSh
 
   return (
     <article className={`shared-print-day ${typeof printIndex === "number" ? "is-print-day" : ""}`}>
+      {typeof printIndex === "number" ? (
+        <header className="shared-document-print-header">
+          <div className="shared-document-print-studio">
+            <span className="shared-brand-mark label-s-semibold" aria-hidden="true">{callSheet.studioInitials}</span>
+            <div><strong>{callSheet.studioName}</strong><span>Production call sheet</span></div>
+          </div>
+          <div className="shared-document-print-title">
+            <span>{clientName}</span>
+            <h1>{callSheet.projectName}</h1>
+            <p>{day.label}</p>
+          </div>
+          <dl>
+            <div><dt>Shoot date</dt><dd>{formatShootDate(day.date)}</dd></div>
+            <div><dt>Updated</dt><dd>{formatUpdatedTime(callSheet.updatedAt)}</dd></div>
+          </dl>
+        </header>
+      ) : null}
       <section className="shared-call-hero" aria-label={`${day.label} essentials`}>
         {onSelectDay && callSheet.days.length > 1 ? <nav className="shared-day-switcher" ref={daySwitcherRef} aria-label="Shoot days">
           {callSheet.days.map((shootDay) => {
@@ -289,6 +340,12 @@ function SharedDay({ callSheet, day, viewer, printIndex, onSelectDay }: { callSh
         <SharedSection title="Documents" icon="folder" count={documents.length}>
           <div className="shared-document-list">{documents.map((document) => <a href={document.url} key={document.id}><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={18} /><span>{document.name}</span><DsIcon name="arrow-bend-up-right" size={16} /></a>)}</div>
         </SharedSection>
+      ) : null}
+      {typeof printIndex === "number" ? (
+        <footer className="shared-document-print-footer">
+          <span>{callSheet.studioName} · {callSheet.projectName}</span>
+          <span>{day.label} of {callSheet.days.length}</span>
+        </footer>
       ) : null}
     </article>
   );

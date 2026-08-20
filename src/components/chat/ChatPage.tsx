@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import type { ComposerSubmission } from "@/components/chat/ChatComposer";
 import { ChatCallLauncher } from "@/components/chat/ChatCallLauncher";
@@ -56,6 +57,8 @@ type ChatPageProps = {
 
 export function ChatPage({ initialProjectId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
+  const searchParams = useSearchParams();
+  const isEmptyPreview = searchParams.get("preview") === "empty";
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
@@ -63,6 +66,10 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
   const [groupConversationList, setGroupConversationList] = useState(initialGroupConversations);
   const [activeView, setActiveView] = useState<ChatRailView>("projects");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() => {
+    if (isEmptyPreview) {
+      return null;
+    }
+
     if (initialProjectId === null) {
       return null;
     }
@@ -178,7 +185,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
     return {
       id: companyChatId,
       code: selectedCompanyChatClientName,
-      title: "Company chat",
+      title: "Client chat",
       clientName: selectedCompanyChatClientName,
       status: "In Production",
       memberIds: [...new Set(clientProjects.flatMap((project) => project.memberIds))],
@@ -1002,7 +1009,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
     activeView === "projects" && activeProjectChat
       ? {
           name: selectedCompanyChatProject
-            ? `${selectedCompanyChatProject.clientName} company chat`
+            ? `${selectedCompanyChatProject.clientName} Client chat`
             : `${activeProjectChat.code} ${activeProjectChat.title}`,
           defaultMemberIds: [effectiveCurrentUserId],
           availableMemberIds:
@@ -1123,7 +1130,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
                   : activeView !== "projects"
                   ? formatViewTitle(activeView)
                   : selectedCompanyChatProject
-                    ? `${selectedCompanyChatProject.clientName} company chat`
+                    ? `${selectedCompanyChatProject.clientName} Client chat`
                   : selectedProject
                     ? `${selectedProject.code} ${selectedProject.title}`
                     : selectedClientName
@@ -1467,7 +1474,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
           </>
         ) : activeView === "projects" ? (
           <ChatProjectList
-            projects={projectListProjects}
+            projects={isEmptyPreview ? [] : projectListProjects}
             messages={messages}
             users={chatUsers}
             clientName={selectedClientName}
@@ -1482,6 +1489,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
             onProjectMarkRead={(projectId) =>
               markRailTargetRead({ type: "project", projectId })
             }
+            role={selectedRole}
           />
         ) : (
           <ChatGlobalView

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   fallbackRoleStages,
   getAcceptedInvitation,
+  getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
   mockTeamPeople,
@@ -13,10 +14,14 @@ import {
   teamRoleLabels,
   teamRoleOptions,
 } from "@/data/active-videos/teamDefaults";
-import type { Invitation, ProjectVideoType, RoleSlot, StageAssignment, TeamPerson, TeamRole, TimeEntry } from "@/components/active-videos/types";
+import type { Invitation, InvitationPaymentTerms, ProjectVideoType, RoleSlot, StageAssignment, TeamPerson, TeamRole, TimeEntry } from "@/components/active-videos/types";
+import { usePeople, type ProjectStaffWorkload } from "@/components/people/PeopleDataContext";
+import { useInvitations } from "@/components/invitations/InvitationContext";
+import type { Person } from "@/data/people";
 import { AddRoleButton } from "./AddRoleButton";
 import { RoleEditorModal } from "./RoleEditorModal";
 import { RoleRow } from "./RoleRow";
+import { useProjectTeams } from "./ProjectTeamDataContext";
 
 export type TeamPanelAccess = "producerAdmin" | "ownStaff" | "freelancer" | "customer";
 
@@ -43,19 +48,37 @@ export function TeamPanel({
   access,
   viewerPersonId,
 }: TeamPanelProps) {
-  const [team, setTeam] = useState(initialTeam);
+  const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
+  const { openInvitePerson } = useInvitations();
+  const { setProjectTeam, teamsByProjectId } = useProjectTeams();
   const [extraPeople, setExtraPeople] = useState<TeamPerson[]>([]);
   const [roleEditorSlotId, setRoleEditorSlotId] = useState<string | null>(null);
   const [isRolePickerOpen, setIsRolePickerOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
-  const people = useMemo(() => [...mockTeamPeople, ...extraPeople], [extraPeople]);
+  const storedTeam = teamsByProjectId[projectId];
+  const team = storedTeam ?? initialTeam;
+  const people = useMemo(() => {
+    const byId = new Map<string, TeamPerson>(mockTeamPeople.map((person) => [person.id, person]));
+    directoryPeople
+      .filter((person) => person.type !== "Client contact" && person.status !== "Archived")
+      .forEach((person) => byId.set(person.id, toTeamPerson(person)));
+    extraPeople.forEach((person) => byId.set(person.id, person));
+    return [...byId.values()];
+  }, [directoryPeople, extraPeople]);
 
   useEffect(() => {
-    setTeam(initialTeam);
+    if (!storedTeam) setProjectTeam(projectId, initialTeam);
+  }, [initialTeam, projectId, setProjectTeam, storedTeam]);
+
+  useEffect(() => {
     setExtraPeople([]);
     setRoleEditorSlotId(null);
     setIsRolePickerOpen(false);
-  }, [initialTeam, projectId]);
+  }, [projectId]);
+
+  useEffect(() => {
+    syncProjectStaffWorkloads(projectId, getProjectStaffWorkloads(projectId, team, people));
+  }, [people, projectId, syncProjectStaffWorkloads, team]);
 
   useEffect(() => {
     if (!toast) {
@@ -80,7 +103,7 @@ export function TeamPanel({
   const assignedPersonIds = getAssignedPersonIds(activeTeam);
 
   const updateSlot = (slotId: string, updater: (slot: RoleSlot) => RoleSlot) => {
-    setTeam((currentTeam) => currentTeam.map((slot) => (slot.id === slotId ? updater(slot) : slot)));
+    setProjectTeam(projectId, (currentTeam) => currentTeam.map((slot) => (slot.id === slotId ? updater(slot) : slot)));
   };
 
   const addStaffToSlot = (slotId: string, person: TeamPerson) => {
@@ -112,7 +135,7 @@ export function TeamPanel({
     }));
   };
 
-  const inviteFreelancerToSlot = (slotId: string, person: TeamPerson) => {
+  const inviteFreelancerToSlot = (slotId: string, person: TeamPerson, paymentTerms: InvitationPaymentTerms) => {
     updateSlot(slotId, (slot) => {
       if (getVisibleInvitations(slot).some((invitation) => invitation.personId === person.id)) {
         return slot;
@@ -127,14 +150,16 @@ export function TeamPanel({
             personId: person.id,
             status: "invited",
             sentAt: new Date().toISOString(),
-            rateSnapshot: person.hourlyRate,
+            rateSnapshot: paymentTerms.basis === "hourly" ? person.hourlyRate : undefined,
+            paymentBasis: paymentTerms.basis,
+            flatRateSnapshot: paymentTerms.basis === "flat" ? paymentTerms.flatRate : undefined,
           },
         ],
       };
     });
   };
 
-  const assignFreelancerDirectlyToSlot = (slotId: string, person: TeamPerson) => {
+  const assignFreelancerDirectlyToSlot = (slotId: string, person: TeamPerson, paymentTerms: InvitationPaymentTerms) => {
     const acceptedInvitationId = `${slotId}-${person.id}-accepted-${Date.now()}`;
     const now = new Date().toISOString();
 
@@ -156,7 +181,9 @@ export function TeamPanel({
           status: "accepted",
           sentAt: now,
           respondedAt: now,
-          rateSnapshot: person.hourlyRate,
+          rateSnapshot: paymentTerms.basis === "hourly" ? person.hourlyRate : undefined,
+          paymentBasis: paymentTerms.basis,
+          flatRateSnapshot: paymentTerms.basis === "flat" ? paymentTerms.flatRate : undefined,
           assignmentMethod: "direct",
         },
       ],
@@ -190,22 +217,18 @@ export function TeamPanel({
     });
   };
 
-  const inviteNewFreelancerToSlot = (slot: RoleSlot, invite: { name: string; email: string; hourlyRate: number }) => {
-    const personId = `invite-${invite.email.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
-    const person: TeamPerson = {
-      id: personId,
-      name: invite.name,
-      initials: getInitials(invite.name),
-      personType: "Studio Freelancer",
-      defaultRole: slot.role,
-      hourlyRate: invite.hourlyRate,
-      bookedHoursThisWeek: 0,
-      weeklyCapacityHours: 40,
-      availabilityLabel: "Available",
-    };
-
-    setExtraPeople((currentPeople) => (currentPeople.some((currentPerson) => currentPerson.id === personId) ? currentPeople : [...currentPeople, person]));
-    inviteFreelancerToSlot(slot.id, person);
+  const openNewFreelancerInvite = (slot: RoleSlot, paymentTerms: InvitationPaymentTerms) => {
+    openInvitePerson({
+      role: "Studio Freelancer",
+      projectId,
+      jobTitle: getSlotLabel(slot),
+    }, (directoryPerson, submission) => {
+      if (submission.role !== "Studio Freelancer" || directoryPerson.type !== "Freelancer") return;
+      const person = toTeamPerson(directoryPerson, slot.role);
+      setExtraPeople((currentPeople) => (currentPeople.some((currentPerson) => currentPerson.id === person.id) ? currentPeople : [...currentPeople, person]));
+      inviteFreelancerToSlot(slot.id, person, paymentTerms);
+      setToast({ id: `${slot.id}-${person.id}`, message: `${person.name} was added to People and invited to the ${getSlotLabel(slot)} role.` });
+    });
   };
 
   const acceptInvitation = (slotId: string, invitationId: string) => {
@@ -276,7 +299,7 @@ export function TeamPanel({
     const roleSlug = role === "custom" ? customRoleLabel?.toLowerCase().replace(/\s+/g, "-") || "custom" : teamRoleLabels[role].toLowerCase().replace(/\s+/g, "-");
     const slotId = `${projectId}-${roleSlug}-${team.length + 1}`;
 
-    setTeam((currentTeam) => [
+    setProjectTeam(projectId, (currentTeam) => [
       ...currentTeam,
       {
         id: slotId,
@@ -329,10 +352,10 @@ export function TeamPanel({
           assignedPersonIds={assignedPersonIds}
           showCosts={showCosts}
           onAddStaff={(person) => addStaffToSlot(activeRoleEditorSlot.id, person)}
-          onInviteFreelancer={(person) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person)}
-          onAssignFreelancer={(person) => assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person)}
+          onInviteFreelancer={(person, paymentTerms) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
+          onAssignFreelancer={(person, paymentTerms) => assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
           onUnassign={() => unassignSlot(activeRoleEditorSlot.id)}
-          onInviteByEmail={(invite) => inviteNewFreelancerToSlot(activeRoleEditorSlot, invite)}
+          onInviteNewFreelancer={(paymentTerms) => openNewFreelancerInvite(activeRoleEditorSlot, paymentTerms)}
           onWithdrawInvitation={(invitationId) => withdrawInvitation(activeRoleEditorSlot.id, invitationId)}
           onWithdrawAll={() => withdrawAllInvitations(activeRoleEditorSlot.id)}
           onRemove={() => updateSlot(activeRoleEditorSlot.id, (teamSlot) => ({ ...teamSlot, archivedAt: new Date().toISOString() }))}
@@ -347,6 +370,43 @@ export function TeamPanel({
       {toast ? <div className="team-toast label-s-semibold" role="status">{toast.message}</div> : null}
     </section>
   );
+}
+
+function toTeamPerson(person: Person, fallbackRole?: TeamRole, hourlyRateOverride?: number): TeamPerson {
+  const defaultRole = fallbackRole ?? getDefaultTeamRole(person);
+  const resolvedHourlyRate = hourlyRateOverride ?? (person.commercial
+    ? person.commercial.rateType === "Day rate" ? person.commercial.defaultRate / 8 : person.commercial.defaultRate
+    : undefined);
+  const hourlyRate = resolvedHourlyRate && resolvedHourlyRate > 0 ? resolvedHourlyRate : undefined;
+  const activeHours = person.workloads
+    .filter((workload) => workload.status === "Waiting on Studio")
+    .reduce((total, workload) => total + workload.predictedHours, 0);
+
+  return {
+    id: person.id,
+    name: person.name,
+    initials: getInitials(person.name),
+    personType: person.type === "Team" ? "Studio Staff" : "Studio Freelancer",
+    defaultRole,
+    hourlyRate,
+    bookedHoursThisWeek: activeHours,
+    weeklyCapacityHours: person.weeklyCapacityHours ?? 40,
+    availabilityLabel: person.availability ?? "Available",
+  };
+}
+
+function getDefaultTeamRole(person: Person): TeamRole {
+  const title = person.jobTitles.join(" ").toLocaleLowerCase("en-AU");
+  if (title.includes("producer")) return "producer";
+  if (title.includes("motion")) return "motionDesigner";
+  if (title.includes("animator")) return "animator";
+  if (title.includes("director of photography") || title.includes("shooter")) return "shooter";
+  if (title.includes("director")) return "director";
+  if (title.includes("colour")) return "colourist";
+  if (title.includes("sound")) return "soundDesigner";
+  if (title.includes("vfx")) return "vfxArtist";
+  if (title.includes("editor")) return "editor";
+  return "custom";
 }
 
 function getVisibleTeam(team: RoleSlot[], people: TeamPerson[], access: TeamPanelAccess, viewerPersonId?: string) {
@@ -384,6 +444,31 @@ function getAssignedPersonIds(team: RoleSlot[]) {
       .filter((invitation): invitation is Invitation => Boolean(invitation))
       .map((invitation) => invitation.personId),
   );
+}
+
+function getProjectStaffWorkloads(projectId: string, team: RoleSlot[], people: TeamPerson[]): ProjectStaffWorkload[] {
+  return team.flatMap((slot) => {
+    if (slot.archivedAt) return [];
+    const acceptedInvitation = getAcceptedInvitation(slot);
+    const person = acceptedInvitation ? people.find((candidate) => candidate.id === acceptedInvitation.personId) : undefined;
+    const predictedHours = getRoleEstimatedHours(slot);
+    const primaryStage = [...slot.stages].sort((left, right) => right.estimatedHours - left.estimatedHours)[0]?.stageId;
+
+    if (!acceptedInvitation || person?.personType !== "Studio Staff" || predictedHours <= 0 || !primaryStage) return [];
+
+    return [{
+      personId: person.id,
+      workload: {
+        id: `${slot.id}-staff-capacity`,
+        projectId,
+        stage: primaryStage,
+        status: "Waiting on Studio" as const,
+        predictedHours,
+        projectRole: getSlotLabel(slot),
+        assignmentStatus: "Assigned" as const,
+      },
+    }];
+  });
 }
 
 function filterSlotForViewer(slot: RoleSlot, viewerPersonId: string): RoleSlot {

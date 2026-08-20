@@ -4,9 +4,8 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
-  formatHours,
   getAcceptedInvitation,
-  getInvitationRate,
+  getInvitationCost,
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
@@ -14,15 +13,9 @@ import {
   stageLabels,
   teamRoleLabels,
 } from "@/data/active-videos/teamDefaults";
-import type { Invitation, RoleSlot, StageKey, TeamPerson } from "@/components/active-videos/types";
+import type { Invitation, InvitationPaymentBasis, InvitationPaymentTerms, RoleSlot, StageKey, TeamPerson } from "@/components/active-videos/types";
+import { getCapacitySummary } from "@/data/people";
 import { FreelancePill, StaffPill } from "./RoleRow";
-
-type NewFreelancerInvite = {
-  name: string;
-  email: string;
-  hourlyRate: number;
-  message: string;
-};
 
 type RoleEditorModalProps = {
   slot: RoleSlot;
@@ -31,10 +24,10 @@ type RoleEditorModalProps = {
   assignedPersonIds: Set<string>;
   showCosts: boolean;
   onAddStaff: (person: TeamPerson) => void;
-  onInviteFreelancer: (person: TeamPerson) => void;
-  onAssignFreelancer: (person: TeamPerson) => void;
+  onInviteFreelancer: (person: TeamPerson, paymentTerms: InvitationPaymentTerms) => void;
+  onAssignFreelancer: (person: TeamPerson, paymentTerms: InvitationPaymentTerms) => void;
   onUnassign: () => void;
-  onInviteByEmail: (invite: NewFreelancerInvite) => void;
+  onInviteNewFreelancer: (paymentTerms: InvitationPaymentTerms) => void;
   onWithdrawInvitation: (invitationId: string) => void;
   onWithdrawAll: () => void;
   onRemove: () => void;
@@ -52,7 +45,7 @@ export function RoleEditorModal({
   onInviteFreelancer,
   onAssignFreelancer,
   onUnassign,
-  onInviteByEmail,
+  onInviteNewFreelancer,
   onWithdrawInvitation,
   onWithdrawAll,
   onRemove,
@@ -70,12 +63,8 @@ export function RoleEditorModal({
   const [activeFillTab, setActiveFillTab] = useState<"team" | "gig">(() => (acceptedPerson?.personType === "Studio Freelancer" || getVisibleInvitations(slot).length > 0 ? "gig" : "team"));
   const [staffPendingConfirmation, setStaffPendingConfirmation] = useState<TeamPerson | null>(null);
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = useState(false);
-  const [isEmailInviteOpen, setIsEmailInviteOpen] = useState(false);
-  const [newFreelancerName, setNewFreelancerName] = useState("");
-  const [newFreelancerEmail, setNewFreelancerEmail] = useState("");
-  const [newFreelancerRate, setNewFreelancerRate] = useState("95");
-  const [emailMessage, setEmailMessage] = useState(() => getDefaultEmailMessage(roleLabel, roleHours));
-  const [isEmailTextOpen, setIsEmailTextOpen] = useState(false);
+  const [paymentBasis, setPaymentBasis] = useState<InvitationPaymentBasis>(() => activeInvitationPaymentBasis(slot));
+  const [flatRate, setFlatRate] = useState(() => activeInvitationFlatRate(slot));
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [selectedFreelancerIds, setSelectedFreelancerIds] = useState<string[]>([]);
   const staff = people.filter((person) => person.personType === "Studio Staff");
@@ -84,6 +73,9 @@ export function RoleEditorModal({
   const activeInvitations = getVisibleInvitations(slot);
   const historicalInvitations = slot.invitations.filter((invitation) => invitation.status === "withdrawn" || invitation.status === "declined" || invitation.status === "expired");
   const selectedStageSummary = selectedStages.map((stage) => stageLabels[stage]).join(", ") || "No stages selected";
+  const parsedFlatRate = Number.parseFloat(flatRate);
+  const hasValidPaymentTerms = paymentBasis === "hourly" || (Number.isFinite(parsedFlatRate) && parsedFlatRate > 0);
+  const paymentTerms: InvitationPaymentTerms = paymentBasis === "flat" ? { basis: "flat", flatRate: parsedFlatRate } : { basis: "hourly" };
 
   useEffect(() => {
     setSelectedFreelancerIds((currentIds) => {
@@ -147,22 +139,6 @@ export function RoleEditorModal({
     }
   };
 
-  const submitEmailInvite = () => {
-    const name = newFreelancerName.trim();
-    const email = newFreelancerEmail.trim();
-    const hourlyRate = Number.parseFloat(newFreelancerRate);
-
-    if (!name || !email || !Number.isFinite(hourlyRate) || hourlyRate <= 0) {
-      return;
-    }
-
-    onInviteByEmail({ name, email, hourlyRate, message: emailMessage });
-    setNewFreelancerName("");
-    setNewFreelancerEmail("");
-    setNewFreelancerRate("95");
-    setIsEmailInviteOpen(false);
-  };
-
   const toggleFreelancerSelection = (person: TeamPerson) => {
     const isSelected = selectedFreelancerIds.includes(person.id);
     const isCurrentAssignee = person.id === currentAssigneeId;
@@ -187,7 +163,7 @@ export function RoleEditorModal({
     selectedFreelancerIds
       .map((personId) => freelancers.find((person) => person.id === personId))
       .filter((person): person is TeamPerson => Boolean(person))
-      .forEach(onInviteFreelancer);
+      .forEach((person) => onInviteFreelancer(person, paymentTerms));
     setSelectedFreelancerIds([]);
   };
 
@@ -201,13 +177,19 @@ export function RoleEditorModal({
     }
 
     if (person) {
-      onAssignFreelancer(person);
+      onAssignFreelancer(person, paymentTerms);
       setSelectedFreelancerIds([]);
     }
   };
 
   const saveSettings = () => {
     onSaveSettings(snapToQuarter(Number.parseFloat(draftHours) || 0), selectedStages);
+  };
+
+  const openNewFreelancerInvite = () => {
+    if (!hasValidPaymentTerms) return;
+    onInviteNewFreelancer(paymentTerms);
+    onClose();
   };
 
   return (
@@ -275,6 +257,7 @@ export function RoleEditorModal({
                 value={draftHours}
                 onChange={(event) => setDraftHours(event.target.value)}
               />
+              <span className="team-setting-hint label-xs">Predicted hours drive Studio Staff capacity.</span>
             </div>
             <div className="team-setting-field grow">
               <span className="team-stage-summary label-s">{selectedStageSummary}</span>
@@ -313,10 +296,10 @@ export function RoleEditorModal({
           <div className="team-person-group-heading">
             <div className="team-segmented-control" role="tablist" aria-label="Fill type">
               <button className={`team-segment ${activeFillTab === "team" ? "active" : ""} label-s-semibold`} type="button" role="tab" aria-selected={activeFillTab === "team"} onClick={() => setActiveFillTab("team")}>
-                Team
+                Studio Staff
               </button>
               <button className={`team-segment ${activeFillTab === "gig" ? "active" : ""} label-s-semibold`} type="button" role="tab" aria-selected={activeFillTab === "gig"} onClick={() => setActiveFillTab("gig")}>
-                Contractor
+                Studio Freelancer
               </button>
             </div>
           </div>
@@ -327,7 +310,7 @@ export function RoleEditorModal({
                 const disabledReason = getStaffDisabledReason(slot, person, assignedPersonIds);
                 const isSelected = selectedStaffId === person.id;
 
-                return <StaffOption key={person.id} person={person} disabledReason={disabledReason} isSelected={isSelected} onSelect={() => toggleStaffSelection(person)} />;
+                return <StaffOption key={person.id} person={person} roleHours={draftRoleHours} isCurrentAssignee={person.id === currentAssigneeId} disabledReason={disabledReason} isSelected={isSelected} onSelect={() => toggleStaffSelection(person)} />;
               })}
               <div className="team-fill-actions">
                 <button className="team-secondary-button label-s-semibold" type="button" disabled={!selectedStaffId} onClick={assignSelectedStaff}>
@@ -337,6 +320,12 @@ export function RoleEditorModal({
             </PersonGroup>
           ) : (
             <PersonGroup meta={formatInvitationCount(activeInvitations.length)}>
+              <PaymentBasisControl
+                basis={paymentBasis}
+                flatRate={flatRate}
+                onBasisChange={setPaymentBasis}
+                onFlatRateChange={setFlatRate}
+              />
               {freelancers.map((person) => {
                 const projectDisabledReason = getFreelancerProjectDisabledReason(slot, person, assignedPersonIds);
                 const isAlreadyInvited = isFreelancerAlreadyInvited(slot, person);
@@ -349,6 +338,8 @@ export function RoleEditorModal({
                     key={person.id}
                     person={person}
                     roleHours={draftRoleHours}
+                    paymentBasis={paymentBasis}
+                    flatRate={parsedFlatRate}
                     projectDisabledReason={projectDisabledReason}
                     isAlreadyInvited={isAlreadyInvited}
                     isSelected={isSelected}
@@ -359,34 +350,17 @@ export function RoleEditorModal({
               })}
               <div className="team-fill-actions">
                 <span className="team-fill-primary-actions">
-                  <button className="team-primary-button team-send-invites-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length === 0} onClick={sendSelectedInvites}>
+                  <button className="team-primary-button team-send-invites-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length === 0 || !hasValidPaymentTerms} onClick={sendSelectedInvites}>
                     {selectedFreelancerIds.length > 0 ? `Send ${selectedFreelancerIds.length} ${selectedFreelancerIds.length === 1 ? "invite" : "invites"}` : "Send invites"}
                   </button>
-                  <button className="team-secondary-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length !== 1} onClick={assignSelectedFreelancer}>
+                  <button className="team-secondary-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length !== 1 || !hasValidPaymentTerms} onClick={assignSelectedFreelancer}>
                     {selectedFreelancerIds.length === 1 && selectedFreelancerIds[0] === currentAssigneeId ? "Unassign" : "Assign"}
                   </button>
                 </span>
-                <button className="team-invite-email-link label-s-semibold" type="button" onClick={() => setIsEmailInviteOpen((isOpen) => !isOpen)}>
-                  + Invite by email
+                <button className="team-invite-email-link label-s-semibold" type="button" disabled={!hasValidPaymentTerms} onClick={openNewFreelancerInvite}>
+                  + Invite new Studio Freelancer
                 </button>
               </div>
-              {isEmailInviteOpen ? (
-                <EmailInviteForm
-                  slotId={slot.id}
-                  name={newFreelancerName}
-                  email={newFreelancerEmail}
-                  rate={newFreelancerRate}
-                  message={emailMessage}
-                  isEmailTextOpen={isEmailTextOpen}
-                  onNameChange={setNewFreelancerName}
-                  onEmailChange={setNewFreelancerEmail}
-                  onRateChange={setNewFreelancerRate}
-                  onMessageChange={setEmailMessage}
-                  onToggleEmailText={() => setIsEmailTextOpen((isOpen) => !isOpen)}
-                  onSubmit={submitEmailInvite}
-                  onCancel={() => setIsEmailInviteOpen(false)}
-                />
-              ) : null}
             </PersonGroup>
           )}
         </section>
@@ -445,12 +419,12 @@ function InvitationEditorList({
       <div className="team-invitation-heading label-s-semibold">Invited ({invitations.length}):</div>
       {invitations.map((invitation) => {
         const person = people.find((teamPerson) => teamPerson.id === invitation.personId);
-        const rate = getInvitationRate(invitation);
+        const cost = getInvitationCost(invitation, roleHours);
 
         return person ? (
           <p className="team-invitation-line label-s" key={invitation.id}>
             <span className="team-invitation-person label-s-semibold">{person.name}</span>
-            {showCosts && rate ? <span>{formatCurrency(rate * roleHours)}</span> : null}
+            {showCosts && typeof cost === "number" ? <span>{invitation.paymentBasis === "flat" ? `Project rate ${formatCurrency(cost)}` : formatCurrency(cost)}</span> : null}
             <span>{formatInvitationStatus(invitation.status)}</span>
             <span>{formatSentTime(invitation.sentAt)}</span>
             <button className="team-inline-action label-s-semibold" type="button" onClick={() => onWithdrawInvitation(invitation.id)}>
@@ -463,75 +437,43 @@ function InvitationEditorList({
   );
 }
 
-function EmailInviteForm({
-  slotId,
-  name,
-  email,
-  rate,
-  message,
-  isEmailTextOpen,
-  onNameChange,
-  onEmailChange,
-  onRateChange,
-  onMessageChange,
-  onToggleEmailText,
-  onSubmit,
-  onCancel,
+function PaymentBasisControl({
+  basis,
+  flatRate,
+  onBasisChange,
+  onFlatRateChange,
 }: {
-  slotId: string;
-  name: string;
-  email: string;
-  rate: string;
-  message: string;
-  isEmailTextOpen: boolean;
-  onNameChange: (value: string) => void;
-  onEmailChange: (value: string) => void;
-  onRateChange: (value: string) => void;
-  onMessageChange: (value: string) => void;
-  onToggleEmailText: () => void;
-  onSubmit: () => void;
-  onCancel: () => void;
+  basis: InvitationPaymentBasis;
+  flatRate: string;
+  onBasisChange: (basis: InvitationPaymentBasis) => void;
+  onFlatRateChange: (value: string) => void;
 }) {
   return (
-    <form
-      className="team-invite-form"
-      onSubmit={(event) => {
-        event.preventDefault();
-        onSubmit();
-      }}
-    >
-      <label className="label-xs-semibold" htmlFor={`invite-name-${slotId}`}>
-        Name
-      </label>
-      <input className="team-inline-input label-s" id={`invite-name-${slotId}`} placeholder="Freelancer name" value={name} onChange={(event) => onNameChange(event.target.value)} />
-      <label className="label-xs-semibold" htmlFor={`invite-email-${slotId}`}>
-        Email
-      </label>
-      <input className="team-inline-input label-s" id={`invite-email-${slotId}`} placeholder="name@example.com" type="email" value={email} onChange={(event) => onEmailChange(event.target.value)} />
-      <label className="label-xs-semibold" htmlFor={`invite-rate-${slotId}`}>
-        Rate
-      </label>
-      <input className="team-inline-input label-s" id={`invite-rate-${slotId}`} min="0" step="1" type="number" value={rate} onChange={(event) => onRateChange(event.target.value)} />
-      <button className="team-invite-email-link label-s-semibold" type="button" onClick={onToggleEmailText}>
-        Edit email text
-      </button>
-      {isEmailTextOpen ? (
-        <div className="team-email-popover" role="dialog" aria-label="Edit email text">
-          <label className="label-xs-semibold" htmlFor={`invite-message-${slotId}`}>
-            Email text
-          </label>
-          <textarea className="team-email-textarea label-s" id={`invite-message-${slotId}`} value={message} onChange={(event) => onMessageChange(event.target.value)} />
-        </div>
-      ) : null}
-      <div className="team-modal-actions">
-        <button className="team-secondary-button label-s-semibold" type="button" onClick={onCancel}>
-          Cancel
-        </button>
-        <button className="team-primary-button label-s-semibold" type="submit">
-          Send invite
-        </button>
+    <div className="team-payment-basis">
+      <div className="team-person-group-heading">
+        <span className="label-xs-semibold">Payment basis</span>
+        <span className="label-xs">Hours remain available for workload planning.</span>
       </div>
-    </form>
+      <div className="team-payment-basis-fields">
+        <div className="team-segmented-control" role="group" aria-label="Studio Freelancer payment basis">
+          <button className={`team-segment ${basis === "hourly" ? "active" : ""} label-s-semibold`} type="button" aria-pressed={basis === "hourly"} onClick={() => onBasisChange("hourly")}>
+            Hourly
+          </button>
+          <button className={`team-segment ${basis === "flat" ? "active" : ""} label-s-semibold`} type="button" aria-pressed={basis === "flat"} onClick={() => onBasisChange("flat")}>
+            Project rate
+          </button>
+        </div>
+        {basis === "flat" ? (
+          <label className="team-flat-rate-field label-xs-semibold" htmlFor="team-flat-rate">
+            Project rate
+            <span className="team-money-input">
+              <span aria-hidden="true">$</span>
+              <input className="team-inline-input label-s" id="team-flat-rate" min="1" inputMode="decimal" step="1" type="number" value={flatRate} onChange={(event) => onFlatRateChange(event.target.value)} />
+            </span>
+          </label>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -551,17 +493,23 @@ function PersonGroup({ title, meta, children }: { title?: string; meta?: string;
 
 function StaffOption({
   person,
+  roleHours,
+  isCurrentAssignee,
   disabledReason,
   isSelected,
   onSelect,
 }: {
   person: TeamPerson;
+  roleHours: number;
+  isCurrentAssignee: boolean;
   disabledReason?: string;
   isSelected: boolean;
   onSelect: () => void;
 }) {
+  const capacity = getCapacitySummary(person.bookedHoursThisWeek, person.weeklyCapacityHours, isCurrentAssignee ? 0 : roleHours);
+
   return (
-    <div className={`team-person-option ${disabledReason ? "disabled" : ""}`}>
+    <div className={`team-person-option team-staff-option is-capacity-${capacity.level} ${disabledReason ? "disabled" : ""}`}>
       <label className="team-freelancer-select">
         <input type="checkbox" checked={isSelected} disabled={Boolean(disabledReason)} onChange={onSelect} />
         <span className="team-checkbox-visual" aria-hidden="true" />
@@ -569,9 +517,11 @@ function StaffOption({
       <span className="team-person-option-copy">
         <span className="team-role-person-name label-s">{person.name}</span>
         <span className="team-role-rate label-xs">
-          {teamRoleLabels[person.defaultRole]} · {person.bookedHoursThisWeek}/{person.weeklyCapacityHours}hrs
+          {teamRoleLabels[person.defaultRole]} · {capacity.availableHours}h available · {capacity.projectedHours}/{person.weeklyCapacityHours}h {isCurrentAssignee ? "booked" : "after assignment"}
         </span>
-        {disabledReason ? <span className="team-person-disabled label-xs">Already on project</span> : null}
+        <span className={`team-capacity-status is-${capacity.level} label-xs-semibold`}><span aria-hidden="true" />{capacity.label}</span>
+        {capacity.level === "full" ? <span className="team-capacity-warning label-xs">User is at capacity. Consider inviting a Studio Freelancer.</span> : null}
+        {disabledReason ? <span className="team-person-disabled label-xs">{disabledReason}</span> : null}
       </span>
     </div>
   );
@@ -580,6 +530,8 @@ function StaffOption({
 function FreelancerOption({
   person,
   roleHours,
+  paymentBasis,
+  flatRate,
   projectDisabledReason,
   isAlreadyInvited,
   isSelected,
@@ -588,6 +540,8 @@ function FreelancerOption({
 }: {
   person: TeamPerson;
   roleHours: number;
+  paymentBasis: InvitationPaymentBasis;
+  flatRate: number;
   projectDisabledReason?: string;
   isAlreadyInvited: boolean;
   isSelected: boolean;
@@ -606,7 +560,11 @@ function FreelancerOption({
       <span className="team-person-option-copy">
         <span className="team-role-person-name label-s">{person.name}</span>
         <span className="team-role-rate label-xs">
-          {teamRoleLabels[person.defaultRole]} · ${rate}/hr · {formatCurrency(rate * roleHours)}
+          {paymentBasis === "flat"
+            ? `${teamRoleLabels[person.defaultRole]} · Project rate · ${Number.isFinite(flatRate) && flatRate > 0 ? formatCurrency(flatRate) : "Set an amount"}`
+            : rate > 0
+              ? `${teamRoleLabels[person.defaultRole]} · $${rate}/hr · ${formatCurrency(rate * roleHours)}`
+              : `${teamRoleLabels[person.defaultRole]} · Rate not set`}
         </span>
         {projectDisabledReason ? <span className="team-person-disabled label-xs">Already on project</span> : null}
         {isAlreadyInvited ? <span className="team-person-disabled label-xs">Already invited</span> : null}
@@ -694,6 +652,11 @@ function formatInvitationCount(count: number) {
   return `${count} invited`;
 }
 
-function getDefaultEmailMessage(roleLabel: string, roleHours: number) {
-  return `Hi, we would like to invite you to fill the ${roleLabel} role on this Brisk project. The role is estimated at ${formatHours(roleHours)}. Please reply in Brisk if you are available.`;
+function activeInvitationPaymentBasis(slot: RoleSlot): InvitationPaymentBasis {
+  return getVisibleInvitations(slot).find((invitation) => invitation.paymentBasis === "flat") ? "flat" : "hourly";
+}
+
+function activeInvitationFlatRate(slot: RoleSlot) {
+  const flatRate = getVisibleInvitations(slot).find((invitation) => invitation.paymentBasis === "flat")?.flatRateSnapshot;
+  return typeof flatRate === "number" ? String(flatRate) : "";
 }

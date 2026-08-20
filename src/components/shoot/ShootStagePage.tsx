@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   useEffect,
@@ -18,10 +19,15 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { BriskSelect } from "@/components/form/BriskSelect";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePeople } from "@/components/people/PeopleDataContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
+import { StageApprovalControl } from "@/components/share/ShareActionRow";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAsset } from "@/data/media";
+import type { Person } from "@/data/people";
 import {
   addMinutes,
   callSheetStorageKey,
@@ -123,6 +129,12 @@ function getWeatherIcon(weather: string): DsIconName {
 }
 
 export function ShootStagePage({ project }: { project: Project }) {
+  const searchParams = useSearchParams();
+  const isEmptyPreview = searchParams.get("preview") === "empty";
+  const { selectedRole } = usePrototypeRole();
+  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const shootStageStatus = getProjectStages(project).shoot;
+  const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
   const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project))));
   const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project).days[0]?.id ?? "day-1");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("loading");
@@ -156,11 +168,12 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [personFilter, setPersonFilter] = useState<PersonFilter>("all");
   const [scheduleView, setScheduleView] = useState<ScheduleView>("schedule");
   const [hasStartedShootPlan, setHasStartedShootPlan] = useState(() => {
+    if (isEmptyPreview) return false;
     const initialCallSheet = getInitialCallSheet(project);
     return initialCallSheet.entries.length > 0 || isCallSheetConfigured(initialCallSheet);
   });
-  const [hasCallSheet, setHasCallSheet] = useState(() => isCallSheetConfigured(getInitialCallSheet(project)));
-  const [isShotListEnabled, setIsShotListEnabled] = useState(() => getInitialCallSheet(project).entries.length > 0);
+  const [hasCallSheet, setHasCallSheet] = useState(() => !isEmptyPreview && isCallSheetConfigured(getInitialCallSheet(project)));
+  const [isShotListEnabled, setIsShotListEnabled] = useState(() => !isEmptyPreview && getInitialCallSheet(project).entries.length > 0);
   const [scheduleStatusFilter, setScheduleStatusFilter] = useState<ScheduleStatusFilter>("all");
   const [scheduleTypeFilters, setScheduleTypeFilters] = useState<ScheduleType[]>([]);
   const [scheduleLocationFilters, setScheduleLocationFilters] = useState<string[]>([]);
@@ -213,16 +226,32 @@ export function ShootStagePage({ project }: { project: Project }) {
   const crew = callSheet.people.filter((person) => person.type === "crew");
   const selectedContactId = crew.find((person) => callSheet.onTheDayContact.startsWith(person.name))?.id ?? "";
   const filteredPeople = people.filter((person) => personFilter === "all" || person.type === personFilter);
+  const directoryShootPeople = directoryPeople
+    .filter((person) => person.status !== "Archived" && (person.type !== "Client contact" || person.clientId === project.clientId))
+    .map((person) => personToShootPerson(person, currentDay?.generalCallTime ?? ""));
+  const availableDirectoryPeople = directoryShootPeople.filter((person) => !callSheet.people.some((existing) => isSameShootPerson(existing, person)));
   const peopleDatabase = [
     ...callSheet.people,
-    ...existingPeople.filter((person) => !callSheet.people.some((existing) => existing.id === person.id)),
+    ...availableDirectoryPeople,
+    ...existingPeople.filter((person) => !callSheet.people.some((existing) => isSameShootPerson(existing, person))
+      && !availableDirectoryPeople.some((existing) => isSameShootPerson(existing, person))),
   ];
   const locations = callSheet.locations.filter((location) => isAssignedToDay(location.shootDayIds, currentDay?.id ?? ""));
   const questions = callSheet.questions.filter((question) => isAssignedToDay(question.shootDayIds, currentDay?.id ?? ""));
   const specialInstructions = [callSheet.notes.trim(), callSheet.practicalInfo.access.trim()].filter(Boolean).join("\n\n");
-  const sharedCallSheetHref = `/share/call-sheet/${project.id}?preview=1`;
+  const sharedCallSheetHref = `/share/call-sheet/${project.id}?preview=1&day=${encodeURIComponent(selectedDayId)}`;
+  const selectedDayPdfHref = `/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(selectedDayId)}`;
 
   useEffect(() => {
+    if (isEmptyPreview) {
+      setHasStartedShootPlan(false);
+      setHasCallSheet(false);
+      setIsShotListEnabled(false);
+      setSaveStatus("saved");
+      setHasLoaded(true);
+      return;
+    }
+
     try {
       const stored = window.localStorage.getItem(callSheetStorageKey(project.id));
       let nextCallSheet = normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project)));
@@ -257,7 +286,7 @@ export function ShootStagePage({ project }: { project: Project }) {
     } finally {
       setHasLoaded(true);
     }
-  }, [project.id]);
+  }, [isEmptyPreview, project.id]);
 
   const selectScheduleView = (view: ScheduleView) => {
     if (view === "shots" && !isShotListEnabled) return;
@@ -307,7 +336,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   useEffect(() => {
-    if (!hasLoaded) return;
+    if (!hasLoaded || isEmptyPreview) return;
     const preferences: ShootPlanPreferences = {
       hasStarted: hasStartedShootPlan,
       callSheetEnabled: hasCallSheet,
@@ -315,10 +344,10 @@ export function ShootStagePage({ project }: { project: Project }) {
       scheduleView,
     };
     window.localStorage.setItem(shootPlanPreferencesStorageKey(project.id), JSON.stringify(preferences));
-  }, [hasCallSheet, hasLoaded, hasStartedShootPlan, isShotListEnabled, project.id, scheduleView]);
+  }, [hasCallSheet, hasLoaded, hasStartedShootPlan, isEmptyPreview, isShotListEnabled, project.id, scheduleView]);
 
   useEffect(() => {
-    if (!hasLoaded) return;
+    if (!hasLoaded || isEmptyPreview) return;
     if (skipInitialSaveRef.current) {
       skipInitialSaveRef.current = false;
       return;
@@ -341,7 +370,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       }
     }, 450);
     return () => window.clearTimeout(timeoutId);
-  }, [callSheet, hasLoaded, project.id]);
+  }, [callSheet, hasLoaded, isEmptyPreview, project.id]);
 
   useEffect(() => () => {
     if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
@@ -613,13 +642,50 @@ export function ShootStagePage({ project }: { project: Project }) {
   const savePerson = (draft: PersonDraft) => {
     if (!draft.name.trim()) return;
     const { sourceContact: _sourceContact, ...personFields } = draft;
+    const matchingDirectoryPerson = !draft.id && draft.email.trim()
+      ? directoryPeople.find((candidate) => candidate.email.toLocaleLowerCase("en-AU") === draft.email.trim().toLocaleLowerCase("en-AU"))
+      : undefined;
+    const createdDirectoryPerson = !draft.id && !matchingDirectoryPerson
+      ? createPerson(draft.type === "client"
+        ? {
+            type: "Client contact",
+            name: draft.name.trim(),
+            email: draft.email.trim(),
+            clientId: project.clientId,
+            projectIds: [project.id],
+          }
+        : {
+            type: "Freelancer",
+            name: draft.name.trim(),
+            email: draft.email.trim(),
+            jobTitle: draft.role.trim() || personTypeLabels[draft.type],
+            defaultRate: 800,
+            inviteNow: false,
+          })
+      : undefined;
+    const directoryPerson = matchingDirectoryPerson ?? createdDirectoryPerson;
+    const personId = draft.id ?? directoryPerson?.id ?? `person-${Date.now()}`;
     const person: ShootPerson = {
       ...personFields,
-      id: draft.id ?? `person-${Date.now()}`,
-      name: draft.name.trim(),
+      id: personId,
+      name: matchingDirectoryPerson?.name ?? draft.name.trim(),
+      email: matchingDirectoryPerson?.email ?? draft.email.trim(),
+      phone: matchingDirectoryPerson?.phone || draft.phone.trim(),
       role: draft.role.trim(),
       shootDayIds: draft.shootDayIds,
     };
+    const existingDirectoryPerson = directoryPeople.find((candidate) => candidate.id === personId);
+    if (draft.id && existingDirectoryPerson) {
+      updatePersonIdentity(personId, {
+        name: person.name,
+        email: person.email.trim(),
+        phone: person.phone.trim(),
+      });
+    } else if (matchingDirectoryPerson && !matchingDirectoryPerson.phone && person.phone) {
+      updatePersonIdentity(personId, { phone: person.phone.trim() });
+    } else if (createdDirectoryPerson) {
+      updatePersonIdentity(personId, { phone: person.phone.trim() });
+    }
     mutateCallSheet((current) => ({
       ...current,
       onTheDayContact: assignNewPersonAsContact ? formatPersonContact(person) : current.onTheDayContact,
@@ -635,7 +701,7 @@ export function ShootStagePage({ project }: { project: Project }) {
     setAttachCreatedPersonToQuickEntry(false);
     setAssignNewPersonAsContact(false);
     setPersonDraft(null);
-    showToast(draft.id ? "Person updated." : "Person added to the Call Sheet.");
+    showToast(draft.id ? "Person updated." : matchingDirectoryPerson ? `${matchingDirectoryPerson.name} reused from People.` : "Person added to the Call Sheet.");
   };
 
   const removePerson = (id: string) => {
@@ -947,10 +1013,37 @@ export function ShootStagePage({ project }: { project: Project }) {
                 <DsIcon name="folder" size={16} />
                 Documents
               </button>
+              <Link className="shoot-button secondary label-s-semibold" href={selectedDayPdfHref} target="_blank">
+                <DsIcon name="download-simple" size={16} />
+                Download PDF
+              </Link>
               <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank">
                 <DsIcon name="eye" size={16} />
                 Preview
               </Link>
+              <StageApprovalControl
+                stageLabel="Shoot"
+                userRole={selectedRole}
+                isApproved={shootStageStatus.state === "done"}
+                approvedAt={shootStageStatus.approvedAt}
+                approvedBy={shootStageStatus.approvedBy}
+                onApprove={() => {
+                  setProjectStageStatus(project.id, "shoot", {
+                    state: "done",
+                    daysAgo: 0,
+                    approvedAt: "17 Aug",
+                    approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+                  });
+                  showToast("Shoot approved.");
+                }}
+                onUnapprove={() => {
+                  setProjectStageStatus(project.id, "shoot", {
+                    state: selectedRole === "Customer" ? "waiting" : "in_progress",
+                    daysAgo: 0,
+                  });
+                  showToast(selectedRole === "Customer" ? "Shoot is waiting on the client." : "Shoot is waiting on Brisk.");
+                }}
+              />
             </div>
           </header>
 
@@ -1119,7 +1212,7 @@ export function ShootStagePage({ project }: { project: Project }) {
                   }}
                   onEdit={(entry) => { setDeleteEntryId(null); setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" }); }}
                   onToggleCompletion={toggleEntryCompletion}
-                /> : <ScheduleEmptyState />}
+                /> : <ScheduleEmptyState onAdd={openNewEntry} />}
               </div>
               </> : null}
             </> : null}
@@ -1405,18 +1498,19 @@ function ShootPlanEntryChoice({ onChoose }: { onChoose: (view: ScheduleView) => 
   );
 }
 
-function ScheduleEmptyState() {
+function ScheduleEmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="shoot-schedule-empty">
       <Image className="shoot-schedule-empty-illustration" src="/brisk-visuals/shoot-schedule-empty.png" alt="" width={160} height={160} priority />
       <strong>No schedule entries yet</strong>
       <p className="paragraph-s">Add a shot or activity, or choose a time on the timeline.</p>
+      <Button size="S" variant="primary" onClick={onAdd}>Add schedule item</Button>
     </div>
   );
 }
 
-function ShotListEmptyState() {
-  return <div className="shoot-entry-empty"><strong>No shots yet</strong><p className="paragraph-s">Add your first shot to begin planning the coverage.</p></div>;
+function ShotListEmptyState({ onAdd }: { onAdd: () => void }) {
+  return <div className="shoot-entry-empty"><strong>No shots yet</strong><p className="paragraph-s">Add your first shot to begin planning the coverage.</p><Button size="S" variant="primary" onClick={onAdd}>Add shot</Button></div>;
 }
 
 function ScheduleFilterEmptyState({ label, onClear }: { label: string; onClear: () => void }) {
@@ -2143,7 +2237,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
       {activeFilterCount ? <div className="shoot-shot-filter-summary"><span className="shoot-count label-xs-semibold">{activeFilterCount}</span><span className="label-xs">active {activeFilterCount === 1 ? "filter" : "filters"}</span><button className="shoot-text-action label-xs-semibold" type="button" onClick={resetFilters}>Clear filters</button></div> : null}
     </div> : null}
 
-    {entries.length === 0 ? <ShotListEmptyState /> : filteredEntries.length === 0 ? <div className="shoot-filter-empty"><strong>No shots match these filters</strong><button className="shoot-text-action label-s-semibold" type="button" onClick={resetFilters}>Clear filters</button></div> : <>
+    {entries.length === 0 ? <ShotListEmptyState onAdd={onAddShot} /> : filteredEntries.length === 0 ? <div className="shoot-filter-empty"><strong>No shots match these filters</strong><button className="shoot-text-action label-s-semibold" type="button" onClick={resetFilters}>Clear filters</button></div> : <>
       <div
         className={`shoot-shot-grid-wrap ${hasStickyPrefix ? "has-sticky-prefix" : ""} ${isGridScrolled ? "is-horizontally-scrolled" : ""}`}
         ref={gridRef}
@@ -3455,6 +3549,28 @@ function emptyPersonDraft(callTime: string, activeDayId: string): PersonDraft {
 
 function personToDraft(person: ShootPerson): PersonDraft {
   return { ...person };
+}
+
+function personToShootPerson(person: Person, callTime: string): ShootPerson {
+  return {
+    id: person.id,
+    name: person.name,
+    type: person.type === "Client contact" ? "client" : "crew",
+    role: person.jobTitles[0] ?? (person.type === "Client contact" ? "Client representative" : "Crew"),
+    company: person.clientName ?? (person.type === "Team" ? "North Star Films" : undefined),
+    contactSource: person.type === "Team" ? "team-member" : "saved-contact",
+    phone: person.phone,
+    email: person.email,
+    callTime,
+    shootDayIds: [],
+  };
+}
+
+function isSameShootPerson(left: ShootPerson, right: ShootPerson) {
+  if (left.id === right.id) return true;
+  const leftEmail = left.email.trim().toLocaleLowerCase("en-AU");
+  const rightEmail = right.email.trim().toLocaleLowerCase("en-AU");
+  return Boolean(leftEmail && rightEmail && leftEmail === rightEmail);
 }
 
 function formatPersonContact(person: ShootPerson) {

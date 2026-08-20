@@ -2,12 +2,16 @@
 
 import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { ChatPage } from "@/components/chat/ChatPage";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { getBillingPlan, subscriptionFixtures } from "@/data/billing";
 import { getDemoProjectDestination, isDemoProject } from "@/data/projects";
 import {
   customerDashboardActivity,
@@ -51,6 +55,8 @@ type DashboardSharedState = {
 const queueTabs: QueueTab[] = ["Queued", "Completed", "Paused", "Archived", "All"];
 const queueScopes: QueueScope[] = ["All videos", "Series only", "Standalone only"];
 const projectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused", "Completed", "Archived"];
+const currentPlan = getBillingPlan(subscriptionFixtures.active.planId);
+const poweredByBriskRequired = currentPlan.id === "starter" || currentPlan.id === "professional";
 const dashboardReferenceDate = new Date("2026-07-27T09:00:00+10:00");
 const initialQueueOrder = Array.from(
   new Set(
@@ -71,6 +77,13 @@ const initialSeriesChildOrder = Object.fromEntries(
 
 export function CustomerDashboard() {
   const { selectedRole } = usePrototypeRole();
+  const { studio } = useStudioSettings();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const previewState = searchParams.get("preview");
+  const isStudioPreview = searchParams.get("studio-preview") === "1";
+  const isClientView = selectedRole === "Customer" || isStudioPreview;
+  const clientName = "Loom";
   const [projects, setProjects] = useState<CustomerDashboardProject[]>(customerDashboardProjects);
   const [selectedTab, setSelectedTab] = useState<QueueTab>("Queued");
   const [queueScope, setQueueScope] = useState<QueueScope>("All videos");
@@ -231,15 +244,17 @@ export function CustomerDashboard() {
     return () => window.removeEventListener("mousedown", closeMenus);
   }, [isFilterOpen, openMenuProjectId, openStatusProjectId]);
 
-  const projectsById = useMemo(() => new Map(projects.map((project) => [project.id, project])), [projects]);
+  const displayProjects = previewState === "empty" ? [] : projects;
+  const projectsById = useMemo(() => new Map(displayProjects.map((project) => [project.id, project])), [displayProjects]);
   const seriesById = useMemo(
     () => new Map(customerDashboardSeries.map((series) => [series.id, series])),
     [],
   );
-  const inProductionProjects = projects.filter((project) => project.status === "In Production");
-  const tabProjects = projects.filter((project) => selectedTab === "All" || project.status === selectedTab);
+  const inProductionProjects = displayProjects.filter((project) => project.status === "In Production");
+  const tabProjects = displayProjects.filter((project) => selectedTab === "All" || project.status === selectedTab);
   const queueCount = tabProjects.length;
-  const visibleQueueEntries = queueOrder.reduce<QueueEntry[]>((entries, token) => {
+  const isQueueFilteredEmpty = previewState === "no-results" || (tabProjects.length === 0 && selectedTab !== "All");
+  const visibleQueueEntries = previewState === "no-results" ? [] : queueOrder.reduce<QueueEntry[]>((entries, token) => {
     const [kind, id] = token.split(":", 2);
 
     if (kind === "series") {
@@ -272,6 +287,14 @@ export function CustomerDashboard() {
 
     return entries;
   }, []);
+
+  const clearQueueControls = () => {
+    setSelectedTab("All");
+    setQueueScope("All videos");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    router.replace(`${url.pathname}${url.search}`);
+  };
 
   const notify = (message: string) => {
     setToast(message);
@@ -341,12 +364,15 @@ export function CustomerDashboard() {
   };
 
   return (
-    <main className="customer-dashboard-shell">
+    <main className={`customer-dashboard-shell studio-client-accent-${studio.branding.brandAccentId} ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
       <div className="customer-dashboard-main">
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
-            <span className="customer-dashboard-customer-mark label-xs-semibold">LOOM</span>
-            <h1>Your videos</h1>
+            <StudioPortalBrand logoPreviewUrl={studio.branding.logoPreviewUrl} studioName={studio.details.name} />
+            <div>
+              <span className="label-xs">{clientName} Client portal</span>
+              <h1>Your videos</h1>
+            </div>
           </div>
           <div className="customer-dashboard-global-actions">
             <button
@@ -384,27 +410,36 @@ export function CustomerDashboard() {
 
         <div className="customer-dashboard-layout">
           <div className="customer-dashboard-content">
+            {displayProjects.length === 0 ? (
+              <section className="customer-dashboard-global-empty">
+                <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={24} /></span>
+                <h2 className="headings-s-bold">Your first video starts here</h2>
+                <p className="paragraph-s">Start a video with {studio.details.name} and follow it from Brief through Masters.</p>
+                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={() => notify("Start Video opens the project brief flow")}>Start Video</button>
+              </section>
+            ) : (
+              <>
             <section
               className={`customer-production-section ${isProductionDropActive ? "drop-active" : ""}`}
               aria-labelledby="customer-production-title"
-              onDragEnter={(event) => {
+              onDragEnter={isClientView ? undefined : (event) => {
                 if (dragItem && "projectId" in dragItem) {
                   event.preventDefault();
                   setIsProductionDropActive(true);
                 }
               }}
-              onDragOver={(event) => {
+              onDragOver={isClientView ? undefined : (event) => {
                 if (dragItem && "projectId" in dragItem) {
                   event.preventDefault();
                   event.dataTransfer.dropEffect = "move";
                 }
               }}
-              onDragLeave={(event) => {
+              onDragLeave={isClientView ? undefined : (event) => {
                 if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
                   setIsProductionDropActive(false);
                 }
               }}
-              onDrop={(event) => {
+              onDrop={isClientView ? undefined : (event) => {
                 event.preventDefault();
                 if (dragItem && "projectId" in dragItem) {
                   startProject(dragItem.projectId);
@@ -421,13 +456,15 @@ export function CustomerDashboard() {
                 {isProductionDropActive ? (
                   <span className="customer-production-drop-message label-s-semibold">Drop to start this video</span>
                 ) : null}
-                <span className="customer-production-subtitle label-s">Videos we&apos;re currently making for Loom</span>
+                <span className="customer-production-subtitle label-s">Videos we&apos;re currently making for {clientName}</span>
               </div>
 
               {inProductionProjects.length > 0 ? (
                 <div className={`customer-production-grid production-count-${Math.min(inProductionProjects.length, 5)}`}>
                   {inProductionProjects.map((project) => (
                     <ProductionCard
+                      clientName={clientName}
+                      interactive={!isClientView}
                       key={project.id}
                       project={project}
                       isWide={inProductionProjects.length === 1}
@@ -440,13 +477,15 @@ export function CustomerDashboard() {
                         setIsFilterOpen(false);
                         setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
                       }}
+                      studioName={studio.details.name}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="customer-production-empty">
                   <strong className="headings-2xs-bold">No videos in production</strong>
-                  <span className="label-s">Drag a queued video here when you are ready to begin.</span>
+                  <span className="label-s">Your planned videos are waiting in the queue below.</span>
+                  <button className="customer-dashboard-secondary-button label-s-semibold" type="button" onClick={() => document.getElementById("customer-queue-title")?.scrollIntoView({ behavior: "smooth" })}>View queue</button>
                 </div>
               )}
             </section>
@@ -455,7 +494,7 @@ export function CustomerDashboard() {
               <div className="customer-queue-heading-row">
                 <div>
                   <h2 className="headings-s-bold" id="customer-queue-title">Queue ({queueCount})</h2>
-                  <span className="label-s">Your production roadmap with North Star Films</span>
+                  <span className="label-s">Your production roadmap with {studio.details.name}</span>
                 </div>
                 <div className="customer-queue-header-actions">
                   <div className="customer-dashboard-filter-wrap">
@@ -532,6 +571,8 @@ export function CustomerDashboard() {
                   if (entry.kind === "project") {
                     return (
                       <QueueProjectRow
+                        clientName={clientName}
+                        interactive={!isClientView}
                         key={entry.token}
                         project={entry.project}
                         dragItem={{ kind: "project", token: entry.token, projectId: entry.project.id }}
@@ -557,6 +598,7 @@ export function CustomerDashboard() {
                           setIsFilterOpen(false);
                           setOpenMenuProjectId((current) => (current === entry.project.id ? null : entry.project.id));
                         }}
+                        studioName={studio.details.name}
                       />
                     );
                   }
@@ -570,11 +612,11 @@ export function CustomerDashboard() {
                       <div
                         className="customer-series-row"
                         role="row"
-                        draggable
-                        onDragStart={(event) => beginDrag(event, { kind: "top-level", token: entry.token })}
-                        onDragEnd={finishDrag}
-                        onDragOver={(event) => event.preventDefault()}
-                        onDrop={(event) => {
+                        draggable={!isClientView}
+                        onDragStart={isClientView ? undefined : (event) => beginDrag(event, { kind: "top-level", token: entry.token })}
+                        onDragEnd={isClientView ? undefined : finishDrag}
+                        onDragOver={isClientView ? undefined : (event) => event.preventDefault()}
+                        onDrop={isClientView ? undefined : (event) => {
                           event.preventDefault();
                           if (dragItem?.kind === "top-level" || dragItem?.kind === "project") {
                             moveTopLevelEntry(dragItem.token, entry.token);
@@ -582,9 +624,9 @@ export function CustomerDashboard() {
                           finishDrag();
                         }}
                       >
-                        <span className="customer-queue-drag" aria-hidden="true">
+                        {!isClientView ? <span className="customer-queue-drag" aria-hidden="true">
                           <DsIcon name="dots-six-vertical" size={18} />
-                        </span>
+                        </span> : null}
                         <button
                           className="customer-series-toggle"
                           type="button"
@@ -607,7 +649,7 @@ export function CustomerDashboard() {
                             {latestAction.label} · {formatRelativeTime(latestAction.timestamp)}
                           </span>
                         </div>
-                        <span className="customer-series-summary label-s" role="cell">
+                        <span className="customer-series-summary" role="cell">
                           {getSeriesSummary(allChildren)}
                         </span>
                         <span className="customer-series-statuses" role="cell">
@@ -635,9 +677,11 @@ export function CustomerDashboard() {
                       {isExpanded
                         ? entry.visibleChildren.map((project) => (
                             <QueueProjectRow
+                              clientName={clientName}
                               key={project.id}
                               project={project}
                               child
+                              interactive={!isClientView}
                               dragItem={{
                                 kind: "series-child",
                                 token: `child:${project.id}`,
@@ -666,6 +710,7 @@ export function CustomerDashboard() {
                                 setIsFilterOpen(false);
                                 setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
                               }}
+                              studioName={studio.details.name}
                             />
                           ))
                         : null}
@@ -676,23 +721,33 @@ export function CustomerDashboard() {
                 {visibleQueueEntries.length === 0 ? (
                   <div className="customer-queue-empty">
                     <span className="customer-queue-empty-icon"><DsIcon name="queue" size={24} /></span>
-                    <strong className="headings-2xs-bold">Plan your next video</strong>
-                    <p className="paragraph-s">Add videos here to plan ahead. Drag any into production when you&apos;re ready.</p>
+                    <strong className="headings-2xs-bold">{isQueueFilteredEmpty ? "No videos in this view" : "Plan your next video"}</strong>
+                    <p className="paragraph-s">{isQueueFilteredEmpty ? "There are no videos matching this status or filter." : "Add videos here to plan ahead. Drag any into production when you’re ready."}</p>
                     <button
-                      className="customer-dashboard-primary-button label-s-semibold"
+                      className={`${isQueueFilteredEmpty ? "customer-dashboard-secondary-button" : "customer-dashboard-primary-button"} label-s-semibold`}
                       type="button"
-                      onClick={() => notify("Start Video opens the project brief flow")}
+                      onClick={isQueueFilteredEmpty ? clearQueueControls : () => notify("Start Video opens the project brief flow")}
                     >
-                      Start Video
+                      {isQueueFilteredEmpty ? "Show all videos" : "Start Video"}
                     </button>
                   </div>
                 ) : null}
               </div>
             </section>
+              </>
+            )}
           </div>
 
         </div>
       </div>
+
+      {poweredByBriskRequired ? (
+        <footer className="customer-dashboard-powered-by label-xs">
+          <span>Powered by</span>
+          <Image src="/assets/logos/brisk.svg" alt="" width={18} height={12} />
+          <strong className="label-xs-semibold">Brisk</strong>
+        </footer>
+      ) : null}
 
       {isActivityOpen ? (
         <div className="customer-activity-backdrop" role="presentation" onMouseDown={() => setIsActivityOpen(false)}>
@@ -711,7 +766,7 @@ export function CustomerDashboard() {
             >
               <DsIcon name="x-close-cross" size={18} />
             </button>
-            <ActivityPanel />
+            <ActivityPanel empty={previewState === "empty"} onClose={() => setIsActivityOpen(false)} />
           </aside>
         </div>
       ) : null}
@@ -748,7 +803,18 @@ export function CustomerDashboard() {
   );
 }
 
-function ActivityPanel() {
+function StudioPortalBrand({ logoPreviewUrl, studioName }: { logoPreviewUrl: string | null; studioName: string }) {
+  return (
+    <div className="customer-dashboard-studio-brand">
+      <span className="customer-dashboard-studio-logo" aria-label={`${studioName} logo`}>
+        {logoPreviewUrl ? <img src={logoPreviewUrl} alt="" /> : <span className="label-s-semibold">{getInitials(studioName)}</span>}
+      </span>
+      <strong className="label-m-semibold">{studioName}</strong>
+    </div>
+  );
+}
+
+function ActivityPanel({ empty, onClose }: { empty: boolean; onClose: () => void }) {
   return (
     <section className="customer-activity-panel" aria-labelledby="customer-activity-title">
       <div className="customer-activity-heading">
@@ -759,7 +825,14 @@ function ActivityPanel() {
         <span className="customer-activity-filter label-xs-semibold">All</span>
       </div>
       <div className="customer-activity-list">
-        {customerDashboardActivity.slice(0, 10).map((activity) => {
+        {empty ? (
+          <div className="customer-activity-empty">
+            <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="clock-clockwise" size={24} /></span>
+            <h3 className="headings-2xs-bold">No activity yet</h3>
+            <p className="paragraph-s">Approvals, uploads, messages and status changes will appear here.</p>
+            <button className="customer-dashboard-secondary-button label-s-semibold" type="button" onClick={onClose}>View videos</button>
+          </div>
+        ) : customerDashboardActivity.slice(0, 10).map((activity) => {
           const activityContent = (
             <>
               <span className="customer-activity-icon"><DsIcon name={activity.icon} size={16} /></span>
@@ -789,6 +862,8 @@ function ActivityPanel() {
 }
 
 function ProductionCard({
+  clientName,
+  interactive,
   project,
   isWide,
   series,
@@ -796,7 +871,10 @@ function ProductionCard({
   onChangeStatus,
   isMenuOpen,
   onToggleMenu,
+  studioName,
 }: {
+  clientName: string;
+  interactive: boolean;
   project: CustomerDashboardProject;
   isWide: boolean;
   series?: CustomerDashboardSeries;
@@ -804,13 +882,14 @@ function ProductionCard({
   onChangeStatus: (status: CustomerDashboardStatus) => void;
   isMenuOpen: boolean;
   onToggleMenu: () => void;
+  studioName: string;
 }) {
   return (
     <article className={`customer-production-card ${isWide ? "is-wide" : ""}`}>
       <div className="customer-production-card-top">
         <div className="customer-production-card-copy">
           <span className="customer-project-code label-xs-semibold">{project.code}</span>
-          <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" project={project} />
+          <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" interactive={interactive} project={project} />
           <span className="customer-latest-action label-xs">
             {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
           </span>
@@ -826,7 +905,7 @@ function ProductionCard({
               <DsIcon name="chats" size={18} />
               <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
             </button>
-            <div className="customer-project-menu-wrap">
+            {interactive ? <div className="customer-project-menu-wrap">
               <button
                 className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
                 type="button"
@@ -839,7 +918,7 @@ function ProductionCard({
               {isMenuOpen ? (
                 <ProjectActionsMenu project={project} onChangeStatus={onChangeStatus} />
               ) : null}
-            </div>
+            </div> : null}
           </div>
           <img
             className="customer-production-thumbnail"
@@ -849,22 +928,26 @@ function ProductionCard({
         </div>
       </div>
 
-      <StageProgress
-        compact={!isWide}
-        showAge={false}
-        projectId={project.id}
-        projectName={project.name}
-        stages={project.stages}
-        studioName="North Star Films"
-        customerName="Loom"
-      />
+      <div className="customer-client-stage-progress" inert={interactive ? undefined : true}>
+        <StageProgress
+          compact={!isWide}
+          showAge={false}
+          projectId={project.id}
+          projectName={project.name}
+          stages={project.stages}
+          studioName={studioName}
+          customerName={clientName}
+        />
+      </div>
     </article>
   );
 }
 
 function QueueProjectRow({
+  clientName,
   project,
   child = false,
+  interactive,
   dragItem,
   onDragStart,
   onDragEnd,
@@ -876,9 +959,12 @@ function QueueProjectRow({
   onChangeStatus,
   isMenuOpen,
   onToggleMenu,
+  studioName,
 }: {
+  clientName: string;
   project: CustomerDashboardProject;
   child?: boolean;
+  interactive: boolean;
   dragItem: DragItem;
   onDragStart: (event: ReactDragEvent<HTMLElement>, item: DragItem) => void;
   onDragEnd: () => void;
@@ -890,50 +976,53 @@ function QueueProjectRow({
   onChangeStatus: (status: CustomerDashboardStatus) => void;
   isMenuOpen: boolean;
   onToggleMenu: () => void;
+  studioName: string;
 }) {
   return (
     <div
       className={`customer-queue-row ${child ? "series-child" : ""}`}
       role="row"
-      draggable
-      onDragStart={(event) => onDragStart(event, dragItem)}
-      onDragEnd={onDragEnd}
-      onDragOver={(event) => {
+      draggable={interactive}
+      onDragStart={interactive ? (event) => onDragStart(event, dragItem) : undefined}
+      onDragEnd={interactive ? onDragEnd : undefined}
+      onDragOver={interactive ? (event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = "move";
-      }}
-      onDrop={(event) => {
+      } : undefined}
+      onDrop={interactive ? (event) => {
         event.preventDefault();
         onDropTopLevel();
         onDragEnd();
-      }}
+      } : undefined}
     >
-      <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span>
+      {interactive ? <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span> : null}
       <div className="customer-queue-project" role="cell">
         <span className="customer-project-code label-xs-semibold">{project.code}</span>
-        <CustomerProjectDestination className="heading-3xs" project={project} />
+        <CustomerProjectDestination className="heading-3xs" interactive={interactive} project={project} />
         <span className="customer-latest-action label-xs">
           {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
         </span>
       </div>
       <div className="customer-queue-progress" role="cell">
-        <StageProgress
-          compact
-          showAge={false}
-          projectId={project.id}
-          projectName={project.name}
-          stages={project.stages}
-          studioName="North Star Films"
-          customerName="Loom"
-        />
+        <div className="customer-client-stage-progress" inert={interactive ? undefined : true}>
+          <StageProgress
+            compact
+            showAge={false}
+            projectId={project.id}
+            projectName={project.name}
+            stages={project.stages}
+            studioName={studioName}
+            customerName={clientName}
+          />
+        </div>
       </div>
       <div className="customer-queue-status" role="cell">
-        <ProjectStatusControl
+        {interactive ? <ProjectStatusControl
           project={project}
           isOpen={isStatusMenuOpen}
           onToggle={onToggleStatusMenu}
           onChange={onChangeStatus}
-        />
+        /> : <span className={`status-pill status-${toStatusClass(project.status)} label-xs-semibold`}>{project.status}</span>}
       </div>
       <time className="customer-queue-created label-xs" dateTime={project.createdAt} role="cell">
         {formatCreatedDate(project.createdAt)}
@@ -943,7 +1032,7 @@ function QueueProjectRow({
           <DsIcon name="chats" size={18} />
           <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
         </button>
-        <div className="customer-project-menu-wrap">
+        {interactive ? <div className="customer-project-menu-wrap">
           <button
             className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
             type="button"
@@ -954,7 +1043,7 @@ function QueueProjectRow({
             <DsIcon name="dots-three" size={18} />
           </button>
           {isMenuOpen ? <ProjectActionsMenu project={project} onStart={onStart} /> : null}
-        </div>
+        </div> : null}
       </div>
     </div>
   );
@@ -1060,16 +1149,20 @@ function ProjectActionsMenu({
 
 function CustomerProjectDestination({
   className,
+  interactive = true,
   project,
 }: {
   className: string;
+  interactive?: boolean;
   project: CustomerDashboardProject;
 }) {
   const destination = getDemoProjectDestination(project.id, "brief");
 
-  if (destination) {
+  if (destination && interactive) {
     return <Link className={className} href={destination.href}>{project.name}</Link>;
   }
+
+  if (!interactive) return <span className={`${className} is-static`}>{project.name}</span>;
 
   return (
     <span className={`${className} is-static`} aria-disabled="true" title="Demo not available">
@@ -1129,6 +1222,15 @@ function moveItem(items: string[], draggedItem: string, targetItem: string) {
   nextItems.splice(draggedIndex, 1);
   nextItems.splice(targetIndex, 0, draggedItem);
   return nextItems;
+}
+
+function getInitials(name: string) {
+  return name
+    .split(/\s+/u)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toLocaleUpperCase("en-AU"))
+    .join("");
 }
 
 function normaliseQueueOrder(storedOrder: string[]) {

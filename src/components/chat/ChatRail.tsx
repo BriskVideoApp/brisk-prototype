@@ -237,7 +237,7 @@ export function ChatRail({
                     onClick={() => onProjectSelect(project.id)}
                   >
                     <span className="chat-project-pill-code">{project.code}</span>
-                    <span className="chat-project-pill-name">{project.clientName}</span>
+                    <span className="chat-project-pill-name">{project.title}</span>
                   </button>
                   <ChatUnreadControl
                     count={unreadCount}

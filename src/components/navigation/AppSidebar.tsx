@@ -4,14 +4,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { ProjectMemberSettings } from "@/components/chat/ChatOverlays";
+import type { ChatProject } from "@/components/chat/types";
 import {
+  canRoleSeeNavigationItem,
   getNavigationItem,
   getRoleHome,
   getVisibleNavigationGroups,
   type NavigationItem,
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { RolePreviewControl } from "@/components/navigation/RolePreviewControl";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { brandKitCustomers } from "@/data/brand-kits";
+import { chatClients, chatProjects, chatUsers } from "@/data/chat";
 
 type AppSidebarProps = {
   mobileOpen: boolean;
@@ -38,14 +44,33 @@ export function AppSidebar({
   const currentItem = getNavigationItem(pathname, currentSearch);
   const { selectedRole, allPages } = usePrototypeRole();
   const navigationGroups = getVisibleNavigationGroups(selectedRole, allPages);
+  const contextualProjectId = getContextualProjectId(pathname, searchParams.get("project"));
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isProjectPeopleOpen, setIsProjectPeopleOpen] = useState(false);
+  const [accessProjectsById, setAccessProjectsById] = useState<Record<string, ChatProject>>({});
   const [recentPages, setRecentPages] = useState<RecentPage[]>([]);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const navigationId = useId();
   const historyMenuId = useId();
   const historyControlRef = useRef<HTMLDivElement>(null);
   const currentHref = currentSearch ? `${pathname}?${currentSearch}` : pathname;
+  const accessProject = contextualProjectId
+    ? accessProjectsById[contextualProjectId]
+      ?? chatProjects.find((project) => project.id === contextualProjectId)
+      ?? null
+    : null;
+  const accessClient = accessProject
+    ? chatClients.find((client) => client.name === accessProject.clientName) ?? null
+    : null;
+  const companyUsers = accessClient
+    ? chatUsers.filter((user) => accessClient.userIds.includes(user.id))
+    : [];
+  const projectBrandKit = accessProject
+    ? brandKitCustomers.find((customer) => customer.name === accessProject.clientName) ?? null
+    : null;
+  const canSeeProjectFiles = allPages || selectedRole !== "Customer";
+  const canSeeProjectSettings = allPages || selectedRole === "Studio Staff";
 
   useEffect(() => {
     if (!currentItem) return;
@@ -85,20 +110,24 @@ export function AppSidebar({
     };
   }, [isHistoryOpen]);
 
+  useEffect(() => {
+    setIsProjectPeopleOpen(false);
+  }, [contextualProjectId]);
+
   const visibleRecentPages = recentPages.filter((page) => {
     if (page.href === currentHref) return false;
     const [recentPathname, recentSearch = ""] = page.href.split("?");
     const item = getNavigationItem(recentPathname, recentSearch);
     if (!item) return false;
-    if (allPages) return true;
-    return !item.reviewOnly && item.roles.includes(selectedRole);
+    return canRoleSeeNavigationItem(item, selectedRole, allPages);
   });
 
   return (
-    <aside
-      className={`app-sidebar ${isCollapsed ? "is-collapsed" : ""} ${mobileOpen ? "is-mobile-open" : ""}`}
-      aria-label="Primary navigation"
-    >
+    <>
+      <aside
+        className={`app-sidebar ${isCollapsed ? "is-collapsed" : ""} ${mobileOpen ? "is-mobile-open" : ""}`}
+        aria-label="Primary navigation"
+      >
       <div className="app-sidebar-brand-row">
         <Link className="app-sidebar-brand" href={getRoleHome(selectedRole)} aria-label="Brisk home" onClick={onNavigate}>
           <Image src="/assets/logos/brisk.svg" alt="" width={24} height={16} priority />
@@ -164,7 +193,87 @@ export function AppSidebar({
         </button>
       </div>
 
+      <div className="app-sidebar-role-preview">
+        <RolePreviewControl />
+      </div>
+
       <nav className="app-sidebar-navigation" id={navigationId} aria-label="Brisk product">
+        {contextualProjectId ? (
+          <section className="app-sidebar-group app-sidebar-project-tools">
+            <div className="app-sidebar-group-heading">
+              <span className="app-sidebar-copy label-xs-semibold">Project tools</span>
+            </div>
+            <div className="app-sidebar-links">
+              {canSeeProjectFiles ? (
+                <SidebarLink
+                  active={pathname === `/projects/${contextualProjectId}/files`}
+                  collapsed={isCollapsed}
+                  item={{
+                    id: `project-files-${contextualProjectId}`,
+                    label: "Files",
+                    href: `/projects/${contextualProjectId}/files`,
+                    icon: "folder",
+                    roles: [],
+                  }}
+                  onNavigate={onNavigate}
+                />
+              ) : null}
+              <SidebarLink
+                active={pathname === "/chat" && searchParams.get("project") === contextualProjectId}
+                collapsed={isCollapsed}
+                item={{
+                  id: `project-chat-${contextualProjectId}`,
+                  label: "Project chat",
+                  href: `/chat?project=${encodeURIComponent(contextualProjectId)}`,
+                  icon: "chats",
+                  roles: [],
+                }}
+                onNavigate={onNavigate}
+              />
+              {accessProject ? (
+                <button
+                  className={`app-sidebar-link label-s-semibold ${isProjectPeopleOpen ? "is-active" : ""}`}
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isProjectPeopleOpen}
+                  title={isCollapsed ? "Project people" : undefined}
+                  onClick={() => setIsProjectPeopleOpen(true)}
+                >
+                  <DsIcon name="users-three" size={16} />
+                  <span className="app-sidebar-copy">Project people</span>
+                </button>
+              ) : null}
+              {canSeeProjectSettings ? (
+                <SidebarLink
+                  active={pathname === `/projects/${contextualProjectId}`}
+                  collapsed={isCollapsed}
+                  item={{
+                    id: `project-settings-${contextualProjectId}`,
+                    label: "Settings",
+                    href: `/projects/${contextualProjectId}`,
+                    icon: "settings",
+                    roles: [],
+                  }}
+                  onNavigate={onNavigate}
+                />
+              ) : null}
+              {projectBrandKit ? (
+                <SidebarLink
+                  active={pathname === `/brand-kits/${projectBrandKit.slug}`}
+                  collapsed={isCollapsed}
+                  item={{
+                    id: `project-brand-kit-${contextualProjectId}`,
+                    label: `${projectBrandKit.name}'s Brand Kit`,
+                    href: `/brand-kits/${projectBrandKit.slug}`,
+                    icon: "sparkle",
+                    roles: [],
+                  }}
+                  onNavigate={onNavigate}
+                />
+              ) : null}
+            </div>
+          </section>
+        ) : null}
         {navigationGroups.map((group) => {
           const isGroupCollapsed = collapsedGroups.has(group.id);
 
@@ -213,7 +322,21 @@ export function AppSidebar({
           <span className="app-sidebar-copy label-xs">Prototype review tool</span>
         </div>
       ) : null}
-    </aside>
+      </aside>
+      {isProjectPeopleOpen && accessProject ? (
+        <ProjectMemberSettings
+          project={accessProject}
+          users={chatUsers}
+          companyUsers={companyUsers}
+          canManage={selectedRole === "Studio Staff"}
+          onClose={() => setIsProjectPeopleOpen(false)}
+          onProjectChange={(project) => setAccessProjectsById((current) => ({
+            ...current,
+            [project.id]: project,
+          }))}
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -253,7 +376,14 @@ function isNavigationItemActive(
 ) {
   if (currentItem?.id === item.id) return true;
   if (item.id === "brand-kits" && pathname.startsWith("/brand-kits/")) return true;
+  if (item.id === "clients" && pathname.startsWith("/clients/")) return true;
+  if (item.id === "people" && pathname.startsWith("/people/")) return true;
   if (item.id === "client-brand-kit" && pathname.startsWith("/brand-kits/loom")) return true;
+  if (item.id === "studio-settings" && (
+    pathname.startsWith("/settings/studio")
+    || pathname === "/settings/plan-billing"
+    || pathname === "/settings/client-billing"
+  )) return true;
   return false;
 }
 
@@ -264,4 +394,13 @@ function readRecentPages(): RecentPage[] {
   } catch {
     return [];
   }
+}
+
+function getContextualProjectId(pathname: string, chatProjectId: string | null) {
+  const projectPathMatch = pathname.match(/^\/projects\/([^/]+)/u);
+
+  if (projectPathMatch?.[1]) return projectPathMatch[1];
+  if (pathname === "/chat") return chatProjectId;
+
+  return null;
 }

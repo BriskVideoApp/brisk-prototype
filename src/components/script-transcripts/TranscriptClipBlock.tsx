@@ -21,6 +21,7 @@ export function TranscriptClipBlock({
   isPlaying,
   paragraphs,
   onCopy,
+  onDownload,
   onDelete,
   onHide,
   onParagraphActivate,
@@ -40,6 +41,7 @@ export function TranscriptClipBlock({
   isPlaying: boolean;
   paragraphs: TranscriptParagraph[];
   onCopy: () => void;
+  onDownload: () => void;
   onDelete: () => void;
   onHide: () => void;
   onParagraphActivate: (paragraph: TranscriptParagraph) => void;
@@ -146,7 +148,7 @@ export function TranscriptClipBlock({
               <DsIcon name="copy" size={15} />
               Copy text
             </button>
-            <TranscriptClipMenu onDelete={onDelete} onHide={onHide} onRename={startRenaming} />
+            <TranscriptClipMenu onDelete={onDelete} onDownload={onDownload} onHide={onHide} onRename={startRenaming} />
           </div>
         </header>
 

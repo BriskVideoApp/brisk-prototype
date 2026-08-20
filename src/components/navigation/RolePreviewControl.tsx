@@ -29,7 +29,8 @@ export function RolePreviewControl() {
   function selectRole(role: PrototypeRole) {
     setSelectedRole(role);
 
-    if (currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
+    const isClientsPermissionPreview = pathname === "/clients" || pathname.startsWith("/clients/");
+    if (!isClientsPermissionPreview && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
       router.push(getRoleHome(role));
     }
   }

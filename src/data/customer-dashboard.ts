@@ -45,11 +45,7 @@ const thumbnailFour = "https://images.unsplash.com/photo-1497366754035-f200968a6
 export const customerDashboardFallbackThumbnailUrl = thumbnailThree;
 
 export const customerDashboardSeries: CustomerDashboardSeries[] = [
-  {
-    id: "wacf-cc",
-    name: "WACF CC",
-    childProjectIds: ["loom-wacf-01", "loom-wacf-02", "loom-wacf-03"],
-  },
+  { id: "wacf-cc", name: "WACF CC", childProjectIds: ["loom-wacf-01", "loom-wacf-02", "loom-wacf-03"] },
   {
     id: "customer-stories",
     name: "Customer Stories",

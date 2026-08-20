@@ -69,6 +69,57 @@
   cursor: not-allowed;
 }
 
+.share-approved-status-wrap {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.share-approved-status-trigger {
+  cursor: pointer;
+}
+
+.share-approved-status-trigger:hover:not(:disabled),
+.share-approved-status-trigger[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--brisk-stage-approved-fill) 10%, var(--brisk-white));
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.share-approved-status-trigger:focus-visible {
+  outline: 2px solid var(--brisk-border-focus);
+  outline-offset: 2px;
+}
+
+.share-approved-status-trigger:disabled {
+  cursor: not-allowed;
+}
+
+.share-approval-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--brisk-space-s));
+  z-index: 50;
+  display: grid;
+  width: max-content;
+  min-width: calc(var(--brisk-space-3xl) * 5);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-l);
+}
+
+.share-approval-popover p {
+  color: var(--brisk-text-primary);
+  margin: var(--brisk-space-none);
+  white-space: nowrap;
+}
+
+.share-approval-popover .share-button {
+  width: 100%;
+}
+
 .share-popover {
   position: absolute;
   top: calc(100% + var(--brisk-space-l));

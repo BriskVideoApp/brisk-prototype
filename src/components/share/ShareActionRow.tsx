@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { RequestReviewModal } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
@@ -9,6 +9,20 @@ export type ShareDensity = "comfortable" | "compact";
 export type ShareUserRole = "Studio Staff" | "Studio Freelancer" | "Customer" | "Share Link Viewer";
 export type ShareLinkOpens = "stageOnly" | "wholeProject" | "videoOnly";
 export type ShareAccess = "viewOnly" | "canComment" | "canEdit";
+
+export type StageApprovalControlProps = {
+  stageLabel: string;
+  userRole: ShareUserRole;
+  isApproved: boolean;
+  onApprove: () => void;
+  onUnapprove: () => void;
+  approveLabel?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  customerName?: string;
+  disabled?: boolean;
+  disabledTooltip?: string;
+};
 
 export type ShareActionRowProps = {
   context: ShareStageContext;
@@ -20,10 +34,16 @@ export type ShareActionRowProps = {
   studioName?: string;
   customerName?: string;
   onApprove?: () => void;
+  onUnapprove?: () => void;
+  onSendToStudio?: () => void;
+  onRequestReview?: () => void;
+  isApproved?: boolean;
   showApprove?: boolean;
   showCopyLink?: boolean;
   copyLinkIconOnly?: boolean;
   approveLabel?: string;
+  approvedAt?: string;
+  approvedBy?: string;
 };
 
 type ExpandedSection = "linkOpens" | "access";
@@ -58,10 +78,16 @@ export function ShareActionRow({
   studioName = "Brisk Studios",
   customerName = "Avery Taylor",
   onApprove,
+  onUnapprove,
+  onSendToStudio,
+  onRequestReview,
+  isApproved = false,
   showApprove = true,
   showCopyLink = true,
   copyLinkIconOnly = false,
   approveLabel = "Approve",
+  approvedAt = "17 Aug",
+  approvedBy,
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
@@ -76,7 +102,6 @@ export function ShareActionRow({
   const stageLabel = stageLabels[context];
   const canUseVideoOnly = context === "edit" || context === "masters";
   const isVideoOnly = linkOpens === "videoOnly";
-  const isApproveDisabled = userRole === "Share Link Viewer";
   const isCustomerView = userRole === "Customer";
   const requestReviewLabel = isCustomerView ? `Send to ${studioName}` : "Request Review";
 
@@ -101,6 +126,16 @@ export function ShareActionRow({
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setIsPopoverOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -152,12 +187,14 @@ export function ShareActionRow({
   };
 
   const handleReviewSent = (recipientName: string) => {
+    onRequestReview?.();
     showActionToast(`Review request sent to ${recipientName}`);
   };
 
   const sendToStudio = () => {
     setIsPopoverOpen(false);
     setIsRequestReviewOpen(false);
+    onSendToStudio?.();
     showActionToast(`Sent to ${studioName}`);
   };
 
@@ -205,7 +242,9 @@ export function ShareActionRow({
             type="button"
             aria-label="Copy Link"
             aria-expanded={isPopoverOpen}
-            onClick={() => setIsPopoverOpen((isOpen) => !isOpen)}
+            onClick={() => {
+              setIsPopoverOpen((isOpen) => !isOpen);
+            }}
           >
             <DsIcon name="link" size={20} />
             {copyLinkIconOnly ? null : "Copy Link"}
@@ -219,16 +258,22 @@ export function ShareActionRow({
           {requestReviewLabel}
         </button>
         {showApprove ? (
-          <button
-            className="share-button share-button-primary label-s-semibold"
-            type="button"
-            disabled={isApproveDisabled}
-            data-tooltip={isApproveDisabled ? "Sign in to approve" : undefined}
-            onClick={approveProject}
-          >
-            <DsIcon name="thumbs-up-like-fill" size={20} />
-            {approveLabel}
-          </button>
+          <StageApprovalControl
+            stageLabel={stageLabel}
+            userRole={userRole}
+            isApproved={isApproved}
+            approveLabel={approveLabel}
+            approvedAt={approvedAt}
+            approvedBy={approvedBy}
+            customerName={customerName}
+            onApprove={approveProject}
+            onUnapprove={() => {
+              setIsPopoverOpen(false);
+              setIsRequestReviewOpen(false);
+              if (onUnapprove) onUnapprove();
+              else showActionToast("Approval removed");
+            }}
+          />
         ) : null}
       </div>
       {reviewToastMessage ? (
@@ -298,6 +343,88 @@ export function ShareActionRow({
         />
       ) : null}
     </div>
+  );
+}
+
+export function StageApprovalControl({
+  stageLabel,
+  userRole,
+  isApproved,
+  onApprove,
+  onUnapprove,
+  approveLabel = "Approve",
+  approvedAt = "17 Aug",
+  approvedBy,
+  customerName = "Avery Taylor",
+  disabled = false,
+  disabledTooltip,
+}: StageApprovalControlProps) {
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const popoverId = useId();
+  const [isOpen, setIsOpen] = useState(false);
+  const isRoleDisabled = userRole === "Share Link Viewer" || userRole === "Studio Freelancer";
+  const isDisabled = disabled || isRoleDisabled;
+  const approvalActor = approvedBy ?? (userRole === "Customer" ? customerName : "Tom");
+  const approvalDetails = `Approved on ${approvedAt} by ${approvalActor}.`;
+  const roleTooltip = userRole === "Studio Freelancer" ? "Only Studio Staff or Clients can approve" : "Sign in to approve";
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  if (!isApproved) {
+    return (
+      <span className="share-approved-status-wrap" ref={rootRef} data-tooltip={isDisabled ? (disabledTooltip ?? roleTooltip) : undefined}>
+        <button className="share-button share-button-primary label-s-semibold" type="button" disabled={isDisabled} onClick={onApprove}>
+          <DsIcon name="thumbs-up-like-fill" size={20} />
+          {approveLabel}
+        </button>
+      </span>
+    );
+  }
+
+  return (
+    <span className="share-approved-status-wrap" ref={rootRef}>
+      <button
+        className="script-approved-pill share-approved-status-trigger label-s-semibold"
+        aria-controls={popoverId}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        disabled={isRoleDisabled}
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {stageLabel} approved
+        <DsIcon name="caret-down" size={14} />
+      </button>
+      {isOpen && !isRoleDisabled ? (
+        <aside className="share-approval-popover" id={popoverId} role="dialog" aria-label={`${stageLabel} approval details`}>
+          <p className="label-s">{approvalDetails}</p>
+          <button
+            className="share-button share-button-secondary label-s-semibold"
+            type="button"
+            onClick={() => {
+              setIsOpen(false);
+              onUnapprove();
+            }}
+          >
+            Unapprove {stageLabel.toLowerCase()}
+          </button>
+        </aside>
+      ) : null}
+    </span>
   );
 }
 

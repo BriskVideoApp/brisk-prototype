@@ -448,6 +448,8 @@
   display: flex;
   flex: 0 1 auto;
   min-width: 0;
+  align-items: center;
+  gap: var(--brisk-space-s);
   justify-content: flex-start;
 }
 

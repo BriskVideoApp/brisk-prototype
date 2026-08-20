@@ -1,0 +1,197 @@
+.client-billing-content {
+  align-content: start;
+}
+
+.client-billing-choice,
+.client-billing-modal-copy {
+  display: grid;
+  gap: var(--brisk-space-xl);
+}
+
+.client-billing-option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
+  gap: var(--brisk-space-xl);
+}
+
+.client-billing-option {
+  align-content: start;
+  grid-template-rows: auto 1fr auto;
+}
+
+.client-billing-option-heading,
+.client-billing-selected-header,
+.client-billing-alert-actions,
+.client-billing-boundary-note,
+.client-billing-security-note,
+.client-billing-loading-button,
+.client-billing-points li {
+  display: flex;
+  align-items: center;
+}
+
+.client-billing-option-heading {
+  align-items: flex-start;
+  gap: var(--brisk-space-m);
+}
+
+.client-billing-option-heading > div {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+}
+
+.client-billing-option-heading h2,
+.client-billing-option-heading p,
+.client-billing-points,
+.client-billing-modal-copy p {
+  margin: var(--brisk-space-none);
+}
+
+.client-billing-option-heading p,
+.client-billing-modal-copy p {
+  color: var(--brisk-text-secondary);
+}
+
+.client-billing-option-icon {
+  display: inline-flex;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+  flex: 0 0 var(--brisk-space-3xl);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.client-billing-points {
+  display: grid;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-none);
+  list-style: none;
+}
+
+.client-billing-points li {
+  align-items: flex-start;
+  gap: var(--brisk-space-s);
+}
+
+.client-billing-points .ds-icon {
+  flex: 0 0 auto;
+  margin-top: var(--brisk-space-xxs);
+  color: var(--brisk-system-success);
+}
+
+.client-billing-option-action {
+  margin-top: auto;
+}
+
+.client-billing-selected-card {
+  gap: var(--brisk-space-xl);
+}
+
+.client-billing-current-method-pill {
+  background: var(--brisk-gray-10);
+  color: var(--brisk-text-secondary);
+}
+
+.client-billing-selected-header {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--brisk-space-xl);
+}
+
+.client-billing-selected-header > .billing-status-pill {
+  flex: 0 0 auto;
+}
+
+.client-billing-connection-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
+  gap: var(--brisk-space-xl);
+  margin: var(--brisk-space-none);
+}
+
+.client-billing-connection-details > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.client-billing-connection-details dt {
+  color: var(--brisk-text-secondary);
+}
+
+.client-billing-connection-details dd {
+  min-width: var(--brisk-space-none);
+  margin: var(--brisk-space-none);
+  overflow-wrap: anywhere;
+}
+
+.client-billing-boundary-note,
+.client-billing-security-note {
+  align-items: flex-start;
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-s);
+}
+
+.client-billing-boundary-note .ds-icon,
+.client-billing-security-note .ds-icon {
+  flex: 0 0 auto;
+  color: var(--brisk-brand-primary-click);
+}
+
+.client-billing-alert-actions {
+  align-items: stretch;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+}
+
+.client-billing-loading-button {
+  gap: var(--brisk-space-s);
+}
+
+.client-billing-connected-actions {
+  justify-content: space-between;
+}
+
+@media (max-width: 900px) {
+  .client-billing-action-alert {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .client-billing-action-alert .billing-alert-action {
+    width: 100%;
+    margin-left: var(--brisk-space-none);
+  }
+
+  .client-billing-alert-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .client-billing-option-grid,
+  .client-billing-connection-details {
+    grid-template-columns: minmax(var(--brisk-space-none), 1fr);
+  }
+
+  .client-billing-selected-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .client-billing-option-action,
+  .client-billing-option-action > button,
+  .client-billing-alert-actions,
+  .client-billing-alert-actions > button,
+  .client-billing-loading-button {
+    width: 100%;
+  }
+
+  .client-billing-alert-actions {
+    flex-direction: column;
+  }
+}

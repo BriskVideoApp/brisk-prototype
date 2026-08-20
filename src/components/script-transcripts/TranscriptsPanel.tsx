@@ -27,6 +27,10 @@ import {
   createPlainText,
   formatReviewTime,
 } from "./transcriptDownloads";
+import {
+  openDocumentExportPreview,
+  type TranscriptExportPayload,
+} from "@/lib/document-export";
 
 type TranscriptView = "all" | "highlights";
 
@@ -51,6 +55,10 @@ export function TranscriptsPanel({
   comments,
   initialFocusAssetId,
   isCustomer,
+  projectId,
+  projectName,
+  clientName,
+  studioName,
   sentSourceKeys,
   onCommentsChange,
   onSendRows,
@@ -59,6 +67,10 @@ export function TranscriptsPanel({
   comments: ScriptComment[];
   initialFocusAssetId: string | null;
   isCustomer: boolean;
+  projectId: string;
+  projectName: string;
+  clientName: string;
+  studioName: string;
   sentSourceKeys: Set<string>;
   onCommentsChange: (previousScope: ScriptComment[], nextScope: ScriptComment[]) => void;
   onSendRows: (payloads: TranscriptWordsRowPayload[]) => void;
@@ -194,6 +206,31 @@ export function TranscriptsPanel({
   const copyClipText = async (resolvedClip: ResolvedTranscriptClip) => {
     await copyToClipboard(createPlainText([resolvedClip]));
     showStatus(`${resolvedClip.asset.name} copied.`);
+  };
+
+  const createTranscriptExportPayload = (clipsToExport: ResolvedTranscriptClip[]): TranscriptExportPayload => ({
+    kind: "transcript",
+    projectId,
+    projectName,
+    clientName,
+    studioName,
+    clips: clipsToExport.map(({ clip, asset }) => ({
+      id: clip.id,
+      title: asset.name,
+      language: clip.language,
+      createdAt: clip.createdAt,
+      paragraphs: clip.paragraphs.map((paragraph) => ({
+        ...paragraph,
+        highlighted: visibleHighlights.some((highlight) => (
+          highlight.clipId === clip.id && highlight.paragraphId === paragraph.id
+        )),
+      })),
+    })),
+  });
+
+  const openTranscriptPdfPreview = (clipsToExport: ResolvedTranscriptClip[], clipId?: string) => {
+    openDocumentExportPreview(createTranscriptExportPayload(clipsToExport), clipId);
+    showStatus(`${clipsToExport.length === 1 ? "Transcript" : "Transcripts"} PDF preview opened.`);
   };
 
   const captureSelection = (
@@ -397,6 +434,15 @@ export function TranscriptsPanel({
             <DsIcon name="copy" size={12} />
             Copy all text
           </Button>
+          <Button
+            size="S"
+            type="button"
+            variant="secondary"
+            onClick={() => openTranscriptPdfPreview(visibleClips)}
+          >
+            <DsIcon name="download-simple" size={14} />
+            Download PDF
+          </Button>
         </div>
         <div className="transcript-view-toggle" role="group" aria-label="Transcript view">
           <button
@@ -451,6 +497,7 @@ export function TranscriptsPanel({
               key={clip.id}
               paragraphs={displayedParagraphs}
               onCopy={() => void copyClipText({ clip, asset })}
+              onDownload={() => openTranscriptPdfPreview([{ clip, asset }], clip.id)}
               onDelete={() => {
                 setDeletedClipIds((currentIds) => new Set(currentIds).add(clip.id));
                 setPlayingClipId((currentId) => currentId === clip.id ? null : currentId);

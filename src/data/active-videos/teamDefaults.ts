@@ -177,7 +177,20 @@ export function getVisibleInvitations(slot: RoleSlot) {
 }
 
 export function getInvitationRate(invitation: Invitation) {
+  if (invitation.paymentBasis === "flat") {
+    return undefined;
+  }
+
   return invitation.rateSnapshot ?? getTeamPerson(invitation.personId)?.hourlyRate;
+}
+
+export function getInvitationCost(invitation: Invitation, roleHours: number) {
+  if (invitation.paymentBasis === "flat") {
+    return invitation.flatRateSnapshot;
+  }
+
+  const rate = getInvitationRate(invitation);
+  return typeof rate === "number" ? rate * roleHours : undefined;
 }
 
 export const defaultRoleStages: Record<ProjectVideoType, Partial<Record<TeamRole, StageKey[]>>> = {
@@ -431,28 +444,26 @@ export function getFreelanceCostRange(roleSlot: RoleSlot) {
 
   if (acceptedInvitation) {
     const acceptedPerson = getTeamPerson(acceptedInvitation.personId);
-    const acceptedRate = acceptedPerson?.personType === "Studio Freelancer" ? getInvitationRate(acceptedInvitation) : undefined;
+    const acceptedCost = acceptedPerson?.personType === "Studio Freelancer" ? getInvitationCost(acceptedInvitation, estimatedHours) : undefined;
 
-    if (!acceptedRate) {
+    if (typeof acceptedCost !== "number") {
       return undefined;
     }
 
-    const cost = estimatedHours * acceptedRate;
-
-    return { min: cost, max: cost };
+    return { min: acceptedCost, max: acceptedCost };
   }
 
-  const pendingRates = getVisibleInvitations(roleSlot)
-    .map(getInvitationRate)
-    .filter((rate): rate is number => typeof rate === "number");
+  const pendingCosts = getVisibleInvitations(roleSlot)
+    .map((invitation) => getInvitationCost(invitation, estimatedHours))
+    .filter((cost): cost is number => typeof cost === "number");
 
-  if (pendingRates.length === 0) {
+  if (pendingCosts.length === 0) {
     return undefined;
   }
 
   return {
-    min: Math.min(...pendingRates) * estimatedHours,
-    max: Math.max(...pendingRates) * estimatedHours,
+    min: Math.min(...pendingCosts),
+    max: Math.max(...pendingCosts),
   };
 }
 

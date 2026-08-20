@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type { Project } from "@/components/active-videos/types";
@@ -27,7 +28,11 @@ import { MediaUploadMenu } from "./MediaUploadMenu";
 
 export function MediaStagePage({ project }: { project: Project }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
+  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const mediaStageStatus = getProjectStages(project).media;
+  const previewState = searchParams.get("preview");
   const [assets, setAssets] = useState(() => mediaAssets.filter((asset) => asset.projectId === project.id));
   const [folders, setFolders] = useState(() => mediaFolders.filter((folder) => folder.projectId === project.id));
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
@@ -49,19 +54,22 @@ export function MediaStagePage({ project }: { project: Project }) {
   const toastTimeoutRef = useRef<number | null>(null);
   const dragDepthRef = useRef(0);
 
+  const displayAssets = previewState === "empty" ? [] : assets;
+  const displayFolders = previewState === "empty" ? [] : folders;
   const visibleAssets = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
-    return [...assets]
+    if (previewState === "no-results") return [];
+    return [...displayAssets]
       .filter((asset) => selectedFolderId === null || asset.folderId === selectedFolderId)
       .filter((asset) => typeFilter === "all" || asset.kind === typeFilter)
       .filter((asset) => !normalisedQuery || asset.name.toLowerCase().includes(normalisedQuery))
       .sort((left, right) => compareAssets(left, right, sort));
-  }, [assets, query, selectedFolderId, sort, typeFilter]);
+  }, [displayAssets, previewState, query, selectedFolderId, sort, typeFilter]);
   const childFolders = useMemo(
     () => selectedFolderId === null
       ? []
-      : folders.filter((folder) => folder.parentId === selectedFolderId).sort((left, right) => left.name.localeCompare(right.name)),
-    [folders, selectedFolderId],
+      : displayFolders.filter((folder) => folder.parentId === selectedFolderId).sort((left, right) => left.name.localeCompare(right.name)),
+    [displayFolders, selectedFolderId],
   );
   const folderPath = useMemo(() => getFolderPath(folders, selectedFolderId), [folders, selectedFolderId]);
   const activeAsset = assets.find((asset) => asset.id === activeAssetId) ?? null;
@@ -262,10 +270,10 @@ export function MediaStagePage({ project }: { project: Project }) {
 
   return (
     <main className="media-stage-shell" onDragEnter={handleDragEnter} onDragOver={(event) => event.preventDefault()} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-      <ProjectStageHeader project={project} activeStage="media" />
+      <ProjectStageHeader project={project} activeUtility="media" mediaCount={displayAssets.length} />
       <div className={`media-workspace ${isRailCollapsed ? "rail-collapsed" : ""} ${activeAsset ? "inspector-open" : ""}`}>
         <MediaFolderTree
-          folders={folders}
+          folders={displayFolders}
           selectedFolderId={selectedFolderId}
           collapsed={isRailCollapsed}
           onSelect={selectFolder}
@@ -337,6 +345,18 @@ export function MediaStagePage({ project }: { project: Project }) {
             onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])}
             onDeselectAll={() => setSelectedAssetIds(new Set())}
             onUpload={() => setIsUploadMenuOpen(true)}
+            emptyKind={previewState === "no-results" || ((query.trim() || typeFilter !== "all") && displayAssets.length > 0)
+              ? "filtered"
+              : selectedFolderId
+                ? "folder"
+                : "project"}
+            onClearControls={() => {
+              setQuery("");
+              setTypeFilter("all");
+              const url = new URL(window.location.href);
+              url.searchParams.delete("preview");
+              router.replace(`${url.pathname}${url.search}`);
+            }}
             onFolderOpen={selectFolder}
           />
         </section>
@@ -358,7 +378,41 @@ export function MediaStagePage({ project }: { project: Project }) {
         ) : null}
       </div>
       <footer className="media-stage-footer">
-        <ShareActionRow context="media" userRole={selectedRole} projectName={project.name} studioName="Brisk Studios" customerName="Avery Taylor" density="compact" />
+        <ShareActionRow
+          context="media"
+          userRole={selectedRole}
+          projectName={project.name}
+          studioName="Brisk Studios"
+          customerName="Avery Taylor"
+          density="compact"
+          approvedAt={mediaStageStatus.approvedAt}
+          approvedBy={mediaStageStatus.approvedBy}
+          isApproved={mediaStageStatus.state === "done"}
+          showApprove
+          onSendToStudio={() => {
+            setProjectStageStatus(project.id, "media", { state: "in_progress", daysAgo: 0 });
+            showToast("Media sent to Brisk Studios.");
+          }}
+          onRequestReview={() => {
+            setProjectStageStatus(project.id, "media", { state: "waiting", daysAgo: 0 });
+          }}
+          onApprove={() => {
+            setProjectStageStatus(project.id, "media", {
+              state: "done",
+              daysAgo: 0,
+              approvedAt: "17 Aug",
+              approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+            });
+            showToast("Media approved.");
+          }}
+          onUnapprove={() => {
+            setProjectStageStatus(project.id, "media", {
+              state: selectedRole === "Customer" ? "waiting" : "in_progress",
+              daysAgo: 0,
+            });
+            showToast(selectedRole === "Customer" ? "Media is waiting on the client." : "Media is waiting on Studio.");
+          }}
+        />
       </footer>
       <MediaUploadDropZone active={isDropZoneActive} folderName={selectedFolderName} />
       <MediaCloudPicker

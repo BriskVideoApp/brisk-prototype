@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   formatHours,
   getAcceptedInvitation,
-  getInvitationRate,
+  getInvitationCost,
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
@@ -179,12 +179,12 @@ function InvitationList({ invitations, people, roleHours, showCosts }: { invitat
         <div className="team-invitation-dropdown" onClick={(event) => event.stopPropagation()}>
           {invitations.map((invitation) => {
             const person = people.find((teamPerson) => teamPerson.id === invitation.personId);
-            const rate = getInvitationRate(invitation);
+            const cost = getInvitationCost(invitation, roleHours);
 
             return person ? (
               <p className="team-invitation-line label-s" key={invitation.id}>
                 <span className="team-invitation-person label-s-semibold">{person.name}</span>
-                {showCosts && rate ? <span>{formatCurrency(rate * roleHours)}</span> : null}
+                {showCosts && typeof cost === "number" ? <span>{invitation.paymentBasis === "flat" ? `Project rate ${formatCurrency(cost)}` : formatCurrency(cost)}</span> : null}
                 <span>{formatInvitationStatus(invitation.status)}</span>
                 <span>{formatSentTime(invitation.sentAt)}</span>
               </p>
@@ -206,11 +206,11 @@ function EmptySlotState({ canEdit }: { canEdit: boolean }) {
 }
 
 export function StaffPill() {
-  return <span className="team-person-pill studio label-xs-semibold">Team</span>;
+  return <span className="team-person-pill studio label-xs-semibold">Studio Staff</span>;
 }
 
 export function FreelancePill() {
-  return <span className="team-person-pill freelance label-xs-semibold">Contractor</span>;
+  return <span className="team-person-pill freelance label-xs-semibold">Studio Freelancer</span>;
 }
 
 function formatInvitationStatus(status: Invitation["status"]) {

@@ -23,6 +23,8 @@ type MediaAssetGridProps = {
   onBatchDelete: () => void;
   onDeselectAll: () => void;
   onUpload: () => void;
+  emptyKind: "project" | "folder" | "filtered";
+  onClearControls: () => void;
   onFolderOpen: (folderId: string | null) => void;
 };
 
@@ -58,12 +60,25 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
       ) : null}
       {props.assets.length === 0 && props.folders.length === 0 ? (
         <div className="media-grid-empty">
-          <DsIcon name="upload-simple" size={32} />
-          <p className="label-s-semibold">Drop files here to start, or click Upload.</p>
-          <button className="media-primary-button label-s-semibold" type="button" onClick={props.onUpload}>
-            <DsIcon name="plus" size={16} />
-            Upload
-          </button>
+          <span className="media-grid-empty-icon" aria-hidden="true"><DsIcon name={props.emptyKind === "filtered" ? "search" : "upload-simple"} size={28} /></span>
+          <h2 className="headings-xs-bold">
+            {props.emptyKind === "filtered" ? "No media matches these controls" : props.emptyKind === "folder" ? "This folder is empty" : "No media yet"}
+          </h2>
+          <p className="paragraph-s">
+            {props.emptyKind === "filtered"
+              ? "Try another filename or clear the media filters."
+              : props.emptyKind === "folder"
+                ? "Upload files here or move existing media into this folder."
+                : "Upload files from your computer or import them from connected storage."}
+          </p>
+          {props.emptyKind === "filtered" ? (
+            <button className="media-secondary-button label-s-semibold" type="button" onClick={props.onClearControls}>Clear controls</button>
+          ) : (
+            <button className="media-primary-button label-s-semibold" type="button" onClick={props.onUpload}>
+              <DsIcon name="plus" size={16} />
+              {props.emptyKind === "folder" ? "Upload to this folder" : "Upload media"}
+            </button>
+          )}
         </div>
       ) : props.viewMode === "card" ? (
         <div className="media-card-grid">

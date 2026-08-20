@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import {
   prototypeCustomerSlug,
@@ -349,12 +349,24 @@ function getBrandTintVariables(profile: BrandProfile | null) {
 
 export function BrandKitsLandingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
   const [query, setQuery] = useState("");
   const isStudioView = hasLoadedRole && (allPages || selectedRole !== "Customer");
-  const filteredCustomers = brandKitCustomers.filter((customer) =>
-    `${customer.name} ${customer.website}`.toLowerCase().includes(query.trim().toLowerCase()),
-  );
+  const previewState = searchParams.get("preview");
+  const customers = previewState === "empty" ? [] : brandKitCustomers;
+  const filteredCustomers = previewState === "no-results"
+    ? []
+    : customers.filter((customer) =>
+        `${customer.name} ${customer.website}`.toLowerCase().includes(query.trim().toLowerCase()),
+      );
+
+  const clearSearch = () => {
+    setQuery("");
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    router.replace(`${url.pathname}${url.search}`);
+  };
 
   useEffect(() => {
     if (hasLoadedRole && selectedRole === "Customer" && !allPages) {
@@ -381,13 +393,29 @@ export function BrandKitsLandingPage() {
               id="brand-kits-search"
               type="search"
               value={query}
-              placeholder="Search customers..."
+              placeholder="Search Clients..."
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
         </header>
-        <section className="brand-kits-page-content" aria-label="Customer Brand Kits">
-          <CustomerGrid customers={filteredCustomers} />
+        <section className="brand-kits-page-content" aria-label="Client Brand Kits">
+          {filteredCustomers.length > 0 ? (
+            <CustomerGrid customers={filteredCustomers} />
+          ) : customers.length === 0 ? (
+            <div className="brand-kits-directory-empty">
+              <span className="brand-kits-directory-empty-icon" aria-hidden="true"><DsIcon name="folder" size={28} /></span>
+              <h2 className="headings-xs-bold">Add a Client to create their Brand Kit</h2>
+              <p className="paragraph-s">Each Client has one Brand Kit shared across their videos.</p>
+              <Link className="brand-kits-directory-primary label-s-semibold" href="/clients">Add Client</Link>
+            </div>
+          ) : (
+            <div className="brand-kits-directory-empty">
+              <span className="brand-kits-directory-empty-icon" aria-hidden="true"><DsIcon name="search" size={28} /></span>
+              <h2 className="headings-xs-bold">No Brand Kits match your search</h2>
+              <p className="paragraph-s">Try another Client name or clear the search.</p>
+              <button className="brand-secondary-button label-s-semibold" type="button" onClick={clearSearch}>Clear search</button>
+            </div>
+          )}
         </section>
       </div>
     </main>
@@ -1162,7 +1190,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                                 autoFocus
                                 className="brand-inline-input paragraph-s"
                                 inputMode="url"
-                                placeholder="yourcompany.com"
+                                placeholder="yourwebsite.com"
                                 type="text"
                                 value={inlineSetupWebsiteDraft}
                                 onChange={(event) => setInlineSetupWebsiteDraft(event.target.value)}
@@ -1253,7 +1281,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                               autoFocus
                               className="brand-inline-input paragraph-s"
                               inputMode="url"
-                              placeholder="yourcompany.com"
+                              placeholder="yourwebsite.com"
                               type="text"
                               value={inlineSetupWebsite}
                               onChange={(event) => {

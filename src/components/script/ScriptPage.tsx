@@ -16,6 +16,8 @@ import type { Project } from "@/components/active-videos/types";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { StageApprovalControl } from "@/components/share/ShareActionRow";
 import {
   ScriptAiPanel,
   type ScriptAiInsertRequest,
@@ -58,6 +60,10 @@ import {
   type ScriptVersion,
 } from "@/data/script";
 import { transcriptClips, type TranscriptClip, type TranscriptWordsRowPayload } from "@/data/transcripts";
+import {
+  openDocumentExportPreview,
+  type ScriptExportPayload,
+} from "@/lib/document-export";
 
 const currentUserId = "user-tom";
 const mediaMenuOptions: Array<ScriptMediaPickerOption<ScriptMediaType>> = [
@@ -155,6 +161,7 @@ type ScriptPageProps = {
   project: Project;
   initialSubtab: ScriptSubtabId;
   initialTranscriptClipId: string | null;
+  initiallyEmpty?: boolean;
 };
 
 const overallCommentAnchor: ScriptCommentAnchor = {
@@ -167,8 +174,9 @@ const defaultVersionMeta: ScriptVersionMeta = {
 };
 const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
-export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: ScriptPageProps) {
+export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, initiallyEmpty = false }: ScriptPageProps) {
   const { selectedRole } = usePrototypeRole();
+  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const latestVersion = scriptVersions[scriptVersions.length - 1];
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
   const isCustomer = role === "customer";
@@ -176,14 +184,14 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
   const [density] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
-  const [isScriptApproved, setIsScriptApproved] = useState(false);
+  const [isScriptApproved, setIsScriptApproved] = useState(() => getProjectStages(project).script.state === "done");
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
   const [versionMetaById, setVersionMetaById] = useState<Record<string, ScriptVersionMeta>>(() =>
     createInitialVersionMeta(scriptVersions, latestVersion.id),
   );
   const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
-  const [rows, setRows] = useState<ScriptRow[]>(() => cloneRows(latestVersion.rows));
-  const [rowHistory, setRowHistory] = useState<ScriptRow[][]>(() => [cloneRows(latestVersion.rows)]);
+  const [rows, setRows] = useState<ScriptRow[]>(() => initiallyEmpty ? [] : cloneRows(latestVersion.rows));
+  const [rowHistory, setRowHistory] = useState<ScriptRow[][]>(() => [initiallyEmpty ? [] : cloneRows(latestVersion.rows)]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectionState, setSelectionState] = useState<SelectionState>({
     lastRowId: null,
@@ -224,7 +232,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
   const [aiPanelPreset, setAiPanelPreset] = useState<ScriptAiPanelPreset | undefined>(undefined);
   const [showAiToCustomer] = useState(scriptBrief.showAiToCustomer);
   const [hasTypedThisSession, setHasTypedThisSession] = useState(() =>
-    latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
+    !initiallyEmpty && latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
   );
   const [floatingToolbar, setFloatingToolbar] = useState<ScriptFloatingToolbarState>({
     visible: false,
@@ -1032,7 +1040,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
     }
 
     if (version.approvedSnapshot) {
-      setToastMessage("The approved version can't be deleted. Un-approve or approve a different version first.");
+      setToastMessage("The approved version can't be deleted. Unapprove or approve a different version first.");
       setIsVersionsPanelOpen(false);
       return;
     }
@@ -1092,35 +1100,34 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
   };
 
   const downloadCurrentVersion = () => {
-    const versionName = getVersionButtonLabel(
+    const versionLabel = getVersionButtonLabel(
       selectedVersion,
       versionMetaById[selectedVersion.id] ?? defaultVersionMeta,
     );
-    const scriptBody = rows
-      .map((row, index) => {
-        const lineNumber = String(index + 1).padStart(2, "0");
-        return row.visuals.trim()
-          ? `${lineNumber}  ${row.words}\n    Visuals: ${row.visuals}`
-          : `${lineNumber}  ${row.words}`;
-      })
-      .join("\n\n");
-    const fileName = `${project.name}-${versionName}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-    const blob = new Blob(
-      [`${project.name}\n${versionName}\n\n${scriptBody}\n`],
-      { type: "text/plain;charset=utf-8" },
-    );
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
+    const payload: ScriptExportPayload = {
+      kind: "script",
+      projectId: project.id,
+      projectName: project.name,
+      clientName: project.clientName,
+      studioName: scriptBrief.studioName,
+      documentTitle: getVersionHistoryTitle(
+        selectedVersion,
+        versionMetaById[selectedVersion.id] ?? defaultVersionMeta,
+      ),
+      versionLabel,
+      createdAt: selectedVersion.createdAt,
+      rows: visibleRows.map((row) => ({
+        id: row.id,
+        words: row.words,
+        visuals: row.visuals,
+        durationSeconds: row.durationSeconds,
+        media: row.media.map((item) => ({ ...item })),
+      })),
+    };
 
-    anchor.href = url;
-    anchor.download = `${fileName}.txt`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    openDocumentExportPreview(payload);
     setIsCurrentVersionMenuOpen(false);
-    setToastMessage(`Downloading ${versionName}`);
+    setToastMessage(`PDF preview opened for ${versionLabel}.`);
   };
 
   const saveCurrentVersionRename = () => {
@@ -1179,18 +1186,25 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
   };
 
   const approveScript = () => {
+    if (selectedRole === "Studio Freelancer") return;
     const approvedAt = formatSnapshotDate(new Date());
     const previouslyApprovedVersion = versions.find((version) => version.approvedSnapshot && version.id !== selectedVersionId);
 
     setIsScriptApproved(true);
     setStatus("Approved");
+    setProjectStageStatus(project.id, "script", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt,
+      approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+    });
     setVersions((currentVersions) =>
       currentVersions.map((version) =>
         version.id === selectedVersionId
           ? {
               ...version,
               approvedSnapshot: true,
-              approvedBy: "Tom",
+              approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
               approvedAt,
               displayName: undefined,
               snapshotName: `${version.label} - Approved`,
@@ -1205,7 +1219,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
     );
     if (previouslyApprovedVersion) {
       addDocHistoryEntry({
-        title: `Tom un-approved ${previouslyApprovedVersion.label}`,
+        title: `Tom unapproved ${previouslyApprovedVersion.label}`,
         detail: `${previouslyApprovedVersion.label} is no longer marked approved.`,
         actor: "Tom",
         time: "Just now",
@@ -1226,7 +1240,11 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
 
   const unapproveScript = (shouldDuplicateSnapshot: boolean) => {
     setIsScriptApproved(false);
-    setStatus("Waiting on Customer");
+    setStatus(selectedRole === "Customer" ? "Waiting on Customer" : "In script");
+    setProjectStageStatus(project.id, "script", {
+      state: selectedRole === "Customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
 
     if (shouldDuplicateSnapshot) {
       const actor = role === "customer" ? "Customer" : "Studio";
@@ -1750,12 +1768,12 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
               Rename
             </button>
             <button className="label-xs-semibold" type="button" onClick={downloadCurrentVersion}>
-              Download
+              Download PDF
             </button>
             <button
               className="delete label-xs-semibold"
               disabled={selectedVersion.approvedSnapshot}
-              title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Un-approve or approve a different version first." : undefined}
+              title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Unapprove or approve a different version first." : undefined}
               type="button"
               onClick={() => {
                 setIsCurrentVersionMenuOpen(false);
@@ -1793,6 +1811,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
       <ScriptActionCluster
         approvedAt={selectedVersion.approvedAt}
         approvedBy={selectedVersion.approvedBy}
+        canApprove={selectedRole !== "Studio Freelancer"}
         isApproved={isScriptApproved}
         isPreviewing={isPreviewingVersion}
         subtabLabel="script"
@@ -1941,10 +1960,14 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
           </>
         ) : activeSubtabId === "transcripts" ? (
           <TranscriptsPanel
-            clips={scriptBrief.hasDialogueMedia ? projectTranscriptClips : []}
+            clips={initiallyEmpty ? [] : scriptBrief.hasDialogueMedia ? projectTranscriptClips : []}
             comments={visibleComments}
             initialFocusAssetId={initialTranscriptClipId}
             isCustomer={isCustomer}
+            projectId={project.id}
+            projectName={project.name}
+            clientName={project.clientName}
+            studioName={scriptBrief.studioName}
             sentSourceKeys={sentTranscriptSourceKeys}
             onCommentsChange={mergeScopedComments}
             onSendRows={appendTranscriptRows}
@@ -2104,6 +2127,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId }: 
 function ScriptActionCluster({
   approvedAt,
   approvedBy,
+  canApprove,
   isApproved,
   isPreviewing,
   subtabLabel,
@@ -2115,6 +2139,7 @@ function ScriptActionCluster({
 }: {
   approvedAt?: string;
   approvedBy?: string;
+  canApprove: boolean;
   isApproved: boolean;
   isPreviewing: boolean;
   subtabLabel: string;
@@ -2128,8 +2153,6 @@ function ScriptActionCluster({
   const disabledTooltip = "Return to current to approve or share.";
   const copyTooltip = `Copy link to ${targetLabel}`;
   const reviewTooltip = `Request review of ${targetLabel}`;
-  const approveTooltip = `Approve ${targetLabel}`;
-  const approvedTooltip = `Approved on ${approvedAt ?? "21 Jun"} by ${approvedBy ?? "Tom"}.`;
 
   return (
     <div className="share-action-row share-density-compact script-action-cluster" aria-label={`${targetLabel} actions`}>
@@ -2153,28 +2176,17 @@ function ScriptActionCluster({
         >
           Request review
         </button>
-        {isApproved && !isPreviewing ? (
-          <span className="script-approved-pill-wrap">
-            <button className="script-approved-pill label-s-semibold" data-tooltip={approvedTooltip} type="button" onClick={onUnapprove}>
-              <DsIcon name="check" size={14} />
-              {capitaliseLabel(subtabLabel)} approved
-            </button>
-            <button className="script-unapprove-link label-xs-semibold" type="button" onClick={onUnapprove}>
-              Un-approve
-            </button>
-          </span>
-        ) : (
-          <button
-            className="share-button share-button-primary label-s-semibold"
-            data-tooltip={isPreviewing ? disabledTooltip : approveTooltip}
-            disabled={isPreviewing}
-            type="button"
-            onClick={onApprove}
-          >
-            <DsIcon name="thumbs-up-like-fill" size={20} />
-            Approve
-          </button>
-        )}
+        <StageApprovalControl
+          stageLabel={capitaliseLabel(subtabLabel)}
+          userRole={canApprove ? "Studio Staff" : "Studio Freelancer"}
+          isApproved={isApproved && !isPreviewing}
+          approvedAt={approvedAt ?? "21 Jun"}
+          approvedBy={approvedBy ?? "Tom"}
+          disabled={isPreviewing}
+          disabledTooltip={disabledTooltip}
+          onApprove={onApprove}
+          onUnapprove={onUnapprove}
+        />
       </div>
     </div>
   );

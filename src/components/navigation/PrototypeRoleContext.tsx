@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type PrototypeRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
@@ -28,6 +28,14 @@ export const prototypeCustomerSlug = "loom";
 export function PrototypeRoleProvider({ children }: { children: React.ReactNode }) {
   const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
   const [allPages, setAllPages] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (window.location.pathname === "/customer-dashboard" && searchParams.get("studio-preview") === "1") {
+      setSelectedRole("Customer");
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       selectedRole,
