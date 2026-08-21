@@ -12,8 +12,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
+import { useCostsData } from "@/components/costs/CostsDataContext";
 import { todayCurrentUserId } from "@/data/today/mockData";
 import { getDemoProjectDestination } from "@/data/projects";
+import { formatCostAmount, type ContractorInvoice, type ContractorOffer, type CostCurrency } from "@/data/costs";
 import {
   readSharedTimeEntries,
   sharedTimeEntriesEventName,
@@ -25,6 +27,7 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
+import { ProjectLatestActionsList } from "@/components/notifications/ProjectActivityHistory";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
 import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
@@ -34,7 +37,7 @@ import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey,
 
 type StatusTab = "All" | Project["status"];
 type FilterKey = "client" | "teammate" | "tags" | "status" | "deadline";
-type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hours" | "team" | "actions";
+type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hours" | "costs" | "team" | "actions";
 type TableColumnKey = "project" | DataColumnKey;
 type DeadlineCategory = "Overdue" | "Due Soon" | "On Track";
 type TagClass = "critical" | "high-priority" | "in-review" | "neutral" | "green" | "peach" | "cream";
@@ -46,6 +49,10 @@ type ProjectTimeEntry = {
   hours: number;
   stage: StageKey;
   note?: string;
+};
+type ProjectCostSummary = {
+  totalLabel: string;
+  outstandingInvoiceCount: number;
 };
 type FilterState = {
   client: string | null;
@@ -81,25 +88,31 @@ type ColumnSettlingGhostState = {
   width: number;
   height: number;
 };
+type LatestActionsOpenRequest = {
+  projectId: string;
+  requestId: number;
+};
 
 const statusTabs: StatusTab[] = ["All", "Queued", "In Production", "Completed", "Paused", "Archived"];
 const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
 const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
 const projectColumnWidth = 300;
-const columnOrderStorageKey = "brisk-active-videos-column-order-v2";
+const columnOrderStorageKey = "brisk-active-videos-column-order-v3";
 const fixedEndColumn: DataColumnKey = "actions";
 
 const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   progress: { label: "Progress", width: 490 },
-  latestUpdate: { label: "Latest Action", width: 300 },
+  latestUpdate: { label: "Latest action", width: 300 },
   status: { label: "Status", width: 150 },
   deadline: { label: "Deadline", width: 170 },
   hours: { label: "Hours", width: 220 },
+  costs: { label: "Costs", width: 190 },
   team: { label: "Team", width: 68 },
   actions: { label: "Actions", width: 86 },
 };
 
-const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team"];
+const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "costs", "team"];
+const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team"];
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 
 function getProjectFlowHref(projectId: string) {
@@ -136,7 +149,7 @@ export function ActiveVideosPage() {
     return <FreelancerVideosPage />;
   }
 
-  return <ActiveVideosWorkspace />;
+  return <ActiveVideosWorkspace key={selectedRole} />;
 }
 
 function ActiveVideosWorkspace() {
@@ -144,6 +157,7 @@ function ActiveVideosWorkspace() {
   const { completionRecords } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
   const { getProjectStages } = useProjectStageStatus();
+  const { invoices, offers } = useCostsData();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
@@ -173,15 +187,18 @@ function ActiveVideosWorkspace() {
   const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams));
   const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams) !== null);
   const [isPanelContentSwitching, setIsPanelContentSwitching] = useState(false);
+  const [latestActionsOpenRequest, setLatestActionsOpenRequest] = useState<LatestActionsOpenRequest | null>(null);
   const panelCloseTimeoutRef = useRef<number | null>(null);
+  const latestActionsRequestIdRef = useRef(0);
+  const availableColumnOrder = selectedRole === "Studio Staff" ? defaultColumnOrder : nonStaffColumnOrder;
   const videoTable = useRoleVideoTable<DataColumnKey, "project">({
     columnConfig,
     defaultHiddenColumns,
-    defaultOrder: defaultColumnOrder,
+    defaultOrder: availableColumnOrder,
     minimumVisibleColumns: 2,
     primaryColumnKey: "project",
     primaryColumnWidth: projectColumnWidth,
-    storageKey: columnOrderStorageKey,
+    storageKey: selectedRole === "Studio Staff" ? columnOrderStorageKey : `${columnOrderStorageKey}:${selectedRole}`,
   });
   const {
     columnContextMenu,
@@ -259,6 +276,13 @@ function ActiveVideosWorkspace() {
       });
   }, [completionRecords, extraProjectTimeEntries, getProjectStages, previewState]);
 
+  const projectCostSummaries = useMemo(
+    () => Object.fromEntries(
+      projects.map((project) => [project.id, getProjectCostSummary(project.id, offers, invoices)]),
+    ) as Record<string, ProjectCostSummary>,
+    [invoices, offers, projects],
+  );
+
   const statusCounts = useMemo(() => Object.fromEntries(statusTabs.map((tab) => [
     tab,
     tab === "All" ? projects.length : projects.filter((project) => project.status === tab).length,
@@ -329,7 +353,11 @@ function ActiveVideosWorkspace() {
     router.push(nextPath, { scroll: false });
   };
 
-  const openProjectPanel = (projectId: string, mode: "push" | "replace" = "push") => {
+  const openProjectPanel = (
+    projectId: string,
+    mode: "push" | "replace" = "push",
+    expandLatestActions = false,
+  ) => {
     if (panelCloseTimeoutRef.current !== null) {
       window.clearTimeout(panelCloseTimeoutRef.current);
       panelCloseTimeoutRef.current = null;
@@ -338,6 +366,15 @@ function ActiveVideosWorkspace() {
     setOpenMenuProjectId(null);
     setOpenTagProjectId(null);
     setOpenDeadlineProjectId(null);
+    if (expandLatestActions) {
+      latestActionsRequestIdRef.current += 1;
+      setLatestActionsOpenRequest({
+        projectId,
+        requestId: latestActionsRequestIdRef.current,
+      });
+    } else {
+      setLatestActionsOpenRequest(null);
+    }
 
     if (isProjectPanelOpen && panelProjectId && panelProjectId !== projectId) {
       setIsPanelContentSwitching(true);
@@ -357,6 +394,7 @@ function ActiveVideosWorkspace() {
   const closeProjectPanel = (mode: "push" | "replace" = "push") => {
     setIsProjectPanelOpen(false);
     setIsPanelContentSwitching(false);
+    setLatestActionsOpenRequest(null);
     updateProjectQuery(null, mode);
 
     if (panelCloseTimeoutRef.current !== null) {
@@ -613,6 +651,7 @@ function ActiveVideosWorkspace() {
             />
           ))}
           <ColumnVisibilityMenu
+            availableColumns={availableColumnOrder}
             isOpen={isColumnMenuOpen}
             hiddenColumns={hiddenColumns}
             visibleColumnCount={visibleDataColumns.filter((columnKey) => columnKey !== fixedEndColumn).length}
@@ -675,6 +714,7 @@ function ActiveVideosWorkspace() {
                   fileLocations={fileLocationsByProjectId[project.id] ?? []}
                   hasLoadedRole={hasLoadedRole}
                   selectedRole={selectedRole}
+                  costSummary={projectCostSummaries[project.id]}
                   tags={projectTags[project.id] ?? []}
                   tagOptions={tagOptions}
                   tagClasses={tagClasses}
@@ -704,6 +744,7 @@ function ActiveVideosWorkspace() {
                     else openProjectPanel(project.id);
                   }}
                   onOpenDetails={() => openProjectPanel(project.id)}
+                  onOpenLatestActions={() => openProjectPanel(project.id, "push", true)}
                   onToggleMenu={() =>
                     setOpenMenuProjectId((current) => (current === project.id ? null : project.id))
                   }
@@ -767,6 +808,11 @@ function ActiveVideosWorkspace() {
           isOpen={isProjectPanelOpen}
           isSwitching={isPanelContentSwitching}
           selectedRole={selectedRole}
+          latestActionsOpenRequest={
+            latestActionsOpenRequest?.projectId === panelProject.id
+              ? latestActionsOpenRequest.requestId
+              : null
+          }
           onClose={() => closeProjectPanel()}
           onSaveDeadline={(deadline) => saveProjectDeadline(panelProject.id, deadline)}
         />
@@ -1065,6 +1111,7 @@ function ColumnHeaderMenu({
 }
 
 function ColumnVisibilityMenu({
+  availableColumns,
   isOpen,
   hiddenColumns,
   visibleColumnCount,
@@ -1072,6 +1119,7 @@ function ColumnVisibilityMenu({
   onToggleColumn,
   onReset,
 }: {
+  availableColumns: readonly DataColumnKey[];
   isOpen: boolean;
   hiddenColumns: DataColumnKey[];
   visibleColumnCount: number;
@@ -1100,7 +1148,7 @@ function ColumnVisibilityMenu({
             <span>Project</span>
             <span className="active-columns-lock label-xs">Locked</span>
           </div>
-          {defaultColumnOrder.map((columnKey) => {
+          {availableColumns.map((columnKey) => {
             const isHidden = hiddenColumns.includes(columnKey);
             const isLastVisible = !isHidden && visibleColumnCount <= 1;
             const isFixedEndColumn = columnKey === fixedEndColumn;
@@ -1145,6 +1193,7 @@ function ProjectDetailPanel({
   isOpen,
   isSwitching,
   selectedRole,
+  latestActionsOpenRequest,
   onClose,
   onSaveDeadline,
 }: {
@@ -1155,6 +1204,7 @@ function ProjectDetailPanel({
   isOpen: boolean;
   isSwitching: boolean;
   selectedRole: PrototypeRole;
+  latestActionsOpenRequest: number | null;
   onClose: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
 }) {
@@ -1166,7 +1216,6 @@ function ProjectDetailPanel({
   const [notes, setNotes] = useState<string[]>([]);
   const [draftNote, setDraftNote] = useState("");
   const [isTimeSpentOpen, setIsTimeSpentOpen] = useState(false);
-  const activityItems = getProjectActivityItems(project);
   const clientContact = getClientContact(project);
   const tagsKey = tags.join("\u0001");
   const loggedHours = getProjectLoggedHours(project.team, project.timeEntries);
@@ -1457,28 +1506,16 @@ function ProjectDetailPanel({
           />
         </section>
 
-        <ProjectDetailCollapsibleSection title="Latest activity">
-          <div className="project-detail-activity-feed">
-            {activityItems.slice(0, 5).map((activityItem) => {
-              const activityParts = getLatestUpdateLabelParts(activityItem.label);
-
-              return (
-                <div className={`project-detail-activity-item ${activityItem.isSystem ? "system" : ""}`} key={activityItem.id}>
-                  {activityItem.isSystem ? <span className="project-detail-system-icon label-xs-semibold">System</span> : null}
-                  <span className="label-s">
-                    <strong>{activityParts.action}</strong>
-                    {activityParts.detail ? ` ${activityParts.detail}` : ""}
-                  </span>
-                  <time className="label-xs" dateTime={activityItem.timestamp} title={formatFullTimestamp(activityItem.timestamp)}>
-                    {formatWorkingAge(activityItem.timestamp, latestUpdateReferenceDate)}
-                  </time>
-                </div>
-              );
-            })}
-            <span className="project-detail-view-all is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
-              Demo not available
-            </span>
-          </div>
+        <ProjectDetailCollapsibleSection
+          title="Latest actions"
+          openRequest={latestActionsOpenRequest}
+          resetKey={project.id}
+        >
+          <ProjectLatestActionsList
+            projectId={project.id}
+            role={selectedRole}
+            freelancerHasProjectAccess={freelancerViewerPersonId !== undefined}
+          />
         </ProjectDetailCollapsibleSection>
 
         <ProjectDetailCollapsibleSection title="Client" onEdit={() => setEditingSection("client")}>
@@ -1724,12 +1761,28 @@ function ProjectDetailCollapsibleSection({
   title,
   children,
   onEdit,
+  openRequest = null,
+  resetKey,
 }: {
   title: string;
   children: ReactNode;
   onEdit?: () => void;
+  openRequest?: number | null;
+  resetKey?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (resetKey !== undefined) {
+      setIsOpen(false);
+    }
+  }, [resetKey]);
+
+  useEffect(() => {
+    if (openRequest !== null) {
+      setIsOpen(true);
+    }
+  }, [openRequest]);
 
   return (
     <section className={`project-detail-section project-detail-collapsible ${isOpen ? "open" : ""}`}>
@@ -2101,6 +2154,7 @@ function ProjectRow({
   fileLocations,
   hasLoadedRole,
   selectedRole,
+  costSummary,
   tags,
   tagOptions,
   tagClasses,
@@ -2121,6 +2175,7 @@ function ProjectRow({
   isMenuOpen,
   isSelected,
   onOpenDetails,
+  onOpenLatestActions,
   onOpenProject,
   onToggleMenu,
 }: {
@@ -2128,6 +2183,7 @@ function ProjectRow({
   fileLocations: ProjectFileLocation[];
   hasLoadedRole: boolean;
   selectedRole: PrototypeRole;
+  costSummary: ProjectCostSummary;
   tags: string[];
   tagOptions: string[];
   tagClasses: Record<string, TagClass>;
@@ -2148,6 +2204,7 @@ function ProjectRow({
   isMenuOpen: boolean;
   isSelected: boolean;
   onOpenDetails: () => void;
+  onOpenLatestActions: () => void;
   onOpenProject: () => void;
   onToggleMenu: () => void;
 }) {
@@ -2198,6 +2255,7 @@ function ProjectRow({
           key={columnKey}
           columnKey={columnKey}
           project={project}
+          costSummary={costSummary}
           isDragging={draggedColumn === columnKey}
           isDropped={droppedColumn === columnKey}
           shiftDirection={getColumnShiftDirection(columnKey, visibleTableColumns, columnDrag)}
@@ -2209,6 +2267,7 @@ function ProjectRow({
           onSaveDeadline={onSaveDeadline}
           isMenuOpen={isMenuOpen}
           onOpenDetails={onOpenDetails}
+          onOpenLatestActions={onOpenLatestActions}
           onToggleMenu={onToggleMenu}
         />
       ))}
@@ -2500,6 +2559,7 @@ function ProjectCell({
 function ProjectDataCell({
   columnKey,
   project,
+  costSummary,
   isDragging,
   isDropped,
   shiftDirection,
@@ -2511,10 +2571,12 @@ function ProjectDataCell({
   onSaveDeadline,
   isMenuOpen,
   onOpenDetails,
+  onOpenLatestActions,
   onToggleMenu,
 }: {
   columnKey: DataColumnKey;
   project: Project;
+  costSummary: ProjectCostSummary;
   isDragging: boolean;
   isDropped: boolean;
   shiftDirection: "left" | "right" | null;
@@ -2526,6 +2588,7 @@ function ProjectDataCell({
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
   isMenuOpen: boolean;
   onOpenDetails: () => void;
+  onOpenLatestActions: () => void;
   onToggleMenu: () => void;
 }) {
   const router = useRouter();
@@ -2565,6 +2628,7 @@ function ProjectDataCell({
           timestamp={project.latestUpdate.timestamp}
           fullDate={latestUpdateFullDate}
           accessibleLabel={latestUpdateAccessibleLabel}
+          onOpenLatestActions={onOpenLatestActions}
         />
       </td>
     );
@@ -2623,6 +2687,25 @@ function ProjectDataCell({
             </button>
           )}
         </div>
+      </td>
+    );
+  }
+
+  if (columnKey === "costs") {
+    const invoiceLabel = costSummary.outstandingInvoiceCount === 1 ? "1 unpaid invoice" : `${costSummary.outstandingInvoiceCount} unpaid invoices`;
+
+    return (
+      <td className={columnClassName}>
+        <Link
+          className="project-costs-cell"
+          href={`/projects/${project.id}/costs`}
+          aria-label={`Open Costs for ${project.name}. ${costSummary.totalLabel}, ${invoiceLabel}.`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <strong className="label-s-semibold">{costSummary.totalLabel}</strong>
+          <span className="label-xs">{invoiceLabel}</span>
+          <DsIcon name="caret-right" size={14} />
+        </Link>
       </td>
     );
   }
@@ -2750,11 +2833,13 @@ function LatestUpdateCell({
   timestamp,
   fullDate,
   accessibleLabel,
+  onOpenLatestActions,
 }: {
   label: string;
   timestamp: string;
   fullDate: string;
   accessibleLabel: string;
+  onOpenLatestActions: () => void;
 }) {
   const copyRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -2780,10 +2865,15 @@ function LatestUpdateCell({
   }, [label]);
 
   return (
-    <div
+    <button
       className="latest-update-cell paragraph-s"
-      aria-label={accessibleLabel}
+      type="button"
+      aria-label={`${accessibleLabel}. Open Latest actions.`}
       data-tooltip={isTruncated ? label : undefined}
+      onClick={(event) => {
+        event.stopPropagation();
+        onOpenLatestActions();
+      }}
     >
       <span className="latest-update-copy" ref={copyRef}>
         <strong>{labelParts.action}</strong>
@@ -2792,7 +2882,7 @@ function LatestUpdateCell({
       <time className="latest-update-time label-xs" dateTime={timestamp} data-tooltip={fullDate}>
         {formatWorkingAge(timestamp, latestUpdateReferenceDate)}
       </time>
-    </div>
+    </button>
   );
 }
 
@@ -3082,47 +3172,6 @@ function getClientContact(project: Project) {
   );
 }
 
-function getProjectActivityItems(project: Project) {
-  const currentStage = getStageLabel(inferCurrentStage(project));
-  const latestTimestamp = new Date(project.latestUpdate.timestamp).getTime();
-  const shiftedTimestamp = (hoursBeforeLatest: number) => new Date(latestTimestamp - hoursBeforeLatest * 60 * 60 * 1000).toISOString();
-
-  return [
-    {
-      id: "latest",
-      label: project.latestUpdate.label,
-      timestamp: project.latestUpdate.timestamp,
-      isSystem: false,
-    },
-    {
-      id: "stage",
-      label: `${currentStage} is the current stage`,
-      timestamp: shiftedTimestamp(2),
-      isSystem: true,
-    },
-    {
-      id: "client",
-      label: "Client portal link refreshed",
-      timestamp: shiftedTimestamp(8),
-      isSystem: true,
-    },
-    {
-      id: "team",
-      label: `${getPrimaryTeamPerson(project.team)?.initials ?? "Studio"} joined the project team`,
-      timestamp: shiftedTimestamp(18),
-      isSystem: false,
-    },
-    {
-      id: "deadline",
-      label: project.deadline?.finalDueAt
-        ? `Final due date set for ${formatShortDeadlineDate(project.deadline.finalDueAt)}`
-        : "Deadline awaiting confirmation",
-      timestamp: shiftedTimestamp(28),
-      isSystem: true,
-    },
-  ];
-}
-
 function formatDeadlineDateTime(timestamp: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -3293,6 +3342,41 @@ function formatFullTimestamp(timestamp: string) {
   }).format(new Date(timestamp));
 
   return `${date} at ${time}`;
+}
+
+function getProjectCostSummary(
+  projectId: string,
+  offers: ContractorOffer[],
+  invoices: ContractorInvoice[],
+): ProjectCostSummary {
+  const acceptedOffers = offers.filter(
+    (offerItem) => offerItem.projectId === projectId && offerItem.state === "Accepted",
+  );
+  const outstandingInvoices = invoices.filter(
+    (invoiceItem) => invoiceItem.projectId === projectId && invoiceItem.state !== "Paid",
+  );
+
+  return {
+    totalLabel: formatCurrencyTotals(
+      acceptedOffers.map((offerItem) => ({ amount: offerItem.agreedRate, currency: offerItem.currency })),
+    ),
+    outstandingInvoiceCount: outstandingInvoices.length,
+  };
+}
+
+function formatCurrencyTotals(items: Array<{ amount: number; currency: CostCurrency }>) {
+  if (!items.length) {
+    return formatCostAmount(0, "AUD");
+  }
+
+  const totals = items.reduce<Partial<Record<CostCurrency, number>>>((current, item) => ({
+    ...current,
+    [item.currency]: (current[item.currency] ?? 0) + item.amount,
+  }), {});
+
+  return Object.entries(totals)
+    .map(([currency, amount]) => formatCostAmount(amount ?? 0, currency as CostCurrency))
+    .join(" + ");
 }
 
 function formatWorkingAge(timestamp: string, referenceDate: Date) {

@@ -54,8 +54,8 @@ export const invoiceForwardingDestinations: readonly InvoiceForwardingDestinatio
 
 export const initialContractorOffers: ContractorOffer[] = [
   offer("offer-loom-jl", "loom-launch-film", "jl", "Jordan Lee", "Shooter", 950, "AUD", "Pending", "2026-08-18T09:20:00+10:00"),
-  offer("offer-loom-ct", "loom-launch-film", "ct", "Chris Taylor", "Editor", 1800, "AUD", "Accepted", "2026-08-01T10:00:00+10:00", "2026-08-02T08:45:00+10:00"),
-  offer("offer-loom-ak", "loom-launch-film", "ak", "Aisha Khan", "Colourist", 880, "AUD", "Accepted", "2026-08-03T14:10:00+10:00", "2026-08-03T15:02:00+10:00"),
+  offer("offer-loom-ct", "loom-launch-film", "ct", "Chris Taylor", "Editor", 2040, "USD", "Accepted", "2026-08-01T10:00:00+10:00", "2026-08-02T08:45:00+10:00"),
+  offer("offer-loom-ak", "loom-launch-film", "ak", "Aisha Khan", "Colourist", 880, "AUD", "Declined", "2026-08-03T14:10:00+10:00", "2026-08-03T15:02:00+10:00"),
   offer("offer-deel-jl", "deel-customer-story", "jl", "Jordan Lee", "Shooter", 1140, "AUD", "Accepted", "2026-07-23T11:20:00+10:00", "2026-07-23T13:15:00+10:00"),
   offer("offer-hims-ed", "hims-product-education", "ed", "Emma Davis", "Animator", 920, "AUD", "Accepted", "2026-07-28T09:30:00+10:00", "2026-07-28T11:10:00+10:00"),
   offer("offer-notion-ct", "notion-workflows", "ct", "Chris Taylor", "Editor", 2040, "USD", "Accepted", "2026-07-02T15:00:00+10:00", "2026-07-03T08:30:00+10:00"),
@@ -68,8 +68,10 @@ export const initialContractorOffers: ContractorOffer[] = [
 ];
 
 export const initialContractorInvoices: ContractorInvoice[] = [
-  invoice("invoice-loom-ct", "offer-loom-ct", "loom-launch-film", "ct", "Chris Taylor", ["CT-3142-edit-services.pdf"], 1950, "AUD", "Submitted", "2026-08-18T16:20:00+10:00", ["Waiting"], "Includes the additional social cut requested after the offer was accepted."),
-  invoice("invoice-loom-ak", "offer-loom-ak", "loom-launch-film", "ak", "Aisha Khan", ["AK-091-colour.pdf"], 880, "AUD", "Approved", "2026-08-16T13:10:00+10:00", ["Urgent"]),
+  {
+    ...invoice("invoice-loom-ct", "offer-loom-ct", "loom-launch-film", "ct", "Chris Taylor", ["CT-3142-edit-services.pdf"], 2140, "USD", "Sent back", "2026-08-18T16:20:00+10:00", ["Disputed"], "Includes the additional social cut requested after the offer was accepted."),
+    sendBackReason: "Please separate the agreed edit cost from the additional work.",
+  },
   invoice("invoice-deel-jl", "offer-deel-jl", "deel-customer-story", "jl", "Jordan Lee", ["JL-1042-shoot.pdf", "JL-1042-expenses.pdf"], 1140, "AUD", "Submitted", "2026-08-18T11:05:00+10:00", ["Follow up"]),
   invoice("invoice-hims-ed", "offer-hims-ed", "hims-product-education", "ed", "Emma Davis", ["ED-508-animation.pdf"], 980, "USD", "Submitted", "2026-08-17T09:30:00+10:00", ["Disputed"], "Invoice includes an extra export pass and was issued in USD."),
   {

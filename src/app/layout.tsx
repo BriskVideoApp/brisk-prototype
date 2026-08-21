@@ -8,6 +8,9 @@ import "@/components/active-videos/freelancer-videos.css";
 import "@/components/today/today.css";
 import "@/components/today/freelancer-today.css";
 import "@/components/project/team/team-panel.css";
+import "@/components/notifications/project-history.css";
+import "@/components/notifications/notification-inbox.css";
+import "@/components/notifications/email-delivery.css";
 import "@/components/project/project-stage-header.css";
 import "@/components/project/project-files.css";
 import "@/components/share/share-action-row.css";
@@ -31,12 +34,14 @@ import "@/components/document-export/document-export.css";
 import "@/components/settings/plan-billing.css";
 import "@/components/settings/client-billing.css";
 import "@/components/settings/studio-settings.css";
+import "@/components/settings/notification-settings.css";
 import "@/components/costs/costs.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
 import { ProjectStageStatusProvider } from "@/components/project/ProjectStageStatusContext";
 import { AppShell } from "@/components/navigation/AppShell";
+import { NotificationInboxProvider } from "@/components/notifications/NotificationInboxContext";
 import { ClientDataProvider } from "@/components/clients/ClientDataContext";
 import { PeopleDataProvider } from "@/components/people/PeopleDataContext";
 import { InvitationProvider } from "@/components/invitations/InvitationContext";
@@ -65,27 +70,29 @@ export default function RootLayout({
     <html lang="en-AU" className={plusJakartaSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <PrototypeRoleProvider>
-          <StudioSettingsProvider>
-            <ProjectCompletionProvider>
-              <ProjectStageStatusProvider>
-                <ProjectFilesProvider>
-                  <ClientDataProvider>
-                    <PeopleDataProvider>
-                      <ProjectTeamDataProvider>
-                        <CostsDataProvider>
-                          <InvitationProvider>
-                            <Suspense fallback={children}>
-                              <AppShell>{children}</AppShell>
-                            </Suspense>
-                          </InvitationProvider>
-                        </CostsDataProvider>
-                      </ProjectTeamDataProvider>
-                    </PeopleDataProvider>
-                  </ClientDataProvider>
-                </ProjectFilesProvider>
-              </ProjectStageStatusProvider>
-            </ProjectCompletionProvider>
-          </StudioSettingsProvider>
+          <NotificationInboxProvider>
+            <StudioSettingsProvider>
+              <ProjectCompletionProvider>
+                <ProjectStageStatusProvider>
+                  <ProjectFilesProvider>
+                    <ClientDataProvider>
+                      <PeopleDataProvider>
+                        <ProjectTeamDataProvider>
+                          <CostsDataProvider>
+                            <InvitationProvider>
+                              <Suspense fallback={children}>
+                                <AppShell>{children}</AppShell>
+                              </Suspense>
+                            </InvitationProvider>
+                          </CostsDataProvider>
+                        </ProjectTeamDataProvider>
+                      </PeopleDataProvider>
+                    </ClientDataProvider>
+                  </ProjectFilesProvider>
+                </ProjectStageStatusProvider>
+              </ProjectCompletionProvider>
+            </StudioSettingsProvider>
+          </NotificationInboxProvider>
         </PrototypeRoleProvider>
       </body>
     </html>

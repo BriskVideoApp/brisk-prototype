@@ -79,7 +79,9 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const rect = trigger.getBoundingClientRect();
     const viewportPadding = 8;
     const triggerGap = 4;
-    const preferredHeight = Math.min(520, (options.length * 40) + (searchable ? 48 : 8));
+    const searchHeight = searchable ? 48 : 8;
+    const actionHeight = props.multiple ? 48 : clearable && selectedValues.length ? 40 : 0;
+    const preferredHeight = Math.min(520, (options.length * 40) + searchHeight + actionHeight);
     const minimumHeight = 112;
     const preferredWidth = Math.min(320, Math.max(192, rect.width));
     const width = Math.min(preferredWidth, window.innerWidth - (viewportPadding * 2));

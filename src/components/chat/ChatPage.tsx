@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import type { ComposerSubmission } from "@/components/chat/ChatComposer";
@@ -51,11 +51,12 @@ import {
 
 type ChatPageProps = {
   initialProjectId?: string | null;
+  initialMessageId?: string;
   embedded?: boolean;
   clientName?: string;
 };
 
-export function ChatPage({ initialProjectId, embedded = false, clientName }: ChatPageProps) {
+export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
   const searchParams = useSearchParams();
   const isEmptyPreview = searchParams.get("preview") === "empty";
@@ -96,6 +97,7 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [customerFilter, setCustomerFilter] = useState<ChatCustomerFilter>("Active");
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
+  const openedInitialMessageRef = useRef(false);
 
   const effectiveCurrentUserId =
     selectedRole === "Customer"
@@ -106,14 +108,42 @@ export function ChatPage({ initialProjectId, embedded = false, clientName }: Cha
   const isCustomer = selectedRole === "Customer";
   const isStudioStaff = selectedRole === "Studio Staff";
   const accessibleProjects = useMemo(() => {
-    const roleProjects = isCustomer
+    const roleProjects = selectedRole === "Customer"
       ? projects.filter((project) => project.clientMemberIds.includes(effectiveCurrentUserId))
-      : projects;
+      : selectedRole === "Studio Freelancer"
+        ? projects.filter((project) => project.memberIds.includes(effectiveCurrentUserId))
+        : projects;
 
     return clientName
       ? roleProjects.filter((project) => project.clientName === clientName)
       : roleProjects;
-  }, [clientName, effectiveCurrentUserId, isCustomer, projects]);
+  }, [clientName, effectiveCurrentUserId, projects, selectedRole]);
+
+  useEffect(() => {
+    if (!initialMessageId || openedInitialMessageRef.current) return;
+
+    const targetMessage = messages.find((message) => message.id === initialMessageId);
+    const canOpenProject = targetMessage
+      ? accessibleProjects.some((project) => project.id === targetMessage.projectId)
+      : false;
+    const canOpenChannel = targetMessage
+      ? selectedRole !== "Customer" || targetMessage.channel === "external"
+      : false;
+
+    openedInitialMessageRef.current = true;
+    if (!targetMessage || !canOpenProject || !canOpenChannel) return;
+
+    setActiveView("projects");
+    setSelectedProjectId(targetMessage.projectId);
+    setSelectedClientName(null);
+    setSelectedCompanyChatClientName(null);
+    setActiveChannel(targetMessage.channel);
+    setThreadParentId(targetMessage.threadId);
+    setHighlightedMessageId(targetMessage.id);
+
+    const highlightTimeout = window.setTimeout(() => setHighlightedMessageId(null), 2000);
+    return () => window.clearTimeout(highlightTimeout);
+  }, [accessibleProjects, initialMessageId, messages, selectedRole]);
   const accessibleClients = clientName
     ? clients.filter((client) => client.name === clientName)
     : clients;

@@ -295,6 +295,13 @@ const inboxFirstOutcomes: NotificationOutcomeContract = {
   delivery: "email-if-unread",
 };
 
+const deliveryFailureOutcomes: NotificationOutcomeContract = {
+  activity: "always",
+  systemPost: "none",
+  inbox: "resolved-recipients",
+  delivery: "none",
+};
+
 function registerEvent(input: RegisteredEventInput): NotificationEventDefinition {
   return {
     version: 1,
@@ -391,7 +398,7 @@ export const notificationEventRegistry = {
     family: "access", project: "none", stage: null, entityType: "client-contact",
     audiences: ["affected-person", "studio"], recipientResponsibilities: ["affected-person", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "warning", publicationStates: null,
-    safeExternalCopy: externalCopy("Portal access changed", "Your access to the Customer portal has changed.", "View access status"),
+    safeExternalCopy: externalCopy("Portal access changed", "Your access to the Client portal has changed.", "View access status"),
     deepLink: "access-status", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: replacementGrouping, quietHours: "bypass", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "include", idempotency: transitionIdempotency,
@@ -400,7 +407,7 @@ export const notificationEventRegistry = {
     family: "access", project: "required", stage: null, entityType: "client-contact",
     audiences: ["affected-person", "studio"], recipientResponsibilities: ["affected-person", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "success", publicationStates: null,
-    safeExternalCopy: externalCopy("Project access added", "You can now access this video in the Customer portal.", "Open video"),
+    safeExternalCopy: externalCopy("Project access added", "You can now access this video in the Client portal.", "Open video"),
     deepLink: "project-overview", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: entityGrouping, quietHours: "respect", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "suppress-synchronous-success", idempotency: transitionIdempotency,
@@ -409,7 +416,7 @@ export const notificationEventRegistry = {
     family: "access", project: "required", stage: null, entityType: "client-contact",
     audiences: ["affected-person", "studio"], recipientResponsibilities: ["affected-person", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "info", publicationStates: null,
-    safeExternalCopy: externalCopy("Project access changed", "The videos available to you have changed.", "Open Customer portal"),
+    safeExternalCopy: externalCopy("Project access changed", "The videos available to you have changed.", "Open Client portal"),
     deepLink: "customer-dashboard", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: entityGrouping, quietHours: "respect", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "suppress-synchronous-success", idempotency: transitionIdempotency,
@@ -418,7 +425,7 @@ export const notificationEventRegistry = {
     family: "access", project: "required", stage: null, entityType: "client-contact",
     audiences: ["affected-person", "studio"], recipientResponsibilities: ["affected-person", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "warning", publicationStates: null,
-    safeExternalCopy: externalCopy("Project access removed", "You no longer have access to this video.", "Open Customer portal"),
+    safeExternalCopy: externalCopy("Project access removed", "You no longer have access to this video.", "Open Client portal"),
     deepLink: "customer-dashboard", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: entityGrouping, quietHours: "bypass", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "include", idempotency: transitionIdempotency,
@@ -427,7 +434,7 @@ export const notificationEventRegistry = {
     family: "access", project: "none", stage: null, entityType: "client",
     audiences: ["customer", "studio"], recipientResponsibilities: ["customer-project-member", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "warning", publicationStates: null,
-    safeExternalCopy: externalCopy("Customer portal paused", "Portal access has been paused because this Client was archived.", "View access status"),
+    safeExternalCopy: externalCopy("Client portal paused", "Portal access has been paused because this Client was archived.", "View access status"),
     deepLink: "access-status", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: projectGrouping, quietHours: "bypass", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "include", idempotency: transitionIdempotency,
@@ -436,7 +443,7 @@ export const notificationEventRegistry = {
     family: "access", project: "none", stage: null, entityType: "client",
     audiences: ["customer", "studio"], recipientResponsibilities: ["customer-project-member", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "success", publicationStates: null,
-    safeExternalCopy: externalCopy("Customer portal restored", "Portal access has been restored.", "Open Customer portal"),
+    safeExternalCopy: externalCopy("Client portal restored", "Portal access has been restored.", "Open Client portal"),
     deepLink: audienceLink("client-access", { customer: "customer-dashboard" }), activityOnly: false, outcomes: privateActionOutcomes,
     grouping: projectGrouping, quietHours: "respect", projectMute: "bypass", retention: "security-audit",
     privacy: "security-sensitive", actorSuppression: "suppress-synchronous-success", idempotency: transitionIdempotency,
@@ -1097,7 +1104,7 @@ export const notificationEventRegistry = {
     family: "integration", project: "optional", stage: null, entityType: "integration",
     audiences: ["studio", "affected-person"], recipientResponsibilities: ["affected-person", "integration-contact", "project-owner"],
     visibility: ["recipient-private", "internal"], severity: "urgent", publicationStates: null, safeExternalCopy: null,
-    deepLink: "notification-settings", activityOnly: false, outcomes: inboxFirstOutcomes,
+    deepLink: null, activityOnly: false, outcomes: deliveryFailureOutcomes,
     grouping: replacementGrouping, quietHours: "bypass", projectMute: "bypass", retention: "workspace-audit",
     privacy: "workspace-internal", actorSuppression: "include",
     idempotency: { scope: "provider-attempt", keyParts: ["event-key", "version", "workspace", "entity", "recipient", "channel"] },

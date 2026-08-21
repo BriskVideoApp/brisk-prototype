@@ -99,36 +99,6 @@
   gap: var(--brisk-space-m);
 }
 
-.project-stage-costs-link {
-  display: inline-flex;
-  min-height: var(--brisk-space-3xl);
-  flex: 0 0 auto;
-  align-items: center;
-  border: 1px solid var(--brisk-border-secondary);
-  border-radius: var(--brisk-radius-m);
-  background: var(--brisk-bg-block-primary);
-  color: var(--brisk-text-primary);
-  gap: var(--brisk-space-s);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-  text-decoration: none;
-}
-
-.project-stage-costs-link:hover,
-.project-stage-costs-link:focus-visible {
-  background: var(--brisk-brand-secondary);
-}
-
-.project-stage-costs-link:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
-}
-
-.project-stage-costs-link.is-active {
-  border-color: var(--brisk-brand-primary);
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary-click);
-}
-
 .project-stage-flow-area {
   position: relative;
   z-index: 0;

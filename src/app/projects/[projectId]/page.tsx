@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ProjectOverviewPage } from "@/components/project/ProjectOverviewPage";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -16,5 +17,9 @@ export default async function ProjectRoute({ params }: { params: Promise<{ proje
     notFound();
   }
 
-  return <ProjectOverviewPage project={project} />;
+  return (
+    <Suspense fallback={null}>
+      <ProjectOverviewPage project={project} />
+    </Suspense>
+  );
 }

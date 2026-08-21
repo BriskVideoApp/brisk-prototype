@@ -9,6 +9,7 @@ import {
 } from "@/components/comments/CommentPrimitives";
 import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { ProjectSystemPost } from "@/components/notifications/ProjectSystemPost";
 import {
   getDemoProjectDestination,
   type DemoProjectExperience,
@@ -269,6 +270,18 @@ export function ChatMessageCard({
       copy: stripEventEmoji(message.body),
     };
 
+    if (projectUpdate.kind === "event") {
+      return (
+        <ProjectSystemPost
+          post={projectUpdate}
+          channel={message.channel}
+          createdAt={message.createdAt}
+          messageId={message.id}
+          highlighted={highlighted}
+        />
+      );
+    }
+
     if (projectUpdate.kind === "review") {
       const projectUpdateContent = (
         <>
@@ -368,7 +381,7 @@ export function ChatMessageCard({
         >
           {message.deepLinkStage ? (
             <span className="chat-linked-comment-icon">
-              <DsIcon name="chat-circle" size={24} />
+              <DsIcon name="chat-circle" size={16} />
             </span>
           ) : null}
           <div className={message.deepLinkStage ? "chat-linked-comment-body" : undefined}>
@@ -376,10 +389,13 @@ export function ChatMessageCard({
             {message.attachments.map((attachment) => (
               <MessageAttachment key={attachment.id} attachment={attachment} />
             ))}
-            {message.deepLinkStage ? (
-              <button className="chat-deep-link label-xs-semibold" type="button">
+            {message.deepLinkStage && getProjectUpdateHref(project.id, message.deepLinkStage) ? (
+              <a
+                className="chat-deep-link label-xs-semibold"
+                href={getProjectUpdateHref(project.id, message.deepLinkStage) ?? undefined}
+              >
                 Open comment in {message.deepLinkStage}
-              </button>
+              </a>
             ) : null}
           </div>
         </div>

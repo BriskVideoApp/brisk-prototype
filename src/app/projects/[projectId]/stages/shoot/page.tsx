@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ShootStagePage } from "@/components/shoot/ShootStagePage";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -12,5 +13,5 @@ export default async function ShootRoute({ params }: { params: Promise<{ project
 
   if (!project) notFound();
 
-  return <ShootStagePage project={project} />;
+  return <Suspense fallback={null}><ShootStagePage project={project} /></Suspense>;
 }

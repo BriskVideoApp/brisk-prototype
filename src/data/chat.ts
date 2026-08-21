@@ -8,6 +8,7 @@ import type {
 } from "@/components/chat/types";
 import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { mediaAssets } from "@/data/media";
+import { projectSystemPostMessages } from "@/data/project-history";
 
 const loomEditPosterUrl = requireMediaThumbnail("media-05");
 
@@ -410,6 +411,7 @@ export const chatProjects: ChatProject[] = [
 ];
 
 export const chatMessages: ChatMessage[] = [
+  ...projectSystemPostMessages,
   {
     id: "company-loom-external-001",
     projectId: "company-chat-loom",
@@ -479,11 +481,19 @@ export const chatMessages: ChatMessage[] = [
     createdAt: "2026-07-21T16:30:00+10:00",
     editedAt: null,
     deletedAt: null,
-    readBy: ["user-tom", "user-david", "user-jess", "user-sarah"],
+    readBy: ["user-tom", "user-david", "user-marcus", "user-jess", "user-sarah"],
     mentions: [],
     projectUpdate: {
-      kind: "completed",
-      copy: "Script approved",
+      kind: "event",
+      eventKey: "stage.approved",
+      canonicalEventId: "event-script-approved-legacy-1",
+      presentation: "passive",
+      state: "success",
+      label: "Approved",
+      title: "Script approved",
+      copy: "The Script has been approved.",
+      href: "/projects/loom-launch-film/script",
+      ctaLabel: "Open Script",
     },
   },
   {
@@ -503,7 +513,7 @@ export const chatMessages: ChatMessage[] = [
     createdAt: "2026-07-22T09:12:00+10:00",
     editedAt: null,
     deletedAt: null,
-    readBy: ["user-tom", "user-david", "user-jess"],
+    readBy: ["user-tom", "user-david", "user-marcus", "user-jess", "user-sarah"],
     mentions: [],
     deepLinkStage: "Script",
   },
@@ -581,34 +591,17 @@ export const chatMessages: ChatMessage[] = [
     readBy: ["user-tom", "user-david", "user-jess"],
     mentions: [],
     projectUpdate: {
-      kind: "review",
-      action: "David Ryan shared the Edit",
-      context: "LOOM-24 Edit v3 · Waiting for your review",
-      asset: "Edit",
-      ctaLabel: "Review",
+      kind: "event",
+      eventKey: "stage.review_requested",
+      canonicalEventId: "event-edit-review-requested-1",
+      presentation: "actionable",
+      state: "information",
+      label: "Update",
+      title: "Edit review requested",
+      copy: "LOOM-24 Edit v3 is ready for review.",
+      href: "/projects/loom-launch-film/stages/edit",
+      ctaLabel: "Review Edit",
       thumbnailUrl: loomEditPosterUrl,
-    },
-  },
-  {
-    id: "message-006-upload",
-    projectId: "loom-launch-film",
-    channel: "external",
-    threadId: null,
-    senderId: null,
-    senderSystem: "Brisk",
-    senderRole: "system",
-    body: "Marcus Lee uploaded Edit v3",
-    attachments: [],
-    reactions: [],
-    sourceChannel: "brisk",
-    createdAt: "2026-07-23T13:58:00+10:00",
-    editedAt: null,
-    deletedAt: null,
-    readBy: ["user-tom", "user-david"],
-    mentions: [],
-    projectUpdate: {
-      kind: "neutral",
-      copy: "Marcus Lee uploaded Edit v3",
     },
   },
   {

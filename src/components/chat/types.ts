@@ -1,4 +1,5 @@
 import type { Reaction, User } from "@/components/video-review/types";
+import type { ProjectSystemPostData } from "@/components/notifications/types";
 
 export type ChatRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
@@ -7,6 +8,7 @@ export type ChatChannel = "external" | "internal";
 export type ChatSource = "brisk" | "email" | "whatsapp" | "slack" | "teams";
 
 export type ChatProjectUpdate =
+  | ({ kind: "event" } & ProjectSystemPostData)
   | {
       kind: "review";
       action: string;

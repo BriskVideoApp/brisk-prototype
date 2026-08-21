@@ -1,4 +1,9 @@
 import type { StudioBrandAccentId } from "@/data/studio-onboard";
+import {
+  cloneStudioNotificationSettings,
+  initialStudioNotificationSettings,
+  type StudioNotificationSettings,
+} from "@/data/notification-settings";
 
 export type StudioDetails = {
   name: string;
@@ -45,6 +50,7 @@ export type StudioSettings = {
   details: StudioDetails;
   branding: StudioBranding;
   production: StudioProductionDefaults;
+  notifications: StudioNotificationSettings;
   staffAccess: StudioStaffAccess[];
 };
 
@@ -76,6 +82,7 @@ export const initialStudioSettings: StudioSettings = {
       allowClientsToInviteColleagues: true,
     },
   },
+  notifications: cloneStudioNotificationSettings(initialStudioNotificationSettings),
   staffAccess: [
     {
       personId: "tom-maclachlan",
@@ -106,6 +113,7 @@ export function cloneStudioSettings(settings: StudioSettings): StudioSettings {
       ...settings.production,
       clientPortal: { ...settings.production.clientPortal },
     },
+    notifications: cloneStudioNotificationSettings(settings.notifications),
     staffAccess: settings.staffAccess.map((staffMember) => ({ ...staffMember })),
   };
 }

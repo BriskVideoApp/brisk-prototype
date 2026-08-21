@@ -381,6 +381,7 @@ function isNavigationItemActive(
   if (item.id === "client-brand-kit" && pathname.startsWith("/brand-kits/loom")) return true;
   if (item.id === "studio-settings" && (
     pathname.startsWith("/settings/studio")
+    || pathname.startsWith("/settings/notifications")
     || pathname === "/settings/plan-billing"
     || pathname === "/settings/client-billing"
   )) return true;

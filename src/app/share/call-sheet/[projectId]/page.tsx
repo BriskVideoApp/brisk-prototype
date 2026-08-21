@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -20,11 +21,13 @@ export default async function SharedCallSheetRoute({
   if (!project) notFound();
 
   return (
-    <SharedCallSheetPage
-      project={project}
-      printMode={query.print === "1"}
-      previewMode={query.preview === "1"}
-      viewerId={typeof query.viewer === "string" ? query.viewer : undefined}
-    />
+    <Suspense fallback={null}>
+      <SharedCallSheetPage
+        project={project}
+        printMode={query.print === "1"}
+        previewMode={query.preview === "1"}
+        viewerId={typeof query.viewer === "string" ? query.viewer : undefined}
+      />
+    </Suspense>
   );
 }

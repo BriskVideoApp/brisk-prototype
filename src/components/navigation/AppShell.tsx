@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
+import { GlobalHeaderActions } from "@/components/navigation/GlobalHeaderActions";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -29,6 +30,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         />
       ) : null}
       <div className="app-shell-workspace">
+        <header className="app-global-header">
+          <GlobalHeaderActions />
+        </header>
         <div className="app-shell-content">{children}</div>
       </div>
     </div>

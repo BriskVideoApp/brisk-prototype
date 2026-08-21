@@ -34,14 +34,11 @@ const invoiceStateOptions: Array<{ value: ContractorInvoiceState; label: string 
   { value: "Paid", label: "Paid" },
 ];
 
-const offerStateOptions: Array<{ value: ContractorOfferState; label: string }> = [
-  { value: "Pending", label: "Pending" },
-  { value: "Accepted", label: "Accepted" },
-  { value: "Declined", label: "Declined" },
-  { value: "Revoked", label: "Revoked" },
-];
-
 export function InvoiceStateBadge({ state }: { state: ContractorInvoiceState }) {
+  return <span className={`costs-state-badge is-${slug(state)} label-xs-semibold`}>{state}</span>;
+}
+
+export function OfferStateBadge({ state }: { state: ContractorOfferState }) {
   return <span className={`costs-state-badge is-${slug(state)} label-xs-semibold`}>{state}</span>;
 }
 
@@ -55,20 +52,6 @@ export function InvoiceStateSelect({ invoiceItem, onChange }: { invoiceItem: Con
     searchable={false}
     triggerClassName={`costs-state-badge is-${slug(invoiceItem.state)} label-xs-semibold`}
     value={invoiceItem.state}
-    onChange={(value) => { if (value) onChange(value); }}
-  />;
-}
-
-export function OfferStateSelect({ offerItem, onChange }: { offerItem: ContractorOffer; onChange: (state: ContractorOfferState) => void }) {
-  return <BriskSelect
-    ariaLabel={`Change offer status for ${offerItem.contractorName}`}
-    className="costs-state-select"
-    clearable={false}
-    options={offerStateOptions}
-    placeholder="Choose status"
-    searchable={false}
-    triggerClassName={`costs-state-badge is-${slug(offerItem.state)} label-xs-semibold`}
-    value={offerItem.state}
     onChange={(value) => { if (value) onChange(value); }}
   />;
 }

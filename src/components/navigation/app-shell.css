@@ -14,8 +14,62 @@
   display: grid;
   min-width: var(--brisk-space-none);
   min-height: var(--brisk-space-none);
-  grid-template-rows: minmax(var(--brisk-space-none), 1fr);
+  grid-template-rows: max-content minmax(var(--brisk-space-none), 1fr);
   overflow: hidden;
+}
+
+.app-global-header {
+  position: relative;
+  z-index: 70;
+  display: flex;
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
+  align-items: center;
+  justify-content: flex-end;
+  border-bottom: 1px solid var(--brisk-border-primary);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-m) var(--brisk-space-2xl);
+}
+
+.app-global-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
+.app-global-activity-control {
+  position: relative;
+}
+
+.app-global-action-button {
+  position: relative;
+  display: inline-flex;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-none);
+  text-decoration: none;
+}
+
+.app-global-action-button:hover,
+.app-global-action-button:focus-visible {
+  box-shadow: var(--brisk-shadow-s);
+  outline: var(--brisk-space-none);
+  transform: translate(-1px, -1px);
+}
+
+.app-global-action-button:active {
+  box-shadow: none;
+  transform: none;
+}
+
+.app-global-action-button.is-active {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
 }
 
 .app-shell-content {
@@ -476,6 +530,10 @@ button.app-sidebar-link {
     display: none;
   }
 
+  .app-global-header {
+    display: none;
+  }
+
   .app-shell-workspace,
   .app-shell-content {
     display: block;
@@ -495,6 +553,11 @@ button.app-sidebar-link {
     left: var(--brisk-space-none);
     width: min(calc(var(--brisk-space-3xl) * 7), calc(100vw - var(--brisk-space-2xl)));
     transform: translateX(-100%);
+  }
+
+  .app-global-header {
+    min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
+    padding: var(--brisk-space-s) var(--brisk-space-l);
   }
 
   .app-sidebar.is-collapsed {

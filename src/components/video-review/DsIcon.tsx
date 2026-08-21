@@ -2,9 +2,11 @@ import type { CSSProperties } from "react";
 
 const iconPaths = {
   "arrow-left": "/brisk-icons/arrow-left.svg",
+  "arrow-right": "/brisk-icons/arrow-right.svg",
   "alert-triangle": "/brisk-icons/alert-triangle.svg",
   "caret-down": "/brisk-icons/caret-down.svg",
   "copy": "/brisk-icons/copy.svg",
+  "cursor": "/brisk-icons/cursor.svg",
   "dots-three": "/brisk-icons/dots-three.svg",
   "dots-three-vertical": "/brisk-icons/dots-three-vertical.svg",
   "dots-six-vertical": "/brisk-icons/dots-six-vertical.svg",
@@ -45,6 +47,7 @@ const iconPaths = {
   "grid-four": "/brisk-icons/grid-four.svg",
   "image-square": "/brisk-icons/image-square.svg",
   "info": "/brisk-icons/info.svg",
+  "bell": "/brisk-icons/bell.svg",
   "bezier-curve": "/brisk-icons/bezier-curve.svg",
   "book-open": "/brisk-icons/book-open.svg",
   "circles-three": "/brisk-icons/circles-three.svg",

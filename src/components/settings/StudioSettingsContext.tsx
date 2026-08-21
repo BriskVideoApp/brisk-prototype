@@ -3,6 +3,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { StudioReviewDraft } from "@/data/studio-onboard";
 import {
+  cloneStudioNotificationSettings,
+  initialStudioNotificationSettings,
+  type StudioNotificationSettings,
+} from "@/data/notification-settings";
+import {
   cloneStudioSettings,
   initialStudioSettings,
   type StudioBranding,
@@ -17,6 +22,7 @@ type StudioSettingsContextValue = {
   updateDetails: (details: StudioDetails) => void;
   updateBranding: (branding: StudioBranding) => void;
   updateProductionDefaults: (production: StudioProductionDefaults) => void;
+  updateNotificationSettings: (notifications: StudioNotificationSettings) => void;
   updateStaffAccess: (staffAccess: StudioStaffAccess[]) => void;
   applyOnboardingSetup: (draft: StudioReviewDraft) => void;
 };
@@ -82,6 +88,13 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
     }));
   }, [commitStudio]);
 
+  const updateNotificationSettings = useCallback((notifications: StudioNotificationSettings) => {
+    commitStudio((current) => ({
+      ...current,
+      notifications: cloneStudioNotificationSettings(notifications),
+    }));
+  }, [commitStudio]);
+
   const applyOnboardingSetup = useCallback((draft: StudioReviewDraft) => {
     commitStudio((current) => ({
       ...current,
@@ -104,9 +117,10 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
     updateDetails,
     updateBranding,
     updateProductionDefaults,
+    updateNotificationSettings,
     updateStaffAccess,
     applyOnboardingSetup,
-  }), [applyOnboardingSetup, studio, updateBranding, updateDetails, updateProductionDefaults, updateStaffAccess]);
+  }), [applyOnboardingSetup, studio, updateBranding, updateDetails, updateNotificationSettings, updateProductionDefaults, updateStaffAccess]);
 
   return <StudioSettingsContext.Provider value={value}>{children}</StudioSettingsContext.Provider>;
 }
@@ -126,7 +140,12 @@ function readStoredStudioSettings(): StudioSettings | null {
     if (!storedStudio.details || !storedStudio.branding || !storedStudio.production || !Array.isArray(storedStudio.staffAccess)) {
       throw new Error("Stored Studio settings are incomplete");
     }
-    return cloneStudioSettings(storedStudio as StudioSettings);
+    return cloneStudioSettings({
+      ...(storedStudio as StudioSettings),
+      notifications: storedStudio.notifications
+        ? cloneStudioNotificationSettings(storedStudio.notifications)
+        : cloneStudioNotificationSettings(initialStudioNotificationSettings),
+    });
   } catch {
     window.localStorage.removeItem(studioSettingsStorageKey);
     return null;

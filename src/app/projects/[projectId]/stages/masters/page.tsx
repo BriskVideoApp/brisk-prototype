@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { MastersPage } from "@/components/masters/MastersPage";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -12,5 +13,5 @@ export default async function MastersRoute({ params }: { params: Promise<{ proje
 
   if (!project) notFound();
 
-  return <MastersPage project={project} />;
+  return <Suspense fallback={null}><MastersPage project={project} /></Suspense>;
 }

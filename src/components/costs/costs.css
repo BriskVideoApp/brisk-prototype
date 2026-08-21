@@ -205,12 +205,11 @@
   text-underline-offset: var(--brisk-space-xs);
 }
 
-.costs-offers-table th:first-child { width: calc(var(--brisk-space-3xl) * 6); }
+.costs-offers-table th:first-child { width: calc(var(--brisk-space-3xl) * 7); }
 .costs-offers-table th:nth-child(2) { width: calc(var(--brisk-space-3xl) * 4); }
-.costs-offers-table th:nth-child(3) { width: calc(var(--brisk-space-3xl) * 4); }
+.costs-offers-table th:nth-child(3) { width: calc(var(--brisk-space-3xl) * 5); }
 .costs-offers-table th:nth-child(4) { width: calc(var(--brisk-space-3xl) * 4); }
-.costs-offers-table th:nth-child(5) { width: calc(var(--brisk-space-3xl) * 4); }
-.costs-offers-table th:last-child { width: calc(var(--brisk-space-3xl) * 5); }
+.costs-offers-table th:nth-child(5) { width: calc(var(--brisk-space-3xl) * 5); }
 .costs-invoices-table th:first-child { width: calc(var(--brisk-space-3xl) * 6); }
 .costs-invoices-table th:nth-child(2) { width: calc(var(--brisk-space-3xl) * 4); }
 .costs-invoices-table th:nth-child(3) { width: calc(var(--brisk-space-3xl) * 4); }

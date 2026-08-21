@@ -24,6 +24,7 @@ export type StudioSettingsSectionId =
   | "branding"
   | "team"
   | "production"
+  | "notifications"
   | "plan-billing"
   | "client-billing";
 
@@ -63,6 +64,13 @@ export const studioSettingsNavigation = [
     href: "/settings/studio/production",
     icon: "queue",
     description: "Set the defaults used when new work is created.",
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    href: "/settings/notifications",
+    icon: "bell",
+    description: "Choose what Brisk sends and when.",
   },
   {
     id: "plan-billing",
@@ -208,7 +216,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
           options={studioSettingsNavigation.map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
           placeholder="Choose section"
           searchable={false}
-          value={pathname}
+          value={activeSection.href}
           onChange={(href) => {
             if (!href || href === pathname || !confirmNavigation()) return;
             router.push(href);

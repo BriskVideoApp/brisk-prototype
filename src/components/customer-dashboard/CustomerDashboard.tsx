@@ -8,6 +8,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { ChatPage } from "@/components/chat/ChatPage";
+import {
+  openCustomerGlobalChatEventName,
+  openCustomerLatestActivityEventName,
+} from "@/components/navigation/GlobalHeaderActions";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -224,6 +228,30 @@ export function CustomerDashboard() {
   }, [chatProjectId, isActivityOpen]);
 
   useEffect(() => {
+    const openLatestActivity = () => {
+      setChatProjectId(undefined);
+      setOpenMenuProjectId(null);
+      setOpenStatusProjectId(null);
+      setIsFilterOpen(false);
+      setIsActivityOpen(true);
+    };
+    const openGlobalChat = () => {
+      setIsActivityOpen(false);
+      setOpenMenuProjectId(null);
+      setOpenStatusProjectId(null);
+      setIsFilterOpen(false);
+      setChatProjectId(null);
+    };
+
+    window.addEventListener(openCustomerLatestActivityEventName, openLatestActivity);
+    window.addEventListener(openCustomerGlobalChatEventName, openGlobalChat);
+    return () => {
+      window.removeEventListener(openCustomerLatestActivityEventName, openLatestActivity);
+      window.removeEventListener(openCustomerGlobalChatEventName, openGlobalChat);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!openMenuProjectId && !openStatusProjectId && !isFilterOpen) {
       return;
     }
@@ -373,38 +401,6 @@ export function CustomerDashboard() {
               <span className="label-xs">{clientName} Client portal</span>
               <h1>Your videos</h1>
             </div>
-          </div>
-          <div className="customer-dashboard-global-actions">
-            <button
-              className="customer-dashboard-icon-button customer-dashboard-header-action"
-              type="button"
-              aria-label="Open latest activity"
-              aria-expanded={isActivityOpen}
-              onClick={() => {
-                setChatProjectId(undefined);
-                setOpenMenuProjectId(null);
-                setOpenStatusProjectId(null);
-                setIsFilterOpen(false);
-                setIsActivityOpen((current) => !current);
-              }}
-            >
-              <DsIcon name="clock-clockwise" size={20} />
-            </button>
-            <button
-              className="customer-dashboard-icon-button customer-dashboard-header-action"
-              type="button"
-              aria-label="Open global chat"
-              onClick={() => {
-                setIsActivityOpen(false);
-                setOpenMenuProjectId(null);
-                setOpenStatusProjectId(null);
-                setIsFilterOpen(false);
-                setChatProjectId(null);
-              }}
-            >
-              <DsIcon name="chats" size={20} />
-              <CommentCountBadge count={8} label="8 unread messages" />
-            </button>
           </div>
         </header>
 

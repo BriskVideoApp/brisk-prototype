@@ -1,5 +1,6 @@
+import { Suspense } from "react";
 import { ClientsPage } from "@/components/clients/ClientsPage";
 
 export default function ClientsRoute() {
-  return <ClientsPage />;
+  return <Suspense fallback={null}><ClientsPage /></Suspense>;
 }

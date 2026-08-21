@@ -76,10 +76,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
             </span>
             <span className="project-stage-project-title">{project.name}</span>
           </div>
-          {actions || selectedRole === "Studio Staff" ? <div className="project-stage-header-actions">
-            {selectedRole === "Studio Staff" ? <Link className={`project-stage-costs-link label-s-semibold ${activeUtility === "costs" ? "is-active" : ""}`} href={`/projects/${project.id}/costs`} aria-current={activeUtility === "costs" ? "page" : undefined}><DsIcon name="file-text" size={16} />Costs</Link> : null}
-            {actions}
-          </div> : null}
+          {actions ? <div className="project-stage-header-actions">{actions}</div> : null}
         </div>
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
           <div className="project-stage-flow-navigation">

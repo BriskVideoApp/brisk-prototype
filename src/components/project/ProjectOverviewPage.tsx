@@ -1,11 +1,10 @@
 "use client";
 
-"use client";
-
 import Link from "next/link";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
+import { ProjectNotificationSettings } from "@/components/settings/ProjectNotificationSettings";
 import { TeamPanel, type TeamPanelAccess } from "./team/TeamPanel";
 
 export function ProjectOverviewPage({ project }: { project: Project }) {
@@ -51,6 +50,9 @@ export function ProjectOverviewPage({ project }: { project: Project }) {
           timeEntries={project.timeEntries}
           access={access}
         />
+        {selectedRole === "Studio Staff" ? (
+          <ProjectNotificationSettings clientBadge={project.clientBadge} projectId={project.id} />
+        ) : null}
       </section>
     </main>
   );
