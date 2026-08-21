@@ -132,6 +132,16 @@ V1 keeps the role model deliberately simple - three roles, no granular permissio
 
 This is a prototype demo affordance only - in production, role is set by the user account.
 
+## User-facing terminology
+
+- **Filmmaker** means anyone working for or with a Studio, including Studio Staff and Studio Freelancers.
+- **Client** means someone on the Customer side.
+- Use **Filmmaker** and **Client** in normal interface copy.
+- The underlying access roles remain **Studio Staff**, **Studio Freelancer** and **Customer**.
+- Show an exact access role only when the distinction affects access, invitations, project visibility, rates, costs, invoices, time tracking or responsibilities.
+- **Filmmaker** is a shared professional identity, not an access role.
+- Do not rename code types, stored values or permission identifiers purely for this language change.
+
 ## Mock data rules
 
 - Mock data lives in `src/data/` as typed arrays. No fetch calls. Components import data directly.

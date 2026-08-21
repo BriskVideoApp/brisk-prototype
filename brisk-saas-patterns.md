@@ -20,18 +20,19 @@ You are designing for Brisk, a SaaS platform used by many production companies. 
 
 ## User roles
 
-Brisk has two role groups: **Studio** (the production company) and **Customer** (the client). See the Production Journey skill for full role definitions.
+Brisk has two access-role groups: **Studio** (the production company) and **Customer** (the client side). The current V1 access roles are **Studio Staff**, **Studio Freelancer** and **Customer**. See the Production Journey skill for full role definitions.
 
-### Studio roles
-1. **Studio Owner** - founder/director of the production company. Full super-admin including billing and subscription.
-2. **Studio Manager** - same as Owner, minus billing and subscription.
-3. **Filmmaker** - reduced permissions. Sees only assigned projects. Covers producers, editors, shooters, and other crew. Stage-level access is configurable per project.
+### User-facing terminology
 
-### Customer roles
-4. **Account Owner** - sees all projects for their company. Invites users, manages subscription and company details.
-5. **Teammate** - sees and edits only the projects they're assigned to.
+- **Filmmaker** means anyone working for or with a Studio, including Studio Staff and Studio Freelancers.
+- **Client** means someone on the Customer side.
+- Use **Filmmaker** and **Client** in normal interface copy.
+- The underlying access roles remain **Studio Staff**, **Studio Freelancer** and **Customer**.
+- Show an exact access role only when the distinction affects access, invitations, project visibility, rates, costs, invoices, time tracking or responsibilities.
+- **Filmmaker** is a shared professional identity, not an access role.
+- Do not rename code types, stored values or permission identifiers purely for this language change.
 
-Every feature must answer: which roles can see it, and which can act on it. Customers never see Studio-only data, and never see another customer's projects.
+Every feature must answer: which roles can see it, and which can act on it. Clients never see Studio-only data, and never see another Client's projects.
 
 ## Studio isolation
 
