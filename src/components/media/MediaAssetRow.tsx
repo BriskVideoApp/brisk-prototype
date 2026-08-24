@@ -1,17 +1,23 @@
 import type { MouseEvent } from "react";
-import type { MediaAsset } from "@/data/media";
+import type { MediaAssetView } from "@/data/media";
+import type { MediaCapabilities } from "@/lib/media";
+import { formatMediaBytes, formatMediaDuration } from "@/lib/media";
 import { MediaAssetActions, MediaThumbnail } from "./MediaAssetCard";
 
 type MediaAssetRowProps = {
-  asset: MediaAsset;
+  asset: MediaAssetView;
+  capabilities: MediaCapabilities;
   isActive: boolean;
   isSelected: boolean;
-  onActivate: (asset: MediaAsset, event: MouseEvent<HTMLElement>) => void;
-  onComment: (asset: MediaAsset) => void;
-  onTranscript: (asset: MediaAsset) => void;
-  onShare: (asset: MediaAsset) => void;
-  onDownload: (asset: MediaAsset) => void;
-  onDelete: (asset: MediaAsset) => void;
+  onActivate: (asset: MediaAssetView, event: MouseEvent<HTMLElement>) => void;
+  onComment: (asset: MediaAssetView) => void;
+  onTranscript: (asset: MediaAssetView) => void;
+  onShare: (asset: MediaAssetView) => void;
+  onDownload: (asset: MediaAssetView) => void;
+  onDelete: (asset: MediaAssetView) => void;
+  onArchive: (asset: MediaAssetView) => void;
+  onRestore: (asset: MediaAssetView) => void;
+  onRetry: (asset: MediaAssetView) => void;
 };
 
 export function MediaAssetRow(props: MediaAssetRowProps) {
@@ -34,9 +40,9 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
       <td><span className="media-list-name label-s-semibold" title={asset.name}>{asset.name}</span></td>
       <td className="label-s">{asset.kind}</td>
       <td className="label-s">{uploaded}</td>
-      <td className="label-s">{asset.sizeLabel}</td>
-      <td className="label-s">{asset.durationLabel ?? "-"}</td>
-      <td className="label-s">{asset.ownerName}</td>
+      <td className="label-s">{formatMediaBytes(asset.sizeBytes)}</td>
+      <td className="label-s">{formatMediaDuration(asset.durationSeconds) || "-"}</td>
+      <td className="label-s">{asset.uploadedByName}</td>
       <td className="label-s">{asset.commentCount}</td>
       <td>
         <MediaAssetActions
@@ -47,6 +53,10 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
           onShare={props.onShare}
           onDownload={props.onDownload}
           onDelete={props.onDelete}
+          onArchive={props.onArchive}
+          onRestore={props.onRestore}
+          onRetry={props.onRetry}
+          capabilities={props.capabilities}
         />
       </td>
     </tr>

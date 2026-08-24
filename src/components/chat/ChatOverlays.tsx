@@ -2,15 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
-import { getMessageSourceDirection, getSourceLabel, SourceLogo } from "@/components/chat/SourceLogo";
+import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   ChatClientStatus,
-  ChatConnectorSource,
   ChatMessage,
   ChatProject,
   ChatRole,
-  ChatSource,
   ChatUser,
 } from "@/components/chat/types";
 import { attachmentMatches, formatCompactDate } from "@/components/chat/chat-utils";
@@ -189,11 +187,8 @@ type CustomerSettingsProps = {
   companyUsers: ChatUser[];
   onClose: () => void;
   onStatusChange: (status: ChatClientStatus) => void;
-  onProjectsChange: (projects: ChatProject[]) => void;
   onNotify: (message: string) => void;
 };
-
-const connectorSources: ChatConnectorSource[] = ["email", "whatsapp", "slack", "teams"];
 
 export function CustomerSettings({
   clientName,
@@ -202,35 +197,9 @@ export function CustomerSettings({
   companyUsers,
   onClose,
   onStatusChange,
-  onProjectsChange,
   onNotify,
 }: CustomerSettingsProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "people" | "connectors">("overview");
-  const [isPreferredSourceMenuOpen, setIsPreferredSourceMenuOpen] = useState(false);
-  const referenceProject = projects[0];
-  const availablePreferredSources: ChatSource[] = referenceProject
-    ? [
-        "brisk",
-        ...connectorSources.filter(
-          (source) => referenceProject.connectors[source].enabled && referenceProject.connectors[source].connected,
-        ),
-      ]
-    : ["brisk"];
-
-  const updateConnector = (
-    source: ChatConnectorSource,
-    update: Partial<ChatProject["connectors"][ChatConnectorSource]>,
-  ) => {
-    onProjectsChange(
-      projects.map((project) => ({
-        ...project,
-        connectors: {
-          ...project.connectors,
-          [source]: { ...project.connectors[source], ...update },
-        },
-      })),
-    );
-  };
+  const [activeTab, setActiveTab] = useState<"overview" | "people">("overview");
 
   return (
     <div className="chat-modal-backdrop" role="presentation" onMouseDown={onClose}>
@@ -251,8 +220,8 @@ export function CustomerSettings({
           </button>
         </header>
 
-        <div className="chat-settings-tabs" role="tablist" aria-label="Customer settings sections">
-          {(["overview", "people", "connectors"] as const).map((tab) => (
+        <div className="chat-settings-tabs two-column" role="tablist" aria-label="Customer settings sections">
+          {(["overview", "people"] as const).map((tab) => (
             <button
               className={`label-s-semibold ${activeTab === tab ? "active" : ""}`}
               type="button"
@@ -288,10 +257,6 @@ export function CustomerSettings({
                 <span className="label-xs">Customer users</span>
                 <strong className="headings-xs-bold">{companyUsers.length}</strong>
               </article>
-              <article>
-                <span className="label-xs">Connected channels</span>
-                <strong className="headings-xs-bold">{referenceProject ? connectorSources.filter((source) => referenceProject.connectors[source].enabled).length : 0}</strong>
-              </article>
             </div>
           </div>
         ) : null}
@@ -322,104 +287,6 @@ export function CustomerSettings({
           </div>
         ) : null}
 
-        {activeTab === "connectors" && referenceProject ? (
-          <>
-            <div className="chat-connector-guardrail">
-              <DsIcon name="lock" size={18} />
-              <span>
-                <strong className="label-s-semibold">How connected channels work</strong>
-                <p className="label-xs">
-                  Your customer probably won&apos;t have Brisk open all day. Connect the channels they already use so nothing gets missed.
-                </p>
-                <p className="label-xs">
-                  Every External message flows both ways: they can reply from Email, WhatsApp, Slack or Teams and it lands here. You reply here, and it reaches them there.
-                </p>
-              </span>
-            </div>
-            <div className="chat-connector-list">
-              {connectorSources.map((source) => {
-                const connector = referenceProject.connectors[source];
-                return (
-                  <article className="chat-connector-card" key={source}>
-                    <div className="chat-connector-card-main">
-                      <span className="chat-connector-logo-tile"><SourceLogo source={source} size={20} /></span>
-                      <span>
-                        <strong className="label-s-semibold">{formatSourceName(source)}</strong>
-                        <small className="label-xs">{connector.detail}</small>
-                      </span>
-                    </div>
-                    {!connector.connected ? (
-                      <button className="chat-reconnect-button label-xs-semibold" type="button" onClick={() => updateConnector(source, { connected: true })}>Reconnect</button>
-                    ) : (
-                      <label className="chat-toggle">
-                        <span className="sr-only">Enable {formatSourceName(source)}</span>
-                        <input type="checkbox" checked={connector.enabled} onChange={(event) => updateConnector(source, { enabled: event.target.checked })} />
-                        <span className="chat-toggle-track" aria-hidden="true">
-                          <span className="chat-toggle-thumb" />
-                        </span>
-                      </label>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
-            <div className="chat-preferred-source">
-              <span>
-                <strong className="label-s-semibold">Preferred outbound channel</strong>
-                <small className="label-xs">New External messages for {clientName} use this channel by default.</small>
-              </span>
-              <div
-                className="chat-source-picker chat-preferred-source-picker"
-                onBlur={(event) => {
-                  const nextFocus = event.relatedTarget;
-
-                  if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-                    setIsPreferredSourceMenuOpen(false);
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    setIsPreferredSourceMenuOpen(false);
-                  }
-                }}
-              >
-                <button
-                  className="chat-source-select label-xs-semibold"
-                  type="button"
-                  aria-haspopup="listbox"
-                  aria-expanded={isPreferredSourceMenuOpen}
-                  aria-label={`Choose preferred outbound channel. ${getSourceLabel(referenceProject.preferredSource)} selected`}
-                  onClick={() => setIsPreferredSourceMenuOpen((isOpen) => !isOpen)}
-                >
-                  <SourceLogo source={referenceProject.preferredSource} size={16} tooltipFocusable={false} />
-                  <span>{getSourceLabel(referenceProject.preferredSource)}</span>
-                  <DsIcon name="caret-down" size={12} />
-                </button>
-                {isPreferredSourceMenuOpen ? (
-                  <div className="chat-source-menu" role="listbox" aria-label="Preferred outbound channel">
-                    {availablePreferredSources.map((source) => (
-                      <button
-                        className={`chat-source-option label-s ${source === referenceProject.preferredSource ? "selected" : ""}`}
-                        type="button"
-                        role="option"
-                        aria-selected={source === referenceProject.preferredSource}
-                        key={source}
-                        onClick={() => {
-                          onProjectsChange(projects.map((project) => ({ ...project, preferredSource: source })));
-                          setIsPreferredSourceMenuOpen(false);
-                        }}
-                      >
-                        <SourceLogo source={source} size={20} tooltipFocusable={false} />
-                        <span>{getSourceLabel(source)}</span>
-                        {source === referenceProject.preferredSource ? <DsIcon name="check" size={16} /> : null}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </>
-        ) : null}
       </section>
     </div>
   );
@@ -585,16 +452,4 @@ function parseSearchQuery(query: string) {
     before: readToken("before"),
     after: readToken("after"),
   } as const;
-}
-
-function formatSourceName(source: ChatConnectorSource) {
-  if (source === "whatsapp") {
-    return "WhatsApp";
-  }
-
-  if (source === "teams") {
-    return "Microsoft Teams";
-  }
-
-  return source[0].toUpperCase() + source.slice(1);
 }

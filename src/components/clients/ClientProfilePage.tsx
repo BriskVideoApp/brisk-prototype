@@ -33,7 +33,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
   } = useClients();
   const { people } = usePeople();
   const { getInvitationStatus, openInvitePerson, resendInvitation } = useInvitations();
-  const { allPages, selectedRole } = usePrototypeRole();
+  const { selectedRole } = usePrototypeRole();
   const searchParams = useSearchParams();
   const client = clients.find((candidate) => candidate.id === clientId) ?? null;
   const requestedSection = searchParams.get("section");
@@ -41,7 +41,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
   const [modal, setModal] = useState<ProfileModal>(searchParams.get("dialog") === "archive" ? "archive" : null);
   const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const isStudioStaff = allPages || selectedRole === "Studio Staff";
+  const isStudioStaff = selectedRole === "Studio Staff";
 
   useEffect(() => {
     if (!toast) return;

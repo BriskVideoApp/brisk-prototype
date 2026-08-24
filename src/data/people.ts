@@ -5,9 +5,14 @@ export type PersonType = "Team" | "Freelancer" | "Client contact";
 export type PersonStatus = "Active" | "Invited" | "Paused" | "Archived";
 export type PersonAvailability = "Available" | "Busy" | "Away";
 export type PersonAccessRole = "Studio Staff" | "Studio Freelancer" | "Customer";
+export type StudioPermission = "Team Member" | "Studio Admin" | "Studio Owner";
 export type WorkloadStatus = "Waiting on Studio" | "Waiting on Client";
 export type AssignmentStatus = "Assigned" | "Accepted" | "Offer sent";
 export type CapacityLevel = "plenty" | "near" | "full";
+
+export const prototypeStudioPersonId = "te";
+export const prototypeFreelancerPersonId = "np";
+export const prototypeCustomerPersonId = "client-jess";
 
 export type PersonActivity = {
   id: string;
@@ -44,6 +49,9 @@ export type Person = {
   avatarUrl: string | null;
   email: string;
   phone: string;
+  businessName?: string;
+  taxNumber?: string;
+  department: string | null;
   type: PersonType;
   jobTitles: string[];
   skills: string[];
@@ -52,6 +60,7 @@ export type Person = {
   location: string;
   timezone: string;
   accessRole: PersonAccessRole;
+  studioPermission: StudioPermission | null;
   status: PersonStatus;
   latestActivity: PersonActivity;
   activity: PersonActivity[];
@@ -66,6 +75,7 @@ export type Person = {
   commercial: PersonCommercialDetails | null;
   clientId: string | null;
   clientName: string | null;
+  clientMembershipRole: "Client Admin" | "Client Member" | null;
   projectAccessIds: string[];
 };
 
@@ -74,6 +84,8 @@ export type PersonProfileUpdate = Partial<Pick<Person,
   | "avatarUrl"
   | "email"
   | "phone"
+  | "businessName"
+  | "taxNumber"
   | "jobTitles"
   | "skills"
   | "styles"
@@ -84,6 +96,19 @@ export type PersonProfileUpdate = Partial<Pick<Person,
   | "availability"
   | "portfolioUrl"
 >>;
+
+export type PersonStudioDetailsUpdate = Partial<Pick<Person,
+  | "department"
+  | "seniority"
+  | "studioPermission"
+  | "testingStatus"
+  | "onboardingStatus"
+  | "agreementStatus"
+  | "weeklyCapacityHours"
+>> & {
+  defaultRate?: number;
+  rateType?: PersonCommercialDetails["rateType"];
+};
 
 export type NewPersonInput = {
   type: Exclude<PersonType, "Client contact">;
@@ -99,7 +124,7 @@ export type NewPersonInput = {
 
 export type ClientContactMetadata = Pick<Person, "jobTitles" | "skills" | "styles" | "seniority" | "location" | "timezone" | "phone" | "notes">;
 
-type NativePersonMetadata = Omit<Person, "id" | "name" | "avatarUrl" | "type" | "weeklyCapacityHours" | "availability" | "workloads" | "latestActivity" | "activity" | "commercial" | "clientId" | "clientName" | "projectAccessIds"> & {
+type NativePersonMetadata = Omit<Person, "id" | "name" | "avatarUrl" | "type" | "department" | "studioPermission" | "weeklyCapacityHours" | "availability" | "workloads" | "latestActivity" | "activity" | "commercial" | "clientId" | "clientName" | "clientMembershipRole" | "projectAccessIds"> & {
   activityLabel: string;
   activityAt: string;
   dayRate?: number;
@@ -184,6 +209,9 @@ const additionalPeople: Person[] = [
 ];
 
 export const clientContactMetadata: Record<string, ClientContactMetadata> = {
+  "client-jess": contactMetadata(["Marketing Director"], ["Brand approvals", "Campaign strategy"], "Lead", "Sydney, NSW", "+61 412 555 820", "Primary Client administrator for Loom."),
+  "client-sarah": contactMetadata(["Brand Manager"], ["Brand approvals", "Campaign delivery"], "Senior", "Sydney, NSW", "+61 419 555 430", "Supports campaign reviews and approvals."),
+  "client-daniel": contactMetadata(["Product Marketing Manager"], ["Product messaging"], "Senior", "Melbourne, VIC", "+61 408 555 712", "Invited Loom collaborator."),
   "loom-contact-1": contactMetadata(["Marketing Director"], ["Brand approvals", "Campaign strategy"], "Lead", "Sydney, NSW", "+61 410 555 014", "Primary Loom approver."),
   "loom-contact-2": contactMetadata(["Product Marketing Manager"], ["Product messaging"], "Senior", "San Francisco, USA", "+1 415 555 0124", "Provides product and launch details."),
   "deel-contact-1": contactMetadata(["Regional Marketing Lead"], ["Campaign strategy"], "Lead", "Singapore", "+65 6555 0184", "Primary APAC stakeholder."),
@@ -214,6 +242,7 @@ export function createNativePerson(input: NewPersonInput, id: string): Person {
     avatarUrl: null,
     email: input.email.trim(),
     phone: "",
+    department: input.type === "Team" ? inferTeamDepartment([input.jobTitle]) : null,
     type: input.type,
     jobTitles: [input.jobTitle.trim() || (isFreelancer ? "Freelancer" : "Team member")],
     skills: input.skills?.filter(Boolean) ?? [],
@@ -222,6 +251,7 @@ export function createNativePerson(input: NewPersonInput, id: string): Person {
     location: input.location?.trim() || "Location not added",
     timezone: "Australia/Sydney",
     accessRole: isFreelancer ? "Studio Freelancer" : "Studio Staff",
+    studioPermission: input.type === "Team" ? "Team Member" : null,
     status: input.inviteNow ? "Invited" : "Active",
     latestActivity: activity,
     activity: [activity],
@@ -241,6 +271,7 @@ export function createNativePerson(input: NewPersonInput, id: string): Person {
     } : null,
     clientId: null,
     clientName: null,
+    clientMembershipRole: null,
     projectAccessIds: [],
   };
 }
@@ -252,6 +283,10 @@ export function getPersonInitials(name: string) {
     .slice(0, 2)
     .map((part) => part.charAt(0).toLocaleUpperCase("en-AU"))
     .join("");
+}
+
+export function hasStudioAdministrationAccess(person: Pick<Person, "studioPermission"> | null | undefined) {
+  return person?.studioPermission === "Studio Admin" || person?.studioPermission === "Studio Owner";
 }
 
 export function getWorkloadRollup(person: Pick<Person, "workloads" | "weeklyCapacityHours">) {
@@ -295,6 +330,7 @@ function makeNativePerson(teamPerson: TeamPerson, details: NativePersonMetadata 
     avatarUrl: null,
     email: details.email,
     phone: details.phone,
+    department: type === "Team" ? inferTeamDepartment(details.jobTitles) : null,
     type,
     jobTitles: details.jobTitles.length ? details.jobTitles : [teamRoleLabels[teamPerson.defaultRole]],
     skills: details.skills,
@@ -303,6 +339,7 @@ function makeNativePerson(teamPerson: TeamPerson, details: NativePersonMetadata 
     location: details.location,
     timezone: details.timezone,
     accessRole: details.accessRole,
+    studioPermission: initialStudioPermission(teamPerson.id, type),
     status: details.status,
     latestActivity: activity,
     activity: [
@@ -329,6 +366,7 @@ function makeNativePerson(teamPerson: TeamPerson, details: NativePersonMetadata 
     } : null,
     clientId: null,
     clientName: null,
+    clientMembershipRole: null,
     projectAccessIds: [],
   };
 }
@@ -396,6 +434,7 @@ function standalonePerson(
     avatarUrl: null,
     email,
     phone: "",
+    department: type === "Team" ? inferTeamDepartment(jobTitles) : null,
     type,
     jobTitles,
     skills,
@@ -404,6 +443,7 @@ function standalonePerson(
     location,
     timezone: location.includes("Auckland") ? "Pacific/Auckland" : "Australia/Sydney",
     accessRole,
+    studioPermission: initialStudioPermission(id, type),
     status,
     latestActivity,
     activity: [latestActivity],
@@ -418,8 +458,21 @@ function standalonePerson(
     commercial: type === "Freelancer" ? { rateType: "Day rate", defaultRate: dayRate ?? 800, currency: "AUD", invoices: [] } : null,
     clientId: null,
     clientName: null,
+    clientMembershipRole: null,
     projectAccessIds: [],
   };
+}
+
+function initialStudioPermission(id: string, type: Exclude<PersonType, "Client contact">): StudioPermission | null {
+  if (type !== "Team") return null;
+  return id === prototypeStudioPersonId || id === "tom-maclachlan" ? "Studio Owner" : "Team Member";
+}
+
+function inferTeamDepartment(jobTitles: string[]) {
+  const roleCopy = jobTitles.join(" ").toLocaleLowerCase("en-AU");
+  if (roleCopy.includes("edit") || roleCopy.includes("motion") || roleCopy.includes("sound") || roleCopy.includes("colour")) return "Post-production";
+  if (roleCopy.includes("director")) return "Studio leadership";
+  return "Production";
 }
 
 function workload(id: string, projectId: string, stage: StageKey, status: WorkloadStatus, predictedHours: number, projectRole: string, assignmentStatus: AssignmentStatus = "Assigned"): PersonWorkload {

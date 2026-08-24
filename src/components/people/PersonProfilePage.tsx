@@ -16,7 +16,9 @@ import {
   formatPersonDate,
 } from "@/components/people/PeoplePrimitives";
 import {
+  EditFreelancerStudioDetailsDialog,
   EditPersonProfileDialog,
+  EditTeamStudioDetailsDialog,
   PersonAccessSummary,
   PersonEventsLog,
   PersonHoursSection,
@@ -24,7 +26,7 @@ import {
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
-import { getWorkloadRollup, type Person } from "@/data/people";
+import { getWorkloadRollup, hasStudioAdministrationAccess, prototypeStudioPersonId, type Person } from "@/data/people";
 
 type ProfileSection = "Overview" | "Work" | "Hours" | "Skills" | "Access" | "Commercial" | "Notes and activity";
 type ProfileDialog = "workload" | "edit" | "archive" | "assign" | "remove-access" | "delete" | null;
@@ -32,7 +34,7 @@ type ProfileDialog = "workload" | "edit" | "archive" | "assign" | "remove-access
 export function PersonProfilePage({ personId }: { personId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { deletePerson, people, setPersonStatus, updatePersonIdentity, updatePersonNotes, updatePersonProjectAccess } = usePeople();
+  const { deletePerson, people, setPersonStatus, updatePersonIdentity, updatePersonNotes, updatePersonProjectAccess, updatePersonStudioDetails } = usePeople();
   const { getInvitationStatus, openInvitePerson, resendInvitation } = useInvitations();
   const { allPages, selectedRole } = usePrototypeRole();
   const person = people.find((candidate) => candidate.id === personId) ?? null;
@@ -40,7 +42,8 @@ export function PersonProfilePage({ personId }: { personId: string }) {
   const [section, setSection] = useState<ProfileSection>(() => isProfileSection(requestedSection) ? requestedSection : "Overview");
   const [dialog, setDialog] = useState<ProfileDialog>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const isStudioStaff = allPages || selectedRole === "Studio Staff";
+  const currentStudioMember = people.find((candidate) => candidate.id === prototypeStudioPersonId) ?? null;
+  const isStudioStaff = allPages || (selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember));
 
   useEffect(() => {
     if (!toast) return;
@@ -60,6 +63,12 @@ export function PersonProfilePage({ personId }: { personId: string }) {
 
   const sections = getProfileSections(person);
   const activeSection = sections.includes(section) ? section : "Overview";
+  const invitationStatus = getInvitationStatus(person);
+  const hasSelfManagedFreelancerProfile = person.type === "Freelancer" && invitationStatus === "Accepted";
+  const hasSelfManagedTeamProfile = person.type === "Team" && invitationStatus === "Accepted";
+  const hasSelfManagedClientProfile = person.type === "Client contact" && invitationStatus === "Accepted";
+  const hasSelfManagedProfile = hasSelfManagedTeamProfile || hasSelfManagedFreelancerProfile || hasSelfManagedClientProfile;
+  const hasSelfManagedProfessionalProfile = hasSelfManagedTeamProfile || hasSelfManagedFreelancerProfile;
   const rollup = getWorkloadRollup(person);
   const currentProjects = getPersonProjects(person).filter((project) => !["Completed", "Archived"].includes(project.status));
 
@@ -69,9 +78,9 @@ export function PersonProfilePage({ personId }: { personId: string }) {
         <div className="person-profile-header-inner">
           <Link className="person-profile-back label-s-semibold" href="/people"><DsIcon name="arrow-left" size={16} /> People</Link>
           <div className="person-profile-heading">
-            <div className="person-profile-identity"><PeopleAvatar person={person} size="L" /><div><span className="label-xs-semibold">{person.accessRole}</span><h1 className="headings-m-bold">{person.name}</h1><p className="label-s">{person.jobTitles.join(", ")} - {person.location}</p></div></div>
+            <div className="person-profile-identity"><PeopleAvatar person={person} size="L" /><div><span className="label-xs-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</span><h1 className="headings-m-bold">{person.name}</h1><p className="label-s">{person.jobTitles.join(", ")} - {person.location}</p></div></div>
             <div className="person-profile-actions">
-              <Button size="M" variant="secondary" onClick={() => setDialog("edit")}><span className="people-button-content"><DsIcon name="pencil-simple-ds" size={16} /> Edit profile</span></Button>
+              {!hasSelfManagedClientProfile ? <Button size="M" variant="secondary" onClick={() => setDialog("edit")}><span className="people-button-content"><DsIcon name="pencil-simple-ds" size={16} /> {hasSelfManagedProfessionalProfile ? "Edit Studio details" : "Edit profile"}</span></Button> : null}
               {person.type !== "Client contact" ? <Button size="M" variant="secondary" onClick={() => setDialog("workload")}>View workload</Button> : null}
               {person.type === "Client contact" && person.clientId ? <Button size="M" variant="secondary" onClick={() => setSection("Access")}>Manage access</Button> : null}
               <Button size="M" onClick={() => person.type === "Client contact" ? setSection("Access") : setDialog("assign")}><span className="people-button-content"><DsIcon name={person.type === "Client contact" ? "lock" : "plus"} size={16} /> {person.type === "Client contact" ? "Client access" : "Assign project"}</span></Button>
@@ -87,17 +96,23 @@ export function PersonProfilePage({ personId }: { personId: string }) {
       <nav className="person-profile-tabs" aria-label="Person profile sections"><div className="person-profile-tabs-inner">{sections.map((item) => <button className={`label-s-semibold ${activeSection === item ? "is-active" : ""}`} type="button" aria-current={activeSection === item ? "page" : undefined} key={item} onClick={() => setSection(item)}>{item}</button>)}</div></nav>
 
       <div className="person-profile-content">
-        {activeSection === "Overview" ? <OverviewSection currentProjects={currentProjects} person={person} rollup={rollup} onActivity={() => setSection("Notes and activity")} onArchive={() => setDialog("archive")} onDelete={() => setDialog("delete")} onWork={() => setSection("Work")} /> : null}
+        {activeSection === "Overview" ? <OverviewSection currentProjects={currentProjects} person={person} rollup={rollup} selfManaged={hasSelfManagedProfile} onActivity={() => setSection("Notes and activity")} onArchive={() => setDialog("archive")} onDelete={() => setDialog("delete")} onWork={() => setSection("Work")} /> : null}
         {activeSection === "Work" ? <WorkSection person={person} /> : null}
         {activeSection === "Hours" ? <PersonHoursSection person={person} /> : null}
-        {activeSection === "Skills" ? <SkillsSection person={person} /> : null}
-        {activeSection === "Access" ? <AccessSection person={person} invitationStatus={getInvitationStatus(person)} onManage={() => openInvitePerson(getInvitePrefill(person))} onPause={() => setPersonStatus(person.id, person.status === "Paused" ? "Active" : "Paused")} onInvite={() => resendInvitation(person)} onProjectAccessChange={(projectIds) => { updatePersonProjectAccess(person.id, projectIds); setToast("Project access updated"); }} onRemoveAccess={() => setDialog("remove-access")} /> : null}
+        {activeSection === "Skills" ? <SkillsSection person={person} selfManaged={hasSelfManagedProfessionalProfile} /> : null}
+        {activeSection === "Access" ? <AccessSection person={person} invitationStatus={invitationStatus} onManage={() => openInvitePerson(getInvitePrefill(person))} onPause={() => setPersonStatus(person.id, person.status === "Paused" ? "Active" : "Paused")} onInvite={() => resendInvitation(person)} onProjectAccessChange={(projectIds) => { updatePersonProjectAccess(person.id, projectIds); setToast("Project access updated"); }} onRemoveAccess={() => setDialog("remove-access")} /> : null}
         {activeSection === "Commercial" ? <CommercialSection person={person} /> : null}
         {activeSection === "Notes and activity" ? <NotesActivitySection person={person} onSave={(notes) => { updatePersonNotes(person.id, notes); setToast("Internal notes saved"); }} /> : null}
       </div>
 
       {dialog === "workload" ? <WorkloadDialog person={person} onClose={() => setDialog(null)} /> : null}
-      {dialog === "edit" ? <EditPersonProfileDialog allPeople={people} person={person} onClose={() => setDialog(null)} onSave={(update) => { updatePersonIdentity(person.id, update); setDialog(null); setToast("Profile updated"); }} /> : null}
+      {dialog === "edit" ? hasSelfManagedTeamProfile ? (
+        <EditTeamStudioDetailsDialog person={person} onClose={() => setDialog(null)} onSave={(update) => { updatePersonStudioDetails(person.id, update); setDialog(null); setToast("Studio details updated"); }} />
+      ) : hasSelfManagedFreelancerProfile ? (
+        <EditFreelancerStudioDetailsDialog person={person} onClose={() => setDialog(null)} onSave={(update) => { updatePersonStudioDetails(person.id, update); setDialog(null); setToast("Studio details updated"); }} />
+      ) : (
+        <EditPersonProfileDialog allPeople={people} person={person} onClose={() => setDialog(null)} onSave={(update) => { updatePersonIdentity(person.id, update); setDialog(null); setToast("Profile updated"); }} />
+      ) : null}
       {dialog === "archive" ? <ArchivePersonDialog person={person} onClose={() => setDialog(null)} onArchive={() => { setPersonStatus(person.id, "Archived"); setDialog(null); setToast("Person archived"); }} /> : null}
       {dialog === "assign" ? <AssignPersonDialog person={person} onAssign={(projectName) => { setDialog(null); setToast(`${person.name} assigned to ${projectName}`); }} onClose={() => setDialog(null)} /> : null}
       {dialog === "remove-access" ? <RemovePortalAccessDialog person={person} onClose={() => setDialog(null)} onRemove={() => { updatePersonProjectAccess(person.id, []); setPersonStatus(person.id, "Paused"); setDialog(null); setToast("Portal and project access removed"); }} /> : null}
@@ -111,7 +126,7 @@ function isProfileSection(value: string | null): value is ProfileSection {
   return value !== null && ["Overview", "Work", "Hours", "Skills", "Access", "Commercial", "Notes and activity"].includes(value);
 }
 
-function OverviewSection({ currentProjects, onActivity, onArchive, onDelete, onWork, person, rollup }: { currentProjects: ReturnType<typeof getPersonProjects>; onActivity: () => void; onArchive: () => void; onDelete: () => void; onWork: () => void; person: Person; rollup: ReturnType<typeof getWorkloadRollup> }) {
+function OverviewSection({ currentProjects, onActivity, onArchive, onDelete, onWork, person, rollup, selfManaged }: { currentProjects: ReturnType<typeof getPersonProjects>; onActivity: () => void; onArchive: () => void; onDelete: () => void; onWork: () => void; person: Person; rollup: ReturnType<typeof getWorkloadRollup>; selfManaged: boolean }) {
   return (
     <section className="person-overview-grid">
       <article className="person-summary-card is-identity"><header><h2 className="headings-xs-bold">Overview</h2><PersonStatusBadge status={person.status} /></header><dl>
@@ -120,9 +135,9 @@ function OverviewSection({ currentProjects, onActivity, onArchive, onDelete, onW
         <div><dt className="label-xs">Email</dt><dd>{person.email ? <a className="label-s-semibold" href={`mailto:${person.email}`}>{person.email}</a> : <span className="label-s people-muted">Not added</span>}</dd></div>
         <div><dt className="label-xs">Phone</dt><dd className="label-s-semibold">{person.phone || "Not added"}</dd></div>
         <div><dt className="label-xs">Location</dt><dd className="label-s-semibold">{person.location}</dd></div>
-        <div><dt className="label-xs">Access role</dt><dd className="label-s-semibold">{person.accessRole}</dd></div>
+        <div><dt className="label-xs">{person.type === "Client contact" ? "Client role" : person.type === "Team" ? "Studio permission" : "Access role"}</dt><dd className="label-s-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</dd></div>
         {person.clientId && person.clientName ? <div><dt className="label-xs">Related Client</dt><dd><Link className="label-s-semibold" href={`/clients/${person.clientId}`}>{person.clientName}</Link></dd></div> : null}
-      </dl></article>
+      </dl>{selfManaged ? <div className="person-profile-safety"><DsIcon name="info" size={16} /><span className="label-xs">Contact and work details are managed by {person.name} in personal settings.</span></div> : null}</article>
 
       <article className="person-summary-card is-work"><header><h2 className="headings-xs-bold">Work at a glance</h2><button className="client-text-button label-xs-semibold" type="button" onClick={onWork}>Current work</button></header><div className="person-metrics">
         <span><strong className="headings-s-bold">{currentProjects.length}</strong><small className="label-xs">Active projects</small></span>
@@ -147,8 +162,66 @@ function WorkSection({ person }: { person: Person }) {
   </section>;
 }
 
-function SkillsSection({ person }: { person: Person }) {
-  return <section className="person-section-stack"><header className="person-section-header"><div><h2 className="headings-s-bold">Skills</h2><p className="paragraph-s">Structured craft details help producers find the right person quickly.</p></div></header><div className="person-skills-layout"><article className="person-detail-card"><h3 className="headings-xs-bold">Skills and specialties</h3><div className="person-tag-list">{person.skills.map((skill) => <span className="label-xs-semibold" key={skill}>{skill}</span>)}{person.skills.length === 0 ? <span className="label-s people-muted">No skills added</span> : null}</div><h3 className="headings-xs-bold">Styles and genres</h3><div className="person-tag-list">{person.styles.map((style) => <span className="label-xs-semibold" key={style}>{style}</span>)}{person.styles.length === 0 ? <span className="label-s people-muted">No styles added</span> : null}</div></article><article className="person-detail-card"><h3 className="headings-xs-bold">Professional profile</h3><dl><div><dt className="label-xs">Seniority</dt><dd className="label-s-semibold">{person.seniority}</dd></div><div><dt className="label-xs">Location and timezone</dt><dd className="label-s-semibold">{person.location} - {person.timezone}</dd></div><div><dt className="label-xs">Availability</dt><dd className="label-s-semibold">{person.availability ?? "Not tracked"}</dd></div><div><dt className="label-xs">Testing</dt><dd className="label-s-semibold">{person.testingStatus}</dd></div><div><dt className="label-xs">Onboarding</dt><dd className="label-s-semibold">{person.onboardingStatus}</dd></div><div><dt className="label-xs">Agreement</dt><dd className="label-s-semibold">{person.agreementStatus}</dd></div><div><dt className="label-xs">Portfolio or reel</dt><dd>{person.portfolioUrl ? <a className="label-s-semibold" href={person.portfolioUrl} target="_blank" rel="noreferrer">Open reel <DsIcon name="arrow-bend-up-right" size={13} /></a> : <span className="label-s people-muted">Not added</span>}</dd></div></dl></article><article className="person-detail-card is-assessment"><h3 className="headings-xs-bold">Internal assessment</h3><p className="paragraph-s">{person.notes || "No internal assessment has been added yet."}</p><div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">This assessment is visible to Studio Staff only.</span></div></article></div></section>;
+function SkillsSection({ person, selfManaged }: { person: Person; selfManaged: boolean }) {
+  const isFreelancer = person.type === "Freelancer";
+  const isTeamMember = person.type === "Team";
+
+  return (
+    <section className="person-section-stack">
+      <header className="person-section-header">
+        <div>
+          <h2 className="headings-s-bold">Skills</h2>
+          <p className="paragraph-s">Structured craft details help producers find the right person quickly.</p>
+        </div>
+      </header>
+      <div className="person-skills-layout">
+        <article className="person-detail-card">
+          <h3 className="headings-xs-bold">{selfManaged ? `${isFreelancer ? "Freelancer" : "Team Member"}-managed profile` : "Skills and specialties"}</h3>
+          <div className="person-tag-list">
+            {person.skills.map((skill) => <span className="label-xs-semibold" key={skill}>{skill}</span>)}
+            {person.skills.length === 0 ? <span className="label-s people-muted">No skills added</span> : null}
+          </div>
+          <h3 className="headings-xs-bold">Styles and genres</h3>
+          <div className="person-tag-list">
+            {person.styles.map((style) => <span className="label-xs-semibold" key={style}>{style}</span>)}
+            {person.styles.length === 0 ? <span className="label-s people-muted">No styles added</span> : null}
+          </div>
+          {selfManaged ? (
+            <dl>
+              <div><dt className="label-xs">Location and timezone</dt><dd className="label-s-semibold">{person.location} - {person.timezone}</dd></div>
+              <div><dt className="label-xs">Availability</dt><dd className="label-s-semibold">{person.availability ?? "Not tracked"}</dd></div>
+              <div><dt className="label-xs">Portfolio or reel</dt><dd>{person.portfolioUrl ? <a className="label-s-semibold" href={person.portfolioUrl} target="_blank" rel="noreferrer">Open reel <DsIcon name="arrow-bend-up-right" size={13} /></a> : <span className="label-s people-muted">Not added</span>}</dd></div>
+            </dl>
+          ) : null}
+          {selfManaged ? <div className="person-profile-safety"><DsIcon name="info" size={16} /><span className="label-xs">Managed by {person.name} in personal settings.</span></div> : null}
+        </article>
+
+        <article className="person-detail-card">
+          <h3 className="headings-xs-bold">{selfManaged ? "Studio record" : "Professional profile"}</h3>
+          <dl>
+            {isTeamMember ? <div><dt className="label-xs">Department</dt><dd className="label-s-semibold">{person.department || "Not assigned"}</dd></div> : null}
+            {isTeamMember ? <div><dt className="label-xs">Weekly capacity</dt><dd className="label-s-semibold">{person.weeklyCapacityHours ? `${person.weeklyCapacityHours} hours` : "Not set"}</dd></div> : null}
+            {isTeamMember ? <div><dt className="label-xs">Studio permission</dt><dd className="label-s-semibold">{person.studioPermission ?? "Team Member"}</dd></div> : null}
+            <div><dt className="label-xs">Seniority</dt><dd className="label-s-semibold">{person.seniority}</dd></div>
+            {!selfManaged ? <div><dt className="label-xs">Location and timezone</dt><dd className="label-s-semibold">{person.location} - {person.timezone}</dd></div> : null}
+            {!selfManaged ? <div><dt className="label-xs">Availability</dt><dd className="label-s-semibold">{person.availability ?? "Not tracked"}</dd></div> : null}
+            <div><dt className="label-xs">Testing</dt><dd className="label-s-semibold">{person.testingStatus}</dd></div>
+            <div><dt className="label-xs">Onboarding</dt><dd className="label-s-semibold">{person.onboardingStatus}</dd></div>
+            <div><dt className="label-xs">Agreement</dt><dd className="label-s-semibold">{person.agreementStatus}</dd></div>
+            {!selfManaged ? <div><dt className="label-xs">Portfolio or reel</dt><dd>{person.portfolioUrl ? <a className="label-s-semibold" href={person.portfolioUrl} target="_blank" rel="noreferrer">Open reel <DsIcon name="arrow-bend-up-right" size={13} /></a> : <span className="label-s people-muted">Not added</span>}</dd></div> : null}
+          </dl>
+          {isFreelancer ? <div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">Classification and contractor checks are managed by Studio Staff.</span></div> : null}
+          {isTeamMember ? <div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">Department, capacity and Studio permission are managed by Studio Owners and Admins.</span></div> : null}
+        </article>
+
+        <article className="person-detail-card is-assessment">
+          <h3 className="headings-xs-bold">Internal assessment</h3>
+          <p className="paragraph-s">{person.notes || "No internal assessment has been added yet."}</p>
+          <div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">This assessment is visible to Studio Staff only.</span></div>
+        </article>
+      </div>
+    </section>
+  );
 }
 
 function AccessSection({ invitationStatus, onInvite, onManage, onPause, onProjectAccessChange, onRemoveAccess, person }: { invitationStatus: InvitationStatus; onInvite: () => void; onManage: () => void; onPause: () => void; onProjectAccessChange: (projectIds: string[]) => void; onRemoveAccess: () => void; person: Person }) {
@@ -162,7 +235,30 @@ function ClientAccessProjectList({ onRemoveProject, person, projects }: { onRemo
 
 function CommercialSection({ person }: { person: Person }) {
   if (!person.commercial) return <div className="person-section-empty"><h2 className="headings-xs-bold">Commercial details are not applicable</h2><p className="paragraph-s">Rates, offers and invoices are available only for freelancers.</p></div>;
-  return <section className="person-section-stack"><header className="person-section-header"><div><h2 className="headings-s-bold">Commercial details</h2><p className="paragraph-s">Studio-only rates, offers and invoice history for this freelancer.</p></div></header><div className="person-commercial-grid"><article className="person-detail-card"><span className="label-xs">Default {person.commercial.rateType.toLocaleLowerCase("en-AU")}</span><strong className="headings-s-bold">${person.commercial.defaultRate.toLocaleString("en-AU")}</strong><small className="label-xs">AUD - used as the starting point for project offers</small></article><article className="person-detail-card"><span className="label-xs">Current project offers</span><strong className="headings-s-bold">{person.workloads.filter((item) => item.assignmentStatus === "Offer sent").length}</strong><small className="label-xs">Project-specific rates can differ from the default</small></article></div><div className="person-invoice-list"><header><h3 className="headings-xs-bold">Invoice history</h3></header>{person.commercial.invoices.length ? person.commercial.invoices.map((invoice) => <article key={invoice.id}><span><strong className="label-s-semibold">{invoice.label}</strong><small className="label-xs">{invoice.id}</small></span><strong className="label-m-semibold">${invoice.amount.toLocaleString("en-AU")}</strong><span className="person-assignment-status label-xs-semibold">{invoice.status}</span></article>) : <div className="people-inline-empty"><strong className="label-s-semibold">No invoices yet</strong><span className="label-xs">Invoices uploaded for accepted work will appear here.</span></div>}</div><div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">Commercial details are hidden from Client contacts and people without permission to see Studio costs.</span></div></section>;
+  return (
+    <section className="person-section-stack">
+      <header className="person-section-header">
+        <div><h2 className="headings-s-bold">Commercial details</h2><p className="paragraph-s">Studio-only rates, offers, contractor details and invoice history for this freelancer.</p></div>
+      </header>
+      <div className="person-commercial-grid">
+        <article className="person-detail-card"><span className="label-xs">Default {person.commercial.rateType.toLocaleLowerCase("en-AU")}</span><strong className="headings-s-bold">${person.commercial.defaultRate.toLocaleString("en-AU")}</strong><small className="label-xs">AUD - used as the starting point for project offers</small></article>
+        <article className="person-detail-card"><span className="label-xs">Current project offers</span><strong className="headings-s-bold">{person.workloads.filter((item) => item.assignmentStatus === "Offer sent").length}</strong><small className="label-xs">Project-specific rates can differ from the default</small></article>
+      </div>
+      <article className="person-detail-card">
+        <h3 className="headings-xs-bold">Contractor details</h3>
+        <dl>
+          <div><dt className="label-xs">Business or trading name</dt><dd className="label-s-semibold">{person.businessName || "Not added"}</dd></div>
+          <div><dt className="label-xs">ABN or tax number</dt><dd className="label-s-semibold">{person.taxNumber || "Not added"}</dd></div>
+        </dl>
+        <div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">Supplied by {person.name} and visible only to authorised Studio Staff.</span></div>
+      </article>
+      <div className="person-invoice-list">
+        <header><h3 className="headings-xs-bold">Invoice history</h3></header>
+        {person.commercial.invoices.length ? person.commercial.invoices.map((invoice) => <article key={invoice.id}><span><strong className="label-s-semibold">{invoice.label}</strong><small className="label-xs">{invoice.id}</small></span><strong className="label-m-semibold">${invoice.amount.toLocaleString("en-AU")}</strong><span className="person-assignment-status label-xs-semibold">{invoice.status}</span></article>) : <div className="people-inline-empty"><strong className="label-s-semibold">No invoices yet</strong><span className="label-xs">Invoices uploaded for accepted work will appear here.</span></div>}
+      </div>
+      <div className="person-profile-safety"><DsIcon name="lock" size={16} /><span className="label-xs">Commercial details are hidden from Client contacts and people without permission to see Studio costs.</span></div>
+    </section>
+  );
 }
 
 function NotesActivitySection({ onSave, person }: { onSave: (notes: string) => void; person: Person }) {
@@ -191,7 +287,8 @@ function AssignPersonDialog({ onAssign, onClose, person }: { onAssign: (projectN
 
 function PersonProfilePermissionState({ role }: { role: "Studio Staff" | "Studio Freelancer" | "Customer" }) {
   const isCustomer = role === "Customer";
-  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "This Studio profile is private" : "This profile is outside your invited projects"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see permitted collaborators in their Client portal, but cannot browse Studio profiles, rates or internal notes." : "Studio Freelancers can see only people needed for projects they can access. Ask the Studio producer if you need this profile."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : "/active-videos"}>{isCustomer ? "Open Client portal" : "Back to invited projects"}</Link></main>;
+  const isTeamMember = role === "Studio Staff";
+  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "This Studio profile is private" : isTeamMember ? "This profile is restricted" : "This profile is outside your invited projects"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see permitted collaborators in their Client portal, but cannot browse Studio profiles, rates or internal notes." : isTeamMember ? "Only Studio Owners and Admins can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only people needed for projects they can access. Ask the Studio producer if you need this profile."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to Today" : "Back to invited projects"}</Link></main>;
 }
 
 function getProfileSections(person: Person): ProfileSection[] {

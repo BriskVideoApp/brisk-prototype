@@ -1,25 +1,31 @@
 import type { MouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import type { MediaAsset, MediaFolder } from "@/data/media";
+import type { MediaAssetView, MediaFolder } from "@/data/media";
+import type { MediaCapabilities } from "@/lib/media";
 import { MediaAssetCard } from "./MediaAssetCard";
 import { MediaAssetRow } from "./MediaAssetRow";
 import type { MediaViewMode } from "./MediaFilterBar";
 
 type MediaAssetGridProps = {
-  assets: MediaAsset[];
+  assets: MediaAssetView[];
+  capabilities: MediaCapabilities;
   folders: MediaFolder[];
   folderPath: MediaFolder[];
   viewMode: MediaViewMode;
   selectedAssetIds: Set<string>;
   activeAssetId: string | null;
-  onActivate: (asset: MediaAsset, event: MouseEvent<HTMLElement>) => void;
-  onComment: (asset: MediaAsset) => void;
-  onTranscript: (asset: MediaAsset) => void;
-  onShare: (asset: MediaAsset) => void;
-  onDownload: (asset: MediaAsset) => void;
-  onDelete: (asset: MediaAsset) => void;
+  onActivate: (asset: MediaAssetView, event: MouseEvent<HTMLElement>) => void;
+  onComment: (asset: MediaAssetView) => void;
+  onTranscript: (asset: MediaAssetView) => void;
+  onShare: (asset: MediaAssetView) => void;
+  onDownload: (asset: MediaAssetView) => void;
+  onDelete: (asset: MediaAssetView) => void;
+  onArchive: (asset: MediaAssetView) => void;
+  onRestore: (asset: MediaAssetView) => void;
+  onRetry: (asset: MediaAssetView) => void;
   onBatchDownload: () => void;
   onBatchMove: () => void;
+  onBatchArchive: () => void;
   onBatchDelete: () => void;
   onDeselectAll: () => void;
   onUpload: () => void;
@@ -29,7 +35,9 @@ type MediaAssetGridProps = {
 };
 
 export function MediaAssetGrid(props: MediaAssetGridProps) {
-  const assetProps = (asset: MediaAsset) => ({
+  const selectedAssets = props.assets.filter((asset) => props.selectedAssetIds.has(asset.id));
+  const hasDownloadableSelection = selectedAssets.some((asset) => asset.originalAvailable);
+  const assetProps = (asset: MediaAssetView) => ({
     asset,
     isActive: props.activeAssetId === asset.id,
     isSelected: props.selectedAssetIds.has(asset.id),
@@ -39,6 +47,10 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
     onShare: props.onShare,
     onDownload: props.onDownload,
     onDelete: props.onDelete,
+    onArchive: props.onArchive,
+    onRestore: props.onRestore,
+    onRetry: props.onRetry,
+    capabilities: props.capabilities,
   });
 
   return (
@@ -73,12 +85,12 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
           </p>
           {props.emptyKind === "filtered" ? (
             <button className="media-secondary-button label-s-semibold" type="button" onClick={props.onClearControls}>Clear controls</button>
-          ) : (
+          ) : props.capabilities.canUpload ? (
             <button className="media-primary-button label-s-semibold" type="button" onClick={props.onUpload}>
               <DsIcon name="plus" size={16} />
               {props.emptyKind === "folder" ? "Upload to this folder" : "Upload media"}
             </button>
-          )}
+          ) : null}
         </div>
       ) : props.viewMode === "card" ? (
         <div className="media-card-grid">
@@ -143,9 +155,10 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
       {props.selectedAssetIds.size > 0 ? (
         <div className="media-selection-bar" aria-label={`${props.selectedAssetIds.size} files selected`}>
           <span className="label-s-semibold">{props.selectedAssetIds.size} selected</span>
-          <button type="button" onClick={props.onBatchDownload}><DsIcon name="download" size={16} />Download</button>
-          <button type="button" onClick={props.onBatchMove}><DsIcon name="folder" size={16} />Move to folder</button>
-          <button type="button" onClick={props.onBatchDelete}><DsIcon name="trash" size={16} />Delete</button>
+          {props.capabilities.canDownload ? <button type="button" disabled={!hasDownloadableSelection} onClick={props.onBatchDownload}><DsIcon name="download" size={16} />Download</button> : null}
+          {props.capabilities.canMoveAssets ? <button type="button" onClick={props.onBatchMove}><DsIcon name="folder" size={16} />Move to folder</button> : null}
+          {props.capabilities.canArchive ? <button type="button" onClick={props.onBatchArchive}><DsIcon name="folder" size={16} />Archive</button> : null}
+          {props.capabilities.canDelete ? <button type="button" onClick={props.onBatchDelete}><DsIcon name="trash" size={16} />Delete</button> : null}
           <button type="button" onClick={props.onDeselectAll}>Deselect all</button>
         </div>
       ) : null}

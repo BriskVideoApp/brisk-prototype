@@ -39,6 +39,10 @@ const subscriptionOptions: ReadonlyArray<{ value: PersonalProjectSubscription; l
 
 export function PersonalNotificationSettingsPage() {
   const { selectedRole } = usePrototypeRole();
+  const isFreelancer = selectedRole === "Studio Freelancer";
+  const isStudioStaff = selectedRole === "Studio Staff";
+  const backHref = isFreelancer ? "/active-videos" : "/notifications";
+  const backLabel = isFreelancer ? "Back to My jobs" : "Back to notification centre";
   const storageKey = `brisk-personal-notification-settings-v1:${selectedRole}`;
   const [savedSettings, setSavedSettings] = useState<PersonalNotificationSettings>(() => clonePersonalNotificationSettings(initialPersonalNotificationSettings));
   const [draft, setDraft] = useState<PersonalNotificationSettings>(() => clonePersonalNotificationSettings(initialPersonalNotificationSettings));
@@ -71,9 +75,9 @@ export function PersonalNotificationSettingsPage() {
     <main className="personal-notification-settings-page">
       <header className="personal-notification-settings-header">
         <div>
-          <Link className="personal-notification-settings-back label-s-semibold" href="/notifications">
+          <Link className="personal-notification-settings-back label-s-semibold" href={backHref}>
             <DsIcon name="arrow-left" size={16} />
-            Back to notifications
+            {backLabel}
           </Link>
           <span className="label-xs-semibold">Your settings</span>
           <h1 className="headings-m-bold">Notification preferences</h1>
@@ -91,30 +95,112 @@ export function PersonalNotificationSettingsPage() {
             </div>
           </header>
           <div className="notification-settings-section-content notification-policy-list">
-            <PersonalPolicyCheckbox
-              checked={draft.inAppActionRequired}
-              label="Updates that need action"
-              description="Show a notification when something needs your attention."
-              onChange={(checked) => setDraft((current) => ({ ...current, inAppActionRequired: checked }))}
-            />
-            <PersonalPolicyCheckbox
-              checked={draft.mentionsAndDms}
-              label="Mentions and DMs"
-              description="Notify you about direct messages, mentions and assigned replies."
-              onChange={(checked) => setDraft((current) => ({ ...current, mentionsAndDms: checked }))}
-            />
-            <PersonalPolicyCheckbox
-              checked={draft.emailFallback}
-              label="Email for important updates"
-              description="Email you when an important update needs your attention."
-              onChange={(checked) => setDraft((current) => ({ ...current, emailFallback: checked }))}
-            />
-            <PersonalPolicyCheckbox
-              checked={draft.dailyDigest}
-              label="Daily digest"
-              description="Combine routine internal updates into one daily email."
-              onChange={(checked) => setDraft((current) => ({ ...current, dailyDigest: checked }))}
-            />
+            {isFreelancer ? (
+              <>
+                <PersonalPolicyCheckbox
+                  checked={draft.mentionsAndDms}
+                  label="Direct messages, mentions and replies"
+                  description="Notify you when someone contacts you directly or replies to you."
+                  onChange={(checked) => setDraft((current) => ({ ...current, mentionsAndDms: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.offersAndChanges}
+                  label="New offers and offer changes"
+                  description="Notify you when a Studio sends or changes an offer."
+                  onChange={(checked) => setDraft((current) => ({ ...current, offersAndChanges: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.assignmentChanges}
+                  label="Assignment changes"
+                  description="Notify you when assigned work, dates or responsibilities change."
+                  onChange={(checked) => setDraft((current) => ({ ...current, assignmentChanges: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.assignedProjectUpdates}
+                  label="Updates from assigned projects"
+                  description="Project updates stop when you are removed. Direct messages and mentions continue while you still have access."
+                  onChange={(checked) => setDraft((current) => ({ ...current, assignedProjectUpdates: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.invoiceStatusChanges}
+                  label="Invoice status changes"
+                  description="Notify you when an uploaded invoice is approved, sent back or marked paid."
+                  onChange={(checked) => setDraft((current) => ({ ...current, invoiceStatusChanges: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.emailFallback}
+                  label="Important email notifications"
+                  description="Email you when an important work update needs your attention."
+                  onChange={(checked) => setDraft((current) => ({ ...current, emailFallback: checked }))}
+                />
+              </>
+            ) : isStudioStaff ? (
+              <>
+                <PersonalPolicyCheckbox
+                  checked={draft.mentionsAndDms}
+                  label="Direct messages, mentions and replies"
+                  description="Notify you when someone contacts you directly or replies to you."
+                  onChange={(checked) => setDraft((current) => ({ ...current, mentionsAndDms: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.assignmentChanges}
+                  label="Assignments and assignment changes"
+                  description="Notify you when assigned work, dates or responsibilities change."
+                  onChange={(checked) => setDraft((current) => ({ ...current, assignmentChanges: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.assignedProjectUpdates}
+                  label="Updates from assigned projects"
+                  description="Project updates stop when your assignment ends. Direct messages and permitted mentions can still reach you."
+                  onChange={(checked) => setDraft((current) => ({ ...current, assignedProjectUpdates: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.inAppActionRequired}
+                  label="Stage assignments and due dates"
+                  description="Notify you when assigned Stage work needs attention or reaches its due date."
+                  onChange={(checked) => setDraft((current) => ({ ...current, inAppActionRequired: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.emailFallback}
+                  label="Important email notifications"
+                  description="Email you when an important work update needs your attention."
+                  onChange={(checked) => setDraft((current) => ({ ...current, emailFallback: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.dailyDigest}
+                  label="Daily digest"
+                  description="Combine routine Studio updates into one daily email."
+                  onChange={(checked) => setDraft((current) => ({ ...current, dailyDigest: checked }))}
+                />
+              </>
+            ) : (
+              <>
+                <PersonalPolicyCheckbox
+                  checked={draft.inAppActionRequired}
+                  label="Updates that need action"
+                  description="Show a notification when something needs your attention."
+                  onChange={(checked) => setDraft((current) => ({ ...current, inAppActionRequired: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.mentionsAndDms}
+                  label="Mentions and DMs"
+                  description="Notify you about direct messages, mentions and assigned replies."
+                  onChange={(checked) => setDraft((current) => ({ ...current, mentionsAndDms: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.emailFallback}
+                  label="Email for important updates"
+                  description="Email you when an important update needs your attention."
+                  onChange={(checked) => setDraft((current) => ({ ...current, emailFallback: checked }))}
+                />
+                <PersonalPolicyCheckbox
+                  checked={draft.dailyDigest}
+                  label="Daily digest"
+                  description="Combine routine internal updates into one daily email."
+                  onChange={(checked) => setDraft((current) => ({ ...current, dailyDigest: checked }))}
+                />
+              </>
+            )}
             <div className="notification-policy-row is-mandatory">
               <NotificationSettingsCheckbox checked disabled label="Important account, access and security emails" />
               <p className="label-xs">These emails are always sent to help protect your account.</p>
@@ -164,24 +250,26 @@ export function PersonalNotificationSettingsPage() {
           </div>
         </section>
 
-        <section className="notification-settings-section">
-          <header>
-            <span><DsIcon name="folder" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">New project subscription</h2>
-              <p className="paragraph-s">Choose your personal starting point when you join a project.</p>
+        {!isFreelancer ? (
+          <section className="notification-settings-section">
+            <header>
+              <span><DsIcon name="folder" size={18} /></span>
+              <div>
+                <h2 className="headings-xs-bold">New project subscription</h2>
+                <p className="paragraph-s">Choose your personal starting point when you join a project.</p>
+              </div>
+            </header>
+            <div className="notification-settings-section-content">
+              <PersonalSelectField
+                label="Default project subscription"
+                options={subscriptionOptions}
+                value={draft.defaultProjectSubscription}
+                onChange={(value) => setDraft((current) => ({ ...current, defaultProjectSubscription: value }))}
+              />
+              <p className="notification-settings-note label-xs">Project-level choices can still be changed without changing your permission role.</p>
             </div>
-          </header>
-          <div className="notification-settings-section-content">
-            <PersonalSelectField
-              label="Default project subscription"
-              options={subscriptionOptions}
-              value={draft.defaultProjectSubscription}
-              onChange={(value) => setDraft((current) => ({ ...current, defaultProjectSubscription: value }))}
-            />
-            <p className="notification-settings-note label-xs">Project-level choices can still be changed without changing your permission role.</p>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         <div className="studio-settings-form-actions">
           <Button size="M" type="button" variant="secondary" onClick={discardChanges}>Discard changes</Button>

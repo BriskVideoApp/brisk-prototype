@@ -62,6 +62,7 @@ const iconPaths = {
   "push-pin-simple-fill": "/brisk-icons/push-pin-simple.svg",
   "bookmark": "/brisk-icons/bookmark-simple.svg",
   "settings": "/brisk-icons/settings.svg",
+  "sign-out": "/brisk-icons/sign-out.svg",
   "lock": "/brisk-icons/lock.svg",
   "globe": "/brisk-icons/globe.svg",
   "paper-plane-tilt": "/brisk-icons/paper-plane-tilt.svg",

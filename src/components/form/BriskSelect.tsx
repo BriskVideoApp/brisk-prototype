@@ -8,6 +8,7 @@ export type BriskSelectOption<T extends string = string> = {
   value: T;
   label: string;
   icon?: DsIconName;
+  logoSrc?: string;
   dividerAbove?: boolean;
 };
 
@@ -68,6 +69,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     : props.multiple && selectedOptions.length > 1
       ? props.selectionLabel?.(selectedOptions) ?? `${selectedOptions.length} selected`
       : selectedOptions[0].label;
+  const selectedLogoSrc = selectedOptions.length === 1 ? selectedOptions[0].logoSrc : undefined;
   const filteredOptions = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
     return normalisedQuery ? options.filter((option) => option.label.toLowerCase().includes(normalisedQuery)) : options;
@@ -198,7 +200,10 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
         }
       }}
     >
-      <span>{triggerLabel}</span>
+      <span className="brisk-select-trigger-label">
+        {selectedLogoSrc ? <img className="brisk-select-option-logo" src={selectedLogoSrc} alt="" /> : null}
+        <span>{triggerLabel}</span>
+      </span>
       <DsIcon name="caret-down" size={12} />
     </button>
     {isOpen ? createPortal(<div className="brisk-select-menu" ref={menuRef} style={menuStyle} role="listbox" id={listboxId} aria-label={ariaLabel} aria-multiselectable={props.multiple || undefined} tabIndex={-1} onKeyDown={handleMenuKeyDown}>
@@ -206,7 +211,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       <div className="brisk-select-options" ref={optionsRef}>
         {filteredOptions.map((option, index) => {
           const isSelected = selectedValues.includes(option.value);
-          return <button className={`brisk-select-option label-s ${isSelected ? "selected" : ""} ${index === activeIndex ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`} type="button" role="option" aria-selected={isSelected} data-active={index === activeIndex} key={option.value} onMouseEnter={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.stopPropagation(); }} onClick={() => selectOption(option.value)}><span className="brisk-select-option-label">{option.icon ? <DsIcon name={option.icon} size={16} /> : null}<span>{option.label}</span></span>{isSelected ? <DsIcon name="check" size={14} /> : null}</button>;
+          return <button className={`brisk-select-option label-s ${isSelected ? "selected" : ""} ${index === activeIndex ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`} type="button" role="option" aria-selected={isSelected} data-active={index === activeIndex} key={option.value} onMouseEnter={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.stopPropagation(); }} onClick={() => selectOption(option.value)}><span className="brisk-select-option-label">{option.logoSrc ? <img className="brisk-select-option-logo" src={option.logoSrc} alt="" /> : option.icon ? <DsIcon name={option.icon} size={16} /> : null}<span>{option.label}</span></span>{isSelected ? <DsIcon name="check" size={14} /> : null}</button>;
         })}
         {filteredOptions.length === 0 ? <span className="brisk-select-empty label-s">No matching options</span> : null}
       </div>

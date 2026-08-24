@@ -12,7 +12,7 @@ import {
   type FloatingSelectionToolbarState,
 } from "@/components/script/FloatingSelectionToolbar";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { mediaAssets, type MediaAsset } from "@/data/media";
+import { mediaAssets, type MediaAssetView } from "@/data/media";
 import { scriptUsers, type ScriptComment, type ScriptCommentAnchor } from "@/data/script";
 import {
   createTranscriptSourceKey,
@@ -40,7 +40,7 @@ type TranscriptSelectionToolbarState = FloatingSelectionToolbarState & {
 
 type ResolvedTranscriptClip = {
   clip: TranscriptClip;
-  asset: MediaAsset;
+  asset: MediaAssetView;
 };
 
 const emptyToolbarState: TranscriptSelectionToolbarState = {
@@ -368,7 +368,7 @@ export function TranscriptsPanel({
 
   const openParagraphComment = (
     clip: TranscriptClip,
-    asset: MediaAsset,
+    asset: MediaAssetView,
     paragraph: TranscriptParagraph,
     triggerRect: DOMRect,
   ) => {
@@ -641,7 +641,7 @@ function TranscriptEmptyState({ projectId }: { projectId: string }) {
 
 function createWordsRowPayload(
   clip: TranscriptClip,
-  asset: MediaAsset,
+  asset: MediaAssetView,
   paragraph: TranscriptParagraph,
   range: { start: number; end: number },
   text: string,

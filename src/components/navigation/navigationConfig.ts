@@ -43,6 +43,7 @@ const allRoles: readonly PrototypeRole[] = [
 const studioRoles: readonly PrototypeRole[] = ["Studio Staff", "Studio Freelancer"];
 const studioOnly: readonly PrototypeRole[] = ["Studio Staff"];
 const clientOnly: readonly PrototypeRole[] = ["Customer"];
+const personalSettingsRoles: readonly PrototypeRole[] = allRoles;
 
 const projectIconByExperience: Record<DemoProjectExperience, DsIconName> = {
   overview: "grid-four",
@@ -99,6 +100,13 @@ export const navigationGroups: readonly NavigationGroup[] = [
         roles: studioRoles,
       },
       {
+        id: "media-library",
+        label: "Media Library",
+        href: "/media",
+        icon: "image-square",
+        roles: allRoles,
+      },
+      {
         id: "outstanding-invoices",
         label: "Outstanding invoices",
         href: "/outstanding-invoices",
@@ -136,6 +144,51 @@ export const navigationGroups: readonly NavigationGroup[] = [
         roles: allRoles,
         sidebarHidden: true,
       },
+      {
+        id: "personal-profile-settings",
+        label: "My profile",
+        href: "/settings/personal/profile",
+        icon: "settings",
+        roles: personalSettingsRoles,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "personal-security-settings",
+        label: "Security",
+        href: "/settings/personal/security",
+        icon: "lock",
+        roles: personalSettingsRoles,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "client-company-settings",
+        label: "Company details",
+        href: "/settings/client/company",
+        icon: "settings",
+        roles: clientOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "client-team-settings",
+        label: "Team access",
+        href: "/settings/client/team",
+        icon: "users-three",
+        roles: clientOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "client-invoices",
+        label: "Invoices & payments",
+        href: "/client/invoices",
+        icon: "file-text",
+        roles: clientOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
     ],
   },
   {
@@ -148,6 +201,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
         href: "/people",
         icon: "users-three",
         roles: studioOnly,
+        strictRoleVisibility: true,
       },
       {
         id: "clients",
@@ -155,6 +209,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
         href: "/clients",
         icon: "users-three",
         roles: studioOnly,
+        strictRoleVisibility: true,
       },
       {
         id: "brand-kits",
@@ -225,6 +280,15 @@ export const navigationGroups: readonly NavigationGroup[] = [
         label: "Production defaults",
         href: "/settings/studio/production",
         icon: "queue",
+        roles: studioOnly,
+        sidebarHidden: true,
+        strictRoleVisibility: true,
+      },
+      {
+        id: "studio-ai-playbook",
+        label: "AI Playbook",
+        href: "/settings/studio/ai-playbook",
+        icon: "sparkle",
         roles: studioOnly,
         sidebarHidden: true,
         strictRoleVisibility: true,

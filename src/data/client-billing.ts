@@ -1,6 +1,16 @@
 export type ClientBillingMethod = "unselected" | "stripe" | "independent";
 export type StripeConnectionStatus = "not-connected" | "connected" | "action-required" | "disconnected";
 
+export type ClientBillingSettings = {
+  method: ClientBillingMethod;
+  stripeStatus: StripeConnectionStatus;
+};
+
+export const initialClientBillingSettings: ClientBillingSettings = {
+  method: "stripe",
+  stripeStatus: "connected",
+};
+
 export type ClientBillingOption = {
   id: "stripe" | "independent";
   title: string;
@@ -47,9 +57,7 @@ export const stripeAccountFixture: StripeAccountDetails = {
   accountEmail: "finance@chopchop.film",
 };
 
-export type ClientBillingFixture = {
-  method: ClientBillingMethod;
-  stripeStatus: StripeConnectionStatus;
+export type ClientBillingFixture = ClientBillingSettings & {
   canManageClientBilling: boolean;
 };
 

@@ -53,6 +53,19 @@ export type BrandProfile = {
   guidelines: { files?: BrandGuidelineFile[]; pdfUrl?: string; aiSummary?: string };
 };
 
+export type AiBrandProfile = {
+  summary: string;
+  audience: string;
+  keyMessages: string;
+  visualStyle: string;
+  recurringThemes: string;
+  productionPreferences: string;
+  previousWins: string;
+  lastUpdated: string;
+  sources: string[];
+  learning: boolean;
+};
+
 export type EditorFile = {
   id: string;
   name: string;
@@ -85,6 +98,7 @@ export type BrandKitCustomer = {
   logoUrl: string | null;
   lastUpdated: string;
   profile: BrandProfile | null;
+  aiBrandProfile: AiBrandProfile;
   clientCanEdit: boolean;
   shareToken: string;
   showPoweredBy: boolean;
@@ -340,6 +354,26 @@ const lightweightCustomers: Array<{
 
 const defaultProfile = mockBrandProfilesBySlug.loom;
 
+function makeAiBrandProfile(
+  name: string,
+  profile: BrandProfile | null,
+  overrides: Partial<AiBrandProfile> = {},
+): AiBrandProfile {
+  return {
+    summary: `Brisk understands ${name} as a clear, confident brand that values useful stories over generic promotion.`,
+    audience: "Decision-makers and teams who need practical, credible information before they act.",
+    keyMessages: "Lead with the customer outcome, explain the product value clearly and support claims with evidence.",
+    visualStyle: profile?.guidelines.aiSummary ?? "Clean layouts, natural people and product detail with restrained use of brand colour.",
+    recurringThemes: "Clarity, progress, collaboration and confident decision-making.",
+    productionPreferences: "Open quickly, keep interviews conversational and show the product in a realistic working context.",
+    previousWins: "Concise customer stories with an early audience cue and a single, memorable product benefit.",
+    lastUpdated: "24 Aug 2026, 9:18 am",
+    sources: ["Brand Kit", "Approved Briefs", "Approved Scripts", "Client comments", "Project history"],
+    learning: false,
+    ...overrides,
+  };
+}
+
 export const brandKitCustomers: BrandKitCustomer[] = [
   {
     slug: "loom",
@@ -349,6 +383,15 @@ export const brandKitCustomers: BrandKitCustomer[] = [
     logoUrl: logoUrls.loom,
     lastUpdated: "25 Jul 2026",
     profile: mockBrandProfilesBySlug.loom,
+    aiBrandProfile: makeAiBrandProfile("Loom", mockBrandProfilesBySlug.loom, {
+      summary: "Brisk understands Loom as warm, direct and useful. The strongest work makes complex teamwork feel human, reaches the audience tension early and lets the product prove the outcome.",
+      audience: "Revenue leaders, enablement teams and distributed teams who need to explain product updates clearly.",
+      keyMessages: "Move quickly without losing clarity. Replace unnecessary meetings with short, human explanations people can revisit.",
+      recurringThemes: "Clear communication, confident teams, async work and human connection.",
+      productionPreferences: "Natural workplace performances, visible product UI, concise openings and restrained purple accents.",
+      previousWins: "Customer-led stories that introduce the team pressure in the first five seconds and reveal Loom as the practical response.",
+      sources: ["Brand Kit", "4 approved Briefs", "3 approved Scripts", "7 approved videos", "18 Client comments"],
+    }),
     clientCanEdit: true,
     shareToken: "loom-2026",
     showPoweredBy: true,
@@ -369,6 +412,11 @@ export const brandKitCustomers: BrandKitCustomer[] = [
     logoUrl: logoUrls.deel,
     lastUpdated: "22 Jul 2026",
     profile: mockBrandProfilesBySlug.deel,
+    aiBrandProfile: makeAiBrandProfile("Deel", mockBrandProfilesBySlug.deel, {
+      audience: "People, finance and operations leaders managing global teams.",
+      recurringThemes: "Global access, confidence, compliance and simpler international operations.",
+      sources: ["Brand Kit", "3 approved Briefs", "2 approved Scripts", "5 approved videos", "12 Client comments"],
+    }),
     clientCanEdit: false,
     shareToken: "deel-2026",
     showPoweredBy: false,
@@ -387,6 +435,11 @@ export const brandKitCustomers: BrandKitCustomer[] = [
     logoUrl: logoUrls.notion,
     lastUpdated: "19 Jul 2026",
     profile: mockBrandProfilesBySlug.notion,
+    aiBrandProfile: makeAiBrandProfile("Notion", mockBrandProfilesBySlug.notion, {
+      audience: "Teams and individuals shaping flexible systems for their own way of working.",
+      recurringThemes: "Thoughtful tools, calm capability, modular workflows and quiet confidence.",
+      sources: ["Brand Kit", "2 approved Briefs", "4 approved Scripts", "6 approved videos", "9 Client comments"],
+    }),
     clientCanEdit: true,
     shareToken: "notion-2026",
     showPoweredBy: true,
@@ -402,6 +455,17 @@ export const brandKitCustomers: BrandKitCustomer[] = [
     logoUrl: logoUrls.hims,
     lastUpdated: "Not set up",
     profile: null,
+    aiBrandProfile: makeAiBrandProfile("Hims", null, {
+      summary: "Brisk has an early understanding of Hims from the Client record and current project activity.",
+      audience: "People looking for straightforward, private and approachable health support.",
+      keyMessages: "Make care feel accessible, clear and free from judgement.",
+      visualStyle: "The AI Brand Profile is still learning the preferred visual system.",
+      recurringThemes: "Confidence, privacy, wellbeing and practical next steps.",
+      productionPreferences: "Keep claims grounded and make the path to action easy to understand.",
+      previousWins: "Brisk AI will improve its understanding as more work is completed for this Client.",
+      sources: ["Client record", "1 active project"],
+      learning: true,
+    }),
     clientCanEdit: true,
     shareToken: "hims-2026",
     showPoweredBy: true,
@@ -409,14 +473,8 @@ export const brandKitCustomers: BrandKitCustomer[] = [
     editorFileVersions: makeEditorVersions("hims"),
     subBrands: [],
   },
-  ...lightweightCustomers.map<BrandKitCustomer>((customer) => ({
-    slug: customer.slug,
-    name: customer.name,
-    badge: customer.badge,
-    website: customer.website,
-    logoUrl: logoUrls[customer.slug],
-    lastUpdated: customer.updated,
-    profile: {
+  ...lightweightCustomers.map<BrandKitCustomer>((customer) => {
+    const profile: BrandProfile = {
       ...defaultProfile,
       logos: makeLogos(customer.slug, customer.name),
       imagery: makeImagery(customer.slug),
@@ -424,14 +482,31 @@ export const brandKitCustomers: BrandKitCustomer[] = [
         summary: `${customer.name} communicates with clarity and confidence. Keep the message practical, specific and focused on the customer's outcome.`,
         tags: ["Clear", "Confident", "Useful"],
       },
-    },
-    clientCanEdit: false,
-    shareToken: `${customer.slug}-2026`,
-    showPoweredBy: true,
-    motionPreview: { posterUrl: productImage, videoUrl: motionVideo },
-    editorFileVersions: makeEditorVersions(customer.slug),
-    subBrands: [],
-  })),
+      guidelines: {
+        aiSummary: `${customer.name} favours a clean, confident visual system with natural people, clear product detail and restrained use of brand colour.`,
+      },
+    };
+
+    return {
+      slug: customer.slug,
+      name: customer.name,
+      badge: customer.badge,
+      website: customer.website,
+      logoUrl: logoUrls[customer.slug],
+      lastUpdated: customer.updated,
+      profile,
+      aiBrandProfile: makeAiBrandProfile(customer.name, profile, {
+        summary: `Brisk understands ${customer.name} from its Brand Kit, approved work and Client feedback. The current profile favours clear, confident and useful communication.`,
+        sources: ["Brand Kit", "Approved Briefs", "Approved Scripts", "Approved videos", "Client comments"],
+      }),
+      clientCanEdit: false,
+      shareToken: `${customer.slug}-2026`,
+      showPoweredBy: true,
+      motionPreview: { posterUrl: productImage, videoUrl: motionVideo },
+      editorFileVersions: makeEditorVersions(customer.slug),
+      subBrands: [],
+    };
+  }),
 ];
 
 export function getBrandKitCustomer(slug: string) {

@@ -4,10 +4,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { mediaAssets } from "@/data/media";
 import {
   getDemoProjectDestination,
   type DemoProjectExperience,
@@ -45,13 +45,14 @@ const stageStateLabels: Record<StageStatus["state"], string> = {
 
 export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project }: ProjectStageHeaderProps) {
   const { completionRecords } = useProjectCompletion();
+  const { assetViews } = useMediaLibrary();
   const { getProjectStages } = useProjectStageStatus();
   const projectStages = getProjectStages(project);
   const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done");
   const isProjectDelivered = project.status === "Completed" || (Boolean(completionRecords[project.id]) && hasApprovedStageFlow);
   const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectStages).key;
   const { selectedRole } = usePrototypeRole();
-  const projectMediaCount = mediaCount ?? mediaAssets.filter((asset) => asset.projectId === project.id).length;
+  const projectMediaCount = mediaCount ?? assetViews.filter((asset) => asset.projectId === project.id && !asset.archivedAt && asset.collection === "media").length;
   const mediaStatus: StageStatus = isProjectDelivered ? { state: "done" } : projectStages.media;
   const mediaTooltip = projectMediaCount > 0
     ? `${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`

@@ -17,13 +17,17 @@ import {
   getRoleHome,
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 export type StudioSettingsSectionId =
   | "details"
   | "branding"
   | "team"
   | "production"
+  | "ai-playbook"
+  | "storage"
   | "notifications"
   | "plan-billing"
   | "client-billing";
@@ -34,6 +38,7 @@ type StudioSettingsNavigationItem = {
   href: string;
   icon: DsIconName;
   description: string;
+  note?: string;
 };
 
 export const studioSettingsNavigation = [
@@ -64,6 +69,21 @@ export const studioSettingsNavigation = [
     href: "/settings/studio/production",
     icon: "queue",
     description: "Set the defaults used when new work is created.",
+  },
+  {
+    id: "ai-playbook",
+    label: "AI Playbook",
+    href: "/settings/studio/ai-playbook",
+    icon: "sparkle",
+    description: "Define how Brisk AI supports creative and production work across your Studio.",
+  },
+  {
+    id: "storage",
+    label: "Storage",
+    href: "/settings/studio/storage",
+    icon: "weather-cloud",
+    description: "Choose where files uploaded to Brisk are saved.",
+    note: "No matter which option you choose, your team will upload, watch and share files in Brisk the same way.",
   },
   {
     id: "notifications",
@@ -117,11 +137,15 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
   const pathname = usePathname();
   const router = useRouter();
   const { selectedRole } = usePrototypeRole();
+  const { people } = usePeople();
   const { hasUnsavedChanges, setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const allowNavigationRef = useRef(false);
   const restoringHistoryRef = useRef(false);
   const activeSection = studioSettingsNavigation.find((item) => item.id === sectionId) ?? studioSettingsNavigation[0];
   const title = activeSection.label;
+  const activeSectionNote = "note" in activeSection ? activeSection.note : undefined;
+  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
+  const canManageStudioSettings = hasStudioAdministrationAccess(currentStudioMember);
 
   const confirmNavigation = useCallback(() => {
     if (!hasUnsavedChanges) return true;
@@ -198,6 +222,18 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
     );
   }
 
+  if (!canManageStudioSettings) {
+    return (
+      <main className="studio-settings-permission-state">
+        <span className="studio-settings-permission-icon"><DsIcon name="lock" size={28} /></span>
+        <span className="label-xs-semibold">Studio Settings</span>
+        <h1 className="headings-s-bold">Studio Settings are restricted</h1>
+        <p className="paragraph-s">Only Studio Owners and Admins can manage Studio-wide details, access, defaults and billing.</p>
+        <Link className="client-secondary-button label-s-semibold" href="/settings/personal/profile">Open my profile</Link>
+      </main>
+    );
+  }
+
   return (
     <div className="studio-settings-shell">
       <header className="studio-settings-header">
@@ -205,6 +241,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
           <span className="label-xs-semibold">Studio Settings</span>
           <h1 className="headings-m-bold">{title}</h1>
           <p className="paragraph-s">{activeSection.description}</p>
+          {activeSectionNote ? <div className="studio-settings-header-note label-s"><DsIcon name="info" size={16} /><span>{activeSectionNote}</span></div> : null}
         </div>
       </header>
 

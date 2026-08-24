@@ -19,6 +19,7 @@ type ClientDataContextValue = {
   restoreClient: (clientId: string) => void;
   addContact: (clientId: string, contact: Pick<ClientContact, "name" | "email">) => ClientContact;
   updateContact: (clientId: string, contactId: string, update: Partial<Pick<ClientContact, "name" | "email">>) => void;
+  updateContactRole: (clientId: string, contactId: string, role: ClientContact["membershipRole"]) => void;
   removeContact: (clientId: string, contactId: string) => void;
   updateContactAccess: (clientId: string, contactId: string, status: PortalAccessStatus) => void;
   updateContactProjects: (clientId: string, contactId: string, projectIds: string[]) => void;
@@ -52,6 +53,7 @@ export function ClientDataProvider({ children }: { children: ReactNode }) {
             portalAccess: "Invited" as const,
             lastActive: null,
             projectIds: [],
+            membershipRole: "Client Admin" as const,
           }
         : null;
       const client: Client = {
@@ -107,6 +109,7 @@ export function ClientDataProvider({ children }: { children: ReactNode }) {
         portalAccess: "Invited",
         lastActive: null,
         projectIds: [],
+        membershipRole: "Client Member",
       };
 
       setClients((current) => current.map((client) => {
@@ -125,6 +128,14 @@ export function ClientDataProvider({ children }: { children: ReactNode }) {
         ? {
             ...client,
             contacts: client.contacts.map((contact) => contact.id === contactId ? { ...contact, ...update } : contact),
+          }
+        : client));
+    },
+    updateContactRole(clientId, contactId, role) {
+      setClients((current) => current.map((client) => client.id === clientId
+        ? {
+            ...client,
+            contacts: client.contacts.map((contact) => contact.id === contactId ? { ...contact, membershipRole: role } : contact),
           }
         : client));
     },

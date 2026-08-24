@@ -1,9 +1,10 @@
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAsset } from "@/data/media";
+import type { MediaSort } from "@/lib/media";
 
 export type MediaTypeFilter = "all" | MediaAsset["kind"];
 export type MediaViewMode = "card" | "list";
-export type MediaSort = "newest" | "oldest" | "name" | "size" | "duration";
+export type { MediaSort } from "@/lib/media";
 
 type MediaFilterBarProps = {
   typeFilter: MediaTypeFilter;
@@ -69,9 +70,8 @@ export function MediaFilterBar(props: MediaFilterBarProps) {
           <select value={props.sort} onChange={(event) => props.onSortChange(event.target.value as MediaSort)}>
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
-            <option value="name">Name</option>
-            <option value="size">Size</option>
-            <option value="duration">Duration</option>
+            <option value="name-asc">Name A-Z</option>
+            <option value="largest">Largest first</option>
           </select>
           <DsIcon name="caret-down" size={16} />
         </label>
@@ -81,7 +81,7 @@ export function MediaFilterBar(props: MediaFilterBarProps) {
             className="label-s"
             type="search"
             value={props.query}
-            placeholder="Search filenames"
+            placeholder="Search media"
             onChange={(event) => props.onQueryChange(event.target.value)}
           />
         </label>

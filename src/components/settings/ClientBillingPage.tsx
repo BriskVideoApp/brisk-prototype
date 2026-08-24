@@ -9,52 +9,56 @@ import {
   ConnectStripeModal,
   DisconnectStripeModal,
 } from "@/components/settings/ClientBillingModals";
+import { useClientBilling } from "@/components/settings/ClientBillingContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   clientBillingFixtures,
   clientBillingOptions,
   clientBillingPreviewAliases,
   stripeAccountFixture,
-  type ClientBillingMethod,
   type ClientBillingPreviewState,
-  type StripeConnectionStatus,
 } from "@/data/client-billing";
-
-const defaultPreviewState: ClientBillingPreviewState = "unselected";
 
 export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) {
   const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
+  const { billingSettings, saveBillingSettings } = useClientBilling();
   const previewState = resolvePreviewState(searchParams.get("preview"));
-  const fixture = clientBillingFixtures[previewState];
-  const [method, setMethod] = useState<ClientBillingMethod>(fixture.method);
-  const [stripeStatus, setStripeStatus] = useState<StripeConnectionStatus>(fixture.stripeStatus);
+  const previewFixture = previewState ? clientBillingFixtures[previewState] : null;
+  const renderedMethod = previewFixture?.method ?? billingSettings.method;
+  const renderedStripeStatus = previewFixture?.stripeStatus ?? billingSettings.stripeStatus;
+  const [method, setMethod] = useState(renderedMethod);
+  const [stripeStatus, setStripeStatus] = useState(renderedStripeStatus);
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
   const [stripeConnecting, setStripeConnecting] = useState(false);
   const [disconnectModalOpen, setDisconnectModalOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const canManageClientBilling = fixture.canManageClientBilling;
+  const canManageClientBilling = previewFixture?.canManageClientBilling ?? true;
 
   useEffect(() => {
-    setMethod(fixture.method);
-    setStripeStatus(fixture.stripeStatus);
+    setMethod(renderedMethod);
+    setStripeStatus(renderedStripeStatus);
+  }, [renderedMethod, renderedStripeStatus]);
+
+  useEffect(() => {
     setStripeModalOpen(false);
     setStripeConnecting(false);
     setDisconnectModalOpen(false);
     setToast(null);
-  }, [fixture]);
+  }, [previewState]);
 
   useEffect(() => {
     if (!stripeConnecting) return;
     const timeout = window.setTimeout(() => {
       setMethod("stripe");
       setStripeStatus("connected");
+      saveBillingSettings({ method: "stripe", stripeStatus: "connected" });
       setStripeConnecting(false);
       setStripeModalOpen(false);
       setToast("Stripe has been connected.");
     }, 900);
     return () => window.clearTimeout(timeout);
-  }, [stripeConnecting]);
+  }, [saveBillingSettings, stripeConnecting]);
 
   useEffect(() => {
     if (!toast) return;
@@ -77,6 +81,7 @@ export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) 
   const selectIndependentBilling = () => {
     setMethod("independent");
     setStripeStatus("not-connected");
+    saveBillingSettings({ method: "independent", stripeStatus: "not-connected" });
     setToast("Client billing will be managed outside Brisk.");
   };
 
@@ -84,6 +89,7 @@ export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) 
     // Production will remove Brisk's Stripe connection without changing anything stored in Stripe.
     setMethod("unselected");
     setStripeStatus("disconnected");
+    saveBillingSettings({ method: "unselected", stripeStatus: "disconnected" });
     setDisconnectModalOpen(false);
     setToast("Stripe has been disconnected. Your Stripe billing remains unchanged.");
   };
@@ -263,7 +269,7 @@ export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) 
   );
 }
 
-function resolvePreviewState(preview: string | null): ClientBillingPreviewState {
-  if (!preview) return defaultPreviewState;
-  return clientBillingPreviewAliases[preview] ?? defaultPreviewState;
+function resolvePreviewState(preview: string | null): ClientBillingPreviewState | null {
+  if (!preview) return null;
+  return clientBillingPreviewAliases[preview] ?? null;
 }

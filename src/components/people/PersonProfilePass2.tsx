@@ -11,7 +11,14 @@ import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
 import type { InvitationStatus } from "@/data/invitations";
-import type { Person, PersonActivity, PersonAvailability, PersonProfileUpdate } from "@/data/people";
+import type {
+  Person,
+  PersonActivity,
+  PersonAvailability,
+  PersonProfileUpdate,
+  PersonStudioDetailsUpdate,
+  StudioPermission,
+} from "@/data/people";
 import {
   readSharedTimeEntries,
   sharedTimeEntriesEventName,
@@ -29,6 +36,36 @@ const availabilityOptions: ReadonlyArray<{ value: PersonAvailability; label: str
   { value: "Available", label: "Available" },
   { value: "Busy", label: "Busy" },
   { value: "Away", label: "Away" },
+];
+
+const testingStatusOptions: ReadonlyArray<{ value: Person["testingStatus"]; label: string }> = [
+  { value: "Not required", label: "Not required" },
+  { value: "Not started", label: "Not started" },
+  { value: "In review", label: "In review" },
+  { value: "Complete", label: "Complete" },
+];
+
+const onboardingStatusOptions: ReadonlyArray<{ value: Person["onboardingStatus"]; label: string }> = [
+  { value: "Not started", label: "Not started" },
+  { value: "In progress", label: "In progress" },
+  { value: "Complete", label: "Complete" },
+];
+
+const agreementStatusOptions: ReadonlyArray<{ value: Person["agreementStatus"]; label: string }> = [
+  { value: "Not required", label: "Not required" },
+  { value: "Pending", label: "Pending" },
+  { value: "Signed", label: "Signed" },
+];
+
+const rateTypeOptions: ReadonlyArray<{ value: NonNullable<Person["commercial"]>["rateType"]; label: string }> = [
+  { value: "Hourly", label: "Hourly" },
+  { value: "Day rate", label: "Day rate" },
+];
+
+const studioPermissionOptions: ReadonlyArray<{ value: StudioPermission; label: string }> = [
+  { value: "Team Member", label: "Team Member" },
+  { value: "Studio Admin", label: "Studio Admin" },
+  { value: "Studio Owner", label: "Studio Owner" },
 ];
 
 type PersonTimeEntry = {
@@ -165,6 +202,111 @@ export function EditPersonProfileDialog({
   );
 }
 
+export function EditFreelancerStudioDetailsDialog({
+  onClose,
+  onSave,
+  person,
+}: {
+  onClose: () => void;
+  onSave: (update: PersonStudioDetailsUpdate) => void;
+  person: Person;
+}) {
+  const [seniority, setSeniority] = useState<Person["seniority"]>(person.seniority);
+  const [testingStatus, setTestingStatus] = useState<Person["testingStatus"]>(person.testingStatus);
+  const [onboardingStatus, setOnboardingStatus] = useState<Person["onboardingStatus"]>(person.onboardingStatus);
+  const [agreementStatus, setAgreementStatus] = useState<Person["agreementStatus"]>(person.agreementStatus);
+  const [rateType, setRateType] = useState<NonNullable<Person["commercial"]>["rateType"]>(person.commercial?.rateType ?? "Day rate");
+  const [defaultRate, setDefaultRate] = useState(String(person.commercial?.defaultRate ?? 0));
+
+  const save = () => {
+    onSave({
+      seniority,
+      testingStatus,
+      onboardingStatus,
+      agreementStatus,
+      rateType,
+      defaultRate: Math.max(0, Number(defaultRate) || 0),
+    });
+  };
+
+  return (
+    <ClientModal
+      className="person-edit-modal"
+      title={`Edit Studio details for ${person.name}`}
+      description="Manage the Studio’s classification, contractor checks and default offer rate. Personal and professional details are managed by the Freelancer."
+      onClose={onClose}
+      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={save}>Save Studio details</Button></>}
+    >
+      <div className="person-edit-profile-layout">
+        <section className="person-edit-access-summary">
+          <span><strong className="label-xs-semibold">Freelancer-managed profile</strong><small className="label-xs">Contact details, skills, availability and portfolio stay synced from personal settings.</small></span>
+          <DsIcon name="lock" size={18} />
+        </section>
+
+        <div className="person-edit-form-grid">
+          <div className="person-edit-select-field"><span className="label-m-semibold">Studio seniority</span><BriskSelect ariaLabel="Choose Studio seniority" clearable={false} searchable={false} options={seniorityOptions} placeholder="Choose seniority" value={seniority} onChange={(value) => value && setSeniority(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Testing</span><BriskSelect ariaLabel="Choose testing status" clearable={false} searchable={false} options={testingStatusOptions} placeholder="Choose status" value={testingStatus} onChange={(value) => value && setTestingStatus(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Onboarding</span><BriskSelect ariaLabel="Choose onboarding status" clearable={false} searchable={false} options={onboardingStatusOptions} placeholder="Choose status" value={onboardingStatus} onChange={(value) => value && setOnboardingStatus(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Agreement</span><BriskSelect ariaLabel="Choose agreement status" clearable={false} searchable={false} options={agreementStatusOptions} placeholder="Choose status" value={agreementStatus} onChange={(value) => value && setAgreementStatus(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Rate type</span><BriskSelect ariaLabel="Choose rate type" clearable={false} searchable={false} options={rateTypeOptions} placeholder="Choose rate type" value={rateType} onChange={(value) => value && setRateType(value)} /></div>
+          <Input label="Default rate" type="number" hint="AUD - starting point for project offers" value={defaultRate} onChange={(event) => setDefaultRate(event.target.value)} />
+        </div>
+      </div>
+    </ClientModal>
+  );
+}
+
+export function EditTeamStudioDetailsDialog({
+  onClose,
+  onSave,
+  person,
+}: {
+  onClose: () => void;
+  onSave: (update: PersonStudioDetailsUpdate) => void;
+  person: Person;
+}) {
+  const [department, setDepartment] = useState(person.department ?? "");
+  const [weeklyCapacity, setWeeklyCapacity] = useState(String(person.weeklyCapacityHours ?? 40));
+  const [studioPermission, setStudioPermission] = useState<StudioPermission>(person.studioPermission ?? "Team Member");
+  const [seniority, setSeniority] = useState<Person["seniority"]>(person.seniority);
+  const [onboardingStatus, setOnboardingStatus] = useState<Person["onboardingStatus"]>(person.onboardingStatus);
+
+  const save = () => {
+    onSave({
+      department: department.trim() || null,
+      weeklyCapacityHours: Math.max(1, Number(weeklyCapacity) || 40),
+      studioPermission,
+      seniority,
+      onboardingStatus,
+    });
+  };
+
+  return (
+    <ClientModal
+      className="person-edit-modal"
+      title={`Edit Studio details for ${person.name}`}
+      description="Manage this person’s place in the Studio. Their contact and professional details stay synced from personal settings."
+      onClose={onClose}
+      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={save}>Save Studio details</Button></>}
+    >
+      <div className="person-edit-profile-layout">
+        <section className="person-edit-access-summary">
+          <span><strong className="label-xs-semibold">Team Member-managed profile</strong><small className="label-xs">Contact details, skills, availability and portfolio stay synced from personal settings.</small></span>
+          <DsIcon name="lock" size={18} />
+        </section>
+
+        <div className="person-edit-form-grid">
+          <Input label="Department" value={department} placeholder="Add department" onChange={(event) => setDepartment(event.target.value)} />
+          <Input label="Weekly capacity" type="number" value={weeklyCapacity} hint="Hours per week" onChange={(event) => setWeeklyCapacity(event.target.value)} />
+          <div className="person-edit-select-field"><span className="label-m-semibold">Studio permission</span><BriskSelect ariaLabel="Choose Studio permission" clearable={false} searchable={false} options={studioPermissionOptions} placeholder="Choose permission" value={studioPermission} onChange={(value) => value && setStudioPermission(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Studio seniority</span><BriskSelect ariaLabel="Choose Studio seniority" clearable={false} searchable={false} options={seniorityOptions} placeholder="Choose seniority" value={seniority} onChange={(value) => value && setSeniority(value)} /></div>
+          <div className="person-edit-select-field"><span className="label-m-semibold">Onboarding</span><BriskSelect ariaLabel="Choose onboarding status" clearable={false} searchable={false} options={onboardingStatusOptions} placeholder="Choose status" value={onboardingStatus} onChange={(value) => value && setOnboardingStatus(value)} /></div>
+        </div>
+      </div>
+    </ClientModal>
+  );
+}
+
 export function PersonHoursSection({ person }: { person: Person }) {
   const entries = usePersonTimeEntries(person.id);
   const latestEntryDate = entries[0]?.loggedAt.slice(0, 10) ?? "2026-08-18";
@@ -236,7 +378,7 @@ export function PersonAccessSummary({ invitationStatus, person }: { invitationSt
   const projectIds = unique([...person.projectAccessIds, ...person.workloads.map((workload) => workload.projectId)]);
   const projects = activeVideoProjects.filter((project) => projectIds.includes(project.id));
   const clients = unique(projects.map((project) => project.clientName));
-  return <div className="person-access-summary-grid"><article className="person-detail-card"><span className="label-xs">Relationship</span><strong className="headings-xs-bold">{person.accessRole}</strong><p className="paragraph-s">{profileAccessCopy(person)}</p></article><article className="person-detail-card"><span className="label-xs">Invitation</span><div className="person-access-status"><span className={`invitation-status is-${invitationStatus.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{invitationStatus}</span><strong className="label-s-semibold">{person.email}</strong></div><p className="paragraph-s">{invitationCopy(invitationStatus)}</p></article><article className="person-detail-card"><span className="label-xs">Current access</span><strong className="headings-xs-bold">{person.type === "Team" ? "Whole Studio" : `${projects.length} ${projects.length === 1 ? "project" : "projects"}`}</strong><p className="paragraph-s">{person.type === "Team" ? "All Clients and projects in V1." : clients.length ? clients.join(", ") : "No Client or project access yet."}</p></article></div>;
+  return <div className="person-access-summary-grid"><article className="person-detail-card"><span className="label-xs">Relationship</span><strong className="headings-xs-bold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</strong><p className="paragraph-s">{profileAccessCopy(person)}</p></article><article className="person-detail-card"><span className="label-xs">Invitation</span><div className="person-access-status"><span className={`invitation-status is-${invitationStatus.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{invitationStatus}</span><strong className="label-s-semibold">{person.email}</strong></div><p className="paragraph-s">{invitationCopy(invitationStatus)}</p></article><article className="person-detail-card"><span className="label-xs">Current access</span><strong className="headings-xs-bold">{person.type === "Team" ? "Whole Studio" : `${projects.length} ${projects.length === 1 ? "project" : "projects"}`}</strong><p className="paragraph-s">{person.type === "Team" ? "All Clients and projects in V1." : clients.length ? clients.join(", ") : "No Client or project access yet."}</p></article></div>;
 }
 
 function usePersonTimeEntries(personId: string) {
@@ -320,7 +462,9 @@ function eventIcon(category: PersonEvent["category"]): DsIconName {
 }
 
 function profileAccessCopy(person: Person) {
-  if (person.type === "Team") return "Full Studio workspace access is automatic in V1.";
+  if (person.type === "Team") return person.studioPermission === "Team Member"
+    ? "Full Studio workspace access without Studio settings."
+    : "Full Studio workspace and Studio settings access.";
   if (person.type === "Freelancer") return "Access is limited to selected Clients and projects.";
   return "Access is limited to one Client company and selected projects.";
 }

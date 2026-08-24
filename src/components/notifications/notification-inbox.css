@@ -720,64 +720,6 @@
   grid-template-rows: max-content minmax(var(--brisk-space-none), 1fr);
 }
 
-.app-global-activity-close {
-  display: inline-flex;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  border: var(--brisk-space-none);
-  border-radius: var(--brisk-radius-s);
-  background: transparent;
-  color: var(--brisk-brand-primary-click);
-  padding: var(--brisk-space-s);
-}
-
-.app-global-activity-close:hover,
-.app-global-activity-close:focus-visible {
-  background: var(--brisk-brand-secondary);
-  outline: var(--brisk-space-none);
-}
-
-.app-global-activity-list {
-  min-height: var(--brisk-space-none);
-  overflow-y: auto;
-  margin: var(--brisk-space-none);
-  padding: var(--brisk-space-none);
-  list-style: none;
-}
-
-.app-global-activity-list li + li {
-  border-top: 1px solid var(--brisk-border-secondary);
-}
-
-.app-global-activity-list a {
-  display: grid;
-  grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr) max-content;
-  align-items: center;
-  color: var(--brisk-text-primary);
-  gap: var(--brisk-space-m);
-  padding: var(--brisk-space-m) var(--brisk-space-l);
-  text-decoration: none;
-}
-
-.app-global-activity-list a:hover,
-.app-global-activity-list a:focus-visible {
-  background: var(--brisk-item-tertiary);
-  outline: var(--brisk-space-none);
-}
-
-.app-global-activity-copy {
-  display: grid;
-  min-width: var(--brisk-space-none);
-  gap: var(--brisk-space-xxs);
-}
-
-.app-global-activity-copy > span,
-.app-global-activity-copy time {
-  color: var(--brisk-text-secondary);
-}
-
 .notification-popover .notification-inbox-item-layout {
   grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr) max-content max-content;
   gap: var(--brisk-space-m);

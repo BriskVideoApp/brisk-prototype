@@ -26,7 +26,7 @@ import { useProjectStageStatus } from "@/components/project/ProjectStageStatusCo
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import { StageApprovalControl } from "@/components/share/ShareActionRow";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { mediaAssets, type MediaAsset } from "@/data/media";
+import { mediaAssets, type MediaAssetView } from "@/data/media";
 import type { Person } from "@/data/people";
 import {
   addMinutes,
@@ -2365,7 +2365,7 @@ function ShotReferenceImagePicker({ entry, projectId, compact = false, onChange 
   </div>;
 }
 
-function ShotMediaLibraryModal({ source, projectId, onClose, onSelect }: { source: "stock" | "project-media"; projectId: string; onClose: () => void; onSelect: (asset: MediaAsset) => void }) {
+function ShotMediaLibraryModal({ source, projectId, onClose, onSelect }: { source: "stock" | "project-media"; projectId: string; onClose: () => void; onSelect: (asset: MediaAssetView) => void }) {
   const projectAssets = mediaAssets.filter((asset) => asset.thumbnailUrl && (asset.projectId === projectId || !mediaAssets.some((item) => item.projectId === projectId && item.thumbnailUrl)));
   const stockAssets = mediaAssets.filter((asset) => asset.thumbnailUrl).slice(0, 8);
   const assets = source === "stock" ? stockAssets : projectAssets;

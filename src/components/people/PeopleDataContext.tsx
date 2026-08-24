@@ -11,6 +11,7 @@ import {
   type Person,
   type PersonActivity,
   type PersonProfileUpdate,
+  type PersonStudioDetailsUpdate,
   type PersonStatus,
   type PersonWorkload,
 } from "@/data/people";
@@ -35,6 +36,8 @@ type PeopleDataContextValue = {
   createPerson: (input: CreatePersonInput) => Person;
   deletePerson: (personId: string) => void;
   updatePersonIdentity: (personId: string, update: PersonProfileUpdate) => void;
+  updatePersonClientMembershipRole: (personId: string, role: "Client Admin" | "Client Member") => void;
+  updatePersonStudioDetails: (personId: string, update: PersonStudioDetailsUpdate) => void;
   updatePersonProjectAccess: (personId: string, projectIds: string[]) => void;
   syncProjectStaffWorkloads: (projectId: string, assignments: ProjectStaffWorkload[]) => void;
   setPersonStatus: (personId: string, status: PersonStatus) => void;
@@ -44,7 +47,7 @@ type PeopleDataContextValue = {
 const PeopleDataContext = createContext<PeopleDataContextValue | null>(null);
 
 export function PeopleDataProvider({ children }: { children: ReactNode }) {
-  const { addContact, clients, removeContact, updateContact, updateContactAccess, updateContactProjects } = useClients();
+  const { addContact, clients, removeContact, updateContact, updateContactAccess, updateContactProjects, updateContactRole } = useClients();
   const [nativePeople, setNativePeople] = useState<Person[]>(initialNativePeople);
   const [archivedContactIds, setArchivedContactIds] = useState<string[]>([]);
   const [contactNotes, setContactNotes] = useState<Record<string, string>>({});
@@ -136,6 +139,28 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
         ...(activity ? { latestActivity: activity, activity: [activity, ...person.activity] } : {}),
       } : person));
     },
+    updatePersonClientMembershipRole(personId, role) {
+      const contactOwner = clients.find((client) => client.contacts.some((contact) => contact.id === personId));
+      if (contactOwner) updateContactRole(contactOwner.id, personId, role);
+    },
+    updatePersonStudioDetails(personId, update) {
+      setNativePeople((current) => current.map((person) => {
+        if (person.id !== personId) return person;
+        const { defaultRate, rateType, ...details } = update;
+        const activity = makeStudioDetailsActivity(person, update);
+        return {
+          ...person,
+          ...details,
+          commercial: person.commercial ? {
+            ...person.commercial,
+            ...(defaultRate !== undefined ? { defaultRate } : {}),
+            ...(rateType !== undefined ? { rateType } : {}),
+          } : null,
+          latestActivity: activity,
+          activity: [activity, ...person.activity],
+        };
+      }));
+    },
     updatePersonProjectAccess(personId, projectIds) {
       const contactOwner = clients.find((client) => client.contacts.some((contact) => contact.id === personId));
       const existingPerson = people.find((person) => person.id === personId);
@@ -181,7 +206,7 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
       }
       setNativePeople((current) => current.map((person) => person.id === personId ? { ...person, notes } : person));
     },
-  }), [addContact, clientContacts, clients, people, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects]);
+  }), [addContact, clientContacts, clients, people, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects, updateContactRole]);
 
   return <PeopleDataContext.Provider value={value}>{children}</PeopleDataContext.Provider>;
 }
@@ -224,6 +249,7 @@ function makeClientContactPerson(
     avatarUrl: profileOverride?.avatarUrl ?? null,
     email: contact.email,
     phone: profileOverride?.phone ?? metadata.phone,
+    department: null,
     type: "Client contact",
     jobTitles: profileOverride?.jobTitles ?? metadata.jobTitles,
     skills: profileOverride?.skills ?? metadata.skills,
@@ -232,6 +258,7 @@ function makeClientContactPerson(
     location: profileOverride?.location ?? metadata.location,
     timezone: profileOverride?.timezone ?? metadata.timezone,
     accessRole: "Customer",
+    studioPermission: null,
     status: archived ? "Archived" : contact.portalAccess,
     latestActivity: activityOverrides[0] ?? baseLatestActivity,
     activity: [
@@ -261,6 +288,7 @@ function makeClientContactPerson(
     commercial: null,
     clientId: client.id,
     clientName: client.name,
+    clientMembershipRole: contact.membershipRole,
     projectAccessIds: contact.projectIds,
   };
 }
@@ -277,11 +305,24 @@ function makeProfileActivity(person: Person | undefined, update: PersonProfileUp
   };
 }
 
+function makeStudioDetailsActivity(person: Person, update: PersonStudioDetailsUpdate): PersonActivity {
+  const now = new Date().toISOString();
+  const changedFields = Object.keys(update).map((field) => studioDetailsFieldLabels[field as keyof PersonStudioDetailsUpdate] ?? field);
+  return {
+    id: `${person.id}-studio-details-${now}`,
+    label: "Studio details updated",
+    detail: `${changedFields.join(", ")} updated for ${person.name}`,
+    occurredAt: now,
+  };
+}
+
 const profileFieldLabels: Partial<Record<keyof PersonProfileUpdate, string>> = {
   avatarUrl: "Avatar",
   name: "Name",
   email: "Email",
   phone: "Phone",
+  businessName: "Business name",
+  taxNumber: "Tax number",
   jobTitles: "Job title",
   skills: "Skills",
   styles: "Styles",
@@ -291,6 +332,18 @@ const profileFieldLabels: Partial<Record<keyof PersonProfileUpdate, string>> = {
   weeklyCapacityHours: "Weekly capacity",
   availability: "Availability",
   portfolioUrl: "Portfolio",
+};
+
+const studioDetailsFieldLabels: Record<keyof PersonStudioDetailsUpdate, string> = {
+  department: "Department",
+  seniority: "Seniority",
+  studioPermission: "Studio permission",
+  testingStatus: "Testing status",
+  onboardingStatus: "Onboarding status",
+  agreementStatus: "Agreement status",
+  weeklyCapacityHours: "Weekly capacity",
+  defaultRate: "Default rate",
+  rateType: "Rate type",
 };
 
 function makePersonId(name: string) {

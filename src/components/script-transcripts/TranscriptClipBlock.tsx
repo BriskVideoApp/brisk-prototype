@@ -3,7 +3,7 @@
 import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import type { MediaAsset } from "@/data/media";
+import type { MediaAssetView } from "@/data/media";
 import type { ScriptComment } from "@/data/script";
 import type { Highlight, TranscriptClip, TranscriptParagraph } from "@/data/transcripts";
 import { TranscriptClipMenu } from "./TranscriptClipMenu";
@@ -32,7 +32,7 @@ export function TranscriptClipBlock({
   onTimeChange,
 }: {
   activeParagraphId: string | null;
-  asset: MediaAsset;
+  asset: MediaAssetView;
   clip: TranscriptClip;
   comments: ScriptComment[];
   currentTimeSeconds: number;

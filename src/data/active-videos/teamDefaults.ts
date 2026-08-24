@@ -49,8 +49,8 @@ export const stageLabels: Record<StageKey, string> = {
 export const mockTeamPeople: TeamPerson[] = [
   {
     id: "te",
-    name: "Tom Editor",
-    initials: "TE",
+    name: "Tom Mitchell",
+    initials: "TM",
     personType: "Studio Staff",
     defaultRole: "producer",
     bookedHoursThisWeek: 20,

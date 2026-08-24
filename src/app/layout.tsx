@@ -35,7 +35,9 @@ import "@/components/settings/plan-billing.css";
 import "@/components/settings/client-billing.css";
 import "@/components/settings/studio-settings.css";
 import "@/components/settings/notification-settings.css";
+import "@/components/settings/client-account-settings.css";
 import "@/components/costs/costs.css";
+import "@/components/ai/brisk-ai.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
@@ -47,7 +49,11 @@ import { PeopleDataProvider } from "@/components/people/PeopleDataContext";
 import { InvitationProvider } from "@/components/invitations/InvitationContext";
 import { ProjectTeamDataProvider } from "@/components/project/team/ProjectTeamDataContext";
 import { StudioSettingsProvider } from "@/components/settings/StudioSettingsContext";
+import { ClientBillingProvider } from "@/components/settings/ClientBillingContext";
+import { ClientAccountSettingsProvider } from "@/components/settings/ClientAccountSettingsContext";
 import { CostsDataProvider } from "@/components/costs/CostsDataContext";
+import { MediaLibraryProvider } from "@/components/media/MediaLibraryContext";
+import { BriskAiProvider } from "@/components/ai/BriskAiContext";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -72,25 +78,33 @@ export default function RootLayout({
         <PrototypeRoleProvider>
           <NotificationInboxProvider>
             <StudioSettingsProvider>
-              <ProjectCompletionProvider>
-                <ProjectStageStatusProvider>
-                  <ProjectFilesProvider>
-                    <ClientDataProvider>
-                      <PeopleDataProvider>
-                        <ProjectTeamDataProvider>
-                          <CostsDataProvider>
-                            <InvitationProvider>
-                              <Suspense fallback={children}>
-                                <AppShell>{children}</AppShell>
-                              </Suspense>
-                            </InvitationProvider>
-                          </CostsDataProvider>
-                        </ProjectTeamDataProvider>
-                      </PeopleDataProvider>
-                    </ClientDataProvider>
-                  </ProjectFilesProvider>
-                </ProjectStageStatusProvider>
-              </ProjectCompletionProvider>
+              <ClientBillingProvider>
+                <ClientAccountSettingsProvider>
+                  <ProjectCompletionProvider>
+                    <ProjectStageStatusProvider>
+                      <ProjectFilesProvider>
+                        <MediaLibraryProvider>
+                        <ClientDataProvider>
+                          <PeopleDataProvider>
+                            <ProjectTeamDataProvider>
+                              <CostsDataProvider>
+                                <InvitationProvider>
+                                  <BriskAiProvider>
+                                    <Suspense fallback={children}>
+                                      <AppShell>{children}</AppShell>
+                                    </Suspense>
+                                  </BriskAiProvider>
+                                </InvitationProvider>
+                              </CostsDataProvider>
+                            </ProjectTeamDataProvider>
+                          </PeopleDataProvider>
+                        </ClientDataProvider>
+                        </MediaLibraryProvider>
+                      </ProjectFilesProvider>
+                    </ProjectStageStatusProvider>
+                  </ProjectCompletionProvider>
+                </ClientAccountSettingsProvider>
+              </ClientBillingProvider>
             </StudioSettingsProvider>
           </NotificationInboxProvider>
         </PrototypeRoleProvider>

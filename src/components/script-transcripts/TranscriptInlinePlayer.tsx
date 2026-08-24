@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { InlinePlayer } from "@/components/video-review/VideoReviewScreen";
-import type { MediaAsset } from "@/data/media";
+import type { MediaAssetView } from "@/data/media";
 import type { TranscriptClip } from "@/data/transcripts";
 
 export function TranscriptInlinePlayer({
@@ -13,14 +13,14 @@ export function TranscriptInlinePlayer({
   onPlayingChange,
   onTimeChange,
 }: {
-  asset: MediaAsset;
+  asset: MediaAssetView;
   clip: TranscriptClip;
   currentTimeSeconds: number;
   isPlaying: boolean;
   onPlayingChange: (isPlaying: boolean) => void;
   onTimeChange: (seconds: number) => void;
 }) {
-  const durationSeconds = parseDurationLabel(asset.durationLabel)
+  const durationSeconds = asset.durationSeconds
     ?? Math.max(...clip.paragraphs.map((paragraph) => paragraph.endTimeSeconds), 1);
   const thumbnailStyle = asset.thumbnailUrl
     ? ({ "--transcript-thumbnail": `url("${asset.thumbnailUrl}")` } as CSSProperties)
@@ -73,18 +73,4 @@ export function TranscriptInlinePlayer({
       />
     </div>
   );
-}
-
-function parseDurationLabel(durationLabel: string | undefined) {
-  if (!durationLabel) {
-    return null;
-  }
-
-  const parts = durationLabel.split(":").map(Number);
-
-  if (parts.some((part) => Number.isNaN(part))) {
-    return null;
-  }
-
-  return parts.reduce((total, part) => total * 60 + part, 0);
 }

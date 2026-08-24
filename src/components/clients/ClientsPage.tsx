@@ -28,13 +28,13 @@ export function ClientsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clients } = useClients();
-  const { allPages, selectedRole } = usePrototypeRole();
+  const { selectedRole } = usePrototypeRole();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("Active");
   const [sort, setSort] = useState<SortOption>("activity");
   const requestedDialog = searchParams.get("dialog");
   const [isAddClientOpen, setIsAddClientOpen] = useState(requestedDialog === "add" || requestedDialog === "duplicate");
-  const canManageClients = allPages || selectedRole === "Studio Staff";
+  const canManageClients = selectedRole === "Studio Staff";
   const isEmptyPreview = searchParams.get("demo") === "empty" || searchParams.get("preview") === "empty";
   const isNoResultsPreview = searchParams.get("preview") === "no-results";
 

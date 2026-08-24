@@ -148,6 +148,10 @@ export type PersonalProjectSubscription = "important-only" | "mentions-only";
 export type PersonalNotificationSettings = {
   inAppActionRequired: boolean;
   mentionsAndDms: boolean;
+  offersAndChanges: boolean;
+  assignmentChanges: boolean;
+  assignedProjectUpdates: boolean;
+  invoiceStatusChanges: boolean;
   emailFallback: boolean;
   dailyDigest: boolean;
   quietHoursEnabled: boolean;
@@ -160,6 +164,10 @@ export type PersonalNotificationSettings = {
 export const initialPersonalNotificationSettings: PersonalNotificationSettings = {
   inAppActionRequired: true,
   mentionsAndDms: true,
+  offersAndChanges: true,
+  assignmentChanges: true,
+  assignedProjectUpdates: true,
+  invoiceStatusChanges: true,
   emailFallback: true,
   dailyDigest: false,
   quietHoursEnabled: true,

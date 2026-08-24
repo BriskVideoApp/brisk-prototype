@@ -19,6 +19,7 @@ import {
   type BrandGuidelineFile,
   type BrandImagery,
   type BrandKitCustomer,
+  type AiBrandProfile,
   type BrandLogo,
   type BrandProfile,
   type BrandRelationship,
@@ -1045,6 +1046,13 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
               <DsIcon name="x-close-cross" size={16} />
             </button>
           </section>
+        ) : null}
+
+        {!isGuest && !subBrand ? (
+          <AiBrandProfileModule
+            canRefine={canEdit && role !== "client"}
+            profile={customer.aiBrandProfile}
+          />
         ) : null}
 
         <section
@@ -2276,6 +2284,71 @@ function BrandKitPermissionTransition() {
         <strong className="label-m-semibold">Opening your Brand Kit…</strong>
       </div>
     </main>
+  );
+}
+
+function AiBrandProfileModule({ canRefine, profile }: { canRefine: boolean; profile: AiBrandProfile }) {
+  const [summary, setSummary] = useState(profile.summary);
+  const [draft, setDraft] = useState(profile.summary);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasRefined, setHasRefined] = useState(false);
+  const details = [
+    { label: "Audience", value: profile.audience },
+    { label: "Key messages", value: profile.keyMessages },
+    { label: "Visual style", value: profile.visualStyle },
+    { label: "Recurring themes", value: profile.recurringThemes },
+    { label: "Production preferences", value: profile.productionPreferences },
+    { label: "What has worked well", value: profile.previousWins },
+  ];
+
+  return (
+    <section className="ai-brand-profile" aria-labelledby="ai-brand-profile-heading">
+      <header>
+        <div className="ai-brand-profile-heading">
+          <span><DsIcon name="sparkle" size={18} /></span>
+          <div>
+            <h2 className="headings-xs-bold" id="ai-brand-profile-heading">AI Brand Profile</h2>
+            <p className="paragraph-s">What Brisk understands about this Client from their Brand Kit and completed work.</p>
+          </div>
+        </div>
+        {canRefine && !isEditing ? (
+          <Button size="S" variant="secondary" onClick={() => {
+            setDraft(summary);
+            setIsEditing(true);
+          }}><DsIcon name="pencil-simple-ds" size={14} />Refine summary</Button>
+        ) : null}
+      </header>
+
+      {profile.learning ? (
+        <div className="ai-brand-profile-learning label-xs"><DsIcon name="info" size={14} />Brisk AI will improve its understanding as more work is completed for this Client.</div>
+      ) : null}
+
+      {isEditing ? (
+        <div className="ai-brand-profile-editor">
+          <label><span className="label-s-semibold">Profile summary</span><textarea className="paragraph-s" value={draft} onChange={(event) => setDraft(event.target.value)} /></label>
+          <div>
+            <Button size="S" variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+            <Button size="S" onClick={() => {
+              if (!draft.trim()) return;
+              setSummary(draft.trim());
+              setHasRefined(true);
+              setIsEditing(false);
+            }}>Save refinement</Button>
+          </div>
+        </div>
+      ) : (
+        <p className="ai-brand-profile-summary paragraph-s">{summary}</p>
+      )}
+
+      <dl className="ai-brand-profile-details">
+        {details.map((detail) => <div key={detail.label}><dt className="label-xs-semibold">{detail.label}</dt><dd className="paragraph-s">{detail.value}</dd></div>)}
+      </dl>
+
+      <footer>
+        <div className="ai-brand-profile-sources"><span className="label-xs-semibold">Sources</span>{profile.sources.map((source) => <span className="label-xs" key={source}>{source}</span>)}</div>
+        <span className="label-xs">{hasRefined ? "Refined just now" : `Last updated ${profile.lastUpdated}`}</span>
+      </footer>
+    </section>
   );
 }
 

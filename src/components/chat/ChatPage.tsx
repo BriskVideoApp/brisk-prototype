@@ -15,6 +15,7 @@ import {
   ShortcutSheet,
 } from "@/components/chat/ChatOverlays";
 import { ChatProjectList } from "@/components/chat/ChatProjectList";
+import { ProjectConnectorSettings } from "@/components/chat/ProjectConnectorSettings";
 import { ChatRail } from "@/components/chat/ChatRail";
 import type {
   ChatCustomerFilter,
@@ -31,14 +32,17 @@ import { getDemoProjectDestination } from "@/data/projects";
 import type {
   ChatAttachment,
   ChatChannel,
+  ChatConnectorSource,
   ChatMessage,
   ChatProject,
   ChatSource,
+  StudioChatConnectors,
 } from "@/components/chat/types";
 import type { ReactionEmoji } from "@/components/video-review/types";
 import {
   chatMessages as initialMessages,
   chatClients,
+  chatStudioConnectors as initialStudioConnectors,
   directMessages as initialDirectMessages,
   chatProjects as initialProjects,
   chatUsers,
@@ -48,6 +52,7 @@ import {
   groupMessages,
   recentCalls,
 } from "@/data/chat";
+import { appendMessageOnce, resolveOutboundSource } from "@/components/chat/chat-utils";
 
 type ChatPageProps = {
   initialProjectId?: string | null;
@@ -89,7 +94,11 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [threadParentId, setThreadParentId] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isConnectorSettingsOpen, setIsConnectorSettingsOpen] = useState(false);
   const [isCustomerSettingsOpen, setIsCustomerSettingsOpen] = useState(false);
+  const [studioConnectors, setStudioConnectors] = useState<StudioChatConnectors>(
+    initialStudioConnectors,
+  );
   const [isShortcutSheetOpen, setIsShortcutSheetOpen] = useState(false);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -97,6 +106,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [customerFilter, setCustomerFilter] = useState<ChatCustomerFilter>("Active");
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
+  const [dismissedConnectorWarnings, setDismissedConnectorWarnings] = useState<Set<string>>(
+    () => new Set(),
+  );
   const openedInitialMessageRef = useRef(false);
 
   const effectiveCurrentUserId =
@@ -276,10 +288,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         internalUnread: selectedDm.unread,
         preferredSource: "brisk",
         connectors: {
-          email: { enabled: false, connected: true, detail: "Not available in direct messages" },
-          whatsapp: { enabled: false, connected: true, detail: "Not available in direct messages" },
-          slack: { enabled: false, connected: true, detail: "Not available in direct messages" },
-          teams: { enabled: false, connected: true, detail: "Not available in direct messages" },
+          whatsapp: {
+            enabled: false,
+            detail: "Not available in direct messages",
+            numberOwner: "studio",
+            conversationName: "Not available in direct messages",
+          },
+          slack: {
+            enabled: false,
+            detail: "Not available in direct messages",
+            setup: "brisk-app",
+            channelName: "Not available in direct messages",
+          },
         },
       }
     : null;
@@ -304,10 +324,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         internalUnread: selectedGroup.unread,
         preferredSource: "brisk",
         connectors: {
-          email: { enabled: false, connected: true, detail: "Not available in groups" },
-          whatsapp: { enabled: false, connected: true, detail: "Not available in groups" },
-          slack: { enabled: false, connected: true, detail: "Not available in groups" },
-          teams: { enabled: false, connected: true, detail: "Not available in groups" },
+          whatsapp: {
+            enabled: false,
+            detail: "Not available in groups",
+            numberOwner: "studio",
+            conversationName: "Not available in groups",
+          },
+          slack: {
+            enabled: false,
+            detail: "Not available in groups",
+            setup: "brisk-app",
+            channelName: "Not available in groups",
+          },
         },
       }
     : null;
@@ -316,12 +344,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         .filter((message) => message.projectId === selectedGroup.id && message.threadId === null)
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
-  const hasConnectorFailure =
-    !selectedCompanyChatProject &&
-    activeProjectChat?.connectors &&
-    Object.values(activeProjectChat.connectors).some(
-      (connector) => connector.enabled && !connector.connected,
-    );
+  const disconnectedConnector =
+    !selectedCompanyChatProject && activeProjectChat?.connectors
+      ? (Object.keys(activeProjectChat.connectors) as ChatConnectorSource[]).find(
+      (source) =>
+        activeProjectChat.connectors[source].enabled && !studioConnectors[source].connected,
+      ) ?? null
+      : null;
+  const connectorWarningKey = disconnectedConnector && activeProjectChat
+    ? `${activeProjectChat.id}:${disconnectedConnector}`
+    : null;
+  const hasConnectorFailure = connectorWarningKey !== null
+    && !dismissedConnectorWarnings.has(connectorWarningKey);
 
   const notify = useCallback((message: string) => {
     setToast(message);
@@ -548,6 +582,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       setActiveView("projects");
       setActiveChannel("external");
       setThreadParentId(null);
+      setIsConnectorSettingsOpen(false);
+      setIsSettingsOpen(false);
 
       if (!accessibleProjects.some((project) => project.id === selectedProjectId)) {
         setSelectedProjectId(accessibleProjects[0]?.id ?? null);
@@ -606,6 +642,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           setIsNewMessagePickerOpen(false);
         } else if (isCustomerSettingsOpen) {
           setIsCustomerSettingsOpen(false);
+        } else if (isConnectorSettingsOpen) {
+          setIsConnectorSettingsOpen(false);
         } else if (isSettingsOpen) {
           setIsSettingsOpen(false);
         } else if (isShortcutSheetOpen) {
@@ -622,6 +660,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     isSearchOpen,
     isNewMessagePickerOpen,
     isCustomerSettingsOpen,
+    isConnectorSettingsOpen,
     isSettingsOpen,
     isShortcutSheetOpen,
     notify,
@@ -772,7 +811,12 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             },
           ]
         : [];
-    const source: ChatSource = activeChannel === "internal" ? "brisk" : submission.source;
+    const source: ChatSource = resolveOutboundSource({
+      channel: activeChannel,
+      project: activeProjectChat,
+      requestedSource: submission.source,
+      studioConnectors,
+    });
     const createdAt = new Date().toISOString();
     const newMessage: ChatMessage = {
       id: `message-${Date.now()}`,
@@ -791,13 +835,16 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       deletedAt: null,
       readBy: [effectiveCurrentUserId],
       mentions: submission.mentions,
+      connectorMessageKey: source === "brisk"
+        ? undefined
+        : `${source}:${activeProjectChat.id}:${threadId ?? "root"}:${createdAt}`,
     };
 
-    setMessages((current) => [...current, newMessage]);
+    setMessages((current) => appendMessageOnce(current, newMessage));
     notify(
       activeChannel === "internal"
         ? `Posted internally to ${chatWorkspace.name}`
-        : `Sent via ${source === "brisk" ? "Brisk" : source}`,
+        : `Sent through ${source === "brisk" ? "Brisk" : source === "whatsapp" ? "WhatsApp" : "Slack"}`,
     );
   };
 
@@ -904,6 +951,10 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     setMessages((current) =>
       current.map((message) => {
         if (message.id !== messageId) {
+          return message;
+        }
+
+        if (message.sourceChannel === "slack") {
           return message;
         }
 
@@ -1267,8 +1318,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                   aria-label="Manage project members"
                   onClick={() => setIsSettingsOpen(true)}
                 >
-                  <DsIcon name="settings" size={19} />
+                  <DsIcon name="users-three" size={19} />
                 </button>
+                {activeChannel === "external" ? (
+                  <button
+                    className="chat-icon-button"
+                    type="button"
+                    aria-label="Open External Chat settings"
+                    onClick={() => setIsConnectorSettingsOpen(true)}
+                  >
+                    <DsIcon name="settings" size={19} />
+                  </button>
+                ) : null}
               </>
             ) : null}
           </div>
@@ -1307,6 +1368,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 channel="internal"
                 users={chatUsers}
                 projects={accessibleProjects}
+                studioConnectors={studioConnectors}
                 placeholder={`Message ${selectedDm.title}`}
                 incomingFiles={pendingDroppedFiles}
                 onIncomingFilesConsumed={() => setPendingDroppedFiles([])}
@@ -1322,6 +1384,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 project={selectedDmProject}
                 users={chatUsers}
                 projects={accessibleProjects}
+                studioConnectors={studioConnectors}
                 currentUserId={effectiveCurrentUserId}
                 directContext
                 onClose={() => setThreadParentId(null)}
@@ -1359,6 +1422,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 channel="internal"
                 users={chatUsers}
                 projects={accessibleProjects}
+                studioConnectors={studioConnectors}
                 placeholder={`Message ${selectedGroup.title}`}
                 incomingFiles={pendingDroppedFiles}
                 onIncomingFilesConsumed={() => setPendingDroppedFiles([])}
@@ -1374,6 +1438,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 project={selectedGroupProject}
                 users={chatUsers}
                 projects={accessibleProjects}
+                studioConnectors={studioConnectors}
                 currentUserId={effectiveCurrentUserId}
                 directContext
                 onClose={() => setThreadParentId(null)}
@@ -1443,10 +1508,21 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
               <div className="chat-reconnect-banner" role="alert">
                 <DsIcon name="alert-triangle" size={16} />
                 <span className="label-s-semibold">
-                  A chat connector needs attention. Reconnect it to keep messages syncing.
+                  {disconnectedConnector === "whatsapp" ? "WhatsApp" : "Slack"} needs to be reconnected to keep External messages syncing.
                 </span>
-                <button className="label-xs-semibold" type="button" onClick={() => setIsSettingsOpen(true)}>
+                <button className="label-xs-semibold" type="button" onClick={() => setIsConnectorSettingsOpen(true)}>
                   Reconnect
+                </button>
+                <button
+                  className="chat-icon-button chat-reconnect-dismiss"
+                  type="button"
+                  aria-label={`Dismiss ${disconnectedConnector === "whatsapp" ? "WhatsApp" : "Slack"} reconnect warning`}
+                  onClick={() => {
+                    if (!connectorWarningKey) return;
+                    setDismissedConnectorWarnings((current) => new Set(current).add(connectorWarningKey));
+                  }}
+                >
+                  <DsIcon name="x-close-cross" size={16} />
                 </button>
               </div>
             ) : null}
@@ -1472,8 +1548,10 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 <ChatComposer
                   project={activeProjectChat}
                   channel={activeChannel}
+                  canUseConnectors={!isCustomer}
                   users={chatUsers}
                   projects={accessibleProjects}
+                  studioConnectors={studioConnectors}
                   placeholder={isCustomer ? "Message your production team" : undefined}
                   incomingFiles={pendingDroppedFiles}
                   onIncomingFilesConsumed={() => setPendingDroppedFiles([])}
@@ -1489,6 +1567,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                   project={activeProjectChat}
                   users={chatUsers}
                   projects={accessibleProjects}
+                  studioConnectors={studioConnectors}
                   currentUserId={effectiveCurrentUserId}
                   customerContext={isCustomer}
                   onClose={() => setThreadParentId(null)}
@@ -1561,6 +1640,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         />
       ) : null}
 
+      {isConnectorSettingsOpen && selectedProject && !isCustomer ? (
+        <ProjectConnectorSettings
+          project={selectedProject}
+          studioName={chatWorkspace.name}
+          studioConnectors={studioConnectors}
+          onClose={() => setIsConnectorSettingsOpen(false)}
+          onNotify={notify}
+          onProjectChange={updateProject}
+          onStudioConnectorsChange={setStudioConnectors}
+        />
+      ) : null}
+
       {isCustomerSettingsOpen && selectedClient ? (
         <CustomerSettings
           clientName={selectedClient.name}
@@ -1572,10 +1663,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             setClients((current) => current.map((client) =>
               client.name === selectedClient.name ? { ...client, status } : client,
             ));
-          }}
-          onProjectsChange={(updatedProjects) => {
-            const updatedById = new Map(updatedProjects.map((project) => [project.id, project]));
-            setProjects((current) => current.map((project) => updatedById.get(project.id) ?? project));
           }}
           onNotify={notify}
         />

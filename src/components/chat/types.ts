@@ -5,7 +5,7 @@ export type ChatRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
 export type ChatChannel = "external" | "internal";
 
-export type ChatSource = "brisk" | "email" | "whatsapp" | "slack" | "teams";
+export type ChatSource = "brisk" | "whatsapp" | "slack";
 
 export type ChatProjectUpdate =
   | ({ kind: "event" } & ProjectSystemPostData)
@@ -36,9 +36,10 @@ export type ChatClient = {
 
 export type ChatAttachment = {
   id: string;
-  type: "image" | "video" | "file" | "loom";
+  type: "image" | "video" | "audio" | "file" | "loom";
   name: string;
   size?: string;
+  duration?: string;
   url?: string;
   previewUrl?: string;
   mimeType?: string;
@@ -61,14 +62,19 @@ export type ChatMessage = {
   deletedAt: string | null;
   readBy: string[];
   mentions: string[];
+  connectorMessageKey?: string;
   deepLinkStage?: "Script" | "Edit" | "Masters";
   projectUpdate?: ChatProjectUpdate;
 };
 
 export type ConnectorState = {
   enabled: boolean;
-  connected: boolean;
   detail: string;
+};
+
+export type WhatsAppProjectConnector = ConnectorState & {
+  numberOwner: "studio" | "client";
+  conversationName: string;
   audience?:
     | { kind: "shared" }
     | {
@@ -77,6 +83,23 @@ export type ConnectorState = {
         possessiveAdjective: string;
       };
 };
+
+export type SlackProjectConnector = ConnectorState & {
+  setup: "slack-connect" | "brisk-app";
+  channelName: string;
+};
+
+export type ChatProjectConnectors = {
+  whatsapp: WhatsAppProjectConnector;
+  slack: SlackProjectConnector;
+};
+
+export type StudioConnectorState = {
+  connected: boolean;
+  detail: string;
+};
+
+export type StudioChatConnectors = Record<ChatConnectorSource, StudioConnectorState>;
 
 export type ChatProject = {
   id: string;
@@ -89,7 +112,7 @@ export type ChatProject = {
   externalUnread: number;
   internalUnread: number;
   preferredSource: ChatSource;
-  connectors: Record<ChatConnectorSource, ConnectorState>;
+  connectors: ChatProjectConnectors;
 };
 
 export type ChatUser = User & {

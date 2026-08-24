@@ -1,8 +1,8 @@
-import type { MediaAsset } from "@/data/media";
+import type { MediaAssetView } from "@/data/media";
 import type { TranscriptClip } from "@/data/transcripts";
 
 export function createPlainText(
-  clips: Array<{ clip: TranscriptClip; asset: MediaAsset }>,
+  clips: Array<{ clip: TranscriptClip; asset: MediaAssetView }>,
 ) {
   return clips
     .map(({ clip, asset }) => [

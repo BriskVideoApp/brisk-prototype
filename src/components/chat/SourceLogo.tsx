@@ -9,10 +9,8 @@ import type {
 
 const sourceDetails: Record<ChatSource, { label: string; src: string }> = {
   brisk: { label: "Brisk", src: "/assets/logos/brisk.svg" },
-  email: { label: "Email", src: "/assets/logos/email.svg" },
   whatsapp: { label: "WhatsApp", src: "/assets/logos/whatsapp.svg" },
   slack: { label: "Slack", src: "/assets/logos/slack.svg" },
-  teams: { label: "Microsoft Teams", src: "/assets/logos/teams.svg" },
 };
 
 type SourceDirection = "inbound" | "outbound" | "composer" | "native" | "internal";
@@ -102,7 +100,7 @@ function getSourceTooltipCopy(
     return {
       title: "Internal message - Brisk only",
       summary: "This message is visible only to members of your studio. Clients cannot see it.",
-      explanation: "It will never be sent by email, WhatsApp, Slack or Microsoft Teams.",
+      explanation: "It will never be sent to WhatsApp or Slack.",
     };
   }
 
@@ -111,20 +109,21 @@ function getSourceTooltipCopy(
       ? {
           title: "Send only in Brisk",
           summary: "When you send this message, it will appear in this External chat for everyone who has access to it.",
-          explanation: "It will not be sent by email, WhatsApp, Slack or Microsoft Teams.",
+          explanation: "It will not be sent to WhatsApp or Slack.",
         }
       : {
           title: "Sent only in Brisk",
           summary: "This message was written directly in Brisk and is visible to everyone who has access to this External chat.",
-          explanation: "It was not sent by email, WhatsApp, Slack or Microsoft Teams.",
+          explanation: "It was not sent to WhatsApp or Slack.",
         };
   }
 
-  const connector = project.connectors[source];
-  const audience = connector.audience ?? { kind: "shared" as const };
+  const audience = source === "whatsapp"
+    ? project.connectors.whatsapp.audience ?? { kind: "shared" as const }
+    : { kind: "shared" as const };
   const isIndividual = audience.kind === "individual";
   const connectedName = isIndividual ? audience.contactName : clientName;
-  const connectorName = source === "email" ? "email" : sourceDetails[source].label;
+  const connectorName = sourceDetails[source].label;
   const replyOwner = isIndividual ? audience.possessiveAdjective : "Their team's";
   const replyDestination = isIndividual ? audience.possessiveAdjective.toLowerCase() : "their";
 

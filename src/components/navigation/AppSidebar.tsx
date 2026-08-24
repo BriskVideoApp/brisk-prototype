@@ -14,10 +14,13 @@ import {
   type NavigationItem,
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePeople } from "@/components/people/PeopleDataContext";
 import { RolePreviewControl } from "@/components/navigation/RolePreviewControl";
+import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { brandKitCustomers } from "@/data/brand-kits";
 import { chatClients, chatProjects, chatUsers } from "@/data/chat";
+import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 type AppSidebarProps = {
   mobileOpen: boolean;
@@ -43,7 +46,16 @@ export function AppSidebar({
   const currentSearch = searchParams.toString();
   const currentItem = getNavigationItem(pathname, currentSearch);
   const { selectedRole, allPages } = usePrototypeRole();
-  const navigationGroups = getVisibleNavigationGroups(selectedRole, allPages);
+  const { people } = usePeople();
+  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
+  const canManageStudioSettings = hasStudioAdministrationAccess(currentStudioMember);
+  const navigationGroups = getVisibleNavigationGroups(selectedRole, allPages)
+    .filter((group) => group.id !== "studio-settings" || allPages || canManageStudioSettings)
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => allPages || canManageStudioSettings || !["people", "outstanding-invoices"].includes(item.id)),
+    }))
+    .filter((group) => group.items.length > 0);
   const contextualProjectId = getContextualProjectId(pathname, searchParams.get("project"));
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -322,6 +334,7 @@ export function AppSidebar({
           <span className="app-sidebar-copy label-xs">Prototype review tool</span>
         </div>
       ) : null}
+      <UserAvatarMenu placement="sidebar" onNavigate={onNavigate} />
       </aside>
       {isProjectPeopleOpen && accessProject ? (
         <ProjectMemberSettings

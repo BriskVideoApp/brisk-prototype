@@ -10,6 +10,7 @@ import type {
   ChatChannel,
   ChatProject,
   ChatSource,
+  StudioChatConnectors,
   ChatUser,
 } from "@/components/chat/types";
 import { getEnabledSources } from "@/components/chat/chat-utils";
@@ -27,7 +28,9 @@ type ChatComposerProps = {
   channel: ChatChannel;
   users: ChatUser[];
   projects: ChatProject[];
+  studioConnectors: StudioChatConnectors;
   compact?: boolean;
+  canUseConnectors?: boolean;
   lockedSource?: ChatSource;
   placeholder?: string;
   incomingFiles?: File[];
@@ -60,7 +63,9 @@ export function ChatComposer({
   channel,
   users,
   projects,
+  studioConnectors,
   compact = false,
+  canUseConnectors = true,
   lockedSource,
   placeholder,
   incomingFiles = [],
@@ -96,8 +101,10 @@ export function ChatComposer({
     [channel, project.memberIds, users],
   );
   const enabledSources = useMemo(
-    () => ["brisk", ...getEnabledSources(project)] as ChatSource[],
-    [project],
+    () => canUseConnectors
+      ? ["brisk", ...getEnabledSources(project, studioConnectors)] as ChatSource[]
+      : ["brisk"] as ChatSource[],
+    [canUseConnectors, project, studioConnectors],
   );
   const composerPlaceholder = getComposerPlaceholder(
     placeholder ?? `Message #${project.code} - ${channel}`,
@@ -119,7 +126,9 @@ export function ChatComposer({
   const filteredEmoji = emojiOptions.filter((option) => option.shortcode.includes(emojiQuery));
 
   useEffect(() => {
-    const availableSources = ["brisk", ...getEnabledSources(project)] as ChatSource[];
+    const availableSources = canUseConnectors
+      ? ["brisk", ...getEnabledSources(project, studioConnectors)] as ChatSource[]
+      : ["brisk"] as ChatSource[];
     setOutboundSource(
       channel === "external"
         ? lockedSource && availableSources.includes(lockedSource)
@@ -136,7 +145,15 @@ export function ChatComposer({
     setScheduledDraft(null);
     setMentions([]);
     setProjectMentions([]);
-  }, [channel, lockedSource, project.connectors, project.id, project.preferredSource]);
+  }, [
+    channel,
+    canUseConnectors,
+    lockedSource,
+    project.connectors,
+    project.id,
+    project.preferredSource,
+    studioConnectors,
+  ]);
 
   useEffect(() => {
     if (incomingFiles.length === 0) {
@@ -149,6 +166,8 @@ export function ChatComposer({
         ? "image"
         : file.type.startsWith("video/")
           ? "video"
+          : file.type.startsWith("audio/")
+            ? "audio"
           : "file",
       name: file.name,
       size: formatFileSize(file.size),
@@ -203,6 +222,8 @@ export function ChatComposer({
         ? "image"
         : file.type.startsWith("video/")
           ? "video"
+          : file.type.startsWith("audio/")
+            ? "audio"
           : "file",
       name: file.name,
       size: formatFileSize(file.size),
@@ -366,7 +387,10 @@ export function ChatComposer({
                 {attachment.type === "image" && attachment.previewUrl ? (
                   <img src={attachment.previewUrl} alt="" />
                 ) : (
-                  <DsIcon name={attachment.type === "image" ? "image-square" : "file-text"} size={14} />
+                  <DsIcon
+                    name={attachment.type === "image" ? "image-square" : attachment.type === "audio" ? "file-audio" : "file-text"}
+                    size={14}
+                  />
                 )}
                 <span>{attachment.name}</span>
                 <button
@@ -504,7 +528,7 @@ export function ChatComposer({
             >
               <DsIcon name="video-camera" size={18} />
             </button>
-            {channel === "external" && lockedSource ? (
+            {channel === "external" && (lockedSource || !canUseConnectors) ? (
               <div
                 className="chat-source-select locked label-xs-semibold"
                 aria-label={`Replies use ${getSourceLabel(outboundSource)}`}
@@ -698,7 +722,7 @@ export function ChatComposer({
         ref={fileInputRef}
         type="file"
         multiple
-        accept="image/*,video/*,.pdf,.doc,.docx"
+        accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
         onChange={(event) => {
           addFiles(Array.from(event.target.files ?? []));
           event.target.value = "";
@@ -729,11 +753,7 @@ function getComposerPlaceholder(
     return `${basePlaceholder} and send to ${clientPossessive} WhatsApp channel`;
   }
 
-  if (source === "teams") {
-    return `${basePlaceholder} and send to ${clientPossessive} Microsoft Teams channel`;
-  }
-
-  return `${basePlaceholder} and send email to customers`;
+  return basePlaceholder;
 }
 
 function makePossessive(name: string) {

@@ -1,0 +1,814 @@
+.account-settings-page,
+.account-settings-page *,
+.account-settings-permission-state,
+.account-settings-permission-state * {
+  font-family: var(--font-brisk);
+}
+
+.account-settings-page {
+  min-width: var(--brisk-space-none);
+  min-height: 100%;
+  background: var(--brisk-page-primary);
+  color: var(--brisk-text-primary);
+}
+
+.account-settings-header {
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-xl) var(--brisk-space-2xl);
+}
+
+.account-settings-header-inner,
+.account-settings-content {
+  width: 100%;
+  max-width: calc(var(--brisk-space-3xl) * 24);
+  margin: var(--brisk-space-none) auto;
+}
+
+.account-settings-header-inner {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.account-settings-header-inner > span {
+  color: var(--brisk-brand-primary-click);
+  text-transform: uppercase;
+}
+
+.account-settings-header h1,
+.account-settings-header p,
+.account-settings-card h2,
+.account-settings-card p,
+.account-settings-section-heading h2,
+.account-settings-section-heading p,
+.account-team-person strong,
+.account-team-person small,
+.account-invoice-table small,
+.account-invoice-checkout-summary p,
+.account-invoice-checkout-summary small {
+  margin: var(--brisk-space-none);
+}
+
+.account-settings-header p,
+.account-settings-card-heading p,
+.account-profile-photo-copy p,
+.account-company-logo-section p,
+.account-settings-section-heading p,
+.account-settings-row-action p,
+.account-team-person small,
+.account-team-invite-date,
+.account-team-current-label,
+.account-invoice-table small,
+.account-invoice-checkout-summary p,
+.account-invoice-checkout-summary small {
+  color: var(--brisk-text-secondary);
+}
+
+.account-settings-back {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  color: var(--brisk-brand-primary-click);
+  gap: var(--brisk-space-s);
+  margin-bottom: var(--brisk-space-m);
+  text-decoration: none;
+}
+
+.account-settings-back:hover,
+.account-settings-back:focus-visible {
+  color: var(--brisk-brand-primary);
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xs);
+  outline: var(--brisk-space-none);
+}
+
+.account-settings-content {
+  display: grid;
+  gap: var(--brisk-space-xl);
+  padding: var(--brisk-space-2xl);
+}
+
+.account-settings-card {
+  min-width: var(--brisk-space-none);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-xl);
+}
+
+.account-settings-card form,
+.account-profile-contact-section,
+.account-work-details-section,
+.account-security-sections,
+.account-security-card,
+.account-team-section,
+.account-invoices-section {
+  display: grid;
+  gap: var(--brisk-space-xl);
+}
+
+.account-work-details-section h3 {
+  margin: var(--brisk-space-none);
+}
+
+.account-profile-photo-section,
+.account-company-logo-section,
+.account-settings-card-heading,
+.account-settings-inline-actions,
+.account-settings-button-content,
+.account-settings-form-actions,
+.account-settings-row-action,
+.account-settings-info-block,
+.account-settings-section-heading,
+.account-team-person,
+.account-team-project-button,
+.account-settings-toast,
+.account-invoice-checkout-summary {
+  display: flex;
+  align-items: center;
+}
+
+.account-profile-photo-section,
+.account-company-logo-section,
+.account-settings-card-heading {
+  align-items: flex-start;
+  gap: var(--brisk-space-l);
+}
+
+.account-profile-avatar .people-avatar,
+.account-company-logo {
+  width: calc(var(--brisk-space-3xl) * 2);
+  height: calc(var(--brisk-space-3xl) * 2);
+  flex: 0 0 calc(var(--brisk-space-3xl) * 2);
+}
+
+.account-profile-avatar .people-avatar {
+  font-size: 20px;
+  line-height: 32px;
+}
+
+.account-profile-photo-copy,
+.account-company-logo-section > div,
+.account-settings-card-heading > div,
+.account-settings-row-action > div,
+.account-settings-section-heading > div,
+.account-team-person > span,
+.account-invoice-checkout-summary > div {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+}
+
+.account-settings-inline-actions,
+.account-settings-button-content {
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
+}
+
+.account-settings-field-grid,
+.account-settings-readonly-grid,
+.account-security-details,
+.account-invoice-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
+  gap: var(--brisk-space-xl);
+}
+
+.account-settings-select-field {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.account-settings-readonly-grid,
+.account-security-details,
+.account-invoice-details {
+  margin: var(--brisk-space-none);
+  border-top: 1px solid var(--brisk-border-secondary);
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-secondary);
+  padding: var(--brisk-space-l);
+}
+
+.account-settings-readonly-grid > div,
+.account-security-details > div,
+.account-invoice-details > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.account-work-readonly-grid {
+  grid-template-columns: minmax(var(--brisk-space-none), 1fr);
+}
+
+.account-settings-readonly-grid dt,
+.account-security-details dt,
+.account-invoice-details dt {
+  color: var(--brisk-text-secondary);
+}
+
+.account-settings-readonly-grid dd,
+.account-security-details dd,
+.account-invoice-details dd {
+  min-width: var(--brisk-space-none);
+  margin: var(--brisk-space-none);
+  overflow-wrap: anywhere;
+}
+
+.account-settings-form-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: var(--brisk-space-s);
+  padding-top: var(--brisk-space-xl);
+}
+
+.account-settings-toast {
+  position: fixed;
+  right: var(--brisk-space-xl);
+  bottom: var(--brisk-space-xl);
+  z-index: 180;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.account-settings-toast .ds-icon {
+  color: var(--brisk-system-success);
+}
+
+.account-settings-scope-navigation {
+  display: flex;
+  width: fit-content;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-primary);
+}
+
+.account-settings-scope-navigation a {
+  display: flex;
+  min-height: var(--brisk-space-3xl);
+  align-items: center;
+  border-right: 1px solid var(--brisk-border-primary);
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+  text-decoration: none;
+}
+
+.account-settings-scope-navigation a:last-child {
+  border-right: var(--brisk-space-none);
+}
+
+.account-settings-scope-navigation a:hover,
+.account-settings-scope-navigation a:focus-visible,
+.account-settings-scope-navigation a.is-active {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  outline: var(--brisk-space-none);
+}
+
+.account-settings-scope-navigation a:hover,
+.account-settings-scope-navigation a:focus-visible {
+  box-shadow: inset var(--brisk-space-none) calc(var(--brisk-space-xs) * -1) var(--brisk-space-none) var(--brisk-brand-primary);
+}
+
+.account-settings-permission-state {
+  display: grid;
+  width: min(calc(100% - (var(--brisk-space-2xl) * 2)), calc(var(--brisk-space-3xl) * 16));
+  min-height: calc(var(--brisk-space-3xl) * 10);
+  place-items: center;
+  align-content: center;
+  gap: var(--brisk-space-m);
+  margin: var(--brisk-space-3xl) auto;
+  padding: var(--brisk-space-2xl);
+  text-align: center;
+}
+
+.account-settings-permission-state h1,
+.account-settings-permission-state p {
+  margin: var(--brisk-space-none);
+}
+
+.account-settings-permission-state p {
+  color: var(--brisk-text-secondary);
+}
+
+.account-settings-permission-state > span.label-xs-semibold {
+  color: var(--brisk-brand-primary-click);
+  text-transform: uppercase;
+}
+
+.account-settings-permission-icon {
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) * 2);
+  height: calc(var(--brisk-space-3xl) * 2);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.account-settings-card-heading > span {
+  display: inline-flex;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+  flex: 0 0 var(--brisk-space-3xl);
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.account-settings-row-action {
+  justify-content: space-between;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: var(--brisk-space-xl);
+  padding-top: var(--brisk-space-l);
+}
+
+.account-settings-info-block {
+  align-items: flex-start;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-l);
+}
+
+.account-settings-info-block > .ds-icon {
+  flex: 0 0 auto;
+  color: var(--brisk-brand-primary-click);
+}
+
+.account-settings-status-badge,
+.account-invoice-status {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-gray-10);
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+}
+
+.account-settings-status-badge.is-active,
+.account-invoice-status.is-paid {
+  background: var(--brisk-green-10);
+  color: var(--brisk-green-60);
+}
+
+.account-settings-status-badge.is-pending,
+.account-invoice-status.is-unpaid {
+  background: var(--brisk-orange-10);
+  color: var(--brisk-yellow-60);
+}
+
+.account-security-password-form,
+.account-team-invite-form {
+  display: grid;
+  gap: var(--brisk-space-l);
+}
+
+.account-settings-field-error {
+  margin: var(--brisk-space-none);
+  color: var(--brisk-system-error);
+}
+
+.account-company-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.account-company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.account-settings-section-heading {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--brisk-space-xl);
+}
+
+.account-team-table-frame,
+.account-invoice-table-frame {
+  overflow-x: auto;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-bg-block-primary);
+}
+
+.account-team-table,
+.account-invoice-table {
+  width: 100%;
+  min-width: calc(var(--brisk-space-3xl) * 18);
+  border-collapse: separate;
+  border-spacing: var(--brisk-space-none);
+  table-layout: fixed;
+}
+
+.account-team-table th,
+.account-invoice-table th {
+  height: calc(var(--brisk-space-3xl) + var(--brisk-space-m));
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-secondary);
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-none) var(--brisk-space-m);
+  text-align: left;
+}
+
+.account-team-table td,
+.account-invoice-table td {
+  height: calc(var(--brisk-space-3xl) * 2);
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-m);
+  vertical-align: middle;
+}
+
+.account-team-table tbody tr:last-child td,
+.account-invoice-table tbody tr:last-child td {
+  border-bottom: var(--brisk-space-none);
+}
+
+.account-team-table tbody tr:hover td,
+.account-invoice-table tbody tr:hover td {
+  background: var(--brisk-bg-block-secondary);
+}
+
+.account-team-table th:nth-child(1) { width: 29%; }
+.account-team-table th:nth-child(2) { width: 23%; }
+.account-team-table th:nth-child(3) { width: 17%; }
+.account-team-table th:nth-child(4) { width: 21%; }
+.account-team-table th:nth-child(5) { width: 10%; }
+
+.account-team-person {
+  gap: var(--brisk-space-s);
+}
+
+.account-team-person > span {
+  overflow: hidden;
+}
+
+.account-team-person strong,
+.account-team-person small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-team-invite-date {
+  display: block;
+  margin-top: var(--brisk-space-xs);
+}
+
+.account-team-project-button,
+.account-invoice-open {
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+}
+
+.account-team-project-button {
+  justify-content: space-between;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s);
+}
+
+.account-team-project-button:hover,
+.account-team-project-button:focus-visible,
+.account-invoice-open:hover,
+.account-invoice-open:focus-visible {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-s);
+  outline: var(--brisk-space-none);
+}
+
+.account-team-project-button:active,
+.account-invoice-open:active {
+  box-shadow: none;
+}
+
+.account-team-project-checklist {
+  display: grid;
+  border: var(--brisk-space-none);
+  gap: var(--brisk-space-s);
+  margin: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
+}
+
+.account-team-project-checklist legend {
+  margin-bottom: var(--brisk-space-s);
+}
+
+.account-team-project-checklist label {
+  display: grid;
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-m));
+  grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr);
+  align-items: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-primary);
+  cursor: pointer;
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.account-team-project-checklist label:hover,
+.account-team-project-checklist label:focus-within {
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.account-team-project-checklist input {
+  width: var(--brisk-space-xl);
+  height: var(--brisk-space-xl);
+  accent-color: var(--brisk-brand-primary);
+}
+
+.account-team-project-checklist span {
+  display: grid;
+  gap: var(--brisk-space-xxs);
+}
+
+.account-team-project-checklist small {
+  color: var(--brisk-text-secondary);
+}
+
+.account-invoice-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+}
+
+.account-invoice-security-note {
+  max-width: calc(var(--brisk-space-3xl) * 17);
+}
+
+.account-invoice-filter {
+  display: flex;
+  width: fit-content;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-primary);
+}
+
+.account-invoice-filter button {
+  min-height: var(--brisk-space-3xl);
+  border: var(--brisk-space-none);
+  border-right: 1px solid var(--brisk-border-primary);
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.account-invoice-filter button:last-child {
+  border-right: var(--brisk-space-none);
+}
+
+.account-invoice-filter button:hover,
+.account-invoice-filter button:focus-visible,
+.account-invoice-filter button.is-active {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  outline: var(--brisk-space-none);
+}
+
+.account-invoice-table th:nth-child(1) { width: 18%; }
+.account-invoice-table th:nth-child(2) { width: 29%; }
+.account-invoice-table th:nth-child(3) { width: 17%; }
+.account-invoice-table th:nth-child(4) { width: 16%; }
+.account-invoice-table th:nth-child(5) { width: 14%; }
+.account-invoice-table th:nth-child(6) { width: 6%; }
+
+.account-invoice-table td:first-child {
+  display: grid;
+  align-content: center;
+  gap: var(--brisk-space-xs);
+}
+
+.account-invoice-number {
+  width: fit-content;
+  border: var(--brisk-space-none);
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  padding: var(--brisk-space-none);
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xs);
+}
+
+.account-invoice-number:hover,
+.account-invoice-number:focus-visible {
+  color: var(--brisk-brand-primary);
+  outline: var(--brisk-space-none);
+}
+
+.account-invoice-open {
+  display: inline-flex;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+  align-items: center;
+  justify-content: center;
+  padding: var(--brisk-space-s);
+}
+
+.account-invoice-checkout-summary {
+  align-items: flex-start;
+  gap: var(--brisk-space-l);
+}
+
+.account-invoice-checkout-summary > span {
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  flex: 0 0 calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+@media (max-width: 820px) {
+  .account-settings-header {
+    padding: var(--brisk-space-xl) var(--brisk-space-l);
+  }
+
+  .account-settings-content {
+    padding: var(--brisk-space-l);
+  }
+
+  .account-settings-scope-navigation {
+    width: 100%;
+  }
+
+  .account-settings-scope-navigation a {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .account-team-table-frame,
+  .account-invoice-table-frame {
+    overflow: visible;
+    border: var(--brisk-space-none);
+    background: transparent;
+  }
+
+  .account-team-table,
+  .account-team-table tbody,
+  .account-team-table tr,
+  .account-team-table td,
+  .account-invoice-table,
+  .account-invoice-table tbody,
+  .account-invoice-table tr,
+  .account-invoice-table td {
+    display: block;
+    min-width: var(--brisk-space-none);
+  }
+
+  .account-team-table thead,
+  .account-invoice-table thead {
+    display: none;
+  }
+
+  .account-team-table tbody,
+  .account-invoice-table tbody {
+    display: grid;
+    gap: var(--brisk-space-m);
+  }
+
+  .account-team-table tr,
+  .account-invoice-table tr {
+    overflow: visible;
+    border: 1px solid var(--brisk-border-primary);
+    border-radius: var(--brisk-radius-m);
+    background: var(--brisk-bg-block-primary);
+  }
+
+  .account-team-table td,
+  .account-invoice-table td,
+  .account-invoice-table td:first-child {
+    display: grid;
+    height: auto;
+    grid-template-columns: calc(var(--brisk-space-3xl) * 3) minmax(var(--brisk-space-none), 1fr);
+    align-items: center;
+    border-bottom: 1px solid var(--brisk-border-secondary);
+    background: transparent;
+    gap: var(--brisk-space-m);
+    padding: var(--brisk-space-m);
+  }
+
+  .account-team-table td::before,
+  .account-invoice-table td::before {
+    content: attr(data-label);
+    color: var(--brisk-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+  }
+
+  .account-team-table td:last-child,
+  .account-invoice-table td:last-child {
+    border-bottom: var(--brisk-space-none);
+  }
+}
+
+@media (max-width: 620px) {
+  .account-settings-header h1 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .account-settings-card {
+    border-radius: var(--brisk-radius-s);
+    box-shadow: var(--brisk-shadow-s);
+    padding: var(--brisk-space-l);
+  }
+
+  .account-profile-photo-section,
+  .account-company-logo-section,
+  .account-settings-section-heading,
+  .account-settings-row-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .account-settings-field-grid,
+  .account-settings-readonly-grid,
+  .account-security-details,
+  .account-invoice-details {
+    grid-template-columns: minmax(var(--brisk-space-none), 1fr);
+  }
+
+  .account-settings-form-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .account-settings-form-actions > button,
+  .account-settings-row-action > button,
+  .account-settings-section-heading > button,
+  .account-invoice-toolbar > button {
+    width: 100%;
+  }
+
+  .account-invoice-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .account-settings-scope-navigation {
+    display: grid;
+  }
+
+  .account-settings-scope-navigation a {
+    justify-content: flex-start;
+    border-right: var(--brisk-space-none);
+    border-bottom: 1px solid var(--brisk-border-primary);
+  }
+
+  .account-settings-scope-navigation a:last-child {
+    border-bottom: var(--brisk-space-none);
+  }
+
+  .account-invoice-filter {
+    width: 100%;
+  }
+
+  .account-invoice-filter button {
+    flex: 1;
+  }
+
+  .account-team-table td,
+  .account-invoice-table td,
+  .account-invoice-table td:first-child {
+    grid-template-columns: minmax(var(--brisk-space-none), 1fr);
+    gap: var(--brisk-space-xs);
+  }
+
+  .account-settings-toast {
+    right: var(--brisk-space-l);
+    bottom: var(--brisk-space-l);
+    left: var(--brisk-space-l);
+  }
+}

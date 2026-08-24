@@ -3,6 +3,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost';
   size?: 'S' | 'M' | 'L';
+  disabled?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -12,11 +13,12 @@ export function Button({
   type = 'button',
   variant = 'primary',
   size = 'M',
+  disabled = false,
   onClick,
   className = ''
 }: ButtonProps) {
   // Radius: 8px (radius/s) for buttons
-  const baseStyles = "transition-all border-[1px] cursor-pointer rounded-[8px]";
+  const baseStyles = "transition-all border-[1px] cursor-pointer rounded-[8px] disabled:cursor-not-allowed disabled:border-[#C6CBD0] disabled:bg-[#F3F4F5] disabled:text-[#8B9298] disabled:shadow-none";
 
   // Size variants - using Label text styles
   const sizeStyles = {
@@ -37,6 +39,7 @@ export function Button({
   return (
     <button
       type={type}
+      disabled={disabled}
       onClick={onClick}
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
     >

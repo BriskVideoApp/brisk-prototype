@@ -1,5 +1,34 @@
 # Yura Review Log
 
+## Unified Media Library, storage and playback prototype
+
+Added shared prototype components under `src/components/media/`:
+
+- `MediaBrowser`
+- `MediaAssetDrawer`
+- `MediaPreview`
+- `MediaUploadProgress`
+- `MediaActionDialogs`
+- `MediaCloudPicker`
+- `StorageUsageMeter`
+
+Added a storage settings composition under `src/components/settings/`:
+
+- `MediaStorageSettingsPage`
+
+Notes for DS review:
+
+- Project Media and the global Media Library now share the same cards, list rows, folder tree, drawer, filters and action treatments. The global route is browse-only while uploads start from a project Media stage.
+- Upload progress uses local tokenised modal and progress-row compositions because the React DS does not currently export a file-upload queue with staged processing states.
+- Move and provider-aware permanent-delete confirmations reuse the exported DS `Button` and existing `BriskSelect`, inside a local modal composition. Please review this against a future shared `d-Modal` and destructive-confirmation pattern.
+- Google Drive and Dropbox use a shared connected-storage picker with source-folder filtering and multi-select. This is a mock adapter, not a real provider integration.
+- Processing chips, missing-original chips and playback preparation panels are local status compositions. They represent Uploading, Stored, Preparing playback, Ready and Failed states.
+- Video cards use the existing playback asset for pointer-position hover scrubbing. Please review whether thumbnail scrubbing belongs in a shared media-card primitive.
+- Mobile replaces the desktop project and folder rails with compact native selectors, while the asset drawer and media dialogs become full-width sheets.
+- The storage settings screen uses `BriskSelect` and tokenised cards to demonstrate Google Drive, Dropbox, Brisk Storage and Remote Studio. Remote Studio managed roots are deliberately immutable mock records.
+- `BriskSelect` now accepts an optional brand-logo source for connected-service options. Storage uses the same small image-mark pattern already established for Slack and WhatsApp, while Remote Studio keeps its Flow icon.
+- The implementation reuses the existing tokenised media buttons because the DS `Button` export does not cover every compact toolbar and icon-only action used by the media surface. These should be reconciled when the shared media toolbar pattern is formalised.
+
 ## Studio Onboard shell prototype
 
 Added prototype components under `src/components/studio-onboard/`:

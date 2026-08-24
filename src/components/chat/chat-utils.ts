@@ -1,4 +1,12 @@
-import type { ChatAttachment, ChatMessage, ChatProject } from "@/components/chat/types";
+import type {
+  ChatAttachment,
+  ChatChannel,
+  ChatConnectorSource,
+  ChatMessage,
+  ChatProject,
+  ChatSource,
+  StudioChatConnectors,
+} from "@/components/chat/types";
 
 export function formatCompactDate(isoDate: string) {
   const date = new Date(isoDate);
@@ -90,12 +98,46 @@ export function getLastProjectMessage(messages: ChatMessage[], projectId: string
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
 }
 
-export function getEnabledSources(project: ChatProject) {
+export function getEnabledSources(
+  project: ChatProject,
+  studioConnectors: StudioChatConnectors,
+): ChatConnectorSource[] {
   return (Object.entries(project.connectors) as Array<
-    [keyof ChatProject["connectors"], ChatProject["connectors"][keyof ChatProject["connectors"]]]
+    [ChatConnectorSource, ChatProject["connectors"][ChatConnectorSource]]
   >)
-    .filter(([, connector]) => connector.enabled && connector.connected)
+    .filter(([source, connector]) => connector.enabled && studioConnectors[source].connected)
     .map(([source]) => source);
+}
+
+export function resolveOutboundSource({
+  channel,
+  project,
+  requestedSource,
+  studioConnectors,
+}: {
+  channel: ChatChannel;
+  project: ChatProject;
+  requestedSource: ChatSource;
+  studioConnectors: StudioChatConnectors;
+}): ChatSource {
+  if (channel !== "external" || requestedSource === "brisk") {
+    return "brisk";
+  }
+
+  return getEnabledSources(project, studioConnectors).includes(requestedSource)
+    ? requestedSource
+    : "brisk";
+}
+
+export function appendMessageOnce(messages: ChatMessage[], message: ChatMessage) {
+  if (
+    message.connectorMessageKey &&
+    messages.some((candidate) => candidate.connectorMessageKey === message.connectorMessageKey)
+  ) {
+    return messages;
+  }
+
+  return [...messages, message];
 }
 
 export function attachmentMatches(
@@ -107,7 +149,11 @@ export function attachmentMatches(
   }
 
   if (requestedType === "file") {
-    return attachment.type === "file" || attachment.type === "video";
+    return (
+      attachment.type === "file" ||
+      attachment.type === "video" ||
+      attachment.type === "audio"
+    );
   }
 
   return Boolean(attachment.url);

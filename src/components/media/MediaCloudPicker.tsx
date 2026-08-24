@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { MediaCloudFile, MediaCloudProvider } from "@/data/media";
+import { formatMediaBytes, formatMediaDuration } from "@/lib/media";
 
 type MediaCloudPickerProps = {
   provider: MediaCloudProvider | null;
@@ -12,12 +13,16 @@ type MediaCloudPickerProps = {
 
 export function MediaCloudPicker({ provider, files, folderName, onClose, onImport }: MediaCloudPickerProps) {
   const [query, setQuery] = useState("");
+  const [sourceFolder, setSourceFolder] = useState("__all__");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const providerFiles = useMemo(() => files.filter((file) => file.provider === provider), [files, provider]);
+  const sourceFolders = useMemo(() => [...new Set(providerFiles.map((file) => file.sourcePath))].toSorted(), [providerFiles]);
   const visibleFiles = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
-    return providerFiles.filter((file) => !normalisedQuery || `${file.name} ${file.sourcePath}`.toLowerCase().includes(normalisedQuery));
-  }, [providerFiles, query]);
+    return providerFiles
+      .filter((file) => sourceFolder === "__all__" || file.sourcePath === sourceFolder)
+      .filter((file) => !normalisedQuery || `${file.name} ${file.sourcePath}`.toLowerCase().includes(normalisedQuery));
+  }, [providerFiles, query, sourceFolder]);
   const selectedFiles = providerFiles.filter((file) => selectedIds.has(file.id));
   const allVisibleSelected = visibleFiles.length > 0 && visibleFiles.every((file) => selectedIds.has(file.id));
   const someVisibleSelected = visibleFiles.some((file) => selectedIds.has(file.id)) && !allVisibleSelected;
@@ -25,6 +30,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
 
   useEffect(() => {
     setQuery("");
+    setSourceFolder("__all__");
     setSelectedIds(new Set());
   }, [provider]);
 
@@ -68,7 +74,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
       <section className="media-cloud-picker" role="dialog" aria-modal="true" aria-labelledby="media-cloud-picker-title">
         <header className="media-cloud-picker-header">
           <div>
-            <span className="label-xs-semibold">Import media</span>
+            <span className="label-xs-semibold">Add from connected storage</span>
             <h2 id="media-cloud-picker-title">{providerName}</h2>
           </div>
           <button className="media-icon-button" type="button" aria-label={`Close ${providerName}`} onClick={onClose}>
@@ -88,6 +94,15 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
         </div>
 
         <div className="media-cloud-picker-tools">
+          <label className="media-cloud-folder-filter">
+            <span className="sr-only">Source folder</span>
+            <DsIcon name="folder-open" size={16} />
+            <select value={sourceFolder} onChange={(event) => setSourceFolder(event.target.value)}>
+              <option value="__all__">All folders</option>
+              {sourceFolders.map((folder) => <option value={folder} key={folder}>{folder}</option>)}
+            </select>
+            <DsIcon name="caret-down" size={14} />
+          </label>
           <label className="media-search-shell">
             <DsIcon name="search" size={16} />
             <input
@@ -120,7 +135,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
                 <span className="label-xs">{file.sourcePath}</span>
               </div>
               <div className="media-cloud-file-meta label-xs">
-                <span>{file.sizeLabel}{file.durationLabel ? ` · ${file.durationLabel}` : ""}</span>
+                <span>{formatMediaBytes(file.sizeBytes)}{file.durationSeconds ? ` · ${formatMediaDuration(file.durationSeconds)}` : ""}</span>
                 <span>{file.modifiedLabel}</span>
               </div>
             </div>
@@ -135,7 +150,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
 
         <footer className="media-cloud-picker-footer">
           <p className="label-xs">
-            {provider === "google-drive" ? "Google Docs, Sheets and Slides are imported as PDF." : "Selected files are copied into Brisk and stay available here."}
+            Originals stay in {providerName}. Brisk stores a stable provider reference and prepares a separate playback asset.
           </p>
           <div>
             <button className="media-secondary-button label-s-semibold" type="button" onClick={onClose}>Cancel</button>
@@ -145,8 +160,8 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
               disabled={selectedFiles.length === 0}
               onClick={() => onImport(selectedFiles)}
             >
-              <DsIcon name="download-simple" size={16} />
-              Import {selectedFiles.length > 0 ? selectedFiles.length : ""} {selectedFiles.length === 1 ? "file" : "files"}
+              <DsIcon name="plus" size={16} />
+              Add {selectedFiles.length > 0 ? selectedFiles.length : ""} {selectedFiles.length === 1 ? "file" : "files"} to Brisk
             </button>
           </div>
         </footer>

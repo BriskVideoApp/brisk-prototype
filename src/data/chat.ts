@@ -3,6 +3,7 @@ import type {
   ChatClient,
   ChatMessage,
   ChatProject,
+  StudioChatConnectors,
   ChatUser,
   ConversationPreview,
 } from "@/components/chat/types";
@@ -16,6 +17,17 @@ export const chatWorkspace = {
   name: "North Star Films",
   currentUserId: "user-tom",
 } as const;
+
+export const chatStudioConnectors: StudioChatConnectors = {
+  whatsapp: {
+    connected: true,
+    detail: "North Star Films Business",
+  },
+  slack: {
+    connected: false,
+    detail: "North Star Films Slack",
+  },
+};
 
 export const chatClients: ChatClient[] = [
   { name: "Loom", status: "Active", userIds: ["user-jess", "user-sarah", "user-avery"] },
@@ -120,20 +132,30 @@ export const chatUsers: ChatUser[] = [
 ];
 
 const connectorDefaults: ChatProject["connectors"] = {
-  email: { enabled: true, connected: true, detail: "project-code@in.briskapp.com" },
-  whatsapp: { enabled: false, connected: true, detail: "North Star Films Business", audience: { kind: "shared" } },
-  slack: { enabled: false, connected: true, detail: "North Star client connect" },
-  teams: { enabled: false, connected: true, detail: "North Star shared channels" },
+  whatsapp: {
+    enabled: false,
+    detail: "Not configured for this project",
+    numberOwner: "studio",
+    conversationName: "Select a Client conversation",
+    audience: { kind: "shared" },
+  },
+  slack: {
+    enabled: false,
+    detail: "Not configured for this project",
+    setup: "slack-connect",
+    channelName: "Select a Slack channel",
+  },
 };
 
-function connectors(
-  overrides: Partial<ChatProject["connectors"]> = {},
-): ChatProject["connectors"] {
+type ConnectorOverrides = {
+  whatsapp?: Partial<ChatProject["connectors"]["whatsapp"]>;
+  slack?: Partial<ChatProject["connectors"]["slack"]>;
+};
+
+function connectors(overrides: ConnectorOverrides = {}): ChatProject["connectors"] {
   return {
-    email: { ...connectorDefaults.email, ...overrides.email },
     whatsapp: { ...connectorDefaults.whatsapp, ...overrides.whatsapp },
     slack: { ...connectorDefaults.slack, ...overrides.slack },
-    teams: { ...connectorDefaults.teams, ...overrides.teams },
   };
 }
 
@@ -148,16 +170,20 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-jess", "user-sarah"],
     externalUnread: 3,
     internalUnread: 2,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors({
       whatsapp: {
         enabled: true,
-        connected: true,
-        detail: "Sarah Kim",
+        detail: "Sarah Kim · Loom campaign group",
+        conversationName: "Sarah Kim · Loom campaign group",
         audience: { kind: "individual", contactName: "Sarah", possessiveAdjective: "Her" },
       },
-      slack: { enabled: true, connected: true, detail: "#north-star-launch-film" },
-      teams: { enabled: true, connected: true, detail: "Loom launch shared channel" },
+      slack: {
+        enabled: true,
+        detail: "Slack Connect · #north-star-launch-film",
+        setup: "slack-connect",
+        channelName: "#north-star-launch-film",
+      },
     }),
   },
   {
@@ -172,7 +198,12 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 0,
     preferredSource: "slack",
     connectors: connectors({
-      slack: { enabled: true, connected: true, detail: "#loom-enterprise-stories" },
+      slack: {
+        enabled: true,
+        detail: "Brisk Slack app · #loom-enterprise-stories",
+        setup: "brisk-app",
+        channelName: "#loom-enterprise-stories",
+      },
     }),
   },
   {
@@ -187,7 +218,11 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 0,
     preferredSource: "slack",
     connectors: connectors({
-      slack: { enabled: true, connected: true, detail: "#deel-apac-story" },
+      slack: {
+        enabled: true,
+        detail: "Slack Connect · #deel-apac-story",
+        channelName: "#deel-apac-story",
+      },
     }),
   },
   {
@@ -200,7 +235,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-alex"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -213,9 +248,13 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-jess"],
     externalUnread: 0,
     internalUnread: 4,
-    preferredSource: "teams",
+    preferredSource: "slack",
     connectors: connectors({
-      teams: { enabled: true, connected: false, detail: "Reconnect Microsoft Teams" },
+      slack: {
+        enabled: true,
+        detail: "Slack Connect · #hims-sleep-series",
+        channelName: "#hims-sleep-series",
+      },
     }),
   },
   {
@@ -228,7 +267,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-sarah"],
     externalUnread: 2,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -243,7 +282,12 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 1,
     preferredSource: "slack",
     connectors: connectors({
-      slack: { enabled: true, connected: true, detail: "#partner-studio-reel" },
+      slack: {
+        enabled: true,
+        detail: "Brisk Slack app · #partner-studio-reel",
+        setup: "brisk-app",
+        channelName: "#partner-studio-reel",
+      },
     }),
   },
   {
@@ -260,8 +304,8 @@ export const chatProjects: ChatProject[] = [
     connectors: connectors({
       whatsapp: {
         enabled: true,
-        connected: true,
-        detail: "Alex Morgan",
+        detail: "Alex Morgan · Ramp product team",
+        conversationName: "Alex Morgan · Ramp product team",
         audience: { kind: "individual", contactName: "Alex", possessiveAdjective: "Their" },
       },
     }),
@@ -276,7 +320,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-sarah"],
     externalUnread: 1,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -291,7 +335,11 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 0,
     preferredSource: "slack",
     connectors: connectors({
-      slack: { enabled: true, connected: true, detail: "#roadmap-film" },
+      slack: {
+        enabled: true,
+        detail: "Slack Connect · #roadmap-film",
+        channelName: "#roadmap-film",
+      },
     }),
   },
   {
@@ -304,7 +352,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-alex"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -317,9 +365,14 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-sarah"],
     externalUnread: 0,
     internalUnread: 2,
-    preferredSource: "teams",
+    preferredSource: "slack",
     connectors: connectors({
-      teams: { enabled: true, connected: true, detail: "Stripe Sessions shared channel" },
+      slack: {
+        enabled: true,
+        detail: "Brisk Slack app · #stripe-sessions-opener",
+        setup: "brisk-app",
+        channelName: "#stripe-sessions-opener",
+      },
     }),
   },
   {
@@ -332,7 +385,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-jess"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -345,7 +398,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-sarah"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   {
@@ -358,10 +411,8 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-alex"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "teams",
-    connectors: connectors({
-      teams: { enabled: true, connected: true, detail: "Atlassian customer voices" },
-    }),
+    preferredSource: "brisk",
+    connectors: connectors(),
   },
   {
     id: "xero-small-business",
@@ -375,7 +426,12 @@ export const chatProjects: ChatProject[] = [
     internalUnread: 0,
     preferredSource: "whatsapp",
     connectors: connectors({
-      whatsapp: { enabled: true, connected: true, detail: "Xero campaign group" },
+      whatsapp: {
+        enabled: true,
+        detail: "Xero campaign group",
+        numberOwner: "client",
+        conversationName: "Xero campaign group",
+      },
     }),
   },
   {
@@ -388,7 +444,7 @@ export const chatProjects: ChatProject[] = [
     clientMemberIds: ["user-sarah"],
     externalUnread: 0,
     internalUnread: 0,
-    preferredSource: "email",
+    preferredSource: "brisk",
     connectors: connectors(),
   },
   ...customerDashboardProjects
@@ -405,7 +461,11 @@ export const chatProjects: ChatProject[] = [
       internalUnread: 0,
       preferredSource: "slack",
       connectors: connectors({
-        slack: { enabled: true, connected: true, detail: "#loom-video-production" },
+        slack: {
+          enabled: true,
+          detail: "Slack Connect · #loom-video-production",
+          channelName: "#loom-video-production",
+        },
       }),
     })),
 ];
@@ -421,7 +481,15 @@ export const chatMessages: ChatMessage[] = [
     senderSystem: null,
     senderRole: "client",
     body: "Could we use this chat for the broader Loom account updates that span more than one project?",
-    attachments: [],
+    attachments: [
+      {
+        id: "attachment-slack-script",
+        type: "file",
+        name: "Loom-final-product-wording.docx",
+        size: "86 KB",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      },
+    ],
     reactions: [],
     sourceChannel: "slack",
     createdAt: "2026-07-24T09:05:00+10:00",
@@ -429,6 +497,7 @@ export const chatMessages: ChatMessage[] = [
     deletedAt: null,
     readBy: ["user-jess", "user-sarah"],
     mentions: [],
+    connectorMessageKey: "slack:company-chat-loom:1719270300.000001",
   },
   {
     id: "company-loom-external-002",
@@ -509,7 +578,7 @@ export const chatMessages: ChatMessage[] = [
     reactions: [
       { emoji: "❤️", label: "Love", selectedBy: ["user-tom", "user-david"] },
     ],
-    sourceChannel: "email",
+    sourceChannel: "brisk",
     createdAt: "2026-07-22T09:12:00+10:00",
     editedAt: null,
     deletedAt: null,
@@ -620,6 +689,27 @@ export const chatMessages: ChatMessage[] = [
         name: "Colour note - frame 184.png",
         size: "1.8 MB",
       },
+      {
+        id: "attachment-whatsapp-video",
+        type: "video",
+        name: "Product screen reference.mp4",
+        size: "12.6 MB",
+        mimeType: "video/mp4",
+      },
+      {
+        id: "attachment-whatsapp-voice",
+        type: "audio",
+        name: "Sarah's colour note",
+        duration: "0:24",
+        mimeType: "audio/ogg",
+      },
+      {
+        id: "attachment-whatsapp-document",
+        type: "file",
+        name: "Loom-approved-product-copy.pdf",
+        size: "640 KB",
+        mimeType: "application/pdf",
+      },
     ],
     reactions: [],
     sourceChannel: "whatsapp",
@@ -628,6 +718,7 @@ export const chatMessages: ChatMessage[] = [
     deletedAt: null,
     readBy: ["user-tom", "user-sarah"],
     mentions: [],
+    connectorMessageKey: "whatsapp:loom-launch-film:wamid-007",
     deepLinkStage: "Edit",
   },
   {
@@ -709,21 +800,32 @@ export const chatMessages: ChatMessage[] = [
     senderId: "user-sarah",
     senderSystem: null,
     senderRole: "client",
-    body: "I’ve shared the updated product wording with the wider Loom team. This version is ready for the final sound pass.",
-    attachments: [],
-    reactions: [],
+    body: "I’ve shared the updated product wording with the wider Loom team. @Marcus Lee this version is ready for the final sound pass.",
+    attachments: [
+      {
+        id: "attachment-slack-product-copy",
+        type: "file",
+        name: "Loom-final-product-wording.docx",
+        size: "86 KB",
+        mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      },
+    ],
+    reactions: [
+      { emoji: "👍", label: "Like", selectedBy: ["user-jess", "user-sarah"] },
+    ],
     sourceChannel: "slack",
     createdAt: "2026-07-24T08:52:00+10:00",
     editedAt: null,
     deletedAt: null,
     readBy: ["user-sarah"],
-    mentions: [],
+    mentions: ["user-marcus"],
+    connectorMessageKey: "slack:loom-launch-film:1719276720.000011",
   },
   {
     id: "message-012",
     projectId: "loom-launch-film",
     channel: "external",
-    threadId: null,
+    threadId: "message-011",
     senderId: "user-jess",
     senderSystem: null,
     senderRole: "client",
@@ -732,12 +834,13 @@ export const chatMessages: ChatMessage[] = [
     reactions: [
       { emoji: "🎉", label: "Party", selectedBy: ["user-tom"] },
     ],
-    sourceChannel: "teams",
+    sourceChannel: "slack",
     createdAt: "2026-07-24T09:28:00+10:00",
     editedAt: null,
     deletedAt: null,
     readBy: ["user-jess"],
     mentions: [],
+    connectorMessageKey: "slack:loom-launch-film:1719278880.000012",
     deepLinkStage: "Masters",
   },
   {
@@ -757,6 +860,7 @@ export const chatMessages: ChatMessage[] = [
     deletedAt: null,
     readBy: ["user-alex"],
     mentions: [],
+    connectorMessageKey: "slack:deel-customer-story:1719270600.000001",
     deepLinkStage: "Script",
   },
   {
@@ -794,6 +898,7 @@ export const chatMessages: ChatMessage[] = [
     deletedAt: null,
     readBy: ["user-alex"],
     mentions: ["user-tom"],
+    connectorMessageKey: "whatsapp:ramp-finance-recap:wamid-ramp-001",
   },
 ];
 

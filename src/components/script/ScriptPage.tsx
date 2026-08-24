@@ -18,12 +18,12 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { StageApprovalControl } from "@/components/share/ShareActionRow";
-import {
-  ScriptAiPanel,
-  type ScriptAiInsertRequest,
-  type ScriptAiPanelPreset,
-  type ScriptAiRowDraft,
+import type {
+  ScriptAiInsertRequest,
+  ScriptAiPanelPreset,
+  ScriptAiRowDraft,
 } from "@/components/script-ai/ScriptAiPanel";
+import { useBriskAi } from "@/components/ai/BriskAiContext";
 import {
   FloatingCommentShell,
   getFloatingCommentPosition,
@@ -175,6 +175,7 @@ const defaultVersionMeta: ScriptVersionMeta = {
 const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
 export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, initiallyEmpty = false }: ScriptPageProps) {
+  const { openAssistant } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const latestVersion = scriptVersions[scriptVersions.length - 1];
@@ -1826,7 +1827,10 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
 
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${activeSubtabId === "transcripts" ? "transcripts-active" : ""} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
-      <ProjectStageHeader activeStage="script" project={project} />
+      <ProjectStageHeader
+        activeStage="script"
+        project={project}
+      />
 
       <ScriptSubtabBar
         activeSubtabId={activeSubtabId}
@@ -2010,12 +2014,13 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
           {
             id: "ai",
             label: "AI",
-            icon: "chopchop-ai",
+            icon: "sparkle",
             showLabel: true,
             onSelect: () => {
-              setAiPanelPreset(undefined);
-              setIsAiPanelOpen(true);
-              setIsAiPanelMinimised(false);
+              openAssistant({
+                expanded: true,
+                prompt: aiSelectionContext.selectedText ? "Rewrite this in the Client's voice" : "Improve this script selection",
+              });
             },
           },
           {
@@ -2027,45 +2032,6 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
           },
         ]}
       /> : null}
-
-      {shouldShowAi ? (
-        <>
-          {!isAiPanelOpen ? (
-            <button
-              className="script-ai-fab"
-              type="button"
-              aria-label="Open ChopChop AI"
-              onClick={() => {
-                if (activeSubtabId === "transcripts") {
-                  openTranscriptPaperEdit(projectTranscriptClips);
-                  return;
-                }
-
-                setAiPanelPreset(undefined);
-                setIsAiPanelOpen(true);
-                setIsAiPanelMinimised(false);
-              }}
-            >
-              <span className="script-ai-fab-tooltip label-xs-semibold" role="tooltip">
-                Brisk AI
-              </span>
-              <span className="script-ai-fab-icon" aria-hidden="true">
-                <DsIcon name="sparkle" size={22} />
-              </span>
-            </button>
-          ) : null}
-          <ScriptAiPanel
-            genre={scriptBrief.genre}
-            isMinimised={isAiPanelMinimised}
-            isOpen={isAiPanelOpen}
-            preset={aiPanelPreset}
-            selectionContext={aiSelectionContext}
-            onClose={() => setIsAiPanelOpen(false)}
-            onInsert={handleAiInsert}
-            onMinimise={setIsAiPanelMinimised}
-          />
-        </>
-      ) : null}
 
       {isApprovedEditModalOpen ? (
         <div className="script-modal-backdrop" role="presentation">

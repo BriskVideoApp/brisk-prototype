@@ -5,23 +5,19 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import { NotificationSemanticState } from "@/components/notifications/NotificationSemanticState";
+import {
+  formatAbsoluteNotificationTime,
+  formatNotificationRelativeTime,
+} from "@/components/notifications/NotificationInboxItem";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { DsIcon } from "@/components/video-review/DsIcon";
+import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import type { NotificationSemanticState } from "@/components/notifications/types";
 import { chatProjects } from "@/data/chat";
 import { notificationInboxRecipientByRole } from "@/data/notification-inbox";
 import { getVisibleActivityFeed } from "@/data/project-history";
 
 export const openCustomerLatestActivityEventName = "brisk:open-customer-latest-activity";
 export const openCustomerGlobalChatEventName = "brisk:open-customer-global-chat";
-
-const activityDateFormatter = new Intl.DateTimeFormat("en-AU", {
-  day: "numeric",
-  month: "short",
-  hour: "numeric",
-  minute: "2-digit",
-  timeZone: "Australia/Sydney",
-});
 
 export function GlobalHeaderActions() {
   const pathname = usePathname();
@@ -119,37 +115,63 @@ export function GlobalHeaderActions() {
           >
             <header className="notification-popover-header">
               <div>
-                <span className="label-xs-semibold">VISIBLE TO YOU</span>
                 <h2 className="headings-xs-bold">Latest activity</h2>
+                <span className="label-xs">Updates across your projects.</span>
               </div>
-              <button
-                className="app-global-activity-close"
-                type="button"
-                aria-label="Close latest activity"
-                onClick={() => setIsActivityOpen(false)}
-              >
-                <DsIcon name="x-close-cross" size={16} />
-              </button>
+              <div className="notification-popover-actions">
+                <button
+                  className="notification-popover-close"
+                  type="button"
+                  aria-label="Close latest activity"
+                  onClick={() => setIsActivityOpen(false)}
+                >
+                  <DsIcon name="x-close-cross" size={16} />
+                </button>
+              </div>
             </header>
 
             {activityEntries.length ? (
-              <ol className="app-global-activity-list">
+              <div className="notification-popover-list">
                 {activityEntries.map((entry) => (
-                  <li key={entry.id}>
-                    <Link href={entry.href} onClick={() => setIsActivityOpen(false)}>
-                      <NotificationSemanticState state={entry.state} label={entry.label} compact />
-                      <span className="app-global-activity-copy">
-                        <strong className="label-s-semibold">{entry.action}</strong>
-                        <span className="label-xs">{entry.entityLabel}</span>
-                        <time className="label-xs" dateTime={entry.occurredAt} title={entry.occurredAt}>
-                          {activityDateFormatter.format(new Date(entry.occurredAt))}
-                        </time>
+                  <article className="notification-inbox-item is-read is-compact" key={entry.id}>
+                    <div className="notification-inbox-item-layout">
+                      <span
+                        className={`notification-inbox-item-icon is-${entry.state}`}
+                        role="img"
+                        aria-label={`Status: ${entry.label}`}
+                      >
+                        <DsIcon name={getActivityIcon(entry.state)} size={16} />
                       </span>
-                      <DsIcon name="caret-right" size={16} />
-                    </Link>
-                  </li>
+                      <Link
+                        className="notification-inbox-item-main-link"
+                        href={entry.href}
+                        aria-label={`${entry.action}. ${entry.entityLabel}. ${formatAbsoluteNotificationTime(entry.occurredAt)}`}
+                        onClick={() => setIsActivityOpen(false)}
+                      >
+                        <span className="notification-inbox-item-title-row">
+                          <strong className="label-s-semibold">{entry.action}</strong>
+                        </span>
+                        <span className="notification-inbox-item-meta label-xs">{entry.entityLabel}</span>
+                      </Link>
+                      <time
+                        className="notification-inbox-item-time label-xs"
+                        dateTime={entry.occurredAt}
+                        title={formatAbsoluteNotificationTime(entry.occurredAt)}
+                      >
+                        {formatNotificationRelativeTime(entry.occurredAt)}
+                      </time>
+                      <Link
+                        className="notification-inbox-item-chevron"
+                        href={entry.href}
+                        aria-label={`Open ${entry.action}`}
+                        onClick={() => setIsActivityOpen(false)}
+                      >
+                        <DsIcon name="caret-right" size={16} />
+                      </Link>
+                    </div>
+                  </article>
                 ))}
-              </ol>
+              </div>
             ) : (
               <div className="notification-popover-empty">
                 <DsIcon name="clock-clockwise" size={24} />
@@ -163,6 +185,12 @@ export function GlobalHeaderActions() {
       {chatControl}
     </nav>
   );
+}
+
+function getActivityIcon(state: NotificationSemanticState): DsIconName {
+  if (state === "success") return "check-circle";
+  if (state === "warning" || state === "failure") return "alert-triangle";
+  return "info";
 }
 
 function getChatUnreadCount(role: PrototypeRole) {

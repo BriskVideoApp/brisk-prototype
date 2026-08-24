@@ -217,6 +217,28 @@ export function VideoReviewScreen({
     }
   };
 
+  useEffect(() => {
+    const seekFromAi = (event: Event) => {
+      const detail = (event as CustomEvent<{ seconds?: number }>).detail;
+      if (typeof detail?.seconds !== "number") return;
+      setCurrentTimeSeconds(detail.seconds);
+      setIsPlaying(false);
+      setHasAnchor(true);
+    };
+    const openCommentFromAi = (event: Event) => {
+      const detail = (event as CustomEvent<{ commentId?: string }>).detail;
+      const comment = detail?.commentId ? reviewComments.find((candidate) => candidate.id === detail.commentId) : null;
+      if (comment) selectComment(comment);
+    };
+
+    window.addEventListener("brisk:ai-seek", seekFromAi);
+    window.addEventListener("brisk:ai-open-comment", openCommentFromAi);
+    return () => {
+      window.removeEventListener("brisk:ai-seek", seekFromAi);
+      window.removeEventListener("brisk:ai-open-comment", openCommentFromAi);
+    };
+  }, [reviewComments]);
+
   const skipComment = (direction: -1 | 1) => {
     if (comments.length === 0) {
       return;
@@ -688,7 +710,10 @@ export function VideoReviewScreen({
     <>
       <main className="video-review-shell">
       <div className="video-review-main">
-        <ProjectStageHeader activeStage="edit" project={project} />
+        <ProjectStageHeader
+          activeStage="edit"
+          project={project}
+        />
         <input
           className="visually-hidden-file-input"
           id={versionUploadInputId}

@@ -241,6 +241,7 @@ export function ChatMessageCard({
 }: ChatMessageCardProps) {
   const [isReactionPickerOpen, setIsReactionPickerOpen] = useState(false);
   const sender = message.senderId ? usersById.get(message.senderId) : undefined;
+  const hasDisplayOnlySlackReactions = message.sourceChannel === "slack";
 
   const handleMessageActionKeys = (event: KeyboardEvent<HTMLElement>) => {
     if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
@@ -389,6 +390,18 @@ export function ChatMessageCard({
             {message.attachments.map((attachment) => (
               <MessageAttachment key={attachment.id} attachment={attachment} />
             ))}
+            {grouped && message.sourceChannel !== "brisk" ? (
+              <span className="chat-grouped-source label-xs">
+                <SourceLogo
+                  source={message.sourceChannel}
+                  size={14}
+                  project={project}
+                  direction={getMessageSourceDirection(message)}
+                  senderName={sender?.name}
+                />
+                Sent through {message.sourceChannel === "whatsapp" ? "WhatsApp" : "Slack"}
+              </span>
+            ) : null}
             {message.deepLinkStage && getProjectUpdateHref(project.id, message.deepLinkStage) ? (
               <a
                 className="chat-deep-link label-xs-semibold"
@@ -402,56 +415,60 @@ export function ChatMessageCard({
 
         {!parentContext ? (
           <div className="chat-message-hover-actions" aria-label="Message actions">
-            <span className="chat-quick-reaction-actions" aria-label="Quick reactions">
-              {quickReactionChoices.map((reaction) => {
-                const isSelected = message.reactions
-                  .find((item) => item.emoji === reaction.emoji)
-                  ?.selectedBy.includes(currentUserId);
+            {!hasDisplayOnlySlackReactions ? (
+              <>
+                <span className="chat-quick-reaction-actions" aria-label="Quick reactions">
+                  {quickReactionChoices.map((reaction) => {
+                    const isSelected = message.reactions
+                      .find((item) => item.emoji === reaction.emoji)
+                      ?.selectedBy.includes(currentUserId);
 
-                return (
+                    return (
+                      <button
+                        className={`chat-message-quick-reaction label-xs ${isSelected ? "selected" : ""}`}
+                        type="button"
+                        data-message-action
+                        aria-label={reaction.label}
+                        key={reaction.emoji}
+                        onClick={() => onToggleReaction?.(message.id, reaction.emoji, reaction.label)}
+                      >
+                        {reaction.emoji}
+                      </button>
+                    );
+                  })}
+                </span>
+                <div className="chat-hover-action-wrap">
                   <button
-                    className={`chat-message-quick-reaction label-xs ${isSelected ? "selected" : ""}`}
+                    className="chat-message-icon-action chat-reaction-library-trigger"
                     type="button"
                     data-message-action
-                    aria-label={reaction.label}
-                    key={reaction.emoji}
-                    onClick={() => onToggleReaction?.(message.id, reaction.emoji, reaction.label)}
+                    aria-label="Find another reaction"
+                    aria-expanded={isReactionPickerOpen}
+                    onClick={() => setIsReactionPickerOpen((current) => !current)}
                   >
-                    {reaction.emoji}
+                    <DsIcon name="smiley" size={15} />
+                    <DsIcon name="plus" size={8} />
                   </button>
-                );
-              })}
-            </span>
-            <div className="chat-hover-action-wrap">
-              <button
-                className="chat-message-icon-action chat-reaction-library-trigger"
-                type="button"
-                data-message-action
-                aria-label="Find another reaction"
-                aria-expanded={isReactionPickerOpen}
-                onClick={() => setIsReactionPickerOpen((current) => !current)}
-              >
-                <DsIcon name="smiley" size={15} />
-                <DsIcon name="plus" size={8} />
-              </button>
-              {isReactionPickerOpen ? (
-                <div className="chat-message-reaction-picker" aria-label="Reaction library">
-                  {reactionChoices.map((reaction) => (
-                    <button
-                      type="button"
-                      key={reaction.emoji}
-                      aria-label={reaction.label}
-                      onClick={() => {
-                        onToggleReaction?.(message.id, reaction.emoji, reaction.label);
-                        setIsReactionPickerOpen(false);
-                      }}
-                    >
-                      {reaction.emoji}
-                    </button>
-                  ))}
+                  {isReactionPickerOpen ? (
+                    <div className="chat-message-reaction-picker" aria-label="Reaction library">
+                      {reactionChoices.map((reaction) => (
+                        <button
+                          type="button"
+                          key={reaction.emoji}
+                          aria-label={reaction.label}
+                          onClick={() => {
+                            onToggleReaction?.(message.id, reaction.emoji, reaction.label);
+                            setIsReactionPickerOpen(false);
+                          }}
+                        >
+                          {reaction.emoji}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-              ) : null}
-            </div>
+              </>
+            ) : null}
             {!threadContext ? (
               <button
                 className="chat-message-reply-action label-xs-semibold"
@@ -493,10 +510,17 @@ export function ChatMessageCard({
           <div className="reaction-row chat-reaction-row">
             {message.reactions.map((reaction) => (
               <CommentReactionPill
+                className={hasDisplayOnlySlackReactions ? "is-display-only" : undefined}
+                disabled={hasDisplayOnlySlackReactions}
                 key={reaction.emoji}
                 reaction={reaction}
                 selected={reaction.selectedBy.includes(currentUserId)}
-                aria-label={reaction.label}
+                aria-label={
+                  hasDisplayOnlySlackReactions
+                    ? `${reaction.label} reaction from Slack - display only`
+                    : reaction.label
+                }
+                title={hasDisplayOnlySlackReactions ? "Slack reactions are display-only in V1" : undefined}
                 onClick={() => onToggleReaction?.(message.id, reaction.emoji, reaction.label)}
               />
             ))}
@@ -627,6 +651,21 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
           <small className="label-xs">Open embedded video</small>
         </span>
       </a>
+    );
+  }
+
+  if (attachment.type === "audio") {
+    return (
+      <div className="chat-audio-attachment">
+        <span className="chat-audio-icon"><DsIcon name="file-audio" size={20} /></span>
+        <span>
+          <strong className="label-s-semibold">{attachment.name}</strong>
+          <small className="label-xs">Voice note{attachment.duration ? ` · ${attachment.duration}` : ""}</small>
+        </span>
+        <button type="button" aria-label={`Play ${attachment.name}`}>
+          <DsIcon name="play" size={16} />
+        </button>
+      </div>
     );
   }
 

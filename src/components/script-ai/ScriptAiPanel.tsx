@@ -87,7 +87,7 @@ const initialSources: ScriptAiSource[] = [
   { id: "brief", label: "Brief", kind: "brief", attached: true },
   { id: "transcript-v2", label: "Transcript v2", kind: "transcript", attached: true },
   { id: "past-scripts", label: "Past scripts", kind: "past_scripts", attached: true },
-  { id: "brand-brain", label: "Brand Brain", kind: "brand_brain", attached: true },
+  { id: "brand-brain", label: "AI Brand Profile", kind: "brand_brain", attached: true },
   { id: "current-script", label: "Current script", kind: "script", attached: true },
   { id: "client-comments", label: "Client comments", kind: "comments", attached: true },
 ];

@@ -19,7 +19,7 @@ import {
 } from "@/components/people/PeoplePrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { getWorkloadRollup, type Person } from "@/data/people";
+import { getWorkloadRollup, hasStudioAdministrationAccess, prototypeStudioPersonId, type Person } from "@/data/people";
 
 type PeopleView = "All" | "Studio Staff" | "Studio Freelancers" | "Customers" | "Archived";
 type SortOption = "activity" | "name" | "workload" | "availability";
@@ -38,7 +38,7 @@ export function PeoplePage() {
   const previewState = searchParams.get("preview");
   const { people } = usePeople();
   const { getInvitationStatus, openInvitePerson, resendInvitation } = useInvitations();
-  const { allPages, selectedRole } = usePrototypeRole();
+  const { selectedRole } = usePrototypeRole();
   const [view, setView] = useState<PeopleView>("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortOption>("activity");
@@ -46,7 +46,8 @@ export function PeoplePage() {
   const [openedInviteFromQuery, setOpenedInviteFromQuery] = useState(false);
   const [workloadPerson, setWorkloadPerson] = useState<Person | null>(null);
   const [activityPerson, setActivityPerson] = useState<Person | null>(null);
-  const canBrowsePeople = allPages || selectedRole === "Studio Staff";
+  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
+  const canBrowsePeople = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
 
   useEffect(() => {
     if (searchParams.get("dialog") !== "invite" || openedInviteFromQuery) return;
@@ -137,7 +138,8 @@ function PeopleEmptyState({ hasControls, onClear, onInvite, view }: { hasControl
 
 function PeoplePermissionState({ role }: { role: "Studio Staff" | "Studio Freelancer" | "Customer" }) {
   const isCustomer = role === "Customer";
-  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "The Studio People directory is private" : "The full People directory is for Studio Staff"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see only permitted collaborators inside their Client portal. Other Clients, private contact details and internal notes stay hidden." : "Studio Freelancers can see only the people and Client information needed for projects they can access. Ask the Studio producer if you need something else."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : "/active-videos"}>{isCustomer ? "Open Client portal" : "Back to invited projects"}</Link></main>;
+  const isTeamMember = role === "Studio Staff";
+  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "The Studio People directory is private" : isTeamMember ? "The People directory is restricted" : "The full People directory is for Studio Staff"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see only permitted collaborators inside their Client portal. Other Clients, private contact details and internal notes stay hidden." : isTeamMember ? "Only Studio Owners and Admins can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only the people and Client information needed for projects they can access. Ask the Studio producer if you need something else."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to Today" : "Back to invited projects"}</Link></main>;
 }
 
 function matchesView(person: Person, view: PeopleView) {

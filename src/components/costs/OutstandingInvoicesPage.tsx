@@ -7,10 +7,12 @@ import { BriskSelect } from "@/components/form/BriskSelect";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { formatCostDate, InvoiceReviewModal, InvoiceStateBadge, InvoiceTagBadge } from "@/components/costs/CostsPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatCostAmount, type ContractorInvoice, type ContractorOffer, type CostCurrency, type InvoiceTag } from "@/data/costs";
+import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 type ProjectStatusFilter = "all" | Project["status"];
 type ReviewState = { invoice: ContractorInvoice; offer: ContractorOffer } | null;
@@ -28,7 +30,10 @@ const invoiceTags: InvoiceTag[] = ["Urgent", "Disputed", "Follow up", "Waiting"]
 export function OutstandingInvoicesPage() {
   const router = useRouter();
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { people } = usePeople();
   const { invoices, markInvoicePaid, offers } = useCostsData();
+  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
+  const canViewContractorInvoices = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
   const [projectStatus, setProjectStatus] = useState<ProjectStatusFilter>("all");
   const [selectedTags, setSelectedTags] = useState<InvoiceTag[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
@@ -37,8 +42,8 @@ export function OutstandingInvoicesPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    if (hasLoadedRole && selectedRole !== "Studio Staff") router.replace("/active-videos");
-  }, [hasLoadedRole, router, selectedRole]);
+    if (hasLoadedRole && !canViewContractorInvoices) router.replace(selectedRole === "Studio Staff" ? "/today" : "/active-videos");
+  }, [canViewContractorInvoices, hasLoadedRole, router, selectedRole]);
 
   useEffect(() => {
     if (!toast) return;
@@ -60,7 +65,7 @@ export function OutstandingInvoicesPage() {
   });
   const approvedRows = visibleRows.filter(({ invoice }) => invoice.state === "Approved");
 
-  if (!hasLoadedRole || selectedRole !== "Studio Staff") return null;
+  if (!hasLoadedRole || !canViewContractorInvoices) return null;
 
   const toggleTag = (tag: InvoiceTag) => setSelectedTags((current) => current.includes(tag) ? current.filter((candidate) => candidate !== tag) : [...current, tag]);
   const clearFilters = () => {

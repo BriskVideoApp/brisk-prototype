@@ -9,6 +9,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   ChatMessage,
   ChatProject,
+  StudioChatConnectors,
   ChatUser,
 } from "@/components/chat/types";
 import type { ReactionEmoji } from "@/components/video-review/types";
@@ -19,6 +20,7 @@ type ChatThreadPaneProps = {
   project: ChatProject;
   users: ChatUser[];
   projects: ChatProject[];
+  studioConnectors: StudioChatConnectors;
   currentUserId: string;
   directContext?: boolean;
   customerContext?: boolean;
@@ -37,6 +39,7 @@ export function ChatThreadPane({
   project,
   users,
   projects,
+  studioConnectors,
   currentUserId,
   directContext = false,
   customerContext = false,
@@ -115,9 +118,11 @@ export function ChatThreadPane({
         compact
         project={project}
         channel={parentMessage.channel}
+        canUseConnectors={!customerContext}
         lockedSource={parentMessage.channel === "external" ? parentMessage.sourceChannel : undefined}
         users={users}
         projects={projects}
+        studioConnectors={studioConnectors}
         placeholder={
           directContext
             ? `Reply to ${project.title}`

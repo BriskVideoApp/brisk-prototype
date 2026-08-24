@@ -33,6 +33,18 @@
   white-space: nowrap;
 }
 
+.brisk-select-trigger-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.brisk-select-trigger-label > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .brisk-select-trigger:hover,
 .brisk-select-trigger:focus-visible {
   background: var(--brisk-brand-secondary);
@@ -120,6 +132,14 @@
   min-width: 0;
   align-items: center;
   gap: var(--brisk-space-s);
+}
+
+.brisk-select-option-logo {
+  display: block;
+  width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  flex: 0 0 var(--brisk-space-l);
+  object-fit: contain;
 }
 
 .brisk-select-option-label > span {

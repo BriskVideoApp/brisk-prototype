@@ -698,7 +698,10 @@ export function BriefPage({ project, studioName = "Northstar Films" }: BriefPage
   return (
     <main className="brief-shell">
       <div className="brief-main">
-        <ProjectStageHeader activeStage="brief" project={project} />
+        <ProjectStageHeader
+          activeStage="brief"
+          project={project}
+        />
         {briefMode === "landing" ? (
           <BriefLandingScreen
             canDraft={clarifyingAnswerCount >= briefClarifyingQuestions.length && hasStartedClarifying && !hasDraftedBrief}

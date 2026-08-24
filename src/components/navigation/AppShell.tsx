@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { GlobalHeaderActions } from "@/components/navigation/GlobalHeaderActions";
+import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
+import { BriskAiAssistant } from "@/components/ai/BriskAiAssistant";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -32,9 +34,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="app-shell-workspace">
         <header className="app-global-header">
           <GlobalHeaderActions />
+          <UserAvatarMenu placement="header" />
         </header>
         <div className="app-shell-content">{children}</div>
       </div>
+      <BriskAiAssistant />
     </div>
   );
 }
