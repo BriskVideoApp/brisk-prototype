@@ -4,9 +4,16 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
+import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import {
+  customerDashboardActivity,
+  customerDashboardProjects,
+  customerDashboardSeries,
+  type CustomerDashboardProject,
+} from "@/data/customer-dashboard";
 import { selectClientPortalData, selectScopedClient, selectWorkspace, type ScopedProject } from "@/data/prototype-state";
 
 type ClientPortalScreenProps = {
@@ -29,6 +36,31 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
 
   const inProduction = portal.projects.filter((project) => project.status === "In Production");
   const queued = portal.projects.filter((project) => project.status === "Queued");
+  const dashboardProjects = createDashboardProjects(portal.projects);
+  const dashboardProjectIds = new Set(dashboardProjects.map((project) => project.id));
+  const dashboardSeries = customerDashboardSeries
+    .map((series) => ({
+      ...series,
+      childProjectIds: series.childProjectIds.filter((projectId) => dashboardProjectIds.has(projectId)),
+    }))
+    .filter((series) => series.childProjectIds.length > 0);
+  const dashboardActivity = customerDashboardActivity.filter((item) => dashboardProjectIds.has(item.projectId));
+
+  if (!embedded) {
+    return (
+      <CustomerDashboard
+        activity={dashboardActivity}
+        brandAccentId={portal.workspace.brandAccentId}
+        clientName={portal.client.name}
+        initialProjects={dashboardProjects}
+        initialSeries={dashboardSeries}
+        key={`${workspaceId}:${clientId}`}
+        logoPreviewUrl={portal.workspace.logoPreviewUrl}
+        storageScopeKey={`${workspaceId}:${clientId}`}
+        studioName={portal.workspace.name}
+      />
+    );
+  }
 
   return (
     <main
@@ -70,6 +102,42 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
       </div>
     </main>
   );
+}
+
+function createDashboardProjects(projects: ScopedProject[]): CustomerDashboardProject[] {
+  return projects.map((project) => {
+    const existingProject = customerDashboardProjects.find((candidate) => candidate.id === project.id);
+
+    return {
+      ...(existingProject ?? {
+        id: project.id,
+        code: project.clientBadge,
+        name: project.name,
+        createdAt: project.latestUpdate.timestamp,
+        latestAction: {
+          label: project.latestUpdate.label,
+          timestamp: project.latestUpdate.timestamp,
+        },
+        unreadMessages: project.unreadMessages ?? 0,
+      }),
+      id: project.id,
+      name: project.name,
+      status: project.status,
+      statusDetail: getDashboardStatusDetail(project),
+      stages: project.stages,
+    };
+  });
+}
+
+function getDashboardStatusDetail(project: ScopedProject): CustomerDashboardProject["statusDetail"] {
+  if (project.status === "Completed") return "Approved";
+  if (project.status === "Paused") return "Paused";
+  if (project.status === "Archived") return "Archived";
+  if (project.status === "Queued") return "Ready to start";
+
+  return Object.values(project.stages).some((stage) => stage.state === "waiting")
+    ? "Waiting on you"
+    : "Waiting on studio";
 }
 
 export function LegacyClientPortalRoute() {

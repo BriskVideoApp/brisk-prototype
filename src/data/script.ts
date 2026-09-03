@@ -12,6 +12,12 @@ export type ScriptGenre = "Documentary" | "Explainer" | "Character animation" | 
 export type ScriptMediaType = "upload" | "library" | "stock" | "link";
 export type ScriptElementType = "scene" | "action" | "character" | "dialogue" | "parenthetical" | "transition";
 
+export type ScriptTextMark = {
+  type: "bold";
+  start: number;
+  end: number;
+};
+
 export type ScriptMediaItem = {
   id: string;
   type: ScriptMediaType;
@@ -27,6 +33,7 @@ export type ScriptRow = {
   durationSeconds: number;
   elementType: ScriptElementType;
   media: ScriptMediaItem[];
+  textMarks?: ScriptTextMark[];
   change?: {
     deleted?: string;
     added?: string;

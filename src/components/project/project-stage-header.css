@@ -55,8 +55,8 @@
 }
 
 .project-stage-dashboard-link:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .project-stage-dashboard-tooltip {
@@ -244,8 +244,8 @@ a.project-stage-chip:focus {
 }
 
 a.project-stage-chip:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .project-stage-icon-surface {

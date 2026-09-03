@@ -180,8 +180,8 @@
 
 .version-pill:focus-visible,
 .version-menu-item:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .version-control-wrap {
@@ -1560,7 +1560,8 @@
 
 .resolve-circle-button:hover span,
 .resolve-circle-button:focus-visible span {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .resolve-circle-button.resolved span {
@@ -1961,16 +1962,16 @@
 }
 
 .inline-reply-input:focus {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   outline: 0;
-  box-shadow: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .inline-edit-input:focus-visible,
 .inline-reply-input:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   outline: 0;
-  box-shadow: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .inline-reply-composer p {

@@ -188,8 +188,8 @@
 }
 
 .studio-settings-textarea:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-setup-overview-grid {
@@ -624,8 +624,8 @@
 }
 
 .studio-team-row-link:focus-visible {
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: calc(var(--brisk-space-xs) * -1);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-team-table td:not(:first-child) {

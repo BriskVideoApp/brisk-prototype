@@ -276,8 +276,8 @@
 .people-availability-button:focus-visible,
 .people-activity-button:focus-visible,
 .person-more-button:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: var(--brisk-shadow-s), 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .people-search input {

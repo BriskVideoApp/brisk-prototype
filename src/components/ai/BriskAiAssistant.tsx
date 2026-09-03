@@ -88,6 +88,7 @@ export function BriskAiAssistant() {
   const { selectedRole } = usePrototypeRole();
   const { studio } = useStudioSettings();
   const {
+    applyResponseDraft,
     closeAssistant,
     conversationModeId,
     openAssistant,
@@ -559,6 +560,18 @@ export function BriskAiAssistant() {
     }
 
     if (action === "use") {
+      const message = messages.find((candidate) => candidate.id === messageId);
+      const responseApplied = message?.role === "assistant" && message.editableDraft.trim()
+        ? applyResponseDraft({
+            draft: message.editableDraft,
+            stage: conversationContext.stage,
+          })
+        : false;
+
+      if (conversationContext.stage === "script" && !responseApplied) {
+        return;
+      }
+
       updateMessage(messageId, (message) => ({ ...message, status: "using" }));
       window.setTimeout(() => updateMessage(messageId, (message) => ({ ...message, status: "used" })), 520);
       return;
@@ -1436,14 +1449,14 @@ function getStageHelperCopy(stage: BriskAiStage) {
 
 function getPrimaryResponseAction(stage: BriskAiStage) {
   if (stage === "brief") return "Use in brief";
-  if (stage === "script") return "Use in script";
+  if (stage === "script") return "Use This Script";
   if (stage === "edit") return "Add as feedback";
   return "Use suggestion";
 }
 
 function getResponseSuccessLabel(stage: BriskAiStage) {
   if (stage === "brief") return "Added to the brief as editable copy";
-  if (stage === "script") return "Added to the script as editable copy";
+  if (stage === "script") return "Script added to the Words column";
   if (stage === "edit") return "Added as editable feedback";
   return "Suggestion added as editable copy";
 }

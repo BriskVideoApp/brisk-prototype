@@ -1362,7 +1362,14 @@ export function MastersPage({ project }: { project: Project }) {
                           canRedoRecut={recutMarkFuture.length > 0}
                           onApprove={() => approveDeliverable(deliverable.id)}
                           onRequestReview={(recipient) => {
-                            if (recipient !== "customer" || !playbackVersion) return;
+                            if (!playbackVersion) return;
+
+                            setProjectStageStatus(project.id, "masters", {
+                              state: recipient === "customer" ? "waiting" : "in_progress",
+                              daysAgo: 0,
+                            });
+
+                            if (recipient !== "customer") return;
 
                             publishStageReviewRequest({
                               projectId: project.id,
@@ -1372,6 +1379,12 @@ export function MastersPage({ project }: { project: Project }) {
                               versionLabel: `v${playbackVersion.number}`,
                               actorName: "Tom",
                               href: `/projects/${project.id}/stages/masters?deliverable=${encodeURIComponent(deliverable.id)}`,
+                            });
+                          }}
+                          onSendToStudio={() => {
+                            setProjectStageStatus(project.id, "masters", {
+                              state: "in_progress",
+                              daysAgo: 0,
                             });
                           }}
                           onUnapprove={() => {
@@ -1848,6 +1861,7 @@ function ExpandedDeliverable({
   canRedoRecut,
   onApprove,
   onRequestReview,
+  onSendToStudio,
   onUnapprove,
   onClearDrawing,
   onDoneDrawing,
@@ -1896,6 +1910,7 @@ function ExpandedDeliverable({
   canRedoRecut: boolean;
   onApprove: () => void;
   onRequestReview: (recipient: RequestReviewRecipient) => void;
+  onSendToStudio: () => void;
   onUnapprove: () => void;
   onClearDrawing: () => void;
   onDoneDrawing: () => void;
@@ -2015,6 +2030,7 @@ function ExpandedDeliverable({
                 isApproved={version.approved}
                 onApprove={onApprove}
                 onRequestReview={onRequestReview}
+                onSendToStudio={onSendToStudio}
                 onUnapprove={onUnapprove}
               />
               {version.approved ? <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}><DsIcon name="download" size={16} />Download</button> : null}

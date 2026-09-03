@@ -233,7 +233,8 @@
 
 .freelancer-today-primary-action:focus-visible,
 .freelancer-today-secondary-action:focus-visible {
-  outline: 4px solid var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .freelancer-today-disabled-action {

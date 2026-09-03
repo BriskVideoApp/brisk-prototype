@@ -108,10 +108,9 @@ button {
   cursor: pointer;
 }
 
-button:focus-visible,
-textarea:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+:is(button, a, input, textarea, select, summary, [role="button"], [role="link"], [role="menuitem"], [role="option"], [role="tab"], [tabindex], [contenteditable="true"]):focus-visible {
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .heading-3xs {

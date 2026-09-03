@@ -736,7 +736,6 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     const approvedAt = formatBriefApprovalDate(new Date());
     const approvedBy = selectedRole === "Customer" ? "Avery Taylor" : "Tom";
     const scriptWriter = "Tom";
-    const currentScriptStatus = getProjectStages(project).script;
 
     console.log("Brief approved", {
       projectId: project.id,
@@ -751,15 +750,6 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
       approvedAt,
       approvedBy,
     });
-
-    if (currentScriptStatus.state !== "done") {
-      setProjectStageStatus(project.id, "script", {
-        ...currentScriptStatus,
-        state: "in_progress",
-        daysAgo: 0,
-        assignedTo: scriptWriter,
-      });
-    }
 
     router.push(withBriefApprovalToast(approvalDestination ?? getProjectStageHref(project.id, "script"), scriptWriter));
   }
@@ -1376,9 +1366,18 @@ function BriefLandingScreen({
       onDrop={handleDrop}
     >
       <div className={`brief-landing-centre ${isClarifying ? "is-clarifying" : ""}`}>
-        <h1 className={isClarifying ? "is-hidden" : ""} id="brief-landing-title">
-          What video are we making?
-        </h1>
+        {isClarifying ? (
+          <h1 className="is-hidden" id="brief-landing-title">
+            What video are we making?
+          </h1>
+        ) : (
+          <div className="brief-landing-intro">
+            <h1 id="brief-landing-title">What video are we making?</h1>
+            <p className="brief-landing-guidance paragraph-s">
+              Answer a few quick questions, then Brisk AI will build your brief.
+            </p>
+          </div>
+        )}
         {isClarifying ? (
           <BriefClarifyingThread messages={messages} onDeleteMessage={deleteMessage} onEditMessage={editMessage} studioName={studioName} />
         ) : null}
@@ -1405,7 +1404,7 @@ function BriefLandingScreen({
                   disabled={!canUseFooterContinue}
                   onClick={handleFooterContinue}
                 >
-                  Build brief with AI
+                  Continue
                 </button>
               </>
             )
@@ -1775,7 +1774,7 @@ function BriefRichInput({
         {shouldShowLandingPlaceholder ? (
           <div className="brief-rich-placeholder label-s" aria-hidden="true">
             <span className="brief-rich-placeholder-example">
-              e.g. A 2-minute investor launch film, shot next Thursday...
+              A 2-minute investor launch film...
             </span>
           </div>
         ) : null}

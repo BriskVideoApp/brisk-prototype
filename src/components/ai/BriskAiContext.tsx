@@ -13,6 +13,7 @@ import {
 import {
   cloneStudioAiPlaybook,
   initialStudioAiPlaybook,
+  type BriskAiStage,
   type FilmmakerModeId,
   type StudioAiPlaybook,
 } from "@/data/brisk-ai";
@@ -25,6 +26,13 @@ export type BriskAiOpenRequest = {
   submit?: boolean;
 };
 
+export type BriskAiResponseDraft = {
+  draft: string;
+  stage: BriskAiStage;
+};
+
+type BriskAiResponseDraftHandler = (response: BriskAiResponseDraft) => boolean;
+
 type OpenAssistantOptions = {
   expanded?: boolean;
   prompt?: string;
@@ -36,7 +44,9 @@ type BriskAiContextValue = {
   openRequest: BriskAiOpenRequest | null;
   playbook: StudioAiPlaybook;
   conversationModeId: FilmmakerModeId;
+  applyResponseDraft: (response: BriskAiResponseDraft) => boolean;
   openAssistant: (options?: OpenAssistantOptions) => void;
+  registerResponseDraftHandler: (handler: BriskAiResponseDraftHandler) => () => void;
   closeAssistant: () => void;
   minimiseAssistant: () => void;
   setAssistantView: (view: BriskAiView) => void;
@@ -53,6 +63,7 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
   const [playbook, setPlaybook] = useState<StudioAiPlaybook>(() => cloneStudioAiPlaybook(initialStudioAiPlaybook));
   const [conversationModeId, setConversationModeId] = useState<FilmmakerModeId>(initialStudioAiPlaybook.defaultModeId);
   const requestIdRef = useRef(0);
+  const responseDraftHandlerRef = useRef<BriskAiResponseDraftHandler | null>(null);
 
   useEffect(() => {
     const storedPlaybook = readStoredPlaybook();
@@ -70,6 +81,20 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
     });
     setView(options.expanded ? "panel" : "compact");
   }, []);
+
+  const registerResponseDraftHandler = useCallback((handler: BriskAiResponseDraftHandler) => {
+    responseDraftHandlerRef.current = handler;
+
+    return () => {
+      if (responseDraftHandlerRef.current === handler) {
+        responseDraftHandlerRef.current = null;
+      }
+    };
+  }, []);
+
+  const applyResponseDraft = useCallback((response: BriskAiResponseDraft) => (
+    responseDraftHandlerRef.current?.(response) ?? false
+  ), []);
 
   const closeAssistant = useCallback(() => setView("closed"), []);
   const minimiseAssistant = useCallback(() => setView("minimised"), []);
@@ -91,13 +116,15 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
     openRequest,
     playbook,
     conversationModeId,
+    applyResponseDraft,
     openAssistant,
+    registerResponseDraftHandler,
     closeAssistant,
     minimiseAssistant,
     setAssistantView: setView,
     setConversationModeId,
     updatePlaybook,
-  }), [closeAssistant, conversationModeId, minimiseAssistant, openAssistant, openRequest, playbook, updatePlaybook, view]);
+  }), [applyResponseDraft, closeAssistant, conversationModeId, minimiseAssistant, openAssistant, openRequest, playbook, registerResponseDraftHandler, updatePlaybook, view]);
 
   return <BriskAiContext.Provider value={value}>{children}</BriskAiContext.Provider>;
 }

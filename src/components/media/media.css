@@ -849,16 +849,16 @@
 }
 
 .media-asset-card:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .media-search-shell:focus-within,
 .media-select-shell:focus-within,
 .media-folder-rename:focus,
 .media-inspector-name:focus {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .media-asset-card.is-selected {

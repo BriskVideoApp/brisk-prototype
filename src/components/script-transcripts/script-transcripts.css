@@ -290,8 +290,7 @@
 }
 
 .transcript-clip-rename-input:focus {
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: 2px;
+  outline: none;
   box-shadow: var(--brisk-shadow-s);
 }
 

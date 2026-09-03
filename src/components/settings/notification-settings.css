@@ -261,7 +261,7 @@
 }
 
 .notification-settings-checkbox input:focus-visible + .notification-settings-checkbox-control {
-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .notification-settings-checkbox:hover:not(.is-disabled) .notification-settings-checkbox-control {
@@ -751,8 +751,8 @@
 }
 
 .customer-message-template-textarea textarea:focus-visible {
-  border-color: var(--brisk-border-focus);
-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .customer-message-automatic-details {

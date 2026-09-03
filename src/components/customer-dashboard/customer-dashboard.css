@@ -374,8 +374,8 @@
 }
 
 .customer-project-surface-link:focus-visible {
-  outline: 2px solid var(--brisk-focus-ring);
-  outline-offset: -2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .customer-production-card:has(.customer-project-surface-link:hover),

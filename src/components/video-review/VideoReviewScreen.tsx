@@ -163,6 +163,23 @@ export function VideoReviewScreen({
   const isEditEmpty = allReviewVersions.length === 0;
 
   useEffect(() => {
+    if (!selectedReviewVersion) return;
+
+    setVersionStatuses((current) => {
+      const currentStatus = current[selectedReviewVersion.label] ?? selectedReviewVersion.status;
+      const nextStatus = editStageStatus.state === "done"
+        ? "approved"
+        : currentStatus === "approved"
+          ? "in_review"
+          : currentStatus;
+
+      return nextStatus === currentStatus
+        ? current
+        : { ...current, [selectedReviewVersion.label]: nextStatus };
+    });
+  }, [editStageStatus.state, selectedReviewVersion]);
+
+  useEffect(() => {
     if (canChooseCommentVisibility) {
       return;
     }
@@ -925,7 +942,14 @@ export function VideoReviewScreen({
               showApprove={Boolean(selectedReviewVersion)}
               onApprove={approveSelectedVersion}
               onRequestReview={(recipient) => {
-                if (recipient !== "customer" || !selectedReviewVersion) return;
+                if (!selectedReviewVersion) return;
+
+                setProjectStageStatus(project.id, "edit", {
+                  state: recipient === "customer" ? "waiting" : "in_progress",
+                  daysAgo: 0,
+                });
+
+                if (recipient !== "customer") return;
 
                 publishStageReviewRequest({
                   projectId: project.id,
@@ -935,6 +959,12 @@ export function VideoReviewScreen({
                   versionLabel: selectedReviewVersion.label,
                   actorName: reviewUsers.find((user) => user.id === currentUserId)?.name ?? "Studio",
                   href: `/projects/${project.id}/stages/edit`,
+                });
+              }}
+              onSendToStudio={() => {
+                setProjectStageStatus(project.id, "edit", {
+                  state: "in_progress",
+                  daysAgo: 0,
                 });
               }}
               onUnapprove={unapproveSelectedVersion}

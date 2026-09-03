@@ -65,6 +65,18 @@
   transition: opacity 160ms ease;
 }
 
+.brief-landing-intro {
+  display: grid;
+  justify-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.brief-landing-guidance {
+  margin: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+  text-align: center;
+}
+
 .brief-landing-centre h1.is-hidden {
   position: absolute;
   overflow: hidden;
@@ -477,8 +489,8 @@
 }
 
 .brief-rich-textarea-shell.landing:focus-within {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-rich-textarea,
@@ -523,7 +535,7 @@
   gap: var(--brisk-space-none);
   color: var(--brisk-text-tertiary);
   pointer-events: none;
-  text-align: center;
+  text-align: left;
 }
 
 .brief-rich-placeholder-example {
@@ -596,7 +608,7 @@
 }
 
 .brief-audience-input:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-audience-remove {
@@ -665,8 +677,8 @@
 .brief-logline-input:focus,
 .brief-inline-link-entry:focus-within,
 .brief-panel-link-entry:focus-within {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-attachment-row {
@@ -1065,8 +1077,8 @@
 }
 
 .brief-status-dot:focus-visible {
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: var(--brisk-space-xs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-status-mini-tooltip {
@@ -1229,7 +1241,7 @@
 }
 
 .brief-purpose-trigger:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-purpose-trigger .ds-icon {
@@ -1306,7 +1318,7 @@
 }
 
 .brief-custom-select-input:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-custom-select-menu {
@@ -1349,7 +1361,7 @@
 }
 
 .brief-video-type-card-list[role="button"]:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-video-type-card {
@@ -1427,7 +1439,7 @@
 }
 
 .brief-video-type-empty-trigger:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-video-type-empty-trigger .ds-icon {
@@ -1627,7 +1639,7 @@
 }
 
 .brief-inline-select-trigger:focus-visible {
-  box-shadow: 0 0 0 4px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
 
@@ -2075,7 +2087,7 @@
 .brief-deliverable-subtitle-input:focus,
 .brief-deliverable-notes-input:focus {
   border-color: var(--brisk-border-primary);
-  box-shadow: 0 0 0 4px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-deliverable-notes-input {
@@ -2207,8 +2219,8 @@
 .brief-duration-trigger:focus-visible,
 .brief-captions-trigger:focus-visible,
 .brief-date-pill:focus-visible {
-  border-color: var(--brisk-brand-primary);
-  box-shadow: 0 0 0 3px var(--brisk-border-focus);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
 
@@ -2623,7 +2635,7 @@
 }
 
 .brief-checkbox-control:focus-within span {
-  box-shadow: 0 0 0 4px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-deliverable-actions {
@@ -2795,10 +2807,10 @@
 
 .brief-date-display:hover,
 .brief-date-display:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-white);
   outline: 0;
-  box-shadow: 0 0 0 3px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-date-popover {
@@ -2870,9 +2882,10 @@
 .brief-date-popover-nav button:focus-visible,
 .brief-date-day:hover,
 .brief-date-day:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
   outline: 0;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-date-weekdays,
@@ -2924,9 +2937,10 @@
 
 .brief-date-popover-actions button:hover,
 .brief-date-popover-actions button:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
   outline: 0;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-reference-videos,
@@ -3102,8 +3116,8 @@
 }
 
 .brief-brand-kit-card:focus-visible {
-  border-color: var(--brisk-brand-primary);
-  box-shadow: 0 0 0 3px var(--brisk-focus-ring);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
 
@@ -3488,7 +3502,7 @@ button.brief-confidence-chip {
 
 .brief-summary-spec-chip:hover,
 .brief-summary-spec-chip:focus {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
@@ -4076,7 +4090,7 @@ button.brief-confidence-chip {
 
 .brief-summary-inline-input:focus,
 .brief-summary-inline-textarea:focus {
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brief-summary-logline-prose .brief-written-inline-editor {
@@ -4214,7 +4228,7 @@ button.brief-confidence-chip {
 
 .brief-summary-static-chip:hover,
 .brief-summary-static-chip:focus {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
@@ -4276,7 +4290,7 @@ button.brief-confidence-chip {
 
 .brief-summary-deliverables .brief-add-version-button:hover,
 .brief-summary-deliverables .brief-add-version-button:focus {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
   text-decoration: none;
 }

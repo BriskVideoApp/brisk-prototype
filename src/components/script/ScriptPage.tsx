@@ -62,6 +62,7 @@ import {
   type ScriptStatus,
   type ScriptSubtab,
   type ScriptSubtabId,
+  type ScriptTextMark,
   type ScriptVersion,
 } from "@/data/script";
 import { transcriptClips, type TranscriptClip, type TranscriptWordsRowPayload } from "@/data/transcripts";
@@ -189,10 +190,11 @@ export function ScriptPage({
   initiallyEmpty = false,
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
-  const { openAssistant } = useBriskAi();
+  const { openAssistant, registerResponseDraftHandler } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
   const { publishStageReviewRequest } = useNotificationInbox();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const scriptStageStatus = getProjectStages(project).script;
   const startingVersions = initialVersions.length > 0 ? initialVersions : scriptVersions;
   const latestVersion = startingVersions[startingVersions.length - 1];
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
@@ -201,7 +203,7 @@ export function ScriptPage({
   const [density] = useState<ScriptDensity>("compact");
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
-  const [isScriptApproved, setIsScriptApproved] = useState(() => getProjectStages(project).script.state === "done");
+  const [isScriptApproved, setIsScriptApproved] = useState(() => scriptStageStatus.state === "done");
   const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(startingVersions));
   const [versionMetaById, setVersionMetaById] = useState<Record<string, ScriptVersionMeta>>(() =>
     createInitialVersionMeta(startingVersions, initiallyEmpty ? null : latestVersion.id),
@@ -266,6 +268,7 @@ export function ScriptPage({
   const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
   const currentVersionRenameInputRef = useRef<HTMLInputElement | null>(null);
   const isCancellingCurrentVersionRenameRef = useRef(false);
+  const applyAiDraftRef = useRef<(draft: string) => boolean>(() => false);
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
   const aiSelectionContext = {
@@ -308,6 +311,10 @@ export function ScriptPage({
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const isPreviewingVersion = previewVersion !== null;
   const dropdownVersion = previewVersion ?? selectedVersion;
+
+  useEffect(() => {
+    setIsScriptApproved(scriptStageStatus.state === "done");
+  }, [scriptStageStatus.state]);
   const dropdownVersionMeta = versionMetaById[dropdownVersion.id] ?? defaultVersionMeta;
 
   useEffect(() => {
@@ -601,6 +608,9 @@ export function ScriptPage({
           ? {
               ...row,
               [field]: value,
+              textMarks: field === "words"
+                ? rebaseTextMarks(row.words, value, row.textMarks)
+                : row.textMarks,
               change: {
                 deleted: row.change?.deleted,
                 added: field === "words" ? "Edited just now" : row.change?.added,
@@ -1320,10 +1330,38 @@ export function ScriptPage({
       return;
     }
 
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
+    const selectionRange = activeCommentAnchor.kind === "selection"
+      && activeCommentAnchor.rowId === activeRowId
+      && activeCommentAnchor.range
+      ? activeCommentAnchor.range
+      : { start: input.selectionStart, end: input.selectionEnd };
+    const { start, end } = selectionRange;
     const value = input.value;
-    const selectedText = value.slice(start, end) || "selected text";
+
+    if (start === end) {
+      return;
+    }
+
+    if (mark === "bold") {
+      updateRows((currentRows) => currentRows.map((row) => (
+        row.id === activeRowId
+          ? { ...row, textMarks: toggleBoldTextMark(row.textMarks, start, end) }
+          : row
+      )));
+      setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+      setActiveCommentAnchor({
+        kind: "row",
+        label: getRowLabel(activeRowId, rows),
+        rowId: activeRowId,
+      });
+      window.setTimeout(() => {
+        input.focus();
+        input.setSelectionRange(end, end);
+      }, 0);
+      return;
+    }
+
+    const selectedText = value.slice(start, end);
     const replacement = getMarkedText(mark, selectedText);
     const nextValue = `${value.slice(0, start)}${replacement}${value.slice(end)}`;
 
@@ -1383,9 +1421,12 @@ export function ScriptPage({
           return row;
         }
 
+        const nextWords = `${row.words.slice(0, activeCommentAnchor.range!.start)}${text}${row.words.slice(activeCommentAnchor.range!.end)}`;
+
         return {
           ...row,
-          words: `${row.words.slice(0, activeCommentAnchor.range!.start)}${text}${row.words.slice(activeCommentAnchor.range!.end)}`,
+          words: nextWords,
+          textMarks: rebaseTextMarks(row.words, nextWords, row.textMarks),
         };
       }),
     );
@@ -1438,6 +1479,70 @@ export function ScriptPage({
     });
     setToastMessage("ChopChop AI rows inserted.");
   };
+
+  const replaceWordsColumnWithAiDraft = (draft: string) => {
+    const formattedWords = formatAiDraftAsScriptRows(draft);
+
+    if (formattedWords.length === 0 || !guardEditable()) {
+      return false;
+    }
+
+    const reusableRows = rows.filter((row) => !row.deletedMeta);
+    const nextRows = Array.from(
+      { length: Math.max(formattedWords.length, reusableRows.length) },
+      (_, index): ScriptRow | null => {
+        const words = formattedWords[index] ?? "";
+        const existingRow = reusableRows[index];
+
+        if (!words && existingRow) {
+          const hasAnchoredContent = Boolean(
+            existingRow.visuals.trim()
+            || existingRow.media.length > 0
+            || commentsByRow.has(existingRow.id),
+          );
+
+          return hasAnchoredContent
+            ? {
+                ...existingRow,
+                words: "",
+                durationSeconds: 0,
+                source: undefined,
+              }
+            : null;
+        }
+
+        const row = existingRow ?? createEmptyRow(index + 1);
+
+        return {
+          ...row,
+          words,
+          durationSeconds: Math.max(1, Math.ceil(countWords(words) / 2.5)),
+          source: undefined,
+          deletedMeta: undefined,
+          textMarks: undefined,
+          change: {
+            added: "Added by Brisk AI just now",
+            author: "Brisk AI",
+          },
+        };
+      },
+    ).filter((row): row is ScriptRow => row !== null);
+
+    pushRows(nextRows);
+    setHasTypedThisSession(true);
+    setHasEditedThisSession(true);
+    setSelectionState({ lastRowId: null, selectedRowIds: new Set<string>() });
+    setActiveCommentAnchor(overallCommentAnchor);
+    setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
+    setToastMessage("Script added to the Words column.");
+    return true;
+  };
+
+  applyAiDraftRef.current = replaceWordsColumnWithAiDraft;
+
+  useEffect(() => registerResponseDraftHandler((response) => (
+    response.stage === "script" ? applyAiDraftRef.current(response.draft) : false
+  )), [registerResponseDraftHandler]);
 
   const focusCommentComposer = () => {
     window.setTimeout(() => {
@@ -1554,6 +1659,27 @@ export function ScriptPage({
     setToastMessage(`Link copied for script ${selectedVersion.label}`);
   };
 
+  const copyCurrentScriptContent = async (includeVisuals: boolean) => {
+    const clipboardText = includeVisuals
+      ? formatWordsAndVisualsForClipboard(visibleRows)
+      : formatWordsForClipboard(visibleRows);
+
+    setIsCurrentVersionMenuOpen(false);
+
+    try {
+      await navigator.clipboard.writeText(clipboardText);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = clipboardText;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      textArea.remove();
+    }
+
+    setToastMessage(includeVisuals ? "Words and visuals copied to clipboard" : "Words copied to clipboard");
+  };
+
   const requestCurrentVersionReview = () => {
     setIsRequestReviewOpen(true);
     setIsVersionsPanelOpen(false);
@@ -1565,6 +1691,10 @@ export function ScriptPage({
   };
 
   const handleReviewRequestSent = (recipientName: string, recipient: RequestReviewRecipient) => {
+    setProjectStageStatus(project.id, "script", {
+      state: recipient === "customer" ? "waiting" : "in_progress",
+      daysAgo: 0,
+    });
     setSelectedVersionLatestAction({
       kind: "shared",
       target: recipientName.toLowerCase().includes("internal") ? "Studio" : "Customer",
@@ -1794,6 +1924,12 @@ export function ScriptPage({
             </button>
             <button className="label-xs-semibold" type="button" onClick={startCurrentVersionRename}>
               Rename
+            </button>
+            <button className="label-xs-semibold" type="button" onClick={() => void copyCurrentScriptContent(false)}>
+              Copy words
+            </button>
+            <button className="label-xs-semibold" type="button" onClick={() => void copyCurrentScriptContent(true)}>
+              Copy words and visuals
             </button>
             <button className="label-xs-semibold" type="button" onClick={downloadCurrentVersion}>
               Download PDF
@@ -2200,7 +2336,10 @@ function ScriptColumnHeaders({
 }) {
   const showVisualsAction = (
     <div className="script-column-header-actions script-toolbar-trailing-actions">
-      <h2 className="script-visuals-toggle-heading">
+      <h2
+        className="script-column-title-with-tooltip script-visuals-toggle-heading"
+        data-tooltip="Describe the visuals for each line. Add media, links or references."
+      >
         <Button
           className="script-visuals-header-toggle script-toolbar-visuals-toggle"
           size="S"
@@ -2385,11 +2524,14 @@ function AvScriptEditor({
               </span>
             </div>
             <div className="script-row-words">
+              {row.textMarks?.length ? (
+                <FormattedWordsOverlay isApproved={isApproved} marks={row.textMarks} words={row.words} />
+              ) : null}
               {selectionHighlightRanges.length > 0 ? (
                 <SelectionHighlightOverlay ranges={selectionHighlightRanges} words={row.words} />
               ) : null}
               <textarea
-                className="script-cell-input words label-s"
+                className={`script-cell-input words label-s ${row.textMarks?.length ? "has-formatting" : ""}`}
                 placeholder={shouldShowEmptyState ? "Write the opening line..." : ""}
                 readOnly={isApproved}
                 ref={(node) => registerTextArea(wordInputRefs.current, row.id, node)}
@@ -2632,6 +2774,41 @@ function SelectionHighlightOverlay({ ranges, words }: { ranges: TextRange[]; wor
           {part.text}
         </span>
       ))}
+    </div>
+  );
+}
+
+function FormattedWordsOverlay({
+  isApproved,
+  marks,
+  words,
+}: {
+  isApproved: boolean;
+  marks: ScriptTextMark[];
+  words: string;
+}) {
+  const boldMarks = normaliseBoldTextMarks(marks, words.length);
+  const parts: Array<{ bold: boolean; key: string; text: string }> = [];
+  let cursor = 0;
+
+  boldMarks.forEach((mark, index) => {
+    if (mark.start > cursor) {
+      parts.push({ bold: false, key: `copy-${index}`, text: words.slice(cursor, mark.start) });
+    }
+
+    parts.push({ bold: true, key: `bold-${index}`, text: words.slice(mark.start, mark.end) });
+    cursor = mark.end;
+  });
+
+  if (cursor < words.length) {
+    parts.push({ bold: false, key: "copy-tail", text: words.slice(cursor) });
+  }
+
+  return (
+    <div className={`script-formatted-words-overlay label-s ${isApproved ? "is-read-only" : ""}`} aria-hidden="true">
+      {parts.map((part) => part.bold
+        ? <strong key={part.key}>{part.text}</strong>
+        : <span key={part.key}>{part.text}</span>)}
     </div>
   );
 }
@@ -3137,6 +3314,7 @@ function cloneRow(row: ScriptRow): ScriptRow {
   return {
     ...row,
     media: row.media.map((mediaItem) => ({ ...mediaItem })),
+    textMarks: row.textMarks?.map((mark) => ({ ...mark })),
     change: row.change ? { ...row.change } : undefined,
     deletedMeta: row.deletedMeta ? { ...row.deletedMeta } : undefined,
     source: row.source
@@ -3208,6 +3386,19 @@ function createRowsFromAiDrafts(draftRows: ScriptAiRowDraft[], baseIndex = 0): S
   }));
 }
 
+function formatAiDraftAsScriptRows(draft: string) {
+  return draft
+    .replace(/\r\n?/gu, "\n")
+    .split(/\n+/gu)
+    .flatMap((line) => line
+      .replace(/^\s*(?:[-*•]|\d+[.)])\s+/u, "")
+      .trim()
+      .replace(/([.!?]["'”’]?)\s+(?=[A-Z0-9“"'(])/gu, "$1\n")
+      .split("\n"))
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 function createMediaItem(type: ScriptMediaType, index: number): ScriptMediaItem {
   const labels: Record<ScriptMediaType, { label: string; meta: string; tone: ScriptMediaItem["tone"] }> = {
     upload: { label: `Upload ${index}`, meta: "Uploaded", tone: "pink" },
@@ -3225,6 +3416,25 @@ function createMediaItem(type: ScriptMediaType, index: number): ScriptMediaItem 
 
 function countWords(value: string) {
   return value.trim().split(/\s+/u).filter(Boolean).length;
+}
+
+function formatWordsForClipboard(rows: ScriptRow[]) {
+  return rows
+    .map((row) => row.words.trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function formatWordsAndVisualsForClipboard(rows: ScriptRow[]) {
+  return rows
+    .filter((row) => row.words.trim() || row.visuals.trim())
+    .map((row) => {
+      const words = row.words.trim();
+      const visuals = row.visuals.trim();
+
+      return `Words:\n${words}\n\nVisuals:\n${visuals}`;
+    })
+    .join("\n\n");
 }
 
 function truncateText(value: string, maxLength: number) {
@@ -3407,12 +3617,107 @@ function resizeTextAreaToContent(node: HTMLTextAreaElement | null) {
   node.style.height = `${node.scrollHeight}px`;
 }
 
-function getMarkedText(mark: "bold" | "link", selectedText: string) {
-  if (mark === "bold") {
-    return `**${selectedText}**`;
+function getMarkedText(mark: "link", selectedText: string) {
+  return `[${selectedText}](https://example.com)`;
+}
+
+function normaliseBoldTextMarks(marks: ScriptTextMark[] | undefined, textLength: number) {
+  const sortedMarks = (marks ?? [])
+    .map((mark) => ({
+      ...mark,
+      start: Math.max(0, Math.min(mark.start, textLength)),
+      end: Math.max(0, Math.min(mark.end, textLength)),
+    }))
+    .filter((mark) => mark.end > mark.start)
+    .sort((first, second) => first.start - second.start);
+
+  return sortedMarks.reduce<ScriptTextMark[]>((mergedMarks, mark) => {
+    const previousMark = mergedMarks[mergedMarks.length - 1];
+
+    if (previousMark && mark.start <= previousMark.end) {
+      previousMark.end = Math.max(previousMark.end, mark.end);
+      return mergedMarks;
+    }
+
+    return [...mergedMarks, { ...mark }];
+  }, []);
+}
+
+function toggleBoldTextMark(marks: ScriptTextMark[] | undefined, start: number, end: number) {
+  const normalisedMarks = normaliseBoldTextMarks(marks, Number.POSITIVE_INFINITY);
+  const selectionIsBold = normalisedMarks.some((mark) => mark.start <= start && mark.end >= end);
+
+  if (!selectionIsBold) {
+    return normaliseBoldTextMarks([...normalisedMarks, { type: "bold", start, end }], Number.POSITIVE_INFINITY);
   }
 
-  return `[${selectedText}](https://example.com)`;
+  return normalisedMarks.flatMap((mark): ScriptTextMark[] => {
+    if (mark.end <= start || mark.start >= end) {
+      return [mark];
+    }
+
+    const remainingMarks: ScriptTextMark[] = [];
+
+    if (mark.start < start) {
+      remainingMarks.push({ ...mark, end: start });
+    }
+
+    if (mark.end > end) {
+      remainingMarks.push({ ...mark, start: end });
+    }
+
+    return remainingMarks;
+  });
+}
+
+function rebaseTextMarks(
+  previousText: string,
+  nextText: string,
+  marks: ScriptTextMark[] | undefined,
+) {
+  if (!marks?.length || previousText === nextText) {
+    return marks;
+  }
+
+  let editStart = 0;
+  const sharedPrefixLength = Math.min(previousText.length, nextText.length);
+
+  while (editStart < sharedPrefixLength && previousText[editStart] === nextText[editStart]) {
+    editStart += 1;
+  }
+
+  let previousEditEnd = previousText.length;
+  let nextEditEnd = nextText.length;
+
+  while (
+    previousEditEnd > editStart
+    && nextEditEnd > editStart
+    && previousText[previousEditEnd - 1] === nextText[nextEditEnd - 1]
+  ) {
+    previousEditEnd -= 1;
+    nextEditEnd -= 1;
+  }
+
+  const characterDelta = (nextEditEnd - editStart) - (previousEditEnd - editStart);
+  const rebasedMarks = marks.flatMap((mark): ScriptTextMark[] => {
+    if (mark.end <= editStart) {
+      return [mark];
+    }
+
+    if (mark.start >= previousEditEnd) {
+      return [{ ...mark, start: mark.start + characterDelta, end: mark.end + characterDelta }];
+    }
+
+    const nextMark = {
+      ...mark,
+      start: Math.min(mark.start, editStart),
+      end: Math.max(editStart, mark.end + characterDelta),
+    };
+
+    return nextMark.end > nextMark.start ? [nextMark] : [];
+  });
+
+  return normaliseBoldTextMarks(rebasedMarks, nextText.length);
 }
 
 function getFloatingToolbarPosition(target: HTMLTextAreaElement) {

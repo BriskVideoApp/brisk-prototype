@@ -202,8 +202,8 @@
 }
 
 .studio-progress-stage-action:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-progress-stage-action:active .studio-progress-marker {
@@ -292,9 +292,9 @@
 }
 
 .studio-ai-composer:focus-within {
-  border-color: var(--brisk-border-focus);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  border-color: var(--brisk-border-primary);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-ai-textarea {
@@ -850,9 +850,8 @@
 }
 
 .studio-video-type-editor-option.studio-onboarding-video-type-option:focus-within {
-  outline: var(--brisk-space-xxs) solid var(--brisk-border-primary);
-  outline-offset: var(--brisk-space-none);
-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-video-type-editor-option.studio-onboarding-video-type-option:active:not(.is-disabled) {
@@ -958,9 +957,8 @@
 }
 
 .studio-follow-up-custom-video-type-icon:has(input:focus-visible) {
-  outline: var(--brisk-space-xxs) solid var(--brisk-border-primary);
-  outline-offset: var(--brisk-space-xxs);
-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-follow-up-custom-video-type-icon:active,
@@ -2008,8 +2006,8 @@
 }
 
 .studio-first-client-profile-action:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-onboarding-skip-confirmation,
@@ -2636,9 +2634,8 @@
 
 .studio-review-card-footer-action:focus-visible {
   border-radius: var(--brisk-radius-xs);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
-  box-shadow: none;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-review-card-footer-action:active {
@@ -2828,8 +2825,8 @@
 .studio-brand-colour-actions button:focus-visible {
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 1px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-brand-colour-editor-preview {
@@ -2924,7 +2921,7 @@
 }
 
 .studio-review-textarea:focus {
-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .studio-brief-configuration-header {

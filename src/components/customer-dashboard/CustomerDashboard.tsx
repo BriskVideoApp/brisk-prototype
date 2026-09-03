@@ -23,6 +23,7 @@ import {
   customerDashboardFallbackThumbnailUrl,
   customerDashboardProjects,
   customerDashboardSeries,
+  type CustomerDashboardActivity,
   type CustomerDashboardProject,
   type CustomerDashboardSeries,
   type CustomerDashboardStatus,
@@ -58,30 +59,34 @@ type DashboardSharedState = {
   statuses: Record<string, CustomerDashboardStatus>;
 };
 
+type CustomerDashboardProps = {
+  activity?: CustomerDashboardActivity[];
+  brandAccentId?: "purple" | "cyan" | "pink";
+  clientName?: string;
+  initialProjects?: CustomerDashboardProject[];
+  initialSeries?: CustomerDashboardSeries[];
+  logoPreviewUrl?: string | null;
+  storageScopeKey?: string;
+  studioName?: string;
+};
+
 const queueTabs: QueueTab[] = ["Queued", "Completed", "Paused", "Archived", "All"];
 const queueScopes: QueueScope[] = ["All videos", "Series only", "Standalone only"];
 const projectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused", "Completed", "Archived"];
 const currentPlan = getBillingPlan(subscriptionFixtures.active.planId);
 const poweredByBriskRequired = currentPlan.id === "starter" || currentPlan.id === "professional";
 const dashboardReferenceDate = new Date("2026-07-27T09:00:00+10:00");
-const initialQueueOrder = Array.from(
-  new Set(
-    [...customerDashboardProjects]
-      .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
-      .map((project) => project.seriesId ? `series:${project.seriesId}` : `project:${project.id}`),
-  ),
-);
-const initialProjectsById = new Map(customerDashboardProjects.map((project) => [project.id, project]));
-const initialSeriesChildOrder = Object.fromEntries(
-  customerDashboardSeries.map((series) => [
-    series.id,
-    [...series.childProjectIds].sort((leftId, rightId) =>
-      (initialProjectsById.get(rightId)?.createdAt ?? "").localeCompare(initialProjectsById.get(leftId)?.createdAt ?? ""),
-    ),
-  ]),
-);
 
-export function CustomerDashboard() {
+export function CustomerDashboard({
+  activity = customerDashboardActivity,
+  brandAccentId,
+  clientName = "Loom",
+  initialProjects = customerDashboardProjects,
+  initialSeries = customerDashboardSeries,
+  logoPreviewUrl,
+  storageScopeKey = "legacy:loom",
+  studioName,
+}: CustomerDashboardProps = {}) {
   const { selectedRole } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
   const { studio } = useStudioSettings();
@@ -91,14 +96,22 @@ export function CustomerDashboard() {
   const isScenarioEmpty = activeScenario?.state === "new";
   const isStudioPreview = searchParams.get("studio-preview") === "1";
   const isClientView = selectedRole === "Customer";
-  const clientName = "Loom";
-  const [projects, setProjects] = useState<CustomerDashboardProject[]>(customerDashboardProjects);
+  const resolvedStudioName = studioName ?? studio.details.name;
+  const resolvedLogoPreviewUrl = logoPreviewUrl === undefined ? studio.branding.logoPreviewUrl : logoPreviewUrl;
+  const resolvedBrandAccentId = brandAccentId ?? studio.branding.brandAccentId;
+  const initialQueueOrder = useMemo(() => createInitialQueueOrder(initialProjects), [initialProjects]);
+  const initialSeriesChildOrder = useMemo(
+    () => createInitialSeriesChildOrder(initialProjects, initialSeries),
+    [initialProjects, initialSeries],
+  );
+  const initialExpandedSeriesIds = initialSeries.some((series) => series.id === "wacf-cc") ? ["wacf-cc"] : [];
+  const [projects, setProjects] = useState<CustomerDashboardProject[]>(initialProjects);
   const [selectedTab, setSelectedTab] = useState<QueueTab>("Queued");
   const [queueScope, setQueueScope] = useState<QueueScope>("All videos");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [queueOrder, setQueueOrder] = useState<string[]>(initialQueueOrder);
   const [seriesChildOrder, setSeriesChildOrder] = useState<Record<string, string[]>>(initialSeriesChildOrder);
-  const [expandedSeriesIds, setExpandedSeriesIds] = useState<string[]>(["wacf-cc"]);
+  const [expandedSeriesIds, setExpandedSeriesIds] = useState<string[]>(initialExpandedSeriesIds);
   const [dragItem, setDragItem] = useState<DragItem | null>(null);
   const [isProductionDropActive, setIsProductionDropActive] = useState(false);
   const [openMenuProjectId, setOpenMenuProjectId] = useState<string | null>(null);
@@ -109,8 +122,8 @@ export function CustomerDashboard() {
   const [loadedPreferenceRole, setLoadedPreferenceRole] = useState<string | null>(null);
   const [hasLoadedSharedState, setHasLoadedSharedState] = useState(false);
 
-  const preferenceStorageKey = `brisk-customer-dashboard-preferences-v1:${selectedRole}`;
-  const sharedStateStorageKey = "brisk-customer-dashboard-shared-state-v1";
+  const preferenceStorageKey = `brisk-customer-dashboard-preferences-v1:${storageScopeKey}:${selectedRole}`;
+  const sharedStateStorageKey = `brisk-customer-dashboard-shared-state-v1:${storageScopeKey}`;
 
   useEffect(() => {
     const storedSharedState = window.localStorage.getItem(sharedStateStorageKey);
@@ -121,7 +134,7 @@ export function CustomerDashboard() {
         const storedStatuses = sharedState.statuses ?? {};
 
         setProjects(
-          customerDashboardProjects.map((project) => {
+          initialProjects.map((project) => {
             const storedStatus = storedStatuses[project.id];
 
             if (!isCustomerDashboardStatus(storedStatus) || storedStatus === project.status) {
@@ -137,7 +150,7 @@ export function CustomerDashboard() {
         );
       } catch {
         window.localStorage.removeItem(sharedStateStorageKey);
-        setProjects(customerDashboardProjects);
+        setProjects(initialProjects);
       }
     }
 
@@ -153,13 +166,13 @@ export function CustomerDashboard() {
         const preferences = JSON.parse(storedPreferences) as Partial<DashboardPreferences>;
 
         if (Array.isArray(preferences.queueOrder)) {
-          setQueueOrder(normaliseQueueOrder(preferences.queueOrder));
+          setQueueOrder(normaliseQueueOrder(preferences.queueOrder, initialQueueOrder));
         } else {
           setQueueOrder(initialQueueOrder);
         }
 
         if (preferences.seriesChildOrder && typeof preferences.seriesChildOrder === "object") {
-          setSeriesChildOrder(normaliseSeriesChildOrder(preferences.seriesChildOrder));
+          setSeriesChildOrder(normaliseSeriesChildOrder(preferences.seriesChildOrder, initialSeries));
         } else {
           setSeriesChildOrder(initialSeriesChildOrder);
         }
@@ -167,23 +180,23 @@ export function CustomerDashboard() {
         if (Array.isArray(preferences.expandedSeriesIds)) {
           setExpandedSeriesIds(
             preferences.expandedSeriesIds.filter((seriesId) =>
-              customerDashboardSeries.some((series) => series.id === seriesId),
+              initialSeries.some((series) => series.id === seriesId),
             ),
           );
         } else {
-          setExpandedSeriesIds(["wacf-cc"]);
+          setExpandedSeriesIds(initialExpandedSeriesIds);
         }
 
       } catch {
         window.localStorage.removeItem(preferenceStorageKey);
         setQueueOrder(initialQueueOrder);
         setSeriesChildOrder(initialSeriesChildOrder);
-        setExpandedSeriesIds(["wacf-cc"]);
+        setExpandedSeriesIds(initialExpandedSeriesIds);
       }
     } else {
       setQueueOrder(initialQueueOrder);
       setSeriesChildOrder(initialSeriesChildOrder);
-      setExpandedSeriesIds(["wacf-cc"]);
+      setExpandedSeriesIds(initialExpandedSeriesIds);
     }
 
     setLoadedPreferenceRole(selectedRole);
@@ -279,8 +292,8 @@ export function CustomerDashboard() {
   const displayProjects = previewState === "empty" || isScenarioEmpty ? [] : projects;
   const projectsById = useMemo(() => new Map(displayProjects.map((project) => [project.id, project])), [displayProjects]);
   const seriesById = useMemo(
-    () => new Map(customerDashboardSeries.map((series) => [series.id, series])),
-    [],
+    () => new Map(initialSeries.map((series) => [series.id, series])),
+    [initialSeries],
   );
   const inProductionProjects = displayProjects.filter((project) => project.status === "In Production");
   const tabProjects = displayProjects.filter((project) => selectedTab === "All" || project.status === selectedTab);
@@ -400,11 +413,11 @@ export function CustomerDashboard() {
   };
 
   return (
-    <main className={`customer-dashboard-shell studio-client-accent-${studio.branding.brandAccentId} ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
+    <main className={`customer-dashboard-shell studio-client-accent-${resolvedBrandAccentId} ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
       <div className="customer-dashboard-main">
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
-            <StudioPortalBrand logoPreviewUrl={studio.branding.logoPreviewUrl} studioName={studio.details.name} />
+            <StudioPortalBrand logoPreviewUrl={resolvedLogoPreviewUrl} studioName={resolvedStudioName} />
             <div>
               <span className="label-xs">{clientName} Client portal</span>
               <h1>Your videos</h1>
@@ -418,7 +431,7 @@ export function CustomerDashboard() {
               <section className="customer-dashboard-global-empty">
                 <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={24} /></span>
                 <h2 className="headings-s-bold">Your first video starts here</h2>
-                <p className="paragraph-s">Start a video with {studio.details.name} and follow it from Brief through Masters.</p>
+                <p className="paragraph-s">Start a video with {resolvedStudioName} and follow it from Brief through Masters.</p>
                 <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>Start Video</button>
               </section>
             ) : (
@@ -481,7 +494,7 @@ export function CustomerDashboard() {
                         setIsFilterOpen(false);
                         setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
                       }}
-                      studioName={studio.details.name}
+                      studioName={resolvedStudioName}
                     />
                   ))}
                 </div>
@@ -498,7 +511,7 @@ export function CustomerDashboard() {
               <div className="customer-queue-heading-row">
                 <div>
                   <h2 className="headings-s-bold" id="customer-queue-title">Queue ({queueCount})</h2>
-                  <span className="label-s">Your production roadmap with {studio.details.name}</span>
+                  <span className="label-s">Your production roadmap with {resolvedStudioName}</span>
                 </div>
                 <div className="customer-queue-header-actions">
                   <div className="customer-dashboard-filter-wrap">
@@ -602,7 +615,7 @@ export function CustomerDashboard() {
                           setIsFilterOpen(false);
                           setOpenMenuProjectId((current) => (current === entry.project.id ? null : entry.project.id));
                         }}
-                        studioName={studio.details.name}
+                        studioName={resolvedStudioName}
                       />
                     );
                   }
@@ -714,7 +727,7 @@ export function CustomerDashboard() {
                                 setIsFilterOpen(false);
                                 setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
                               }}
-                              studioName={studio.details.name}
+                              studioName={resolvedStudioName}
                             />
                           ))
                         : null}
@@ -770,7 +783,12 @@ export function CustomerDashboard() {
             >
               <DsIcon name="x-close-cross" size={18} />
             </button>
-            <ActivityPanel empty={previewState === "empty" || isScenarioEmpty} onClose={() => setIsActivityOpen(false)} />
+            <ActivityPanel
+              activity={activity}
+              clientName={clientName}
+              empty={previewState === "empty" || isScenarioEmpty}
+              onClose={() => setIsActivityOpen(false)}
+            />
           </aside>
         </div>
       ) : null}
@@ -795,7 +813,7 @@ export function CustomerDashboard() {
             <ChatPage
               key={chatProjectId ?? "global-chat"}
               embedded
-              clientName="Loom"
+              clientName={clientName}
               initialProjectId={chatProjectId}
             />
           </aside>
@@ -818,13 +836,23 @@ function StudioPortalBrand({ logoPreviewUrl, studioName }: { logoPreviewUrl: str
   );
 }
 
-function ActivityPanel({ empty, onClose }: { empty: boolean; onClose: () => void }) {
+function ActivityPanel({
+  activity,
+  clientName,
+  empty,
+  onClose,
+}: {
+  activity: CustomerDashboardActivity[];
+  clientName: string;
+  empty: boolean;
+  onClose: () => void;
+}) {
   return (
     <section className="customer-activity-panel" aria-labelledby="customer-activity-title">
       <div className="customer-activity-heading">
         <div>
           <h2 className="headings-2xs-bold" id="customer-activity-title">Latest activity</h2>
-          <span className="label-xs">Across all Loom videos</span>
+          <span className="label-xs">Across all {clientName} videos</span>
         </div>
         <span className="customer-activity-filter label-xs-semibold">All</span>
       </div>
@@ -836,7 +864,7 @@ function ActivityPanel({ empty, onClose }: { empty: boolean; onClose: () => void
             <p className="paragraph-s">Approvals, uploads, messages and status changes will appear here.</p>
             <button className="customer-dashboard-secondary-button label-s-semibold" type="button" onClick={onClose}>View videos</button>
           </div>
-        ) : customerDashboardActivity.slice(0, 10).map((activity) => {
+        ) : activity.slice(0, 10).map((activity) => {
           const activityContent = (
             <>
               <span className="customer-activity-icon"><DsIcon name={activity.icon} size={16} /></span>
@@ -1231,15 +1259,44 @@ function getInitials(name: string) {
     .join("");
 }
 
-function normaliseQueueOrder(storedOrder: string[]) {
+function createInitialQueueOrder(projects: CustomerDashboardProject[]) {
+  return Array.from(
+    new Set(
+      [...projects]
+        .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+        .map((project) => project.seriesId ? `series:${project.seriesId}` : `project:${project.id}`),
+    ),
+  );
+}
+
+function createInitialSeriesChildOrder(
+  projects: CustomerDashboardProject[],
+  seriesItems: CustomerDashboardSeries[],
+) {
+  const projectsById = new Map(projects.map((project) => [project.id, project]));
+
+  return Object.fromEntries(
+    seriesItems.map((series) => [
+      series.id,
+      [...series.childProjectIds].sort((leftId, rightId) =>
+        (projectsById.get(rightId)?.createdAt ?? "").localeCompare(projectsById.get(leftId)?.createdAt ?? ""),
+      ),
+    ]),
+  );
+}
+
+function normaliseQueueOrder(storedOrder: string[], initialQueueOrder: string[]) {
   const knownTokens = new Set(initialQueueOrder);
   const validStoredTokens = storedOrder.filter((token) => knownTokens.has(token));
   return [...validStoredTokens, ...initialQueueOrder.filter((token) => !validStoredTokens.includes(token))];
 }
 
-function normaliseSeriesChildOrder(storedOrder: Record<string, string[]>) {
+function normaliseSeriesChildOrder(
+  storedOrder: Record<string, string[]>,
+  seriesItems: CustomerDashboardSeries[],
+) {
   return Object.fromEntries(
-    customerDashboardSeries.map((series) => {
+    seriesItems.map((series) => {
       const storedChildren = Array.isArray(storedOrder[series.id]) ? storedOrder[series.id] : [];
       const validStoredChildren = storedChildren.filter((projectId) => series.childProjectIds.includes(projectId));
       return [

@@ -178,8 +178,8 @@
 }
 
 .costs-invoice-row:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: -2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .costs-table td > strong,
@@ -246,9 +246,8 @@
 
 .costs-state-select .brisk-select-trigger:hover,
 .costs-state-select .brisk-select-trigger:focus-visible {
-  box-shadow: none;
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
 }
 
 .costs-state-badge.is-pending,
@@ -423,8 +422,8 @@
 }
 
 .costs-field textarea:focus {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .costs-upload-field {
@@ -632,8 +631,8 @@
 }
 
 .costs-search:focus-within {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .costs-search input {

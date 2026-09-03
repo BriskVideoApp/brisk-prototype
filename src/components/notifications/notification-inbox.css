@@ -246,7 +246,7 @@
 .notification-inbox-item-chevron:focus-visible,
 .notification-inbox-mark-read:focus-visible {
   border-radius: var(--brisk-radius-xs);
-  box-shadow: 0 0 0 3px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
   outline: var(--brisk-space-none);
 }
 

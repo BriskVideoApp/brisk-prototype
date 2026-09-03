@@ -60,8 +60,8 @@
 }
 
 .freelancer-videos-search:focus-within {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .freelancer-videos-search input {
@@ -301,7 +301,8 @@
 
 .freelancer-video-title:not(.is-static):focus-visible {
   border-radius: var(--brisk-radius-xs);
-  outline: 4px solid var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .freelancer-title-unavailable {
@@ -401,7 +402,8 @@
 
 .freelancer-inline-action:focus-visible {
   border-radius: var(--brisk-radius-xs);
-  outline: 4px solid var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .freelancer-offer-brief {
@@ -424,8 +426,8 @@
 }
 
 .freelancer-offer-brief:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus), var(--brisk-shadow-m);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .freelancer-demo-unavailable,

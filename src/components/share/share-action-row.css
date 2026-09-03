@@ -86,8 +86,8 @@
 }
 
 .share-approved-status-trigger:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .share-approved-status-trigger:disabled {

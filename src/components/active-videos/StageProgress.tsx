@@ -1,5 +1,8 @@
+"use client";
+
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { StageKey, StageStatus } from "@/components/active-videos/types";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
 
 type StageIconName = Parameters<typeof DsIcon>[0]["name"];
@@ -30,6 +33,9 @@ export function StageProgress({
   compact?: boolean;
   showAge?: boolean;
 }) {
+  const { getProjectStages } = useProjectStageStatus();
+  const currentStages = getProjectStages({ id: projectId, stages });
+
   return (
     <div
       className={`stage-track ${compact ? "stage-track-compact" : ""}`}
@@ -39,7 +45,7 @@ export function StageProgress({
         <StageChip
           key={stage.key}
           stage={stage}
-          status={stages[stage.key]}
+          status={currentStages[stage.key]}
           projectId={projectId}
           studioName={studioName}
           customerName={customerName}

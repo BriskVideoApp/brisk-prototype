@@ -114,8 +114,8 @@
 }
 
 .shoot-stage-tabs > button:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-stage-navigation-actions {
@@ -144,8 +144,8 @@
 }
 
 .shoot-back-to-setup:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-eyebrow {
@@ -538,10 +538,10 @@
 
 .shoot-date-display:hover,
 .shoot-date-display:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-white);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-date-picker-input {
@@ -578,8 +578,8 @@
 .shoot-shell select:focus-visible,
 .shoot-shell textarea:focus-visible,
 .shoot-shell a:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-notice {
@@ -801,8 +801,8 @@
 
 .shoot-clash-indicator:focus-visible {
   border-radius: var(--brisk-radius-xs);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-schedule-time span,
@@ -1033,8 +1033,8 @@
 }
 
 .shoot-checkbox input:focus-visible + span {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-checkbox-tooltip {
@@ -1428,8 +1428,7 @@
 
 .shoot-document-rename-input:focus-visible {
   box-shadow: var(--brisk-shadow-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 1px;
+  outline: none;
 }
 
 .shoot-document-comment-form {
@@ -1783,8 +1782,8 @@
 }
 
 .shoot-person-search-field:focus-within {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-person-search-field input {
@@ -2509,10 +2508,10 @@
 .shared-call-actions > button:focus-visible,
 .shared-call-actions > a:hover,
 .shared-call-actions > a:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
 }
 
 .shared-day-switcher {
@@ -2685,8 +2684,7 @@
 .shared-primary-action:hover,
 .shared-primary-action:focus-visible {
   box-shadow: var(--brisk-shadow-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
 }
 
 .shared-weather-block > div {
@@ -3219,8 +3217,8 @@
 .shoot-editable-call-time:hover,
 .shoot-editable-call-time:focus-visible {
   background: var(--brisk-bg-block-secondary);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-entry-group.is-run-of-day .shoot-schedule-list {
@@ -3330,8 +3328,8 @@
 }
 
 .shoot-entry-time-mode button:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-unscheduled-checkbox {
@@ -3395,8 +3393,8 @@
 }
 
 .shoot-no-time-option input:focus-visible + span {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-quick-field {
@@ -3862,22 +3860,25 @@
 .shared-contact-list article > a:focus-visible,
 .shared-document-list a:hover,
 .shared-document-list a:focus-visible {
-  box-shadow: none;
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: var(--brisk-space-xxs);
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
 }
 
 .shoot-call-sheet-hero :is(input, select, textarea):focus-visible,
 .shoot-section :is(input, select, textarea):focus-visible,
 .shoot-modal :is(input, select, textarea):focus-visible {
-  border-color: var(--brisk-brand-primary);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
 }
 
-.shoot-shell button:hover,
-.shoot-shell button:focus-visible {
+.shoot-shell button:hover {
   box-shadow: none !important;
+}
+
+.shoot-shell button:focus-visible {
+  box-shadow: var(--brisk-shadow-s) !important;
+  outline: none;
 }
 
 .shoot-modal button[class*="border-black"],
@@ -4300,8 +4301,8 @@
 .shoot-schedule-row:focus-visible {
   border-color: var(--shoot-soft-border);
   background: var(--brisk-bg-block-secondary);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-schedule-row.is-complete {
@@ -4411,8 +4412,8 @@
 .shoot-unscheduled-panel.is-collapsed > button:hover,
 .shoot-unscheduled-panel.is-collapsed > button:focus-visible {
   background: var(--brisk-white);
-  outline: 2px solid var(--brisk-brand-secondary-click);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-unscheduled-list {
@@ -5341,8 +5342,8 @@
 .shoot-day-add:focus-visible {
   position: relative;
   z-index: 1;
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-day-menu,
@@ -5542,9 +5543,10 @@
 
 .shoot-person-chip:hover,
 .shoot-person-chip:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
   outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-people-search {
@@ -5966,8 +5968,8 @@
 }
 
 .shoot-column-resize-handle:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: calc(var(--brisk-space-xxs) * -1);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-shot-cell > :is(input, select),
@@ -5995,7 +5997,7 @@
 }
 
 .shoot-shot-cell:has(> .brisk-select):focus-within {
-  box-shadow: inset 0 0 0 2px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-shot-cell > .brisk-select .brisk-select-trigger:is(:hover, :focus-visible) {
@@ -6040,8 +6042,8 @@
 }
 
 .shoot-filming-time-input:focus-within {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-filming-time-input input {
@@ -6406,13 +6408,15 @@
 }
 
 .shoot-people-search > input:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-quick-entry :is(input, select, textarea):focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-people-results {
@@ -6559,7 +6563,7 @@
 }
 
 .shoot-plan-entry-option:is(:hover, :focus-visible) {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
   background: var(--brisk-brand-secondary);
 }
 
@@ -6568,8 +6572,8 @@
 }
 
 .shoot-plan-entry-option:focus-visible {
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-plan-entry-copy {

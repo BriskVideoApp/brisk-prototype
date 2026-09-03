@@ -82,9 +82,8 @@
 .chat-shell input:focus-visible,
 .chat-shell textarea:focus-visible,
 .chat-shell select:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
-  box-shadow: none;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-rail {
@@ -821,9 +820,8 @@
 
 .chat-shell .chat-channel-tab:focus-visible {
   z-index: 2;
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
-  box-shadow: none;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-channel-tab-copy {
@@ -976,8 +974,8 @@
 
 .chat-message-row:focus-visible {
   border-radius: var(--brisk-radius-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-message-row.grouped {
@@ -1027,8 +1025,8 @@
 }
 
 .chat-source-logo-wrap.has-tooltip:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-source-logo {
@@ -1719,7 +1717,8 @@
 }
 
 .chat-composer-box:focus-within {
-  border-width: 2px;
+  border-width: 1px;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-shell .chat-composer-input:focus-visible {
@@ -1838,7 +1837,7 @@
 }
 
 .chat-source-picker > button.chat-source-select:focus-visible {
-  box-shadow: 0 0 0 4px var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
   outline: 0;
 }
 
@@ -1979,8 +1978,8 @@
 
 .chat-schedule-toggle:focus-visible {
   z-index: 1;
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-schedule-toggle:disabled {
@@ -2059,8 +2058,8 @@
 }
 
 .chat-schedule-custom input:focus-visible {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .chat-schedule-confirm {

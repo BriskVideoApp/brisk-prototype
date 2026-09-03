@@ -1257,7 +1257,8 @@
 }
 
 .team-money-input:focus-within {
-  outline: 4px solid var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .team-money-input .team-inline-input {

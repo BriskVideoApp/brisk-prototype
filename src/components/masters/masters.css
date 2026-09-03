@@ -253,8 +253,8 @@
 }
 
 .masters-timeline:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .masters-timeline-progress {
@@ -505,8 +505,8 @@
 
 .masters-deliverable-row:focus-visible {
   z-index: 2;
-  outline: 4px solid var(--brisk-border-focus);
-  outline-offset: -4px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .masters-deliverable-row.is-child {
@@ -1516,8 +1516,8 @@
 .masters-shell input:focus-visible,
 .masters-shell select:focus-visible,
 .masters-shell textarea:focus-visible {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 @media (max-width: 1100px) {
@@ -1635,9 +1635,8 @@
 
 .masters-deliverable-row:focus-visible {
   z-index: 3;
-  outline: 3px solid var(--brisk-border-focus);
-  outline-offset: -3px;
-  box-shadow: none;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .masters-deliverable-row.is-child {
@@ -2317,7 +2316,8 @@
 
 .masters-comment-card:hover,
 .masters-comment-card:focus-visible {
-  border-color: var(--brisk-brand-primary);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .masters-comment-card.resolved {
@@ -3826,8 +3826,8 @@
 }
 
 .masters-approval-checkbox > input:focus-visible + span {
-  outline: 3px solid var(--brisk-border-focus);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .masters-approval-checkbox > span:last-child {

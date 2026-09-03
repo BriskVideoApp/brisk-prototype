@@ -58,8 +58,8 @@
 }
 
 .active-videos-search:focus-within {
-  outline: 4px solid var(--brisk-border-primary);
-  box-shadow: 0 0 0 6px var(--brisk-border-focus);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .active-videos-search input {
@@ -922,8 +922,8 @@
 }
 
 .project-tag-input:focus {
-  border-color: var(--brisk-brand-primary);
-  box-shadow: 0 0 0 4px var(--brisk-brand-secondary);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
@@ -1013,7 +1013,7 @@
 }
 
 .latest-update-cell:focus-visible {
-  box-shadow: 0 0 0 var(--brisk-space-xxs) var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
@@ -1229,8 +1229,8 @@
 }
 
 .deadline-inline-input:focus {
-  border-color: var(--brisk-brand-primary);
-  box-shadow: 0 0 0 4px var(--brisk-brand-secondary);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
@@ -1529,7 +1529,7 @@
 }
 
 .project-costs-cell:focus-visible {
-  box-shadow: 0 0 0 var(--brisk-space-xxs) var(--brisk-border-focus);
+  box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
@@ -2109,8 +2109,8 @@
 }
 
 .project-detail-inline-input:focus {
-  border-color: var(--brisk-brand-primary);
-  box-shadow: 0 0 0 4px var(--brisk-brand-secondary);
+  border-color: var(--brisk-border-primary);
+  box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
@@ -2365,8 +2365,8 @@
 }
 
 .project-detail-note-input:focus {
-  outline: 2px solid var(--brisk-brand-primary);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .project-detail-panel-footer {

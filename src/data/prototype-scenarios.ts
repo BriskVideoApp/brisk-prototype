@@ -74,7 +74,7 @@ export const clientNewVideoProject: Project = {
   status: "Queued",
   file_locations: [],
   stages: {
-    brief: { state: "not_started" },
+    brief: { state: "waiting" },
     script: { state: "not_started" },
     shoot: { state: "not_started" },
     media: { state: "not_started" },

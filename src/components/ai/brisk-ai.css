@@ -232,10 +232,9 @@
 }
 
 .brisk-ai-history-search:focus-within {
-  border-color: var(--brisk-border-focus);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
 }
 
 .brisk-ai-history-search input {
@@ -380,14 +379,14 @@
 
 .brisk-ai-history-rename {
   min-width: var(--brisk-space-none);
-  border: 1px solid var(--brisk-border-focus);
+  border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-bg-block-primary);
   color: var(--brisk-text-primary);
   margin: var(--brisk-space-xs);
   padding: var(--brisk-space-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
+  box-shadow: var(--brisk-shadow-s);
 }
 
 .brisk-ai-history-empty {
@@ -1081,10 +1080,9 @@
 }
 
 .brisk-ai-source-picker-toolbar label:focus-within {
-  border-color: var(--brisk-border-focus);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: none;
 }
 
 .brisk-ai-source-picker-toolbar input {
