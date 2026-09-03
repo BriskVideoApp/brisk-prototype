@@ -69,7 +69,6 @@ export function ClientCompanyPage() {
       <ClientCompanySettingsPageShell
         activeSection="company"
         title="Company details"
-        description="Manage the practical details your Studio uses for contact and billing."
       >
         <section className="account-settings-card account-company-card" aria-label="Company details">
           <form onSubmit={submit}>
@@ -79,7 +78,6 @@ export function ClientCompanyPage() {
               </span>
               <div>
                 <h2 className="headings-xs-bold" id="company-logo-heading">Company logo</h2>
-                <p className="paragraph-s">Shown beside your company in Client account settings.</p>
                 <div className="account-settings-inline-actions">
                   <input className="sr-only" ref={logoInputRef} type="file" accept="image/*" onChange={uploadLogo} />
                   <Button size="S" type="button" variant="secondary" onClick={() => logoInputRef.current?.click()}>
@@ -122,11 +120,6 @@ export function ClientCompanyPage() {
                   onChange={(timezone) => updateField("timezone", timezone)}
                 />
               </label>
-            </div>
-
-            <div className="account-settings-info-block">
-              <DsIcon name="info" size={18} />
-              <p className="paragraph-s">Logos, fonts, colours and creative guidelines stay in Brand Kit and are not duplicated here.</p>
             </div>
 
             <div className="account-settings-form-actions">

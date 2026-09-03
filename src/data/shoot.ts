@@ -490,6 +490,29 @@ export const shootAddressSuggestions: ShootAddressSuggestion[] = [
   { id: "adelaide-studios", name: "Adelaide Studios", address: "1 Mulberry Road, Glenside SA 5065" },
 ];
 
+export function getEmptyCallSheet(project: Project): CallSheet {
+  return {
+    projectId: project.id,
+    projectName: project.name,
+    studioName: "North Star Films",
+    studioInitials: "NS",
+    days: [],
+    notice: "",
+    weather: "Weather will appear after a date and primary location are set.",
+    weatherUpdatedAt: "Waiting for shoot details",
+    onTheDayContact: "",
+    entries: [],
+    people: [],
+    locations: [],
+    notes: "",
+    practicalInfo: { wifi: "", access: "", safety: "", accessibility: "", emergencyContact: "" },
+    questions: [],
+    documents: [],
+    visibleOptionalSections: [],
+    updatedAt: project.latestUpdate.timestamp,
+  };
+}
+
 export function getInitialCallSheet(project: Project): CallSheet {
   if (project.id === completeCallSheet.projectId) {
     return structuredClone(completeCallSheet);

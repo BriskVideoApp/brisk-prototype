@@ -20,6 +20,7 @@ import {
   sharedTimeEntriesEventName,
   type SharedTimeEntry,
 } from "@/data/timeEntries/sharedTimeEntries";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 const freelancerTodayDate = "2026-08-18";
 
@@ -42,13 +43,15 @@ const experienceByStage: Record<StageKey, DemoProjectExperience> = {
 };
 
 export function FreelancerTodayPage() {
+  const { activeScenario } = usePrototypeScenario();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [sharedEntries, setSharedEntries] = useState<SharedTimeEntry[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
   const engagements = useMemo(
-    () => getFreelancerEngagements(activeVideoProjects, freelancerPreviewViewer.id),
-    [],
+    () => getFreelancerEngagements(scenarioProjects, freelancerPreviewViewer.id),
+    [scenarioProjects],
   );
   const accepted = engagements.filter((engagement) => engagement.invitationStatus === "accepted");
   const currentWork = accepted.filter((engagement) => !["Completed", "Archived"].includes(engagement.project.status));

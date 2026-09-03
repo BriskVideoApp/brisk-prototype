@@ -1,15 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, type ReactNode, type SetStateAction } from "react";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import {
-  clients as initialClients,
   getClientInitials,
-  makeClientId,
   type Client,
   type ClientContact,
   type NewClientInput,
   type PortalAccessStatus,
 } from "@/data/clients";
+import { selectWorkspaceClients } from "@/data/prototype-state";
 
 type ClientDataContextValue = {
   clients: Client[];
@@ -28,51 +28,16 @@ type ClientDataContextValue = {
 const ClientDataContext = createContext<ClientDataContextValue | null>(null);
 
 export function ClientDataProvider({ children }: { children: ReactNode }) {
-  const [clients, setClients] = useState<Client[]>(initialClients);
+  const { state, createClient: createCanonicalClient, replaceWorkspaceClients } = usePrototypeState();
+  const clients = selectWorkspaceClients(state, state.session.activeWorkspaceId);
+  const setClients = (update: SetStateAction<Client[]>) => {
+    replaceWorkspaceClients(typeof update === "function" ? update(clients) : update);
+  };
 
   const value = useMemo<ClientDataContextValue>(() => ({
     clients,
     createClient(input) {
-      const baseId = makeClientId(input.name);
-      const matchingIds = new Set(clients.map((client) => client.id));
-      let id = baseId;
-      let suffix = 2;
-
-      while (matchingIds.has(id)) {
-        id = `${baseId}-${suffix}`;
-        suffix += 1;
-      }
-
-      const contactName = input.primaryContactName?.trim() ?? "";
-      const contactEmail = input.primaryContactEmail?.trim() ?? "";
-      const primaryContact = contactName && contactEmail
-        ? {
-            id: `${id}-contact-1`,
-            name: contactName,
-            email: contactEmail,
-            portalAccess: "Invited" as const,
-            lastActive: null,
-            projectIds: [],
-            membershipRole: "Client Admin" as const,
-          }
-        : null;
-      const client: Client = {
-        id,
-        name: input.name.trim(),
-        badge: getClientInitials(input.name),
-        type: input.type ?? "Organisation",
-        status: "Active",
-        website: input.website?.trim() ?? "",
-        logoUrl: input.logoUrl ?? null,
-        primaryContactId: primaryContact?.id ?? null,
-        contacts: primaryContact ? [primaryContact] : [],
-        latestActivity: { label: "Client added", occurredAt: new Date().toISOString() },
-        portal: { status: "Active", slug: id },
-        defaultBrandKitSlug: null,
-      };
-
-      setClients((current) => [client, ...current]);
-      return client;
+      return createCanonicalClient(input);
     },
     updateClient(clientId, update) {
       setClients((current) => current.map((client) => client.id === clientId
@@ -161,7 +126,7 @@ export function ClientDataProvider({ children }: { children: ReactNode }) {
         ? { ...client, contacts: client.contacts.map((contact) => contact.id === contactId ? { ...contact, projectIds } : contact) }
         : client));
     },
-  }), [clients]);
+  }), [clients, createCanonicalClient, replaceWorkspaceClients]);
 
   return <ClientDataContext.Provider value={value}>{children}</ClientDataContext.Provider>;
 }

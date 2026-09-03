@@ -8,10 +8,11 @@ import type { StudioOnboardingAnswer, StudioOnboardingSource } from "@/data/stud
 type StudioAiQuestionProps = {
   initialAnswer?: StudioOnboardingAnswer | null;
   onAnalyse: (answer: StudioOnboardingAnswer) => void;
+  onBack: () => void;
   onDraftChange: (answer: StudioOnboardingAnswer) => void;
 };
 
-export function StudioAiQuestion({ initialAnswer, onAnalyse, onDraftChange }: StudioAiQuestionProps) {
+export function StudioAiQuestion({ initialAnswer, onAnalyse, onBack, onDraftChange }: StudioAiQuestionProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [website, setWebsite] = useState(
     () => initialAnswer?.sources.find((source) => source.type === "website")?.label ?? "",
@@ -74,12 +75,12 @@ export function StudioAiQuestion({ initialAnswer, onAnalyse, onDraftChange }: St
       </div>
 
       <div className="studio-description-field">
-        <label className="label-m-semibold" htmlFor="studio-description">What does your studio do?</label>
+        <label className="label-m-semibold" htmlFor="studio-description">What does your Studio do?</label>
         <div className="studio-ai-composer">
           <textarea
-            className="studio-ai-textarea paragraph-s"
+            className="studio-ai-textarea paragraph-m"
             id="studio-description"
-            placeholder="What kind of videos do you make and who do you work with?"
+            placeholder="What kinds of videos do you make, and who do you work with?"
             value={studioDescription}
             onChange={(event) => {
               setStudioDescription(event.target.value);
@@ -99,15 +100,24 @@ export function StudioAiQuestion({ initialAnswer, onAnalyse, onDraftChange }: St
 
           <div className="studio-composer-actions">
             <div className="studio-composer-tools">
-              <button
-                className="studio-composer-tool"
-                type="button"
-                aria-label="Upload Studio files"
-                title="Upload Studio files"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <DsIcon name="upload-simple" size={16} />
-              </button>
+              <div className="studio-composer-tool-wrap">
+                <button
+                  className="studio-composer-tool"
+                  type="button"
+                  aria-label="Upload Studio files"
+                  aria-describedby="studio-upload-files-tooltip"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <DsIcon name="upload-simple" size={16} />
+                </button>
+                <span
+                  className="studio-composer-tooltip label-xs-semibold"
+                  id="studio-upload-files-tooltip"
+                  role="tooltip"
+                >
+                  Optional: upload a pamphlet or ad about what your Studio does.
+                </span>
+              </div>
               <input
                 ref={fileInputRef}
                 className="studio-hidden-file-input"
@@ -118,17 +128,18 @@ export function StudioAiQuestion({ initialAnswer, onAnalyse, onDraftChange }: St
               />
             </div>
 
-            <button
-              className="studio-analyse-button"
-              type="submit"
-              aria-label="Analyse Studio details"
-              disabled={!canAnalyse}
-            >
-              <DsIcon name="paper-plane-tilt" size={16} />
-            </button>
           </div>
         </div>
       </div>
+
+      <footer className="studio-follow-up-footer">
+        <div className="studio-follow-up-actions">
+          <button className="studio-follow-up-back label-s-semibold" type="button" onClick={onBack}>Back</button>
+          <button className="studio-follow-up-continue label-m-semibold" type="submit" disabled={!canAnalyse}>
+            Continue
+          </button>
+        </div>
+      </footer>
     </form>
   );
 }

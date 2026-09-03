@@ -1,4 +1,5 @@
 import type {
+  DefaultProjectTeamMember,
   Invitation,
   ProjectVideoType,
   RoleSlot,
@@ -185,6 +186,10 @@ export function getInvitationRate(invitation: Invitation) {
 }
 
 export function getInvitationCost(invitation: Invitation, roleHours: number) {
+  if (typeof invitation.projectRateSnapshot === "number") {
+    return invitation.projectRateSnapshot;
+  }
+
   if (invitation.paymentBasis === "flat") {
     return invitation.flatRateSnapshot;
   }
@@ -231,6 +236,52 @@ const defaultRoleHours: Record<ProjectVideoType, Partial<Record<TeamRole, number
     motionDesigner: 16,
   },
 };
+
+export function applyStudioDefaultTeam({
+  defaultTeam,
+  initialTeam,
+  projectId,
+  videoType,
+}: {
+  defaultTeam: DefaultProjectTeamMember[];
+  initialTeam: RoleSlot[];
+  projectId: string;
+  videoType: ProjectVideoType;
+}): RoleSlot[] {
+  const team = initialTeam.map((slot) => ({
+    ...slot,
+    stages: slot.stages.map((stage) => ({ ...stage })),
+    invitations: slot.invitations.map((invitation) => ({ ...invitation })),
+  }));
+
+  defaultTeam.forEach((defaultMember, index) => {
+    if (team.some((slot) => !slot.archivedAt && slot.role === defaultMember.role)) return;
+
+    const coveredStages = defaultRoleStages[videoType][defaultMember.role] ?? fallbackRoleStages[defaultMember.role];
+    const stages = createStageAssignments(coveredStages, defaultRoleHours[videoType][defaultMember.role] ?? 0);
+    const roleSlug = teamRoleLabels[defaultMember.role].toLowerCase().replace(/\s+/g, "-");
+    const slotId = `${projectId}-${roleSlug}`;
+    const acceptedInvitationId = defaultMember.personId ? `${slotId}-${defaultMember.personId}-accepted` : undefined;
+
+    team.push({
+      id: slotId,
+      projectId,
+      role: defaultMember.role,
+      stages,
+      invitations: defaultMember.personId ? [{
+        id: acceptedInvitationId ?? `${slotId}-accepted`,
+        personId: defaultMember.personId,
+        status: "accepted",
+        sentAt: createMockTimestamp(index + 2),
+        respondedAt: createMockTimestamp(index + 1),
+        assignmentMethod: "direct",
+      }] : [],
+      acceptedInvitationId,
+    });
+  });
+
+  return team;
+}
 
 export function createDefaultRoleSlots({
   projectId,

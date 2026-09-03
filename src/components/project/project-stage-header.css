@@ -59,7 +59,7 @@
   outline-offset: 2px;
 }
 
-.project-stage-dashboard-link::after {
+.project-stage-dashboard-tooltip {
   position: absolute;
   top: calc(100% + var(--brisk-space-s));
   right: auto;
@@ -72,7 +72,6 @@
   background: var(--brisk-bg-elevated-primary);
   box-shadow: var(--brisk-shadow-m);
   color: var(--brisk-text-primary);
-  content: attr(data-tooltip);
   font-size: 12px;
   font-weight: 700;
   line-height: 16px;
@@ -84,8 +83,8 @@
   white-space: nowrap;
 }
 
-.project-stage-dashboard-link:hover::after,
-.project-stage-dashboard-link:focus-visible::after {
+.project-stage-dashboard-link:hover .project-stage-dashboard-tooltip,
+.project-stage-dashboard-link:focus-visible .project-stage-dashboard-tooltip {
   opacity: 1;
   transform: translate(var(--brisk-space-none), var(--brisk-space-none));
 }
@@ -101,7 +100,7 @@
 
 .project-stage-flow-area {
   position: relative;
-  z-index: 0;
+  z-index: 90;
   display: grid;
   width: 100%;
   min-width: 0;
@@ -173,6 +172,41 @@
   flex-direction: column;
   align-items: center;
   gap: var(--brisk-space-xs);
+}
+
+.project-stage-chip[data-tooltip]::after {
+  position: absolute;
+  left: 50%;
+  top: auto;
+  bottom: calc(100% + var(--brisk-space-xs));
+  z-index: 160;
+  width: max-content;
+  max-width: calc(var(--brisk-space-3xl) * 5);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-s);
+  color: var(--brisk-text-primary);
+  content: attr(data-tooltip);
+  font-family: var(--font-brisk);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  opacity: 0;
+  padding: var(--brisk-space-xxs) var(--brisk-space-xs);
+  pointer-events: none;
+  text-align: left;
+  transform: translate(-50%, var(--brisk-space-xs));
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+
+.project-stage-step:hover .project-stage-chip[data-tooltip]::after,
+.project-stage-step:focus-within .project-stage-chip[data-tooltip]::after,
+.project-stage-chip[data-tooltip]:hover::after,
+.project-stage-chip[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, var(--brisk-space-none));
 }
 
 .project-stage-chip {

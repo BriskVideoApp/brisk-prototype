@@ -22,11 +22,13 @@ import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 export type StudioSettingsSectionId =
+  | "overview"
   | "details"
   | "branding"
   | "team"
   | "production"
   | "ai-playbook"
+  | "integrations"
   | "storage"
   | "notifications"
   | "plan-billing"
@@ -43,9 +45,16 @@ type StudioSettingsNavigationItem = {
 
 export const studioSettingsNavigation = [
   {
-    id: "details",
-    label: "Studio details",
+    id: "overview",
+    label: "Studio setup",
     href: "/settings/studio",
+    icon: "settings",
+    description: "Review and manage the defaults used across your Studio.",
+  },
+  {
+    id: "details",
+    label: "Studio profile",
+    href: "/settings/studio/details",
     icon: "settings",
     description: "Manage your Studio’s identity and regional settings.",
   },
@@ -76,6 +85,13 @@ export const studioSettingsNavigation = [
     href: "/settings/studio/ai-playbook",
     icon: "sparkle",
     description: "Define how Brisk AI supports creative and production work across your Studio.",
+  },
+  {
+    id: "integrations",
+    label: "Apps and integrations",
+    href: "/settings/studio/integrations",
+    icon: "link",
+    description: "Manage the shared accounts that connect your Studio to external messaging apps.",
   },
   {
     id: "storage",

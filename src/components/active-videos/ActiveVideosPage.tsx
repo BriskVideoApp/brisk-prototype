@@ -32,6 +32,8 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
 import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
 import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { selectWorkspaceProjects, type ScopedProject } from "@/data/prototype-state";
 import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
 import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
 
@@ -106,7 +108,7 @@ const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   status: { label: "Status", width: 150 },
   deadline: { label: "Deadline", width: 170 },
   hours: { label: "Hours", width: 220 },
-  costs: { label: "Costs", width: 190 },
+  costs: { label: "Project costs", width: 190 },
   team: { label: "Team", width: 68 },
   actions: { label: "Actions", width: 86 },
 };
@@ -116,7 +118,7 @@ const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "statu
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 
 function getProjectFlowHref(projectId: string) {
-  return getDemoProjectDestination(projectId, "brief")?.href ?? null;
+  return getDemoProjectDestination(projectId, "brief")?.href ?? `/projects/${encodeURIComponent(projectId)}`;
 }
 
 const filterLabels: Record<FilterKey, string> = {
@@ -154,6 +156,8 @@ export function ActiveVideosPage() {
 
 function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { state } = usePrototypeState();
+  const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const { completionRecords } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
   const { getProjectStages } = useProjectStageStatus();
@@ -173,10 +177,10 @@ function ActiveVideosWorkspace() {
     deadline: null,
   });
   const [projectTags, setProjectTags] = useState<Record<string, string[]>>(() =>
-    Object.fromEntries(activeVideoProjects.map((project) => [project.id, project.tags ?? []])),
+    Object.fromEntries(canonicalProjects.map((project) => [project.id, project.tags ?? []])),
   );
   const [projectDeadlines, setProjectDeadlines] = useState<Record<string, ProjectDeadline | undefined>>(() =>
-    Object.fromEntries(activeVideoProjects.map((project) => [project.id, project.deadline])),
+    Object.fromEntries(canonicalProjects.map((project) => [project.id, project.deadline])),
   );
   const [extraProjectTimeEntries, setExtraProjectTimeEntries] = useState<Record<string, TimeEntry[]>>({});
   const [tagClasses, setTagClasses] = useState<Record<string, TagClass>>(defaultTagClasses);
@@ -254,7 +258,7 @@ function ActiveVideosWorkspace() {
   const projects = useMemo(() => {
     if (previewState === "empty") return [];
 
-    return activeVideoProjects.map((project) => {
+    return canonicalProjects.map((project) => {
         const completion = completionRecords[project.id];
         const projectStages = getProjectStages(project);
         return {
@@ -274,7 +278,7 @@ function ActiveVideosWorkspace() {
           timeEntries: [...project.timeEntries, ...(extraProjectTimeEntries[project.id] ?? [])],
         };
       });
-  }, [completionRecords, extraProjectTimeEntries, getProjectStages, previewState]);
+  }, [canonicalProjects, completionRecords, extraProjectTimeEntries, getProjectStages, previewState]);
 
   const projectCostSummaries = useMemo(
     () => Object.fromEntries(
@@ -770,7 +774,6 @@ function ActiveVideosWorkspace() {
                   <Link className="active-videos-empty-primary label-s-semibold" href={selectedRole === "Studio Freelancer" ? "/chat" : selectedRole === "Customer" ? "/customer-dashboard" : "/clients"}>
                     {selectedRole === "Studio Freelancer" ? "Open Chat" : selectedRole === "Customer" ? "Back to dashboard" : "Add Client"}
                   </Link>
-                  {selectedRole === "Studio Staff" ? <Link className="active-videos-empty-secondary label-s-semibold" href="/studio-onboard">Studio onboarding</Link> : null}
                 </div>
               </div>
             ) : (
@@ -1197,7 +1200,7 @@ function ProjectDetailPanel({
   onClose,
   onSaveDeadline,
 }: {
-  project: Project;
+  project: ScopedProject;
   tags: string[];
   tagClasses: Record<string, TagClass>;
   deadline: ProjectDeadline | undefined;
@@ -1653,7 +1656,7 @@ function TimeSpentModal({
   entries,
   onClose,
 }: {
-  project: Project;
+  project: ScopedProject;
   totalHours: number;
   entries: ProjectTimeEntry[];
   onClose: () => void;
@@ -1707,10 +1710,11 @@ function TimeSpentModal({
 function ProjectDetailEditableHeader({ title, onEdit }: { title: string; onEdit: () => void }) {
   return (
     <div className="project-detail-section-heading">
-      <h3 className="project-detail-section-title label-s-semibold">{title}</h3>
-      <button className="project-detail-section-edit" type="button" aria-label={`Edit ${title}`} title={`Edit ${title}`} onClick={onEdit}>
-        <DsIcon name="pencil-simple-ds" size={16} />
-      </button>
+      <h3 className="project-detail-section-title label-s-semibold">
+        <button className="project-detail-section-title-button label-s-semibold" type="button" onClick={onEdit}>
+          {title}
+        </button>
+      </h3>
     </div>
   );
 }
@@ -1788,28 +1792,29 @@ function ProjectDetailCollapsibleSection({
     <section className={`project-detail-section project-detail-collapsible ${isOpen ? "open" : ""}`}>
       <div className="project-detail-collapsible-header">
         <button
-          className="project-detail-collapsible-toggle label-s-semibold"
+          className="project-detail-collapsible-title-button label-s-semibold"
           type="button"
+          onClick={() => {
+            if (onEdit) {
+              setIsOpen(true);
+              onEdit();
+              return;
+            }
+
+            setIsOpen((currentValue) => !currentValue);
+          }}
+        >
+          {title}
+        </button>
+        <button
+          className="project-detail-collapsible-disclosure"
+          type="button"
+          aria-label={`${isOpen ? "Collapse" : "Expand"} ${title}`}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((currentValue) => !currentValue)}
         >
-          <span>{title}</span>
           <DsIcon name="caret-down" size={16} />
         </button>
-        {onEdit && isOpen ? (
-          <button
-            className="project-detail-section-edit"
-            type="button"
-            aria-label={`Edit ${title}`}
-            title={`Edit ${title}`}
-            onClick={() => {
-              setIsOpen(true);
-              onEdit();
-            }}
-          >
-            <DsIcon name="pencil-simple-ds" size={16} />
-          </button>
-        ) : null}
       </div>
       {isOpen ? <div className="project-detail-collapsible-content">{children}</div> : null}
     </section>
@@ -2179,7 +2184,7 @@ function ProjectRow({
   onOpenProject,
   onToggleMenu,
 }: {
-  project: Project;
+  project: ScopedProject;
   fileLocations: ProjectFileLocation[];
   hasLoadedRole: boolean;
   selectedRole: PrototypeRole;
@@ -2290,7 +2295,7 @@ function ProjectCell({
   onRemoveTag,
   onCreateTag,
 }: {
-  project: Project;
+  project: ScopedProject;
   fileLocations: ProjectFileLocation[];
   hasLoadedRole: boolean;
   projectFlowHref: string | null;
@@ -2412,9 +2417,9 @@ function ProjectCell({
             ) : null}
             <a
               className="project-quick-action"
-              href="/customer-dashboard"
-              aria-label="Go to client dashboard"
-              data-tooltip="Go to client dashboard"
+              href={`/workspaces/${encodeURIComponent(project.workspaceId)}/clients/${encodeURIComponent(project.clientId)}/portal?studio-preview=1`}
+              aria-label="Go to Client portal"
+              data-tooltip="Go to Client portal"
               onClick={(event) => event.stopPropagation()}
             >
               <DsIcon name="queue" size={20} />
@@ -2699,7 +2704,7 @@ function ProjectDataCell({
         <Link
           className="project-costs-cell"
           href={`/projects/${project.id}/costs`}
-          aria-label={`Open Costs for ${project.name}. ${costSummary.totalLabel}, ${invoiceLabel}.`}
+          aria-label={`Open Project costs for ${project.name}. ${costSummary.totalLabel}, ${invoiceLabel}.`}
           onClick={(event) => event.stopPropagation()}
         >
           <strong className="label-s-semibold">{costSummary.totalLabel}</strong>

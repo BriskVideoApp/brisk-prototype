@@ -16,7 +16,8 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getBillingPlan, subscriptionFixtures } from "@/data/billing";
-import { getDemoProjectDestination, isDemoProject } from "@/data/projects";
+import { isDemoProject } from "@/data/projects";
+import { getProjectEntryHref } from "@/data/project-fixtures";
 import {
   customerDashboardActivity,
   customerDashboardFallbackThumbnailUrl,
@@ -26,6 +27,7 @@ import {
   type CustomerDashboardSeries,
   type CustomerDashboardStatus,
 } from "@/data/customer-dashboard";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type QueueTab = "Queued" | "Completed" | "Paused" | "Archived" | "All";
 type QueueScope = "All videos" | "Series only" | "Standalone only";
@@ -81,12 +83,14 @@ const initialSeriesChildOrder = Object.fromEntries(
 
 export function CustomerDashboard() {
   const { selectedRole } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
   const { studio } = useStudioSettings();
   const router = useRouter();
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
+  const isScenarioEmpty = activeScenario?.state === "new";
   const isStudioPreview = searchParams.get("studio-preview") === "1";
-  const isClientView = selectedRole === "Customer" || isStudioPreview;
+  const isClientView = selectedRole === "Customer";
   const clientName = "Loom";
   const [projects, setProjects] = useState<CustomerDashboardProject[]>(customerDashboardProjects);
   const [selectedTab, setSelectedTab] = useState<QueueTab>("Queued");
@@ -272,7 +276,7 @@ export function CustomerDashboard() {
     return () => window.removeEventListener("mousedown", closeMenus);
   }, [isFilterOpen, openMenuProjectId, openStatusProjectId]);
 
-  const displayProjects = previewState === "empty" ? [] : projects;
+  const displayProjects = previewState === "empty" || isScenarioEmpty ? [] : projects;
   const projectsById = useMemo(() => new Map(displayProjects.map((project) => [project.id, project])), [displayProjects]);
   const seriesById = useMemo(
     () => new Map(customerDashboardSeries.map((series) => [series.id, series])),
@@ -391,6 +395,10 @@ export function CustomerDashboard() {
     setIsProductionDropActive(false);
   };
 
+  const startVideo = () => {
+    router.push("/customer-dashboard/start-video");
+  };
+
   return (
     <main className={`customer-dashboard-shell studio-client-accent-${studio.branding.brandAccentId} ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
       <div className="customer-dashboard-main">
@@ -411,7 +419,7 @@ export function CustomerDashboard() {
                 <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={24} /></span>
                 <h2 className="headings-s-bold">Your first video starts here</h2>
                 <p className="paragraph-s">Start a video with {studio.details.name} and follow it from Brief through Masters.</p>
-                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={() => notify("Start Video opens the project brief flow")}>Start Video</button>
+                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>Start Video</button>
               </section>
             ) : (
               <>
@@ -531,7 +539,7 @@ export function CustomerDashboard() {
                   <button
                     className="customer-dashboard-primary-button label-s-semibold"
                     type="button"
-                    onClick={() => notify("Start Video opens the project brief flow")}
+                    onClick={startVideo}
                   >
                     <DsIcon name="plus" size={16} />
                     Start Video
@@ -722,7 +730,7 @@ export function CustomerDashboard() {
                     <button
                       className={`${isQueueFilteredEmpty ? "customer-dashboard-secondary-button" : "customer-dashboard-primary-button"} label-s-semibold`}
                       type="button"
-                      onClick={isQueueFilteredEmpty ? clearQueueControls : () => notify("Start Video opens the project brief flow")}
+                      onClick={isQueueFilteredEmpty ? clearQueueControls : startVideo}
                     >
                       {isQueueFilteredEmpty ? "Show all videos" : "Start Video"}
                     </button>
@@ -762,7 +770,7 @@ export function CustomerDashboard() {
             >
               <DsIcon name="x-close-cross" size={18} />
             </button>
-            <ActivityPanel empty={previewState === "empty"} onClose={() => setIsActivityOpen(false)} />
+            <ActivityPanel empty={previewState === "empty" || isScenarioEmpty} onClose={() => setIsActivityOpen(false)} />
           </aside>
         </div>
       ) : null}
@@ -880,12 +888,20 @@ function ProductionCard({
   onToggleMenu: () => void;
   studioName: string;
 }) {
+  const projectHref = getProjectEntryHref(project);
+
   return (
     <article className={`customer-production-card ${isWide ? "is-wide" : ""}`}>
+      <Link
+        className="customer-project-surface-link"
+        href={projectHref}
+        aria-label={`Open ${project.name}`}
+        draggable={false}
+      />
       <div className="customer-production-card-top">
         <div className="customer-production-card-copy">
           <span className="customer-project-code label-xs-semibold">{project.code}</span>
-          <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" interactive={interactive} project={project} />
+          <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" project={project} />
           <span className="customer-latest-action label-xs">
             {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
           </span>
@@ -974,6 +990,8 @@ function QueueProjectRow({
   onToggleMenu: () => void;
   studioName: string;
 }) {
+  const projectHref = getProjectEntryHref(project);
+
   return (
     <div
       className={`customer-queue-row ${child ? "series-child" : ""}`}
@@ -991,10 +1009,16 @@ function QueueProjectRow({
         onDragEnd();
       } : undefined}
     >
+      <Link
+        className="customer-project-surface-link"
+        href={projectHref}
+        aria-label={`Open ${project.name}`}
+        draggable={false}
+      />
       {interactive ? <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span> : null}
       <div className="customer-queue-project" role="cell">
         <span className="customer-project-code label-xs-semibold">{project.code}</span>
-        <CustomerProjectDestination className="heading-3xs" interactive={interactive} project={project} />
+        <CustomerProjectDestination className="heading-3xs" project={project} />
         <span className="customer-latest-action label-xs">
           {project.latestAction.label} · {formatRelativeTime(project.latestAction.timestamp)}
         </span>
@@ -1128,44 +1152,22 @@ function ProjectActionsMenu({
           </button>
         </div>
       ) : null}
-      {getDemoProjectDestination(project.id, "brief") ? (
-        <Link className="label-s-semibold" href={getDemoProjectDestination(project.id, "brief")?.href ?? ""} role="menuitem">
-          <DsIcon name="folder-open" size={16} />
-          Open project
-        </Link>
-      ) : (
-        <span className="customer-project-menu-disabled label-s-semibold" role="menuitem" aria-disabled="true">
-          <DsIcon name="folder-open" size={16} />
-          Demo not available
-        </span>
-      )}
+      <Link className="label-s-semibold" href={getProjectEntryHref(project)} role="menuitem">
+        <DsIcon name="folder-open" size={16} />
+        Open project
+      </Link>
     </div>
   );
 }
 
 function CustomerProjectDestination({
   className,
-  interactive = true,
   project,
 }: {
   className: string;
-  interactive?: boolean;
   project: CustomerDashboardProject;
 }) {
-  const destination = getDemoProjectDestination(project.id, "brief");
-
-  if (destination && interactive) {
-    return <Link className={className} href={destination.href}>{project.name}</Link>;
-  }
-
-  if (!interactive) return <span className={`${className} is-static`}>{project.name}</span>;
-
-  return (
-    <span className={`${className} is-static`} aria-disabled="true" title="Demo not available">
-      {project.name}
-      <small className="customer-demo-unavailable label-xs">Demo not available</small>
-    </span>
-  );
+  return <span className={className}>{project.name}</span>;
 }
 
 function getSeriesChildren(

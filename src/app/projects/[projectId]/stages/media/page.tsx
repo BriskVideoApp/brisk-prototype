@@ -1,16 +1,16 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { MediaStagePage } from "@/components/media/MediaStagePage";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { getProjectFixture, projectFixtureIds } from "@/data/project-fixtures";
 
 export function generateStaticParams() {
-  return activeVideoProjects.map((project) => ({ projectId: project.id }));
+  return projectFixtureIds.map((projectId) => ({ projectId }));
 }
 
 export default async function MediaRoute({ params, searchParams }: { params: Promise<{ projectId: string }>; searchParams: Promise<{ folder?: string | string[]; asset?: string | string[] }> }) {
   const { projectId } = await params;
   const query = await searchParams;
-  const project = activeVideoProjects.find((activeProject) => activeProject.id === projectId);
+  const project = getProjectFixture(projectId);
 
   if (!project) notFound();
 

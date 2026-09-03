@@ -143,8 +143,6 @@ export const initialStudioNotificationSettings: StudioNotificationSettings = {
   },
 };
 
-export type PersonalProjectSubscription = "important-only" | "mentions-only";
-
 export type PersonalNotificationSettings = {
   inAppActionRequired: boolean;
   mentionsAndDms: boolean;
@@ -154,11 +152,6 @@ export type PersonalNotificationSettings = {
   invoiceStatusChanges: boolean;
   emailFallback: boolean;
   dailyDigest: boolean;
-  quietHoursEnabled: boolean;
-  quietHoursStart: string;
-  quietHoursEnd: string;
-  timezone: string;
-  defaultProjectSubscription: PersonalProjectSubscription;
 };
 
 export const initialPersonalNotificationSettings: PersonalNotificationSettings = {
@@ -170,11 +163,6 @@ export const initialPersonalNotificationSettings: PersonalNotificationSettings =
   invoiceStatusChanges: true,
   emailFallback: true,
   dailyDigest: false,
-  quietHoursEnabled: true,
-  quietHoursStart: "18:00",
-  quietHoursEnd: "08:00",
-  timezone: "Australia/Sydney",
-  defaultProjectSubscription: "important-only",
 };
 
 export type ProjectNotificationFollowMode = "studio-default" | "follow-all" | "important-only" | "mentions-only" | "muted";
@@ -236,7 +224,16 @@ export function cloneStudioNotificationSettings(settings: StudioNotificationSett
 }
 
 export function clonePersonalNotificationSettings(settings: PersonalNotificationSettings): PersonalNotificationSettings {
-  return { ...settings };
+  return {
+    inAppActionRequired: settings.inAppActionRequired,
+    mentionsAndDms: settings.mentionsAndDms,
+    offersAndChanges: settings.offersAndChanges,
+    assignmentChanges: settings.assignmentChanges,
+    assignedProjectUpdates: settings.assignedProjectUpdates,
+    invoiceStatusChanges: settings.invoiceStatusChanges,
+    emailFallback: settings.emailFallback,
+    dailyDigest: settings.dailyDigest,
+  };
 }
 
 export function cloneProjectNotificationOverrides(overrides: ProjectNotificationOverrides): ProjectNotificationOverrides {

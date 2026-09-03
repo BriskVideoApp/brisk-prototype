@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { NotificationSettingsCheckbox } from "@/components/settings/NotificationSettingsCheckbox";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -11,31 +10,7 @@ import {
   clonePersonalNotificationSettings,
   initialPersonalNotificationSettings,
   type PersonalNotificationSettings,
-  type PersonalProjectSubscription,
 } from "@/data/notification-settings";
-
-const quietHourOptions = [
-  { value: "17:00", label: "5:00 pm" },
-  { value: "18:00", label: "6:00 pm" },
-  { value: "19:00", label: "7:00 pm" },
-  { value: "20:00", label: "8:00 pm" },
-  { value: "08:00", label: "8:00 am" },
-  { value: "09:00", label: "9:00 am" },
-] as const;
-
-const timezoneOptions = [
-  { value: "Australia/Sydney", label: "Australia/Sydney" },
-  { value: "Australia/Melbourne", label: "Australia/Melbourne" },
-  { value: "Australia/Brisbane", label: "Australia/Brisbane" },
-  { value: "Australia/Perth", label: "Australia/Perth" },
-  { value: "Pacific/Auckland", label: "Pacific/Auckland" },
-  { value: "Europe/London", label: "Europe/London" },
-] as const;
-
-const subscriptionOptions: ReadonlyArray<{ value: PersonalProjectSubscription; label: string }> = [
-  { value: "important-only", label: "Important only" },
-  { value: "mentions-only", label: "Mentions only" },
-];
 
 export function PersonalNotificationSettingsPage() {
   const { selectedRole } = usePrototypeRole();
@@ -79,9 +54,7 @@ export function PersonalNotificationSettingsPage() {
             <DsIcon name="arrow-left" size={16} />
             {backLabel}
           </Link>
-          <span className="label-xs-semibold">Your settings</span>
           <h1 className="headings-m-bold">Notification preferences</h1>
-          <p className="paragraph-s">Choose which updates you receive in Brisk and by email.</p>
         </div>
       </header>
 
@@ -209,68 +182,6 @@ export function PersonalNotificationSettingsPage() {
           </div>
         </section>
 
-        <section className="notification-settings-section">
-          <header>
-            <span><DsIcon name="clock-clockwise" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">Quiet hours</h2>
-              <p className="paragraph-s">Routine delivery waits until quiet hours end. Security and urgent published shoot changes take precedence.</p>
-            </div>
-          </header>
-          <div className="notification-settings-section-content">
-            <PersonalPolicyCheckbox
-              checked={draft.quietHoursEnabled}
-              label="Use quiet hours"
-              description="Hold non-urgent email and digest delivery during this window."
-              onChange={(checked) => setDraft((current) => ({ ...current, quietHoursEnabled: checked }))}
-            />
-            <div className="notification-settings-field-grid is-three-columns">
-              <PersonalSelectField
-                label="Start"
-                options={quietHourOptions}
-                value={draft.quietHoursStart}
-                disabled={!draft.quietHoursEnabled}
-                onChange={(value) => setDraft((current) => ({ ...current, quietHoursStart: value }))}
-              />
-              <PersonalSelectField
-                label="End"
-                options={quietHourOptions}
-                value={draft.quietHoursEnd}
-                disabled={!draft.quietHoursEnabled}
-                onChange={(value) => setDraft((current) => ({ ...current, quietHoursEnd: value }))}
-              />
-              <PersonalSelectField
-                label="Timezone"
-                options={timezoneOptions}
-                value={draft.timezone}
-                disabled={!draft.quietHoursEnabled}
-                onChange={(value) => setDraft((current) => ({ ...current, timezone: value }))}
-              />
-            </div>
-          </div>
-        </section>
-
-        {!isFreelancer ? (
-          <section className="notification-settings-section">
-            <header>
-              <span><DsIcon name="folder" size={18} /></span>
-              <div>
-                <h2 className="headings-xs-bold">New project subscription</h2>
-                <p className="paragraph-s">Choose your personal starting point when you join a project.</p>
-              </div>
-            </header>
-            <div className="notification-settings-section-content">
-              <PersonalSelectField
-                label="Default project subscription"
-                options={subscriptionOptions}
-                value={draft.defaultProjectSubscription}
-                onChange={(value) => setDraft((current) => ({ ...current, defaultProjectSubscription: value }))}
-              />
-              <p className="notification-settings-note label-xs">Project-level choices can still be changed without changing your permission role.</p>
-            </div>
-          </section>
-        ) : null}
-
         <div className="studio-settings-form-actions">
           <Button size="M" type="button" variant="secondary" onClick={discardChanges}>Discard changes</Button>
           <Button size="M" type="submit">Save preferences</Button>
@@ -304,44 +215,14 @@ function PersonalPolicyCheckbox({
   );
 }
 
-function PersonalSelectField<T extends string>({
-  disabled = false,
-  label,
-  onChange,
-  options,
-  value,
-}: {
-  disabled?: boolean;
-  label: string;
-  onChange: (value: T) => void;
-  options: ReadonlyArray<{ value: T; label: string }>;
-  value: T;
-}) {
-  return (
-    <label className={`notification-settings-select-field ${disabled ? "is-disabled" : ""}`}>
-      <span className="label-s-semibold">{label}</span>
-      <div aria-disabled={disabled}>
-        <BriskSelect
-          ariaLabel={label}
-          clearable={false}
-          options={options}
-          placeholder={`Choose ${label.toLocaleLowerCase("en-AU")}`}
-          searchable={false}
-          value={value}
-          onChange={(nextValue) => {
-            if (nextValue && !disabled) onChange(nextValue);
-          }}
-        />
-      </div>
-    </label>
-  );
-}
-
 function readPersonalNotificationSettings(storageKey: string) {
   try {
     const storedValue = window.localStorage.getItem(storageKey);
     if (!storedValue) return clonePersonalNotificationSettings(initialPersonalNotificationSettings);
-    return { ...initialPersonalNotificationSettings, ...JSON.parse(storedValue) as Partial<PersonalNotificationSettings> };
+    return clonePersonalNotificationSettings({
+      ...initialPersonalNotificationSettings,
+      ...JSON.parse(storedValue) as Partial<PersonalNotificationSettings>,
+    });
   } catch {
     return clonePersonalNotificationSettings(initialPersonalNotificationSettings);
   }

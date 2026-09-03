@@ -1,15 +1,15 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { MastersPage } from "@/components/masters/MastersPage";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { getProjectFixture, projectFixtureIds } from "@/data/project-fixtures";
 
 export function generateStaticParams() {
-  return activeVideoProjects.map((project) => ({ projectId: project.id }));
+  return projectFixtureIds.map((projectId) => ({ projectId }));
 }
 
 export default async function MastersRoute({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
-  const project = activeVideoProjects.find((activeProject) => activeProject.id === projectId);
+  const project = getProjectFixture(projectId);
 
   if (!project) notFound();
 

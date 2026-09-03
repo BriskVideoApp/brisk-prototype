@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 export type PrototypeRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
@@ -19,32 +20,36 @@ export const prototypeRoles: readonly PrototypeRole[] = [
   "Customer",
 ];
 export const prototypeRoleLabels: Record<PrototypeRole, string> = {
-  "Studio Staff": "Studio",
-  "Studio Freelancer": "Freelancer",
+  "Studio Staff": "Studio Staff",
+  "Studio Freelancer": "Studio Freelancer",
   Customer: "Client",
 };
+// Compatibility only for legacy, non-portal demonstration fixtures.
 export const prototypeCustomerSlug = "loom";
 
 export function PrototypeRoleProvider({ children }: { children: React.ReactNode }) {
+  const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
   const [allPages, setAllPages] = useState(false);
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (window.location.pathname === "/customer-dashboard" && searchParams.get("studio-preview") === "1") {
-      setSelectedRole("Customer");
+    if (activeScenario) {
+      setSelectedRole(activeScenario.accessRole);
+      setAllPages(false);
+      return;
     }
-  }, []);
+
+  }, [activeScenario]);
 
   const value = useMemo(
     () => ({
       selectedRole,
-      hasLoadedRole: true,
+      hasLoadedRole: hasLoadedScenario,
       allPages,
       setSelectedRole,
       setAllPages,
     }),
-    [allPages, selectedRole],
+    [allPages, hasLoadedScenario, selectedRole],
   );
 
   return (

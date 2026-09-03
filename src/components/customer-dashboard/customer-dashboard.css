@@ -11,6 +11,96 @@
   color: var(--brisk-text-primary);
 }
 
+.customer-dashboard-shell.is-embedded {
+  min-height: 0;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-l);
+  overflow: hidden;
+}
+
+.customer-dashboard-shell.is-embedded .customer-dashboard-header {
+  min-height: auto;
+}
+
+.customer-portal-preview-badge,
+.customer-dashboard-primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--brisk-space-s);
+}
+
+.customer-portal-preview-badge {
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.customer-portal-project-section {
+  display: grid;
+  gap: var(--brisk-space-l);
+}
+
+.customer-portal-project-section > header {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.customer-portal-project-section > header > * {
+  margin: 0;
+}
+
+.customer-portal-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--brisk-space-l);
+}
+
+.customer-portal-project-grid .customer-production-card {
+  min-height: 240px;
+}
+
+.customer-portal-project-grid .customer-dashboard-primary-button {
+  width: max-content;
+  text-decoration: none;
+}
+
+.customer-portal-unavailable {
+  display: grid;
+  min-height: 100dvh;
+  place-content: center;
+  justify-items: center;
+  gap: var(--brisk-space-m);
+  background: var(--brisk-page-primary);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-2xl);
+  text-align: center;
+}
+
+.customer-portal-unavailable.is-embedded {
+  min-height: 320px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-l);
+}
+
+.customer-portal-unavailable > * {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .customer-dashboard-header,
+  .customer-dashboard-layout {
+    padding-right: var(--brisk-space-l);
+    padding-left: var(--brisk-space-l);
+  }
+
+  .customer-dashboard-heading h1 {
+    font-size: 30px;
+    line-height: 38px;
+  }
+}
+
 .customer-dashboard-main {
   min-width: 0;
   flex: 1 1 auto;
@@ -274,6 +364,43 @@
   animation: customer-production-card-reveal 420ms ease-out both;
 }
 
+.customer-project-surface-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.customer-project-surface-link:focus-visible {
+  outline: 2px solid var(--brisk-focus-ring);
+  outline-offset: -2px;
+}
+
+.customer-production-card:has(.customer-project-surface-link:hover),
+.customer-production-card:has(.customer-project-surface-link:focus-visible) {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.customer-production-card > :not(.customer-project-surface-link),
+.customer-queue-row > :not(.customer-project-surface-link) {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.customer-production-card .customer-dashboard-icon-button,
+.customer-production-card .customer-project-menu-wrap,
+.customer-production-card .customer-client-stage-progress:not([inert]),
+.customer-queue-row .customer-dashboard-icon-button,
+.customer-queue-row .customer-project-menu-wrap,
+.customer-queue-row .customer-status-control,
+.customer-queue-row .customer-queue-drag,
+.customer-queue-row .customer-client-stage-progress:not([inert]) {
+  pointer-events: auto;
+}
+
 .customer-production-card-top {
   min-width: 0;
   align-items: flex-start;
@@ -520,9 +647,14 @@
   color: var(--brisk-text-white);
 }
 
-.customer-dashboard-shell.is-client-view .customer-dashboard-primary-button {
+.customer-dashboard-shell:is(.is-client-view, .is-studio-preview) .customer-dashboard-primary-button {
   background: var(--studio-client-accent);
   color: var(--studio-client-accent-contrast);
+}
+
+.customer-dashboard-shell:is(.is-client-view, .is-studio-preview) .customer-project-code {
+  background: var(--studio-client-accent-soft);
+  color: var(--studio-client-accent-ink);
 }
 
 .customer-dashboard-secondary-button {
@@ -548,6 +680,11 @@
 .customer-dashboard-secondary-button:active {
   box-shadow: none;
   transform: none;
+}
+
+.customer-dashboard-shell:is(.is-client-view, .is-studio-preview) .customer-dashboard-primary-button:active {
+  background: var(--studio-client-accent-ink);
+  color: var(--studio-client-accent-ink-contrast);
 }
 
 .customer-dashboard-secondary-button[aria-expanded="true"] .ds-icon {

@@ -1,8 +1,11 @@
 export type BriefStepId =
   | "basics"
+  | "videoType"
   | "purposeAudience"
-  | "lookFeel"
+  | "similarVideos"
+  | "brandKit"
   | "contentProduction"
+  | "deadline"
   | "deliverablesTiming"
   | "summary";
 
@@ -74,12 +77,15 @@ export type BriefDraft = {
 };
 
 export const briefSteps: Array<{ id: BriefStepId; index: number; label: string; shortLabel: string }> = [
-  { id: "basics", index: 1, label: "The basics", shortLabel: "Basics" },
-  { id: "purposeAudience", index: 2, label: "Purpose and audience", shortLabel: "Purpose" },
-  { id: "lookFeel", index: 3, label: "Look and feel", shortLabel: "Look" },
-  { id: "contentProduction", index: 4, label: "Content and production", shortLabel: "Content" },
-  { id: "deliverablesTiming", index: 5, label: "Deliverables and timing", shortLabel: "Timing" },
-  { id: "summary", index: 6, label: "Brief Summary", shortLabel: "Summary" },
+  { id: "basics", index: 1, label: "Description", shortLabel: "Description" },
+  { id: "videoType", index: 2, label: "Video type", shortLabel: "Type" },
+  { id: "purposeAudience", index: 3, label: "Audience and action", shortLabel: "Audience" },
+  { id: "similarVideos", index: 4, label: "Similar videos", shortLabel: "Videos" },
+  { id: "brandKit", index: 5, label: "Brand kit", shortLabel: "Brand" },
+  { id: "contentProduction", index: 6, label: "Content and production", shortLabel: "Content" },
+  { id: "deadline", index: 7, label: "Deadline", shortLabel: "Deadline" },
+  { id: "deliverablesTiming", index: 8, label: "Deliverables", shortLabel: "Versions" },
+  { id: "summary", index: 9, label: "Review your brief", shortLabel: "Summary" },
 ];
 
 export const confidenceChipLabels: Record<ConfidenceState, ConfidenceChipModel> = {
@@ -260,7 +266,7 @@ export const initialBriefFields: BriefFields = {
     value: "",
     confidence: "missing",
     source: "missing",
-    required: true,
+    required: false,
   },
   audience: {
     id: "audience",
@@ -276,7 +282,7 @@ export const initialBriefFields: BriefFields = {
     value: "",
     confidence: "missing",
     source: "missing",
-    required: true,
+    required: false,
   },
   referenceVideos: {
     id: "referenceVideos",
@@ -400,7 +406,7 @@ export const fallbackBriefDraft: BriefDraft = {
       value: "Awareness - Make more people know about your topic",
       confidence: "guess",
       source: "ai_inferred",
-      required: true,
+      required: false,
     },
     audience: {
       id: "audience",
@@ -416,7 +422,7 @@ export const fallbackBriefDraft: BriefDraft = {
       value: "Informative, Urgent",
       confidence: "guess",
       source: "ai_inferred",
-      required: true,
+      required: false,
     },
     referenceVideos: {
       id: "referenceVideos",
@@ -524,7 +530,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           value: "Education - Explain clearly",
           confidence: "guess",
           source: "ai_inferred",
-          required: true,
+          required: false,
         },
         audience: {
           id: "audience",
@@ -540,7 +546,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           value: "Informative",
           confidence: "guess",
           source: "ai_inferred",
-          required: true,
+          required: false,
         },
         referenceVideos: {
           id: "referenceVideos",
@@ -647,7 +653,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           value: "Awareness - Make more people know about your topic",
           confidence: "guess",
           source: "ai_inferred",
-          required: true,
+          required: false,
         },
         audience: {
           id: "audience",
@@ -663,7 +669,7 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
           value: "Inspirational",
           confidence: "guess",
           source: "ai_inferred",
-          required: true,
+          required: false,
         },
         referenceVideos: {
           id: "referenceVideos",

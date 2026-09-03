@@ -43,6 +43,7 @@ const allRoles: readonly PrototypeRole[] = [
 const studioRoles: readonly PrototypeRole[] = ["Studio Staff", "Studio Freelancer"];
 const studioOnly: readonly PrototypeRole[] = ["Studio Staff"];
 const clientOnly: readonly PrototypeRole[] = ["Customer"];
+const clientDashboardRoles: readonly PrototypeRole[] = ["Studio Staff", "Customer"];
 const personalSettingsRoles: readonly PrototypeRole[] = allRoles;
 
 const projectIconByExperience: Record<DemoProjectExperience, DsIconName> = {
@@ -108,7 +109,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
       },
       {
         id: "outstanding-invoices",
-        label: "Outstanding invoices",
+        label: "Invoices to pay",
         href: "/outstanding-invoices",
         icon: "file-text",
         roles: studioOnly,
@@ -116,10 +117,10 @@ export const navigationGroups: readonly NavigationGroup[] = [
       },
       {
         id: "client-dashboard",
-        label: "Dashboard",
-        href: "/customer-dashboard",
+        label: "Client portal",
+        href: "/prototype/scenarios",
         icon: "grid-four",
-        roles: clientOnly,
+        roles: clientDashboardRoles,
       },
       {
         id: "chat",
@@ -435,5 +436,5 @@ export function canRoleSeeNavigationItem(
 export function getRoleHome(selectedRole: PrototypeRole) {
   if (selectedRole === "Studio Staff") return "/today";
   if (selectedRole === "Studio Freelancer") return "/today";
-  return "/customer-dashboard";
+  return "/prototype/scenarios";
 }

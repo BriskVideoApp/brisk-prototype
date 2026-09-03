@@ -1876,21 +1876,8 @@
   color: var(--brisk-text-secondary);
 }
 
-.voice-summary,
-.guidelines-summary p,
-.guidelines-summary-editor {
+.voice-summary {
   margin: var(--brisk-space-none);
-}
-
-.guidelines-summary-editor {
-  width: 100%;
-  min-height: 144px;
-  resize: vertical;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-m);
 }
 
 .tone-tag-list {
@@ -1957,24 +1944,6 @@
 
 .brand-tile.brand-guidelines-tile > .brand-tile-body {
   gap: var(--brisk-space-l);
-}
-
-.guidelines-summary {
-  display: grid;
-  min-height: 0;
-  align-content: start;
-  border-radius: var(--brisk-radius-s);
-  background: transparent;
-  gap: var(--brisk-space-m);
-  padding: var(--brisk-space-none);
-}
-
-.guidelines-summary-label {
-  display: inline-flex;
-  width: max-content;
-  align-items: center;
-  color: var(--brisk-brand-primary-click);
-  gap: var(--brisk-space-xs);
 }
 
 .brand-guidelines-frame {

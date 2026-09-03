@@ -27,22 +27,20 @@ import { ChatThreadPane } from "@/components/chat/ChatThreadPane";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getDemoProjectDestination } from "@/data/projects";
 import type {
   ChatAttachment,
   ChatChannel,
-  ChatConnectorSource,
   ChatMessage,
   ChatProject,
   ChatSource,
-  StudioChatConnectors,
 } from "@/components/chat/types";
 import type { ReactionEmoji } from "@/components/video-review/types";
 import {
   chatMessages as initialMessages,
   chatClients,
-  chatStudioConnectors as initialStudioConnectors,
   directMessages as initialDirectMessages,
   chatProjects as initialProjects,
   chatUsers,
@@ -53,6 +51,7 @@ import {
   recentCalls,
 } from "@/data/chat";
 import { appendMessageOnce, resolveOutboundSource } from "@/components/chat/chat-utils";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type ChatPageProps = {
   initialProjectId?: string | null;
@@ -63,8 +62,10 @@ type ChatPageProps = {
 
 export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
+  const { studio } = useStudioSettings();
+  const { activeScenario } = usePrototypeScenario();
   const searchParams = useSearchParams();
-  const isEmptyPreview = searchParams.get("preview") === "empty";
+  const isEmptyPreview = searchParams.get("preview") === "empty" || activeScenario?.state === "new";
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
@@ -96,9 +97,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConnectorSettingsOpen, setIsConnectorSettingsOpen] = useState(false);
   const [isCustomerSettingsOpen, setIsCustomerSettingsOpen] = useState(false);
-  const [studioConnectors, setStudioConnectors] = useState<StudioChatConnectors>(
-    initialStudioConnectors,
-  );
+  const studioConnectors = studio.integrations;
   const [isShortcutSheetOpen, setIsShortcutSheetOpen] = useState(false);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -106,9 +105,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [customerFilter, setCustomerFilter] = useState<ChatCustomerFilter>("Active");
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
-  const [dismissedConnectorWarnings, setDismissedConnectorWarnings] = useState<Set<string>>(
-    () => new Set(),
-  );
   const openedInitialMessageRef = useRef(false);
 
   const effectiveCurrentUserId =
@@ -120,6 +116,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const isCustomer = selectedRole === "Customer";
   const isStudioStaff = selectedRole === "Studio Staff";
   const accessibleProjects = useMemo(() => {
+    if (isEmptyPreview) return [];
+
     const roleProjects = selectedRole === "Customer"
       ? projects.filter((project) => project.clientMemberIds.includes(effectiveCurrentUserId))
       : selectedRole === "Studio Freelancer"
@@ -129,7 +127,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     return clientName
       ? roleProjects.filter((project) => project.clientName === clientName)
       : roleProjects;
-  }, [clientName, effectiveCurrentUserId, projects, selectedRole]);
+  }, [clientName, effectiveCurrentUserId, isEmptyPreview, projects, selectedRole]);
 
   useEffect(() => {
     if (!initialMessageId || openedInitialMessageRef.current) return;
@@ -264,7 +262,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         .filter((message) => message.threadId === threadParent.id)
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
-  const visibleDmConversations = dmConversations.filter((conversation) =>
+  const visibleDmConversations = (isEmptyPreview ? [] : dmConversations).filter((conversation) =>
     conversation.memberIds.includes(effectiveCurrentUserId),
   );
   const selectedDm = selectedDmId
@@ -344,19 +342,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         .filter((message) => message.projectId === selectedGroup.id && message.threadId === null)
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
-  const disconnectedConnector =
-    !selectedCompanyChatProject && activeProjectChat?.connectors
-      ? (Object.keys(activeProjectChat.connectors) as ChatConnectorSource[]).find(
-      (source) =>
-        activeProjectChat.connectors[source].enabled && !studioConnectors[source].connected,
-      ) ?? null
-      : null;
-  const connectorWarningKey = disconnectedConnector && activeProjectChat
-    ? `${activeProjectChat.id}:${disconnectedConnector}`
-    : null;
-  const hasConnectorFailure = connectorWarningKey !== null
-    && !dismissedConnectorWarnings.has(connectorWarningKey);
-
   const notify = useCallback((message: string) => {
     setToast(message);
     window.setTimeout(() => setToast(null), 2400);
@@ -1337,7 +1322,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
         {activeView === "calls" ? (
           <ChatCallsView
-            calls={recentCalls}
+            calls={isEmptyPreview ? [] : recentCalls}
             projects={accessibleProjects}
             users={chatUsers}
             workspaceName={chatWorkspace.name}
@@ -1504,29 +1489,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
               </div>
             ) : null}
 
-            {hasConnectorFailure && activeChannel === "external" ? (
-              <div className="chat-reconnect-banner" role="alert">
-                <DsIcon name="alert-triangle" size={16} />
-                <span className="label-s-semibold">
-                  {disconnectedConnector === "whatsapp" ? "WhatsApp" : "Slack"} needs to be reconnected to keep External messages syncing.
-                </span>
-                <button className="label-xs-semibold" type="button" onClick={() => setIsConnectorSettingsOpen(true)}>
-                  Reconnect
-                </button>
-                <button
-                  className="chat-icon-button chat-reconnect-dismiss"
-                  type="button"
-                  aria-label={`Dismiss ${disconnectedConnector === "whatsapp" ? "WhatsApp" : "Slack"} reconnect warning`}
-                  onClick={() => {
-                    if (!connectorWarningKey) return;
-                    setDismissedConnectorWarnings((current) => new Set(current).add(connectorWarningKey));
-                  }}
-                >
-                  <DsIcon name="x-close-cross" size={16} />
-                </button>
-              </div>
-            ) : null}
-
             <div className={`chat-conversation-layout ${threadParent ? "thread-open" : ""}`}>
               <section className={`chat-conversation-pane ${activeChannel}`}>
                 <ChatMessageList
@@ -1584,7 +1546,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         ) : activeView === "projects" ? (
           <ChatProjectList
             projects={isEmptyPreview ? [] : projectListProjects}
-            messages={messages}
+            messages={isEmptyPreview ? [] : messages}
             users={chatUsers}
             clientName={selectedClientName}
             showCompanyChat={!isCustomer && Boolean(selectedClientName)}
@@ -1608,7 +1570,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             messages={messages}
             users={chatUsers}
             directConversations={visibleDmConversations}
-            groupConversations={groupConversationList}
+            groupConversations={isEmptyPreview ? [] : groupConversationList}
             customerContext={isCustomer}
             onConversationSelect={selectDirectConversation}
             onGroupConversationSelect={selectGroupConversation}
@@ -1643,12 +1605,11 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       {isConnectorSettingsOpen && selectedProject && !isCustomer ? (
         <ProjectConnectorSettings
           project={selectedProject}
-          studioName={chatWorkspace.name}
+          studioName={studio.details.name}
           studioConnectors={studioConnectors}
           onClose={() => setIsConnectorSettingsOpen(false)}
           onNotify={notify}
           onProjectChange={updateProject}
-          onStudioConnectorsChange={setStudioConnectors}
         />
       ) : null}
 

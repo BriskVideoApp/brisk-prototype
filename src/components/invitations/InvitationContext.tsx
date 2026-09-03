@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { InvitePersonModal, type InvitePersonSubmission } from "@/components/invitations/InvitePersonModal";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -53,6 +54,7 @@ type OpenInvitation = {
 const InvitationContext = createContext<InvitationContextValue | null>(null);
 
 export function InvitationProvider({ children }: { children: ReactNode }) {
+  const { inviteClient, inviteClientTeammate } = usePrototypeState();
   const {
     createPerson,
     people,
@@ -146,10 +148,26 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       status,
       destination: getInvitationDestination(submission.role, submission.clientIds, submission.projectIds),
     });
+    if (submission.role === "Customer" && submission.clientIds[0]) {
+      if (submission.projectIds[0]) {
+        inviteClient({
+          clientId: submission.clientIds[0],
+          projectId: submission.projectIds[0],
+          name,
+          email,
+        });
+      } else {
+        inviteClientTeammate({
+          clientId: submission.clientIds[0],
+          name,
+          email,
+        });
+      }
+    }
     onComplete?.(person, submission);
     setOpenInvitation(null);
     setToast(`Invite sent to ${email}.`);
-  }, [addInvitationRecord, createPerson, getInvitationStatus, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
+  }, [addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
 
   const resendInvitation = useCallback((person: Person) => {
     const projectIds = unique([

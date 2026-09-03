@@ -1,10 +1,12 @@
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ScriptSubtab, ScriptSubtabId } from "@/data/script";
+import type { ReactNode } from "react";
 
 export function ScriptSubtabBar({
   activeSubtabId,
   draggingSubtabId,
   subtabs,
+  actions,
   onActivate,
   onDragEnd,
   onDragStart,
@@ -13,6 +15,7 @@ export function ScriptSubtabBar({
   activeSubtabId: ScriptSubtabId;
   draggingSubtabId: ScriptSubtabId | null;
   subtabs: ScriptSubtab[];
+  actions?: ReactNode;
   onActivate: (subtabId: ScriptSubtabId) => void;
   onDragEnd: () => void;
   onDragStart: (subtabId: ScriptSubtabId) => void;
@@ -48,6 +51,7 @@ export function ScriptSubtabBar({
           </div>
         ))}
       </div>
+      {actions ? <div className="script-subtab-actions">{actions}</div> : null}
     </nav>
   );
 }

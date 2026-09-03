@@ -23,6 +23,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import { StageApprovalControl } from "@/components/share/ShareActionRow";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -34,6 +35,7 @@ import {
   ensureShotNumbers,
   existingPeople,
   formatTime,
+  getEmptyCallSheet,
   getInitialCallSheet,
   getMapsUrl,
   isAssignedToDay,
@@ -130,7 +132,9 @@ function getWeatherIcon(weather: string): DsIconName {
 
 export function ShootStagePage({ project }: { project: Project }) {
   const searchParams = useSearchParams();
-  const isEmptyPreview = searchParams.get("preview") === "empty";
+  const { activeScenario } = usePrototypeScenario();
+  const isEmptyPlanFixture = searchParams.get("preview") === "empty"
+    || activeScenario?.testOverrides?.shootPlanStartsEmpty === true;
   const { selectedRole } = usePrototypeRole();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const shootStageStatus = getProjectStages(project).shoot;
@@ -168,12 +172,12 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [personFilter, setPersonFilter] = useState<PersonFilter>("all");
   const [scheduleView, setScheduleView] = useState<ScheduleView>("schedule");
   const [hasStartedShootPlan, setHasStartedShootPlan] = useState(() => {
-    if (isEmptyPreview) return false;
+    if (isEmptyPlanFixture) return false;
     const initialCallSheet = getInitialCallSheet(project);
     return initialCallSheet.entries.length > 0 || isCallSheetConfigured(initialCallSheet);
   });
-  const [hasCallSheet, setHasCallSheet] = useState(() => !isEmptyPreview && isCallSheetConfigured(getInitialCallSheet(project)));
-  const [isShotListEnabled, setIsShotListEnabled] = useState(() => !isEmptyPreview && getInitialCallSheet(project).entries.length > 0);
+  const [hasCallSheet, setHasCallSheet] = useState(() => !isEmptyPlanFixture && isCallSheetConfigured(getInitialCallSheet(project)));
+  const [isShotListEnabled, setIsShotListEnabled] = useState(() => !isEmptyPlanFixture && getInitialCallSheet(project).entries.length > 0);
   const [scheduleStatusFilter, setScheduleStatusFilter] = useState<ScheduleStatusFilter>("all");
   const [scheduleTypeFilters, setScheduleTypeFilters] = useState<ScheduleType[]>([]);
   const [scheduleLocationFilters, setScheduleLocationFilters] = useState<string[]>([]);
@@ -243,7 +247,10 @@ export function ShootStagePage({ project }: { project: Project }) {
   const selectedDayPdfHref = `/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(selectedDayId)}`;
 
   useEffect(() => {
-    if (isEmptyPreview) {
+    if (isEmptyPlanFixture) {
+      const emptyCallSheet = normaliseSimpleShootCallSheet(getEmptyCallSheet(project));
+      setCallSheet(emptyCallSheet);
+      setSelectedDayId("day-1");
       setHasStartedShootPlan(false);
       setHasCallSheet(false);
       setIsShotListEnabled(false);
@@ -286,7 +293,7 @@ export function ShootStagePage({ project }: { project: Project }) {
     } finally {
       setHasLoaded(true);
     }
-  }, [isEmptyPreview, project.id]);
+  }, [isEmptyPlanFixture, project.id]);
 
   const selectScheduleView = (view: ScheduleView) => {
     if (view === "shots" && !isShotListEnabled) return;
@@ -336,7 +343,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   useEffect(() => {
-    if (!hasLoaded || isEmptyPreview) return;
+    if (!hasLoaded || isEmptyPlanFixture) return;
     const preferences: ShootPlanPreferences = {
       hasStarted: hasStartedShootPlan,
       callSheetEnabled: hasCallSheet,
@@ -344,10 +351,10 @@ export function ShootStagePage({ project }: { project: Project }) {
       scheduleView,
     };
     window.localStorage.setItem(shootPlanPreferencesStorageKey(project.id), JSON.stringify(preferences));
-  }, [hasCallSheet, hasLoaded, hasStartedShootPlan, isEmptyPreview, isShotListEnabled, project.id, scheduleView]);
+  }, [hasCallSheet, hasLoaded, hasStartedShootPlan, isEmptyPlanFixture, isShotListEnabled, project.id, scheduleView]);
 
   useEffect(() => {
-    if (!hasLoaded || isEmptyPreview) return;
+    if (!hasLoaded || isEmptyPlanFixture) return;
     if (skipInitialSaveRef.current) {
       skipInitialSaveRef.current = false;
       return;
@@ -370,7 +377,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       }
     }, 450);
     return () => window.clearTimeout(timeoutId);
-  }, [callSheet, hasLoaded, isEmptyPreview, project.id]);
+  }, [callSheet, hasLoaded, isEmptyPlanFixture, project.id]);
 
   useEffect(() => () => {
     if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);

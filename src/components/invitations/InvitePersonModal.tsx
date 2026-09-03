@@ -7,8 +7,9 @@ import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { selectWorkspaceProjects } from "@/data/prototype-state";
 import type { InvitationRole, InvitePersonPrefill } from "@/data/invitations";
 
 export type InvitePersonSubmission = {
@@ -44,9 +45,11 @@ const roleOptions: ReadonlyArray<{ role: InvitationRole; description: string }> 
 export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonModalProps) {
   const { clients } = useClients();
   const { people } = usePeople();
+  const { state } = usePrototypeState();
+  const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const prefilledProjectIds = prefill.projectIds ?? [];
   const projectClientIds = prefilledProjectIds
-    .map((projectId) => activeVideoProjects.find((project) => project.id === projectId)?.clientId)
+    .map((projectId) => workspaceProjects.find((project) => project.id === projectId)?.clientId)
     .filter((clientId): clientId is string => Boolean(clientId));
   const initialClientIds = unique([...(prefill.clientIds ?? []), ...projectClientIds]);
   const [step, setStep] = useState<1 | 2>(1);
@@ -70,12 +73,16 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   const inviteeName = name.trim() || existingPerson?.name || normalisedEmail;
   const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(normalisedEmail);
   const selectedClientIds = role === "Customer" ? (customerClientId ? [customerClientId] : []) : clientIds;
-  const availableProjects = activeVideoProjects.filter((project) => project.status !== "Archived" && selectedClientIds.includes(project.clientId));
+  const availableProjects = workspaceProjects.filter((project) => project.status !== "Archived" && selectedClientIds.includes(project.clientId));
   const selectedProjects = projectIds.filter((projectId) => availableProjects.some((project) => project.id === projectId));
   const hasCustomerConflict = role === "Customer" && existingPerson?.type === "Client contact" && existingPerson.clientId !== customerClientId;
   const canSend = emailIsValid
     && !hasCustomerConflict
-    && (role === "Studio Staff" || (selectedClientIds.length > 0 && selectedProjects.length > 0));
+    && (
+      role === "Studio Staff"
+      || (role === "Customer" && selectedClientIds.length > 0)
+      || (role === "Studio Freelancer" && selectedClientIds.length > 0 && selectedProjects.length > 0)
+    );
 
   const goNext = () => {
     setAttemptedNext(true);
@@ -89,13 +96,13 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
 
   const changeCustomerClient = (nextClientId: string) => {
     setCustomerClientId(nextClientId);
-    setProjectIds((current) => current.filter((projectId) => activeVideoProjects.find((project) => project.id === projectId)?.clientId === nextClientId));
+    setProjectIds((current) => current.filter((projectId) => workspaceProjects.find((project) => project.id === projectId)?.clientId === nextClientId));
   };
 
   const toggleClient = (clientId: string) => {
     if (clientIds.includes(clientId)) {
       setClientIds((current) => current.filter((id) => id !== clientId));
-      setProjectIds((current) => current.filter((projectId) => activeVideoProjects.find((project) => project.id === projectId)?.clientId !== clientId));
+      setProjectIds((current) => current.filter((projectId) => workspaceProjects.find((project) => project.id === projectId)?.clientId !== clientId));
       return;
     }
     setClientIds((current) => [...current, clientId]);
@@ -179,7 +186,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                 {roleOptions.map((option) => (
                   <label className={role === option.role ? "is-selected" : ""} key={option.role}>
                     <input type="radio" name="invitation-role" value={option.role} checked={role === option.role} onChange={() => changeRole(option.role)} />
-                    <span><strong className="label-s-semibold">{option.role}</strong><small className="label-xs">{option.description}</small></span>
+                    <span><strong className="label-s-semibold">{option.role === "Customer" ? "Client" : option.role}</strong><small className="label-xs">{option.description}</small></span>
                   </label>
                 ))}
               </div>
@@ -220,7 +227,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                 <SearchableSelection
                   label="Clients"
                   emptyMessage="No Clients match this search."
-                  options={activeClients.map((client) => ({ value: client.id, label: client.name, description: client.type }))}
+                  options={activeClients.map((client) => ({ value: client.id, label: client.name, description: client.website }))}
                   selected={clientIds}
                   onToggle={toggleClient}
                   selectAll={{ label: "All Clients", onToggle: toggleAllClients }}
@@ -251,7 +258,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                   />
                 </div>
                 <SearchableSelection
-                  label="Projects"
+                  label="Projects (optional)"
                   emptyMessage={customerClientId ? "No projects match this search." : "Choose a Client company to see projects."}
                   options={availableProjects.map((project) => ({ value: project.id, label: project.name, description: project.status }))}
                   selected={selectedProjects}
@@ -263,7 +270,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
 
             {existingPerson ? <ExistingPersonNotice name={existingPerson.name} /> : null}
             {hasCustomerConflict ? (
-              <div className="invite-person-warning" role="alert"><DsIcon name="alert-triangle" size={18} /><p className="label-s">This email is already a Customer for {existingPerson?.clientName}. Choose that Client or use a different email to keep Client data isolated.</p></div>
+              <div className="invite-person-warning" role="alert"><DsIcon name="alert-triangle" size={18} /><p className="label-s">This email is already a Client contact for {existingPerson?.clientName}. Choose that Client or use a different email to keep Client data isolated.</p></div>
             ) : null}
             <AccessExplanation role={role} clientIds={selectedClientIds} inviteeName={inviteeName} projectIds={selectedProjects} />
           </>
@@ -312,18 +319,21 @@ function JobTitleField({ choice, jobTitle, label, onChoiceChange, onCustomChange
 
 function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clientIds: string[]; inviteeName: string; projectIds: string[]; role: InvitationRole }) {
   const { clients } = useClients();
+  const { state } = usePrototypeState();
   const selectedClients = clients.filter((client) => clientIds.includes(client.id));
-  const selectedProjects = activeVideoProjects.filter((project) => projectIds.includes(project.id));
+  const selectedProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId).filter((project) => projectIds.includes(project.id));
   const firstProject = selectedProjects[0];
   const accessSentence = role === "Studio Staff"
     ? "They can see and act on everything in the Studio workspace."
     : role === "Studio Freelancer"
       ? "They can only see the Clients and projects you choose."
-      : `${inviteeName} belongs to ${selectedClients[0]?.name ?? "one Client company"} and can only see the projects you choose.`;
+      : projectIds.length > 0
+        ? `${inviteeName} belongs to ${selectedClients[0]?.name ?? "one Client company"} and can only see the projects you choose.`
+        : `${inviteeName} belongs to ${selectedClients[0]?.name ?? "one Client company"}. No project access has been added yet.`;
   const destinationSentence = role === "Customer"
     ? null
     : role === "Studio Staff"
-      ? "The invitation opens the Northstar Films Studio workspace."
+      ? "The invitation opens the North Star Films Studio workspace."
       : firstProject
       ? `The invitation opens ${firstProject.name}.`
       : "The invitation opens their selected project access.";
@@ -334,7 +344,13 @@ function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clien
       <div>
         <strong className="label-m-semibold">What they can access</strong>
         <p className="paragraph-s">{accessSentence}</p>
-        {role === "Customer" ? <p className="label-xs">They can comment, approve and invite other customers from the same client. Studio notes, rates, freelancer costs, other clients and internal comments stay private.</p> : null}
+        {role === "Customer" ? (
+          <p className="label-xs">
+            {projectIds.length > 0
+              ? "They can comment, approve and invite other Client contacts from the same Client. Studio notes, rates, freelancer costs, other Clients and internal comments stay private."
+              : "Add project access when the first video is ready. Other Clients and Studio-only information stay private."}
+          </p>
+        ) : null}
         {destinationSentence ? <p className="label-xs">{destinationSentence}</p> : null}
         {role !== "Customer" ? <p className="label-xs">Job titles and project roles never change permissions.</p> : null}
       </div>

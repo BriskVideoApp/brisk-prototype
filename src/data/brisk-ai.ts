@@ -290,7 +290,7 @@ export const initialStudioAiPlaybook: StudioAiPlaybook = {
     "Deel customer story treatment.pdf",
     "Northstar review principles.docx",
   ],
-  clientAccessEnabled: false,
+  clientAccessEnabled: true,
 };
 
 export const stageActionPrompts: Record<BriskAiStage, readonly string[]> = {

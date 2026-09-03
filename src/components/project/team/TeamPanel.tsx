@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
+  applyStudioDefaultTeam,
   fallbackRoleStages,
   getAcceptedInvitation,
   getRoleEstimatedHours,
@@ -17,6 +18,7 @@ import {
 import type { Invitation, InvitationPaymentTerms, ProjectVideoType, RoleSlot, StageAssignment, TeamPerson, TeamRole, TimeEntry } from "@/components/active-videos/types";
 import { usePeople, type ProjectStaffWorkload } from "@/components/people/PeopleDataContext";
 import { useInvitations } from "@/components/invitations/InvitationContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import type { Person } from "@/data/people";
 import { AddRoleButton } from "./AddRoleButton";
 import { RoleEditorModal } from "./RoleEditorModal";
@@ -44,11 +46,13 @@ type ToastState = {
 export function TeamPanel({
   projectId,
   projectName,
+  videoType,
   initialTeam,
   access,
   viewerPersonId,
 }: TeamPanelProps) {
   const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
+  const { studio } = useStudioSettings();
   const { openInvitePerson } = useInvitations();
   const { setProjectTeam, teamsByProjectId } = useProjectTeams();
   const [extraPeople, setExtraPeople] = useState<TeamPerson[]>([]);
@@ -56,7 +60,13 @@ export function TeamPanel({
   const [isRolePickerOpen, setIsRolePickerOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const storedTeam = teamsByProjectId[projectId];
-  const team = storedTeam ?? initialTeam;
+  const startingTeam = useMemo(() => applyStudioDefaultTeam({
+    defaultTeam: studio.production.defaultTeam,
+    initialTeam,
+    projectId,
+    videoType,
+  }), [initialTeam, projectId, studio.production.defaultTeam, videoType]);
+  const team = storedTeam ?? startingTeam;
   const people = useMemo(() => {
     const byId = new Map<string, TeamPerson>(mockTeamPeople.map((person) => [person.id, person]));
     directoryPeople
@@ -67,8 +77,8 @@ export function TeamPanel({
   }, [directoryPeople, extraPeople]);
 
   useEffect(() => {
-    if (!storedTeam) setProjectTeam(projectId, initialTeam);
-  }, [initialTeam, projectId, setProjectTeam, storedTeam]);
+    if (!storedTeam) setProjectTeam(projectId, startingTeam);
+  }, [projectId, setProjectTeam, startingTeam, storedTeam]);
 
   useEffect(() => {
     setExtraPeople([]);
@@ -100,6 +110,7 @@ export function TeamPanel({
   const displayTeam = access === "freelancer" && viewerPersonId ? visibleTeam.map((slot) => filterSlotForViewer(slot, viewerPersonId)) : visibleTeam;
   const showCosts = access === "producerAdmin" || access === "freelancer";
   const activeRoleEditorSlot = canEdit ? team.find((slot) => slot.id === roleEditorSlotId) : undefined;
+  const primaryRoleEditorSlot = displayTeam.find((slot) => slot.role === "producer") ?? displayTeam[0];
   const assignedPersonIds = getAssignedPersonIds(activeTeam);
 
   const updateSlot = (slotId: string, updater: (slot: RoleSlot) => RoleSlot) => {
@@ -150,7 +161,8 @@ export function TeamPanel({
             personId: person.id,
             status: "invited",
             sentAt: new Date().toISOString(),
-            rateSnapshot: paymentTerms.basis === "hourly" ? person.hourlyRate : undefined,
+            rateSnapshot: paymentTerms.basis === "hourly" ? paymentTerms.hourlyRate ?? person.hourlyRate : undefined,
+            projectRateSnapshot: paymentTerms.projectRate,
             paymentBasis: paymentTerms.basis,
             flatRateSnapshot: paymentTerms.basis === "flat" ? paymentTerms.flatRate : undefined,
           },
@@ -181,7 +193,8 @@ export function TeamPanel({
           status: "accepted",
           sentAt: now,
           respondedAt: now,
-          rateSnapshot: paymentTerms.basis === "hourly" ? person.hourlyRate : undefined,
+          rateSnapshot: paymentTerms.basis === "hourly" ? paymentTerms.hourlyRate ?? person.hourlyRate : undefined,
+          projectRateSnapshot: paymentTerms.projectRate,
           paymentBasis: paymentTerms.basis,
           flatRateSnapshot: paymentTerms.basis === "flat" ? paymentTerms.flatRate : undefined,
           assignmentMethod: "direct",
@@ -217,7 +230,7 @@ export function TeamPanel({
     });
   };
 
-  const openNewFreelancerInvite = (slot: RoleSlot, paymentTerms: InvitationPaymentTerms) => {
+  const openNewFreelancerInvite = (slot: RoleSlot) => {
     openInvitePerson({
       role: "Studio Freelancer",
       projectId,
@@ -226,7 +239,11 @@ export function TeamPanel({
       if (submission.role !== "Studio Freelancer" || directoryPerson.type !== "Freelancer") return;
       const person = toTeamPerson(directoryPerson, slot.role);
       setExtraPeople((currentPeople) => (currentPeople.some((currentPerson) => currentPerson.id === person.id) ? currentPeople : [...currentPeople, person]));
-      inviteFreelancerToSlot(slot.id, person, paymentTerms);
+      inviteFreelancerToSlot(slot.id, person, {
+        basis: "hourly",
+        hourlyRate: person.hourlyRate,
+        projectRate: typeof person.hourlyRate === "number" ? person.hourlyRate * getRoleEstimatedHours(slot) : undefined,
+      });
       setToast({ id: `${slot.id}-${person.id}`, message: `${person.name} was added to People and invited to the ${getSlotLabel(slot)} role.` });
     });
   };
@@ -318,7 +335,22 @@ export function TeamPanel({
     <section className="team-panel" aria-label={`${projectName} team`}>
       <header className="team-panel-header">
         <span className="team-panel-heading">
-          <span className="team-panel-title label-s-semibold">Team</span>
+          {canEdit ? (
+            <button
+              className="team-panel-title team-panel-title-button label-s-semibold"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => {
+                if (primaryRoleEditorSlot) {
+                  setRoleEditorSlotId(primaryRoleEditorSlot.id);
+                }
+              }}
+            >
+              Team
+            </button>
+          ) : (
+            <span className="team-panel-title label-s-semibold">Team</span>
+          )}
         </span>
       </header>
 
@@ -332,7 +364,6 @@ export function TeamPanel({
               canEdit={canEdit}
               showCosts={showCosts}
               onOpenEditor={() => setRoleEditorSlotId(slot.id)}
-              onChangeHours={(hours) => updateSlot(slot.id, (teamSlot) => redistributeRoleHours(teamSlot, hours))}
             />
           ))}
         </div>
@@ -355,7 +386,7 @@ export function TeamPanel({
           onInviteFreelancer={(person, paymentTerms) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
           onAssignFreelancer={(person, paymentTerms) => assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
           onUnassign={() => unassignSlot(activeRoleEditorSlot.id)}
-          onInviteNewFreelancer={(paymentTerms) => openNewFreelancerInvite(activeRoleEditorSlot, paymentTerms)}
+          onInviteNewFreelancer={() => openNewFreelancerInvite(activeRoleEditorSlot)}
           onWithdrawInvitation={(invitationId) => withdrawInvitation(activeRoleEditorSlot.id, invitationId)}
           onWithdrawAll={() => withdrawAllInvitations(activeRoleEditorSlot.id)}
           onRemove={() => updateSlot(activeRoleEditorSlot.id, (teamSlot) => ({ ...teamSlot, archivedAt: new Date().toISOString() }))}

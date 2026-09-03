@@ -10,6 +10,15 @@
   padding: var(--brisk-space-s) var(--brisk-space-2xl);
 }
 
+.script-subtab-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+  margin-left: auto;
+}
+
 .script-subtab-list {
   display: flex;
   align-items: center;

@@ -3,7 +3,6 @@ import type {
   ChatClient,
   ChatMessage,
   ChatProject,
-  StudioChatConnectors,
   ChatUser,
   ConversationPreview,
 } from "@/components/chat/types";
@@ -17,17 +16,6 @@ export const chatWorkspace = {
   name: "North Star Films",
   currentUserId: "user-tom",
 } as const;
-
-export const chatStudioConnectors: StudioChatConnectors = {
-  whatsapp: {
-    connected: true,
-    detail: "North Star Films Business",
-  },
-  slack: {
-    connected: false,
-    detail: "North Star Films Slack",
-  },
-};
 
 export const chatClients: ChatClient[] = [
   { name: "Loom", status: "Active", userIds: ["user-jess", "user-sarah", "user-avery"] },

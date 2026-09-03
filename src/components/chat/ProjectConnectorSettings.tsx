@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { SourceLogo, getSourceLabel } from "@/components/chat/SourceLogo";
@@ -18,7 +19,6 @@ type ProjectConnectorSettingsProps = {
   onClose: () => void;
   onNotify: (message: string) => void;
   onProjectChange: (project: ChatProject) => void;
-  onStudioConnectorsChange: (connectors: StudioChatConnectors) => void;
 };
 
 const connectorSources: ChatConnectorSource[] = ["whatsapp", "slack"];
@@ -30,7 +30,6 @@ export function ProjectConnectorSettings({
   onClose,
   onNotify,
   onProjectChange,
-  onStudioConnectorsChange,
 }: ProjectConnectorSettingsProps) {
   const [configureSource, setConfigureSource] = useState<ChatConnectorSource | null>(null);
   const [whatsAppNumberOwner, setWhatsAppNumberOwner] = useState(
@@ -68,14 +67,6 @@ export function ProjectConnectorSettings({
     }
 
     onNotify(`${getSourceLabel(source)} ${enabled ? "enabled" : "turned off"} for ${project.code}`);
-  };
-
-  const reconnect = (source: ChatConnectorSource) => {
-    onStudioConnectorsChange({
-      ...studioConnectors,
-      [source]: { ...studioConnectors[source], connected: true },
-    });
-    onNotify(`${getSourceLabel(source)} reconnected for ${studioName}`);
   };
 
   const saveConfiguration = (source: ChatConnectorSource) => {
@@ -207,14 +198,9 @@ export function ProjectConnectorSettings({
                         Configure
                       </Button>
                     ) : (
-                      <Button
-                        className="chat-connector-ds-button"
-                        variant="primary"
-                        size="S"
-                        onClick={() => reconnect(source)}
-                      >
-                        Reconnect
-                      </Button>
+                      <Link className="chat-secondary-button label-xs-semibold" href="/settings/studio/integrations">
+                        Open Studio Settings
+                      </Link>
                     )}
                   </div>
 

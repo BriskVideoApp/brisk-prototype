@@ -4,14 +4,16 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { BriefGuidedExperience, getBriefConfigurableOptions } from "@/components/brief/BriefPage";
 import {
-  StudioAccentPicker,
+  StudioBrandColourEditor,
   StudioBriefOptionsEditor,
   StudioManualSetupEditor,
   StudioVideoTypeEditor,
   type StudioReviewDialogId,
 } from "@/components/studio-onboard/StudioReviewEditors";
+import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
+  briefSteps,
   briefVideoTypeDetails,
   createInitialBriefFields,
   type BriefFieldId,
@@ -20,7 +22,10 @@ import {
 import {
   cloneStudioBriefConfiguration,
   createRecommendedStudioBriefConfiguration,
-  studioBrandAccentOptions,
+  getStudioBrandColours,
+  getStudioCustomVideoTypes,
+  studioOnboardingVideoTypeLabels,
+  type StudioBrandColour,
   type StudioBriefConfiguration,
   type StudioReviewDraft,
 } from "@/data/studio-onboard";
@@ -28,9 +33,9 @@ import {
 type GeneratedStudioSetupProps = {
   draft: StudioReviewDraft;
   openManualSetupInitially?: boolean;
+  onBack: () => void;
   onDraftChange: (draft: StudioReviewDraft) => void;
   onManualSetupResolved?: () => void;
-  onStartAgain: () => void;
   onUseSetup: () => void;
 };
 
@@ -39,9 +44,9 @@ type BriefSurfaceMode = "configure" | null;
 export function GeneratedStudioSetup({
   draft,
   openManualSetupInitially = false,
+  onBack,
   onDraftChange,
   onManualSetupResolved,
-  onStartAgain,
   onUseSetup,
 }: GeneratedStudioSetupProps) {
   const [activeDialogId, setActiveDialogId] = useState<StudioReviewDialogId | null>(
@@ -54,8 +59,11 @@ export function GeneratedStudioSetup({
   const [videoTypeIdsDraft, setVideoTypeIdsDraft] = useState<BriefVideoTypeId[]>([...draft.videoTypeIds]);
   const [briefPreviewFields, setBriefPreviewFields] = useState(createInitialBriefFields);
   const [summaryGeneration, setSummaryGeneration] = useState(0);
-  const [showAccentOptions, setShowAccentOptions] = useState(false);
+  const [editingBrandColourIndex, setEditingBrandColourIndex] = useState<number | "new" | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const customVideoTypes = getStudioCustomVideoTypes(draft);
+  const brandColours = getStudioBrandColours(draft);
+  const brandThemeStyle = getStudioBrandThemeStyle(draft);
 
   function saveDraft(nextDraft: StudioReviewDraft) {
     onDraftChange(nextDraft);
@@ -63,14 +71,11 @@ export function GeneratedStudioSetup({
     onManualSetupResolved?.();
   }
 
-  function requestStartAgain() {
-    if (window.confirm("Start again and clear these generated recommendations?")) {
-      onStartAgain();
-    }
-  }
-
   function regenerateStudioSummary() {
-    const offeredVideoTypes = formatStudioSummaryList(draft.videoTypeIds.slice(0, 3));
+    const offeredVideoTypes = formatStudioSummaryList([
+      ...draft.videoTypeIds,
+      ...customVideoTypes.map((videoType) => videoType.name),
+    ].slice(0, 3));
     const regeneratedSummaries = [
       `We create ${offeredVideoTypes} projects for clients who need clear, well-crafted video.`,
       `${draft.studioName} is a ${draft.studioType.toLocaleLowerCase("en-AU")} helping clients take video from first idea to final delivery.`,
@@ -81,6 +86,39 @@ export function GeneratedStudioSetup({
       studioDescription: regeneratedSummaries[summaryGeneration % regeneratedSummaries.length],
     });
     setSummaryGeneration((currentGeneration) => currentGeneration + 1);
+  }
+
+  function setPrimaryBrandColour(primaryIndex: number) {
+    onDraftChange({
+      ...draft,
+      brandColours: brandColours.map((colour, index): StudioBrandColour => ({
+        ...colour,
+        role: index === primaryIndex ? "primary" : "supporting",
+      })),
+    });
+  }
+
+  function removeBrandColour(colourIndex: number) {
+    onDraftChange({
+      ...draft,
+      brandColours: brandColours.filter((_, index) => index !== colourIndex),
+    });
+  }
+
+  function saveBrandColour(hex: string) {
+    const nextColours = [...brandColours];
+
+    if (editingBrandColourIndex === "new") {
+      nextColours.push({ hex, role: "supporting" });
+    } else if (editingBrandColourIndex !== null) {
+      nextColours[editingBrandColourIndex] = {
+        ...nextColours[editingBrandColourIndex],
+        hex,
+      };
+    }
+
+    onDraftChange({ ...draft, brandColours: nextColours });
+    setEditingBrandColourIndex(null);
   }
 
   function updateLogo(event: ChangeEvent<HTMLInputElement>) {
@@ -127,6 +165,22 @@ export function GeneratedStudioSetup({
     setBriefSurfaceMode(null);
   }
 
+  function updateBriefPreviewFields(nextFields: ReturnType<typeof createInitialBriefFields>) {
+    setBriefPreviewFields(nextFields);
+
+    const selectedVideoTypeIds = briefVideoTypeDetails
+      .filter((videoType) => nextFields.videoType.value
+        .split(",")
+        .map((value) => value.trim())
+        .includes(videoType.name))
+      .map((videoType) => videoType.name);
+
+    setVideoTypeIdsDraft((currentVideoTypeIds) => Array.from(new Set([
+      ...currentVideoTypeIds,
+      ...selectedVideoTypeIds,
+    ])));
+  }
+
   function saveBriefOptionExclusions(excludedValues: string[]) {
     if (!activeBriefOptionsFieldId) {
       return;
@@ -155,6 +209,7 @@ export function GeneratedStudioSetup({
     return (
       <section
         className={`studio-review-brief-experience studio-branded-brief studio-client-accent-${draft.brandAccentId}`}
+        style={brandThemeStyle}
         aria-labelledby="studio-review-brief-editor-heading"
       >
         <header className="studio-review-brief-experience-header studio-brief-configuration-header">
@@ -175,8 +230,9 @@ export function GeneratedStudioSetup({
           fields={briefPreviewFields}
           onEditFieldOptions={setActiveBriefOptionsFieldId}
           videoTypeIds={videoTypeIdsDraft}
+          videoTypeOptionIds={briefVideoTypeDetails.map((videoType) => videoType.name)}
           onDone={saveBriefConfiguration}
-          onFieldsChange={setBriefPreviewFields}
+          onFieldsChange={updateBriefPreviewFields}
           onToggleFieldExcluded={toggleBriefFieldExcluded}
           studioName={draft.studioName}
         />
@@ -200,22 +256,37 @@ export function GeneratedStudioSetup({
   }
 
   const selectedVideoTypes = briefVideoTypeDetails.filter((videoType) => draft.videoTypeIds.includes(videoType.name));
-  const accentLabel = studioBrandAccentOptions.find((accent) => accent.id === draft.brandAccentId)?.label ?? "Brisk Purple";
+  const briefPreviewSections = briefSteps.filter((step) => step.id !== "summary").slice(0, 4);
   const logoOptions = getLogoOptions(draft);
 
   return (
     <section className="studio-generated-setup" aria-labelledby="studio-generated-heading">
       <header className="studio-generated-header">
-        <h1 className="headings-m-bold" id="studio-generated-heading">Review your Studio</h1>
-        <p className="paragraph-s">
-          Check the essentials. You can change everything later in Studio Settings.
-        </p>
+        <div className="studio-generated-heading-copy">
+          <h1 className="headings-m-bold" id="studio-generated-heading">Your Studio setup is ready</h1>
+          <p className="paragraph-s">
+            We&apos;ve created your Studio profile, Client Brief template and Client portal defaults. Check them before continuing.
+          </p>
+          <ul className="studio-generated-ready-list" aria-label="Studio setup created">
+            {[
+              "Studio profile created",
+              "Client Brief prepared",
+              "Video types added",
+            ].map((item) => (
+              <li className="label-xs-semibold" key={item}>
+                <DsIcon name="check-circle" size={16} />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       </header>
 
       <div className="studio-setup-overview">
         <div className="studio-review-bento-grid">
           <section
             className={`studio-review-bento-card studio-review-summary-tile studio-client-accent-${draft.brandAccentId}`}
+            style={brandThemeStyle}
             aria-label="Studio summary"
           >
             <header className="studio-review-bento-card-header">
@@ -250,6 +321,14 @@ export function GeneratedStudioSetup({
             </header>
             <div className="studio-review-brief-content">
               <p className="paragraph-s">The starting brief you or your clients will complete for new projects.</p>
+              <ul className="studio-review-brief-sections" aria-label="Client Brief sections">
+                {briefPreviewSections.map((step) => (
+                  <li className="label-xs" key={step.id}>
+                    <DsIcon name="check" size={14} />
+                    {step.label}
+                  </li>
+                ))}
+              </ul>
             </div>
             <footer className="studio-review-card-footer">
               <button className="studio-review-card-footer-action label-s-semibold" type="button" onClick={openBriefConfiguration}>
@@ -306,35 +385,35 @@ export function GeneratedStudioSetup({
 
           <section className="studio-review-bento-card studio-review-accent-tile" aria-labelledby="studio-review-accent-heading">
             <header className="studio-review-bento-card-header">
-              <h2 className="headings-xs-bold" id="studio-review-accent-heading">Portal accent colour</h2>
+              <h2 className="headings-xs-bold" id="studio-review-accent-heading">Brand colours</h2>
+              <Button size="S" type="button" variant="secondary" onClick={() => setEditingBrandColourIndex("new")}>
+                + Add colour
+              </Button>
             </header>
-            {showAccentOptions ? (
-              <StudioAccentPicker
-                hideLabel
-                value={draft.brandAccentId}
-                onChange={(brandAccentId) => {
-                  onDraftChange({ ...draft, brandAccentId });
-                  setShowAccentOptions(false);
-                }}
-              />
-            ) : (
-              <>
-                <div className={`studio-review-accent-content studio-client-accent-${draft.brandAccentId}`}>
-                  <span className="studio-review-accent-swatch" aria-hidden="true" />
-                  <strong className="label-m-semibold">{accentLabel}</strong>
-                  <DsIcon name="check" size={16} />
-                </div>
-              </>
-            )}
-            <footer className="studio-review-card-footer">
-              <button
-                className="studio-review-card-footer-action label-s-semibold"
-                type="button"
-                onClick={() => setShowAccentOptions((current) => !current)}
-              >
-                {showAccentOptions ? "Cancel" : "Change colour"}
-              </button>
-            </footer>
+            <ul className="studio-brand-colour-list" aria-label="Studio Brand Kit colours">
+              {brandColours.map((colour, index) => (
+                <li key={`${colour.hex}-${index}`}>
+                  <div className="studio-brand-colour-value">
+                    <span className="studio-brand-colour-swatch" style={{ backgroundColor: colour.hex }} aria-hidden="true" />
+                    <strong className="label-s-semibold">{colour.hex}</strong>
+                    {colour.role === "primary" ? <span className="studio-brand-colour-primary label-xs-semibold">Primary</span> : null}
+                  </div>
+                  <div className="studio-brand-colour-actions" role="group" aria-label={`Actions for ${colour.hex}`}>
+                    {colour.role !== "primary" ? (
+                      <button type="button" title="Set as primary" aria-label={`Set ${colour.hex} as primary`} onClick={() => setPrimaryBrandColour(index)}>
+                        <DsIcon name="check-circle" size={16} />
+                      </button>
+                    ) : null}
+                    <button type="button" title="Edit colour" aria-label={`Edit ${colour.hex}`} onClick={() => setEditingBrandColourIndex(index)}>
+                      <DsIcon name="pencil-simple" size={16} />
+                    </button>
+                    <button type="button" title="Remove colour" aria-label={`Remove ${colour.hex}`} onClick={() => removeBrandColour(index)}>
+                      <DsIcon name="trash-simple" size={16} />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </section>
 
           <section className="studio-review-bento-card studio-review-products-tile" aria-labelledby="studio-review-products-heading">
@@ -343,7 +422,14 @@ export function GeneratedStudioSetup({
             </header>
             <div className="studio-review-video-chips" aria-label="Products offered">
               {selectedVideoTypes.map((videoType) => (
-                <span className="studio-review-video-chip label-xs-semibold" key={videoType.name}>{videoType.name}</span>
+                <span className="studio-review-video-chip label-xs-semibold" key={videoType.name}>
+                  {studioOnboardingVideoTypeLabels[videoType.name]}
+                </span>
+              ))}
+              {customVideoTypes.map((videoType) => (
+                <span className="studio-review-video-chip label-xs-semibold" key={videoType.name}>
+                  {videoType.name}
+                </span>
               ))}
             </div>
             <footer className="studio-review-card-footer">
@@ -361,7 +447,7 @@ export function GeneratedStudioSetup({
 
       <footer className="studio-generated-actions">
         <div className="studio-generated-secondary-actions">
-          <button className="studio-generated-text-action label-s-semibold" type="button" onClick={requestStartAgain}>Start again</button>
+          <Button size="S" type="button" variant="secondary" onClick={onBack}>Back</Button>
         </div>
         <div className="studio-generated-primary-action">
           <Button size="M" type="button" variant="primary" onClick={onUseSetup}>Use this setup</Button>
@@ -379,6 +465,13 @@ export function GeneratedStudioSetup({
             onManualSetupResolved?.();
           }}
           onSave={saveDraft}
+        />
+      ) : null}
+      {editingBrandColourIndex !== null ? (
+        <StudioBrandColourEditor
+          colour={editingBrandColourIndex === "new" ? null : brandColours[editingBrandColourIndex]}
+          onCancel={() => setEditingBrandColourIndex(null)}
+          onSave={saveBrandColour}
         />
       ) : null}
     </section>
@@ -413,7 +506,7 @@ function readFileAsDataUrl(file: File) {
   });
 }
 
-function formatStudioSummaryList(items: readonly BriefVideoTypeId[]) {
+function formatStudioSummaryList(items: readonly string[]) {
   if (items.length === 0) return "video";
   if (items.length === 1) return items[0].toLocaleLowerCase("en-AU");
   if (items.length === 2) return `${items[0].toLocaleLowerCase("en-AU")} and ${items[1].toLocaleLowerCase("en-AU")}`;

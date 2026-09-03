@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   createContext,
   useContext,
   useEffect,
@@ -10,11 +11,14 @@ import {
 } from "react";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
+  createClientStageReviewNotification,
   getAuthorisedNotificationInboxItems,
   notificationInboxRecipientByRole,
   type NotificationEmailDeliveryState,
   type RecipientInboxItem,
+  type StageReviewRequestedNotificationInput,
 } from "@/data/notification-inbox";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type ReadIdsByRecipient = Record<string, string[]>;
 
@@ -25,18 +29,32 @@ type NotificationInboxContextValue = {
   markAsRead: (itemId: string) => void;
   markAllAsRead: () => void;
   retryEmail: (itemId: string) => void;
+  publishStageReviewRequest: (input: StageReviewRequestedNotificationInput) => void;
 };
 
 const notificationReadStorageKey = "brisk-notification-inbox-read-v1";
+const generatedNotificationStorageKey = "brisk-notification-inbox-generated-v1";
 const NotificationInboxContext = createContext<NotificationInboxContextValue | null>(null);
 
 export function NotificationInboxProvider({ children }: { children: ReactNode }) {
   const { selectedRole } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
   const [readIdsByRecipient, setReadIdsByRecipient] = useState<ReadIdsByRecipient>({});
   const [emailDeliveryOverrides, setEmailDeliveryOverrides] = useState<Record<string, NotificationEmailDeliveryState>>({});
+  const [generatedItems, setGeneratedItems] = useState<RecipientInboxItem[]>([]);
   const authorisedItems = useMemo(
-    () => getAuthorisedNotificationInboxItems(selectedRole),
-    [selectedRole],
+    () => {
+      const fixtureItems = activeScenario?.state === "new" ? [] : getAuthorisedNotificationInboxItems(selectedRole);
+      const authorisedGeneratedItems = getAuthorisedNotificationInboxItems(selectedRole, generatedItems);
+      const uniqueItems = new Map<string, RecipientInboxItem>();
+
+      [...fixtureItems, ...authorisedGeneratedItems].forEach((item) => {
+        uniqueItems.set(`${item.canonicalEventId}:${item.recipientId}`, item);
+      });
+
+      return [...uniqueItems.values()].sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
+    },
+    [activeScenario?.state, generatedItems, selectedRole],
   );
   const items = useMemo(
     () => authorisedItems.map((item) => {
@@ -67,6 +85,7 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
 
   useEffect(() => {
     setReadIdsByRecipient(readStoredNotificationReadState());
+    setGeneratedItems(readStoredGeneratedNotifications());
   }, []);
 
   const isRead = (item: RecipientInboxItem) => (
@@ -90,6 +109,31 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     });
   };
 
+  const publishStageReviewRequest = useCallback((input: StageReviewRequestedNotificationInput) => {
+    const item = createClientStageReviewNotification(input);
+
+    setGeneratedItems((current) => {
+      const nextItems = [
+        item,
+        ...current.filter((candidate) => (
+          candidate.canonicalEventId !== item.canonicalEventId
+          || candidate.recipientId !== item.recipientId
+        )),
+      ];
+      window.localStorage.setItem(generatedNotificationStorageKey, JSON.stringify(nextItems));
+      return nextItems;
+    });
+    setReadIdsByRecipient((current) => {
+      const recipientId = item.recipientId;
+      const nextState = {
+        ...current,
+        [recipientId]: (current[recipientId] ?? []).filter((itemId) => itemId !== item.id),
+      };
+      window.localStorage.setItem(notificationReadStorageKey, JSON.stringify(nextState));
+      return nextState;
+    });
+  }, []);
+
   const value = useMemo<NotificationInboxContextValue>(() => ({
     items,
     unreadCount,
@@ -100,7 +144,8 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
       setEmailDeliveryOverrides((current) => ({ ...current, [itemId]: "sent" }));
       updatePersonalReadIds([itemId]);
     },
-  }), [items, personalReadIds, recipientId, unreadCount]);
+    publishStageReviewRequest,
+  }), [items, personalReadIds, publishStageReviewRequest, recipientId, unreadCount]);
 
   return (
     <NotificationInboxContext.Provider value={value}>
@@ -125,5 +170,17 @@ function readStoredNotificationReadState(): ReadIdsByRecipient {
     return storedState ? JSON.parse(storedState) as ReadIdsByRecipient : {};
   } catch {
     return {};
+  }
+}
+
+function readStoredGeneratedNotifications(): RecipientInboxItem[] {
+  try {
+    const storedState = window.localStorage.getItem(generatedNotificationStorageKey);
+    if (!storedState) return [];
+
+    const parsedState: unknown = JSON.parse(storedState);
+    return Array.isArray(parsedState) ? parsedState as RecipientInboxItem[] : [];
+  } catch {
+    return [];
   }
 }

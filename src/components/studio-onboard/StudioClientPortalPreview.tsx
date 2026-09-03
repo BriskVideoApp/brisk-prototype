@@ -1,7 +1,8 @@
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { briefVideoTypeDetails } from "@/data/brief";
-import type { StudioReviewDraft } from "@/data/studio-onboard";
+import { getStudioCustomVideoTypes, type StudioReviewDraft } from "@/data/studio-onboard";
 
 export function StudioClientPortalPreview({
   draft,
@@ -11,10 +12,12 @@ export function StudioClientPortalPreview({
   onPreviewBrief: () => void;
 }) {
   const selectedVideoTypes = briefVideoTypeDetails.filter((videoType) => draft.videoTypeIds.includes(videoType.name));
+  const customVideoTypes = getStudioCustomVideoTypes(draft);
 
   return (
     <article
       className={`studio-client-portal studio-client-accent-${draft.brandAccentId}`}
+      style={getStudioBrandThemeStyle(draft)}
       aria-label={`Client portal preview for ${draft.studioName}`}
     >
       <header className="studio-client-portal-header">
@@ -36,6 +39,12 @@ export function StudioClientPortalPreview({
             {selectedVideoTypes.map((videoType) => (
               <span className="studio-client-offer-chip label-xs-semibold" key={videoType.name}>
                 <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={14} />
+                {videoType.name}
+              </span>
+            ))}
+            {customVideoTypes.map((videoType) => (
+              <span className="studio-client-offer-chip label-xs-semibold" key={videoType.name}>
+                <DsIcon name={videoType.iconId} size={14} />
                 {videoType.name}
               </span>
             ))}

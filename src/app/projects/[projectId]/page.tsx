@@ -1,25 +1,6 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { ProjectOverviewPage } from "@/components/project/ProjectOverviewPage";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
-
-export function generateStaticParams() {
-  return activeVideoProjects.map((project) => ({
-    projectId: project.id,
-  }));
-}
+import { CanonicalProjectOverviewRoute } from "@/components/project/CanonicalProjectRoutes";
 
 export default async function ProjectRoute({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
-  const project = activeVideoProjects.find((activeProject) => activeProject.id === projectId);
-
-  if (!project) {
-    notFound();
-  }
-
-  return (
-    <Suspense fallback={null}>
-      <ProjectOverviewPage project={project} />
-    </Suspense>
-  );
+  return <CanonicalProjectOverviewRoute projectId={projectId} />;
 }

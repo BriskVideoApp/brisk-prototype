@@ -38,7 +38,10 @@ import "@/components/settings/notification-settings.css";
 import "@/components/settings/client-account-settings.css";
 import "@/components/costs/costs.css";
 import "@/components/ai/brisk-ai.css";
+import "@/components/prototype-scenarios/prototype-scenarios.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
+import { PrototypeScenarioProvider } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { PrototypeStateProvider } from "@/components/prototype-state/PrototypeStateContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
 import { ProjectStageStatusProvider } from "@/components/project/ProjectStageStatusContext";
@@ -75,39 +78,43 @@ export default function RootLayout({
   return (
     <html lang="en-AU" className={plusJakartaSans.variable} suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <PrototypeRoleProvider>
-          <NotificationInboxProvider>
-            <StudioSettingsProvider>
-              <ClientBillingProvider>
-                <ClientAccountSettingsProvider>
-                  <ProjectCompletionProvider>
-                    <ProjectStageStatusProvider>
-                      <ProjectFilesProvider>
-                        <MediaLibraryProvider>
-                        <ClientDataProvider>
-                          <PeopleDataProvider>
-                            <ProjectTeamDataProvider>
-                              <CostsDataProvider>
-                                <InvitationProvider>
-                                  <BriskAiProvider>
-                                    <Suspense fallback={children}>
-                                      <AppShell>{children}</AppShell>
-                                    </Suspense>
-                                  </BriskAiProvider>
-                                </InvitationProvider>
-                              </CostsDataProvider>
-                            </ProjectTeamDataProvider>
-                          </PeopleDataProvider>
-                        </ClientDataProvider>
-                        </MediaLibraryProvider>
-                      </ProjectFilesProvider>
-                    </ProjectStageStatusProvider>
-                  </ProjectCompletionProvider>
-                </ClientAccountSettingsProvider>
-              </ClientBillingProvider>
-            </StudioSettingsProvider>
-          </NotificationInboxProvider>
-        </PrototypeRoleProvider>
+        <PrototypeScenarioProvider>
+          <PrototypeStateProvider>
+          <PrototypeRoleProvider>
+            <NotificationInboxProvider>
+              <StudioSettingsProvider>
+                <ClientBillingProvider>
+                  <ClientAccountSettingsProvider>
+                    <ProjectCompletionProvider>
+                      <ProjectStageStatusProvider>
+                        <ProjectFilesProvider>
+                          <MediaLibraryProvider>
+                          <ClientDataProvider>
+                            <PeopleDataProvider>
+                              <ProjectTeamDataProvider>
+                                <CostsDataProvider>
+                                  <InvitationProvider>
+                                    <BriskAiProvider>
+                                      <Suspense fallback={children}>
+                                        <AppShell>{children}</AppShell>
+                                      </Suspense>
+                                    </BriskAiProvider>
+                                  </InvitationProvider>
+                                </CostsDataProvider>
+                              </ProjectTeamDataProvider>
+                            </PeopleDataProvider>
+                          </ClientDataProvider>
+                          </MediaLibraryProvider>
+                        </ProjectFilesProvider>
+                      </ProjectStageStatusProvider>
+                    </ProjectCompletionProvider>
+                  </ClientAccountSettingsProvider>
+                </ClientBillingProvider>
+              </StudioSettingsProvider>
+            </NotificationInboxProvider>
+          </PrototypeRoleProvider>
+          </PrototypeStateProvider>
+        </PrototypeScenarioProvider>
       </body>
     </html>
   );

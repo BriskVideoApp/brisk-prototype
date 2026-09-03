@@ -1,19 +1,17 @@
 import { notFound } from "next/navigation";
 import { VideoReviewScreen } from "@/components/video-review/VideoReviewScreen";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { demoProjects, getDemoProject } from "@/data/projects";
+import { getProjectFixture, projectFixtureIds } from "@/data/project-fixtures";
 
 export function generateStaticParams() {
-  return demoProjects.map((project) => ({ projectId: project.id }));
+  return projectFixtureIds.map((projectId) => ({ projectId }));
 }
 
 export default async function EditRoute({ params, searchParams }: { params: Promise<{ projectId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { projectId } = await params;
   const query = await searchParams;
-  const demoProject = getDemoProject(projectId);
-  const project = activeVideoProjects.find((candidate) => candidate.id === projectId);
+  const project = getProjectFixture(projectId);
 
-  if (!demoProject || !project) notFound();
+  if (!project) notFound();
 
   return (
     <VideoReviewScreen

@@ -15,6 +15,7 @@ import type { NotificationSemanticState } from "@/components/notifications/types
 import { chatProjects } from "@/data/chat";
 import { notificationInboxRecipientByRole } from "@/data/notification-inbox";
 import { getVisibleActivityFeed } from "@/data/project-history";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 export const openCustomerLatestActivityEventName = "brisk:open-customer-latest-activity";
 export const openCustomerGlobalChatEventName = "brisk:open-customer-global-chat";
@@ -22,16 +23,18 @@ export const openCustomerGlobalChatEventName = "brisk:open-customer-global-chat"
 export function GlobalHeaderActions() {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
   const [isActivityOpen, setIsActivityOpen] = useState(false);
   const activityPopoverId = useId();
   const activityControlRef = useRef<HTMLDivElement>(null);
-  const usesCustomerDashboardDrawers = selectedRole === "Customer" && pathname === "/customer-dashboard";
-  const chatUnreadCount = getChatUnreadCount(selectedRole);
+  const usesCustomerDashboardDrawers = selectedRole !== "Studio Freelancer" && pathname === "/customer-dashboard";
+  const isScenarioEmpty = activeScenario?.state === "new";
+  const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(selectedRole);
   const activityEntries = useMemo(
-    () => getVisibleActivityFeed(selectedRole).filter(
+    () => (isScenarioEmpty ? [] : getVisibleActivityFeed(selectedRole)).filter(
       (entry): entry is typeof entry & { href: string } => entry.href !== null,
     ).slice(0, 6),
-    [selectedRole],
+    [isScenarioEmpty, selectedRole],
   );
 
   useEffect(() => {

@@ -77,7 +77,7 @@ export const demoProjects: readonly DemoProject[] = [
       },
       costs: {
         href: "/projects/loom-launch-film/costs",
-        label: "Costs",
+        label: "Project costs",
       },
     },
   },

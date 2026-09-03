@@ -1,4 +1,10 @@
-import type { StudioBrandAccentId } from "@/data/studio-onboard";
+import type { DefaultProjectTeamMember } from "@/components/active-videos/types";
+import {
+  createStudioBrandColours,
+  getStudioBrandColours,
+  type StudioBrandAccentId,
+  type StudioBrandColour,
+} from "@/data/studio-onboard";
 import {
   cloneStudioNotificationSettings,
   initialStudioNotificationSettings,
@@ -9,6 +15,7 @@ export type StudioDetails = {
   name: string;
   legalName: string;
   studioType: string;
+  description: string;
   website: string;
   contactEmail: string;
   country: string;
@@ -20,6 +27,7 @@ export type StudioBranding = {
   logoPreviewUrl: string | null;
   logoOptions: string[];
   brandAccentId: StudioBrandAccentId;
+  brandColours: StudioBrandColour[];
 };
 
 export type StudioBriefTemplateId = "brisk-standard" | "simple-request" | "none";
@@ -31,6 +39,7 @@ export type StudioProductionDefaults = {
   nextProjectNumber: string;
   reviewReminderId: StudioReviewReminderId;
   defaultActiveVideosPerClient: number;
+  defaultTeam: DefaultProjectTeamMember[];
   clientPortal: {
     showProjectQueue: boolean;
     showCompletedProjects: boolean;
@@ -46,10 +55,20 @@ export type StudioStaffAccess = {
   hasBillingAccess: boolean;
 };
 
+export type StudioIntegrationId = "whatsapp" | "slack";
+
+export type StudioIntegration = {
+  connected: boolean;
+  detail: string;
+};
+
+export type StudioIntegrations = Record<StudioIntegrationId, StudioIntegration>;
+
 export type StudioSettings = {
   details: StudioDetails;
   branding: StudioBranding;
   production: StudioProductionDefaults;
+  integrations: StudioIntegrations;
   notifications: StudioNotificationSettings;
   staffAccess: StudioStaffAccess[];
 };
@@ -59,6 +78,7 @@ export const initialStudioSettings: StudioSettings = {
     name: "ChopChop Film",
     legalName: "ChopChop Film Pty Ltd",
     studioType: "Production and post-production",
+    description: "Films for ambitious teams and purpose-driven organisations.",
     website: "https://chopchop.film",
     contactEmail: "tom@chopchop.film",
     country: "Australia",
@@ -69,6 +89,7 @@ export const initialStudioSettings: StudioSettings = {
     logoPreviewUrl: null,
     logoOptions: [],
     brandAccentId: "purple",
+    brandColours: createStudioBrandColours("purple"),
   },
   production: {
     briefTemplateId: "brisk-standard",
@@ -76,10 +97,32 @@ export const initialStudioSettings: StudioSettings = {
     nextProjectNumber: "001",
     reviewReminderId: "two-working-days",
     defaultActiveVideosPerClient: 4,
+    defaultTeam: [
+      {
+        id: "default-producer",
+        role: "producer",
+        personId: "te",
+      },
+      {
+        id: "default-editor",
+        role: "editor",
+        personId: "sc",
+      },
+    ],
     clientPortal: {
       showProjectQueue: true,
       showCompletedProjects: true,
       allowClientsToInviteColleagues: true,
+    },
+  },
+  integrations: {
+    whatsapp: {
+      connected: true,
+      detail: "ChopChop Film Business",
+    },
+    slack: {
+      connected: false,
+      detail: "ChopChop Film Slack",
     },
   },
   notifications: cloneStudioNotificationSettings(initialStudioNotificationSettings),
@@ -104,14 +147,21 @@ export const initialStudioSettings: StudioSettings = {
 
 export function cloneStudioSettings(settings: StudioSettings): StudioSettings {
   return {
-    details: { ...settings.details },
+    details: { ...initialStudioSettings.details, ...settings.details },
     branding: {
       ...settings.branding,
       logoOptions: [...settings.branding.logoOptions],
+      brandColours: getStudioBrandColours(settings.branding),
     },
     production: {
+      ...initialStudioSettings.production,
       ...settings.production,
+      defaultTeam: (settings.production.defaultTeam ?? initialStudioSettings.production.defaultTeam).map((member) => ({ ...member })),
       clientPortal: { ...settings.production.clientPortal },
+    },
+    integrations: {
+      whatsapp: { ...settings.integrations.whatsapp },
+      slack: { ...settings.integrations.slack },
     },
     notifications: cloneStudioNotificationSettings(settings.notifications),
     staffAccess: settings.staffAccess.map((staffMember) => ({ ...staffMember })),

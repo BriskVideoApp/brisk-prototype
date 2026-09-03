@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Check, Minus } from 'lucide-react';
+import { useState, type KeyboardEvent, type ReactNode } from 'react';
 
 interface CheckboxProps {
   label?: string;
@@ -7,6 +6,8 @@ interface CheckboxProps {
   indeterminate?: boolean;
   onChange?: (checked: boolean) => void;
   disabled?: boolean;
+  checkedIcon?: ReactNode;
+  indeterminateIcon?: ReactNode;
 }
 
 export function Checkbox({
@@ -14,7 +15,9 @@ export function Checkbox({
   checked = false,
   indeterminate = false,
   onChange,
-  disabled = false
+  disabled = false,
+  checkedIcon,
+  indeterminateIcon
 }: CheckboxProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -22,6 +25,18 @@ export function Checkbox({
     if (!disabled && onChange) {
       onChange(!checked);
     }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const isSpace = event.key === ' '
+      || event.key === 'Space'
+      || event.key === 'Spacebar'
+      || event.code === 'Space';
+
+    if (!isSpace && event.key !== 'Enter') return;
+
+    event.preventDefault();
+    handleChange();
   };
 
   // Checkbox states: Default, Hover, Disabled + Selection states (Unchecked, Checked, Indeterminate)
@@ -34,7 +49,7 @@ export function Checkbox({
     if (checked || indeterminate) {
       // Checked/Indeterminate: purple background, black border
       // Hover doesn't change checked state appearance
-      return 'bg-[#8B2CFF] border-black';
+      return 'bg-[#8B2CFF] border-black text-white';
     }
 
     if (isHovered) {
@@ -56,7 +71,9 @@ export function Checkbox({
         <input
           type="checkbox"
           checked={checked}
+          aria-checked={indeterminate ? 'mixed' : checked}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
           className="sr-only"
         />
@@ -71,12 +88,8 @@ export function Checkbox({
             ${getCheckboxClasses()}
           `}
         >
-          {indeterminate && !disabled && (
-            <Minus size={16} className="text-white" strokeWidth={3} />
-          )}
-          {checked && !indeterminate && !disabled && (
-            <Check size={16} className="text-white" strokeWidth={3} />
-          )}
+          {indeterminate && !disabled ? indeterminateIcon : null}
+          {checked && !indeterminate && !disabled ? checkedIcon : null}
         </div>
       </div>
 

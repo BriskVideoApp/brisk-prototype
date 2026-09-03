@@ -54,6 +54,75 @@ export type RecipientInboxItem = {
   initiallyRead: boolean;
 };
 
+export type StageReviewRequestedNotificationInput = {
+  projectId: string;
+  projectCode?: string;
+  projectName: string;
+  stage: StageKey;
+  versionLabel?: string;
+  actorName: string;
+  href: string;
+  occurredAt?: string;
+};
+
+const stageNotificationLabels: Record<StageKey, string> = {
+  brief: "Brief",
+  script: "Script",
+  shoot: "Shoot",
+  media: "Media",
+  edit: "Edit",
+  masters: "Masters",
+};
+
+const stageReviewNotificationCopy: Record<StageKey, string> = {
+  brief: "Review the Brief and confirm the direction before production continues.",
+  script: "Review the Script and add any feedback before production continues.",
+  shoot: "Review the Shoot plan and confirm the production details.",
+  media: "Review the shared Media and add any required feedback.",
+  edit: "Watch the latest Edit and add any feedback in Brisk.",
+  masters: "Review the latest Masters and approve the deliverables when you are happy.",
+};
+
+export function createClientStageReviewNotification({
+  projectId,
+  projectCode,
+  projectName,
+  stage,
+  versionLabel,
+  actorName,
+  href,
+  occurredAt = new Date().toISOString(),
+}: StageReviewRequestedNotificationInput): RecipientInboxItem {
+  const stageLabel = stageNotificationLabels[stage];
+  const reviewTarget = [stageLabel, versionLabel].filter(Boolean).join(" ");
+  const eventVersionKey = (versionLabel ?? "current").toLowerCase().replace(/[^a-z0-9]+/gu, "-");
+
+  return {
+    id: `generated-client-review-${projectId}-${stage}-${eventVersionKey}`,
+    canonicalEventId: `generated-review-${projectId}-${stage}-${eventVersionKey}`,
+    eventKey: "stage.review_requested",
+    recipientId: notificationInboxRecipientByRole.Customer,
+    recipientRole: "Customer",
+    recipientResponsibility: "reviewer",
+    category: "action-required",
+    state: "warning",
+    label: "Needs attention",
+    title: `${reviewTarget} is ready for review`,
+    copy: stageReviewNotificationCopy[stage],
+    actorName,
+    projectId,
+    projectCode,
+    projectName,
+    stage,
+    occurredAt,
+    href,
+    deepLinkTarget: "project-stage",
+    ctaLabel: `Review ${stageLabel}`,
+    emailDeliveryState: "sent",
+    initiallyRead: false,
+  };
+}
+
 export const notificationInboxRecipientByRole = {
   "Studio Staff": "user-tom",
   "Studio Freelancer": "user-nina",
@@ -414,9 +483,12 @@ export const notificationInboxItems = [
   },
 ] as const satisfies readonly RecipientInboxItem[];
 
-export function getAuthorisedNotificationInboxItems(role: PrototypeRole) {
+export function getAuthorisedNotificationInboxItems(
+  role: PrototypeRole,
+  sourceItems: readonly RecipientInboxItem[] = notificationInboxItems,
+) {
   const recipientId = notificationInboxRecipientByRole[role];
-  const authorisedItems = notificationInboxItems
+  const authorisedItems = sourceItems
     .filter((item) => item.recipientId === recipientId && item.recipientRole === role)
     .filter(isAuthorisedNotificationInboxItem);
   const uniqueItems = new Map<string, RecipientInboxItem>();

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { useCostsData } from "@/components/costs/CostsDataContext";
-import { formatCostDate, InvoiceReviewModal, InvoiceStateBadge, InvoiceTagBadge } from "@/components/costs/CostsPrimitives";
+import { formatCostDate, getInvoiceTagClass, InvoiceReviewModal, InvoiceStateBadge, InvoiceTagBadge } from "@/components/costs/CostsPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -80,13 +80,13 @@ export function OutstandingInvoicesPage() {
       <header className="costs-page-header costs-workspace-header">
         <div>
           <span className="costs-kicker label-xs-semibold">WORKSPACE OWNER</span>
-          <h1 className="headings-m-bold">Outstanding invoices</h1>
+          <h1 className="headings-m-bold">Invoices to pay</h1>
           <p className="paragraph-s">Review contractor invoices across projects and record what has been paid.</p>
         </div>
-        <label className="costs-search" htmlFor="outstanding-invoice-search"><DsIcon name="search" size={16} /><span className="sr-only">Search outstanding invoices</span><input id="outstanding-invoice-search" type="search" value={query} placeholder="Search invoices" onChange={(event) => setQuery(event.target.value)} /></label>
+        <label className="costs-search" htmlFor="outstanding-invoice-search"><DsIcon name="search" size={16} /><span className="sr-only">Search invoices to pay</span><input id="outstanding-invoice-search" type="search" value={query} placeholder="Search invoices" onChange={(event) => setQuery(event.target.value)} /></label>
       </header>
 
-      <section className="costs-summary-grid costs-workspace-summary" aria-label="Outstanding invoice summary">
+      <section className="costs-summary-grid costs-workspace-summary" aria-label="Invoices to pay summary">
         <SummaryCard label="Outstanding" value={formatCurrencyTotals(visibleRows.map(({ invoice }) => ({ amount: invoice.amount, currency: invoice.currency })))} note={`${visibleRows.length} visible ${visibleRows.length === 1 ? "invoice" : "invoices"}`} />
         <SummaryCard label="Ready to pay" value={formatCurrencyTotals(approvedRows.map(({ invoice }) => ({ amount: invoice.amount, currency: invoice.currency })))} note={`${approvedRows.length} approved`} />
         <SummaryCard label="Needs review" value={String(visibleRows.filter(({ invoice }) => invoice.state === "Submitted").length)} note="Submitted invoices" />
@@ -96,7 +96,13 @@ export function OutstandingInvoicesPage() {
         <label className="costs-filter-select"><span className="label-xs-semibold">Project status</span><BriskSelect ariaLabel="Filter by project status" clearable={false} searchable={false} options={projectStatusOptions} placeholder="All project statuses" value={projectStatus} onChange={(value) => setProjectStatus((value || "all") as ProjectStatusFilter)} /></label>
         <div className="costs-tag-filters" role="group" aria-label="Filter by tags">
           <span className="label-xs-semibold">Tags</span>
-          <div>{invoiceTags.map((tag) => <button className={`costs-filter-chip label-xs-semibold ${selectedTags.includes(tag) ? "is-active" : ""}`} type="button" aria-pressed={selectedTags.includes(tag)} key={tag} onClick={() => toggleTag(tag)}>{tag}</button>)}</div>
+          <div>{invoiceTags.map((tag) => {
+            const isSelected = selectedTags.includes(tag);
+            return <button className="costs-filter-chip label-s" type="button" aria-pressed={isSelected} key={tag} onClick={() => toggleTag(tag)}>
+              <span className={`filter-checkbox ${isSelected ? "checked" : ""}`}>{isSelected ? <DsIcon name="check" size={12} /> : null}</span>
+              <span className={`tag-option ${getInvoiceTagClass(tag)}`}>{tag}</span>
+            </button>;
+          })}</div>
         </div>
         <button className={`costs-archive-toggle label-s-semibold ${includeArchived ? "is-active" : ""}`} type="button" aria-pressed={includeArchived} onClick={() => setIncludeArchived((current) => !current)}><span aria-hidden="true">{includeArchived ? <DsIcon name="check" size={12} /> : null}</span>Include archived projects</button>
         {(projectStatus !== "all" || selectedTags.length || includeArchived || query) ? <button className="costs-text-action label-s-semibold" type="button" onClick={clearFilters}>Clear filters</button> : null}
@@ -113,7 +119,7 @@ export function OutstandingInvoicesPage() {
               <td data-label="Total"><strong className="label-s-semibold">{formatCostAmount(invoice.amount, invoice.currency)}</strong></td>
               <td data-label="Status"><InvoiceStateBadge state={invoice.state} /></td>
               <td data-label="Tags"><span className="costs-tags">{invoice.tags.map((tag) => <InvoiceTagBadge key={tag} tag={tag} />)}</span></td>
-              <td data-label="Actions">{invoice.state === "Submitted" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => setReviewState({ invoice, offer })}>Review</button> : invoice.state === "Approved" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => { markInvoicePaid(invoice.id); setToast(`${invoice.fileNames[0]} marked as paid`); }}>Mark paid</button> : <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}/costs`}>View Costs</Link>}</td>
+              <td data-label="Actions">{invoice.state === "Submitted" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => setReviewState({ invoice, offer })}>Review</button> : invoice.state === "Approved" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => { markInvoicePaid(invoice.id); setToast(`${invoice.fileNames[0]} marked as paid`); }}>Mark paid</button> : <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}/costs`}>View project costs</Link>}</td>
             </tr>)}</tbody>
           </table>
         </section>

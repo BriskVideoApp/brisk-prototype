@@ -18,8 +18,11 @@
   border-radius: var(--brisk-radius-full);
   background: var(--brisk-bg-elevated-primary);
   color: var(--brisk-text-primary);
+  cursor: grab;
   padding: var(--brisk-space-none);
+  touch-action: none;
   transition: background-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+  user-select: none;
 }
 
 .brisk-ai-launcher::after,
@@ -67,6 +70,18 @@
 .brisk-ai-launcher:active {
   box-shadow: none;
   transform: none;
+}
+
+.brisk-ai-launcher.is-dragging,
+.brisk-ai-launcher.is-dragging:hover,
+.brisk-ai-launcher.is-dragging:focus-visible {
+  cursor: grabbing;
+  transform: none;
+  transition: none;
+}
+
+.brisk-ai-launcher.is-dragging::after {
+  opacity: 0;
 }
 
 .brisk-ai-floating {
@@ -439,18 +454,6 @@
   display: none;
 }
 
-.brisk-ai-empty {
-  display: flex;
-  min-height: calc(var(--brisk-space-3xl) * 3);
-  align-items: center;
-  justify-content: center;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-s);
-  padding: var(--brisk-space-l);
-  text-align: center;
-}
-
-.brisk-ai-empty p,
 .brisk-ai-message p,
 .brisk-ai-review-note,
 .brisk-ai-permission p,
@@ -821,10 +824,10 @@
 }
 
 .brisk-ai-prompt-field textarea:focus-visible {
-  border-color: var(--brisk-border-focus);
+  border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: var(--brisk-space-xxs);
+  outline: var(--brisk-space-none);
+  outline-offset: var(--brisk-space-none);
 }
 
 .brisk-ai-composer-actions {

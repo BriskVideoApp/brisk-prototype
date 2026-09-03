@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useBriskAi } from "@/components/ai/BriskAiContext";
@@ -63,6 +64,25 @@ type CurrentAiContext = {
   stage: BriskAiStage;
 };
 
+type LauncherPosition = {
+  x: number;
+  y: number;
+};
+
+type LauncherDrag = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  originX: number;
+  originY: number;
+  width: number;
+  height: number;
+  moved: boolean;
+};
+
+const launcherPositionStorageKey = "brisk-ai-launcher-position-v1";
+const launcherDragThreshold = 5;
+
 export function BriskAiAssistant() {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
@@ -95,14 +115,18 @@ export function BriskAiAssistant() {
   const [previewSourceId, setPreviewSourceId] = useState<string | null>(null);
   const [conversationState, setConversationState] = useState<ConversationStateId>("default");
   const [toast, setToast] = useState("");
+  const [launcherPosition, setLauncherPosition] = useState<LauncherPosition | null>(null);
+  const [isLauncherDragging, setIsLauncherDragging] = useState(false);
   const promptRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const sourceAnchorRef = useRef<HTMLDivElement>(null);
   const historyAnchorRef = useRef<HTMLDivElement>(null);
   const handledRequestIdRef = useRef<number | null>(null);
   const responseTimerRef = useRef<number | null>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
+  const launcherDragRef = useRef<LauncherDrag | null>(null);
+  const suppressLauncherClickRef = useRef(false);
   const isStandaloneDocument = pathname.startsWith("/print/") || pathname.startsWith("/share/call-sheet/");
-  const isClientDenied = selectedRole === "Customer" && !playbook.clientAccessEnabled;
   const automaticSources = useMemo(() => getAutomaticBriskAiSources({
     clientName: conversationContext.clientName,
     projectName: conversationContext.projectName,
@@ -121,11 +145,11 @@ export function BriskAiAssistant() {
   const helperCopy = getStageHelperCopy(conversationContext.stage);
   const shownContextSources = getCompactContextSources(visibleContextSources, promotedSourceId).slice(0, 3);
   const previewIsAnchoredToChip = previewSource ? shownContextSources.some((source) => source.id === previewSource.id) : false;
-  const hasConversationContent = messages.length > 0 || isProcessing || conversationState !== "default" || isClientDenied;
+  const hasConversationContent = messages.length > 0 || isProcessing || conversationState !== "default";
 
   const submitPrompt = useCallback((requestedPrompt?: string) => {
     const prompt = (requestedPrompt ?? inputValue).trim();
-    if (!prompt || isProcessing || isClientDenied) return;
+    if (!prompt || isProcessing) return;
 
     const userMessage: AssistantMessage = {
       id: `brisk-ai-user-${Date.now()}`,
@@ -207,7 +231,7 @@ export function BriskAiAssistant() {
       });
       setIsProcessing(false);
     }, 720);
-  }, [activeChatId, conversationContext, inputValue, isClientDenied, isProcessing, manualSources, messages, selectedApproach, selectedRole, selectedSources]);
+  }, [activeChatId, conversationContext, inputValue, isProcessing, manualSources, messages, selectedApproach, selectedRole, selectedSources]);
 
   useEffect(() => {
     if (!openRequest || handledRequestIdRef.current === openRequest.id) return;
@@ -301,6 +325,44 @@ export function BriskAiAssistant() {
 
   useEffect(() => () => {
     if (responseTimerRef.current) window.clearTimeout(responseTimerRef.current);
+  }, []);
+
+  useEffect(() => {
+    const storedPosition = window.sessionStorage.getItem(launcherPositionStorageKey);
+    if (!storedPosition) return;
+
+    try {
+      const parsedPosition: unknown = JSON.parse(storedPosition);
+      if (!isLauncherPosition(parsedPosition)) return;
+
+      window.requestAnimationFrame(() => {
+        const launcher = launcherRef.current;
+        setLauncherPosition(clampLauncherPosition(
+          parsedPosition,
+          launcher?.offsetWidth ?? 0,
+          launcher?.offsetHeight ?? 0,
+        ));
+      });
+    } catch {
+      window.sessionStorage.removeItem(launcherPositionStorageKey);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!launcherPosition) return;
+    window.sessionStorage.setItem(launcherPositionStorageKey, JSON.stringify(launcherPosition));
+  }, [launcherPosition]);
+
+  useEffect(() => {
+    const keepLauncherInViewport = () => {
+      const launcher = launcherRef.current;
+      setLauncherPosition((currentPosition) => currentPosition
+        ? clampLauncherPosition(currentPosition, launcher?.offsetWidth ?? 0, launcher?.offsetHeight ?? 0)
+        : currentPosition);
+    };
+
+    window.addEventListener("resize", keepLauncherInViewport);
+    return () => window.removeEventListener("resize", keepLauncherInViewport);
   }, []);
 
   if (isStandaloneDocument) return null;
@@ -536,7 +598,7 @@ export function BriskAiAssistant() {
         <textarea
           ref={promptRef}
           className="paragraph-s"
-          disabled={isClientDenied || isProcessing}
+          disabled={isProcessing}
           placeholder={helperCopy.placeholder}
           rows={2}
           value={inputValue}
@@ -598,7 +660,7 @@ export function BriskAiAssistant() {
         <button
           className="brisk-ai-send-button label-xs-semibold"
           type="button"
-          disabled={!inputValue.trim() || isProcessing || isClientDenied}
+          disabled={!inputValue.trim() || isProcessing}
           onClick={() => submitPrompt()}
         >
           {isProcessing ? <span className="brisk-ai-spinner" aria-hidden="true" /> : <DsIcon name="paper-plane-tilt" size={14} />}
@@ -608,23 +670,85 @@ export function BriskAiAssistant() {
     </div>
   );
 
+  const handleLauncherPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return;
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+    launcherDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: bounds.left,
+      originY: bounds.top,
+      width: bounds.width,
+      height: bounds.height,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleLauncherPointerMove = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = launcherDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - drag.startX;
+    const deltaY = event.clientY - drag.startY;
+    if (!drag.moved && Math.hypot(deltaX, deltaY) < launcherDragThreshold) return;
+
+    drag.moved = true;
+    setIsLauncherDragging(true);
+    setLauncherPosition(clampLauncherPosition(
+      { x: drag.originX + deltaX, y: drag.originY + deltaY },
+      drag.width,
+      drag.height,
+    ));
+  };
+
+  const finishLauncherDrag = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    const drag = launcherDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    suppressLauncherClickRef.current = drag.moved;
+    if (drag.moved) {
+      window.setTimeout(() => {
+        suppressLauncherClickRef.current = false;
+      }, 0);
+    }
+    launcherDragRef.current = null;
+    setIsLauncherDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
   return (
     <>
       {view === "closed" || view === "minimised" ? (
         <button
-          className="brisk-ai-launcher"
+          ref={launcherRef}
+          className={`brisk-ai-launcher ${isLauncherDragging ? "is-dragging" : ""}`}
           type="button"
           aria-label="Ask Brisk AI"
           data-tooltip="Ask Brisk AI"
           style={{
             position: "fixed",
-            top: "auto",
-            right: "var(--brisk-space-2xl)",
-            bottom: "calc(var(--brisk-space-3xl) * 3)",
-            left: "auto",
+            top: launcherPosition ? `${launcherPosition.y}px` : "auto",
+            right: launcherPosition ? "auto" : "var(--brisk-space-2xl)",
+            bottom: launcherPosition ? "auto" : "calc(var(--brisk-space-3xl) * 3)",
+            left: launcherPosition ? `${launcherPosition.x}px` : "auto",
             zIndex: 1000,
           }}
-          onClick={() => openAssistant()}
+          onClick={() => {
+            if (suppressLauncherClickRef.current) {
+              suppressLauncherClickRef.current = false;
+              return;
+            }
+            openAssistant();
+          }}
+          onPointerCancel={finishLauncherDrag}
+          onPointerDown={handleLauncherPointerDown}
+          onPointerMove={handleLauncherPointerMove}
+          onPointerUp={finishLauncherDrag}
         >
           <DsIcon name="sparkle" size={22} />
         </button>
@@ -660,9 +784,7 @@ export function BriskAiAssistant() {
             }}
           />
           <div className="brisk-ai-thread" ref={threadRef} aria-live="polite">
-            {isClientDenied ? (
-              <PermissionDeniedState />
-            ) : conversationState === "failure" ? (
+            {conversationState === "failure" ? (
               <ConversationState
                 icon="alert-triangle"
                 title="Brisk AI could not finish that response"
@@ -691,7 +813,7 @@ export function BriskAiAssistant() {
                 onAction={() => setConversationState("default")}
               />
             ) : messages.length === 0 && !isProcessing ? (
-              <EmptyConversation copy={helperCopy.empty} />
+              null
             ) : (
               messages.map((message) => message.role === "user" ? (
                 <article className="brisk-ai-message is-user" key={message.id}>
@@ -710,7 +832,7 @@ export function BriskAiAssistant() {
             )}
             {isProcessing ? <ProcessingState /> : null}
           </div>
-          {!isClientDenied ? composer : null}
+          {composer}
         </aside>
       ) : null}
 
@@ -970,16 +1092,6 @@ function ContextChips({
   );
 }
 
-function EmptyConversation({ copy }: { copy: string }) {
-  if (!copy) return null;
-
-  return (
-    <div className="brisk-ai-empty">
-      <p className="paragraph-s">{copy}</p>
-    </div>
-  );
-}
-
 function AssistantResponse({
   message,
   onAction,
@@ -1057,15 +1169,6 @@ function ProcessingState() {
     <div className="brisk-ai-processing" role="status">
       <span className="brisk-ai-spinner" aria-hidden="true" />
       <span className="label-s">Brisk AI is reviewing the request…</span>
-    </div>
-  );
-}
-
-function PermissionDeniedState() {
-  return (
-    <div className="brisk-ai-permission">
-      <span><DsIcon name="lock" size={20} /></span>
-      <div><strong className="label-s-semibold">Brisk AI is not available in this Client portal</strong><p className="paragraph-s">Studio Staff can enable Client access in the Studio AI Playbook. Internal comments, other Clients and unrelated projects remain private.</p></div>
     </div>
   );
 }
@@ -1277,6 +1380,20 @@ function getStageLabel(stage: BriskAiStage) {
   return labels[stage];
 }
 
+function isLauncherPosition(value: unknown): value is LauncherPosition {
+  if (!value || typeof value !== "object") return false;
+
+  const candidate = value as Partial<LauncherPosition>;
+  return Number.isFinite(candidate.x) && Number.isFinite(candidate.y);
+}
+
+function clampLauncherPosition(position: LauncherPosition, width: number, height: number): LauncherPosition {
+  return {
+    x: Math.min(Math.max(position.x, 0), Math.max(window.innerWidth - width, 0)),
+    y: Math.min(Math.max(position.y, 0), Math.max(window.innerHeight - height, 0)),
+  };
+}
+
 function getCurrentAiContext(pathname: string): CurrentAiContext {
   const projectMatch = pathname.match(/^\/projects\/([^/]+)/);
   const projectId = projectMatch?.[1] ?? null;
@@ -1296,27 +1413,23 @@ function getCurrentAiContext(pathname: string): CurrentAiContext {
 function getStageHelperCopy(stage: BriskAiStage) {
   if (stage === "script") {
     return {
-      empty: "",
       placeholder: "Do anything with AI",
     };
   }
 
   if (stage === "brief") {
     return {
-      empty: "Draft or improve this brief, clarify the audience, or ask about the project.",
       placeholder: "Ask Brisk AI to draft or improve this brief…",
     };
   }
 
   if (stage === "edit") {
     return {
-      empty: "Review this edit, check it against the brief, or ask about the project.",
       placeholder: "Ask Brisk AI to review this edit…",
     };
   }
 
   return {
-    empty: "Ask Brisk AI about this project.",
     placeholder: "Ask Brisk AI about this project…",
   };
 }

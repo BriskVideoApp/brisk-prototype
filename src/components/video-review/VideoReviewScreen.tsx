@@ -4,13 +4,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
 import type { RecutBrief } from "@/data/masters";
 import type { Project } from "@/components/active-videos/types";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "./DsIcon";
 import { ReviewCommentComposer } from "./ReviewCommentComposer";
@@ -65,11 +68,16 @@ export function VideoReviewScreen({
 }) {
   const router = useRouter();
   const { selectedRole } = usePrototypeRole();
+  const { studio } = useStudioSettings();
+  const { publishStageReviewRequest } = useNotificationInbox();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
+  const projectCode = customerDashboardProjects.find((item) => item.id === project.id)?.code;
   const editReadiness = getEditReadiness(project);
   const editStageStatus = getProjectStages(project).edit;
   const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
   const canMarkReadyToEdit = selectedRole !== "Studio Freelancer";
+  const canUploadVersions = selectedRole !== "Customer";
+  const canChooseCommentVisibility = selectedRole !== "Customer";
   const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
   const initialReviewComments = initialReviewVersions.length === 0 ? [] : reviewVideo.comments;
   const [reviewComments, setReviewComments] = useState(initialReviewComments);
@@ -153,6 +161,15 @@ export function VideoReviewScreen({
       }
     : reviewVideo;
   const isEditEmpty = allReviewVersions.length === 0;
+
+  useEffect(() => {
+    if (canChooseCommentVisibility) {
+      return;
+    }
+
+    setComposerVisibility("external");
+    setIsPostingMenuOpen(false);
+  }, [canChooseCommentVisibility]);
 
   useEffect(() => {
     if (!window.location.search.includes("recut=")) return;
@@ -392,6 +409,11 @@ export function VideoReviewScreen({
   };
 
   const uploadVersion = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadVersions) {
+      event.target.value = "";
+      return;
+    }
+
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -483,6 +505,10 @@ export function VideoReviewScreen({
   };
 
   const replaceReviewVersionFile = (version: ReviewVersion, file: File) => {
+    if (!canUploadVersions) {
+      return;
+    }
+
     const sourceUrl = URL.createObjectURL(file);
 
     localVideoUrlsRef.current.push(sourceUrl);
@@ -563,6 +589,10 @@ export function VideoReviewScreen({
   };
 
   const toggleCommentVisibility = (commentId: string) => {
+    if (!canChooseCommentVisibility) {
+      return;
+    }
+
     setReviewComments((current) =>
       current.map((comment) =>
         comment.id === commentId
@@ -636,6 +666,7 @@ export function VideoReviewScreen({
   const submitComposer = () => {
     const trimmedBody = composerBody.trim();
     const submittedBody = trimmedBody || "Drawing note";
+    const submittedVisibility = canChooseCommentVisibility ? composerVisibility : "external";
 
     if (!trimmedBody && !hasDrawingAttachment) {
       return;
@@ -645,7 +676,7 @@ export function VideoReviewScreen({
       const newComment: ReviewComment = {
         id: `comment-${Date.now()}`,
         authorId: currentUserId,
-        visibility: composerVisibility,
+        visibility: submittedVisibility,
         timecodeSeconds: currentTimeSeconds,
         createdAgo: "Just now",
         body: submittedBody,
@@ -688,7 +719,7 @@ export function VideoReviewScreen({
     const newComment: ReviewComment = {
       id: `comment-overall-${currentUserId}-${reviewVideo.versionLabel}`,
       authorId: currentUserId,
-      visibility: composerVisibility,
+      visibility: submittedVisibility,
       createdAgo: "Just now",
       body: submittedBody,
       drawingPaths: hasDrawingAttachment ? pendingDrawingPaths : undefined,
@@ -714,14 +745,16 @@ export function VideoReviewScreen({
           activeStage="edit"
           project={project}
         />
-        <input
-          className="visually-hidden-file-input"
-          id={versionUploadInputId}
-          type="file"
-          accept="video/*"
-          aria-label="Upload a new version"
-          onChange={uploadVersion}
-        />
+        {canUploadVersions ? (
+          <input
+            className="visually-hidden-file-input"
+            id={versionUploadInputId}
+            type="file"
+            accept="video/*"
+            aria-label="Upload a new version"
+            onChange={uploadVersion}
+          />
+        ) : null}
         {!editReadiness.ready ? (
           <section className="review-workspace is-empty" aria-label="Edit readiness">
             <EditReadinessEmptyState
@@ -808,6 +841,8 @@ export function VideoReviewScreen({
             versions={allReviewVersions}
             statuses={versionStatuses}
             selectedVersionLabel={selectedVersionLabel}
+            studioName={studio.details.name}
+            canUpload={canUploadVersions}
             uploadInputId={versionUploadInputId}
             isCompareMode={isCompareMode}
             onDelete={deleteReviewVersion}
@@ -819,6 +854,7 @@ export function VideoReviewScreen({
         </div>
         <CommentPanel
           activeFilter={activeFilter}
+          canChooseVisibility={canChooseCommentVisibility}
           canSkipNext={canSkipNext}
           canSkipPrevious={canSkipPrevious}
           comments={comments}
@@ -888,6 +924,19 @@ export function VideoReviewScreen({
               isApproved={selectedVersionStatus === "approved"}
               showApprove={Boolean(selectedReviewVersion)}
               onApprove={approveSelectedVersion}
+              onRequestReview={(recipient) => {
+                if (recipient !== "customer" || !selectedReviewVersion) return;
+
+                publishStageReviewRequest({
+                  projectId: project.id,
+                  projectCode,
+                  projectName: project.name,
+                  stage: "edit",
+                  versionLabel: selectedReviewVersion.label,
+                  actorName: reviewUsers.find((user) => user.id === currentUserId)?.name ?? "Studio",
+                  href: `/projects/${project.id}/stages/edit`,
+                });
+              }}
               onUnapprove={unapproveSelectedVersion}
             />
           </div>
@@ -1518,6 +1567,8 @@ function ReviewVersionLibrary({
   versions,
   statuses,
   selectedVersionLabel,
+  studioName,
+  canUpload,
   uploadInputId,
   isCompareMode,
   onDelete,
@@ -1529,6 +1580,8 @@ function ReviewVersionLibrary({
   versions: ReviewVersion[];
   statuses: Record<string, ReviewVersionStatus>;
   selectedVersionLabel: string;
+  studioName: string;
+  canUpload: boolean;
   uploadInputId: string;
   isCompareMode: boolean;
   onDelete: (version: ReviewVersion) => void;
@@ -1558,18 +1611,20 @@ function ReviewVersionLibrary({
         <div>
           <span className="review-version-eyebrow label-xs-semibold">FILES</span>
           <h2 id="review-version-library-title">Versions</h2>
-          <p className="label-s">Every cut stays together beneath the player.</p>
+          <p className="label-s">Each new edit uploaded by {studioName} becomes a new version. The latest version is on top.</p>
         </div>
-        <label
-          className="review-upload-version label-s-semibold"
-          htmlFor={uploadInputId}
-          role="button"
-          tabIndex={0}
-          onKeyDown={openUploadWithKeyboard}
-        >
-          <DsIcon name="upload-simple" size={16} />
-          Upload V{nextVersionNumber}
-        </label>
+        {canUpload ? (
+          <label
+            className="review-upload-version label-s-semibold"
+            htmlFor={uploadInputId}
+            role="button"
+            tabIndex={0}
+            onKeyDown={openUploadWithKeyboard}
+          >
+            <DsIcon name="upload-simple" size={16} />
+            Upload V{nextVersionNumber}
+          </label>
+        ) : null}
       </div>
 
       <button
@@ -1609,33 +1664,37 @@ function ReviewVersionLibrary({
                 <button type="button" aria-label={`Download V${version.number}`} data-tooltip="Download" onClick={() => onDownload(version)}>
                   <DsIcon name="download" size={15} />
                 </button>
-                <label
-                  className="review-version-file-action"
-                  htmlFor={`replace-${version.label}`}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Replace file for V${version.number}`}
-                  data-tooltip="Replace file"
-                  onKeyDown={(event) => {
-                    if (event.key !== "Enter" && event.key !== " ") return;
-                    event.preventDefault();
-                    document.getElementById(`replace-${version.label}`)?.click();
-                  }}
-                >
-                  <DsIcon name="arrows-clockwise" size={15} />
-                </label>
-                <input
-                  className="visually-hidden-file-input"
-                  id={`replace-${version.label}`}
-                  type="file"
-                  accept="video/*"
-                  aria-label={`Choose replacement file for V${version.number}`}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) onReplace(version, file);
-                    event.target.value = "";
-                  }}
-                />
+                {canUpload ? (
+                  <>
+                    <label
+                      className="review-version-file-action"
+                      htmlFor={`replace-${version.label}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Replace file for V${version.number}`}
+                      data-tooltip="Replace file"
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        event.preventDefault();
+                        document.getElementById(`replace-${version.label}`)?.click();
+                      }}
+                    >
+                      <DsIcon name="arrows-clockwise" size={15} />
+                    </label>
+                    <input
+                      className="visually-hidden-file-input"
+                      id={`replace-${version.label}`}
+                      type="file"
+                      accept="video/*"
+                      aria-label={`Choose replacement file for V${version.number}`}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) onReplace(version, file);
+                        event.target.value = "";
+                      }}
+                    />
+                  </>
+                ) : null}
                 <button
                   className="delete"
                   type="button"
@@ -1725,6 +1784,7 @@ function ScrubBar({
 
 function CommentPanel({
   activeFilter,
+  canChooseVisibility,
   canSkipNext,
   canSkipPrevious,
   comments,
@@ -1774,6 +1834,7 @@ function CommentPanel({
   onToggleResolved,
 }: {
   activeFilter: CommentFilter;
+  canChooseVisibility: boolean;
   canSkipNext: boolean;
   canSkipPrevious: boolean;
   comments: ReviewComment[];
@@ -1864,6 +1925,7 @@ function CommentPanel({
           comments.map((comment) => (
             <ReviewCommentThread
               comment={comment}
+              canChangeVisibility={canChooseVisibility}
               isExpandedResolved={expandedResolvedIds.has(comment.id)}
               editDraft={editDraft}
               isEditing={editingCommentId === comment.id}
@@ -1899,6 +1961,7 @@ function CommentPanel({
 
       <ReviewCommentComposer
         body={composerBody}
+        canChooseVisibility={canChooseVisibility}
         currentTimeSeconds={currentTimeSeconds}
         visibility={composerVisibility}
         hasAnchor={hasAnchor}
@@ -1951,6 +2014,7 @@ function CommentFilters({
 
 export function ReviewCommentThread({
   comment,
+  canChangeVisibility = true,
   editDraft,
   isEditing,
   isHighlighted,
@@ -1978,6 +2042,7 @@ export function ReviewCommentThread({
   usersById,
 }: {
   comment: ReviewComment;
+  canChangeVisibility?: boolean;
   editDraft: string;
   isEditing: boolean;
   isHighlighted: boolean;
@@ -2078,6 +2143,7 @@ export function ReviewCommentThread({
                   <OverallChip />
                 )}
                 <VisibilityToggle
+                  interactive={canChangeVisibility}
                   visibility={comment.visibility}
                   onToggle={() => onToggleCommentVisibility(comment.id)}
                 />
@@ -2476,13 +2542,23 @@ function OverallChip() {
 }
 
 function VisibilityToggle({
+  interactive,
   visibility,
   onToggle,
 }: {
+  interactive: boolean;
   visibility: CommentVisibility;
   onToggle: () => void;
 }) {
   const isInternal = visibility === "internal";
+
+  if (!interactive) {
+    return (
+      <span className={`visibility-toggle visibility-label label-xs-semibold ${isInternal ? "internal" : "external"}`}>
+        {isInternal ? "Team" : "Client"}
+      </span>
+    );
+  }
 
   return (
     <button

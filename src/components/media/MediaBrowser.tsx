@@ -20,15 +20,24 @@ import { MediaUploadMenu } from "./MediaUploadMenu";
 import { MediaUploadDropZone } from "./MediaUploadDropZone";
 import { MediaUploadProgress } from "./MediaUploadProgress";
 import { StorageUsageMeter } from "./StorageUsageMeter";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type GlobalTab = "media" | "masters" | "archived";
 type MediaBrowserProps = { scope: "project" | "global"; project?: Project; initialProjectId?: string | null; initialFolderId?: string | null; initialAssetId?: string | null };
 export function MediaBrowser({ scope, project, initialProjectId = null, initialFolderId = null, initialAssetId = null }: MediaBrowserProps) {
   const router = useRouter();
   const { selectedRole, allPages } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
   const library = useMediaLibrary();
   const linkedAsset = library.assetViews.find((asset) => asset.id === initialAssetId && (!project || asset.projectId === project.id));
-  const accessibleProjects = useMemo(() => getMediaProjectsForRole(selectedRole, activeVideoProjects, allPages), [allPages, selectedRole]);
+  const scenarioProjects = useMemo(
+    () => {
+      if (activeScenario?.state !== "new") return activeVideoProjects;
+      return project && activeScenario.fixtureProjectIds?.includes(project.id) ? [project] : [];
+    },
+    [activeScenario, project],
+  );
+  const accessibleProjects = useMemo(() => getMediaProjectsForRole(selectedRole, scenarioProjects, allPages), [allPages, scenarioProjects, selectedRole]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(project?.id ?? linkedAsset?.projectId ?? initialProjectId);
   const activeProjectId = project?.id ?? selectedProjectId;
   const [tab, setTab] = useState<GlobalTab>(linkedAsset?.archivedAt ? "archived" : linkedAsset?.collection === "masters" ? "masters" : "media");
@@ -41,7 +50,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const [selectedAssetIds, setSelectedAssetIds] = useState<Set<string>>(new Set());
   const [activeAssetId, setActiveAssetId] = useState<string | null>(linkedAsset?.id ?? null);
   const [drawerTab, setDrawerTab] = useState<MediaAssetDrawerTab>("details");
-  const [uploadOpen, setUploadOpen] = useState(false);
+  const [openUploadMenu, setOpenUploadMenu] = useState<"toolbar" | "empty" | null>(null);
   const [cloudProvider, setCloudProvider] = useState<MediaCloudProvider | null>(null);
   const [toast, setToast] = useState("");
   const [trackedUploadIds, setTrackedUploadIds] = useState<string[]>([]);
@@ -55,7 +64,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   useEffect(() => {
     if (scope === "project" && project && !projectIds.has(project.id)) router.replace(getRoleHome(selectedRole));
   }, [project, projectIds, router, scope, selectedRole]);
-  const capabilities = getMediaCapabilities(selectedRole, activeProjectId, activeVideoProjects, allPages);
+  const capabilities = getMediaCapabilities(selectedRole, activeProjectId, scenarioProjects, allPages);
   const browserCapabilities = { ...capabilities, canUpload: scope === "project" && capabilities.canUpload };
   const folders = library.folders.filter((folder) => folder.projectId === activeProjectId);
   const collection: MediaCollection = tab === "masters" ? "masters" : "media";
@@ -69,16 +78,16 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
       .filter((asset) => typeFilter === "all" || asset.kind === typeFilter)
       .filter((asset) => {
         if (!needle) return true;
-        const projectName = activeVideoProjects.find((item) => item.id === asset.projectId)?.name ?? "";
+        const projectName = scenarioProjects.find((item) => item.id === asset.projectId)?.name ?? "";
         const folderName = library.folders.find((folder) => folder.id === asset.folderId)?.name ?? "";
         return `${asset.name} ${projectName} ${folderName}`.toLowerCase().includes(needle);
       })
       .toSorted((left, right) => compareMediaAssets(left, right, sort));
-  }, [activeProjectId, collection, library.assetViews, library.folders, projectIds, query, selectedFolderId, sort, tab, typeFilter]);
+  }, [activeProjectId, collection, library.assetViews, library.folders, projectIds, query, scenarioProjects, selectedFolderId, sort, tab, typeFilter]);
   const childFolders = tab === "archived" || scope === "global" && !activeProjectId ? [] : folders.filter((folder) => folder.parentId === selectedFolderId);
   const folderPath = getFolderPath(folders, selectedFolderId);
   const activeAsset = library.assetViews.find((asset) => asset.id === activeAssetId && projectIds.has(asset.projectId) && (!project || asset.projectId === project.id)) ?? null;
-  const activeProject = activeVideoProjects.find((item) => item.id === (activeAsset?.projectId ?? activeProjectId));
+  const activeProject = scenarioProjects.find((item) => item.id === (activeAsset?.projectId ?? activeProjectId));
   const selectedFolderName = folders.find((folder) => folder.id === selectedFolderId)?.name ?? "All media";
   const configuredStorage = mediaStorageOptions.find((option) => option.provider === library.workspaceStorage.provider) ?? mediaStorageOptions[2];
   const configuredLocation = mediaStorageLocations.find((location) => location.id === configuredStorage.locationId) ?? mediaStorageLocations[0];
@@ -141,15 +150,15 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
     <div className={`media-workspace ${railCollapsed ? "rail-collapsed" : ""} ${activeAsset ? "inspector-open" : ""}`}>
       {scope === "global" ? <aside className="media-project-rail" aria-label="Media projects"><div className="media-project-rail-heading"><span className="label-s-semibold">Projects</span></div><button type="button" className={`media-project-rail-item ${selectedProjectId === null ? "is-selected" : ""}`} onClick={() => selectProject(null)}><DsIcon name="grid-four" size={17} /><span className="label-s-semibold">All Projects</span></button><div className="media-project-rail-list">{accessibleProjects.map((item) => <button type="button" className={`media-project-rail-item ${selectedProjectId === item.id ? "is-selected" : ""}`} key={item.id} onClick={() => selectProject(item.id)}><span className="media-project-rail-mark" aria-hidden="true">{item.name.slice(0, 1)}</span><span><strong className="label-s-semibold">{item.name}</strong><small className="label-xs">{item.clientName}</small></span></button>)}</div>{activeProjectId ? <MediaFolderTree folders={folders} selectedFolderId={selectedFolderId} collapsed={false} canManage={capabilities.canManageFolders} canCopyLink={capabilities.canCopyLink} canCollapse={false} onSelect={setSelectedFolderId} onAdd={(parentId) => library.createFolder(activeProjectId, parentId)} onRename={library.renameFolder} onMove={library.moveFolder} onDelete={(id) => { if (!library.deleteFolder(id)) notify("Only empty folders can be deleted."); }} onCopyLink={(id) => { void copyLink(`/media?project=${activeProjectId}&folder=${id}`); }} onToggleCollapsed={() => {}} /> : null}</aside> : <MediaFolderTree folders={folders} selectedFolderId={selectedFolderId} collapsed={railCollapsed} canManage={capabilities.canManageFolders} canCopyLink={capabilities.canCopyLink} onSelect={setSelectedFolderId} onAdd={(parentId) => activeProjectId ? library.createFolder(activeProjectId, parentId) : null} onRename={library.renameFolder} onMove={library.moveFolder} onDelete={(id) => { if (!library.deleteFolder(id)) notify("Only empty folders can be deleted."); }} onCopyLink={(id) => { void copyLink(`/projects/${activeProjectId}/stages/media?folder=${id}`); }} onToggleCollapsed={() => setRailCollapsed((current) => !current)} />}
       <section className="media-main-area">
-        <div className="media-main-actions"><div className="media-action-buttons">{browserCapabilities.canUpload ? <MediaUploadMenu open={uploadOpen} onOpenChange={setUploadOpen} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setUploadOpen(false); setCloudProvider(providerName); }} /> : null}{capabilities.canManageFolders && activeProjectId ? <button className="media-secondary-button label-s-semibold" type="button" onClick={() => library.createFolder(activeProjectId, selectedFolderId)}><DsIcon name="folder-plus" size={16} />New folder</button> : null}{capabilities.canDownload ? <button className="media-tertiary-button label-s-semibold" type="button" onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}><DsIcon name="download" size={16} />Download all</button> : null}<input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} /></div>{capabilities.canViewStorage ? <StorageUsageMeter label={configuredStorage.label} helper={configuredStorage.helper} usedBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.exampleUsedBytes : undefined} limitBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.includedBytes : undefined} /> : null}</div>
+        <div className="media-main-actions"><div className="media-action-buttons">{browserCapabilities.canUpload ? <MediaUploadMenu open={openUploadMenu === "toolbar"} onOpenChange={(open) => setOpenUploadMenu(open ? "toolbar" : null)} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }} /> : null}{capabilities.canManageFolders && activeProjectId ? <button className="media-secondary-button label-s-semibold" type="button" onClick={() => library.createFolder(activeProjectId, selectedFolderId)}><DsIcon name="folder-plus" size={16} />New folder</button> : null}{capabilities.canDownload ? <button className="media-tertiary-button label-s-semibold" type="button" onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}><DsIcon name="download" size={16} />Download all</button> : null}<input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} /></div>{capabilities.canViewStorage ? <StorageUsageMeter label={configuredStorage.label} helper={configuredStorage.helper} usedBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.exampleUsedBytes : undefined} limitBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.includedBytes : undefined} /> : null}</div>
         <MediaFilterBar typeFilter={typeFilter} viewMode={viewMode} sort={sort} query={query} onTypeFilterChange={setTypeFilter} onViewModeChange={setViewMode} onSortChange={setSort} onQueryChange={setQuery} />
-        <MediaAssetGrid assets={visibleAssets} folders={childFolders} folderPath={folderPath} viewMode={viewMode} selectedAssetIds={selectedAssetIds} activeAssetId={activeAssetId} capabilities={browserCapabilities} onActivate={activate} {...commonAction} onBatchDownload={() => notify(`Downloading ${visibleAssets.filter((asset) => selectedAssetIds.has(asset.id) && asset.originalAvailable).length} files.`)} onBatchMove={() => setMoveAssetIds([...selectedAssetIds])} onBatchArchive={() => { library.archiveAssets([...selectedAssetIds]); setSelectedAssetIds(new Set()); notify("Files archived."); }} onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])} onDeselectAll={() => { setSelectedAssetIds(new Set()); lastSelectedAssetIdRef.current = null; }} onUpload={() => inputRef.current?.click()} emptyKind={(query || typeFilter !== "all") ? "filtered" : selectedFolderId ? "folder" : "project"} onClearControls={() => { setQuery(""); setTypeFilter("all"); }} onFolderOpen={setSelectedFolderId} />
+        <MediaAssetGrid assets={visibleAssets} folders={childFolders} folderPath={folderPath} viewMode={viewMode} selectedAssetIds={selectedAssetIds} activeAssetId={activeAssetId} capabilities={browserCapabilities} onActivate={activate} {...commonAction} onBatchDownload={() => notify(`Downloading ${visibleAssets.filter((asset) => selectedAssetIds.has(asset.id) && asset.originalAvailable).length} files.`)} onBatchMove={() => setMoveAssetIds([...selectedAssetIds])} onBatchArchive={() => { library.archiveAssets([...selectedAssetIds]); setSelectedAssetIds(new Set()); notify("Files archived."); }} onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])} onDeselectAll={() => { setSelectedAssetIds(new Set()); lastSelectedAssetIdRef.current = null; }} emptyUploadAction={browserCapabilities.canUpload ? <MediaUploadMenu open={openUploadMenu === "empty"} onOpenChange={(open) => setOpenUploadMenu(open ? "empty" : null)} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }} /> : null} emptyKind={(query || typeFilter !== "all") ? "filtered" : selectedFolderId ? "folder" : "project"} onClearControls={() => { setQuery(""); setTypeFilter("all"); }} onFolderOpen={setSelectedFolderId} />
       </section>
-      {activeAsset && activeProject ? <MediaAssetDrawer asset={activeAsset} projectName={activeProject.name} folders={library.folders.filter((folder) => folder.projectId === activeAsset.projectId)} versions={library.versions} comments={library.comments} transcriptNotes={mediaTranscriptNotes} storageLocations={mediaStorageLocations} capabilities={getMediaCapabilities(selectedRole, activeAsset.projectId, activeVideoProjects, allPages)} globalScope={scope === "global"} activeTab={drawerTab} onTabChange={setDrawerTab} onRename={library.renameAsset} onAddComment={(assetId, body) => library.addComment(assetId, selectedRole === "Customer" ? "Avery Taylor" : selectedRole === "Studio Freelancer" ? "Jordan Lee" : "Tom Evans", selectedRole === "Customer" ? "external" : "internal", body)} onClose={() => setActiveAssetId(null)} {...commonAction} /> : null}
+      {activeAsset && activeProject ? <MediaAssetDrawer asset={activeAsset} projectName={activeProject.name} folders={library.folders.filter((folder) => folder.projectId === activeAsset.projectId)} versions={library.versions} comments={library.comments} transcriptNotes={mediaTranscriptNotes} storageLocations={mediaStorageLocations} capabilities={getMediaCapabilities(selectedRole, activeAsset.projectId, scenarioProjects, allPages)} globalScope={scope === "global"} activeTab={drawerTab} onTabChange={setDrawerTab} onRename={library.renameAsset} onAddComment={(assetId, body) => library.addComment(assetId, selectedRole === "Customer" ? "Avery Taylor" : selectedRole === "Studio Freelancer" ? "Jordan Lee" : "Tom Evans", selectedRole === "Customer" ? "external" : "internal", body)} onClose={() => setActiveAssetId(null)} {...commonAction} /> : null}
     </div>
     <MediaUploadDropZone active={dragActive} folderName={selectedFolderName} />
     <MediaCloudPicker provider={cloudProvider} files={mediaCloudFiles} folderName={selectedFolderName} onClose={() => setCloudProvider(null)} onImport={importFiles} />
-    <MediaUploadProgress assets={uploadProgressAssets} destinationLabel={selectedFolderName} projectName={activeVideoProjects.find((item) => item.id === activeProjectId)?.name ?? "Project"} storageHelper={configuredLocation.helper} onClose={() => setTrackedUploadIds([])} onRetry={(assetId) => library.retryAssets([assetId])} />
+    <MediaUploadProgress assets={uploadProgressAssets} destinationLabel={selectedFolderName} projectName={scenarioProjects.find((item) => item.id === activeProjectId)?.name ?? "Project"} storageHelper={configuredLocation.helper} onClose={() => setTrackedUploadIds([])} onRetry={(assetId) => library.retryAssets([assetId])} />
     {moveAssetIds && moveDialogAssets.length ? <MediaMoveDialog assets={moveDialogAssets} folders={folders} onClose={() => setMoveAssetIds(null)} onMove={(folderId) => { library.moveAssets(moveAssetIds, folderId); setMoveAssetIds(null); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} /> : null}
     {deleteAssetIds && deleteDialogAssets.length ? <MediaDeleteDialog assets={deleteDialogAssets} storageLocations={mediaStorageLocations} onClose={() => setDeleteAssetIds(null)} onConfirm={() => { library.deleteAssets(deleteAssetIds); setDeleteAssetIds(null); setSelectedAssetIds(new Set()); setActiveAssetId(null); notify("Files deleted from Brisk."); }} /> : null}
     {toast ? <div className="media-toast label-s-semibold" role="status">{toast}</div> : null}

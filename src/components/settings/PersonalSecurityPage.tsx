@@ -47,7 +47,6 @@ export function PersonalSecurityPage() {
               <span><DsIcon name="lock" size={20} /></span>
               <div>
                 <h2 className="headings-xs-bold" id="security-sign-in-heading">Sign-in details</h2>
-                <p className="paragraph-s">Your sign-in method is managed separately from your profile.</p>
               </div>
             </header>
             <dl className="account-security-details">
@@ -56,7 +55,7 @@ export function PersonalSecurityPage() {
                 <dd className="label-m-semibold">{signInEmail}</dd>
               </div>
               <div>
-                <dt className="label-xs">Authentication method</dt>
+                <dt className="label-xs">Sign-in method</dt>
                 <dd className="label-m-semibold">{getAuthenticationMethodLabel(authenticationMethod)}</dd>
               </div>
             </dl>
@@ -64,7 +63,6 @@ export function PersonalSecurityPage() {
               <div className="account-settings-row-action">
                 <div>
                   <strong className="label-m-semibold">Password</strong>
-                  <p className="paragraph-s">Choose a strong password you do not use elsewhere.</p>
                 </div>
                 <Button size="S" variant="secondary" onClick={() => setPasswordModalOpen(true)}>Change password</Button>
               </div>

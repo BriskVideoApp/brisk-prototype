@@ -10,7 +10,11 @@ import {
   type BriefVideoTypeId,
 } from "@/data/brief";
 import {
+  isValidStudioBrandHex,
+  normaliseStudioBrandHex,
+  studioOnboardingVideoTypeLabels,
   studioBrandAccentOptions,
+  type StudioBrandColour,
   type StudioBrandAccentId,
   type StudioReviewDraft,
 } from "@/data/studio-onboard";
@@ -190,8 +194,7 @@ export function StudioVideoTypeEditor({
                 <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={16} />
               </span>
               <span>
-                <strong className="label-s-semibold">{videoType.name}</strong>
-                <span className="label-xs">{videoType.summary}</span>
+                <strong className="label-s-semibold">{studioOnboardingVideoTypeLabels[videoType.name]}</strong>
               </span>
               {isSelected ? <DsIcon name="check-circle" size={16} /> : null}
             </button>
@@ -246,25 +249,32 @@ export function StudioBriefOptionsEditor({
       <div className="studio-review-dialog-body studio-video-type-editor-grid" role="group" aria-label={`${fieldLabel} options`}>
         {options.map((option) => {
           const isIncluded = !nextExcludedValues.includes(option.value);
+          const isCustomResponse = option.value === "Something else";
 
-          return (
+          const optionButton = (
             <button
-              className={`studio-video-type-editor-option ${isIncluded ? "selected" : ""}`}
+              className={`studio-video-type-editor-option ${isCustomResponse ? "custom-response" : ""} ${isIncluded ? "selected" : ""}`}
               type="button"
-              key={option.value}
               aria-pressed={isIncluded}
               onClick={() => toggleOption(option.value)}
             >
               <span className="studio-video-type-editor-icon">
-                <DsIcon name={videoTypeIconMap[option.value] ?? "check-circle"} size={16} />
+                <DsIcon name={isCustomResponse ? "pencil-simple" : videoTypeIconMap[option.value] ?? "check-circle"} size={16} />
               </span>
               <span>
-                <strong className="label-s-semibold">{option.label}</strong>
-                {option.description ? <span className="label-xs">{option.description}</span> : null}
+                <strong className="label-s-semibold">{isCustomResponse ? "Allow a custom response" : option.label}</strong>
+                {isCustomResponse ? <span className="label-xs">Clients can enter their own answer.</span> : option.description ? <span className="label-xs">{option.description}</span> : null}
               </span>
               {isIncluded ? <DsIcon name="check-circle" size={16} /> : null}
             </button>
           );
+
+          return isCustomResponse ? (
+            <div className="studio-custom-response-group" key={option.value}>
+              <span className="studio-custom-response-divider label-xs-semibold">Custom response</span>
+              {optionButton}
+            </div>
+          ) : <div key={option.value}>{optionButton}</div>;
         })}
       </div>
       {includedOptionCount === 0 ? (
@@ -325,8 +335,8 @@ export function StudioAccentPicker({
 }) {
   return (
     <div className="studio-review-field-group">
-      {hideLabel ? null : <span className="label-m-semibold">Customer-facing accent colour</span>}
-      <div className="studio-accent-picker" role="radiogroup" aria-label="Customer-facing accent colour">
+      {hideLabel ? null : <span className="label-m-semibold">Client-facing accent colour</span>}
+      <div className="studio-accent-picker" role="radiogroup" aria-label="Client-facing accent colour">
         {studioBrandAccentOptions.map((accent) => (
           <button
             className={`studio-accent-option studio-client-accent-${accent.id} ${accent.id === value ? "selected" : ""}`}
@@ -343,6 +353,48 @@ export function StudioAccentPicker({
         ))}
       </div>
     </div>
+  );
+}
+
+export function StudioBrandColourEditor({
+  colour,
+  onCancel,
+  onSave,
+}: {
+  colour: StudioBrandColour | null;
+  onCancel: () => void;
+  onSave: (hex: string) => void;
+}) {
+  const [hex, setHex] = useState(colour?.hex ?? "#FFFFFF");
+  const isValid = isValidStudioBrandHex(hex);
+  const previewHex = isValid ? normaliseStudioBrandHex(hex) : "#FFFFFF";
+
+  return (
+    <StudioReviewDialog
+      title={colour ? "Edit brand colour" : "Add brand colour"}
+      description="Enter the six-digit hex value from your Studio brand palette."
+      onClose={onCancel}
+    >
+      <div className="studio-review-dialog-body">
+        <div className="studio-brand-colour-editor-preview">
+          <span style={{ backgroundColor: previewHex }} aria-hidden="true" />
+          <strong className="label-m-semibold">{previewHex}</strong>
+        </div>
+        <Input
+          error={hex.length > 0 && !isValid}
+          hint={isValid ? "Colour ready to save." : "Use a value such as #8B2CFF."}
+          label="Hex value"
+          value={hex}
+          onChange={(event) => setHex(event.target.value.toLocaleUpperCase("en-AU"))}
+        />
+      </div>
+      <DialogActions
+        disabled={!isValid}
+        onCancel={onCancel}
+        onSave={() => onSave(normaliseStudioBrandHex(hex))}
+        saveLabel={colour ? "Save colour" : "Add colour"}
+      />
+    </StudioReviewDialog>
   );
 }
 

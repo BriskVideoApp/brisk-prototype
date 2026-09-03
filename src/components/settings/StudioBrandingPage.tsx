@@ -4,31 +4,41 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { useStudioSettingsUnsavedChanges } from "@/components/settings/StudioSettingsShell";
-import { StudioAccentPicker } from "@/components/studio-onboard/StudioReviewEditors";
+import { StudioBrandColourEditor } from "@/components/studio-onboard/StudioReviewEditors";
+import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getBillingPlan, subscriptionFixtures } from "@/data/billing";
-import { studioBrandAccentOptions } from "@/data/studio-onboard";
+import { getStudioBrandColours, type StudioBrandColour } from "@/data/studio-onboard";
 import type { StudioBranding } from "@/data/studio-settings";
 
 const currentPlan = getBillingPlan(subscriptionFixtures.active.planId);
 const poweredByBriskRequired = currentPlan.id === "starter" || currentPlan.id === "professional";
-const clientPortalPreviewHref = "/customer-dashboard?client=loom&studio-preview=1";
-
 export function StudioBrandingPage() {
   const { studio, updateBranding } = useStudioSettings();
+  const { state } = usePrototypeState();
   const { setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const [draft, setDraft] = useState<StudioBranding>(() => ({
     ...studio.branding,
     logoOptions: [...studio.branding.logoOptions],
+    brandColours: getStudioBrandColours(studio.branding),
   }));
-  const [showColourOptions, setShowColourOptions] = useState(false);
+  const [editingBrandColourIndex, setEditingBrandColourIndex] = useState<number | "new" | null>(null);
   const [showSaveBeforePreview, setShowSaveBeforePreview] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(studio.branding), [draft, studio.branding]);
-  const accentLabel = studioBrandAccentOptions.find((accent) => accent.id === draft.brandAccentId)?.label ?? "Brisk Purple";
+  const brandColours = getStudioBrandColours(draft);
+  const previewClientId = state.onboarding.clientId && state.clients.some((client) => (
+    client.workspaceId === state.session.activeWorkspaceId && client.id === state.onboarding.clientId
+  )) ? state.onboarding.clientId : state.session.activeClientId && state.clients.some((client) => (
+    client.workspaceId === state.session.activeWorkspaceId && client.id === state.session.activeClientId
+  )) ? state.session.activeClientId : null;
+  const clientPortalPreviewHref = previewClientId
+    ? `/workspaces/${state.session.activeWorkspaceId}/clients/${previewClientId}/portal?studio-preview=1`
+    : null;
 
   useEffect(() => {
     setHasUnsavedChanges(hasChanges);
@@ -65,6 +75,7 @@ export function StudioBrandingPage() {
   };
 
   const openClientPortalPreview = () => {
+    if (!clientPortalPreviewHref) return;
     window.open(clientPortalPreviewHref, "_blank", "noopener,noreferrer");
   };
 
@@ -80,6 +91,36 @@ export function StudioBrandingPage() {
     saveBranding();
     setShowSaveBeforePreview(false);
     openClientPortalPreview();
+  };
+
+  const setPrimaryColour = (primaryIndex: number) => {
+    setDraft((current) => ({
+      ...current,
+      brandColours: getStudioBrandColours(current).map((colour, index): StudioBrandColour => ({
+        ...colour,
+        role: index === primaryIndex ? "primary" : "supporting",
+      })),
+    }));
+  };
+
+  const removeColour = (colourIndex: number) => {
+    setDraft((current) => ({
+      ...current,
+      brandColours: getStudioBrandColours(current).filter((_, index) => index !== colourIndex),
+    }));
+  };
+
+  const saveColour = (hex: string) => {
+    setDraft((current) => {
+      const nextColours = getStudioBrandColours(current);
+      if (editingBrandColourIndex === "new") {
+        nextColours.push({ hex, role: "supporting" });
+      } else if (editingBrandColourIndex !== null) {
+        nextColours[editingBrandColourIndex] = { ...nextColours[editingBrandColourIndex], hex };
+      }
+      return { ...current, brandColours: nextColours };
+    });
+    setEditingBrandColourIndex(null);
   };
 
   return (
@@ -99,7 +140,10 @@ export function StudioBrandingPage() {
                 <p className="paragraph-s">Shown in every Client portal.</p>
               </div>
               <div className="studio-branding-field-control">
-                <div className={`studio-branding-logo-row studio-client-accent-${draft.brandAccentId}`}>
+                <div
+                  className={`studio-branding-logo-row studio-client-accent-${draft.brandAccentId}`}
+                  style={getStudioBrandThemeStyle(draft)}
+                >
                   <StudioBrandingLogo
                     logoPreviewUrl={draft.logoPreviewUrl}
                     studioName={studio.details.name}
@@ -113,27 +157,30 @@ export function StudioBrandingPage() {
               </div>
             </div>
 
-            <div className="studio-branding-field">
+            <div className="studio-branding-field studio-branding-palette-field">
               <div>
-                <h3 className="headings-2xs-bold">Primary colour</h3>
-                <p className="paragraph-s">Currently {accentLabel}.</p>
+                <h3 className="headings-2xs-bold">Brand colours</h3>
+                <p className="paragraph-s">The primary colour is used for portal buttons and active states. Text contrast is selected automatically.</p>
               </div>
-              <div className="studio-branding-field-control">
-                {showColourOptions ? (
-                  <StudioAccentPicker
-                    value={draft.brandAccentId}
-                    onChange={(brandAccentId) => {
-                      setDraft((current) => ({ ...current, brandAccentId }));
-                      setShowColourOptions(false);
-                    }}
-                  />
-                ) : (
-                  <div className={`studio-branding-current-colour studio-client-accent-${draft.brandAccentId}`}>
-                    <span aria-hidden="true" />
-                    <strong className="label-s-semibold">{accentLabel}</strong>
+              <div className="studio-branding-palette-list">
+                {brandColours.map((colour, index) => (
+                  <div className="studio-branding-palette-row" key={`${colour.hex}-${index}`}>
+                    <span className="studio-branding-palette-swatch" style={{ backgroundColor: colour.hex }} aria-hidden="true" />
+                    <strong className="label-s-semibold">{colour.hex}</strong>
+                    {colour.role === "primary" ? <span className="studio-branding-primary-badge label-xs-semibold">Primary</span> : (
+                      <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => setPrimaryColour(index)}>Set as primary</button>
+                    )}
+                    <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => setEditingBrandColourIndex(index)}>Edit</button>
+                    {brandColours.length > 1 ? (
+                      <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => removeColour(index)}>Remove</button>
+                    ) : null}
                   </div>
-                )}
-                <Button size="M" variant="secondary" onClick={() => setShowColourOptions((current) => !current)}>Change colour</Button>
+                ))}
+              </div>
+              <div>
+                <Button size="S" variant="secondary" onClick={() => setEditingBrandColourIndex("new")}>
+                  <span className="studio-settings-button-content"><DsIcon name="plus" size={16} /> Add colour</span>
+                </Button>
               </div>
             </div>
           </section>
@@ -174,7 +221,7 @@ export function StudioBrandingPage() {
       </div>
 
       <div className="studio-settings-form-actions">
-        <Button size="M" variant="secondary" onClick={previewClientPortal}>Preview Client portal</Button>
+        <Button size="M" variant="secondary" disabled={!clientPortalPreviewHref} onClick={previewClientPortal}>Preview Client portal</Button>
         <Button size="M" onClick={saveBranding}>Save branding</Button>
       </div>
 
@@ -191,6 +238,14 @@ export function StudioBrandingPage() {
         >
           <p className="paragraph-s">Save your latest logo and colour before opening the Client portal preview.</p>
         </ClientModal>
+      ) : null}
+
+      {editingBrandColourIndex !== null ? (
+        <StudioBrandColourEditor
+          colour={editingBrandColourIndex === "new" ? null : brandColours[editingBrandColourIndex]}
+          onCancel={() => setEditingBrandColourIndex(null)}
+          onSave={saveColour}
+        />
       ) : null}
 
       {toast ? (

@@ -57,7 +57,14 @@ export function InvoiceStateSelect({ invoiceItem, onChange }: { invoiceItem: Con
 }
 
 export function InvoiceTagBadge({ tag }: { tag: InvoiceTag }) {
-  return <span className={`costs-tag-badge is-${slug(tag)} label-xs-semibold`}>{tag}</span>;
+  return <span className={`costs-tag-badge tag-option ${getInvoiceTagClass(tag)} label-s-semibold`}>{tag}</span>;
+}
+
+export function getInvoiceTagClass(tag: InvoiceTag) {
+  if (tag === "Urgent") return "critical";
+  if (tag === "Disputed") return "peach";
+  if (tag === "Follow up") return "high-priority";
+  return "neutral";
 }
 
 export function CreateOfferModal({ projectId, onClose, onCreated }: { projectId: string; onClose: () => void; onCreated: (offer: ContractorOffer) => void }) {

@@ -4,14 +4,16 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import {
+  getClientPortalDestination,
+  getScopedRoleHome,
+} from "@/components/navigation/prototypeNavigation";
 import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import {
-  getDemoProjectDestination,
-  type DemoProjectExperience,
-} from "@/data/projects";
+import { getProjectStageHref } from "@/data/project-fixtures";
 
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
@@ -36,14 +38,8 @@ const projectHeaderStages: ProjectHeaderStage[] = [
   { key: "masters", label: "Masters", icon: "film-strip" },
 ];
 
-const stageStateLabels: Record<StageStatus["state"], string> = {
-  done: "approved",
-  in_progress: "waiting on Studio",
-  not_started: "not started",
-  waiting: "waiting on client",
-};
-
 export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project }: ProjectStageHeaderProps) {
+  const dashboardTooltipId = `project-stage-dashboard-tooltip-${project.id}`;
   const { completionRecords } = useProjectCompletion();
   const { assetViews } = useMediaLibrary();
   const { getProjectStages } = useProjectStageStatus();
@@ -52,12 +48,17 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const isProjectDelivered = project.status === "Completed" || (Boolean(completionRecords[project.id]) && hasApprovedStageFlow);
   const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectStages).key;
   const { selectedRole } = usePrototypeRole();
+  const { state } = usePrototypeState();
+  const studioName = state.workspaces.find((workspace) => workspace.id === state.session.activeWorkspaceId)?.name ?? "Studio";
+  const homeHref = getScopedRoleHome(selectedRole, getClientPortalDestination(state));
   const projectMediaCount = mediaCount ?? assetViews.filter((asset) => asset.projectId === project.id && !asset.archivedAt && asset.collection === "media").length;
   const mediaStatus: StageStatus = isProjectDelivered ? { state: "done" } : projectStages.media;
+  const mediaStatusLabel = getProjectStageStatusLabel(mediaStatus.state, project.clientName, studioName);
   const mediaTooltip = projectMediaCount > 0
     ? `${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`
     : "No media uploaded";
   const mediaLabel = `Media${projectMediaCount > 0 ? ` (${projectMediaCount})` : ""}`;
+  const mediaHref = getProjectStageHref(project.id, "media");
 
   return (
       <header className="project-stage-header" aria-label="Project stage progress">
@@ -65,11 +66,14 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
           <div className="project-stage-identity">
             <Link
               className="project-stage-dashboard-link"
-              href={selectedRole === "Customer" ? "/customer-dashboard" : "/active-videos"}
+              href={selectedRole === "Customer" ? homeHref : "/active-videos"}
               aria-label="Back to dashboard"
-              data-tooltip="Back to dashboard"
+              aria-describedby={dashboardTooltipId}
             >
               <DsIcon name="arrow-left" size={18} />
+              <span className="project-stage-dashboard-tooltip" id={dashboardTooltipId} role="tooltip">
+                Back to dashboard
+              </span>
             </Link>
             <span className="project-stage-client-badge label-xs-semibold">{project.clientBadge}</span>
             <span className="project-stage-identity-divider" aria-hidden="true">
@@ -86,6 +90,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
                 const status: StageStatus = isProjectDelivered ? { state: "done" } : projectStages[stage.key];
                 const href = getProjectStageHref(project.id, stage.key);
                 const isCurrentStage = stage.key === currentStageKey;
+                const statusLabel = getProjectStageStatusLabel(status.state, project.clientName, studioName);
                 const chipContent = (
                   <span className="project-stage-icon-surface" aria-hidden="true">
                     <DsIcon name={stage.icon} size={24} />
@@ -100,8 +105,9 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
                     {href ? (
                       <Link
                         className="project-stage-chip"
+                        data-tooltip={statusLabel}
                         href={href}
-                        aria-label={`${getProjectStageLinkLabel(stage.key, stage.label)}: ${stageStateLabels[status.state]}`}
+                        aria-label={`${getProjectStageLinkLabel(stage.key, stage.label)}: ${statusLabel}`}
                         aria-current={isCurrentStage ? "step" : undefined}
                       >
                         {chipContent}
@@ -109,7 +115,8 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
                     ) : (
                       <span
                         className="project-stage-chip"
-                        aria-label={`${stage.label}: ${stageStateLabels[status.state]}`}
+                        data-tooltip={statusLabel}
+                        aria-label={`${stage.label}: ${statusLabel}`}
                         role="img"
                       >
                         {chipContent}
@@ -126,16 +133,26 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
               })}
             </ol>
             <div className={`project-stage-step project-stage-media-step is-${mediaStatus.state} ${activeUtility === "media" ? "is-current" : ""}`}>
-              <Link
+              {mediaHref ? <Link
                 className="project-stage-chip"
-                href={`/projects/${project.id}/stages/media`}
+                data-tooltip={mediaStatusLabel}
+                href={mediaHref}
                 aria-current={activeUtility === "media" ? "page" : undefined}
-                aria-label={`${mediaLabel}: ${stageStateLabels[mediaStatus.state]}. ${mediaTooltip}`}
+                aria-label={`${mediaLabel}: ${mediaStatusLabel}. ${mediaTooltip}`}
               >
                 <span className="project-stage-icon-surface" aria-hidden="true">
                   <DsIcon name="image-square" size={24} />
                 </span>
-              </Link>
+              </Link> : <span
+                className="project-stage-chip"
+                data-tooltip={mediaStatusLabel}
+                aria-label={`${mediaLabel}: ${mediaStatusLabel}. ${mediaTooltip}`}
+                role="img"
+              >
+                <span className="project-stage-icon-surface" aria-hidden="true">
+                  <DsIcon name="image-square" size={24} />
+                </span>
+              </span>}
               <span className="project-stage-label label-xs-semibold">{mediaLabel}</span>
             </div>
           </div>
@@ -148,19 +165,26 @@ function getCurrentProjectStage(stages: Record<StageKey, StageStatus>) {
   return projectHeaderStages.find((stage) => stages[stage.key].state !== "done") ?? projectHeaderStages[projectHeaderStages.length - 1];
 }
 
-function getProjectStageHref(projectId: string, stage: StageKey) {
-  const experienceByStage: Record<StageKey, DemoProjectExperience> = {
-    brief: "brief",
-    script: "script",
-    shoot: "shoot",
-    media: "media",
-    edit: "edit",
-    masters: "masters",
-  };
-
-  return getDemoProjectDestination(projectId, experienceByStage[stage])?.href ?? "";
-}
-
 function getProjectStageLinkLabel(stage: StageKey, label: string) {
   return stage === "edit" ? "Video Review" : label;
+}
+
+function getProjectStageStatusLabel(
+  state: StageStatus["state"],
+  clientName: string,
+  studioName: string,
+) {
+  if (state === "waiting") {
+    return `Waiting on ${clientName || "Client"}`;
+  }
+
+  if (state === "in_progress") {
+    return `Waiting on ${studioName || "Studio"}`;
+  }
+
+  if (state === "done") {
+    return "Approved";
+  }
+
+  return "Not started";
 }

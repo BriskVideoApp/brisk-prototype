@@ -7,7 +7,8 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { selectWorkspaceProjects } from "@/data/prototype-state";
 import type { Project, StageKey } from "@/components/active-videos/types";
 import { stageOrder } from "@/components/active-videos/StageProgress";
 import { useClients } from "@/components/clients/ClientDataContext";
@@ -28,6 +29,8 @@ export function ClientsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { clients } = useClients();
+  const { state } = usePrototypeState();
+  const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const { selectedRole } = usePrototypeRole();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("Active");
@@ -43,7 +46,7 @@ export function ClientsPage() {
     if (isEmptyPreview || isNoResultsPreview) return [];
     return clients
       .filter((client) => status === "All" || client.status === status)
-      .filter((client) => !normalisedQuery || `${client.name} ${client.website} ${client.type}`.toLocaleLowerCase("en-AU").includes(normalisedQuery))
+      .filter((client) => !normalisedQuery || `${client.name} ${client.website}`.toLocaleLowerCase("en-AU").includes(normalisedQuery))
       .sort((left, right) => sort === "name"
         ? left.name.localeCompare(right.name, "en-AU")
         : right.latestActivity.occurredAt.localeCompare(left.latestActivity.occurredAt));
@@ -123,8 +126,8 @@ export function ClientsPage() {
             </thead>
             <tbody>
               {visibleClients.map((client) => {
-                const projects = activeVideoProjects.filter((project) => project.clientId === client.id);
-                const activeProjects = projects.filter((project) => !["Completed", "Archived"].includes(project.status));
+                const projects = workspaceProjects.filter((project) => project.clientId === client.id);
+                const activeProjects = projects.filter((project) => project.status === "In Production");
                 const primaryContact = client.contacts.find((contact) => contact.id === client.primaryContactId) ?? null;
 
                 return (
@@ -134,7 +137,7 @@ export function ClientsPage() {
                         <ClientAvatar client={client} />
                         <span>
                           <strong className="label-m-semibold">{client.name}</strong>
-                          <small className="label-xs">{client.type}{client.website ? ` - ${client.website}` : ""}</small>
+                          {client.website ? <small className="label-xs">{client.website}</small> : null}
                         </span>
                       </Link>
                     </td>

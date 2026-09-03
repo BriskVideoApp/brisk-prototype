@@ -222,7 +222,7 @@ export const clientContactMetadata: Record<string, ClientContactMetadata> = {
   "ramp-contact-1": contactMetadata(["Brand Manager"], ["Brand approvals"], "Senior", "New York, USA", "+1 212 555 0138", "Requested the current production pause."),
   "canva-contact-1": contactMetadata(["Creative Operations Lead"], ["Creative operations"], "Lead", "Sydney, NSW", "+61 421 555 811", "Owns creative direction and review routing."),
   "linear-contact-1": contactMetadata(["Head of Content"], ["Content strategy"], "Lead", "San Francisco, USA", "+1 415 555 0172", "Completed project contact."),
-  "alex-contact-1": contactMetadata(["Founder"], ["Approvals"], "Lead", "Melbourne, VIC", "+61 404 555 628", "Individual Client and approver."),
+  "alex-contact-1": contactMetadata(["Founder"], ["Approvals"], "Lead", "Melbourne, VIC", "+61 404 555 628", "Client contact and approver."),
 };
 
 export const initialNativePeople: Person[] = [

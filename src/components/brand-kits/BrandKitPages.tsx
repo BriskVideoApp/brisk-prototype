@@ -13,7 +13,6 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   brandKitCustomers,
   createManualBrandProfile,
-  makeGuidelineFiles,
   mockAudioAsset,
   type BrandColour,
   type BrandGuidelineFile,
@@ -194,11 +193,7 @@ function getWebsiteHref(website: string) {
 
 function getGuidelineFiles(profile: BrandProfile | null, titleName: string): BrandGuidelineFile[] {
   if (profile?.guidelines.files?.length) return profile.guidelines.files;
-  if (!profile?.guidelines.pdfUrl) {
-    if (!profile?.guidelines.aiSummary) return [];
-    const prefix = titleName.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "");
-    return makeGuidelineFiles(prefix || "brand", titleName);
-  }
+  if (!profile?.guidelines.pdfUrl) return [];
 
   return [{
     id: "legacy-brand-guidelines",
@@ -299,7 +294,6 @@ function profileHasBrandContent(profile: BrandProfile | null) {
     || profile.imagery.length
     || profileHasVoice(profile)
     || profile.guidelines.pdfUrl
-    || profile.guidelines.aiSummary
   ));
 }
 
@@ -833,8 +827,6 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
         ...profile?.guidelines,
         files: nextGuidelines,
         pdfUrl: nextGuidelines[0]?.url,
-        aiSummary: profile?.guidelines.aiSummary
-          ?? "Key brand guidance extracted from the uploaded PDFs.",
       });
       setSelectedGuidelineId(uploadedGuidelines[0]?.id ?? null);
       notify(`${files.length} ${files.length === 1 ? "file" : "files"} uploaded to Brand Guidelines.`);
@@ -1840,7 +1832,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
           </BrandTile>
 
           <BrandTile
-            action={canEdit && Boolean(guidelineFiles.length || profile?.guidelines.aiSummary) ? (
+            action={canEdit && Boolean(guidelineFiles.length) ? (
               <TileHeaderActions
                 accept={uploadAccept.guidelines}
                 addLabel="Upload guidelines"
@@ -1964,31 +1956,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                 </div>
               </div>
             ) : null}
-            {profile?.guidelines.aiSummary ? (
-              <div className="guidelines-summary">
-                <span className="guidelines-summary-label label-xs-semibold">
-                  <DsIcon name="sparkle" size={14} />
-                  AI summary
-                </span>
-                {canEdit ? (
-                  <textarea
-                    className="guidelines-summary-editor paragraph-s"
-                    value={profile.guidelines.aiSummary}
-                    aria-label="Brand guidelines summary"
-                    onChange={(event) =>
-                      updateSection("guidelines", {
-                        ...profile.guidelines,
-                        aiSummary: event.target.value,
-                      })
-                    }
-                    onBlur={() => notify("Brand Guidelines saved")}
-                  />
-                ) : (
-                  <p className="paragraph-s">{profile.guidelines.aiSummary}</p>
-                )}
-              </div>
-            ) : null}
-            {!selectedGuideline && !profile?.guidelines.aiSummary ? (
+            {!selectedGuideline ? (
               <EmptyTile
                 action={{
                   label: "Upload guidelines",
@@ -1996,7 +1964,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                   multiple: true,
                   onFiles: (files) => handleTargetedUpload("guidelines", files),
                 }}
-                copy="No guidelines yet. Upload a PDF or add a short summary."
+                copy="No guidelines yet. Upload PDFs or other brand documents."
                 icon="file-text"
                 visual="guidelines"
               />

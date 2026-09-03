@@ -14,6 +14,12 @@ export type TeamRole =
   | "vfxArtist"
   | "custom";
 
+export type DefaultProjectTeamMember = {
+  id: string;
+  role: Exclude<TeamRole, "custom">;
+  personId: string | null;
+};
+
 export type InvitationStatus = "invited" | "seen" | "accepted" | "declined" | "expired" | "withdrawn";
 
 export type InvitationDeclineReason = "role_filled" | "manual" | "unavailable";
@@ -22,6 +28,8 @@ export type InvitationPaymentBasis = "hourly" | "flat";
 
 export type InvitationPaymentTerms = {
   basis: InvitationPaymentBasis;
+  hourlyRate?: number;
+  projectRate?: number;
   flatRate?: number;
 };
 
@@ -30,6 +38,7 @@ export type StageStatus = {
   daysAgo?: number;
   approvedAt?: string;
   approvedBy?: string;
+  assignedTo?: string;
 };
 
 export type ProjectDeadline = {
@@ -67,6 +76,7 @@ export type Invitation = {
   sentAt: string;
   respondedAt?: string;
   rateSnapshot?: number;
+  projectRateSnapshot?: number;
   paymentBasis?: InvitationPaymentBasis;
   flatRateSnapshot?: number;
   declinedReason?: InvitationDeclineReason;

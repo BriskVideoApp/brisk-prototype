@@ -87,6 +87,15 @@ export function StudioDetailsPage() {
             value={draft.studioType}
             onChange={(value) => updateField("studioType", value)}
           />
+          <label className="studio-settings-textarea-field">
+            <span className="label-m-semibold">Studio description</span>
+            <textarea
+              className="studio-settings-textarea paragraph-s"
+              rows={5}
+              value={draft.description}
+              onChange={(event) => updateField("description", event.target.value)}
+            />
+          </label>
           <Input label="Website" type="url" value={draft.website} onChange={(event) => updateField("website", event.target.value)} />
           <Input label="Main contact email" type="email" value={draft.contactEmail} onChange={(event) => updateField("contactEmail", event.target.value)} />
           <StudioSelectField

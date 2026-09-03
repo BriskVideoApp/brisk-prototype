@@ -531,6 +531,31 @@
   padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
+.account-team-project-checklist .account-team-project-all {
+  background: var(--brisk-brand-secondary);
+}
+
+.account-team-project-divider {
+  display: flex;
+  align-items: center;
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-m);
+  margin: var(--brisk-space-s) var(--brisk-space-none);
+}
+
+.account-team-project-divider::before,
+.account-team-project-divider::after {
+  height: 1px;
+  flex: 1;
+  background: var(--brisk-border-secondary);
+  content: "";
+}
+
+.account-team-project-options {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
 .account-team-project-checklist label:hover,
 .account-team-project-checklist label:focus-within {
   background: var(--brisk-brand-secondary);
@@ -559,8 +584,16 @@
   gap: var(--brisk-space-s);
 }
 
-.account-invoice-security-note {
+.account-invoice-portal-message {
   max-width: calc(var(--brisk-space-3xl) * 17);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.account-invoice-portal-message p {
+  min-width: calc(var(--brisk-space-3xl) * 6);
+  flex: 1;
+  margin: var(--brisk-space-none);
 }
 
 .account-invoice-filter {

@@ -163,7 +163,7 @@ export function ClientPicker({
               <ClientAvatar client={client} size="S" />
               <span>
                 <strong className="label-s-semibold">{client.name}</strong>
-                <small className="label-xs">{client.type}{client.website ? ` - ${client.website}` : ""}</small>
+                {client.website ? <small className="label-xs">{client.website}</small> : null}
               </span>
               {client.id === value ? <DsIcon name="check" size={14} /> : null}
             </button>
@@ -191,7 +191,7 @@ export function AddClientDialog({
   showDuplicateOnOpen?: boolean;
 }) {
   const { clients, createClient } = useClients();
-  const [form, setForm] = useState<NewClientInput>({ name: initialName, type: "Organisation", website: "" });
+  const [form, setForm] = useState<NewClientInput>({ name: initialName, website: "" });
   const [duplicate, setDuplicate] = useState<Client | null>(showDuplicateOnOpen ? findDuplicateClient({ name: initialName }, clients) : null);
 
   const update = <Key extends keyof NewClientInput>(key: Key, value: NewClientInput[Key]) => {
@@ -226,17 +226,6 @@ export function AddClientDialog({
           <span className="label-m-semibold">Client name <small className="label-xs">Required</small></span>
           <input autoFocus value={form.name} onChange={(event) => update("name", event.target.value)} />
         </label>
-        <fieldset className="client-type-field">
-          <legend className="label-m-semibold">Client type</legend>
-          <div>
-            {(["Organisation", "Individual"] as const).map((type) => (
-              <label className={`client-radio label-s-semibold ${form.type === type ? "is-selected" : ""}`} key={type}>
-                <input type="radio" name="client-type" value={type} checked={form.type === type} onChange={() => update("type", type)} />
-                {type}
-              </label>
-            ))}
-          </div>
-        </fieldset>
         <label className="client-field">
           <span className="label-m-semibold">Website <small className="label-xs">Optional</small></span>
           <input value={form.website ?? ""} placeholder="example.org" onChange={(event) => update("website", event.target.value)} />

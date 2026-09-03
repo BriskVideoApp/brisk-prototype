@@ -15,8 +15,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
+import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
   useProjectCompletion,
@@ -36,6 +38,7 @@ import type {
   ReviewComment,
   User,
 } from "@/components/video-review/types";
+import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { reviewUsers } from "@/data/video-review";
 import {
   createMockSrt,
@@ -90,6 +93,8 @@ const thumbnailPlatformOptions: ThumbnailPlatform[] = [
 
 export function MastersPage({ project }: { project: Project }) {
   const { selectedRole: role } = usePrototypeRole();
+  const { publishStageReviewRequest } = useNotificationInbox();
+  const projectCode = customerDashboardProjects.find((item) => item.id === project.id)?.code;
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
   const { completionRecords, completeProject, undoProjectCompletion } = useProjectCompletion();
@@ -1356,6 +1361,19 @@ export function MastersPage({ project }: { project: Project }) {
                           canUndoRecut={recutMarkHistory.length > 0}
                           canRedoRecut={recutMarkFuture.length > 0}
                           onApprove={() => approveDeliverable(deliverable.id)}
+                          onRequestReview={(recipient) => {
+                            if (recipient !== "customer" || !playbackVersion) return;
+
+                            publishStageReviewRequest({
+                              projectId: project.id,
+                              projectCode,
+                              projectName: project.name,
+                              stage: "masters",
+                              versionLabel: `v${playbackVersion.number}`,
+                              actorName: "Tom",
+                              href: `/projects/${project.id}/stages/masters?deliverable=${encodeURIComponent(deliverable.id)}`,
+                            });
+                          }}
                           onUnapprove={() => {
                             if (playbackVersion) unapproveDeliverable(deliverable.id, playbackVersion.id);
                           }}
@@ -1829,6 +1847,7 @@ function ExpandedDeliverable({
   canUndoRecut,
   canRedoRecut,
   onApprove,
+  onRequestReview,
   onUnapprove,
   onClearDrawing,
   onDoneDrawing,
@@ -1876,6 +1895,7 @@ function ExpandedDeliverable({
   canUndoRecut: boolean;
   canRedoRecut: boolean;
   onApprove: () => void;
+  onRequestReview: (recipient: RequestReviewRecipient) => void;
   onUnapprove: () => void;
   onClearDrawing: () => void;
   onDoneDrawing: () => void;
@@ -1994,6 +2014,7 @@ function ExpandedDeliverable({
                 approveLabel="Approve this version"
                 isApproved={version.approved}
                 onApprove={onApprove}
+                onRequestReview={onRequestReview}
                 onUnapprove={onUnapprove}
               />
               {version.approved ? <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}><DsIcon name="download" size={16} />Download</button> : null}

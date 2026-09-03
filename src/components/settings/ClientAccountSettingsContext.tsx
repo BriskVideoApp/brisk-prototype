@@ -32,6 +32,7 @@ export type ClientAccountAccess = {
 
 type InviteClientMemberInput = {
   memberId?: string;
+  name: string;
   email: string;
   role: ClientMembershipRole;
   projectIds: string[];
@@ -111,15 +112,9 @@ export function ClientAccountSettingsProvider({ children }: { children: ReactNod
 
   const inviteTeamMember = useCallback((input: InviteClientMemberInput) => {
     commitAccount((current) => {
-      const emailName = input.email.split("@")[0] ?? "Client colleague";
-      const name = emailName
-        .split(/[._-]+/u)
-        .filter(Boolean)
-        .map((part) => `${part.charAt(0).toLocaleUpperCase("en-AU")}${part.slice(1)}`)
-        .join(" ");
       const nextMember = {
         id: input.memberId ?? `client-invite-${Date.now()}`,
-        name: name || "Client colleague",
+        name: input.name,
         email: input.email,
         role: input.role,
         status: "Pending invitation" as const,

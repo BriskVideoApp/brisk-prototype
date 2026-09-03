@@ -147,11 +147,8 @@ export function StudioAiPlaybookPage() {
           <Button size="S" type="button" variant="secondary" onClick={addExampleReference}><DsIcon name="plus" size={14} />Add mocked reference</Button>
         </PlaybookSection>
 
-        <PlaybookSection title="Client access" description="Client AI access is off by default and controlled by Studio Staff.">
-          <label className="studio-settings-compact-toggle brisk-ai-client-access-toggle">
-            <input type="checkbox" checked={draft.clientAccessEnabled} onChange={(event) => updateField("clientAccessEnabled", event.target.checked)} />
-            <span><strong className="label-s-semibold">Make Brisk AI available to Clients</strong><small className="label-xs">Clients can only use their own AI Brand Profile, assigned projects, released work and Client-visible comments. Internal comments remain private.</small></span>
-          </label>
+        <PlaybookSection title="Client access" description="Brisk AI is available to every Client across all of their videos.">
+          <p className="brisk-ai-playbook-rule label-xs"><DsIcon name="check-circle" size={14} />Clients can use their own AI Brand Profile, assigned projects, released work and Client-visible comments. Internal comments, other Clients and unrelated projects remain private.</p>
         </PlaybookSection>
 
         <div className="studio-settings-form-actions">

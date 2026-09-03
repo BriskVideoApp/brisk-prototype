@@ -1,16 +1,13 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import Link from "next/link";
 import { useState } from "react";
 import {
-  formatHours,
   getAcceptedInvitation,
   getInvitationCost,
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
-  snapToQuarter,
-  stageLabels,
 } from "@/data/active-videos/teamDefaults";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Invitation, RoleSlot, TeamPerson } from "@/components/active-videos/types";
@@ -21,115 +18,37 @@ type RoleRowProps = {
   canEdit: boolean;
   showCosts: boolean;
   onOpenEditor: () => void;
-  onChangeHours: (hours: number) => void;
 };
 
 const teamReferenceDate = new Date("2026-06-25T09:00:00+10:00");
 
-export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor, onChangeHours }: RoleRowProps) {
-  const [isEditingHours, setIsEditingHours] = useState(false);
-  const [draftHours, setDraftHours] = useState("");
+export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor }: RoleRowProps) {
   const roleLabel = getSlotLabel(slot);
   const estimatedHours = getRoleEstimatedHours(slot);
   const acceptedInvitation = getAcceptedInvitation(slot);
   const acceptedPerson = acceptedInvitation ? people.find((person) => person.id === acceptedInvitation.personId) : undefined;
   const pendingInvitations = getVisibleInvitations(slot);
 
-  const openEditor = () => {
-    if (canEdit) {
-      onOpenEditor();
-    }
-  };
-
-  const startHoursEdit = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-
-    if (!canEdit) {
-      return;
-    }
-
-    setDraftHours(estimatedHours > 0 ? String(estimatedHours) : "");
-    setIsEditingHours(true);
-  };
-
-  const commitHoursEdit = () => {
-    onChangeHours(snapToQuarter(Number.parseFloat(draftHours) || 0));
-    setIsEditingHours(false);
-  };
-
   return (
-    <div
-      className={`team-role-row ${canEdit ? "editable" : ""}`}
-      role={canEdit ? "button" : "row"}
-      tabIndex={canEdit ? 0 : undefined}
-      aria-label={canEdit ? `Edit ${roleLabel} role` : undefined}
-      onClick={openEditor}
-      onKeyDown={(event) => {
-        if (!canEdit) {
-          return;
-        }
-
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onOpenEditor();
-        }
-      }}
-    >
+    <div className="team-role-row" role="row">
       <div className="team-role-row-primary">
         <div className="team-role-main">
           <span className="team-role-titleline">
-            <span className="team-role-name label-s-semibold">{roleLabel}</span>
-            <span className="team-role-dot" aria-hidden="true">
-              ·
-            </span>
-            {isEditingHours ? (
-              <input
-                className="team-role-hours-input label-s-semibold"
-                inputMode="decimal"
-                min="0"
-                step="0.25"
-                type="number"
-                value={draftHours}
-                autoFocus
-                onClick={(event) => event.stopPropagation()}
-                onChange={(event) => setDraftHours(event.target.value)}
-                onBlur={commitHoursEdit}
-                onKeyDown={(event) => {
-                  event.stopPropagation();
-
-                  if (event.key === "Enter") {
-                    commitHoursEdit();
-                  }
-
-                  if (event.key === "Escape") {
-                    setIsEditingHours(false);
-                  }
-                }}
-              />
-            ) : canEdit ? (
-              <button className="team-role-hours-chip label-s-semibold" type="button" onClick={startHoursEdit}>
-                {estimatedHours > 0 ? formatHours(estimatedHours) : "Add hours"}
+            {canEdit ? (
+              <button
+                className="team-role-name team-role-name-trigger label-s-semibold"
+                type="button"
+                aria-label={`Edit ${roleLabel} role`}
+                aria-haspopup="dialog"
+                onClick={onOpenEditor}
+              >
+                {roleLabel}
               </button>
             ) : (
-              <span className="team-role-hours-chip label-s-semibold">{estimatedHours > 0 ? formatHours(estimatedHours) : "Add hours"}</span>
+              <span className="team-role-name label-s-semibold">{roleLabel}</span>
             )}
           </span>
-          <span className="team-role-stages label-xs">{slot.stages.map((stage) => stageLabels[stage.stageId]).join(", ") || "No stages yet"}</span>
         </div>
-        {canEdit ? (
-          <button
-            className="team-role-card-edit"
-            type="button"
-            aria-label={`Edit ${roleLabel}`}
-            title={`Edit ${roleLabel}`}
-            onClick={(event) => {
-              event.stopPropagation();
-              onOpenEditor();
-            }}
-          >
-            <DsIcon name="pencil-simple-ds" size={16} />
-          </button>
-        ) : null}
       </div>
 
       {acceptedPerson && acceptedInvitation ? (
@@ -137,20 +56,32 @@ export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor, onChan
       ) : pendingInvitations.length > 0 ? (
         <InvitationList invitations={pendingInvitations} people={people} roleHours={estimatedHours} showCosts={showCosts} />
       ) : (
-        <EmptySlotState canEdit={canEdit} />
+        <EmptySlotState canEdit={canEdit} onOpenEditor={onOpenEditor} />
       )}
     </div>
   );
 }
 
-function ResolvedSlotState({ person, invitation }: { person: TeamPerson; invitation: Invitation }) {
+function ResolvedSlotState({
+  person,
+  invitation,
+}: {
+  person: TeamPerson;
+  invitation: Invitation;
+}) {
   const isFreelancer = person.personType === "Studio Freelancer";
   const isDirectFreelancer = isFreelancer && invitation.assignmentMethod === "direct";
 
   return (
     <div className="team-role-fill-state">
       <span className="team-role-person-name label-s">
-        {person.name}
+        <Link
+          className="team-role-person-trigger label-s"
+          href={`/people/${encodeURIComponent(person.id)}`}
+          aria-label={`Open ${person.name}'s People profile`}
+        >
+          {person.name}
+        </Link>
         {isFreelancer ? <FreelancePill /> : <StaffPill />}
         {isDirectFreelancer ? <span className="team-assigned-indicator label-xs-semibold">Assigned</span> : null}
       </span>
@@ -184,7 +115,9 @@ function InvitationList({ invitations, people, roleHours, showCosts }: { invitat
             return person ? (
               <p className="team-invitation-line label-s" key={invitation.id}>
                 <span className="team-invitation-person label-s-semibold">{person.name}</span>
-                {showCosts && typeof cost === "number" ? <span>{invitation.paymentBasis === "flat" ? `Project rate ${formatCurrency(cost)}` : formatCurrency(cost)}</span> : null}
+                {showCosts && typeof cost === "number" ? (
+                  <span>{typeof invitation.projectRateSnapshot === "number" || invitation.paymentBasis === "flat" ? `Project rate ${formatCurrency(cost)}` : formatCurrency(cost)}</span>
+                ) : null}
                 <span>{formatInvitationStatus(invitation.status)}</span>
                 <span>{formatSentTime(invitation.sentAt)}</span>
               </p>
@@ -196,17 +129,30 @@ function InvitationList({ invitations, people, roleHours, showCosts }: { invitat
   );
 }
 
-function EmptySlotState({ canEdit }: { canEdit: boolean }) {
+function EmptySlotState({ canEdit, onOpenEditor }: { canEdit: boolean; onOpenEditor: () => void }) {
   return (
     <div className="team-empty-fill-state">
       <span className="team-empty-slot label-s">No-one assigned.</span>
-      {canEdit ? <span className="team-row-edit-hint label-xs-semibold">Fill role</span> : null}
+      {canEdit ? (
+        <button className="team-row-edit-hint label-xs-semibold" type="button" onClick={onOpenEditor}>
+          Fill role
+        </button>
+      ) : null}
     </div>
   );
 }
 
 export function StaffPill() {
-  return <span className="team-person-pill studio label-xs-semibold">Studio Staff</span>;
+  return (
+    <span
+      className="team-person-pill studio"
+      aria-label="Studio Staff"
+      data-tooltip="Studio Staff"
+      tabIndex={0}
+    >
+      <DsIcon name="users-three" size={12} />
+    </span>
+  );
 }
 
 export function FreelancePill() {

@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView, MediaFolder } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
@@ -28,7 +28,7 @@ type MediaAssetGridProps = {
   onBatchArchive: () => void;
   onBatchDelete: () => void;
   onDeselectAll: () => void;
-  onUpload: () => void;
+  emptyUploadAction?: ReactNode;
   emptyKind: "project" | "folder" | "filtered";
   onClearControls: () => void;
   onFolderOpen: (folderId: string | null) => void;
@@ -85,12 +85,7 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
           </p>
           {props.emptyKind === "filtered" ? (
             <button className="media-secondary-button label-s-semibold" type="button" onClick={props.onClearControls}>Clear controls</button>
-          ) : props.capabilities.canUpload ? (
-            <button className="media-primary-button label-s-semibold" type="button" onClick={props.onUpload}>
-              <DsIcon name="plus" size={16} />
-              {props.emptyKind === "folder" ? "Upload to this folder" : "Upload media"}
-            </button>
-          ) : null}
+          ) : props.capabilities.canUpload ? props.emptyUploadAction : null}
         </div>
       ) : props.viewMode === "card" ? (
         <div className="media-card-grid">

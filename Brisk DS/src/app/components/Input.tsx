@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 interface InputProps {
+  id?: string;
+  name?: string;
+  autoComplete?: string;
   label?: string;
   type?: string;
   placeholder?: string;
@@ -14,6 +17,9 @@ interface InputProps {
 }
 
 export function Input({
+  id,
+  name,
+  autoComplete,
   label,
   type = 'text',
   placeholder,
@@ -25,6 +31,8 @@ export function Input({
   iconStart,
   iconEnd
 }: InputProps) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [hasTyped, setHasTyped] = useState(false);
@@ -69,7 +77,7 @@ export function Input({
   return (
     <div className="flex flex-col gap-[4px]">
       {label && (
-        <label className="label-m-semibold" style={{ color: '#0E1114' }}>
+        <label className="label-m-semibold" htmlFor={inputId} style={{ color: '#0E1114' }}>
           {label}
         </label>
       )}
@@ -88,6 +96,9 @@ export function Input({
         )}
 
         <input
+          id={inputId}
+          name={name}
+          autoComplete={autoComplete}
           type={type}
           placeholder={placeholder}
           value={value}

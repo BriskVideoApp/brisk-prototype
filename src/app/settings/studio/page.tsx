@@ -1,10 +1,10 @@
-import { StudioDetailsPage } from "@/components/settings/StudioDetailsPage";
+import { StudioSetupOverviewPage } from "@/components/settings/StudioSetupOverviewPage";
 import { StudioSettingsShell } from "@/components/settings/StudioSettingsShell";
 
-export default function StudioDetailsRoute() {
+export default function StudioSetupRoute() {
   return (
-    <StudioSettingsShell sectionId="details">
-      <StudioDetailsPage />
+    <StudioSettingsShell sectionId="overview">
+      <StudioSetupOverviewPage />
     </StudioSettingsShell>
   );
 }

@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import type { DefaultProjectTeamMember, TeamRole } from "@/components/active-videos/types";
 import { BriskSelect } from "@/components/form/BriskSelect";
+import { usePeople } from "@/components/people/PeopleDataContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { useStudioSettingsUnsavedChanges } from "@/components/settings/StudioSettingsShell";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { teamRoleLabels, teamRoleOptions } from "@/data/active-videos/teamDefaults";
 import type {
   StudioBriefTemplateId,
   StudioProductionDefaults,
@@ -26,12 +29,21 @@ const reminderOptions = [
   { value: "three-working-days", label: "After 3 working days" },
 ] as const;
 
+const defaultTeamRoleOptions = teamRoleOptions
+  .filter((role): role is Exclude<TeamRole, "custom"> => role !== "custom")
+  .map((role) => ({ value: role, label: teamRoleLabels[role] }));
+
 export function StudioProductionDefaultsPage() {
   const { studio, updateProductionDefaults } = useStudioSettings();
+  const { people } = usePeople();
   const { setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const [draft, setDraft] = useState<StudioProductionDefaults>(() => cloneProductionDefaults(studio.production));
   const [toast, setToast] = useState<string | null>(null);
   const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(studio.production), [draft, studio.production]);
+  const studioStaffOptions = useMemo(() => people
+    .filter((person) => person.type === "Team" && person.status === "Active")
+    .map((person) => ({ value: person.id, label: person.name })), [people]);
+  const availableRoleToAdd = defaultTeamRoleOptions.find((option) => !draft.defaultTeam.some((member) => member.role === option.value));
 
   useEffect(() => {
     setHasUnsavedChanges(hasChanges);
@@ -62,6 +74,35 @@ export function StudioProductionDefaultsPage() {
     value: StudioProductionDefaults["clientPortal"][Key],
   ) => {
     setDraft((current) => ({ ...current, clientPortal: { ...current.clientPortal, [key]: value } }));
+  };
+
+  const updateDefaultTeamMember = (memberId: string, update: Partial<DefaultProjectTeamMember>) => {
+    setDraft((current) => ({
+      ...current,
+      defaultTeam: current.defaultTeam.map((member) => member.id === memberId ? { ...member, ...update } : member),
+    }));
+  };
+
+  const addDefaultTeamRole = () => {
+    if (!availableRoleToAdd) return;
+    setDraft((current) => ({
+      ...current,
+      defaultTeam: [
+        ...current.defaultTeam,
+        {
+          id: `default-${availableRoleToAdd.value}`,
+          role: availableRoleToAdd.value,
+          personId: null,
+        },
+      ],
+    }));
+  };
+
+  const removeDefaultTeamRole = (memberId: string) => {
+    setDraft((current) => ({
+      ...current,
+      defaultTeam: current.defaultTeam.filter((member) => member.id !== memberId),
+    }));
   };
 
   return (
@@ -110,6 +151,65 @@ export function StudioProductionDefaultsPage() {
               </div>
             </div>
           </div>
+        </ProductionSection>
+
+        <ProductionSection
+          description="Choose the roles that appear when a new project is created. Assign Studio Staff now or leave a role unassigned."
+          title="Default project team"
+        >
+          <div className="studio-default-team-list">
+            {draft.defaultTeam.map((member) => {
+              const roleOptions = defaultTeamRoleOptions.filter((option) => option.value === member.role || !draft.defaultTeam.some((currentMember) => currentMember.role === option.value));
+
+              return (
+                <div className="studio-default-team-row" key={member.id}>
+                  <label className="studio-settings-select-field">
+                    <span className="label-xs-semibold">Role</span>
+                    <BriskSelect<Exclude<TeamRole, "custom">>
+                      ariaLabel="Default project role"
+                      clearable={false}
+                      options={roleOptions}
+                      placeholder="Choose a role"
+                      searchable={false}
+                      value={member.role}
+                      onChange={(role) => {
+                        if (role) updateDefaultTeamMember(member.id, { role, personId: null });
+                      }}
+                    />
+                  </label>
+
+                  <label className="studio-settings-select-field">
+                    <span className="label-xs-semibold">Default Studio Staff</span>
+                    <BriskSelect
+                      ariaLabel={`Default ${teamRoleLabels[member.role]}`}
+                      clearLabel="Leave unassigned"
+                      options={studioStaffOptions}
+                      placeholder="No default assignee"
+                      value={member.personId ?? ""}
+                      onChange={(personId) => updateDefaultTeamMember(member.id, { personId: personId || null })}
+                    />
+                  </label>
+
+                  <button
+                    aria-label={`Remove default ${teamRoleLabels[member.role]} role`}
+                    className="studio-default-team-remove"
+                    type="button"
+                    onClick={() => removeDefaultTeamRole(member.id)}
+                  >
+                    <DsIcon name="trash-simple" size={16} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {availableRoleToAdd ? (
+            <div>
+              <Button size="S" type="button" variant="secondary" onClick={addDefaultTeamRole}>
+                <span className="studio-settings-button-content"><DsIcon name="plus" size={16} /> Add default role</span>
+              </Button>
+            </div>
+          ) : null}
         </ProductionSection>
 
         <ProductionSection description="Choose when Clients are reminded to review released work." title="Reviews">
@@ -204,6 +304,7 @@ function SettingsToggle({ checked, label, onChange }: { checked: boolean; label:
 function cloneProductionDefaults(production: StudioProductionDefaults): StudioProductionDefaults {
   return {
     ...production,
+    defaultTeam: production.defaultTeam.map((member) => ({ ...member })),
     clientPortal: { ...production.clientPortal },
   };
 }

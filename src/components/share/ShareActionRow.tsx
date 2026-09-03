@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { RequestReviewModal } from "@/components/share/RequestReviewModal";
+import {
+  RequestReviewModal,
+  type RequestReviewRecipient,
+} from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export type ShareStageContext = "brief" | "script" | "media" | "edit" | "masters";
@@ -36,7 +39,7 @@ export type ShareActionRowProps = {
   onApprove?: () => void;
   onUnapprove?: () => void;
   onSendToStudio?: () => void;
-  onRequestReview?: () => void;
+  onRequestReview?: (recipient: RequestReviewRecipient) => void;
   isApproved?: boolean;
   showApprove?: boolean;
   showCopyLink?: boolean;
@@ -186,8 +189,8 @@ export function ShareActionRow({
     }, 2600);
   };
 
-  const handleReviewSent = (recipientName: string) => {
-    onRequestReview?.();
+  const handleReviewSent = (recipientName: string, recipient: RequestReviewRecipient) => {
+    onRequestReview?.(recipient);
     showActionToast(`Review request sent to ${recipientName}`);
   };
 

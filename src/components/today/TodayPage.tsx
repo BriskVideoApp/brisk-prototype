@@ -18,6 +18,7 @@ import type { Project, StageKey } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
 import { FreelancerTodayPage } from "./FreelancerTodayPage";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 const stageOptions: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const defaultBlockHours = 2;
@@ -65,9 +66,13 @@ export function TodayPage() {
 
 function StudioTodayPage() {
   const { selectedRole } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
   const router = useRouter();
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
+  const showOnboardingClientPrompt = searchParams.get("onboarding") === "add-client";
+  const effectivePreviewState = activeScenario?.state === "new" ? "empty" : previewState;
+  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
   const [weekOffset, setWeekOffset] = useState(0);
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
@@ -92,8 +97,8 @@ function StudioTodayPage() {
 
   const weekDays = useMemo(() => getWeekDays(weekOffset), [weekOffset]);
   const projectCards = useMemo(
-    () => deriveProjectCards(activeVideoProjects, todayCurrentUserId, entries),
-    [entries],
+    () => deriveProjectCards(scenarioProjects, todayCurrentUserId, entries),
+    [entries, scenarioProjects],
   );
   const entriesByDay = useMemo(() => groupEntriesByDay(entries, weekDays), [entries, weekDays]);
   const weekTotals = useMemo(
@@ -161,7 +166,14 @@ function StudioTodayPage() {
           onThisWeek={() => setWeekOffset(0)}
         />
 
-        {selectedRole === "Studio Staff" ? previewState === "empty" ? (
+        {selectedRole === "Studio Staff" ? showOnboardingClientPrompt ? (
+          <section className="today-page-empty">
+            <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name="users-three" size={28} /></span>
+            <h2 className="headings-xs-bold">Add your first Client</h2>
+            <p className="paragraph-s">Add a Client when you are ready to start your first real video.</p>
+            <Link className="today-page-empty-button label-s-semibold" href="/clients?dialog=add">Add a Client</Link>
+          </section>
+        ) : effectivePreviewState === "empty" ? (
           <section className="today-page-empty">
             <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={28} /></span>
             <h2 className="headings-xs-bold">No active videos assigned to you</h2>
@@ -171,12 +183,12 @@ function StudioTodayPage() {
         ) : (
           <div className="today-workspace">
             <ProjectRail projectCards={projectCards} />
-            {previewState === "no-results" || previewState === "complete" ? (
+            {effectivePreviewState === "no-results" || effectivePreviewState === "complete" ? (
               <section className="today-page-empty is-workspace">
-                <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name={previewState === "complete" ? "check-circle" : "clock-clockwise"} size={28} /></span>
-                <h2 className="headings-xs-bold">{previewState === "complete" ? "You’re clear for today" : "Plan your day"}</h2>
-                <p className="paragraph-s">{previewState === "complete" ? "Everything you planned for today is complete." : "Drag an active video into Today, or add a time entry to get started."}</p>
-                <button className="today-page-empty-button label-s-semibold" type="button" onClick={() => addPreviewEntry(previewState === "complete" ? weekDays.find((day) => day.date > todayReferenceDate)?.date ?? todayReferenceDate : todayReferenceDate)}>{previewState === "complete" ? "Plan tomorrow" : "Add time"}</button>
+                <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name={effectivePreviewState === "complete" ? "check-circle" : "clock-clockwise"} size={28} /></span>
+                <h2 className="headings-xs-bold">{effectivePreviewState === "complete" ? "You’re clear for today" : "Plan your day"}</h2>
+                <p className="paragraph-s">{effectivePreviewState === "complete" ? "Everything you planned for today is complete." : "Drag an active video into Today, or add a time entry to get started."}</p>
+                <button className="today-page-empty-button label-s-semibold" type="button" onClick={() => addPreviewEntry(effectivePreviewState === "complete" ? weekDays.find((day) => day.date > todayReferenceDate)?.date ?? todayReferenceDate : todayReferenceDate)}>{effectivePreviewState === "complete" ? "Plan tomorrow" : "Add time"}</button>
               </section>
             ) : (
               <WeekGrid

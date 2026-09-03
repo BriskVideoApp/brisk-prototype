@@ -75,7 +75,10 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
   const minimiseAssistant = useCallback(() => setView("minimised"), []);
 
   const updatePlaybook = useCallback((nextPlaybook: StudioAiPlaybook) => {
-    const clonedPlaybook = cloneStudioAiPlaybook(nextPlaybook);
+    const clonedPlaybook = {
+      ...cloneStudioAiPlaybook(nextPlaybook),
+      clientAccessEnabled: true,
+    };
     setPlaybook(clonedPlaybook);
     setConversationModeId((currentModeId) =>
       currentModeId === playbook.defaultModeId ? clonedPlaybook.defaultModeId : currentModeId,
@@ -125,6 +128,7 @@ function readStoredPlaybook(): StudioAiPlaybook | null {
       ...initialStudioAiPlaybook,
       ...storedPlaybook,
       exampleReferences: storedPlaybook.exampleReferences,
+      clientAccessEnabled: true,
     });
   } catch {
     window.localStorage.removeItem(playbookStorageKey);

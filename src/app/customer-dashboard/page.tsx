@@ -1,7 +1,5 @@
-import { Suspense } from "react";
-import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
-import "@/components/chat/chat.css";
+import { LegacyClientPortalRoute } from "@/components/client-portal/ClientPortalScreen";
 
 export default function CustomerDashboardRoute() {
-  return <Suspense fallback={null}><CustomerDashboard /></Suspense>;
+  return <LegacyClientPortalRoute />;
 }

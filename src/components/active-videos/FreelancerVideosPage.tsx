@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -30,6 +31,7 @@ import {
 import { formatCostAmount, type ContractorInvoice, type ContractorOffer } from "@/data/costs";
 import { getDemoProjectDestination } from "@/data/projects";
 import { getFileLocationHref } from "@/lib/project-files";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type FreelancerView = "videos" | "offers";
 type OfferView = "open" | "history";
@@ -83,10 +85,13 @@ const stageMeta: Record<StageKey, { label: string; icon: DsIconName }> = {
 };
 
 export function FreelancerVideosPage() {
+  const searchParams = useSearchParams();
+  const { activeScenario } = usePrototypeScenario();
   const { completionRecords } = useProjectCompletion();
   const { getProjectStages } = useProjectStageStatus();
   const { invoices, offers, setOfferState } = useCostsData();
-  const projects = useMemo(() => activeVideoProjects.map((project) => {
+  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
+  const projects = useMemo(() => scenarioProjects.map((project) => {
     const completion = completionRecords[project.id];
     return {
       ...project,
@@ -94,13 +99,13 @@ export function FreelancerVideosPage() {
       stages: getProjectStages(project),
       deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
     };
-  }), [completionRecords, getProjectStages]);
+  }), [completionRecords, getProjectStages, scenarioProjects]);
   const baseEngagements = useMemo(
     () => getFreelancerEngagements(projects, freelancerPreviewViewer.id),
     [projects],
   );
-  const [view, setView] = useState<FreelancerView>("videos");
-  const [offerView, setOfferView] = useState<OfferView>("open");
+  const [view, setView] = useState<FreelancerView>(() => searchParams.get("scenario-view") === "offer-history" ? "offers" : "videos");
+  const [offerView, setOfferView] = useState<OfferView>(() => searchParams.get("scenario-view") === "offer-history" ? "history" : "open");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
   const [query, setQuery] = useState("");
   const [invoiceOffer, setInvoiceOffer] = useState<ContractorOffer | null>(null);
@@ -176,7 +181,12 @@ export function FreelancerVideosPage() {
       {view === "videos" ? (
         <>
           <FreelancerVideoTable engagements={visibleVideos} table={videoTable} onSubmitInvoice={setInvoiceOffer} />
-          {visibleVideos.length === 0 ? <FreelancerEmptyState title="No jobs match these controls" body="Try another payment state or search." action="Clear controls" onAction={clearControls} /> : null}
+          {visibleVideos.length === 0 ? <FreelancerEmptyState
+            title={activeScenario?.state === "new" ? "No jobs yet" : "No jobs match these controls"}
+            body={activeScenario?.state === "new" ? "Accepted project work will appear here when a Studio assigns it to you." : "Try another payment state or search."}
+            action={activeScenario?.state === "new" ? "Check offers" : "Clear controls"}
+            onAction={activeScenario?.state === "new" ? () => setView("offers") : clearControls}
+          /> : null}
         </>
       ) : (
         <>

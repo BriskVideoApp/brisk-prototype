@@ -13,6 +13,7 @@ export function ReviewCommentComposer({
   isDrawingMode,
   isEditingOverallComment,
   isPostingMenuOpen,
+  canChooseVisibility = true,
   visibility,
   onBodyChange,
   onRemoveAnchor,
@@ -29,6 +30,7 @@ export function ReviewCommentComposer({
   isDrawingMode: boolean;
   isEditingOverallComment: boolean;
   isPostingMenuOpen: boolean;
+  canChooseVisibility?: boolean;
   visibility: CommentVisibility;
   onBodyChange: (body: string) => void;
   onRemoveAnchor: () => void;
@@ -50,21 +52,23 @@ export function ReviewCommentComposer({
 
   return (
     <section className={`comment-composer ${isInternal ? "internal" : ""}`} aria-label="Add comment">
-      <div className="posting-menu-wrap">
-        <button className="posting-toggle label-xs" type="button" onClick={onTogglePostingMenu}>
-          {isInternal ? "Posting to Team" : "Posting to Client"} <DsIcon name="caret-down" size={12} />
-        </button>
-        {isPostingMenuOpen ? (
-          <div className="posting-menu">
-            <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
-              Posting to Client
-            </button>
-            <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
-              Posting to Team
-            </button>
-          </div>
-        ) : null}
-      </div>
+      {canChooseVisibility ? (
+        <div className="posting-menu-wrap">
+          <button className="posting-toggle label-xs" type="button" onClick={onTogglePostingMenu}>
+            {isInternal ? "Posting to Team" : "Posting to Client"} <DsIcon name="caret-down" size={12} />
+          </button>
+          {isPostingMenuOpen ? (
+            <div className="posting-menu">
+              <button className="label-s" type="button" onClick={() => onSetVisibility("external")}>
+                Posting to Client
+              </button>
+              <button className="label-s" type="button" onClick={() => onSetVisibility("internal")}>
+                Posting to Team
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
       <div className={`composer-box ${isInternal ? "internal" : ""}`}>
         <textarea
           className="composer-input label-s"

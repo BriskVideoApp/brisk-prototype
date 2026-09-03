@@ -70,7 +70,7 @@ export function ProjectCostsPage({ project }: { project: Project }) {
         <header className="costs-page-header">
           <div>
             <span className="costs-kicker label-xs-semibold">PROJECT</span>
-            <h1 className="headings-m-bold" id="project-costs-heading">Costs</h1>
+            <h1 className="headings-m-bold" id="project-costs-heading">Project costs</h1>
             <p className="paragraph-s">See what you agreed to pay, review invoices and mark them as paid.</p>
           </div>
           <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}`}>Manage offers</Link>

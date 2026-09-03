@@ -15,6 +15,7 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { StageApprovalControl } from "@/components/share/ShareActionRow";
@@ -35,11 +36,15 @@ import {
   FloatingSelectionToolbar,
   type FloatingSelectionToolbarState,
 } from "@/components/script/FloatingSelectionToolbar";
-import { RequestReviewModal } from "@/components/share/RequestReviewModal";
+import {
+  RequestReviewModal,
+  type RequestReviewRecipient,
+} from "@/components/share/RequestReviewModal";
 import { ScriptSubtabBar } from "@/components/script-transcripts/ScriptSubtabBar";
 import { TranscriptsPanel } from "@/components/script-transcripts/TranscriptsPanel";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { chatProjects } from "@/data/chat";
+import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { mediaAssets } from "@/data/media";
 import {
   initialScriptComments,
@@ -161,7 +166,9 @@ type ScriptPageProps = {
   project: Project;
   initialSubtab: ScriptSubtabId;
   initialTranscriptClipId: string | null;
+  initialToastMessage?: string;
   initiallyEmpty?: boolean;
+  initialVersions?: ScriptVersion[];
 };
 
 const overallCommentAnchor: ScriptCommentAnchor = {
@@ -174,11 +181,20 @@ const defaultVersionMeta: ScriptVersionMeta = {
 };
 const initialSavedAt = new Date("2026-07-06T12:31:00+10:00");
 
-export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, initiallyEmpty = false }: ScriptPageProps) {
+export function ScriptPage({
+  project,
+  initialSubtab,
+  initialTranscriptClipId,
+  initialToastMessage = "",
+  initiallyEmpty = false,
+  initialVersions = scriptVersions,
+}: ScriptPageProps) {
   const { openAssistant } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
+  const { publishStageReviewRequest } = useNotificationInbox();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
-  const latestVersion = scriptVersions[scriptVersions.length - 1];
+  const startingVersions = initialVersions.length > 0 ? initialVersions : scriptVersions;
+  const latestVersion = startingVersions[startingVersions.length - 1];
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
   const isCustomer = role === "customer";
   const scriptCustomerName = chatProjects.find((candidate) => candidate.id === project.id)?.clientName ?? "customer";
@@ -186,9 +202,9 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
   const [showChanges, setShowChanges] = useState(false);
   const [, setStatus] = useState<ScriptStatus>("In script");
   const [isScriptApproved, setIsScriptApproved] = useState(() => getProjectStages(project).script.state === "done");
-  const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(scriptVersions));
+  const [versions, setVersions] = useState<ScriptVersion[]>(() => cloneVersions(startingVersions));
   const [versionMetaById, setVersionMetaById] = useState<Record<string, ScriptVersionMeta>>(() =>
-    createInitialVersionMeta(scriptVersions, latestVersion.id),
+    createInitialVersionMeta(startingVersions, initiallyEmpty ? null : latestVersion.id),
   );
   const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
   const [rows, setRows] = useState<ScriptRow[]>(() => initiallyEmpty ? [] : cloneRows(latestVersion.rows));
@@ -202,7 +218,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
   const [subtabs, setSubtabs] = useState<ScriptSubtab[]>(() => initialScriptSubtabs.map((subtab) => ({ ...subtab })));
   const [activeSubtabId, setActiveSubtabId] = useState<ScriptSubtabId>(initialSubtab);
   const [draggingSubtabId, setDraggingSubtabId] = useState<ScriptSubtabId | null>(null);
-  const [comments, setComments] = useState<ScriptComment[]>(() => cloneComments(initialScriptComments));
+  const [comments, setComments] = useState<ScriptComment[]>(() => initiallyEmpty ? [] : cloneComments(initialScriptComments));
   const [openCommentRowId, setOpenCommentRowId] = useState<string | null>(null);
   const [isCommentComposerOpen, setIsCommentComposerOpen] = useState(false);
   const [floatingCommentPosition, setFloatingCommentPosition] = useState<FloatingCommentPosition | null>(null);
@@ -225,7 +241,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
   const [dropRowId, setDropRowId] = useState<string | null>(null);
   const [openMediaMenuRowId, setOpenMediaMenuRowId] = useState<string | null>(null);
   const [isApprovedEditModalOpen, setIsApprovedEditModalOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState(initialToastMessage);
   const [saveState, setSaveState] = useState<"Saved" | "Saving...">("Saved");
   const [lastSavedAt, setLastSavedAt] = useState(initialSavedAt);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
@@ -1548,12 +1564,23 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
     setFloatingCommentPosition(null);
   };
 
-  const handleReviewRequestSent = (recipientName: string) => {
+  const handleReviewRequestSent = (recipientName: string, recipient: RequestReviewRecipient) => {
     setSelectedVersionLatestAction({
       kind: "shared",
       target: recipientName.toLowerCase().includes("internal") ? "Studio" : "Customer",
       date: formatSnapshotDate(new Date()),
     });
+    if (recipient === "customer") {
+      publishStageReviewRequest({
+        projectId: project.id,
+        projectCode: customerDashboardProjects.find((item) => item.id === project.id)?.code,
+        projectName: project.name,
+        stage: "script",
+        versionLabel: selectedVersion.label,
+        actorName: scriptUsers.find((user) => user.id === currentUserId)?.name ?? "Studio",
+        href: `/projects/${project.id}/script`,
+      });
+    }
     setToastMessage(`Review request sent to ${recipientName}`);
   };
 
@@ -1807,6 +1834,13 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
       </button>
   );
 
+  const scriptSubtabActions = activeSubtabId === "script" ? (
+    <div className="script-subtab-trailing-actions">
+      {scriptToolbarActions}
+      {scriptToolbarCommentsButton}
+    </div>
+  ) : null;
+
   const scriptDecisionActions = (
     <div className="script-word-footer-actions" aria-label="Script review actions">
       <ScriptActionCluster
@@ -1834,6 +1868,7 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
 
       <ScriptSubtabBar
         activeSubtabId={activeSubtabId}
+        actions={scriptSubtabActions}
         draggingSubtabId={draggingSubtabId}
         subtabs={visibleSubtabs}
         onActivate={activateScriptSubtab}
@@ -1870,8 +1905,6 @@ export function ScriptPage({ project, initialSubtab, initialTranscriptClipId, in
             confirmingDeleteRowId={confirmingDeleteRowId}
             rows={visibleRows}
             areVisualsVisible={areVisualsVisible}
-            scriptToolbarActions={scriptToolbarActions}
-            scriptToolbarCommentsButton={scriptToolbarCommentsButton}
             selectedRowIds={selectionState.selectedRowIds}
             showChanges={showChanges}
             wordInputRefs={wordInputRefs}
@@ -2160,39 +2193,48 @@ function ScriptActionCluster({
 
 function ScriptColumnHeaders({
   areVisualsVisible,
-  scriptToolbarActions,
-  scriptToolbarCommentsButton,
   onToggleVisuals,
 }: {
   areVisualsVisible: boolean;
-  scriptToolbarActions: ReactNode;
-  scriptToolbarCommentsButton: ReactNode;
   onToggleVisuals: () => void;
 }) {
+  const showVisualsAction = (
+    <div className="script-column-header-actions script-toolbar-trailing-actions">
+      <h2 className="script-visuals-toggle-heading">
+        <Button
+          className="script-visuals-header-toggle script-toolbar-visuals-toggle"
+          size="S"
+          type="button"
+          variant="ghost"
+          onClick={onToggleVisuals}
+        >
+          <span>Show Visuals</span>
+          <DsIcon name="caret-right" size={16} />
+        </Button>
+      </h2>
+    </div>
+  );
+
+  const hideVisualsAction = (
+    <button
+      className="script-visuals-header-toggle script-toolbar-visuals-toggle is-icon-only"
+      type="button"
+      aria-label="Hide visuals"
+      data-tooltip="Hide visuals"
+      onClick={onToggleVisuals}
+    >
+      <DsIcon name="caret-left" size={16} />
+    </button>
+  );
+
   return (
     <div className={`script-column-headers ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="Script column guidance">
-      <div className="script-column-toolbar-row" aria-label="Script controls">
-        {scriptToolbarActions}
-        <div className="script-toolbar-trailing-actions">
-          <Button
-            className="script-visuals-header-toggle script-toolbar-visuals-toggle"
-            size="S"
-            type="button"
-            variant="secondary"
-            onClick={onToggleVisuals}
-          >
-            <span>{areVisualsVisible ? "Hide Visuals" : "Show Visuals"}</span>
-            <DsIcon name={areVisualsVisible ? "caret-left" : "caret-right"} size={12} />
-          </Button>
-          {scriptToolbarCommentsButton}
-        </div>
-      </div>
       <section className="script-column-header words">
         <div className="script-column-header-main">
           <h2 className="script-column-title-with-tooltip" data-tooltip="Write the words of your script in this column - could be titles on screen, dialogue, voiceover etc. 150 words = 1 minute.">
             Words
           </h2>
-          <div className="script-column-header-actions" />
+          {!areVisualsVisible ? showVisualsAction : null}
         </div>
       </section>
       {areVisualsVisible ? (
@@ -2201,6 +2243,7 @@ function ScriptColumnHeaders({
             <h2 className="script-column-title-with-tooltip" data-tooltip="Describe the visuals for each line. Add media, links or references.">
               Visuals
             </h2>
+            {hideVisualsAction}
           </div>
         </section>
       ) : null}
@@ -2221,8 +2264,6 @@ function AvScriptEditor({
   confirmingDeleteRowId,
   rows,
   areVisualsVisible,
-  scriptToolbarActions,
-  scriptToolbarCommentsButton,
   selectedRowIds,
   showChanges,
   wordInputRefs,
@@ -2261,8 +2302,6 @@ function AvScriptEditor({
   confirmingDeleteRowId: string | null;
   rows: ScriptRow[];
   areVisualsVisible: boolean;
-  scriptToolbarActions: ReactNode;
-  scriptToolbarCommentsButton: ReactNode;
   selectedRowIds: Set<string>;
   showChanges: boolean;
   wordInputRefs: MutableRefObject<Map<string, HTMLTextAreaElement>>;
@@ -2296,8 +2335,6 @@ function AvScriptEditor({
     <section className={`script-av-surface ${density} ${areVisualsVisible ? "visuals-visible" : "words-only"}`} aria-label="AV script editor">
       <ScriptColumnHeaders
         areVisualsVisible={areVisualsVisible}
-        scriptToolbarActions={scriptToolbarActions}
-        scriptToolbarCommentsButton={scriptToolbarCommentsButton}
         onToggleVisuals={onToggleVisuals}
       />
       {editorRows.map((row, index) => {
@@ -2821,7 +2858,7 @@ function createDocHistoryEntry(entry: Omit<DocHistoryEntry, "id">, index: number
   };
 }
 
-function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: string) {
+function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: string | null) {
   return versions.reduce<Record<string, ScriptVersionMeta>>((metaById, version) => {
     metaById[version.id] = {
       isMaster: version.id === masterVersionId,
@@ -2833,7 +2870,7 @@ function createInitialVersionMeta(versions: ScriptVersion[], masterVersionId: st
 }
 
 function getInitialVersionLatestAction(version: ScriptVersion): VersionLatestAction {
-  if (version.id === "v1") {
+  if (version.id === "v1" && version.approvedSnapshot) {
     return {
       kind: "commented",
       actor: "Customer",

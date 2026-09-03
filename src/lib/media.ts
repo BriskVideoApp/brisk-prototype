@@ -30,7 +30,7 @@ export function getMediaCapabilities(role: PrototypeRole, projectId: string | nu
     return { canUpload: Boolean(projectId), canManageFolders: Boolean(projectId), canMoveAssets: Boolean(projectId), canArchive: true, canDelete: true, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: true };
   }
   if (role === "Customer") {
-    return { canUpload: false, canManageFolders: false, canMoveAssets: false, canArchive: false, canDelete: false, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: false };
+    return { canUpload: Boolean(projectId), canManageFolders: Boolean(projectId), canMoveAssets: false, canArchive: false, canDelete: false, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: false };
   }
   const engagement = projectId ? getFreelancerEngagements(projects, freelancerPreviewViewer.id)
     .find((candidate) => candidate.project.id === projectId && candidate.invitationStatus === "accepted") : undefined;

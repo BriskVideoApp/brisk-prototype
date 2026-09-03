@@ -98,7 +98,6 @@ export function ClientTeamPage() {
       <ClientCompanySettingsPageShell
         activeSection="team"
         title="Team access"
-        description="Invite colleagues, assign a Client role and choose the projects each person can open."
       >
         <section className="account-team-section" aria-labelledby="client-team-heading">
           <div className="account-settings-section-heading">
@@ -192,7 +191,7 @@ export function ClientTeamPage() {
             onInvite={(input) => {
               const person = createPerson({
                 type: "Client contact",
-                name: clientNameFromEmail(input.email),
+                name: input.name,
                 email: input.email,
                 clientId: "loom",
                 projectIds: input.projectIds,
@@ -228,8 +227,9 @@ function InviteClientColleagueModal({
   onInvite,
 }: {
   onClose: () => void;
-  onInvite: (input: { email: string; role: ClientMembershipRole; projectIds: string[] }) => void;
+  onInvite: (input: { name: string; email: string; role: ClientMembershipRole; projectIds: string[] }) => void;
 }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<ClientMembershipRole>("Client Member");
   const [projectIds, setProjectIds] = useState<string[]>([clientProjectAccessOptions[0]?.id ?? ""]);
@@ -242,13 +242,14 @@ function InviteClientColleagueModal({
       footer={(
         <>
           <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={() => {
-            if (email.trim()) onInvite({ email: email.trim(), role, projectIds });
+          <Button size="M" disabled={!name.trim() || !email.trim()} onClick={() => {
+            if (name.trim() && email.trim()) onInvite({ name: name.trim(), email: email.trim(), role, projectIds });
           }}>Send invitation</Button>
         </>
       )}
     >
       <div className="account-team-invite-form">
+        <Input label="Name" value={name} onChange={(event) => setName(event.target.value)} />
         <Input label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         <label className="account-settings-select-field">
           <span className="label-m-semibold">Role</span>
@@ -306,7 +307,7 @@ function ProjectAccessChecklist({
   return (
     <fieldset className="account-team-project-checklist">
       <legend className="label-m-semibold">Project access</legend>
-      <label>
+      <label className="account-team-project-all">
         <input
           type="checkbox"
           checked={allSelected}
@@ -314,28 +315,21 @@ function ProjectAccessChecklist({
         />
         <span><strong className="label-s-semibold">All current projects</strong><small className="label-xs">Give access to every project listed below.</small></span>
       </label>
-      {clientProjectAccessOptions.map((project) => (
-        <label key={project.id}>
-          <input
-            type="checkbox"
-            checked={projectIds.includes(project.id)}
-            onChange={(event) => onChange(event.target.checked
-              ? [...new Set([...projectIds, project.id])]
-              : projectIds.filter((projectId) => projectId !== project.id))}
-          />
-          <span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.code}</small></span>
-        </label>
-      ))}
+      <div className="account-team-project-divider label-xs-semibold"><span>Or choose individual projects</span></div>
+      <div className="account-team-project-options">
+        {clientProjectAccessOptions.map((project) => (
+          <label key={project.id}>
+            <input
+              type="checkbox"
+              checked={projectIds.includes(project.id)}
+              onChange={(event) => onChange(event.target.checked
+                ? [...new Set([...projectIds, project.id])]
+                : projectIds.filter((projectId) => projectId !== project.id))}
+            />
+            <span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.code}</small></span>
+          </label>
+        ))}
+      </div>
     </fieldset>
   );
-}
-
-function clientNameFromEmail(email: string) {
-  const emailName = email.split("@")[0] ?? "Client colleague";
-  const name = emailName
-    .split(/[._-]+/u)
-    .filter(Boolean)
-    .map((part) => `${part.charAt(0).toLocaleUpperCase("en-AU")}${part.slice(1)}`)
-    .join(" ");
-  return name || "Client colleague";
 }

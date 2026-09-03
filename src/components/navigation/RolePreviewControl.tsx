@@ -4,7 +4,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   canRoleSeeNavigationItem,
   getNavigationItem,
-  getRoleHome,
 } from "@/components/navigation/navigationConfig";
 import {
   prototypeRoleLabels,
@@ -13,6 +12,12 @@ import {
   type PrototypeRole,
 } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import {
+  getClientPortalDestination,
+  getScopedRoleHome,
+} from "@/components/navigation/prototypeNavigation";
 
 export function RolePreviewControl() {
   const pathname = usePathname();
@@ -24,6 +29,9 @@ export function RolePreviewControl() {
     allPages,
     setAllPages,
   } = usePrototypeRole();
+  const { activeScenario } = usePrototypeScenario();
+  const { state } = usePrototypeState();
+  const clientPortalDestination = getClientPortalDestination(state);
   const currentItem = getNavigationItem(pathname, searchParams.toString());
 
   function selectRole(role: PrototypeRole) {
@@ -31,7 +39,7 @@ export function RolePreviewControl() {
 
     const isClientsPermissionPreview = pathname === "/clients" || pathname.startsWith("/clients/");
     if (!isClientsPermissionPreview && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
-      router.push(getRoleHome(role));
+      router.push(getScopedRoleHome(role, clientPortalDestination));
     }
   }
 
@@ -40,7 +48,7 @@ export function RolePreviewControl() {
     setAllPages(nextAllPages);
 
     if (!nextAllPages && currentItem && !canRoleSeeNavigationItem(currentItem, selectedRole, false)) {
-      router.push(getRoleHome(selectedRole));
+      router.push(getScopedRoleHome(selectedRole, clientPortalDestination));
     }
   }
 
@@ -63,6 +71,8 @@ export function RolePreviewControl() {
         className={`role-preview-all-pages label-xs-semibold ${allPages ? "is-active" : ""}`}
         type="button"
         aria-pressed={allPages}
+        disabled={Boolean(activeScenario)}
+        title={activeScenario ? "All pages is unavailable while a test scenario is active" : undefined}
         onClick={toggleAllPages}
       >
         <span className="role-preview-checkbox" aria-hidden="true">

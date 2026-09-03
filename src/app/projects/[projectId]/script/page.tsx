@@ -1,7 +1,10 @@
 import { notFound } from "next/navigation";
 import { ScriptPage } from "@/components/script/ScriptPage";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { demoProjects, getDemoProject } from "@/data/projects";
+import { getProjectFixture, projectFixtureIds } from "@/data/project-fixtures";
+import {
+  clientNewScriptVersions,
+  clientNewVideoScriptProject,
+} from "@/data/prototype-scenarios";
 
 type ScriptRouteProps = {
   params: Promise<{ projectId: string }>;
@@ -9,31 +12,45 @@ type ScriptRouteProps = {
     subtab?: string | string[];
     clip?: string | string[];
     preview?: string | string[];
+    briefApproved?: string | string[];
+    scriptWriter?: string | string[];
   }>;
 };
 
 export function generateStaticParams() {
-  return demoProjects.map((project) => ({ projectId: project.id }));
+  return projectFixtureIds.map((projectId) => ({ projectId }));
 }
 
 export default async function ScriptRoute({ params, searchParams }: ScriptRouteProps) {
   const { projectId } = await params;
   const query = await searchParams;
-  const project = activeVideoProjects.find((candidate) => candidate.id === projectId);
+  const project = getProjectFixture(projectId);
 
-  if (!getDemoProject(projectId) || !project) notFound();
+  if (!project) notFound();
 
   const subtab = getSubtab(query.subtab);
   const clip = getSingleValue(query.clip);
+  const isClientNewVideo = project.id === clientNewVideoScriptProject.id;
 
   return (
     <ScriptPage
       project={project}
       initialSubtab={subtab}
       initialTranscriptClipId={clip}
-      initiallyEmpty={getSingleValue(query.preview) === "empty"}
+      initialVersions={isClientNewVideo ? clientNewScriptVersions : undefined}
+      initiallyEmpty={isClientNewVideo || getSingleValue(query.preview) === "empty"}
+      initialToastMessage={getBriefApprovalToast(query.briefApproved, query.scriptWriter)}
     />
   );
+}
+
+function getBriefApprovalToast(briefApproved: string | string[] | undefined, scriptWriter: string | string[] | undefined) {
+  if (getSingleValue(briefApproved) !== "1") {
+    return "";
+  }
+
+  const writer = getSingleValue(scriptWriter)?.trim() || "Tom";
+  return `Brief approved. Script assigned to ${writer}.`;
 }
 
 function getSubtab(subtab: string | string[] | undefined) {

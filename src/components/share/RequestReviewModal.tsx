@@ -13,7 +13,7 @@ export type RequestReviewModalProps = {
   studioName: string;
   customerName: string;
   onClose: () => void;
-  onSent: (recipientName: string) => void;
+  onSent: (recipientName: string, recipient: RequestReviewRecipient) => void;
 };
 
 type RequestReviewTemplate = {
@@ -87,7 +87,7 @@ export function RequestReviewModal({
   };
 
   const sendRequest = () => {
-    onSent(recipientName);
+    onSent(recipientName, recipient);
     onClose();
   };
 

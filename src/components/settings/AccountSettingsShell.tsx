@@ -31,8 +31,8 @@ export function PersonalSettingsPageShell({
     <AccountSettingsPageShell
       backHref={resolvedBackHref}
       backLabel={resolvedBackLabel}
-      description={description}
-      eyebrow="Your settings"
+      description={selectedRole === "Customer" ? undefined : description}
+      eyebrow={selectedRole === "Customer" ? undefined : "Your settings"}
       title={title}
     >
       {children}
@@ -47,12 +47,10 @@ export function PersonalSettingsAccessBoundary({ children }: { children: ReactNo
 export function ClientCompanySettingsPageShell({
   activeSection,
   children,
-  description,
   title,
 }: {
   activeSection: "company" | "team";
   children: ReactNode;
-  description: string;
   title: string;
 }) {
   const { buildHref } = useClientAccountSettings();
@@ -60,8 +58,6 @@ export function ClientCompanySettingsPageShell({
     <AccountSettingsPageShell
       backHref="/customer-dashboard"
       backLabel="Back to dashboard"
-      description={description}
-      eyebrow="Company & team"
       title={title}
     >
       <nav className="account-settings-scope-navigation" aria-label="Company and team settings">
@@ -92,7 +88,6 @@ export function ClientInvoicesPageShell({ children }: { children: ReactNode }) {
     <AccountSettingsPageShell
       backHref="/customer-dashboard"
       backLabel="Back to dashboard"
-      description="View and pay invoices from North Star Films."
       title="Invoices & payments"
     >
       {children}
@@ -111,7 +106,7 @@ function AccountSettingsPageShell({
   backHref: string;
   backLabel: string;
   children: ReactNode;
-  description: string;
+  description?: string;
   eyebrow?: string;
   title: string;
 }) {
@@ -126,7 +121,7 @@ function AccountSettingsPageShell({
           </Link>
           {eyebrow ? <span className="label-xs-semibold">{eyebrow}</span> : null}
           <h1 className="headings-m-bold">{title}</h1>
-          <p className="paragraph-s">{description}</p>
+          {description ? <p className="paragraph-s">{description}</p> : null}
         </div>
       </header>
       <div className="account-settings-content">{children}</div>

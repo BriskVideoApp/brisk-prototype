@@ -281,22 +281,6 @@
   gap: var(--brisk-space-xs);
 }
 
-.costs-tag-badge {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary-click);
-}
-
-.costs-tag-badge.is-urgent,
-.costs-tag-badge.is-disputed {
-  background: var(--brisk-pink-10);
-  color: var(--brisk-pink-60);
-}
-
-.costs-tag-badge.is-waiting {
-  background: var(--brisk-yellow-10);
-  color: var(--brisk-yellow-60);
-}
-
 .costs-mismatch {
   background: var(--brisk-yellow-10);
   color: var(--brisk-yellow-60);
@@ -694,23 +678,21 @@
 }
 
 .costs-filter-chip {
-  min-height: var(--brisk-space-3xl);
-  border: 1px solid var(--brisk-border-primary);
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  border: var(--brisk-space-none);
   border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-white);
+  background: transparent;
   color: var(--brisk-text-primary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
+  gap: 10px;
+  padding: var(--brisk-space-none) var(--brisk-space-s);
 }
 
 .costs-filter-chip:hover,
 .costs-filter-chip:focus-visible {
   background: var(--brisk-brand-secondary);
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.costs-filter-chip.is-active {
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
+  outline: var(--brisk-space-none);
 }
 
 .costs-archive-toggle {
