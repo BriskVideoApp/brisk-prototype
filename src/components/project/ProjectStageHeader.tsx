@@ -10,10 +10,16 @@ import {
 } from "@/components/navigation/prototypeNavigation";
 import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import { getProjectStageHref } from "@/data/project-fixtures";
+import {
+  getProductionFlowStageDefinition,
+  type ProductionFlowStageKey,
+} from "@/data/production-flow";
 
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
@@ -24,29 +30,18 @@ type ProjectStageHeaderProps = {
   showUtilities?: boolean;
 };
 
-type ProjectHeaderStage = {
-  key: StageKey;
-  label: string;
-  icon: DsIconName;
-};
-
-const projectHeaderStages: ProjectHeaderStage[] = [
-  { key: "brief", label: "Brief", icon: "clipboard-text" },
-  { key: "script", label: "Script", icon: "pen-nib" },
-  { key: "shoot", label: "Shoot", icon: "video-camera-ds" },
-  { key: "edit", label: "Edit", icon: "stage-edit" },
-  { key: "masters", label: "Masters", icon: "film-strip" },
-];
-
 export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project }: ProjectStageHeaderProps) {
   const dashboardTooltipId = `project-stage-dashboard-tooltip-${project.id}`;
   const { completionRecords } = useProjectCompletion();
   const { assetViews } = useMediaLibrary();
   const { getProjectStages } = useProjectStageStatus();
+  const { getProjectFlow } = useProjectFlow();
   const projectStages = getProjectStages(project);
+  const projectFlow = getProjectFlow(project);
+  const projectHeaderStages = projectFlow.stages.map((stage) => getProductionFlowStageDefinition(stage, projectFlow.postProductionTerm));
   const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done");
   const isProjectDelivered = project.status === "Completed" || (Boolean(completionRecords[project.id]) && hasApprovedStageFlow);
-  const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectStages).key;
+  const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectHeaderStages, projectStages)?.key;
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
   const studioName = state.workspaces.find((workspace) => workspace.id === state.session.activeWorkspaceId)?.name ?? "Studio";
@@ -85,10 +80,15 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
         </div>
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
           <div className="project-stage-flow-navigation">
-            <ol className="project-stage-track" aria-label="Sequential production stages">
+            <ol
+              className="project-stage-track"
+              aria-label="Sequential production stages"
+              style={{ gridTemplateColumns: `repeat(${Math.max(projectHeaderStages.length, 1)}, minmax(0, 1fr))` }}
+            >
               {projectHeaderStages.map((stage, index) => {
-                const status: StageStatus = isProjectDelivered ? { state: "done" } : projectStages[stage.key];
-                const href = getProjectStageHref(project.id, stage.key);
+                const storedStatus = stage.key === "storyboard" ? { state: "not_started" as const } : projectStages[stage.key];
+                const status: StageStatus = isProjectDelivered ? { state: "done" } : storedStatus;
+                const href = stage.key === "storyboard" ? null : getProjectStageHref(project.id, stage.key);
                 const isCurrentStage = stage.key === currentStageKey;
                 const statusLabel = getProjectStageStatusLabel(status.state, project.clientName, studioName);
                 const chipContent = (
@@ -156,16 +156,25 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
               <span className="project-stage-label label-xs-semibold">{mediaLabel}</span>
             </div>
           </div>
+          {selectedRole === "Studio Staff" ? (
+            <div className="project-stage-flow-adjuster">
+              <ProjectFlowAdjuster project={project} />
+            </div>
+          ) : null}
         </div>
       </header>
   );
 }
 
-function getCurrentProjectStage(stages: Record<StageKey, StageStatus>) {
-  return projectHeaderStages.find((stage) => stages[stage.key].state !== "done") ?? projectHeaderStages[projectHeaderStages.length - 1];
+function getCurrentProjectStage(
+  flowStages: Array<{ key: ProductionFlowStageKey }>,
+  statuses: Record<StageKey, StageStatus>,
+) {
+  return flowStages.find((stage) => stage.key === "storyboard" || statuses[stage.key].state !== "done")
+    ?? flowStages[flowStages.length - 1];
 }
 
-function getProjectStageLinkLabel(stage: StageKey, label: string) {
+function getProjectStageLinkLabel(stage: ProductionFlowStageKey, label: string) {
   return stage === "edit" ? "Video Review" : label;
 }
 

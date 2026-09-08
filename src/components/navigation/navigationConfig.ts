@@ -334,6 +334,13 @@ export const navigationGroups: readonly NavigationGroup[] = [
         icon: "sparkle",
         roles: studioOnly,
       },
+      {
+        id: "testing-scenarios",
+        label: "Testing scenarios",
+        href: "/prototype/scenarios",
+        icon: "circles-three",
+        roles: allRoles,
+      },
     ],
   },
   {
@@ -367,6 +374,14 @@ export const navigationGroups: readonly NavigationGroup[] = [
     id: "experimental",
     label: "Prototype previews",
     items: [
+      {
+        id: "production-flow",
+        label: "Production flow",
+        href: "/prototype/production-flow",
+        icon: "circles-three",
+        roles: allRoles,
+        reviewOnly: true,
+      },
       {
         id: "share-controls",
         label: "Share controls",

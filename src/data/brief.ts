@@ -82,7 +82,7 @@ export const briefSteps: Array<{ id: BriefStepId; index: number; label: string; 
   { id: "purposeAudience", index: 3, label: "Audience and action", shortLabel: "Audience" },
   { id: "similarVideos", index: 4, label: "Similar videos", shortLabel: "Videos" },
   { id: "brandKit", index: 5, label: "Brand kit", shortLabel: "Brand" },
-  { id: "contentProduction", index: 6, label: "Content and production", shortLabel: "Content" },
+  { id: "contentProduction", index: 6, label: "Footage and filming", shortLabel: "Footage" },
   { id: "deadline", index: 7, label: "Deadline", shortLabel: "Deadline" },
   { id: "deliverablesTiming", index: 8, label: "Deliverables", shortLabel: "Versions" },
   { id: "summary", index: 9, label: "Review your brief", shortLabel: "Summary" },
@@ -227,6 +227,48 @@ export type BriefVideoTypeId = (typeof briefVideoTypeDetails)[number]["name"];
 
 export const briefVideoTypes = briefVideoTypeDetails.map((videoType) => videoType.name);
 
+export type BriefFootageChoice = "Use existing" | "Shoot new";
+export type BriefFilmingContentChoice = "Interviews" | "Scripted scenes" | "Not sure yet";
+
+export const briefFootageOptions = [
+  {
+    label: "Existing footage",
+    value: "Use existing",
+    description: "Footage or photos you already have.",
+  },
+  {
+    label: "New footage",
+    value: "Shoot new",
+    description: "Footage created specifically for this video.",
+  },
+] as const satisfies ReadonlyArray<{
+  description: string;
+  label: string;
+  value: BriefFootageChoice;
+}>;
+
+export const briefFilmingContentOptions = [
+  {
+    label: "Interviews",
+    value: "Interviews",
+    description: "People answering questions on camera.",
+  },
+  {
+    label: "Scripted scenes",
+    value: "Scripted scenes",
+    description: "Performers or presenters following a prepared script.",
+  },
+  {
+    label: "Not sure yet",
+    value: "Not sure yet",
+    description: "You can decide this later.",
+  },
+] as const satisfies ReadonlyArray<{
+  description: string;
+  label: string;
+  value: BriefFilmingContentChoice;
+}>;
+
 export const initialBriefFields: BriefFields = {
   workingTitle: {
     id: "workingTitle",
@@ -302,7 +344,7 @@ export const initialBriefFields: BriefFields = {
   },
   liveFootage: {
     id: "liveFootage",
-    label: "Are we shooting live footage?",
+    label: "What footage will the video use?",
     value: "",
     confidence: "missing",
     source: "missing",
@@ -442,8 +484,8 @@ export const fallbackBriefDraft: BriefDraft = {
     },
     liveFootage: {
       id: "liveFootage",
-      label: "Are we shooting live footage?",
-      value: "Shoot new|Studio shoots",
+      label: "What footage will the video use?",
+      value: "Shoot new|Studio shoots|Interviews",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
@@ -566,8 +608,8 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         },
         liveFootage: {
           id: "liveFootage",
-          label: "Are we shooting live footage?",
-          value: "Shoot new|Studio shoots",
+          label: "What footage will the video use?",
+          value: "Shoot new|Studio shoots|Scripted scenes",
           confidence: "guess",
           source: "ai_inferred",
           required: true,
@@ -689,8 +731,8 @@ export const briefDraftOptions: Array<{ keywords: string[]; draft: BriefDraft }>
         },
         liveFootage: {
           id: "liveFootage",
-          label: "Are we shooting live footage?",
-          value: "Shoot new|Studio shoots",
+          label: "What footage will the video use?",
+          value: "Shoot new|Studio shoots|Interviews",
           confidence: "guess",
           source: "ai_inferred",
           required: true,

@@ -2,7 +2,6 @@
 
 import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
@@ -15,7 +14,6 @@ import {
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { getBillingPlan, subscriptionFixtures } from "@/data/billing";
 import { isDemoProject } from "@/data/projects";
 import { getProjectEntryHref } from "@/data/project-fixtures";
 import {
@@ -73,8 +71,6 @@ type CustomerDashboardProps = {
 const queueTabs: QueueTab[] = ["Queued", "Completed", "Paused", "Archived", "All"];
 const queueScopes: QueueScope[] = ["All videos", "Series only", "Standalone only"];
 const projectStatuses: CustomerDashboardStatus[] = ["In Production", "Queued", "Paused", "Completed", "Archived"];
-const currentPlan = getBillingPlan(subscriptionFixtures.active.planId);
-const poweredByBriskRequired = currentPlan.id === "starter" || currentPlan.id === "professional";
 const dashboardReferenceDate = new Date("2026-07-27T09:00:00+10:00");
 
 export function CustomerDashboard({
@@ -757,14 +753,6 @@ export function CustomerDashboard({
 
         </div>
       </div>
-
-      {poweredByBriskRequired ? (
-        <footer className="customer-dashboard-powered-by label-xs">
-          <span>Powered by</span>
-          <Image src="/assets/logos/brisk.svg" alt="" width={18} height={12} />
-          <strong className="label-xs-semibold">Brisk</strong>
-        </footer>
-      ) : null}
 
       {isActivityOpen ? (
         <div className="customer-activity-backdrop" role="presentation" onMouseDown={() => setIsActivityOpen(false)}>

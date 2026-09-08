@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -40,6 +41,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
   const { selectedRole } = usePrototypeRole();
   const searchParams = useSearchParams();
   const isEmptyPreview = searchParams.get("preview") === "empty";
+  const isLiveMode = searchParams.get("live") === "1" && selectedRole !== "Customer";
   const requestedDayId = searchParams.get("day");
   const printAllDays = searchParams.get("all") === "1";
   const [callSheet, setCallSheet] = useState(() => ensureShotNumbers(getInitialCallSheet(project)));
@@ -122,6 +124,14 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
     }
   };
 
+  const updateLiveCallSheet = (updater: (current: CallSheet) => CallSheet) => {
+    setCallSheet((current) => {
+      const next = { ...updater(current), updatedAt: new Date().toISOString() };
+      window.localStorage.setItem(callSheetStorageKey(project.id), JSON.stringify(next));
+      return next;
+    });
+  };
+
   return (
     <main className={`shared-call-sheet ${printMode ? "is-print-mode" : ""} ${showPreviewBar ? "has-preview-bar" : ""}`}>
       {showPreviewBar ? <header className="shared-preview-bar">
@@ -153,7 +163,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
         </div>
       </header>
 
-      {isEmptyPreview ? (
+      {isLiveMode ? <OnSetLiveView callSheet={callSheet} day={currentDay} project={project} onChange={updateLiveCallSheet} /> : isEmptyPreview ? (
         <section className="shared-call-sheet-empty">
           <span className="shared-call-sheet-empty-icon" aria-hidden="true"><DsIcon name="clipboard-text" size={28} /></span>
           <h1>{selectedRole === "Customer" ? "The call sheet is still being prepared" : "This call sheet isn’t ready yet"}</h1>
@@ -187,6 +197,33 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId 
       </footer>
     </main>
   );
+}
+
+function OnSetLiveView({ callSheet, day, project, onChange }: { callSheet: CallSheet; day?: ShootDay; project: Project; onChange: (updater: (current: CallSheet) => CallSheet) => void }) {
+  const [missedShotIds, setMissedShotIds] = useState<string[]>([]);
+  const [productionNote, setProductionNote] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
+  const timedEntries = callSheet.entries.filter((entry) => entry.dayId === day?.id && entry.startTime).sort((left, right) => left.startTime.localeCompare(right.startTime));
+  const currentEntryIndex = timedEntries.findIndex((entry) => !(entry.completed || entry.captured));
+  const currentEntry = currentEntryIndex >= 0 ? timedEntries[currentEntryIndex] : undefined;
+  const nextEntry = currentEntryIndex >= 0 ? timedEntries[currentEntryIndex + 1] : undefined;
+  const shots = callSheet.entries.filter((entry) => entry.type === "shot" && (!day || entry.dayId === day.id || !entry.dayId));
+  const capturedCount = shots.filter((shot) => shot.captured).length;
+  const remainingCount = shots.filter((shot) => !shot.captured && !missedShotIds.includes(shot.id)).length;
+  const people = callSheet.people.filter((person) => !day || isAssignedToDay(person.shootDayIds, day.id));
+
+  return <div className="on-set-live-shell">
+    <header className="on-set-live-heading"><div><p className="label-xs-semibold">On Set · {day?.label ?? "Shoot day"}</p><h1>{isComplete ? "Shoot complete" : "Live shoot"}</h1><span className="label-s">{callSheet.projectName}</span></div><Link className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot`}>Back to Shoot</Link></header>
+    <section className="on-set-live-now"><span className="label-xs-semibold">Current Schedule item</span><strong>{currentEntry?.description ?? "No Schedule item remaining"}</strong>{currentEntry ? <small className="label-s">{formatTime(currentEntry.startTime)} to {formatTime(addMinutes(currentEntry.startTime, currentEntry.durationMinutes))}</small> : null}{currentEntry ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === currentEntry.id ? { ...entry, completed: true, captured: entry.type === "shot" ? true : entry.captured } : entry) }))}>Complete item</button> : null}</section>
+    <div className="on-set-live-stats"><article><span className="label-xs">Next Schedule item</span><strong>{nextEntry?.description ?? "Nothing else scheduled"}</strong>{nextEntry ? <small>{formatTime(nextEntry.startTime)}</small> : null}</article><article><span className="label-xs">Shots captured</span><strong>{capturedCount}</strong></article><article><span className="label-xs">Shots remaining</span><strong>{remainingCount}</strong></article></div>
+    <section className="on-set-live-section"><header><h2>Shots</h2><span className="label-xs">Tick off coverage as it is captured.</span></header><div className="on-set-live-shot-list">{shots.map((shot, index) => {
+      const isMissed = missedShotIds.includes(shot.id);
+      return <article className={shot.captured ? "is-captured" : isMissed ? "is-missed" : ""} key={shot.id}><button className="on-set-live-shot-toggle" type="button" aria-label={`${shot.captured ? "Mark remaining" : "Mark captured"}: ${shot.description}`} onClick={() => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === shot.id ? { ...entry, captured: !shot.captured } : entry) }))}><DsIcon name={shot.captured ? "check-circle" : "video-camera-ds"} size={22} /></button><div><strong>{shot.description}</strong><span className="label-xs">Shot {shot.shotNumber ?? index + 1}{shot.priority ? ` · ${shot.priority}` : ""}</span></div><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setMissedShotIds((current) => current.includes(shot.id) ? current.filter((id) => id !== shot.id) : [...current, shot.id])}>{isMissed ? "Restore" : "Missed / pickup"}</button></article>;
+    })}</div></section>
+    <section className="on-set-live-section"><header><h2>Quick production notes</h2></header><textarea rows={4} placeholder="Add a note from the set" value={productionNote} onChange={(event) => setProductionNote(event.target.value)} /></section>
+    <section className="on-set-live-section"><header><h2>Crew and Talent</h2></header><div className="on-set-live-contact-list">{people.map((person) => <article key={person.id}><div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span></div>{person.showContactDetails !== false && person.phone ? <a className="shoot-button secondary label-s-semibold" href={`tel:${normalisePhone(person.phone)}`}>Call</a> : null}</article>)}</div></section>
+    <footer className="on-set-live-footer">{isComplete ? <Link className="shoot-button primary label-s-semibold" href={`/projects/${project.id}/stages/media`}>Open Media</Link> : <Button size="S" variant="primary" onClick={() => setIsComplete(true)}>Complete Shoot</Button>}</footer>
+  </div>;
 }
 
 function SharedDay({ callSheet, clientName, day, viewer, printIndex, onSelectDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; viewer?: CallSheet["people"][number]; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
@@ -303,8 +340,8 @@ function SharedDay({ callSheet, clientName, day, viewer, printIndex, onSelectDay
           <div className="shared-contact-list">{people.map((person) => (
             <article key={person.id}>
               <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
-              <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span>{person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}</div>
-              {person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
+              <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span>{person.showContactDetails !== false && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}</div>
+              {person.showContactDetails !== false && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
             </article>
           ))}</div>
         </SharedSection>

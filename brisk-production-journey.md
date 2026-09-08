@@ -14,19 +14,31 @@ You are designing for video production teams using **Brisk**. Filmmakers think i
 
 ## Production phases and stages
 
-Brisk projects flow through three production phases, made up of six named stages. Always reference the correct phase and stage when designing a feature.
+Brisk projects use one adaptable production flow assembled from the completed Brief. Always reference the correct phase and Stage when designing a feature.
 
 ### Pre-production
 1. **Brief** - Client submits or producer captures the project brief.
-2. **Script** - Written narrative, interview structure, shot structure, or scene plan.
+2. **Script** - Written narrative, scene plan, or a transcript-led paper edit created after filming for interview-led videos.
+3. **Storyboard** - Optional approval Stage after Script for animation productions.
 
 ### Production
-3. **Shoot** - Filming sessions, interviews, b-roll capture, on-set workflow.
-4. **Media** - Ingest, backup, organisation of captured assets. Transcripts generated here.
+4. **Shoot** - A single Stage containing Pre-production and On Set substages. Pre-production contains Creative Plan and Plan the Day. On Set contains the Call Sheet and live shoot workflow.
+
+**Media** is a permanent project area available throughout the flow. It supports ingest, backup, organisation and transcript generation, but it is not reordered with the production Stages.
 
 ### Post-production
-5. **Edit** - Rough cut through fine cut, versioning, revisions, paper edits, colour, audio, captions.
+5. **Edit or Animation** - Rough cut through fine cut, or animation production. The label and working language change with the production type while versions, comments and approvals remain consistent.
 6. **Masters** - Final exports, delivery files, social cutdowns, file handover, archive.
+
+### Recommended flow templates
+
+- **Existing footage:** Brief → Script → Edit → Masters
+- **Scripted shoot:** Brief → Script → Shoot → Edit → Masters
+- **Interview-led shoot:** Brief → Shoot → Script → Edit → Masters
+- **Animation:** Brief → Script → Storyboard → Animation → Masters
+- **Mixed production:** Brief → Script → Shoot → Edit → Masters, with Script revisited after transcripts when required
+
+Studios can reorder, hide and restore supported Stages. Brief remains first, Masters remains last, Storyboard follows Script, and Media remains pinned outside the reorderable flow. Hidden Stage work is preserved. Reset restores the flow recommended by the completed Brief.
 
 When designing, ask: which phase and stage(s) does this feature serve?
 

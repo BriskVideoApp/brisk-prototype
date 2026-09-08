@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import {
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -19,16 +20,24 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { BriskSelect } from "@/components/form/BriskSelect";
-import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
-import { StageApprovalControl } from "@/components/share/ShareActionRow";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import {
+  ShootSetupBuilder,
+  type ShootSetupOwner,
+  type ShootSetupState,
+} from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAssetView } from "@/data/media";
 import type { Person } from "@/data/people";
+import { selectProjectBrief } from "@/data/prototype-state";
 import {
   addMinutes,
   callSheetStorageKey,
@@ -83,6 +92,15 @@ type EntryTimeMode = "unscheduled" | "set";
 type EntryDraft = Omit<ProductionEntry, "id" | "dayId"> & { id?: string; timeMode?: EntryTimeMode };
 type PersonDraft = Omit<ShootPerson, "id"> & { id?: string; sourceContact?: boolean };
 type LocationDraft = Omit<ShootLocation, "id"> & { id?: string };
+type ExistingShootPlanCoverage = "creative" | "day" | "both";
+type ExistingShootPlan = {
+  name: string;
+  source: "file" | "link";
+  url?: string;
+  coverage: ExistingShootPlanCoverage;
+  addedBy: string;
+  addedAt: string;
+};
 
 const scheduleTypeOptions: Array<{ value: ScheduleType; label: string; icon: DsIconName }> = [
   { value: "shot", label: "Shot", icon: "video-camera-ds" },
@@ -99,11 +117,11 @@ const interiorExteriorOptions: InteriorExterior[] = ["Interior", "Exterior", "Bo
 const lensOptions = ["Wide, 16-35mm", "Standard, 35-70mm", "Telephoto, 70-200mm", "Macro", "Prime", "Zoom", "Custom"];
 const gearOptions = ["Tripod", "Monopod", "Shoulder rig", "Handheld", "Gimbal / stabiliser", "Slider / dolly", "Jib / crane", "Drone", "Other"];
 const defaultShotFields: ShotFieldId[] = ["captured", "image", "shotNumber", "description", "subject", "location", "category", "size", "movement", "estimatedTime", "notes"];
-const allShotFields: Array<{ id: ShotFieldId; label: string; optional?: boolean }> = [
+const allShotFields: Array<{ id: ShotFieldId; label: string; optional?: boolean; help?: string }> = [
   { id: "captured", label: "Captured" }, { id: "image", label: "Image" }, { id: "shotNumber", label: "Shot number" }, { id: "description", label: "Description" },
-  { id: "subject", label: "Subject" }, { id: "location", label: "Location" }, { id: "category", label: "Shot category" }, { id: "size", label: "Shot size" },
-  { id: "movement", label: "Camera movement" }, { id: "estimatedTime", label: "Est. filming time" }, { id: "notes", label: "Notes" },
-  { id: "cameraAngle", label: "Camera angle", optional: true }, { id: "lens", label: "Lens", optional: true }, { id: "camera", label: "Camera", optional: true },
+  { id: "subject", label: "Subject" }, { id: "location", label: "Location" }, { id: "category", label: "Shot category", help: "The kind of coverage, such as interview, action, product or b-roll." }, { id: "size", label: "Shot size", help: "How tightly the subject is framed, from extreme close-up to extreme wide." },
+  { id: "movement", label: "Camera movement", help: "How the camera moves during the shot, such as static, handheld, pan or tracking." }, { id: "estimatedTime", label: "Est. filming time" }, { id: "notes", label: "Notes" },
+  { id: "cameraAngle", label: "Camera angle", optional: true, help: "The camera position relative to the subject, such as eye level, low angle or overhead." }, { id: "lens", label: "Lens", optional: true }, { id: "camera", label: "Camera", optional: true },
   { id: "gear", label: "Gear", optional: true }, { id: "interiorExterior", label: "Interior / Exterior", optional: true },
 ];
 const shotMediaOptions: Array<ScriptMediaPickerOption<ShotImageSource>> = [
@@ -136,8 +154,11 @@ export function ShootStagePage({ project }: { project: Project }) {
   const isEmptyPlanFixture = searchParams.get("preview") === "empty"
     || activeScenario?.testOverrides?.shootPlanStartsEmpty === true;
   const { selectedRole } = usePrototypeRole();
-  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
-  const shootStageStatus = getProjectStages(project).shoot;
+  const { setProjectStageStatus } = useProjectStageStatus();
+  const { state: prototypeState } = usePrototypeState();
+  const projectBrief = selectProjectBrief(prototypeState, project.id);
+  const isInterviewLed = briefIncludesInterviews(projectBrief?.fields.liveFootage.value ?? "");
+  const { studio } = useStudioSettings();
   const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
   const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project))));
   const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project).days[0]?.id ?? "day-1");
@@ -160,6 +181,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [dayDraftMode, setDayDraftMode] = useState<DayDraftMode | null>(null);
   const [dayDraftError, setDayDraftError] = useState("");
   const [deleteDayId, setDeleteDayId] = useState<string | null>(null);
+  const [deleteSetupShotId, setDeleteSetupShotId] = useState<string | null>(null);
   const [editingShootDetail, setEditingShootDetail] = useState<ShootDetailKey | null>(null);
   const [isNoticeEditing, setIsNoticeEditing] = useState(false);
   const [noticeDraft, setNoticeDraft] = useState("");
@@ -171,6 +193,13 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [questionPersonFilter, setQuestionPersonFilter] = useState("all");
   const [personFilter, setPersonFilter] = useState<PersonFilter>("all");
   const [scheduleView, setScheduleView] = useState<ScheduleView>("schedule");
+  const [setupState, setSetupState] = useState<ShootSetupState>(() => createInitialShootSetupState(getInitialCallSheet(project), selectedRole));
+  const initialSetupRoleRef = useRef(selectedRole);
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
+  const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
+  const [skipSetupPath, setSkipSetupPath] = useState<ScheduleView | null>(null);
+  const [isExistingPlanOpen, setIsExistingPlanOpen] = useState(false);
+  const [existingPlan, setExistingPlan] = useState<ExistingShootPlan | null>(null);
   const [hasStartedShootPlan, setHasStartedShootPlan] = useState(() => {
     if (isEmptyPlanFixture) return false;
     const initialCallSheet = getInitialCallSheet(project);
@@ -225,7 +254,6 @@ export function ShootStagePage({ project }: { project: Project }) {
   const visibleShotListEntries = [...shotEntries];
   const hasVisibleScheduleEntries = visibleTimedEntries.length + unscheduledShots.length > 0;
   const entriesForCurrentView = scheduleView === "schedule" ? dayEntries : shotEntries;
-  const canReturnToSetup = !isCallSheetConfigured(callSheet) && callSheet.entries.length === 0;
   const people = callSheet.people.filter((person) => isAssignedToDay(person.shootDayIds, currentDay?.id ?? ""));
   const crew = callSheet.people.filter((person) => person.type === "crew");
   const selectedContactId = crew.find((person) => callSheet.onTheDayContact.startsWith(person.name))?.id ?? "";
@@ -243,25 +271,14 @@ export function ShootStagePage({ project }: { project: Project }) {
   const locations = callSheet.locations.filter((location) => isAssignedToDay(location.shootDayIds, currentDay?.id ?? ""));
   const questions = callSheet.questions.filter((question) => isAssignedToDay(question.shootDayIds, currentDay?.id ?? ""));
   const specialInstructions = [callSheet.notes.trim(), callSheet.practicalInfo.access.trim()].filter(Boolean).join("\n\n");
-  const sharedCallSheetHref = `/share/call-sheet/${project.id}?preview=1&day=${encodeURIComponent(selectedDayId)}`;
+  const sharedCallSheetHref = `/share/call-sheet/${project.id}?day=${encodeURIComponent(selectedDayId)}`;
   const selectedDayPdfHref = `/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(selectedDayId)}`;
+  const callSheetApprovalFingerprint = useMemo(() => getCallSheetApprovalFingerprint(callSheet), [callSheet]);
 
   useEffect(() => {
-    if (isEmptyPlanFixture) {
-      const emptyCallSheet = normaliseSimpleShootCallSheet(getEmptyCallSheet(project));
-      setCallSheet(emptyCallSheet);
-      setSelectedDayId("day-1");
-      setHasStartedShootPlan(false);
-      setHasCallSheet(false);
-      setIsShotListEnabled(false);
-      setSaveStatus("saved");
-      setHasLoaded(true);
-      return;
-    }
-
     try {
-      const stored = window.localStorage.getItem(callSheetStorageKey(project.id));
-      let nextCallSheet = normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project)));
+      const stored = isEmptyPlanFixture ? null : window.localStorage.getItem(callSheetStorageKey(project.id));
+      let nextCallSheet = normaliseSimpleShootCallSheet(ensureShotNumbers(isEmptyPlanFixture ? getEmptyCallSheet(project) : getInitialCallSheet(project)));
       if (stored) {
         const parsed = normaliseSimpleShootCallSheet(ensureShotNumbers(JSON.parse(stored) as CallSheet));
         if (parsed.notice.trim() && !parsed.visibleOptionalSections.includes("notice")) {
@@ -270,37 +287,36 @@ export function ShootStagePage({ project }: { project: Project }) {
         nextCallSheet = parsed;
       }
 
-      const storedPreferences = parseShootPlanPreferences(window.localStorage.getItem(shootPlanPreferencesStorageKey(project.id)));
-      const storedLegacyView = window.localStorage.getItem(`brisk-shoot-view-${project.id}`);
+      const storedPreferences = isEmptyPlanFixture ? null : parseShootPlanPreferences(window.localStorage.getItem(shootPlanPreferencesStorageKey(project.id)));
+      const storedSetupState = isEmptyPlanFixture ? null : parseShootSetupState(window.localStorage.getItem(shootSetupStorageKey(project.id)));
+      const storedLegacyView = isEmptyPlanFixture ? null : window.localStorage.getItem(`brisk-shoot-view-${project.id}`);
       const hasEntries = nextCallSheet.entries.length > 0;
       const configuredCallSheet = isCallSheetConfigured(nextCallSheet);
-      const hasStarted = configuredCallSheet || hasEntries || storedPreferences?.hasStarted === true;
-      const callSheetEnabled = storedPreferences?.callSheetEnabled
-        ?? (configuredCallSheet || (storedPreferences?.hasStarted === true && storedPreferences.scheduleView === "schedule"));
-      const shotListEnabled = storedPreferences?.shotListEnabled ?? nextCallSheet.entries.some((entry) => entry.type === "shot");
-      const preferredView = storedPreferences?.scheduleView
+      const nextSetupState = storedSetupState ?? createInitialShootSetupState(nextCallSheet, initialSetupRoleRef.current);
+      const hasStarted = nextSetupState.scheduleStarted || nextSetupState.shotListStarted || configuredCallSheet || hasEntries || storedPreferences?.hasStarted === true;
+      const callSheetEnabled = nextSetupState.scheduleStarted || storedPreferences?.callSheetEnabled
+        || configuredCallSheet || (storedPreferences?.hasStarted === true && storedPreferences.scheduleView === "schedule");
+      const shotListEnabled = nextSetupState.shotListStarted || storedPreferences?.shotListEnabled || nextCallSheet.entries.some((entry) => entry.type === "shot");
+      const preferredView = nextSetupState.phase === "workspace" ? nextSetupState.activePath : storedPreferences?.scheduleView
         ?? (storedLegacyView === "schedule" || storedLegacyView === "shots" ? storedLegacyView : "schedule");
 
       setCallSheet(nextCallSheet);
+      setSetupState(nextSetupState);
+      setIsSetupOpen(nextSetupState.phase === "builder");
+      setIsWorkspaceOpen(false);
       setSelectedDayId(nextCallSheet.days[0]?.id ?? "day-1");
       setHasStartedShootPlan(hasStarted);
       setHasCallSheet(callSheetEnabled);
       setIsShotListEnabled(shotListEnabled);
       setScheduleView(!callSheetEnabled || (preferredView === "shots" && !shotListEnabled) ? (callSheetEnabled ? "schedule" : "shots") : preferredView);
       setSaveStatus("saved");
+      setExistingPlan(isEmptyPlanFixture ? null : parseExistingShootPlan(window.localStorage.getItem(existingShootPlanStorageKey(project.id))));
     } catch {
       setSaveStatus("error");
     } finally {
       setHasLoaded(true);
     }
   }, [isEmptyPlanFixture, project.id]);
-
-  const selectScheduleView = (view: ScheduleView) => {
-    if (view === "shots" && !isShotListEnabled) return;
-    setScheduleView(view);
-    if (view === "shots") setIsUnscheduledPanelOpen(false);
-    window.localStorage.setItem(`brisk-shoot-view-${project.id}`, view);
-  };
 
   const initialiseCallSheet = () => {
     const dayId = callSheet.days[0]?.id ?? "day-1";
@@ -318,28 +334,162 @@ export function ShootStagePage({ project }: { project: Project }) {
     setScheduleView("schedule");
   };
 
-  const startShootPlan = (view: ScheduleView) => {
+  const startShootPlan = (view: ScheduleView, step?: number) => {
     if (view === "schedule") {
-      setIsShotListEnabled(false);
       initialiseCallSheet();
-      return;
+    } else {
+      setHasStartedShootPlan(true);
+      setScheduleView("shots");
+      setIsShotListEnabled(true);
     }
+    setSetupState((current) => ({
+      ...current,
+      phase: "builder",
+      activePath: view,
+      scheduleStarted: current.scheduleStarted || view === "schedule",
+      shotListStarted: current.shotListStarted || view === "shots",
+      scheduleSkipped: view === "schedule" ? false : current.scheduleSkipped,
+      shotListSkipped: view === "shots" ? false : current.shotListSkipped,
+      shotListSource: view === "shots" && !current.shotListStarted ? "ai" : current.shotListSource,
+      aiGenerated: view === "shots" && !current.shotListStarted ? false : current.aiGenerated,
+      scheduleStep: view === "schedule" && typeof step === "number" ? step : current.scheduleStep,
+      shotListStep: view === "shots" && typeof step === "number" ? step : current.shotListStep,
+      owner: selectedRole === "Customer" ? "client" : "studio",
+      status: current.status === "released" ? "released" : "working",
+      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      updatedAt: new Date().toISOString(),
+    }));
     setHasStartedShootPlan(true);
-    setHasCallSheet(false);
-    setScheduleView("shots");
-    setIsShotListEnabled(true);
+    setIsWorkspaceOpen(false);
+    setIsSetupOpen(true);
   };
 
-  const returnToShootSetup = () => {
-    if (!canReturnToSetup) return;
-    mutateCallSheet((current) => ({ ...current, days: [] }));
-    setSelectedDayId("");
-    setHasStartedShootPlan(false);
-    setHasCallSheet(false);
-    setIsShotListEnabled(false);
-    setScheduleView("schedule");
-    setQuickEntryDraft(null);
-    setEntryDraft(null);
+  const closeShootSetup = () => {
+    const activePath = setupState.activePath;
+    setSetupState((current) => ({
+      ...current,
+      phase: "workspace",
+      updatedAt: new Date().toISOString(),
+    }));
+    if (activePath === "schedule") setHasCallSheet(true);
+    if (activePath === "shots") setIsShotListEnabled(true);
+    setScheduleView(activePath);
+    setIsWorkspaceOpen(false);
+    setIsSetupOpen(false);
+  };
+
+  const openShootWorkspace = (view: ScheduleView) => {
+    setScheduleView(view);
+    setSetupState((current) => ({ ...current, activePath: view, phase: "workspace" }));
+    setIsWorkspaceOpen(true);
+  };
+
+  const confirmSkipSetup = () => {
+    if (!skipSetupPath) return;
+    setSetupState((current) => ({
+      ...current,
+      phase: "workspace",
+      activePath: skipSetupPath,
+      scheduleSkipped: skipSetupPath === "schedule" ? true : current.scheduleSkipped,
+      shotListSkipped: skipSetupPath === "shots" ? true : current.shotListSkipped,
+      status: "working",
+      updatedAt: new Date().toISOString(),
+    }));
+    setSkipSetupPath(null);
+    showToast(skipSetupPath === "schedule" ? "Plan the Day skipped. You can restore it any time." : "Creative Plan skipped. You can restore it any time.");
+  };
+
+  const attachExistingPlan = (plan: ExistingShootPlan) => {
+    setExistingPlan(plan);
+    if (!isEmptyPlanFixture) window.localStorage.setItem(existingShootPlanStorageKey(project.id), JSON.stringify(plan));
+    setIsExistingPlanOpen(false);
+    showToast("Existing shoot plan attached.");
+  };
+
+  const selectScheduleView = (view: ScheduleView) => {
+    const isReady = view === "schedule" ? setupState.scheduleComplete : setupState.shotListComplete;
+    if (!isReady) {
+      startShootPlan(view);
+      return;
+    }
+    setScheduleView(view);
+    setSetupState((current) => ({ ...current, activePath: view, phase: "workspace" }));
+    if (view === "shots") setIsUnscheduledPanelOpen(false);
+    if (!isEmptyPlanFixture) window.localStorage.setItem(`brisk-shoot-view-${project.id}`, view);
+  };
+
+  const handoverShootSetup = (owner: ShootSetupOwner) => {
+    const status = owner === "client" ? "waiting_on_client" : "waiting_on_studio";
+    setSetupState((current) => ({
+      ...current,
+      owner,
+      status,
+      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      updatedAt: new Date().toISOString(),
+    }));
+    setProjectStageStatus(project.id, "shoot", {
+      state: owner === "client" ? "waiting" : "in_progress",
+      daysAgo: 0,
+      assignedTo: owner === "client" ? project.clientName : "Studio",
+    });
+    showToast(owner === "client" ? "Shoot setup sent to the Client." : "Shoot setup sent to the Studio.");
+  };
+
+  const approveShootPlan = () => {
+    const creativeCoveredByPlan = existingPlan?.coverage === "creative" || existingPlan?.coverage === "both";
+    const dayCoveredByPlan = existingPlan?.coverage === "day" || existingPlan?.coverage === "both";
+    const creativeReady = setupState.shotListComplete || setupState.shotListSkipped || creativeCoveredByPlan;
+    const dayReady = setupState.scheduleComplete || setupState.scheduleSkipped || dayCoveredByPlan;
+    if (!creativeReady || !dayReady) return;
+    setSetupState((current) => ({
+      ...current,
+      status: "released",
+      approvalInvalidated: false,
+      approvedCallSheetFingerprint: callSheetApprovalFingerprint,
+      updatedAt: new Date().toISOString(),
+    }));
+    setProjectStageStatus(project.id, "shoot", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt: "Today",
+      approvedBy: selectedRole === "Customer" ? project.clientName : selectedRole,
+    });
+    showToast("Shoot plan approved.");
+  };
+
+  const unapproveShootPlan = () => {
+    setSetupState((current) => ({
+      ...current,
+      status: "ready_to_finalise",
+      approvalInvalidated: false,
+      approvedCallSheetFingerprint: undefined,
+      updatedAt: new Date().toISOString(),
+    }));
+    setProjectStageStatus(project.id, "shoot", {
+      state: "in_progress",
+      daysAgo: 0,
+      assignedTo: "Studio",
+    });
+    showToast("Shoot approval removed.");
+  };
+
+  const finaliseCallSheet = () => {
+    if (!hasMinimumCallSheetDetails(callSheet) || selectedRole === "Customer") return;
+    setSetupState((current) => ({
+      ...current,
+      status: "released",
+      owner: "studio",
+      approvalInvalidated: false,
+      approvedCallSheetFingerprint: callSheetApprovalFingerprint,
+      updatedAt: new Date().toISOString(),
+    }));
+    setProjectStageStatus(project.id, "shoot", {
+      state: "done",
+      daysAgo: 0,
+      approvedAt: "Today",
+      approvedBy: selectedRole,
+    });
+    showToast("Shoot approved.");
   };
 
   useEffect(() => {
@@ -352,6 +502,44 @@ export function ShootStagePage({ project }: { project: Project }) {
     };
     window.localStorage.setItem(shootPlanPreferencesStorageKey(project.id), JSON.stringify(preferences));
   }, [hasCallSheet, hasLoaded, hasStartedShootPlan, isEmptyPlanFixture, isShotListEnabled, project.id, scheduleView]);
+
+  useEffect(() => {
+    if (!hasLoaded || isEmptyPlanFixture) return;
+    try {
+      window.localStorage.setItem(shootSetupStorageKey(project.id), JSON.stringify(setupState));
+    } catch {
+      setSaveStatus("error");
+    }
+  }, [hasLoaded, isEmptyPlanFixture, project.id, setupState]);
+
+  useEffect(() => {
+    if (!hasLoaded || setupState.status !== "released") return;
+
+    if (!setupState.approvedCallSheetFingerprint) {
+      setSetupState((current) => current.status === "released" && !current.approvedCallSheetFingerprint
+        ? { ...current, approvedCallSheetFingerprint: callSheetApprovalFingerprint }
+        : current);
+      return;
+    }
+
+    if (setupState.approvedCallSheetFingerprint === callSheetApprovalFingerprint) return;
+
+    setSetupState((current) => current.status === "released"
+      ? {
+        ...current,
+        status: "ready_to_finalise",
+        approvalInvalidated: true,
+        approvedCallSheetFingerprint: undefined,
+        updatedAt: new Date().toISOString(),
+      }
+      : current);
+    setProjectStageStatus(project.id, "shoot", {
+      state: "in_progress",
+      daysAgo: 0,
+      assignedTo: "Studio",
+    });
+    showToast("Changes made - approval required again.");
+  }, [callSheetApprovalFingerprint, hasLoaded, project.id, setProjectStageStatus, setupState.approvedCallSheetFingerprint, setupState.status]);
 
   useEffect(() => {
     if (!hasLoaded || isEmptyPlanFixture) return;
@@ -569,6 +757,12 @@ export function ShootStagePage({ project }: { project: Project }) {
     setEntryDraft(null);
     setDeleteEntryId(null);
     showToast("Entry removed.");
+  };
+
+  const removeSetupShot = (id: string) => {
+    mutateCallSheet((current) => ({ ...current, entries: current.entries.filter((entry) => entry.id !== id) }));
+    setDeleteSetupShotId(null);
+    showToast("Shot deleted.");
   };
 
   const reorderEntries = (sourceId: string, targetId: string) => {
@@ -999,61 +1193,55 @@ export function ShootStagePage({ project }: { project: Project }) {
     <main className="shoot-shell">
       <div className="shoot-main">
         <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} />
-        {hasStartedShootPlan ? <ShootStageNavigation
+        {!hasLoaded ? <ShootSetupLoading /> : isSetupOpen ? <ShootSetupBuilder
+          callSheet={callSheet}
+          customerName={project.clientName}
+          isApproved={setupState.status === "released"}
+          projectName={project.name}
+          selectedRole={selectedRole}
+          state={setupState}
+          studioName={studio.details.name}
+          saveStatus={saveStatus}
+          sharedCallSheetHref={sharedCallSheetHref}
+          onApprove={approveShootPlan}
+          onCallSheetChange={mutateCallSheet}
+          onClose={closeShootSetup}
+          onHandover={handoverShootSetup}
+          onOpenDetailedShotList={() => {
+            setIsSetupOpen(false);
+            openShootWorkspace("shots");
+          }}
+          onRemoveShootDay={setDeleteDayId}
+          onRemoveShot={setDeleteSetupShotId}
+          onUnapprove={unapproveShootPlan}
+          onStateChange={setSetupState}
+          onSwitchPath={startShootPlan}
+          briskContacts={directoryShootPeople}
+          isInterviewLed={isInterviewLed}
+        /> : isWorkspaceOpen ? <>
+        {setupState.phase === "workspace" ? <ShootStageNavigation
           value={scheduleView}
-          showShotList={isShotListEnabled}
-          showSchedule={hasCallSheet}
-          canReturnToSetup={canReturnToSetup}
-          onChange={selectScheduleView}
-          onReturnToSetup={returnToShootSetup}
+          onBack={() => scheduleView === "shots" ? startShootPlan("shots") : setIsWorkspaceOpen(false)}
+          onEditSetup={() => startShootPlan(scheduleView, scheduleView === "shots" ? 1 : undefined)}
         /> : null}
         <div className={`shoot-workspace ${hasStartedShootPlan && scheduleView === "shots" ? "is-shot-list-page" : ""}`}>
-          {!hasStartedShootPlan ? <ShootPlanEntryChoice onChoose={startShootPlan} /> : <>
+          {!hasStartedShootPlan ? <ShootPlanEntryChoice onChoose={startShootPlan} /> : setupState.phase === "paused" ? <ShootSetupResume state={setupState} onContinue={() => startShootPlan(setupState.activePath)} onSwitchPath={startShootPlan} /> : <>
+          <ShootWorkspaceHeader
+            callSheetReady={hasMinimumCallSheetDetails(callSheet)}
+            isCallSheetReleased={setupState.status === "released"}
+            project={project}
+            saveStatus={saveStatus}
+            selectedDayPdfHref={selectedDayPdfHref}
+            selectedRole={selectedRole}
+            setupStatus={setupState.status}
+            sharedCallSheetHref={sharedCallSheetHref}
+            onContinueSetup={!setupState.scheduleComplete ? () => startShootPlan("schedule") : undefined}
+            onDocuments={() => setIsDocumentsOpen(true)}
+            onFinalise={finaliseCallSheet}
+            onHandover={handoverShootSetup}
+          />
+          {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
           {hasCallSheet && currentDay && scheduleView === "schedule" ? <>
-          <header className="shoot-page-heading">
-            <div>
-              <h1>{callSheet.projectName}</h1>
-              <SaveIndicator status={saveStatus} />
-            </div>
-            <div className="shoot-heading-actions">
-              <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => setIsDocumentsOpen(true)}>
-                <DsIcon name="folder" size={16} />
-                Documents
-              </button>
-              <Link className="shoot-button secondary label-s-semibold" href={selectedDayPdfHref} target="_blank">
-                <DsIcon name="download-simple" size={16} />
-                Download PDF
-              </Link>
-              <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank">
-                <DsIcon name="eye" size={16} />
-                Preview
-              </Link>
-              <StageApprovalControl
-                stageLabel="Shoot"
-                userRole={selectedRole}
-                isApproved={shootStageStatus.state === "done"}
-                approvedAt={shootStageStatus.approvedAt}
-                approvedBy={shootStageStatus.approvedBy}
-                onApprove={() => {
-                  setProjectStageStatus(project.id, "shoot", {
-                    state: "done",
-                    daysAgo: 0,
-                    approvedAt: "17 Aug",
-                    approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
-                  });
-                  showToast("Shoot approved.");
-                }}
-                onUnapprove={() => {
-                  setProjectStageStatus(project.id, "shoot", {
-                    state: selectedRole === "Customer" ? "waiting" : "in_progress",
-                    daysAgo: 0,
-                  });
-                  showToast(selectedRole === "Customer" ? "Shoot is waiting on the client." : "Shoot is waiting on Brisk.");
-                }}
-              />
-            </div>
-          </header>
-
           <section className="shoot-call-sheet-hero" aria-labelledby="call-sheet-overview-title">
             <div className="shoot-day-controls">
               <div className="shoot-day-tabs-wrap">
@@ -1354,6 +1542,23 @@ export function ShootStagePage({ project }: { project: Project }) {
           </>}
 
         </div>
+        </> : <ShootDashboard
+          callSheet={callSheet}
+          existingPlan={existingPlan}
+          project={project}
+          selectedRole={selectedRole}
+          setupState={setupState}
+          sharedCallSheetHref={sharedCallSheetHref}
+          selectedDayPdfHref={selectedDayPdfHref}
+          studioName={studio.details.name}
+          onApprove={approveShootPlan}
+          onAttachPlan={() => setIsExistingPlanOpen(true)}
+          onHandover={handoverShootSetup}
+          onOpenModule={(view) => view === "shots" ? startShootPlan("shots") : setupState.scheduleComplete ? openShootWorkspace("schedule") : startShootPlan("schedule")}
+          onRestore={startShootPlan}
+          onSkip={setSkipSetupPath}
+          onUnapprove={unapproveShootPlan}
+        />}
       </div>
 
       {quickEntryDraft ? <div className="shoot-quick-entry-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeQuickEntry(); }}>
@@ -1442,6 +1647,14 @@ export function ShootStagePage({ project }: { project: Project }) {
         onCancel={() => setDeleteDayId(null)}
         onConfirm={() => deleteShootDay(deleteDayId)}
       /> : null}
+      {deleteSetupShotId ? <DeleteShootShotModal
+        entryId={deleteSetupShotId}
+        entries={callSheet.entries}
+        onCancel={() => setDeleteSetupShotId(null)}
+        onConfirm={() => removeSetupShot(deleteSetupShotId)}
+      /> : null}
+      {skipSetupPath ? <SkipShootModuleModal path={skipSetupPath} onCancel={() => setSkipSetupPath(null)} onConfirm={confirmSkipSetup} /> : null}
+      {isExistingPlanOpen ? <ExistingShootPlanModal existingPlan={existingPlan} onClose={() => setIsExistingPlanOpen(false)} onSave={attachExistingPlan} /> : null}
       {toast ? <div className="shoot-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={18} />{toast}{toastAction === "add-person" ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => { setToast(""); setToastAction(null); setIsExistingPersonOpen(true); }}>Add another</button> : null}</div> : null}
     </main>
   );
@@ -1486,23 +1699,249 @@ function EmptyState({ illustrationSrc, title, body, action, onAction, secondaryA
   );
 }
 
+function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupState, sharedCallSheetHref, selectedDayPdfHref, studioName, onApprove, onAttachPlan, onHandover, onOpenModule, onRestore, onSkip, onUnapprove }: {
+  callSheet: CallSheet;
+  existingPlan: ExistingShootPlan | null;
+  project: Project;
+  selectedRole: PrototypeRole;
+  setupState: ShootSetupState;
+  sharedCallSheetHref: string;
+  selectedDayPdfHref: string;
+  studioName: string;
+  onApprove: () => void;
+  onAttachPlan: () => void;
+  onHandover: (owner: ShootSetupOwner) => void;
+  onOpenModule: (view: ScheduleView) => void;
+  onRestore: (view: ScheduleView) => void;
+  onSkip: (view: ScheduleView) => void;
+  onUnapprove: () => void;
+}) {
+  const [clientReview, setClientReview] = useState<"creative" | "details" | null>(null);
+  const isClient = selectedRole === "Customer";
+  const shotCount = callSheet.entries.filter((entry) => entry.type === "shot").length;
+  const questionCount = callSheet.questions.length;
+  const creativeCoveredByPlan = existingPlan?.coverage === "creative" || existingPlan?.coverage === "both";
+  const dayCoveredByPlan = existingPlan?.coverage === "day" || existingPlan?.coverage === "both";
+  const creativeReady = setupState.shotListComplete || creativeCoveredByPlan;
+  const dayReady = setupState.scheduleComplete || dayCoveredByPlan;
+  const canOpenCallSheet = dayReady || Boolean(existingPlan);
+  const canApprove = (creativeReady || setupState.shotListSkipped) && (dayReady || setupState.scheduleSkipped);
+  const callSheetStatus = setupState.status === "released"
+    ? "Shoot ready"
+    : setupState.approvalInvalidated
+      ? "Changes made - approval required again"
+    : canApprove
+      ? "Ready to share"
+      : setupState.scheduleStarted || setupState.shotListStarted || existingPlan
+        ? "Call Sheet draft"
+        : "Waiting for details";
+  if (isClient) {
+    return <section className="shoot-dashboard is-client" aria-labelledby="shoot-dashboard-title">
+      <header className="shoot-dashboard-heading"><div><h1 id="shoot-dashboard-title">{project.name}</h1><p className="paragraph-s">Review the plans and shoot-day information shared by {studioName}.</p></div></header>
+      <div className="shoot-dashboard-client-list">
+        <ShootClientCard icon="film-slate" title="Creative Plan" description="Review the Interview Questions and shots planned for the shoot." action="Review Creative Plan" onClick={() => setClientReview("creative")} />
+        <ShootClientCard icon="calendar" title="Shoot details" description="Confirm the date, location, Talent and access information." action="Review Shoot details" onClick={() => setClientReview("details")} />
+        <article className="shoot-dashboard-client-card"><span className="shoot-dashboard-card-icon"><DsIcon name="clipboard-text" size={24} /></span><div><h2>Call Sheet</h2><p className="paragraph-s">Everything you need for the shoot day.</p></div>{canOpenCallSheet ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <button className="shoot-button secondary label-s-semibold" type="button" disabled>Not ready yet</button>}</article>
+      </div>
+      {clientReview ? <ClientShootReview
+        callSheet={callSheet}
+        mode={clientReview}
+        project={project}
+        canApprove={canApprove && setupState.status === "waiting_on_client"}
+        onApprove={onApprove}
+        onClose={() => setClientReview(null)}
+        onConfirm={() => onHandover("studio")}
+      /> : null}
+    </section>;
+  }
+
+  return <section className="shoot-dashboard" aria-labelledby="shoot-dashboard-title">
+    <header className="shoot-dashboard-heading">
+      <div><h1 id="shoot-dashboard-title">Plan and run the shoot</h1><p className="paragraph-s">Creative Plan and Plan the Day can be completed in either order. Both feed On Set.</p></div>
+    </header>
+    {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
+    <div className="shoot-dashboard-modules">
+      <ShootDashboardModule
+        icon="film-slate"
+        eyebrow="1"
+        title="Creative Plan"
+        description="Questions and shots"
+        status={creativeCoveredByPlan ? "Existing plan attached" : setupState.shotListSkipped ? "Skipped" : shotCount ? `${questionCount ? `${questionCount} questions · ` : ""}${shotCount} shots drafted` : setupState.shotListStarted ? "In progress" : "Not started"}
+        primaryLabel={creativeReady ? "Open" : "Continue"}
+        skipped={setupState.shotListSkipped}
+        onPrimary={() => onOpenModule("shots")}
+        onRestore={() => onRestore("shots")}
+        onSkip={() => onSkip("shots")}
+      />
+      <ShootDashboardModule
+        icon="calendar"
+        eyebrow="2"
+        title="Plan the Day"
+        description="Logistics and timing"
+        status={dayCoveredByPlan ? "Existing plan attached" : setupState.scheduleSkipped ? "Skipped" : setupState.scheduleComplete ? "5 of 5 complete" : setupState.scheduleStarted ? `${Math.min(setupState.scheduleStep + 1, 5)} of 5 in progress` : "Not started"}
+        primaryLabel={dayReady ? "Open" : "Continue"}
+        skipped={setupState.scheduleSkipped}
+        onPrimary={() => onOpenModule("schedule")}
+        onRestore={() => onRestore("schedule")}
+        onSkip={() => onSkip("schedule")}
+      />
+      <article className="shoot-dashboard-module is-on-set">
+        <header><span className="shoot-dashboard-card-icon"><DsIcon name="clipboard-text" size={24} /></span><span className="shoot-dashboard-card-number label-xs-semibold">3</span></header>
+        <div><h2>On Set</h2><p className="paragraph-s">Call Sheet and live shoot</p></div>
+        <strong className="shoot-dashboard-module-status label-s-semibold">{callSheetStatus}</strong>
+        <div className="shoot-dashboard-module-actions">
+          {canOpenCallSheet ? <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <button className="shoot-button primary label-s-semibold" type="button" disabled title="Add shoot details or attach an existing plan first">Open Call Sheet</button>}
+          {canOpenCallSheet ? <Link className="shoot-button secondary label-s-semibold" href={selectedDayPdfHref} target="_blank"><DsIcon name="download-simple" size={16} />PDF</Link> : null}
+          {setupState.status === "released" ? <Link className="shoot-button secondary label-s-semibold" href={`${sharedCallSheetHref}&live=1`}><DsIcon name="video-camera-ds" size={16} />Start shoot</Link> : null}
+        </div>
+      </article>
+    </div>
+    {existingPlan ? <section className="shoot-existing-plan"><span className="shoot-dashboard-card-icon"><DsIcon name={existingPlan.source === "link" ? "link-simple-horizontal" : "file-text"} size={22} /></span><div><strong>Existing plan attached</strong><span className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)}</span><small className="label-xs">Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div><div>{existingPlan.url ? <a className="shoot-button secondary label-s-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-s-semibold" type="button" onClick={onAttachPlan}>Replace</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={() => onHandover("client")}>Request review</button></div></section> : null}
+    <button className="shoot-use-existing-plan label-s-semibold" type="button" onClick={onAttachPlan}><DsIcon name="upload-simple" size={18} />{existingPlan ? "Replace the existing shoot plan" : "Use an existing shoot plan"}</button>
+    <div className="shoot-dashboard-review-row">
+      <ShareActionRow
+        context="shoot"
+        userRole={selectedRole}
+        density="compact"
+        initialAccess="canEdit"
+        initialLinkOpens="stageOnly"
+        projectName={project.name}
+        studioName={studioName}
+        customerName={project.clientName}
+        copyLinkIconOnly
+        approveLabel="Approve Shoot"
+        approveDisabled={!canApprove}
+        approveDisabledTooltip="Complete or skip both planning modules first"
+        isApproved={setupState.status === "released"}
+        onApprove={onApprove}
+        onRequestReview={(recipient) => onHandover(recipient === "customer" ? "client" : "studio")}
+        onSendToStudio={() => onHandover("studio")}
+        onUnapprove={onUnapprove}
+      />
+    </div>
+  </section>;
+}
+
+function ShootApprovalChangedNotice() {
+  return <div className="shoot-approval-changed-notice" role="status">
+    <DsIcon name="alert-triangle" size={18} />
+    <div>
+      <strong className="label-s-semibold">Changes made - approval required again</strong>
+      <span className="label-xs">Important information on the live Call Sheet has changed since it was approved.</span>
+    </div>
+  </div>;
+}
+
+function ShootDashboardModule({ icon, eyebrow, title, description, status, primaryLabel, skipped, onPrimary, onRestore, onSkip }: { icon: DsIconName; eyebrow: string; title: string; description: string; status: string; primaryLabel: string; skipped: boolean; onPrimary: () => void; onRestore: () => void; onSkip: () => void }) {
+  return <article className={`shoot-dashboard-module${skipped ? " is-skipped" : ""}`}>
+    <header><span className="shoot-dashboard-card-icon"><DsIcon name={icon} size={24} /></span><span className="shoot-dashboard-card-number label-xs-semibold">{eyebrow}</span></header>
+    <div><h2>{title}</h2><p className="paragraph-s">{description}</p></div>
+    <strong className="shoot-dashboard-module-status label-s-semibold">{status}</strong>
+    <div className="shoot-dashboard-module-actions">{skipped ? <Button size="S" variant="primary" onClick={onRestore}>Restore</Button> : <><Button size="S" variant="primary" onClick={onPrimary}>{primaryLabel}</Button><button className="shoot-text-action label-s-semibold" type="button" onClick={onSkip}>Skip</button></>}</div>
+  </article>;
+}
+
+function ShootClientCard({ icon, title, description, action, onClick }: { icon: DsIconName; title: string; description: string; action: string; onClick: () => void }) {
+  return <article className="shoot-dashboard-client-card"><span className="shoot-dashboard-card-icon"><DsIcon name={icon} size={24} /></span><div><h2>{title}</h2><p className="paragraph-s">{description}</p></div><Button size="S" variant="secondary" onClick={onClick}>{action}</Button></article>;
+}
+
+function ClientShootReview({ callSheet, mode, project, canApprove, onApprove, onClose, onConfirm }: { callSheet: CallSheet; mode: "creative" | "details"; project: Project; canApprove: boolean; onApprove: () => void; onClose: () => void; onConfirm: () => void }) {
+  const day = callSheet.days[0];
+  const location = callSheet.locations.find((item) => item.id === day?.primaryLocationId) ?? callSheet.locations[0];
+  const shots = callSheet.entries.filter((entry) => entry.type === "shot").sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
+  const talent = callSheet.people.filter((person) => person.type === "talent");
+
+  return <section className="shoot-client-review" aria-labelledby="shoot-client-review-title">
+    <header><div><span className="label-xs-semibold">Client review</span><h2 id="shoot-client-review-title">{mode === "creative" ? "Creative Plan" : "Shoot details"}</h2></div><button className="shoot-icon-button" type="button" aria-label="Close review" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header>
+    {mode === "creative" ? <div className="shoot-client-review-columns">
+      {callSheet.questions.length ? <section><h3 className="label-s-semibold">Interview Questions</h3><ol>{callSheet.questions.map((question) => <li className="label-s" key={question.id}>{question.question}</li>)}</ol></section> : null}
+      <section><h3 className="label-s-semibold">Shot List</h3>{shots.length ? <ol>{shots.map((shot) => <li key={shot.id}><strong className="label-s-semibold">{shot.description}</strong><span className="label-xs">{[shot.subject, shot.priority].filter(Boolean).join(" · ")}</span></li>)}</ol> : <p className="paragraph-s">No shots have been shared yet.</p>}</section>
+    </div> : <dl className="shoot-client-review-details">
+      <div><dt className="label-xs">Shoot date</dt><dd className="label-s-semibold">{day?.date ? formatEditorDate(day.date) : "Not confirmed yet"}</dd></div>
+      <div><dt className="label-xs">Location</dt><dd className="label-s-semibold">{location?.name || "Not confirmed yet"}</dd>{location?.address ? <small className="label-xs">{location.address}</small> : null}</div>
+      <div><dt className="label-xs">Talent</dt><dd className="label-s-semibold">{talent.length ? talent.map((person) => person.name).join(", ") : "Not confirmed yet"}</dd></div>
+      <div><dt className="label-xs">Access</dt><dd className="label-s-semibold">{callSheet.practicalInfo.access || "Not confirmed yet"}</dd></div>
+    </dl>}
+    <footer><Link className="shoot-button secondary label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chat-circle" size={16} />Comment</Link>{canApprove ? <><Button size="S" variant="secondary" onClick={onConfirm}>Confirm details</Button><Button size="S" variant="primary" onClick={onApprove}>Approve Shoot</Button></> : null}</footer>
+  </section>;
+}
+
+function SkipShootModuleModal({ path, onCancel, onConfirm }: { path: ScheduleView; onCancel: () => void; onConfirm: () => void }) {
+  const isCreative = path === "shots";
+  return <ModalShell
+    compact
+    title={`Skip ${isCreative ? "Creative Plan" : "Plan the Day"}?`}
+    description={isCreative
+      ? "Brisk will not create Interview Questions or a Shot List. You can restore this module later or add an existing plan."
+      : "Brisk will not create a native Schedule or Call Sheet. You can upload an existing plan or continue without one."}
+    onClose={onCancel}
+    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button><Button size="S" variant="primary" onClick={onConfirm}>Skip {isCreative ? "Creative Plan" : "Plan the Day"}</Button></div>}
+  ><p className="paragraph-s">This will not delete any work already saved.</p></ModalShell>;
+}
+
+function ExistingShootPlanModal({ existingPlan, onClose, onSave }: { existingPlan: ExistingShootPlan | null; onClose: () => void; onSave: (plan: ExistingShootPlan) => void }) {
+  const [source, setSource] = useState<ExistingShootPlan["source"]>(existingPlan?.source ?? "file");
+  const [coverage, setCoverage] = useState<ExistingShootPlanCoverage>(existingPlan?.coverage ?? "both");
+  const [name, setName] = useState(existingPlan?.name ?? "");
+  const [url, setUrl] = useState(existingPlan?.url ?? "");
+  const [secondaryFileName, setSecondaryFileName] = useState("");
+  const canSave = Boolean(name.trim() && (source === "file" || url.trim()));
+
+  return <ModalShell
+    wide
+    title={existingPlan ? "Replace the existing shoot plan" : "Use an existing shoot plan"}
+    description="Attach a PDF, spreadsheet or shared plan. For V1, Brisk displays and shares the original file without importing its contents."
+    onClose={onClose}
+    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!canSave} onClick={() => onSave({ name: secondaryFileName ? `${name.trim()} + ${secondaryFileName}` : name.trim(), source, url: url.trim() || undefined, coverage, addedBy: "Tom", addedAt: "7 September" })}>{existingPlan ? "Replace plan" : "Attach plan"}</Button></div>}
+  >
+    <div className="shoot-existing-plan-form">
+      <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">Add the plan as</legend><label className="label-s"><input type="radio" name="plan-source" checked={source === "file"} onChange={() => setSource("file")} />Upload file</label><label className="label-s"><input type="radio" name="plan-source" checked={source === "link"} onChange={() => setSource("link")} />Paste share link</label></fieldset>
+      {source === "file" ? <div className="shoot-setup-grid two-column"><label className="shoot-setup-field"><span className="label-xs-semibold">Shot List or Call Sheet</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setName(file.name); setUrl(URL.createObjectURL(file)); }} /></label><label className="shoot-setup-field"><span className="label-xs-semibold">Optional second file</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => setSecondaryFileName(event.target.files?.[0]?.name ?? "")} /></label></div> : <label className="shoot-setup-field"><span className="label-xs-semibold">Share link</span><input type="url" placeholder="https://" value={url} onChange={(event) => { setUrl(event.target.value); if (!name) setName("Shared shoot plan"); }} /></label>}
+      <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">What does this plan cover?</legend>{(["creative", "day", "both"] as const).map((value) => <label className="label-s" key={value}><input type="radio" name="plan-coverage" checked={coverage === value} onChange={() => setCoverage(value)} />{formatExistingPlanCoverage(value)}</label>)}</fieldset>
+    </div>
+  </ModalShell>;
+}
+
 function ShootPlanEntryChoice({ onChoose }: { onChoose: (view: ScheduleView) => void }) {
   return (
     <div className="shoot-plan-entry-choice">
-      <Image className="shoot-plan-entry-illustration" src="/brisk-visuals/shoot-schedule-empty-transparent.png" alt="" width={160} height={160} priority />
+      <div className="shoot-plan-entry-heading">
+        <h1>Plan your shoot</h1>
+      </div>
       <div className="shoot-plan-entry-options">
         <button className="shoot-plan-entry-option" type="button" onClick={() => onChoose("schedule")}>
-          <span className="shoot-plan-entry-copy"><strong>Build a schedule</strong><span className="paragraph-s">Create a call sheet and start planning the shoot day.</span></span>
-          <span className="shoot-plan-entry-action">Start →</span>
+          <span className="shoot-plan-entry-icon" aria-hidden="true"><DsIcon name="calendar" size={28} /></span>
+          <span className="shoot-plan-entry-copy"><strong>Schedule</strong><span className="paragraph-s">Set dates, locations, people and the run of day.</span></span>
+          <span className="shoot-plan-entry-action">Create schedule<DsIcon name="arrow-right" size={16} /></span>
         </button>
         <button className="shoot-plan-entry-option" type="button" onClick={() => onChoose("shots")}>
-          <span className="shoot-plan-entry-copy"><strong>Create a shot list</strong><span className="paragraph-s">Plan your coverage first. Build the schedule when you’re ready.</span></span>
-          <span className="shoot-plan-entry-action">Start →</span>
+          <span className="shoot-plan-entry-icon" aria-hidden="true"><DsIcon name="film-slate" size={28} /></span>
+          <span className="shoot-plan-entry-copy"><strong>Shot list</strong><span className="paragraph-s">Plan the shots you need to capture.</span></span>
+          <span className="shoot-plan-entry-action">Create shot list<DsIcon name="arrow-right" size={16} /></span>
         </button>
       </div>
-      <p className="shoot-plan-entry-guidance paragraph-s">Choose where you’d like to begin. You can change this later.</p>
+      <p className="shoot-plan-entry-guidance paragraph-s">Start with either - you can use both.</p>
     </div>
   );
+}
+
+function ShootSetupLoading() {
+  return <div className="shoot-setup-loading" role="status" aria-label="Loading Shoot setup"><span /><span /><span /></div>;
+}
+
+function ShootSetupResume({ state, onContinue, onSwitchPath }: { state: ShootSetupState; onContinue: () => void; onSwitchPath: (path: ScheduleView) => void }) {
+  const activeLabel = state.activePath === "schedule" ? "Schedule" : "Shot List";
+  const otherPath: ScheduleView = state.activePath === "schedule" ? "shots" : "schedule";
+  const otherLabel = otherPath === "schedule" ? "Schedule" : "Shot List";
+  return <section className="shoot-setup-resume">
+    <span className="shoot-setup-resume-icon"><DsIcon name="film-slate" size={28} /></span>
+    <div><p className="shoot-eyebrow label-xs-semibold">Setup saved</p><h1>Continue planning your shoot</h1><p className="paragraph-s">Your shared progress is safe. Pick up the {activeLabel} or switch to the {otherLabel}.</p></div>
+    <div className="shoot-setup-resume-progress">
+      <span><strong className="label-s-semibold">Schedule</strong><small className="label-xs">{state.scheduleComplete ? "Ready" : state.scheduleStarted ? `Question ${state.scheduleStep + 1} of 6` : "Not started"}</small></span>
+      <span><strong className="label-s-semibold">Shot List</strong><small className="label-xs">{state.shotListComplete ? "Ready" : state.shotListStarted ? `Question ${state.shotListStep + 1} of 5` : "Not started"}</small></span>
+    </div>
+    <div className="shoot-setup-resume-actions"><Button size="M" variant="primary" onClick={onContinue}>Continue {activeLabel}</Button><Button size="M" variant="secondary" onClick={() => onSwitchPath(otherPath)}>Open {otherLabel}</Button></div>
+  </section>;
 }
 
 function ScheduleEmptyState({ onAdd }: { onAdd: () => void }) {
@@ -1529,25 +1968,77 @@ function ScheduleFilterEmptyState({ label, onClear }: { label: string; onClear: 
   );
 }
 
-function ShootStageNavigation({ value, showShotList, showSchedule, canReturnToSetup, onChange, onReturnToSetup }: {
+function ShootStageNavigation({ value, onBack, onEditSetup }: {
   value: ScheduleView;
-  showShotList: boolean;
-  showSchedule: boolean;
-  canReturnToSetup: boolean;
-  onChange: (view: ScheduleView) => void;
-  onReturnToSetup: () => void;
+  onBack: () => void;
+  onEditSetup: () => void;
 }) {
   return <nav className="shoot-stage-navigation" aria-label="Shoot pages">
     <div className="shoot-stage-navigation-inner">
-      <div className="shoot-stage-tabs" role="tablist" aria-label="Shoot pages">
-        {showShotList ? <button className={`label-s-semibold ${value === "shots" ? "active" : ""}`} type="button" role="tab" aria-selected={value === "shots"} aria-current={value === "shots" ? "page" : undefined} onClick={() => onChange("shots")}><DsIcon name="video-camera-ds" size={18} /><span>Shot list</span></button> : null}
-        {showSchedule ? <button className={`label-s-semibold ${value === "schedule" ? "active" : ""}`} type="button" role="tab" aria-selected={value === "schedule"} aria-current={value === "schedule" ? "page" : undefined} onClick={() => onChange("schedule")}><DsIcon name="clipboard-text" size={18} /><span>Call sheet</span></button> : null}
-      </div>
+      <button className="shoot-back-to-setup label-s-semibold" type="button" onClick={onBack}><DsIcon name="arrow-left" size={16} /><span>{value === "shots" ? "Back to Creative Plan" : "Back to Shoot"}</span></button>
+      <strong className="label-s-semibold">{value === "schedule" ? "Plan the Day" : "Creative Plan"}</strong>
       <div className="shoot-stage-navigation-actions">
-        {canReturnToSetup ? <button className="shoot-back-to-setup label-s-semibold" type="button" aria-label="Back to setup" onClick={onReturnToSetup}><DsIcon name="arrow-left" size={16} /><span>Back to setup</span></button> : null}
+        <button className="shoot-back-to-setup label-s-semibold" type="button" onClick={onEditSetup}><DsIcon name="pencil-simple-ds" size={16} /><span>{value === "shots" ? "Edit questions" : "Edit setup"}</span></button>
       </div>
     </div>
   </nav>;
+}
+
+function ShootWorkspaceHeader({ callSheetReady, isCallSheetReleased, project, saveStatus, selectedDayPdfHref, selectedRole, setupStatus, sharedCallSheetHref, onContinueSetup, onDocuments, onFinalise, onHandover }: {
+  callSheetReady: boolean;
+  isCallSheetReleased: boolean;
+  project: Project;
+  saveStatus: SaveStatus;
+  selectedDayPdfHref: string;
+  selectedRole: PrototypeRole;
+  setupStatus: ShootSetupState["status"];
+  sharedCallSheetHref: string;
+  onContinueSetup?: () => void;
+  onDocuments: () => void;
+  onFinalise: () => void;
+  onHandover: (owner: ShootSetupOwner) => void;
+}) {
+  const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const actionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isActionsOpen) return;
+    const closeOnOutsideClick = (event: globalThis.MouseEvent) => {
+      if (!actionsRef.current?.contains(event.target as Node)) setIsActionsOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsActionsOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isActionsOpen]);
+
+  const primaryAction = onContinueSetup ? <Button size="S" variant="primary" onClick={onContinueSetup}>Continue setup</Button>
+    : isCallSheetReleased ? <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank"><DsIcon name="link" size={16} />Share Call Sheet</Link>
+      : selectedRole === "Customer" ? setupStatus === "waiting_on_studio"
+        ? <Button size="S" variant="primary" disabled>Waiting on Studio</Button>
+        : <Button size="S" variant="primary" onClick={() => onHandover("studio")}>Send to Studio</Button>
+        : <Button size="S" variant="primary" disabled={!callSheetReady} onClick={onFinalise}>Approve Shoot</Button>;
+
+  return <header className="shoot-page-heading">
+    <div><p className="shoot-eyebrow label-xs-semibold">Shoot workspace</p><h1>{project.name}</h1><div className="shoot-heading-state"><SaveIndicator status={saveStatus} />{setupStatus === "waiting_on_studio" ? <span className="label-xs">Waiting on Studio</span> : setupStatus === "waiting_on_client" ? <span className="label-xs">Waiting on Client</span> : null}</div></div>
+    <div className="shoot-heading-actions">
+      {callSheetReady ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank"><DsIcon name="eye" size={16} />Open Call Sheet</Link> : <button className="shoot-button secondary label-s-semibold" type="button" disabled title="Add a shoot date, times and primary location first"><DsIcon name="eye" size={16} />Open Call Sheet</button>}
+      <div className="shoot-workspace-actions" ref={actionsRef}>
+        <button className="shoot-button secondary label-s-semibold" type="button" aria-expanded={isActionsOpen} onClick={() => setIsActionsOpen((current) => !current)}>Actions<DsIcon name="caret-down" size={14} /></button>
+        {isActionsOpen ? <div className="shoot-workspace-actions-menu" role="menu">
+          <button className="label-s-semibold" type="button" role="menuitem" onClick={() => { setIsActionsOpen(false); onDocuments(); }}><DsIcon name="folder" size={16} />Documents</button>
+          <Link className="label-s-semibold" href={selectedDayPdfHref} target="_blank" role="menuitem" onClick={() => setIsActionsOpen(false)}><DsIcon name="download-simple" size={16} />Download PDF</Link>
+        </div> : null}
+      </div>
+      <Link className="shoot-button secondary label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chat-circle" size={16} />Comments</Link>
+      {primaryAction}
+    </div>
+  </header>;
 }
 
 function ScheduleFilters({ status, selectedTypes, showType, locations, people, selectedLocationIds, selectedPersonIds, onStatusChange, onTypeChange, onLocationChange, onPersonChange, onClear }: {
@@ -2048,6 +2539,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
   const [isGridScrolled, setIsGridScrolled] = useState(false);
   const resizeStateRef = useRef<{ field: ShotFieldId; pointerId: number; startX: number; startWidth: number } | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const fieldsControlRef = useRef<HTMLDivElement>(null);
   const visibleFields = orderedFields.filter((field) => !hiddenFields.includes(field));
   const hasStickyPrefix = ["captured", "image", "shotNumber", "description"].every((field, index) => visibleFields[index] === field);
   const getColumnWidth = (field: ShotFieldId) => columnWidths[field] ? `max(var(--shot-min-${field}), ${columnWidths[field]}px)` : `var(--shot-col-${field})`;
@@ -2111,6 +2603,22 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
       // The Shot List remains usable when browser storage is unavailable.
     }
   }, [columnWidths, columnWidthsLoaded, projectId]);
+
+  useEffect(() => {
+    if (!isFieldsOpen) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!fieldsControlRef.current?.contains(event.target as Node)) setIsFieldsOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsFieldsOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isFieldsOpen]);
 
   const getMinimumColumnWidth = (field: ShotFieldId) => {
     const grid = gridRef.current;
@@ -2221,7 +2729,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
         >
           Filters{activeFilterCount ? ` · ${activeFilterCount}` : ""}<DsIcon name="caret-down" size={14} />
         </button>
-      <div className="shoot-fields-control">
+      <div className="shoot-fields-control" ref={fieldsControlRef}>
         <button className="shoot-button secondary label-s-semibold" type="button" aria-expanded={isFieldsOpen} onClick={() => { setIsFiltersOpen(false); setIsFieldsOpen((current) => !current); }}><DsIcon name="settings" size={16} />Fields</button>
         {isFieldsOpen ? <div className="shoot-fields-popover" role="dialog" aria-label="Shot List fields">
           <header><strong>Fields</strong><span className="label-xs">Show, hide or reorder columns.</span></header>
@@ -2250,8 +2758,11 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
         ref={gridRef}
         onScroll={(event) => setIsGridScrolled(event.currentTarget.scrollLeft > 1)}
       >
-        <div className="shoot-shot-grid-header" style={gridStyle} role="row">{visibleFields.map((field) => <div className={`shoot-shot-cell is-${field} label-xs-semibold`} data-shot-field={field} role="columnheader" key={field}>
-          <span>{allShotFields.find((item) => item.id === field)?.label}</span>
+        <div className="shoot-shot-grid-header" style={gridStyle} role="row">{visibleFields.map((field) => {
+          const fieldMeta = allShotFields.find((item) => item.id === field);
+          return <div className={`shoot-shot-cell is-${field} label-xs-semibold`} data-shot-field={field} role="columnheader" key={field}>
+          <span>{fieldMeta?.label}</span>
+          {fieldMeta?.help ? <span className="shoot-shot-field-help"><button type="button" aria-label={`About ${fieldMeta.label}`}><DsIcon name="info" size={14} /></button><span className="label-xs" role="tooltip">{fieldMeta.help}</span></span> : null}
           <span
             className="shoot-column-resize-handle"
             role="separator"
@@ -2273,7 +2784,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
               setColumnWidths((current) => ({ ...current, [field]: Math.max(minimumWidth, Math.round(cell.getBoundingClientRect().width + (direction * 16))) }));
             }}
           />
-        </div>)}</div>
+        </div>;})}</div>
         <div className="shoot-shot-grid-body">
           {filteredEntries.map((entry) => <div className={`shoot-shot-grid-row ${entry.captured ? "is-captured" : ""}`} style={gridStyle} role="row" key={entry.id}
             onClick={(event) => { if (!(event.target as HTMLElement).closest("input, button, textarea, a, label, details, summary")) onEdit(entry); }}
@@ -2285,11 +2796,12 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
         </div>
       </div>
       <div className="shoot-shot-card-list">
-        {filteredEntries.map((entry) => <article className={entry.captured ? "is-captured" : ""} role="button" tabIndex={0} key={entry.id} onClick={() => onEdit(entry)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") onEdit(entry); }}>
+        {filteredEntries.map((entry) => <article className={entry.captured ? "is-captured" : ""} key={entry.id}>
           <ShotReferenceImagePicker entry={entry} projectId={projectId} compact onChange={(patch) => onUpdate(entry.id, patch)} />
           <div className="shoot-shot-card-heading"><span className="shoot-schedule-type is-shot label-xs-semibold">{entry.shotNumber}</span><label className="shoot-checkbox" onClick={(event) => event.stopPropagation()}><input type="checkbox" checked={Boolean(entry.captured)} aria-label={`Mark ${entry.description} as captured`} onChange={() => onToggleCaptured(entry.id)} /><span aria-hidden="true"><DsIcon name="check" size={14} /></span></label></div>
           <strong>{entry.description}</strong>
           <p className="label-xs">{[entry.shotCategory, entry.shotSize, entry.durationMinutes ? `${entry.durationMinutes} min` : null].filter(Boolean).join(" · ")}</p>
+          <button className="shoot-text-action label-s-semibold" type="button" onClick={() => onEdit(entry)}>Edit shot<DsIcon name="arrow-right" size={16} /></button>
         </article>)}
       </div>
     </>}
@@ -2306,7 +2818,7 @@ function ShotGridCell({ entry, field, locations, projectId, autoFocusDescription
   if (field === "captured") return <div {...cellProps}><label className="shoot-checkbox"><input type="checkbox" checked={Boolean(entry.captured)} aria-label={`Mark ${entry.description} as captured`} onChange={onToggleCaptured} /><span aria-hidden="true"><DsIcon name="check" size={14} /></span></label></div>;
   if (field === "image") return <div {...cellProps}><ShotReferenceImagePicker entry={entry} projectId={projectId} onChange={onUpdate} /></div>;
   if (field === "shotNumber") return <div {...cellProps}>{showDragHandle ? <span className="shoot-shot-drag" draggable aria-label="Drag to reorder shot" onDragEnd={onDragEnd} onDragStart={onDragStart}><DsIcon name="dots-six-vertical" size={15} /></span> : null}<strong>{entry.shotNumber}</strong></div>;
-  if (field === "description") return <div {...cellProps}><input autoFocus={autoFocusDescription} required aria-label="Description" placeholder="Describe what needs to be captured…" value={entry.description} onFocus={onDescriptionFocused} onChange={(event) => onUpdate({ description: event.target.value })} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") event.currentTarget.blur(); }} /></div>;
+  if (field === "description") return <div {...cellProps}><input autoFocus={autoFocusDescription} required aria-label="Description" placeholder="Describe what needs to be captured…" value={entry.description} onFocus={onDescriptionFocused} onChange={(event) => onUpdate({ description: event.target.value })} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") event.currentTarget.blur(); }} /><button className="shoot-shot-edit-action label-xs-semibold" type="button" onClick={onEdit}>Edit shot</button></div>;
   if (field === "subject") return <div {...cellProps}><input aria-label="Subject" placeholder="Person, product, place or activity" value={entry.subject ?? ""} onChange={(event) => onUpdate({ subject: event.target.value })} /></div>;
   if (field === "location") return <div {...cellProps}><BriskSelect ariaLabel="Location" options={[...locations.map((location) => ({ value: location.id, label: location.name })), { value: "create-new", label: "Create new location" }]} placeholder="No location" value={entry.locationId ?? ""} onChange={(value) => value === "create-new" ? onCreateLocation() : onUpdate({ locationId: value || undefined })} /></div>;
   if (field === "category") return <div {...cellProps}><BriskSelect ariaLabel="Shot category" options={shotCategoryOptions.map((option) => ({ value: option, label: option }))} placeholder="Category" value={entry.shotCategory ?? ""} onChange={(value) => onUpdate({ shotCategory: value || undefined })} /></div>;
@@ -2794,6 +3306,22 @@ function CustomiseShootPlanModal({ hasShots, shotListEnabled, onClose, onShotLis
   </ModalShell>;
 }
 
+function DeleteShootItemModal({ title, message, confirmLabel, onCancel, onConfirm }: { title: string; message: string; confirmLabel: string; onCancel: () => void; onConfirm: () => void }) {
+  return (
+    <ModalShell
+      compact
+      title={title}
+      onClose={onCancel}
+      footer={<div className="shoot-modal-actions align-right">
+        <button autoFocus className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
+        <button className="shoot-button danger label-s-semibold" type="button" onClick={onConfirm}><DsIcon name="trash-simple" size={16} />{confirmLabel}</button>
+      </div>}
+    >
+      <p className="paragraph-s">{message}</p>
+    </ModalShell>
+  );
+}
+
 function DeleteShootDayModal({ day, entries, onCancel, onConfirm }: { day?: ShootDay; entries: ProductionEntry[]; onCancel: () => void; onConfirm: () => void }) {
   if (!day) return null;
   const scheduledCount = entries.filter((entry) => entry.startTime).length;
@@ -2806,19 +3334,22 @@ function DeleteShootDayModal({ day, entries, onCancel, onConfirm }: { day?: Shoo
     ? `This will permanently remove ${removedContent}. People and locations will remain in the project.`
     : "This will permanently remove the shoot day. People and locations will remain in the project.";
 
-  return (
-    <ModalShell
-      compact
-      title={`Delete ${day.label}?`}
-      onClose={onCancel}
-      footer={<div className="shoot-modal-actions align-right">
-        <button autoFocus className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-        <button className="shoot-button danger label-s-semibold" type="button" onClick={onConfirm}><DsIcon name="trash-simple" size={16} />Delete day</button>
-      </div>}
-    >
-      <p className="paragraph-s">{impactMessage}</p>
-    </ModalShell>
-  );
+  return <DeleteShootItemModal title={`Delete ${day.label}?`} message={impactMessage} confirmLabel="Delete day" onCancel={onCancel} onConfirm={onConfirm} />;
+}
+
+function DeleteShootShotModal({ entryId, entries, onCancel, onConfirm }: { entryId: string; entries: ProductionEntry[]; onCancel: () => void; onConfirm: () => void }) {
+  const shots = entries
+    .filter((entry) => entry.type === "shot")
+    .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
+  const shotIndex = shots.findIndex((shot) => shot.id === entryId);
+  const shot = shots[shotIndex];
+  if (!shot) return null;
+  const shotLabel = shotIndex + 1;
+  const message = shot.description
+    ? `“${shot.description}” will be permanently removed from the Shot List and Schedule.`
+    : "This shot will be permanently removed from the Shot List and Schedule.";
+
+  return <DeleteShootItemModal title={`Delete shot ${shotLabel}?`} message={message} confirmLabel="Delete shot" onCancel={onCancel} onConfirm={onConfirm} />;
 }
 
 function EntryModal({ draft, hideScheduling, locations, people, projectId, confirmDelete, onCancelDelete, onChange, onClose, onDelete, onCreateLocation, onSave }: {
@@ -3763,6 +4294,209 @@ function entryPlaceholder(type: ScheduleType) {
 
 function shootPlanPreferencesStorageKey(projectId: string) {
   return `brisk-shoot-plan-preferences-${projectId}-v2`;
+}
+
+function shootSetupStorageKey(projectId: string) {
+  return `brisk-shoot-guided-setup-${projectId}-v1`;
+}
+
+function createInitialShootSetupState(callSheet: CallSheet, role: PrototypeRole): ShootSetupState {
+  const scheduleStarted = isCallSheetConfigured(callSheet);
+  const shotListStarted = callSheet.entries.some((entry) => entry.type === "shot");
+  const hasWorkingView = scheduleStarted || shotListStarted;
+  return {
+    version: 1,
+    phase: hasWorkingView ? "workspace" : "entry",
+    activePath: scheduleStarted ? "schedule" : "shots",
+    scheduleStarted,
+    shotListStarted,
+    scheduleSkipped: false,
+    shotListSkipped: false,
+    scheduleComplete: scheduleStarted,
+    shotListComplete: shotListStarted,
+    scheduleStep: scheduleStarted ? 4 : 0,
+    shotListStep: shotListStarted ? 3 : 0,
+    shotListSource: "ai",
+    aiGenerated: shotListStarted,
+    owner: role === "Customer" ? "client" : "studio",
+    status: scheduleStarted ? "ready_to_finalise" : "working",
+    approvalInvalidated: false,
+    lastContributor: scheduleStarted || shotListStarted ? "Studio" : "",
+    updatedAt: callSheet.updatedAt,
+  };
+}
+
+function parseShootSetupState(rawValue: string | null): ShootSetupState | null {
+  if (!rawValue) return null;
+  try {
+    const value: unknown = JSON.parse(rawValue);
+    if (!value || typeof value !== "object") return null;
+    const state = value as Partial<ShootSetupState>;
+    if (
+      state.version !== 1
+      || !["entry", "builder", "paused", "workspace"].includes(state.phase ?? "")
+      || !["schedule", "shots"].includes(state.activePath ?? "")
+      || typeof state.scheduleStarted !== "boolean"
+      || typeof state.shotListStarted !== "boolean"
+      || typeof state.scheduleComplete !== "boolean"
+      || typeof state.shotListComplete !== "boolean"
+      || typeof state.scheduleStep !== "number"
+      || typeof state.shotListStep !== "number"
+      || !["ai", "blank"].includes(state.shotListSource ?? "")
+      || typeof state.aiGenerated !== "boolean"
+      || !["studio", "client"].includes(state.owner ?? "")
+      || !["working", "waiting_on_studio", "waiting_on_client", "ready_to_finalise", "released"].includes(state.status ?? "")
+      || (typeof state.approvalInvalidated !== "undefined" && typeof state.approvalInvalidated !== "boolean")
+      || (typeof state.approvedCallSheetFingerprint !== "undefined" && typeof state.approvedCallSheetFingerprint !== "string")
+      || typeof state.lastContributor !== "string"
+      || typeof state.updatedAt !== "string"
+    ) return null;
+    return {
+      ...(state as ShootSetupState),
+      approvalInvalidated: state.approvalInvalidated === true,
+      approvedCallSheetFingerprint: typeof state.approvedCallSheetFingerprint === "string" ? state.approvedCallSheetFingerprint : undefined,
+      scheduleSkipped: state.scheduleSkipped === true,
+      shotListSkipped: state.shotListSkipped === true,
+      scheduleComplete: state.status === "released" || (state.scheduleComplete === true && state.scheduleStep >= 4),
+      shotListComplete: state.status === "released" || (state.shotListComplete === true && state.shotListStep >= 3),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
+  return JSON.stringify({
+    projectName: normaliseApprovalText(callSheet.projectName),
+    days: callSheet.days.map((day) => ({
+      id: day.id,
+      label: normaliseApprovalText(day.label),
+      date: day.date,
+      generalCallTime: day.generalCallTime,
+      expectedWrapTime: day.expectedWrapTime,
+      primaryLocationId: day.primaryLocationId,
+      safetyEmergency: day.safetyEmergency ? {
+        hospitalName: normaliseApprovalText(day.safetyEmergency.hospitalName),
+        hospitalAddress: normaliseApprovalText(day.safetyEmergency.hospitalAddress),
+        hospitalPhone: normaliseApprovalText(day.safetyEmergency.hospitalPhone ?? ""),
+        travelTime: normaliseApprovalText(day.safetyEmergency.travelTime ?? ""),
+        emergencyNumber: normaliseApprovalText(day.safetyEmergency.emergencyNumber),
+        confirmed: day.safetyEmergency.confirmed,
+      } : null,
+    })),
+    notice: normaliseApprovalText(callSheet.notice),
+    onTheDayContact: normaliseApprovalText(callSheet.onTheDayContact),
+    entries: callSheet.entries.map((entry) => ({
+      id: entry.id,
+      dayId: entry.dayId,
+      shotNumber: entry.shotNumber,
+      startTime: entry.startTime,
+      durationMinutes: entry.durationMinutes,
+      description: normaliseApprovalText(entry.description),
+      type: entry.type,
+      locationId: entry.locationId,
+      personIds: entry.personIds,
+      subject: normaliseApprovalText(entry.subject ?? ""),
+      priority: entry.priority,
+    })),
+    people: callSheet.people.map((person) => ({
+      id: person.id,
+      name: normaliseApprovalText(person.name),
+      type: person.type,
+      role: normaliseApprovalText(person.role),
+      company: normaliseApprovalText(person.company ?? ""),
+      phone: normaliseApprovalText(person.phone),
+      email: normaliseApprovalText(person.email),
+      showContactDetails: person.showContactDetails !== false,
+      callTime: person.callTime,
+      shootDayIds: person.shootDayIds,
+    })),
+    locations: callSheet.locations.map((location) => ({
+      id: location.id,
+      name: normaliseApprovalText(location.name),
+      address: normaliseApprovalText(location.address),
+      shootDayIds: location.shootDayIds,
+      wifi: normaliseApprovalText(location.wifi ?? ""),
+      accessibility: normaliseApprovalText(location.accessibility ?? ""),
+      parking: normaliseApprovalText(location.parking),
+      access: normaliseApprovalText(location.access),
+      notes: normaliseApprovalText(location.notes),
+      mapLink: normaliseApprovalText(location.mapLink ?? ""),
+    })),
+    notes: normaliseApprovalText(callSheet.notes),
+    practicalInfo: {
+      wifi: normaliseApprovalText(callSheet.practicalInfo.wifi),
+      access: normaliseApprovalText(callSheet.practicalInfo.access),
+      safety: normaliseApprovalText(callSheet.practicalInfo.safety),
+      accessibility: normaliseApprovalText(callSheet.practicalInfo.accessibility),
+      emergencyContact: normaliseApprovalText(callSheet.practicalInfo.emergencyContact),
+      equipment: normaliseApprovalText(callSheet.practicalInfo.equipment ?? ""),
+      wardrobe: normaliseApprovalText(callSheet.practicalInfo.wardrobe ?? ""),
+      catering: normaliseApprovalText(callSheet.practicalInfo.catering ?? ""),
+      weatherConsiderations: normaliseApprovalText(callSheet.practicalInfo.weatherConsiderations ?? ""),
+      clientNotes: normaliseApprovalText(callSheet.practicalInfo.clientNotes ?? ""),
+    },
+    questions: callSheet.questions.map((question) => ({
+      id: question.id,
+      personId: question.personId,
+      question: normaliseApprovalText(question.question),
+      shootDayIds: question.shootDayIds,
+    })),
+    documents: callSheet.documents.map((document) => ({
+      id: document.id,
+      name: normaliseApprovalText(document.name),
+      kind: document.kind,
+      type: document.type,
+      url: document.url,
+      shootDayIds: document.shootDayIds,
+    })),
+    visibleOptionalSections: callSheet.visibleOptionalSections,
+  });
+}
+
+function normaliseApprovalText(value: string) {
+  return value.trim().toLocaleLowerCase().replace(/[\p{P}\p{S}]+/gu, "").replace(/\s+/gu, " ");
+}
+
+function existingShootPlanStorageKey(projectId: string) {
+  return `brisk-existing-shoot-plan-${projectId}-v1`;
+}
+
+function parseExistingShootPlan(rawValue: string | null): ExistingShootPlan | null {
+  if (!rawValue) return null;
+  try {
+    const value: unknown = JSON.parse(rawValue);
+    if (!value || typeof value !== "object") return null;
+    const plan = value as Partial<ExistingShootPlan>;
+    if (typeof plan.name !== "string" || !["file", "link"].includes(plan.source ?? "") || !["creative", "day", "both"].includes(plan.coverage ?? "") || typeof plan.addedBy !== "string" || typeof plan.addedAt !== "string") return null;
+    return plan as ExistingShootPlan;
+  } catch {
+    return null;
+  }
+}
+
+function formatExistingPlanCoverage(coverage: ExistingShootPlanCoverage) {
+  if (coverage === "creative") return "Creative Plan";
+  if (coverage === "day") return "Plan the Day";
+  return "Creative Plan and Plan the Day";
+}
+
+function briefIncludesInterviews(liveFootageValue: string) {
+  const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
+  const usesNewFootage = footageValue
+    .split("+")
+    .some((choice) => choice === "Shoot new" || choice === "New footage");
+  const filmingChoices = filmingContentValue === "Both"
+    ? ["Interviews", "Scripted scenes"]
+    : filmingContentValue.split("+");
+  return usesNewFootage && filmingChoices.includes("Interviews");
+}
+
+function hasMinimumCallSheetDetails(callSheet: CallSheet) {
+  const hasReadyDay = callSheet.days.some((day) => Boolean(day.date && day.generalCallTime && day.expectedWrapTime));
+  const primaryLocationIds = new Set(callSheet.days.map((day) => day.primaryLocationId).filter(Boolean));
+  const hasPrimaryLocation = callSheet.locations.some((location) => primaryLocationIds.has(location.id) && Boolean(location.name.trim() && location.address.trim()));
+  return hasReadyDay && hasPrimaryLocation;
 }
 
 function createEmptyShootDay(id = "day-1"): ShootDay {

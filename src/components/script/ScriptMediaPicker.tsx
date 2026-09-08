@@ -17,6 +17,7 @@ export function ScriptMediaPicker<T extends string>({
   triggerClassName = "",
   triggerIcon = "plus",
   triggerText,
+  triggerTooltip,
   onOpenChange,
   onSelect,
 }: {
@@ -24,8 +25,9 @@ export function ScriptMediaPicker<T extends string>({
   options: Array<ScriptMediaPickerOption<T>>;
   triggerLabel: string;
   triggerClassName?: string;
-  triggerIcon?: DsIconName;
+  triggerIcon?: DsIconName | null;
   triggerText?: string;
+  triggerTooltip?: string;
   onOpenChange: (isOpen: boolean) => void;
   onSelect: (value: T) => void;
 }) {
@@ -68,8 +70,8 @@ export function ScriptMediaPicker<T extends string>({
   }, [isOpen, onOpenChange]);
 
   return <div className="script-media-menu-wrap">
-    <button className={`script-media-add ${triggerClassName}`.trim()} ref={triggerRef} type="button" aria-label={triggerLabel} aria-expanded={isOpen} onClick={() => onOpenChange(!isOpen)}>
-      <DsIcon name={triggerIcon} size={14} />
+    <button className={`script-media-add ${triggerClassName}`.trim()} ref={triggerRef} type="button" aria-label={triggerLabel} aria-expanded={isOpen} data-tooltip={triggerTooltip} onClick={() => onOpenChange(!isOpen)}>
+      {triggerIcon ? <DsIcon name={triggerIcon} size={14} /> : null}
       {triggerText ? <span>{triggerText}</span> : null}
     </button>
     {isOpen ? createPortal(<div className="script-media-menu is-portal" ref={menuRef} style={menuStyle} role="menu">

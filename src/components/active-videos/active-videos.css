@@ -2056,6 +2056,12 @@
   left: 66px;
 }
 
+.stage-step.is-media-pinned {
+  border-left: 1px solid var(--brisk-border-secondary);
+  margin-left: var(--brisk-space-s);
+  padding-left: var(--brisk-space-l);
+}
+
 .project-detail-metric {
   display: grid;
   gap: 8px;

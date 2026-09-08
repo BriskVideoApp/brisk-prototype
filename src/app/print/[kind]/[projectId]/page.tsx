@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { DocumentExportPreview } from "@/components/document-export/DocumentExportPreview";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { mediaAssets } from "@/data/media";
+import { clientNewVideoScriptProject } from "@/data/prototype-scenarios";
 import { scriptBrief, scriptVersions } from "@/data/script";
 import { transcriptClips } from "@/data/transcripts";
 import type {
@@ -14,8 +15,12 @@ type DocumentExportRouteProps = {
   searchParams: Promise<{ clip?: string | string[] }>;
 };
 
+const documentExportProjects = activeVideoProjects.some((project) => project.id === clientNewVideoScriptProject.id)
+  ? activeVideoProjects
+  : [...activeVideoProjects, clientNewVideoScriptProject];
+
 export function generateStaticParams() {
-  return activeVideoProjects.flatMap((project) => [
+  return documentExportProjects.flatMap((project) => [
     { kind: "script", projectId: project.id },
     { kind: "transcript", projectId: project.id },
   ]);
@@ -25,7 +30,7 @@ export default async function DocumentExportRoute({ params, searchParams }: Docu
   const { kind: rawKind, projectId } = await params;
   const query = await searchParams;
   const kind = getDocumentExportKind(rawKind);
-  const project = activeVideoProjects.find((candidate) => candidate.id === projectId);
+  const project = documentExportProjects.find((candidate) => candidate.id === projectId);
 
   if (!kind || !project) notFound();
 
@@ -46,7 +51,7 @@ function getDocumentExportKind(value: string): DocumentExportKind | null {
 }
 
 function createInitialPayload(kind: DocumentExportKind, projectId: string): DocumentExportPayload {
-  const project = activeVideoProjects.find((candidate) => candidate.id === projectId);
+  const project = documentExportProjects.find((candidate) => candidate.id === projectId);
 
   if (!project) notFound();
 

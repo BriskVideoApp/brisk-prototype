@@ -1,9 +1,14 @@
 "use client";
 
 import { DsIcon } from "@/components/video-review/DsIcon";
-import type { StageKey, StageStatus } from "@/components/active-videos/types";
+import type { ProjectVideoType, StageKey, StageStatus } from "@/components/active-videos/types";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
+import {
+  getProductionFlowStageDefinition,
+  type ProductionFlowStageKey,
+} from "@/data/production-flow";
 
 type StageIconName = Parameters<typeof DsIcon>[0]["name"];
 
@@ -12,7 +17,7 @@ export const stageOrder: Array<{ key: StageKey; label: string; icon: StageIconNa
   { key: "script", label: "Script", icon: "pen-nib" },
   { key: "shoot", label: "Shoot", icon: "video-camera-ds" },
   { key: "media", label: "Media", icon: "image-square" },
-  { key: "edit", label: "Edit", icon: "stage-edit" },
+  { key: "edit", label: "Edit", icon: "scissors" },
   { key: "masters", label: "Masters", icon: "film-strip" },
 ];
 
@@ -22,6 +27,7 @@ export function StageProgress({
   stages,
   studioName,
   customerName,
+  videoType = "liveAction",
   compact = false,
   showAge = true,
 }: {
@@ -30,29 +36,43 @@ export function StageProgress({
   stages: Record<StageKey, StageStatus>;
   studioName: string;
   customerName: string;
+  videoType?: ProjectVideoType;
   compact?: boolean;
   showAge?: boolean;
 }) {
   const { getProjectStages } = useProjectStageStatus();
+  const { getProjectFlow } = useProjectFlow();
   const currentStages = getProjectStages({ id: projectId, stages });
+  const flow = getProjectFlow({ id: projectId, videoType });
+  const visibleStages = flow.stages.map((stage) => getProductionFlowStageDefinition(stage, flow.postProductionTerm));
+  const mediaStage = { key: "media" as const, label: "Media", icon: "image-square" as const };
 
   return (
     <div
       className={`stage-track ${compact ? "stage-track-compact" : ""}`}
       aria-label={`${projectName} stage progress`}
     >
-      {stageOrder.map((stage, index) => (
+      {visibleStages.map((stage, index) => (
         <StageChip
           key={stage.key}
           stage={stage}
-          status={currentStages[stage.key]}
+          status={stage.key === "storyboard" ? { state: "not_started" } : currentStages[stage.key]}
           projectId={projectId}
           studioName={studioName}
           customerName={customerName}
-          showConnector={index < stageOrder.length - 1}
+          showConnector={index < visibleStages.length - 1}
           showAge={showAge}
         />
       ))}
+      <StageChip
+        stage={mediaStage}
+        status={currentStages.media}
+        projectId={projectId}
+        studioName={studioName}
+        customerName={customerName}
+        showConnector={false}
+        showAge={showAge}
+      />
     </div>
   );
 }
@@ -66,7 +86,7 @@ export function StageChip({
   showConnector,
   showAge = true,
 }: {
-  stage: { key: StageKey; label: string; icon: StageIconName };
+  stage: { key: ProductionFlowStageKey | "media"; label: string; icon: StageIconName };
   status: StageStatus;
   projectId: string;
   studioName: string;
@@ -74,7 +94,7 @@ export function StageChip({
   showConnector: boolean;
   showAge?: boolean;
 }) {
-  const stageHref = getProjectStageHref(projectId, stage.key);
+  const stageHref = stage.key === "storyboard" ? null : getProjectStageHref(projectId, stage.key);
   const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
   const chipContent = (
     <span className="stage-icon-surface" aria-hidden="true">
@@ -83,7 +103,7 @@ export function StageChip({
   );
 
   return (
-    <div className="stage-step">
+    <div className={`stage-step ${stage.key === "media" ? "is-media-pinned" : ""}`.trim()}>
       {stageHref ? (
         <a
           className={`stage-chip stage-${status.state}`}
@@ -115,7 +135,7 @@ export function StageChip({
   );
 }
 
-function getProjectStageLinkLabel(stage: StageKey, label: string) {
+function getProjectStageLinkLabel(stage: ProductionFlowStageKey | "media", label: string) {
   return stage === "edit" ? "Video Review" : label;
 }
 

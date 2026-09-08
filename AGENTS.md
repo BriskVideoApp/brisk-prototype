@@ -119,7 +119,10 @@ Use this verification ladder instead:
 - Use exported visual assets from `Brisk Visuals/` for Flow icons, logos, illustrations, and pictograms.
 - Flow icons live in `Brisk Visuals/Flow icons/`. Use these SVGs for production stages before falling back to placeholder or generic icons.
 - Do not recreate Flow icons with generic Phosphor icons, letter tiles, or local approximations.
-- Current production-stage UI uses the circular six-stage treatment: Brief, Script, Shoot, Media, Edit, Masters. Do not use Style Frames / Styleframes, Storyboard, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
+- Current production-flow UI uses the circular stage treatment. The adaptable flow supports Brief, Script, Shoot, Storyboard, Edit or Animation, and Masters. Media stays pinned outside the reorderable flow because it is available throughout a project.
+- Show Shoot once in the project flow. Pre-production and On Set are substages inside Shoot. Do not add Shoot Plan or On Set as separate project-flow stages.
+- Storyboard is an optional project-flow stage after Script. Animation replaces Edit as the user-facing stage name for animation projects while retaining the same version, review and approval behaviour.
+- Do not use Style Frames / Styleframes, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
 
 ## Role-switcher requirement
 

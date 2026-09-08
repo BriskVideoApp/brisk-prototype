@@ -36,7 +36,8 @@ export function RolePreviewControl() {
     setSelectedRole(role);
 
     const isClientsPermissionPreview = pathname === "/clients" || pathname.startsWith("/clients/");
-    if (!isClientsPermissionPreview && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
+    const keepsRolePreviewOnCurrentPage = isClientsPermissionPreview || pathname === "/prototype/production-flow";
+    if (!keepsRolePreviewOnCurrentPage && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
       router.push(getScopedRoleHome(role, clientPortalDestination));
     }
   }

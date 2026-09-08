@@ -374,7 +374,7 @@ function FreelancerVideoDataCell({
   }
 
   if (columnKey === "progress") {
-    return <td className={`${className} freelancer-progress-cell`} data-label="Progress"><StageProgress compact projectId={engagement.project.id} projectName={engagement.project.name} stages={engagement.project.stages} studioName="North Star Films" customerName={engagement.project.clientName} /></td>;
+    return <td className={`${className} freelancer-progress-cell`} data-label="Progress"><StageProgress compact projectId={engagement.project.id} projectName={engagement.project.name} stages={engagement.project.stages} studioName="North Star Films" customerName={engagement.project.clientName} videoType={engagement.project.videoType} /></td>;
   }
 
   if (columnKey === "latestAction") {

@@ -14,9 +14,8 @@ export function getAppShellPresentation(
 ): AppShellPresentation {
   const isStandaloneDocument = pathname.startsWith("/print/")
     || pathname.startsWith("/share/call-sheet/");
-  const isPrototypeControl = pathname === "/prototype/scenarios";
 
-  if (isStandaloneDocument || isPrototypeControl) return "standalone";
+  if (isStandaloneDocument) return "standalone";
 
   if (pathname === "/studio-onboard") return "clean-entry";
 
@@ -35,7 +34,8 @@ export function shouldHideLegacyCurrentVideo(
   contextualProjectId: string | null,
 ) {
   const isEntryRoute = pathname === "/studio-onboard"
-    || pathname === "/prototype/journey-entry";
+    || pathname === "/prototype/journey-entry"
+    || pathname === "/prototype/scenarios";
   const isClientPortal = scopedClientPortalPattern.test(pathname)
     || pathname === "/customer-dashboard";
 

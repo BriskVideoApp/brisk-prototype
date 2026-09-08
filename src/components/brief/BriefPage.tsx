@@ -20,10 +20,12 @@ import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { StageApprovalControl } from "@/components/share/ShareActionRow";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import {
   briefClarifyingQuestions,
   briefDraftOptions,
+  briefFilmingContentOptions,
+  briefFootageOptions,
   briefSteps,
   briefVideoTypeDetails,
   confidenceChipLabels,
@@ -35,6 +37,8 @@ import {
   type BriefField,
   type BriefFieldId,
   type BriefFields,
+  type BriefFilmingContentChoice,
+  type BriefFootageChoice,
   type BriefStepId,
   type BriefVideoTypeDetail,
   type BriefVideoTypeId,
@@ -113,7 +117,7 @@ const briefSectionIntros: Record<BriefStepId, BriefSectionIntroModel> = {
   },
   contentProduction: {
     step: 6,
-    title: "Content and production",
+    title: "Footage and filming",
     tone: "production",
   },
   deadline: {
@@ -660,14 +664,17 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
 
   function updateBriefField(fieldId: BriefFieldId, nextValue: string) {
     const value = fieldId === "description" ? limitWords(nextValue, maxBriefWords) : nextValue;
+    const hasCompleteValue = fieldId === "liveFootage"
+      ? isLiveFootageValueComplete(value)
+      : Boolean(value.trim());
 
     commitBriefFields((currentFields) => ({
       ...currentFields,
       [fieldId]: {
         ...currentFields[fieldId],
         value,
-        confidence: value.trim() ? "confident" : "missing",
-        source: value.trim() ? "manual_edit" : "missing",
+        confidence: hasCompleteValue ? "confident" : "missing",
+        source: hasCompleteValue ? "manual_edit" : "missing",
       },
     }));
     markLoglineOutOfSync();
@@ -869,21 +876,32 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             activeStepIndex={activeStepIndex}
             chatPanel={chatPanel}
             footerAction={
-              isSummaryStep ? (
-                <BriefApproveButton
-                  approved={isBriefApproved}
-                  approvedAt={briefStageStatus.approvedAt}
-                  approvedBy={briefStageStatus.approvedBy ?? (selectedRole === "Customer" ? "Avery Taylor" : "Tom")}
-                  userRole={selectedRole}
-                  disabled={false}
-                  onApprove={approveBrief}
-                  onUnapprove={unapproveBrief}
-                />
-              ) : (
+              isSummaryStep ? null : (
                 <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
                   Next
                 </Button>
               )
+            }
+            footerShare={
+              <ShareActionRow
+                context="brief"
+                userRole={selectedRole}
+                density="compact"
+                initialAccess="canEdit"
+                initialLinkOpens="stageOnly"
+                projectName={project.name}
+                studioName={studioName}
+                customerName={project.clientName}
+                copyLinkIconOnly
+                approveLabel="Approve Brief"
+                approveDisabled={!isSummaryStep}
+                approveDisabledTooltip="Review the Summary before approving"
+                approvedAt={briefStageStatus.approvedAt}
+                approvedBy={briefStageStatus.approvedBy ?? (selectedRole === "Customer" ? "Avery Taylor" : "Tom")}
+                isApproved={isBriefApproved}
+                onApprove={approveBrief}
+                onUnapprove={unapproveBrief}
+              />
             }
             onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
             onStartWithAi={resetToLanding}
@@ -931,6 +949,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "contentProduction" ? (
               <BriefContentProductionSection
+                clientName={project.clientName}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -985,6 +1004,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
 }
 
 export function BriefGuidedExperience({
+  clientName,
   doneLabel,
   excludedFieldIds = [],
   excludedOptionValues = {},
@@ -999,6 +1019,7 @@ export function BriefGuidedExperience({
   videoTypeIds,
   videoTypeOptionIds,
 }: {
+  clientName?: string;
   doneLabel: string;
   excludedFieldIds?: readonly BriefFieldId[];
   excludedOptionValues?: Partial<Record<BriefFieldId, readonly string[]>>;
@@ -1023,14 +1044,17 @@ export function BriefGuidedExperience({
     if (readOnly || !onFieldsChange) {
       return;
     }
+    const hasCompleteValue = fieldId === "liveFootage"
+      ? isLiveFootageValueComplete(value)
+      : Boolean(value.trim());
 
     onFieldsChange({
       ...fields,
       [fieldId]: {
         ...fields[fieldId],
         value,
-        confidence: value.trim() ? "confident" : "missing",
-        source: value.trim() ? "manual_edit" : "missing",
+        confidence: hasCompleteValue ? "confident" : "missing",
+        source: hasCompleteValue ? "manual_edit" : "missing",
       },
     });
   }
@@ -1084,7 +1108,7 @@ export function BriefGuidedExperience({
             <BriefBrandKitSection excludedFieldIds={excludedFieldIds} excludedOptionValues={excludedOptionValues} fields={fields} intro={briefGuidedExperienceIntros.brandKit} onConfirmField={confirmField} onEditFieldOptions={onEditFieldOptions} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
           ) : null}
           {activeStepId === "contentProduction" ? (
-            <BriefContentProductionSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.contentProduction} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} studioName={studioName} />
+            <BriefContentProductionSection clientName={clientName} excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.contentProduction} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} studioName={studioName} />
           ) : null}
           {activeStepId === "deadline" ? (
             <BriefDeadlineSection excludedFieldIds={excludedFieldIds} fields={fields} intro={briefGuidedExperienceIntros.deadline} onConfirmField={confirmField} onFieldChange={updateField} onRegenerateField={regenerateField} onToggleFieldExcluded={onToggleFieldExcluded} />
@@ -1130,6 +1154,7 @@ function BriefStepShell({
   chatPanel,
   children,
   footerAction,
+  footerShare,
   footerNotice,
   onBack,
   onStartWithAi,
@@ -1140,6 +1165,7 @@ function BriefStepShell({
   chatPanel: ReactNode;
   children: ReactNode;
   footerAction: ReactNode;
+  footerShare: ReactNode;
   footerNotice?: ReactNode;
   onBack?: () => void;
   onStartWithAi: () => void;
@@ -1167,6 +1193,9 @@ function BriefStepShell({
             {footerNotice}
             {footerAction}
           </span>
+        </div>
+        <div className="brief-step-footer-share">
+          {footerShare}
         </div>
       </footer>
     </>
@@ -2629,6 +2658,7 @@ function BriefBrandKitSection({
 }
 
 function BriefContentProductionSection({
+  clientName,
   excludedFieldIds = [],
   fields,
   intro = briefSectionIntros.contentProduction,
@@ -2639,6 +2669,7 @@ function BriefContentProductionSection({
   summaryMode = false,
   studioName,
 }: {
+  clientName?: string;
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
   onConfirmField: (fieldId: BriefFieldId) => void;
@@ -2650,7 +2681,7 @@ function BriefContentProductionSection({
   return (
     <section
       className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
-      aria-label={summaryMode ? undefined : "Content and production"}
+      aria-label={summaryMode ? undefined : "Footage and filming"}
       aria-labelledby={summaryMode ? "brief-content-production-title" : "brief-content-production-step-title"}
     >
       {summaryMode ? (
@@ -2658,7 +2689,7 @@ function BriefContentProductionSection({
           hideCopy
           hideEyebrow
           titleId="brief-content-production-title"
-          title="Content and production"
+          title="Footage and filming"
         />
       ) : (
         <BriefSectionIntro
@@ -2669,6 +2700,7 @@ function BriefContentProductionSection({
       <div className="brief-field-list">
         <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.liveFootage} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefLiveFootageToggle
+            clientName={clientName}
             studioName={studioName}
             value={fields.liveFootage.value}
             onChange={(value) => onFieldChange("liveFootage", value)}
@@ -3359,7 +3391,7 @@ function BriefDeliverableDeadlineControl({
 }) {
   return (
     <div className="brief-deliverable-deadline">
-      <BriefDatePicker
+      <BriskDatePicker
         ariaLabel="Deliverable deadline"
         placeholder="Choose date"
         value={value}
@@ -3379,12 +3411,12 @@ function BriefDeadlineField({
 }) {
   return (
     <div className="brief-deadline-control">
-      <BriefDatePicker ariaLabel="Deadline" placeholder="Choose date" value={value} variant="field" onChange={onChange} />
+      <BriskDatePicker ariaLabel="Deadline" placeholder="Choose date" value={value} variant="field" onChange={onChange} />
     </div>
   );
 }
 
-function BriefDatePicker({
+export function BriskDatePicker({
   ariaLabel,
   displayLabel,
   isTertiary = false,
@@ -3584,98 +3616,167 @@ function formatBriefCalendarDayLabel(date: Date) {
 }
 
 function BriefLiveFootageToggle({
+  clientName,
   onChange,
   studioName,
   value,
 }: {
+  clientName?: string;
   onChange: (value: string) => void;
   studioName: string;
   value: string;
 }) {
-  const [footageChoice, shooterChoice] = parseLiveFootageValue(value);
-  const isShootingNew = footageChoice === "Shoot new";
-  const footageOptions: Array<{
-    description: string;
-    label: string;
-    value: "Use existing" | "Shoot new";
-  }> = [
-    {
-      label: "Use existing footage",
-      value: "Use existing",
-      description: "Best if you already have your own footage or photos.",
-    },
-    {
-      label: "Shoot new footage",
-      value: "Shoot new",
-      description: "Capture new footage from scratch with a dedicated shoot.",
-    },
-  ];
+  const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(value);
+  const isShootingNew = footageChoices.includes("Shoot new");
+  const clientTeamLabel = clientName || "Our team";
   const shooterOptions: Array<{
     description: string;
     label: string;
     value: "Client shoots" | "Studio shoots";
   }> = [
     {
-      label: "Client shoots",
+      label: clientTeamLabel,
       value: "Client shoots",
-      description: "The client handles the crew, kit and location.",
+      description: clientName
+        ? `${clientName} will handle the crew, equipment and location.`
+        : "We’ll handle the crew, equipment and location.",
     },
     {
-      label: `${studioName} shoots`,
+      label: studioName,
       value: "Studio shoots",
-      description: `${studioName} handles the crew, kit, location and direction.`,
+      description: `${studioName} will handle the crew, equipment and direction.`,
     },
   ];
 
-  function selectFootageChoice(nextChoice: "Use existing" | "Shoot new") {
-    if (nextChoice === "Use existing") {
-      onChange("Use existing");
-      return;
-    }
+  function toggleFootageChoice(nextChoice: BriefFootageChoice) {
+    const nextFootageChoices = footageChoices.includes(nextChoice)
+      ? footageChoices.filter((choice) => choice !== nextChoice)
+      : [...footageChoices, nextChoice];
+    const keepsNewFootage = nextFootageChoices.includes("Shoot new");
 
-    onChange(`Shoot new|${shooterChoice || "Studio shoots"}`);
+    onChange(serializeLiveFootageValue(
+      nextFootageChoices,
+      keepsNewFootage ? shooterChoice : "",
+      keepsNewFootage ? filmingContentChoices : [],
+    ));
   }
 
   function selectShooterChoice(nextChoice: "Client shoots" | "Studio shoots") {
-    onChange(`Shoot new|${nextChoice}`);
+    onChange(serializeLiveFootageValue(footageChoices, nextChoice, filmingContentChoices));
+  }
+
+  function toggleFilmingContentChoice(nextChoice: BriefFilmingContentChoice) {
+    const nextFilmingContentChoices: BriefFilmingContentChoice[] = nextChoice === "Not sure yet"
+      ? filmingContentChoices.includes("Not sure yet") ? [] : ["Not sure yet"]
+      : filmingContentChoices.includes(nextChoice)
+        ? filmingContentChoices.filter((choice) => choice !== nextChoice)
+        : [...filmingContentChoices.filter((choice) => choice !== "Not sure yet"), nextChoice];
+
+    onChange(serializeLiveFootageValue(footageChoices, shooterChoice, nextFilmingContentChoices));
   }
 
   return (
     <div className="brief-live-footage-control">
-      <div className="brief-pill-toggle-group" aria-label="Live footage source" role="group">
-        {footageOptions.map((option) => (
-          <button
-            className={`brief-pill-toggle brief-pill-toggle-described ${footageChoice === option.value ? "selected" : ""}`}
+      <div className="brief-production-choice-grid" aria-label="Footage sources" role="group">
+        {briefFootageOptions.map((option) => (
+          <BriefProductionChoiceCard
+            checked={footageChoices.includes(option.value)}
+            description={option.description}
+            indicator="checkbox"
             key={option.value}
-            type="button"
-            aria-pressed={footageChoice === option.value}
-            onClick={() => selectFootageChoice(option.value)}
-          >
-            <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
-            <span className="brief-pill-toggle-description label-xs">{option.description}</span>
-          </button>
+            label={option.label}
+            onChange={() => toggleFootageChoice(option.value)}
+          />
         ))}
       </div>
       {isShootingNew ? (
-        <div className="brief-live-footage-shooter-block">
-          <span className="brief-live-footage-sub-label label-xs-semibold">Who's shooting it?</span>
-          <div className="brief-pill-toggle-group" aria-label="Who will shoot the footage" role="group">
+        <fieldset className="brief-live-footage-follow-up">
+          <legend className="brief-live-footage-sub-label label-s-semibold">Who will film the new footage?</legend>
+          <div className="brief-production-choice-grid">
             {shooterOptions.map((option) => (
-              <button
-                className={`brief-pill-toggle brief-pill-toggle-described ${shooterChoice === option.value ? "selected" : ""}`}
+              <BriefProductionChoiceCard
+                checked={shooterChoice === option.value}
+                description={option.description}
+                indicator="radio"
                 key={option.value}
-                type="button"
-                aria-pressed={shooterChoice === option.value}
-                onClick={() => selectShooterChoice(option.value)}
-              >
-                <span className="brief-pill-toggle-title label-s-semibold">{option.label}</span>
-                <span className="brief-pill-toggle-description label-xs">{option.description}</span>
-              </button>
+                label={option.label}
+                name="brief-filming-responsibility"
+                onChange={() => selectShooterChoice(option.value)}
+              />
             ))}
           </div>
-        </div>
+        </fieldset>
+      ) : null}
+      {isShootingNew && shooterChoice ? (
+        <fieldset className="brief-live-footage-follow-up">
+          <legend className="brief-live-footage-sub-label label-s-semibold">What will you film?</legend>
+          <div className="brief-production-choice-grid">
+            {briefFilmingContentOptions.filter((option) => option.value !== "Not sure yet").map((option) => (
+              <BriefProductionChoiceCard
+                checked={filmingContentChoices.includes(option.value)}
+                description={option.description}
+                indicator="checkbox"
+                key={option.value}
+                label={option.label}
+                onChange={() => toggleFilmingContentChoice(option.value)}
+              />
+            ))}
+          </div>
+          <Button
+            className={`brief-production-not-sure ${filmingContentChoices.includes("Not sure yet") ? "is-selected" : ""}`}
+            size="S"
+            type="button"
+            variant="secondary"
+            onClick={() => toggleFilmingContentChoice("Not sure yet")}
+          >
+            Not sure yet - decide later
+            {filmingContentChoices.includes("Not sure yet") ? <span className="sr-only"> Selected</span> : null}
+          </Button>
+        </fieldset>
       ) : null}
     </div>
+  );
+}
+
+function BriefProductionChoiceCard({
+  checked,
+  description,
+  indicator,
+  label,
+  name,
+  onChange,
+}: {
+  checked: boolean;
+  description?: string;
+  indicator: "checkbox" | "radio";
+  label: string;
+  name?: string;
+  onChange: () => void;
+}) {
+  return (
+    <label
+      className={`brief-production-choice-card ${checked ? "is-selected" : ""}`}
+      onClick={(event) => {
+        if (event.detail === 0) return;
+        const input = event.currentTarget.querySelector("input");
+        window.requestAnimationFrame(() => input?.blur());
+      }}
+    >
+      <input
+        className="sr-only"
+        checked={checked}
+        name={name}
+        type={indicator}
+        onChange={onChange}
+      />
+      <span className={`brief-production-choice-indicator is-${indicator} ${checked ? "is-selected" : ""}`}>
+        {indicator === "checkbox" && checked ? <DsIcon name="check" size={12} /> : null}
+      </span>
+      <span className="brief-production-choice-copy">
+        <strong className="label-s-semibold">{label}</strong>
+        {description ? <span className="label-xs">{description}</span> : null}
+      </span>
+    </label>
   );
 }
 
@@ -4261,25 +4362,31 @@ function BriefVideoTypeMultiSelect({
           aria-multiselectable="true"
           role="listbox"
         >
-          {options.map((videoType) => (
-            <button
-              className={`brief-video-type-option label-s ${selectedValues.includes(videoType.name) ? "selected" : ""}`}
-              key={videoType.name}
-              type="button"
-              disabled={!selectedValues.includes(videoType.name) && !canAddType}
-              aria-selected={selectedValues.includes(videoType.name)}
-              role="option"
-              onClick={() => toggleType(videoType.name)}
-            >
-              <span className="brief-video-type-option-icon" aria-hidden="true">
-                <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={16} />
-              </span>
-              <span className="brief-video-type-option-copy">
-                <strong>{videoType.name}</strong>
-                <span> - {videoType.summary}</span>
-              </span>
-            </button>
-          ))}
+          {options.map((videoType) => {
+            const isSelected = selectedValues.includes(videoType.name);
+
+            return (
+              <button
+                className={`brief-video-type-option ${isSelected ? "selected" : ""}`}
+                key={videoType.name}
+                type="button"
+                disabled={!isSelected && !canAddType}
+                aria-selected={isSelected}
+                role="option"
+                onClick={() => toggleType(videoType.name)}
+              >
+                <span className="brief-video-type-option-icon" aria-hidden="true">
+                  <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={16} />
+                </span>
+                <strong className="label-s-semibold">{videoType.name}</strong>
+                {isSelected ? (
+                  <span className="brief-video-type-option-check" aria-hidden="true">
+                    <DsIcon name="check-circle" size={16} />
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
         </div>
       ) : null}
     </div>
@@ -4351,17 +4458,58 @@ function getAudiencePlaceholder(index: number) {
   return `Audience ${index + 1}`;
 }
 
-function parseLiveFootageValue(value: string): ["Use existing" | "Shoot new" | "", "Client shoots" | "Studio shoots" | ""] {
-  const [footageChoice = "", shooterChoice = ""] = value.split("|");
-  const normalisedFootageChoice = footageChoice === "Use existing" || footageChoice === "Shoot new" ? footageChoice : "";
+function parseLiveFootageValue(value: string): [
+  BriefFootageChoice[],
+  "Client shoots" | "Studio shoots" | "",
+  BriefFilmingContentChoice[],
+] {
+  const [footageValue = "", shooterChoice = "", filmingContentValue = ""] = value.split("|");
+  const normalisedFootageChoices = footageValue
+    .split("+")
+    .map((choice) => choice === "Existing footage" ? "Use existing" : choice === "New footage" ? "Shoot new" : choice)
+    .filter((choice): choice is BriefFootageChoice => choice === "Use existing" || choice === "Shoot new");
   const normalisedShooterChoice =
     shooterChoice === "Client shoots" || shooterChoice === "You shoot"
       ? "Client shoots"
       : shooterChoice === "Studio shoots"
         ? "Studio shoots"
         : "";
+  const legacyFilmingContentValue = filmingContentValue === "Both"
+    ? "Interviews+Scripted scenes"
+    : filmingContentValue === "I'll decide later"
+      ? "Not sure yet"
+      : filmingContentValue;
+  const parsedFilmingContentChoices = legacyFilmingContentValue
+    .split("+")
+    .filter((choice): choice is BriefFilmingContentChoice => (
+      choice === "Interviews" || choice === "Scripted scenes" || choice === "Not sure yet"
+    ));
+  const normalisedFilmingContentChoices = parsedFilmingContentChoices.includes("Not sure yet")
+    ? ["Not sure yet"] satisfies BriefFilmingContentChoice[]
+    : parsedFilmingContentChoices;
 
-  return [normalisedFootageChoice, normalisedShooterChoice];
+  return [normalisedFootageChoices, normalisedShooterChoice, normalisedFilmingContentChoices];
+}
+
+function serializeLiveFootageValue(
+  footageChoices: BriefFootageChoice[],
+  shooterChoice: "Client shoots" | "Studio shoots" | "",
+  filmingContentChoices: BriefFilmingContentChoice[],
+) {
+  if (footageChoices.length === 0) return "";
+  const usesNewFootage = footageChoices.includes("Shoot new");
+  return [
+    footageChoices.join("+"),
+    usesNewFootage ? shooterChoice : "",
+    usesNewFootage ? filmingContentChoices.join("+") : "",
+  ].join("|");
+}
+
+function isLiveFootageValueComplete(value: string) {
+  const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(value);
+  return footageChoices.length > 0 && (
+    !footageChoices.includes("Shoot new") || (Boolean(shooterChoice) && filmingContentChoices.length > 0)
+  );
 }
 
 function parseVoiceoverValue(
@@ -5326,7 +5474,7 @@ function createWrittenSummaryModel(
   const referenceVideos = parseReferenceVideos(fields.referenceVideos.value);
   const referenceVideo = referenceVideos[0];
   const audiences = parseAudienceList(fields.audience.value).filter(Boolean);
-  const [footageChoice, shooterChoice] = parseLiveFootageValue(fields.liveFootage.value);
+  const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(fields.liveFootage.value);
   const platform = fields.platform.value || primaryDeliverable.platform;
   const deadlineValue = primaryDeliverable.deadline || fields.deadline.value;
   const deadline = formatBriefDate(deadlineValue);
@@ -5336,16 +5484,20 @@ function createWrittenSummaryModel(
     ? formatCustomDuration(primaryDeliverable)
     : formatDurationLabel(primaryDeliverable.duration);
   const videoType = videoTypes.length > 0 ? videoTypes.join(" + ") : fields.videoType.value;
-  const shootMode =
-    footageChoice === "Shoot new"
-      ? "Shoot new footage"
-      : footageChoice === "Use existing"
-        ? "Use existing footage"
+  const usesExistingFootage = footageChoices.includes("Use existing");
+  const usesNewFootage = footageChoices.includes("Shoot new");
+  const shootMode = usesExistingFootage && usesNewFootage
+    ? "Existing and new footage"
+    : usesNewFootage
+      ? "New footage"
+      : usesExistingFootage
+        ? "Existing footage"
         : "";
-  const shootModeDetail = footageChoice === "Shoot new"
-    ? shooterChoice === "Studio shoots"
-      ? `${studioName} shoots`
-      : shooterChoice
+  const shootModeDetail = usesNewFootage
+    ? [
+        filmingContentChoices.join(" + "),
+        shooterChoice === "Studio shoots" ? `${studioName} shoots` : shooterChoice,
+      ].filter(Boolean).join(" · ")
     : "Shoot mode";
   const footageSource = shootMode;
   const platformDisplay = formatPlatformForSentence(platform);
@@ -6407,7 +6559,7 @@ function BriefSummaryDeadlineValue({
 }) {
   return (
     <span className="brief-summary-deadline-value">
-      <BriefDatePicker
+      <BriskDatePicker
         ariaLabel="Additional version deadline"
         displayLabel={label}
         isTertiary={isInherited}
@@ -6421,15 +6573,17 @@ function BriefSummaryDeadlineValue({
 }
 
 function formatLiveFootageSummary(value: string) {
-  const [footageChoice, shooterChoice] = parseLiveFootageValue(value);
-  const footageLabel =
-    footageChoice === "Shoot new"
-      ? "Shoot new footage"
-      : footageChoice === "Use existing"
-        ? "Use existing footage"
-        : "";
+  const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(value);
+  const usesNewFootage = footageChoices.includes("Shoot new");
+  const footageLabel = footageChoices
+    .map((choice) => choice === "Use existing" ? "Existing footage" : "New footage")
+    .join(" + ");
 
-  return [footageLabel, footageChoice === "Shoot new" ? shooterChoice : ""].filter(Boolean).join(". ");
+  return [
+    footageLabel,
+    usesNewFootage ? filmingContentChoices.join(" + ") : "",
+    usesNewFootage ? shooterChoice : "",
+  ].filter(Boolean).join(". ");
 }
 
 function formatVoiceoverSummary(value: string) {
@@ -6483,38 +6637,6 @@ function BriefSummaryPlaceholder({ copy, stepLabel }: { copy: string; stepLabel:
       </div>
       <span className="brief-placeholder-pill label-xs-semibold">Coming soon</span>
     </section>
-  );
-}
-
-function BriefApproveButton({
-  approved,
-  approvedAt,
-  approvedBy,
-  userRole,
-  disabled,
-  onApprove,
-  onUnapprove,
-}: {
-  approved: boolean;
-  approvedAt?: string;
-  approvedBy: string;
-  userRole: "Studio Staff" | "Studio Freelancer" | "Customer";
-  disabled: boolean;
-  onApprove: () => void;
-  onUnapprove: () => void;
-}) {
-  return (
-    <StageApprovalControl
-      stageLabel="Brief"
-      userRole={userRole}
-      isApproved={approved}
-      approvedAt={approvedAt}
-      approvedBy={approvedBy}
-      disabled={disabled}
-      disabledTooltip="Fill in the missing fields to approve"
-      onApprove={onApprove}
-      onUnapprove={onUnapprove}
-    />
   );
 }
 

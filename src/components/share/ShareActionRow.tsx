@@ -7,7 +7,7 @@ import {
 } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
-export type ShareStageContext = "brief" | "script" | "media" | "edit" | "masters";
+export type ShareStageContext = "brief" | "script" | "shoot" | "media" | "edit" | "masters";
 export type ShareDensity = "comfortable" | "compact";
 export type ShareUserRole = "Studio Staff" | "Studio Freelancer" | "Customer" | "Share Link Viewer";
 export type ShareLinkOpens = "stageOnly" | "wholeProject" | "videoOnly";
@@ -44,7 +44,11 @@ export type ShareActionRowProps = {
   showApprove?: boolean;
   showCopyLink?: boolean;
   copyLinkIconOnly?: boolean;
+  disabled?: boolean;
+  disabledTooltip?: string;
   approveLabel?: string;
+  approveDisabled?: boolean;
+  approveDisabledTooltip?: string;
   approvedAt?: string;
   approvedBy?: string;
 };
@@ -54,6 +58,7 @@ type ExpandedSection = "linkOpens" | "access";
 const stageLabels: Record<ShareStageContext, string> = {
   brief: "Brief",
   script: "Script",
+  shoot: "Shoot",
   media: "Media",
   edit: "Edit",
   masters: "Masters",
@@ -88,7 +93,11 @@ export function ShareActionRow({
   showApprove = true,
   showCopyLink = true,
   copyLinkIconOnly = false,
+  disabled = false,
+  disabledTooltip,
   approveLabel = "Approve",
+  approveDisabled = false,
+  approveDisabledTooltip,
   approvedAt = "17 Aug",
   approvedBy,
 }: ShareActionRowProps) {
@@ -245,6 +254,8 @@ export function ShareActionRow({
             type="button"
             aria-label="Copy Link"
             aria-expanded={isPopoverOpen}
+            disabled={disabled}
+            title={disabled ? disabledTooltip : undefined}
             onClick={() => {
               setIsPopoverOpen((isOpen) => !isOpen);
             }}
@@ -256,6 +267,8 @@ export function ShareActionRow({
         <button
           className="share-button share-button-secondary label-s-semibold"
           type="button"
+          disabled={disabled}
+          title={disabled ? disabledTooltip : undefined}
           onClick={isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true)}
         >
           {requestReviewLabel}
@@ -266,6 +279,8 @@ export function ShareActionRow({
             userRole={userRole}
             isApproved={isApproved}
             approveLabel={approveLabel}
+            disabled={disabled || approveDisabled}
+            disabledTooltip={disabled ? disabledTooltip : approveDisabledTooltip}
             approvedAt={approvedAt}
             approvedBy={approvedBy}
             customerName={customerName}

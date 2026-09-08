@@ -6,6 +6,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { getBrandKitCustomerByBadge } from "@/data/brand-kits";
 import { ProjectNotificationSettings } from "@/components/settings/ProjectNotificationSettings";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
 import type { ScopedProject } from "@/data/prototype-state";
 import { TeamPanel, type TeamPanelAccess } from "./team/TeamPanel";
 
@@ -50,7 +51,10 @@ export function ProjectOverviewPage({ project, studioName }: { project: ScopedPr
             <span className="label-xs-semibold">Production journey</span>
             <h2 className="headings-xs-bold" id="project-overview-journey-heading">Your video starts with the Brief</h2>
           </div>
-          <span className="project-overview-video-status label-xs-semibold">{project.status}</span>
+          <div className="project-overview-flow-actions">
+            <span className="project-overview-video-status label-xs-semibold">{project.status}</span>
+            <ProjectFlowAdjuster project={project} />
+          </div>
         </header>
         <StageProgress
           compact
@@ -60,6 +64,7 @@ export function ProjectOverviewPage({ project, studioName }: { project: ScopedPr
           projectName={project.name}
           stages={project.stages}
           studioName={studioName}
+          videoType={project.videoType}
         />
       </section>
 

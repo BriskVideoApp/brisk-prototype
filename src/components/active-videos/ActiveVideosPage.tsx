@@ -30,6 +30,7 @@ import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamP
 import { ProjectLatestActionsList } from "@/components/notifications/ProjectActivityHistory";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
+import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
 import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
 import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -1435,6 +1436,10 @@ function ProjectDetailPanel({
         </section>
 
         <section className="project-detail-section">
+          <div className="project-detail-section-heading">
+            <h3 className="project-detail-section-title label-s-semibold">Project flow</h3>
+            <ProjectFlowAdjuster project={project} />
+          </div>
           <div className="project-panel-progress-track">
             <StageProgress
               projectId={project.id}
@@ -1442,6 +1447,7 @@ function ProjectDetailPanel({
               stages={project.stages}
               studioName="North Star Films"
               customerName={project.clientName}
+              videoType={project.videoType}
             />
           </div>
         </section>
@@ -2616,6 +2622,7 @@ function ProjectDataCell({
             stages={project.stages}
             studioName="North Star Films"
             customerName={project.clientName}
+            videoType={project.videoType}
           />
           {project.status === "Completed" && project.deliveredAt ? (
             <span className="project-delivered-date label-xs-semibold">Delivered {formatDeliveredDate(project.deliveredAt)}</span>

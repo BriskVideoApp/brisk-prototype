@@ -39,12 +39,14 @@ import "@/components/settings/client-account-settings.css";
 import "@/components/costs/costs.css";
 import "@/components/ai/brisk-ai.css";
 import "@/components/prototype-scenarios/prototype-scenarios.css";
+import "@/components/production-flow/production-flow.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { PrototypeScenarioProvider } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { PrototypeStateProvider } from "@/components/prototype-state/PrototypeStateContext";
 import { ProjectCompletionProvider } from "@/components/project/ProjectCompletionContext";
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
 import { ProjectStageStatusProvider } from "@/components/project/ProjectStageStatusContext";
+import { ProjectFlowProvider } from "@/components/project/ProjectFlowContext";
 import { AppShell } from "@/components/navigation/AppShell";
 import { NotificationInboxProvider } from "@/components/notifications/NotificationInboxContext";
 import { ClientDataProvider } from "@/components/clients/ClientDataContext";
@@ -86,8 +88,9 @@ export default function RootLayout({
                 <ClientBillingProvider>
                   <ClientAccountSettingsProvider>
                     <ProjectCompletionProvider>
-                      <ProjectStageStatusProvider>
-                        <ProjectFilesProvider>
+                      <ProjectFlowProvider>
+                        <ProjectStageStatusProvider>
+                          <ProjectFilesProvider>
                           <MediaLibraryProvider>
                           <ClientDataProvider>
                             <PeopleDataProvider>
@@ -105,8 +108,9 @@ export default function RootLayout({
                             </PeopleDataProvider>
                           </ClientDataProvider>
                           </MediaLibraryProvider>
-                        </ProjectFilesProvider>
-                      </ProjectStageStatusProvider>
+                          </ProjectFilesProvider>
+                        </ProjectStageStatusProvider>
+                      </ProjectFlowProvider>
                     </ProjectCompletionProvider>
                   </ClientAccountSettingsProvider>
                 </ClientBillingProvider>

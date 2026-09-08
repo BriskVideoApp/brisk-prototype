@@ -764,6 +764,7 @@ export function BriskAiAssistant() {
           onPointerUp={finishLauncherDrag}
         >
           <DsIcon name="sparkle" size={22} />
+          <span className="brisk-ai-launcher-label label-s-semibold">Plan with Brisk AI</span>
         </button>
       ) : null}
 

@@ -146,6 +146,12 @@
   padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
+.project-overview-flow-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
 .project-overview-brief-icon {
   display: inline-flex;
   width: var(--brisk-space-3xl);

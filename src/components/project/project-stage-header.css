@@ -104,6 +104,8 @@
   display: grid;
   width: 100%;
   min-width: 0;
+  grid-template-columns: minmax(var(--brisk-space-none), 1fr) auto;
+  align-items: start;
   gap: var(--brisk-space-l);
   padding: var(--brisk-space-l) var(--brisk-space-2xl) var(--brisk-space-xl);
 }
@@ -116,6 +118,11 @@
   align-items: stretch;
   justify-content: center;
   gap: var(--brisk-space-2xl);
+}
+
+.project-stage-flow-adjuster {
+  align-self: start;
+  justify-self: end;
 }
 
 .project-stage-client-badge {

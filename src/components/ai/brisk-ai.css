@@ -25,6 +25,25 @@
   user-select: none;
 }
 
+.brisk-ai-launcher-label {
+  display: none;
+  white-space: nowrap;
+}
+
+body:has(.shoot-plan-entry-choice) .brisk-ai-launcher {
+  width: auto;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-none) var(--brisk-space-l);
+}
+
+body:has(.shoot-plan-entry-choice) .brisk-ai-launcher-label {
+  display: inline;
+}
+
+body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
+  display: none;
+}
+
 .brisk-ai-launcher::after,
 .brisk-ai-header-actions button::after {
   position: absolute;

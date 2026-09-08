@@ -55,7 +55,8 @@
 .brisk-select-menu {
   position: fixed;
   z-index: 300;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);

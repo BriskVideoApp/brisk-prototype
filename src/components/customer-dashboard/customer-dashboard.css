@@ -1210,17 +1210,6 @@
   padding: var(--brisk-space-m) var(--brisk-space-l);
 }
 
-.customer-dashboard-powered-by {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid var(--brisk-border-secondary);
-  background: var(--brisk-bg-block-primary);
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-m) var(--brisk-space-l);
-}
-
 @media (max-width: 820px) {
   .customer-dashboard-header {
     position: relative;

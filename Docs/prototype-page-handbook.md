@@ -104,6 +104,7 @@ Shoot planning, project files and Studio setup are intentionally hidden from Cus
 
 All pages exposes all role navigation plus review-only screens:
 
+- Production flow
 - Shared Brand Kit
 - Sub-brand Kit - Loom AI
 - Shared call sheet
@@ -156,6 +157,7 @@ The project group is labelled **Demo project - Launch Film**.
 | Shared call sheet | [`/share/call-sheet/loom-launch-film?preview=1`](http://localhost:3000/share/call-sheet/loom-launch-film?preview=1) | External production preview | Implemented | `src/components/shoot/SharedCallSheetPage.tsx` |
 | Printable call sheet | [`/share/call-sheet/loom-launch-film?print=1`](http://localhost:3000/share/call-sheet/loom-launch-film?print=1) | Print layout review | Implemented | `src/components/shoot/SharedCallSheetPage.tsx` |
 | Share controls | [`/share`](http://localhost:3000/share) | Component and interaction review | Experimental review screen | `src/app/share/page.tsx` |
+| Production flow | [`/prototype/production-flow`](http://localhost:3000/prototype/production-flow) | Adaptive production template and inline-adjuster review | Experimental review screen | `src/components/production-flow/ProductionFlow.tsx` |
 | Review compatibility route | [`/review`](http://localhost:3000/review) | Older direct link to Video Review | Duplicate compatibility route | `src/app/review/page.tsx` |
 
 ## Directly addressable empty and alternate states

@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { ShareActionRow, type ShareStageContext, type ShareUserRole } from "@/components/share/ShareActionRow";
 
-const stageOptions: ShareStageContext[] = ["brief", "script", "media", "edit", "masters"];
+const stageOptions: ShareStageContext[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const roleOptions: Extract<ShareUserRole, "Studio Staff" | "Customer">[] = ["Studio Staff", "Customer"];
 const stageLabels: Record<ShareStageContext, string> = {
   brief: "Brief",
   script: "Script",
+  shoot: "Shoot",
   media: "Media",
   edit: "Edit",
   masters: "Masters",

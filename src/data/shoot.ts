@@ -45,6 +45,7 @@ export type ProductionEntry = {
   captured?: boolean;
   completed?: boolean;
   subject?: string;
+  priority?: "Essential" | "Useful" | "Optional";
   imageReferenceUrl?: string;
   imageReferenceId?: string;
   imageReferenceSource?: ShotImageSource;
@@ -58,6 +59,7 @@ export type ProductionEntry = {
   gear?: string[];
   interiorExterior?: InteriorExterior;
   notes?: string;
+  scriptSection?: string;
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";
@@ -71,6 +73,7 @@ export type ShootPerson = {
   contactSource?: "team-member" | "saved-contact";
   phone: string;
   email: string;
+  showContactDetails?: boolean;
   callTime: string;
   shootDayIds: ShootDayAssignment;
 };
@@ -85,6 +88,7 @@ export type ShootLocation = {
   parking: string;
   access: string;
   notes: string;
+  mapLink?: string;
 };
 
 export type ShootAddressSuggestion = {
@@ -116,6 +120,12 @@ export type PracticalInfo = {
   safety: string;
   accessibility: string;
   emergencyContact: string;
+  equipment?: string;
+  wardrobe?: string;
+  catering?: string;
+  weatherConsiderations?: string;
+  clientNotes?: string;
+  internalNotes?: string;
 };
 
 export type OptionalSectionKey = "notice" | "practical" | "questions" | "documents";
