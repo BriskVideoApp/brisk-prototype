@@ -1652,6 +1652,18 @@
   padding: 0 7px;
 }
 
+.frame-pin-chip {
+  display: inline-flex;
+  height: 22px;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+  border: 1px solid var(--brisk-brand-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary);
+  padding: 0 var(--brisk-space-s);
+}
+
 .comment-thread.internal .overall-chip {
   border-color: var(--brisk-brand-primary);
   background: var(--brisk-brand-secondary);

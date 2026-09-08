@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   useEffect,
   useMemo,
@@ -18,6 +19,7 @@ import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type {
@@ -32,7 +34,10 @@ import {
   type FloatingCommentPosition,
 } from "@/components/script/FloatingCommentShell";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
-import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
+import { ScriptDocumentControls } from "@/components/script/ScriptDocumentControls";
+import { ScriptMediaPicker, scriptMediaPickerOptions } from "@/components/script/ScriptMediaPicker";
+import { ScriptVersionControl } from "@/components/script/ScriptVersionControl";
+import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import {
   FloatingSelectionToolbar,
   type FloatingSelectionToolbarState,
@@ -66,12 +71,6 @@ import {
 } from "@/lib/document-export";
 
 const currentUserId = "user-tom";
-const mediaMenuOptions: Array<ScriptMediaPickerOption<ScriptMediaType>> = [
-  { value: "upload", label: "Upload file", icon: "upload-simple" },
-  { value: "library", label: "Add from your Media", icon: "play" },
-  { value: "stock", label: "Stock footage search", icon: "image-square" },
-  { value: "link", label: "Add link", icon: "link" },
-];
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
 const emptyScriptPlaceholderRow: ScriptRow = {
@@ -184,11 +183,15 @@ export function ScriptPage({
   initiallyEmpty = false,
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
+  const router = useRouter();
   const { openAssistant, registerResponseDraftHandler, view: aiView } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
   const { publishStageReviewRequest } = useNotificationInbox();
+  const { getProjectFlow } = useProjectFlow();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const { createStoryboard } = useStoryboard();
   const scriptStageStatus = getProjectStages(project).script;
+  const hasStoryboardStage = getProjectFlow(project).stages.includes("storyboard");
   const startingVersions = initialVersions.length > 0 ? initialVersions : scriptVersions;
   const latestVersion = startingVersions[startingVersions.length - 1];
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
@@ -307,6 +310,23 @@ export function ScriptPage({
   const isPreviewingVersion = previewVersion !== null;
   const dropdownVersion = previewVersion ?? selectedVersion;
   const activeVersionName = getVersionDisplayName(dropdownVersion, defaultVersionName);
+  const canConvertScriptToStoryboard = isScriptApproved
+    && selectedVersion.approvedSnapshot
+    && !isPreviewingVersion;
+
+  const convertApprovedScriptToStoryboard = () => {
+    if (!canConvertScriptToStoryboard) return;
+    createStoryboard(
+      project.id,
+      role === "customer" ? "Customer" : "Studio",
+      {
+        ...selectedVersion,
+        rows: selectedVersion.rows.filter((row) => !row.deletedMeta),
+      },
+    );
+    setIsCurrentVersionMenuOpen(false);
+    router.push(`/projects/${project.id}/stages/storyboard`);
+  };
 
   useEffect(() => {
     setIsScriptApproved(scriptStageStatus.state === "done");
@@ -1772,113 +1792,103 @@ export function ScriptPage({
   };
 
   const scriptVersionControl = (
-    <div className="script-version-control">
-      <div className="script-version-panel-wrap">
-        <button
-          className={`script-current-version-button label-xs-semibold ${isPreviewingVersion ? "previewing" : ""}`}
-          type="button"
-          aria-label="Open versions"
-          aria-expanded={isVersionsPanelOpen}
-          onClick={() => {
-            setIsVersionsPanelOpen((isOpen) => !isOpen);
-            setIsCurrentVersionMenuOpen(false);
-            setIsCommentsOverviewOpen(false);
-            setOpenCommentRowId(null);
-            setIsCommentComposerOpen(false);
-            setFloatingCommentPosition(null);
-          }}
-        >
-          <span>{getVersionShortLabel(dropdownVersion)}</span>
-          <DsIcon name="caret-down" size={14} />
-        </button>
-        {isVersionsPanelOpen ? (
-          <VersionsPanel
-            lastSavedAt={lastSavedAt}
-            previewVersionId={previewVersionId}
-            saveState={saveState}
-            selectedVersionId={selectedVersionId}
-            defaultVersionName={defaultVersionName}
-            versionMetaById={versionMetaById}
-            versions={versions}
-            onCreateVersion={createNewScriptDocument}
-            onDuplicateCurrentVersion={() => duplicateVersion(selectedVersion.id)}
-            onRenameCurrentVersion={startScriptTitleRename}
-            onViewVersion={previewVersionForReadOnly}
-          />
-        ) : null}
-      </div>
-      {isPreviewingVersion ? (
-        <span className="script-version-read-only label-xs">
-          <DsIcon name="lock" size={12} />
-          <span>Read only</span>
-        </span>
-      ) : null}
-    </div>
+    <ScriptVersionControl
+      currentShortLabel={getVersionShortLabel(dropdownVersion)}
+      isOpen={isVersionsPanelOpen}
+      isPreviewing={isPreviewingVersion}
+      items={versions.map((version) => {
+        const isCurrent = version.id === selectedVersionId;
+        const isPreviewing = version.id === previewVersionId;
+        const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
+        return {
+          id: version.id,
+          shortLabel: getVersionShortLabel(version),
+          displayName: getVersionDisplayName(version, defaultVersionName),
+          metaLabel: isCurrent
+            ? `Current • ${saveState === "Saving..." ? "Saving..." : `Saved ${formatSavedTime(lastSavedAt)}`}`
+            : `Last edited ${getVersionLastEditedLabel(version, versionMeta)}`,
+          isCurrent,
+          isSelected: isPreviewing || (!previewVersionId && isCurrent),
+        };
+      })}
+      onCreateVersion={createNewScriptDocument}
+      onDuplicateCurrentVersion={() => duplicateVersion(selectedVersion.id)}
+      onOpenChange={(isOpen) => {
+        setIsVersionsPanelOpen(isOpen);
+        if (isOpen) {
+          setIsCurrentVersionMenuOpen(false);
+          setIsCommentsOverviewOpen(false);
+          setOpenCommentRowId(null);
+          setIsCommentComposerOpen(false);
+          setFloatingCommentPosition(null);
+        }
+      }}
+      onRenameCurrentVersion={startScriptTitleRename}
+      onSelectVersion={previewVersionForReadOnly}
+    />
   );
 
-  function renderScriptCurrentVersionMenu() {
+  function renderScriptDocumentControls() {
     return (
-      <div className="script-current-version-menu-wrap" aria-label="Script document controls">
-        <button
-          className="script-header-action-button label-s-semibold"
-          type="button"
-          aria-label="Open script actions"
-          aria-expanded={isCurrentVersionMenuOpen}
-          onClick={() => {
-            setIsCurrentVersionMenuOpen((isOpen) => !isOpen);
+      <ScriptDocumentControls
+        actionsLabel="Script"
+        isActionsOpen={isCurrentVersionMenuOpen}
+        isCommentsOpen={isCommentsOverviewOpen}
+        onActionsOpenChange={(isOpen) => {
+          setIsCurrentVersionMenuOpen(isOpen);
+          if (isOpen) {
             setIsVersionsPanelOpen(false);
             setIsCommentsOverviewOpen(false);
-          }}
-        >
-          <span>Actions</span>
-          <DsIcon name="caret-down" size={14} />
-        </button>
-        {isCurrentVersionMenuOpen ? (
-          <span className="script-version-row-menu script-current-version-menu">
-            <button
-              className="label-xs-semibold"
-              type="button"
-              onClick={() => {
-                undoRows();
-                setIsCurrentVersionMenuOpen(false);
-              }}
-            >
-              <span>Undo</span>
-              <DsIcon name="arrow-counter-clockwise" size={12} />
-            </button>
-            <button
-              className="label-xs-semibold"
-              type="button"
-              onClick={() => {
-                redoRows();
-                setIsCurrentVersionMenuOpen(false);
-              }}
-            >
-              <span>Redo</span>
-              <DsIcon name="arrow-clockwise" size={12} />
-            </button>
-            <span className="script-menu-divider" aria-hidden="true" />
-            <button className="label-xs-semibold" type="button" onClick={() => void copyCurrentScriptContent(false)}>
-              Copy words
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={() => void copyCurrentScriptContent(true)}>
-              Copy words and visuals
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={downloadCurrentVersion}>
-              Download PDF
-            </button>
-            <button
-              className="delete label-xs-semibold"
-              disabled={selectedVersion.approvedSnapshot}
-              title={selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Unapprove or approve a different version first." : undefined}
-              type="button"
-              onClick={() => requestVersionDelete(selectedVersion.id)}
-            >
-              Delete version
-            </button>
-          </span>
-        ) : null}
-      </div>
+          }
+        }}
+        onCommentsToggle={openAllComments}
+        actions={[
+          {
+            id: "undo",
+            label: "Undo",
+            icon: "arrow-counter-clockwise",
+            onSelect: undoRows,
+          },
+          {
+            id: "redo",
+            label: "Redo",
+            icon: "arrow-clockwise",
+            onSelect: redoRows,
+          },
+          {
+            id: "copy-words",
+            label: "Copy words",
+            dividerBefore: true,
+            onSelect: () => void copyCurrentScriptContent(false),
+          },
+          {
+            id: "copy-words-and-visuals",
+            label: "Copy words and visuals",
+            onSelect: () => void copyCurrentScriptContent(true),
+          },
+          {
+            id: "download-pdf",
+            label: "Download PDF",
+            onSelect: downloadCurrentVersion,
+          },
+          ...(hasStoryboardStage ? [{
+            id: "convert-to-storyboard",
+            label: "Convert script to storyboard",
+            dividerBefore: true,
+            disabled: !canConvertScriptToStoryboard,
+            title: !canConvertScriptToStoryboard ? "Approve the current Script version before converting it to a Storyboard." : undefined,
+            onSelect: convertApprovedScriptToStoryboard,
+          }] : []),
+          {
+            id: "delete-version",
+            label: "Delete version",
+            tone: "danger",
+            disabled: selectedVersion.approvedSnapshot,
+            title: selectedVersion.approvedSnapshot ? "The approved version can't be deleted. Unapprove or approve a different version first." : undefined,
+            onSelect: () => requestVersionDelete(selectedVersion.id),
+          },
+        ]}
+      />
     );
   }
 
@@ -1938,18 +1948,7 @@ export function ScriptPage({
             )}
           </button>
         ) : null}
-        {renderScriptCurrentVersionMenu()}
-        <button
-          className={`script-header-action-button label-s-semibold ${isCommentsOverviewOpen ? "active" : ""}`}
-          type="button"
-          aria-label="Show all comments"
-          aria-expanded={isCommentsOverviewOpen}
-          aria-pressed={isCommentsOverviewOpen}
-          onClick={openAllComments}
-        >
-          <DsIcon name="chat-circle" size={16} />
-          <span>Comments</span>
-        </button>
+        {renderScriptDocumentControls()}
       </div>
     </header>
   );
@@ -2337,6 +2336,121 @@ function ScriptColumnHeaders({
   );
 }
 
+export function ReusableScriptAvEditor({
+  rows,
+  commentsByRow = new Map<string, ScriptComment[]>(),
+  isApproved = false,
+  onAddMediaItem,
+  onAddRowAfter,
+  onAddRowBefore,
+  onDeleteRow,
+  onDuplicateRow,
+  onOpenRowComment,
+  onReorderRows,
+  onRequestEdit,
+  onSetField,
+}: {
+  rows: ScriptRow[];
+  commentsByRow?: Map<string, ScriptComment[]>;
+  isApproved?: boolean;
+  onAddMediaItem: (rowId: string, type: ScriptMediaType) => void;
+  onAddRowAfter: (rowId: string) => void;
+  onAddRowBefore: (rowId: string) => void;
+  onDeleteRow: (rowId: string) => void;
+  onDuplicateRow: (rowId: string) => void;
+  onOpenRowComment: (rowId: string) => void;
+  onReorderRows: (rowId: string, beforeRowId: string) => void;
+  onRequestEdit: () => void;
+  onSetField: (rowId: string, field: "words" | "visuals", value: string) => void;
+}) {
+  const [areVisualsVisible, setAreVisualsVisible] = useState(true);
+  const [draggingRowId, setDraggingRowId] = useState<string | null>(null);
+  const [dropRowId, setDropRowId] = useState<string | null>(null);
+  const [openMediaMenuRowId, setOpenMediaMenuRowId] = useState<string | null>(null);
+  const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
+  const [confirmingDeleteRowId, setConfirmingDeleteRowId] = useState<string | null>(null);
+  const wordInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
+  const visualInputRefs = useRef(new Map<string, HTMLTextAreaElement>());
+
+  useEffect(() => {
+    [...wordInputRefs.current.values(), ...visualInputRefs.current.values()].forEach(resizeTextAreaToContent);
+  }, [areVisualsVisible, rows]);
+
+  const guardApproved = () => {
+    if (!isApproved) return true;
+    onRequestEdit();
+    return false;
+  };
+
+  const runEditable = (action: () => void) => {
+    if (!guardApproved()) return;
+    action();
+  };
+
+  return (
+    <AvScriptEditor
+      commentsByRow={commentsByRow}
+      density="compact"
+      draggingRowId={draggingRowId}
+      dropRowId={dropRowId}
+      hasTypedThisSession
+      isApproved={isApproved}
+      highlightedRowId={null}
+      openMediaMenuRowId={openMediaMenuRowId}
+      openRowMenuId={openRowMenuId}
+      confirmingDeleteRowId={confirmingDeleteRowId}
+      rows={rows}
+      areVisualsVisible={areVisualsVisible}
+      selectedRowIds={new Set<string>()}
+      showChanges={false}
+      wordInputRefs={wordInputRefs}
+      visualInputRefs={visualInputRefs}
+      onAddMediaItem={(rowId, type) => runEditable(() => onAddMediaItem(rowId, type))}
+      onAddRowAfter={(rowId) => rowId && runEditable(() => onAddRowAfter(rowId))}
+      onAddRowBefore={(rowId) => runEditable(() => onAddRowBefore(rowId))}
+      onCancelRowDelete={() => setConfirmingDeleteRowId(null)}
+      onCaptureSelectionAnchor={() => undefined}
+      onDeleteRow={(rowId, shouldSkipConfirm) => {
+        if (!shouldSkipConfirm) {
+          setConfirmingDeleteRowId(rowId);
+          return;
+        }
+        runEditable(() => {
+          onDeleteRow(rowId);
+          setConfirmingDeleteRowId(null);
+          setOpenRowMenuId(null);
+        });
+      }}
+      onToggleVisuals={() => setAreVisualsVisible((visible) => !visible)}
+      onDragEnd={() => {
+        setDraggingRowId(null);
+        setDropRowId(null);
+      }}
+      onDragOverRow={setDropRowId}
+      onDragStartRow={(rowId) => {
+        if (!guardApproved()) return;
+        setDraggingRowId(rowId);
+      }}
+      onDuplicateRow={(rowId) => runEditable(() => onDuplicateRow(rowId))}
+      onGuardApproved={guardApproved}
+      onOpenRowAnnotation={(anchor) => onOpenRowComment(anchor.anchorRef)}
+      onPasteWords={() => undefined}
+      onReorderRows={(beforeRowId) => {
+        if (!draggingRowId) return;
+        onReorderRows(draggingRowId, beforeRowId);
+        setDraggingRowId(null);
+        setDropRowId(null);
+      }}
+      onSelectRow={() => undefined}
+      onSetField={onSetField}
+      onSetMediaMenuRow={setOpenMediaMenuRowId}
+      onSetOpenRowMenu={setOpenRowMenuId}
+      onWordsKeyDown={() => undefined}
+      registerRowRef={() => undefined}
+    />
+  );
+}
+
 function AvScriptEditor({
   commentsByRow,
   density,
@@ -2676,7 +2790,7 @@ function AddVisualPlaceholder({
   return <div className="script-visual-empty-wrap">
     <ScriptMediaPicker
       isOpen={isOpen}
-      options={mediaMenuOptions}
+      options={scriptMediaPickerOptions}
       triggerLabel={`Add visual to ${getRowLabel(row.id, rows)}`}
       triggerClassName="script-visual-empty"
       triggerTooltip="Add image or footage"
@@ -2778,105 +2892,6 @@ function RedlineLegend() {
       <span><span className="legend-deleted" /> Deleted text</span>
       <span><span className="legend-added" /> Added text</span>
     </div>
-  );
-}
-
-function VersionsPanel({
-  defaultVersionName,
-  lastSavedAt,
-  previewVersionId,
-  saveState,
-  selectedVersionId,
-  versionMetaById,
-  versions,
-  onCreateVersion,
-  onDuplicateCurrentVersion,
-  onRenameCurrentVersion,
-  onViewVersion,
-}: {
-  defaultVersionName: string;
-  lastSavedAt: Date;
-  previewVersionId: string | null;
-  saveState: "Saved" | "Saving...";
-  selectedVersionId: string;
-  versionMetaById: Record<string, ScriptVersionMeta>;
-  versions: ScriptVersion[];
-  onCreateVersion: () => void;
-  onDuplicateCurrentVersion: () => void;
-  onRenameCurrentVersion: () => void;
-  onViewVersion: (versionId: string) => void;
-}) {
-  const viewVersion = (versionId: string) => {
-    onViewVersion(versionId);
-  };
-
-  return (
-    <aside className={`script-versions-panel ${previewVersionId ? "has-preview" : ""}`} aria-label="Versions">
-      <div className="script-versions-panel-content">
-        <section className="script-versions-section" aria-label="Saved versions">
-          <h3 className="label-xs-semibold">Versions</h3>
-          <div className="script-version-list">
-            {versions.map((version) => {
-              const isCurrent = version.id === selectedVersionId;
-              const isPreviewing = version.id === previewVersionId;
-              const isSelected = isPreviewing || (!previewVersionId && isCurrent);
-              const versionMeta = versionMetaById[version.id] ?? defaultVersionMeta;
-              const versionIdentifier = getVersionShortLabel(version);
-              const versionName = getVersionDisplayName(version, defaultVersionName);
-              const versionTitle = `${versionIdentifier} · ${versionName}`;
-              const rowCopy = (
-                <span className="script-version-row-copy">
-                  <strong className="label-xs-semibold" title={versionTitle}>
-                    <span>{versionIdentifier}</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="script-version-row-display-name label-xs">{versionName}</span>
-                  </strong>
-                  <span className="script-version-row-meta label-xs">
-                    <span>
-                      {isCurrent
-                        ? `Current • ${saveState === "Saving..." ? "Saving..." : `Saved ${formatSavedTime(lastSavedAt)}`}`
-                        : `Last edited ${getVersionLastEditedLabel(version, versionMeta)}`}
-                    </span>
-                  </span>
-                </span>
-              );
-
-              return (
-                <article
-                  className={`script-version-row ${isCurrent ? "current" : ""} ${isPreviewing ? "previewing" : ""} ${isSelected ? "selected" : ""}`}
-                  aria-current={isCurrent ? "true" : undefined}
-                  key={version.id}
-                >
-                  <div className="script-version-row-main">
-                    {!isCurrent || previewVersionId ? (
-                      <button className="script-version-row-body" type="button" onClick={() => viewVersion(version.id)}>
-                        {rowCopy}
-                      </button>
-                    ) : (
-                      <span className="script-version-row-body">{rowCopy}</span>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <div className="script-versions-panel-actions">
-            <button className="label-xs-semibold" type="button" onClick={onCreateVersion}>
-              <DsIcon name="plus" size={12} />
-              <span>New blank version</span>
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={onDuplicateCurrentVersion}>
-              <DsIcon name="copy" size={12} />
-              <span>Duplicate current version</span>
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={onRenameCurrentVersion}>
-              <DsIcon name="pencil-simple" size={12} />
-              <span>Rename version</span>
-            </button>
-          </div>
-        </section>
-      </div>
-    </aside>
   );
 }
 

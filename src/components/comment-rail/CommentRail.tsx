@@ -31,6 +31,7 @@ const quickReactionOptions = [
 
 type CommentRailProps = {
   activeAnchor: ScriptCommentAnchor;
+  ariaLabel?: string;
   comments: ScriptComment[];
   currentUserId: string;
   users: User[];
@@ -50,6 +51,7 @@ type ReplyDrafts = Record<string, string>;
 
 export function CommentRail({
   activeAnchor,
+  ariaLabel = "Script comments",
   comments: initialComments,
   currentUserId,
   users,
@@ -240,7 +242,7 @@ export function CommentRail({
   };
 
   return (
-    <aside className={`comment-panel script-comment-panel ${composerClass}`} aria-label="Script comments">
+    <aside className={`comment-panel script-comment-panel ${composerClass}`} aria-label={ariaLabel}>
       <div className="comment-panel-top">
         <div className="comment-header">
           <div className="comment-title-row">

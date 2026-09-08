@@ -75,7 +75,8 @@ export function VideoReviewScreen({
   const editReadiness = getEditReadiness(project);
   const editStageStatus = getProjectStages(project).edit;
   const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
-  const canMarkReadyToEdit = selectedRole !== "Studio Freelancer";
+  const canMarkReadyToEdit = selectedRole !== "Studio Freelancer"
+    && !outstandingEditPrerequisites.some((item) => item.key === "storyboard");
   const canUploadVersions = selectedRole !== "Customer";
   const canChooseCommentVisibility = selectedRole !== "Customer";
   const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
@@ -2043,6 +2044,7 @@ function CommentFilters({
 }
 
 export function ReviewCommentThread({
+  anchorLabel,
   comment,
   canChangeVisibility = true,
   editDraft,
@@ -2071,6 +2073,7 @@ export function ReviewCommentThread({
   replyDraft,
   usersById,
 }: {
+  anchorLabel?: string;
   comment: ReviewComment;
   canChangeVisibility?: boolean;
   editDraft: string;
@@ -2101,7 +2104,7 @@ export function ReviewCommentThread({
 }) {
   const author = getUser(usersById, comment.authorId);
   const isCollapsedResolved = comment.resolved && !isExpandedResolved;
-  const isOverall = isOverallComment(comment);
+  const isOverall = !anchorLabel && isOverallComment(comment);
   const isTimecoded = hasTimecode(comment);
   const lastReplyId = comment.replies.at(-1)?.id;
 
@@ -2123,7 +2126,7 @@ export function ReviewCommentThread({
         >
           <span className="resolved-compact-tick" aria-hidden="true" />
           <span className="resolved-compact-author label-xs-semibold">{author.name}</span>
-          {isTimecoded ? <TimecodeChip seconds={comment.timecodeSeconds} prefix="" /> : <OverallChip />}
+          {anchorLabel ? <FramePinChip label={anchorLabel} /> : isTimecoded ? <TimecodeChip seconds={comment.timecodeSeconds} prefix="" /> : <OverallChip />}
           <span className="resolved-compact-copy label-xs">{comment.body}</span>
         </button>
         <CommentEditDeleteActions
@@ -2163,7 +2166,9 @@ export function ReviewCommentThread({
                 </span>
               </span>
               <span className="anchor-meta-row">
-                {isTimecoded ? (
+                {anchorLabel ? (
+                  <FramePinChip label={anchorLabel} />
+                ) : isTimecoded ? (
                   <TimecodeChip
                     seconds={comment.timecodeSeconds}
                     prefix=""
@@ -2569,6 +2574,13 @@ function TimecodeChip({
 
 function OverallChip() {
   return <span className="overall-chip label-xs-semibold">Overall</span>;
+}
+
+function FramePinChip({ label }: { label: string }) {
+  return <span className="frame-pin-chip label-xs-semibold">
+    <DsIcon name="push-pin-simple" size={12} />
+    {label}
+  </span>;
 }
 
 function VisibilityToggle({

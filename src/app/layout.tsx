@@ -40,6 +40,7 @@ import "@/components/costs/costs.css";
 import "@/components/ai/brisk-ai.css";
 import "@/components/prototype-scenarios/prototype-scenarios.css";
 import "@/components/production-flow/production-flow.css";
+import "@/components/storyboard/storyboard.css";
 import { PrototypeRoleProvider } from "@/components/navigation/PrototypeRoleContext";
 import { PrototypeScenarioProvider } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { PrototypeStateProvider } from "@/components/prototype-state/PrototypeStateContext";
@@ -59,6 +60,7 @@ import { ClientAccountSettingsProvider } from "@/components/settings/ClientAccou
 import { CostsDataProvider } from "@/components/costs/CostsDataContext";
 import { MediaLibraryProvider } from "@/components/media/MediaLibraryContext";
 import { BriskAiProvider } from "@/components/ai/BriskAiContext";
+import { StoryboardProvider } from "@/components/storyboard/StoryboardContext";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -89,7 +91,8 @@ export default function RootLayout({
                   <ClientAccountSettingsProvider>
                     <ProjectCompletionProvider>
                       <ProjectFlowProvider>
-                        <ProjectStageStatusProvider>
+                        <StoryboardProvider>
+                          <ProjectStageStatusProvider>
                           <ProjectFilesProvider>
                           <MediaLibraryProvider>
                           <ClientDataProvider>
@@ -109,7 +112,8 @@ export default function RootLayout({
                           </ClientDataProvider>
                           </MediaLibraryProvider>
                           </ProjectFilesProvider>
-                        </ProjectStageStatusProvider>
+                          </ProjectStageStatusProvider>
+                        </StoryboardProvider>
                       </ProjectFlowProvider>
                     </ProjectCompletionProvider>
                   </ClientAccountSettingsProvider>

@@ -4,6 +4,7 @@ import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { mediaAssets } from "@/data/media";
 import { clientNewVideoScriptProject } from "@/data/prototype-scenarios";
 import { scriptBrief, scriptVersions } from "@/data/script";
+import { createStoryboardRecord, initialStoryboardRecords } from "@/data/storyboard";
 import { transcriptClips } from "@/data/transcripts";
 import type {
   DocumentExportKind,
@@ -22,6 +23,7 @@ const documentExportProjects = activeVideoProjects.some((project) => project.id 
 export function generateStaticParams() {
   return documentExportProjects.flatMap((project) => [
     { kind: "script", projectId: project.id },
+    { kind: "storyboard", projectId: project.id },
     { kind: "transcript", projectId: project.id },
   ]);
 }
@@ -47,7 +49,7 @@ export default async function DocumentExportRoute({ params, searchParams }: Docu
 }
 
 function getDocumentExportKind(value: string): DocumentExportKind | null {
-  return value === "script" || value === "transcript" ? value : null;
+  return value === "script" || value === "storyboard" || value === "transcript" ? value : null;
 }
 
 function createInitialPayload(kind: DocumentExportKind, projectId: string): DocumentExportPayload {
@@ -73,6 +75,35 @@ function createInitialPayload(kind: DocumentExportKind, projectId: string): Docu
         visuals: row.visuals,
         durationSeconds: row.durationSeconds,
         media: row.media.map((item) => ({ ...item })),
+      })),
+    };
+  }
+
+  if (kind === "storyboard") {
+    const record = initialStoryboardRecords[projectId] ?? createStoryboardRecord(projectId, "Studio");
+    const version = record.versions.find((item) => item.id === record.currentVersionId) ?? record.versions[0];
+
+    return {
+      kind,
+      projectId,
+      projectName: project.name,
+      clientName: project.clientName,
+      studioName: scriptBrief.studioName,
+      documentTitle: version.snapshotName,
+      versionLabel: version.label,
+      createdAt: version.createdAt,
+      rows: version.frames.map((frame, index) => ({
+        id: frame.id,
+        words: frame.words,
+        visuals: frame.visuals,
+        durationSeconds: frame.durationSeconds,
+        media: frame.image ? [{
+          id: frame.image.id,
+          type: frame.image.source,
+          label: frame.image.label,
+          meta: "Storyboard image",
+          tone: (["cyan", "lime", "purple", "pink", "yellow"] as const)[index % 5],
+        }] : [],
       })),
     };
   }

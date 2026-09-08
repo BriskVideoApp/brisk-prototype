@@ -3,15 +3,18 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStoryboard } from "@/components/storyboard/StoryboardContext";
+import type { ProductionFlowStageKey } from "@/data/production-flow";
 
-const editPrerequisiteKeys = ["brief", "script", "shoot", "media"] as const;
 const projectStageSequence: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const projectStageStatusStorageKey = "brisk-project-stage-status-v1";
 
-type EditPrerequisiteKey = (typeof editPrerequisiteKeys)[number];
 type ProjectStageSource = Pick<Project, "id" | "stages">;
+type EditReadinessSource = Pick<Project, "id" | "stages" | "videoType">;
+type EditPrerequisiteKey = Exclude<ProductionFlowStageKey, "edit" | "masters"> | "media";
 
 export type EditReadinessItem = {
   key: EditPrerequisiteKey;
@@ -23,7 +26,7 @@ export type EditReadinessItem = {
 type ProjectStageOverrides = Record<string, Partial<Record<StageKey, StageStatus>>>;
 
 type ProjectStageStatusContextValue = {
-  getEditReadiness: (project: ProjectStageSource) => { ready: boolean; items: EditReadinessItem[] };
+  getEditReadiness: (project: EditReadinessSource) => { ready: boolean; items: EditReadinessItem[] };
   getProjectStages: (project: ProjectStageSource) => Record<StageKey, StageStatus>;
   markReadyToEdit: (project: ProjectStageSource) => void;
   setProjectStageStatus: (projectId: string, stage: StageKey, status: StageStatus) => void;
@@ -33,6 +36,7 @@ const prerequisiteLabels: Record<EditPrerequisiteKey, string> = {
   brief: "Brief",
   script: "Script",
   shoot: "Shoot",
+  storyboard: "Storyboard",
   media: "Media",
 };
 
@@ -40,6 +44,8 @@ const ProjectStageStatusContext = createContext<ProjectStageStatusContextValue |
 
 export function ProjectStageStatusProvider({ children }: { children: ReactNode }) {
   const { completionRecords, undoProjectCompletion } = useProjectCompletion();
+  const { getProjectFlow } = useProjectFlow();
+  const { getStoryboardStatus } = useStoryboard();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const { hasHydrated: hasHydratedPrototypeState, state } = usePrototypeState();
   const [overrides, setOverrides] = useState<ProjectStageOverrides>({});
@@ -82,13 +88,22 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
   );
 
   const getEditReadiness = useCallback(
-    (project: ProjectStageSource) => {
+    (project: EditReadinessSource) => {
       const stages = getProjectStages(project);
-      const items = editPrerequisiteKeys.map((key) => ({
+      const flow = getProjectFlow(project);
+      const editIndex = flow.stages.indexOf("edit");
+      const flowPrerequisites = flow.stages.slice(0, editIndex < 0 ? flow.stages.length : editIndex);
+      const prerequisiteKeys: EditPrerequisiteKey[] = [
+        ...flowPrerequisites.filter((key): key is Exclude<ProductionFlowStageKey, "edit" | "masters"> => (
+          key !== "edit" && key !== "masters"
+        )),
+        "media",
+      ];
+      const items = prerequisiteKeys.map((key) => ({
         key,
         label: prerequisiteLabels[key],
-        status: stages[key],
-        approved: stages[key].state === "done",
+        status: key === "storyboard" ? getStoryboardStatus(project.id) : stages[key],
+        approved: (key === "storyboard" ? getStoryboardStatus(project.id) : stages[key]).state === "done",
       }));
 
       return {
@@ -96,7 +111,7 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
         items,
       };
     },
-    [getProjectStages],
+    [getProjectFlow, getProjectStages, getStoryboardStatus],
   );
 
   const markReadyToEdit = useCallback((project: ProjectStageSource) => {

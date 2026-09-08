@@ -4,6 +4,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ProjectVideoType, StageKey, StageStatus } from "@/components/active-videos/types";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import {
   getProductionFlowStageDefinition,
@@ -41,6 +42,7 @@ export function StageProgress({
   showAge?: boolean;
 }) {
   const { getProjectStages } = useProjectStageStatus();
+  const { getStoryboardStatus } = useStoryboard();
   const { getProjectFlow } = useProjectFlow();
   const currentStages = getProjectStages({ id: projectId, stages });
   const flow = getProjectFlow({ id: projectId, videoType });
@@ -56,7 +58,7 @@ export function StageProgress({
         <StageChip
           key={stage.key}
           stage={stage}
-          status={stage.key === "storyboard" ? { state: "not_started" } : currentStages[stage.key]}
+          status={stage.key === "storyboard" ? getStoryboardStatus(projectId) : currentStages[stage.key]}
           projectId={projectId}
           studioName={studioName}
           customerName={customerName}
@@ -94,7 +96,7 @@ export function StageChip({
   showConnector: boolean;
   showAge?: boolean;
 }) {
-  const stageHref = stage.key === "storyboard" ? null : getProjectStageHref(projectId, stage.key);
+  const stageHref = getProjectStageHref(projectId, stage.key);
   const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
   const chipContent = (
     <span className="stage-icon-surface" aria-hidden="true">

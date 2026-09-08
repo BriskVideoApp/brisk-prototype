@@ -13,6 +13,7 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
+import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getProjectStageHref } from "@/data/project-fixtures";
@@ -24,7 +25,7 @@ import {
 type ProjectStageHeaderProps = {
   actions?: ReactNode;
   project: Project;
-  activeStage?: StageKey;
+  activeStage?: StageKey | "storyboard";
   activeUtility?: "media" | "files" | "costs" | "chat" | "people" | "settings";
   mediaCount?: number;
   showUtilities?: boolean;
@@ -35,13 +36,16 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const { completionRecords } = useProjectCompletion();
   const { assetViews } = useMediaLibrary();
   const { getProjectStages } = useProjectStageStatus();
+  const { getStoryboardStatus } = useStoryboard();
   const { getProjectFlow } = useProjectFlow();
   const projectStages = getProjectStages(project);
+  const storyboardStatus = getStoryboardStatus(project.id);
   const projectFlow = getProjectFlow(project);
   const projectHeaderStages = projectFlow.stages.map((stage) => getProductionFlowStageDefinition(stage, projectFlow.postProductionTerm));
-  const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done");
+  const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done")
+    && (!projectFlow.stages.includes("storyboard") || storyboardStatus.state === "done");
   const isProjectDelivered = project.status === "Completed" || (Boolean(completionRecords[project.id]) && hasApprovedStageFlow);
-  const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectHeaderStages, projectStages)?.key;
+  const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectHeaderStages, projectStages, storyboardStatus)?.key;
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
   const studioName = state.workspaces.find((workspace) => workspace.id === state.session.activeWorkspaceId)?.name ?? "Studio";
@@ -86,9 +90,9 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
               style={{ gridTemplateColumns: `repeat(${Math.max(projectHeaderStages.length, 1)}, minmax(0, 1fr))` }}
             >
               {projectHeaderStages.map((stage, index) => {
-                const storedStatus = stage.key === "storyboard" ? { state: "not_started" as const } : projectStages[stage.key];
+                const storedStatus = stage.key === "storyboard" ? storyboardStatus : projectStages[stage.key];
                 const status: StageStatus = isProjectDelivered ? { state: "done" } : storedStatus;
-                const href = stage.key === "storyboard" ? null : getProjectStageHref(project.id, stage.key);
+                const href = getProjectStageHref(project.id, stage.key);
                 const isCurrentStage = stage.key === currentStageKey;
                 const statusLabel = getProjectStageStatusLabel(status.state, project.clientName, studioName);
                 const chipContent = (
@@ -169,8 +173,11 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
 function getCurrentProjectStage(
   flowStages: Array<{ key: ProductionFlowStageKey }>,
   statuses: Record<StageKey, StageStatus>,
+  storyboardStatus: StageStatus,
 ) {
-  return flowStages.find((stage) => stage.key === "storyboard" || statuses[stage.key].state !== "done")
+  return flowStages.find((stage) => (
+    stage.key === "storyboard" ? storyboardStatus.state !== "done" : statuses[stage.key].state !== "done"
+  ))
     ?? flowStages[flowStages.length - 1];
 }
 

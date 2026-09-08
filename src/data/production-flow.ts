@@ -199,7 +199,19 @@ export function getRecommendedProductionFlow(videoType: string, briefOverride: P
     return productionFlowTemplates[explicitMapping[briefOverride]];
   }
 
-  return Object.values(productionFlowTemplates).find((template) => template.videoTypes.includes(videoType))
+  const selectedVideoTypes = videoType
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const hasAnimationType = selectedVideoTypes.some((selectedType) => (
+    productionFlowTemplates.animation.videoTypes.includes(selectedType)
+  ));
+
+  if (hasAnimationType) return productionFlowTemplates.animation;
+
+  return Object.values(productionFlowTemplates).find((template) => (
+    selectedVideoTypes.some((selectedType) => template.videoTypes.includes(selectedType))
+  ))
     ?? productionFlowTemplates.default;
 }
 

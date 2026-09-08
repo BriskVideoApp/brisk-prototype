@@ -7,7 +7,7 @@ import {
 } from "@/components/share/RequestReviewModal";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
-export type ShareStageContext = "brief" | "script" | "shoot" | "media" | "edit" | "masters";
+export type ShareStageContext = "brief" | "script" | "shoot" | "storyboard" | "media" | "edit" | "masters";
 export type ShareDensity = "comfortable" | "compact";
 export type ShareUserRole = "Studio Staff" | "Studio Freelancer" | "Customer" | "Share Link Viewer";
 export type ShareLinkOpens = "stageOnly" | "wholeProject" | "videoOnly";
@@ -63,6 +63,7 @@ const stageLabels: Record<ShareStageContext, string> = {
   brief: "Brief",
   script: "Script",
   shoot: "Shoot",
+  storyboard: "Storyboard",
   media: "Media",
   edit: "Edit",
   masters: "Masters",

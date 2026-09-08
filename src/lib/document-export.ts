@@ -1,6 +1,6 @@
 import type { ScriptMediaItem } from "@/data/script";
 
-export type DocumentExportKind = "script" | "transcript";
+export type DocumentExportKind = "script" | "storyboard" | "transcript";
 
 export type ScriptExportRow = {
   id: string;
@@ -20,6 +20,10 @@ export type ScriptExportPayload = {
   versionLabel: string;
   createdAt: string;
   rows: ScriptExportRow[];
+};
+
+export type StoryboardExportPayload = Omit<ScriptExportPayload, "kind"> & {
+  kind: "storyboard";
 };
 
 export type TranscriptExportParagraph = {
@@ -48,7 +52,7 @@ export type TranscriptExportPayload = {
   clips: TranscriptExportClip[];
 };
 
-export type DocumentExportPayload = ScriptExportPayload | TranscriptExportPayload;
+export type DocumentExportPayload = ScriptExportPayload | StoryboardExportPayload | TranscriptExportPayload;
 
 export function documentExportStorageKey(kind: DocumentExportKind, projectId: string) {
   return `brisk-document-export-${kind}-${projectId}`;

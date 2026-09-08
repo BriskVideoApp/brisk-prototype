@@ -8,6 +8,7 @@ import {
   readDocumentExportPayload,
   type DocumentExportPayload,
   type ScriptExportPayload,
+  type StoryboardExportPayload,
   type TranscriptExportPayload,
 } from "@/lib/document-export";
 
@@ -42,9 +43,15 @@ export function DocumentExportPreview({
     return selectedClip ? { ...payload, clips: [selectedClip] } : payload;
   }, [clipId, payload]);
   const documentName = getDocumentName(printablePayload);
-  const returnHref = printablePayload.kind === "script"
-    ? `/projects/${project.id}/script`
-    : `/projects/${project.id}/script?subtab=transcripts`;
+  const isAvDocument = printablePayload.kind === "script" || printablePayload.kind === "storyboard";
+  const returnHref = printablePayload.kind === "storyboard"
+    ? `/projects/${project.id}/stages/storyboard`
+    : printablePayload.kind === "script"
+      ? `/projects/${project.id}/script`
+      : `/projects/${project.id}/script?subtab=transcripts`;
+  const returnLabel = printablePayload.kind === "storyboard"
+    ? "Storyboard"
+    : printablePayload.kind === "script" ? "Script" : "Transcripts";
 
   useEffect(() => {
     document.title = documentName;
@@ -55,7 +62,7 @@ export function DocumentExportPreview({
       <header className="document-export-toolbar">
         <a className="document-export-back label-s-semibold" href={returnHref}>
           <DsIcon name="arrow-left" size={16} />
-          Back to {printablePayload.kind === "script" ? "Script" : "Transcripts"}
+          Back to {returnLabel}
         </a>
         <div>
           <span className="label-xs-semibold">PDF preview</span>
@@ -65,7 +72,7 @@ export function DocumentExportPreview({
 
       <div className="document-export-layout">
         <section className="document-export-canvas" aria-label={`${documentName} page preview`}>
-          {printablePayload.kind === "script"
+          {isAvDocument
             ? <ScriptDocument payload={printablePayload} />
             : <TranscriptDocument payload={printablePayload} />}
         </section>
@@ -117,7 +124,7 @@ export function DocumentExportPreview({
   );
 }
 
-function ScriptDocument({ payload }: { payload: ScriptExportPayload }) {
+function ScriptDocument({ payload }: { payload: ScriptExportPayload | StoryboardExportPayload }) {
   const pageRows = chunk(payload.rows, scriptRowsPerPage);
   const pages = pageRows.length ? pageRows : [[]];
   const totalWords = payload.rows.reduce((total, row) => total + countWords(row.words), 0);
@@ -128,14 +135,14 @@ function ScriptDocument({ payload }: { payload: ScriptExportPayload }) {
       footer={`${totalWords} words · ${formatDuration(totalDuration)}`}
       pageIndex={pageIndex}
       pageTotal={pages.length}
-      key={`script-page-${pageIndex + 1}`}
+      key={`${payload.kind}-page-${pageIndex + 1}`}
     >
       <DocumentHeader
         createdAt={payload.createdAt}
         documentTitle={payload.documentTitle}
         projectName={payload.projectName}
         studioName={payload.studioName}
-        eyebrow={`${payload.clientName} · Script · ${payload.versionLabel}`}
+        eyebrow={`${payload.clientName} · ${payload.kind === "storyboard" ? "Storyboard" : "Script"} · ${payload.versionLabel}`}
       />
       <div className="document-script-table" role="table" aria-label="AV script">
         <div className="document-script-row document-script-head" role="row">
@@ -258,7 +265,7 @@ function DocumentHeader({
 }
 
 function getDocumentName(payload: DocumentExportPayload) {
-  if (payload.kind === "script") {
+  if (payload.kind === "script" || payload.kind === "storyboard") {
     return `${payload.projectName} - ${payload.documentTitle}`;
   }
 
@@ -268,8 +275,10 @@ function getDocumentName(payload: DocumentExportPayload) {
 }
 
 function getIncludedItems(payload: DocumentExportPayload) {
-  if (payload.kind === "script") {
-    return ["Words and visuals", "Media references", "Row duration and totals", "Created date and version"];
+  if (payload.kind === "script" || payload.kind === "storyboard") {
+    return payload.kind === "storyboard"
+      ? ["Words and visual direction", "Storyboard images", "Frame duration and totals", "Created date and version"]
+      : ["Words and visuals", "Media references", "Row duration and totals", "Created date and version"];
   }
 
   return [

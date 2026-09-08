@@ -185,9 +185,13 @@ function createDefaultProjectFlow(
   selectedVideoType: string,
   liveFootage: string,
 ): ProjectFlowConfiguration {
-  const template = projectVideoType === "animation"
+  const recommendedFromBrief = getRecommendedProductionFlow(
+    selectedVideoType,
+    getBriefProductionOverride(liveFootage),
+  );
+  const template = projectVideoType === "animation" || recommendedFromBrief.id === "animation"
     ? productionFlowTemplates.animation
-    : getLiveActionTemplate(selectedVideoType, liveFootage);
+    : getLiveActionTemplate(recommendedFromBrief);
   return {
     stages: [...template.stages],
     postProductionTerm: template.postProductionTerm,
@@ -195,8 +199,7 @@ function createDefaultProjectFlow(
   };
 }
 
-function getLiveActionTemplate(selectedVideoType: string, liveFootage: string) {
-  const recommended = getRecommendedProductionFlow(selectedVideoType, getBriefProductionOverride(liveFootage));
+function getLiveActionTemplate(recommended: (typeof productionFlowTemplates)[keyof typeof productionFlowTemplates]) {
   return recommended.stages.includes("shoot") ? recommended : productionFlowTemplates.scripted;
 }
 

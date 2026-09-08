@@ -1,5 +1,23 @@
 # Yura Review Log
 
+## Storyboard Stage prototype
+
+Added shared prototype components under `src/components/storyboard/`:
+
+- `StoryboardPage`
+- `StoryboardFrameReview`
+- `StoryboardProvider`
+
+Notes for DS review:
+
+- Board view uses a local tokenised storyboard-card composition because the React DS does not currently export a frame card with image, script copy, review count and drag handle.
+- The AV view directly renders the reusable existing Script AV editor. It does not introduce a separate Storyboard row or table treatment.
+- Frame image actions reuse `ScriptMediaPicker`. The compact image surface and remove action remain local compositions until the DS has a shared single-image field.
+- Frame review reuses the existing Edit `ReviewCommentComposer`, `ReviewCommentThread`, point pin and freehand drawing treatments. No new shape or annotation model was introduced.
+- The confirmation dialogs reuse the exported DS `Button` inside the app's existing local tokenised dialog treatment. They should be reconciled with a future shared `d-Modal` and approval-change confirmation.
+- Board ordering uses native desktop drag-and-drop. Mobile Storyboard interaction is explicitly deferred.
+- The Stage reuses `ShareActionRow` for link sharing, review requests and approval. Storyboard was added as a supported share context rather than creating another action row.
+
 ## Unified Media Library, storage and playback prototype
 
 Added shared prototype components under `src/components/media/`:

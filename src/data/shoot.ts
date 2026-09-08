@@ -1,4 +1,5 @@
 import type { Project } from "@/components/active-videos/types";
+import type { ScriptComment } from "@/data/script";
 
 export type ShootDayAssignment = "all" | string[];
 
@@ -73,6 +74,7 @@ export type ProductionEntry = {
   notes?: string;
   scriptSection?: string;
   suggestionStatus?: "suggested";
+  comments?: ScriptComment[];
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";

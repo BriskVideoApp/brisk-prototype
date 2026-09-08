@@ -30,7 +30,11 @@ export function getProjectEntryHref(project: Pick<Project, "id" | "stages">) {
   return getProjectStageHref(project.id, currentStage);
 }
 
-export function getProjectStageHref(projectId: string, stage: StageKey) {
+export function getProjectStageHref(projectId: string, stage: StageKey | "storyboard") {
+  if (stage === "storyboard") {
+    return `/projects/${encodeURIComponent(projectId)}/stages/storyboard`;
+  }
+
   if (projectId === clientNewVideoScriptProject.id) {
     const newClientJourneyHrefs: Record<StageKey, string> = {
       brief: "/customer-dashboard/start-video",

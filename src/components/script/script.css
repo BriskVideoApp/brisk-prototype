@@ -1276,6 +1276,12 @@ body:has(.script-shell.script-ai-entry-active) .brisk-ai-launcher {
   background: var(--brisk-brand-secondary);
 }
 
+.script-media-menu-divider {
+  height: 1px;
+  background: var(--brisk-border-secondary);
+  margin: var(--brisk-space-xs) var(--brisk-space-m);
+}
+
 .script-row-comment-gutter {
   position: relative;
   display: flex;

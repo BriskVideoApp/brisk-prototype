@@ -40,12 +40,13 @@ For a complete end-to-end walkthrough, select **All pages** and use the canonica
 2. [Brief](http://localhost:3000/projects/loom-launch-film/stages/brief)
 3. [Script](http://localhost:3000/projects/loom-launch-film/script)
 4. [Transcripts](http://localhost:3000/projects/loom-launch-film/script?subtab=transcripts)
-5. [Shoot](http://localhost:3000/projects/loom-launch-film/stages/shoot)
-6. [Shared call sheet](http://localhost:3000/share/call-sheet/loom-launch-film?preview=1)
-7. [Media](http://localhost:3000/projects/loom-launch-film/stages/media)
-8. [Edit](http://localhost:3000/projects/loom-launch-film/stages/edit)
-9. [Masters](http://localhost:3000/projects/loom-launch-film/stages/masters)
-10. [Files](http://localhost:3000/projects/loom-launch-film/files)
+5. [Storyboard - animation example](http://localhost:3000/projects/notion-workflows/stages/storyboard)
+6. [Shoot](http://localhost:3000/projects/loom-launch-film/stages/shoot)
+7. [Shared call sheet](http://localhost:3000/share/call-sheet/loom-launch-film?preview=1)
+8. [Media](http://localhost:3000/projects/loom-launch-film/stages/media)
+9. [Edit](http://localhost:3000/projects/loom-launch-film/stages/edit)
+10. [Masters](http://localhost:3000/projects/loom-launch-film/stages/masters)
+11. [Files](http://localhost:3000/projects/loom-launch-film/files)
 
 Other mock projects remain useful in Videos, Client Dashboard and Chat. They are not complete demonstration projects and should not be treated as substitutes for Launch Film.
 
@@ -142,6 +143,7 @@ The project group is labelled **Demo project - Launch Film**.
 | Brief | [`/projects/loom-launch-film/stages/brief`](http://localhost:3000/projects/loom-launch-film/stages/brief) | Shared | Implemented | `src/components/brief/BriefPage.tsx` |
 | Script | [`/projects/loom-launch-film/script`](http://localhost:3000/projects/loom-launch-film/script) | Shared | Implemented for the canonical demo project | `src/components/script/ScriptPage.tsx` |
 | Transcripts | [`/projects/loom-launch-film/script?subtab=transcripts`](http://localhost:3000/projects/loom-launch-film/script?subtab=transcripts) | Shared | Implemented for the canonical demo project | `src/components/script-transcripts/TranscriptsPanel.tsx` |
+| Storyboard | [`/projects/notion-workflows/stages/storyboard`](http://localhost:3000/projects/notion-workflows/stages/storyboard) | Shared | Implemented for an approved animation project | `src/components/storyboard/StoryboardPage.tsx` |
 | Shoot | [`/projects/loom-launch-film/stages/shoot`](http://localhost:3000/projects/loom-launch-film/stages/shoot) | Studio Staff, Studio Freelancer | Implemented | `src/components/shoot/ShootStagePage.tsx` |
 | Shared call sheet | [`/share/call-sheet/loom-launch-film?preview=1`](http://localhost:3000/share/call-sheet/loom-launch-film?preview=1) | Shared external preview | Implemented | `src/components/shoot/SharedCallSheetPage.tsx` |
 | Media | [`/projects/loom-launch-film/stages/media`](http://localhost:3000/projects/loom-launch-film/stages/media) | Shared | Implemented | `src/components/media/MediaStagePage.tsx` |
@@ -182,6 +184,7 @@ These links are stable QA shortcuts. They do not require deleting mock data.
 | Client Dashboard | Filtered queue | [`/customer-dashboard?preview=no-results`](http://localhost:3000/customer-dashboard?preview=no-results) | No videos in this view | Show all videos |
 | Script | Empty script | [`/projects/loom-launch-film/script?preview=empty`](http://localhost:3000/projects/loom-launch-film/script?preview=empty) | Empty writing canvas | Write the opening line |
 | Transcripts | No transcripts | [`/projects/loom-launch-film/script?subtab=transcripts&preview=empty`](http://localhost:3000/projects/loom-launch-film/script?subtab=transcripts&preview=empty) | No dialogue transcripts yet | Open Media |
+| Storyboard | Script approval required | [`/projects/hims-product-education/stages/storyboard`](http://localhost:3000/projects/hims-product-education/stages/storyboard) | Approve the Script before creating a Storyboard | Open Script |
 | Shoot | Unconfigured production plan | [`/projects/loom-launch-film/stages/shoot?preview=empty`](http://localhost:3000/projects/loom-launch-film/stages/shoot?preview=empty) | Empty schedule, people, locations and shots | Contextual Add actions |
 | Shared call sheet | Not ready | [`/share/call-sheet/loom-launch-film?preview=empty`](http://localhost:3000/share/call-sheet/loom-launch-film?preview=empty) | This call sheet isn’t ready yet, or Customer preparation copy | Open Shoot, Back to project or Message production |
 | Media | No media | [`/projects/loom-launch-film/stages/media?preview=empty`](http://localhost:3000/projects/loom-launch-film/stages/media?preview=empty) | No media yet | Upload media |

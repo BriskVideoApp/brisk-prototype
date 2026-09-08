@@ -283,7 +283,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   );
 }
 
-function OnSetLiveView({ callSheet, day, isStudioInternal, project, onChange }: { callSheet: CallSheet; day?: ShootDay; isStudioInternal: boolean; project: Project; onChange: (updater: (current: CallSheet) => CallSheet) => void }) {
+export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBack, onChange }: { callSheet: CallSheet; day?: ShootDay; isStudioInternal: boolean; project: Project; onBack?: () => void; onChange: (updater: (current: CallSheet) => CallSheet) => void }) {
   const [missedShotIds, setMissedShotIds] = useState<string[]>([]);
   const [productionNote, setProductionNote] = useState("");
   const [isComplete, setIsComplete] = useState(false);
@@ -297,7 +297,7 @@ function OnSetLiveView({ callSheet, day, isStudioInternal, project, onChange }: 
   const people = callSheet.people.filter((person) => !day || isAssignedToDay(person.shootDayIds, day.id));
 
   return <div className="on-set-live-shell">
-    <header className="on-set-live-heading"><div><p className="label-xs-semibold">On Set · {day?.label ?? "Shoot day"}</p><h1>{isComplete ? "Shoot complete" : "Live shoot"}</h1><span className="label-s">{callSheet.projectName}</span></div><Link className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot`}>Back to Shoot</Link></header>
+    <header className="on-set-live-heading"><div><p className="label-xs-semibold">On Set · {day?.label ?? "Shoot day"}</p><h1>{isComplete ? "Shoot complete" : "Live shoot"}</h1><span className="label-s">{callSheet.projectName}</span></div>{onBack ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onBack}>Back to Call Sheet</button> : <Link className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot`}>Back to Shoot</Link>}</header>
     <section className="on-set-live-now"><span className="label-xs-semibold">Current Schedule item</span><strong>{currentEntry?.description ?? "No Schedule item remaining"}</strong>{currentEntry ? <small className="label-s">{formatTime(currentEntry.startTime)} to {formatTime(addMinutes(currentEntry.startTime, currentEntry.durationMinutes))}</small> : null}{currentEntry ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === currentEntry.id ? { ...entry, completed: true, captured: entry.type === "shot" ? true : entry.captured } : entry) }))}>Complete item</button> : null}</section>
     <div className="on-set-live-stats"><article><span className="label-xs">Next Schedule item</span><strong>{nextEntry?.description ?? "Nothing else scheduled"}</strong>{nextEntry ? <small>{formatTime(nextEntry.startTime)}</small> : null}</article><article><span className="label-xs">Shots captured</span><strong>{capturedCount}</strong></article><article><span className="label-xs">Shots remaining</span><strong>{remainingCount}</strong></article></div>
     <section className="on-set-live-section"><header><h2>Shots</h2><span className="label-xs">Tick off coverage as it is captured.</span></header><div className="on-set-live-shot-list">{shots.map((shot, index) => {

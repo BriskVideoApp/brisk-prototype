@@ -28,15 +28,22 @@ import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import {
+  FloatingCommentShell,
+  getFloatingCommentPosition,
+  type FloatingCommentPosition,
+} from "@/components/script/FloatingCommentShell";
+import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
-import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
+import { OnSetLiveView, SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAssetView } from "@/data/media";
 import type { Person } from "@/data/people";
 import { selectProjectBrief } from "@/data/prototype-state";
+import { scriptUsers, type ScriptComment, type ScriptCommentAnchor } from "@/data/script";
 import {
   addMinutes,
   callSheetStorageKey,
@@ -107,16 +114,17 @@ type ExistingShootPlan = {
   secondaryName?: string;
   secondaryUrl?: string;
 };
-type ShootWorkspaceSection = "quick-start" | "shots" | "questions" | "references" | "dates" | "locations" | "people" | "schedule" | "notes" | "documents" | "call-sheet";
+type ShootWorkspaceSection = "quick-start" | "shots" | "questions" | "references" | "dates" | "locations" | "people" | "schedule" | "notes" | "documents" | "call-sheet" | "shoot-helper";
 type ShootAccessLevel = "viewOnly" | "canEdit" | "canManage";
 type ShootAccessSettings = {
   freelancer: ShootAccessLevel;
   client: ShootAccessLevel;
 };
-type QuickStartCapture = "interviews" | "scripted" | "b-roll" | "documentary" | "mixture" | "not-confirmed";
+type QuickStartCapture = "interviews" | "scripted" | "b-roll" | "not-confirmed";
+type ConfirmedQuickStartCapture = Exclude<QuickStartCapture, "not-confirmed">;
 type QuickStartStepId = "capture" | "people" | "location" | "date" | "must-haves";
 type QuickStartAnswers = {
-  capture: QuickStartCapture;
+  captures: QuickStartCapture[];
   people: string;
   peopleNotConfirmed: boolean;
   locationName: string;
@@ -136,6 +144,11 @@ const scheduleTypeOptions: Array<{ value: ScheduleType; label: string; icon: DsI
   { value: "travel", label: "Travel", icon: "car-simple" },
   { value: "break", label: "Break", icon: "coffee" },
 ];
+const quickStartCaptureOptions: Array<{ value: ConfirmedQuickStartCapture; label: string; icon: DsIconName }> = [
+  { value: "interviews", label: "Interviews", icon: "quotes" },
+  { value: "scripted", label: "Scripted scenes", icon: "film-script" },
+  { value: "b-roll", label: "B-roll or general coverage", icon: "video-camera" },
+];
 const shotCategoryOptions: ShotCategory[] = ["Interview", "B-roll", "Establishing", "Product", "Action", "Demonstration", "Event coverage", "Drone", "Other"];
 const shotSizeOptions: ShotSize[] = ["Extreme close-up", "Close-up", "Medium close-up", "Medium", "Medium wide", "Wide", "Extreme wide"];
 const cameraMovementOptions: CameraMovement[] = ["Static", "Handheld", "Pan", "Tilt", "Tracking", "Push in", "Pull out", "Gimbal", "Slider / dolly", "Jib / crane", "Other"];
@@ -153,9 +166,9 @@ const allShotFields: Array<{ id: ShotFieldId; label: string; optional?: boolean;
 ];
 const shotMediaOptions: Array<ScriptMediaPickerOption<ShotImageSource>> = [
   { value: "upload", label: "Upload file", icon: "upload-simple" },
+  { value: "project-media", label: "Add from your Media", icon: "play" },
+  { value: "stock", label: "Stock footage search", icon: "image-square" },
   { value: "link", label: "Add link", icon: "link" },
-  { value: "stock", label: "Choose stock", icon: "image-square" },
-  { value: "project-media", label: "Choose from Project Media", icon: "play" },
 ];
 
 const personTypeLabels: Record<ShootPersonType, string> = {
@@ -1289,7 +1302,7 @@ export function ShootStagePage({ project }: { project: Project }) {
           accessLevel={accessLevel}
           activeSection={activeSection}
           callSheet={callSheet}
-          briefCapture={getBriefShootCapture(projectBrief?.fields.liveFootage.value ?? "", isInterviewLed)}
+          briefCaptures={getBriefShootCaptures(projectBrief?.fields.liveFootage.value ?? "", isInterviewLed)}
           contactOptions={peopleDatabase}
           existingPlan={existingPlan}
           isInterviewLed={isInterviewLed}
@@ -1441,7 +1454,7 @@ export function ShootStagePage({ project }: { project: Project }) {
 type ShootPreProductionWorkspaceProps = {
   accessLevel: ShootAccessLevel;
   activeSection: ShootWorkspaceSection;
-  briefCapture: QuickStartCapture | null;
+  briefCaptures: ConfirmedQuickStartCapture[] | null;
   callSheet: CallSheet;
   contactOptions: ShootPerson[];
   existingPlan: ExistingShootPlan | null;
@@ -1481,7 +1494,7 @@ type ShootPreProductionWorkspaceProps = {
 function ShootPreProductionWorkspace({
   accessLevel,
   activeSection,
-  briefCapture,
+  briefCaptures,
   callSheet,
   contactOptions,
   existingPlan,
@@ -1519,7 +1532,7 @@ function ShootPreProductionWorkspace({
 }: ShootPreProductionWorkspaceProps) {
   const canEdit = accessLevel !== "viewOnly";
   const canManage = accessLevel === "canManage";
-  const [quickStartCapture, setQuickStartCapture] = useState<QuickStartCapture | null>(briefCapture);
+  const [quickStartCaptures, setQuickStartCaptures] = useState<QuickStartCapture[]>(briefCaptures ?? ["not-confirmed"]);
   const shots = callSheet.entries.filter((entry) => entry.type === "shot").sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
   const scheduledCount = callSheet.entries.filter((entry) => Boolean(entry.dayId && entry.startTime)).length;
   const confirmedDays = callSheet.days.filter((day) => Boolean(day.date)).length;
@@ -1530,13 +1543,14 @@ function ShootPreProductionWorkspace({
   const [readinessAction, setReadinessAction] = useState<ShootReadinessAction | null>(null);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   const missingReadiness = getMissingCallSheetDetails(callSheet);
-  const showInterviewQuestions = quickStartCapture && quickStartCapture !== "not-confirmed"
-    ? quickStartCapture === "interviews" || quickStartCapture === "documentary" || quickStartCapture === "mixture"
+  const confirmedQuickStartCaptures = quickStartCaptures.filter((capture) => capture !== "not-confirmed");
+  const showInterviewQuestions = confirmedQuickStartCaptures.length
+    ? confirmedQuickStartCaptures.includes("interviews")
     : isInterviewLed || callSheet.questions.length > 0;
 
   useEffect(() => {
-    setQuickStartCapture(briefCapture);
-  }, [briefCapture, project.id]);
+    setQuickStartCaptures(briefCaptures ?? ["not-confirmed"]);
+  }, [briefCaptures, project.id]);
 
   useEffect(() => {
     if (!showInterviewQuestions && activeSection === "questions") onSectionChange("shots");
@@ -1563,7 +1577,13 @@ function ShootPreProductionWorkspace({
         { id: "documents", label: "Documents", icon: "folder", meta: `${callSheet.documents.length} ${callSheet.documents.length === 1 ? "document" : "documents"}` },
       ],
     },
-    { label: "On set", items: [{ id: "call-sheet", label: "Call Sheet", icon: "clipboard-text", meta: "Available" }] },
+    {
+      label: "On set",
+      items: [
+        { id: "call-sheet", label: "Call Sheet", icon: "clipboard-text", meta: "Available" },
+        ...(canManage ? [{ id: "shoot-helper" as const, label: "Shoot helper", icon: "video-camera-ds" as const, meta: "Available" }] : []),
+      ],
+    },
   ];
   const allNavigationItems = navigationGroups.flatMap((group) => group.items);
   const guidedDaySections: ShootWorkspaceSection[] = ["dates", "locations", "people", "schedule", "notes"];
@@ -1578,6 +1598,16 @@ function ShootPreProductionWorkspace({
     setPendingAction(() => next);
   };
 
+  const openShootHelper = () => runReadinessAction("start", () => onSectionChange("shoot-helper"));
+
+  const selectNavigationItem = (itemId: ShootWorkspaceSection) => {
+    if (itemId === "shoot-helper") {
+      openShootHelper();
+      return;
+    }
+    onSectionChange(itemId);
+  };
+
   const updateCallSheet = (updater: (current: CallSheet) => CallSheet) => {
     if (canEdit) onCallSheetChange(updater);
   };
@@ -1585,24 +1615,28 @@ function ShootPreProductionWorkspace({
   let sectionContent: ReactNode;
   if (activeSection === "quick-start") {
     sectionContent = <ShootQuickStart
-      briefCapture={briefCapture}
+      briefCaptures={briefCaptures}
       callSheet={callSheet}
       canEdit={canEdit}
       contactOptions={contactOptions}
       onBuild={onBuildWithBrisk}
       onCallSheetChange={updateCallSheet}
-      onCaptureChange={setQuickStartCapture}
+      onCaptureChange={setQuickStartCaptures}
       persistAnswers={persistSetupAnswers}
       projectId={project.id}
     />;
   } else if (activeSection === "shots") {
     sectionContent = <PreProductionShotList
+      availablePeople={contactOptions}
       callSheet={callSheet}
       canEdit={canEdit}
       entries={shots}
       onChange={updateCallSheet}
+      onCommentChange={onCallSheetChange}
       onDelete={onDeleteShot}
       onReorder={onReorderShots}
+      projectId={project.id}
+      selectedRole={selectedRole}
     />;
   } else if (activeSection === "questions") {
     sectionContent = <PreProductionInterviewQuestions
@@ -1634,6 +1668,15 @@ function ShootPreProductionWorkspace({
     sectionContent = <PreProductionNotes callSheet={callSheet} canEdit={canEdit} isStudioInternal={isStudioInternal} selectedDayId={currentDay?.id ?? ""} onChange={updateCallSheet} onSelectDay={onSelectDay} />;
   } else if (activeSection === "documents") {
     sectionContent = <PreProductionDocuments callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} onOpenDocuments={onOpenDocuments} />;
+  } else if (activeSection === "shoot-helper") {
+    sectionContent = <OnSetLiveView
+      callSheet={callSheet}
+      day={currentDay}
+      isStudioInternal={isStudioInternal}
+      project={project}
+      onBack={() => onSectionChange("call-sheet")}
+      onChange={updateCallSheet}
+    />;
   } else {
     sectionContent = <section className="shoot-preproduction-call-sheet">
       <header className="shoot-preproduction-call-sheet-actions">
@@ -1646,7 +1689,7 @@ function ShootPreProductionWorkspace({
           <a className="shoot-button secondary label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
           {!canManage ? <Link className="shoot-button secondary label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chat-circle" size={16} />Comment</Link> : null}
           {!canManage && ((selectedRole === "Customer" && setupState.status === "waiting_on_client") || (selectedRole === "Studio Freelancer" && setupState.status === "waiting_on_studio")) ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => runReadinessAction("approve", onApprove)}><DsIcon name="thumbs-up-like-fill" size={16} />Approve Shoot</button> : null}
-          {setupState.status === "released" && canManage ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => runReadinessAction("start", () => { window.location.href = `/share/call-sheet/${project.id}?day=${encodeURIComponent(currentDay?.id ?? "")}&live=1`; })}><DsIcon name="video-camera-ds" size={16} />Start shoot</button> : null}
+          {canManage ? <button className="shoot-button primary label-s-semibold" type="button" onClick={openShootHelper}><DsIcon name="video-camera-ds" size={16} />Start shoot</button> : null}
           {canManage ? <ShareActionRow
             context="shoot"
             userRole={selectedRole}
@@ -1687,8 +1730,8 @@ function ShootPreProductionWorkspace({
     <header className="shoot-preproduction-heading">
       <div>
         <p className="label-xs-semibold">Shoot</p>
-        <h1>Pre-production</h1>
-        <span className="paragraph-s">Plan what to capture, organise the day and keep one live Call Sheet.</span>
+        <h1>{activeSection === "call-sheet" || activeSection === "shoot-helper" ? "On set" : "Pre-production"}</h1>
+        <span className="paragraph-s">{activeSection === "shoot-helper" ? "Run the shoot from the live Schedule, Shot List and crew details." : activeSection === "call-sheet" ? "Keep the live Call Sheet ready for everyone on the day." : "Plan what to capture, organise the day and keep one live Call Sheet."}</span>
         <SaveIndicator status={saveStatus} />
       </div>
       <div className="shoot-preproduction-heading-actions">
@@ -1706,7 +1749,7 @@ function ShootPreProductionWorkspace({
         value={activeSection}
         options={allNavigationItems.map((item) => ({ value: item.id, label: `${item.label} - ${item.meta ?? ""}`, icon: item.icon }))}
         placeholder="Choose section"
-        onChange={(value) => { if (value) onSectionChange(value); }}
+        onChange={(value) => { if (value) selectNavigationItem(value); }}
       />
     </div>
 
@@ -1714,14 +1757,17 @@ function ShootPreProductionWorkspace({
       <aside className="shoot-preproduction-navigation" aria-label="Shoot sections">
         {navigationGroups.map((group) => <section key={group.label}>
           <h2 className="label-xs-semibold">{group.label}</h2>
-          <div>{group.items.map((item) => <button className={activeSection === item.id ? "active" : ""} type="button" aria-current={activeSection === item.id ? "page" : undefined} key={item.id} onClick={() => onSectionChange(item.id)}>
+          <div>{group.items.map((item) => {
+            const isActive = item.id === "shoot-helper" ? readinessAction === "start" : activeSection === item.id;
+            return <button className={isActive ? "active" : ""} type="button" aria-current={isActive ? "page" : undefined} key={item.id} onClick={() => selectNavigationItem(item.id)}>
             <DsIcon name={item.icon} size={17} />
             <span><strong className="label-s-semibold">{item.label}</strong><small className="label-xs">{item.meta}</small></span>
-          </button>)}</div>
+          </button>;
+          })}</div>
         </section>)}
       </aside>
       <div className="shoot-preproduction-content">
-        {existingPlan && activeSection !== "call-sheet" && activeSection !== "quick-start" ? <aside className="shoot-existing-plan-summary">
+        {existingPlan && activeSection !== "call-sheet" && activeSection !== "shoot-helper" && activeSection !== "quick-start" ? <aside className="shoot-existing-plan-summary">
           <span><DsIcon name={existingPlan.source === "link" ? "link" : "file-text"} size={20} /></span>
           <div><strong>Existing plan attached</strong><small className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)} · Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div>
           {existingPlan.url ? <a className="shoot-button secondary label-xs-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}
@@ -1761,21 +1807,21 @@ function ShootPreProductionWorkspace({
   </div>;
 }
 
-function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onBuild, onCallSheetChange, onCaptureChange, persistAnswers, projectId }: {
-  briefCapture: QuickStartCapture | null;
+function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, onBuild, onCallSheetChange, onCaptureChange, persistAnswers, projectId }: {
+  briefCaptures: ConfirmedQuickStartCapture[] | null;
   callSheet: CallSheet;
   canEdit: boolean;
   contactOptions: ShootPerson[];
   onBuild: (answers: QuickStartAnswers) => void;
   onCallSheetChange: (updater: (current: CallSheet) => CallSheet) => void;
-  onCaptureChange: (capture: QuickStartCapture) => void;
+  onCaptureChange: (captures: QuickStartCapture[]) => void;
   persistAnswers: boolean;
   projectId: string;
 }) {
   const { createPerson } = usePeople();
-  const [includeCaptureStep, setIncludeCaptureStep] = useState(briefCapture === null);
-  const [activeStepId, setActiveStepId] = useState<QuickStartStepId>(briefCapture === null ? "capture" : "people");
-  const [answers, setAnswers] = useState<QuickStartAnswers>(() => createInitialQuickStartAnswers(briefCapture));
+  const [includeCaptureStep, setIncludeCaptureStep] = useState(briefCaptures === null);
+  const [activeStepId, setActiveStepId] = useState<QuickStartStepId>(briefCaptures === null ? "capture" : "people");
+  const [answers, setAnswers] = useState<QuickStartAnswers>(() => createInitialQuickStartAnswers(briefCaptures));
   const [mustHaveShotDraft, setMustHaveShotDraft] = useState("");
   const [hasLoadedAnswers, setHasLoadedAnswers] = useState(false);
   const questionSteps: Array<{ id: QuickStartStepId; label: string }> = [
@@ -1798,10 +1844,10 @@ function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onB
     const storedAnswers = parseQuickStartAnswers(window.localStorage.getItem(quickStartAnswersStorageKey(projectId)));
     if (storedAnswers) {
       setAnswers(storedAnswers);
-      setIncludeCaptureStep(briefCapture === null || storedAnswers.capture !== briefCapture);
+      setIncludeCaptureStep(briefCaptures === null || !areQuickStartCapturesEqual(storedAnswers.captures, briefCaptures));
     }
     setHasLoadedAnswers(true);
-  }, [briefCapture, persistAnswers, projectId]);
+  }, [briefCaptures, persistAnswers, projectId]);
 
   useEffect(() => {
     if (!hasLoadedAnswers || !persistAnswers) return;
@@ -1809,10 +1855,19 @@ function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onB
   }, [answers, hasLoadedAnswers, persistAnswers, projectId]);
 
   useEffect(() => {
-    onCaptureChange(answers.capture);
-  }, [answers.capture, onCaptureChange]);
+    onCaptureChange(answers.captures);
+  }, [answers.captures, onCaptureChange]);
 
   const updateAnswers = (next: Partial<QuickStartAnswers>) => setAnswers((current) => ({ ...current, ...next }));
+  const toggleQuickStartCapture = (capture: ConfirmedQuickStartCapture) => setAnswers((current) => {
+    const confirmedCaptures = current.captures.filter((value): value is ConfirmedQuickStartCapture => value !== "not-confirmed");
+    return {
+      ...current,
+      captures: confirmedCaptures.includes(capture)
+        ? confirmedCaptures.filter((value) => value !== capture)
+        : [...confirmedCaptures, capture],
+    };
+  });
   const rememberQuickStartPerson = (name: string) => setAnswers((current) => {
     const people = parseQuickStartPeople(current.people);
     if (people.some((person) => normaliseIdentity(person.name) === normaliseIdentity(name))) {
@@ -1965,24 +2020,34 @@ function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onB
     questionContent = <QuickStartQuestion
       title="What are you planning to capture?"
     >
-      <div className="shoot-preproduction-field">
-        <BriskSelect
-          ariaLabel="What are you planning to capture?"
-          clearable={false}
-          searchable={false}
-          value={answers.capture}
-          options={[
-            { value: "interviews", label: "Interviews" },
-            { value: "scripted", label: "Scripted scenes" },
-            { value: "b-roll", label: "B-roll or general coverage" },
-            { value: "documentary", label: "Event or documentary coverage" },
-            { value: "mixture", label: "A mixture" },
-            { value: "not-confirmed", label: "Not sure yet - decide later" },
-          ]}
-          placeholder="Choose what to capture"
-          onChange={(value) => { if (value) updateAnswers({ capture: value }); }}
-        />
+      <div className="shoot-quick-start-capture-grid" role="group" aria-label="What are you planning to capture?">
+        {quickStartCaptureOptions.map((option) => {
+          const isSelected = answers.captures.includes(option.value);
+          return <button
+            className={`shoot-quick-start-capture-option label-s-semibold${isSelected ? " selected" : ""}`}
+            type="button"
+            key={option.value}
+            aria-pressed={isSelected}
+            disabled={!canEdit}
+            onClick={() => toggleQuickStartCapture(option.value)}
+          >
+            <span className="shoot-quick-start-capture-icon" aria-hidden="true"><DsIcon name={option.icon} size={16} /></span>
+            <span>{option.label}</span>
+          </button>;
+        })}
       </div>
+      <button
+        className={`shoot-quick-start-not-sure label-s-semibold${answers.captures.includes("not-confirmed") ? " selected" : ""}`}
+        type="button"
+        aria-pressed={answers.captures.includes("not-confirmed")}
+        disabled={!canEdit}
+        onClick={() => {
+          updateAnswers({ captures: ["not-confirmed"] });
+          goToRelativeStep(1);
+        }}
+      >
+        Not sure yet - decide later
+      </button>
     </QuickStartQuestion>;
   } else if (activeStepId === "people") {
     questionContent = <QuickStartQuestion
@@ -2097,8 +2162,8 @@ function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onB
       title="Setup"
       description={`Answer ${questionSteps.length} quick questions, then Brisk will generate a draft shoot plan from your Brief and Script.`}
     />
-    {briefCapture && !includeCaptureStep ? <div className="shoot-quick-start-brief-source">
-      <span><strong className="label-xs-semibold">Brief answer:</strong><small className="label-s">{formatQuickStartCapture(briefCapture)}</small></span>
+    {briefCaptures && !includeCaptureStep ? <div className="shoot-quick-start-brief-source">
+      <span><strong className="label-xs-semibold">Brief answer:</strong><small className="label-s">{formatQuickStartCaptures(briefCaptures)}</small></span>
       <button className="shoot-text-action label-xs-semibold" type="button" disabled={!canEdit} onClick={() => { setIncludeCaptureStep(true); setActiveStepId("capture"); }}>Change</button>
     </div> : null}
     {questionContent}
@@ -2146,15 +2211,41 @@ function PreProductionSectionHeading({ icon, title, description, action }: { ico
   </header>;
 }
 
-function PreProductionShotList({ callSheet, canEdit, entries, onChange, onDelete, onReorder }: {
+function PreProductionShotList({ availablePeople, callSheet, canEdit, entries, onChange, onCommentChange, onDelete, onReorder, projectId, selectedRole }: {
+  availablePeople: ShootPerson[];
   callSheet: CallSheet;
   canEdit: boolean;
   entries: ProductionEntry[];
   onChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onCommentChange: (updater: (current: CallSheet) => CallSheet) => void;
   onDelete: (shotId: string) => void;
   onReorder: (sourceId: string, targetId: string) => void;
+  projectId: string;
+  selectedRole: PrototypeRole;
 }) {
+  const { createPerson } = usePeople();
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dropShotId, setDropShotId] = useState<string | null>(null);
+  const [selectedShotId, setSelectedShotId] = useState<string | null>(null);
+  const [previewShotId, setPreviewShotId] = useState<string | null>(null);
+  const [openMenuShotId, setOpenMenuShotId] = useState<string | null>(null);
+  const [commentShotId, setCommentShotId] = useState<string | null>(null);
+  const [commentPosition, setCommentPosition] = useState<FloatingCommentPosition | null>(null);
+  const actionMenuRef = useRef<HTMLDivElement>(null);
+  const actionMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const selectedShot = entries.find((entry) => entry.id === selectedShotId);
+  const previewShot = entries.find((entry) => entry.id === previewShotId);
+  const commentShot = entries.find((entry) => entry.id === commentShotId);
+  const commentShotIndex = commentShot ? entries.findIndex((entry) => entry.id === commentShot.id) : -1;
+  const commentShotNumber = commentShot ? commentShot.shotNumber ?? commentShotIndex + 1 : 0;
+  const currentCommentUserId = selectedRole === "Customer"
+    ? "user-jess"
+    : selectedRole === "Studio Freelancer"
+      ? "user-david"
+      : "user-tom";
+  const visibleCommentsForShot = (entry: ProductionEntry) => selectedRole === "Customer"
+    ? (entry.comments ?? []).filter((comment) => comment.visibility === "external")
+    : entry.comments ?? [];
   const addShot = () => {
     const shotNumber = Math.max(0, ...entries.map((entry) => entry.shotNumber ?? 0)) + 1;
     const shotListOrder = Math.max(-1, ...entries.map((entry) => entry.shotListOrder ?? -1)) + 1;
@@ -2176,49 +2267,311 @@ function PreProductionShotList({ callSheet, canEdit, entries, onChange, onDelete
     }));
   };
   const updateShot = (id: string, patch: Partial<ProductionEntry>) => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === id ? { ...entry, ...patch } : entry) }));
+  const updateShotComments = (entry: ProductionEntry, previousVisibleComments: ScriptComment[], nextVisibleComments: ScriptComment[]) => {
+    const previousVisibleIds = new Set(previousVisibleComments.map((comment) => comment.id));
+    const hiddenComments = (entry.comments ?? []).filter((comment) => !previousVisibleIds.has(comment.id));
+    onCommentChange((current) => ({
+      ...current,
+      entries: current.entries.map((candidate) => candidate.id === entry.id
+        ? { ...candidate, comments: [...hiddenComments, ...nextVisibleComments] }
+        : candidate),
+    }));
+  };
+  const duplicateShot = (entry: ProductionEntry) => onChange((current) => {
+    const orderedShots = current.entries
+      .filter((candidate) => candidate.type === "shot")
+      .sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
+    const sourceIndex = orderedShots.findIndex((candidate) => candidate.id === entry.id);
+    if (sourceIndex < 0) return current;
+    const duplicate: ProductionEntry = {
+      ...entry,
+      id: `entry-${Date.now()}`,
+      shotNumber: Math.max(0, ...orderedShots.map((candidate) => candidate.shotNumber ?? 0)) + 1,
+      shotListOrder: sourceIndex + 1,
+      startTime: "",
+      durationMinutes: 0,
+      captured: false,
+      completed: undefined,
+      suggestionStatus: undefined,
+      comments: undefined,
+    };
+    const nextShots = [...orderedShots];
+    nextShots.splice(sourceIndex + 1, 0, duplicate);
+    const orderedShotById = new Map(nextShots.map((shot, index) => [shot.id, { ...shot, shotListOrder: index }]));
+    return {
+      ...current,
+      entries: [
+        ...current.entries.map((candidate) => candidate.type === "shot"
+          ? orderedShotById.get(candidate.id) ?? candidate
+          : candidate),
+        orderedShotById.get(duplicate.id) ?? duplicate,
+      ],
+    };
+  });
+  const selectShotSubject = (shotId: string, person: ShootPerson) => onChange((current) => {
+    const existing = current.people.find((candidate) => isSameShootPerson(candidate, person));
+    const nextPerson = existing ? null : {
+      ...person,
+      shootDayIds: "all" as const,
+      assignments: getShootAssignments(person).map((assignment) => ({ ...assignment, shootDayIds: "all" as const })),
+    };
+    return {
+      ...current,
+      people: nextPerson ? [...current.people, nextPerson] : current.people,
+      entries: current.entries.map((entry) => entry.id === shotId ? { ...entry, subject: person.name } : entry),
+    };
+  });
+  const createShotSubject = (shotId: string, name: string) => {
+    const directoryPerson = createPerson({
+      type: "Contact",
+      name,
+      email: "",
+      jobTitle: "",
+      inviteNow: false,
+    });
+    selectShotSubject(shotId, personToShootPerson(directoryPerson, callSheet.days[0]?.generalCallTime ?? ""));
+  };
   const removeSuggestion = (id: string) => onChange((current) => ({ ...current, entries: current.entries.filter((entry) => entry.id !== id) }));
 
-  return <section className="shoot-preproduction-section">
-    <PreProductionSectionHeading
-      icon="video-camera-ds"
-      title="Shot List"
-      description="Plan what the team needs to capture. Assign shoot days and times later in Schedule."
-      action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addShot}><DsIcon name="plus" size={16} />Add shot</button> : null}
-    />
-    {entries.length ? <div className="shoot-direct-shot-list">
-      {entries.map((entry, index) => <article
-        className={`shoot-direct-shot-row ${entry.suggestionStatus ? "is-suggested" : ""}`}
-        draggable={canEdit}
-        key={entry.id}
-        onDragStart={() => setDraggedId(entry.id)}
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={() => { if (draggedId) onReorder(draggedId, entry.id); setDraggedId(null); }}
-      >
-        <div className="shoot-direct-shot-order"><DsIcon name="dots-six-vertical" size={16} /><span className="label-xs-semibold">{entry.shotNumber ?? index + 1}</span></div>
-        <div className="shoot-direct-shot-fields">
-          <label className="shoot-preproduction-field"><span>Description</span><input disabled={!canEdit} value={entry.description} onChange={(event) => updateShot(entry.id, { description: event.target.value })} /></label>
-          <label className="shoot-preproduction-field"><span>Talent or subject</span><input disabled={!canEdit} placeholder="Not confirmed yet" value={entry.subject ?? ""} onChange={(event) => updateShot(entry.id, { subject: event.target.value })} /></label>
-          <label className="shoot-preproduction-field"><span>Location</span>{canEdit ? <BriskSelect ariaLabel={`Location for shot ${entry.shotNumber ?? index + 1}`} value={entry.locationId ?? ""} options={callSheet.locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed yet" onChange={(value) => updateShot(entry.id, { locationId: value || undefined })} /> : <span className="shoot-readonly-field">{callSheet.locations.find((location) => location.id === entry.locationId)?.name ?? "Not confirmed"}</span>}</label>
-          <label className="shoot-preproduction-field"><span>Priority</span>{canEdit ? <BriskSelect ariaLabel={`Priority for shot ${entry.shotNumber ?? index + 1}`} clearable={false} searchable={false} value={entry.priority ?? "Useful"} options={[{ value: "Essential", label: "Essential" }, { value: "Useful", label: "Useful" }, { value: "Optional", label: "Optional" }]} placeholder="Choose priority" onChange={(value) => { if (value) updateShot(entry.id, { priority: value }); }} /> : <span className="shoot-readonly-field">{entry.priority ?? "Useful"}</span>}</label>
-        </div>
-        <div className="shoot-direct-shot-actions">
-          {entry.suggestionStatus ? <span className="shoot-suggested-pill label-xs-semibold">Suggested</span> : null}
-          {entry.suggestionStatus && canEdit ? <><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateShot(entry.id, { suggestionStatus: undefined })}>Keep</button><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={() => removeSuggestion(entry.id)}>Remove</button></> : null}
-          {!entry.suggestionStatus && canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove shot ${entry.shotNumber ?? index + 1}`} onClick={() => onDelete(entry.id)}><DsIcon name="trash-simple" size={16} /></button> : null}
-        </div>
-        <details className="shoot-direct-shot-details">
-          <summary className="label-s-semibold">More details</summary>
-          <div>
-            <label className="shoot-preproduction-field"><span>Shot category</span>{canEdit ? <BriskSelect ariaLabel="Shot category" value={entry.shotCategory ?? ""} options={shotCategoryOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { shotCategory: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotCategory ?? "Not set"}</span>}</label>
-            <label className="shoot-preproduction-field"><span>Shot size</span>{canEdit ? <BriskSelect ariaLabel="Shot size" value={entry.shotSize ?? ""} options={shotSizeOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { shotSize: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotSize ?? "Not set"}</span>}</label>
-            <label className="shoot-preproduction-field"><span>Camera movement</span>{canEdit ? <BriskSelect ariaLabel="Camera movement" value={entry.cameraMovement ?? ""} options={cameraMovementOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { cameraMovement: value || undefined })} /> : <span className="shoot-readonly-field">{entry.cameraMovement ?? "Not set"}</span>}</label>
-            <label className="shoot-preproduction-field"><span>Shot reference</span><input disabled={!canEdit} type="url" placeholder="Paste an image link" value={entry.imageReferenceUrl ?? ""} onChange={(event) => updateShot(entry.id, { imageReferenceUrl: event.target.value, imageReferenceSource: event.target.value ? "link" : undefined })} /></label>
-          </div>
-          {entry.imageReferenceUrl ? <a className="shoot-shot-reference-preview" href={entry.imageReferenceUrl} target="_blank" rel="noreferrer"><DsIcon name="image-square" size={18} />Reference attached</a> : null}
-        </details>
-      </article>)}
-    </div> : canEdit ? <EmptyState illustrationSrc="/brisk-visuals/shoot-shot-list-empty.png" title="Start your Shot List" action="Add shot" onAction={addShot} /> : <p className="shoot-preproduction-empty-copy">The Shot List has not been started.</p>}
-  </section>;
+  useEffect(() => {
+    if (!openMenuShotId) return;
+    const closeMenu = (event: globalThis.MouseEvent) => {
+      if (!actionMenuRef.current?.contains(event.target as Node)) setOpenMenuShotId(null);
+    };
+    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpenMenuShotId(null);
+      window.requestAnimationFrame(() => actionMenuTriggerRef.current?.focus());
+    };
+    document.addEventListener("mousedown", closeMenu);
+    document.addEventListener("keydown", closeMenuWithKeyboard);
+    return () => {
+      document.removeEventListener("mousedown", closeMenu);
+      document.removeEventListener("keydown", closeMenuWithKeyboard);
+    };
+  }, [openMenuShotId]);
+
+  return <>
+    <section className="shoot-preproduction-section">
+      <PreProductionSectionHeading
+        icon="video-camera-ds"
+        title="Shot List"
+        description="Plan what the team needs to capture. Assign shoot days and times later in Schedule."
+        action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addShot}><DsIcon name="plus" size={16} />Add shot</button> : null}
+      />
+      {entries.length ? <div className="shoot-shot-table-wrap">
+        <table className="shoot-shot-table">
+          <colgroup>
+            <col className="shoot-shot-table-number-column" />
+            <col className="shoot-shot-table-description-column" />
+            <col className="shoot-shot-table-subject-column" />
+            <col className="shoot-shot-table-location-column" />
+            <col className="shoot-shot-table-priority-column" />
+            <col className="shoot-shot-table-reference-column" />
+            <col className="shoot-shot-table-actions-column" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col"><span className="sr-only">Reorder and shot number</span></th>
+              <th scope="col">Description</th>
+              <th scope="col">Talent or subject</th>
+              <th scope="col">Location</th>
+              <th scope="col">Priority</th>
+              <th scope="col">Reference</th>
+              <th scope="col"><span className="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.map((entry, index) => {
+              const shotNumber = entry.shotNumber ?? index + 1;
+              const technicalSummary = [entry.shotCategory, entry.shotSize, entry.cameraMovement].filter(Boolean).join(" · ");
+              const menuOpen = openMenuShotId === entry.id;
+              const shotComments = visibleCommentsForShot(entry);
+              const priority = entry.priority ?? "Useful";
+              const priorityTone = priority.toLocaleLowerCase("en-AU");
+              const matchingSubject = entry.subject
+                ? availablePeople.find((person) => normaliseIdentity(person.name) === normaliseIdentity(entry.subject ?? ""))
+                : undefined;
+              const provisionalSubject: ShootPerson | undefined = entry.subject && !matchingSubject ? {
+                id: `shot-subject-${entry.id}`,
+                name: entry.subject,
+                type: "talent",
+                role: "Subject",
+                phone: "",
+                email: "",
+                callTime: "",
+                shootDayIds: "all",
+              } : undefined;
+              const subjectPeople = provisionalSubject ? [provisionalSubject, ...availablePeople] : availablePeople;
+              const selectedSubjectId = matchingSubject?.id ?? provisionalSubject?.id;
+
+              return <tr
+                className={`${entry.suggestionStatus ? "is-suggested" : ""} ${canEdit ? "can-reorder" : ""} ${draggedId === entry.id ? "is-dragging" : ""} ${dropShotId === entry.id && draggedId !== entry.id ? "is-drop-target" : ""}`}
+                draggable={canEdit}
+                key={entry.id}
+                onDragStart={() => {
+                  if (canEdit) setDraggedId(entry.id);
+                }}
+                onDragOver={(event) => {
+                  if (!canEdit) return;
+                  event.preventDefault();
+                  setDropShotId(entry.id);
+                }}
+                onDrop={() => {
+                  if (draggedId) onReorder(draggedId, entry.id);
+                  setDraggedId(null);
+                  setDropShotId(null);
+                }}
+                onDragEnd={() => {
+                  setDraggedId(null);
+                  setDropShotId(null);
+                }}
+              >
+                <td>
+                  <div className="shoot-shot-table-order">
+                    <span className="shoot-shot-table-number label-xs-semibold">{shotNumber}</span>
+                    {canEdit ? <button
+                      className="shoot-shot-table-drag"
+                      type="button"
+                      draggable
+                      aria-label={`Drag to reorder shot ${shotNumber}`}
+                      onClick={(event) => event.preventDefault()}
+                      onDragStart={(event) => {
+                        event.dataTransfer.effectAllowed = "move";
+                        setDraggedId(entry.id);
+                      }}
+                    ><DsIcon name="dots-six-vertical" size={16} /></button> : null}
+                  </div>
+                </td>
+                <td>
+                  <div className="shoot-shot-table-description">
+                    <input className="shoot-shot-table-input label-s" disabled={!canEdit} aria-label={`Description for shot ${shotNumber}`} value={entry.description} onChange={(event) => updateShot(entry.id, { description: event.target.value })} />
+                    {technicalSummary || entry.suggestionStatus ? <span className="shoot-shot-table-description-meta label-xs">
+                      {technicalSummary ? <span>{technicalSummary}</span> : null}
+                      {entry.suggestionStatus ? <span className="shoot-suggested-pill label-xs-semibold">Suggested</span> : null}
+                    </span> : null}
+                  </div>
+                </td>
+                <td>{canEdit ? <PeoplePicker
+                  compact
+                  single
+                  label={`Talent or subject for shot ${shotNumber}`}
+                  people={subjectPeople}
+                  placeholder="Not confirmed yet"
+                  selectedIds={selectedSubjectId ? [selectedSubjectId] : []}
+                  showLabel={false}
+                  onChange={() => undefined}
+                  onCreatePerson={(name) => createShotSubject(entry.id, name)}
+                  onSelectPerson={(person) => selectShotSubject(entry.id, person)}
+                /> : <span className="shoot-shot-table-static label-s">{entry.subject || "Not confirmed"}</span>}</td>
+                <td>{canEdit ? <BriskSelect className="shoot-shot-table-select" ariaLabel={`Location for shot ${shotNumber}`} value={entry.locationId ?? ""} options={callSheet.locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed yet" onChange={(value) => updateShot(entry.id, { locationId: value || undefined })} /> : <span className="shoot-shot-table-static label-s">{callSheet.locations.find((location) => location.id === entry.locationId)?.name ?? "Not confirmed"}</span>}</td>
+                <td>{canEdit ? <BriskSelect className="shoot-shot-table-select" triggerClassName={`shoot-shot-priority-trigger is-${priorityTone}`} ariaLabel={`Priority for shot ${shotNumber}`} clearable={false} searchable={false} value={priority} options={[{ value: "Essential", label: "Essential" }, { value: "Useful", label: "Useful" }, { value: "Optional", label: "Optional" }]} placeholder="Choose priority" onChange={(value) => { if (value) updateShot(entry.id, { priority: value }); }} /> : <span className={`shoot-shot-table-static shoot-shot-priority-static is-${priorityTone} label-s`}>{priority}</span>}</td>
+                <td>
+                  {entry.imageReferenceUrl ? <button className="shoot-shot-reference-thumbnail" type="button" aria-label={`Preview reference for shot ${shotNumber}`} onClick={() => setPreviewShotId(entry.id)}>
+                    <img src={entry.imageReferenceUrl} alt="" />
+                  </button> : canEdit ? <ShotReferenceImagePicker
+                    table
+                    entry={entry}
+                    projectId={projectId}
+                    onChange={(patch) => updateShot(entry.id, patch)}
+                  /> : <span className="shoot-shot-reference-indicator label-xs-semibold" role="img" aria-label={`No reference for shot ${shotNumber}`}><DsIcon name="image-square" size={16} /></span>}
+                </td>
+                <td>
+                  <div className="shoot-shot-table-actions" ref={menuOpen ? actionMenuRef : undefined}>
+                    <button className="shoot-shot-details-button label-xs-semibold" type="button" aria-controls="shoot-shot-details-drawer" aria-expanded={selectedShotId === entry.id} onClick={() => setSelectedShotId(entry.id)}>Details<DsIcon name="caret-right" size={14} /></button>
+                    <ScriptAnnotationPin
+                      count={shotComments.length}
+                      hasUnresolved={shotComments.some((comment) => !comment.resolved)}
+                      label={`shot ${shotNumber}`}
+                      onOpen={(triggerRect) => {
+                        setOpenMenuShotId(null);
+                        setSelectedShotId(null);
+                        setCommentShotId(entry.id);
+                        setCommentPosition(getFloatingCommentPosition(triggerRect));
+                      }}
+                    />
+                    {canEdit ? <>
+                      <button className="shoot-shot-table-menu-button" type="button" aria-label={`More actions for shot ${shotNumber}`} aria-expanded={menuOpen} aria-haspopup="menu" onClick={(event) => { actionMenuTriggerRef.current = event.currentTarget; setOpenMenuShotId((current) => current === entry.id ? null : entry.id); }}><DsIcon name="dots-three" size={18} /></button>
+                      {menuOpen ? <div className="shoot-shot-table-menu" role="menu" onKeyDown={(event) => { if (event.key === "Escape") setOpenMenuShotId(null); }}>
+                        {entry.suggestionStatus ? <button className="label-s" type="button" role="menuitem" onClick={() => { updateShot(entry.id, { suggestionStatus: undefined }); setOpenMenuShotId(null); }}><DsIcon name="check" size={16} />Keep suggestion</button> : <button className="label-s" type="button" role="menuitem" onClick={() => { duplicateShot(entry); setOpenMenuShotId(null); }}><DsIcon name="copy" size={16} />Duplicate shot</button>}
+                        <button className="danger label-s" type="button" role="menuitem" onClick={() => {
+                          setOpenMenuShotId(null);
+                          if (entry.suggestionStatus) removeSuggestion(entry.id);
+                          else onDelete(entry.id);
+                        }}><DsIcon name="trash-simple" size={16} />{entry.suggestionStatus ? "Remove suggestion" : "Delete shot"}</button>
+                      </div> : null}
+                    </> : null}
+                  </div>
+                </td>
+              </tr>;
+            })}
+          </tbody>
+        </table>
+      </div> : canEdit ? <EmptyState illustrationSrc="/brisk-visuals/shoot-shot-list-empty.png" title="Start your Shot List" action="Add shot" onAction={addShot} /> : <p className="shoot-preproduction-empty-copy">The Shot List has not been started.</p>}
+    </section>
+    {selectedShot ? <PreProductionShotDetailsDrawer
+      canEdit={canEdit}
+      entry={selectedShot}
+      projectId={projectId}
+      shotNumber={selectedShot.shotNumber ?? entries.indexOf(selectedShot) + 1}
+      onChange={(patch) => updateShot(selectedShot.id, patch)}
+      onClose={() => setSelectedShotId(null)}
+    /> : null}
+    {previewShot?.imageReferenceUrl ? <ModalShell
+      title={`Image for shot ${previewShot.shotNumber ?? entries.indexOf(previewShot) + 1}`}
+      onClose={() => setPreviewShotId(null)}
+      footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="primary" onClick={() => setPreviewShotId(null)}>Done</Button></div>}
+    ><div className="shoot-shot-image-preview"><img src={previewShot.imageReferenceUrl} alt={`Reference for ${previewShot.description}`} /></div></ModalShell> : null}
+    {commentShot && commentPosition ? createPortal(<FloatingCommentShell
+      anchor={{ kind: "row", label: `Shot ${commentShotNumber}`, rowId: commentShot.id } satisfies ScriptCommentAnchor}
+      canPostInternal={selectedRole !== "Customer"}
+      comments={visibleCommentsForShot(commentShot)}
+      currentUserId={currentCommentUserId}
+      position={commentPosition}
+      users={scriptUsers}
+      onCommentsChange={(nextComments) => updateShotComments(commentShot, visibleCommentsForShot(commentShot), nextComments)}
+      onDismiss={() => {
+        setCommentShotId(null);
+        setCommentPosition(null);
+      }}
+    />, document.body) : null}
+  </>;
+}
+
+function PreProductionShotDetailsDrawer({ canEdit, entry, projectId, shotNumber, onChange, onClose }: {
+  canEdit: boolean;
+  entry: ProductionEntry;
+  projectId: string;
+  shotNumber: number;
+  onChange: (patch: Partial<ProductionEntry>) => void;
+  onClose: () => void;
+}) {
+  return createPortal(<aside
+    className="shoot-shot-details-drawer"
+    id="shoot-shot-details-drawer"
+    role="dialog"
+    aria-labelledby="shoot-shot-details-title"
+    aria-modal="false"
+    onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}
+  >
+    <header className="shoot-shot-details-drawer-header">
+      <div>
+        <span className="label-xs-semibold">Shot {shotNumber}</span>
+        <h2 id="shoot-shot-details-title">Shot details</h2>
+        <p className="paragraph-s">{entry.description}</p>
+      </div>
+      <button className="shoot-icon-button" type="button" autoFocus aria-label="Close shot details" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button>
+    </header>
+    <div className="shoot-shot-details-drawer-body">
+      <label className="shoot-preproduction-field"><span>Shot category</span>{canEdit ? <BriskSelect ariaLabel={`Shot category for shot ${shotNumber}`} value={entry.shotCategory ?? ""} options={shotCategoryOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => onChange({ shotCategory: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotCategory ?? "Not set"}</span>}</label>
+      <label className="shoot-preproduction-field"><span>Shot size</span>{canEdit ? <BriskSelect ariaLabel={`Shot size for shot ${shotNumber}`} value={entry.shotSize ?? ""} options={shotSizeOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => onChange({ shotSize: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotSize ?? "Not set"}</span>}</label>
+      <label className="shoot-preproduction-field"><span>Camera movement</span>{canEdit ? <BriskSelect ariaLabel={`Camera movement for shot ${shotNumber}`} value={entry.cameraMovement ?? ""} options={cameraMovementOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => onChange({ cameraMovement: value || undefined })} /> : <span className="shoot-readonly-field">{entry.cameraMovement ?? "Not set"}</span>}</label>
+      <div className="shoot-preproduction-field">
+        <span>Shot reference</span>
+        {canEdit ? <ShotReferenceImagePicker compact entry={entry} projectId={projectId} onChange={onChange} /> : entry.imageReferenceUrl ? <a className="shoot-shot-reference-preview" href={entry.imageReferenceUrl} target="_blank" rel="noreferrer"><DsIcon name="image-square" size={18} />Open attached reference</a> : <span className="shoot-readonly-field">Not set</span>}
+      </div>
+    </div>
+  </aside>, document.body);
 }
 
 function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, onChange, onReorder }: {
@@ -3700,7 +4053,7 @@ function FilmingTimeInput({ value, onChange }: { value: number; onChange: (value
   return <DurationInput value={value} onChange={onChange} />;
 }
 
-function ShotReferenceImagePicker({ entry, projectId, compact = false, onChange }: { entry: ProductionEntry | EntryDraft; projectId: string; compact?: boolean; onChange: (patch: Partial<ProductionEntry>) => void }) {
+function ShotReferenceImagePicker({ entry, projectId, compact = false, table = false, onChange }: { entry: ProductionEntry | EntryDraft; projectId: string; compact?: boolean; table?: boolean; onChange: (patch: Partial<ProductionEntry>) => void }) {
   const [isSourceOpen, setIsSourceOpen] = useState(false);
   const [librarySource, setLibrarySource] = useState<"stock" | "project-media" | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -3723,7 +4076,7 @@ function ShotReferenceImagePicker({ entry, projectId, compact = false, onChange 
   };
   const clearImage = () => onChange({ imageReferenceUrl: undefined, imageReferenceId: undefined, imageReferenceSource: undefined });
 
-  return <div className={`shoot-shot-image-picker ${compact ? "is-compact" : ""}`} onClick={(event) => event.stopPropagation()}>
+  return <div className={`shoot-shot-image-picker${compact ? " is-compact" : ""}${table ? " is-table" : ""}`} onClick={(event) => event.stopPropagation()}>
     {entry.imageReferenceUrl ? <div className="shoot-shot-image-filled">
       <button type="button" aria-label={`Preview image for ${entry.description}`} onClick={() => setIsPreviewOpen(true)}><img src={entry.imageReferenceUrl} alt="" /></button>
       {!compact ? <div className="shoot-shot-image-actions">
@@ -3731,7 +4084,7 @@ function ShotReferenceImagePicker({ entry, projectId, compact = false, onChange 
         <ScriptMediaPicker isOpen={isSourceOpen} options={shotMediaOptions} triggerLabel={`Replace image for ${entry.description}`} triggerClassName="shoot-shot-image-action" triggerIcon="arrows-clockwise" onOpenChange={setIsSourceOpen} onSelect={chooseSource} />
         <button className="shoot-shot-image-action" type="button" aria-label={`Remove image from ${entry.description}`} title="Remove" onClick={clearImage}><DsIcon name="trash" size={14} /></button>
       </div> : null}
-    </div> : <ScriptMediaPicker isOpen={isSourceOpen} options={shotMediaOptions} triggerLabel={`Add image to ${entry.description}`} triggerClassName="shoot-shot-image-empty" triggerIcon={compact ? "image-square" : "plus"} triggerText={compact ? "Add image" : undefined} onOpenChange={setIsSourceOpen} onSelect={chooseSource} />}
+    </div> : <ScriptMediaPicker isOpen={isSourceOpen} options={shotMediaOptions} triggerLabel={`Add image to ${entry.description}`} triggerClassName={table ? "shoot-shot-reference-indicator label-xs-semibold" : "shoot-shot-image-empty"} triggerIcon={compact || table ? "image-square" : "plus"} triggerText={compact && !table ? "Add image" : undefined} onOpenChange={setIsSourceOpen} onSelect={chooseSource} />}
     <input className="shoot-visually-hidden" ref={fileInputRef} type="file" accept="image/*" tabIndex={-1} onChange={(event) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -3960,7 +4313,8 @@ function QuickEntryRow({ draft, shotOnly, locations, people, onCancel, onChange,
   );
 }
 
-function PeoplePicker({ disabled = false, display = "chips", label = "People (optional)", people, placeholder = "Add people…", selectedIds, showLabel = true, onChange, onCreatePerson, onSelectPerson }: {
+function PeoplePicker({ compact = false, disabled = false, display = "chips", label = "People (optional)", people, placeholder = "Add people…", selectedIds, showLabel = true, single = false, onChange, onCreatePerson, onSelectPerson }: {
+  compact?: boolean;
   disabled?: boolean;
   display?: "chips" | "rows";
   label?: string;
@@ -3968,6 +4322,7 @@ function PeoplePicker({ disabled = false, display = "chips", label = "People (op
   placeholder?: string;
   selectedIds: string[];
   showLabel?: boolean;
+  single?: boolean;
   onChange: (ids: string[]) => void;
   onCreatePerson?: (name: string) => void;
   onSelectPerson?: (person: ShootPerson) => void;
@@ -4018,7 +4373,7 @@ function PeoplePicker({ disabled = false, display = "chips", label = "People (op
   };
 
   return (
-    <div className="shoot-people-picker">
+    <div className={`shoot-people-picker${compact ? " is-compact" : ""}${single ? " is-single" : ""}${isOpen ? " is-open" : ""}`}>
       {showLabel ? <span className="label-xs-semibold">{label}</span> : null}
       {!disabled ? <div className="shoot-people-search" ref={pickerRef}>
         <input
@@ -4029,8 +4384,8 @@ function PeoplePicker({ disabled = false, display = "chips", label = "People (op
           aria-label={label}
           role="combobox"
           placeholder={placeholder}
-          value={search}
-          onFocus={() => setIsOpen(true)}
+          value={single && !isOpen ? selectedPeople[0]?.name ?? "" : search}
+          onFocus={() => { if (single) setSearch(""); setIsOpen(true); }}
           onChange={(event) => { setSearch(event.target.value); setIsOpen(true); setActiveIndex(0); }}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
@@ -4046,6 +4401,7 @@ function PeoplePicker({ disabled = false, display = "chips", label = "People (op
             }
           }}
         />
+        {compact ? <span className="shoot-people-picker-caret" aria-hidden="true"><DsIcon name="caret-down" size={12} /></span> : null}
         {isOpen ? <div className="shoot-people-results" id={listboxId} role="listbox" aria-label="Matching people">
           {results.map((person, index) => <button
             className={`label-s ${index === activeIndex ? "is-active" : ""}`}
@@ -4071,7 +4427,7 @@ function PeoplePicker({ disabled = false, display = "chips", label = "People (op
           {!results.length && !canCreatePerson ? <div className="shoot-people-no-results"><span className="label-xs">{search.trim() ? "This person has already been added" : "Start typing to find or add someone"}</span></div> : null}
         </div> : null}
       </div> : null}
-      {selectedPeople.length ? display === "rows" ? <ul className="shoot-quick-start-person-list" aria-label="People added to this shoot">
+      {!single && selectedPeople.length ? display === "rows" ? <ul className="shoot-quick-start-person-list" aria-label="People added to this shoot">
         {selectedPeople.map((person) => <li key={person.id}>
           <span className="shoot-avatar label-xs-semibold" aria-hidden="true">{getInitials(person.name)}</span>
           <strong>{person.name}</strong>
@@ -5271,8 +5627,9 @@ function markEmergencyDetailsForReview(info?: SafetyEmergencyInfo): SafetyEmerge
 }
 
 function createBriskShootPlan(current: CallSheet, project: Project, answers: QuickStartAnswers, interviewLed: boolean) {
-  const capture = answers.capture === "not-confirmed" ? interviewLed ? "interviews" : "scripted" : answers.capture;
-  const shouldAddQuestions = capture === "interviews" || capture === "documentary" || capture === "mixture";
+  const confirmedCaptures = answers.captures.filter((capture): capture is ConfirmedQuickStartCapture => capture !== "not-confirmed");
+  const captures: ConfirmedQuickStartCapture[] = confirmedCaptures.length ? confirmedCaptures : [interviewLed ? "interviews" : "scripted"];
+  const shouldAddQuestions = captures.includes("interviews");
   const existingPlanningContent = current.entries.some((entry) => entry.type === "shot") || current.questions.length > 0;
   const suggestionStatus = existingPlanningContent ? "suggested" as const : undefined;
   const now = Date.now();
@@ -5302,8 +5659,8 @@ function createBriskShootPlan(current: CallSheet, project: Project, answers: Qui
     assignments: [{ id: `assignment-brisk-${project.id}`, type: "talent", role: "CEO interviewee", callTime: current.days[0]?.generalCallTime ?? "", shootDayIds: "all" }],
   } : undefined;
   const targetTalent = addedPeople[0] ?? existingTalent ?? provisionalTalent;
-  const subject = targetTalent?.name ?? (capture === "b-roll" ? "Product and team" : "Primary subject");
-  const shotTemplates = getBriskShotTemplates(capture, subject);
+  const subject = targetTalent?.name ?? (captures.length === 1 && captures[0] === "b-roll" ? "Product and team" : "Primary subject");
+  const shotTemplates = getBriskShotTemplates(captures, subject);
   const questionTemplates = shouldAddQuestions ? [
     "What problem were you trying to solve?",
     "What changed after you started using the product?",
@@ -5428,9 +5785,9 @@ function parseQuickStartList(value: string) {
   return value.split(/[;\n]+/u).map((item) => item.trim()).filter(Boolean);
 }
 
-function createInitialQuickStartAnswers(briefCapture: QuickStartCapture | null): QuickStartAnswers {
+function createInitialQuickStartAnswers(briefCaptures: ConfirmedQuickStartCapture[] | null): QuickStartAnswers {
   return {
-    capture: briefCapture ?? "not-confirmed",
+    captures: briefCaptures ?? ["not-confirmed"],
     people: "",
     peopleNotConfirmed: false,
     locationName: "",
@@ -5443,6 +5800,10 @@ function createInitialQuickStartAnswers(briefCapture: QuickStartCapture | null):
   };
 }
 
+function areQuickStartCapturesEqual(left: readonly QuickStartCapture[], right: readonly QuickStartCapture[]) {
+  return left.length === right.length && left.every((capture) => right.includes(capture));
+}
+
 function quickStartAnswersStorageKey(projectId: string) {
   return `brisk-shoot-quick-start-${projectId}-v1`;
 }
@@ -5452,11 +5813,20 @@ function parseQuickStartAnswers(value: string | null): QuickStartAnswers | null 
   try {
     const parsed: unknown = JSON.parse(value);
     if (!parsed || typeof parsed !== "object") return null;
-    const answers = parsed as Partial<QuickStartAnswers>;
-    const captures: QuickStartCapture[] = ["interviews", "scripted", "b-roll", "documentary", "mixture", "not-confirmed"];
-    if (!captures.includes(answers.capture as QuickStartCapture)) return null;
+    const answers = parsed as Partial<QuickStartAnswers> & { capture?: unknown };
+    const captures: QuickStartCapture[] = ["interviews", "scripted", "b-roll", "not-confirmed"];
+    const rawCaptures: unknown[] = Array.isArray(answers.captures)
+      ? answers.captures
+      : typeof answers.capture === "string"
+        ? [answers.capture]
+        : [];
+    const migratedCaptures = rawCaptures.flatMap((capture) => capture === "mixture" ? ["interviews", "scripted"] : [capture]);
+    const validCaptures = migratedCaptures.filter((capture): capture is QuickStartCapture => typeof capture === "string" && captures.includes(capture as QuickStartCapture));
+    const selectedCaptures: QuickStartCapture[] = validCaptures.includes("not-confirmed")
+      ? ["not-confirmed"]
+      : [...new Set(validCaptures)];
     return {
-      capture: answers.capture as QuickStartCapture,
+      captures: selectedCaptures.length ? selectedCaptures : ["not-confirmed"],
       people: typeof answers.people === "string" ? answers.people : "",
       peopleNotConfirmed: answers.peopleNotConfirmed === true,
       locationName: typeof answers.locationName === "string" ? answers.locationName : "",
@@ -5472,8 +5842,9 @@ function parseQuickStartAnswers(value: string | null): QuickStartAnswers | null 
   }
 }
 
-function getBriskShotTemplates(capture: QuickStartCapture, subject: string): Array<{ description: string; subject: string; priority: ProductionEntry["priority"]; category: ShotCategory }> {
-  const interviewShots = [
+function getBriskShotTemplates(captures: ConfirmedQuickStartCapture[], subject: string): Array<{ description: string; subject: string; priority: ProductionEntry["priority"]; category: ShotCategory }> {
+  type QuickStartShotTemplate = { description: string; subject: string; priority: ProductionEntry["priority"]; category: ShotCategory };
+  const interviewShots: QuickStartShotTemplate[] = [
     { description: "Wide establishing shot of the location", subject: "Shoot location", priority: "Essential" as const, category: "Establishing" as const },
     { description: "Primary interview framed to camera", subject, priority: "Essential" as const, category: "Interview" as const },
     { description: "Alternative interview angle", subject, priority: "Useful" as const, category: "Interview" as const },
@@ -5483,7 +5854,7 @@ function getBriskShotTemplates(capture: QuickStartCapture, subject: string): Arr
     { description: "Team collaboration coverage", subject: "Team", priority: "Useful" as const, category: "B-roll" as const },
     { description: "Closing portrait and confident look to camera", subject, priority: "Optional" as const, category: "Interview" as const },
   ];
-  const scriptedShots = [
+  const scriptedShots: QuickStartShotTemplate[] = [
     { description: "Wide exterior establishing shot of the location", subject: "Shoot location", priority: "Essential" as const, category: "Establishing" as const },
     { description: "Opening scripted scene", subject, priority: "Essential" as const, category: "Action" as const },
     { description: "Primary action in a medium frame", subject, priority: "Essential" as const, category: "Action" as const },
@@ -5493,11 +5864,14 @@ function getBriskShotTemplates(capture: QuickStartCapture, subject: string): Arr
     { description: "Team collaborating around the product", subject: "Team", priority: "Useful" as const, category: "B-roll" as const },
     { description: "Closing hero shot", subject, priority: "Essential" as const, category: "Product" as const },
   ];
-  if (capture === "interviews") return interviewShots;
-  if (capture === "b-roll") return scriptedShots.filter((shot) => shot.category === "B-roll" || shot.category === "Product" || shot.category === "Establishing");
-  if (capture === "documentary") return [...interviewShots.slice(0, 4), ...scriptedShots.slice(4, 8)];
-  if (capture === "mixture") return [...interviewShots.slice(0, 4), ...scriptedShots.slice(3, 7)];
-  return scriptedShots;
+  const templatesByCapture: Record<ConfirmedQuickStartCapture, QuickStartShotTemplate[]> = {
+    interviews: interviewShots,
+    scripted: scriptedShots,
+    "b-roll": scriptedShots.filter((shot) => shot.category === "B-roll" || shot.category === "Product" || shot.category === "Establishing"),
+  };
+  return captures
+    .flatMap((capture) => templatesByCapture[capture])
+    .filter((shot, index, shots) => shots.findIndex((candidate) => normaliseIdentity(candidate.description) === normaliseIdentity(shot.description) && normaliseIdentity(candidate.subject) === normaliseIdentity(shot.subject)) === index);
 }
 
 function shootWorkspaceSectionStorageKey(projectId: string) {
@@ -5505,7 +5879,7 @@ function shootWorkspaceSectionStorageKey(projectId: string) {
 }
 
 function parseShootWorkspaceSection(value: string | null): ShootWorkspaceSection | null {
-  const sections: ShootWorkspaceSection[] = ["quick-start", "shots", "questions", "references", "dates", "locations", "people", "schedule", "notes", "documents", "call-sheet"];
+  const sections: ShootWorkspaceSection[] = ["quick-start", "shots", "questions", "references", "dates", "locations", "people", "schedule", "notes", "documents", "call-sheet", "shoot-helper"];
   return sections.includes(value as ShootWorkspaceSection) ? value as ShootWorkspaceSection : null;
 }
 
@@ -5787,28 +6161,26 @@ function formatExistingPlanCoverage(coverage: ExistingShootPlanCoverage) {
   return "Creative Plan and Plan the Day";
 }
 
-function getBriefShootCapture(liveFootageValue: string, fallbackIsInterviewLed: boolean): QuickStartCapture | null {
+function getBriefShootCaptures(liveFootageValue: string, fallbackIsInterviewLed: boolean): ConfirmedQuickStartCapture[] | null {
   const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
   const usesNewFootage = footageValue.split("+").some((choice) => choice === "Shoot new" || choice === "New footage");
   const filmingChoices = filmingContentValue === "Both" ? ["Interviews", "Scripted scenes"] : filmingContentValue.split("+").filter(Boolean);
   if (filmingChoices.includes("Not sure yet") || filmingChoices.includes("I'll decide later")) return null;
-  if (usesNewFootage && filmingChoices.includes("Interviews") && filmingChoices.includes("Scripted scenes")) return "mixture";
-  if (usesNewFootage && filmingChoices.includes("Interviews")) return "interviews";
-  if (usesNewFootage && filmingChoices.includes("Scripted scenes")) return "scripted";
-  if (!liveFootageValue.trim() && fallbackIsInterviewLed) return "interviews";
+  const captures: ConfirmedQuickStartCapture[] = [];
+  if (usesNewFootage && filmingChoices.includes("Interviews")) captures.push("interviews");
+  if (usesNewFootage && filmingChoices.includes("Scripted scenes")) captures.push("scripted");
+  if (captures.length) return captures;
+  if (!liveFootageValue.trim() && fallbackIsInterviewLed) return ["interviews"];
   return null;
 }
 
-function formatQuickStartCapture(capture: QuickStartCapture) {
-  const labels: Record<QuickStartCapture, string> = {
+function formatQuickStartCaptures(captures: ConfirmedQuickStartCapture[]) {
+  const labels: Record<ConfirmedQuickStartCapture, string> = {
     interviews: "Interviews",
     scripted: "Scripted scenes",
     "b-roll": "B-roll or general coverage",
-    documentary: "Event or documentary coverage",
-    mixture: "A mixture",
-    "not-confirmed": "Not sure yet - decide later",
   };
-  return labels[capture];
+  return captures.map((capture) => labels[capture]).join(" + ");
 }
 
 function briefIncludesInterviews(liveFootageValue: string) {
