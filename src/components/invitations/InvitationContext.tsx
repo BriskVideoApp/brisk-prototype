@@ -170,6 +170,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
   }, [addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
 
   const resendInvitation = useCallback((person: Person) => {
+    if (!person.accessRole || !person.email) return;
     const projectIds = unique([
       ...person.projectAccessIds,
       ...person.workloads.map((workload) => workload.projectId),
@@ -178,7 +179,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       ...(person.clientId ? [person.clientId] : []),
       ...projectIds.map((projectId) => activeVideoProjects.find((project) => project.id === projectId)?.clientId).filter((clientId): clientId is string => Boolean(clientId)),
     ]);
-    const role = person.type === "Team" ? "Studio Staff" : person.type === "Freelancer" ? "Studio Freelancer" : "Customer";
+    const role = person.accessRole;
     setPersonStatus(person.id, "Invited");
     addInvitationRecord({
       personId: person.id,

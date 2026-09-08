@@ -19,21 +19,20 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
+import { BriskDatePicker } from "@/components/brief/BriefPage";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/script/ScriptMediaPicker";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
-import {
-  ShootSetupBuilder,
-  type ShootSetupOwner,
-  type ShootSetupState,
-} from "@/components/shoot/ShootSetupBuilder";
+import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAssetView } from "@/data/media";
 import type { Person } from "@/data/people";
@@ -46,8 +45,10 @@ import {
   formatTime,
   getEmptyCallSheet,
   getInitialCallSheet,
+  getMapsLinkLabel,
   getMapsUrl,
   isAssignedToDay,
+  shootAccessStorageKey,
   shootAddressSuggestions,
   type CallSheet,
   type InterviewQuestion,
@@ -62,10 +63,13 @@ import {
   type ShotSize,
   type ShootDay,
   type ShootDayAssignment,
+  type ShootDayNotes,
   type ShootDocument,
   type ShootLocation,
   type ShootPerson,
+  type ShootAssignment,
   type ShootPersonType,
+  type ShootVisualReference,
 } from "@/data/shoot";
 
 type SaveStatus = "loading" | "saved" | "saving" | "error" | "recovered";
@@ -100,7 +104,30 @@ type ExistingShootPlan = {
   coverage: ExistingShootPlanCoverage;
   addedBy: string;
   addedAt: string;
+  secondaryName?: string;
+  secondaryUrl?: string;
 };
+type ShootWorkspaceSection = "quick-start" | "shots" | "questions" | "references" | "dates" | "locations" | "people" | "schedule" | "notes" | "documents" | "call-sheet";
+type ShootAccessLevel = "viewOnly" | "canEdit" | "canManage";
+type ShootAccessSettings = {
+  freelancer: ShootAccessLevel;
+  client: ShootAccessLevel;
+};
+type QuickStartCapture = "interviews" | "scripted" | "b-roll" | "documentary" | "mixture" | "not-confirmed";
+type QuickStartStepId = "capture" | "people" | "location" | "date" | "must-haves";
+type QuickStartAnswers = {
+  capture: QuickStartCapture;
+  people: string;
+  peopleNotConfirmed: boolean;
+  locationName: string;
+  locationAddress: string;
+  locationNotConfirmed: boolean;
+  shootDate: string;
+  dateNotConfirmed: boolean;
+  mustHaveShots: string;
+  letBriskSuggestShots: boolean;
+};
+type ShootReadinessAction = "share" | "review" | "approve" | "start";
 
 const scheduleTypeOptions: Array<{ value: ScheduleType; label: string; icon: DsIconName }> = [
   { value: "shot", label: "Shot", icon: "video-camera-ds" },
@@ -157,7 +184,12 @@ export function ShootStagePage({ project }: { project: Project }) {
   const { setProjectStageStatus } = useProjectStageStatus();
   const { state: prototypeState } = usePrototypeState();
   const projectBrief = selectProjectBrief(prototypeState, project.id);
-  const isInterviewLed = briefIncludesInterviews(projectBrief?.fields.liveFootage.value ?? "");
+  const { getProjectFlow } = useProjectFlow();
+  const projectFlow = getProjectFlow(project);
+  const shootStageIndex = projectFlow.stages.indexOf("shoot");
+  const scriptStageIndex = projectFlow.stages.indexOf("script");
+  const isInterviewLed = briefIncludesInterviews(projectBrief?.fields.liveFootage.value ?? "")
+    || (shootStageIndex >= 0 && scriptStageIndex >= 0 && shootStageIndex < scriptStageIndex);
   const { studio } = useStudioSettings();
   const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
   const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project))));
@@ -218,6 +250,9 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [highlightedEntryId, setHighlightedEntryId] = useState<string | null>(null);
   const [focusedShotDescriptionId, setFocusedShotDescriptionId] = useState<string | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [activeSection, setActiveSection] = useState<ShootWorkspaceSection>("quick-start");
+  const [accessSettings, setAccessSettings] = useState<ShootAccessSettings>({ freelancer: "canEdit", client: "viewOnly" });
+  const [isAccessOpen, setIsAccessOpen] = useState(false);
   const toastTimeoutRef = useRef<number | null>(null);
   const saveRecoveryTimeoutRef = useRef<number | null>(null);
   const skipInitialSaveRef = useRef(true);
@@ -311,12 +346,37 @@ export function ShootStagePage({ project }: { project: Project }) {
       setScheduleView(!callSheetEnabled || (preferredView === "shots" && !shotListEnabled) ? (callSheetEnabled ? "schedule" : "shots") : preferredView);
       setSaveStatus("saved");
       setExistingPlan(isEmptyPlanFixture ? null : parseExistingShootPlan(window.localStorage.getItem(existingShootPlanStorageKey(project.id))));
+      const storedSection = isEmptyPlanFixture ? null : parseShootWorkspaceSection(window.localStorage.getItem(shootWorkspaceSectionStorageKey(project.id)));
+      const availableStoredSection = storedSection === "questions" && !isInterviewLed ? "shots" : storedSection;
+      setActiveSection(hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
+        ? availableStoredSection
+        : hasStarted
+          ? "shots"
+          : "quick-start");
+      setAccessSettings(isEmptyPlanFixture
+        ? { freelancer: "canEdit", client: "viewOnly" }
+        : parseShootAccessSettings(window.localStorage.getItem(shootAccessStorageKey(project.id))));
     } catch {
       setSaveStatus("error");
     } finally {
       setHasLoaded(true);
     }
-  }, [isEmptyPlanFixture, project.id]);
+  }, [isEmptyPlanFixture, isInterviewLed, project.id]);
+
+  useEffect(() => {
+    if (!hasLoaded || isEmptyPlanFixture) return;
+    window.localStorage.setItem(shootWorkspaceSectionStorageKey(project.id), activeSection);
+  }, [activeSection, hasLoaded, isEmptyPlanFixture, project.id]);
+
+  useEffect(() => {
+    document.body.classList.toggle("is-shoot-setup-screen", activeSection === "quick-start");
+    return () => document.body.classList.remove("is-shoot-setup-screen");
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (!hasLoaded || isEmptyPlanFixture) return;
+    window.localStorage.setItem(shootAccessStorageKey(project.id), JSON.stringify(accessSettings));
+  }, [accessSettings, hasLoaded, isEmptyPlanFixture, project.id]);
 
   const initialiseCallSheet = () => {
     const dayId = callSheet.days[0]?.id ?? "day-1";
@@ -436,11 +496,6 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   const approveShootPlan = () => {
-    const creativeCoveredByPlan = existingPlan?.coverage === "creative" || existingPlan?.coverage === "both";
-    const dayCoveredByPlan = existingPlan?.coverage === "day" || existingPlan?.coverage === "both";
-    const creativeReady = setupState.shotListComplete || setupState.shotListSkipped || creativeCoveredByPlan;
-    const dayReady = setupState.scheduleComplete || setupState.scheduleSkipped || dayCoveredByPlan;
-    if (!creativeReady || !dayReady) return;
     setSetupState((current) => ({
       ...current,
       status: "released",
@@ -874,6 +929,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       phone: matchingDirectoryPerson?.phone || draft.phone.trim(),
       role: draft.role.trim(),
       shootDayIds: draft.shootDayIds,
+      assignments: draft.assignments?.length ? draft.assignments : [{ id: `assignment-${personId}`, type: draft.type, role: draft.role.trim(), callTime: draft.callTime, shootDayIds: draft.shootDayIds }],
     };
     const existingDirectoryPerson = directoryPeople.find((candidate) => candidate.id === personId);
     if (draft.id && existingDirectoryPerson) {
@@ -930,7 +986,11 @@ export function ShootStagePage({ project }: { project: Project }) {
       ? current
       : {
           ...current,
-          people: [...current.people, { ...person, shootDayIds: activeDayId ? [activeDayId] : [] }],
+          people: [...current.people, {
+            ...person,
+            shootDayIds: "all",
+            assignments: getShootAssignments(person).map((assignment) => ({ ...assignment, shootDayIds: "all" })),
+          }],
         });
     showToast(`${person.name} added to the shoot.`, "add-person");
   };
@@ -977,10 +1037,10 @@ export function ShootStagePage({ project }: { project: Project }) {
       id: draft.id ?? `location-${Date.now()}`,
       name: draft.name.trim() || deriveLocationName(draft.address),
       address: draft.address.trim(),
-      wifi: "",
-      accessibility: "",
-      parking: "",
-      access: "",
+      wifi: draft.wifi?.trim() ?? "",
+      accessibility: draft.accessibility?.trim() ?? "",
+      parking: draft.parking.trim(),
+      access: draft.access.trim(),
       notes: draft.notes.trim(),
       shootDayIds: draft.shootDayIds,
     };
@@ -1187,376 +1247,93 @@ export function ShootStagePage({ project }: { project: Project }) {
     showToast("Shoot day deleted.");
   };
 
+  const updatePlanWithBrisk = (answers: QuickStartAnswers) => {
+    const result = createBriskShootPlan(callSheet, project, answers, isInterviewLed);
+    mutateCallSheet(() => result.callSheet);
+    setHasStartedShootPlan(true);
+    setIsShotListEnabled(true);
+    setSetupState((current) => ({
+      ...current,
+      phase: "workspace",
+      activePath: "shots",
+      shotListStarted: true,
+      aiGenerated: true,
+      status: current.status === "released" ? "released" : "working",
+      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      updatedAt: new Date().toISOString(),
+    }));
+    setActiveSection("shots");
+    const parts = [
+      result.questionCount ? `${result.questionCount} interview ${result.questionCount === 1 ? "question" : "questions"}` : "",
+      result.shotCount ? `${result.shotCount} ${result.shotCount === 1 ? "shot" : "shots"}` : "",
+    ].filter(Boolean);
+    showToast(parts.length ? `Brisk suggested ${parts.join(" and ")} from your Brief and Script.` : "Your plan is already up to date.");
+  };
+
+  const accessLevel: ShootAccessLevel = selectedRole === "Studio Staff"
+    ? "canManage"
+    : selectedRole === "Studio Freelancer"
+      ? accessSettings.freelancer
+      : accessSettings.client;
+  const canEditShoot = accessLevel !== "viewOnly";
+  const canManageShoot = accessLevel === "canManage";
+  const isStudioInternal = selectedRole !== "Customer";
+
   if (hasCallSheet && !currentDay) return null;
 
   return (
-    <main className="shoot-shell">
+    <main className={`shoot-shell ${activeSection === "quick-start" ? "is-setup-screen" : ""}`}>
       <div className="shoot-main">
         <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} />
-        {!hasLoaded ? <ShootSetupLoading /> : isSetupOpen ? <ShootSetupBuilder
+        {!hasLoaded ? <ShootSetupLoading /> : <ShootPreProductionWorkspace
+          accessLevel={accessLevel}
+          activeSection={activeSection}
           callSheet={callSheet}
-          customerName={project.clientName}
-          isApproved={setupState.status === "released"}
-          projectName={project.name}
-          selectedRole={selectedRole}
-          state={setupState}
-          studioName={studio.details.name}
-          saveStatus={saveStatus}
-          sharedCallSheetHref={sharedCallSheetHref}
-          onApprove={approveShootPlan}
-          onCallSheetChange={mutateCallSheet}
-          onClose={closeShootSetup}
-          onHandover={handoverShootSetup}
-          onOpenDetailedShotList={() => {
-            setIsSetupOpen(false);
-            openShootWorkspace("shots");
-          }}
-          onRemoveShootDay={setDeleteDayId}
-          onRemoveShot={setDeleteSetupShotId}
-          onUnapprove={unapproveShootPlan}
-          onStateChange={setSetupState}
-          onSwitchPath={startShootPlan}
-          briskContacts={directoryShootPeople}
-          isInterviewLed={isInterviewLed}
-        /> : isWorkspaceOpen ? <>
-        {setupState.phase === "workspace" ? <ShootStageNavigation
-          value={scheduleView}
-          onBack={() => scheduleView === "shots" ? startShootPlan("shots") : setIsWorkspaceOpen(false)}
-          onEditSetup={() => startShootPlan(scheduleView, scheduleView === "shots" ? 1 : undefined)}
-        /> : null}
-        <div className={`shoot-workspace ${hasStartedShootPlan && scheduleView === "shots" ? "is-shot-list-page" : ""}`}>
-          {!hasStartedShootPlan ? <ShootPlanEntryChoice onChoose={startShootPlan} /> : setupState.phase === "paused" ? <ShootSetupResume state={setupState} onContinue={() => startShootPlan(setupState.activePath)} onSwitchPath={startShootPlan} /> : <>
-          <ShootWorkspaceHeader
-            callSheetReady={hasMinimumCallSheetDetails(callSheet)}
-            isCallSheetReleased={setupState.status === "released"}
-            project={project}
-            saveStatus={saveStatus}
-            selectedDayPdfHref={selectedDayPdfHref}
-            selectedRole={selectedRole}
-            setupStatus={setupState.status}
-            sharedCallSheetHref={sharedCallSheetHref}
-            onContinueSetup={!setupState.scheduleComplete ? () => startShootPlan("schedule") : undefined}
-            onDocuments={() => setIsDocumentsOpen(true)}
-            onFinalise={finaliseCallSheet}
-            onHandover={handoverShootSetup}
-          />
-          {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
-          {hasCallSheet && currentDay && scheduleView === "schedule" ? <>
-          <section className="shoot-call-sheet-hero" aria-labelledby="call-sheet-overview-title">
-            <div className="shoot-day-controls">
-              <div className="shoot-day-tabs-wrap">
-                <div className="shoot-segmented shoot-day-tabs">
-                  <div className="shoot-day-tabs-scroll" role="tablist" aria-label="Shoot days">{callSheet.days.map((day) => {
-                    const isActive = day.id === currentDay.id;
-                    return (
-                      <div ref={isActive ? activeDayTabRef : undefined} className={`shoot-day-tab ${isActive ? "active" : ""}`} key={day.id}>
-                        <button className="shoot-day-tab-label label-s-semibold" type="button" role="tab" aria-selected={isActive} onClick={() => { setSelectedDayId(day.id); setDayMenuId(null); setDayDraft(null); setDayDraftMode(null); setDeleteDayId(null); }}>{day.label}</button>
-                        {isActive ? <button className="shoot-day-tab-menu-button" type="button" aria-label={`Manage ${day.label}`} aria-expanded={dayMenuId === day.id || (dayDraftMode === "edit" && dayDraft?.id === day.id)} onClick={() => { setDayDraft(null); setDayDraftMode(null); setDayDraftError(""); setDeleteDayId(null); setDayMenuId((current) => current === day.id ? null : day.id); }}><DsIcon name="caret-down" size={13} /></button> : null}
-                      </div>
-                    );
-                  })}</div>
-                  <div className="shoot-day-add-anchor"><button className="shoot-day-add" type="button" aria-label="Add shoot day" aria-expanded={dayDraftMode === "add"} onClick={() => dayDraftMode === "add" ? (setDayDraft(null), setDayDraftMode(null), setDayDraftError("")) : openAddShootDay()}><DsIcon name="plus" size={15} /></button></div>
-                </div>
-                {dayMenuId === currentDay.id ? <div className="shoot-day-menu" role="menu" aria-label={`${currentDay.label} options`}>
-                  <button className="label-s" type="button" role="menuitem" onClick={() => { setDayMenuId(null); setDayDraft(structuredClone(currentDay)); setDayDraftMode("edit"); setDayDraftError(""); }}><DsIcon name="pencil-simple-ds" size={16} />Edit day</button>
-                  <button className="label-s" type="button" role="menuitem" onClick={() => duplicateShootDay(currentDay.id)}><DsIcon name="copy" size={16} />Duplicate day</button>
-                  <button className="label-s danger" type="button" role="menuitem" disabled={callSheet.days.length === 1} onClick={() => { setDayMenuId(null); setDeleteDayId(currentDay.id); }}><DsIcon name="trash-simple" size={16} />Delete day</button>
-                </div> : null}
-                {dayDraft && dayDraftMode ? <DayEditorPopover draft={dayDraft} mode={dayDraftMode} error={dayDraftError} locations={callSheet.locations} onCreateLocation={addLocationToDayDraft} onCancel={() => { setDayDraft(null); setDayDraftMode(null); setDayDraftError(""); }} onChange={(next) => { setDayDraft(next); setDayDraftError(""); }} onSave={saveDayDraft} /> : null}
-              </div>
-            </div>
-            <div className="shoot-hero-grid">
-              <div className="shoot-hero-intro">
-                <p className="label-xs-semibold" id="call-sheet-overview-title">General call time</p>
-                {editingShootDetail === "callTime" ? <label className="shoot-hero-time"><span className="sr-only">General call time</span><TimeSelect autoFocus value={currentDay.generalCallTime} onBlur={() => setEditingShootDetail(null)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); if (event.key === "Escape") setEditingShootDetail(null); }} onChange={updateGeneralCallTime} /></label> : <button className="shoot-editable-call-time" type="button" aria-label={`Edit general call time, ${formatTime(currentDay.generalCallTime)}`} onClick={() => setEditingShootDetail("callTime")}><strong className="shoot-hero-time-read">{formatTime(currentDay.generalCallTime)}</strong></button>}
-                <div className="shoot-day-summary-pair">
-                  <div className="shoot-date-control"><button className="shoot-editable-detail" type="button" aria-label={`Edit shoot date, ${formatEditorDate(currentDay.date)}`} onClick={() => shootDateInputRef.current?.showPicker?.()}><span className="label-xs-semibold">Shoot date</span><strong>{formatEditorDate(currentDay.date)}</strong></button><input ref={shootDateInputRef} className="shoot-date-picker-input" type="date" tabIndex={-1} aria-hidden="true" value={currentDay.date} onChange={(event) => updateCurrentDay({ date: event.target.value })} /></div>
-                  {editingShootDetail === "wrap" ? <label className="shoot-inline-field"><span className="label-xs-semibold">Expected wrap</span><TimeSelect autoFocus value={currentDay.expectedWrapTime} onBlur={() => setEditingShootDetail(null)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); if (event.key === "Escape") setEditingShootDetail(null); }} onChange={updateExpectedWrapTime} /></label> : <button className="shoot-editable-detail" type="button" onClick={() => setEditingShootDetail("wrap")}><span className="label-xs-semibold">Expected wrap</span><strong>{formatTime(currentDay.expectedWrapTime)}</strong></button>}
-                </div>
-              </div>
-              <div className="shoot-hero-details">
-                {editingShootDetail === "location" ? <label className="shoot-inline-field"><span className="label-xs-semibold">Primary location</span><BriskSelect autoOpen clearable={false} ariaLabel="Choose primary location" placeholder="Location not set" value={currentDay.primaryLocationId} options={[...callSheet.locations.map((location) => ({ value: location.id, label: location.name })), { value: "new", label: "Add new location", icon: "plus" as const, dividerAbove: callSheet.locations.length > 0 }]} onOpenChange={(isOpen) => { if (!isOpen) setEditingShootDetail(null); }} onChange={(value) => {
-                  if (value === "new") {
-                    setEditingShootDetail(null);
-                    openNewLocation(true);
-                    return;
-                  }
-                  if (value) selectPrimaryLocation(value);
-                  setEditingShootDetail(null);
-                }} /></label> : <button className="shoot-editable-detail" type="button" onClick={() => setEditingShootDetail("location")}><span className="label-xs-semibold">Primary location</span><strong>{currentLocation?.name ?? "Location not set"}</strong>{currentLocation?.address ? <small>{currentLocation.address}</small> : null}</button>}
-                {currentLocation ? (
-                  <a className="shoot-map-link label-s-semibold" href={getMapsUrl(currentLocation.address)} target="_blank" rel="noreferrer">
-                    <DsIcon name="arrow-bend-up-right" size={16} />
-                    Open in Maps
-                  </a>
-                ) : null}
-              </div>
-              <div className="shoot-hero-support">
-                <div className="shoot-weather-panel">
-                  <span className="shoot-weather-icon" aria-hidden="true"><DsIcon name={getWeatherIcon(displayedWeather)} size={18} /></span>
-                  <div>
-                    <strong>{displayedWeather}</strong>
-                  </div>
-                </div>
-                {editingShootDetail === "contact" ? <label className="shoot-inline-field"><span className="label-xs-semibold">Key contacts</span><BriskSelect autoOpen clearable={false} ariaLabel="Choose key contact" placeholder="Choose crew" value={selectedContactId} options={[...crew.map((person) => ({ value: person.id, label: person.role ? `${person.name} · ${person.role}` : person.name })), { value: "new", label: "Add new crew member" }]} onOpenChange={(isOpen) => { if (!isOpen) setEditingShootDetail(null); }} onChange={(value) => {
-                  if (value === "new") {
-                    setEditingShootDetail(null);
-                    setAssignNewPersonAsContact(true);
-                    setPersonDraft(emptyPersonDraft(currentDay.generalCallTime, activeDayId));
-                    return;
-                  }
-                  if (value) selectOnTheDayContact(value);
-                  setEditingShootDetail(null);
-                }} /></label> : <button className="shoot-editable-detail" type="button" onClick={() => setEditingShootDetail("contact")}><span className="label-xs-semibold">Key contacts</span><strong>{callSheet.onTheDayContact || "Not set"}</strong></button>}
-              </div>
-            </div>
-          </section>
-
-          </> : null}
-
-          <Section
-            className={`shoot-schedule-section ${scheduleView === "shots" ? "is-shot-list-section" : ""}`}
-            title={scheduleView === "schedule" ? "Schedule" : "Shot list"}
-            icon={scheduleView === "schedule" ? "clock-clockwise" : "video-camera-ds"}
-            hideHeader={scheduleView === "shots"}
-            action={scheduleView === "schedule" ? <div className="shoot-section-actions">
-              <CallSheetSettings
-                startTime={timelineStartTime}
-                endTime={timelineEndTime}
-                onStartTimeChange={(timelineStartTime) => updateCurrentDay({ timelineStartTime })}
-                onEndTimeChange={(timelineEndTime) => updateCurrentDay({ timelineEndTime })}
-              />
-              {scheduleView === "schedule" && entriesForCurrentView.length > 0 ? <ScheduleFilters
-                status={scheduleStatusFilter}
-                selectedTypes={scheduleTypeFilters}
-                showType={scheduleView === "schedule"}
-                locations={scheduleView === "schedule" ? locations : callSheet.locations}
-                people={scheduleView === "schedule" ? people : callSheet.people}
-                selectedLocationIds={scheduleLocationFilters}
-                selectedPersonIds={schedulePersonFilters}
-                onStatusChange={setScheduleStatusFilter}
-                onTypeChange={setScheduleTypeFilters}
-                onLocationChange={setScheduleLocationFilters}
-                onPersonChange={setSchedulePersonFilters}
-                onClear={() => { setScheduleStatusFilter("all"); setScheduleTypeFilters([]); setScheduleLocationFilters([]); setSchedulePersonFilters([]); }}
-              /> : null}
-              {!quickEntryDraft ? <button ref={scheduleAddButtonRef} className={`shoot-button ${hasCallSheet ? "primary" : "secondary"} label-s-semibold`} type="button" onClick={openNewEntry}><DsIcon name="plus" size={16} />{scheduleView === "schedule" ? "Add to schedule" : "Add shot"}</button> : null}
-              {!hasCallSheet ? <button className="shoot-button primary label-s-semibold" type="button" onClick={initialiseCallSheet}>Build schedule</button> : null}
-            </div> : undefined}
-          >
-            {hasCallSheet && scheduleView === "schedule" ? <>
-              {outOfRangeEntryCount ? <div className="shoot-timeline-range-notice" role="status">
-                <span className="label-xs">{outOfRangeEntryCount} scheduled {outOfRangeEntryCount === 1 ? "entry sits" : "entries sit"} outside the visible timeline.</span>
-                <div>
-                  {entriesBeforeTimeline.length ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateCurrentDay({ timelineStartTime: entriesBeforeTimeline.reduce((earliest, entry) => entry.startTime < earliest ? entry.startTime : earliest, entriesBeforeTimeline[0].startTime) })}>Show earlier</button> : null}
-                  {entriesAfterTimeline.length ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateCurrentDay({ timelineEndTime: minutesToTime(Math.max(...entriesAfterTimeline.map((entry) => timeToMinutes(entry.startTime) + entry.durationMinutes))) })}>Show later</button> : null}
-                </div>
-              </div> : null}
-              {dayEntries.length > 0 && !hasVisibleScheduleEntries && !quickEntryDraft ? <ScheduleFilterEmptyState label="No schedule entries match these filters" onClear={() => { setScheduleStatusFilter("all"); setScheduleTypeFilters([]); setScheduleLocationFilters([]); setSchedulePersonFilters([]); }} /> : null}
-              {dayEntries.length === 0 || hasVisibleScheduleEntries ? <>
-              <div className="shoot-desktop-timeline">
-                <div className={`shoot-schedule-layout ${unscheduledShots.length ? isUnscheduledPanelOpen ? "has-unscheduled-sidebar" : "is-unscheduled-collapsed" : ""}`}>
-                  {unscheduledShots.length > 0 ? <UnscheduledShotsPanel
-                    entries={unscheduledShots}
-                    isOpen={isUnscheduledPanelOpen}
-                    onClose={() => setIsUnscheduledPanelOpen(false)}
-                    onOpen={() => setIsUnscheduledPanelOpen(true)}
-                    onDragEnd={() => setDraggedEntryId(null)}
-                    onDragStart={setDraggedEntryId}
-                    onEdit={(entry) => { setDeleteEntryId(null); setEntryDraft({ ...entry, timeMode: "unscheduled" }); }}
-                    onToggleCompletion={toggleEntryCompletion}
-                  /> : null}
-                  <ScheduleTimeline
-                    day={currentDay}
-                    entries={visibleTimelineEntries}
-                    highlightedEntryId={highlightedEntryId}
-                    locations={callSheet.locations}
-                    people={callSheet.people}
-                    clashes={entryClashes}
-                    onEdit={(entry) => { setDeleteEntryId(null); setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" }); }}
-                    onAddAtTime={openNewEntryAtTime}
-                    onMove={moveTimelineEntry}
-                    onResize={resizeTimelineEntry}
-                    onToggleCompletion={toggleEntryCompletion}
-                  />
-                </div>
-              </div>
-              <div className="shoot-mobile-schedule">
-                {unscheduledShots.length > 0 ? <button className="shoot-button secondary shoot-mobile-unscheduled-trigger label-s-semibold" type="button" aria-expanded={isUnscheduledPanelOpen} onClick={() => setIsUnscheduledPanelOpen(true)}><span>Unscheduled shots</span><span>{unscheduledShots.length}<DsIcon name="caret-right" size={14} /></span></button> : null}
-                {visibleTimedEntries.length > 0 ? <EntryGroup
-                  title="Run of day"
-                  description=""
-                  hideHeader
-                  entries={visibleTimedEntries}
-                  highlightedEntryId={highlightedEntryId}
-                  locations={callSheet.locations}
-                  people={callSheet.people}
-                  clashes={entryClashes}
-                  emptyTitle="No entries in this view"
-                  emptyBody="Change the view or add a shot."
-                  draggedEntryId={draggedEntryId}
-                  onDragStart={setDraggedEntryId}
-                  onDropEntry={(targetId) => {
-                    if (draggedEntryId && unscheduledShots.some((entry) => entry.id === draggedEntryId)) moveEntry(draggedEntryId, true);
-                    else if (draggedEntryId) reorderEntries(draggedEntryId, targetId);
-                    setDraggedEntryId(null);
-                  }}
-                  onDropGroup={() => {
-                    if (draggedEntryId && unscheduledShots.some((entry) => entry.id === draggedEntryId)) moveEntry(draggedEntryId, true);
-                    setDraggedEntryId(null);
-                  }}
-                  onEdit={(entry) => { setDeleteEntryId(null); setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" }); }}
-                  onToggleCompletion={toggleEntryCompletion}
-                /> : <ScheduleEmptyState onAdd={openNewEntry} />}
-              </div>
-              </> : null}
-            </> : null}
-
-            {scheduleView === "shots" ? <DetailedShotList
-              entries={visibleShotListEntries}
-              locations={callSheet.locations}
-              people={callSheet.people}
-              projectId={project.id}
-              onCreateLocation={(entryId) => { setNewLocationShotTargetId(entryId); openNewLocation(); }}
-              focusedDescriptionId={focusedShotDescriptionId}
-              onAddShot={addShotListRow}
-              onDescriptionFocused={() => setFocusedShotDescriptionId(null)}
-              onEdit={(entry) => { setDeleteEntryId(null); setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" }); }}
-              onReorder={reorderShotList}
-              onToggleCaptured={toggleEntryCompletion}
-              onUpdate={updateShot}
-            /> : null}
-          </Section>
-
-          {hasCallSheet && currentDay && scheduleView === "schedule" ? <>
-          <Section
-            className={`shoot-people-section ${!people.length ? "is-empty" : ""}`}
-            title="People"
-            icon="users-three"
-            count={people.length || undefined}
-            action={people.length ? <div className="shoot-section-actions">
-              <PeopleFilters value={personFilter} onChange={setPersonFilter} />
-              <button className="shoot-button secondary label-s-semibold" type="button" onClick={openExistingPersonPicker}><DsIcon name="plus" size={16} />Add person</button>
-            </div> : undefined}
-          >
-            {people.length ? <>
-              {filteredPeople.length ? (
-              <div className="shoot-people-list">
-                {filteredPeople.map((person) => (
-                  <article className="shoot-person-row" key={person.id}>
-                    <span className={`shoot-avatar is-${person.contactSource ?? "saved-contact"} label-xs-semibold`} aria-hidden="true">{getInitials(person.name)}</span>
-                    <div className="shoot-person-name">
-                      <strong className="label-s-semibold">{person.name}</strong>
-                      <span className="label-xs">{person.role}</span>
-                    </div>
-                    <span className={`shoot-type-badge is-${person.type} label-xs-semibold`}>{personTypeLabels[person.type]}</span>
-                    <div className="shoot-person-call">
-                      <span className="label-xs">Call time</span>
-                      <strong className="label-s-semibold">{formatTime(person.callTime)}</strong>
-                    </div>
-                    <div className="shoot-person-contact label-xs">
-                      <a href={`tel:${normalisePhone(person.phone)}`}>{person.phone || "Add phone"}</a>
-                      <a href={`mailto:${person.email}`}>{person.email || "Add email"}</a>
-                    </div>
-                    {person.phone ? <a className="shoot-mobile-call label-s-semibold" href={`tel:${normalisePhone(person.phone)}`} aria-label={`Call ${person.name}`}>Call</a> : null}
-                    <details className="shoot-person-secondary">
-                      <summary className="label-xs-semibold">Contact details</summary>
-                      {person.phone ? <a href={`tel:${normalisePhone(person.phone)}`}>{person.phone}</a> : <span>No phone</span>}
-                      {person.email ? <a href={`mailto:${person.email}`}>{person.email}</a> : <span>No email</span>}
-                    </details>
-                    <button className="shoot-icon-button" type="button" aria-label={`Edit ${person.name}`} onClick={() => setPersonDraft(personToDraft(person))}>
-                      <DsIcon name="pencil-simple-ds" size={16} />
-                    </button>
-                  </article>
-                ))}
-              </div>
-              ) : <div className="shoot-filter-empty"><strong>No people in this category</strong><button className="shoot-text-action label-s-semibold" type="button" onClick={() => setPersonFilter("all")}>Show all</button></div>}
-            </> : (
-              <EmptyState
-                illustrationSrc="/brisk-visuals/shoot-people-empty.png"
-                title="Add people to your shoot"
-                action="Add person"
-                onAction={openExistingPersonPicker}
-              />
-            )}
-          </Section>
-
-          <Section
-            className={!locations.length ? "is-empty" : ""}
-            title="Locations"
-            icon="push-pin-simple"
-            count={locations.length || undefined}
-            action={locations.length ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => openNewLocation()}><DsIcon name="plus" size={16} />Add location</button> : undefined}
-          >
-            {locations.length ? (
-              <div className="shoot-location-list">
-                {locations.map((location) => (
-                  <article className="shoot-location-row" key={location.id}>
-                    <div className="shoot-location-title">
-                      <strong>{location.name}</strong>
-                      {location.id === currentDay.primaryLocationId ? <span className="shoot-primary-badge label-xs-semibold">Primary</span> : null}
-                    </div>
-                    <p>{location.address}</p>
-                    <div className="shoot-location-meta label-xs">
-                      <span><strong>Used:</strong> {formatDayAssignment(location.shootDayIds, callSheet.days)}</span>
-                      {getLocationNotes(location) ? <span><strong>Notes:</strong> {getLocationNotes(location)}</span> : null}
-                    </div>
-                    <div className="shoot-location-actions">
-                      <a className="shoot-text-action label-s-semibold" href={getMapsUrl(location.address)} target="_blank" rel="noreferrer">Open in Maps</a>
-                      <button className="shoot-icon-button" type="button" aria-label={`Edit ${location.name}`} onClick={() => setLocationDraft(locationToDraft(location))}><DsIcon name="pencil-simple-ds" size={16} /></button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <EmptyState illustrationSrc="/brisk-visuals/shoot-locations-empty.png" title="Add the primary shoot location" action="Add location" onAction={() => openNewLocation()} />
-            )}
-          </Section>
-
-          <Section
-            className="shoot-compact-summary-section"
-            title="Special instructions"
-            icon="file-text"
-            action={!isSpecialInstructionsEditing ? <button className="shoot-text-action label-s-semibold" type="button" onClick={() => { setSpecialInstructionsDraft(specialInstructions); setIsSpecialInstructionsEditing(true); }}><DsIcon name={specialInstructions ? "pencil-simple-ds" : "plus"} size={14} />{specialInstructions ? "Edit" : "Add instructions"}</button> : undefined}
-          >
-            {isSpecialInstructionsEditing ? <div className="shoot-special-instructions-editor">
-              <label className="shoot-textarea-field">
-                <span className="sr-only">Special instructions</span>
-                <textarea autoFocus rows={4} placeholder="Add shoot-wide access, timing or filming instructions." value={specialInstructionsDraft} onChange={(event) => setSpecialInstructionsDraft(event.target.value)} />
-              </label>
-              <div className="shoot-summary-edit-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={() => { setSpecialInstructionsDraft(specialInstructions); setIsSpecialInstructionsEditing(false); }}>Cancel</button><button className="shoot-button primary label-s-semibold" type="button" onClick={() => { mutateCallSheet((current) => ({ ...current, notes: specialInstructionsDraft.trim(), practicalInfo: { ...current.practicalInfo, access: "" } })); setIsSpecialInstructionsEditing(false); }}>Save</button></div>
-            </div> : <p className={`shoot-special-instructions-summary ${specialInstructions ? "" : "is-empty"}`}>{specialInstructions || "No special instructions"}</p>}
-          </Section>
-
-          <Section className="shoot-safety-section shoot-compact-summary-section" title="Safety and emergency" icon="alert-triangle">
-            <SafetyEmergencySection
-              key={currentDay.id}
-              info={currentDay.safetyEmergency}
-              primaryLocation={currentLocation}
-              onAddPrimaryLocation={() => openNewLocation(true)}
-              onChange={(safetyEmergency) => updateCurrentDay({ safetyEmergency })}
-            />
-          </Section>
-
-          </> : null}
-          </>}
-
-        </div>
-        </> : <ShootDashboard
-          callSheet={callSheet}
+          briefCapture={getBriefShootCapture(projectBrief?.fields.liveFootage.value ?? "", isInterviewLed)}
+          contactOptions={peopleDatabase}
           existingPlan={existingPlan}
+          isInterviewLed={isInterviewLed}
+          isStudioInternal={isStudioInternal}
+          persistSetupAnswers={!isEmptyPlanFixture}
           project={project}
+          saveStatus={saveStatus}
+          selectedDayId={selectedDayId}
           selectedRole={selectedRole}
           setupState={setupState}
-          sharedCallSheetHref={sharedCallSheetHref}
-          selectedDayPdfHref={selectedDayPdfHref}
           studioName={studio.details.name}
           onApprove={approveShootPlan}
-          onAttachPlan={() => setIsExistingPlanOpen(true)}
-          onHandover={handoverShootSetup}
-          onOpenModule={(view) => view === "shots" ? startShootPlan("shots") : setupState.scheduleComplete ? openShootWorkspace("schedule") : startShootPlan("schedule")}
-          onRestore={startShootPlan}
-          onSkip={setSkipSetupPath}
+          onBuildWithBrisk={updatePlanWithBrisk}
+          onCallSheetChange={mutateCallSheet}
+          onDeleteDay={setDeleteDayId}
+          onDeleteShot={setDeleteSetupShotId}
+          onEditEntry={(entry) => {
+            setDeleteEntryId(null);
+            setEntryDraft({ ...entry, timeMode: entry.startTime ? "set" : "unscheduled" });
+          }}
+          onEditLocation={(location) => setLocationDraft(locationToDraft(location))}
+          onEditPerson={(person) => setPersonDraft(personToDraft(person))}
+          onManageAccess={() => setIsAccessOpen(true)}
+          onNewLocation={() => openNewLocation()}
+          onNewPerson={openExistingPersonPicker}
+          onCreatePerson={() => setPersonDraft(emptyPersonDraft(currentDay?.generalCallTime ?? "", activeDayId))}
+          onNewScheduleItem={(dayId) => {
+            const day = callSheet.days.find((item) => item.id === dayId) ?? currentDay;
+            setSelectedDayId(dayId);
+            setScheduleView("schedule");
+            setEntryDraft(null);
+            setQuickEntryDraft({
+              ...createNewEntryDraft("unscheduled"),
+              locationId: day?.primaryLocationId,
+            });
+          }}
+          onNotify={showToast}
+          onOpenDocuments={() => setIsDocumentsOpen(true)}
+          onOpenExistingPlan={() => setIsExistingPlanOpen(true)}
+          onReorderQuestions={reorderQuestion}
+          onReorderShots={reorderShotList}
+          onRequestReview={handoverShootSetup}
+          onSectionChange={setActiveSection}
+          onSelectDay={setSelectedDayId}
           onUnapprove={unapproveShootPlan}
         />}
       </div>
@@ -1655,9 +1432,1093 @@ export function ShootStagePage({ project }: { project: Project }) {
       /> : null}
       {skipSetupPath ? <SkipShootModuleModal path={skipSetupPath} onCancel={() => setSkipSetupPath(null)} onConfirm={confirmSkipSetup} /> : null}
       {isExistingPlanOpen ? <ExistingShootPlanModal existingPlan={existingPlan} onClose={() => setIsExistingPlanOpen(false)} onSave={attachExistingPlan} /> : null}
+      {isAccessOpen ? <ShootAccessModal settings={accessSettings} onChange={setAccessSettings} onClose={() => setIsAccessOpen(false)} /> : null}
       {toast ? <div className="shoot-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={18} />{toast}{toastAction === "add-person" ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => { setToast(""); setToastAction(null); setIsExistingPersonOpen(true); }}>Add another</button> : null}</div> : null}
     </main>
   );
+}
+
+type ShootPreProductionWorkspaceProps = {
+  accessLevel: ShootAccessLevel;
+  activeSection: ShootWorkspaceSection;
+  briefCapture: QuickStartCapture | null;
+  callSheet: CallSheet;
+  contactOptions: ShootPerson[];
+  existingPlan: ExistingShootPlan | null;
+  isInterviewLed: boolean;
+  isStudioInternal: boolean;
+  persistSetupAnswers: boolean;
+  project: Project;
+  saveStatus: SaveStatus;
+  selectedDayId: string;
+  selectedRole: PrototypeRole;
+  setupState: ShootSetupState;
+  studioName: string;
+  onApprove: () => void;
+  onBuildWithBrisk: (answers: QuickStartAnswers) => void;
+  onCallSheetChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onDeleteDay: (dayId: string) => void;
+  onDeleteShot: (shotId: string) => void;
+  onEditEntry: (entry: ProductionEntry) => void;
+  onEditLocation: (location: ShootLocation) => void;
+  onEditPerson: (person: ShootPerson) => void;
+  onManageAccess: () => void;
+  onNewLocation: () => void;
+  onNewPerson: (event?: ReactMouseEvent<HTMLButtonElement>) => void;
+  onCreatePerson: () => void;
+  onNewScheduleItem: (dayId: string) => void;
+  onNotify: (message: string) => void;
+  onOpenDocuments: () => void;
+  onOpenExistingPlan: () => void;
+  onReorderQuestions: (sourceId: string, targetId: string) => void;
+  onReorderShots: (sourceId: string, targetId: string) => void;
+  onRequestReview: (owner: ShootSetupOwner) => void;
+  onSectionChange: (section: ShootWorkspaceSection) => void;
+  onSelectDay: (dayId: string) => void;
+  onUnapprove: () => void;
+};
+
+function ShootPreProductionWorkspace({
+  accessLevel,
+  activeSection,
+  briefCapture,
+  callSheet,
+  contactOptions,
+  existingPlan,
+  isInterviewLed,
+  isStudioInternal,
+  persistSetupAnswers,
+  project,
+  saveStatus,
+  selectedDayId,
+  selectedRole,
+  setupState,
+  studioName,
+  onApprove,
+  onBuildWithBrisk,
+  onCallSheetChange,
+  onDeleteDay,
+  onDeleteShot,
+  onEditEntry,
+  onEditLocation,
+  onEditPerson,
+  onManageAccess,
+  onNewLocation,
+  onNewPerson,
+  onCreatePerson,
+  onNewScheduleItem,
+  onNotify,
+  onOpenDocuments,
+  onOpenExistingPlan,
+  onReorderQuestions,
+  onReorderShots,
+  onRequestReview,
+  onSectionChange,
+  onSelectDay,
+  onUnapprove,
+}: ShootPreProductionWorkspaceProps) {
+  const canEdit = accessLevel !== "viewOnly";
+  const canManage = accessLevel === "canManage";
+  const [quickStartCapture, setQuickStartCapture] = useState<QuickStartCapture | null>(briefCapture);
+  const shots = callSheet.entries.filter((entry) => entry.type === "shot").sort((left, right) => (left.shotListOrder ?? 0) - (right.shotListOrder ?? 0));
+  const scheduledCount = callSheet.entries.filter((entry) => Boolean(entry.dayId && entry.startTime)).length;
+  const confirmedDays = callSheet.days.filter((day) => Boolean(day.date)).length;
+  const noteCount = callSheet.days.reduce((count, day) => count + Object.values(day.notes ?? emptyShootDayNotes()).filter((value) => value.trim()).length, 0);
+  const references = callSheet.visualReferences ?? [];
+  const currentDay = callSheet.days.find((day) => day.id === selectedDayId) ?? callSheet.days[0];
+  const hasPlanningContent = shots.length > 0 || callSheet.questions.length > 0 || callSheet.locations.length > 0 || callSheet.people.length > 0;
+  const [readinessAction, setReadinessAction] = useState<ShootReadinessAction | null>(null);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const missingReadiness = getMissingCallSheetDetails(callSheet);
+  const showInterviewQuestions = quickStartCapture && quickStartCapture !== "not-confirmed"
+    ? quickStartCapture === "interviews" || quickStartCapture === "documentary" || quickStartCapture === "mixture"
+    : isInterviewLed || callSheet.questions.length > 0;
+
+  useEffect(() => {
+    setQuickStartCapture(briefCapture);
+  }, [briefCapture, project.id]);
+
+  useEffect(() => {
+    if (!showInterviewQuestions && activeSection === "questions") onSectionChange("shots");
+  }, [activeSection, onSectionChange, showInterviewQuestions]);
+
+  const navigationGroups: Array<{ label: string; items: Array<{ id: ShootWorkspaceSection; label: string; icon: DsIconName; meta?: string }> }> = [
+    { label: "Start", items: [{ id: "quick-start", label: "Setup", icon: "sparkle", meta: "Optional" }] },
+    {
+      label: "What to capture",
+      items: [
+        { id: "shots", label: "Shot List", icon: "video-camera-ds", meta: `${shots.length} ${shots.length === 1 ? "shot" : "shots"}` },
+        ...(showInterviewQuestions ? [{ id: "questions" as const, label: "Interview Questions", icon: "quotes" as const, meta: `${callSheet.questions.length} ${callSheet.questions.length === 1 ? "question" : "questions"}` }] : []),
+        { id: "references", label: "Visual References", icon: "image-square", meta: `${references.length} ${references.length === 1 ? "reference" : "references"}` },
+      ],
+    },
+    {
+      label: "Plan the day",
+      items: [
+        { id: "dates", label: "Dates", icon: "calendar", meta: confirmedDays ? `${callSheet.days.length} shoot ${callSheet.days.length === 1 ? "day" : "days"}` : "Not confirmed" },
+        { id: "locations", label: "Locations", icon: "push-pin-simple", meta: callSheet.locations.length ? `${callSheet.locations.length} ${callSheet.locations.length === 1 ? "location" : "locations"}` : "Not confirmed" },
+        { id: "people", label: "People", icon: "users-three", meta: `${callSheet.people.length} ${callSheet.people.length === 1 ? "person" : "people"}` },
+        { id: "schedule", label: "Schedule", icon: "clock-clockwise", meta: `${scheduledCount} ${scheduledCount === 1 ? "item" : "items"}` },
+        { id: "notes", label: "Notes", icon: "file-text", meta: noteCount ? `${noteCount} ${noteCount === 1 ? "note" : "notes"}` : "No notes" },
+        { id: "documents", label: "Documents", icon: "folder", meta: `${callSheet.documents.length} ${callSheet.documents.length === 1 ? "document" : "documents"}` },
+      ],
+    },
+    { label: "On set", items: [{ id: "call-sheet", label: "Call Sheet", icon: "clipboard-text", meta: "Available" }] },
+  ];
+  const allNavigationItems = navigationGroups.flatMap((group) => group.items);
+  const guidedDaySections: ShootWorkspaceSection[] = ["dates", "locations", "people", "schedule", "notes"];
+  const guidedDayIndex = guidedDaySections.indexOf(activeSection);
+
+  const runReadinessAction = (action: ShootReadinessAction, next: () => void) => {
+    if (!missingReadiness.length) {
+      next();
+      return;
+    }
+    setReadinessAction(action);
+    setPendingAction(() => next);
+  };
+
+  const updateCallSheet = (updater: (current: CallSheet) => CallSheet) => {
+    if (canEdit) onCallSheetChange(updater);
+  };
+
+  let sectionContent: ReactNode;
+  if (activeSection === "quick-start") {
+    sectionContent = <ShootQuickStart
+      briefCapture={briefCapture}
+      callSheet={callSheet}
+      canEdit={canEdit}
+      contactOptions={contactOptions}
+      onBuild={onBuildWithBrisk}
+      onCallSheetChange={updateCallSheet}
+      onCaptureChange={setQuickStartCapture}
+      persistAnswers={persistSetupAnswers}
+      projectId={project.id}
+    />;
+  } else if (activeSection === "shots") {
+    sectionContent = <PreProductionShotList
+      callSheet={callSheet}
+      canEdit={canEdit}
+      entries={shots}
+      onChange={updateCallSheet}
+      onDelete={onDeleteShot}
+      onReorder={onReorderShots}
+    />;
+  } else if (activeSection === "questions") {
+    sectionContent = <PreProductionInterviewQuestions
+      availablePeople={contactOptions}
+      callSheet={callSheet}
+      canEdit={canEdit}
+      onChange={updateCallSheet}
+      onReorder={onReorderQuestions}
+    />;
+  } else if (activeSection === "references") {
+    sectionContent = <PreProductionVisualReferences callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} />;
+  } else if (activeSection === "dates") {
+    sectionContent = <PreProductionDates callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} onDeleteDay={onDeleteDay} />;
+  } else if (activeSection === "locations") {
+    sectionContent = <PreProductionLocations callSheet={callSheet} canEdit={canEdit} onEdit={onEditLocation} onNew={onNewLocation} />;
+  } else if (activeSection === "people") {
+    sectionContent = <PreProductionPeople callSheet={callSheet} canEdit={canEdit} isStudioInternal={isStudioInternal} onChange={updateCallSheet} onEdit={onEditPerson} onNew={onNewPerson} onCreate={onCreatePerson} />;
+  } else if (activeSection === "schedule") {
+    sectionContent = <PreProductionSchedule
+      callSheet={callSheet}
+      canEdit={canEdit}
+      selectedDayId={currentDay?.id ?? ""}
+      onChange={updateCallSheet}
+      onEditEntry={onEditEntry}
+      onNewEntry={onNewScheduleItem}
+      onSelectDay={onSelectDay}
+    />;
+  } else if (activeSection === "notes") {
+    sectionContent = <PreProductionNotes callSheet={callSheet} canEdit={canEdit} isStudioInternal={isStudioInternal} selectedDayId={currentDay?.id ?? ""} onChange={updateCallSheet} onSelectDay={onSelectDay} />;
+  } else if (activeSection === "documents") {
+    sectionContent = <PreProductionDocuments callSheet={callSheet} canEdit={canEdit} onChange={updateCallSheet} onOpenDocuments={onOpenDocuments} />;
+  } else {
+    sectionContent = <section className="shoot-preproduction-call-sheet">
+      <header className="shoot-preproduction-call-sheet-actions">
+        <div>
+          <h2>Call Sheet</h2>
+          <p className="paragraph-s">The current Call Sheet updates as Pre-production changes.</p>
+        </div>
+        <div className="shoot-call-sheet-action-group">
+          <a className="shoot-button secondary label-s-semibold" href={`/share/call-sheet/${project.id}?day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="arrow-bend-up-right" size={16} />Open Call Sheet</a>
+          <a className="shoot-button secondary label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
+          {!canManage ? <Link className="shoot-button secondary label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chat-circle" size={16} />Comment</Link> : null}
+          {!canManage && ((selectedRole === "Customer" && setupState.status === "waiting_on_client") || (selectedRole === "Studio Freelancer" && setupState.status === "waiting_on_studio")) ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => runReadinessAction("approve", onApprove)}><DsIcon name="thumbs-up-like-fill" size={16} />Approve Shoot</button> : null}
+          {setupState.status === "released" && canManage ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => runReadinessAction("start", () => { window.location.href = `/share/call-sheet/${project.id}?day=${encodeURIComponent(currentDay?.id ?? "")}&live=1`; })}><DsIcon name="video-camera-ds" size={16} />Start shoot</button> : null}
+          {canManage ? <ShareActionRow
+            context="shoot"
+            userRole={selectedRole}
+            density="compact"
+            projectName={project.name}
+            studioName={studioName}
+            customerName={project.clientName}
+            isApproved={setupState.status === "released"}
+            approveLabel="Approve Shoot"
+            allowRoleApproval={canManage}
+            canConfigureLink={selectedRole === "Studio Staff"}
+            onApprove={onApprove}
+            onRequestReview={(recipient) => onRequestReview(recipient === "customer" ? "client" : "studio")}
+            onSendToStudio={() => onRequestReview("studio")}
+            onUnapprove={onUnapprove}
+            beforeAction={(action, proceed) => runReadinessAction(action === "copy" ? "share" : action, proceed)}
+          /> : null}
+        </div>
+      </header>
+      {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
+      {existingPlan ? <ExistingPlanCallSheetAttachment plan={existingPlan} onReplace={onOpenExistingPlan} onNotify={onNotify} /> : null}
+      <div className="shoot-live-call-sheet-frame">
+        <SharedCallSheetPage
+          project={project}
+          previewMode={false}
+          printMode={false}
+          embedded
+          embeddedCallSheet={callSheet}
+          canEdit={canEdit}
+          isStudioInternal={isStudioInternal}
+          onEmbeddedChange={updateCallSheet}
+        />
+      </div>
+    </section>;
+  }
+
+  return <div className="shoot-preproduction-shell">
+    <header className="shoot-preproduction-heading">
+      <div>
+        <p className="label-xs-semibold">Shoot</p>
+        <h1>Pre-production</h1>
+        <span className="paragraph-s">Plan what to capture, organise the day and keep one live Call Sheet.</span>
+        <SaveIndicator status={saveStatus} />
+      </div>
+      <div className="shoot-preproduction-heading-actions">
+        {canEdit && activeSection !== "quick-start" && hasPlanningContent ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => onSectionChange("quick-start")}><DsIcon name="sparkle" size={16} />Update with Brisk</button> : null}
+        {canEdit && activeSection !== "quick-start" ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onOpenExistingPlan}><DsIcon name="upload-simple" size={16} />Use an existing shoot plan</button> : null}
+        {selectedRole === "Studio Staff" ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onManageAccess}><DsIcon name="user-switch" size={16} />Manage access</button> : <span className="shoot-access-label label-xs-semibold">{formatShootAccessLevel(accessLevel)}</span>}
+      </div>
+    </header>
+
+    <div className="shoot-preproduction-mobile-select">
+      <BriskSelect
+        ariaLabel="Choose Shoot section"
+        clearable={false}
+        searchable={false}
+        value={activeSection}
+        options={allNavigationItems.map((item) => ({ value: item.id, label: `${item.label} - ${item.meta ?? ""}`, icon: item.icon }))}
+        placeholder="Choose section"
+        onChange={(value) => { if (value) onSectionChange(value); }}
+      />
+    </div>
+
+    <div className="shoot-preproduction-layout">
+      <aside className="shoot-preproduction-navigation" aria-label="Shoot sections">
+        {navigationGroups.map((group) => <section key={group.label}>
+          <h2 className="label-xs-semibold">{group.label}</h2>
+          <div>{group.items.map((item) => <button className={activeSection === item.id ? "active" : ""} type="button" aria-current={activeSection === item.id ? "page" : undefined} key={item.id} onClick={() => onSectionChange(item.id)}>
+            <DsIcon name={item.icon} size={17} />
+            <span><strong className="label-s-semibold">{item.label}</strong><small className="label-xs">{item.meta}</small></span>
+          </button>)}</div>
+        </section>)}
+      </aside>
+      <div className="shoot-preproduction-content">
+        {existingPlan && activeSection !== "call-sheet" && activeSection !== "quick-start" ? <aside className="shoot-existing-plan-summary">
+          <span><DsIcon name={existingPlan.source === "link" ? "link" : "file-text"} size={20} /></span>
+          <div><strong>Existing plan attached</strong><small className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)} · Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div>
+          {existingPlan.url ? <a className="shoot-button secondary label-xs-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}
+          {canEdit ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={onOpenExistingPlan}>Replace</button> : null}
+          {canManage ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => onNotify("Review requested for the attached plan.")}>Request review</button> : null}
+        </aside> : null}
+        {sectionContent}
+        {guidedDayIndex >= 0 ? <nav className="shoot-guided-section-actions" aria-label="Plan the Day navigation">
+          <button className="shoot-button secondary label-s-semibold" type="button" disabled={guidedDayIndex === 0} onClick={() => onSectionChange(guidedDaySections[guidedDayIndex - 1])}><DsIcon name="arrow-left" size={16} />Back</button>
+          <button className="shoot-text-action label-s-semibold" type="button" onClick={() => onSectionChange(guidedDayIndex < guidedDaySections.length - 1 ? guidedDaySections[guidedDayIndex + 1] : "call-sheet")}>Skip for now</button>
+          {guidedDayIndex < guidedDaySections.length - 1 ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onSectionChange(guidedDaySections[guidedDayIndex + 1])}>Continue<DsIcon name="arrow-right" size={16} /></button> : <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onSectionChange("call-sheet")}>Open Call Sheet<DsIcon name="arrow-right" size={16} /></button>}
+        </nav> : null}
+      </div>
+    </div>
+
+    {readinessAction ? <ShootReadinessModal
+      action={readinessAction}
+      missing={missingReadiness}
+      onAddDetails={() => {
+        setReadinessAction(null);
+        setPendingAction(null);
+        const destination: ShootWorkspaceSection = missingReadiness.includes("Shoot date") || missingReadiness.includes("General call time")
+          ? "dates"
+          : missingReadiness.includes("Primary location")
+            ? "locations"
+            : "people";
+        onSectionChange(destination);
+      }}
+      onCancel={() => { setReadinessAction(null); setPendingAction(null); }}
+      onContinue={() => {
+        const action = pendingAction;
+        setReadinessAction(null);
+        setPendingAction(null);
+        action?.();
+      }}
+    /> : null}
+  </div>;
+}
+
+function ShootQuickStart({ briefCapture, callSheet, canEdit, contactOptions, onBuild, onCallSheetChange, onCaptureChange, persistAnswers, projectId }: {
+  briefCapture: QuickStartCapture | null;
+  callSheet: CallSheet;
+  canEdit: boolean;
+  contactOptions: ShootPerson[];
+  onBuild: (answers: QuickStartAnswers) => void;
+  onCallSheetChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onCaptureChange: (capture: QuickStartCapture) => void;
+  persistAnswers: boolean;
+  projectId: string;
+}) {
+  const { createPerson } = usePeople();
+  const [includeCaptureStep, setIncludeCaptureStep] = useState(briefCapture === null);
+  const [activeStepId, setActiveStepId] = useState<QuickStartStepId>(briefCapture === null ? "capture" : "people");
+  const [answers, setAnswers] = useState<QuickStartAnswers>(() => createInitialQuickStartAnswers(briefCapture));
+  const [mustHaveShotDraft, setMustHaveShotDraft] = useState("");
+  const [hasLoadedAnswers, setHasLoadedAnswers] = useState(false);
+  const questionSteps: Array<{ id: QuickStartStepId; label: string }> = [
+    ...(includeCaptureStep ? [{ id: "capture" as const, label: "What to capture" }] : []),
+    { id: "people", label: "People" },
+    { id: "location", label: "Location" },
+    { id: "date", label: "Date" },
+    { id: "must-haves", label: "Must-have shots" },
+  ];
+  const activeStepIndex = Math.max(0, questionSteps.findIndex((step) => step.id === activeStepId));
+  const existingTalent = callSheet.people.filter((person) => getShootAssignments(person).some((assignment) => assignment.type === "talent"));
+  const existingDates = callSheet.days.filter((day) => Boolean(day.date));
+  const mustHaveShots = parseQuickStartList(answers.mustHaveShots);
+
+  useEffect(() => {
+    if (!persistAnswers) {
+      setHasLoadedAnswers(true);
+      return;
+    }
+    const storedAnswers = parseQuickStartAnswers(window.localStorage.getItem(quickStartAnswersStorageKey(projectId)));
+    if (storedAnswers) {
+      setAnswers(storedAnswers);
+      setIncludeCaptureStep(briefCapture === null || storedAnswers.capture !== briefCapture);
+    }
+    setHasLoadedAnswers(true);
+  }, [briefCapture, persistAnswers, projectId]);
+
+  useEffect(() => {
+    if (!hasLoadedAnswers || !persistAnswers) return;
+    window.localStorage.setItem(quickStartAnswersStorageKey(projectId), JSON.stringify(answers));
+  }, [answers, hasLoadedAnswers, persistAnswers, projectId]);
+
+  useEffect(() => {
+    onCaptureChange(answers.capture);
+  }, [answers.capture, onCaptureChange]);
+
+  const updateAnswers = (next: Partial<QuickStartAnswers>) => setAnswers((current) => ({ ...current, ...next }));
+  const rememberQuickStartPerson = (name: string) => setAnswers((current) => {
+    const people = parseQuickStartPeople(current.people);
+    if (people.some((person) => normaliseIdentity(person.name) === normaliseIdentity(name))) {
+      return { ...current, peopleNotConfirmed: false };
+    }
+    return { ...current, people: [...people.map((person) => person.name), name].join("; "), peopleNotConfirmed: false };
+  });
+  const addQuickStartPerson = (person: ShootPerson) => {
+    onCallSheetChange((current) => {
+      const existing = current.people.find((candidate) => isSameShootPerson(candidate, person));
+      const existingAssignments = existing ? getShootAssignments(existing) : getShootAssignments(person);
+      const hasTalentAssignment = existingAssignments.some((assignment) => assignment.type === "talent");
+      const talentAssignment: ShootAssignment = {
+        id: `assignment-quick-start-${Date.now()}`,
+        type: "talent",
+        role: "",
+        callTime: current.days[0]?.generalCallTime ?? "",
+        shootDayIds: "all",
+      };
+
+      if (existing) {
+        if (hasTalentAssignment) return current;
+        return {
+          ...current,
+          people: current.people.map((candidate) => candidate.id === existing.id
+            ? { ...candidate, assignments: [...existingAssignments, talentAssignment] }
+            : candidate),
+        };
+      }
+
+      return {
+        ...current,
+        people: [...current.people, {
+          ...person,
+          shootDayIds: "all",
+          assignments: hasTalentAssignment ? existingAssignments : [...existingAssignments, talentAssignment],
+        }],
+      };
+    });
+    rememberQuickStartPerson(person.name);
+  };
+  const addNamedQuickStartPerson = (value: string) => {
+    const name = value.trim();
+    if (!name || !canEdit) return;
+    const directoryPerson = createPerson({
+      type: "Contact",
+      name,
+      email: "",
+      jobTitle: "",
+      inviteNow: false,
+    });
+    addQuickStartPerson(personToShootPerson(directoryPerson, callSheet.days[0]?.generalCallTime ?? ""));
+  };
+  const removeQuickStartPerson = (person: ShootPerson) => {
+    onCallSheetChange((current) => {
+      const matchingPerson = current.people.find((candidate) => isSameShootPerson(candidate, person));
+      if (!matchingPerson) return current;
+      const remainingAssignments = getShootAssignments(matchingPerson).filter((assignment) => assignment.type !== "talent");
+      return {
+        ...current,
+        people: remainingAssignments.length
+          ? current.people.map((candidate) => candidate.id === matchingPerson.id
+            ? { ...candidate, type: remainingAssignments[0].type, role: remainingAssignments[0].role, assignments: remainingAssignments }
+            : candidate)
+          : current.people.filter((candidate) => candidate.id !== matchingPerson.id),
+      };
+    });
+    setAnswers((current) => ({
+      ...current,
+      people: parseQuickStartPeople(current.people)
+        .filter((candidate) => normaliseIdentity(candidate.name) !== normaliseIdentity(person.name))
+        .map((candidate) => candidate.name)
+        .join("; "),
+    }));
+  };
+  const removeQuickStartLocation = (location: ShootLocation) => {
+    onCallSheetChange((current) => ({
+      ...current,
+      days: current.days.map((day) => day.primaryLocationId === location.id ? { ...day, primaryLocationId: "" } : day),
+      entries: current.entries.map((entry) => entry.locationId === location.id ? { ...entry, locationId: undefined } : entry),
+      locations: current.locations.filter((candidate) => candidate.id !== location.id),
+    }));
+  };
+  const addQuickStartLocation = (draft: LocationDraft) => {
+    const locationInput = draft.address.trim();
+    if (!canEdit || !locationInput) return;
+    const locationInputIsLink = /^https?:\/\//iu.test(locationInput);
+    const location: ShootLocation = {
+      id: `location-quick-start-${Date.now()}`,
+      name: draft.name.trim() || deriveLocationName(locationInput),
+      address: locationInputIsLink ? "" : locationInput,
+      mapLink: locationInputIsLink ? locationInput : undefined,
+      shootDayIds: "all",
+      parking: "",
+      access: "",
+      notes: "",
+    };
+
+    onCallSheetChange((current) => {
+      const alreadyAdded = current.locations.some((candidate) => {
+        const candidateLocation = candidate.mapLink || candidate.address;
+        return normaliseIdentity(candidateLocation) === normaliseIdentity(locationInput);
+      });
+      return alreadyAdded ? current : { ...current, locations: [...current.locations, location] };
+    });
+    updateAnswers({ locationName: "", locationAddress: "", locationNotConfirmed: false });
+  };
+  const addQuickStartShootDate = (date: string) => {
+    if (!canEdit || !date) return;
+    onCallSheetChange((current) => {
+      if (current.days.some((day) => day.date === date)) return current;
+      const blankDayIndex = current.days.findIndex((day) => !day.date);
+      if (blankDayIndex >= 0) {
+        return {
+          ...current,
+          days: current.days.map((day, index) => index === blankDayIndex ? { ...day, date } : day),
+        };
+      }
+      const newDay = createEmptyShootDay(`day-quick-start-${Date.now()}`);
+      return {
+        ...current,
+        days: [...current.days, { ...newDay, label: `Day ${current.days.length + 1}`, date }],
+      };
+    });
+    updateAnswers({ shootDate: "", dateNotConfirmed: false });
+  };
+  const addQuickStartMustHaveShot = () => {
+    const shot = mustHaveShotDraft.trim();
+    if (!canEdit || !shot) return;
+    const alreadyAdded = mustHaveShots.some((item) => normaliseIdentity(item) === normaliseIdentity(shot));
+    updateAnswers({
+      mustHaveShots: alreadyAdded ? answers.mustHaveShots : [...mustHaveShots, shot].join("\n"),
+      letBriskSuggestShots: false,
+    });
+    setMustHaveShotDraft("");
+  };
+  const removeQuickStartMustHaveShot = (shot: string) => {
+    updateAnswers({
+      mustHaveShots: mustHaveShots.filter((item) => item !== shot).join("\n"),
+      letBriskSuggestShots: false,
+    });
+  };
+  const goToRelativeStep = (offset: number) => {
+    const nextStep = questionSteps[activeStepIndex + offset];
+    if (nextStep) setActiveStepId(nextStep.id);
+  };
+
+  let questionContent: ReactNode;
+  if (activeStepId === "capture") {
+    questionContent = <QuickStartQuestion
+      title="What are you planning to capture?"
+    >
+      <div className="shoot-preproduction-field">
+        <BriskSelect
+          ariaLabel="What are you planning to capture?"
+          clearable={false}
+          searchable={false}
+          value={answers.capture}
+          options={[
+            { value: "interviews", label: "Interviews" },
+            { value: "scripted", label: "Scripted scenes" },
+            { value: "b-roll", label: "B-roll or general coverage" },
+            { value: "documentary", label: "Event or documentary coverage" },
+            { value: "mixture", label: "A mixture" },
+            { value: "not-confirmed", label: "Not sure yet - decide later" },
+          ]}
+          placeholder="Choose what to capture"
+          onChange={(value) => { if (value) updateAnswers({ capture: value }); }}
+        />
+      </div>
+    </QuickStartQuestion>;
+  } else if (activeStepId === "people") {
+    questionContent = <QuickStartQuestion
+      title="Who will be on camera?"
+    >
+      <PeoplePicker
+        disabled={!canEdit}
+        display="rows"
+        label="People"
+        people={contactOptions}
+        placeholder="Search or add a person"
+        selectedIds={existingTalent.map((person) => person.id)}
+        showLabel={false}
+        onChange={(selectedIds) => existingTalent.filter((person) => !selectedIds.includes(person.id)).forEach(removeQuickStartPerson)}
+        onCreatePerson={addNamedQuickStartPerson}
+        onSelectPerson={addQuickStartPerson}
+      />
+      {!existingTalent.length ? <Button size="S" variant={answers.peopleNotConfirmed ? "tertiary" : "secondary"} disabled={!canEdit} onClick={() => updateAnswers({ peopleNotConfirmed: !answers.peopleNotConfirmed })}>
+        No one confirmed yet
+      </Button> : null}
+    </QuickStartQuestion>;
+  } else if (activeStepId === "location") {
+    questionContent = <QuickStartQuestion
+      title="Where might you be filming?"
+    >
+      <label className="shoot-preproduction-field">
+        <span className="sr-only">Google Maps link or address</span>
+        <AddressAutocomplete
+          autoFocus={false}
+          disabled={!canEdit}
+          draft={{
+            name: answers.locationName,
+            address: answers.locationAddress,
+            shootDayIds: "all",
+            parking: "",
+            access: "",
+            notes: "",
+          }}
+          placeholder="Search Google Maps or paste a link"
+          onChange={(draft) => updateAnswers({ locationName: draft.name, locationAddress: draft.address, locationNotConfirmed: false })}
+          onSubmit={addQuickStartLocation}
+        />
+        {answers.locationAddress.trim() ? <a className="shoot-location-link label-xs-semibold" href={getMapsUrl(answers.locationAddress)} target="_blank" rel="noreferrer">{getMapsLinkLabel(answers.locationAddress)}</a> : null}
+      </label>
+      {callSheet.locations.length ? <ul className="shoot-quick-start-location-list" aria-label="Locations added to this shoot">
+        {callSheet.locations.map((location) => {
+          const mapValue = location.mapLink || location.address;
+          return <li key={location.id}>
+            <span className="shoot-quick-start-location-icon" aria-hidden="true"><DsIcon name="push-pin-simple" size={16} /></span>
+            <span><strong>{location.name}</strong>{mapValue ? <a className="shoot-location-link label-xs" href={getMapsUrl(mapValue)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || mapValue)}</a> : null}</span>
+            {canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${location.name} from this shoot`} onClick={() => removeQuickStartLocation(location)}><DsIcon name="x-close-cross" size={14} /></button> : null}
+          </li>;
+        })}
+      </ul> : null}
+    </QuickStartQuestion>;
+  } else if (activeStepId === "date") {
+    questionContent = <QuickStartQuestion
+      title="When might you be filming?"
+    >
+      <div className="shoot-preproduction-field shoot-quick-start-date-field">
+        <BriskDatePicker
+          ariaLabel="Shoot date"
+          disabled={!canEdit}
+          placeholder="Add a shoot date"
+          value={answers.shootDate}
+          variant="field"
+          onChange={addQuickStartShootDate}
+        />
+      </div>
+      {existingDates.length ? <ul className="shoot-quick-start-day-list" aria-label="Shoot days added to this shoot">
+        {existingDates.map((day) => <li key={day.id}>
+          <span className="shoot-quick-start-day-icon" aria-hidden="true"><DsIcon name="calendar" size={16} /></span>
+          <span><strong>{day.label}</strong><small className="label-xs">{formatEditorDate(day.date)}</small></span>
+        </li>)}
+      </ul> : null}
+    </QuickStartQuestion>;
+  } else if (activeStepId === "must-haves") {
+    questionContent = <QuickStartQuestion
+      title="Are there any must-have shots?"
+    >
+      <div className="shoot-quick-start-entry-row">
+        <label className="shoot-preproduction-field">
+          <input
+            disabled={!canEdit}
+            aria-label="Must-have shot"
+            placeholder="For example, a product close-up"
+            value={mustHaveShotDraft}
+            onChange={(event) => { setMustHaveShotDraft(event.target.value); updateAnswers({ letBriskSuggestShots: false }); }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                addQuickStartMustHaveShot();
+              }
+            }}
+          />
+        </label>
+        <Button size="S" variant="secondary" disabled={!canEdit || !mustHaveShotDraft.trim()} onClick={addQuickStartMustHaveShot}>Add shot</Button>
+      </div>
+      {mustHaveShots.length ? <ul className="shoot-quick-start-must-have-list" aria-label="Must-have shots added to this shoot">
+        {mustHaveShots.map((shot) => <li key={shot}>
+          <span className="shoot-quick-start-must-have-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={16} /></span>
+          <strong>{shot}</strong>
+          {canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${shot}`} onClick={() => removeQuickStartMustHaveShot(shot)}><DsIcon name="x-close-cross" size={14} /></button> : null}
+        </li>)}
+      </ul> : null}
+    </QuickStartQuestion>;
+  }
+
+  return <section className="shoot-preproduction-section shoot-quick-start-section">
+    <PreProductionSectionHeading
+      icon="sparkle"
+      title="Setup"
+      description={`Answer ${questionSteps.length} quick questions, then Brisk will generate a draft shoot plan from your Brief and Script.`}
+    />
+    {briefCapture && !includeCaptureStep ? <div className="shoot-quick-start-brief-source">
+      <span><strong className="label-xs-semibold">Brief answer:</strong><small className="label-s">{formatQuickStartCapture(briefCapture)}</small></span>
+      <button className="shoot-text-action label-xs-semibold" type="button" disabled={!canEdit} onClick={() => { setIncludeCaptureStep(true); setActiveStepId("capture"); }}>Change</button>
+    </div> : null}
+    {questionContent}
+    <footer className="shoot-quick-start-footer">
+      <span className="shoot-quick-start-footer-side">
+        {activeStepIndex > 0 ? <Button size="S" variant="secondary" onClick={() => goToRelativeStep(-1)}>Back</Button> : null}
+      </span>
+      <nav className="brief-step-dots" aria-label="Shoot setup questions">
+        {questionSteps.map((step, index) => <button
+          className={`brief-step-dot label-xs-semibold ${index === activeStepIndex ? "active" : ""} ${index < activeStepIndex ? "complete" : ""}`}
+          type="button"
+          key={step.id}
+          aria-current={index === activeStepIndex ? "step" : undefined}
+          data-tooltip={step.label}
+          onClick={() => setActiveStepId(step.id)}
+        >
+          {index + 1}
+        </button>)}
+      </nav>
+      <span className="shoot-quick-start-footer-side right">
+        {activeStepIndex === questionSteps.length - 1 ? <Button size="S" variant="primary" disabled={!canEdit} onClick={() => onBuild(answers)}><span className="shoot-button-content"><DsIcon name="sparkle" size={16} />Generate plan</span></Button> : <Button size="S" variant="primary" onClick={() => goToRelativeStep(1)}>Next</Button>}
+      </span>
+    </footer>
+  </section>;
+}
+
+function QuickStartQuestion({ children, existing, title }: {
+  children: ReactNode;
+  existing?: string;
+  title: string;
+}) {
+  return <div className="shoot-quick-start-question">
+    <div className="shoot-quick-start-question-copy">
+      <h3 className="headings-xs-bold">{title}</h3>
+      {existing ? <small className="shoot-quick-start-existing label-xs">{existing}</small> : null}
+    </div>
+    <div className="shoot-quick-start-answer">{children}</div>
+  </div>;
+}
+
+function PreProductionSectionHeading({ icon, title, description, action }: { icon: DsIconName; title: string; description: string; action?: ReactNode }) {
+  return <header className="shoot-preproduction-section-heading">
+    <div><span className="shoot-preproduction-section-icon"><DsIcon name={icon} size={20} /></span><div><h2>{title}</h2><p className="paragraph-s">{description}</p></div></div>
+    {action ? <div>{action}</div> : null}
+  </header>;
+}
+
+function PreProductionShotList({ callSheet, canEdit, entries, onChange, onDelete, onReorder }: {
+  callSheet: CallSheet;
+  canEdit: boolean;
+  entries: ProductionEntry[];
+  onChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onDelete: (shotId: string) => void;
+  onReorder: (sourceId: string, targetId: string) => void;
+}) {
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const addShot = () => {
+    const shotNumber = Math.max(0, ...entries.map((entry) => entry.shotNumber ?? 0)) + 1;
+    const shotListOrder = Math.max(-1, ...entries.map((entry) => entry.shotListOrder ?? -1)) + 1;
+    onChange((current) => ({
+      ...current,
+      entries: [...current.entries, {
+        id: `entry-${Date.now()}`,
+        dayId: "",
+        shotNumber,
+        shotListOrder,
+        startTime: "",
+        durationMinutes: 0,
+        description: "New shot",
+        type: "shot",
+        personIds: [],
+        captured: false,
+        priority: "Useful",
+      }],
+    }));
+  };
+  const updateShot = (id: string, patch: Partial<ProductionEntry>) => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === id ? { ...entry, ...patch } : entry) }));
+  const removeSuggestion = (id: string) => onChange((current) => ({ ...current, entries: current.entries.filter((entry) => entry.id !== id) }));
+
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading
+      icon="video-camera-ds"
+      title="Shot List"
+      description="Plan what the team needs to capture. Assign shoot days and times later in Schedule."
+      action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addShot}><DsIcon name="plus" size={16} />Add shot</button> : null}
+    />
+    {entries.length ? <div className="shoot-direct-shot-list">
+      {entries.map((entry, index) => <article
+        className={`shoot-direct-shot-row ${entry.suggestionStatus ? "is-suggested" : ""}`}
+        draggable={canEdit}
+        key={entry.id}
+        onDragStart={() => setDraggedId(entry.id)}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={() => { if (draggedId) onReorder(draggedId, entry.id); setDraggedId(null); }}
+      >
+        <div className="shoot-direct-shot-order"><DsIcon name="dots-six-vertical" size={16} /><span className="label-xs-semibold">{entry.shotNumber ?? index + 1}</span></div>
+        <div className="shoot-direct-shot-fields">
+          <label className="shoot-preproduction-field"><span>Description</span><input disabled={!canEdit} value={entry.description} onChange={(event) => updateShot(entry.id, { description: event.target.value })} /></label>
+          <label className="shoot-preproduction-field"><span>Talent or subject</span><input disabled={!canEdit} placeholder="Not confirmed yet" value={entry.subject ?? ""} onChange={(event) => updateShot(entry.id, { subject: event.target.value })} /></label>
+          <label className="shoot-preproduction-field"><span>Location</span>{canEdit ? <BriskSelect ariaLabel={`Location for shot ${entry.shotNumber ?? index + 1}`} value={entry.locationId ?? ""} options={callSheet.locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed yet" onChange={(value) => updateShot(entry.id, { locationId: value || undefined })} /> : <span className="shoot-readonly-field">{callSheet.locations.find((location) => location.id === entry.locationId)?.name ?? "Not confirmed"}</span>}</label>
+          <label className="shoot-preproduction-field"><span>Priority</span>{canEdit ? <BriskSelect ariaLabel={`Priority for shot ${entry.shotNumber ?? index + 1}`} clearable={false} searchable={false} value={entry.priority ?? "Useful"} options={[{ value: "Essential", label: "Essential" }, { value: "Useful", label: "Useful" }, { value: "Optional", label: "Optional" }]} placeholder="Choose priority" onChange={(value) => { if (value) updateShot(entry.id, { priority: value }); }} /> : <span className="shoot-readonly-field">{entry.priority ?? "Useful"}</span>}</label>
+        </div>
+        <div className="shoot-direct-shot-actions">
+          {entry.suggestionStatus ? <span className="shoot-suggested-pill label-xs-semibold">Suggested</span> : null}
+          {entry.suggestionStatus && canEdit ? <><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateShot(entry.id, { suggestionStatus: undefined })}>Keep</button><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={() => removeSuggestion(entry.id)}>Remove</button></> : null}
+          {!entry.suggestionStatus && canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove shot ${entry.shotNumber ?? index + 1}`} onClick={() => onDelete(entry.id)}><DsIcon name="trash-simple" size={16} /></button> : null}
+        </div>
+        <details className="shoot-direct-shot-details">
+          <summary className="label-s-semibold">More details</summary>
+          <div>
+            <label className="shoot-preproduction-field"><span>Shot category</span>{canEdit ? <BriskSelect ariaLabel="Shot category" value={entry.shotCategory ?? ""} options={shotCategoryOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { shotCategory: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotCategory ?? "Not set"}</span>}</label>
+            <label className="shoot-preproduction-field"><span>Shot size</span>{canEdit ? <BriskSelect ariaLabel="Shot size" value={entry.shotSize ?? ""} options={shotSizeOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { shotSize: value || undefined })} /> : <span className="shoot-readonly-field">{entry.shotSize ?? "Not set"}</span>}</label>
+            <label className="shoot-preproduction-field"><span>Camera movement</span>{canEdit ? <BriskSelect ariaLabel="Camera movement" value={entry.cameraMovement ?? ""} options={cameraMovementOptions.map((value) => ({ value, label: value }))} placeholder="Not set" onChange={(value) => updateShot(entry.id, { cameraMovement: value || undefined })} /> : <span className="shoot-readonly-field">{entry.cameraMovement ?? "Not set"}</span>}</label>
+            <label className="shoot-preproduction-field"><span>Shot reference</span><input disabled={!canEdit} type="url" placeholder="Paste an image link" value={entry.imageReferenceUrl ?? ""} onChange={(event) => updateShot(entry.id, { imageReferenceUrl: event.target.value, imageReferenceSource: event.target.value ? "link" : undefined })} /></label>
+          </div>
+          {entry.imageReferenceUrl ? <a className="shoot-shot-reference-preview" href={entry.imageReferenceUrl} target="_blank" rel="noreferrer"><DsIcon name="image-square" size={18} />Reference attached</a> : null}
+        </details>
+      </article>)}
+    </div> : canEdit ? <EmptyState illustrationSrc="/brisk-visuals/shoot-shot-list-empty.png" title="Start your Shot List" action="Add shot" onAction={addShot} /> : <p className="shoot-preproduction-empty-copy">The Shot List has not been started.</p>}
+  </section>;
+}
+
+function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, onChange, onReorder }: {
+  availablePeople: ShootPerson[];
+  callSheet: CallSheet;
+  canEdit: boolean;
+  onChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onReorder: (sourceId: string, targetId: string) => void;
+}) {
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [provisionalQuestionId, setProvisionalQuestionId] = useState<string | null>(null);
+  const [provisionalName, setProvisionalName] = useState("");
+  const provisionalOptionValue = "__add-provisional-talent__";
+  const peopleOptions = [
+    ...availablePeople.map((person) => ({ value: person.id, label: person.role ? `${person.name} - ${person.role}` : person.name })),
+    { value: provisionalOptionValue, label: "Add provisional Talent", icon: "plus" as const, dividerAbove: true },
+  ];
+  const updateQuestion = (id: string, patch: Partial<InterviewQuestion>) => onChange((current) => ({ ...current, questions: current.questions.map((question) => question.id === id ? { ...question, ...patch } : question) }));
+  const addQuestion = () => onChange((current) => ({ ...current, questions: [...current.questions, { id: `question-${Date.now()}`, question: "New interview question", shootDayIds: "all" }] }));
+  const addProvisionalTalent = (questionId: string) => {
+    const name = provisionalName.trim();
+    if (!name) return;
+    onChange((current) => {
+      const existing = current.people.find((person) => normaliseIdentity(person.name) === normaliseIdentity(name));
+      const personId = existing?.id ?? `person-${Date.now()}`;
+      const person: ShootPerson = existing ?? { id: personId, name, type: "talent", role: "Interviewee", phone: "", email: "", showContactDetails: false, callTime: current.days[0]?.generalCallTime ?? "", shootDayIds: "all", assignments: [{ id: `assignment-${Date.now()}`, type: "talent", role: "Interviewee", callTime: current.days[0]?.generalCallTime ?? "", shootDayIds: "all" }] };
+      return {
+        ...current,
+        people: existing ? current.people : [...current.people, person],
+        questions: current.questions.map((question) => question.id === questionId ? { ...question, personId } : question),
+      };
+    });
+    setProvisionalName("");
+    setProvisionalQuestionId(null);
+  };
+
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="quotes" title="Interview Questions" description="Plan what to ask and who each question is for." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</button> : null} />
+    <div className="shoot-interview-question-list">
+      {callSheet.questions.map((question, index) => <article className={question.suggestionStatus ? "is-suggested" : ""} draggable={canEdit} key={question.id} onDragStart={() => setDraggedId(question.id)} onDragOver={(event) => event.preventDefault()} onDrop={() => { if (draggedId) onReorder(draggedId, question.id); setDraggedId(null); }}>
+        <div className="shoot-question-order"><DsIcon name="dots-six-vertical" size={16} /><span className="label-xs-semibold">{index + 1}</span></div>
+        <label className="shoot-preproduction-field"><span>Question</span><input disabled={!canEdit} value={question.question} onChange={(event) => updateQuestion(question.id, { question: event.target.value })} /></label>
+        <label className="shoot-preproduction-field"><span>For</span>{canEdit ? <BriskSelect ariaLabel={`Person for question ${index + 1}`} value={question.personId ?? ""} options={peopleOptions} placeholder="Not confirmed yet" onChange={(value) => {
+          if (value === provisionalOptionValue) {
+            setProvisionalQuestionId(question.id);
+            setProvisionalName("");
+            return;
+          }
+          setProvisionalQuestionId(null);
+          const selected = availablePeople.find((person) => person.id === value);
+          onChange((current) => {
+            const existing = selected ? current.people.find((person) => isSameShootPerson(person, selected)) : undefined;
+            const personId = existing?.id ?? selected?.id;
+            return {
+              ...current,
+              people: selected && !existing ? [...current.people, { ...selected, shootDayIds: "all", assignments: getShootAssignments(selected).map((assignment) => ({ ...assignment, shootDayIds: "all" })) }] : current.people,
+              questions: current.questions.map((item) => item.id === question.id ? { ...item, personId } : item),
+            };
+          });
+        }} /> : <span className="shoot-readonly-field">{callSheet.people.find((person) => person.id === question.personId)?.name ?? "Not confirmed"}</span>}
+          {canEdit && provisionalQuestionId === question.id ? <span className="shoot-question-provisional-person"><input autoFocus placeholder="Name or role, such as CEO interviewee" value={provisionalName} onChange={(event) => setProvisionalName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); addProvisionalTalent(question.id); } }} /><button className="shoot-button secondary label-xs-semibold" type="button" disabled={!provisionalName.trim()} onClick={() => addProvisionalTalent(question.id)}>Add</button></span> : null}
+        </label>
+        <div className="shoot-question-actions">{question.suggestionStatus ? <span className="shoot-suggested-pill label-xs-semibold">Suggested</span> : null}{question.suggestionStatus && canEdit ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateQuestion(question.id, { suggestionStatus: undefined })}>Keep</button> : null}<button className="shoot-icon-button" type="button" disabled={!canEdit} aria-label={`Remove question ${index + 1}`} onClick={() => onChange((current) => ({ ...current, questions: current.questions.filter((item) => item.id !== question.id) }))}><DsIcon name="trash-simple" size={16} /></button></div>
+      </article>)}
+      {!callSheet.questions.length ? <p className="shoot-preproduction-empty-copy">No interview questions yet. Add one yourself or return to Setup for Brisk suggestions.</p> : null}
+    </div>
+  </section>;
+}
+
+function PreProductionVisualReferences({ callSheet, canEdit, onChange }: { callSheet: CallSheet; canEdit: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void }) {
+  const [link, setLink] = useState("");
+  const references = callSheet.visualReferences ?? [];
+  const addReference = (reference: ShootVisualReference) => onChange((current) => ({ ...current, visualReferences: [...(current.visualReferences ?? []), reference] }));
+  const addLink = () => {
+    const url = link.trim();
+    if (!url) return;
+    addReference({ id: `reference-${Date.now()}`, name: deriveReferenceName(url), url, source: "link" });
+    setLink("");
+  };
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="image-square" title="Visual References" description="Keep overall mood, styling and production references together. Shot-specific references remain on each shot." />
+    {canEdit ? <div className="shoot-reference-add">
+      <label className="shoot-preproduction-field"><span>Paste a reference link</span><input type="url" placeholder="https://" value={link} onChange={(event) => setLink(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addLink(); }} /></label>
+      <button className="shoot-button secondary label-s-semibold" type="button" disabled={!link.trim()} onClick={addLink}><DsIcon name="link" size={16} />Add link</button>
+      <label className="shoot-button secondary label-s-semibold shoot-file-button"><DsIcon name="upload-simple" size={16} />Upload<input type="file" accept="image/*" onChange={(event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        addReference({ id: `reference-${Date.now()}`, name: file.name, url: URL.createObjectURL(file), source: "upload" });
+        event.currentTarget.value = "";
+      }} /></label>
+    </div> : null}
+    {references.length ? <div className="shoot-reference-gallery">{references.map((reference) => <article key={reference.id}>
+      <a href={reference.url} target="_blank" rel="noreferrer"><span className="shoot-reference-image"><DsIcon name="image-square" size={26} /></span><strong>{reference.name}</strong><small className="label-xs">{reference.source === "upload" ? "Uploaded image" : "Linked reference"}</small></a>
+      {canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${reference.name}`} onClick={() => onChange((current) => ({ ...current, visualReferences: (current.visualReferences ?? []).filter((item) => item.id !== reference.id) }))}><DsIcon name="trash-simple" size={16} /></button> : null}
+    </article>)}</div> : <p className="shoot-preproduction-empty-copy">No overall visual references have been added.</p>}
+  </section>;
+}
+
+function PreProductionDates({ callSheet, canEdit, onChange, onDeleteDay }: { callSheet: CallSheet; canEdit: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onDeleteDay: (dayId: string) => void }) {
+  const updateDay = (id: string, patch: Partial<ShootDay>) => onChange((current) => ({ ...current, days: current.days.map((day) => day.id === id ? { ...day, ...patch } : day) }));
+  const addDay = () => {
+    const id = `day-${Date.now()}`;
+    const newDay = createEmptyShootDay(id);
+    onChange((current) => ({ ...current, days: [...current.days, { ...newDay, label: `Day ${current.days.length + 1}` }] }));
+  };
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="calendar" title="When are you shooting?" description="Add the date, general call time and expected wrap for each shoot day." action={canEdit ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={addDay}><DsIcon name="plus" size={16} />Add shoot day</button> : null} />
+    <div className="shoot-date-list">{callSheet.days.map((day) => <article key={day.id}>
+      <header><div><strong>{day.label}</strong><span className="label-xs">{day.date ? formatEditorDate(day.date) : "Not confirmed"}</span></div>{canEdit && callSheet.days.length > 1 ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${day.label}`} onClick={() => onDeleteDay(day.id)}><DsIcon name="trash-simple" size={16} /></button> : null}</header>
+      <div className="shoot-date-fields">
+        <label className="shoot-preproduction-field"><span>Shoot date</span><input disabled={!canEdit} type="date" value={day.date} onChange={(event) => updateDay(day.id, { date: event.target.value })} /></label>
+        <label className="shoot-preproduction-field"><span>General call time</span><TimeSelect disabled={!canEdit} value={day.generalCallTime} onChange={(generalCallTime) => updateDay(day.id, { generalCallTime, timelineStartTime: generalCallTime })} /></label>
+        <label className="shoot-preproduction-field"><span>Expected wrap</span><TimeSelect disabled={!canEdit} value={day.expectedWrapTime} onChange={(expectedWrapTime) => updateDay(day.id, { expectedWrapTime, timelineEndTime: expectedWrapTime })} /></label>
+      </div>
+      {canEdit ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => updateDay(day.id, { date: "", generalCallTime: "", expectedWrapTime: "" })}>Not confirmed yet</button> : null}
+    </article>)}</div>
+  </section>;
+}
+
+function PreProductionLocations({ callSheet, canEdit, onEdit, onNew }: { callSheet: CallSheet; canEdit: boolean; onEdit: (location: ShootLocation) => void; onNew: () => void }) {
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="push-pin-simple" title="Where are you shooting?" description="Add locations, practical access details and their shoot days." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add location</button> : null} />
+    {callSheet.locations.length ? <div className="shoot-preproduction-location-list">{callSheet.locations.map((location) => {
+      const usedBy = callSheet.days.filter((day) => day.primaryLocationId === location.id);
+      const mapValue = location.mapLink || location.address;
+      return <article key={location.id}>
+        <div><strong>{location.name}</strong><p>{mapValue ? <a className="shoot-location-link" href={getMapsUrl(mapValue)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || mapValue)}</a> : "Address not confirmed"}</p><span className="label-xs">{formatDayAssignment(location.shootDayIds, callSheet.days)}</span></div>
+        <dl><div><dt>Parking</dt><dd>{location.parking || "Not confirmed"}</dd></div><div><dt>Access</dt><dd>{location.access || "Not confirmed"}</dd></div><div><dt>Weather</dt><dd>{usedBy.length && usedBy.some((day) => day.date) ? getDisplayedWeather(callSheet.weather, true) : "Waiting for a confirmed date and primary location"}</dd></div></dl>
+        {canEdit ? <div className="shoot-location-actions"><button className="shoot-icon-button" type="button" aria-label={`Edit ${location.name}`} onClick={() => onEdit(location)}><DsIcon name="pencil-simple-ds" size={16} /></button></div> : null}
+      </article>;
+    })}</div> : <p className="shoot-preproduction-empty-copy">No shoot location is confirmed yet.</p>}
+  </section>;
+}
+
+function PreProductionPeople({ callSheet, canEdit, isStudioInternal, onChange, onEdit, onNew, onCreate }: { callSheet: CallSheet; canEdit: boolean; isStudioInternal: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onEdit: (person: ShootPerson) => void; onNew: (event?: ReactMouseEvent<HTMLButtonElement>) => void; onCreate: () => void }) {
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="users-three" title="Who is involved?" description="Use one contact identity and add every shoot assignment they need." action={canEdit ? <div className="shoot-preproduction-heading-inline-actions"><button className="shoot-button primary label-s-semibold" type="button" onClick={onNew}><DsIcon name="users-three" size={16} />Add from Brisk</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={onCreate}><DsIcon name="plus" size={16} />Create new contact</button></div> : null} />
+    {callSheet.people.length ? <div className="shoot-preproduction-people-list">{callSheet.people.map((person) => <article key={person.id}>
+      <span className="shoot-avatar label-xs-semibold">{getInitials(person.name)}</span>
+      <div className="shoot-person-identity"><strong>{person.name}</strong><span className="label-xs">{person.email || "Details needed"}</span>{isStudioInternal && person.phone ? <span className="label-xs">{person.phone}</span> : null}</div>
+      <div className="shoot-assignment-list">{getShootAssignments(person).map((assignment) => <span className={`shoot-type-badge is-${assignment.type} label-xs-semibold`} key={assignment.id}>{personTypeLabels[assignment.type]}{assignment.role ? ` - ${assignment.role}` : ""}</span>)}</div>
+      <div className="shoot-person-call"><span className="label-xs">Call time</span><strong>{person.callTime ? formatTime(person.callTime) : "Not confirmed"}</strong></div>
+      <label className="shoot-contact-visibility label-xs"><input type="checkbox" disabled={!canEdit} checked={person.showContactDetails === true} onChange={(event) => onChange((current) => ({ ...current, people: current.people.map((item) => item.id === person.id ? { ...item, showContactDetails: event.target.checked } : item) }))} />Share contact details</label>
+      {canEdit ? <div className="shoot-person-row-actions"><AddShootAssignment person={person} days={callSheet.days} onChange={onChange} /><button className="shoot-icon-button" type="button" aria-label={`Edit ${person.name}`} onClick={() => onEdit(person)}><DsIcon name="pencil-simple-ds" size={16} /></button></div> : null}
+    </article>)}</div> : <p className="shoot-preproduction-empty-copy">No people have been added. Search Brisk contacts or create a shoot contact.</p>}
+  </section>;
+}
+
+function AddShootAssignment({ person, days, onChange }: { person: ShootPerson; days: ShootDay[]; onChange: (updater: (current: CallSheet) => CallSheet) => void }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [type, setType] = useState<ShootPersonType>("crew");
+  const [role, setRole] = useState("");
+  const add = () => {
+    const assignment: ShootAssignment = { id: `assignment-${Date.now()}`, type, role: role.trim(), callTime: days[0]?.generalCallTime ?? "", shootDayIds: "all" };
+    onChange((current) => ({ ...current, people: current.people.map((item) => item.id === person.id ? { ...item, assignments: [...getShootAssignments(item), assignment] } : item) }));
+    setRole("");
+    setIsOpen(false);
+  };
+  return <div className="shoot-add-assignment"><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setIsOpen((open) => !open)}>Add assignment</button>{isOpen ? <div className="shoot-add-assignment-popover"><BriskSelect ariaLabel="Assignment type" clearable={false} searchable={false} value={type} options={(["crew", "talent", "client"] satisfies ShootPersonType[]).map((value) => ({ value, label: personTypeLabels[value] }))} placeholder="Choose type" onChange={(value) => { if (value) setType(value); }} /><input autoFocus placeholder="Shoot-specific role" value={role} onChange={(event) => setRole(event.target.value)} /><button className="shoot-button primary label-xs-semibold" type="button" onClick={add}>Add</button></div> : null}</div>;
+}
+
+function PreProductionSchedule({ callSheet, canEdit, selectedDayId, onChange, onEditEntry, onNewEntry, onSelectDay }: {
+  callSheet: CallSheet;
+  canEdit: boolean;
+  selectedDayId: string;
+  onChange: (updater: (current: CallSheet) => CallSheet) => void;
+  onEditEntry: (entry: ProductionEntry) => void;
+  onNewEntry: (dayId: string) => void;
+  onSelectDay: (dayId: string) => void;
+}) {
+  const unassignedShots = callSheet.entries.filter((entry) => entry.type === "shot" && !entry.dayId);
+  const currentDay = callSheet.days.find((day) => day.id === selectedDayId) ?? callSheet.days[0];
+  const dayEntries = callSheet.entries.filter((entry) => entry.dayId === currentDay?.id);
+  const scheduled = dayEntries.filter((entry) => Boolean(entry.startTime)).sort((left, right) => left.startTime.localeCompare(right.startTime));
+  const unscheduled = dayEntries.filter((entry) => entry.type === "shot" && !entry.startTime);
+  const [draggedShotId, setDraggedShotId] = useState<string | null>(null);
+  const assignShot = (shotId: string, dayId: string) => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === shotId ? { ...entry, dayId, startTime: "" } : entry) }));
+  const setStartTime = (entryId: string, startTime: string) => onChange((current) => ({ ...current, entries: current.entries.map((entry) => entry.id === entryId ? { ...entry, startTime, durationMinutes: entry.durationMinutes || 30 } : entry) }));
+
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="clock-clockwise" title="What happens during the day?" description="Build the Schedule by day. Shots may remain unassigned or unscheduled." action={canEdit && currentDay ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onNewEntry(currentDay.id)}><DsIcon name="plus" size={16} />Add schedule item</button> : null} />
+    <section className="shoot-unassigned-shot-group">
+      <header><div><h3>Unassigned shots</h3><span className="label-xs">Shot List items without a shoot day</span></div><span className="shoot-count-badge label-xs-semibold">{unassignedShots.length}</span></header>
+      {unassignedShots.length ? <div>{unassignedShots.map((shot) => <article draggable={canEdit} key={shot.id} onDragStart={() => setDraggedShotId(shot.id)}><DsIcon name="dots-six-vertical" size={16} /><span><strong>{shot.description}</strong><small className="label-xs">Shot {shot.shotNumber ?? "-"} · {shot.priority ?? "Useful"}</small></span>{canEdit ? <BriskSelect ariaLabel={`Assign ${shot.description} to a shoot day`} value="" clearable={false} options={callSheet.days.map((day) => ({ value: day.id, label: day.label }))} placeholder="Assign to day" onChange={(dayId) => { if (dayId) assignShot(shot.id, dayId); }} /> : null}</article>)}</div> : <p className="shoot-preproduction-empty-copy">Every shot has a shoot day.</p>}
+    </section>
+    <div className="shoot-schedule-day-tabs" role="tablist" aria-label="Shoot days">{callSheet.days.map((day) => <button className={day.id === currentDay?.id ? "active label-s-semibold" : "label-s-semibold"} type="button" role="tab" aria-selected={day.id === currentDay?.id} key={day.id} onClick={() => onSelectDay(day.id)}>{day.label}<small>{day.date ? formatEditorDate(day.date) : "Not confirmed"}</small></button>)}</div>
+    {currentDay ? <section className="shoot-schedule-day-board" onDragOver={(event) => event.preventDefault()} onDrop={() => { if (draggedShotId) assignShot(draggedShotId, currentDay.id); setDraggedShotId(null); }}>
+      <header><div><h3>{currentDay.label}</h3><span className="label-xs">{currentDay.date ? formatEditorDate(currentDay.date) : "Date not confirmed"}</span></div></header>
+      <div className="shoot-scheduled-entry-list">{scheduled.map((entry) => <article key={entry.id}><TimeSelect disabled={!canEdit} value={entry.startTime} onChange={(value) => setStartTime(entry.id, value)} /><span className={`shoot-schedule-entry-icon is-${entry.type}`}><DsIcon name={scheduleTypeOptions.find((option) => option.value === entry.type)?.icon ?? "clock-clockwise"} size={16} /></span><div><strong>{entry.description}</strong><small className="label-xs">{scheduleTypeOptions.find((option) => option.value === entry.type)?.label}{entry.durationMinutes ? ` · ${entry.durationMinutes} min` : ""}</small></div>{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Edit ${entry.description}`} onClick={() => onEditEntry(entry)}><DsIcon name="pencil-simple-ds" size={16} /></button> : null}</article>)}</div>
+      <div className="shoot-day-unscheduled"><header><h4>Unscheduled shots</h4><span className="shoot-count-badge label-xs-semibold">{unscheduled.length}</span></header>{unscheduled.length ? unscheduled.map((shot) => <article key={shot.id}><DsIcon name="video-camera-ds" size={16} /><span><strong>{shot.description}</strong><small className="label-xs">Assigned to {currentDay.label}, no start time</small></span>{canEdit ? <TimeSelect value="" placeholder="Add time" onChange={(value) => setStartTime(shot.id, value)} /> : null}</article>) : <p className="shoot-preproduction-empty-copy">No untimed shots for this day.</p>}</div>
+    </section> : <p className="shoot-preproduction-empty-copy">Add a shoot day before building the Schedule.</p>}
+  </section>;
+}
+
+const shootDayNoteFields: Array<{ key: keyof ShootDayNotes; label: string; description: string; private?: boolean }> = [
+  { key: "equipment", label: "Equipment", description: "Camera, lighting, sound and specialist kit." },
+  { key: "wardrobe", label: "Wardrobe", description: "Clothing, styling and continuity requirements." },
+  { key: "catering", label: "Catering", description: "Meals, dietary needs and refreshment arrangements." },
+  { key: "access", label: "Access", description: "Arrival, loading, entry and site instructions." },
+  { key: "safety", label: "Safety", description: "Hazards, controls and emergency information." },
+  { key: "weatherConsiderations", label: "Weather considerations", description: "Weather-specific contingencies or requirements." },
+  { key: "clientNotes", label: "Client-visible notes", description: "Useful notes that may appear on the shared Call Sheet." },
+  { key: "internalNotes", label: "Internal Studio notes", description: "Visible only to Studio-internal users.", private: true },
+];
+
+function PreProductionNotes({ callSheet, canEdit, isStudioInternal, selectedDayId, onChange, onSelectDay }: { callSheet: CallSheet; canEdit: boolean; isStudioInternal: boolean; selectedDayId: string; onChange: (updater: (current: CallSheet) => CallSheet) => void; onSelectDay: (dayId: string) => void }) {
+  const day = callSheet.days.find((item) => item.id === selectedDayId) ?? callSheet.days[0];
+  const notes = day?.notes ?? emptyShootDayNotes();
+  const updateNote = (key: keyof ShootDayNotes, value: string) => {
+    if (!day) return;
+    onChange((current) => ({ ...current, days: current.days.map((item) => item.id === day.id ? { ...item, notes: { ...emptyShootDayNotes(), ...item.notes, [key]: value } } : item) }));
+  };
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="file-text" title="What should everyone know?" description="Add only the production note sections needed for each shoot day." />
+    <div className="shoot-note-day-control"><span className="label-s-semibold">Notes for</span><BriskSelect ariaLabel="Choose shoot day for notes" clearable={false} searchable={false} value={day?.id ?? ""} options={callSheet.days.map((item) => ({ value: item.id, label: item.label }))} placeholder="Choose day" onChange={(value) => { if (value) onSelectDay(value); }} /></div>
+    <div className="shoot-day-notes-list">{shootDayNoteFields.filter((field) => !field.private || isStudioInternal).map((field) => <details open={Boolean(notes[field.key])} key={field.key}>
+      <summary><span><strong>{field.label}</strong><small className="label-xs">{notes[field.key] ? "Added" : field.description}</small></span><DsIcon name="caret-down" size={14} /></summary>
+      <textarea disabled={!canEdit} rows={4} placeholder={`Add ${field.label.toLowerCase()} for ${day?.label ?? "the day"}`} value={notes[field.key]} onChange={(event) => updateNote(field.key, event.target.value)} />
+    </details>)}</div>
+  </section>;
+}
+
+function PreProductionDocuments({ callSheet, canEdit, onChange, onOpenDocuments }: { callSheet: CallSheet; canEdit: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments: () => void }) {
+  return <section className="shoot-preproduction-section">
+    <PreProductionSectionHeading icon="folder" title="Supporting shoot documents" description="Attach reference files without changing the coverage or status of the native production plan." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onOpenDocuments}><DsIcon name="plus" size={16} />Add supporting document</button> : null} />
+    {callSheet.documents.length ? <div className="shoot-supporting-document-list">{callSheet.documents.map((document) => <article key={document.id}><span><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={20} /></span><div><strong>{document.name}</strong><small className="label-xs">{document.type ?? "Supporting document"} · {formatDayAssignment(document.shootDayIds, callSheet.days)}</small></div><a className="shoot-button secondary label-xs-semibold" href={document.url} target="_blank" rel="noreferrer">Open</a>{document.kind !== "link" ? <a className="shoot-icon-button" aria-label={`Download ${document.name}`} href={document.url} download><DsIcon name="download-simple" size={16} /></a> : null}{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${document.name}`} onClick={() => onChange((current) => ({ ...current, documents: current.documents.filter((item) => item.id !== document.id) }))}><DsIcon name="trash-simple" size={16} /></button> : null}</article>)}</div> : <p className="shoot-preproduction-empty-copy">No supporting shoot documents have been added.</p>}
+  </section>;
+}
+
+function ExistingPlanCallSheetAttachment({ plan, onReplace, onNotify }: { plan: ExistingShootPlan; onReplace: () => void; onNotify: (message: string) => void }) {
+  const callSheetName = plan.secondaryName ?? (plan.coverage === "day" || plan.coverage === "both" ? plan.name : "");
+  if (!callSheetName) return null;
+  return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-xs-semibold" type="button" onClick={onReplace}>Replace</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => onNotify("Review requested for the attached plan.")}>Request review</button></aside>;
+}
+
+function ShootReadinessModal({ action, missing, onAddDetails, onCancel, onContinue }: { action: ShootReadinessAction; missing: string[]; onAddDetails: () => void; onCancel: () => void; onContinue: () => void }) {
+  const labels: Record<ShootReadinessAction, string> = { share: "share the Call Sheet", review: "request review", approve: "approve the Shoot", start: "start the shoot" };
+  return <div className="shoot-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onCancel(); }}><section className="shoot-modal shoot-readiness-modal" role="dialog" aria-modal="true" aria-labelledby="shoot-readiness-title"><header><span className="shoot-modal-icon warning"><DsIcon name="alert-triangle" size={22} /></span><div><h2 id="shoot-readiness-title">Some Call Sheet details are not confirmed</h2><p>You can still {labels[action]}.</p></div></header><div className="shoot-readiness-list">{missing.map((item) => <span className="label-s" key={item}><DsIcon name="info" size={15} />{item}</span>)}</div><div className="shoot-modal-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={onContinue}>Continue anyway</button><button className="shoot-button primary label-s-semibold" type="button" onClick={onAddDetails}>Add details</button></div></section></div>;
+}
+
+function ShootAccessModal({ settings, onChange, onClose }: { settings: ShootAccessSettings; onChange: (settings: ShootAccessSettings) => void; onClose: () => void }) {
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const options: Array<{ value: ShootAccessLevel; label: string }> = [
+    { value: "viewOnly", label: "View only" },
+    { value: "canEdit", label: "Can edit" },
+    { value: "canManage", label: "Can manage" },
+  ];
+
+  const copyShootLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}`;
+    void navigator.clipboard.writeText(url).then(
+      () => setCopyStatus("copied"),
+      () => setCopyStatus("error"),
+    );
+  };
+
+  return <ModalShell
+    compact
+    title="Manage access"
+    onClose={onClose}
+    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Done</Button></div>}
+  >
+    <div className="shoot-access-share">
+      <Button size="M" variant="primary" onClick={copyShootLink}>{copyStatus === "copied" ? "Link copied" : "Copy Shoot link"}</Button>
+      <small className="label-xs">Share this Shoot workspace.</small>
+      {copyStatus === "error" ? <small className="label-xs" role="status">Could not copy the link.</small> : null}
+    </div>
+    <div className="shoot-access-groups">
+      <ShootAccessGroup
+        label="Filmmaker access"
+        name="shoot-filmmaker-access"
+        options={options}
+        value={settings.freelancer}
+        onChange={(freelancer) => onChange({ ...settings, freelancer })}
+      />
+      <ShootAccessGroup
+        label="Client access"
+        name="shoot-client-access"
+        options={options}
+        value={settings.client}
+        onChange={(client) => onChange({ ...settings, client })}
+      />
+    </div>
+  </ModalShell>;
+}
+
+function ShootAccessGroup({ label, name, onChange, options, value }: {
+  label: string;
+  name: string;
+  onChange: (value: ShootAccessLevel) => void;
+  options: Array<{ value: ShootAccessLevel; label: string }>;
+  value: ShootAccessLevel;
+}) {
+  return <fieldset className="shoot-access-group">
+    <legend><span>{label}</span><strong>{formatShootAccessLevel(value)}</strong></legend>
+    {options.map((option) => <label className="shoot-access-choice" key={option.value}>
+      <input type="radio" name={name} value={option.value} checked={value === option.value} onChange={() => onChange(option.value)} />
+      <span className="label-s">{option.label}</span>
+    </label>)}
+  </fieldset>;
 }
 
 function SaveIndicator({ status }: { status: SaveStatus }) {
@@ -1858,7 +2719,7 @@ function ClientShootReview({ callSheet, mode, project, canApprove, onApprove, on
       <section><h3 className="label-s-semibold">Shot List</h3>{shots.length ? <ol>{shots.map((shot) => <li key={shot.id}><strong className="label-s-semibold">{shot.description}</strong><span className="label-xs">{[shot.subject, shot.priority].filter(Boolean).join(" · ")}</span></li>)}</ol> : <p className="paragraph-s">No shots have been shared yet.</p>}</section>
     </div> : <dl className="shoot-client-review-details">
       <div><dt className="label-xs">Shoot date</dt><dd className="label-s-semibold">{day?.date ? formatEditorDate(day.date) : "Not confirmed yet"}</dd></div>
-      <div><dt className="label-xs">Location</dt><dd className="label-s-semibold">{location?.name || "Not confirmed yet"}</dd>{location?.address ? <small className="label-xs">{location.address}</small> : null}</div>
+      <div><dt className="label-xs">Location</dt><dd className="label-s-semibold">{location?.name || "Not confirmed yet"}</dd>{location && (location.mapLink || location.address) ? <small className="label-xs"><a className="shoot-location-link" href={getMapsUrl(location.mapLink || location.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(location.address || location.mapLink || "")}</a></small> : null}</div>
       <div><dt className="label-xs">Talent</dt><dd className="label-s-semibold">{talent.length ? talent.map((person) => person.name).join(", ") : "Not confirmed yet"}</dd></div>
       <div><dt className="label-xs">Access</dt><dd className="label-s-semibold">{callSheet.practicalInfo.access || "Not confirmed yet"}</dd></div>
     </dl>}
@@ -1884,7 +2745,8 @@ function ExistingShootPlanModal({ existingPlan, onClose, onSave }: { existingPla
   const [coverage, setCoverage] = useState<ExistingShootPlanCoverage>(existingPlan?.coverage ?? "both");
   const [name, setName] = useState(existingPlan?.name ?? "");
   const [url, setUrl] = useState(existingPlan?.url ?? "");
-  const [secondaryFileName, setSecondaryFileName] = useState("");
+  const [secondaryFileName, setSecondaryFileName] = useState(existingPlan?.secondaryName ?? "");
+  const [secondaryFileUrl, setSecondaryFileUrl] = useState(existingPlan?.secondaryUrl ?? "");
   const canSave = Boolean(name.trim() && (source === "file" || url.trim()));
 
   return <ModalShell
@@ -1892,11 +2754,11 @@ function ExistingShootPlanModal({ existingPlan, onClose, onSave }: { existingPla
     title={existingPlan ? "Replace the existing shoot plan" : "Use an existing shoot plan"}
     description="Attach a PDF, spreadsheet or shared plan. For V1, Brisk displays and shares the original file without importing its contents."
     onClose={onClose}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!canSave} onClick={() => onSave({ name: secondaryFileName ? `${name.trim()} + ${secondaryFileName}` : name.trim(), source, url: url.trim() || undefined, coverage, addedBy: "Tom", addedAt: "7 September" })}>{existingPlan ? "Replace plan" : "Attach plan"}</Button></div>}
+    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!canSave} onClick={() => onSave({ name: name.trim(), source, url: url.trim() || undefined, coverage, addedBy: "Tom", addedAt: "7 September", secondaryName: secondaryFileName || undefined, secondaryUrl: secondaryFileUrl || undefined })}>{existingPlan ? "Replace plan" : "Attach plan"}</Button></div>}
   >
     <div className="shoot-existing-plan-form">
       <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">Add the plan as</legend><label className="label-s"><input type="radio" name="plan-source" checked={source === "file"} onChange={() => setSource("file")} />Upload file</label><label className="label-s"><input type="radio" name="plan-source" checked={source === "link"} onChange={() => setSource("link")} />Paste share link</label></fieldset>
-      {source === "file" ? <div className="shoot-setup-grid two-column"><label className="shoot-setup-field"><span className="label-xs-semibold">Shot List or Call Sheet</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setName(file.name); setUrl(URL.createObjectURL(file)); }} /></label><label className="shoot-setup-field"><span className="label-xs-semibold">Optional second file</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => setSecondaryFileName(event.target.files?.[0]?.name ?? "")} /></label></div> : <label className="shoot-setup-field"><span className="label-xs-semibold">Share link</span><input type="url" placeholder="https://" value={url} onChange={(event) => { setUrl(event.target.value); if (!name) setName("Shared shoot plan"); }} /></label>}
+      {source === "file" ? <div className="shoot-setup-grid two-column"><label className="shoot-setup-field"><span className="label-xs-semibold">Shot List or Call Sheet</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; setName(file.name); setUrl(URL.createObjectURL(file)); }} /></label><label className="shoot-setup-field"><span className="label-xs-semibold">Optional second file</span><input type="file" accept=".pdf,.xls,.xlsx,.csv,.tsv" onChange={(event) => { const file = event.target.files?.[0]; setSecondaryFileName(file?.name ?? ""); setSecondaryFileUrl(file ? URL.createObjectURL(file) : ""); }} /></label></div> : <label className="shoot-setup-field"><span className="label-xs-semibold">Share link</span><input type="url" placeholder="https://" value={url} onChange={(event) => { setUrl(event.target.value); if (!name) setName("Shared shoot plan"); }} /></label>}
       <fieldset className="shoot-setup-checkboxes"><legend className="label-xs-semibold">What does this plan cover?</legend>{(["creative", "day", "both"] as const).map((value) => <label className="label-s" key={value}><input type="radio" name="plan-coverage" checked={coverage === value} onChange={() => setCoverage(value)} />{formatExistingPlanCoverage(value)}</label>)}</fieldset>
     </div>
   </ModalShell>;
@@ -3098,13 +3960,36 @@ function QuickEntryRow({ draft, shotOnly, locations, people, onCancel, onChange,
   );
 }
 
-function PeoplePicker({ people, selectedIds, onChange, onCreatePerson, onSelectPerson }: { people: ShootPerson[]; selectedIds: string[]; onChange: (ids: string[]) => void; onCreatePerson?: (name: string) => void; onSelectPerson?: (person: ShootPerson) => void }) {
+function PeoplePicker({ disabled = false, display = "chips", label = "People (optional)", people, placeholder = "Add people…", selectedIds, showLabel = true, onChange, onCreatePerson, onSelectPerson }: {
+  disabled?: boolean;
+  display?: "chips" | "rows";
+  label?: string;
+  people: ShootPerson[];
+  placeholder?: string;
+  selectedIds: string[];
+  showLabel?: boolean;
+  onChange: (ids: string[]) => void;
+  onCreatePerson?: (name: string) => void;
+  onSelectPerson?: (person: ShootPerson) => void;
+}) {
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const pickerRef = useRef<HTMLDivElement>(null);
   const listboxId = useId();
-  const results = people.filter((person) => !selectedIds.includes(person.id) && `${person.name} ${person.role}`.toLowerCase().includes(search.trim().toLowerCase()));
+  const normalisedSearch = search.trim().toLocaleLowerCase("en-AU");
+  const uniquePeople = people.filter((person, index, candidates) => candidates.findIndex((candidate) => isSameShootPerson(candidate, person)) === index);
   const selectedPeople = selectedIds.map((id) => people.find((person) => person.id === id)).filter((person): person is ShootPerson => Boolean(person));
+  const results = uniquePeople
+    .filter((person) => !selectedPeople.some((selectedPerson) => isSameShootPerson(selectedPerson, person)) && `${person.name} ${person.role}`.toLocaleLowerCase("en-AU").includes(normalisedSearch))
+    .slice(0, 8);
+  const hasExactMatch = uniquePeople.some((person) => normaliseIdentity(person.name) === normaliseIdentity(search));
+  const canCreatePerson = Boolean(onCreatePerson && search.trim() && !hasExactMatch);
+  const optionCount = results.length + Number(canCreatePerson);
+
+  useEffect(() => {
+    setActiveIndex((current) => Math.min(current, Math.max(0, optionCount - 1)));
+  }, [optionCount]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -3119,16 +4004,80 @@ function PeoplePicker({ people, selectedIds, onChange, onCreatePerson, onSelectP
     if (onSelectPerson) onSelectPerson(person);
     else onChange([...selectedIds, person.id]);
     setSearch("");
+    setIsOpen(false);
+    setActiveIndex(0);
+  };
+
+  const createNewPerson = () => {
+    const name = search.trim();
+    if (!name || !onCreatePerson) return;
+    onCreatePerson(name);
+    setSearch("");
+    setIsOpen(false);
+    setActiveIndex(0);
   };
 
   return (
     <div className="shoot-people-picker">
-      <span className="label-xs-semibold">People (optional)</span>
-      {selectedPeople.length ? <div className="shoot-people-chips">{selectedPeople.map((person) => <button className="shoot-person-chip label-xs-semibold" type="button" aria-label={`Remove ${person.name}`} key={person.id} onClick={() => onChange(selectedIds.filter((id) => id !== person.id))}>{person.name}<DsIcon name="x-close-cross" size={12} /></button>)}</div> : null}
-      <div className="shoot-people-search" ref={pickerRef}>
-        <input aria-label="Add people" aria-autocomplete="list" aria-controls={listboxId} aria-expanded={isOpen} role="combobox" placeholder="Add people…" value={search} onFocus={() => setIsOpen(true)} onChange={(event) => { setSearch(event.target.value); setIsOpen(true); }} onKeyDown={(event) => { if (event.key === "Escape") setIsOpen(false); if (event.key === "Enter") { event.preventDefault(); if (results[0]) selectPerson(results[0]); } }} />
-        {isOpen ? <div className="shoot-people-results" id={listboxId} role="listbox" aria-label="Matching people">{results.length ? results.slice(0, 8).map((person) => <button className="label-s" type="button" role="option" aria-selected="false" key={person.id} onMouseDown={(event) => event.preventDefault()} onClick={() => selectPerson(person)}><span className="shoot-people-option-avatar label-xs-semibold" aria-hidden="true">{getInitials(person.name)}</span><span><strong>{person.name}</strong><small className="label-xs">{person.role}</small></span></button>) : <div className="shoot-people-no-results"><span className="label-xs">{search.trim() ? "No matching people" : "No people available"}</span>{onCreatePerson && search.trim() ? <button className="shoot-text-action label-s-semibold" type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => { onCreatePerson(search.trim()); setSearch(""); setIsOpen(false); }}><DsIcon name="plus" size={16} />Create new person</button> : null}</div>}</div> : null}
-      </div>
+      {showLabel ? <span className="label-xs-semibold">{label}</span> : null}
+      {!disabled ? <div className="shoot-people-search" ref={pickerRef}>
+        <input
+          aria-activedescendant={isOpen && optionCount ? `${listboxId}-option-${activeIndex}` : undefined}
+          aria-autocomplete="list"
+          aria-controls={isOpen ? listboxId : undefined}
+          aria-expanded={isOpen}
+          aria-label={label}
+          role="combobox"
+          placeholder={placeholder}
+          value={search}
+          onFocus={() => setIsOpen(true)}
+          onChange={(event) => { setSearch(event.target.value); setIsOpen(true); setActiveIndex(0); }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              setIsOpen(false);
+            } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+              event.preventDefault();
+              setIsOpen(true);
+              setActiveIndex((current) => event.key === "ArrowDown" ? Math.min(current + 1, Math.max(0, optionCount - 1)) : Math.max(current - 1, 0));
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              if (results[activeIndex]) selectPerson(results[activeIndex]);
+              else if (canCreatePerson && activeIndex === results.length) createNewPerson();
+            }
+          }}
+        />
+        {isOpen ? <div className="shoot-people-results" id={listboxId} role="listbox" aria-label="Matching people">
+          {results.map((person, index) => <button
+            className={`label-s ${index === activeIndex ? "is-active" : ""}`}
+            id={`${listboxId}-option-${index}`}
+            type="button"
+            role="option"
+            aria-selected={index === activeIndex}
+            key={person.id}
+            onMouseEnter={() => setActiveIndex(index)}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => selectPerson(person)}
+          ><span className="shoot-people-option-avatar label-xs-semibold" aria-hidden="true">{getInitials(person.name)}</span><span><strong>{person.name}</strong>{person.role ? <small className="label-xs">{person.role}</small> : null}</span></button>)}
+          {canCreatePerson ? <button
+            className={`shoot-people-create-option label-s-semibold ${activeIndex === results.length ? "is-active" : ""}`}
+            id={`${listboxId}-option-${results.length}`}
+            type="button"
+            role="option"
+            aria-selected={activeIndex === results.length}
+            onMouseEnter={() => setActiveIndex(results.length)}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={createNewPerson}
+          ><DsIcon name="plus" size={16} />Add “{search.trim()}” as a new person</button> : null}
+          {!results.length && !canCreatePerson ? <div className="shoot-people-no-results"><span className="label-xs">{search.trim() ? "This person has already been added" : "Start typing to find or add someone"}</span></div> : null}
+        </div> : null}
+      </div> : null}
+      {selectedPeople.length ? display === "rows" ? <ul className="shoot-quick-start-person-list" aria-label="People added to this shoot">
+        {selectedPeople.map((person) => <li key={person.id}>
+          <span className="shoot-avatar label-xs-semibold" aria-hidden="true">{getInitials(person.name)}</span>
+          <strong>{person.name}</strong>
+          {!disabled ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${person.name} from this shoot`} onClick={() => onChange(selectedIds.filter((id) => id !== person.id))}><DsIcon name="x-close-cross" size={14} /></button> : null}
+        </li>)}
+      </ul> : <div className="shoot-people-chips">{selectedPeople.map((person) => <button className="shoot-person-chip label-xs-semibold" type="button" disabled={disabled} aria-label={`Remove ${person.name}`} key={person.id} onClick={() => onChange(selectedIds.filter((id) => id !== person.id))}>{person.name}<DsIcon name="x-close-cross" size={12} /></button>)}</div> : null}
     </div>
   );
 }
@@ -3734,15 +4683,25 @@ function LocationModal({ draft, days, onChange, onClose, onDelete, onSave }: { d
       {draft.id ? <div className="shoot-delete-confirm">{confirmDelete ? <><span className="label-xs-semibold">Remove {draft.name}?</span><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={onDelete}>Yes, remove</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setConfirmDelete(false)}>Keep location</button></> : <button className="shoot-text-action danger label-s-semibold" type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</button>}</div> : <span />}
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" onClick={() => onSave(draft)}>Save location</Button></div>
     </>}>
+      <Field label="Location name"><input value={draft.name} placeholder="Studio, office or venue" onChange={(event) => onChange({ ...draft, name: event.target.value })} /></Field>
       <Field label="Address"><AddressAutocomplete draft={draft} onChange={onChange} /></Field>
-      <Field label="Practical details"><textarea rows={5} placeholder="Anything the crew should know about arriving or working here? Like Wi-Fi, access and parking." value={draft.notes} onChange={(event) => onChange({ ...draft, notes: event.target.value })} /></Field>
+      <Field label="Map link"><input type="url" value={draft.mapLink ?? ""} placeholder="https://maps.google.com/..." onChange={(event) => onChange({ ...draft, mapLink: event.target.value })} /></Field>
+      <div className="shoot-modal-grid two-column"><Field label="Parking"><textarea rows={3} placeholder="Parking and loading details" value={draft.parking} onChange={(event) => onChange({ ...draft, parking: event.target.value })} /></Field><Field label="Access"><textarea rows={3} placeholder="Entry, lift or access details" value={draft.access} onChange={(event) => onChange({ ...draft, access: event.target.value })} /></Field></div>
+      <Field label="Other practical details"><textarea rows={4} placeholder="Anything else the crew should know about arriving or working here?" value={draft.notes} onChange={(event) => onChange({ ...draft, notes: event.target.value })} /></Field>
       {containsWifiDetails ? <p className="shoot-location-wifi-warning label-xs"><DsIcon name="info" size={16} />Wi-Fi details will appear on the public Call Sheet when it is shared.</p> : null}
       <Field label="Shoot days"><ShootDayMultiSelect days={days} value={draft.shootDayIds} onChange={(shootDayIds) => onChange({ ...draft, shootDayIds })} /></Field>
     </ModalShell>
   );
 }
 
-function AddressAutocomplete({ draft, onChange }: { draft: LocationDraft; onChange: (draft: LocationDraft) => void }) {
+function AddressAutocomplete({ autoFocus = true, disabled = false, draft, onChange, onSubmit, placeholder = "Start typing an address" }: {
+  autoFocus?: boolean;
+  disabled?: boolean;
+  draft: LocationDraft;
+  onChange: (draft: LocationDraft) => void;
+  onSubmit?: (draft: LocationDraft) => void;
+  placeholder?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const listboxId = useId();
@@ -3754,20 +4713,23 @@ function AddressAutocomplete({ draft, onChange }: { draft: LocationDraft; onChan
   const chooseSuggestion = (index: number) => {
     const suggestion = results[index];
     if (!suggestion) return;
-    onChange({
+    const selectedDraft = {
       ...draft,
       name: draft.name.trim() ? draft.name : suggestion.name,
       address: suggestion.address,
-    });
+    };
+    onChange(selectedDraft);
+    onSubmit?.(selectedDraft);
     setIsOpen(false);
     setActiveIndex(0);
   };
 
   return <div className="shoot-address-search">
     <input
-      autoFocus
+      autoFocus={autoFocus}
       autoComplete="off"
-      placeholder="Start typing an address"
+      disabled={disabled}
+      placeholder={placeholder}
       value={draft.address}
       role="combobox"
       aria-autocomplete="list"
@@ -3788,6 +4750,9 @@ function AddressAutocomplete({ draft, onChange }: { draft: LocationDraft; onChan
         } else if (event.key === "Enter" && isOpen && results.length) {
           event.preventDefault();
           chooseSuggestion(activeIndex);
+        } else if (event.key === "Enter" && onSubmit && draft.address.trim()) {
+          event.preventDefault();
+          onSubmit(draft);
         } else if (event.key === "Escape") {
           setIsOpen(false);
         }
@@ -3811,9 +4776,9 @@ function AddressAutocomplete({ draft, onChange }: { draft: LocationDraft; onChan
 }
 
 function TimeSelect({ value, onChange, onBlur, onFocus, onKeyDown, disabled, ...props }: Omit<ComponentProps<"input">, "value" | "onChange"> & { value: string; onChange: (value: string) => void }) {
-  const options = Array.from({ length: 24 * 4 }, (_, index) => {
-    const hours = Math.floor(index / 4);
-    const minutes = (index % 4) * 15;
+  const options = Array.from({ length: 24 * 12 }, (_, index) => {
+    const hours = Math.floor(index / 12);
+    const minutes = (index % 12) * 5;
     const optionValue = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
     return { value: optionValue, label: formatTime(optionValue) };
   });
@@ -3842,8 +4807,9 @@ function TimeSelect({ value, onChange, onBlur, onFocus, onKeyDown, disabled, ...
   const commitValue = (rawValue: string) => {
     const parsedValue = parseTimeInput(rawValue);
     if (parsedValue) {
-      onChange(parsedValue);
-      setInputValue(formatTime(parsedValue));
+      const roundedValue = roundTimeToFive(parsedValue);
+      onChange(roundedValue);
+      setInputValue(formatTime(roundedValue));
       return;
     }
     if (!rawValue.trim()) {
@@ -3875,7 +4841,12 @@ function TimeSelect({ value, onChange, onBlur, onFocus, onKeyDown, disabled, ...
         aria-controls={listboxId}
         aria-expanded={isOpen}
         role="combobox"
-        onChange={(event) => { setInputValue(event.target.value); setActiveIndex(null); }}
+        onChange={(event) => {
+          const nextInput = event.target.value;
+          const parsedValue = parseTimeInput(nextInput);
+          setInputValue(nextInput);
+          setActiveIndex(parsedValue ? options.findIndex((option) => option.value === roundTimeToFive(parsedValue)) : null);
+        }}
         onFocus={(event) => { setIsEditing(true); setIsOpen(!disabled); onFocus?.(event); }}
         onBlur={(event) => { commitValue(event.currentTarget.value); setIsOpen(false); setIsEditing(false); setActiveIndex(null); onBlur?.(event); }}
         onKeyDown={(event) => {
@@ -4081,8 +5052,8 @@ function minutesToTime(value: number) {
   return `${String(Math.floor(normalised / 60)).padStart(2, "0")}:${String(normalised % 60).padStart(2, "0")}`;
 }
 
-function emptyPersonDraft(callTime: string, activeDayId: string): PersonDraft {
-  return { name: "", type: "crew", role: "", contactSource: "saved-contact", phone: "", email: "", callTime, shootDayIds: activeDayId ? [activeDayId] : [] };
+function emptyPersonDraft(callTime: string, _activeDayId: string): PersonDraft {
+  return { name: "", type: "crew", role: "", contactSource: "saved-contact", phone: "", email: "", showContactDetails: false, callTime, shootDayIds: "all" };
 }
 
 function personToDraft(person: ShootPerson): PersonDraft {
@@ -4090,17 +5061,27 @@ function personToDraft(person: ShootPerson): PersonDraft {
 }
 
 function personToShootPerson(person: Person, callTime: string): ShootPerson {
+  const shootType: ShootPersonType = person.type === "Client contact" ? "client" : person.type === "Contact" ? "talent" : "crew";
+  const shootRole = person.jobTitles[0] ?? (person.type === "Client contact" ? "Client representative" : person.type === "Contact" ? "Talent" : "Crew");
   return {
     id: person.id,
     name: person.name,
-    type: person.type === "Client contact" ? "client" : "crew",
-    role: person.jobTitles[0] ?? (person.type === "Client contact" ? "Client representative" : "Crew"),
+    type: shootType,
+    role: shootRole,
     company: person.clientName ?? (person.type === "Team" ? "North Star Films" : undefined),
     contactSource: person.type === "Team" ? "team-member" : "saved-contact",
     phone: person.phone,
     email: person.email,
+    showContactDetails: false,
     callTime,
     shootDayIds: [],
+    assignments: [{
+      id: `assignment-${person.id}`,
+      type: shootType,
+      role: shootRole,
+      callTime,
+      shootDayIds: [],
+    }],
   };
 }
 
@@ -4108,7 +5089,8 @@ function isSameShootPerson(left: ShootPerson, right: ShootPerson) {
   if (left.id === right.id) return true;
   const leftEmail = left.email.trim().toLocaleLowerCase("en-AU");
   const rightEmail = right.email.trim().toLocaleLowerCase("en-AU");
-  return Boolean(leftEmail && rightEmail && leftEmail === rightEmail);
+  if (leftEmail && rightEmail) return leftEmail === rightEmail;
+  return normaliseIdentity(left.name) === normaliseIdentity(right.name);
 }
 
 function formatPersonContact(person: ShootPerson) {
@@ -4120,7 +5102,7 @@ function emptyLocationDraft(activeDayId: string): LocationDraft {
 }
 
 function locationToDraft(location: ShootLocation): LocationDraft {
-  return { ...location, wifi: "", accessibility: "", parking: "", access: "", notes: mergeLocationPracticalDetails(location) };
+  return { ...location };
 }
 
 function getLocationNotes(location: ShootLocation) {
@@ -4148,13 +5130,12 @@ function normaliseSimpleShootCallSheet(callSheet: CallSheet): CallSheet {
   return {
     ...callSheet,
     notes,
+    days: callSheet.days.map((day) => ({ ...day, notes: { ...emptyShootDayNotes(), ...day.notes } })),
+    people: callSheet.people.map((person) => ({ ...person, showContactDetails: person.showContactDetails === true, assignments: getShootAssignments(person) })),
     locations: callSheet.locations.map((location) => ({
       ...location,
-      notes: mergeLocationPracticalDetails(location, { wifi: legacyPracticalInfo.wifi, accessibility: legacyPracticalInfo.accessibility }),
-      wifi: "",
-      accessibility: "",
-      parking: "",
-      access: "",
+      wifi: location.wifi || legacyPracticalInfo.wifi,
+      accessibility: location.accessibility || legacyPracticalInfo.accessibility,
     })),
     practicalInfo: {
       ...legacyPracticalInfo,
@@ -4164,11 +5145,14 @@ function normaliseSimpleShootCallSheet(callSheet: CallSheet): CallSheet {
       accessibility: "",
     },
     visibleOptionalSections: callSheet.visibleOptionalSections.filter((section) => section !== "practical"),
+    visualReferences: callSheet.visualReferences ?? [],
   };
 }
 
-function deriveLocationName(address: string) {
-  return address.split(",")[0]?.trim() || address.trim();
+function deriveLocationName(addressOrLink: string) {
+  const value = addressOrLink.trim();
+  if (/^https?:\/\//iu.test(value)) return "Google Maps location";
+  return value.split(",")[0]?.trim() || value;
 }
 
 function getInitials(name: string) {
@@ -4177,6 +5161,11 @@ function getInitials(name: string) {
 
 function normalisePhone(phone: string) {
   return phone.replace(/[^+\d]/gu, "");
+}
+
+function getContactPhone(contact: string) {
+  const match = contact.match(/(?:\+?\d[\d\s()-]{7,}\d)/u);
+  return match ? normalisePhone(match[0]) : "";
 }
 
 function formatEditorDate(value: string) {
@@ -4281,6 +5270,306 @@ function markEmergencyDetailsForReview(info?: SafetyEmergencyInfo): SafetyEmerge
   return { ...info, confirmed: false, needsReview: true };
 }
 
+function createBriskShootPlan(current: CallSheet, project: Project, answers: QuickStartAnswers, interviewLed: boolean) {
+  const capture = answers.capture === "not-confirmed" ? interviewLed ? "interviews" : "scripted" : answers.capture;
+  const shouldAddQuestions = capture === "interviews" || capture === "documentary" || capture === "mixture";
+  const existingPlanningContent = current.entries.some((entry) => entry.type === "shot") || current.questions.length > 0;
+  const suggestionStatus = existingPlanningContent ? "suggested" as const : undefined;
+  const now = Date.now();
+  const addedPeople = parseQuickStartPeople(answers.people).map<ShootPerson>((person, index) => ({
+    id: `person-quick-start-${now}-${index}`,
+    name: person.name,
+    type: "talent",
+    role: person.role,
+    phone: "",
+    email: "",
+    showContactDetails: false,
+    callTime: current.days[0]?.generalCallTime ?? "",
+    shootDayIds: "all",
+    assignments: [{ id: `assignment-quick-start-${now}-${index}`, type: "talent", role: person.role, callTime: current.days[0]?.generalCallTime ?? "", shootDayIds: "all" }],
+  })).filter((person) => !current.people.some((existing) => isSameShootPerson(existing, person)));
+  const existingTalent = current.people.find((person) => getShootAssignments(person).some((assignment) => assignment.type === "talent"));
+  const provisionalTalent: ShootPerson | undefined = shouldAddQuestions && !existingTalent && addedPeople.length === 0 ? {
+    id: `person-brisk-${project.id}`,
+    name: "Interviewee not confirmed",
+    type: "talent",
+    role: "CEO interviewee",
+    phone: "",
+    email: "",
+    showContactDetails: false,
+    callTime: current.days[0]?.generalCallTime ?? "",
+    shootDayIds: "all",
+    assignments: [{ id: `assignment-brisk-${project.id}`, type: "talent", role: "CEO interviewee", callTime: current.days[0]?.generalCallTime ?? "", shootDayIds: "all" }],
+  } : undefined;
+  const targetTalent = addedPeople[0] ?? existingTalent ?? provisionalTalent;
+  const subject = targetTalent?.name ?? (capture === "b-roll" ? "Product and team" : "Primary subject");
+  const shotTemplates = getBriskShotTemplates(capture, subject);
+  const questionTemplates = shouldAddQuestions ? [
+    "What problem were you trying to solve?",
+    "What changed after you started using the product?",
+    "Can you describe the moment you knew it was working?",
+    "What would you tell someone considering the same change?",
+    "What result are you most proud of?",
+    "What should the audience remember from this story?",
+  ] : [];
+  const existingShots = current.entries.filter((entry) => entry.type === "shot");
+  const mustHaveDescriptions = answers.letBriskSuggestShots ? [] : parseQuickStartList(answers.mustHaveShots);
+  const uniqueMustHaveDescriptions = mustHaveDescriptions.filter((description) => !existingShots.some((entry) => normaliseIdentity(entry.description) === normaliseIdentity(description)));
+  const nextShots = shotTemplates.filter((template) => ![...existingShots, ...uniqueMustHaveDescriptions.map((description) => ({ description, subject }))].some((entry) => normaliseIdentity(entry.description) === normaliseIdentity(template.description) && normaliseIdentity(entry.subject ?? "") === normaliseIdentity(template.subject)));
+  const existingQuestions = current.questions;
+  const nextQuestions = questionTemplates.filter((question) => !existingQuestions.some((entry) => {
+    const entryPerson = current.people.find((person) => person.id === entry.personId)?.name ?? "";
+    return normaliseIdentity(entry.question) === normaliseIdentity(question) && normaliseIdentity(entryPerson) === normaliseIdentity(targetTalent?.name ?? "");
+  }));
+  const maxShotNumber = Math.max(0, ...existingShots.map((entry) => entry.shotNumber ?? 0));
+  const maxShotOrder = Math.max(-1, ...existingShots.map((entry) => entry.shotListOrder ?? -1));
+  const mustHaveShots: ProductionEntry[] = uniqueMustHaveDescriptions.map((description, index) => ({
+    id: `entry-must-have-${now}-${index}`,
+    dayId: "",
+    shotNumber: maxShotNumber + index + 1,
+    shotListOrder: maxShotOrder + index + 1,
+    startTime: "",
+    durationMinutes: 0,
+    description,
+    type: "shot",
+    personIds: targetTalent ? [targetTalent.id] : [],
+    subject,
+    captured: false,
+    priority: "Essential",
+  }));
+  const generatedShots: ProductionEntry[] = nextShots.map((template, index) => ({
+    id: `entry-brisk-${now}-${index}`,
+    dayId: "",
+    shotNumber: maxShotNumber + mustHaveShots.length + index + 1,
+    shotListOrder: maxShotOrder + mustHaveShots.length + index + 1,
+    startTime: "",
+    durationMinutes: 0,
+    description: template.description,
+    type: "shot",
+    personIds: targetTalent ? [targetTalent.id] : [],
+    subject: template.subject,
+    captured: false,
+    priority: template.priority,
+    shotCategory: template.category,
+    suggestionStatus,
+  }));
+  const generatedQuestions: InterviewQuestion[] = nextQuestions.map((question, index) => ({ id: `question-brisk-${now}-${index}`, question, personId: targetTalent?.id, shootDayIds: "all", suggestionStatus }));
+  const locationInput = answers.locationAddress.trim();
+  const locationInputIsLink = /^https?:\/\//iu.test(locationInput);
+  const locationName = answers.locationName.trim() || deriveLocationName(locationInput);
+  const locationAddress = locationInputIsLink ? "" : locationInput;
+  const locationMapLink = locationInputIsLink ? locationInput : "";
+  const matchedLocation = current.locations.find((location) => normaliseIdentity(location.name) === normaliseIdentity(locationName)
+    && normaliseIdentity(location.address) === normaliseIdentity(locationAddress)
+    && normaliseIdentity(location.mapLink ?? "") === normaliseIdentity(locationMapLink));
+  const addedLocation: ShootLocation | undefined = !answers.locationNotConfirmed && (locationName || locationInput) && !matchedLocation ? {
+    id: `location-quick-start-${now}`,
+    name: locationName || "Google Maps location",
+    address: locationAddress,
+    mapLink: locationMapLink || undefined,
+    shootDayIds: "all",
+    parking: "",
+    access: "",
+    notes: "",
+  } : undefined;
+  const nextLocations = addedLocation ? [...current.locations, addedLocation] : current.locations;
+  let nextDays = current.days;
+  if (!answers.dateNotConfirmed && answers.shootDate && !current.days.some((day) => day.date === answers.shootDate)) {
+    const blankDayIndex = current.days.findIndex((day) => !day.date);
+    nextDays = blankDayIndex >= 0
+      ? current.days.map((day, index) => index === blankDayIndex ? { ...day, date: answers.shootDate } : day)
+      : [...current.days, { ...createEmptyShootDay(`day-quick-start-${now}`), label: `Day ${current.days.length + 1}`, date: answers.shootDate }];
+  }
+  nextDays = suggestPrimaryLocations(nextDays, nextLocations);
+  const nextPeople = [...current.people, ...addedPeople, ...(provisionalTalent ? [provisionalTalent] : [])];
+  return {
+    callSheet: {
+      ...current,
+      days: nextDays,
+      locations: nextLocations,
+      people: nextPeople,
+      entries: ensureShotNumbers({ ...current, entries: [...current.entries, ...mustHaveShots, ...generatedShots] }).entries,
+      questions: [...current.questions, ...generatedQuestions],
+    },
+    shotCount: mustHaveShots.length + generatedShots.length,
+    questionCount: generatedQuestions.length,
+  };
+}
+
+function parseQuickStartPeople(value: string) {
+  return value.split(";").map((item) => item.trim()).filter(Boolean).map((item) => {
+    const [name = "", ...roleParts] = item.split(",");
+    return { name: name.trim(), role: roleParts.join(",").trim() || "Talent" };
+  }).filter((person) => person.name);
+}
+
+function suggestPrimaryLocations(days: ShootDay[], locations: ShootLocation[]) {
+  const unassignedDayIndexes = days
+    .map((day, index) => day.primaryLocationId ? -1 : index)
+    .filter((index) => index >= 0);
+  if (!unassignedDayIndexes.length || !locations.length) return days;
+
+  if (locations.length === 1) {
+    return days.map((day) => day.primaryLocationId ? day : { ...day, primaryLocationId: locations[0].id });
+  }
+
+  const assignedLocationIds = new Set(days.map((day) => day.primaryLocationId).filter(Boolean));
+  const availableLocations = locations.filter((location) => !assignedLocationIds.has(location.id));
+  if (availableLocations.length !== unassignedDayIndexes.length) return days;
+
+  const locationByDayIndex = new Map(unassignedDayIndexes.map((dayIndex, index) => [dayIndex, availableLocations[index].id]));
+  return days.map((day, index) => {
+    const primaryLocationId = locationByDayIndex.get(index);
+    return primaryLocationId ? { ...day, primaryLocationId } : day;
+  });
+}
+
+function parseQuickStartList(value: string) {
+  return value.split(/[;\n]+/u).map((item) => item.trim()).filter(Boolean);
+}
+
+function createInitialQuickStartAnswers(briefCapture: QuickStartCapture | null): QuickStartAnswers {
+  return {
+    capture: briefCapture ?? "not-confirmed",
+    people: "",
+    peopleNotConfirmed: false,
+    locationName: "",
+    locationAddress: "",
+    locationNotConfirmed: false,
+    shootDate: "",
+    dateNotConfirmed: false,
+    mustHaveShots: "",
+    letBriskSuggestShots: false,
+  };
+}
+
+function quickStartAnswersStorageKey(projectId: string) {
+  return `brisk-shoot-quick-start-${projectId}-v1`;
+}
+
+function parseQuickStartAnswers(value: string | null): QuickStartAnswers | null {
+  if (!value) return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!parsed || typeof parsed !== "object") return null;
+    const answers = parsed as Partial<QuickStartAnswers>;
+    const captures: QuickStartCapture[] = ["interviews", "scripted", "b-roll", "documentary", "mixture", "not-confirmed"];
+    if (!captures.includes(answers.capture as QuickStartCapture)) return null;
+    return {
+      capture: answers.capture as QuickStartCapture,
+      people: typeof answers.people === "string" ? answers.people : "",
+      peopleNotConfirmed: answers.peopleNotConfirmed === true,
+      locationName: typeof answers.locationName === "string" ? answers.locationName : "",
+      locationAddress: typeof answers.locationAddress === "string" ? answers.locationAddress : "",
+      locationNotConfirmed: answers.locationNotConfirmed === true,
+      shootDate: typeof answers.shootDate === "string" ? answers.shootDate : "",
+      dateNotConfirmed: answers.dateNotConfirmed === true,
+      mustHaveShots: typeof answers.mustHaveShots === "string" ? answers.mustHaveShots : "",
+      letBriskSuggestShots: answers.letBriskSuggestShots === true,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function getBriskShotTemplates(capture: QuickStartCapture, subject: string): Array<{ description: string; subject: string; priority: ProductionEntry["priority"]; category: ShotCategory }> {
+  const interviewShots = [
+    { description: "Wide establishing shot of the location", subject: "Shoot location", priority: "Essential" as const, category: "Establishing" as const },
+    { description: "Primary interview framed to camera", subject, priority: "Essential" as const, category: "Interview" as const },
+    { description: "Alternative interview angle", subject, priority: "Useful" as const, category: "Interview" as const },
+    { description: "Interviewee listening and reacting", subject, priority: "Useful" as const, category: "B-roll" as const },
+    { description: "Hands and detail cutaways", subject, priority: "Useful" as const, category: "B-roll" as const },
+    { description: "Subject working in their environment", subject, priority: "Essential" as const, category: "Action" as const },
+    { description: "Team collaboration coverage", subject: "Team", priority: "Useful" as const, category: "B-roll" as const },
+    { description: "Closing portrait and confident look to camera", subject, priority: "Optional" as const, category: "Interview" as const },
+  ];
+  const scriptedShots = [
+    { description: "Wide exterior establishing shot of the location", subject: "Shoot location", priority: "Essential" as const, category: "Establishing" as const },
+    { description: "Opening scripted scene", subject, priority: "Essential" as const, category: "Action" as const },
+    { description: "Primary action in a medium frame", subject, priority: "Essential" as const, category: "Action" as const },
+    { description: "Over-the-shoulder product demonstration", subject: "Product workflow", priority: "Essential" as const, category: "Demonstration" as const },
+    { description: "Reaction and listening coverage", subject, priority: "Useful" as const, category: "B-roll" as const },
+    { description: "Detail cutaways of hands and screens", subject: "Product details", priority: "Useful" as const, category: "Product" as const },
+    { description: "Team collaborating around the product", subject: "Team", priority: "Useful" as const, category: "B-roll" as const },
+    { description: "Closing hero shot", subject, priority: "Essential" as const, category: "Product" as const },
+  ];
+  if (capture === "interviews") return interviewShots;
+  if (capture === "b-roll") return scriptedShots.filter((shot) => shot.category === "B-roll" || shot.category === "Product" || shot.category === "Establishing");
+  if (capture === "documentary") return [...interviewShots.slice(0, 4), ...scriptedShots.slice(4, 8)];
+  if (capture === "mixture") return [...interviewShots.slice(0, 4), ...scriptedShots.slice(3, 7)];
+  return scriptedShots;
+}
+
+function shootWorkspaceSectionStorageKey(projectId: string) {
+  return `brisk-shoot-workspace-section-${projectId}-v1`;
+}
+
+function parseShootWorkspaceSection(value: string | null): ShootWorkspaceSection | null {
+  const sections: ShootWorkspaceSection[] = ["quick-start", "shots", "questions", "references", "dates", "locations", "people", "schedule", "notes", "documents", "call-sheet"];
+  return sections.includes(value as ShootWorkspaceSection) ? value as ShootWorkspaceSection : null;
+}
+
+function parseShootAccessSettings(rawValue: string | null): ShootAccessSettings {
+  const fallback: ShootAccessSettings = { freelancer: "canEdit", client: "viewOnly" };
+  if (!rawValue) return fallback;
+  try {
+    const value: unknown = JSON.parse(rawValue);
+    if (!value || typeof value !== "object") return fallback;
+    const settings = value as Partial<ShootAccessSettings>;
+    const accessLevels: ShootAccessLevel[] = ["viewOnly", "canEdit", "canManage"];
+    if (!accessLevels.includes(settings.freelancer as ShootAccessLevel) || !accessLevels.includes(settings.client as ShootAccessLevel)) return fallback;
+    return settings as ShootAccessSettings;
+  } catch {
+    return fallback;
+  }
+}
+
+function formatShootAccessLevel(value: ShootAccessLevel) {
+  if (value === "canManage") return "Can manage";
+  if (value === "canEdit") return "Can edit";
+  return "View only";
+}
+
+function getMissingCallSheetDetails(callSheet: CallSheet) {
+  const day = callSheet.days[0];
+  const location = callSheet.locations.find((item) => item.id === day?.primaryLocationId);
+  const contactPhone = getContactPhone(callSheet.onTheDayContact) || callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name))?.phone.trim();
+  return [
+    !day?.date ? "Shoot date" : "",
+    !day?.generalCallTime ? "General call time" : "",
+    !location || !(location.address.trim() || location.mapLink?.trim()) ? "Primary location" : "",
+    !callSheet.onTheDayContact.trim() || !contactPhone ? "On-the-day contact and phone number" : "",
+  ].filter(Boolean);
+}
+
+function getShootAssignments(person: ShootPerson): ShootAssignment[] {
+  return person.assignments?.length ? person.assignments : [{ id: `assignment-${person.id}`, type: person.type, role: person.role, callTime: person.callTime, shootDayIds: person.shootDayIds }];
+}
+
+function emptyShootDayNotes(): ShootDayNotes {
+  return { equipment: "", wardrobe: "", catering: "", access: "", safety: "", weatherConsiderations: "", clientNotes: "", internalNotes: "" };
+}
+
+function normaliseIdentity(value: string) {
+  return value.trim().toLocaleLowerCase("en-AU").replace(/[\p{P}\p{S}]+/gu, " ").replace(/\s+/gu, " ");
+}
+
+function deriveReferenceName(value: string) {
+  try {
+    const url = new URL(value);
+    return decodeURIComponent(url.pathname.split("/").filter(Boolean).at(-1) ?? "") || url.hostname;
+  } catch {
+    return "Visual reference";
+  }
+}
+
+function roundTimeToFive(value: string) {
+  const [hours, minutes] = value.split(":").map(Number);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return value;
+  const roundedMinutes = Math.round((hours * 60 + minutes) / 5) * 5;
+  return minutesToTime(roundedMinutes);
+}
+
 function entryPlaceholder(type: ScheduleType) {
   const placeholders: Record<ScheduleType, string> = {
     shot: "e.g. Founder interview",
@@ -4383,6 +5672,15 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
         emergencyNumber: normaliseApprovalText(day.safetyEmergency.emergencyNumber),
         confirmed: day.safetyEmergency.confirmed,
       } : null,
+      notes: day.notes ? {
+        equipment: normaliseApprovalText(day.notes.equipment),
+        wardrobe: normaliseApprovalText(day.notes.wardrobe),
+        catering: normaliseApprovalText(day.notes.catering),
+        access: normaliseApprovalText(day.notes.access),
+        safety: normaliseApprovalText(day.notes.safety),
+        weatherConsiderations: normaliseApprovalText(day.notes.weatherConsiderations),
+        clientNotes: normaliseApprovalText(day.notes.clientNotes),
+      } : null,
     })),
     notice: normaliseApprovalText(callSheet.notice),
     onTheDayContact: normaliseApprovalText(callSheet.onTheDayContact),
@@ -4407,9 +5705,16 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
       company: normaliseApprovalText(person.company ?? ""),
       phone: normaliseApprovalText(person.phone),
       email: normaliseApprovalText(person.email),
-      showContactDetails: person.showContactDetails !== false,
+      showContactDetails: person.showContactDetails === true,
       callTime: person.callTime,
       shootDayIds: person.shootDayIds,
+      assignments: getShootAssignments(person).map((assignment) => ({
+        id: assignment.id,
+        type: assignment.type,
+        role: normaliseApprovalText(assignment.role),
+        callTime: assignment.callTime,
+        shootDayIds: assignment.shootDayIds,
+      })),
     })),
     locations: callSheet.locations.map((location) => ({
       id: location.id,
@@ -4442,6 +5747,7 @@ function getCallSheetApprovalFingerprint(callSheet: CallSheet) {
       question: normaliseApprovalText(question.question),
       shootDayIds: question.shootDayIds,
     })),
+    visualReferences: (callSheet.visualReferences ?? []).map((reference) => ({ id: reference.id, name: normaliseApprovalText(reference.name), url: reference.url })),
     documents: callSheet.documents.map((document) => ({
       id: document.id,
       name: normaliseApprovalText(document.name),
@@ -4481,6 +5787,30 @@ function formatExistingPlanCoverage(coverage: ExistingShootPlanCoverage) {
   return "Creative Plan and Plan the Day";
 }
 
+function getBriefShootCapture(liveFootageValue: string, fallbackIsInterviewLed: boolean): QuickStartCapture | null {
+  const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
+  const usesNewFootage = footageValue.split("+").some((choice) => choice === "Shoot new" || choice === "New footage");
+  const filmingChoices = filmingContentValue === "Both" ? ["Interviews", "Scripted scenes"] : filmingContentValue.split("+").filter(Boolean);
+  if (filmingChoices.includes("Not sure yet") || filmingChoices.includes("I'll decide later")) return null;
+  if (usesNewFootage && filmingChoices.includes("Interviews") && filmingChoices.includes("Scripted scenes")) return "mixture";
+  if (usesNewFootage && filmingChoices.includes("Interviews")) return "interviews";
+  if (usesNewFootage && filmingChoices.includes("Scripted scenes")) return "scripted";
+  if (!liveFootageValue.trim() && fallbackIsInterviewLed) return "interviews";
+  return null;
+}
+
+function formatQuickStartCapture(capture: QuickStartCapture) {
+  const labels: Record<QuickStartCapture, string> = {
+    interviews: "Interviews",
+    scripted: "Scripted scenes",
+    "b-roll": "B-roll or general coverage",
+    documentary: "Event or documentary coverage",
+    mixture: "A mixture",
+    "not-confirmed": "Not sure yet - decide later",
+  };
+  return labels[capture];
+}
+
 function briefIncludesInterviews(liveFootageValue: string) {
   const [footageValue = "", , filmingContentValue = ""] = liveFootageValue.split("|");
   const usesNewFootage = footageValue
@@ -4495,7 +5825,7 @@ function briefIncludesInterviews(liveFootageValue: string) {
 function hasMinimumCallSheetDetails(callSheet: CallSheet) {
   const hasReadyDay = callSheet.days.some((day) => Boolean(day.date && day.generalCallTime && day.expectedWrapTime));
   const primaryLocationIds = new Set(callSheet.days.map((day) => day.primaryLocationId).filter(Boolean));
-  const hasPrimaryLocation = callSheet.locations.some((location) => primaryLocationIds.has(location.id) && Boolean(location.name.trim() && location.address.trim()));
+  const hasPrimaryLocation = callSheet.locations.some((location) => primaryLocationIds.has(location.id) && Boolean(location.address.trim() || location.mapLink?.trim()));
   return hasReadyDay && hasPrimaryLocation;
 }
 

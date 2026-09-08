@@ -78,13 +78,13 @@ export function PersonProfilePage({ personId }: { personId: string }) {
         <div className="person-profile-header-inner">
           <Link className="person-profile-back label-s-semibold" href="/people"><DsIcon name="arrow-left" size={16} /> People</Link>
           <div className="person-profile-heading">
-            <div className="person-profile-identity"><PeopleAvatar person={person} size="L" /><div><span className="label-xs-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</span><h1 className="headings-m-bold">{person.name}</h1><p className="label-s">{person.jobTitles.join(", ")} - {person.location}</p></div></div>
+            <div className="person-profile-identity"><PeopleAvatar person={person} size="L" /><div><span className="label-xs-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole ?? "No Brisk access"}</span><h1 className="headings-m-bold">{person.name}</h1><p className="label-s">{person.jobTitles.join(", ") || "Production contact"} - {person.location}</p></div></div>
             <div className="person-profile-actions">
               {!hasSelfManagedClientProfile ? <Button size="M" variant="secondary" onClick={() => setDialog("edit")}><span className="people-button-content"><DsIcon name="pencil-simple-ds" size={16} /> {hasSelfManagedProfessionalProfile ? "Edit Studio details" : "Edit profile"}</span></Button> : null}
-              {person.type !== "Client contact" ? <Button size="M" variant="secondary" onClick={() => setDialog("workload")}>View workload</Button> : null}
+              {person.type !== "Client contact" && person.type !== "Contact" ? <Button size="M" variant="secondary" onClick={() => setDialog("workload")}>View workload</Button> : null}
               {person.type === "Client contact" && person.clientId ? <Button size="M" variant="secondary" onClick={() => setSection("Access")}>Manage access</Button> : null}
-              <Button size="M" onClick={() => person.type === "Client contact" ? setSection("Access") : setDialog("assign")}><span className="people-button-content"><DsIcon name={person.type === "Client contact" ? "lock" : "plus"} size={16} /> {person.type === "Client contact" ? "Client access" : "Assign project"}</span></Button>
-              <Button size="M" variant="secondary" onClick={() => person.status === "Paused" ? setPersonStatus(person.id, "Active") : setPersonStatus(person.id, "Paused")}>{person.status === "Paused" ? "Restore access" : "Pause access"}</Button>
+              {person.type !== "Contact" ? <Button size="M" onClick={() => person.type === "Client contact" ? setSection("Access") : setDialog("assign")}><span className="people-button-content"><DsIcon name={person.type === "Client contact" ? "lock" : "plus"} size={16} /> {person.type === "Client contact" ? "Client access" : "Assign project"}</span></Button> : null}
+              {person.type !== "Contact" ? <Button size="M" variant="secondary" onClick={() => person.status === "Paused" ? setPersonStatus(person.id, "Active") : setPersonStatus(person.id, "Paused")}>{person.status === "Paused" ? "Restore access" : "Pause access"}</Button> : null}
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ function OverviewSection({ currentProjects, onActivity, onArchive, onDelete, onW
         <div><dt className="label-xs">Email</dt><dd>{person.email ? <a className="label-s-semibold" href={`mailto:${person.email}`}>{person.email}</a> : <span className="label-s people-muted">Not added</span>}</dd></div>
         <div><dt className="label-xs">Phone</dt><dd className="label-s-semibold">{person.phone || "Not added"}</dd></div>
         <div><dt className="label-xs">Location</dt><dd className="label-s-semibold">{person.location}</dd></div>
-        <div><dt className="label-xs">{person.type === "Client contact" ? "Client role" : person.type === "Team" ? "Studio permission" : "Access role"}</dt><dd className="label-s-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</dd></div>
+        <div><dt className="label-xs">{person.type === "Contact" ? "Brisk access" : person.type === "Client contact" ? "Client role" : person.type === "Team" ? "Studio permission" : "Access role"}</dt><dd className="label-s-semibold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole ?? "None"}</dd></div>
         {person.clientId && person.clientName ? <div><dt className="label-xs">Related Client</dt><dd><Link className="label-s-semibold" href={`/clients/${person.clientId}`}>{person.clientName}</Link></dd></div> : null}
       </dl>{selfManaged ? <div className="person-profile-safety"><DsIcon name="info" size={16} /><span className="label-xs">Contact and work details are managed by {person.name} in personal settings.</span></div> : null}</article>
 
@@ -292,6 +292,7 @@ function PersonProfilePermissionState({ role }: { role: "Studio Staff" | "Studio
 }
 
 function getProfileSections(person: Person): ProfileSection[] {
+  if (person.type === "Contact") return ["Overview", "Notes and activity"];
   if (person.type === "Client contact") return ["Overview", "Work", "Access", "Notes and activity"];
   if (person.type === "Freelancer") return ["Overview", "Work", "Hours", "Skills", "Access", "Commercial", "Notes and activity"];
   return ["Overview", "Work", "Hours", "Skills", "Access", "Notes and activity"];
@@ -311,7 +312,7 @@ function getInvitePrefill(person: Person) {
     ...projectIds.map((projectId) => activeVideoProjects.find((project) => project.id === projectId)?.clientId).filter((clientId): clientId is string => Boolean(clientId)),
   ])];
   return {
-    role: person.accessRole,
+    role: person.accessRole ?? undefined,
     email: person.email,
     name: person.name,
     jobTitle: person.jobTitles[0],

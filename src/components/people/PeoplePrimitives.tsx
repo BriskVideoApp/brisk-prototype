@@ -23,7 +23,7 @@ export function PeopleAvatar({ person, size = "M" }: { person: Pick<Person, "ava
 }
 
 export function PersonTypeBadge({ type }: { type: PersonType }) {
-  const label = type === "Team" ? "Studio Staff" : type === "Freelancer" ? "Studio Freelancer" : "Customer";
+  const label = type === "Team" ? "Studio Staff" : type === "Freelancer" ? "Studio Freelancer" : type === "Client contact" ? "Customer" : "Contact";
   return <span className={`people-type-badge is-${slug(type)} label-xs-semibold`}>{label}</span>;
 }
 
@@ -34,7 +34,7 @@ export function PersonStatusBadge({ status }: { status: PersonStatus }) {
 export function CapacityButton({ onClick, person }: { onClick: () => void; person: Person }) {
   const rollup = getWorkloadRollup(person);
 
-  if (person.type === "Client contact") return <span className="label-s people-muted">Not applicable</span>;
+  if (person.type === "Client contact" || person.type === "Contact") return <span className="label-s people-muted">Not applicable</span>;
 
   if (person.type === "Freelancer") {
     return (
@@ -139,7 +139,7 @@ export function AddPersonDialog({ initialType = "Team", onClose, onOpenPerson }:
   const [duplicate, setDuplicate] = useState<{ person: Person; reason: "email" | "name" } | null>(null);
   const [created, setCreated] = useState<Person | null>(null);
   const availableProjects = activeVideoProjects.filter((project) => project.clientId === clientId && project.status !== "Archived");
-  const needsEmail = type === "Client contact" || inviteNow;
+  const needsEmail = type === "Client contact" || (type !== "Contact" && inviteNow);
   const canCreate = Boolean(name.trim() && (!needsEmail || email.trim()) && (type !== "Client contact" || clientId));
 
   const resetWarnings = () => setDuplicate(null);
@@ -155,7 +155,7 @@ export function AddPersonDialog({ initialType = "Team", onClose, onOpenPerson }:
           skills: skills.split(",").map((item) => item.trim()).filter(Boolean),
           location,
           defaultRate: Number(rate) || 800,
-          inviteNow,
+          inviteNow: type === "Contact" ? false : inviteNow,
         });
     setCreated(person);
   };
@@ -197,17 +197,17 @@ export function AddPersonDialog({ initialType = "Team", onClose, onOpenPerson }:
   return (
     <ClientModal
       title="Add person"
-      description="Create one Person record for a Team member, freelancer or Client contact."
+      description="Create one Person record for a Filmmaker, Client or production contact."
       onClose={onClose}
       footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><button className="client-primary-button label-m-semibold" type="button" disabled={!canCreate} onClick={submit}>Create person</button></>}
     >
       <fieldset className="people-type-choice">
         <legend className="label-m-semibold">Person type</legend>
         <div>
-          {(["Team", "Freelancer", "Client contact"] as const).map((option) => (
+          {(["Team", "Freelancer", "Client contact", "Contact"] as const).map((option) => (
             <label className={type === option ? "is-selected" : ""} key={option}>
               <input type="radio" name="person-type" value={option} checked={type === option} onChange={() => { setType(option); resetWarnings(); }} />
-              <span><strong className="label-s-semibold">{option === "Team" ? "Team member" : option}</strong><small className="label-xs">{option === "Team" ? "Internal Studio staff" : option === "Freelancer" ? "External contractor" : "Human connected to a Client"}</small></span>
+              <span><strong className="label-s-semibold">{option === "Team" ? "Team member" : option}</strong><small className="label-xs">{option === "Team" ? "Internal Studio staff" : option === "Freelancer" ? "External contractor" : option === "Client contact" ? "Human connected to a Client" : "Talent or another production contact"}</small></span>
             </label>
           ))}
         </div>
@@ -229,12 +229,14 @@ export function AddPersonDialog({ initialType = "Team", onClose, onOpenPerson }:
           <label className="people-field"><span className="label-m-semibold">Default day rate <small className="label-xs">AUD</small></span><input type="number" min="0" value={rate} onChange={(event) => setRate(event.target.value)} /></label>
         </> : null}
 
+        {type === "Contact" ? <label className="people-field"><span className="label-m-semibold">Role <small className="label-xs">Optional</small></span><input value={jobTitle} placeholder="For example, interviewee or talent" onChange={(event) => setJobTitle(event.target.value)} /></label> : null}
+
         {type === "Client contact" ? <>
           <div className="people-field"><span className="label-m-semibold">Related Client</span><BriskSelect ariaLabel="Choose related Client" clearable={false} options={activeClients.map((client) => ({ value: client.id, label: client.name }))} placeholder="Choose Client" searchable value={clientId} onChange={(value) => { setClientId(value); setProjectIds([]); }} /></div>
           <fieldset className="people-project-access"><legend className="label-m-semibold">Project access</legend>{availableProjects.length ? availableProjects.map((project) => <label key={project.id}><input type="checkbox" checked={projectIds.includes(project.id)} onChange={(event) => setProjectIds((current) => event.target.checked ? [...current, project.id] : current.filter((id) => id !== project.id))} /><span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.status}</small></span></label>) : <span className="label-s people-muted">No projects are available for this Client yet.</span>}</fieldset>
         </> : null}
 
-        {type !== "Client contact" ? <label className="people-invite-option"><input type="checkbox" checked={inviteNow} onChange={(event) => setInviteNow(event.target.checked)} /><span><strong className="label-s-semibold">Invite to Brisk now</strong><small className="label-xs">Turn this off to create the profile before sending access.</small></span></label> : null}
+        {type !== "Client contact" && type !== "Contact" ? <label className="people-invite-option"><input type="checkbox" checked={inviteNow} onChange={(event) => setInviteNow(event.target.checked)} /><span><strong className="label-s-semibold">Invite to Brisk now</strong><small className="label-xs">Turn this off to create the profile before sending access.</small></span></label> : null}
       </div>
 
       {duplicate ? (

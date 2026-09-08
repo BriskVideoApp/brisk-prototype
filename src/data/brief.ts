@@ -501,7 +501,7 @@ export const fallbackBriefDraft: BriefDraft = {
     callToAction: {
       id: "callToAction",
       label: "What do we want them to do next?",
-      value: "Book a session",
+      value: "Book now",
       confidence: "guess",
       source: "ai_inferred",
       required: true,
@@ -824,7 +824,7 @@ export const fieldRegenerationValues: Record<BriefFieldId, string[]> = {
     "Yes|Female voiceover|Kai",
   ],
   callToAction: [
-    "Book a session",
+    "Book now",
     "Learn more",
     "Contact us",
   ],

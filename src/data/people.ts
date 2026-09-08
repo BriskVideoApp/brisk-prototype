@@ -1,7 +1,7 @@
 import type { StageKey, TeamPerson } from "@/components/active-videos/types";
 import { mockTeamPeople, teamRoleLabels } from "@/data/active-videos/teamDefaults";
 
-export type PersonType = "Team" | "Freelancer" | "Client contact";
+export type PersonType = "Team" | "Freelancer" | "Client contact" | "Contact";
 export type PersonStatus = "Active" | "Invited" | "Paused" | "Archived";
 export type PersonAvailability = "Available" | "Busy" | "Away";
 export type PersonAccessRole = "Studio Staff" | "Studio Freelancer" | "Customer";
@@ -59,7 +59,7 @@ export type Person = {
   seniority: "Emerging" | "Midweight" | "Senior" | "Lead";
   location: string;
   timezone: string;
-  accessRole: PersonAccessRole;
+  accessRole: PersonAccessRole | null;
   studioPermission: StudioPermission | null;
   status: PersonStatus;
   latestActivity: PersonActivity;
@@ -235,6 +235,7 @@ export function createNativePerson(input: NewPersonInput, id: string): Person {
   const activityLabel = input.inviteNow ? "Invitation sent" : "Person added";
   const activity = makeActivity(id, activityLabel, input.inviteNow ? `Invitation sent to ${input.email}` : "Profile created in People", now);
   const isFreelancer = input.type === "Freelancer";
+  const isContact = input.type === "Contact";
 
   return {
     id,
@@ -244,24 +245,24 @@ export function createNativePerson(input: NewPersonInput, id: string): Person {
     phone: "",
     department: input.type === "Team" ? inferTeamDepartment([input.jobTitle]) : null,
     type: input.type,
-    jobTitles: [input.jobTitle.trim() || (isFreelancer ? "Freelancer" : "Team member")],
+    jobTitles: input.jobTitle.trim() ? [input.jobTitle.trim()] : isContact ? [] : [isFreelancer ? "Freelancer" : "Team member"],
     skills: input.skills?.filter(Boolean) ?? [],
     styles: [],
     seniority: "Midweight",
     location: input.location?.trim() || "Location not added",
     timezone: "Australia/Sydney",
-    accessRole: isFreelancer ? "Studio Freelancer" : "Studio Staff",
+    accessRole: isContact ? null : isFreelancer ? "Studio Freelancer" : "Studio Staff",
     studioPermission: input.type === "Team" ? "Team Member" : null,
     status: input.inviteNow ? "Invited" : "Active",
     latestActivity: activity,
     activity: [activity],
     workloads: [],
     weeklyCapacityHours: input.type === "Team" ? input.weeklyCapacityHours ?? 40 : null,
-    availability: "Available",
+    availability: isContact ? null : "Available",
     notes: "",
     portfolioUrl: "",
     testingStatus: isFreelancer ? "Not started" : "Not required",
-    onboardingStatus: input.inviteNow ? "Not started" : "In progress",
+    onboardingStatus: isContact ? "Not started" : input.inviteNow ? "Not started" : "In progress",
     agreementStatus: isFreelancer ? "Pending" : "Not required",
     commercial: isFreelancer ? {
       rateType: "Day rate",

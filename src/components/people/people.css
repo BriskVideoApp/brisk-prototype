@@ -466,6 +466,7 @@
 .people-type-badge.is-team { background: var(--brisk-cyan-10); color: var(--brisk-cyan-70); }
 .people-type-badge.is-freelancer { background: var(--brisk-brand-secondary); color: var(--brisk-brand-primary-click); }
 .people-type-badge.is-client-contact { background: var(--brisk-yellow-10); color: var(--brisk-yellow-60); }
+.people-type-badge.is-contact { background: var(--brisk-bg-block-secondary); color: var(--brisk-text-secondary); }
 .people-status-badge.is-active { background: var(--brisk-green-10); color: var(--brisk-green-60); }
 .people-status-badge.is-invited { background: var(--brisk-brand-secondary); color: var(--brisk-brand-primary-click); }
 .people-status-badge.is-paused { background: var(--brisk-yellow-10); color: var(--brisk-yellow-60); }
@@ -611,7 +612,7 @@
 
 .people-type-choice > div {
   display: grid;
-  grid-template-columns: repeat(3, minmax(var(--brisk-space-none), 1fr));
+  grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
   gap: var(--brisk-space-s);
   margin-top: var(--brisk-space-xs);
 }

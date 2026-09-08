@@ -1470,24 +1470,15 @@
 }
 
 .brief-video-type-menu {
-  position: absolute;
-  z-index: 60;
-  top: calc(100% + var(--brisk-space-xxs));
-  right: 0;
-  left: 0;
+  position: static;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  max-height: min(calc(var(--brisk-space-3xl) * 6), 40dvh);
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-m);
   gap: var(--brisk-space-l);
-  overflow-y: scroll;
-  overscroll-behavior: contain;
   padding: var(--brisk-space-l);
-  scrollbar-gutter: stable;
-  touch-action: pan-y;
 }
 
 .brief-video-type-option {
@@ -1550,6 +1541,29 @@
 .brief-video-type-option-check {
   display: inline-flex;
   color: var(--brisk-brand-primary-click);
+}
+
+.brief-call-to-action-display {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.brief-call-to-action-inline {
+  cursor: text;
+}
+
+.brief-call-to-action-inline:focus-within {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.brief-call-to-action-inline-input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  padding: var(--brisk-space-none);
 }
 
 .brief-tone-chip-picker {
@@ -2903,6 +2917,12 @@
 .brief-date-picker-wrap-field {
   width: min(100%, calc(var(--brisk-space-3xl) * 8));
   max-width: calc(var(--brisk-space-3xl) * 8);
+}
+
+.brief-date-picker-wrap.is-inline .brief-date-popover {
+  position: static;
+  width: 100%;
+  max-width: none;
 }
 
 .brief-date-display {

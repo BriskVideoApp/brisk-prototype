@@ -3,6 +3,8 @@
   --project-stage-chip-size: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
   --project-stage-track-width: calc(var(--brisk-space-3xl) * 22);
   display: grid;
+  box-sizing: border-box;
+  min-width: 0;
   flex: 0 0 auto;
   border-bottom: 1px solid var(--brisk-border-primary);
   background: var(--brisk-bg-block-primary);
@@ -102,6 +104,7 @@
   position: relative;
   z-index: 90;
   display: grid;
+  box-sizing: border-box;
   width: 100%;
   min-width: 0;
   grid-template-columns: minmax(var(--brisk-space-none), 1fr) auto;
@@ -114,7 +117,7 @@
   display: grid;
   width: 100%;
   min-width: var(--brisk-space-none);
-  grid-template-columns: minmax(var(--brisk-space-none), var(--project-stage-track-width)) auto;
+  grid-template-columns: minmax(var(--brisk-space-none), var(--project-stage-track-width)) minmax(var(--brisk-space-3xl), auto);
   align-items: stretch;
   justify-content: center;
   gap: var(--brisk-space-2xl);
@@ -271,10 +274,25 @@ a.project-stage-chip:focus-visible {
 }
 
 .project-stage-media-step {
-  min-width: calc(var(--brisk-space-3xl) * 3);
+  min-width: var(--brisk-space-3xl);
   align-self: stretch;
   border-left: 1px solid var(--brisk-border-secondary);
   padding-left: var(--brisk-space-2xl);
+}
+
+@media (max-width: 1280px) and (min-width: 761px) {
+  .project-stage-flow-area {
+    gap: var(--brisk-space-m);
+    padding-inline: var(--brisk-space-l);
+  }
+
+  .project-stage-flow-navigation {
+    gap: var(--brisk-space-l);
+  }
+
+  .project-stage-media-step {
+    padding-left: var(--brisk-space-l);
+  }
 }
 
 .project-stage-media-step .project-stage-icon-surface {

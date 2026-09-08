@@ -284,42 +284,35 @@ const briefPurposeOptions = [
 ] as const;
 
 const briefCallToActionOptions = [
-  "Book a session",
-  "Contact us",
-  "Create account",
-  "Discover",
-  "Donate today",
-  "Fill out a short form",
-  "Get started",
-  "Join the conversation",
-  "Join us",
   "Learn more",
-  "Save my spot",
-  "Share now",
+  "Shop now",
+  "Contact us",
+  "Book now",
   "Sign up",
+  "Get quote",
+  "Download",
   "Subscribe",
+  "Apply now",
+  "Watch more",
   "Something else",
 ] as const;
 
 const briefCallToActionIconMap: Record<(typeof briefCallToActionOptions)[number], DsIconName> = {
-  "Book a session": "calendar",
-  "Contact us": "phone-call",
-  "Create account": "user-switch",
-  "Discover": "search",
-  "Donate today": "heart",
-  "Fill out a short form": "clipboard-text",
-  "Get started": "arrow-right",
-  "Join the conversation": "chats",
-  "Join us": "users-three",
   "Learn more": "book-open",
-  "Save my spot": "bookmark",
-  "Share now": "paper-plane-tilt",
+  "Shop now": "cursor",
+  "Contact us": "phone-call",
+  "Book now": "calendar",
   "Sign up": "pencil-simple",
+  "Get quote": "file-text",
+  "Download": "download-simple",
   "Subscribe": "bell",
+  "Apply now": "clipboard-text",
+  "Watch more": "play",
   "Something else": "plus",
 };
 
 const briefCustomOptionLabel = "Add Custom";
+const briefCustomCallToActionLabel = "Add custom CTA";
 
 function isBriefCustomOption(option: string) {
   return option === "Something else" || option === "Custom/Other";
@@ -327,6 +320,10 @@ function isBriefCustomOption(option: string) {
 
 function getBriefCallToActionIcon(option: string): DsIconName {
   return briefCallToActionIconMap[option as (typeof briefCallToActionOptions)[number]] ?? "cursor";
+}
+
+function getBriefCallToActionDisplayLabel(option: string) {
+  return isBriefCustomOption(option) ? briefCustomCallToActionLabel : option;
 }
 
 function getBriefOptionDisplayLabel(option: string) {
@@ -473,7 +470,7 @@ export function getBriefConfigurableOptions(
   if (fieldId === "callToAction") {
     return briefCallToActionOptions.map((option) => ({
       value: option,
-      label: getBriefOptionDisplayLabel(option),
+      label: getBriefCallToActionDisplayLabel(option),
     }));
   }
 
@@ -2347,148 +2344,56 @@ function BriefCallToActionSelect({
   onChange: (value: string) => void;
   value: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const isKnownCallToAction = briefCallToActionOptions.includes(value as (typeof briefCallToActionOptions)[number]);
   const isCustomCallToAction = value === "Something else" || (!!value && !isKnownCallToAction);
   const customValue = isCustomCallToAction && value !== "Something else" ? value : "";
-  const selectedCallToAction = isCustomCallToAction ? customValue : value;
-  const selectCallToAction = (option: (typeof briefCallToActionOptions)[number]) => {
-    onChange(option);
-    setIsOpen(false);
-  };
-  function handleTriggerKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      setIsOpen((current) => !current);
-    }
-  }
-
-  const menu = isOpen ? (
-    <div className="brief-platform-menu brief-call-to-action-menu" role="listbox" aria-label="Call to action options">
-      {briefCallToActionOptions.filter((option) => !excludedOptions.includes(option)).map((option) => {
-        const isCustomOption = isBriefCustomOption(option);
-
-        return (
-          <button
-            className={`brief-platform-option brief-call-to-action-option label-s${isCustomOption ? " brief-picker-custom-option" : ""}`}
-            key={option}
-            onClick={() => selectCallToAction(option)}
-            role="option"
-            type="button"
-            aria-selected={option === (isCustomCallToAction ? "Something else" : value)}
-          >
-            <span className="brief-platform-icon" aria-hidden="true">
-              <DsIcon name={getBriefCallToActionIcon(option)} size={16} />
-            </span>
-            <span className="brief-platform-option-copy">
-              <strong>{getBriefOptionDisplayLabel(option)}</strong>
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  ) : null;
-
-  if (isCustomCallToAction) {
-    return (
-      <div
-        className="brief-custom-select-wrap"
-        onBlur={(event) => {
-          const nextFocus = event.relatedTarget;
-          if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-            setIsOpen(false);
-          }
-        }}
-      >
-        <input
-          className="brief-custom-select-input label-s"
-          aria-label="Custom call to action"
-          placeholder="Describe the call to action"
-          value={customValue}
-          onClick={() => setIsOpen(true)}
-          onChange={(event) => onChange(event.target.value || "Something else")}
-          onFocus={() => setIsOpen(true)}
-        />
-        <button
-          className="brief-custom-select-menu"
-          type="button"
-          aria-label="Change call to action"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((current) => !current)}
-        >
-          <span className="sr-only">Change call to action</span>
-        </button>
-        <DsIcon name="caret-down" size={14} />
-        {menu}
-      </div>
-    );
-  }
-
-  if (selectedCallToAction) {
-    return (
-      <div
-        className="brief-platform-select brief-call-to-action-select"
-        onBlur={(event) => {
-          const nextFocus = event.relatedTarget;
-          if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-            setIsOpen(false);
-          }
-        }}
-      >
-        <div
-          className="brief-video-type-card-list brief-call-to-action-card-list"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isOpen}
-          aria-label="What do we want them to do next?"
-          onClick={() => setIsOpen((current) => !current)}
-          onKeyDown={handleTriggerKeyDown}
-        >
-          <article className="brief-video-type-card brief-call-to-action-card">
-            <div className="brief-video-type-card-body">
-              <div className="brief-video-type-card-head">
-                <h3 className="label-s-semibold">{selectedCallToAction}</h3>
-                <button
-                  className="brief-video-type-card-remove"
-                  type="button"
-                  aria-label={`Clear ${selectedCallToAction}`}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onChange("");
-                  }}
-                >
-                  <DsIcon name="x-close-cross" size={12} />
-                </button>
-              </div>
-            </div>
-          </article>
-        </div>
-        {menu}
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="brief-platform-select brief-call-to-action-select"
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <button
-        className="brief-video-type-empty-trigger label-s"
-        type="button"
-        aria-label="What do we want them to do next?"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((current) => !current)}
-      >
-        Choose call to action
-        <DsIcon name="caret-down" size={16} />
-      </button>
-      {menu}
+    <div className="brief-call-to-action-display">
+      <div className="brief-video-type-menu" role="listbox" aria-label="Call to action options">
+        {briefCallToActionOptions.filter((option) => !excludedOptions.includes(option)).map((option) => {
+          const isCustomOption = isBriefCustomOption(option);
+          const isSelected = option === (isCustomCallToAction ? "Something else" : value);
+
+          if (isCustomOption && isSelected) {
+            return (
+              <div
+                className="brief-video-type-option brief-call-to-action-inline selected"
+                key={option}
+                role="option"
+                aria-selected="true"
+              >
+                <span className="brief-video-type-option-icon" aria-hidden="true">
+                  <DsIcon name={getBriefCallToActionIcon(option)} size={16} />
+                </span>
+                <input
+                  autoFocus
+                  className="brief-call-to-action-inline-input label-s-semibold"
+                  aria-label="Custom call to action"
+                  placeholder={briefCustomCallToActionLabel}
+                  value={customValue}
+                  onChange={(event) => onChange(event.target.value || "Something else")}
+                />
+              </div>
+            );
+          }
+
+          return (
+            <button
+              className={`brief-video-type-option${isSelected ? " selected" : ""}`}
+              key={option}
+              type="button"
+              role="option"
+              aria-selected={isSelected}
+              onClick={() => onChange(isSelected ? "" : option)}
+            >
+              <span className="brief-video-type-option-icon" aria-hidden="true">
+                <DsIcon name={getBriefCallToActionIcon(option)} size={16} />
+              </span>
+              <strong className="label-s-semibold">{getBriefCallToActionDisplayLabel(option)}</strong>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -2750,6 +2655,7 @@ function BriefDeadlineSection({
       <div className="brief-field-list">
         <BriefFieldRow excludedFieldIds={excludedFieldIds} field={fields.deadline} onConfirm={onConfirmField} onRegenerate={onRegenerateField} onToggleFieldExcluded={onToggleFieldExcluded}>
           <BriefDeadlineField
+            inline={!summaryMode}
             value={fields.deadline.value}
             onChange={(value) => onFieldChange("deadline", value)}
           />
@@ -3403,22 +3309,27 @@ function BriefDeliverableDeadlineControl({
 }
 
 function BriefDeadlineField({
+  inline = false,
   onChange,
   value,
 }: {
+  inline?: boolean;
   onChange: (value: string) => void;
   value: string;
 }) {
   return (
     <div className="brief-deadline-control">
-      <BriskDatePicker ariaLabel="Deadline" placeholder="Choose date" value={value} variant="field" onChange={onChange} />
+      <BriskDatePicker ariaLabel="Deadline" inline={inline} placeholder="Choose date" value={value} variant="field" onChange={onChange} />
     </div>
   );
 }
 
 export function BriskDatePicker({
   ariaLabel,
+  defaultOpen = false,
+  disabled = false,
   displayLabel,
+  inline = false,
   isTertiary = false,
   onChange,
   placeholder,
@@ -3426,14 +3337,17 @@ export function BriskDatePicker({
   variant,
 }: {
   ariaLabel: string;
+  defaultOpen?: boolean;
+  disabled?: boolean;
   displayLabel?: string;
+  inline?: boolean;
   isTertiary?: boolean;
   onChange: (value: string) => void;
   placeholder: string;
   value: string;
   variant: "field" | "pill" | "summary";
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [visibleMonth, setVisibleMonth] = useState(() => getBriefCalendarMonthStart(value));
   const pickerRef = useRef<HTMLDivElement | null>(null);
   const readableDate = formatBriefDate(value);
@@ -3450,6 +3364,10 @@ export function BriskDatePicker({
       : `brief-date-display label-s${readableDate ? "" : " is-placeholder"}`;
 
   useEffect(() => {
+    if (inline) {
+      return;
+    }
+
     if (!isOpen) {
       setVisibleMonth(getBriefCalendarMonthStart(value));
       return;
@@ -3478,7 +3396,7 @@ export function BriskDatePicker({
       document.removeEventListener("pointerdown", closeOnPointerDown, true);
       document.removeEventListener("keydown", closeOnEscape);
     };
-  }, [isOpen, value]);
+  }, [inline, isOpen, value]);
 
   function openPicker() {
     setVisibleMonth(getBriefCalendarMonthStart(value));
@@ -3487,7 +3405,10 @@ export function BriskDatePicker({
 
   function selectDate(nextValue: string) {
     onChange(nextValue);
-    setIsOpen(false);
+
+    if (!inline) {
+      setIsOpen(false);
+    }
   }
 
   function selectToday() {
@@ -3499,9 +3420,13 @@ export function BriskDatePicker({
 
   return (
     <div
-      className={`brief-date-picker-wrap brief-date-picker-wrap-${variant}`}
+      className={`brief-date-picker-wrap brief-date-picker-wrap-${variant}${inline ? " is-inline" : ""}`}
       ref={pickerRef}
       onBlur={(event) => {
+        if (inline) {
+          return;
+        }
+
         const nextFocus = event.relatedTarget;
 
         if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
@@ -3509,12 +3434,14 @@ export function BriskDatePicker({
         }
       }}
     >
-      <button className={triggerClassName} type="button" aria-expanded={isOpen} aria-haspopup="dialog" onClick={openPicker}>
-        <span className={variant !== "summary" ? "brief-deliverable-trigger-label" : undefined}>{displayText}</span>
-        {variant === "summary" ? null : <DsIcon name="caret-down" size={12} />}
-      </button>
-      {isOpen ? (
-        <div className="brief-date-popover" role="dialog" aria-label={ariaLabel}>
+      {inline ? null : (
+        <button className={triggerClassName} type="button" aria-expanded={isOpen} aria-haspopup="dialog" disabled={disabled} onClick={openPicker}>
+          <span className={variant !== "summary" ? "brief-deliverable-trigger-label" : undefined}>{displayText}</span>
+          {variant === "summary" ? null : <DsIcon name="caret-down" size={12} />}
+        </button>
+      )}
+      {inline || isOpen ? (
+        <div className="brief-date-popover" role={inline ? "group" : "dialog"} aria-label={ariaLabel}>
           <div className="brief-date-popover-head">
             <strong className="label-s-semibold">{formatBriefCalendarMonth(visibleMonth)}</strong>
             <div className="brief-date-popover-nav" aria-label="Change month">
@@ -4274,7 +4201,6 @@ function BriefVideoTypeMultiSelect({
   options?: readonly BriefVideoTypeDetail[];
   value: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const selectedValues = parseMultiSelectValue(value).slice(0, 2);
   const canAddType = selectedValues.length < 2;
 
@@ -4288,107 +4214,40 @@ function BriefVideoTypeMultiSelect({
     onChange(nextValues.join(", "));
   }
 
-  function handleTriggerKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      setIsOpen((currentValue) => !currentValue);
-    }
-  }
-
   return (
-    <div
-      className="brief-video-type-multi"
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      {selectedValues.length > 0 ? (
-        <div
-          className="brief-video-type-card-list"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isOpen}
-          aria-label="Choose video type"
-          onClick={() => setIsOpen((currentValue) => !currentValue)}
-          onKeyDown={handleTriggerKeyDown}
-        >
-          {selectedValues.map((selectedValue) => {
-            const selectedType = briefVideoTypeDetails.find((videoType) => videoType.name === selectedValue);
+    <div className="brief-video-type-multi">
+      <div
+        className="brief-video-type-menu"
+        aria-label="Choose video type"
+        aria-multiselectable="true"
+        role="listbox"
+      >
+        {options.map((videoType) => {
+          const isSelected = selectedValues.includes(videoType.name);
 
-            return (
-              <article className="brief-video-type-card" key={selectedValue}>
-                <div className="brief-video-type-card-body">
-                  <div className="brief-video-type-card-head">
-                    <h3 className="label-s-semibold">{selectedType?.name ?? selectedValue}</h3>
-                    <button
-                      className="brief-video-type-card-remove"
-                      type="button"
-                      aria-label={`Remove ${selectedType?.name ?? selectedValue}`}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        toggleType(selectedValue);
-                      }}
-                    >
-                      <DsIcon name="x-close-cross" size={12} />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <div
-          className="brief-video-type-empty-trigger label-s"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isOpen}
-          aria-label="Choose video type"
-          onClick={() => setIsOpen((currentValue) => !currentValue)}
-          onKeyDown={handleTriggerKeyDown}
-        >
-          Choose video type
-          <DsIcon name="caret-down" size={16} />
-        </div>
-      )}
-
-      {isOpen ? (
-        <div
-          className="brief-video-type-menu"
-          aria-label="Choose video type"
-          aria-multiselectable="true"
-          role="listbox"
-        >
-          {options.map((videoType) => {
-            const isSelected = selectedValues.includes(videoType.name);
-
-            return (
-              <button
-                className={`brief-video-type-option ${isSelected ? "selected" : ""}`}
-                key={videoType.name}
-                type="button"
-                disabled={!isSelected && !canAddType}
-                aria-selected={isSelected}
-                role="option"
-                onClick={() => toggleType(videoType.name)}
-              >
-                <span className="brief-video-type-option-icon" aria-hidden="true">
-                  <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={16} />
+          return (
+            <button
+              className={`brief-video-type-option ${isSelected ? "selected" : ""}`}
+              key={videoType.name}
+              type="button"
+              disabled={!isSelected && !canAddType}
+              aria-selected={isSelected}
+              role="option"
+              onClick={() => toggleType(videoType.name)}
+            >
+              <span className="brief-video-type-option-icon" aria-hidden="true">
+                <DsIcon name={videoTypeIconMap[videoType.name] ?? "film-strip"} size={16} />
+              </span>
+              <strong className="label-s-semibold">{videoType.name}</strong>
+              {isSelected ? (
+                <span className="brief-video-type-option-check" aria-hidden="true">
+                  <DsIcon name="check-circle" size={16} />
                 </span>
-                <strong className="label-s-semibold">{videoType.name}</strong>
-                {isSelected ? (
-                  <span className="brief-video-type-option-check" aria-hidden="true">
-                    <DsIcon name="check-circle" size={16} />
-                  </span>
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -6018,6 +5877,7 @@ function BriefSummaryLogline({
               <BriefInlineSelect
                 autoOpen
                 ariaLabel="Choose call to action"
+                getOptionLabel={getBriefCallToActionDisplayLabel}
                 options={briefCallToActionOptions}
                 placeholder="Choose call to action"
                 value={fields.callToAction.value}

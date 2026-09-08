@@ -70,7 +70,7 @@ export function PeoplePage() {
     <main className="people-page">
       <header className="people-page-header">
         <div className="people-page-header-inner">
-          <div><span className="label-xs-semibold">Studio workspace</span><h1 className="headings-m-bold">People</h1><p className="paragraph-s">Manage Studio Staff, Studio Freelancers and Customers in one directory.</p></div>
+          <div><span className="label-xs-semibold">Studio workspace</span><h1 className="headings-m-bold">People</h1><p className="paragraph-s">Manage Filmmakers, Clients and production contacts in one directory.</p></div>
           <div className="people-page-actions">
             <Button size="M" variant="secondary" onClick={() => setIsAddOpen(true)}>Add profile</Button>
             <Button size="M" onClick={() => openInvitePerson()}><span className="people-button-content"><DsIcon name="plus" size={16} /> Invite person</span></Button>
@@ -108,7 +108,7 @@ export function PeoplePage() {
                     <td data-label="Current work"><div className="people-current-work"><strong className="label-xs-semibold">{currentProjects.length} active {currentProjects.length === 1 ? "project" : "projects"}</strong>{currentProjects.slice(0, 2).map((project) => <Link className="label-xs" href={`/projects/${project.id}`} key={project.id}>{project.name}</Link>)}{currentProjects.length === 0 ? <span className="label-xs people-muted">No current work</span> : null}</div></td>
                     <td data-label="Capacity or availability"><CapacityButton person={person} onClick={() => setWorkloadPerson(person)} /></td>
                     <td data-label="Latest activity"><button className="people-activity-button" type="button" onClick={() => setActivityPerson(person)}><strong className="label-s-semibold">{person.latestActivity.label}</strong><small className="label-xs">{formatPersonDate(person.latestActivity.occurredAt)}</small></button></td>
-                    <td data-label="Invitation"><div className="people-invitation-cell"><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? "Invite sent - waiting for them to join." : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : "They have joined Brisk."}</small>{invitationStatus !== "Accepted" ? <button className="client-text-button label-xs-semibold" type="button" onClick={() => resendInvitation(person)}>Resend invite</button> : null}</div></td>
+                    <td data-label="Invitation">{person.type === "Contact" ? <div className="people-invitation-cell"><strong className="label-s-semibold">No access</strong><small className="label-xs">Not invited to Brisk.</small></div> : <div className="people-invitation-cell"><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? "Invite sent - waiting for them to join." : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : "They have joined Brisk."}</small>{invitationStatus !== "Accepted" ? <button className="client-text-button label-xs-semibold" type="button" onClick={() => resendInvitation(person)}>Resend invite</button> : null}</div>}</td>
                     <td data-label="Open profile"><Link className="people-row-open" href={`/people/${person.id}`} aria-label={`Open ${person.name}`}><DsIcon name="caret-right" size={16} /></Link></td>
                   </tr>
                 );
@@ -132,7 +132,7 @@ function PeopleEmptyState({ hasControls, onClear, onInvite, view }: { hasControl
       ? { title: "No Customers", body: "Customers will appear here when you invite someone to a Client portal.", action: "Invite Customer" }
       : view === "Archived"
         ? { title: "No archived people", body: "Archived profiles will stay here with their project history intact.", action: "Invite person" }
-        : { title: "No people yet", body: "Studio Staff, Studio Freelancers and Customers will appear here.", action: "Invite person" };
+        : { title: "No people yet", body: "Filmmakers, Clients and production contacts will appear here.", action: "Invite person" };
   return <section className="people-empty-state"><span><DsIcon name="users-three" size={28} /></span><h2 className="headings-xs-bold">{hasControls ? "No people match this search" : copy.title}</h2><p className="paragraph-s">{hasControls ? "Try a different name or email address." : copy.body}</p>{hasControls ? <Button size="M" variant="secondary" onClick={onClear}>Clear search</Button> : <Button size="M" onClick={onInvite}>{copy.action}</Button>}</section>;
 }
 
@@ -168,7 +168,7 @@ function totalWorkload(person: Person) {
 }
 
 function availabilityScore(person: Person) {
-  if (person.type === "Client contact") return 4;
+  if (person.type === "Client contact" || person.type === "Contact") return 4;
   if (person.type === "Freelancer") return person.availability === "Available" ? 0 : person.availability === "Busy" ? 2 : 3;
   const rollup = getWorkloadRollup(person);
   if (rollup.level === "full") return 3;

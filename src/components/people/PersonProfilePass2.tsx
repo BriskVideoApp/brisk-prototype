@@ -119,8 +119,8 @@ export function EditPersonProfileDialog({
   const [avatarUrl, setAvatarUrl] = useState(person.avatarUrl);
   const [attemptedSave, setAttemptedSave] = useState(false);
   const normalisedEmail = email.trim().toLocaleLowerCase("en-AU");
-  const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(normalisedEmail);
-  const duplicate = allPeople.find((candidate) => candidate.id !== person.id && candidate.email.trim().toLocaleLowerCase("en-AU") === normalisedEmail);
+  const emailIsValid = person.type === "Contact" && !normalisedEmail ? true : /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(normalisedEmail);
+  const duplicate = normalisedEmail ? allPeople.find((candidate) => candidate.id !== person.id && candidate.email.trim().toLocaleLowerCase("en-AU") === normalisedEmail) : undefined;
   const canSave = Boolean(name.trim() && emailIsValid && !duplicate);
 
   const chooseAvatar = (event: ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +147,7 @@ export function EditPersonProfileDialog({
       seniority,
       location: location.trim() || "Location not added",
       timezone: timezone.trim() || "UTC",
-      availability: person.type === "Client contact" ? null : availability,
+      availability: person.type === "Client contact" || person.type === "Contact" ? null : availability,
       weeklyCapacityHours: person.type === "Team" ? Math.max(1, Number(weeklyCapacity) || 40) : null,
       portfolioUrl: portfolioUrl.trim(),
     });
@@ -176,7 +176,7 @@ export function EditPersonProfileDialog({
         </section>
 
         <section className="person-edit-access-summary">
-          <span><strong className="label-xs-semibold">{person.accessRole}</strong><small className="label-xs">{profileAccessCopy(person)}</small></span>
+          <span><strong className="label-xs-semibold">{person.accessRole ?? "No Brisk access"}</strong><small className="label-xs">{profileAccessCopy(person)}</small></span>
           <DsIcon name="lock" size={18} />
         </section>
 
@@ -184,11 +184,11 @@ export function EditPersonProfileDialog({
           <Input label="Name" value={name} error={attemptedSave && !name.trim()} onChange={(event) => setName(event.target.value)} />
           <Input label="Email" type="email" value={email} error={attemptedSave && (!emailIsValid || Boolean(duplicate))} onChange={(event) => setEmail(event.target.value)} />
           <Input label="Phone" value={phone} placeholder="Add phone number" onChange={(event) => setPhone(event.target.value)} />
-          <Input label={person.type === "Client contact" ? "Role" : "Job titles"} value={jobTitles} hint="Separate multiple titles with commas" onChange={(event) => setJobTitles(event.target.value)} />
+          <Input label={person.type === "Client contact" || person.type === "Contact" ? "Role" : "Job titles"} value={jobTitles} hint="Separate multiple titles with commas" onChange={(event) => setJobTitles(event.target.value)} />
           <Input label="Location" value={location} onChange={(event) => setLocation(event.target.value)} />
           <Input label="Timezone" value={timezone} onChange={(event) => setTimezone(event.target.value)} />
           <div className="person-edit-select-field"><span className="label-m-semibold">Seniority</span><BriskSelect ariaLabel="Choose seniority" clearable={false} searchable={false} options={seniorityOptions} placeholder="Choose seniority" value={seniority} onChange={(value) => value && setSeniority(value)} /></div>
-          {person.type !== "Client contact" ? <div className="person-edit-select-field"><span className="label-m-semibold">Availability</span><BriskSelect ariaLabel="Choose availability" clearable={false} searchable={false} options={availabilityOptions} placeholder="Choose availability" value={availability} onChange={(value) => value && setAvailability(value)} /></div> : null}
+          {person.type !== "Client contact" && person.type !== "Contact" ? <div className="person-edit-select-field"><span className="label-m-semibold">Availability</span><BriskSelect ariaLabel="Choose availability" clearable={false} searchable={false} options={availabilityOptions} placeholder="Choose availability" value={availability} onChange={(value) => value && setAvailability(value)} /></div> : null}
           {person.type === "Team" ? <Input label="Weekly capacity" type="number" value={weeklyCapacity} hint="Hours per week" onChange={(event) => setWeeklyCapacity(event.target.value)} /> : null}
           {person.type !== "Client contact" ? <Input label="Portfolio or reel" type="url" value={portfolioUrl} placeholder="https://" onChange={(event) => setPortfolioUrl(event.target.value)} /> : null}
           <div className="person-edit-wide"><Input label="Skills and specialties" value={skills} hint="Separate skills with commas" onChange={(event) => setSkills(event.target.value)} /></div>
@@ -466,6 +466,7 @@ function profileAccessCopy(person: Person) {
     ? "Full Studio workspace access without Studio settings."
     : "Full Studio workspace and Studio settings access.";
   if (person.type === "Freelancer") return "Access is limited to selected Clients and projects.";
+  if (person.type === "Contact") return "This production contact has not been invited to Brisk.";
   return "Access is limited to one Client company and selected projects.";
 }
 

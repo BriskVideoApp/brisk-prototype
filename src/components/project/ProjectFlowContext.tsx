@@ -12,8 +12,11 @@ import {
 import type { ProjectVideoType } from "@/components/active-videos/types";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { selectProjectBrief } from "@/data/prototype-state";
 import {
+  getRecommendedProductionFlow,
   productionFlowTemplates,
+  type ProductionBriefOverride,
   type ProductionFlowPostProductionTerm,
   type ProductionFlowStageKey,
 } from "@/data/production-flow";
@@ -52,7 +55,8 @@ type ProjectFlowContextValue = {
   ) => void;
 };
 
-const projectFlowStorageKey = "brisk-project-flow-v1";
+const projectFlowStorageKey = "brisk-project-flow-v2";
+const legacyProjectFlowStorageKey = "brisk-project-flow-v1";
 const ProjectFlowContext = createContext<ProjectFlowContextValue | null>(null);
 
 export function ProjectFlowProvider({ children }: { children: ReactNode }) {
@@ -66,21 +70,30 @@ export function ProjectFlowProvider({ children }: { children: ReactNode }) {
     setOverrides(readProjectFlowOverrides(scopeKey));
   }, [hasHydrated, hasLoadedScenario, scopeKey]);
 
+  const getRecommendedProjectFlow = useCallback((project: ProjectFlowSource) => {
+    const brief = selectProjectBrief(state, project.id);
+    return createDefaultProjectFlow(
+      project.videoType,
+      brief?.fields.videoType.value ?? "",
+      brief?.fields.liveFootage.value ?? "",
+    );
+  }, [state]);
+
   const getProjectFlow = useCallback(
-    (project: ProjectFlowSource) => overrides[project.id] ?? createDefaultProjectFlow(project.videoType),
-    [overrides],
+    (project: ProjectFlowSource) => overrides[project.id] ?? getRecommendedProjectFlow(project),
+    [getRecommendedProjectFlow, overrides],
   );
 
   const commitProjectFlow = useCallback((project: ProjectFlowSource, update: (current: ProjectFlowConfiguration) => ProjectFlowConfiguration) => {
     setOverrides((currentOverrides) => {
       const nextOverrides = {
         ...currentOverrides,
-        [project.id]: update(currentOverrides[project.id] ?? createDefaultProjectFlow(project.videoType)),
+        [project.id]: update(currentOverrides[project.id] ?? getRecommendedProjectFlow(project)),
       };
       writeProjectFlowOverrides(scopeKey, nextOverrides);
       return nextOverrides;
     });
-  }, [scopeKey]);
+  }, [getRecommendedProjectFlow, scopeKey]);
 
   const addProjectStage = useCallback((project: ProjectFlowSource, stage: ProductionFlowStageKey) => {
     commitProjectFlow(project, (current) => {
@@ -132,8 +145,8 @@ export function ProjectFlowProvider({ children }: { children: ReactNode }) {
   }, [commitProjectFlow]);
 
   const resetProjectFlow = useCallback((project: ProjectFlowSource) => {
-    commitProjectFlow(project, () => createDefaultProjectFlow(project.videoType));
-  }, [commitProjectFlow]);
+    commitProjectFlow(project, () => getRecommendedProjectFlow(project));
+  }, [commitProjectFlow, getRecommendedProjectFlow]);
 
   const setProjectPostProductionTerm = useCallback((
     project: ProjectFlowSource,
@@ -167,13 +180,36 @@ export function useProjectFlow() {
   return context;
 }
 
-function createDefaultProjectFlow(videoType: ProjectVideoType): ProjectFlowConfiguration {
-  const template = videoType === "animation" ? productionFlowTemplates.animation : productionFlowTemplates.scripted;
+function createDefaultProjectFlow(
+  projectVideoType: ProjectVideoType,
+  selectedVideoType: string,
+  liveFootage: string,
+): ProjectFlowConfiguration {
+  const template = projectVideoType === "animation"
+    ? productionFlowTemplates.animation
+    : getLiveActionTemplate(selectedVideoType, liveFootage);
   return {
     stages: [...template.stages],
     postProductionTerm: template.postProductionTerm,
     hiddenStageLocations: {},
   };
+}
+
+function getLiveActionTemplate(selectedVideoType: string, liveFootage: string) {
+  const recommended = getRecommendedProductionFlow(selectedVideoType, getBriefProductionOverride(liveFootage));
+  return recommended.stages.includes("shoot") ? recommended : productionFlowTemplates.scripted;
+}
+
+function getBriefProductionOverride(liveFootage: string): ProductionBriefOverride {
+  const normalised = liveFootage.toLowerCase();
+  const hasInterviews = normalised.includes("interview");
+  const hasScriptedScenes = normalised.includes("scripted");
+
+  if (normalised.includes("animation")) return "animation";
+  if (hasInterviews && hasScriptedScenes) return "mixed";
+  if (hasInterviews) return "interview";
+  if (hasScriptedScenes) return "scripted";
+  return "video-type";
 }
 
 function insertStage(stages: ProductionFlowStageKey[], stage: ProductionFlowStageKey) {
@@ -237,12 +273,37 @@ function getFlowValidationIssue(stages: ProductionFlowStageKey[]) {
 function readProjectFlowOverrides(scopeKey: string): ProjectFlowOverrides {
   try {
     const stored = window.localStorage.getItem(projectFlowStorageKey);
-    if (!stored) return {};
-    const scopes = JSON.parse(stored) as Record<string, ProjectFlowOverrides>;
-    return scopes[scopeKey] ?? {};
+    if (stored) {
+      const scopes = JSON.parse(stored) as Record<string, ProjectFlowOverrides>;
+      if (scopes[scopeKey]) return scopes[scopeKey];
+    }
+
+    const legacyStored = window.localStorage.getItem(legacyProjectFlowStorageKey);
+    if (!legacyStored) return {};
+    const legacyScopes = JSON.parse(legacyStored) as Record<string, ProjectFlowOverrides>;
+    return Object.fromEntries(Object.entries(legacyScopes[scopeKey] ?? {}).map(([projectId, flow]) => [
+      projectId,
+      normaliseLegacyProjectFlow(flow),
+    ]));
   } catch {
     return {};
   }
+}
+
+function normaliseLegacyProjectFlow(flow: ProjectFlowConfiguration): ProjectFlowConfiguration {
+  const shootIndex = flow.stages.indexOf("shoot");
+  const scriptIndex = flow.stages.indexOf("script");
+  const template = shootIndex >= 0 && scriptIndex >= 0 && shootIndex < scriptIndex
+    ? productionFlowTemplates.interview
+    : flow.postProductionTerm === "animation" && shootIndex < 0
+      ? productionFlowTemplates.animation
+      : productionFlowTemplates.scripted;
+
+  return {
+    stages: [...template.stages],
+    postProductionTerm: template.postProductionTerm,
+    hiddenStageLocations: {},
+  };
 }
 
 function writeProjectFlowOverrides(scopeKey: string, overrides: ProjectFlowOverrides) {

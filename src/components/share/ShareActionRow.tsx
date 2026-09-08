@@ -25,6 +25,7 @@ export type StageApprovalControlProps = {
   customerName?: string;
   disabled?: boolean;
   disabledTooltip?: string;
+  allowRoleApproval?: boolean;
 };
 
 export type ShareActionRowProps = {
@@ -51,6 +52,9 @@ export type ShareActionRowProps = {
   approveDisabledTooltip?: string;
   approvedAt?: string;
   approvedBy?: string;
+  allowRoleApproval?: boolean;
+  canConfigureLink?: boolean;
+  beforeAction?: (action: "copy" | "review" | "approve", proceed: () => void) => void;
 };
 
 type ExpandedSection = "linkOpens" | "access";
@@ -100,6 +104,9 @@ export function ShareActionRow({
   approveDisabledTooltip,
   approvedAt = "17 Aug",
   approvedBy,
+  allowRoleApproval = false,
+  canConfigureLink = true,
+  beforeAction,
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
@@ -186,6 +193,14 @@ export function ShareActionRow({
     showActionToast("Link copied");
   };
 
+  const runAction = (action: "copy" | "review" | "approve", proceed: () => void) => {
+    if (beforeAction) {
+      beforeAction(action, proceed);
+      return;
+    }
+    proceed();
+  };
+
   const showActionToast = (message: string) => {
     setReviewToastMessage(message);
 
@@ -269,7 +284,7 @@ export function ShareActionRow({
           type="button"
           disabled={disabled}
           title={disabled ? disabledTooltip : undefined}
-          onClick={isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true)}
+          onClick={() => runAction("review", isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true))}
         >
           {requestReviewLabel}
         </button>
@@ -284,7 +299,8 @@ export function ShareActionRow({
             approvedAt={approvedAt}
             approvedBy={approvedBy}
             customerName={customerName}
-            onApprove={approveProject}
+            allowRoleApproval={allowRoleApproval}
+            onApprove={() => runAction("approve", approveProject)}
             onUnapprove={() => {
               setIsPopoverOpen(false);
               setIsRequestReviewOpen(false);
@@ -302,7 +318,7 @@ export function ShareActionRow({
 
       {isPopoverOpen ? (
         <aside className="share-popover" aria-label="Copy link settings" onPointerDown={(event) => event.stopPropagation()}>
-          <button className="share-copy-primary label-s-semibold" type="button" onClick={copyLink}>
+          <button className="share-copy-primary label-s-semibold" type="button" onClick={() => runAction("copy", copyLink)}>
             Copy link
           </button>
           {hasCopied ? (
@@ -312,7 +328,7 @@ export function ShareActionRow({
           ) : null}
           <p className="share-helper-text label-s">For external sharing. No sign-in needed.</p>
 
-          <ShareOptionSection
+          {canConfigureLink ? <><ShareOptionSection
             title="Link opens"
             value={linkOpens === "stageOnly" ? `${stageLabel} only` : linkOpenLabels[linkOpens]}
             isExpanded={expandedSections.includes("linkOpens")}
@@ -346,7 +362,7 @@ export function ShareActionRow({
             {access === "canEdit" ? (
               <p className="share-section-helper label-xs">Approve and Request Review still need sign-in.</p>
             ) : null}
-          </ShareOptionSection>
+          </ShareOptionSection></> : null}
         </aside>
       ) : null}
 
@@ -376,11 +392,12 @@ export function StageApprovalControl({
   customerName = "Avery Taylor",
   disabled = false,
   disabledTooltip,
+  allowRoleApproval = false,
 }: StageApprovalControlProps) {
   const rootRef = useRef<HTMLSpanElement>(null);
   const popoverId = useId();
   const [isOpen, setIsOpen] = useState(false);
-  const isRoleDisabled = userRole === "Share Link Viewer" || userRole === "Studio Freelancer";
+  const isRoleDisabled = userRole === "Share Link Viewer" || (userRole === "Studio Freelancer" && !allowRoleApproval);
   const isDisabled = disabled || isRoleDisabled;
   const approvalActor = approvedBy ?? (userRole === "Customer" ? customerName : "Tom");
   const approvalDetails = `Approved on ${approvedAt} by ${approvalActor}.`;

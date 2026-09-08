@@ -20,6 +20,18 @@ export type ShootDay = {
   timelineEndTime?: string;
   primaryLocationId: string;
   safetyEmergency?: SafetyEmergencyInfo;
+  notes?: ShootDayNotes;
+};
+
+export type ShootDayNotes = {
+  equipment: string;
+  wardrobe: string;
+  catering: string;
+  access: string;
+  safety: string;
+  weatherConsiderations: string;
+  clientNotes: string;
+  internalNotes: string;
 };
 
 export type SafetyEmergencyInfo = {
@@ -60,6 +72,7 @@ export type ProductionEntry = {
   interiorExterior?: InteriorExterior;
   notes?: string;
   scriptSection?: string;
+  suggestionStatus?: "suggested";
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";
@@ -74,6 +87,15 @@ export type ShootPerson = {
   phone: string;
   email: string;
   showContactDetails?: boolean;
+  callTime: string;
+  shootDayIds: ShootDayAssignment;
+  assignments?: ShootAssignment[];
+};
+
+export type ShootAssignment = {
+  id: string;
+  type: ShootPersonType;
+  role: string;
   callTime: string;
   shootDayIds: ShootDayAssignment;
 };
@@ -102,6 +124,14 @@ export type InterviewQuestion = {
   personId?: string;
   question: string;
   shootDayIds: ShootDayAssignment;
+  suggestionStatus?: "suggested";
+};
+
+export type ShootVisualReference = {
+  id: string;
+  name: string;
+  url: string;
+  source: "upload" | "link";
 };
 
 export type ShootDocument = {
@@ -146,6 +176,7 @@ export type CallSheet = {
   notes: string;
   practicalInfo: PracticalInfo;
   questions: InterviewQuestion[];
+  visualReferences?: ShootVisualReference[];
   documents: ShootDocument[];
   visibleOptionalSections: OptionalSectionKey[];
   updatedAt: string;
@@ -490,6 +521,7 @@ export const existingPeople: ShootPerson[] = [
 ];
 
 export const shootAddressSuggestions: ShootAddressSuggestion[] = [
+  { id: "hewitts-avenue", name: "Hewitts Avenue", address: "26 Hewitts Avenue, Thirroul NSW 2515" },
   { id: "sydney-opera-house", name: "Sydney Opera House", address: "Bennelong Point, Sydney NSW 2000" },
   { id: "carriageworks", name: "Carriageworks", address: "245 Wilson Street, Eveleigh NSW 2015" },
   { id: "icc-sydney", name: "ICC Sydney", address: "14 Darling Drive, Sydney NSW 2000" },
@@ -592,6 +624,10 @@ export function callSheetStorageKey(projectId: string) {
   return `brisk-call-sheet-${projectId}-v3`;
 }
 
+export function shootAccessStorageKey(projectId: string) {
+  return `brisk-shoot-access-${projectId}-v1`;
+}
+
 export function ensureShotNumbers(callSheet: CallSheet) {
   const usedNumbers = new Set<number>();
   let nextNumber = Math.max(0, ...callSheet.entries
@@ -648,8 +684,15 @@ export function formatShootDate(value: string) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-export function getMapsUrl(address: string) {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+export function getMapsUrl(addressOrLink: string) {
+  const value = addressOrLink.trim();
+  if (/^https?:\/\//iu.test(value)) return value;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(value)}`;
+}
+
+export function getMapsLinkLabel(addressOrLink: string) {
+  const value = addressOrLink.trim();
+  return /^https?:\/\//iu.test(value) ? "Open in Google Maps" : value;
 }
 
 export function addMinutes(time: string, minutes: number) {
