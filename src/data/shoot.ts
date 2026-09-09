@@ -3,13 +3,24 @@ import type { ScriptComment } from "@/data/script";
 
 export type ShootDayAssignment = "all" | string[];
 
-export type ScheduleType = "shot" | "setup" | "lunch" | "travel" | "break";
-export type ShotCategory = "Interview" | "B-roll" | "Establishing" | "Product" | "Action" | "Demonstration" | "Event coverage" | "Drone" | "Other";
+export type ScheduleType = "shot" | "coverage" | "setup" | "lunch" | "travel" | "break";
+export type ShotCategory = string;
 export type ShotSize = "Extreme close-up" | "Close-up" | "Medium close-up" | "Medium" | "Medium wide" | "Wide" | "Extreme wide";
-export type CameraMovement = "Static" | "Handheld" | "Pan" | "Tilt" | "Tracking" | "Push in" | "Pull out" | "Gimbal" | "Slider / dolly" | "Jib / crane" | "Other";
+export type CameraMovement = string;
+export type ShotPriority = "Critical" | "High" | "Medium" | "Bonus";
 export type CameraAngle = "Eye level" | "Low angle" | "High angle" | "Overhead" | "Shoulder level" | "Hip level" | "POV" | "Dutch angle" | "Other";
 export type InteriorExterior = "Interior" | "Exterior" | "Both";
 export type ShotImageSource = "upload" | "link" | "stock" | "project-media";
+export type ShotCaptureStatus = "to-capture" | "captured" | "pickup-needed" | "not-required";
+
+export type ShotGroup = {
+  id: string;
+  name: string;
+  description?: string;
+  subject?: string;
+  locationId?: string;
+  order: number;
+};
 
 export type ShootDay = {
   id: string;
@@ -58,7 +69,7 @@ export type ProductionEntry = {
   captured?: boolean;
   completed?: boolean;
   subject?: string;
-  priority?: "Essential" | "Useful" | "Optional";
+  priority?: ShotPriority;
   imageReferenceUrl?: string;
   imageReferenceId?: string;
   imageReferenceSource?: ShotImageSource;
@@ -75,6 +86,9 @@ export type ProductionEntry = {
   scriptSection?: string;
   suggestionStatus?: "suggested";
   comments?: ScriptComment[];
+  shotGroupId?: string | null;
+  linkedShotGroupId?: string;
+  captureStatus?: ShotCaptureStatus;
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";
@@ -127,13 +141,17 @@ export type InterviewQuestion = {
   question: string;
   shootDayIds: ShootDayAssignment;
   suggestionStatus?: "suggested";
+  asked?: boolean;
 };
 
 export type ShootVisualReference = {
   id: string;
   name: string;
+  description?: string;
   url: string;
-  source: "upload" | "link";
+  thumbnailUrl?: string;
+  kind?: "image" | "video";
+  source: ShotImageSource;
 };
 
 export type ShootDocument = {
@@ -173,6 +191,8 @@ export type CallSheet = {
   weatherUpdatedAt: string;
   onTheDayContact: string;
   entries: ProductionEntry[];
+  shotGroups?: ShotGroup[];
+  shotListTopLevelOrder?: string[];
   people: ShootPerson[];
   locations: ShootLocation[];
   notes: string;
@@ -559,7 +579,7 @@ export function getEmptyCallSheet(project: Project): CallSheet {
 
 export function getInitialCallSheet(project: Project): CallSheet {
   if (project.id === completeCallSheet.projectId) {
-    return structuredClone(completeCallSheet);
+    return normaliseShootArchitecture(structuredClone(completeCallSheet));
   }
 
   const locationId = `location-${project.id}`;
@@ -631,36 +651,116 @@ export function shootAccessStorageKey(projectId: string) {
 }
 
 export function ensureShotNumbers(callSheet: CallSheet) {
-  const usedNumbers = new Set<number>();
-  let nextNumber = Math.max(0, ...callSheet.entries
+  const orderedShots = callSheet.entries
     .filter((entry) => entry.type === "shot")
-    .map((entry) => entry.shotNumber ?? 0)) + 1;
-
+    .map((entry, index) => ({ entry, fallbackOrder: index }))
+    .sort((left, right) => (left.entry.shotListOrder ?? left.fallbackOrder) - (right.entry.shotListOrder ?? right.fallbackOrder));
+  const positionById = new Map(orderedShots.map(({ entry }, index) => [entry.id, index]));
   let changed = false;
-  let shotOrder = 0;
   const entries = callSheet.entries.map((entry) => {
     if (entry.type !== "shot") {
       if (entry.shotNumber === undefined) return entry;
       changed = true;
       return { ...entry, shotNumber: undefined };
     }
-    const shotListOrder = entry.shotListOrder ?? shotOrder;
-    shotOrder += 1;
-    if (entry.shotListOrder === undefined) changed = true;
-    if (entry.shotNumber && !usedNumbers.has(entry.shotNumber)) {
-      usedNumbers.add(entry.shotNumber);
-      return entry.shotListOrder === undefined ? { ...entry, shotListOrder } : entry;
-    }
-
-    while (usedNumbers.has(nextNumber)) nextNumber += 1;
-    const shotNumber = nextNumber;
-    usedNumbers.add(shotNumber);
-    nextNumber += 1;
+    const shotListOrder = positionById.get(entry.id) ?? 0;
+    const shotNumber = shotListOrder + 1;
+    if (entry.shotListOrder === shotListOrder && entry.shotNumber === shotNumber) return entry;
     changed = true;
     return { ...entry, shotNumber, shotListOrder };
   });
 
   return changed ? { ...callSheet, entries } : callSheet;
+}
+
+export function normaliseShootArchitecture(callSheet: CallSheet): CallSheet {
+  const originalShots = callSheet.entries.filter((entry) => entry.type === "shot");
+  const groups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
+  const groupByName = new Map(groups.map((group) => [shootIdentityKey(group.name), group]));
+  const shots = originalShots.map((shot) => {
+    if (shot.shotGroupId === null) {
+      return {
+        ...shot,
+        dayId: "",
+        startTime: "",
+        durationMinutes: 0,
+        captureStatus: shot.captureStatus ?? (shot.captured ? "captured" : "to-capture"),
+      } satisfies ProductionEntry;
+    }
+    let group = shot.shotGroupId ? groups.find((candidate) => candidate.id === shot.shotGroupId) : undefined;
+    if (!group) {
+      const groupName = inferArchitectureGroupName(shot);
+      group = groupByName.get(shootIdentityKey(groupName));
+      if (!group) {
+        group = {
+          id: `shot-group-${shootIdentityKey(groupName).replaceAll(" ", "-") || groups.length + 1}`,
+          name: groupName,
+          description: inferArchitectureGroupDescription(groupName),
+          subject: shot.subject,
+          locationId: shot.locationId,
+          order: groups.length,
+        };
+        groups.push(group);
+        groupByName.set(shootIdentityKey(groupName), group);
+      }
+    }
+    return {
+      ...shot,
+      dayId: "",
+      startTime: "",
+      durationMinutes: 0,
+      shotGroupId: group.id,
+      captureStatus: shot.captureStatus ?? (shot.captured ? "captured" : "to-capture"),
+    } satisfies ProductionEntry;
+  });
+  const scheduleEntries = callSheet.entries.filter((entry) => entry.type !== "shot");
+  const coveredGroupIds = new Set(scheduleEntries.flatMap((entry) => entry.linkedShotGroupId ? [entry.linkedShotGroupId] : []));
+  const migratedCoverageEntries = groups.flatMap((group) => {
+    if (coveredGroupIds.has(group.id)) return [];
+    const legacyScheduledShots = originalShots.filter((shot) => shots.find((candidate) => candidate.id === shot.id)?.shotGroupId === group.id && Boolean(shot.dayId));
+    if (!legacyScheduledShots.length) return [];
+    const firstTimedShot = legacyScheduledShots.filter((shot) => shot.startTime).sort((left, right) => left.startTime.localeCompare(right.startTime))[0];
+    const firstAssignedShot = firstTimedShot ?? legacyScheduledShots[0];
+    return [{
+      id: `coverage-${group.id}`,
+      dayId: firstAssignedShot.dayId,
+      startTime: firstTimedShot?.startTime ?? "",
+      durationMinutes: Math.min(240, Math.max(30, legacyScheduledShots.reduce((total, shot) => total + (shot.durationMinutes || 0), 0))),
+      description: group.name,
+      type: "coverage" as const,
+      locationId: firstAssignedShot.locationId ?? group.locationId,
+      personIds: [...new Set(legacyScheduledShots.flatMap((shot) => shot.personIds))],
+      linkedShotGroupId: group.id,
+    }];
+  });
+
+  return ensureShotNumbers({
+    ...callSheet,
+    shotGroups: groups,
+    entries: [...scheduleEntries, ...shots, ...migratedCoverageEntries],
+  });
+}
+
+function inferArchitectureGroupName(shot: ProductionEntry) {
+  if (shot.scriptSection?.trim()) return shot.scriptSection.trim();
+  const value = `${shot.description} ${shot.shotCategory ?? ""}`.toLocaleLowerCase("en-AU");
+  if (/interview|founder|piece to camera|portrait|talking head/u.test(value)) return "Founder interview";
+  if (/product|demonstration|workflow|screen|detail/u.test(value)) return "Product demonstration";
+  if (/establish|exterior|location|signage|atmosphere/u.test(value)) return "Establishing coverage";
+  if (/team|collaboration|workplace|office|b-roll|cutaway|hands/u.test(value)) return "Team and workplace B-roll";
+  return "Additional coverage";
+}
+
+function inferArchitectureGroupDescription(groupName: string) {
+  if (groupName === "Founder interview") return "Primary frame, alternate angle, reactions and cutaways.";
+  if (groupName === "Product demonstration") return "Product workflow, screen detail and supporting inserts.";
+  if (groupName === "Establishing coverage") return "Location, signage and atmosphere that set the scene.";
+  if (groupName === "Team and workplace B-roll") return "Natural team activity and workplace coverage.";
+  return "Extra shots to capture if the day allows.";
+}
+
+function shootIdentityKey(value: string) {
+  return value.trim().toLocaleLowerCase("en-AU").replace(/[\p{P}\p{S}]+/gu, " ").replace(/\s+/gu, " ");
 }
 
 export function isAssignedToDay(assignment: ShootDayAssignment, dayId: string) {

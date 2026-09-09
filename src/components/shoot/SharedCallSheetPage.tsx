@@ -5,19 +5,18 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
-import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
   addMinutes,
   callSheetStorageKey,
-  ensureShotNumbers,
   formatShootDate,
   formatTime,
   getInitialCallSheet,
   getMapsLinkLabel,
   getMapsUrl,
   isAssignedToDay,
+  normaliseShootArchitecture,
   shootAccessStorageKey,
   type CallSheet,
   type ScheduleType,
@@ -26,6 +25,7 @@ import {
 
 const scheduleTypeMeta: Record<ScheduleType, { label: string; icon: DsIconName }> = {
   shot: { label: "Shot", icon: "video-camera-ds" },
+  coverage: { label: "Coverage", icon: "video-camera-ds" },
   setup: { label: "Setup", icon: "settings" },
   lunch: { label: "Lunch", icon: "fork-knife" },
   travel: { label: "Travel", icon: "car-simple" },
@@ -82,7 +82,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   const isEmptyPreview = searchParams.get("preview") === "empty";
   const requestedDayId = searchParams.get("day");
   const printAllDays = searchParams.get("all") === "1";
-  const [callSheet, setCallSheet] = useState(() => ensureShotNumbers(embeddedCallSheet ?? getInitialCallSheet(project)));
+  const [callSheet, setCallSheet] = useState(() => normaliseShootArchitecture(embeddedCallSheet ?? getInitialCallSheet(project)));
   const [selectedDayId, setSelectedDayId] = useState(() => {
     const initialCallSheet = embeddedCallSheet ?? getInitialCallSheet(project);
     return initialCallSheet.days.some((day) => day.id === requestedDayId)
@@ -93,9 +93,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   const [copyStatus, setCopyStatus] = useState("Copy link");
   const [showPreviewBar, setShowPreviewBar] = useState(previewMode && !printMode);
   const [standaloneAccess, setStandaloneAccess] = useState<SharedShootAccessLevel>(() => getDefaultShootAccess(selectedRole));
-  const effectiveCanEdit = canEdit ?? standaloneAccess !== "viewOnly";
   const effectiveIsStudioInternal = isStudioInternal ?? selectedRole !== "Customer";
-  const isLiveMode = searchParams.get("live") === "1" && standaloneAccess === "canManage";
 
   useEffect(() => {
     if (embedded) return;
@@ -108,7 +106,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   useEffect(() => {
     if (embedded) {
       if (embeddedCallSheet) {
-        const next = ensureShotNumbers(embeddedCallSheet);
+        const next = normaliseShootArchitecture(embeddedCallSheet);
         setCallSheet(next);
         setSelectedDayId((current) => next.days.some((day) => day.id === current)
           ? current
@@ -121,7 +119,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
       try {
         const stored = window.localStorage.getItem(callSheetStorageKey(project.id));
         if (stored) {
-          const next = ensureShotNumbers(JSON.parse(stored) as CallSheet);
+          const next = normaliseShootArchitecture(JSON.parse(stored) as CallSheet);
           if (next.notice.trim() && !next.visibleOptionalSections.includes("notice")) {
             next.visibleOptionalSections = ["notice", ...next.visibleOptionalSections];
           }
@@ -211,6 +209,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
         <nav className="shared-preview-actions" aria-label="Preview actions">
           <button className="label-s-semibold" type="button" onClick={enterFullScreen}><DsIcon name="frame-corners" size={16} />Full screen</button>
           <Link className="label-s-semibold" href={`/projects/${project.id}/stages/shoot`}><DsIcon name="pencil-simple-ds" size={16} />Edit</Link>
+          {effectiveIsStudioInternal ? <Link className="label-s-semibold" href={`/projects/${project.id}/stages/shoot?view=on-set&day=${encodeURIComponent(selectedDayId)}&section=schedule`}><DsIcon name="video-camera-ds" size={16} />Open Shoot day</Link> : null}
           <details className="shared-preview-share">
             <summary className="label-s-semibold"><DsIcon name="link-simple-horizontal" size={16} />Share<DsIcon name="caret-down" size={13} /></summary>
             <div className="shared-preview-share-menu">
@@ -230,17 +229,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
         </div>
       </header>
 
-      {(embedded || effectiveCanEdit) && currentDay ? <section className="shared-call-sheet-edit-strip" aria-label="Call Sheet editing controls">
-        <div className="shared-call-sheet-edit-heading"><strong>{effectiveCanEdit ? "Edit current Call Sheet" : "Current Call Sheet"}</strong><span className="label-xs">{effectiveCanEdit ? "Changes update Pre-production immediately." : "Your Shoot access is view only."}</span></div>
-        <label><span className="label-xs-semibold">Shoot day</span><BriskSelect ariaLabel="Choose Call Sheet shoot day" clearable={false} searchable={false} value={currentDay.id} options={callSheet.days.map((day) => ({ value: day.id, label: day.label }))} placeholder="Choose day" onChange={(value) => { if (value) setSelectedDayId(value); }} /></label>
-        <label><span className="label-xs-semibold">Shoot date</span><input disabled={!effectiveCanEdit} type="date" value={currentDay.date} onChange={(event) => updateLiveCallSheet((current) => ({ ...current, days: current.days.map((day) => day.id === currentDay.id ? { ...day, date: event.target.value } : day) }))} /></label>
-        <label><span className="label-xs-semibold">General call time</span><input disabled={!effectiveCanEdit} type="time" step={300} value={currentDay.generalCallTime} onChange={(event) => updateLiveCallSheet((current) => ({ ...current, days: current.days.map((day) => day.id === currentDay.id ? { ...day, generalCallTime: event.target.value } : day) }))} /></label>
-        <label><span className="label-xs-semibold">Expected wrap</span><input disabled={!effectiveCanEdit} type="time" step={300} value={currentDay.expectedWrapTime} onChange={(event) => updateLiveCallSheet((current) => ({ ...current, days: current.days.map((day) => day.id === currentDay.id ? { ...day, expectedWrapTime: event.target.value } : day) }))} /></label>
-        <label><span className="label-xs-semibold">Primary location</span>{effectiveCanEdit ? <BriskSelect ariaLabel="Choose primary Call Sheet location" value={currentDay.primaryLocationId} options={callSheet.locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed" onChange={(value) => updateLiveCallSheet((current) => ({ ...current, days: current.days.map((day) => day.id === currentDay.id ? { ...day, primaryLocationId: value } : day) }))} /> : <span className="shared-call-sheet-readonly-field">{callSheet.locations.find((location) => location.id === currentDay.primaryLocationId)?.name ?? "Not confirmed"}</span>}</label>
-        <label><span className="label-xs-semibold">On-the-day contact</span>{effectiveCanEdit ? <BriskSelect ariaLabel="Choose on-the-day contact" value={callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name))?.id ?? ""} options={callSheet.people.map((person) => ({ value: person.id, label: person.role ? `${person.name} - ${person.role}` : person.name }))} placeholder="Not confirmed" onChange={(value) => updateLiveCallSheet((current) => { const person = current.people.find((item) => item.id === value); return { ...current, onTheDayContact: person ? [person.name, person.role, person.phone].filter(Boolean).join(" · ") : "" }; })} /> : <span className="shared-call-sheet-readonly-field">{callSheet.onTheDayContact || "Not confirmed"}</span>}</label>
-      </section> : null}
-
-      {isLiveMode ? <OnSetLiveView callSheet={callSheet} day={currentDay} isStudioInternal={effectiveIsStudioInternal} project={project} onChange={updateLiveCallSheet} /> : isEmptyPreview && !embedded ? (
+      {isEmptyPreview && !embedded ? (
         <section className="shared-call-sheet-empty">
           <span className="shared-call-sheet-empty-icon" aria-hidden="true"><DsIcon name="clipboard-text" size={28} /></span>
           <h1>{selectedRole === "Customer" ? "The call sheet is still being prepared" : "This call sheet isn’t ready yet"}</h1>
@@ -254,7 +243,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
         <section className="shared-call-sheet-empty">
           <span className="shared-call-sheet-empty-icon" aria-hidden="true"><DsIcon name="calendar" size={28} /></span>
           <h1>No shoot day has been added yet</h1>
-          <p className="paragraph-s">Add a shoot day in Dates. This live Call Sheet will update immediately.</p>
+          <p className="paragraph-s">Add a shoot day in Schedule. This live Call Sheet will update immediately.</p>
         </section>
       ) : <div className="shared-call-sheet-content">
         <header className="shared-project-heading">
@@ -266,6 +255,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
             callSheet={callSheet}
             clientName={project.clientName}
             day={day}
+            projectId={project.id}
             viewer={viewer && isAssignedToDay(viewer.shootDayIds, day.id) ? viewer : undefined}
             isStudioInternal={effectiveIsStudioInternal}
             printIndex={printMode ? index : undefined}
@@ -310,13 +300,14 @@ export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBac
   </div>;
 }
 
-function SharedDay({ callSheet, clientName, day, viewer, isStudioInternal, printIndex, onSelectDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
+function SharedDay({ callSheet, clientName, day, projectId, viewer, isStudioInternal, printIndex, onSelectDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
   const daySwitcherRef = useRef<HTMLElement>(null);
   const activeDayButtonRef = useRef<HTMLButtonElement>(null);
   const location = callSheet.locations.find((item) => item.id === day.primaryLocationId);
   const timedEntries = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.startTime).sort((left, right) => left.startTime.localeCompare(right.startTime));
-  const unscheduledShots = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.type === "shot" && !entry.startTime);
-  const remainingShots = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.type === "shot" && !entry.captured).length;
+  const scheduledGroupIds = new Set(callSheet.entries.filter((entry) => entry.dayId === day.id && entry.type === "coverage").flatMap((entry) => entry.linkedShotGroupId ? [entry.linkedShotGroupId] : []));
+  const dayShots = callSheet.entries.filter((entry) => entry.type === "shot" && entry.shotGroupId && scheduledGroupIds.has(entry.shotGroupId));
+  const remainingShots = dayShots.filter((entry) => !entry.captured && entry.captureStatus !== "not-required").length;
   const displayedWeather = getDisplayedWeather(callSheet.weather, Boolean(day.date && location));
   const [temperature, conditions, rainChance] = displayedWeather.split(" · ");
   const people = callSheet.people.filter((person) => isAssignedToDay(person.shootDayIds, day.id));
@@ -406,33 +397,24 @@ function SharedDay({ callSheet, clientName, day, viewer, isStudioInternal, print
 
       <section className="shared-day-glance" aria-label="At a glance">
         <article><span className="label-xs-semibold">First up</span><strong>{timedEntries[0]?.description ?? "Run of day not set"}</strong>{timedEntries[0] ? <small>{formatTime(timedEntries[0].startTime)}</small> : null}</article>
-        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>Scheduled and unscheduled shots</small></article>
+        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>Track detailed coverage in Shoot day</small>{isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
       </section>
 
       <SharedSection title="Run of day" icon="clock-clockwise" count={timedEntries.length}>
         {timedEntries.length ? <div className="shared-schedule-list">{timedEntries.map((entry) => {
           const meta = scheduleTypeMeta[entry.type];
           const rowLocation = callSheet.locations.find((item) => item.id === entry.locationId);
+          const linkedGroup = entry.linkedShotGroupId ? callSheet.shotGroups?.find((group) => group.id === entry.linkedShotGroupId) : undefined;
+          const linkedShotCount = entry.linkedShotGroupId ? callSheet.entries.filter((shot) => shot.type === "shot" && shot.shotGroupId === entry.linkedShotGroupId).length : 0;
           return (
             <article className={`shared-schedule-row is-${entry.type} ${entry.captured ? "captured" : ""}`} key={entry.id}>
               <div className="shared-schedule-time"><strong>{formatTime(entry.startTime)}</strong>{entry.durationMinutes ? <span className="label-xs">to {formatTime(addMinutes(entry.startTime, entry.durationMinutes))}</span> : null}</div>
               <span className="shared-schedule-icon"><DsIcon name={entry.type === "shot" && entry.captured ? "check-circle" : meta.icon} size={18} /></span>
-              <div><strong>{entry.description}</strong><span className="label-xs">{[entry.type === "shot" && entry.shotNumber ? `S${entry.shotNumber}` : meta.label, rowLocation?.name].filter(Boolean).join(" · ")}</span></div>
+              <div><strong>{linkedGroup?.name ?? entry.description}</strong><span className="label-xs">{[entry.type === "coverage" && linkedShotCount ? `${linkedShotCount} shots` : meta.label, rowLocation?.name].filter(Boolean).join(" · ")}</span></div>
             </article>
           );
         })}</div> : <p className="shared-empty-copy">The schedule has not been added yet.</p>}
       </SharedSection>
-
-      {unscheduledShots.length ? (
-        <SharedSection title="Unscheduled shots" icon="video-camera-ds" count={unscheduledShots.length}>
-          <div className="shared-shot-list">{unscheduledShots.map((shot) => (
-            <article className={shot.captured ? "captured" : ""} key={shot.id}>
-              <span className={`shared-shot-status ${shot.captured ? "captured" : "remaining"}`}>{shot.captured ? <DsIcon name="check-circle" size={20} /> : <span className="label-xs-semibold">To do</span>}</span>
-              <div><strong>{shot.description}</strong><span className="label-xs">{[shot.shotNumber ? `S${shot.shotNumber}` : null, shot.subject, callSheet.locations.find((item) => item.id === shot.locationId)?.name].filter(Boolean).join(" · ")}</span></div>
-            </article>
-          ))}</div>
-        </SharedSection>
-      ) : null}
 
       {people.length ? (
         <SharedSection title="Contacts" icon="users-three" count={people.length}>

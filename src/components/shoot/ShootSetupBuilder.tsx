@@ -302,6 +302,7 @@ const shotListSteps = [
 
 const scheduleTypeLabels: Record<ScheduleType, string> = {
   shot: "Shot",
+  coverage: "Coverage",
   setup: "Setup",
   lunch: "Lunch",
   travel: "Travel",
@@ -931,9 +932,9 @@ function renderShotListStep({ callSheet, currentStep, isGenerating, state, mutat
           <SetupField label="Description"><input value={shot.description} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { description: event.target.value }))} /></SetupField>
           <SetupField label="Talent or subject"><input placeholder="Person, product or action" value={shot.subject ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { subject: event.target.value }))} /></SetupField>
           <SetupField label="Location"><select value={shot.locationId ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { locationId: event.target.value || undefined }))}><option value="">No location yet</option>{callSheet.locations.map((location) => <option value={location.id} key={location.id}>{location.name}</option>)}</select></SetupField>
-          <SetupField label="Priority"><select value={shot.priority ?? "Useful"} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { priority: event.target.value as ProductionEntry["priority"] }))}><option>Essential</option><option>Useful</option><option>Optional</option></select></SetupField>
+          <SetupField label="Priority"><select value={shot.priority ?? "Medium"} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { priority: event.target.value as ProductionEntry["priority"] }))}><option>Critical</option><option>High</option><option>Medium</option><option>Bonus</option></select></SetupField>
         </div>
-        <details className="shoot-setup-more-details"><summary className="label-s-semibold">More details</summary><div className="shoot-setup-grid three-column"><SetupField label="Shot size"><select value={shot.shotSize ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { shotSize: event.target.value as ProductionEntry["shotSize"] || undefined }))}><option value="">Choose size</option>{["Extreme close-up", "Close-up", "Medium", "Wide", "Extreme wide"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Camera movement"><select value={shot.cameraMovement ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { cameraMovement: event.target.value as ProductionEntry["cameraMovement"] || undefined }))}><option value="">Choose movement</option>{["Static", "Handheld", "Pan", "Tilt", "Tracking", "Push in", "Pull out", "Gimbal"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Reference image"><input type="url" placeholder="Paste an image link" value={shot.imageReferenceUrl ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { imageReferenceUrl: event.target.value || undefined, imageReferenceSource: event.target.value ? "link" : undefined }))} /></SetupField></div></details>
+        <details className="shoot-setup-more-details"><summary className="label-s-semibold">More details</summary><div className="shoot-setup-grid three-column"><SetupField label="Shot size"><select value={shot.shotSize ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { shotSize: event.target.value as ProductionEntry["shotSize"] || undefined }))}><option value="">Choose size</option>{["Extreme close-up", "Close-up", "Medium", "Wide", "Extreme wide"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Camera approach"><select value={shot.cameraMovement ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { cameraMovement: event.target.value as ProductionEntry["cameraMovement"] || undefined }))}><option value="">Choose approach</option>{["Static", "Handheld", "Pan", "Tilt", "Push in", "Pull out", "Tracking", "Gimbal", "Drone"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Reference image"><input type="url" placeholder="Paste an image link" value={shot.imageReferenceUrl ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { imageReferenceUrl: event.target.value || undefined, imageReferenceSource: event.target.value ? "link" : undefined }))} /></SetupField></div></details>
       </section>) : <SetupEmpty title="No shots to detail" body="Go back to add a shot, or continue and add one in the working Shot List." />}
     </div>;
   }
@@ -945,7 +946,7 @@ function renderShotListStep({ callSheet, currentStep, isGenerating, state, mutat
       {shots.length ? <div className="shoot-setup-organise-list">{shots.map((shot, index) => <article key={shot.id}>
         <span className="shoot-shot-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={16} /></span>
         <span className="shoot-setup-shot-number label-xs-semibold">{index + 1}</span>
-        <div><strong>{shot.description || "Untitled shot"}</strong><span className="label-xs">{[shot.priority ?? "Useful", shot.subject].filter(Boolean).join(" · ")}</span></div>
+        <div><strong>{shot.description || "Untitled shot"}</strong><span className="label-xs">{[shot.priority ?? "Medium", shot.subject].filter(Boolean).join(" · ")}</span></div>
         <div className="shoot-setup-reorder-actions">
           <button className="shoot-icon-button" type="button" disabled={index === 0} aria-label={`Move shot ${index + 1} up`} onClick={() => mutateCallSheet((current) => moveShot(current, shot.id, -1))}><DsIcon name="caret-left" size={16} /></button>
           <button className="shoot-icon-button" type="button" disabled={index === shots.length - 1} aria-label={`Move shot ${index + 1} down`} onClick={() => mutateCallSheet((current) => moveShot(current, shot.id, 1))}><DsIcon name="caret-right" size={16} /></button>
@@ -1076,7 +1077,7 @@ function createBlankShot(callSheet: CallSheet): ProductionEntry {
     type: "shot",
     personIds: [],
     captured: false,
-    priority: "Useful",
+    priority: "Medium",
     scriptSection: "Added manually",
   };
 }
@@ -1148,7 +1149,7 @@ function createGeneratedShots(callSheet: CallSheet): ProductionEntry[] {
     type: "shot",
     personIds: [],
     captured: false,
-    priority: index < 2 ? "Essential" : index < 5 ? "Useful" : "Optional",
+    priority: index < 2 ? "Critical" : index < 5 ? "Medium" : "Bonus",
     subject: suggestion.subject,
     shotSize: suggestion.shotSize,
     cameraMovement: suggestion.cameraMovement,

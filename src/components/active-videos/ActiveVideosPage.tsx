@@ -111,11 +111,11 @@ const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   hours: { label: "Hours", width: 220 },
   costs: { label: "Project costs", width: 190 },
   team: { label: "Team", width: 68 },
-  actions: { label: "Actions", width: 86 },
+  actions: { label: "Actions", width: 64 },
 };
 
-const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "costs", "team"];
-const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team"];
+const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "costs", "team", "actions"];
+const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team", "actions"];
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 
 function getProjectFlowHref(projectId: string) {
@@ -188,7 +188,6 @@ function ActiveVideosWorkspace() {
   const [openTagProjectId, setOpenTagProjectId] = useState<string | null>(null);
   const [openDeadlineProjectId, setOpenDeadlineProjectId] = useState<string | null>(null);
   const [areFiltersVisible, setAreFiltersVisible] = useState(false);
-  const [openMenuProjectId, setOpenMenuProjectId] = useState<string | null>(null);
   const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams));
   const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams) !== null);
   const [isPanelContentSwitching, setIsPanelContentSwitching] = useState(false);
@@ -368,7 +367,6 @@ function ActiveVideosWorkspace() {
       panelCloseTimeoutRef.current = null;
     }
 
-    setOpenMenuProjectId(null);
     setOpenTagProjectId(null);
     setOpenDeadlineProjectId(null);
     if (expandLatestActions) {
@@ -741,7 +739,6 @@ function ActiveVideosWorkspace() {
                   columnDrag={columnDrag}
                   draggedColumn={draggedColumn}
                   droppedColumn={droppedColumn}
-                  isMenuOpen={openMenuProjectId === project.id}
                   isSelected={isProjectPanelOpen && panelProjectId === project.id}
                   onOpenProject={() => {
                     const projectFlowHref = getProjectFlowHref(project.id);
@@ -750,9 +747,6 @@ function ActiveVideosWorkspace() {
                   }}
                   onOpenDetails={() => openProjectPanel(project.id)}
                   onOpenLatestActions={() => openProjectPanel(project.id, "push", true)}
-                  onToggleMenu={() =>
-                    setOpenMenuProjectId((current) => (current === project.id ? null : project.id))
-                  }
                 />
               ))}
             </tbody>
@@ -1189,6 +1183,38 @@ function ColumnVisibilityMenu({
   );
 }
 
+export function ProjectDetailsSidebar({
+  project,
+  isOpen,
+  onClose,
+}: {
+  project: Project;
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const { selectedRole } = usePrototypeRole();
+  const [deadline, setDeadline] = useState<ProjectDeadline | undefined>(project.deadline);
+
+  useEffect(() => {
+    setDeadline(project.deadline);
+  }, [project.deadline, project.id]);
+
+  return (
+    <ProjectDetailPanel
+      project={project}
+      tags={project.tags ?? []}
+      tagClasses={defaultTagClasses}
+      deadline={deadline}
+      isOpen={isOpen}
+      isSwitching={false}
+      selectedRole={selectedRole}
+      latestActionsOpenRequest={null}
+      onClose={onClose}
+      onSaveDeadline={setDeadline}
+    />
+  );
+}
+
 function ProjectDetailPanel({
   project,
   tags,
@@ -1201,7 +1227,7 @@ function ProjectDetailPanel({
   onClose,
   onSaveDeadline,
 }: {
-  project: ScopedProject;
+  project: Project;
   tags: string[];
   tagClasses: Record<string, TagClass>;
   deadline: ProjectDeadline | undefined;
@@ -1662,7 +1688,7 @@ function TimeSpentModal({
   entries,
   onClose,
 }: {
-  project: ScopedProject;
+  project: Project;
   totalHours: number;
   entries: ProjectTimeEntry[];
   onClose: () => void;
@@ -2183,12 +2209,10 @@ function ProjectRow({
   columnDrag,
   draggedColumn,
   droppedColumn,
-  isMenuOpen,
   isSelected,
   onOpenDetails,
   onOpenLatestActions,
   onOpenProject,
-  onToggleMenu,
 }: {
   project: ScopedProject;
   fileLocations: ProjectFileLocation[];
@@ -2212,12 +2236,10 @@ function ProjectRow({
   columnDrag: ColumnDragState | null;
   draggedColumn: DataColumnKey | null;
   droppedColumn: DataColumnKey | null;
-  isMenuOpen: boolean;
   isSelected: boolean;
   onOpenDetails: () => void;
   onOpenLatestActions: () => void;
   onOpenProject: () => void;
-  onToggleMenu: () => void;
 }) {
   const projectFlowHref = getProjectFlowHref(project.id);
   const latestUpdateFullDate = formatFullTimestamp(project.latestUpdate.timestamp);
@@ -2276,10 +2298,8 @@ function ProjectRow({
           isDeadlineOpen={isDeadlineOpen}
           onToggleDeadline={onToggleDeadline}
           onSaveDeadline={onSaveDeadline}
-          isMenuOpen={isMenuOpen}
           onOpenDetails={onOpenDetails}
           onOpenLatestActions={onOpenLatestActions}
-          onToggleMenu={onToggleMenu}
         />
       ))}
     </tr>
@@ -2580,10 +2600,8 @@ function ProjectDataCell({
   isDeadlineOpen,
   onToggleDeadline,
   onSaveDeadline,
-  isMenuOpen,
   onOpenDetails,
   onOpenLatestActions,
-  onToggleMenu,
 }: {
   columnKey: DataColumnKey;
   project: Project;
@@ -2597,10 +2615,8 @@ function ProjectDataCell({
   isDeadlineOpen: boolean;
   onToggleDeadline: () => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
-  isMenuOpen: boolean;
   onOpenDetails: () => void;
   onOpenLatestActions: () => void;
-  onToggleMenu: () => void;
 }) {
   const router = useRouter();
   const columnClassName = [
@@ -2716,7 +2732,6 @@ function ProjectDataCell({
         >
           <strong className="label-s-semibold">{costSummary.totalLabel}</strong>
           <span className="label-xs">{invoiceLabel}</span>
-          <DsIcon name="caret-right" size={14} />
         </Link>
       </td>
     );
@@ -2733,20 +2748,8 @@ function ProjectDataCell({
   }
 
   return (
-    <td className={`row-actions-cell ${isMenuOpen ? "menu-open" : ""} ${columnClassName}`}>
+    <td className={`row-actions-cell ${columnClassName}`}>
       <div className="row-actions-wrap">
-        <button
-          className="row-menu-button"
-          type="button"
-          aria-label={`Open actions for ${project.name}`}
-          aria-expanded={isMenuOpen}
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleMenu();
-          }}
-        >
-          <DsIcon name="dots-three" size={18} />
-        </button>
         <button
           className="row-open-chevron"
           type="button"
@@ -2759,20 +2762,6 @@ function ProjectDataCell({
         >
           <DsIcon name="caret-right" size={14} />
         </button>
-        {isMenuOpen ? (
-          <div className="row-actions-menu">
-            {[
-              { label: "Mark complete", shortcut: "⌘↵" },
-              { label: "Copy link", shortcut: "⌘C" },
-              { label: "Archive project", shortcut: "⌘⌫" },
-            ].map((item) => (
-              <button className="label-s-semibold" type="button" key={item.label} onClick={(event) => event.stopPropagation()}>
-                <span>{item.label}</span>
-                <span className="row-menu-shortcut label-xs-semibold">{item.shortcut}</span>
-              </button>
-            ))}
-          </div>
-        ) : null}
       </div>
     </td>
   );

@@ -1,12 +1,13 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 
 export type BriskSelectOption<T extends string = string> = {
   value: T;
   label: string;
+  triggerLabel?: string;
   icon?: DsIconName;
   logoSrc?: string;
   dividerAbove?: boolean;
@@ -18,10 +19,17 @@ type BriskSelectSharedProps<T extends string> = {
   className?: string;
   clearLabel?: string;
   clearable?: boolean;
+  footerAction?: {
+    label: string;
+    icon?: DsIconName;
+    onSelect: (trigger: HTMLButtonElement | null) => void;
+  };
   onOpenChange?: (isOpen: boolean) => void;
   options: ReadonlyArray<BriskSelectOption<T>>;
   placeholder: string;
   searchable?: boolean;
+  showSelectedIcon?: boolean;
+  triggerContent?: ReactNode;
   triggerClassName?: string;
 };
 
@@ -47,9 +55,12 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     className = "",
     clearLabel = "Clear selection",
     clearable = true,
+    footerAction,
     onOpenChange,
     options,
     placeholder,
+    showSelectedIcon = false,
+    triggerContent,
     triggerClassName = "",
   } = props;
   const searchable = props.searchable ?? options.length > 7;
@@ -68,8 +79,9 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     ? placeholder
     : props.multiple && selectedOptions.length > 1
       ? props.selectionLabel?.(selectedOptions) ?? `${selectedOptions.length} selected`
-      : selectedOptions[0].label;
+      : selectedOptions[0].triggerLabel ?? selectedOptions[0].label;
   const selectedLogoSrc = selectedOptions.length === 1 ? selectedOptions[0].logoSrc : undefined;
+  const selectedIcon = selectedOptions.length === 1 ? selectedOptions[0].icon : undefined;
   const filteredOptions = useMemo(() => {
     const normalisedQuery = query.trim().toLowerCase();
     return normalisedQuery ? options.filter((option) => option.label.toLowerCase().includes(normalisedQuery)) : options;
@@ -82,7 +94,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const viewportPadding = 8;
     const triggerGap = 4;
     const searchHeight = searchable ? 48 : 8;
-    const actionHeight = props.multiple ? 48 : clearable && selectedValues.length ? 40 : 0;
+    const actionHeight = (props.multiple ? 48 : clearable && selectedValues.length ? 40 : 0) + (footerAction ? 40 : 0);
     const preferredHeight = Math.min(520, (options.length * 40) + searchHeight + actionHeight);
     const minimumHeight = 112;
     const preferredWidth = Math.min(320, Math.max(192, rect.width));
@@ -201,8 +213,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       }}
     >
       <span className="brisk-select-trigger-label">
-        {selectedLogoSrc ? <img className="brisk-select-option-logo" src={selectedLogoSrc} alt="" /> : null}
-        <span>{triggerLabel}</span>
+        {triggerContent ?? <>{selectedLogoSrc ? <img className="brisk-select-option-logo" src={selectedLogoSrc} alt="" /> : showSelectedIcon && selectedIcon ? <DsIcon name={selectedIcon} size={16} /> : null}<span>{triggerLabel}</span></>}
       </span>
       <DsIcon name="caret-down" size={12} />
     </button>
@@ -218,6 +229,11 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       {props.multiple ? <div className="brisk-select-menu-actions">{clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : <span />}
         <button className="brisk-select-done label-xs-semibold" type="button" onClick={() => closeMenu(true)}>Done</button>
       </div> : clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : null}
+      {footerAction ? <button className="brisk-select-footer-action label-xs-semibold" type="button" onClick={() => {
+        const trigger = triggerRef.current;
+        closeMenu();
+        footerAction.onSelect(trigger);
+      }}>{footerAction.icon ? <DsIcon name={footerAction.icon} size={16} /> : null}{footerAction.label}</button> : null}
     </div>, document.body) : null}
   </div>;
 }

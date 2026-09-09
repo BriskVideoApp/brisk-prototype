@@ -167,6 +167,21 @@
   text-align: left;
 }
 
+.brisk-select-footer-action {
+  display: flex;
+  min-height: var(--brisk-space-2xl);
+  align-items: center;
+  border: 0;
+  border-top: 1px solid var(--brisk-border-secondary);
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  cursor: pointer;
+  gap: var(--brisk-space-xs);
+  margin-top: var(--brisk-space-xs);
+  padding: var(--brisk-space-xs) var(--brisk-space-s) var(--brisk-space-none);
+  text-align: left;
+}
+
 .brisk-select-menu-actions {
   display: flex;
   min-height: var(--brisk-space-3xl);
