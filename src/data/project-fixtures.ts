@@ -9,10 +9,38 @@ import { clientNewVideoScriptProject } from "@/data/prototype-scenarios";
 const fixtureReferenceDate = new Date("2026-07-27T09:00:00+10:00");
 const millisecondsPerDay = 24 * 60 * 60 * 1000;
 const stageOrder: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
+const catsFirstVideoProject: Project = {
+  id: "cats-first-video",
+  clientId: "cats",
+  clientBadge: "CATS",
+  clientName: "Cats",
+  name: "First Video",
+  videoType: "liveAction",
+  videoLengthSeconds: 60,
+  latestUpdate: {
+    label: "Shoot ready to set up",
+    daysAgo: 0,
+    timestamp: "2026-09-10T09:00:00+10:00",
+  },
+  deadlineAt: "2026-10-10T17:00:00+11:00",
+  isCritical: false,
+  status: "In Production",
+  file_locations: [],
+  stages: {
+    brief: { state: "done", daysAgo: 0 },
+    script: { state: "done", daysAgo: 0 },
+    shoot: { state: "in_progress", daysAgo: 0 },
+    media: { state: "not_started" },
+    edit: { state: "not_started" },
+    masters: { state: "not_started" },
+  },
+  team: [],
+  timeEntries: [],
+};
 
 const customerProjectFixtures = customerDashboardProjects.map(toProjectFixture);
 const projectsById = new Map(
-  [clientNewVideoScriptProject, ...customerProjectFixtures, ...activeVideoProjects].map((project) => [project.id, project]),
+  [clientNewVideoScriptProject, catsFirstVideoProject, ...customerProjectFixtures, ...activeVideoProjects].map((project) => [project.id, project]),
 );
 
 export const projectFixtureIds = [...projectsById.keys()];

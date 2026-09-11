@@ -36,6 +36,7 @@ export type ShootDay = {
 };
 
 export type ShootDayNotes = {
+  practicalDetails?: string;
   equipment: string;
   wardrobe: string;
   catering: string;
@@ -89,6 +90,7 @@ export type ProductionEntry = {
   shotGroupId?: string | null;
   linkedShotGroupId?: string;
   captureStatus?: ShotCaptureStatus;
+  skippedShootDayIds?: string[];
 };
 
 export type ShootPersonType = "talent" | "crew" | "client" | "other";
@@ -765,6 +767,27 @@ function shootIdentityKey(value: string) {
 
 export function isAssignedToDay(assignment: ShootDayAssignment, dayId: string) {
   return assignment === "all" || assignment.includes(dayId);
+}
+
+export function getShootDayShots(callSheet: CallSheet, dayId: string) {
+  if (!dayId) return [];
+  const groupIds = new Set((callSheet.shotGroups ?? []).map((group) => group.id));
+  const scheduledDaysByGroupId = new Map<string, Set<string>>();
+  callSheet.entries.forEach((entry) => {
+    if (!entry.linkedShotGroupId || !entry.dayId) return;
+    const scheduledDays = scheduledDaysByGroupId.get(entry.linkedShotGroupId) ?? new Set<string>();
+    scheduledDays.add(entry.dayId);
+    scheduledDaysByGroupId.set(entry.linkedShotGroupId, scheduledDays);
+  });
+  return callSheet.entries.filter((entry) => {
+    if (entry.type !== "shot") return false;
+    if (entry.shotGroupId && groupIds.has(entry.shotGroupId)) {
+      const scheduledDays = scheduledDaysByGroupId.get(entry.shotGroupId);
+      if (scheduledDays?.size) return scheduledDays.has(dayId);
+      return entry.dayId ? entry.dayId === dayId : true;
+    }
+    return entry.dayId ? entry.dayId === dayId : true;
+  });
 }
 
 export function formatTime(time: string) {

@@ -13,14 +13,17 @@ import {
   formatShootDate,
   formatTime,
   getInitialCallSheet,
+  getShootDayShots,
   getMapsLinkLabel,
   getMapsUrl,
   isAssignedToDay,
   normaliseShootArchitecture,
   shootAccessStorageKey,
   type CallSheet,
+  type SafetyEmergencyInfo,
   type ScheduleType,
   type ShootDay,
+  type ShootLocation,
 } from "@/data/shoot";
 
 const scheduleTypeMeta: Record<ScheduleType, { label: string; icon: DsIconName }> = {
@@ -31,6 +34,16 @@ const scheduleTypeMeta: Record<ScheduleType, { label: string; icon: DsIconName }
   travel: { label: "Travel", icon: "car-simple" },
   break: { label: "Break", icon: "coffee" },
 };
+
+export type CallSheetSectionControls = {
+  collapsed: boolean;
+  focused: boolean;
+  onToggleCollapse: () => void;
+  onToggleFocus: () => void;
+};
+
+type CallSheetPlanningSection = "locations" | "people" | "schedule";
+type EditableOperationalSection = "people";
 
 type SharedShootAccessLevel = "viewOnly" | "canEdit" | "canManage";
 
@@ -66,7 +79,7 @@ function getWeatherIcon(weather: string): DsIconName {
   return "weather-cloud";
 }
 
-export function SharedCallSheetPage({ project, previewMode, printMode, viewerId, embedded = false, embeddedCallSheet, canEdit, isStudioInternal, onEmbeddedChange }: {
+export function SharedCallSheetPage({ project, previewMode, printMode, viewerId, embedded = false, embeddedCallSheet, canEdit, isStudioInternal, focusedSectionId = null, openSectionRequest, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, onEmbeddedChange, onEmbeddedSelectDay, onExitSectionFocus, onFocusSection, renderInterviewQuestions, renderRunOfDay }: {
   project: Project;
   previewMode: boolean;
   printMode: boolean;
@@ -75,7 +88,17 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   embeddedCallSheet?: CallSheet;
   canEdit?: boolean;
   isStudioInternal?: boolean;
+  focusedSectionId?: string | null;
+  openSectionRequest?: { sectionId: string; requestId: number } | null;
+  onOpenDocuments?: () => void;
+  onOpenPlanningSection?: (section: CallSheetPlanningSection) => void;
+  onOpenSchedule?: () => void;
   onEmbeddedChange?: (updater: (current: CallSheet) => CallSheet) => void;
+  onEmbeddedSelectDay?: (dayId: string) => void;
+  onExitSectionFocus?: () => void;
+  onFocusSection?: (sectionId: string) => void;
+  renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode;
+  renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode;
 }) {
   const { selectedRole } = usePrototypeRole();
   const searchParams = useSearchParams();
@@ -92,6 +115,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   const [hasLoaded, setHasLoaded] = useState(false);
   const [copyStatus, setCopyStatus] = useState("Copy link");
   const [showPreviewBar, setShowPreviewBar] = useState(previewMode && !printMode);
+  const [collapsedSectionIds, setCollapsedSectionIds] = useState<string[]>(["documents"]);
   const [standaloneAccess, setStandaloneAccess] = useState<SharedShootAccessLevel>(() => getDefaultShootAccess(selectedRole));
   const effectiveIsStudioInternal = isStudioInternal ?? selectedRole !== "Customer";
 
@@ -195,6 +219,28 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
     });
   };
 
+  const selectDay = (dayId: string) => {
+    setSelectedDayId(dayId);
+    if (embedded) onEmbeddedSelectDay?.(dayId);
+  };
+
+  const getSectionControls = (sectionId: string): CallSheetSectionControls => ({
+    collapsed: collapsedSectionIds.includes(sectionId),
+    focused: focusedSectionId === sectionId,
+    onToggleCollapse: () => setCollapsedSectionIds((current) => current.includes(sectionId)
+      ? current.filter((id) => id !== sectionId)
+      : [...current, sectionId]),
+    onToggleFocus: () => focusedSectionId === sectionId ? onExitSectionFocus?.() : onFocusSection?.(sectionId),
+  });
+
+  useEffect(() => {
+    if (!openSectionRequest) return;
+    setCollapsedSectionIds((current) => current.filter((sectionId) => sectionId !== openSectionRequest.sectionId));
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>(`[data-call-sheet-section="${openSectionRequest.sectionId}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
+  }, [openSectionRequest]);
+
   const Root = embedded ? "div" : "main";
 
   return (
@@ -221,13 +267,13 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
           </details>
         </nav>
       </header> : null}
-      <header className="shared-brand-bar">
+      {!embedded ? <header className="shared-brand-bar">
         <div className="shared-brand-mark label-s-semibold" aria-hidden="true">{callSheet.studioInitials}</div>
         <div>
           <strong>{callSheet.studioName}</strong>
           <span className="label-xs">Call Sheet</span>
         </div>
-      </header>
+      </header> : null}
 
       {isEmptyPreview && !embedded ? (
         <section className="shared-call-sheet-empty">
@@ -246,29 +292,37 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
           <p className="paragraph-s">Add a shoot day in Schedule. This live Call Sheet will update immediately.</p>
         </section>
       ) : <div className="shared-call-sheet-content">
-        <header className="shared-project-heading">
+        {!embedded ? <header className="shared-project-heading">
           <p className="label-xs-semibold">{project.clientName}</p>
           <h1>{callSheet.projectName}</h1>
-        </header>
+        </header> : null}
         {visibleDays.map((day, index) => (
           <SharedDay
             callSheet={callSheet}
             clientName={project.clientName}
             day={day}
+            embedded={embedded}
             projectId={project.id}
             viewer={viewer && isAssignedToDay(viewer.shootDayIds, day.id) ? viewer : undefined}
             isStudioInternal={effectiveIsStudioInternal}
+            getSectionControls={embedded && !printMode && onFocusSection ? getSectionControls : undefined}
             printIndex={printMode ? index : undefined}
-            onSelectDay={!printMode ? setSelectedDayId : undefined}
+            onSelectDay={!printMode ? selectDay : undefined}
+            onChange={embedded && canEdit && !printMode ? updateLiveCallSheet : undefined}
+            onOpenDocuments={embedded && !printMode ? onOpenDocuments : undefined}
+            onOpenPlanningSection={embedded && effectiveIsStudioInternal && !printMode ? onOpenPlanningSection : undefined}
+            onOpenSchedule={embedded && effectiveIsStudioInternal && !printMode ? onOpenSchedule : undefined}
+            renderInterviewQuestions={!printMode ? renderInterviewQuestions : undefined}
+            renderRunOfDay={!printMode ? renderRunOfDay : undefined}
             key={day.id}
           />
         ))}
       </div>}
 
-      <footer className="shared-call-sheet-footer">
+      {!embedded ? <footer className="shared-call-sheet-footer">
         <span>{callSheet.studioName}</span>
         <span className="label-xs">Updated {formatUpdatedTime(callSheet.updatedAt)}</span>
-      </footer>
+      </footer> : null}
     </Root>
   );
 }
@@ -283,7 +337,7 @@ export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBac
   const nextEntry = currentEntryIndex >= 0 ? timedEntries[currentEntryIndex + 1] : undefined;
   const shots = callSheet.entries.filter((entry) => entry.type === "shot" && (!day || entry.dayId === day.id || !entry.dayId));
   const capturedCount = shots.filter((shot) => shot.captured).length;
-  const remainingCount = shots.filter((shot) => !shot.captured && !missedShotIds.includes(shot.id)).length;
+  const remainingCount = shots.filter((shot) => !shot.captured && !missedShotIds.includes(shot.id) && !(day && shot.skippedShootDayIds?.includes(day.id))).length;
   const people = callSheet.people.filter((person) => !day || isAssignedToDay(person.shootDayIds, day.id));
 
   return <div className="on-set-live-shell">
@@ -300,35 +354,56 @@ export function OnSetLiveView({ callSheet, day, isStudioInternal, project, onBac
   </div>;
 }
 
-function SharedDay({ callSheet, clientName, day, projectId, viewer, isStudioInternal, printIndex, onSelectDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; printIndex?: number; onSelectDay?: (dayId: string) => void }) {
+function SharedDay({ callSheet, clientName, day, embedded, projectId, viewer, isStudioInternal, getSectionControls, printIndex, onSelectDay, onChange, onOpenDocuments, onOpenPlanningSection, onOpenSchedule, renderInterviewQuestions, renderRunOfDay }: { callSheet: CallSheet; clientName: string; day: ShootDay; embedded: boolean; projectId: string; viewer?: CallSheet["people"][number]; isStudioInternal: boolean; getSectionControls?: (sectionId: string) => CallSheetSectionControls; printIndex?: number; onSelectDay?: (dayId: string) => void; onChange?: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments?: () => void; onOpenPlanningSection?: (section: CallSheetPlanningSection) => void; onOpenSchedule?: () => void; renderInterviewQuestions?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode; renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode }) {
   const daySwitcherRef = useRef<HTMLElement>(null);
   const activeDayButtonRef = useRef<HTMLButtonElement>(null);
+  const [editingOperationalSection, setEditingOperationalSection] = useState<EditableOperationalSection | null>(null);
   const location = callSheet.locations.find((item) => item.id === day.primaryLocationId);
   const timedEntries = callSheet.entries.filter((entry) => entry.dayId === day.id && entry.startTime).sort((left, right) => left.startTime.localeCompare(right.startTime));
-  const scheduledGroupIds = new Set(callSheet.entries.filter((entry) => entry.dayId === day.id && entry.type === "coverage").flatMap((entry) => entry.linkedShotGroupId ? [entry.linkedShotGroupId] : []));
-  const dayShots = callSheet.entries.filter((entry) => entry.type === "shot" && entry.shotGroupId && scheduledGroupIds.has(entry.shotGroupId));
-  const remainingShots = dayShots.filter((entry) => !entry.captured && entry.captureStatus !== "not-required").length;
+  const dayShots = getShootDayShots(callSheet, day.id);
+  const remainingShots = dayShots.filter((entry) => !entry.captured && entry.captureStatus !== "not-required" && !entry.skippedShootDayIds?.includes(day.id)).length;
   const displayedWeather = getDisplayedWeather(callSheet.weather, Boolean(day.date && location));
   const [temperature, conditions, rainChance] = displayedWeather.split(" · ");
   const people = callSheet.people.filter((person) => isAssignedToDay(person.shootDayIds, day.id));
   const locations = callSheet.locations.filter((item) => isAssignedToDay(item.shootDayIds, day.id));
   const documents = callSheet.documents.filter((document) => isAssignedToDay(document.shootDayIds, day.id));
-  const dayNoteSections = [
-    ["Equipment", day.notes?.equipment ?? ""],
-    ["Wardrobe", day.notes?.wardrobe ?? ""],
-    ["Catering", day.notes?.catering ?? ""],
-    ["Access", day.notes?.access ?? ""],
-    ["Safety", day.notes?.safety ?? ""],
-    ["Weather considerations", day.notes?.weatherConsiderations ?? ""],
-    ["Client-visible notes", day.notes?.clientNotes ?? ""],
-    ...(isStudioInternal ? [["Internal Studio notes", day.notes?.internalNotes ?? ""]] : []),
-  ].filter(([, value]) => value.trim());
+  const dayNotes = day.notes?.practicalDetails ?? getLegacyDayNotes(callSheet, day, location);
+  const nearestEmergencyHospital = getNearestEmergencyHospital(location, day.safetyEmergency);
+  const internalNotes = isStudioInternal ? day.notes?.internalNotes?.trim() ?? "" : "";
   const selectedProductionContact = callSheet.people.find((person) => callSheet.onTheDayContact.startsWith(person.name));
   const hideProductionContactDetails = Boolean(!isStudioInternal && selectedProductionContact && selectedProductionContact.showContactDetails !== true);
   const visibleProductionContact = hideProductionContactDetails && selectedProductionContact
     ? [selectedProductionContact.name, selectedProductionContact.role].filter(Boolean).join(" · ")
     : callSheet.onTheDayContact;
   const visibleProductionPhone = hideProductionContactDetails ? "" : getContactPhone(callSheet.onTheDayContact);
+  const sectionControls = (sectionId: string): CallSheetSectionControls => getSectionControls?.(sectionId) ?? {
+    collapsed: false,
+    focused: false,
+    onToggleCollapse: () => undefined,
+    onToggleFocus: () => undefined,
+  };
+  const updatePersonPhone = (personId: string, phone: string) => onChange?.((current) => ({
+    ...current,
+    people: current.people.map((person) => person.id === personId ? { ...person, phone } : person),
+  }));
+  const updateDayNotes = (value: string) => onChange?.((current) => ({
+    ...current,
+    days: current.days.map((item) => item.id === day.id ? {
+      ...item,
+      notes: {
+        equipment: "",
+        wardrobe: "",
+        catering: "",
+        access: "",
+        safety: "",
+        weatherConsiderations: "",
+        clientNotes: "",
+        internalNotes: "",
+        ...item.notes,
+        practicalDetails: value,
+      },
+    } : item),
+  }));
 
   useEffect(() => {
     const switcher = daySwitcherRef.current;
@@ -395,12 +470,11 @@ function SharedDay({ callSheet, clientName, day, projectId, viewer, isStudioInte
         </div>
       </section>
 
-      <section className="shared-day-glance" aria-label="At a glance">
-        <article><span className="label-xs-semibold">First up</span><strong>{timedEntries[0]?.description ?? "Run of day not set"}</strong>{timedEntries[0] ? <small>{formatTime(timedEntries[0].startTime)}</small> : null}</article>
-        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>Track detailed coverage in Shoot day</small>{isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
-      </section>
+      {!embedded ? <section className="shared-day-glance is-single" aria-label="At a glance">
+        <article><span className="label-xs-semibold">Shots remaining</span><strong>{remainingShots}</strong><small>{renderRunOfDay ? "Track detailed coverage below" : "Track detailed coverage in Shoot day"}</small>{!renderRunOfDay && isStudioInternal && typeof printIndex !== "number" ? <Link className="shared-shot-list-link label-s-semibold" href={`/projects/${projectId}/stages/shoot?view=on-set&day=${encodeURIComponent(day.id)}&section=schedule`}>Open Shoot day<DsIcon name="arrow-right" size={14} /></Link> : null}</article>
+      </section> : null}
 
-      <SharedSection title="Run of day" icon="clock-clockwise" count={timedEntries.length}>
+      {renderRunOfDay ? renderRunOfDay(day, sectionControls("run-of-day")) : <SharedSection title="Run of day" count={timedEntries.length} controls={getSectionControls?.("run-of-day")}>
         {timedEntries.length ? <div className="shared-schedule-list">{timedEntries.map((entry) => {
           const meta = scheduleTypeMeta[entry.type];
           const rowLocation = callSheet.locations.find((item) => item.id === entry.locationId);
@@ -413,53 +487,91 @@ function SharedDay({ callSheet, clientName, day, projectId, viewer, isStudioInte
               <div><strong>{linkedGroup?.name ?? entry.description}</strong><span className="label-xs">{[entry.type === "coverage" && linkedShotCount ? `${linkedShotCount} shots` : meta.label, rowLocation?.name].filter(Boolean).join(" · ")}</span></div>
             </article>
           );
-        })}</div> : <p className="shared-empty-copy">The schedule has not been added yet.</p>}
+        })}</div> : <div className="shared-empty-schedule"><p className="shared-empty-copy">{onOpenSchedule ? "The schedule has not been added yet." : "Schedule not yet available."}</p>{onOpenSchedule ? <button className="shared-schedule-helper-link label-s-semibold" type="button" onClick={onOpenSchedule}>Create the run of day in Schedule<DsIcon name="arrow-right" size={14} /></button> : null}</div>}
+      </SharedSection>}
+
+      {renderInterviewQuestions ? renderInterviewQuestions(day, sectionControls("interview-questions")) : null}
+
+      <SharedSection title="Locations" count={locations.length} controls={getSectionControls?.("locations")}>
+        <OperationalSectionActions
+          editing={false}
+          planningLabel={locations.length ? "Manage locations in Planning" : "Add locations in Planning"}
+          showEdit={false}
+          showPlanning={Boolean(onOpenPlanningSection)}
+          onOpenPlanning={() => onOpenPlanningSection?.("locations")}
+        />
+        {locations.length ? <div className="shared-location-list">{locations.map((item) => (
+          <article key={item.id}>
+            <div className="shared-location-heading"><strong>{item.name}</strong>{item.id === day.primaryLocationId ? <span className="label-xs-semibold">Primary</span> : null}</div>
+            {item.mapLink || item.address ? <a className="shared-location-map label-s-semibold" href={getMapsUrl(item.mapLink || item.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(item.address || item.mapLink || "")}</a> : null}
+          </article>
+        ))}</div> : <div className="shared-section-empty"><strong>No locations added</strong><span className="label-xs">Add the shoot locations in Planning before the day begins.</span></div>}
       </SharedSection>
 
-      {people.length ? (
-        <SharedSection title="Contacts" icon="users-three" count={people.length}>
-          <div className="shared-contact-list">{people.map((person) => (
-            <article key={person.id}>
-              <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
-              <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span>{(isStudioInternal || person.showContactDetails === true) && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}</div>
-              {(isStudioInternal || person.showContactDetails === true) && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
-            </article>
-          ))}</div>
+      <SharedSection title="People" count={people.length} controls={getSectionControls?.("people")}>
+        <OperationalSectionActions
+          editing={editingOperationalSection === "people"}
+          editLabel="Edit phone numbers"
+          planningLabel={people.length ? "Manage people in Planning" : "Add people in Planning"}
+          showEdit={Boolean(onChange && people.length)}
+          showPlanning={Boolean(onOpenPlanningSection)}
+          onEdit={() => setEditingOperationalSection((current) => current === "people" ? null : "people")}
+          onOpenPlanning={() => onOpenPlanningSection?.("people")}
+        />
+        {people.length ? <div className="shared-contact-list">{people.map((person) => (
+          <article key={person.id}>
+            <span className="shared-contact-avatar label-xs-semibold">{getInitials(person.name)}</span>
+            <div><strong>{person.name}</strong><span className="label-xs">{person.role || person.type} · Call {formatTime(person.callTime)}</span>{(isStudioInternal || person.showContactDetails === true) && person.email ? <a className="shared-contact-email label-xs" href={`mailto:${person.email}`}>{person.email}</a> : null}{editingOperationalSection === "people" ? <OperationalField label="Phone" type="tel" value={person.phone} onChange={(value) => updatePersonPhone(person.id, value)} /> : null}</div>
+            {editingOperationalSection !== "people" && (isStudioInternal || person.showContactDetails === true) && person.phone ? <a aria-label={`Call ${person.name}`} href={`tel:${normalisePhone(person.phone)}`}><span className="label-xs-semibold">Call</span><span className="shared-desktop-phone label-xs-semibold">{person.phone}</span></a> : null}
+          </article>
+        ))}</div> : <div className="shared-section-empty"><strong>No people added</strong><span className="label-xs">Add crew and talent in Planning before the day begins.</span></div>}
+      </SharedSection>
+
+      {onChange || dayNotes.trim() || internalNotes ? (
+        <SharedSection title="Notes for the day" controls={getSectionControls?.("notes")}>
+          {onChange ? (
+            <label className="shared-notes-editor">
+              <span className="label-xs-semibold">{day.label} notes</span>
+              <textarea
+                aria-label={`${day.label} notes`}
+                placeholder={"Parking:\nAccess:\nWi-Fi:\nOther practical details:"}
+                rows={7}
+                value={dayNotes}
+                onChange={(event) => updateDayNotes(event.target.value)}
+              />
+            </label>
+          ) : dayNotes.trim() ? <p className="shared-notes">{dayNotes}</p> : null}
+          {internalNotes ? <div className="shared-practical-grid"><PracticalItem title="Internal Studio notes" body={internalNotes} /></div> : null}
         </SharedSection>
       ) : null}
 
-      {locations.length ? (
-        <SharedSection title="Locations" icon="push-pin-simple" count={locations.length}>
-          <div className="shared-location-list">{locations.map((item) => {
-            const practicalDetails = getLocationPracticalDetails(item);
-            return <article key={item.id}>
-              <div className="shared-location-heading"><strong>{item.name}</strong>{item.id === day.primaryLocationId ? <span className="label-xs-semibold">Primary</span> : null}</div>
-              {item.mapLink || item.address ? <a className="shared-location-map label-s-semibold" href={getMapsUrl(item.mapLink || item.address)} target="_blank" rel="noreferrer">{getMapsLinkLabel(item.address || item.mapLink || "")}</a> : null}
-              {practicalDetails ? <p className="shared-location-practical-details">{practicalDetails}</p> : null}
-            </article>
-          })}</div>
-        </SharedSection>
-      ) : null}
-
-      {day.safetyEmergency?.confirmed ? (
-        <SharedSection title="Safety and emergency" icon="alert-triangle">
-          <div className="shared-safety-emergency">
-            <div><span className="label-xs-semibold">Nearest emergency department</span><strong>{day.safetyEmergency.hospitalName}</strong><p>{day.safetyEmergency.hospitalAddress}</p>{day.safetyEmergency.hospitalPhone ? <a href={`tel:${normalisePhone(day.safetyEmergency.hospitalPhone)}`}>{day.safetyEmergency.hospitalPhone}</a> : null}{day.safetyEmergency.travelTime ? <p>{day.safetyEmergency.travelTime}</p> : null}</div>
-            <a className="shared-primary-action label-s-semibold" href={getMapsUrl(day.safetyEmergency.hospitalAddress)} target="_blank" rel="noreferrer"><DsIcon name="arrow-bend-up-right" size={16} />Open in Maps</a>
-            <div><span className="label-xs-semibold">Emergency contact</span><a href={`tel:${normalisePhone(day.safetyEmergency.emergencyNumber)}`}>{day.safetyEmergency.emergencyNumber}</a></div>
+      {onOpenDocuments || documents.length ? (
+        <SharedSection sectionId="documents" title="Documents" count={documents.length} controls={getSectionControls?.("documents")}>
+          <div className="shared-documents-section">
+            {documents.length ? <div className="shared-document-list">{documents.map((document) => <a href={document.url} target="_blank" rel="noreferrer" key={document.id}><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={18} /><span>{document.name}</span><DsIcon name="arrow-bend-up-right" size={16} /></a>)}</div> : <div className="shared-documents-empty"><strong>No documents added</strong><span className="label-xs">Add files or links the crew may need on the shoot day.</span></div>}
+            {onOpenDocuments ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onOpenDocuments}><DsIcon name="folder" size={16} />Manage documents</button> : null}
           </div>
         </SharedSection>
       ) : null}
 
-      {callSheet.notes.trim() ? <SharedSection title="Production Notes" icon="file-text"><p className="shared-notes">{callSheet.notes}</p></SharedSection> : null}
-
-      {dayNoteSections.length ? <SharedSection title="Notes for the day" icon="file-text"><div className="shared-practical-grid">{dayNoteSections.map(([label, value]) => <PracticalItem title={label} body={value} key={label} />)}</div></SharedSection> : null}
-
-      {callSheet.visibleOptionalSections.includes("documents") && documents.length ? (
-        <SharedSection title="Documents" icon="folder" count={documents.length}>
-          <div className="shared-document-list">{documents.map((document) => <a href={document.url} key={document.id}><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={18} /><span>{document.name}</span><DsIcon name="arrow-bend-up-right" size={16} /></a>)}</div>
+      {nearestEmergencyHospital && location ? (
+        <SharedSection title="Nearest emergency hospital">
+          <div className="shared-safety-emergency">
+            <div>
+              <strong>{nearestEmergencyHospital.hospitalName}</strong>
+              <a className="shared-location-map label-s-semibold" href={getMapsUrl(nearestEmergencyHospital.hospitalAddress)} target="_blank" rel="noreferrer">{nearestEmergencyHospital.hospitalAddress}</a>
+              <span className="label-xs">{nearestEmergencyHospital.travelTime || `Calculated from ${location.name}`}</span>
+            </div>
+            <a className="shared-primary-action label-s-semibold" href={getMapsUrl(nearestEmergencyHospital.hospitalAddress)} target="_blank" rel="noreferrer"><DsIcon name="arrow-bend-up-right" size={16} />Directions</a>
+            <div>
+              <span className="label-xs-semibold">Emergency</span>
+              <a href={`tel:${normalisePhone(nearestEmergencyHospital.emergencyNumber)}`}>{nearestEmergencyHospital.emergencyNumber}</a>
+              {nearestEmergencyHospital.hospitalPhone ? <a className="label-xs-semibold" href={`tel:${normalisePhone(nearestEmergencyHospital.hospitalPhone)}`}>Hospital {nearestEmergencyHospital.hospitalPhone}</a> : null}
+            </div>
+          </div>
         </SharedSection>
       ) : null}
+
       {typeof printIndex === "number" ? (
         <footer className="shared-document-print-footer">
           <span>{callSheet.studioName} · {callSheet.projectName}</span>
@@ -470,32 +582,108 @@ function SharedDay({ callSheet, clientName, day, projectId, viewer, isStudioInte
   );
 }
 
-function SharedSection({ title, icon, count, children }: { title: string; icon: DsIconName; count?: number; children: ReactNode }) {
+function getLegacyDayNotes(callSheet: CallSheet, day: ShootDay, location: CallSheet["locations"][number] | undefined) {
+  const emergency = day.safetyEmergency;
+  const details: Array<[string, string]> = [
+    ["Parking", location?.parking ?? ""],
+    ["Access", [location?.access, day.notes?.access, callSheet.practicalInfo.access].filter(Boolean).join(" ")],
+    ["Accessibility", location?.accessibility ?? callSheet.practicalInfo.accessibility],
+    ["Wi-Fi", location?.wifi ?? callSheet.practicalInfo.wifi],
+    ["Emergency contact", [emergency?.emergencyNumber, callSheet.practicalInfo.emergencyContact].filter(Boolean).join(" - ")],
+    ["Equipment", day.notes?.equipment ?? ""],
+    ["Wardrobe", day.notes?.wardrobe ?? ""],
+    ["Catering", day.notes?.catering ?? ""],
+    ["Safety", [day.notes?.safety, callSheet.practicalInfo.safety].filter(Boolean).join(" ")],
+    ["Weather", day.notes?.weatherConsiderations ?? ""],
+    ["Other practical details", [day.notes?.clientNotes, callSheet.notes, location?.notes].filter(Boolean).join(" ")],
+  ];
+
+  return details
+    .map(([label, value]) => [label, value.trim()] as const)
+    .filter(([, value]) => value)
+    .map(([label, value]) => `${label}: ${value}`)
+    .join("\n");
+}
+
+function getNearestEmergencyHospital(location: ShootLocation | undefined, existing: SafetyEmergencyInfo | undefined): SafetyEmergencyInfo | undefined {
+  if (!location) return undefined;
+  if (existing?.hospitalName.trim() && existing.hospitalAddress.trim() && !existing.needsReview) return existing;
+
+  const locationText = `${location.name} ${location.address}`.toLowerCase();
+  if (locationText.includes("carriageworks") || locationText.includes("eveleigh") || locationText.includes("camperdown") || locationText.includes("newtown")) {
+    return { hospitalName: "Royal Prince Alfred Hospital Emergency Department", hospitalAddress: "Missenden Road, Camperdown NSW 2050", hospitalPhone: "02 9515 6111", emergencyNumber: "000", confirmed: true };
+  }
+  if (locationText.includes("thirroul") || locationText.includes("wollongong")) {
+    return { hospitalName: "Wollongong Hospital Emergency Department", hospitalAddress: "348-352 Crown Street, Wollongong NSW 2500", hospitalPhone: "02 4222 5000", emergencyNumber: "000", confirmed: true };
+  }
+  if (locationText.includes("vic")) {
+    return { hospitalName: "The Royal Melbourne Hospital Emergency Department", hospitalAddress: "300 Grattan Street, Parkville VIC 3050", hospitalPhone: "03 9342 7000", emergencyNumber: "000", confirmed: true };
+  }
+  if (locationText.includes("qld")) {
+    return { hospitalName: "Royal Brisbane and Women's Hospital Emergency Department", hospitalAddress: "Butterfield Street, Herston QLD 4029", hospitalPhone: "07 3646 8111", emergencyNumber: "000", confirmed: true };
+  }
+  if (locationText.includes("sa ")) {
+    return { hospitalName: "Royal Adelaide Hospital Emergency Department", hospitalAddress: "Port Road, Adelaide SA 5000", hospitalPhone: "08 7074 0000", emergencyNumber: "000", confirmed: true };
+  }
+
+  return { hospitalName: "Sydney Hospital Emergency Department", hospitalAddress: "8 Macquarie Street, Sydney NSW 2000", hospitalPhone: "02 9382 7111", emergencyNumber: "000", confirmed: true };
+}
+
+function SharedSection({ title, count, children, controls, sectionId }: { title: string; count?: number; children: ReactNode; controls?: CallSheetSectionControls; sectionId?: string }) {
+  const isExpanded = controls?.focused || !controls?.collapsed;
   return (
-    <section className="shared-section">
-      <header><div><DsIcon name={icon} size={20} /><h2>{title}</h2>{typeof count === "number" ? <span className="label-xs-semibold">{count}</span> : null}</div></header>
-      <div className="shared-section-body">{children}</div>
+    <section className={`shared-section shoot-call-sheet-focus-section ${controls?.focused ? "is-focused" : ""}`} data-call-sheet-section={sectionId} role={controls?.focused ? "dialog" : undefined} aria-modal={controls?.focused ? "true" : undefined} aria-label={controls?.focused ? `Focused ${title}` : undefined}>
+      <header>
+        <div><h2>{title}</h2>{typeof count === "number" ? <span className="shoot-call-sheet-section-count label-xs-semibold">{count}</span> : null}</div>
+        {controls ? <div className="shared-section-actions">
+          {controls.focused
+            ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={controls.onToggleFocus}><DsIcon name="x-close-cross" size={16} />Exit focus</button>
+            : <>
+              <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title}`} title={`${isExpanded ? "Collapse" : "Expand"} ${title}`} onClick={controls.onToggleCollapse}><DsIcon name="caret-down" size={16} /></button>
+              <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${title}`} title={`Focus on ${title}`} onClick={controls.onToggleFocus}><DsIcon name="frame-corners" size={17} /></button>
+            </>}
+        </div> : null}
+      </header>
+      {isExpanded ? <div className="shared-section-body">{children}</div> : null}
     </section>
   );
 }
 
-function PracticalItem({ title, body }: { title: string; body: string }) {
-  return <article><strong>{title}</strong><p>{body}</p></article>;
+function OperationalSectionActions({ editing, editLabel, planningLabel, showEdit, showPlanning = false, onEdit, onOpenPlanning }: {
+  editing: boolean;
+  editLabel?: string;
+  planningLabel?: string;
+  showEdit: boolean;
+  showPlanning?: boolean;
+  onEdit?: () => void;
+  onOpenPlanning?: () => void;
+}) {
+  if (!showEdit && !showPlanning) return null;
+  return <div className="shared-on-set-section-actions">
+    {showEdit && onEdit && editLabel ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onEdit}><DsIcon name={editing ? "check" : "pencil-simple-ds"} size={16} />{editing ? "Done" : editLabel}</button> : null}
+    {showPlanning && onOpenPlanning && planningLabel ? <button className="shoot-text-action label-s-semibold" type="button" onClick={onOpenPlanning}>{planningLabel}<DsIcon name="arrow-right" size={14} /></button> : null}
+  </div>;
 }
 
-function getLocationPracticalDetails(location: CallSheet["locations"][number]) {
-  let notes = location.notes.trim();
-  const details = [
-    ["Parking", location.parking.trim()],
-    ["Access", location.access.trim()],
-    ["Accessibility", location.accessibility?.trim() ?? ""],
-    ["Wi-Fi", location.wifi?.trim() ?? ""],
-  ] as const;
-  details.forEach(([label, detail]) => {
-    if (!detail || new RegExp(`^${label}:`, "imu").test(notes)) return;
-    notes = `${notes}${notes ? "\n" : ""}${label}: ${detail}`;
-  });
-  return notes;
+function OperationalField({ label, value, placeholder = "Not confirmed", multiline = false, wide = false, type = "text", onChange }: {
+  label: string;
+  value: string;
+  placeholder?: string;
+  multiline?: boolean;
+  wide?: boolean;
+  type?: "text" | "tel";
+  onChange: (value: string) => void;
+}) {
+  return <label className={`shared-on-set-edit-field ${wide ? "is-wide" : ""}`}>
+    <span className="label-xs-semibold">{label}</span>
+    {multiline
+      ? <textarea rows={3} value={value} placeholder={placeholder.trim() || "Not confirmed"} onChange={(event) => onChange(event.target.value)} />
+      : <input type={type} value={value} placeholder={placeholder.trim() || "Not confirmed"} onChange={(event) => onChange(event.target.value)} />}
+  </label>;
+}
+
+function PracticalItem({ title, body }: { title: string; body: string }) {
+  return <article><strong>{title}</strong><p>{body}</p></article>;
 }
 
 function formatShortDate(value: string) {

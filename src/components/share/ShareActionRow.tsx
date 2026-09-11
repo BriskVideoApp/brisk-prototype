@@ -44,7 +44,9 @@ export type ShareActionRowProps = {
   isApproved?: boolean;
   showApprove?: boolean;
   showCopyLink?: boolean;
+  showReview?: boolean;
   copyLinkIconOnly?: boolean;
+  copyLinkLabel?: string;
   disabled?: boolean;
   disabledTooltip?: string;
   approveLabel?: string;
@@ -54,6 +56,8 @@ export type ShareActionRowProps = {
   approvedBy?: string;
   allowRoleApproval?: boolean;
   canConfigureLink?: boolean;
+  shareUrl?: string;
+  stageLabelOverride?: string;
   beforeAction?: (action: "copy" | "review" | "approve", proceed: () => void) => void;
 };
 
@@ -97,7 +101,9 @@ export function ShareActionRow({
   isApproved = false,
   showApprove = true,
   showCopyLink = true,
+  showReview = true,
   copyLinkIconOnly = false,
+  copyLinkLabel = "Copy Link",
   disabled = false,
   disabledTooltip,
   approveLabel = "Approve",
@@ -107,6 +113,8 @@ export function ShareActionRow({
   approvedBy,
   allowRoleApproval = false,
   canConfigureLink = true,
+  shareUrl,
+  stageLabelOverride,
   beforeAction,
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -119,7 +127,7 @@ export function ShareActionRow({
   const [access, setAccess] = useState<ShareAccess>(initialLinkOpens === "videoOnly" ? "viewOnly" : initialAccess);
   const [hasCopied, setHasCopied] = useState(false);
   const [reviewToastMessage, setReviewToastMessage] = useState("");
-  const stageLabel = stageLabels[context];
+  const stageLabel = stageLabelOverride ?? stageLabels[context];
   const canUseVideoOnly = context === "edit" || context === "masters";
   const isVideoOnly = linkOpens === "videoOnly";
   const isCustomerView = userRole === "Customer";
@@ -171,11 +179,13 @@ export function ShareActionRow({
   }, []);
 
   const copyLink = async () => {
-    const shareUrl = `https://share.brisk.prototype/${context}/${linkOpens}/${access}`;
+    const resolvedShareUrl = shareUrl
+      ? new URL(shareUrl, window.location.origin).toString()
+      : `https://share.brisk.prototype/${context}/${linkOpens}/${access}`;
 
     try {
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareUrl);
+        await navigator.clipboard.writeText(resolvedShareUrl);
       }
     } catch {
       // Prototype-only: keep the happy-path feedback visible if browser clipboard access is blocked.
@@ -268,7 +278,7 @@ export function ShareActionRow({
           <button
             className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
             type="button"
-            aria-label="Copy Link"
+            aria-label={copyLinkLabel}
             aria-expanded={isPopoverOpen}
             disabled={disabled}
             title={disabled ? disabledTooltip : undefined}
@@ -277,10 +287,10 @@ export function ShareActionRow({
             }}
           >
             <DsIcon name="link" size={20} />
-            {copyLinkIconOnly ? null : "Copy Link"}
+            {copyLinkIconOnly ? null : copyLinkLabel}
           </button>
         ) : null}
-        <button
+        {showReview ? <button
           className="share-button share-button-secondary label-s-semibold"
           type="button"
           disabled={disabled}
@@ -288,7 +298,7 @@ export function ShareActionRow({
           onClick={() => runAction("review", isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true))}
         >
           {requestReviewLabel}
-        </button>
+        </button> : null}
         {showApprove ? (
           <StageApprovalControl
             stageLabel={stageLabel}
@@ -318,7 +328,7 @@ export function ShareActionRow({
       ) : null}
 
       {isPopoverOpen ? (
-        <aside className="share-popover" aria-label="Copy link settings" onPointerDown={(event) => event.stopPropagation()}>
+        <aside className="share-popover" aria-label={`${copyLinkLabel} settings`} onPointerDown={(event) => event.stopPropagation()}>
           <button className="share-copy-primary label-s-semibold" type="button" onClick={() => runAction("copy", copyLink)}>
             Copy link
           </button>

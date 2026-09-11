@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
-import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { getProjectFixture, projectFixtureIds } from "@/data/project-fixtures";
 
 export function generateStaticParams() {
-  return activeVideoProjects.map((project) => ({ projectId: project.id }));
+  return projectFixtureIds.map((projectId) => ({ projectId }));
 }
 
 export default async function SharedCallSheetRoute({
@@ -16,7 +16,7 @@ export default async function SharedCallSheetRoute({
 }) {
   const { projectId } = await params;
   const query = await searchParams;
-  const project = activeVideoProjects.find((activeProject) => activeProject.id === projectId);
+  const project = getProjectFixture(projectId);
 
   if (!project) notFound();
 
@@ -24,6 +24,7 @@ export default async function SharedCallSheetRoute({
     <Suspense fallback={null}>
       <SharedCallSheetPage
         project={project}
+        isStudioInternal={false}
         printMode={query.print === "1"}
         previewMode={query.preview === "1"}
         viewerId={typeof query.viewer === "string" ? query.viewer : undefined}
