@@ -49,6 +49,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
           href="/notifications"
           aria-current="page"
           aria-label={notificationLabel}
+          data-tooltip="Notifications"
         >
           <NotificationBellContents unreadCount={unreadCount} />
         </Link>
@@ -60,6 +61,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
             aria-label={notificationLabel}
             aria-controls={popoverId}
             aria-expanded={isOpen}
+            data-tooltip={isOpen ? undefined : "Notifications"}
             onClick={() => setIsOpen((current) => !current)}
           >
             <NotificationBellContents unreadCount={unreadCount} />
@@ -68,6 +70,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
             className="app-notification-bell app-notification-bell-mobile-link"
             href="/notifications"
             aria-label={notificationLabel}
+            data-tooltip="Notifications"
             onClick={onNavigate}
           >
             <NotificationBellContents unreadCount={unreadCount} />

@@ -20,6 +20,8 @@ export type ShotGroup = {
   subject?: string;
   locationId?: string;
   order: number;
+  createdBy?: "brisk-ai";
+  suggestionStatus?: "suggested";
 };
 
 export type ShootDay = {
@@ -85,6 +87,7 @@ export type ProductionEntry = {
   interiorExterior?: InteriorExterior;
   notes?: string;
   scriptSection?: string;
+  createdBy?: "brisk-ai";
   suggestionStatus?: "suggested";
   comments?: ScriptComment[];
   shotGroupId?: string | null;
@@ -142,6 +145,7 @@ export type InterviewQuestion = {
   personId?: string;
   question: string;
   shootDayIds: ShootDayAssignment;
+  createdBy?: "brisk-ai";
   suggestionStatus?: "suggested";
   asked?: boolean;
 };

@@ -10,6 +10,8 @@ import {
   formatNotificationRelativeTime,
 } from "@/components/notifications/NotificationInboxItem";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { NotificationSemanticState } from "@/components/notifications/types";
 import { chatProjects } from "@/data/chat";
@@ -24,6 +26,7 @@ export function GlobalHeaderActions() {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
+  const { actions: shootActions } = useShootGlobalActions();
   const [isActivityOpen, setIsActivityOpen] = useState(false);
   const activityPopoverId = useId();
   const activityControlRef = useRef<HTMLDivElement>(null);
@@ -79,6 +82,7 @@ export function GlobalHeaderActions() {
       className="app-global-action-button"
       type="button"
       aria-label={`Open Chat${chatUnreadCount ? `, ${chatUnreadCount} unread` : ""}`}
+      data-tooltip="Chat"
       onClick={openCustomerChat}
     >
       <DsIcon name="chats" size={20} />
@@ -89,6 +93,7 @@ export function GlobalHeaderActions() {
       className={`app-global-action-button ${pathname === "/chat" ? "is-active" : ""}`}
       href="/chat"
       aria-label={`Open Chat${chatUnreadCount ? `, ${chatUnreadCount} unread` : ""}`}
+      data-tooltip="Chat"
     >
       <DsIcon name="chats" size={20} />
       <CommentCountBadge count={chatUnreadCount} label={`${chatUnreadCount} unread messages`} />
@@ -96,7 +101,8 @@ export function GlobalHeaderActions() {
   );
 
   return (
-    <nav className="app-global-header-actions" aria-label="Personal updates">
+    <nav className="app-global-header-actions" aria-label="Global actions">
+      {shootActions ? <ShootActionsMenu actions={shootActions} /> : null}
       <NotificationBell />
       <div className="app-global-activity-control" ref={activityControlRef}>
         <button
@@ -105,6 +111,7 @@ export function GlobalHeaderActions() {
           aria-label="Open latest activity"
           aria-controls={usesCustomerDashboardDrawers ? undefined : activityPopoverId}
           aria-expanded={usesCustomerDashboardDrawers ? undefined : isActivityOpen}
+          data-tooltip={isActivityOpen ? undefined : "Latest activity"}
           onClick={openLatestActivity}
         >
           <DsIcon name="clock-clockwise" size={20} />
@@ -188,6 +195,31 @@ export function GlobalHeaderActions() {
       {chatControl}
     </nav>
   );
+}
+
+function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
+  return <ShareActionRow
+    context="shoot"
+    userRole={actions.userRole}
+    presentation="overflow"
+    initialAccess={actions.initialAccess}
+    initialLinkOpens="stageOnly"
+    projectName={actions.projectName}
+    studioName={actions.studioName}
+    customerName={actions.customerName}
+    shareUrl={actions.shareUrl}
+    approveLabel="Approve Shoot"
+    approveDisabled={!actions.canApprove}
+    approveDisabledTooltip="Only Studio Staff or Clients can approve the Shoot"
+    reviewDisabled={!actions.canEdit}
+    reviewDisabledTooltip="You need edit access to request a review"
+    isApproved={actions.isApproved}
+    beforeAction={actions.beforeAction}
+    onApprove={actions.onApprove}
+    onRequestReview={actions.onRequestReview}
+    onSendToStudio={actions.onSendToStudio}
+    onUnapprove={actions.onUnapprove}
+  />;
 }
 
 function getActivityIcon(state: NotificationSemanticState): DsIconName {

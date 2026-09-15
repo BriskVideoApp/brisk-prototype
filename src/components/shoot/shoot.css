@@ -412,6 +412,7 @@
 }
 
 .shoot-preproduction-navigation button {
+  position: relative;
   display: grid;
   width: 100%;
   min-width: 0;
@@ -425,6 +426,17 @@
   grid-template-columns: auto minmax(0, 1fr);
   padding: var(--brisk-space-s);
   text-align: left;
+}
+
+.shoot-navigation-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shoot-preproduction-navigation button.has-readiness .shoot-navigation-icon,
+.shoot-preproduction-navigation button.has-readiness-changes .shoot-navigation-icon {
+  color: var(--brisk-green-60);
 }
 
 .shoot-preproduction-navigation button:hover,
@@ -492,6 +504,201 @@
   bottom: calc(100% + var(--brisk-space-l));
 }
 
+.shoot-stage-share-footer.is-schedule-footer {
+  justify-content: flex-end;
+  gap: var(--brisk-space-l);
+}
+
+.shoot-schedule-footer-more {
+  position: relative;
+}
+
+.shoot-schedule-footer-more > summary {
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  min-width: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  align-items: center;
+  justify-content: center;
+  padding: var(--brisk-space-none);
+  list-style: none;
+}
+
+.shoot-schedule-footer-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.shoot-schedule-footer-more > div {
+  position: absolute;
+  bottom: calc(100% + var(--brisk-space-s));
+  left: var(--brisk-space-none);
+  display: grid;
+  width: calc(var(--brisk-space-3xl) * 5);
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-xs);
+}
+
+.shoot-schedule-footer-more > div button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  border: 0;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  cursor: pointer;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+  text-align: left;
+}
+
+.shoot-schedule-footer-more > div button:hover,
+.shoot-schedule-footer-more > div button:focus-visible {
+  background: var(--brisk-bg-block-secondary);
+  outline: none;
+}
+
+.shoot-schedule-footer-more > div button:disabled {
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+}
+
+.shoot-schedule-footer-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+}
+
+.shoot-schedule-ready-button {
+  display: inline-flex;
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  align-items: center;
+  border: 1px solid var(--brisk-green-60);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-green-10);
+  color: var(--brisk-green-60);
+  cursor: pointer;
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+  list-style: none;
+}
+
+.shoot-schedule-ready-button::-webkit-details-marker {
+  display: none;
+}
+
+.shoot-schedule-ready-button:hover,
+.shoot-schedule-ready-button:focus-visible {
+  background: var(--brisk-white);
+  outline: 2px solid var(--brisk-green-60);
+  outline-offset: 1px;
+}
+
+.shoot-readiness-status-menu {
+  position: relative;
+}
+
+.shoot-readiness-status-menu > div {
+  position: absolute;
+  right: var(--brisk-space-none);
+  bottom: calc(100% + var(--brisk-space-s));
+  z-index: 50;
+  width: max-content;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-xs);
+}
+
+.shoot-readiness-status-menu > div button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  border: var(--brisk-space-none);
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  cursor: pointer;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.shoot-readiness-status-menu > div button:hover,
+.shoot-readiness-status-menu > div button:focus-visible {
+  background: var(--brisk-bg-block-secondary);
+  outline: none;
+}
+
+.shoot-schedule-changes-notice {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid var(--brisk-border-secondary);
+  border-left: var(--brisk-space-xs) solid var(--brisk-orange-40);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-m);
+}
+
+.shoot-schedule-changes-notice > span {
+  color: var(--brisk-orange-40);
+}
+
+.shoot-schedule-changes-notice > div {
+  display: grid;
+  gap: var(--brisk-space-2xs);
+}
+
+.shoot-schedule-changes-notice small {
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-schedule-ready-summary {
+  display: grid;
+  gap: var(--brisk-space-xs);
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-secondary);
+  padding: var(--brisk-space-m);
+}
+
+.shoot-schedule-ready-summary span {
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-schedule-review-issues {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.shoot-schedule-review-issues > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.shoot-schedule-review-issues span,
+.shoot-schedule-review-passed {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.shoot-schedule-review-issues span {
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-schedule-review-passed {
+  color: var(--brisk-green-60);
+}
+
 .shoot-preproduction-section,
 .shoot-preproduction-call-sheet {
   display: grid;
@@ -532,6 +739,68 @@
 }
 
 .shoot-preproduction-section-heading p {
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-ai-suggestion-bar,
+.shoot-ai-suggestion-summary,
+.shoot-ai-suggestion-actions {
+  display: flex;
+  align-items: center;
+}
+
+.shoot-ai-suggestion-bar {
+  min-width: 0;
+  justify-content: space-between;
+  gap: var(--brisk-space-m);
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.shoot-ai-suggestion-summary,
+.shoot-ai-suggestion-actions {
+  gap: var(--brisk-space-s);
+}
+
+.shoot-ai-suggestion-summary {
+  min-width: 0;
+  color: var(--brisk-brand-primary-click);
+}
+
+.shoot-ai-suggestion-summary small {
+  color: var(--brisk-text-secondary);
+  font-weight: 400;
+}
+
+.shoot-ai-suggestion-why {
+  position: relative;
+}
+
+.shoot-ai-suggestion-why > summary {
+  list-style: none;
+}
+
+.shoot-ai-suggestion-why > summary::-webkit-details-marker {
+  display: none;
+}
+
+.shoot-ai-suggestion-popover {
+  position: absolute;
+  top: calc(100% + var(--brisk-space-xs));
+  right: 0;
+  z-index: 50;
+  display: grid;
+  width: calc(var(--brisk-space-3xl) * 8);
+  gap: var(--brisk-space-s);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-m);
+}
+
+.shoot-ai-suggestion-popover p {
   color: var(--brisk-text-secondary);
 }
 
@@ -1122,10 +1391,6 @@
   width: 12%;
 }
 
-.shoot-shot-table-priority-column {
-  width: calc(var(--brisk-space-3xl) * 3);
-}
-
 .shoot-shot-table-reference-column {
   width: calc(var(--brisk-space-3xl) * 2);
 }
@@ -1144,7 +1409,7 @@
 }
 
 .shoot-planning-shot-table .shoot-shot-table-description-column {
-  width: 45%;
+  width: 49%;
 }
 
 .shoot-planning-shot-table .shoot-shot-table-type-column {
@@ -1159,16 +1424,12 @@
   width: 9%;
 }
 
-.shoot-planning-shot-table .shoot-shot-table-priority-column {
-  width: 7%;
-}
-
 .shoot-planning-shot-table .shoot-shot-table-reference-column {
   width: 6%;
 }
 
 .shoot-planning-shot-table .shoot-shot-table-notes-column {
-  width: 7%;
+  width: 10%;
 }
 
 .shoot-planning-shot-table .shoot-shot-table-actions-column {
@@ -1936,10 +2197,35 @@
   gap: var(--brisk-space-xs);
 }
 
+.shoot-question-assignment {
+  color: var(--brisk-text-secondary);
+  padding-inline: var(--brisk-space-xs);
+}
+
 .shoot-question-table-actions {
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: var(--brisk-space-xs);
   white-space: nowrap;
+}
+
+.shoot-question-editor-fields {
+  display: grid;
+  gap: var(--brisk-space-m);
+}
+
+.shoot-question-editor-related {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--brisk-border-secondary);
+  gap: var(--brisk-space-m);
+  padding-top: var(--brisk-space-m);
+}
+
+.shoot-question-editor-related > span {
+  color: var(--brisk-text-secondary);
+  margin-right: auto;
 }
 
 .shoot-preproduction-section textarea.shoot-question-table-input {
@@ -1975,6 +2261,11 @@
   font-weight: 400;
   line-height: 20px;
   padding: var(--brisk-space-xs);
+}
+
+.shoot-shot-abbreviated-select .brisk-select-trigger {
+  gap: var(--brisk-space-2xs);
+  padding-inline: var(--brisk-space-2xs);
 }
 
 .shoot-shot-table .shoot-people-picker.is-compact .shoot-people-search > input,
@@ -2344,22 +2635,17 @@
   min-height: calc(var(--brisk-space-3xl) * 4);
   align-items: center;
   justify-content: center;
-  aspect-ratio: 4 / 3;
   background: var(--brisk-bg-block-secondary);
 }
 
-.shoot-reference-card:nth-child(3n + 2) .shoot-reference-image {
-  aspect-ratio: 4 / 5;
-}
-
-.shoot-reference-card:nth-child(3n) .shoot-reference-image {
-  aspect-ratio: 3 / 4;
+.shoot-reference-image.has-media {
+  min-height: 0;
 }
 
 .shoot-reference-image > :is(img, video) {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 
 .shoot-reference-play {
@@ -2543,48 +2829,126 @@
   display: grid;
   min-width: 0;
   align-items: center;
-  gap: var(--brisk-space-m);
-  border-bottom: 1px solid var(--brisk-border-primary);
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
-  padding: var(--brisk-space-m) 0;
+  gap: var(--brisk-space-l);
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  grid-template-columns: minmax(0, 1.25fr) minmax(calc(var(--brisk-space-3xl) * 5), 1fr) minmax(calc(var(--brisk-space-3xl) * 2), auto) var(--brisk-space-2xl);
+  padding: var(--brisk-space-l);
 }
 
 .shoot-preproduction-people-list > article:last-child {
   border-bottom: 0;
 }
 
-.shoot-person-identity,
+.shoot-preproduction-people-list {
+  gap: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
+}
+
+.shoot-preproduction-people-header {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1.25fr) minmax(calc(var(--brisk-space-3xl) * 5), 1fr) minmax(calc(var(--brisk-space-3xl) * 2), auto) var(--brisk-space-2xl);
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-gray-5);
+  color: var(--brisk-text-secondary);
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.shoot-person-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
+.shoot-person-identity-copy,
 .shoot-assignment-list {
   display: grid;
   min-width: 0;
   gap: var(--brisk-space-2xs);
 }
 
+.shoot-person-identity-copy > span,
+.shoot-person-call > span {
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-person-identity-copy > :is(strong, span) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shoot-person-edit {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.shoot-assignment-editor {
+  position: relative;
+  min-width: 0;
+}
+
 .shoot-assignment-list {
   justify-items: start;
 }
 
-.shoot-contact-visibility {
-  display: flex;
+.shoot-assignment-button,
+.shoot-assignment-value,
+.shoot-add-role {
+  display: inline-flex;
+  max-width: 100%;
   align-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-primary);
   gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+  text-align: left;
 }
 
-.shoot-person-row-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--brisk-space-xs);
+.shoot-assignment-button {
+  border-radius: var(--brisk-radius-xs);
+  cursor: pointer;
 }
 
-.shoot-add-assignment {
-  position: relative;
+.shoot-assignment-button:is(:hover, :focus-visible) {
+  background: var(--brisk-bg-block-secondary);
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
+}
+
+.shoot-assignment-button:active {
+  box-shadow: none;
+}
+
+.shoot-assignment-button > svg {
+  flex: 0 0 auto;
+  color: var(--brisk-text-secondary);
+}
+
+.shoot-assignment-button > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shoot-add-role {
+  color: var(--brisk-text-secondary);
+  cursor: pointer;
+}
+
+.shoot-add-role:is(:hover, :focus-visible) {
+  color: var(--brisk-text-primary);
+  outline: none;
 }
 
 .shoot-add-assignment-popover {
   position: absolute;
   z-index: 20;
   top: calc(100% + var(--brisk-space-xs));
-  right: 0;
+  left: 0;
   display: grid;
   width: calc(var(--brisk-space-3xl) * 6);
   gap: var(--brisk-space-s);
@@ -2593,6 +2957,16 @@
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-m);
   padding: var(--brisk-space-m);
+}
+
+.shoot-add-assignment-popover .shoot-field {
+  gap: var(--brisk-space-xs);
+}
+
+.shoot-assignment-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--brisk-space-xs);
 }
 
 .shoot-unassigned-shot-group,
@@ -2641,13 +3015,29 @@
 
 .shoot-schedule-day-tabs {
   display: flex;
-  gap: var(--brisk-space-xs);
+  min-width: 0;
+  gap: var(--brisk-space-s);
   margin: 0 var(--brisk-space-l);
   overflow-x: auto;
+  padding-bottom: var(--brisk-space-xs);
 }
 
-.shoot-schedule-day-tabs button {
+.shoot-schedule-day-card {
+  position: relative;
+  width: calc((var(--brisk-space-3xl) * 2) + var(--brisk-space-2xl));
+  height: calc((var(--brisk-space-3xl) * 2) + var(--brisk-space-2xl));
+  flex: 0 0 auto;
+  transition: width 160ms ease;
+}
+
+.shoot-schedule-day-card.is-active {
+  width: calc(var(--brisk-space-3xl) * 7);
+}
+
+.shoot-schedule-day-card-select {
   display: grid;
+  width: 100%;
+  height: 100%;
   flex: 0 0 auto;
   align-content: center;
   border: 1px solid var(--brisk-border-primary);
@@ -2655,18 +3045,91 @@
   background: var(--brisk-white);
   color: var(--brisk-text-secondary);
   cursor: pointer;
-  gap: var(--brisk-space-2xs);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-m);
+  text-align: left;
 }
 
-.shoot-schedule-day-tabs button.active {
+.shoot-schedule-day-card.is-active .shoot-schedule-day-card-select {
   border-color: var(--brisk-brand-primary-click);
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
+  padding-right: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
 }
 
-.shoot-schedule-day-tabs small {
+.shoot-schedule-day-card-select:is(:hover, :focus-visible) {
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
+}
+
+.shoot-schedule-day-card-select > :is(strong, small, span) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shoot-schedule-day-card-select small,
+.shoot-schedule-day-card-location {
   color: var(--brisk-text-secondary);
+}
+
+.shoot-schedule-day-card-time {
+  color: var(--brisk-text-primary);
+}
+
+.shoot-schedule-day-actions {
+  position: absolute;
+  top: var(--brisk-space-s);
+  right: var(--brisk-space-s);
+  z-index: 2;
+}
+
+.shoot-schedule-day-actions > .shoot-icon-button {
+  width: var(--brisk-space-2xl);
+  height: var(--brisk-space-2xl);
+  min-height: var(--brisk-space-2xl);
+  background: transparent;
+}
+
+.shoot-schedule-day-menu {
+  min-width: calc(var(--brisk-space-3xl) * 4);
+}
+
+.shoot-schedule-day-menu > button {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.shoot-schedule-day-menu > button.danger {
+  color: var(--brisk-system-error);
+}
+
+.shoot-schedule-add-day-card {
+  display: inline-flex;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+  flex: 0 0 auto;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-brand-primary-click);
+  cursor: pointer;
+  padding: var(--brisk-space-none);
+}
+
+.shoot-schedule-add-day-card:is(:hover, :focus-visible) {
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-s);
+  outline: none;
+}
+
+.shoot-schedule-add-day-card:active {
+  box-shadow: none;
 }
 
 .shoot-scheduled-entry-list article {
@@ -2696,23 +3159,24 @@
 .shoot-preproduction-schedule {
   display: grid;
   min-width: 0;
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-l) 0;
+  gap: var(--brisk-space-m);
+  padding: var(--brisk-space-m) 0;
 }
 
 .shoot-preproduction-schedule .shoot-schedule-day-tabs {
   margin-inline: var(--brisk-space-l);
 }
 
-.shoot-schedule-day-settings {
+.shoot-schedule-day-editor {
   display: grid;
   min-width: 0;
   align-items: end;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--brisk-space-m);
   margin-inline: var(--brisk-space-l);
-  border-bottom: 1px solid var(--shoot-soft-divider);
-  padding-bottom: var(--brisk-space-l);
+  border-block: 1px solid var(--shoot-soft-divider);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-m);
 }
 
 .shoot-run-of-day > header,
@@ -2731,13 +3195,13 @@
   gap: var(--brisk-space-xxs);
 }
 
-.shoot-schedule-day-settings :is(h3, p),
+.shoot-schedule-day-editor :is(h3, p),
 .shoot-run-of-day :is(h3, p),
 .shoot-schedule-backlog :is(h3, h4, p) {
   margin: 0;
 }
 
-.shoot-schedule-day-settings p,
+.shoot-schedule-day-editor p,
 .shoot-run-of-day p,
 .shoot-schedule-backlog p,
 .shoot-schedule-backlog-card > div > span,
@@ -2745,19 +3209,49 @@
   color: var(--brisk-text-secondary);
 }
 
-.shoot-schedule-day-settings-fields {
+.shoot-schedule-day-editor-fields {
   display: grid;
   min-width: 0;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 1.25fr);
   gap: var(--brisk-space-m);
 }
 
-.shoot-schedule-time-range {
-  display: grid;
+.shoot-schedule-day-editor :is(.brief-date-display, .brisk-select-trigger, .shoot-time-input > input) {
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+}
+
+.shoot-schedule-day-editor .shoot-time-input > input {
+  width: 100%;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
+}
+
+.shoot-schedule-day-editor-actions {
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--brisk-space-s);
+}
+
+.shoot-schedule-time-range {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.shoot-schedule-time-range > .shoot-time-input {
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-2xl));
+}
+
+.shoot-schedule-time-range > .shoot-time-input > input {
+  width: 100%;
 }
 
 .shoot-schedule-time-range > span {
@@ -2767,10 +3261,14 @@
 .shoot-preproduction-schedule-layout {
   display: grid;
   min-width: 0;
-  align-items: start;
-  grid-template-columns: minmax(0, 1fr) minmax(calc(var(--brisk-space-3xl) * 5), calc(var(--brisk-space-3xl) * 6));
+  align-items: stretch;
+  grid-template-columns: minmax(0, 7fr) minmax(calc(var(--brisk-space-3xl) * 5), 3fr);
   gap: var(--brisk-space-l);
   padding-inline: var(--brisk-space-l);
+}
+
+.shoot-preproduction-schedule-layout.is-backlog-collapsed {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .shoot-run-of-day {
@@ -2782,6 +3280,12 @@
 .shoot-run-of-day > header > h3 {
   flex: none;
   white-space: nowrap;
+}
+
+.shoot-button.shoot-schedule-add-button {
+  min-height: var(--brisk-space-2xl);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
 .shoot-schedule-backlog {
@@ -2797,15 +3301,89 @@
   border-left: 1px solid var(--shoot-soft-divider);
 }
 
+.shoot-preproduction-schedule-layout > .shoot-schedule-backlog:not(.is-collapsed):not(.is-mobile) {
+  position: relative;
+  top: auto;
+  height: auto;
+  max-height: none;
+  align-self: stretch;
+}
+
 .shoot-schedule-backlog > header {
+  align-items: center;
   border-bottom: 1px solid var(--brisk-border-secondary);
   padding: var(--brisk-space-s);
+}
+
+.shoot-schedule-backlog.is-collapsed {
+  display: block;
+  width: var(--brisk-space-3xl);
+  min-height: var(--brisk-space-3xl);
+  overflow: visible;
+  grid-template-rows: none;
+}
+
+.shoot-schedule-backlog-expand {
+  position: relative;
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+}
+
+.shoot-schedule-backlog-count {
+  position: absolute;
+  top: calc(var(--brisk-space-xs) * -1);
+  right: calc(var(--brisk-space-xs) * -1);
+  display: inline-flex;
+  min-width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-primary);
+  color: var(--brisk-white);
+  padding-inline: var(--brisk-space-xxs);
+}
+
+.shoot-schedule-backlog-tooltip {
+  position: absolute;
+  top: var(--brisk-space-none);
+  right: calc(100% + var(--brisk-space-s));
+  z-index: 50;
+  width: max-content;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-s);
+  color: var(--brisk-text-primary);
+  opacity: 0;
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+  pointer-events: none;
+  transform: translateX(var(--brisk-space-xs));
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+
+.shoot-schedule-backlog-expand:is(:hover, :focus-visible) + .shoot-schedule-backlog-tooltip {
+  opacity: 1;
+  transform: translateX(var(--brisk-space-none));
+}
+
+.shoot-schedule-backlog.is-drop-target {
+  border-left-color: var(--brisk-brand-primary);
+  background: var(--brisk-brand-secondary);
+}
+
+.shoot-schedule-backlog.is-drop-target > header,
+.shoot-schedule-backlog.is-drop-target > .shoot-schedule-backlog-expand {
+  background: var(--brisk-brand-secondary);
 }
 
 .shoot-schedule-backlog > section {
   display: grid;
   min-height: 0;
+  align-content: start;
   gap: var(--brisk-space-xs);
+  grid-auto-rows: max-content;
   overflow-y: auto;
   padding: var(--brisk-space-s);
 }
@@ -2816,6 +3394,7 @@
 
 .shoot-schedule-backlog-list {
   display: grid;
+  align-content: start;
   gap: var(--brisk-space-none);
 }
 
@@ -2905,25 +3484,22 @@
   grid-template-columns: var(--brisk-space-l) minmax(0, 1fr);
   gap: var(--brisk-space-xs);
   border: 0;
+  border-left: var(--brisk-space-xxs) solid transparent;
   border-bottom: 1px solid var(--shoot-soft-divider);
   background: var(--brisk-white);
   cursor: grab;
   padding: var(--brisk-space-xs);
 }
 
-.shoot-schedule-backlog-card.has-selection-control {
-  grid-template-columns: var(--brisk-space-l) var(--brisk-space-l) minmax(0, 1fr);
-}
-
 .shoot-schedule-backlog-card.is-group-shot {
-  grid-template-columns: var(--brisk-space-l) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   margin-left: var(--brisk-space-l);
   background: var(--brisk-bg-block-primary);
-  cursor: default;
+  cursor: pointer;
 }
 
-.shoot-schedule-backlog-card:has(.shoot-schedule-backlog-select input:checked) {
-  background: var(--brisk-bg-block-secondary);
+.shoot-schedule-backlog-card.is-shot {
+  cursor: pointer;
 }
 
 .shoot-schedule-backlog-card:hover,
@@ -2932,7 +3508,15 @@
   outline: none;
 }
 
-.shoot-schedule-backlog-card:active {
+.shoot-schedule-backlog-card.is-selected,
+.shoot-schedule-backlog-card.is-selected:hover,
+.shoot-schedule-backlog-card.is-selected:focus-visible {
+  border-left-color: var(--brisk-brand-primary);
+  background: var(--brisk-brand-secondary);
+}
+
+.shoot-schedule-backlog-card.is-group:active,
+.shoot-schedule-backlog-card.is-shot:active {
   cursor: grabbing;
 }
 
@@ -3427,17 +4011,13 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
   }
 
   .shoot-preproduction-people-list > article {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--brisk-space-m);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto var(--brisk-space-2xl);
   }
 
-  .shoot-assignment-list,
-  .shoot-contact-visibility {
-    grid-column: 2;
-  }
-
-  .shoot-person-row-actions {
-    grid-column: 3;
-    grid-row: 1 / span 3;
+  .shoot-preproduction-people-header {
+    gap: var(--brisk-space-m);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto var(--brisk-space-2xl);
   }
 }
 
@@ -3540,13 +4120,31 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
 
   .shoot-preproduction-people-list > article {
     align-items: start;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
+  .shoot-preproduction-people-header {
+    display: none;
+  }
+
+  .shoot-assignment-editor,
   .shoot-person-call,
-  .shoot-assignment-list,
-  .shoot-contact-visibility {
-    grid-column: 2;
+  .shoot-assignment-list {
+    grid-column: 1 / -1;
+  }
+
+  .shoot-person-call {
+    grid-row: 3;
+  }
+
+  .shoot-person-identity {
+    padding-right: var(--brisk-space-2xl);
+  }
+
+  .shoot-person-edit {
+    position: absolute;
+    top: var(--brisk-space-m);
+    right: var(--brisk-space-m);
   }
 
   .shoot-scheduled-entry-list article {
@@ -3557,7 +4155,11 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
     grid-column: 3;
   }
 
-  .shoot-schedule-day-settings-fields {
+  .shoot-schedule-day-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .shoot-schedule-day-editor-fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3607,6 +4209,21 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
   .shoot-stage-share-footer {
     align-items: stretch;
     padding: var(--brisk-space-m);
+  }
+
+  .shoot-stage-share-footer.is-schedule-footer {
+    align-items: flex-end;
+  }
+
+  .shoot-schedule-footer-actions {
+    flex: 1;
+    flex-wrap: wrap;
+  }
+
+  .shoot-schedule-footer-actions .shoot-button,
+  .shoot-schedule-ready-button {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 
   .shoot-stage-share-footer .share-action-row,
@@ -3750,9 +4367,8 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
   .shoot-interview-question-list > article > .shoot-preproduction-field,
   .shoot-question-actions,
   .shoot-person-call,
+  .shoot-assignment-editor,
   .shoot-assignment-list,
-  .shoot-contact-visibility,
-  .shoot-person-row-actions,
   .shoot-scheduled-entry-list article > button {
     grid-column: 1;
   }
@@ -3767,8 +4383,23 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
     padding: var(--brisk-space-m);
   }
 
+  .shoot-preproduction-people-list {
+    gap: var(--brisk-space-m);
+  }
+
+  .shoot-preproduction-people-list > article {
+    overflow: visible;
+    border: 1px solid var(--brisk-border-secondary);
+    border-radius: var(--brisk-radius-s);
+    padding: var(--brisk-space-m);
+  }
+
+  .shoot-preproduction-people-list > article:last-child {
+    border-bottom: 1px solid var(--brisk-border-secondary);
+  }
+
   .shoot-preproduction-schedule .shoot-schedule-day-tabs,
-  .shoot-schedule-day-settings {
+  .shoot-schedule-day-editor {
     margin-inline: var(--brisk-space-m);
   }
 
@@ -3776,7 +4407,7 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
     padding-inline: var(--brisk-space-m);
   }
 
-  .shoot-schedule-day-settings-fields {
+  .shoot-schedule-day-editor-fields {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -4229,8 +4860,11 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
 }
 
 .shoot-on-set-question-list li {
+  display: grid;
+  align-items: center;
   border-bottom: 1px solid var(--brisk-border-primary);
   background: var(--brisk-white);
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .shoot-on-set-question-list li:last-child {
@@ -4245,6 +4879,22 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
   grid-template-columns: auto var(--brisk-space-xl) minmax(0, 1fr);
   cursor: pointer;
   padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.shoot-on-set-question-edit {
+  margin-right: var(--brisk-space-l);
+}
+
+.shoot-question-empty {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-l);
+}
+
+.shoot-question-empty .shoot-preproduction-empty-copy {
+  margin: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
 }
 
 .shoot-on-set-question-list input,
@@ -6141,6 +6791,12 @@ button.shoot-on-set-shot-copy:focus-visible {
   gap: var(--brisk-space-s);
 }
 
+.shoot-entry-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
 .shoot-existing-list article {
   grid-template-columns: var(--brisk-space-3xl) minmax(var(--brisk-space-none), 1fr) auto;
 }
@@ -6665,7 +7321,8 @@ button.shoot-on-set-shot-copy:focus-visible {
     grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
   }
 
-  .shoot-delete-confirm {
+  .shoot-delete-confirm,
+  .shoot-entry-footer-actions {
     flex-wrap: wrap;
   }
 
@@ -10220,6 +10877,11 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 }
 
 @media (max-width: 860px) {
+  .shoot-ai-suggestion-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .shoot-shot-list-heading-actions,
   .shoot-on-set-toolbar {
     align-items: stretch;
@@ -11375,9 +12037,9 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 }
 
 .shoot-timeline {
-  --shoot-timeline-slot-height: var(--brisk-space-2xl);
+  --shoot-timeline-slot-height: var(--brisk-space-xl);
   display: grid;
-  grid-template-columns: calc(var(--brisk-space-3xl) * 2) minmax(0, 1fr);
+  grid-template-columns: calc(var(--brisk-space-3xl) + var(--brisk-space-xl)) minmax(0, 1fr);
   min-width: 0;
   border-top: 1px solid var(--shoot-soft-divider);
   padding-top: var(--brisk-space-m);
@@ -11574,8 +12236,8 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   top: calc(var(--shoot-timeline-slot-height) * var(--timeline-slot-offset));
   z-index: 2;
   display: grid;
-  min-height: var(--brisk-space-3xl);
-  height: max(calc(var(--shoot-timeline-slot-height) * var(--timeline-slot-span)), var(--brisk-space-3xl));
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  height: max(calc(var(--shoot-timeline-slot-height) * var(--timeline-slot-span)), calc(var(--brisk-space-3xl) + var(--brisk-space-s)));
   align-content: start;
   overflow: hidden;
   border: 1px solid var(--shoot-soft-border);
@@ -11650,7 +12312,7 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 }
 
 .shoot-timeline-block.is-short {
-  height: max(calc(var(--shoot-timeline-slot-height) * var(--timeline-slot-span)), calc(var(--brisk-space-3xl) + var(--brisk-space-l)));
+  height: max(calc(var(--shoot-timeline-slot-height) * var(--timeline-slot-span)), calc(var(--brisk-space-3xl) + var(--brisk-space-s)));
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-rows: auto auto;
   align-content: center;
@@ -11665,6 +12327,8 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 .shoot-timeline-block.is-short .shoot-schedule-type {
   grid-column: 1;
   grid-row: 1;
+  min-height: var(--brisk-space-l);
+  padding-block: var(--brisk-space-none);
 }
 
 .shoot-timeline-block.is-short .shoot-timeline-block-title {
@@ -13989,6 +14653,26 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   gap: var(--brisk-space-none);
   background: var(--brisk-white);
   padding: var(--brisk-space-none) var(--brisk-space-l) var(--brisk-space-l);
+}
+
+.shoot-simple-add-control > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.shoot-simple-add-control > summary::-webkit-details-marker {
+  display: none;
+}
+
+.shoot-simple-add-control[open] > summary .ds-icon:last-child {
+  transform: rotate(180deg);
+}
+
+.shoot-simple-group-actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--brisk-border-secondary);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
 .shoot-on-set-empty {

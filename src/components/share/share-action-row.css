@@ -11,6 +11,17 @@
   justify-content: center;
 }
 
+.share-action-row.is-overflow .share-popover {
+  right: var(--brisk-space-none);
+  left: auto;
+}
+
+.share-action-row.is-overflow .share-request-toast {
+  right: var(--brisk-space-none);
+  left: auto;
+  transform: none;
+}
+
 .share-action-buttons {
   display: flex;
   align-items: center;

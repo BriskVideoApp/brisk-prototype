@@ -43,7 +43,7 @@
 
 .app-global-header {
   position: relative;
-  z-index: 70;
+  z-index: 100;
   display: flex;
   min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
   align-items: center;
@@ -64,6 +64,67 @@
   position: relative;
 }
 
+.app-global-shoot-actions {
+  position: relative;
+}
+
+.app-global-shoot-actions > summary {
+  list-style: none;
+}
+
+.app-global-shoot-actions > summary::-webkit-details-marker {
+  display: none;
+}
+
+.app-global-shoot-actions[open] > summary {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+}
+
+.app-global-shoot-actions[open] > summary::after {
+  display: none;
+}
+
+.app-global-shoot-actions > div {
+  position: absolute;
+  top: calc(100% + var(--brisk-space-s));
+  right: var(--brisk-space-none);
+  z-index: 100;
+  display: grid;
+  width: calc(var(--brisk-space-3xl) * 5);
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-m);
+  background: var(--brisk-white);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-xs);
+}
+
+.app-global-shoot-actions > div button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  border: var(--brisk-space-none);
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-primary);
+  cursor: pointer;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+  text-align: left;
+}
+
+.app-global-shoot-actions > div button:hover,
+.app-global-shoot-actions > div button:focus-visible {
+  background: var(--brisk-bg-block-secondary);
+  outline: var(--brisk-space-none);
+}
+
+.app-global-shoot-actions > div button:disabled {
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
+}
+
 .app-global-action-button {
   position: relative;
   display: inline-flex;
@@ -77,6 +138,16 @@
   color: var(--brisk-text-primary);
   padding: var(--brisk-space-none);
   text-decoration: none;
+}
+
+.app-global-action-button[data-tooltip],
+.app-notification-bell[data-tooltip] {
+  --tooltip-top: calc(100% + var(--brisk-space-s));
+  --tooltip-right: auto;
+  --tooltip-bottom: auto;
+  --tooltip-left: 50%;
+  --tooltip-x: -50%;
+  --tooltip-y: calc(var(--brisk-space-xs) * -1);
 }
 
 .app-global-action-button:hover,

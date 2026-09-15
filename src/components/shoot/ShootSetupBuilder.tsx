@@ -281,6 +281,10 @@ export type ShootSetupState = {
   status: ShootSetupStatus;
   approvalInvalidated: boolean;
   approvedCallSheetFingerprint?: string;
+  scheduleConfirmedFingerprint?: string;
+  scheduleConfirmedAt?: string;
+  scheduleSentFingerprint?: string;
+  scheduleSentAt?: string;
   lastContributor: string;
   updatedAt: string;
 };

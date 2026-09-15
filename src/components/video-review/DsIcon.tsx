@@ -60,6 +60,7 @@ const iconPaths = {
   "pen-nib": "/brisk-icons/pen-nib.svg",
   "smiley": "/brisk-icons/smiley.svg",
   "search": "/brisk-icons/search.svg",
+  "share-network": "/brisk-icons/share-network.svg",
   "scissors": "/brisk-icons/scissors.svg",
   "plus": "/brisk-icons/plus.svg",
   "push-pin-simple": "/brisk-icons/push-pin-simple.svg",

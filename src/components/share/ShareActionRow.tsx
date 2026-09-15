@@ -9,6 +9,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 
 export type ShareStageContext = "brief" | "script" | "shoot" | "storyboard" | "media" | "edit" | "masters";
 export type ShareDensity = "comfortable" | "compact";
+export type SharePresentation = "row" | "overflow";
 export type ShareUserRole = "Studio Staff" | "Studio Freelancer" | "Customer" | "Share Link Viewer";
 export type ShareLinkOpens = "stageOnly" | "wholeProject" | "videoOnly";
 export type ShareAccess = "viewOnly" | "canComment" | "canEdit";
@@ -32,6 +33,7 @@ export type ShareActionRowProps = {
   context: ShareStageContext;
   userRole: ShareUserRole;
   density?: ShareDensity;
+  presentation?: SharePresentation;
   initialLinkOpens?: ShareLinkOpens;
   initialAccess?: ShareAccess;
   projectName?: string;
@@ -45,6 +47,8 @@ export type ShareActionRowProps = {
   showApprove?: boolean;
   showCopyLink?: boolean;
   showReview?: boolean;
+  reviewDisabled?: boolean;
+  reviewDisabledTooltip?: string;
   copyLinkIconOnly?: boolean;
   copyLinkLabel?: string;
   disabled?: boolean;
@@ -89,6 +93,7 @@ export function ShareActionRow({
   context,
   userRole,
   density = "comfortable",
+  presentation = "row",
   initialLinkOpens = "stageOnly",
   initialAccess = "canComment",
   projectName = "Launch Film - Sales Narrative",
@@ -102,6 +107,8 @@ export function ShareActionRow({
   showApprove = true,
   showCopyLink = true,
   showReview = true,
+  reviewDisabled = false,
+  reviewDisabledTooltip,
   copyLinkIconOnly = false,
   copyLinkLabel = "Copy Link",
   disabled = false,
@@ -118,6 +125,7 @@ export function ShareActionRow({
   beforeAction,
 }: ShareActionRowProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const overflowMenuRef = useRef<HTMLDetailsElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
   const reviewToastTimeoutRef = useRef<number | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -146,6 +154,7 @@ export function ShareActionRow({
     const handlePointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) {
         setIsPopoverOpen(false);
+        overflowMenuRef.current?.removeAttribute("open");
       }
     };
 
@@ -160,6 +169,7 @@ export function ShareActionRow({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setIsPopoverOpen(false);
+      overflowMenuRef.current?.removeAttribute("open");
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -247,6 +257,38 @@ export function ShareActionRow({
     showActionToast("Approved");
   };
 
+  const unapproveProject = () => {
+    setIsPopoverOpen(false);
+    setIsRequestReviewOpen(false);
+    if (onUnapprove) onUnapprove();
+    else showActionToast("Approval removed");
+  };
+
+  const closeOverflowMenu = () => {
+    overflowMenuRef.current?.removeAttribute("open");
+  };
+
+  const openCopyLinkSettings = () => {
+    closeOverflowMenu();
+    setIsPopoverOpen(true);
+  };
+
+  const requestReview = () => {
+    closeOverflowMenu();
+    setIsPopoverOpen(false);
+    runAction("review", isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true));
+  };
+
+  const changeApproval = () => {
+    closeOverflowMenu();
+    setIsPopoverOpen(false);
+    if (isApproved) {
+      unapproveProject();
+      return;
+    }
+    runAction("approve", approveProject);
+  };
+
   const toggleSection = (section: ExpandedSection) => {
     setExpandedSections((currentSections) =>
       currentSections.includes(section)
@@ -272,8 +314,19 @@ export function ShareActionRow({
   };
 
   return (
-    <div className={`share-action-row share-density-${density}`} ref={rootRef}>
-      <div className="share-action-buttons" aria-label={`${stageLabel} share actions`}>
+    <div className={`share-action-row share-density-${density} ${presentation === "overflow" ? "is-overflow" : ""}`} ref={rootRef}>
+      {presentation === "overflow" ? (
+        <details className="app-global-shoot-actions" ref={overflowMenuRef} onToggle={(event) => { if (event.currentTarget.open) setIsPopoverOpen(false); }}>
+          <summary className="app-global-action-button" aria-label={`${stageLabel} actions`} data-tooltip={`${stageLabel} actions`}>
+            <DsIcon name="share-network" size={20} />
+          </summary>
+          <div role="menu" aria-label={`${stageLabel} actions`}>
+            {showCopyLink ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled} title={disabled ? disabledTooltip : undefined} onClick={openCopyLinkSettings}><DsIcon name="link" size={16} />Copy link</button> : null}
+            {showReview ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled || reviewDisabled} title={disabled ? disabledTooltip : reviewDisabled ? reviewDisabledTooltip : undefined} onClick={requestReview}><DsIcon name="paper-plane-tilt" size={16} />{requestReviewLabel}</button> : null}
+            {showApprove ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled || approveDisabled} title={disabled ? disabledTooltip : approveDisabled ? approveDisabledTooltip : undefined} onClick={changeApproval}><DsIcon name="thumbs-up-like-fill" size={16} />{isApproved ? "Remove approval" : approveLabel}</button> : null}
+          </div>
+        </details>
+      ) : <div className="share-action-buttons" aria-label={`${stageLabel} share actions`}>
         {showCopyLink ? (
           <button
             className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
@@ -293,8 +346,8 @@ export function ShareActionRow({
         {showReview ? <button
           className="share-button share-button-secondary label-s-semibold"
           type="button"
-          disabled={disabled}
-          title={disabled ? disabledTooltip : undefined}
+          disabled={disabled || reviewDisabled}
+          title={disabled ? disabledTooltip : reviewDisabled ? reviewDisabledTooltip : undefined}
           onClick={() => runAction("review", isCustomerView ? sendToStudio : () => setIsRequestReviewOpen(true))}
         >
           {requestReviewLabel}
@@ -315,12 +368,11 @@ export function ShareActionRow({
             onUnapprove={() => {
               setIsPopoverOpen(false);
               setIsRequestReviewOpen(false);
-              if (onUnapprove) onUnapprove();
-              else showActionToast("Approval removed");
+              unapproveProject();
             }}
           />
         ) : null}
-      </div>
+      </div>}
       {reviewToastMessage ? (
         <span className="share-request-toast label-xs-semibold" role="status">
           {reviewToastMessage}
