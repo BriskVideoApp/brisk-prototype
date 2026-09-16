@@ -606,6 +606,10 @@
   padding: var(--brisk-space-xs);
 }
 
+.app-sidebar-mobile-close {
+  display: none;
+}
+
 .app-sidebar-history-controls button:hover,
 .app-sidebar-history-controls button:focus-visible,
 .app-sidebar-collapse:hover,

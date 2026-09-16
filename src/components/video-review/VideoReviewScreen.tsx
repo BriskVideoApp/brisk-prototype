@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
@@ -15,6 +16,7 @@ import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { getProjectStageHref } from "@/data/project-fixtures";
 import { DsIcon } from "./DsIcon";
 import { ReviewCommentComposer } from "./ReviewCommentComposer";
 import type {
@@ -25,6 +27,7 @@ import type {
   FramePin,
   Reaction,
   ReactionEmoji,
+  ReviewAttachment,
   ReviewComment,
   ReviewVersion,
   ReviewVersionStatus,
@@ -35,6 +38,9 @@ import type {
 const currentUserId = "user-tom";
 type RecutHandoff = { childDeliverableId: string; childName: string; brief: RecutBrief };
 const versionUploadInputId = "video-version-upload";
+const editCompletionHoldMs = 7200;
+const toastVisibleDurationMs = 3000;
+const toastFadeDurationMs = 400;
 const playbackSpeeds = [0.5, 1, 1.5, 2] as const;
 const reactionOptions: Array<{ emoji: ReactionEmoji; label: string }> = [
   { emoji: "❤️", label: "Love" },
@@ -80,8 +86,13 @@ export function VideoReviewScreen({
   const canUploadVersions = selectedRole !== "Customer";
   const canChooseCommentVisibility = selectedRole !== "Customer";
   const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
-  const initialReviewComments = initialReviewVersions.length === 0 ? [] : reviewVideo.comments;
-  const [reviewComments, setReviewComments] = useState(initialReviewComments);
+  const initialReviewComments = initialReviewVersions.length === 0
+    ? []
+    : reviewVideo.comments.map((comment) => ({
+        ...comment,
+        versionLabel: comment.versionLabel ?? reviewVideo.versionLabel,
+      }));
+  const [reviewComments, setReviewComments] = useState<ReviewComment[]>(initialReviewComments);
   const [activeFilter, setActiveFilter] = useState<CommentFilter>("unresolved");
   const [resolvedIds, setResolvedIds] = useState(
     () => new Set(initialReviewComments.filter((comment) => comment.resolved).map((comment) => comment.id)),
@@ -91,9 +102,13 @@ export function VideoReviewScreen({
   const [versionStatuses, setVersionStatuses] = useState<Record<string, ReviewVersionStatus>>(() =>
     Object.fromEntries(initialReviewVersions.map((version) => [version.label, version.status])),
   );
+  const [comparisonVersionLabels, setComparisonVersionLabels] = useState<string[]>(() =>
+    initialReviewVersions.slice(0, 2).map((version) => version.label),
+  );
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [hasAnchor, setHasAnchor] = useState(true);
   const [composerBody, setComposerBody] = useState("");
+  const [composerAttachments, setComposerAttachments] = useState<ReviewAttachment[]>([]);
   const [composerVisibility, setComposerVisibility] = useState<CommentVisibility>("external");
   const [isPostingMenuOpen, setIsPostingMenuOpen] = useState(false);
   const [editingOverallCommentId, setEditingOverallCommentId] = useState<string | null>(null);
@@ -104,9 +119,11 @@ export function VideoReviewScreen({
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editingDrawingCommentId, setEditingDrawingCommentId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState("");
   const [openCommentMenuId, setOpenCommentMenuId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [isToastFading, setIsToastFading] = useState(false);
   const [videoVersions, setVideoVersions] = useState<ReviewVersion[]>(() =>
     initialReviewVersions.map((version) => ({ ...version })),
   );
@@ -116,21 +133,34 @@ export function VideoReviewScreen({
   const [pendingFramePin, setPendingFramePin] = useState<FramePin | null>(null);
   const [recutHandoff, setRecutHandoff] = useState<RecutHandoff | null>(null);
   const [isReadyConfirmationOpen, setIsReadyConfirmationOpen] = useState(false);
+  const [isCompletionVisible, setIsCompletionVisible] = useState(false);
   const localVideoUrlsRef = useRef<string[]>([]);
+  const localAttachmentUrlsRef = useRef<string[]>([]);
   const commentRefs = useRef(new Map<string, HTMLElement>());
   const highlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const completionRedirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toastFadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toastRemoveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const usersById = useMemo(() => new Map(reviewUsers.map((user) => [user.id, user])), []);
-  const existingOverallComment = reviewComments.find(
+  const versionComments = reviewComments.filter((comment) => comment.versionLabel === selectedVersionLabel);
+  const roleVisibleVersionComments = canChooseCommentVisibility
+    ? versionComments
+    : versionComments.filter((comment) => comment.visibility === "external");
+  const visibleActiveFilter = !canChooseCommentVisibility
+    && (activeFilter === "internal" || activeFilter === "external")
+      ? "unresolved"
+      : activeFilter;
+  const existingOverallComment = roleVisibleVersionComments.find(
     (comment) => comment.authorId === currentUserId && isOverallComment(comment),
   );
   const comments = sortCommentsForReview(
     getFilteredComments(
-      reviewComments.map((comment) => ({
+      roleVisibleVersionComments.map((comment) => ({
         ...comment,
         resolved: resolvedIds.has(comment.id),
       })),
-      activeFilter,
+      visibleActiveFilter,
     ),
   );
   const selectedVisibleIndex = selectedCommentId
@@ -144,12 +174,22 @@ export function VideoReviewScreen({
     : undefined;
   const allReviewVersions = videoVersions;
   const selectedReviewVersion = allReviewVersions.find((version) => version.label === selectedVersionLabel) ?? allReviewVersions[0];
+  const activeComparisonVersionLabels = allReviewVersions.length === 2
+    ? allReviewVersions.map((version) => version.label)
+    : comparisonVersionLabels;
+  const comparisonVersions = activeComparisonVersionLabels
+    .map((versionLabel) => allReviewVersions.find((version) => version.label === versionLabel))
+    .filter((version): version is ReviewVersion => Boolean(version));
+  const isActiveCompareMode = isCompareMode && comparisonVersions.length === 2;
   const selectedVersionStatus = selectedReviewVersion
     ? (versionStatuses[selectedReviewVersion.label] ?? selectedReviewVersion.status)
     : "in_review";
-  const hasDrawingAttachment = drawingPaths.length > 0 || activeDrawingPath !== null;
+  const isEditingDrawing = editingDrawingCommentId !== null;
+  const hasDrawingAttachment = !isEditingDrawing && (drawingPaths.length > 0 || activeDrawingPath !== null);
   const pendingDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
-  const selectedDrawingPaths = pendingFramePin ? [] : (selectedComment?.drawingPaths ?? []);
+  const selectedDrawingPaths = pendingFramePin || editingDrawingCommentId === selectedCommentId
+    ? []
+    : (selectedComment?.drawingPaths ?? []);
   const activeFramePin = pendingFramePin ?? selectedComment?.framePin ?? null;
   const activeVideo: Video = selectedReviewVersion
     ? {
@@ -162,6 +202,21 @@ export function VideoReviewScreen({
       }
     : reviewVideo;
   const isEditEmpty = allReviewVersions.length === 0;
+
+  useEffect(() => {
+    if (allReviewVersions.length !== 2) {
+      return;
+    }
+
+    const availableLabels = allReviewVersions.map((version) => version.label);
+
+    setComparisonVersionLabels((current) => (
+      current.length === availableLabels.length
+      && current.every((label, index) => label === availableLabels[index])
+        ? current
+        : availableLabels
+    ));
+  }, [allReviewVersions]);
 
   useEffect(() => {
     if (!selectedReviewVersion) return;
@@ -201,12 +256,63 @@ export function VideoReviewScreen({
   }, []);
 
   useEffect(() => {
+    if (!toastMessage) {
+      setIsToastFading(false);
+      return;
+    }
+
+    setIsToastFading(false);
+    toastFadeTimeoutRef.current = setTimeout(() => {
+      setIsToastFading(true);
+    }, toastVisibleDurationMs);
+    toastRemoveTimeoutRef.current = setTimeout(() => {
+      setToastMessage("");
+    }, toastVisibleDurationMs + toastFadeDurationMs);
+
+    return () => {
+      if (toastFadeTimeoutRef.current) {
+        clearTimeout(toastFadeTimeoutRef.current);
+        toastFadeTimeoutRef.current = null;
+      }
+
+      if (toastRemoveTimeoutRef.current) {
+        clearTimeout(toastRemoveTimeoutRef.current);
+        toastRemoveTimeoutRef.current = null;
+      }
+    };
+  }, [toastMessage]);
+
+  useEffect(() => {
+    if (!isDrawingMode) {
+      return;
+    }
+
+    const exitDrawingMode = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      event.preventDefault();
+      setActiveDrawingPath(null);
+      setIsDrawingMode(false);
+    };
+
+    document.addEventListener("keydown", exitDrawingMode);
+    return () => document.removeEventListener("keydown", exitDrawingMode);
+  }, [isDrawingMode]);
+
+  useEffect(() => {
     return () => {
       if (highlightTimeoutRef.current) {
         clearTimeout(highlightTimeoutRef.current);
       }
 
+      if (completionRedirectTimeoutRef.current) {
+        clearTimeout(completionRedirectTimeoutRef.current);
+      }
+
       localVideoUrlsRef.current.forEach((sourceUrl) => URL.revokeObjectURL(sourceUrl));
+      localAttachmentUrlsRef.current.forEach((sourceUrl) => URL.revokeObjectURL(sourceUrl));
     };
   }, []);
 
@@ -343,9 +449,27 @@ export function VideoReviewScreen({
   };
 
   const startEditComment = (comment: ReviewComment) => {
+    const commentDrawingPaths = comment.drawingPaths?.map((path) => ({
+      ...path,
+      points: path.points.map((point) => ({ ...point })),
+    })) ?? [];
+
     setEditingCommentId(comment.id);
     setEditDraft(comment.body);
     setReplyingCommentId(null);
+    setOpenCommentMenuId(null);
+    selectComment(comment);
+
+    if (commentDrawingPaths.length > 0) {
+      setEditingDrawingCommentId(comment.id);
+      setDrawingPaths(commentDrawingPaths);
+      setActiveDrawingPath(null);
+      setIsDrawingMode(true);
+      setIsPlaying(false);
+    } else {
+      setEditingDrawingCommentId(null);
+      clearDrawingAttachment();
+    }
 
     if (comment.resolved) {
       setExpandedResolvedIds((current) => {
@@ -358,6 +482,8 @@ export function VideoReviewScreen({
 
   const saveEditComment = (commentId: string) => {
     const trimmedBody = editDraft.trim();
+    const editedDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
+    const isSavingDrawing = editingDrawingCommentId === commentId;
 
     if (!trimmedBody) {
       return;
@@ -369,19 +495,26 @@ export function VideoReviewScreen({
           ? {
               ...comment,
               body: trimmedBody,
+              drawingPaths: isSavingDrawing
+                ? (editedDrawingPaths.length > 0 ? editedDrawingPaths : undefined)
+                : comment.drawingPaths,
               createdAgo: "Just now",
             }
           : comment,
       ),
     );
     setEditingCommentId(null);
+    setEditingDrawingCommentId(null);
     setEditDraft("");
-    setToastMessage("Comment updated");
+    clearDrawingAttachment();
+    setToastMessage(isSavingDrawing ? "Comment and drawing updated" : "Comment updated");
   };
 
   const cancelEditComment = () => {
     setEditingCommentId(null);
+    setEditingDrawingCommentId(null);
     setEditDraft("");
+    clearDrawingAttachment();
   };
 
   const deleteComment = (commentId: string) => {
@@ -413,6 +546,11 @@ export function VideoReviewScreen({
     if (editingCommentId === commentId) {
       setEditingCommentId(null);
       setEditDraft("");
+    }
+
+    if (editingDrawingCommentId === commentId) {
+      setEditingDrawingCommentId(null);
+      clearDrawingAttachment();
     }
 
     if (editingOverallCommentId === commentId) {
@@ -466,6 +604,9 @@ export function VideoReviewScreen({
     setIsPlaying(false);
     setPendingFramePin(null);
     setSelectedCommentId(null);
+    setEditingCommentId(null);
+    setEditingDrawingCommentId(null);
+    setEditDraft("");
     clearDrawingAttachment();
     setToastMessage(`${nextLabel} uploaded`);
     event.target.value = "";
@@ -484,8 +625,17 @@ export function VideoReviewScreen({
     );
   };
 
+  const openMasters = () => {
+    if (completionRedirectTimeoutRef.current) {
+      clearTimeout(completionRedirectTimeoutRef.current);
+      completionRedirectTimeoutRef.current = null;
+    }
+
+    router.push(`/projects/${project.id}/stages/masters`);
+  };
+
   const approveSelectedVersion = () => {
-    if (!selectedReviewVersion) {
+    if (!selectedReviewVersion || isCompletionVisible) {
       return;
     }
 
@@ -496,6 +646,13 @@ export function VideoReviewScreen({
       approvedAt: "17 Aug",
       approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
     });
+
+    if (selectedRole === "Customer") {
+      setIsCompletionVisible(true);
+      completionRedirectTimeoutRef.current = setTimeout(openMasters, editCompletionHoldMs);
+      return;
+    }
+
     setToastMessage(`V${selectedReviewVersion.number} approved`);
   };
 
@@ -516,10 +673,32 @@ export function VideoReviewScreen({
     setSelectedVersionLabel(versionLabel);
     setCurrentTimeSeconds(0);
     setIsPlaying(false);
+    setHasAnchor(true);
+    setComposerBody("");
+    setComposerAttachments([]);
+    setEditingOverallCommentId(null);
     setPendingFramePin(null);
     setSelectedCommentId(null);
+    setEditingCommentId(null);
+    setEditingDrawingCommentId(null);
+    setEditDraft("");
     setIsCompareMode(false);
     clearDrawingAttachment();
+  };
+
+  const toggleComparisonVersion = (versionLabel: string) => {
+    setComparisonVersionLabels((current) => {
+      if (current.includes(versionLabel)) {
+        return current.filter((label) => label !== versionLabel);
+      }
+
+      if (current.length >= 2) {
+        return current;
+      }
+
+      return [...current, versionLabel];
+    });
+    setIsCompareMode(false);
   };
 
   const replaceReviewVersionFile = (version: ReviewVersion, file: File) => {
@@ -551,6 +730,10 @@ export function VideoReviewScreen({
   };
 
   const deleteReviewVersion = (version: ReviewVersion) => {
+    if (!canUploadVersions) {
+      return;
+    }
+
     if (allReviewVersions.length <= 1) {
       setToastMessage("Keep at least one version");
       return;
@@ -577,6 +760,11 @@ export function VideoReviewScreen({
     }
 
     if (remainingVersions.length < 2) {
+      setIsCompareMode(false);
+    }
+
+    if (comparisonVersionLabels.includes(version.label)) {
+      setComparisonVersionLabels((current) => current.filter((label) => label !== version.label));
       setIsCompareMode(false);
     }
 
@@ -633,10 +821,40 @@ export function VideoReviewScreen({
 
   const removeAnchor = () => {
     setHasAnchor(false);
-    setPendingFramePin(null);
     setEditingOverallCommentId(existingOverallComment?.id ?? null);
-    setComposerBody(existingOverallComment?.body ?? "");
+    setComposerBody((currentBody) => currentBody || existingOverallComment?.body || "");
     setToastMessage("General comment");
+  };
+
+  const addComposerAttachments = (files: File[]) => {
+    const createdAt = Date.now();
+    const attachments = files.map<ReviewAttachment>((file, index) => {
+      const url = URL.createObjectURL(file);
+      localAttachmentUrlsRef.current.push(url);
+
+      return {
+        id: `review-attachment-${createdAt}-${index}-${file.name}`,
+        name: file.name,
+        size: formatFileSize(file.size),
+        mimeType: file.type,
+        url,
+      };
+    });
+
+    setComposerAttachments((current) => [...current, ...attachments]);
+  };
+
+  const removeComposerAttachment = (attachmentId: string) => {
+    setComposerAttachments((current) => {
+      const attachment = current.find((candidate) => candidate.id === attachmentId);
+
+      if (attachment) {
+        URL.revokeObjectURL(attachment.url);
+        localAttachmentUrlsRef.current = localAttachmentUrlsRef.current.filter((url) => url !== attachment.url);
+      }
+
+      return current.filter((candidate) => candidate.id !== attachmentId);
+    });
   };
 
   const finishDrawing = () => {
@@ -654,21 +872,18 @@ export function VideoReviewScreen({
   };
 
   const undoLastDrawingStroke = () => {
-    setActiveDrawingPath(null);
+    if (activeDrawingPath) {
+      setActiveDrawingPath(null);
+      return;
+    }
+
     setDrawingPaths((current) => current.slice(0, -1));
   };
 
-  const clearCurrentDrawing = () => {
-    setDrawingPaths([]);
-    setActiveDrawingPath(null);
-  };
-
-  const finishDrawingMode = () => {
-    finishDrawing();
-    setIsDrawingMode(false);
-  };
-
   const placeFramePin = (framePin: FramePin) => {
+    setComposerBody("");
+    setComposerAttachments([]);
+    clearDrawingAttachment();
     setPendingFramePin(framePin);
     setSelectedCommentId(null);
     setHasAnchor(true);
@@ -683,16 +898,17 @@ export function VideoReviewScreen({
 
   const submitComposer = () => {
     const trimmedBody = composerBody.trim();
-    const submittedBody = trimmedBody || "Drawing note";
+    const submittedBody = trimmedBody || (hasDrawingAttachment ? "Drawing note" : "Attached file");
     const submittedVisibility = canChooseCommentVisibility ? composerVisibility : "external";
 
-    if (!trimmedBody && !hasDrawingAttachment) {
+    if (!trimmedBody && !hasDrawingAttachment && composerAttachments.length === 0) {
       return;
     }
 
     if (hasAnchor) {
       const newComment: ReviewComment = {
         id: `comment-${Date.now()}`,
+        versionLabel: selectedReviewVersion.label,
         authorId: currentUserId,
         visibility: submittedVisibility,
         timecodeSeconds: currentTimeSeconds,
@@ -700,12 +916,14 @@ export function VideoReviewScreen({
         body: submittedBody,
         drawingPaths: hasDrawingAttachment ? pendingDrawingPaths : undefined,
         framePin: pendingFramePin ?? undefined,
+        attachments: composerAttachments.length > 0 ? composerAttachments : undefined,
         resolved: false,
         replies: [],
       };
 
       setReviewComments((current) => [...current, newComment]);
       setComposerBody("");
+      setComposerAttachments([]);
       setPendingFramePin(null);
       clearDrawingAttachment();
       setSelectedCommentId(newComment.id);
@@ -723,25 +941,31 @@ export function VideoReviewScreen({
                 body: submittedBody,
                 drawingPaths: hasDrawingAttachment ? pendingDrawingPaths : comment.drawingPaths,
                 framePin: pendingFramePin ?? comment.framePin,
+                attachments: composerAttachments.length > 0
+                  ? [...(comment.attachments ?? []), ...composerAttachments]
+                  : comment.attachments,
                 createdAgo: "Just now",
               }
             : comment,
         ),
       );
       setPendingFramePin(null);
+      setComposerAttachments([]);
       clearDrawingAttachment();
       setToastMessage("Overall comment updated");
       return;
     }
 
     const newComment: ReviewComment = {
-      id: `comment-overall-${currentUserId}-${reviewVideo.versionLabel}`,
+      id: `comment-overall-${currentUserId}-${selectedReviewVersion.label}`,
+      versionLabel: selectedReviewVersion.label,
       authorId: currentUserId,
       visibility: submittedVisibility,
       createdAgo: "Just now",
       body: submittedBody,
       drawingPaths: hasDrawingAttachment ? pendingDrawingPaths : undefined,
       framePin: pendingFramePin ?? undefined,
+      attachments: composerAttachments.length > 0 ? composerAttachments : undefined,
       resolved: false,
       replies: [],
     };
@@ -749,7 +973,8 @@ export function VideoReviewScreen({
     setReviewComments((current) => [newComment, ...current]);
     setEditingOverallCommentId(newComment.id);
     setSelectedCommentId(newComment.id);
-    setComposerBody("");
+    setComposerBody(submittedBody);
+    setComposerAttachments([]);
     setPendingFramePin(null);
     clearDrawingAttachment();
     setToastMessage("Overall comment added");
@@ -779,6 +1004,7 @@ export function VideoReviewScreen({
               canMarkReady={canMarkReadyToEdit}
               items={editReadiness.items}
               onMarkReady={() => setIsReadyConfirmationOpen(true)}
+              projectId={project.id}
             />
           </section>
         ) : isEditEmpty ? (
@@ -794,13 +1020,14 @@ export function VideoReviewScreen({
             <div className="review-media-pane">
           <InlinePlayer
             video={activeVideo}
-            comments={reviewComments.map((comment) => ({
+            comments={roleVisibleVersionComments.map((comment) => ({
               ...comment,
               resolved: resolvedIds.has(comment.id),
             }))}
             currentTimeSeconds={currentTimeSeconds}
             isPlaying={isPlaying}
-            isCompareMode={isCompareMode}
+            isCompareMode={isActiveCompareMode}
+            comparisonVersions={comparisonVersions}
             versionStatus={selectedVersionStatus}
             selectedCommentId={selectedCommentId}
             activeDrawingPath={activeDrawingPath}
@@ -809,6 +1036,7 @@ export function VideoReviewScreen({
             drawingPaths={drawingPaths}
             selectedDrawingPaths={selectedDrawingPaths}
             isDrawingMode={isDrawingMode}
+            isEditingDrawing={isEditingDrawing}
             pendingFramePin={pendingFramePin}
             recutBrief={recutHandoff?.brief}
             onComposerBodyChange={setComposerBody}
@@ -832,10 +1060,12 @@ export function VideoReviewScreen({
               );
             }}
             onEndDrawing={finishDrawing}
-            onClearDrawing={clearCurrentDrawing}
-            onDoneDrawing={finishDrawingMode}
             onSubmitComposer={submitComposer}
-            onUndoDrawing={undoLastDrawingStroke}
+            onEditSelectedDrawing={() => {
+              if (selectedComment?.drawingPaths?.length) {
+                startEditComment(selectedComment);
+              }
+            }}
             onSelectComment={selectComment}
             onSkipNextComment={() => skipComment(1)}
             onSkipPreviousComment={() => skipComment(-1)}
@@ -859,23 +1089,30 @@ export function VideoReviewScreen({
             versions={allReviewVersions}
             statuses={versionStatuses}
             selectedVersionLabel={selectedVersionLabel}
-            studioName={studio.details.name}
             canUpload={canUploadVersions}
             uploadInputId={versionUploadInputId}
             isCompareMode={isCompareMode}
+            comparisonVersionLabels={activeComparisonVersionLabels}
             onDelete={deleteReviewVersion}
             onDownload={(version) => setToastMessage(`Downloading ${version.fileName}`)}
             onReplace={replaceReviewVersionFile}
             onSelectVersion={selectReviewVersion}
-            onToggleCompare={() => setIsCompareMode((current) => !current)}
+            onToggleCompare={() => {
+              if (comparisonVersions.length === 2) {
+                setIsCompareMode((current) => !current);
+              }
+            }}
+            onToggleComparisonVersion={toggleComparisonVersion}
           />
         </div>
         <CommentPanel
-          activeFilter={activeFilter}
+          activeFilter={visibleActiveFilter}
           canChooseVisibility={canChooseCommentVisibility}
           canSkipNext={canSkipNext}
           canSkipPrevious={canSkipPrevious}
           comments={comments}
+          composerAttachments={composerAttachments}
+          canUndoDrawing={drawingPaths.length > 0 || activeDrawingPath !== null}
           visibleCommentsCount={comments.length}
           usersById={usersById}
           currentTimeSeconds={currentTimeSeconds}
@@ -895,6 +1132,7 @@ export function VideoReviewScreen({
           replyingCommentId={replyingCommentId}
           replyDraft={replyDraft}
           selectedCommentId={selectedCommentId}
+          onAddComposerAttachments={addComposerAttachments}
           onChangeFilter={setActiveFilter}
           onCancelEditComment={cancelEditComment}
           onComposerBodyChange={setComposerBody}
@@ -904,6 +1142,7 @@ export function VideoReviewScreen({
           onOpenReply={openReply}
           onRemoveAnchor={removeAnchor}
           onRegisterCommentRef={registerCommentRef}
+          onRemoveComposerAttachment={removeComposerAttachment}
           onSelectComment={selectComment}
           onSetComposerVisibility={(visibility) => {
             setComposerVisibility(visibility);
@@ -915,6 +1154,7 @@ export function VideoReviewScreen({
           onSkipPrevious={() => skipComment(-1)}
           onSubmitComposer={submitComposer}
           onToggleDrawingMode={() => setIsDrawingMode((current) => !current)}
+          onUndoDrawing={undoLastDrawingStroke}
           onSaveEditComment={saveEditComment}
           onStartEditComment={startEditComment}
           onSubmitReply={submitReply}
@@ -926,7 +1166,13 @@ export function VideoReviewScreen({
         />
         <footer className="review-action-footer" aria-label="Edit review actions">
           <div className="review-action-footer-inner">
-            {toastMessage ? <Toast message={toastMessage} onDismiss={() => setToastMessage("")} /> : null}
+            {toastMessage ? (
+              <Toast
+                isFading={isToastFading}
+                message={toastMessage}
+                onDismiss={() => setToastMessage("")}
+              />
+            ) : null}
             <ShareActionRow
               context="edit"
               userRole={selectedRole}
@@ -986,7 +1232,53 @@ export function VideoReviewScreen({
           }}
         />
       ) : null}
+      {isCompletionVisible ? <EditCompletionMoment onDismiss={openMasters} /> : null}
     </>
+  );
+}
+
+function EditCompletionMoment({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div className="review-completion-moment">
+      <div className="review-completion-confetti" aria-hidden="true">
+        {Array.from({ length: 144 }, (_, index) => (
+          <span
+            key={index}
+            style={{
+              "--confetti-index": index,
+              "--confetti-x": `${2 + (index * 37) % 96}%`,
+              "--confetti-delay": `${(index % 24) * 85}ms`,
+              "--confetti-duration": `${3600 + (index % 7) * 240}ms`,
+              "--confetti-drift": (index * 29) % 31 - 15,
+            } as CSSProperties}
+          />
+        ))}
+      </div>
+      <section
+        className="review-completion-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="review-completion-title"
+        aria-describedby="review-completion-description"
+      >
+        <button
+          className="review-completion-dismiss"
+          type="button"
+          aria-label="Dismiss celebration and open Masters"
+          onClick={onDismiss}
+        >
+          <DsIcon name="x-close-cross" size={18} />
+        </button>
+        <span className="review-completion-icon" aria-hidden="true">
+          <DsIcon name="check" size={28} />
+        </span>
+        <span className="label-xs-semibold review-completion-kicker">FINAL APPROVAL CONFIRMED</span>
+        <h2 className="headings-m-bold" id="review-completion-title">Your video is complete</h2>
+        <p className="paragraph-s" id="review-completion-description">
+          Taking you to Masters to access the completed deliverables.
+        </p>
+      </section>
+    </div>
   );
 }
 
@@ -994,10 +1286,12 @@ function EditReadinessEmptyState({
   canMarkReady,
   items,
   onMarkReady,
+  projectId,
 }: {
   canMarkReady: boolean;
   items: EditReadinessItem[];
   onMarkReady: () => void;
+  projectId: string;
 }) {
   return (
     <div className="review-edit-empty-state">
@@ -1008,8 +1302,8 @@ function EditReadinessEmptyState({
         <h2 className="headings-xs-bold">Edit isn’t ready yet</h2>
         <p className="paragraph-s">Approve the previous stages and Media before editing begins.</p>
         <ul className="review-edit-readiness-list" aria-label="Edit prerequisites">
-          {items.map((item) => (
-            <li className="review-edit-readiness-item label-s" key={item.key}>
+          {items.map((item) => {
+            const content = <>
               <span
                 className={`review-edit-readiness-state ${item.approved ? "is-approved" : "is-outstanding"}`}
                 aria-hidden="true"
@@ -1019,8 +1313,23 @@ function EditReadinessEmptyState({
               <span>
                 {item.label} {getReadinessStatusLabel(item.status)}
               </span>
-            </li>
-          ))}
+            </>;
+
+            return (
+              <li className="review-edit-readiness-item label-s" key={item.key}>
+                {item.approved ? content : (
+                  <Link
+                    className="review-edit-readiness-link"
+                    href={getProjectStageHref(projectId, item.key)}
+                    aria-label={`Open ${item.label} - ${getReadinessStatusLabel(item.status)}`}
+                  >
+                    {content}
+                    <DsIcon name="arrow-right" size={16} />
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
         {canMarkReady ? (
           <Button className="review-edit-empty-action" size="M" onClick={onMarkReady}>
@@ -1129,6 +1438,7 @@ export function InlinePlayer({
   currentTimeSeconds,
   isPlaying,
   isCompareMode,
+  comparisonVersions = [],
   versionStatus,
   selectedCommentId,
   activeDrawingPath,
@@ -1137,6 +1447,7 @@ export function InlinePlayer({
   drawingPaths,
   selectedDrawingPaths,
   isDrawingMode,
+  isEditingDrawing,
   pendingFramePin,
   recutBrief,
   onComposerBodyChange,
@@ -1145,10 +1456,8 @@ export function InlinePlayer({
   onStartDrawing,
   onUpdateDrawing,
   onEndDrawing,
-  onClearDrawing,
-  onDoneDrawing,
+  onEditSelectedDrawing = () => undefined,
   onSubmitComposer,
-  onUndoDrawing,
   onSeek,
   onTimeChange,
   onDurationChange,
@@ -1163,6 +1472,7 @@ export function InlinePlayer({
   currentTimeSeconds: number;
   isPlaying: boolean;
   isCompareMode: boolean;
+  comparisonVersions?: ReviewVersion[];
   versionStatus: ReviewVersionStatus;
   selectedCommentId: string | null;
   activeDrawingPath: DrawingPath | null;
@@ -1171,6 +1481,7 @@ export function InlinePlayer({
   drawingPaths: DrawingPath[];
   selectedDrawingPaths: DrawingPath[];
   isDrawingMode: boolean;
+  isEditingDrawing: boolean;
   pendingFramePin: FramePin | null;
   recutBrief?: RecutBrief;
   onComposerBodyChange: (body: string) => void;
@@ -1179,10 +1490,10 @@ export function InlinePlayer({
   onStartDrawing: (point: DrawingPoint) => void;
   onUpdateDrawing: (point: DrawingPoint) => void;
   onEndDrawing: () => void;
-  onClearDrawing: () => void;
-  onDoneDrawing: () => void;
+  onClearDrawing?: () => void;
+  onDoneDrawing?: () => void;
+  onEditSelectedDrawing?: () => void;
   onSubmitComposer: () => void;
-  onUndoDrawing: () => void;
   onSeek: (seconds: number) => void;
   onTimeChange: (seconds: number) => void;
   onDurationChange: (seconds: number) => void;
@@ -1194,12 +1505,28 @@ export function InlinePlayer({
 }) {
   const [isMuted, setIsMuted] = useState(false);
   const [speedIndex, setSpeedIndex] = useState(1);
+  const [dismissedDrawingPromptPathId, setDismissedDrawingPromptPathId] = useState<string | null>(null);
   const columnRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const frameNoteInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const playbackSpeed = playbackSpeeds[speedIndex];
-  const hasDrawingStrokes = drawingPaths.length > 0 || activeDrawingPath !== null;
+  const latestDrawingPath = drawingPaths[drawingPaths.length - 1];
+  const latestDrawingPoint = latestDrawingPath?.points[latestDrawingPath.points.length - 1];
+  const isDrawingCommentPromptVisible = Boolean(
+    isDrawingMode
+      && !isEditingDrawing
+      && !activeDrawingPath
+      && latestDrawingPath
+      && latestDrawingPoint
+      && dismissedDrawingPromptPathId !== latestDrawingPath.id,
+  );
+  const composerPopoverAnchor = pendingFramePin ?? (latestDrawingPoint
+    ? {
+        x: latestDrawingPoint.x / 10,
+        y: latestDrawingPoint.y / 5.625,
+      }
+    : null);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -1249,14 +1576,14 @@ export function InlinePlayer({
   }, [isMuted, video.sourceUrl]);
 
   useEffect(() => {
-    if (!pendingFramePin) {
+    if (!pendingFramePin && !isDrawingCommentPromptVisible) {
       return;
     }
 
     requestAnimationFrame(() => {
       frameNoteInputRef.current?.focus();
     });
-  }, [pendingFramePin]);
+  }, [isDrawingCommentPromptVisible, latestDrawingPath?.id, pendingFramePin]);
 
   const seekTo = (seconds: number) => {
     const nextSeconds = Math.min(Math.max(seconds, 0), video.durationSeconds);
@@ -1303,7 +1630,7 @@ export function InlinePlayer({
 
     const target = event.target;
 
-    if (target instanceof HTMLElement && target.closest("button, input, textarea, .frame-note-popover")) {
+    if (target instanceof Element && target.closest("button, input, textarea, .frame-note-popover, .drawing-stroke.editable")) {
       return;
     }
 
@@ -1316,23 +1643,19 @@ export function InlinePlayer({
   };
 
   return (
-    <section className="video-column" ref={columnRef} aria-label={`${video.fileName} video player`}>
+    <section className={`video-column ${isCompareMode ? "is-comparing" : ""}`} ref={columnRef} aria-label={`${video.fileName} video player`}>
       <div className="review-player-statusbar">
-        {recutBrief ? (
+        {isCompareMode ? (
+          <span className="review-version-status is-comparing label-s-semibold">
+            {comparisonVersions.map((version) => `V${version.number}`).join(" + ")} · Comparison
+          </span>
+        ) : recutBrief ? (
           <span className="review-recut-banner label-s-semibold">Recut brief · {recutBrief.marks.length} {recutBrief.marks.length === 1 ? "mark" : "marks"} · target {recutBrief.targetDurationSec}s</span>
         ) : (
           <span className={`review-version-status label-s-semibold is-${versionStatus}`}>
             {video.versionLabel.toUpperCase()} · {formatVersionStatus(versionStatus)}
           </span>
         )}
-        {versionStatus === "approved" ? (
-          <div className="review-player-status-actions">
-            <span className="review-approved-message label-s-semibold">
-              <DsIcon name="check" size={16} />
-              Version approved
-            </span>
-          </div>
-        ) : null}
       </div>
       <div
         className={`video-frame ${isDrawingMode ? "drawing-active" : ""} ${isCompareMode ? "is-comparing" : ""}`}
@@ -1340,9 +1663,13 @@ export function InlinePlayer({
         onPointerDown={placePinFromPointer}
       >
         {isCompareMode ? (
-          <div className="review-compare-view" aria-label="Side-by-side comparison of V1 and V2">
-            <CompareFrame label="V1" />
-            <CompareFrame label="V2" />
+          <div
+            className="review-compare-view"
+            aria-label={`Side-by-side comparison of ${comparisonVersions.map((version) => `V${version.number}`).join(" and ")}`}
+          >
+            {comparisonVersions.map((version) => (
+              <CompareFrame key={version.label} version={version} />
+            ))}
           </div>
         ) : video.sourceUrl ? (
           <video
@@ -1367,7 +1694,7 @@ export function InlinePlayer({
           </div>
         )}
         {!isCompareMode ? <svg
-          className="drawing-layer"
+          className={`drawing-layer ${selectedDrawingPaths.length > 0 ? "has-editable-drawing" : ""}`}
           viewBox="0 0 1000 562.5"
           preserveAspectRatio="none"
           aria-label={isDrawingMode ? "Drawing layer active" : "Drawing layer"}
@@ -1403,7 +1730,27 @@ export function InlinePlayer({
             }
           }}
         >
-          {[...selectedDrawingPaths, ...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])].map((path) => (
+          {selectedDrawingPaths.map((path) => (
+            <path
+              className="drawing-stroke editable"
+              d={formatDrawingPath(path.points)}
+              key={path.id}
+              role="button"
+              tabIndex={0}
+              aria-label="Edit drawing feedback"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={onEditSelectedDrawing}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") {
+                  return;
+                }
+
+                event.preventDefault();
+                onEditSelectedDrawing();
+              }}
+            />
+          ))}
+          {[...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])].map((path) => (
             <path className="drawing-stroke" d={formatDrawingPath(path.points)} key={path.id} />
           ))}
         </svg> : null}
@@ -1421,12 +1768,12 @@ export function InlinePlayer({
             }}
           />
         ) : null}
-        {!isCompareMode && pendingFramePin ? (
+        {!isCompareMode && composerPopoverAnchor && (pendingFramePin || isDrawingCommentPromptVisible) ? (
           <div
             className="frame-note-popover"
             style={{
-              "--frame-note-x": `${pendingFramePin.x}%`,
-              "--frame-note-y": `${pendingFramePin.y}%`,
+              "--frame-note-x": `${composerPopoverAnchor.x}%`,
+              "--frame-note-y": `${composerPopoverAnchor.y}%`,
             } as CSSProperties}
             onPointerDown={(event) => event.stopPropagation()}
           >
@@ -1435,13 +1782,17 @@ export function InlinePlayer({
               <input
                 className="frame-note-input label-s"
                 ref={frameNoteInputRef}
-                placeholder="Add a note"
+                placeholder="Comment"
                 value={composerBody}
                 onChange={(event) => onComposerBodyChange(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") {
                     event.preventDefault();
-                    onCancelFramePin();
+                    if (pendingFramePin) {
+                      onCancelFramePin();
+                    } else if (latestDrawingPath) {
+                      setDismissedDrawingPromptPathId(latestDrawingPath.id);
+                    }
                     return;
                   }
 
@@ -1462,42 +1813,23 @@ export function InlinePlayer({
               <button
                 className="frame-note-close"
                 type="button"
-                aria-label="Close pinned comment"
-                onClick={onCancelFramePin}
+                aria-label={pendingFramePin ? "Close pinned comment" : "Close drawing comment"}
+                onClick={() => {
+                  if (pendingFramePin) {
+                    onCancelFramePin();
+                  } else if (latestDrawingPath) {
+                    setDismissedDrawingPromptPathId(latestDrawingPath.id);
+                  }
+                }}
               >
                 <DsIcon name="x-close-cross" size={12} />
               </button>
             </div>
-            <p className="frame-note-hint label-xs">Use @ to mention others</p>
-          </div>
-        ) : null}
-        {!isCompareMode && isDrawingMode ? (
-          <div className="drawing-toolbar" aria-label="Drawing options">
-            <span className="drawing-toolbar-label label-xs-semibold">Draw on screen</span>
-            <button
-              className="label-xs-semibold"
-              type="button"
-              disabled={!hasDrawingStrokes}
-              onClick={onUndoDrawing}
-            >
-              Undo
-            </button>
-            <button
-              className="label-xs-semibold"
-              type="button"
-              disabled={!hasDrawingStrokes}
-              onClick={onClearDrawing}
-            >
-              Clear
-            </button>
-            <button className="label-xs-semibold done" type="button" onClick={onDoneDrawing}>
-              Done
-            </button>
           </div>
         ) : null}
       </div>
 
-      <div className="player-controls">
+      {!isCompareMode ? <div className="player-controls">
         <ScrubBar
           video={video}
           comments={comments}
@@ -1580,16 +1912,143 @@ export function InlinePlayer({
             </button>
           </div>
         </div>
-      </div>
+      </div> : null}
     </section>
   );
 }
 
-function CompareFrame({ label }: { label: string }) {
+function CompareFrame({ version }: { version: ReviewVersion }) {
+  const [currentTimeSeconds, setCurrentTimeSeconds] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [speedIndex, setSpeedIndex] = useState(1);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const playbackSpeed = playbackSpeeds[speedIndex];
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+
+    if (!videoElement || !version.sourceUrl) {
+      return;
+    }
+
+    videoElement.playbackRate = playbackSpeed;
+    videoElement.muted = isMuted;
+
+    if (isPlaying) {
+      void videoElement.play();
+      return;
+    }
+
+    videoElement.pause();
+  }, [isMuted, isPlaying, playbackSpeed, version.sourceUrl]);
+
+  useEffect(() => {
+    if (version.sourceUrl || !isPlaying) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setCurrentTimeSeconds((current) => Math.min(current + playbackSpeed, version.durationSeconds));
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [isPlaying, playbackSpeed, version.durationSeconds, version.sourceUrl]);
+
+  useEffect(() => {
+    if (isPlaying && currentTimeSeconds >= version.durationSeconds) {
+      setIsPlaying(false);
+    }
+  }, [currentTimeSeconds, isPlaying, version.durationSeconds]);
+
+  const seekTo = (seconds: number) => {
+    const nextSeconds = Math.min(Math.max(seconds, 0), version.durationSeconds);
+
+    if (videoRef.current) {
+      videoRef.current.currentTime = nextSeconds;
+    }
+
+    setCurrentTimeSeconds(nextSeconds);
+  };
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+
+    void frameRef.current?.requestFullscreen();
+  };
+
   return (
-    <div className="review-compare-frame">
-      <span className="review-compare-label label-xs-semibold">{label}</span>
-      <div className="review-compare-orb" aria-hidden="true">MY</div>
+    <div className="review-compare-frame" ref={frameRef}>
+      <span className="review-compare-label label-xs-semibold">V{version.number}</span>
+      {version.sourceUrl ? (
+        <video
+          className="review-compare-video"
+          ref={videoRef}
+          src={version.sourceUrl}
+          playsInline
+          onLoadedMetadata={(event) => {
+            event.currentTarget.currentTime = Math.min(currentTimeSeconds, event.currentTarget.duration);
+          }}
+          onTimeUpdate={(event) => setCurrentTimeSeconds(event.currentTarget.currentTime)}
+          onEnded={() => {
+            setCurrentTimeSeconds(version.durationSeconds);
+            setIsPlaying(false);
+          }}
+        />
+      ) : (
+        <div className="review-compare-orb" aria-hidden="true">MY</div>
+      )}
+      <div className="review-compare-playback" aria-label={`V${version.number} playback controls`}>
+        <div className="review-compare-scrub-row">
+          <span className="label-xs-semibold">{formatTime(currentTimeSeconds)}</span>
+          <input
+            type="range"
+            min={0}
+            max={version.durationSeconds}
+            step={0.1}
+            value={Math.min(currentTimeSeconds, version.durationSeconds)}
+            aria-label={`V${version.number} timeline`}
+            onChange={(event) => seekTo(Number(event.target.value))}
+          />
+          <span className="label-xs">{formatTime(version.durationSeconds)}</span>
+        </div>
+        <div className="review-compare-control-row">
+          <button
+            className="play-control"
+            type="button"
+            aria-label={`${isPlaying ? "Pause" : "Play"} V${version.number}`}
+            onClick={() => setIsPlaying((current) => !current)}
+          >
+            <DsIcon name={isPlaying ? "pause" : "play"} size={16} />
+          </button>
+          <div className="review-compare-control-actions">
+            <button
+              className="speed-button label-xs-semibold"
+              type="button"
+              aria-label={`V${version.number} playback speed ${playbackSpeed}x`}
+              onClick={() => setSpeedIndex((current) => (current + 1) % playbackSpeeds.length)}
+            >
+              {playbackSpeed}x <DsIcon name="caret-down" size={12} />
+            </button>
+            <button
+              className={`ghost-control ${isMuted ? "muted" : ""}`}
+              type="button"
+              aria-label={`${isMuted ? "Unmute" : "Mute"} V${version.number}`}
+              aria-pressed={isMuted}
+              onClick={() => setIsMuted((current) => !current)}
+            >
+              <DsIcon name="speaker-high" size={17} />
+            </button>
+            <button className="ghost-control" type="button" aria-label={`Fullscreen V${version.number}`} onClick={toggleFullscreen}>
+              <DsIcon name="frame-corners" size={17} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1598,31 +2057,36 @@ function ReviewVersionLibrary({
   versions,
   statuses,
   selectedVersionLabel,
-  studioName,
   canUpload,
   uploadInputId,
   isCompareMode,
+  comparisonVersionLabels,
   onDelete,
   onDownload,
   onReplace,
   onSelectVersion,
   onToggleCompare,
+  onToggleComparisonVersion,
 }: {
   versions: ReviewVersion[];
   statuses: Record<string, ReviewVersionStatus>;
   selectedVersionLabel: string;
-  studioName: string;
   canUpload: boolean;
   uploadInputId: string;
   isCompareMode: boolean;
+  comparisonVersionLabels: string[];
   onDelete: (version: ReviewVersion) => void;
   onDownload: (version: ReviewVersion) => void;
   onReplace: (version: ReviewVersion, file: File) => void;
   onSelectVersion: (versionLabel: string) => void;
   onToggleCompare: () => void;
+  onToggleComparisonVersion: (versionLabel: string) => void;
 }) {
   const orderedVersions = [...versions].sort((left, right) => right.number - left.number);
-  const nextVersionNumber = Math.max(0, ...versions.map((version) => version.number)) + 1;
+  const comparisonVersions = comparisonVersionLabels
+    .map((versionLabel) => versions.find((version) => version.label === versionLabel))
+    .filter((version): version is ReviewVersion => Boolean(version));
+  const comparisonLabel = comparisonVersions.map((version) => `V${version.number}`).join(" and ");
   const openUploadWithKeyboard = (event: KeyboardEvent<HTMLLabelElement>) => {
     if (event.key !== "Enter" && event.key !== " ") {
       return;
@@ -1642,7 +2106,6 @@ function ReviewVersionLibrary({
         <div>
           <span className="review-version-eyebrow label-xs-semibold">FILES</span>
           <h2 id="review-version-library-title">Versions</h2>
-          <p className="label-s">Each new edit uploaded by {studioName} becomes a new version. The latest version is on top.</p>
         </div>
         {canUpload ? (
           <label
@@ -1653,29 +2116,40 @@ function ReviewVersionLibrary({
             onKeyDown={openUploadWithKeyboard}
           >
             <DsIcon name="upload-simple" size={16} />
-            Upload V{nextVersionNumber}
+            Upload new version
           </label>
         ) : null}
       </div>
 
-      <button
-        className={`review-compare-button label-s-semibold ${isCompareMode ? "active" : ""}`}
-        type="button"
-        disabled={versions.length < 2}
-        aria-pressed={isCompareMode}
-        onClick={onToggleCompare}
-      >
-        <DsIcon name="columns" size={16} />
-        {isCompareMode ? "Exit V1 and V2 comparison" : "Compare V1 and V2"}
-      </button>
+      {versions.length > 1 ? (
+        <button
+          className={`review-compare-button label-s-semibold ${isCompareMode ? "active" : ""}`}
+          type="button"
+          disabled={comparisonVersions.length < 2}
+          aria-pressed={isCompareMode}
+          onClick={onToggleCompare}
+        >
+          <DsIcon name="columns" size={16} />
+          {isCompareMode
+            ? `Exit ${comparisonLabel} comparison`
+            : comparisonVersions.length === 2
+              ? `Compare ${comparisonLabel}`
+              : comparisonVersions.length === 1
+                ? "Choose one more version"
+                : "Choose two versions to compare"}
+        </button>
+      ) : null}
 
       <div className="review-version-file-list">
         {orderedVersions.map((version) => {
           const status = statuses[version.label] ?? version.status;
           const isSelected = version.label === selectedVersionLabel;
+          const comparisonIndex = comparisonVersionLabels.indexOf(version.label);
+          const isSelectedForComparison = comparisonIndex !== -1;
+          const comparisonSelectionFull = comparisonVersionLabels.length >= 2;
 
           return (
-            <article className={`review-version-file ${isSelected ? "selected" : ""}`} key={version.label}>
+            <article className={`review-version-file ${isSelected ? "selected" : ""} ${isSelectedForComparison ? "comparison-selected" : ""}`} key={version.label}>
               <button className="review-version-file-select" type="button" onClick={() => onSelectVersion(version.label)}>
                 <span className="review-version-file-thumb"><DsIcon name="play" size={18} /></span>
                 <span className="review-version-file-copy">
@@ -1687,11 +2161,25 @@ function ReviewVersionLibrary({
                 </span>
               </button>
               <div className="review-version-file-actions">
-                {!isSelected ? (
+                {versions.length > 2 ? (
+                  <button
+                    className={`review-version-compare-select ${isSelectedForComparison ? "active" : ""}`}
+                    type="button"
+                    aria-label={`${isSelectedForComparison ? "Remove" : "Add"} V${version.number} ${isSelectedForComparison ? "from" : "to"} comparison`}
+                    aria-pressed={isSelectedForComparison}
+                    data-tooltip={isSelectedForComparison ? "Remove from comparison" : comparisonSelectionFull ? "Choose only two versions" : "Add to comparison"}
+                    disabled={!isSelectedForComparison && comparisonSelectionFull}
+                    onClick={() => onToggleComparisonVersion(version.label)}
+                  >
+                    <DsIcon name={isSelectedForComparison ? "check" : "columns"} size={15} />
+                    <span className="label-xs-semibold">{isSelectedForComparison ? `Compare ${comparisonIndex + 1}` : "Compare"}</span>
+                  </button>
+                ) : null}
+                {!isSelected && canUpload ? (
                   <button type="button" aria-label={`Set V${version.number} as current`} data-tooltip="Set as current" onClick={() => onSelectVersion(version.label)}>
                     <DsIcon name="eye" size={15} />
                   </button>
-                ) : <span className="review-current-version label-xs-semibold">Current</span>}
+                ) : isSelected ? <span className="review-current-version label-xs-semibold">Current</span> : null}
                 <button type="button" aria-label={`Download V${version.number}`} data-tooltip="Download" onClick={() => onDownload(version)}>
                   <DsIcon name="download" size={15} />
                 </button>
@@ -1724,18 +2212,18 @@ function ReviewVersionLibrary({
                         event.target.value = "";
                       }}
                     />
+                    <button
+                      className="delete"
+                      type="button"
+                      aria-label={`Delete V${version.number}`}
+                      data-tooltip={versions.length <= 1 ? "Keep at least one version" : "Delete"}
+                      disabled={versions.length <= 1}
+                      onClick={() => onDelete(version)}
+                    >
+                      <DsIcon name="trash-simple" size={15} />
+                    </button>
                   </>
                 ) : null}
-                <button
-                  className="delete"
-                  type="button"
-                  aria-label={`Delete V${version.number}`}
-                  data-tooltip={versions.length <= 1 ? "Keep at least one version" : "Delete"}
-                  disabled={versions.length <= 1}
-                  onClick={() => onDelete(version)}
-                >
-                  <DsIcon name="trash-simple" size={15} />
-                </button>
               </div>
             </article>
           );
@@ -1819,6 +2307,8 @@ function CommentPanel({
   canSkipNext,
   canSkipPrevious,
   comments,
+  canUndoDrawing,
+  composerAttachments,
   composerBody,
   composerVisibility,
   currentTimeSeconds,
@@ -1838,6 +2328,7 @@ function CommentPanel({
   replyingCommentId,
   replyDraft,
   selectedCommentId,
+  onAddComposerAttachments,
   onCancelEditComment,
   onChangeFilter,
   onComposerBodyChange,
@@ -1847,6 +2338,7 @@ function CommentPanel({
   onOpenReply,
   onRemoveAnchor,
   onRegisterCommentRef,
+  onRemoveComposerAttachment,
   onSelectComment,
   onSetComposerVisibility,
   onSetOpenCommentMenu,
@@ -1855,6 +2347,7 @@ function CommentPanel({
   onSkipPrevious,
   onSubmitComposer,
   onToggleDrawingMode,
+  onUndoDrawing,
   onSaveEditComment,
   onStartEditComment,
   onSubmitReply,
@@ -1869,6 +2362,8 @@ function CommentPanel({
   canSkipNext: boolean;
   canSkipPrevious: boolean;
   comments: ReviewComment[];
+  canUndoDrawing: boolean;
+  composerAttachments: ReviewAttachment[];
   composerBody: string;
   composerVisibility: CommentVisibility;
   currentTimeSeconds: number;
@@ -1888,6 +2383,7 @@ function CommentPanel({
   replyingCommentId: string | null;
   replyDraft: string;
   selectedCommentId: string | null;
+  onAddComposerAttachments: (files: File[]) => void;
   onCancelEditComment: () => void;
   onChangeFilter: (filter: CommentFilter) => void;
   onComposerBodyChange: (body: string) => void;
@@ -1897,6 +2393,7 @@ function CommentPanel({
   onOpenReply: (commentId: string) => void;
   onRemoveAnchor: () => void;
   onRegisterCommentRef: (commentId: string, node: HTMLElement | null) => void;
+  onRemoveComposerAttachment: (attachmentId: string) => void;
   onSelectComment: (comment: ReviewComment) => void;
   onSetComposerVisibility: (visibility: CommentVisibility) => void;
   onSetOpenCommentMenu: (commentId: string | null) => void;
@@ -1905,6 +2402,7 @@ function CommentPanel({
   onSkipPrevious: () => void;
   onSubmitComposer: () => void;
   onToggleDrawingMode: () => void;
+  onUndoDrawing: () => void;
   onSaveEditComment: (commentId: string) => void;
   onStartEditComment: (comment: ReviewComment) => void;
   onSubmitReply: (commentId: string) => void;
@@ -1947,7 +2445,11 @@ function CommentPanel({
               </div>
             </div>
           </div>
-          <CommentFilters active={activeFilter} onChange={onChangeFilter} />
+          <CommentFilters
+            active={activeFilter}
+            onChange={onChangeFilter}
+            showVisibilityFilters={canChooseVisibility}
+          />
         </div>
       </div>
 
@@ -1991,7 +2493,9 @@ function CommentPanel({
       </div>
 
       <ReviewCommentComposer
+        attachments={composerAttachments}
         body={composerBody}
+        canUndoDrawing={canUndoDrawing}
         canChooseVisibility={canChooseVisibility}
         currentTimeSeconds={currentTimeSeconds}
         visibility={composerVisibility}
@@ -2001,12 +2505,15 @@ function CommentPanel({
         isDrawingMode={isDrawingMode}
         isEditingOverallComment={isEditingOverallComment}
         isPostingMenuOpen={isPostingMenuOpen}
+        onAddAttachments={onAddComposerAttachments}
         onBodyChange={onComposerBodyChange}
         onRemoveAnchor={onRemoveAnchor}
+        onRemoveAttachment={onRemoveComposerAttachment}
         onSetVisibility={onSetComposerVisibility}
         onSubmit={onSubmitComposer}
         onToggleDrawingMode={onToggleDrawingMode}
         onTogglePostingMenu={onTogglePostingMenu}
+        onUndoDrawing={onUndoDrawing}
       />
 
     </aside>
@@ -2016,15 +2523,21 @@ function CommentPanel({
 function CommentFilters({
   active,
   onChange,
+  showVisibilityFilters,
 }: {
   active: CommentFilter;
   onChange: (filter: CommentFilter) => void;
+  showVisibilityFilters: boolean;
 }) {
   const filters: Array<{ label: string; value: CommentFilter }> = [
     { label: "All", value: "all" },
     { label: "Unresolved", value: "unresolved" },
-    { label: "Team", value: "internal" },
-    { label: "Client", value: "external" },
+    ...(showVisibilityFilters
+      ? [
+          { label: "Team", value: "internal" as const },
+          { label: "Client", value: "external" as const },
+        ]
+      : []),
   ];
 
   return (
@@ -2215,11 +2728,39 @@ export function ReviewCommentThread({
             <p className="comment-copy paragraph-s">{comment.body}</p>
           )}
 
+          {comment.attachments?.length ? (
+            <div className="review-comment-attachments" aria-label="Comment attachments">
+              {comment.attachments.map((attachment) => (
+                <a
+                  className="review-comment-attachment"
+                  href={attachment.url}
+                  download={attachment.name}
+                  key={attachment.id}
+                >
+                  <span className="review-comment-attachment-icon">
+                    <DsIcon name={getReviewAttachmentIcon(attachment.mimeType)} size={18} />
+                  </span>
+                  <span>
+                    <strong className="label-xs-semibold">{attachment.name}</strong>
+                    <small className="label-xs">{attachment.size}</small>
+                  </span>
+                  <DsIcon name="download-simple" size={15} />
+                </a>
+              ))}
+            </div>
+          ) : null}
+
           {comment.drawingPaths?.length ? (
-            <span className="comment-drawing-indicator label-xs-semibold">
+            <button
+              className="comment-drawing-indicator label-xs-semibold"
+              type="button"
+              aria-label="Edit drawing feedback"
+              data-tooltip="Edit drawing"
+              onClick={() => onStartEdit(comment)}
+            >
               <DsIcon name="pencil-simple" size={13} />
               Drawing
-            </span>
+            </button>
           ) : null}
 
           <ReactionPills
@@ -2530,14 +3071,16 @@ function InlineReplyComposer({
 }
 
 function Toast({
+  isFading,
   message,
   onDismiss,
 }: {
+  isFading: boolean;
   message: string;
   onDismiss: () => void;
 }) {
   return (
-    <div className="toast-message label-s-semibold" role="status">
+    <div className={`toast-message label-s-semibold ${isFading ? "is-fading" : ""}`} role="status">
       {message}
       <button type="button" aria-label="Dismiss notification" onClick={onDismiss}>
         <DsIcon name="x-close-cross" size={12} />
@@ -2745,6 +3288,13 @@ function formatFileSize(bytes: number) {
   }
 
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function getReviewAttachmentIcon(mimeType: string) {
+  if (mimeType.startsWith("image/")) return "image-square" as const;
+  if (mimeType.startsWith("audio/")) return "file-audio" as const;
+  if (mimeType.startsWith("video/")) return "video-camera" as const;
+  return "file-text" as const;
 }
 
 function formatTime(totalSeconds: number) {

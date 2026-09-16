@@ -41,8 +41,17 @@ export type CommentReply = {
   reactions?: Reaction[];
 };
 
+export type ReviewAttachment = {
+  id: string;
+  name: string;
+  size: string;
+  mimeType: string;
+  url: string;
+};
+
 export type ReviewComment = {
   id: string;
+  versionLabel?: string;
   authorId: string;
   visibility: CommentVisibility;
   timecodeSeconds?: number;
@@ -52,6 +61,7 @@ export type ReviewComment = {
   reactions?: Reaction[];
   drawingPaths?: DrawingPath[];
   framePin?: FramePin;
+  attachments?: ReviewAttachment[];
   replies: CommentReply[];
 };
 

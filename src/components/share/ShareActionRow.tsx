@@ -39,6 +39,7 @@ export type ShareActionRowProps = {
   projectName?: string;
   studioName?: string;
   customerName?: string;
+  customerReviewLabel?: string;
   onApprove?: () => void;
   onUnapprove?: () => void;
   onSendToStudio?: () => void;
@@ -99,6 +100,7 @@ export function ShareActionRow({
   projectName = "Launch Film - Sales Narrative",
   studioName = "Brisk Studios",
   customerName = "Avery Taylor",
+  customerReviewLabel,
   onApprove,
   onUnapprove,
   onSendToStudio,
@@ -139,7 +141,9 @@ export function ShareActionRow({
   const canUseVideoOnly = context === "edit" || context === "masters";
   const isVideoOnly = linkOpens === "videoOnly";
   const isCustomerView = userRole === "Customer";
-  const requestReviewLabel = isCustomerView ? `Send to ${studioName}` : "Request Review";
+  const requestReviewLabel = isCustomerView
+    ? customerReviewLabel ?? `Send to ${studioName}`
+    : "Request Review";
 
   const linkOptions = useMemo(
     () => [

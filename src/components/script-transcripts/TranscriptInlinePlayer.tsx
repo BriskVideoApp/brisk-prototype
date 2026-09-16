@@ -51,6 +51,7 @@ export function TranscriptInlinePlayer({
         drawingPaths={[]}
         selectedDrawingPaths={[]}
         isDrawingMode={false}
+        isEditingDrawing={false}
         pendingFramePin={null}
         onComposerBodyChange={() => undefined}
         onCancelFramePin={() => undefined}
@@ -61,7 +62,6 @@ export function TranscriptInlinePlayer({
         onClearDrawing={() => undefined}
         onDoneDrawing={() => undefined}
         onSubmitComposer={() => undefined}
-        onUndoDrawing={() => undefined}
         onSeek={onTimeChange}
         onTimeChange={onTimeChange}
         onDurationChange={() => undefined}

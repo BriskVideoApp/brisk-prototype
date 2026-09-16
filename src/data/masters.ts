@@ -94,24 +94,8 @@ export type MastersSrtAttachment = {
 export type MastersThumbnailAttachment = {
   status: "ready";
   imageUrl: string;
-  platform: ThumbnailPlatform;
   frameSeconds: number;
-  copy: string;
-  source: "auto-generated" | "regenerated" | "uploaded";
-};
-
-export type ThumbnailPlatform =
-  | "YouTube"
-  | "LinkedIn"
-  | "Instagram (feed)"
-  | "Instagram (reel)"
-  | "TikTok"
-  | "Custom";
-
-export type MastersGraphicsKit = {
-  font: string;
-  colours: string[];
-  logoUrl: string;
+  source: "captured-frame" | "uploaded";
 };
 
 export type MastersDeliverable = {
@@ -141,18 +125,7 @@ export type MastersDeliverable = {
   recutSourceUpload?: MastersVersion;
 };
 
-export const mastersGraphicsKit: MastersGraphicsKit = {
-  font: "Plus Jakarta Sans",
-  colours: ["#8b2cff", "#6de5fa", "#fdce5d", "#24b553"],
-  logoUrl: "/assets/logos/brisk.svg",
-};
-
-export const mastersThumbnailVariantUrls = [
-  "/mock-thumbnails/good-citizens-purple.svg",
-  "/mock-thumbnails/good-citizens-cyan.svg",
-  "/mock-thumbnails/good-citizens-yellow.svg",
-  "/mock-thumbnails/good-citizens-green.svg",
-] as const;
+const mastersVideoFrameImageUrl = "https://images.pexels.com/videos/853800/free-video-853800.jpg?auto=compress&cs=tinysrgb&w=1200";
 
 const mainComments: MastersComment[] = [
   {
@@ -203,29 +176,6 @@ export function createMockSrt(id: string, filename: string, durationSeconds: num
   };
 }
 
-export function createMockThumbnail(
-  platform: DeliverablePlatform,
-  frameSeconds = 0,
-): MastersThumbnailAttachment {
-  const thumbnailPlatform: ThumbnailPlatform = platform === "YouTube (Main)"
-    ? "YouTube"
-    : platform === "Instagram"
-      ? "Instagram (reel)"
-      : platform === "LinkedIn"
-        ? "LinkedIn"
-        : platform === "TikTok"
-          ? "TikTok"
-          : "Custom";
-  return {
-    status: "ready",
-    imageUrl: mastersThumbnailVariantUrls[0],
-    platform: thumbnailPlatform,
-    frameSeconds,
-    copy: "Clarity for every care decision",
-    source: "auto-generated",
-  };
-}
-
 export const initialMastersDeliverables: MastersDeliverable[] = [
   {
     id: "masters-main-video",
@@ -243,11 +193,9 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     srt: createMockSrt("main-caption", "Good_Citizens_Main_Master_en-AU.srt", 180),
     thumbnail: {
       status: "ready",
-      imageUrl: mastersThumbnailVariantUrls[0],
-      platform: "YouTube",
+      imageUrl: mastersVideoFrameImageUrl,
       frameSeconds: 42,
-      copy: "Care decisions, made clearer",
-      source: "auto-generated",
+      source: "captured-frame",
     },
     comments: mainComments,
     unreadCommentCount: 2,
@@ -297,11 +245,9 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     srt: createMockSrt("cutdown-caption", "Good_Citizens_Instagram_30s_en-AU.srt", 30),
     thumbnail: {
       status: "ready",
-      imageUrl: mastersThumbnailVariantUrls[1],
-      platform: "Instagram (reel)",
+      imageUrl: mastersVideoFrameImageUrl,
       frameSeconds: 8,
-      copy: "The next step, made simple",
-      source: "regenerated",
+      source: "captured-frame",
     },
     comments: [
       {
@@ -348,17 +294,48 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     srt: createMockSrt("square-caption", "Good_Citizens_LinkedIn_30s_en-AU.srt", 30),
     thumbnail: {
       status: "ready",
-      imageUrl: mastersThumbnailVariantUrls[2],
-      platform: "LinkedIn",
+      imageUrl: mastersVideoFrameImageUrl,
       frameSeconds: 12,
-      copy: "Clarity for every care decision",
-      source: "auto-generated",
+      source: "captured-frame",
     },
     comments: [],
     unreadCommentCount: 0,
     versions: [],
   },
+  {
+    id: "masters-shorts-cut",
+    briefDeliverableId: "shorts-cut",
+    name: "Shorts cut",
+    platform: "Facebook",
+    format: "16:9",
+    duration: "30 secs",
+    captions: ["None"],
+    deadline: "2026-09-12",
+    status: "not_started",
+    addedBy: "filmmaker",
+    kind: "video",
+    recutSourceDeliverableId: "masters-main-video",
+    comments: [],
+    unreadCommentCount: 0,
+    versions: [],
+  },
 ];
+
+export function createMastersSlotsFromApprovedBrief(): MastersDeliverable[] {
+  return structuredClone(initialMastersDeliverables).map((deliverable) => ({
+    ...deliverable,
+    status: "not_started",
+    versions: [],
+    approvedVersionId: undefined,
+    currentVersionId: undefined,
+    comments: [],
+    unreadCommentCount: 0,
+    srt: undefined,
+    thumbnail: undefined,
+    recutBrief: undefined,
+    recutSourceUpload: undefined,
+  }));
+}
 
 export const mastersPlatformOptions: DeliverablePlatform[] = [
   "YouTube (Main)",
