@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import type { BrandFont } from "@/data/brand-kits";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 
 export type BrandMenuItem = {
@@ -290,113 +291,96 @@ export function RenameAssetDialog({
   );
 }
 
-export function AddFontDialog({
-  onAdd,
+const standardFontRoles = [
+  "heading",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "body",
+  "caption",
+  "label",
+  "mono",
+] as const;
+
+function getFontRoleLabel(role: string) {
+  if (/^h[1-6]$/u.test(role)) return role.toUpperCase();
+  return role.replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+export function FontRoleMatrixDialog({
+  fonts,
   onCancel,
-  onUpload,
+  onSave,
 }: {
-  onAdd: (family: string, role: string) => void;
+  fonts: BrandFont[];
   onCancel: () => void;
-  onUpload: (file: File, role: string) => void;
+  onSave: (fonts: BrandFont[]) => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [role, setRole] = useState("body");
-  const [customRole, setCustomRole] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const selectedRole = role === "custom" ? customRole.trim() : role;
-  const searchedFamily = query.trim();
+  const matrixRoles = [
+    ...standardFontRoles,
+    ...fonts.map((font) => font.role).filter((role) => !standardFontRoles.includes(role as typeof standardFontRoles[number])),
+  ];
+  const [draftFonts, setDraftFonts] = useState<BrandFont[]>(() => matrixRoles.map((role) => {
+    const font = fonts.find((candidate) => candidate.role === role);
+    return font ?? { role, family: "", source: "google" };
+  }));
+
+  const updateFamily = (role: string, family: string) => {
+    setDraftFonts((current) => current.map((font) => font.role === role ? { ...font, family } : font));
+  };
 
   return (
     <div className="brand-modal-backdrop" role="presentation">
       <section className="brand-modal brand-font-modal" role="dialog" aria-modal="true" aria-labelledby="brand-font-title">
         <header className="brand-modal-header">
           <div>
-            <h2 className="headings-xs-bold" id="brand-font-title">Add font</h2>
-            <p className="paragraph-s">Choose a Google Font or upload a font file.</p>
+            <h2 className="headings-xs-bold" id="brand-font-title">Font roles</h2>
+            <p className="paragraph-s">Set every type role together. Leave a font blank to remove it from this Brand Kit.</p>
           </div>
           <button className="brand-modal-close" type="button" aria-label="Close" onClick={onCancel}>
             <DsIcon name="x-close-cross" size={18} />
           </button>
         </header>
-        <div className="brand-modal-body brand-font-body">
-          <label className="brand-delete-confirm-name">
-            <span className="label-s-semibold">Font type</span>
-            <select
-              className="brand-font-role-select paragraph-m"
-              value={role}
-              onChange={(event) => setRole(event.target.value)}
-            >
-              <option value="heading">Heading</option>
-              <option value="h1">H1</option>
-              <option value="h2">H2</option>
-              <option value="h3">H3</option>
-              <option value="h4">H4</option>
-              <option value="h5">H5</option>
-              <option value="h6">H6</option>
-              <option value="body">Body</option>
-              <option value="caption">Caption</option>
-              <option value="label">Label</option>
-              <option value="mono">Mono</option>
-              <option value="custom">Custom…</option>
-            </select>
-          </label>
-          {role === "custom" ? (
-            <label className="brand-delete-confirm-name">
-              <span className="label-s-semibold">Custom type</span>
-              <input
-                className="brand-inline-input paragraph-m"
-                value={customRole}
-                placeholder="e.g. Display"
-                onChange={(event) => setCustomRole(event.target.value)}
-              />
-            </label>
-          ) : null}
-          <label className="brand-delete-confirm-name">
-            <span className="label-s-semibold">Search Google Fonts</span>
-            <span className="brand-font-search">
-              <DsIcon name="search" size={16} />
-              <input
-                className="paragraph-m"
-                type="search"
-                value={query}
-                placeholder="Search fonts..."
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </span>
-          </label>
-          <div className="brand-font-results">
-            {searchedFamily ? (
-              <button
-                type="button"
-                disabled={!selectedRole}
-                onClick={() => onAdd(searchedFamily, selectedRole)}
-              >
-                <strong className="brand-font-result-name" style={{ fontFamily: searchedFamily }}>
-                  Add {searchedFamily}
-                </strong>
-                <DsIcon name="plus" size={16} />
-              </button>
-            ) : null}
+        <div className="brand-modal-body brand-font-matrix-body">
+          <div className="brand-font-matrix-frame">
+            <table className="brand-font-matrix">
+              <thead>
+                <tr>
+                  <th scope="col">Type</th>
+                  <th scope="col">Font family</th>
+                </tr>
+              </thead>
+              <tbody>
+                {draftFonts.map((font) => (
+                  <tr key={font.role}>
+                    <th className="label-s-semibold" scope="row">{getFontRoleLabel(font.role)}</th>
+                    <td>
+                      <input
+                        aria-label={`${getFontRoleLabel(font.role)} font family`}
+                        className="brand-inline-input paragraph-s"
+                        placeholder="Not set"
+                        value={font.family}
+                        onChange={(event) => updateFamily(font.role, event.target.value)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <button
-            className="brand-secondary-button label-s-semibold"
-            type="button"
-            disabled={!selectedRole}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Upload font file
-          </button>
-          <input
-            ref={fileInputRef}
-            className="sr-only"
-            type="file"
-            accept=".otf,.ttf,.woff,.woff2"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (file && selectedRole) onUpload(file, selectedRole);
-              event.target.value = "";
-            }}
-          />
+          <div className="brand-delete-actions">
+            <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
+            <button
+              className="brand-save-button label-s-semibold"
+              type="button"
+              onClick={() => onSave(draftFonts.filter((font) => font.family.trim()).map((font) => ({ ...font, family: font.family.trim() })))}
+            >
+              Save font roles
+            </button>
+          </div>
         </div>
       </section>
     </div>

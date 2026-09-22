@@ -124,6 +124,11 @@ export const studioSettingsNavigation = [
   },
 ] as const satisfies readonly StudioSettingsNavigationItem[];
 
+const studioWorkspaceNavigation = [
+  { label: "People", href: "/people", icon: "users-three" as const },
+  { label: "Clients", href: "/clients", icon: "users-three" as const },
+] as const;
+
 type StudioSettingsUnsavedContextValue = {
   hasUnsavedChanges: boolean;
   setHasUnsavedChanges: (hasUnsavedChanges: boolean) => void;
@@ -266,7 +271,10 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
         <BriskSelect
           ariaLabel="Choose Studio Settings section"
           clearable={false}
-          options={studioSettingsNavigation.map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
+          options={[
+            ...studioSettingsNavigation,
+            ...studioWorkspaceNavigation,
+          ].map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
           placeholder="Choose section"
           searchable={false}
           value={activeSection.href}
@@ -279,7 +287,26 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
 
       <div className="studio-settings-layout">
         <nav className="studio-settings-navigation" aria-label="Studio Settings">
-          {studioSettingsNavigation.map((item) => (
+          {studioSettingsNavigation.slice(0, 4).map((item) => (
+            <Link
+              className={`studio-settings-navigation-link label-s-semibold ${item.id === sectionId ? "is-active" : ""}`}
+              href={item.href}
+              aria-current={item.id === sectionId ? "page" : undefined}
+              key={item.id}
+            >
+              <DsIcon name={item.icon} size={16} />
+              <span>{item.label}</span>
+              <DsIcon name="caret-right" size={14} />
+            </Link>
+          ))}
+          {studioWorkspaceNavigation.map((item) => (
+            <Link className="studio-settings-navigation-link label-s-semibold" href={item.href} key={item.href}>
+              <DsIcon name={item.icon} size={16} />
+              <span>{item.label}</span>
+              <DsIcon name="caret-right" size={14} />
+            </Link>
+          ))}
+          {studioSettingsNavigation.slice(4).map((item) => (
             <Link
               className={`studio-settings-navigation-link label-s-semibold ${item.id === sectionId ? "is-active" : ""}`}
               href={item.href}

@@ -1,22 +1,31 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import { AppSidebar } from "@/components/navigation/AppSidebar";
+import { type ReactNode } from "react";
 import { GlobalHeaderActions } from "@/components/navigation/GlobalHeaderActions";
 import { ShootGlobalActionsProvider } from "@/components/navigation/ShootGlobalActionsContext";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
-import { BriskAiAssistant } from "@/components/ai/BriskAiAssistant";
+import { BriskAiAssistant, BriskAiHeaderButton } from "@/components/ai/BriskAiAssistant";
 import { PrototypeScenarioToolbar } from "@/components/prototype-scenarios/PrototypeScenarioToolbar";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
-import { DsIcon } from "@/components/video-review/DsIcon";
-import { getAppShellPresentation } from "@/components/navigation/prototypeNavigation";
+import { prototypeCustomerSlug, usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { getAppShellPresentation, getClientPortalDestination } from "@/components/navigation/prototypeNavigation";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { activeScenario } = usePrototypeScenario();
-  const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
+  const { selectedRole } = usePrototypeRole();
+  const { state } = usePrototypeState();
+  const { studio } = useStudioSettings();
   const presentation = getAppShellPresentation(pathname, Boolean(activeScenario));
+  const clientPortalHref = getClientPortalDestination(state);
+  const isStudioStaff = selectedRole === "Studio Staff";
+  const isStudioUser = selectedRole !== "Customer";
+  const videosHref = selectedRole === "Customer" ? clientPortalHref ?? "/prototype/scenarios" : "/active-videos";
 
   if (presentation === "standalone") {
     return children;
@@ -34,35 +43,52 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ShootGlobalActionsProvider>
       <div className="prototype-test-frame">
-        <PrototypeScenarioToolbar inline />
         <div className="app-shell">
-          <AppSidebar
-            mobileOpen={isMobileNavigationOpen}
-            onNavigate={() => setIsMobileNavigationOpen(false)}
-            onRequestClose={() => setIsMobileNavigationOpen(false)}
-          />
-          {isMobileNavigationOpen ? (
-            <button
-              className="app-shell-mobile-backdrop"
-              type="button"
-              aria-label="Close navigation"
-              onClick={() => setIsMobileNavigationOpen(false)}
-            />
-          ) : null}
           <div className="app-shell-workspace">
             <header className="app-global-header">
-              <button
-                className="app-global-action-button app-shell-mobile-navigation-trigger"
-                type="button"
-                aria-label="Open navigation"
-                aria-controls="brisk-primary-navigation"
-                aria-expanded={isMobileNavigationOpen}
-                onClick={() => setIsMobileNavigationOpen(true)}
-              >
-                <DsIcon name="columns" size={18} />
-              </button>
-              <GlobalHeaderActions />
-              <UserAvatarMenu placement="header" />
+              <div className="app-account-header">
+                <div className="app-account-header-leading">
+                  <Link
+                    className="app-account-brisk-brand"
+                    href={videosHref}
+                    aria-label="Videos"
+                    data-tooltip="Videos"
+                  >
+                    <Image src="/assets/logos/brisk.svg" alt="" width={24} height={16} priority />
+                  </Link>
+                  <StudioHeaderBrand selectedRole={selectedRole} studioName={studio.details.name} logoPreviewUrl={studio.branding.logoPreviewUrl} />
+                </div>
+                <div className="app-account-header-trailing">
+                  <PrototypeScenarioToolbar inline />
+                  <UserAvatarMenu placement="header" />
+                </div>
+              </div>
+              <div className="app-workspace-header">
+                <div className="app-global-header-leading">
+                  <Link className={`app-header-navigation-link is-primary label-s-semibold ${pathname === videosHref ? "is-active" : ""}`} href={videosHref}>
+                    Videos
+                  </Link>
+                  {isStudioUser ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/today" ? "is-active" : ""}`} href="/today">
+                    Today
+                  </Link> : null}
+                  <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/media" ? "is-active" : ""}`} href="/media">
+                    Media Library
+                  </Link>
+                  {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/outstanding-invoices" ? "is-active" : ""}`} href="/outstanding-invoices">
+                    Expenses
+                  </Link> : null}
+                  <Link
+                    className={`app-header-navigation-link label-s-semibold ${pathname.startsWith("/brand-kits") ? "is-active" : ""}`}
+                    href={isStudioUser ? "/brand-kits" : `/brand-kits/${prototypeCustomerSlug}`}
+                  >
+                    {isStudioUser ? "Brand Kits" : "Brand Kit"}
+                  </Link>
+                </div>
+                <div className="app-global-header-trailing">
+                  <GlobalHeaderActions />
+                  <BriskAiHeaderButton />
+                </div>
+              </div>
             </header>
             <div className="app-shell-content">{children}</div>
           </div>
@@ -70,5 +96,37 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </div>
     </ShootGlobalActionsProvider>
+  );
+}
+
+function StudioHeaderBrand({
+  selectedRole,
+  studioName,
+  logoPreviewUrl,
+}: {
+  selectedRole: ReturnType<typeof usePrototypeRole>["selectedRole"];
+  studioName: string;
+  logoPreviewUrl: string | null;
+}) {
+  const initials = studioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
+  const content = <>
+    <span className="app-global-client-studio-logo" aria-label={`${studioName} logo`}>
+      {logoPreviewUrl ? <img src={logoPreviewUrl} alt="" /> : <span className="label-s-semibold">{initials}</span>}
+    </span>
+    <strong className="label-m-semibold">{studioName}</strong>
+  </>;
+
+  if (selectedRole === "Studio Staff") {
+    return (
+      <Link className="app-global-client-studio-brand is-link" href="/settings/studio">
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="app-global-client-studio-brand">
+      {content}
+    </div>
   );
 }

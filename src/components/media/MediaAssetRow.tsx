@@ -1,8 +1,9 @@
-import type { MouseEvent } from "react";
+import type { DragEvent, MouseEvent } from "react";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
 import { formatMediaBytes, formatMediaDuration } from "@/lib/media";
-import { MediaAssetActions, MediaThumbnail } from "./MediaAssetCard";
+import { MediaAssetActions, MediaAssetIndicators, MediaThumbnail } from "./MediaAssetCard";
 
 type MediaAssetRowProps = {
   asset: MediaAssetView;
@@ -18,6 +19,9 @@ type MediaAssetRowProps = {
   onArchive: (asset: MediaAssetView) => void;
   onRestore: (asset: MediaAssetView) => void;
   onRetry: (asset: MediaAssetView) => void;
+  onToggleSelect: (asset: MediaAssetView) => void;
+  onDragStart: (event: DragEvent<HTMLElement>) => void;
+  onDragEnd: () => void;
 };
 
 export function MediaAssetRow(props: MediaAssetRowProps) {
@@ -28,7 +32,10 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
     <tr
       className={`${isSelected ? "is-selected" : ""} ${isActive ? "is-active" : ""}`}
       tabIndex={0}
+      draggable={props.capabilities.canMoveAssets}
       onClick={(event) => onActivate(asset, event)}
+      onDragStart={props.onDragStart}
+      onDragEnd={props.onDragEnd}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
@@ -36,6 +43,7 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
         }
       }}
     >
+      <td>{props.capabilities.canMoveAssets ? <button className={`media-row-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); props.onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}</td>
       <td><MediaThumbnail asset={asset} small /></td>
       <td><span className="media-list-name label-s-semibold" title={asset.name}>{asset.name}</span></td>
       <td className="label-s">{asset.kind}</td>
@@ -43,7 +51,8 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
       <td className="label-s">{formatMediaBytes(asset.sizeBytes)}</td>
       <td className="label-s">{formatMediaDuration(asset.durationSeconds) || "-"}</td>
       <td className="label-s">{asset.uploadedByName}</td>
-      <td className="label-s">{asset.commentCount}</td>
+      <td><MediaAssetIndicators asset={asset} showComments={false} /></td>
+      <td><MediaAssetIndicators asset={asset} showTranscript={false} /></td>
       <td>
         <MediaAssetActions
           asset={asset}

@@ -38,6 +38,8 @@ export function WorkspaceSidebar({
   const navigationId = useId();
   const historyMenuId = useId();
   const historyControlRef = useRef<HTMLDivElement>(null);
+  const historyPressTimerRef = useRef<number | null>(null);
+  const historyOpenedByPressRef = useRef(false);
   const brandKitHref = selectedRole === "Customer"
     ? `/brand-kits/${prototypeCustomerSlug}`
     : "/brand-kits";
@@ -88,42 +90,58 @@ export function WorkspaceSidebar({
     };
   }, [isHistoryOpen]);
 
+  useEffect(() => () => {
+    if (historyPressTimerRef.current) window.clearTimeout(historyPressTimerRef.current);
+  }, []);
+
+  const clearHistoryPress = () => {
+    if (historyPressTimerRef.current) {
+      window.clearTimeout(historyPressTimerRef.current);
+      historyPressTimerRef.current = null;
+    }
+  };
+
+  const beginHistoryPress = () => {
+    clearHistoryPress();
+    historyOpenedByPressRef.current = false;
+    historyPressTimerRef.current = window.setTimeout(() => {
+      historyOpenedByPressRef.current = true;
+      setIsHistoryOpen(true);
+    }, 500);
+  };
+
+  const goBack = () => {
+    if (historyOpenedByPressRef.current) {
+      historyOpenedByPressRef.current = false;
+      return;
+    }
+    window.history.back();
+  };
+
   return (
     <aside className={sidebarClassName} aria-label="Primary navigation">
       <div className="workspace-sidebar-header">
         <div className="workspace-history-controls" aria-label="Navigation history">
-          <button
-            className="workspace-navigation-control"
-            type="button"
-            aria-label="Go back"
-            data-tooltip="Back"
-            onClick={() => window.history.back()}
-          >
-            <DsIcon name="arrow-left" size={18} />
-          </button>
-          <button
-            className="workspace-history-forward workspace-navigation-control"
-            type="button"
-            aria-label="Go forward"
-            data-tooltip="Forward"
-            onClick={() => window.history.forward()}
-          >
-            <DsIcon name="arrow-left" size={18} />
-          </button>
           <div className="workspace-history-control" ref={historyControlRef}>
             <button
               className="workspace-navigation-control"
               type="button"
-              aria-label="Show history"
+              aria-label="Go back. Press and hold for recent pages."
               aria-controls={historyMenuId}
               aria-expanded={isHistoryOpen}
-              data-tooltip="Recent pages"
-              onClick={() => setIsHistoryOpen((current) => !current)}
+              aria-haspopup="menu"
+              data-tooltip="Hold for history"
+              onPointerDown={beginHistoryPress}
+              onPointerUp={clearHistoryPress}
+              onPointerCancel={clearHistoryPress}
+              onPointerLeave={clearHistoryPress}
+              onKeyDown={(event) => { if (event.key === "ArrowDown") { event.preventDefault(); setIsHistoryOpen(true); } }}
+              onClick={goBack}
             >
-              <DsIcon name="clock-clockwise" size={18} />
+              <DsIcon name="arrow-left" size={18} />
             </button>
             {isHistoryOpen ? (
-              <section id={historyMenuId} className="workspace-history-menu" aria-label="Recent pages">
+              <section id={historyMenuId} className="workspace-history-menu" aria-label="Recent pages" role="menu">
                 <p className="label-s-semibold">Recent</p>
                 <div className="workspace-history-list">
                   {visibleHistoryPages.length > 0 ? visibleHistoryPages.map((page) => (
@@ -143,6 +161,15 @@ export function WorkspaceSidebar({
               </section>
             ) : null}
           </div>
+          <button
+            className="workspace-history-forward workspace-navigation-control"
+            type="button"
+            aria-label="Go forward"
+            data-tooltip="Forward"
+            onClick={() => window.history.forward()}
+          >
+            <DsIcon name="arrow-left" size={18} />
+          </button>
         </div>
         <button
           className="workspace-sidebar-toggle workspace-navigation-control"

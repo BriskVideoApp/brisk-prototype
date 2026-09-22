@@ -73,7 +73,7 @@ export const clients: Client[] = [
     logoUrl: "https://cdn.simpleicons.org/loom",
     primaryContactId: "loom-contact-1",
     contacts: [
-      contact("client-jess", "Jess Taylor", "jess@loom.com", ["loom-launch-film", "loom-ai-launch", "loom-customer-stories", "loom-brand-refresh"], "2026-08-11T10:24:00+10:00", "Client Admin"),
+      contact("client-jess", "Jess Taylor", "jess@loom.com", ["loom-launch-film", "loom-wacf-01", "loom-product-tour", "loom-customer-stories", "loom-q3-recap"], "2026-08-11T10:24:00+10:00", "Client Admin"),
       contact("client-sarah", "Sarah Kim", "sarah@loom.com", ["loom-launch-film", "loom-ai-launch"]),
       { ...contact("client-daniel", "Daniel Ortiz", "daniel@loom.com", ["loom-customer-stories"], null), portalAccess: "Invited" },
       contact("loom-contact-1", "Maya Chen", "maya@loom.com", ["loom-launch-film"], "2026-08-11T10:24:00+10:00", "Client Admin"),

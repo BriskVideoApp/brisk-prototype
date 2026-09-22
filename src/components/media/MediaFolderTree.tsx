@@ -1,4 +1,4 @@
-import { useState, type DragEvent, type MouseEvent } from "react";
+import { useEffect, useState, type DragEvent, type MouseEvent, type ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaFolder } from "@/data/media";
 
@@ -7,14 +7,17 @@ type MediaFolderTreeProps = {
   selectedFolderId: string | null;
   collapsed: boolean;
   canManage: boolean;
+  canMoveAssets: boolean;
   canCopyLink: boolean;
   canCollapse?: boolean;
+  storageUsage?: ReactNode;
   onSelect: (folderId: string | null) => void;
   onAdd: (parentId: string | null) => MediaFolder | null;
   onRename: (folderId: string, name: string) => void;
   onMove: (folderId: string, parentId: string | null) => void;
   onDelete: (folderId: string) => void;
   onCopyLink: (folderId: string) => void;
+  onMoveAssetsToFolder: (assetIds: string[], folderId: string | null) => void;
   onToggleCollapsed: () => void;
 };
 
@@ -23,6 +26,7 @@ type FolderMenu = { folderId: string; x: number; y: number };
 export function MediaFolderTree(props: MediaFolderTreeProps) {
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [draggingFolderId, setDraggingFolderId] = useState<string | null>(null);
+  const [assetDropTargetId, setAssetDropTargetId] = useState<string | null>(null);
   const [menu, setMenu] = useState<FolderMenu | null>(null);
 
   const addFolder = () => {
@@ -30,19 +34,50 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
     if (folder) setEditingFolderId(folder.id);
   };
 
+  useEffect(() => {
+    const clearAssetDropTarget = () => setAssetDropTargetId(null);
+    window.addEventListener("dragend", clearAssetDropTarget);
+    window.addEventListener("drop", clearAssetDropTarget);
+    return () => {
+      window.removeEventListener("dragend", clearAssetDropTarget);
+      window.removeEventListener("drop", clearAssetDropTarget);
+    };
+  }, []);
+
   const showMenu = (event: MouseEvent, folderId: string) => {
     event.preventDefault();
+    event.stopPropagation();
     setMenu({ folderId, x: event.clientX, y: event.clientY });
   };
 
   const dropFolder = (event: DragEvent, parentId: string | null) => {
     event.preventDefault();
+    const assetData = event.dataTransfer.getData("application/x-brisk-media-asset-ids");
+    if (assetData && props.canMoveAssets) {
+      try {
+        const assetIds: unknown = JSON.parse(assetData);
+        if (Array.isArray(assetIds) && assetIds.every((id) => typeof id === "string")) props.onMoveAssetsToFolder(assetIds, parentId);
+      } catch {
+        // Ignore malformed drag data in the prototype.
+      }
+      setDraggingFolderId(null);
+      setAssetDropTargetId(null);
+      return;
+    }
     if (draggingFolderId && draggingFolderId !== parentId) {
       props.onMove(draggingFolderId, parentId);
     }
     setDraggingFolderId(null);
+    setAssetDropTargetId(null);
   };
 
+  const showAssetDropTarget = (event: DragEvent, folderId: string) => {
+    if (props.canMoveAssets && event.dataTransfer.types.includes("application/x-brisk-media-asset-ids")) setAssetDropTargetId(folderId);
+  };
+
+  const clearAssetDropTarget = (event: DragEvent<HTMLElement>, folderId: string) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null) && assetDropTargetId === folderId) setAssetDropTargetId(null);
+  };
   if (props.collapsed) {
     return (
       <aside className="media-folder-rail is-collapsed" aria-label="Media folders">
@@ -71,9 +106,9 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
           </button> : null}
         </div>
       </div>
-      <div className="media-folder-list" onDragOver={(event) => event.preventDefault()} onDrop={(event) => dropFolder(event, null)}>
+      <div className="media-folder-list">
         <div className="media-all-folder-section">
-          <button className={`media-folder-item ${props.selectedFolderId === null ? "is-selected" : ""}`} type="button" onClick={() => props.onSelect(null)}>
+          <button className={`media-folder-item ${props.selectedFolderId === null ? "is-selected" : ""} ${assetDropTargetId === "__root__" ? "is-drop-target" : ""}`} type="button" onClick={() => props.onSelect(null)} onDragEnter={(event) => showAssetDropTarget(event, "__root__")} onDragOver={(event) => { if (props.canMoveAssets) event.preventDefault(); }} onDragLeave={(event) => clearAssetDropTarget(event, "__root__")} onDrop={(event) => dropFolder(event, null)}>
             <DsIcon name="folder-open" size={18} />
             <span className="label-s-semibold">All media</span>
           </button>
@@ -97,11 +132,16 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
             onContextMenu={showMenu}
             onDragStart={setDraggingFolderId}
             onDrop={dropFolder}
+            assetDropTargetId={assetDropTargetId}
+            onAssetDragEnter={showAssetDropTarget}
+            onAssetDragLeave={clearAssetDropTarget}
             canManage={props.canManage}
+            canMoveAssets={props.canMoveAssets}
             canOpenMenu={props.canManage || props.canCopyLink}
           />
         )}
       </div>
+      {props.storageUsage ? <div className="media-folder-storage">{props.storageUsage}</div> : null}
       {menu && (props.canManage || props.canCopyLink) ? (
         <div className="media-folder-menu" role="menu" style={{ left: menu.x, top: menu.y }} onClick={(event) => event.stopPropagation()}>
           {props.canManage ? <button type="button" role="menuitem" onClick={() => { setEditingFolderId(menu.folderId); setMenu(null); }}>Rename</button> : null}
@@ -125,7 +165,11 @@ type FolderBranchProps = {
   onContextMenu: (event: MouseEvent, folderId: string) => void;
   onDragStart: (folderId: string) => void;
   onDrop: (event: DragEvent, parentId: string) => void;
+  assetDropTargetId: string | null;
+  onAssetDragEnter: (event: DragEvent, folderId: string) => void;
+  onAssetDragLeave: (event: DragEvent<HTMLElement>, folderId: string) => void;
   canManage: boolean;
+  canMoveAssets: boolean;
   canOpenMenu: boolean;
 };
 
@@ -145,20 +189,25 @@ function FolderBranch(props: FolderBranchProps) {
           }}
         />
       ) : (
-        <button
-          className={`media-folder-item ${props.selectedFolderId === folder.id ? "is-selected" : ""}`}
-          type="button"
-          draggable={props.canManage}
-          style={{ paddingLeft: `calc(var(--brisk-space-m) + (var(--brisk-space-l) * ${depth}))` }}
-          onClick={() => props.onSelect(folder.id)}
-          onContextMenu={(event) => props.canOpenMenu && props.onContextMenu(event, folder.id)}
-          onDragStart={() => props.canManage && props.onDragStart(folder.id)}
-          onDragOver={(event) => props.canManage && event.preventDefault()}
-          onDrop={(event) => { if (props.canManage) { event.stopPropagation(); props.onDrop(event, folder.id); } }}
-        >
-          <DsIcon name={props.selectedFolderId === folder.id ? "folder-open" : "folder"} size={18} />
-          <span className="label-s">{folder.name}</span>
-        </button>
+        <div className={`media-folder-item-row ${props.selectedFolderId === folder.id ? "is-selected" : ""} ${props.assetDropTargetId === folder.id ? "is-drop-target" : ""}`}>
+          <button
+            className={`media-folder-item ${props.selectedFolderId === folder.id ? "is-selected" : ""}`}
+            type="button"
+            draggable={props.canManage}
+            style={{ paddingLeft: `calc(var(--brisk-space-m) + (var(--brisk-space-l) * ${depth}))` }}
+            onClick={() => props.onSelect(folder.id)}
+            onContextMenu={(event) => props.canOpenMenu && props.onContextMenu(event, folder.id)}
+            onDragStart={() => props.canManage && props.onDragStart(folder.id)}
+            onDragEnter={(event) => props.onAssetDragEnter(event, folder.id)}
+            onDragOver={(event) => { if (props.canManage || props.canMoveAssets) event.preventDefault(); }}
+            onDragLeave={(event) => props.onAssetDragLeave(event, folder.id)}
+            onDrop={(event) => { if (props.canManage || props.canMoveAssets) { event.stopPropagation(); props.onDrop(event, folder.id); } }}
+          >
+            <DsIcon name={props.selectedFolderId === folder.id ? "folder-open" : "folder"} size={18} />
+            <span className="label-s">{folder.name}</span>
+          </button>
+          {props.canOpenMenu ? <button className="media-folder-more" type="button" aria-label={`More options for ${folder.name}`} data-tooltip="Folder options" onClick={(event) => props.onContextMenu(event, folder.id)}><DsIcon name="dots-three" size={16} /></button> : null}
+        </div>
       )}
       <FolderBranch {...props} parentId={folder.id} depth={depth + 1} />
     </div>

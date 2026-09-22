@@ -96,6 +96,17 @@
   position: relative;
 }
 
+.workspace-history-control [data-tooltip]::after {
+  left: var(--brisk-space-none);
+  --tooltip-x: var(--brisk-space-none);
+}
+
+.workspace-sidebar-toggle[data-tooltip]::after {
+  right: var(--brisk-space-none);
+  left: auto;
+  --tooltip-x: var(--brisk-space-none);
+}
+
 .workspace-history-menu {
   position: absolute;
   top: calc(100% + var(--brisk-space-s));

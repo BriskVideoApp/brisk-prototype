@@ -18,7 +18,6 @@ import {
   type BrandGuidelineFile,
   type BrandImagery,
   type BrandKitCustomer,
-  type AiBrandProfile,
   type BrandLogo,
   type BrandProfile,
   type BrandRelationship,
@@ -45,7 +44,7 @@ import {
 } from "./BrandKitPrimitives";
 import {
   ActionMenu,
-  AddFontDialog,
+  FontRoleMatrixDialog,
   AssetActions,
   DeleteConfirmation,
   ManagedAsset,
@@ -556,6 +555,13 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
     ?? editorVersions[0];
   const visibleSubBrands = showAllSubBrands ? subBrands : subBrands.slice(0, 3);
   const brandColours = profile?.colours ?? [];
+  const voiceToneSourceLabels = [
+    customer.website ? "Website" : null,
+    profile?.guidelines.files?.length || profile?.guidelines.pdfUrl ? "Brand guidelines" : null,
+    profile?.logos.length ? "Logos" : null,
+    profile?.imagery.length ? "Brand imagery" : null,
+    profile?.fonts.length ? "Fonts" : null,
+  ].filter((source): source is string => source !== null);
   const filteredImagery = profile?.imagery.filter((image) => image.kind === imageryFilter) ?? [];
   const visibleImagery = imageryFilter === "audio" && filteredImagery.length === 0
     ? [mockAudioAsset]
@@ -977,20 +983,19 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                 <span className="brand-logo-initials label-xs-semibold">{customer.badge}</span>
               )}
             </div>
-          ) : subBrand ? (
+          ) : (
             <nav className="brand-breadcrumbs label-xs-semibold" aria-label="Breadcrumb">
-              <Link href={role === "client" ? `/brand-kits/${prototypeCustomerSlug}` : "/brand-kits"}>Brand Kit</Link>
+              <Link href={role === "client" ? `/brand-kits/${prototypeCustomerSlug}` : "/brand-kits"}>Brand Kits</Link>
               <DsIcon name="caret-right" size={14} />
-              <Link href={`/brand-kits/${customer.slug}`}>{customer.name}</Link>
-              <DsIcon name="caret-right" size={14} />
-              <span>{subBrand.name}</span>
+              {subBrand ? (
+                <>
+                  <Link href={`/brand-kits/${customer.slug}`}>{customer.name}</Link>
+                  <DsIcon name="caret-right" size={14} />
+                  <span>{subBrand.name}</span>
+                </>
+              ) : <span>{titleName}</span>}
             </nav>
-          ) : role !== "client" ? (
-            <Link className="brand-kit-back label-xs-semibold" href="/brand-kits">
-              <DsIcon name="arrow-left" size={14} />
-              All Brand Kits
-            </Link>
-          ) : null}
+          )}
           <div>
             <h1>{subBrand ? titleName : `${titleName} Brand Kit`}</h1>
             <p className="paragraph-s">
@@ -1040,15 +1045,8 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
           </section>
         ) : null}
 
-        {!isGuest && !subBrand ? (
-          <AiBrandProfileModule
-            canRefine={canEdit && role !== "client"}
-            profile={customer.aiBrandProfile}
-          />
-        ) : null}
-
         <section
-          className={`brand-tile-grid ${!tilesEnabled ? "has-setup-heading" : ""}`.trim()}
+          className={`brand-tile-grid ${!tilesEnabled ? "has-setup-heading" : ""} has-prioritised-assets`.trim()}
           aria-label={`${titleName} brand assets`}
           style={getBrandTintVariables(profile)}
         >
@@ -1137,7 +1135,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                 <div className="brand-hero-setup-content">
                   <strong className="label-m-semibold">Build your Brand Kit</strong>
                   <p className="paragraph-s">
-                    Add whatever you have: brand guidelines, logos, fonts, imagery and source files. Or add your website. Brisk will analyse your brand and create your brand kit.
+                    Your Brand Kit keeps your logos, colours, fonts, imagery and brand guidelines in one place, so every video looks and feels consistent.
                   </p>
 
                   {inlineSetupFiles.length > 0 || inlineSetupWebsiteAdded ? (
@@ -1531,7 +1529,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                 menuItems={[
                   downloadAllMenuItem("Fonts"),
                   {
-                    label: "Manage font roles",
+                    label: "Edit font roles",
                     icon: "settings",
                     onSelect: () => setFontModalOpen(true),
                   },
@@ -2136,32 +2134,20 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
       ) : null}
 
       {fontModalOpen ? (
-        <AddFontDialog
+        <FontRoleMatrixDialog
+          fonts={profile?.fonts ?? []}
           onCancel={() => setFontModalOpen(false)}
-          onAdd={(family, fontRole) => {
-            const currentFonts = profile?.fonts ?? [];
-            const nextFonts = currentFonts.some((font) => font.role === fontRole)
-              ? currentFonts.map((font) => font.role === fontRole ? { ...font, family, source: "google" as const } : font)
-              : [...currentFonts, { role: fontRole, family, source: "google" as const }];
-            updateSection("fonts", nextFonts);
+          onSave={(fonts) => {
+            updateSection("fonts", fonts);
             setFontModalOpen(false);
-            notify(`${family} added`);
-          }}
-          onUpload={(file, fontRole) => {
-            const family = file.name.replace(/\.[^.]+$/u, "");
-            const currentFonts = profile?.fonts ?? [];
-            const nextFonts = currentFonts.some((font) => font.role === fontRole)
-              ? currentFonts.map((font) => font.role === fontRole ? { ...font, family, source: "custom" as const } : font)
-              : [...currentFonts, { role: fontRole, family, source: "custom" as const }];
-            updateSection("fonts", nextFonts);
-            setFontModalOpen(false);
-            notify(`${family} uploaded`);
+            notify("Font roles updated");
           }}
         />
       ) : null}
 
       {voiceModalOpen ? (
         <VoiceToneDialog
+          brandName={titleName}
           initialValue={profile?.voice.summary ?? ""}
           isCustomerView={role === "client"}
           onCancel={() => setVoiceModalOpen(false)}
@@ -2173,6 +2159,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
             setVoiceModalOpen(false);
             notify("Voice & Tone saved");
           }}
+          sourceLabels={voiceToneSourceLabels}
         />
       ) : null}
 
@@ -2252,71 +2239,6 @@ function BrandKitPermissionTransition() {
         <strong className="label-m-semibold">Opening your Brand Kit…</strong>
       </div>
     </main>
-  );
-}
-
-function AiBrandProfileModule({ canRefine, profile }: { canRefine: boolean; profile: AiBrandProfile }) {
-  const [summary, setSummary] = useState(profile.summary);
-  const [draft, setDraft] = useState(profile.summary);
-  const [isEditing, setIsEditing] = useState(false);
-  const [hasRefined, setHasRefined] = useState(false);
-  const details = [
-    { label: "Audience", value: profile.audience },
-    { label: "Key messages", value: profile.keyMessages },
-    { label: "Visual style", value: profile.visualStyle },
-    { label: "Recurring themes", value: profile.recurringThemes },
-    { label: "Production preferences", value: profile.productionPreferences },
-    { label: "What has worked well", value: profile.previousWins },
-  ];
-
-  return (
-    <section className="ai-brand-profile" aria-labelledby="ai-brand-profile-heading">
-      <header>
-        <div className="ai-brand-profile-heading">
-          <span><DsIcon name="sparkle" size={18} /></span>
-          <div>
-            <h2 className="headings-xs-bold" id="ai-brand-profile-heading">AI Brand Profile</h2>
-            <p className="paragraph-s">What Brisk understands about this Client from their Brand Kit and completed work.</p>
-          </div>
-        </div>
-        {canRefine && !isEditing ? (
-          <Button size="S" variant="secondary" onClick={() => {
-            setDraft(summary);
-            setIsEditing(true);
-          }}><DsIcon name="pencil-simple-ds" size={14} />Refine summary</Button>
-        ) : null}
-      </header>
-
-      {profile.learning ? (
-        <div className="ai-brand-profile-learning label-xs"><DsIcon name="info" size={14} />Brisk AI will improve its understanding as more work is completed for this Client.</div>
-      ) : null}
-
-      {isEditing ? (
-        <div className="ai-brand-profile-editor">
-          <label><span className="label-s-semibold">Profile summary</span><textarea className="paragraph-s" value={draft} onChange={(event) => setDraft(event.target.value)} /></label>
-          <div>
-            <Button size="S" variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
-            <Button size="S" onClick={() => {
-              if (!draft.trim()) return;
-              setSummary(draft.trim());
-              setHasRefined(true);
-              setIsEditing(false);
-            }}>Save refinement</Button>
-          </div>
-        </div>
-      ) : (
-        <p className="ai-brand-profile-summary paragraph-s">{summary}</p>
-      )}
-
-      <dl className="ai-brand-profile-details">
-        {details.map((detail) => <div key={detail.label}><dt className="label-xs-semibold">{detail.label}</dt><dd className="paragraph-s">{detail.value}</dd></div>)}
-      </dl>
-
-      <footer>
-        <div className="ai-brand-profile-sources"><span className="label-xs-semibold">Sources</span>{profile.sources.map((source) => <span className="label-xs" key={source}>{source}</span>)}</div>
-        <span className="label-xs">{hasRefined ? "Refined just now" : `Last updated ${profile.lastUpdated}`}</span>
-      </footer>
-    </section>
   );
 }
 
@@ -2477,17 +2399,28 @@ function EditorFiles({
 }
 
 function VoiceToneDialog({
+  brandName,
   initialValue,
   isCustomerView,
   onCancel,
   onSave,
+  sourceLabels,
 }: {
+  brandName: string;
   initialValue: string;
   isCustomerView: boolean;
   onCancel: () => void;
   onSave: (summary: string) => void;
+  sourceLabels: string[];
 }) {
   const [summary, setSummary] = useState(initialValue);
+  const [hasAiDraft, setHasAiDraft] = useState(false);
+  const hasSources = sourceLabels.length > 0;
+
+  const suggestWithAi = () => {
+    setSummary(`${brandName} sounds clear, confident and human. Lead with the audience outcome, keep language direct and conversational, and avoid unnecessary jargon or hype.`);
+    setHasAiDraft(true);
+  };
 
   return (
     <div className="brand-modal-backdrop" role="presentation" onMouseDown={onCancel}>
@@ -2517,6 +2450,17 @@ function VoiceToneDialog({
               onChange={(event) => setSummary(event.target.value)}
             />
           </label>
+          <div className="brand-voice-ai-help">
+            <Button size="S" variant="secondary" onClick={suggestWithAi}>
+              <DsIcon name="sparkle" size={14} />
+              {hasAiDraft ? "Refresh with Brisk AI" : "Suggest with Brisk AI"}
+            </Button>
+            <p className="label-xs">
+              {hasSources
+                ? `Uses ${sourceLabels.join(", ")}. This adds an editable draft and does not save changes.`
+                : "Add a website, guidelines or sample content for a better suggestion. This adds an editable draft and does not save changes."}
+            </p>
+          </div>
         </div>
         <footer className="brand-modal-footer">
           <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>

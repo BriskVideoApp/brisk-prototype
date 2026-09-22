@@ -37,6 +37,24 @@ export function MediaMoveDialog({ assets, folders, onClose, onMove }: { assets: 
   );
 }
 
+export function MediaArchiveDialog({ assets, onClose, onConfirm }: { assets: MediaAssetView[]; onClose: () => void; onConfirm: () => void }) {
+  return (
+    <div className="media-modal-backdrop" role="presentation">
+      <section className="media-action-dialog" role="alertdialog" aria-modal="true" aria-labelledby="media-archive-dialog-title" aria-describedby="media-archive-dialog-copy">
+        <header className="media-action-dialog-header">
+          <div><h2 className="headings-xs-bold" id="media-archive-dialog-title">Archive {assets.length === 1 ? "this file" : `${assets.length} files`}?</h2></div>
+          <button className="media-icon-button" type="button" aria-label="Close archive confirmation" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button>
+        </header>
+        <div className="media-action-dialog-body" id="media-archive-dialog-copy">
+          <p className="paragraph-s">Moves {assets.length === 1 ? "it" : "them"} to Archived and removes {assets.length === 1 ? "it" : "them"} from this project.</p>
+          <p className="media-archive-impact label-s"><DsIcon name="info" size={16} /><span>{assets.length === 1 ? "Original stays" : "Originals stay"} untouched. You can restore {assets.length === 1 ? "it" : "them"} at any time.</span></p>
+        </div>
+        <footer className="media-action-dialog-footer"><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" variant="primary" onClick={onConfirm}>Archive</Button></footer>
+      </section>
+    </div>
+  );
+}
+
 export function MediaDeleteDialog({ assets, storageLocations, onClose, onConfirm }: { assets: MediaAssetView[]; storageLocations: MediaStorageLocation[]; onClose: () => void; onConfirm: () => void }) {
   const locationById = new Map(storageLocations.map((location) => [location.id, location]));
   const providers = new Set(assets.map((asset) => locationById.get(asset.storageLocationId)?.provider ?? "brisk-storage"));
@@ -47,15 +65,15 @@ export function MediaDeleteDialog({ assets, storageLocations, onClose, onConfirm
     <div className="media-modal-backdrop" role="presentation">
       <section className="media-action-dialog" role="alertdialog" aria-modal="true" aria-labelledby="media-delete-dialog-title" aria-describedby="media-delete-dialog-copy">
         <header className="media-action-dialog-header">
-          <div><span className="label-xs-semibold">Permanent deletion</span><h2 className="headings-xs-bold" id="media-delete-dialog-title">Remove {assets.length === 1 ? "this file" : `${assets.length} files`} from Brisk?</h2></div>
+          <div><h2 className="headings-xs-bold" id="media-delete-dialog-title">Delete {assets.length === 1 ? "this file" : `${assets.length} files`}?</h2></div>
           <button className="media-icon-button" type="button" aria-label="Close delete confirmation" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button>
         </header>
         <div className="media-action-dialog-body" id="media-delete-dialog-copy">
-          <p className="paragraph-s">The Brisk media record and playback asset will be permanently deleted.</p>
-          {deletesOriginal ? <p className="media-delete-impact label-s"><DsIcon name="alert-triangle" size={16} /><span><strong>Brisk Storage:</strong> the original in Brisk-managed storage will also be permanently deleted.</span></p> : null}
-          {leavesConnectedOriginal ? <p className="media-delete-impact label-s"><DsIcon name="info" size={16} /><span><strong>Connected storage or Remote Studio:</strong> the original will remain untouched.</span></p> : null}
+          <p className="paragraph-s">This permanently deletes {assets.length === 1 ? "the file" : "these files"} from Brisk.</p>
+          {deletesOriginal ? <p className="media-delete-impact label-s"><DsIcon name="alert-triangle" size={16} /><span><strong>Brisk Storage:</strong> the original is also deleted.</span></p> : null}
+          {leavesConnectedOriginal ? <p className="media-delete-impact label-s"><DsIcon name="info" size={16} /><span><strong>Connected storage:</strong> the original stays there.</span></p> : null}
         </div>
-        <footer className="media-action-dialog-footer"><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><button className="media-danger-button label-m-semibold" type="button" onClick={onConfirm}>Delete permanently</button></footer>
+        <footer className="media-action-dialog-footer"><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><button className="media-danger-button label-m-semibold" type="button" onClick={onConfirm}>Delete {assets.length === 1 ? "file" : "files"}</button></footer>
       </section>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useRef, useState, type MouseEvent } from "react";
+import { useRef, useState, type DragEvent, type MouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
@@ -18,6 +18,9 @@ type MediaAssetCardProps = {
   onArchive: (asset: MediaAssetView) => void;
   onRestore: (asset: MediaAssetView) => void;
   onRetry: (asset: MediaAssetView) => void;
+  onToggleSelect: (asset: MediaAssetView) => void;
+  onDragStart: (event: DragEvent<HTMLElement>) => void;
+  onDragEnd: () => void;
 };
 
 export function MediaAssetCard({
@@ -33,6 +36,9 @@ export function MediaAssetCard({
   onArchive,
   onRestore,
   onRetry,
+  onToggleSelect,
+  onDragStart,
+  onDragEnd,
   capabilities,
 }: MediaAssetCardProps) {
   return (
@@ -40,7 +46,10 @@ export function MediaAssetCard({
       className={`media-asset-card ${isSelected ? "is-selected" : ""} ${isActive ? "is-active" : ""}`}
       tabIndex={0}
       aria-label={`${asset.name}, ${asset.kind}`}
+      draggable={capabilities.canMoveAssets}
       onClick={(event) => onActivate(asset, event)}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
@@ -49,6 +58,7 @@ export function MediaAssetCard({
       }}
     >
       <MediaThumbnail asset={asset} />
+      {capabilities.canMoveAssets ? <button className={`media-asset-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}
       <div className="media-card-copy">
         <p className="media-card-meta label-xs">{formatAssetMeta(asset)}</p>
         <p className="media-card-name label-s-semibold" title={asset.name}>{asset.name}</p>
@@ -56,6 +66,7 @@ export function MediaAssetCard({
       <MediaAssetActions
         asset={asset}
         compact
+        showPersistentIndicators
         onComment={onComment}
         onTranscript={onTranscript}
         onShare={onShare}
@@ -73,6 +84,7 @@ export function MediaAssetCard({
 type MediaAssetActionsProps = {
   asset: MediaAssetView;
   compact?: boolean;
+  showPersistentIndicators?: boolean;
   capabilities: MediaCapabilities;
   onComment: (asset: MediaAssetView) => void;
   onTranscript: (asset: MediaAssetView) => void;
@@ -84,7 +96,7 @@ type MediaAssetActionsProps = {
   onRetry: (asset: MediaAssetView) => void;
 };
 
-export function MediaAssetActions({ asset, compact = false, capabilities, onComment, onTranscript, onShare, onDownload, onDelete, onArchive, onRestore, onRetry }: MediaAssetActionsProps) {
+export function MediaAssetActions({ asset, compact = false, showPersistentIndicators = false, capabilities, onComment, onTranscript, onShare, onDownload, onDelete, onArchive, onRestore, onRetry }: MediaAssetActionsProps) {
   const canTranscribe = asset.kind === "video" || asset.kind === "audio";
   const actions = [
     ...(asset.status === "failed" ? [{ label: "Retry", icon: "arrows-clockwise" as const, action: onRetry, disabled: false }] : []),
@@ -98,26 +110,60 @@ export function MediaAssetActions({ asset, compact = false, capabilities, onComm
   ];
 
   return (
-    <div className={`media-asset-actions ${compact ? "is-compact" : ""}`} aria-label={`Actions for ${asset.name}`}>
-      {actions.map((item) => (
-        <button
-          className="media-icon-button"
-          type="button"
-          key={item.label}
-          aria-label={`${item.label} ${asset.name}`}
-          data-tooltip={item.label}
-          disabled={item.disabled}
-          onClick={(event) => {
-            event.stopPropagation();
-            item.action(asset);
-          }}
-        >
-          <DsIcon name={item.icon} size={16} />
-          {item.label === "Comment" && asset.commentCount > 0 ? (
-            <span className="media-comment-count label-xs-semibold">{asset.commentCount}</span>
-          ) : null}
-        </button>
-      ))}
+    <div className={`media-asset-actions ${compact ? "is-compact" : ""} ${showPersistentIndicators && (asset.commentCount > 0 || asset.transcriptStatus === "ready") ? "has-persistent-indicators" : ""}`} aria-label={`Actions for ${asset.name}`}>
+      {actions.map((item) => {
+        const isPersistent = showPersistentIndicators && (
+          (item.label === "Comment" && asset.commentCount > 0) ||
+          (item.label === "Transcript" && asset.transcriptStatus === "ready")
+        );
+
+        return (
+          <button
+            className={`media-icon-button ${isPersistent ? "is-persistent" : ""}`}
+            type="button"
+            key={item.label}
+            aria-label={item.label === "Comment" && asset.commentCount > 0 ? `${asset.commentCount} comment${asset.commentCount === 1 ? "" : "s"} for ${asset.name}` : `${item.label} ${asset.name}`}
+            data-tooltip={item.label}
+            disabled={item.disabled}
+            onClick={(event) => {
+              event.stopPropagation();
+              item.action(asset);
+            }}
+          >
+            <DsIcon name={item.icon} size={16} />
+            {isPersistent && item.label === "Comment" ? <span className="media-comment-count label-xs-semibold">{asset.commentCount}</span> : null}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+type MediaAssetIndicatorsProps = {
+  asset: MediaAssetView;
+  showComments?: boolean;
+  showTranscript?: boolean;
+};
+
+export function MediaAssetIndicators({ asset, showComments = true, showTranscript = true }: MediaAssetIndicatorsProps) {
+  const hasComments = showComments && asset.commentCount > 0;
+  const hasTranscript = showTranscript && asset.transcriptStatus === "ready";
+
+  if (!hasComments && !hasTranscript) return null;
+
+  return (
+    <div className="media-asset-indicators" aria-label="File activity">
+      {hasComments ? (
+        <span className="media-asset-indicator label-xs-semibold" data-tooltip={`${asset.commentCount} comment${asset.commentCount === 1 ? "" : "s"}`}>
+          <DsIcon name="chat-circle" size={14} />
+          <span>{asset.commentCount}</span>
+        </span>
+      ) : null}
+      {hasTranscript ? (
+        <span className="media-asset-indicator" data-tooltip="Transcript available" aria-label="Transcript available">
+          <DsIcon name="file-text" size={14} />
+        </span>
+      ) : null}
     </div>
   );
 }

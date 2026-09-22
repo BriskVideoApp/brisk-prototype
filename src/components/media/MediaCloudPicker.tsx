@@ -74,8 +74,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
       <section className="media-cloud-picker" role="dialog" aria-modal="true" aria-labelledby="media-cloud-picker-title">
         <header className="media-cloud-picker-header">
           <div>
-            <span className="label-xs-semibold">Add from connected storage</span>
-            <h2 id="media-cloud-picker-title">{providerName}</h2>
+            <h2 id="media-cloud-picker-title">Import from {providerName}</h2>
           </div>
           <button className="media-icon-button" type="button" aria-label={`Close ${providerName}`} onClick={onClose}>
             <DsIcon name="x-close-cross" size={16} />
@@ -84,11 +83,11 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
 
         <div className="media-cloud-picker-context">
           <div>
-            <span className="label-xs">Signed in as</span>
+            <span className="label-xs">Account</span>
             <strong className="label-s-semibold">tom@briskstudios.com</strong>
           </div>
           <div>
-            <span className="label-xs">Import to</span>
+            <span className="label-xs">Destination</span>
             <strong className="label-s-semibold"><DsIcon name="folder" size={14} />{folderName}</strong>
           </div>
         </div>
@@ -150,7 +149,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
 
         <footer className="media-cloud-picker-footer">
           <p className="label-xs">
-            Originals stay in {providerName}. Brisk stores a stable provider reference and prepares a separate playback asset.
+            Originals stay in {providerName}. Brisk creates a playable copy.
           </p>
           <div>
             <button className="media-secondary-button label-s-semibold" type="button" onClick={onClose}>Cancel</button>
@@ -161,7 +160,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
               onClick={() => onImport(selectedFiles)}
             >
               <DsIcon name="plus" size={16} />
-              Add {selectedFiles.length > 0 ? selectedFiles.length : ""} {selectedFiles.length === 1 ? "file" : "files"} to Brisk
+              Import {selectedFiles.length > 0 ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "file" : "files"}` : "files"}
             </button>
           </div>
         </footer>

@@ -14,8 +14,6 @@ import {
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
-import { RolePreviewControl } from "@/components/navigation/RolePreviewControl";
-import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { brandKitCustomers } from "@/data/brand-kits";
 import { chatClients, chatProjects, chatUsers } from "@/data/chat";
@@ -82,6 +80,8 @@ export function AppSidebar({
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const historyMenuId = useId();
   const historyControlRef = useRef<HTMLDivElement>(null);
+  const historyPressTimerRef = useRef<number | null>(null);
+  const historyOpenedByPressRef = useRef(false);
   const currentHref = currentSearch ? `${pathname}?${currentSearch}` : pathname;
   const accessProject = contextualProjectId
     ? accessProjectsById[contextualProjectId]
@@ -138,6 +138,10 @@ export function AppSidebar({
     };
   }, [isHistoryOpen]);
 
+  useEffect(() => () => {
+    if (historyPressTimerRef.current) window.clearTimeout(historyPressTimerRef.current);
+  }, []);
+
   useEffect(() => {
     setIsProjectPeopleOpen(false);
   }, [contextualProjectId]);
@@ -149,6 +153,35 @@ export function AppSidebar({
     if (!item) return false;
     return canRoleSeeNavigationItem(item, selectedRole, allPages);
   });
+
+  const clearHistoryPress = () => {
+    if (historyPressTimerRef.current) {
+      window.clearTimeout(historyPressTimerRef.current);
+      historyPressTimerRef.current = null;
+    }
+  };
+
+  const beginHistoryPress = () => {
+    clearHistoryPress();
+    historyOpenedByPressRef.current = false;
+    historyPressTimerRef.current = window.setTimeout(() => {
+      historyOpenedByPressRef.current = true;
+      setIsHistoryOpen(true);
+    }, 500);
+  };
+
+  const goBack = () => {
+    if (historyOpenedByPressRef.current) {
+      historyOpenedByPressRef.current = false;
+      return;
+    }
+    if (onBack) {
+      onBack();
+      onNavigate();
+      return;
+    }
+    window.history.back();
+  };
 
   return (
     <>
@@ -172,50 +205,6 @@ export function AppSidebar({
       </div>
 
       <div className="app-sidebar-history-row">
-        <div className="app-sidebar-history-controls" aria-label="Navigation history">
-          <button type="button" aria-label="Go back" data-tooltip="Back" onClick={() => {
-            if (onBack) {
-              onBack();
-              onNavigate();
-              return;
-            }
-
-            window.history.back();
-          }}>
-            <DsIcon name="arrow-left" size={18} />
-          </button>
-          <button className="is-forward" type="button" aria-label="Go forward" data-tooltip="Forward" onClick={() => window.history.forward()}>
-            <DsIcon name="arrow-left" size={18} />
-          </button>
-          <div className="app-sidebar-history-control" ref={historyControlRef}>
-            <button
-              type="button"
-              aria-label="Show recent pages"
-              aria-controls={historyMenuId}
-              aria-expanded={isHistoryOpen}
-              data-tooltip="Recent pages"
-              onClick={() => setIsHistoryOpen((current) => !current)}
-            >
-              <DsIcon name="clock-clockwise" size={18} />
-            </button>
-            {isHistoryOpen ? (
-              <section className="app-sidebar-history-menu" id={historyMenuId} aria-label="Recent pages">
-                <p className="label-s-semibold">Recent</p>
-                {visibleRecentPages.length > 0 ? visibleRecentPages.map((page) => (
-                  <Link href={page.href} key={page.href} onClick={() => {
-                    setIsHistoryOpen(false);
-                    onNavigate();
-                  }}>
-                    <DsIcon name={page.icon} size={16} />
-                    <span className="label-s-semibold">{page.label}</span>
-                  </Link>
-                )) : (
-                  <span className="label-xs">No recent pages yet.</span>
-                )}
-              </section>
-            ) : null}
-          </div>
-        </div>
         <button
           className="app-sidebar-collapse"
           type="button"
@@ -227,10 +216,6 @@ export function AppSidebar({
         >
           <DsIcon name={isCollapsed ? "caret-right" : "caret-left"} size={18} />
         </button>
-      </div>
-
-      <div className="app-sidebar-role-preview">
-        <RolePreviewControl />
       </div>
 
       <nav className="app-sidebar-navigation" id="brisk-primary-navigation" aria-label="Brisk product">
@@ -362,7 +347,6 @@ export function AppSidebar({
           <span className="app-sidebar-copy label-xs">Prototype review tool</span>
         </div>
       ) : null}
-      <UserAvatarMenu placement="sidebar" onNavigate={onNavigate} />
       </aside>
       {isProjectPeopleOpen && accessProject ? (
         <ProjectMemberSettings

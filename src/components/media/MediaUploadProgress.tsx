@@ -7,12 +7,11 @@ type MediaUploadProgressProps = {
   assets: MediaAssetView[];
   destinationLabel: string;
   projectName: string;
-  storageHelper: string;
   onClose: () => void;
   onRetry: (assetId: string) => void;
 };
 
-export function MediaUploadProgress({ assets, destinationLabel, projectName, storageHelper, onClose, onRetry }: MediaUploadProgressProps) {
+export function MediaUploadProgress({ assets, destinationLabel, projectName, onClose, onRetry }: MediaUploadProgressProps) {
   if (assets.length === 0) return null;
   const complete = assets.every((asset) => asset.status === "ready");
 
@@ -32,7 +31,6 @@ export function MediaUploadProgress({ assets, destinationLabel, projectName, sto
         <div className="media-upload-progress-context">
           <div><span className="label-xs">Project</span><strong className="label-s-semibold">{projectName}</strong></div>
           <div><span className="label-xs">Brisk folder</span><strong className="label-s-semibold">{destinationLabel}</strong></div>
-          <p className="label-xs"><DsIcon name="info" size={14} />{storageHelper}</p>
         </div>
 
         <div className="media-upload-progress-list" aria-live="polite">

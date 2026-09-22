@@ -1,77 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useId, useRef, useState } from "react";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
-import {
-  formatAbsoluteNotificationTime,
-  formatNotificationRelativeTime,
-} from "@/components/notifications/NotificationInboxItem";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
-import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import type { NotificationSemanticState } from "@/components/notifications/types";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatProjects } from "@/data/chat";
 import { notificationInboxRecipientByRole } from "@/data/notification-inbox";
-import { getVisibleActivityFeed } from "@/data/project-history";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { canRoleSeeNavigationItem, getNavigationItem } from "@/components/navigation/navigationConfig";
+import type { DsIconName } from "@/components/video-review/DsIcon";
 
 export const openCustomerLatestActivityEventName = "brisk:open-customer-latest-activity";
 export const openCustomerGlobalChatEventName = "brisk:open-customer-global-chat";
+const recentPagesStorageKey = "brisk-recent-pages-v2";
+
+type RecentPage = {
+  href: string;
+  label: string;
+  icon: DsIconName;
+};
 
 export function GlobalHeaderActions() {
   const pathname = usePathname();
-  const { selectedRole } = usePrototypeRole();
+  const searchParams = useSearchParams();
+  const { selectedRole, allPages } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
   const { actions: shootActions } = useShootGlobalActions();
-  const [isActivityOpen, setIsActivityOpen] = useState(false);
-  const activityPopoverId = useId();
-  const activityControlRef = useRef<HTMLDivElement>(null);
   const usesCustomerDashboardDrawers = selectedRole !== "Studio Freelancer" && pathname === "/customer-dashboard";
   const isScenarioEmpty = activeScenario?.state === "new";
   const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(selectedRole);
-  const activityEntries = useMemo(
-    () => (isScenarioEmpty ? [] : getVisibleActivityFeed(selectedRole)).filter(
-      (entry): entry is typeof entry & { href: string } => entry.href !== null,
-    ).slice(0, 6),
-    [isScenarioEmpty, selectedRole],
-  );
-
-  useEffect(() => {
-    setIsActivityOpen(false);
-  }, [pathname, selectedRole]);
-
-  useEffect(() => {
-    if (!isActivityOpen) return;
-
-    const closeOutside = (event: MouseEvent) => {
-      if (!activityControlRef.current?.contains(event.target as Node)) {
-        setIsActivityOpen(false);
-      }
-    };
-    const closeWithEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsActivityOpen(false);
-    };
-
-    document.addEventListener("mousedown", closeOutside);
-    document.addEventListener("keydown", closeWithEscape);
-    return () => {
-      document.removeEventListener("mousedown", closeOutside);
-      document.removeEventListener("keydown", closeWithEscape);
-    };
-  }, [isActivityOpen]);
-
-  const openLatestActivity = () => {
-    if (usesCustomerDashboardDrawers) {
-      window.dispatchEvent(new Event(openCustomerLatestActivityEventName));
-      return;
-    }
-
-    setIsActivityOpen((current) => !current);
-  };
 
   const openCustomerChat = () => {
     window.dispatchEvent(new Event(openCustomerGlobalChatEventName));
@@ -103,98 +65,131 @@ export function GlobalHeaderActions() {
   return (
     <nav className="app-global-header-actions" aria-label="Global actions">
       {shootActions ? <ShootActionsMenu actions={shootActions} /> : null}
-      <NotificationBell />
-      <div className="app-global-activity-control" ref={activityControlRef}>
-        <button
-          className={`app-global-action-button ${isActivityOpen ? "is-active" : ""}`}
-          type="button"
-          aria-label="Open latest activity"
-          aria-controls={usesCustomerDashboardDrawers ? undefined : activityPopoverId}
-          aria-expanded={usesCustomerDashboardDrawers ? undefined : isActivityOpen}
-          data-tooltip={isActivityOpen ? undefined : "Latest activity"}
-          onClick={openLatestActivity}
-        >
-          <DsIcon name="clock-clockwise" size={20} />
-        </button>
-
-        {isActivityOpen ? (
-          <section
-            className="notification-popover app-global-activity-popover"
-            id={activityPopoverId}
-            aria-label="Latest activity"
-          >
-            <header className="notification-popover-header">
-              <div>
-                <h2 className="headings-xs-bold">Latest activity</h2>
-                <span className="label-xs">Updates across your projects.</span>
-              </div>
-              <div className="notification-popover-actions">
-                <button
-                  className="notification-popover-close"
-                  type="button"
-                  aria-label="Close latest activity"
-                  onClick={() => setIsActivityOpen(false)}
-                >
-                  <DsIcon name="x-close-cross" size={16} />
-                </button>
-              </div>
-            </header>
-
-            {activityEntries.length ? (
-              <div className="notification-popover-list">
-                {activityEntries.map((entry) => (
-                  <article className="notification-inbox-item is-read is-compact" key={entry.id}>
-                    <div className="notification-inbox-item-layout">
-                      <span
-                        className={`notification-inbox-item-icon is-${entry.state}`}
-                        role="img"
-                        aria-label={`Status: ${entry.label}`}
-                      >
-                        <DsIcon name={getActivityIcon(entry.state)} size={16} />
-                      </span>
-                      <Link
-                        className="notification-inbox-item-main-link"
-                        href={entry.href}
-                        aria-label={`${entry.action}. ${entry.entityLabel}. ${formatAbsoluteNotificationTime(entry.occurredAt)}`}
-                        onClick={() => setIsActivityOpen(false)}
-                      >
-                        <span className="notification-inbox-item-title-row">
-                          <strong className="label-s-semibold">{entry.action}</strong>
-                        </span>
-                        <span className="notification-inbox-item-meta label-xs">{entry.entityLabel}</span>
-                      </Link>
-                      <time
-                        className="notification-inbox-item-time label-xs"
-                        dateTime={entry.occurredAt}
-                        title={formatAbsoluteNotificationTime(entry.occurredAt)}
-                      >
-                        {formatNotificationRelativeTime(entry.occurredAt)}
-                      </time>
-                      <Link
-                        className="notification-inbox-item-chevron"
-                        href={entry.href}
-                        aria-label={`Open ${entry.action}`}
-                        onClick={() => setIsActivityOpen(false)}
-                      >
-                        <DsIcon name="caret-right" size={16} />
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="notification-popover-empty">
-                <DsIcon name="clock-clockwise" size={24} />
-                <strong className="label-s-semibold">No activity to show</strong>
-                <span className="label-xs">Actions you can access will appear here.</span>
-              </div>
-            )}
-          </section>
-        ) : null}
-      </div>
+      <HistoryBackControl pathname={pathname} search={searchParams.toString()} role={selectedRole} allPages={allPages} />
+      <button className="app-global-action-button app-global-history-forward" type="button" aria-label="Go forward" data-tooltip="Forward" onClick={() => window.history.forward()}>
+        <DsIcon name="arrow-left" size={20} />
+      </button>
       {chatControl}
+      <NotificationBell />
     </nav>
   );
+}
+
+function HistoryBackControl({ pathname, search, role, allPages }: { pathname: string; search: string; role: PrototypeRole; allPages: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [recentPages, setRecentPages] = useState<RecentPage[]>([]);
+  const controlRef = useRef<HTMLDivElement>(null);
+  const pressTimerRef = useRef<number | null>(null);
+  const openedByPressRef = useRef(false);
+  const menuId = useId();
+  const currentHref = search ? `${pathname}?${search}` : pathname;
+  const currentItem = getNavigationItem(pathname, search);
+
+  useEffect(() => {
+    if (!currentItem) return;
+    const storedPages = readRecentPages();
+    const currentPage: RecentPage = { href: currentHref, label: currentItem.label, icon: currentItem.icon };
+    const nextPages = [currentPage, ...storedPages.filter((page) => page.href !== currentHref)].slice(0, 12);
+    window.localStorage.setItem(recentPagesStorageKey, JSON.stringify(nextPages));
+    setRecentPages(nextPages);
+  }, [currentHref, currentItem]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const close = (event: MouseEvent) => {
+      if (!controlRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+    const closeWithEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", closeWithEscape);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", closeWithEscape);
+    };
+  }, [isOpen]);
+
+  useEffect(() => () => {
+    if (pressTimerRef.current) window.clearTimeout(pressTimerRef.current);
+  }, []);
+
+  const visibleRecentPages = recentPages.filter((page) => {
+    if (page.href === currentHref) return false;
+    const [recentPathname, recentSearch = ""] = page.href.split("?");
+    const item = getNavigationItem(recentPathname, recentSearch);
+    return Boolean(item && canRoleSeeNavigationItem(item, role, allPages));
+  });
+
+  const clearPress = () => {
+    if (pressTimerRef.current) {
+      window.clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+  };
+
+  const startPress = () => {
+    clearPress();
+    openedByPressRef.current = false;
+    pressTimerRef.current = window.setTimeout(() => {
+      openedByPressRef.current = true;
+      setIsOpen(true);
+    }, 500);
+  };
+
+  return (
+    <div className="app-global-history-control" ref={controlRef}>
+      <button
+        className="app-global-action-button"
+        type="button"
+        aria-label="Go back"
+        aria-controls={menuId}
+        aria-expanded={isOpen}
+        data-tooltip="Back - press and hold for history"
+        onPointerDown={startPress}
+        onPointerUp={clearPress}
+        onPointerLeave={clearPress}
+        onPointerCancel={clearPress}
+        onClick={() => {
+          if (openedByPressRef.current) {
+            openedByPressRef.current = false;
+            return;
+          }
+          window.history.back();
+        }}
+      >
+        <DsIcon name="arrow-left" size={20} />
+      </button>
+      {isOpen ? (
+        <div className="app-global-history-menu" id={menuId} role="menu" aria-label="Recent pages">
+          {visibleRecentPages.length ? visibleRecentPages.map((page) => (
+            <Link href={page.href} key={page.href} role="menuitem" onClick={() => setIsOpen(false)}>
+              <DsIcon name={page.icon} size={16} />
+              <span>{page.label}</span>
+            </Link>
+          )) : <span className="label-s">No recent pages yet.</span>}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function readRecentPages(): RecentPage[] {
+  try {
+    const stored = window.localStorage.getItem(recentPagesStorageKey);
+    if (!stored) return [];
+    const parsed: unknown = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isRecentPage);
+  } catch {
+    return [];
+  }
+}
+
+function isRecentPage(value: unknown): value is RecentPage {
+  if (!value || typeof value !== "object") return false;
+  const page = value as Record<string, unknown>;
+  return typeof page.href === "string" && typeof page.label === "string" && typeof page.icon === "string";
 }
 
 function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
@@ -220,12 +215,6 @@ function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
     onSendToStudio={actions.onSendToStudio}
     onUnapprove={actions.onUnapprove}
   />;
-}
-
-function getActivityIcon(state: NotificationSemanticState): DsIconName {
-  if (state === "success") return "check-circle";
-  if (state === "warning" || state === "failure") return "alert-triangle";
-  return "info";
 }
 
 function getChatUnreadCount(role: PrototypeRole) {

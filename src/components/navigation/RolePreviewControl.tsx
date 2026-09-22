@@ -18,7 +18,7 @@ import {
   getScopedRoleHome,
 } from "@/components/navigation/prototypeNavigation";
 
-export function RolePreviewControl() {
+export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -49,6 +49,26 @@ export function RolePreviewControl() {
     if (!nextAllPages && currentItem && !canRoleSeeNavigationItem(currentItem, selectedRole, false)) {
       router.push(getScopedRoleHome(selectedRole, clientPortalDestination));
     }
+  }
+
+  if (compact) {
+    return (
+      <section className="role-preview-control is-compact" aria-label="Prototype view">
+        <div className="role-preview-options" role="group" aria-label="View as role">
+          {prototypeRoles.map((role) => (
+            <button
+              className={`label-xs-semibold ${selectedRole === role ? "is-active" : ""}`}
+              type="button"
+              aria-pressed={selectedRole === role}
+              key={role}
+              onClick={() => selectRole(role)}
+            >
+              {prototypeRoleLabels[role]}
+            </button>
+          ))}
+        </div>
+      </section>
+    );
   }
 
   return (

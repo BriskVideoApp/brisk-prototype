@@ -1,5 +1,6 @@
 import type { Project, ProjectVideoType } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
+import { getProjectFixture } from "@/data/project-fixtures";
 import {
   clients as populatedClients,
   getClientInitials,
@@ -26,6 +27,14 @@ import {
 export const northStarWorkspaceId = "northstar-films";
 export const northStarWorkspaceName = "North Star Films";
 export const prototypeStateStorageKey = "brisk-prototype-state-v1";
+
+const loomPortalProjectIds = [
+  "loom-launch-film",
+  "loom-wacf-01",
+  "loom-product-tour",
+  "loom-customer-stories",
+  "loom-q3-recap",
+] as const;
 
 export type PrototypeFixtureKind = "populated-studio" | "onboarding-empty";
 export type PrototypeUserRole = "Studio Staff" | "Studio Freelancer" | "Client";
@@ -212,7 +221,13 @@ export function createPopulatedStudioFixture(): PrototypeState {
   const clients = [...populatedClients.map(cloneClient), harbourClient]
     .map((client) => ({ ...client, workspaceId: northStarWorkspaceId }));
   const harbourProject = makeHarbourProject();
-  const projects = [...activeVideoProjects.map(cloneProject), harbourProject]
+  const activeProjectIds = new Set(activeVideoProjects.map((project) => project.id));
+  const loomPortalProjects = loomPortalProjectIds
+    .filter((projectId) => !activeProjectIds.has(projectId))
+    .map((projectId) => getProjectFixture(projectId))
+    .filter((project): project is Project => project !== null)
+    .map(cloneProject);
+  const projects = [...activeVideoProjects.map(cloneProject), ...loomPortalProjects, harbourProject]
     .map((project) => ({
       ...project,
       workspaceId: northStarWorkspaceId,

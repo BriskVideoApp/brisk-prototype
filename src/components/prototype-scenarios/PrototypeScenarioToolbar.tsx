@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { RolePreviewControl } from "@/components/navigation/RolePreviewControl";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 type ToolbarPosition = {
@@ -23,6 +24,74 @@ const toolbarViewportInset = 8;
 const toolbarKeyboardMoveStep = 16;
 
 export function PrototypeScenarioToolbar({ inline = false }: { inline?: boolean }) {
+  if (inline) return <InlinePrototypeScenarioToolbar />;
+
+  return <FloatingPrototypeScenarioToolbar />;
+}
+
+function InlinePrototypeScenarioToolbar() {
+  const menuRef = useRef<HTMLDetailsElement>(null);
+  const {
+    activeScenario,
+    hasLoadedScenario,
+    resetScenario,
+  } = usePrototypeScenario();
+
+  useEffect(() => {
+    const closeWhenClickingOutside = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        menuRef.current?.removeAttribute("open");
+      }
+    };
+    const closeWithEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") menuRef.current?.removeAttribute("open");
+    };
+
+    document.addEventListener("mousedown", closeWhenClickingOutside);
+    document.addEventListener("keydown", closeWithEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeWhenClickingOutside);
+      document.removeEventListener("keydown", closeWithEscape);
+    };
+  }, []);
+
+  if (!hasLoadedScenario || !activeScenario) return null;
+
+  return (
+    <div className="prototype-scenario-toolbar-inline-group">
+      <RolePreviewControl compact />
+      <details className="prototype-scenario-toolbar-inline" aria-label="Prototype controls" ref={menuRef}>
+        <summary className="label-s-semibold">
+          Test mode
+          <DsIcon name="caret-down" size={16} />
+        </summary>
+        <div className="prototype-scenario-toolbar-inline-panel">
+          <Button size="S" variant="secondary" onClick={resetScenario}>Reset</Button>
+          <div className="prototype-scenario-toolbar-inline-links">
+            <Link href="/prototype/scenarios">
+              <DsIcon name="circles-three" size={16} />
+              <span className="label-s-semibold">Testing scenarios</span>
+            </Link>
+            <Link href="/prototype/production-flow">
+              <DsIcon name="circles-three" size={16} />
+              <span className="label-s-semibold">Production flow</span>
+            </Link>
+            <Link href="/share">
+              <DsIcon name="link" size={16} />
+              <span className="label-s-semibold">Share controls</span>
+            </Link>
+            <Link href="/studio-onboard">
+              <DsIcon name="sparkle" size={16} />
+              <span className="label-s-semibold">Studio onboarding</span>
+            </Link>
+          </div>
+        </div>
+      </details>
+    </div>
+  );
+}
+
+function FloatingPrototypeScenarioToolbar() {
   const toolbarRef = useRef<HTMLElement>(null);
   const [position, setPosition] = useState<ToolbarPosition | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -142,12 +211,12 @@ export function PrototypeScenarioToolbar({ inline = false }: { inline?: boolean 
 
   return (
     <aside
-      className={`prototype-scenario-toolbar${inline ? " is-inline" : ""}${isCollapsed ? " is-collapsed" : ""}${isDragging ? " is-dragging" : ""}`}
+      className={`prototype-scenario-toolbar${isCollapsed ? " is-collapsed" : ""}${isDragging ? " is-dragging" : ""}`}
       aria-label="Active prototype test scenario"
       ref={toolbarRef}
-      style={!inline && position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}
+      style={position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}
     >
-      {!inline ? <button
+      <button
         className="prototype-scenario-toolbar-handle"
         type="button"
         aria-label="Move test toolbar"
@@ -156,7 +225,7 @@ export function PrototypeScenarioToolbar({ inline = false }: { inline?: boolean 
         onPointerDown={beginDrag}
       >
         <DsIcon name="dots-six-vertical" size={18} />
-      </button> : null}
+      </button>
       <div className={`prototype-scenario-toolbar-copy${isCollapsed ? " is-collapsed" : ""}`}>
         <span className="label-xs-semibold">Test mode</span>
         {isCollapsed ? (
@@ -172,6 +241,8 @@ export function PrototypeScenarioToolbar({ inline = false }: { inline?: boolean 
       </div>
       {!isCollapsed ? (
         <div className="prototype-scenario-toolbar-actions">
+          <RolePreviewControl compact />
+          <span className="prototype-scenario-toolbar-divider" aria-hidden="true" />
           <Button size="S" variant="ghost" onClick={returnToStartingPoint}>Starting point</Button>
           <Button size="S" variant="secondary" onClick={resetScenario}>Reset</Button>
           <Link className="prototype-scenario-toolbar-link label-s-semibold" href="/prototype/scenarios">

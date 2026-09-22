@@ -83,7 +83,7 @@ type LauncherDrag = {
 const launcherPositionStorageKey = "brisk-ai-launcher-position-v1";
 const launcherDragThreshold = 5;
 
-export function BriskAiAssistant() {
+export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: boolean }) {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
   const { studio } = useStudioSettings();
@@ -736,7 +736,7 @@ export function BriskAiAssistant() {
 
   return (
     <>
-      {view === "closed" || view === "minimised" ? (
+      {showLauncher && (view === "closed" || view === "minimised") ? (
         <button
           ref={launcherRef}
           className={`brisk-ai-launcher ${isLauncherDragging ? "is-dragging" : ""}`}
@@ -860,6 +860,23 @@ export function BriskAiAssistant() {
 
       {toast ? <div className="brisk-ai-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} />{toast}</div> : null}
     </>
+  );
+}
+
+export function BriskAiHeaderButton() {
+  const { openAssistant, view } = useBriskAi();
+
+  return (
+    <button
+      className="app-global-client-brand-kit app-global-brisk-ai label-s-semibold"
+      type="button"
+      aria-expanded={view !== "closed" && view !== "minimised"}
+      aria-label="Open Brisk AI"
+      onClick={() => openAssistant()}
+    >
+      <DsIcon name="sparkle" size={16} />
+      Brisk AI
+    </button>
   );
 }
 

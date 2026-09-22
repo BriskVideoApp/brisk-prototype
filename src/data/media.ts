@@ -73,7 +73,7 @@ export const mediaPeople: Record<string, string> = {
 };
 
 export const mediaStorageLocations: MediaStorageLocation[] = [
-  { id: "brisk-main", provider: "brisk-storage", label: "Brisk Storage", helper: "Original stored in Brisk Storage.", limitBytes: 100_000_000_000 },
+  { id: "brisk-main", provider: "brisk-storage", label: "Brisk Storage", helper: "Your original files are safely saved here.", limitBytes: 100_000_000_000 },
   { id: "drive-main", provider: "google-drive", label: "Google Drive", helper: "Original stored in your connected Google Drive." },
   { id: "dropbox-main", provider: "dropbox", label: "Dropbox", helper: "Original stored in your connected Dropbox." },
   { id: "remote-studio-main", provider: "remote-studio", label: "Remote Studio", helper: "Original stored in Remote Studio." },

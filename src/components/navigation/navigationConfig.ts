@@ -43,7 +43,6 @@ const allRoles: readonly PrototypeRole[] = [
 const studioRoles: readonly PrototypeRole[] = ["Studio Staff", "Studio Freelancer"];
 const studioOnly: readonly PrototypeRole[] = ["Studio Staff"];
 const clientOnly: readonly PrototypeRole[] = ["Customer"];
-const clientDashboardRoles: readonly PrototypeRole[] = ["Studio Staff", "Customer"];
 const personalSettingsRoles: readonly PrototypeRole[] = allRoles;
 
 const projectIconByExperience: Record<DemoProjectExperience, DsIconName> = {
@@ -105,7 +104,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
         label: "Media Library",
         href: "/media",
         icon: "image-square",
-        roles: allRoles,
+        roles: studioRoles,
       },
       {
         id: "outstanding-invoices",
@@ -120,14 +119,14 @@ export const navigationGroups: readonly NavigationGroup[] = [
         label: "Client portal",
         href: "/prototype/scenarios",
         icon: "grid-four",
-        roles: clientDashboardRoles,
+        roles: studioOnly,
       },
       {
         id: "chat",
         label: "Chat",
         href: "/chat",
         icon: "chats",
-        roles: allRoles,
+        roles: studioRoles,
       },
       {
         id: "notifications",
@@ -218,13 +217,6 @@ export const navigationGroups: readonly NavigationGroup[] = [
         href: "/brand-kits",
         icon: "frame-corners",
         roles: studioRoles,
-      },
-      {
-        id: "client-brand-kit",
-        label: "Brand Kit",
-        href: `/brand-kits/${primaryDemoProject.customerSlug}`,
-        icon: "frame-corners",
-        roles: clientOnly,
       },
     ],
   },
