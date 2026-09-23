@@ -676,6 +676,19 @@ export function updateProjectBriefState(
   };
 }
 
+export function updateProjectStatusState(
+  state: PrototypeState,
+  projectId: string,
+  status: Project["status"],
+): PrototypeState {
+  return {
+    ...state,
+    projects: state.projects.map((project) => project.id === projectId && project.workspaceId === state.session.activeWorkspaceId
+      ? { ...project, status }
+      : project),
+  };
+}
+
 export function selectWorkspace(state: PrototypeState, workspaceId: string) {
   return state.workspaces.find((workspace) => workspace.id === workspaceId) ?? null;
 }

@@ -28,6 +28,7 @@ import {
   updateStudioBriefTemplateState,
   updateOnboardingProgressState,
   updateProjectBriefState,
+  updateProjectStatusState,
   updateWorkspaceBrandingState,
   updateWorkspaceDetailsState,
   type PrototypeOnboardingProgress,
@@ -57,6 +58,7 @@ type PrototypeStateContextValue = {
   completeOnboarding: () => void;
   updateOnboardingProgress: (update: Partial<PrototypeOnboardingProgress>) => void;
   updateProjectBrief: (projectId: string, fields: BriefFields) => void;
+  updateProjectStatus: (projectId: string, status: ScopedProject["status"]) => void;
   updateStudioTemplate: (update: Pick<StudioBriefTemplate, "configuration" | "videoTypeIds" | "customVideoTypes" | "customVideoType">) => void;
   updateWorkspaceBranding: (branding: StudioBranding) => void;
   updateWorkspaceDetails: (details: StudioDetails) => void;
@@ -166,6 +168,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     completeOnboarding: () => commitState(completeOnboardingState),
     updateOnboardingProgress: (update) => commitState((current) => updateOnboardingProgressState(current, update)),
     updateProjectBrief: (projectId, fields) => commitState((current) => updateProjectBriefState(current, projectId, fields)),
+    updateProjectStatus: (projectId, status) => commitState((current) => updateProjectStatusState(current, projectId, status)),
     updateStudioTemplate: (update) => commitState((current) => updateStudioBriefTemplateState(current, update)),
     updateWorkspaceBranding: (branding) => commitState((current) => updateWorkspaceBrandingState(current, branding)),
     updateWorkspaceDetails: (details) => commitState((current) => updateWorkspaceDetailsState(current, details)),

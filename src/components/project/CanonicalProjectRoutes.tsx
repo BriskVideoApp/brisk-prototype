@@ -2,17 +2,8 @@
 
 import Link from "next/link";
 import { BriefPage } from "@/components/brief/BriefPage";
-import { ProjectOverviewPage } from "@/components/project/ProjectOverviewPage";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { selectProject, selectProjectBrief, selectWorkspace } from "@/data/prototype-state";
-
-export function CanonicalProjectOverviewRoute({ projectId }: { projectId: string }) {
-  const { state } = usePrototypeState();
-  const project = selectProject(state, projectId);
-  if (!project) return <ProjectUnavailable />;
-  const workspace = selectWorkspace(state, project.workspaceId);
-  return <ProjectOverviewPage project={project} studioName={workspace?.name ?? "Studio"} />;
-}
+import { selectProject, selectProjectBrief } from "@/data/prototype-state";
 
 export function CanonicalProjectBriefRoute({ projectId }: { projectId: string }) {
   const { state, updateProjectBrief } = usePrototypeState();

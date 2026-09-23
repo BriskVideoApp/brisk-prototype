@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { type ReactNode } from "react";
-import { GlobalHeaderActions } from "@/components/navigation/GlobalHeaderActions";
+import { type ReactNode, useEffect, useState } from "react";
+import { GlobalHeaderActions, openCustomerGlobalChatEventName } from "@/components/navigation/GlobalHeaderActions";
 import { ShootGlobalActionsProvider } from "@/components/navigation/ShootGlobalActionsContext";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { BriskAiAssistant, BriskAiHeaderButton } from "@/components/ai/BriskAiAssistant";
@@ -14,9 +14,12 @@ import { prototypeCustomerSlug, usePrototypeRole } from "@/components/navigation
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { getAppShellPresentation, getClientPortalDestination } from "@/components/navigation/prototypeNavigation";
+import { ChatPage } from "@/components/chat/ChatPage";
+import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [isGlobalChatOpen, setIsGlobalChatOpen] = useState(false);
   const { activeScenario } = usePrototypeScenario();
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
@@ -26,6 +29,22 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isStudioStaff = selectedRole === "Studio Staff";
   const isStudioUser = selectedRole !== "Customer";
   const videosHref = selectedRole === "Customer" ? clientPortalHref ?? "/prototype/scenarios" : "/active-videos";
+
+  useEffect(() => {
+    if (pathname === "/customer-dashboard") return;
+    const openGlobalChat = () => setIsGlobalChatOpen(true);
+    window.addEventListener(openCustomerGlobalChatEventName, openGlobalChat);
+    return () => window.removeEventListener(openCustomerGlobalChatEventName, openGlobalChat);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isGlobalChatOpen) return;
+    const closeWithEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsGlobalChatOpen(false);
+    };
+    window.addEventListener("keydown", closeWithEscape);
+    return () => window.removeEventListener("keydown", closeWithEscape);
+  }, [isGlobalChatOpen]);
 
   if (presentation === "standalone") {
     return children;
@@ -93,6 +112,27 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="app-shell-content">{children}</div>
           </div>
           <BriskAiAssistant />
+          {isGlobalChatOpen ? (
+            <div className="customer-chat-backdrop" role="presentation" onMouseDown={() => setIsGlobalChatOpen(false)}>
+              <aside
+                className="customer-chat-drawer"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Global Chat"
+                onMouseDown={(event) => event.stopPropagation()}
+              >
+                <button
+                  className="customer-chat-close"
+                  type="button"
+                  aria-label="Close Chat"
+                  onClick={() => setIsGlobalChatOpen(false)}
+                >
+                  <DsIcon name="x-close-cross" size={18} />
+                </button>
+                <ChatPage key="global-chat-drawer" embedded initialProjectId={null} />
+              </aside>
+            </div>
+          ) : null}
         </div>
       </div>
     </ShootGlobalActionsProvider>

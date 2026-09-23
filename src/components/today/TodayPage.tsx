@@ -9,12 +9,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { formatHours, getAcceptedPerson, snapToQuarter, stageLabels } from "@/data/active-videos/teamDefaults";
+import { formatHours, getAcceptedPerson, mockTeamPeople, snapToQuarter, stageLabels } from "@/data/active-videos/teamDefaults";
 import { todayCurrentUserId, todayReferenceDate, todayTimeEntries } from "@/data/today/mockData";
 import { readSharedTimeEntries, sharedTimeEntriesEventName, toTodayTimeEntry } from "@/data/timeEntries/sharedTimeEntries";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import type { Project, StageKey } from "@/components/active-videos/types";
+import type { Project, StageKey, TeamPerson } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
 import { FreelancerTodayPage } from "./FreelancerTodayPage";
@@ -74,6 +74,7 @@ function StudioTodayPage() {
   const effectivePreviewState = activeScenario?.state === "new" ? "empty" : previewState;
   const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
   const [weekOffset, setWeekOffset] = useState(0);
+  const [viewedPersonId, setViewedPersonId] = useState(todayCurrentUserId);
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
   const [todoLanePercent, setTodoLanePercent] = useState(defaultTodoLanePercent);
@@ -96,11 +97,16 @@ function StudioTodayPage() {
   }, []);
 
   const weekDays = useMemo(() => getWeekDays(weekOffset), [weekOffset]);
-  const projectCards = useMemo(
-    () => deriveProjectCards(scenarioProjects, todayCurrentUserId, entries),
-    [entries, scenarioProjects],
+  const studioTeamMembers = useMemo(() => mockTeamPeople, []);
+  const visibleEntries = useMemo(
+    () => entries.filter((entry) => entry.personId === viewedPersonId),
+    [entries, viewedPersonId],
   );
-  const entriesByDay = useMemo(() => groupEntriesByDay(entries, weekDays), [entries, weekDays]);
+  const projectCards = useMemo(
+    () => deriveProjectCards(scenarioProjects, viewedPersonId, visibleEntries),
+    [scenarioProjects, viewedPersonId, visibleEntries],
+  );
+  const entriesByDay = useMemo(() => groupEntriesByDay(visibleEntries, weekDays), [visibleEntries, weekDays]);
   const weekTotals = useMemo(
     () =>
       weekDays.reduce<EntryTotals>(
@@ -109,7 +115,7 @@ function StudioTodayPage() {
       ),
     [entriesByDay, weekDays],
   );
-  const editorEntry = editorState ? entries.find((entry) => entry.id === editorState.entryId) ?? null : null;
+  const editorEntry = editorState ? visibleEntries.find((entry) => entry.id === editorState.entryId) ?? null : null;
 
   const updateEntry = (entryId: string, updater: (entry: TodayTimeEntry) => TodayTimeEntry) => {
     setEntries((currentEntries) =>
@@ -164,6 +170,12 @@ function StudioTodayPage() {
           onPreviousWeek={() => setWeekOffset((currentOffset) => currentOffset - 1)}
           onNextWeek={() => setWeekOffset((currentOffset) => currentOffset + 1)}
           onThisWeek={() => setWeekOffset(0)}
+          teamMembers={studioTeamMembers}
+          viewedPersonId={viewedPersonId}
+          onViewedPersonChange={(personId) => {
+            setViewedPersonId(personId);
+            setEditorState(null);
+          }}
         />
 
         {selectedRole === "Studio Staff" ? showOnboardingClientPrompt ? (
@@ -235,12 +247,18 @@ function TodayHeader({
   onPreviousWeek,
   onNextWeek,
   onThisWeek,
+  teamMembers,
+  viewedPersonId,
+  onViewedPersonChange,
 }: {
   weekDays: WeekDay[];
   weekTotals: EntryTotals;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   onThisWeek: () => void;
+  teamMembers: TeamPerson[];
+  viewedPersonId: string;
+  onViewedPersonChange: (personId: string) => void;
 }) {
   const firstDay = weekDays[0];
   const lastDay = weekDays[weekDays.length - 1];
@@ -263,6 +281,12 @@ function TodayHeader({
             <DsIcon name="caret-right" size={16} />
           </button>
         </div>
+        <label className="today-viewer-picker label-s-semibold">
+          <span>Viewing</span>
+          <select value={viewedPersonId} aria-label="Choose whose Today view to see" onChange={(event) => onViewedPersonChange(event.target.value)}>
+            {teamMembers.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
+          </select>
+        </label>
         <span className="today-week-total label-s-semibold">
           {formatHours(weekTotals.planned)} planned · {formatHours(weekTotals.done)} done
         </span>
@@ -299,7 +323,11 @@ function ProjectCard({ projectCard }: { projectCard: TodayProjectCard }) {
   return (
     <div className="today-project-card" draggable onDragStart={handleDragStart}>
       <div className="today-project-card-line">
-        <strong className="label-s-semibold">{projectCard.projectName}</strong>
+        <strong className="label-s-semibold">
+          <Link className="today-project-card-title" href={`/projects/${encodeURIComponent(projectCard.id)}/stages/brief`}>
+            {projectCard.projectName}
+          </Link>
+        </strong>
         <span className="today-client-badge label-xs-semibold">{projectCard.clientBadge}</span>
         {projectCard.isCritical ? <DsIcon name="fire-simple" size={15} /> : null}
       </div>
@@ -773,7 +801,7 @@ function deriveProjectCards(projects: Project[], currentUserId: string, entries:
     .flatMap((project) => {
       const currentUserRoles = project.team.filter((roleSlot) => {
         const person = getAcceptedPerson(roleSlot);
-        return person?.id === currentUserId && person.personType === "Studio Staff" && roleSlot.stages.some((stage) => stage.estimatedHours > 0);
+        return person?.id === currentUserId && roleSlot.stages.some((stage) => stage.estimatedHours > 0);
       });
       const todayEntriesForProject = entries.filter((entry) => entry.projectId === project.id && entry.personId === currentUserId);
 

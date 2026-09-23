@@ -73,7 +73,7 @@ export function ProjectCostsPage({ project }: { project: Project }) {
             <h1 className="headings-m-bold" id="project-costs-heading">Project costs</h1>
             <p className="paragraph-s">See what you agreed to pay, review invoices and mark them as paid.</p>
           </div>
-          <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}`}>Manage offers</Link>
+          <Link className="costs-text-action label-s-semibold" href={`/active-videos?project=${encodeURIComponent(project.id)}&section=team`}>Open Team panel</Link>
         </header>
 
         <section className="costs-summary-grid" aria-label="Project cost summary">
@@ -119,7 +119,7 @@ export function ProjectCostsPage({ project }: { project: Project }) {
               title="No contractor costs yet"
               body="Assign a Freelancer and send an offer from the video's Team panel."
               action="Open Team panel"
-              actionHref={`/projects/${project.id}`}
+              actionHref={`/active-videos?project=${encodeURIComponent(project.id)}&section=team`}
             />
           )}
         </section>

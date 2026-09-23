@@ -8332,8 +8332,7 @@ button.shoot-on-set-shot-copy:focus-visible {
   text-align: left;
 }
 
-.shoot-setup-field .shoot-brisk-time-trigger > input,
-.shoot-setup-entry-list .shoot-brisk-time-trigger > input {
+.shoot-brisk-time-trigger > input {
   width: 100%;
   min-width: var(--brisk-space-none);
   min-height: var(--brisk-space-3xl);
@@ -8355,10 +8354,8 @@ button.shoot-on-set-shot-copy:focus-visible {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.shoot-setup-field .shoot-brisk-time-trigger > input:hover,
-.shoot-setup-field .shoot-brisk-time-trigger > input:focus-visible,
-.shoot-setup-entry-list .shoot-brisk-time-trigger > input:hover,
-.shoot-setup-entry-list .shoot-brisk-time-trigger > input:focus-visible {
+.shoot-brisk-time-trigger > input:hover,
+.shoot-brisk-time-trigger > input:focus-visible {
   background: transparent;
   outline: none;
   box-shadow: none;
@@ -8390,25 +8387,27 @@ button.shoot-on-set-shot-copy:focus-visible {
 }
 
 .shoot-brisk-time-popover {
-  position: absolute;
-  top: calc(100% + var(--brisk-space-s));
+  position: fixed;
+  top: var(--brisk-space-none);
   left: var(--brisk-space-none);
   z-index: 170;
   display: grid;
-  width: 100%;
-  min-width: calc(var(--brisk-space-3xl) * 4);
+  width: calc(var(--brisk-space-3xl) * 4);
+  min-width: min(calc(var(--brisk-space-3xl) * 4), calc(100vw - (var(--brisk-space-l) * 2)));
   max-width: calc(100vw - (var(--brisk-space-l) * 2));
+  max-height: calc(100vh - (var(--brisk-space-l) * 2));
+  overflow-y: auto;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-m);
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-l);
+  transform: translateY(var(--brisk-space-s));
 }
 
-.shoot-setup-grid.three-column > .shoot-setup-field:last-child .shoot-brisk-time-popover {
-  right: var(--brisk-space-none);
-  left: auto;
+.shoot-brisk-time-popover.opens-up {
+  transform: translateY(calc(-100% - var(--brisk-space-s)));
 }
 
 .shoot-brisk-time-actions {

@@ -1,6 +1,6 @@
-import { CanonicalProjectOverviewRoute } from "@/components/project/CanonicalProjectRoutes";
+import { redirect } from "next/navigation";
 
 export default async function ProjectRoute({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
-  return <CanonicalProjectOverviewRoute projectId={projectId} />;
+  redirect(`/projects/${encodeURIComponent(projectId)}/stages/brief`);
 }

@@ -39,27 +39,17 @@ export function GlobalHeaderActions() {
     window.dispatchEvent(new Event(openCustomerGlobalChatEventName));
   };
 
-  const chatControl = usesCustomerDashboardDrawers ? (
+  const chatControl = (
     <button
       className="app-global-action-button"
       type="button"
       aria-label={`Open Chat${chatUnreadCount ? `, ${chatUnreadCount} unread` : ""}`}
       data-tooltip="Chat"
-      onClick={openCustomerChat}
+      onClick={usesCustomerDashboardDrawers ? openCustomerChat : () => window.dispatchEvent(new Event(openCustomerGlobalChatEventName))}
     >
       <DsIcon name="chats" size={20} />
       <CommentCountBadge count={chatUnreadCount} label={`${chatUnreadCount} unread messages`} />
     </button>
-  ) : (
-    <Link
-      className={`app-global-action-button ${pathname === "/chat" ? "is-active" : ""}`}
-      href="/chat"
-      aria-label={`Open Chat${chatUnreadCount ? `, ${chatUnreadCount} unread` : ""}`}
-      data-tooltip="Chat"
-    >
-      <DsIcon name="chats" size={20} />
-      <CommentCountBadge count={chatUnreadCount} label={`${chatUnreadCount} unread messages`} />
-    </Link>
   );
 
   return (

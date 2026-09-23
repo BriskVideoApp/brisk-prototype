@@ -626,6 +626,16 @@
   padding: 0 8px;
 }
 
+.client-badge-link {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.client-badge-link:hover .client-badge,
+.client-badge-link:focus-visible .client-badge {
+  box-shadow: var(--brisk-shadow-s);
+}
+
 .project-title {
   color: var(--brisk-text-primary);
   text-decoration: none;
@@ -1082,6 +1092,18 @@
   white-space: nowrap;
 }
 
+.project-status-select {
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align-last: center;
+}
+
+.project-status-select:hover,
+.project-status-select:focus-visible {
+  box-shadow: var(--brisk-shadow-s);
+}
+
 .status-queued {
   background: var(--brisk-cyan-10);
   color: var(--brisk-cyan-70);
@@ -1250,6 +1272,23 @@
   border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
   outline: none;
+}
+
+.project-detail-deadline-date-time {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 128px;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.project-detail-deadline-picker,
+.project-detail-deadline-picker .brief-date-picker-wrap-field {
+  width: 100%;
+  max-width: 100%;
+}
+
+.project-detail-deadline-time-picker {
+  min-width: 0;
 }
 
 .deadline-inline-actions {
@@ -1528,10 +1567,15 @@
   min-width: 0;
   grid-template-columns: minmax(0, 1fr) max-content;
   align-items: center;
+  border: 0;
   border-radius: var(--brisk-radius-xs);
+  background: transparent;
   color: var(--brisk-text-primary);
   column-gap: var(--brisk-space-xs);
+  cursor: pointer;
+  font: inherit;
   padding: var(--brisk-space-xs);
+  text-align: left;
   text-decoration: none;
 }
 
@@ -1557,16 +1601,93 @@
   outline: none;
 }
 
-.team-avatar {
+.team-cell-button {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 0;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  cursor: pointer;
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-xs);
+  text-align: left;
+}
+
+.team-cell-button:hover,
+.team-cell-button:focus-visible {
+  background: var(--brisk-brand-primary-hover);
+  outline: none;
+}
+
+.team-member-list {
+  display: grid;
+  gap: var(--brisk-space-xs);
+  min-width: 0;
+  width: 100%;
+}
+
+.team-member-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.team-avatar-item {
+  position: relative;
   display: inline-flex;
-  width: 34px;
-  height: 34px;
+  width: var(--brisk-space-2xl);
+  height: var(--brisk-space-2xl);
+  flex: 0 0 var(--brisk-space-2xl);
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-full);
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
+  background: var(--brisk-white);
+}
+
+.team-avatar-item.is-invited .people-avatar {
+  border-style: dashed;
+  opacity: 0.65;
+}
+
+.team-member-role {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--brisk-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-member-overflow {
+  color: var(--brisk-brand-primary-click);
+  margin-left: calc(var(--brisk-space-2xl) + var(--brisk-space-s));
+}
+
+.team-member-empty {
+  color: var(--brisk-text-tertiary);
+}
+
+.team-avatar-tooltip {
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  max-width: min(280px, 80vw);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-s);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-xs) var(--brisk-space-s);
+  pointer-events: none;
+  text-align: center;
+  transform: translate(-50%, -100%);
+  white-space: normal;
+}
+
+.team-avatar-item:hover {
+  z-index: 10 !important;
 }
 
 .row-actions-cell {
@@ -1939,6 +2060,27 @@
 
 .project-detail-collapsible-header:hover {
   background: color-mix(in srgb, var(--brisk-brand-secondary) 35%, transparent);
+}
+
+.project-detail-collapsible.open .project-detail-collapsible-header {
+  position: relative;
+  background: transparent;
+}
+
+.project-detail-collapsible.open .project-detail-collapsible-header::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 3px;
+  height: 18px;
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-brand-primary);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.project-detail-collapsible.open .project-detail-collapsible-title-button {
+  color: var(--brisk-brand-primary-click);
 }
 
 .project-detail-collapsible-content {

@@ -423,7 +423,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
   function finishOnProject() {
     if (!onboardingProject) return;
     completeOnboarding();
-    router.push(`/projects/${onboardingProject.id}`);
+    router.push(`/projects/${encodeURIComponent(onboardingProject.id)}/stages/brief`);
   }
 
   function addFirstClient() {

@@ -36,6 +36,7 @@ type TeamPanelProps = {
   timeEntries: TimeEntry[];
   access: TeamPanelAccess;
   viewerPersonId?: string;
+  hideHeader?: boolean;
 };
 
 type ToastState = {
@@ -50,6 +51,7 @@ export function TeamPanel({
   initialTeam,
   access,
   viewerPersonId,
+  hideHeader = false,
 }: TeamPanelProps) {
   const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
   const { studio } = useStudioSettings();
@@ -333,7 +335,7 @@ export function TeamPanel({
 
   return (
     <section className="team-panel" aria-label={`${projectName} team`}>
-      <header className="team-panel-header">
+      {!hideHeader ? <header className="team-panel-header">
         <span className="team-panel-heading">
           {canEdit ? (
             <button
@@ -352,7 +354,7 @@ export function TeamPanel({
             <span className="team-panel-title label-s-semibold">Team</span>
           )}
         </span>
-      </header>
+      </header> : null}
 
       <div className="team-panel-body">
         <div className="team-panel-slot-list" role="table" aria-label="Project roles">

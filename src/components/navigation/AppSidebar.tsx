@@ -98,7 +98,6 @@ export function AppSidebar({
     ? brandKitCustomers.find((customer) => customer.name === accessProject.clientName) ?? null
     : null;
   const canSeeProjectFiles = allPages || selectedRole !== "Customer";
-  const canSeeProjectSettings = allPages || selectedRole === "Studio Staff";
 
   useEffect(() => {
     if (!currentItem) return;
@@ -263,20 +262,6 @@ export function AppSidebar({
                   <DsIcon name="users-three" size={16} />
                   <span className="app-sidebar-copy">Project people</span>
                 </button>
-              ) : null}
-              {canSeeProjectSettings ? (
-                <SidebarLink
-                  active={pathname === `/projects/${contextualProjectId}`}
-                  collapsed={isCollapsed}
-                  item={{
-                    id: `project-settings-${contextualProjectId}`,
-                    label: "Settings",
-                    href: `/projects/${contextualProjectId}`,
-                    icon: "settings",
-                    roles: [],
-                  }}
-                  onNavigate={onNavigate}
-                />
               ) : null}
               {projectBrandKit ? (
                 <SidebarLink

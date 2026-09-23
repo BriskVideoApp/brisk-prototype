@@ -92,7 +92,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
               studioName={studioName}
               customerName={project.clientName}
               copyLinkLabel="Share project"
-              shareUrl={`/projects/${project.id}`}
+              shareUrl={`/projects/${project.id}/stages/brief`}
               showSend={false}
               showApprove={false}
             /> : null}

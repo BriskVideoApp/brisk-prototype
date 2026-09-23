@@ -739,6 +739,18 @@
 
 .client-metric-card > span:not(.client-metric-icon),
 .client-metric-card > small { color: var(--brisk-text-secondary); }
+.client-metric-card.is-link {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.client-metric-card.is-link:hover,
+.client-metric-card.is-link:focus-visible {
+  border-color: var(--brisk-brand-primary-click);
+  background: var(--brisk-bg-elevated-secondary);
+}
+.client-metric-card.is-link:focus-visible { outline: 2px solid var(--brisk-brand-primary-click); outline-offset: 2px; }
+.client-metric-link-hint { color: var(--brisk-brand-primary-click); }
 .client-metric-icon {
   display: inline-flex;
   width: var(--brisk-space-3xl);

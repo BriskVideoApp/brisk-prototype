@@ -7,11 +7,15 @@ import type {
   PointerEvent as ReactPointerEvent,
   ReactNode,
 } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { BriskDatePicker } from "@/components/brief/BriefPage";
+import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
+import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getSlotLabel, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
+import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { todayCurrentUserId } from "@/data/today/mockData";
 import { getDemoProjectDestination } from "@/data/projects";
@@ -26,11 +30,11 @@ import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/Pr
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { TeamPanel, type TeamPanelAccess } from "@/components/project/team/TeamPanel";
 import { ProjectLatestActionsList } from "@/components/notifications/ProjectActivityHistory";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
-import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
 import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
 import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -44,7 +48,8 @@ type DataColumnKey = "progress" | "latestUpdate" | "status" | "deadline" | "hour
 type TableColumnKey = "project" | DataColumnKey;
 type DeadlineCategory = "Overdue" | "Due Soon" | "On Track";
 type TagClass = "critical" | "high-priority" | "in-review" | "neutral" | "green" | "peach" | "cream";
-type ProjectPanelEditSection = "hours" | "deadline" | "client" | "tags" | "notes";
+type ProjectPanelEditSection = "hours" | "deadline" | "notes";
+type ProjectPanelSection = "hours" | "team" | "costs" | "deadline" | "latestActions" | "notes";
 type ProjectTimeEntry = {
   id: string;
   person: string;
@@ -91,12 +96,8 @@ type ColumnSettlingGhostState = {
   width: number;
   height: number;
 };
-type LatestActionsOpenRequest = {
-  projectId: string;
-  requestId: number;
-};
-
 const statusTabs: StatusTab[] = ["All", "Queued", "In Production", "Completed", "Paused", "Archived"];
+const projectStatusOptions = statusTabs.filter((status): status is Project["status"] => status !== "All");
 const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
 const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
 const projectColumnWidth = 300;
@@ -105,12 +106,12 @@ const fixedEndColumn: DataColumnKey = "actions";
 
 const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   progress: { label: "Progress", width: 490 },
-  latestUpdate: { label: "Latest action", width: 300 },
+  latestUpdate: { label: "Latest action", width: 210 },
   status: { label: "Status", width: 150 },
   deadline: { label: "Deadline", width: 170 },
   hours: { label: "Hours", width: 220 },
   costs: { label: "Project costs", width: 190 },
-  team: { label: "Team", width: 68 },
+  team: { label: "Team", width: 190 },
   actions: { label: "Actions", width: 64 },
 };
 
@@ -119,7 +120,7 @@ const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "statu
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 
 function getProjectFlowHref(projectId: string) {
-  return getDemoProjectDestination(projectId, "brief")?.href ?? `/projects/${encodeURIComponent(projectId)}`;
+  return getDemoProjectDestination(projectId, "brief")?.href ?? `/projects/${encodeURIComponent(projectId)}/stages/brief`;
 }
 
 const filterLabels: Record<FilterKey, string> = {
@@ -157,15 +158,16 @@ export function ActiveVideosPage() {
 
 function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
-  const { state } = usePrototypeState();
+  const { state, updateProjectStatus } = usePrototypeState();
   const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
-  const { completionRecords } = useProjectCompletion();
+  const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
   const { getProjectStages } = useProjectStageStatus();
   const { invoices, offers } = useCostsData();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
+  const panelSectionFromParams = searchParams.get("section");
   const previewState = searchParams.get("preview");
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
   const [query, setQuery] = useState("");
@@ -186,14 +188,13 @@ function ActiveVideosWorkspace() {
   const [extraProjectTimeEntries, setExtraProjectTimeEntries] = useState<Record<string, TimeEntry[]>>({});
   const [tagClasses, setTagClasses] = useState<Record<string, TagClass>>(defaultTagClasses);
   const [openTagProjectId, setOpenTagProjectId] = useState<string | null>(null);
-  const [openDeadlineProjectId, setOpenDeadlineProjectId] = useState<string | null>(null);
   const [areFiltersVisible, setAreFiltersVisible] = useState(false);
   const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams));
   const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams) !== null);
+  const [panelSectionRequest, setPanelSectionRequest] = useState<{ section: ProjectPanelSection; requestId: number } | null>(null);
+  const panelSectionRequestIdRef = useRef(0);
   const [isPanelContentSwitching, setIsPanelContentSwitching] = useState(false);
-  const [latestActionsOpenRequest, setLatestActionsOpenRequest] = useState<LatestActionsOpenRequest | null>(null);
   const panelCloseTimeoutRef = useRef<number | null>(null);
-  const latestActionsRequestIdRef = useRef(0);
   const availableColumnOrder = selectedRole === "Studio Staff" ? defaultColumnOrder : nonStaffColumnOrder;
   const videoTable = useRoleVideoTable<DataColumnKey, "project">({
     columnConfig,
@@ -345,6 +346,7 @@ function ActiveVideosWorkspace() {
       url.searchParams.set("project", projectId);
     } else {
       url.searchParams.delete("project");
+      url.searchParams.delete("section");
     }
 
     const nextPath = `${url.pathname}${url.search}${url.hash}`;
@@ -361,6 +363,7 @@ function ActiveVideosWorkspace() {
     projectId: string,
     mode: "push" | "replace" = "push",
     expandLatestActions = false,
+    focusSection?: ProjectPanelSection,
   ) => {
     if (panelCloseTimeoutRef.current !== null) {
       window.clearTimeout(panelCloseTimeoutRef.current);
@@ -368,17 +371,13 @@ function ActiveVideosWorkspace() {
     }
 
     setOpenTagProjectId(null);
-    setOpenDeadlineProjectId(null);
-    if (expandLatestActions) {
-      latestActionsRequestIdRef.current += 1;
-      setLatestActionsOpenRequest({
-        projectId,
-        requestId: latestActionsRequestIdRef.current,
-      });
+    const nextFocusSection = focusSection ?? (expandLatestActions ? "latestActions" : null);
+    if (nextFocusSection) {
+      panelSectionRequestIdRef.current += 1;
+      setPanelSectionRequest({ section: nextFocusSection, requestId: panelSectionRequestIdRef.current });
     } else {
-      setLatestActionsOpenRequest(null);
+      setPanelSectionRequest(null);
     }
-
     if (isProjectPanelOpen && panelProjectId && panelProjectId !== projectId) {
       setIsPanelContentSwitching(true);
       window.setTimeout(() => {
@@ -397,7 +396,6 @@ function ActiveVideosWorkspace() {
   const closeProjectPanel = (mode: "push" | "replace" = "push") => {
     setIsProjectPanelOpen(false);
     setIsPanelContentSwitching(false);
-    setLatestActionsOpenRequest(null);
     updateProjectQuery(null, mode);
 
     if (panelCloseTimeoutRef.current !== null) {
@@ -484,18 +482,33 @@ function ActiveVideosWorkspace() {
     }));
   };
 
+  const saveProjectStatus = (projectId: string, status: Project["status"]) => {
+    if (status !== "Completed" && completionRecords[projectId]) {
+      undoProjectCompletion(projectId);
+    }
+    updateProjectStatus(projectId, status);
+  };
+
   useEffect(() => {
     const validProjectId = getValidProjectId(projectIdFromParams);
 
     if (validProjectId) {
       setPanelProjectId(validProjectId);
       setIsProjectPanelOpen(true);
+      const requestedSection = getValidProjectPanelSection(panelSectionFromParams);
+      if (requestedSection) {
+        panelSectionRequestIdRef.current += 1;
+        setPanelSectionRequest({ section: requestedSection, requestId: panelSectionRequestIdRef.current });
+      } else {
+        setPanelSectionRequest(null);
+      }
       return;
     }
 
     setIsProjectPanelOpen(false);
     setPanelProjectId(null);
-  }, [projectIdFromParams]);
+    setPanelSectionRequest(null);
+  }, [panelSectionFromParams, projectIdFromParams]);
 
   useEffect(() => {
     if (!isProjectPanelOpen || !panelProjectId) {
@@ -559,26 +572,6 @@ function ActiveVideosWorkspace() {
 
     return () => window.removeEventListener("pointerdown", handlePointerDown);
   }, [isProjectPanelOpen]);
-
-  useEffect(() => {
-    if (!openDeadlineProjectId) {
-      return;
-    }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target;
-
-      if (target instanceof HTMLElement && target.closest(".deadline-cell, .deadline-popover")) {
-        return;
-      }
-
-      setOpenDeadlineProjectId(null);
-    };
-
-    window.addEventListener("pointerdown", handlePointerDown);
-
-    return () => window.removeEventListener("pointerdown", handlePointerDown);
-  }, [openDeadlineProjectId]);
 
   return (
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
@@ -729,11 +722,8 @@ function ActiveVideosWorkspace() {
                   onRemoveTag={(tag) => removeProjectTag(project.id, tag)}
                   onCreateTag={(tag, tagClass) => createProjectTag(project.id, tag, tagClass)}
                   deadline={projectDeadlines[project.id]}
-                  isDeadlineOpen={openDeadlineProjectId === project.id}
-                  onToggleDeadline={() =>
-                    setOpenDeadlineProjectId((current) => (current === project.id ? null : project.id))
-                  }
-                  onSaveDeadline={(deadline) => saveProjectDeadline(project.id, deadline)}
+                  onOpenPanelSection={(section) => openProjectPanel(project.id, "push", false, section)}
+                  onSaveStatus={(status) => saveProjectStatus(project.id, status)}
                   visibleColumns={visibleDataColumns}
                   visibleTableColumns={visibleTableColumns}
                   columnDrag={columnDrag}
@@ -800,18 +790,14 @@ function ActiveVideosWorkspace() {
       {panelProject ? (
         <ProjectDetailPanel
           project={panelProject}
-          tags={projectTags[panelProject.id] ?? []}
-          tagClasses={tagClasses}
+          costSummary={projectCostSummaries[panelProject.id]}
           deadline={projectDeadlines[panelProject.id]}
           isOpen={isProjectPanelOpen}
           isSwitching={isPanelContentSwitching}
           selectedRole={selectedRole}
-          latestActionsOpenRequest={
-            latestActionsOpenRequest?.projectId === panelProject.id
-              ? latestActionsOpenRequest.requestId
-              : null
-          }
+          sectionRequest={panelSectionRequest}
           onClose={() => closeProjectPanel()}
+          onSaveStatus={(status) => saveProjectStatus(panelProject.id, status)}
           onSaveDeadline={(deadline) => saveProjectDeadline(panelProject.id, deadline)}
         />
       ) : null}
@@ -1193,6 +1179,8 @@ export function ProjectDetailsSidebar({
   onClose: () => void;
 }) {
   const { selectedRole } = usePrototypeRole();
+  const { updateProjectStatus } = usePrototypeState();
+  const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const [deadline, setDeadline] = useState<ProjectDeadline | undefined>(project.deadline);
 
   useEffect(() => {
@@ -1202,14 +1190,19 @@ export function ProjectDetailsSidebar({
   return (
     <ProjectDetailPanel
       project={project}
-      tags={project.tags ?? []}
-      tagClasses={defaultTagClasses}
+      costSummary={{ totalLabel: formatCurrencyTotals([]), outstandingInvoiceCount: 0 }}
       deadline={deadline}
       isOpen={isOpen}
       isSwitching={false}
       selectedRole={selectedRole}
-      latestActionsOpenRequest={null}
+      sectionRequest={null}
       onClose={onClose}
+      onSaveStatus={(status) => {
+        if (status !== "Completed" && completionRecords[project.id]) {
+          undoProjectCompletion(project.id);
+        }
+        updateProjectStatus(project.id, status);
+      }}
       onSaveDeadline={setDeadline}
     />
   );
@@ -1217,37 +1210,34 @@ export function ProjectDetailsSidebar({
 
 function ProjectDetailPanel({
   project,
-  tags,
-  tagClasses,
+  costSummary,
   deadline,
   isOpen,
   isSwitching,
   selectedRole,
-  latestActionsOpenRequest,
+  sectionRequest,
   onClose,
+  onSaveStatus,
   onSaveDeadline,
 }: {
   project: Project;
-  tags: string[];
-  tagClasses: Record<string, TagClass>;
+  costSummary: ProjectCostSummary;
   deadline: ProjectDeadline | undefined;
   isOpen: boolean;
   isSwitching: boolean;
   selectedRole: PrototypeRole;
-  latestActionsOpenRequest: number | null;
+  sectionRequest: { section: ProjectPanelSection; requestId: number } | null;
   onClose: () => void;
+  onSaveStatus: (status: Project["status"]) => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
 }) {
   const projectFlowHref = getProjectFlowHref(project.id);
   const unreadMessages = project.unreadMessages ?? 0;
   const [panelStatus, setPanelStatus] = useState<Project["status"]>(project.status);
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
-  const [hasCopiedLink, setHasCopiedLink] = useState(false);
   const [notes, setNotes] = useState<string[]>([]);
   const [draftNote, setDraftNote] = useState("");
   const [isTimeSpentOpen, setIsTimeSpentOpen] = useState(false);
-  const clientContact = getClientContact(project);
-  const tagsKey = tags.join("\u0001");
   const loggedHours = getProjectLoggedHours(project.team, project.timeEntries);
   const estimatedHours = getProjectEstimatedHours(project.team);
   const timeEntries = getProjectTimeEntries(project);
@@ -1255,54 +1245,70 @@ function ProjectDetailPanel({
   const staffViewerPersonId = getFirstTeamPersonForType(project.team, "Studio Staff")?.id;
   const freelancerViewerPersonId = getFirstTeamPersonForType(project.team, "Studio Freelancer")?.id;
   const [editingSection, setEditingSection] = useState<ProjectPanelEditSection | null>(null);
+  const [focusedPanelSection, setFocusedPanelSection] = useState<ProjectPanelSection | null>(null);
+  const panelSectionRefs = useRef<Partial<Record<ProjectPanelSection, HTMLElement | null>>>({});
+  const panelBodyRef = useRef<HTMLDivElement | null>(null);
+  const [panelScrollRequest, setPanelScrollRequest] = useState<{ section: ProjectPanelSection; id: number } | null>(null);
+  const panelScrollRequestIdRef = useRef(0);
   const [panelEstimatedHours, setPanelEstimatedHours] = useState(estimatedHours);
   const [draftEstimatedHours, setDraftEstimatedHours] = useState(String(estimatedHours));
-  const [panelClientName, setPanelClientName] = useState(clientContact.name);
-  const [panelClientRole, setPanelClientRole] = useState(clientContact.role);
-  const [panelClientEmail, setPanelClientEmail] = useState(clientContact.email);
-  const [draftClientName, setDraftClientName] = useState(clientContact.name);
-  const [draftClientRole, setDraftClientRole] = useState(clientContact.role);
-  const [draftClientEmail, setDraftClientEmail] = useState(clientContact.email);
-  const [panelTags, setPanelTags] = useState(tags);
-  const [draftPanelTag, setDraftPanelTag] = useState("");
 
   useEffect(() => {
     setPanelStatus(project.status);
     setIsStatusMenuOpen(false);
-    setHasCopiedLink(false);
     setIsTimeSpentOpen(false);
     setNotes([]);
     setDraftNote("");
     setEditingSection(null);
     setPanelEstimatedHours(estimatedHours);
     setDraftEstimatedHours(String(estimatedHours));
-    setPanelClientName(clientContact.name);
-    setPanelClientRole(clientContact.role);
-    setPanelClientEmail(clientContact.email);
-    setDraftClientName(clientContact.name);
-    setDraftClientRole(clientContact.role);
-    setDraftClientEmail(clientContact.email);
-    setPanelTags(tags);
-    setDraftPanelTag("");
   }, [
-    clientContact.email,
-    clientContact.name,
-    clientContact.role,
     estimatedHours,
     project.id,
     project.status,
-    tagsKey,
   ]);
 
-  const copyProjectLink = () => {
-    if (!projectFlowHref) return;
+  useEffect(() => {
+    setFocusedPanelSection(null);
+  }, [project.id]);
 
-    if (typeof window !== "undefined" && navigator.clipboard) {
-      void navigator.clipboard.writeText(`${window.location.origin}${projectFlowHref}`);
+  const scrollPanelSectionToTop = useCallback((section: ProjectPanelSection) => {
+    panelScrollRequestIdRef.current += 1;
+    setPanelScrollRequest({ section, id: panelScrollRequestIdRef.current });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!panelScrollRequest) return;
+
+    const body = panelBodyRef.current;
+    const sectionElement = panelSectionRefs.current[panelScrollRequest.section];
+    if (!body || !sectionElement) return;
+
+    const top = body.scrollTop + sectionElement.getBoundingClientRect().top - body.getBoundingClientRect().top;
+    body.scrollTo({ top, behavior: "smooth" });
+  }, [focusedPanelSection, panelScrollRequest]);
+
+  useEffect(() => {
+    if (!sectionRequest) {
+      setFocusedPanelSection(null);
+      return;
     }
-    setHasCopiedLink(true);
-    window.setTimeout(() => setHasCopiedLink(false), 1400);
-  };
+
+    setFocusedPanelSection(sectionRequest.section);
+    if (sectionRequest.section === "hours" || sectionRequest.section === "deadline") {
+      setEditingSection(sectionRequest.section);
+    }
+    scrollPanelSectionToTop(sectionRequest.section);
+  }, [scrollPanelSectionToTop, sectionRequest]);
+
+  const selectPanelSection = useCallback((section: ProjectPanelSection) => {
+    setFocusedPanelSection(section);
+    scrollPanelSectionToTop(section);
+  }, [scrollPanelSectionToTop]);
+  const togglePanelSection = useCallback((section: ProjectPanelSection) => {
+    setFocusedPanelSection((currentSection) => currentSection === section ? null : section);
+    scrollPanelSectionToTop(section);
+  }, [scrollPanelSectionToTop]);
 
   const addNote = () => {
     const trimmedNote = draftNote.trim();
@@ -1318,10 +1324,6 @@ function ProjectDetailPanel({
   const cancelPanelEdit = () => {
     setEditingSection(null);
     setDraftEstimatedHours(String(panelEstimatedHours || ""));
-    setDraftClientName(panelClientName);
-    setDraftClientRole(panelClientRole);
-    setDraftClientEmail(panelClientEmail);
-    setDraftPanelTag("");
     setDraftNote("");
   };
 
@@ -1329,24 +1331,6 @@ function ProjectDetailPanel({
     const nextEstimatedHours = Number.parseInt(draftEstimatedHours, 10);
 
     setPanelEstimatedHours(Number.isFinite(nextEstimatedHours) && nextEstimatedHours > 0 ? nextEstimatedHours : 0);
-    setEditingSection(null);
-  };
-
-  const saveClientEdit = () => {
-    setPanelClientName(draftClientName.trim() || panelClientName);
-    setPanelClientRole(draftClientRole.trim() || panelClientRole);
-    setPanelClientEmail(draftClientEmail.trim() || panelClientEmail);
-    setEditingSection(null);
-  };
-
-  const saveTagsEdit = () => {
-    const nextTag = draftPanelTag.trim();
-
-    if (nextTag && !panelTags.includes(nextTag)) {
-      setPanelTags((currentTags) => [...currentTags, nextTag]);
-    }
-
-    setDraftPanelTag("");
     setEditingSection(null);
   };
 
@@ -1433,7 +1417,7 @@ function ProjectDetailPanel({
         </button>
       </div>
 
-      <div className={`project-detail-panel-body ${isSwitching ? "switching" : ""}`}>
+      <div className={`project-detail-panel-body ${isSwitching ? "switching" : ""}`} ref={panelBodyRef}>
         <section className="project-detail-section">
           <div className="project-detail-actions">
             {projectFlowHref ? (
@@ -1461,25 +1445,15 @@ function ProjectDetailPanel({
           </div>
         </section>
 
-        <section className="project-detail-section">
-          <div className="project-detail-section-heading">
-            <h3 className="project-detail-section-title label-s-semibold">Project flow</h3>
-            <ProjectFlowAdjuster project={project} />
-          </div>
-          <div className="project-panel-progress-track">
-            <StageProgress
-              projectId={project.id}
-              projectName={project.name}
-              stages={project.stages}
-              studioName="North Star Films"
-              customerName={project.clientName}
-              videoType={project.videoType}
-            />
-          </div>
-        </section>
-
-        <section className="project-detail-section">
-          <ProjectDetailEditableHeader title="Hours" onEdit={() => setEditingSection("hours")} />
+        <ProjectDetailCollapsibleSection
+          title="Hours"
+          sectionKey="hours"
+          isOpen={focusedPanelSection === "hours"}
+          sectionRef={(element) => { panelSectionRefs.current.hours = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
+          onEdit={() => setEditingSection("hours")}
+        >
           <div className="project-detail-metric">
             <button
               className="project-detail-hours-total heading-3xs"
@@ -1516,21 +1490,57 @@ function ProjectDetailPanel({
               </>
             )}
           </div>
-        </section>
+        </ProjectDetailCollapsibleSection>
 
-        <TeamPanel
-          projectId={project.id}
-          projectName={project.name}
-          videoType={project.videoType}
-          videoLengthSeconds={project.videoLengthSeconds}
-          initialTeam={project.team}
-          timeEntries={project.timeEntries}
-          access={teamAccess}
-          viewerPersonId={selectedRole === "Studio Freelancer" ? freelancerViewerPersonId : selectedRole === "Studio Staff" ? staffViewerPersonId : undefined}
-        />
+        <ProjectDetailCollapsibleSection
+          title="Team"
+          sectionKey="team"
+          isOpen={focusedPanelSection === "team"}
+          sectionRef={(element) => { panelSectionRefs.current.team = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
+        >
+          <TeamPanel
+            projectId={project.id}
+            projectName={project.name}
+            videoType={project.videoType}
+            videoLengthSeconds={project.videoLengthSeconds}
+            initialTeam={project.team}
+            timeEntries={project.timeEntries}
+            access={teamAccess}
+            hideHeader
+            viewerPersonId={selectedRole === "Studio Freelancer" ? freelancerViewerPersonId : selectedRole === "Studio Staff" ? staffViewerPersonId : undefined}
+          />
+        </ProjectDetailCollapsibleSection>
 
-        <section className="project-detail-section">
-          <ProjectDetailEditableHeader title="Deadline" onEdit={() => setEditingSection("deadline")} />
+        <ProjectDetailCollapsibleSection
+          title="Project costs"
+          sectionKey="costs"
+          isOpen={focusedPanelSection === "costs"}
+          sectionRef={(element) => { panelSectionRefs.current.costs = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
+        >
+          <div className="project-detail-metric">
+            <strong className="heading-3xs">{costSummary.totalLabel}</strong>
+            <span className="label-s">
+              {costSummary.outstandingInvoiceCount === 1 ? "1 unpaid invoice" : `${costSummary.outstandingInvoiceCount} unpaid invoices`}
+            </span>
+            <Link className="project-detail-text-link label-s-semibold" href={`/projects/${project.id}/costs`}>
+              View cost details
+            </Link>
+          </div>
+        </ProjectDetailCollapsibleSection>
+
+        <ProjectDetailCollapsibleSection
+          title="Deadline"
+          sectionKey="deadline"
+          isOpen={focusedPanelSection === "deadline"}
+          sectionRef={(element) => { panelSectionRefs.current.deadline = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
+          onEdit={() => setEditingSection("deadline")}
+        >
           <ProjectPanelDeadline
             project={project}
             deadline={deadline}
@@ -1539,12 +1549,15 @@ function ProjectDetailPanel({
             onDone={() => setEditingSection(null)}
             onSave={onSaveDeadline}
           />
-        </section>
+        </ProjectDetailCollapsibleSection>
 
         <ProjectDetailCollapsibleSection
           title="Latest actions"
-          openRequest={latestActionsOpenRequest}
-          resetKey={project.id}
+          sectionKey="latestActions"
+          isOpen={focusedPanelSection === "latestActions"}
+          sectionRef={(element) => { panelSectionRefs.current.latestActions = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
         >
           <ProjectLatestActionsList
             projectId={project.id}
@@ -1553,78 +1566,15 @@ function ProjectDetailPanel({
           />
         </ProjectDetailCollapsibleSection>
 
-        <ProjectDetailCollapsibleSection title="Client" onEdit={() => setEditingSection("client")}>
-          {editingSection === "client" ? (
-            <div className="project-detail-edit-stack">
-              <ProjectDetailInlineField
-                id={`project-client-name-${project.id}`}
-                label="Name"
-                value={draftClientName}
-                onChange={setDraftClientName}
-                onKeyDown={(event) => handleInlineEditKeyDown(event, saveClientEdit)}
-              />
-              <ProjectDetailInlineField
-                id={`project-client-role-${project.id}`}
-                label="Role"
-                value={draftClientRole}
-                onChange={setDraftClientRole}
-                onKeyDown={(event) => handleInlineEditKeyDown(event, saveClientEdit)}
-              />
-              <ProjectDetailInlineField
-                id={`project-client-email-${project.id}`}
-                label="Email"
-                value={draftClientEmail}
-                onChange={setDraftClientEmail}
-                onKeyDown={(event) => handleInlineEditKeyDown(event, saveClientEdit)}
-              />
-              <ProjectDetailInlineActions onCancel={cancelPanelEdit} onSave={saveClientEdit} />
-            </div>
-          ) : (
-            <div className="project-detail-client-card">
-              <div className="project-detail-client-contact">
-                <span className="project-detail-client-name label-s-semibold">{panelClientName}</span>
-                <span className="project-detail-client-role label-xs">{panelClientRole}</span>
-              </div>
-              <a className="project-detail-client-link label-s-semibold" href={`mailto:${panelClientEmail}`}>
-                {panelClientEmail}
-              </a>
-              <span className="project-detail-client-link is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
-                Open client portal
-              </span>
-              <span className="project-detail-client-meta label-xs">
-                Last contact {formatWorkingAge(clientContact.lastContactAt, latestUpdateReferenceDate)}
-              </span>
-            </div>
-          )}
-        </ProjectDetailCollapsibleSection>
-
-        <ProjectDetailCollapsibleSection title="Tags" onEdit={() => setEditingSection("tags")}>
-          <div className="project-detail-tags">
-            {panelTags.length > 0 ? (
-              panelTags.map((tag) => (
-                <span className={`project-tag-chip tag-option ${getTagClass(tag, tagClasses)} label-s-semibold`} key={tag}>
-                  {tag}
-                </span>
-              ))
-            ) : (
-              <span className="label-s">No tags yet.</span>
-            )}
-          </div>
-          {editingSection === "tags" ? (
-            <div className="project-detail-edit-stack">
-              <ProjectDetailInlineField
-                id={`project-panel-tag-${project.id}`}
-                label="New tag"
-                value={draftPanelTag}
-                onChange={setDraftPanelTag}
-                onKeyDown={(event) => handleInlineEditKeyDown(event, saveTagsEdit)}
-              />
-              <ProjectDetailInlineActions onCancel={cancelPanelEdit} onSave={saveTagsEdit} />
-            </div>
-          ) : null}
-        </ProjectDetailCollapsibleSection>
-
-        <ProjectDetailCollapsibleSection title="Notes" onEdit={() => setEditingSection("notes")}>
+        <ProjectDetailCollapsibleSection
+          title="Notes"
+          sectionKey="notes"
+          isOpen={focusedPanelSection === "notes"}
+          sectionRef={(element) => { panelSectionRefs.current.notes = element; }}
+          onSelect={selectPanelSection}
+          onToggle={togglePanelSection}
+          onEdit={() => setEditingSection("notes")}
+        >
           <div className="project-detail-notes-panel">
             {notes.length > 0 ? (
               <div className="project-detail-notes-list">
@@ -1658,13 +1608,25 @@ function ProjectDetailPanel({
       </div>
 
       <div className="project-detail-panel-footer">
-        <button className="project-detail-copy-link label-s-semibold" type="button" disabled={!projectFlowHref} onClick={copyProjectLink}>
-          {projectFlowHref ? (hasCopiedLink ? "Copied" : "Copy link") : "Demo not available"}
-        </button>
-        <button className="project-detail-footer-button label-s-semibold" type="button">
+        <ShareActionRow
+          context="project"
+          scopeType="project"
+          shareTitle={project.name}
+          userRole={selectedRole}
+          presentation="brief-summary"
+          projectId={project.id}
+          projectName={project.name}
+          studioName="North Star Films"
+          customerName={project.clientName}
+          copyLinkLabel="Copy link"
+          shareUrl={projectFlowHref ?? undefined}
+          showSend={false}
+          showApprove={false}
+        />
+        <button className="project-detail-footer-button label-s-semibold" type="button" onClick={() => onSaveStatus("Completed")}>
           Mark complete
         </button>
-        <button className="project-detail-footer-button label-s-semibold" type="button">
+        <button className="project-detail-footer-button label-s-semibold" type="button" onClick={() => onSaveStatus("Archived")}>
           Archive
         </button>
       </div>
@@ -1795,55 +1757,58 @@ function ProjectDetailInlineField({
 
 function ProjectDetailCollapsibleSection({
   title,
+  sectionKey,
   children,
+  isOpen,
+  sectionRef,
+  onSelect,
+  onToggle,
   onEdit,
-  openRequest = null,
-  resetKey,
+  headerAction,
 }: {
   title: string;
+  sectionKey: ProjectPanelSection;
   children: ReactNode;
+  isOpen: boolean;
+  sectionRef: (element: HTMLElement | null) => void;
+  onSelect: (section: ProjectPanelSection) => void;
+  onToggle: (section: ProjectPanelSection) => void;
   onEdit?: () => void;
-  openRequest?: number | null;
-  resetKey?: string;
+  headerAction?: ReactNode;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (resetKey !== undefined) {
-      setIsOpen(false);
-    }
-  }, [resetKey]);
-
-  useEffect(() => {
-    if (openRequest !== null) {
-      setIsOpen(true);
-    }
-  }, [openRequest]);
-
   return (
-    <section className={`project-detail-section project-detail-collapsible ${isOpen ? "open" : ""}`}>
+    <section
+      className={`project-detail-section project-detail-collapsible ${isOpen ? "open" : ""}`}
+      ref={sectionRef}
+    >
       <div className="project-detail-collapsible-header">
         <button
           className="project-detail-collapsible-title-button label-s-semibold"
           type="button"
-          onClick={() => {
-            if (onEdit) {
-              setIsOpen(true);
-              onEdit();
-              return;
-            }
-
-            setIsOpen((currentValue) => !currentValue);
-          }}
+          aria-expanded={isOpen}
+          onClick={() => onSelect(sectionKey)}
         >
           {title}
         </button>
+        {isOpen && onEdit ? (
+          <button
+            className="project-detail-collapsible-edit label-xs-semibold"
+            type="button"
+            onClick={() => {
+              onSelect(sectionKey);
+              onEdit();
+            }}
+          >
+            Edit
+          </button>
+        ) : null}
+        {isOpen ? headerAction : null}
         <button
           className="project-detail-collapsible-disclosure"
           type="button"
           aria-label={`${isOpen ? "Collapse" : "Expand"} ${title}`}
           aria-expanded={isOpen}
-          onClick={() => setIsOpen((currentValue) => !currentValue)}
+          onClick={() => onToggle(sectionKey)}
         >
           <DsIcon name="caret-down" size={16} />
         </button>
@@ -2084,8 +2049,8 @@ function ProjectPanelDeadline({
   const [draftFinalDueAt, setDraftFinalDueAt] = useState("");
   const dueHelper = getDeadlineHelper(deadline?.dueAt);
   const finalHelper = getDeadlineHelper(deadline?.finalDueAt);
-  const draftDueHelper = getDeadlineHelper(fromDateTimeInputValue(draftDueAt));
-  const draftFinalHelper = getDeadlineHelper(fromDateTimeInputValue(draftFinalDueAt));
+  const draftDueHelper = draftDueAt.startsWith("T") ? null : getDeadlineHelper(fromDateTimeInputValue(draftDueAt));
+  const draftFinalHelper = draftFinalDueAt.startsWith("T") ? null : getDeadlineHelper(fromDateTimeInputValue(draftFinalDueAt));
 
   useEffect(() => {
     setDraftDueAt(toDateTimeInputValue(deadline?.dueAt));
@@ -2093,8 +2058,8 @@ function ProjectPanelDeadline({
   }, [deadline?.dueAt, deadline?.finalDueAt, project.id]);
 
   const buildDeadline = (): ProjectDeadline | undefined => {
-    const dueAt = fromDateTimeInputValue(draftDueAt);
-    const finalDueAt = fromDateTimeInputValue(draftFinalDueAt);
+    const dueAt = draftDueAt.startsWith("T") ? undefined : fromDateTimeInputValue(draftDueAt);
+    const finalDueAt = draftFinalDueAt.startsWith("T") ? undefined : fromDateTimeInputValue(draftFinalDueAt);
 
     if (!dueAt && !finalDueAt) {
       return undefined;
@@ -2119,32 +2084,13 @@ function ProjectPanelDeadline({
     onCancel();
   };
 
-  const handleDeadlineKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      saveDeadline();
-    }
-
-    if (event.key === "Escape") {
-      event.preventDefault();
-      cancelDeadline();
-    }
-  };
-
   return (
     <div className="deadline-read-list">
       <div className="deadline-read-row-v2">
         <div className="deadline-read-copy">
           <span className="deadline-read-label label-xs-semibold">Stage deadline</span>
           {isEditing ? (
-            <input
-              className="deadline-inline-input label-s"
-              type="datetime-local"
-              value={draftDueAt}
-              aria-label="Stage deadline"
-              onChange={(event) => setDraftDueAt(event.target.value)}
-              onKeyDown={handleDeadlineKeyDown}
-            />
+            <ProjectDetailDeadlinePicker ariaLabel="Stage deadline" value={draftDueAt} onChange={setDraftDueAt} />
           ) : (
             <span className="deadline-read-date label-s-semibold">
               {deadline?.dueAt ? formatDeadlineReadDate(deadline.dueAt, "stage") : "To be set"}
@@ -2161,14 +2107,7 @@ function ProjectPanelDeadline({
         <div className="deadline-read-copy">
           <span className="deadline-read-label label-xs-semibold">Final delivery</span>
           {isEditing ? (
-            <input
-              className="deadline-inline-input label-s"
-              type="datetime-local"
-              value={draftFinalDueAt}
-              aria-label="Final delivery"
-              onChange={(event) => setDraftFinalDueAt(event.target.value)}
-              onKeyDown={handleDeadlineKeyDown}
-            />
+            <ProjectDetailDeadlinePicker ariaLabel="Final delivery" value={draftFinalDueAt} onChange={setDraftFinalDueAt} />
           ) : (
             <span className="deadline-read-date label-s-semibold">
               {deadline?.finalDueAt ? formatDeadlineReadDate(deadline.finalDueAt, "final") : "To be set"}
@@ -2182,6 +2121,44 @@ function ProjectPanelDeadline({
         </div>
       </div>
       {isEditing ? <ProjectDetailInlineActions onCancel={cancelDeadline} onSave={saveDeadline} /> : null}
+    </div>
+  );
+}
+
+function ProjectDetailDeadlinePicker({
+  ariaLabel,
+  value,
+  onChange,
+}: {
+  ariaLabel: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [dateValue, timeValue = ""] = value.split("T");
+
+  return (
+    <div className="project-detail-deadline-date-time">
+      <div className="project-detail-deadline-picker">
+        <BriskDatePicker
+          ariaLabel={ariaLabel}
+          placeholder="Choose date"
+          value={dateValue}
+          variant="field"
+          onChange={(nextDate) => onChange(updateDateTimeInputDate(value, nextDate))}
+        />
+      </div>
+      <div className="project-detail-deadline-time-picker">
+        <BriskTimePicker
+          ariaLabel={`${ariaLabel} time`}
+          placeholder="Choose time"
+          value={timeValue}
+          onChange={(nextTime) => {
+            if (nextTime) onChange(`${dateValue}T${nextTime}`);
+            else if (dateValue) onChange(`${dateValue}T17:00`);
+            else onChange("");
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -2201,9 +2178,8 @@ function ProjectRow({
   onRemoveTag,
   onCreateTag,
   deadline,
-  isDeadlineOpen,
-  onToggleDeadline,
-  onSaveDeadline,
+  onOpenPanelSection,
+  onSaveStatus,
   visibleColumns,
   visibleTableColumns,
   columnDrag,
@@ -2228,9 +2204,8 @@ function ProjectRow({
   onRemoveTag: (tag: string) => void;
   onCreateTag: (tag: string, tagClass: TagClass) => void;
   deadline: ProjectDeadline | undefined;
-  isDeadlineOpen: boolean;
-  onToggleDeadline: () => void;
-  onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
+  onOpenPanelSection: (section: ProjectPanelSection) => void;
+  onSaveStatus: (status: Project["status"]) => void;
   visibleColumns: DataColumnKey[];
   visibleTableColumns: TableColumnKey[];
   columnDrag: ColumnDragState | null;
@@ -2295,9 +2270,9 @@ function ProjectRow({
           latestUpdateFullDate={latestUpdateFullDate}
           latestUpdateAccessibleLabel={latestUpdateAccessibleLabel}
           deadline={deadline}
-          isDeadlineOpen={isDeadlineOpen}
-          onToggleDeadline={onToggleDeadline}
-          onSaveDeadline={onSaveDeadline}
+          onOpenPanelSection={onOpenPanelSection}
+          onSaveStatus={onSaveStatus}
+          canEditStatus={selectedRole === "Studio Staff"}
           onOpenDetails={onOpenDetails}
           onOpenLatestActions={onOpenLatestActions}
         />
@@ -2375,7 +2350,18 @@ function ProjectCell({
   return (
     <td className={`project-cell ${isTagMenuOpen ? "project-cell-tag-menu-open" : ""}`}>
       <div className="project-cell-inner">
-        <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
+        {selectedRole === "Studio Staff" ? (
+          <Link
+            className="client-badge-link"
+            href={`/clients/${encodeURIComponent(project.clientId)}`}
+            aria-label={`Open ${project.clientName} Client record`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
+          </Link>
+        ) : (
+          <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
+        )}
         <div className="project-title-row">
           {projectFlowHref ? (
             <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
@@ -2597,9 +2583,9 @@ function ProjectDataCell({
   latestUpdateFullDate,
   latestUpdateAccessibleLabel,
   deadline,
-  isDeadlineOpen,
-  onToggleDeadline,
-  onSaveDeadline,
+  onOpenPanelSection,
+  onSaveStatus,
+  canEditStatus,
   onOpenDetails,
   onOpenLatestActions,
 }: {
@@ -2612,13 +2598,13 @@ function ProjectDataCell({
   latestUpdateFullDate: string;
   latestUpdateAccessibleLabel: string;
   deadline: ProjectDeadline | undefined;
-  isDeadlineOpen: boolean;
-  onToggleDeadline: () => void;
-  onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
+  onOpenPanelSection: (section: ProjectPanelSection) => void;
+  onSaveStatus: (status: Project["status"]) => void;
+  canEditStatus: boolean;
   onOpenDetails: () => void;
   onOpenLatestActions: () => void;
 }) {
-  const router = useRouter();
+  const [teamAvatarTooltip, setTeamAvatarTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const columnClassName = [
     `column-${columnKey}`,
     isDragging ? "column-is-dragging" : "",
@@ -2665,22 +2651,34 @@ function ProjectDataCell({
   if (columnKey === "status") {
     return (
       <td className={columnClassName}>
-        <span className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} label-s-semibold`}>
-          {getStatusLabel(project.status)}
-        </span>
+        {canEditStatus ? (
+          <select
+            className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} project-status-select label-s-semibold`}
+            aria-label={`Change status for ${project.name}`}
+            value={project.status}
+            onChange={(event) => {
+              const nextStatus = projectStatusOptions.find((status) => status === event.target.value);
+              if (nextStatus) onSaveStatus(nextStatus);
+            }}
+          >
+            {projectStatusOptions.map((status) => <option key={status} value={status}>{getStatusLabel(status)}</option>)}
+          </select>
+        ) : (
+          <span className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} label-s-semibold`}>
+            {getStatusLabel(project.status)}
+          </span>
+        )}
       </td>
     );
   }
 
   if (columnKey === "deadline") {
     return (
-      <td className={`${columnClassName} ${isDeadlineOpen ? "deadline-column-open" : ""}`}>
+      <td className={columnClassName}>
         <DeadlineCell
           project={project}
           deadline={deadline}
-          isOpen={isDeadlineOpen}
-          onToggle={onToggleDeadline}
-          onSave={onSaveDeadline}
+          onOpen={() => onOpenPanelSection("deadline")}
         />
       </td>
     );
@@ -2703,14 +2701,21 @@ function ProjectDataCell({
                 type="button"
                 onClick={(event) => {
                   event.stopPropagation();
-                  router.push("/today");
+                  onOpenPanelSection("hours");
                 }}
               >
                 + Log
               </button>
             </>
           ) : (
-            <button className="hours-button add label-s-semibold" type="button" onClick={(event) => event.stopPropagation()}>
+            <button
+              className="hours-button add label-s-semibold"
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpenPanelSection("hours");
+              }}
+            >
               + Add
             </button>
           )}
@@ -2724,25 +2729,89 @@ function ProjectDataCell({
 
     return (
       <td className={columnClassName}>
-        <Link
+        <button
           className="project-costs-cell"
-          href={`/projects/${project.id}/costs`}
+          type="button"
           aria-label={`Open Project costs for ${project.name}. ${costSummary.totalLabel}, ${invoiceLabel}.`}
-          onClick={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            onOpenPanelSection("costs");
+          }}
         >
           <strong className="label-s-semibold">{costSummary.totalLabel}</strong>
           <span className="label-xs">{invoiceLabel}</span>
-        </Link>
+        </button>
       </td>
     );
   }
 
   if (columnKey === "team") {
-    const person = getPrimaryTeamPerson(project.team);
+    const teamMembers = getProjectTeamColumnMembers(project.team);
+    const visibleTeamMembers = teamMembers.members.slice(0, 3);
+    const extraMemberCount = teamMembers.members.length - visibleTeamMembers.length;
+    const accessibleTeamSummary = teamMembers.members
+      .map((member) => `${member.person.name}, ${member.roles.join(" and ")}${member.isInvited ? ", invited" : ""}`)
+      .join("; ");
 
     return (
       <td className={columnClassName}>
-        <span className="team-avatar label-xs-semibold">{person?.initials ?? "ST"}</span>
+        <button
+          className="team-cell-button"
+          type="button"
+          aria-label={`Open Team for ${project.name}${accessibleTeamSummary ? `: ${accessibleTeamSummary}` : ": no team members assigned"}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onOpenPanelSection("team");
+          }}
+        >
+          <span className="team-member-list" aria-hidden="true">
+            {visibleTeamMembers.map((member, index) => (
+              <span className="team-member-row" key={member.person.id}>
+                <span
+                  className={`team-avatar-item ${member.isInvited ? "is-invited" : ""}`}
+                  onMouseEnter={(event) => {
+                    const bounds = event.currentTarget.getBoundingClientRect();
+                    setTeamAvatarTooltip({
+                      text: `${member.person.name} · ${member.roles.join(", ")}${member.isInvited ? " · Invited" : ""}`,
+                      x: bounds.left + bounds.width / 2,
+                      y: bounds.top - 8,
+                    });
+                  }}
+                  onMouseLeave={() => setTeamAvatarTooltip(null)}
+                  style={{ zIndex: visibleTeamMembers.length - index }}
+                >
+                  <PeopleAvatar
+                    person={{
+                      name: member.person.name,
+                      avatarUrl: member.person.photoUrl ?? null,
+                      type: member.person.personType === "Studio Staff" ? "Team" : "Freelancer",
+                    }}
+                    size="S"
+                  />
+                </span>
+                <span className="team-member-role label-xs-semibold">
+                  {member.roles.join(", ")}{member.isInvited ? " · Invited" : ""}
+                </span>
+              </span>
+            ))}
+            {extraMemberCount > 0 ? (
+              <span className="team-member-overflow label-xs-semibold">
+                +{extraMemberCount} more
+              </span>
+            ) : null}
+            {teamMembers.members.length === 0 ? <span className="team-member-empty label-xs">No team assigned</span> : null}
+          </span>
+        </button>
+        {teamAvatarTooltip && typeof document !== "undefined" ? createPortal(
+          <span
+            className="team-avatar-tooltip label-xs-semibold"
+            role="tooltip"
+            style={{ left: teamAvatarTooltip.x, top: teamAvatarTooltip.y }}
+          >
+            {teamAvatarTooltip.text}
+          </span>,
+          document.body,
+        ) : null}
       </td>
     );
   }
@@ -2767,18 +2836,10 @@ function ProjectDataCell({
   );
 }
 
-function DeadlineCell({
-  project,
-  deadline,
-  isOpen,
-  onToggle,
-  onSave,
-}: {
+function DeadlineCell({ project, deadline, onOpen }: {
   project: Project;
   deadline: ProjectDeadline | undefined;
-  isOpen: boolean;
-  onToggle: () => void;
-  onSave: (deadline: ProjectDeadline | undefined) => void;
+  onOpen: () => void;
 }) {
   const summary = getDeadlineSummary(deadline);
   const stageLabel = getStageLabel(deadline?.stage ?? inferCurrentStage(project));
@@ -2790,10 +2851,10 @@ function DeadlineCell({
           className="deadline-display"
           type="button"
           aria-label={`Edit deadline for ${project.name}`}
-          aria-expanded={isOpen}
+          aria-haspopup="dialog"
           onClick={(event) => {
             event.stopPropagation();
-            onToggle();
+            onOpen();
           }}
         >
           {summary ? (
@@ -2810,21 +2871,16 @@ function DeadlineCell({
           className="deadline-chip label-s-semibold"
           type="button"
           aria-label={`Set deadline for ${project.name}`}
-          aria-expanded={isOpen}
+          aria-haspopup="dialog"
           onClick={(event) => {
             event.stopPropagation();
-            onToggle();
+            onOpen();
           }}
         >
           To be set
         </button>
       )}
 
-      {isOpen ? (
-        <div className="deadline-popover" onClick={(event) => event.stopPropagation()}>
-          <DeadlineReadFirstEditor project={project} deadline={deadline} onSave={onSave} />
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -2917,6 +2973,21 @@ function getValidProjectId(projectId: string | null) {
   }
 
   return projectId;
+}
+
+function getValidProjectPanelSection(section: string | null): ProjectPanelSection | null {
+  if (
+    section === "hours" ||
+    section === "team" ||
+    section === "costs" ||
+    section === "deadline" ||
+    section === "latestActions" ||
+    section === "notes"
+  ) {
+    return section;
+  }
+
+  return null;
 }
 
 function getColumnShiftDirection(
@@ -3066,6 +3137,36 @@ function getPrimaryTeamPerson(team: RoleSlot[]): TeamPerson | undefined {
   return primarySlot ? getAcceptedPerson(primarySlot) : undefined;
 }
 
+function getProjectTeamColumnMembers(team: RoleSlot[]) {
+  const membersById = new Map<string, { person: TeamPerson; roles: string[]; isInvited: boolean }>();
+
+  team.filter((slot) => !slot.archivedAt).forEach((slot) => {
+    const roleLabel = getSlotLabel(slot);
+    const acceptedPerson = getAcceptedPerson(slot);
+    const pendingInvitations = getVisibleInvitations(slot);
+
+    const addMember = (person: TeamPerson, isInvited: boolean) => {
+      const currentMember = membersById.get(person.id);
+      if (currentMember) {
+        if (!currentMember.roles.includes(roleLabel)) currentMember.roles.push(roleLabel);
+        currentMember.isInvited = currentMember.isInvited && isInvited;
+        return;
+      }
+
+      membersById.set(person.id, { person, roles: [roleLabel], isInvited });
+    };
+
+    if (acceptedPerson) addMember(acceptedPerson, false);
+    pendingInvitations.forEach((invitation) => {
+      const invitedPerson = getTeamPerson(invitation.personId);
+      if (invitedPerson) addMember(invitedPerson, true);
+    });
+
+  });
+
+  return { members: [...membersById.values()] };
+}
+
 function getFirstTeamPersonForType(team: RoleSlot[], personType: TeamPerson["personType"]) {
   const acceptedPerson = team.map(getAcceptedPerson).find((person) => person?.personType === personType);
 
@@ -3103,74 +3204,6 @@ function getPersonName(initials: string) {
   };
 
   return personMap[initials] ?? "Studio team";
-}
-
-function getClientContact(project: Project) {
-  const contactMap: Record<string, { name: string; role: string; email: string; lastContactAt: string }> = {
-    CNVA: {
-      name: "Ari Bennett",
-      role: "Brand Manager",
-      email: "ari@canva.com",
-      lastContactAt: "2026-06-18T10:15:00+10:00",
-    },
-    DEEL: {
-      name: "Priya Shah",
-      role: "Talent Marketing Lead",
-      email: "priya@deel.com",
-      lastContactAt: "2026-06-12T16:20:00+10:00",
-    },
-    HIMS: {
-      name: "Marcus Lee",
-      role: "Content Director",
-      email: "marcus@hims.com",
-      lastContactAt: "2026-06-17T14:05:00+10:00",
-    },
-    LINR: {
-      name: "Nina Patel",
-      role: "Product Marketing Manager",
-      email: "nina@linear.app",
-      lastContactAt: "2026-06-16T11:45:00+10:00",
-    },
-    LOOM: {
-      name: "Mia Reynolds",
-      role: "Marketing Lead",
-      email: "mia@loom.com",
-      lastContactAt: "2026-06-16T15:30:00+10:00",
-    },
-    NOTN: {
-      name: "Elliot Grant",
-      role: "Developer Relations",
-      email: "elliot@notion.so",
-      lastContactAt: "2026-06-15T09:40:00+10:00",
-    },
-    OPEN: {
-      name: "Sofia Chen",
-      role: "Creative Ops",
-      email: "sofia@openai.com",
-      lastContactAt: "2026-06-13T13:20:00+10:00",
-    },
-    PHOG: {
-      name: "Jules Morgan",
-      role: "Growth Lead",
-      email: "jules@posthog.com",
-      lastContactAt: "2026-06-09T12:10:00+10:00",
-    },
-    RAMP: {
-      name: "Noah Carter",
-      role: "Campaign Manager",
-      email: "noah@ramp.com",
-      lastContactAt: "2026-06-12T10:05:00+10:00",
-    },
-  };
-
-  return (
-    contactMap[project.clientBadge] ?? {
-      name: "Client contact",
-      role: "Primary contact",
-      email: "client@example.com",
-      lastContactAt: project.latestUpdate.timestamp,
-    }
-  );
 }
 
 function formatDeadlineDateTime(timestamp: string) {
@@ -3316,6 +3349,13 @@ function toDateInputValue(timestamp: string | undefined) {
   const date = new Date(timestamp);
 
   return `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
+}
+
+function updateDateTimeInputDate(currentValue: string, nextDate: string) {
+  if (!nextDate) return "";
+
+  const existingTime = currentValue.split("T")[1] || "17:00";
+  return `${nextDate}T${existingTime}`;
 }
 
 function fromDateTimeInputValue(value: string) {

@@ -88,7 +88,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
             </div>
             <div className="client-profile-actions">
               <Button size="M" variant="secondary" onClick={openInvite}>Invite teammate</Button>
-              <Link className="client-secondary-button label-m-semibold" href={portalHref}>Go to {client.name}&apos;s portal</Link>
+              <Link className="client-secondary-button label-m-semibold" href={portalHref}>Go to {client.name}&apos;s dashboard</Link>
               <Button size="M" onClick={() => setModal("start-project")}>
                 <span className="client-button-content"><DsIcon name="plus" size={16} /> Start project</span>
               </Button>
@@ -119,6 +119,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
         {section === "Overview" ? (
           <OverviewSection
             client={client}
+            dashboardHref={portalHref}
             primaryContact={primaryContact}
             projects={projects}
             onArchive={() => setModal("archive")}
@@ -194,6 +195,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
 
 function OverviewSection({
   client,
+  dashboardHref,
   onArchive,
   onRestore,
   onSave,
@@ -201,6 +203,7 @@ function OverviewSection({
   projects,
 }: {
   client: Client;
+  dashboardHref: string;
   onArchive: () => void;
   onRestore: () => void;
   onSave: (update: { name: string; website: string; logoUrl: string | null }) => void;
@@ -230,12 +233,13 @@ function OverviewSection({
           <Button size="M" onClick={() => onSave(form)}>Save changes</Button>
         </div>
       </article>
-      <article className="client-metric-card">
+      <Link className="client-metric-card is-link" href={dashboardHref} aria-label={`Open ${client.name}'s Client dashboard`}>
         <span className="client-metric-icon"><DsIcon name="queue" size={20} /></span>
         <strong className="headings-m-bold">{activeCount}</strong>
         <span className="label-s-semibold">Active {activeCount === 1 ? "project" : "projects"}</span>
         <small className="label-xs">{projects.length} total across this Client</small>
-      </article>
+        <span className="client-metric-link-hint label-xs-semibold">Open Client dashboard</span>
+      </Link>
       <article className="client-metric-card">
         <span className="client-metric-icon"><DsIcon name="clock-clockwise" size={20} /></span>
         <strong className="headings-2xs-bold">{formatRelativeDate(client.latestActivity.occurredAt)}</strong>
