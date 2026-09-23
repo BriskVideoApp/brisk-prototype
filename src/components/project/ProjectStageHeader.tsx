@@ -13,6 +13,7 @@ import { useProjectCompletion } from "@/components/project/ProjectCompletionCont
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdjuster";
+import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -29,9 +30,10 @@ type ProjectStageHeaderProps = {
   activeUtility?: "media" | "files" | "costs" | "chat" | "people" | "settings";
   mediaCount?: number;
   showUtilities?: boolean;
+  showProjectShare?: boolean;
 };
 
-export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project }: ProjectStageHeaderProps) {
+export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project, showProjectShare = true }: ProjectStageHeaderProps) {
   const dashboardTooltipId = `project-stage-dashboard-tooltip-${project.id}`;
   const { completionRecords } = useProjectCompletion();
   const { assetViews } = useMediaLibrary();
@@ -80,7 +82,22 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
             </span>
             <span className="project-stage-project-title">{project.name}</span>
           </div>
-          {actions ? <div className="project-stage-header-actions">{actions}</div> : null}
+          <div className="project-stage-header-actions">
+            {showProjectShare ? <ShareActionRow
+              context="project"
+              scopeType="project"
+              shareTitle={project.name}
+              userRole={selectedRole}
+              projectName={project.name}
+              studioName={studioName}
+              customerName={project.clientName}
+              copyLinkLabel="Share project"
+              shareUrl={`/projects/${project.id}`}
+              showSend={false}
+              showApprove={false}
+            /> : null}
+            {actions}
+          </div>
         </div>
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
           <div className="project-stage-flow-navigation">

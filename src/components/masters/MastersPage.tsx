@@ -5,7 +5,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ChangeEvent,
   type KeyboardEvent,
   type PointerEvent,
@@ -15,16 +14,15 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
-import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
-import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
-import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import {
-  useProjectCompletion,
-  type DeliverableApprovalSnapshot,
-} from "@/components/project/ProjectCompletionContext";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { appendSharedReviewActivity, sharedReviewActivityStorageKey } from "@/data/share-review-activity";
 import { ReviewCommentComposer } from "@/components/video-review/ReviewCommentComposer";
 import {
   ReviewCommentThread,
@@ -38,7 +36,6 @@ import type {
   ReviewComment,
   User,
 } from "@/components/video-review/types";
-import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { reviewUsers } from "@/data/video-review";
 import {
   createMockSrt,
@@ -61,6 +58,20 @@ type RequestTab = "cutdown" | "reformat" | "script";
 type AssetInspector = { deliverableId: string; type: "captions" | "thumbnail" | "versions" };
 type RecutDraftRange = { inSec: number; outSec: number };
 type DownloadSelection = { deliverableId: string; versionId?: string };
+type MastersReviewAuditEntry = {
+  id: string;
+  action: "sent" | "reminded" | "updated";
+  actor: string;
+  company: string;
+  recipients: string[];
+  occurredAt: string;
+  scopeKey: string;
+  scopeLabel: string;
+  href?: string;
+  requestId?: string;
+  fingerprint?: string;
+  message?: string;
+};
 type DownloadableAsset = {
   id: "video" | "thumbnail" | "captions";
   label: string;
@@ -68,8 +79,6 @@ type DownloadableAsset = {
   detail: string;
   icon: "video-camera" | "image-square" | "file-text";
 };
-
-const mastersStudioName = "North Star Films";
 
 const commentFilters: Array<{ value: CommentFilter; label: string }> = [
   { value: "all", label: "All" },
@@ -80,12 +89,28 @@ const commentFilters: Array<{ value: CommentFilter; label: string }> = [
 
 export function MastersPage({ project }: { project: Project }) {
   const { selectedRole: role } = usePrototypeRole();
-  const { publishStageReviewRequest } = useNotificationInbox();
-  const projectCode = customerDashboardProjects.find((item) => item.id === project.id)?.code;
+  const mastersStudioName = useStudioCompanyName();
+  const { completionRecords, completeProject } = useProjectCompletion();
+  const { state } = usePrototypeState();
+  const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
+  const { publishStageReviewFollowUp } = useNotificationInbox();
+  const mastersStageStatus = getProjectStages(project).masters;
+  const projectState = state.projects.find((candidate) => candidate.id === project.id);
+  const projectClient = state.clients.find((candidate) => candidate.id === project.clientId);
+  const clientRecipientNames = projectClient?.contacts
+    .filter((contact) => (projectState?.clientMemberIds.includes(contact.id) ?? contact.projectIds.includes(project.id)) && contact.portalAccess !== "Paused")
+    .map((contact) => contact.name) ?? [];
+  const studioRecipientNames = state.users
+    .filter((user) => user.workspaceId === state.session.activeWorkspaceId && user.role !== "Client")
+    .map((user) => user.name);
+  const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
+  const reviewActorName = role === "Customer" ? clientRecipientNames[0] ?? project.clientName : activeUser?.name ?? mastersStudioName;
+  const reviewCompany = role === "Customer" || role === "Studio Freelancer" ? mastersStudioName : project.clientName;
+  const auditStorageKey = `brisk-masters-review-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
-  const { completionRecords, completeProject, undoProjectCompletion } = useProjectCompletion();
-  const { setProjectStageStatus } = useProjectStageStatus();
+  const linkedDeliverableId = searchParams.get("deliverable");
+  const linkedVersionId = searchParams.get("version");
   const [deliverables, setDeliverables] = useState<MastersDeliverable[]>(() =>
     previewState === "empty"
       ? createMastersSlotsFromApprovedBrief()
@@ -105,17 +130,15 @@ export function MastersPage({ project }: { project: Project }) {
   const [currentTimeSeconds, setCurrentTimeSeconds] = useState(12);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [toast, setToast] = useState<{ message: string; canUndo?: boolean } | null>(null);
+  const [toast, setToast] = useState<{ message: string } | null>(null);
   const [openRowMenuId, setOpenRowMenuId] = useState<string | null>(null);
   const [editingNameId, setEditingNameId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [downloadSelection, setDownloadSelection] = useState<DownloadSelection | null>(null);
-  const [bulkApproveStep, setBulkApproveStep] = useState<"confirm" | "success" | null>(null);
-  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
-  const [isConfettiVisible, setIsConfettiVisible] = useState(false);
-  const [clock, setClock] = useState(() => Date.now());
-  const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
-  const [isReopenDialogOpen, setIsReopenDialogOpen] = useState(false);
+  const [downloadedVersionKeys, setDownloadedVersionKeys] = useState<Set<string>>(() => new Set());
+  const [hasDownloadedAll, setHasDownloadedAll] = useState(false);
+  const [mastersReviewAudit, setMastersReviewAudit] = useState<MastersReviewAuditEntry[]>([]);
+  const [sharePanelOpenSignal, setSharePanelOpenSignal] = useState(0);
   const [requestSourceId, setRequestSourceId] = useState<string | null>(null);
   const [requestTab, setRequestTab] = useState<RequestTab>("cutdown");
   const [requestName, setRequestName] = useState("");
@@ -157,15 +180,24 @@ export function MastersPage({ project }: { project: Project }) {
   const pendingExpandedScrollIdRef = useRef<string | null>(null);
 
   const isFilmmaker = role !== "Customer";
-  const isClient = role === "Customer";
-  const completionRecord = completionRecords[project.id];
-  const allDeliverablesApproved = areAllDeliveredFilesApproved(deliverables);
-  const isProjectDelivered = Boolean(completionRecord)
-    || (allDeliverablesApproved && project.status === "Completed");
-  const undoSeconds = completionRecord
-    ? Math.max(0, Math.ceil((new Date(completionRecord.undoExpiresAt).getTime() - clock) / 1000))
-    : 0;
   const expandedDeliverable = deliverables.find((deliverable) => deliverable.id === expandedDeliverableId);
+  const expandedVersion = expandedDeliverable ? getPresentedVersion(expandedDeliverable, selectedVersionByDeliverable) : undefined;
+  const reviewScopeKey = expandedDeliverable && expandedVersion ? `${expandedDeliverable.id}:${expandedVersion.id}` : "masters";
+  const reviewScopeLabel = expandedDeliverable && expandedVersion ? `${expandedDeliverable.name} V${expandedVersion.number}` : "Masters";
+  const reviewHref = expandedDeliverable && expandedVersion
+    ? `/projects/${project.id}/stages/masters?deliverable=${encodeURIComponent(expandedDeliverable.id)}&version=${encodeURIComponent(expandedVersion.id)}`
+    : `/projects/${project.id}/stages/masters`;
+  const reviewFingerprint = expandedDeliverable && expandedVersion
+    ? JSON.stringify({ version: expandedVersion, name: expandedDeliverable.name, captions: expandedDeliverable.srt, thumbnail: expandedDeliverable.thumbnail })
+    : JSON.stringify(deliverables.map((deliverable) => ({ id: deliverable.id, name: deliverable.name, versions: deliverable.versions, captions: deliverable.srt, thumbnail: deliverable.thumbnail })));
+  const latestReviewRequest = [...mastersReviewAudit].reverse().find((entry) => entry.action === "sent" && entry.scopeKey === reviewScopeKey && entry.company === reviewCompany);
+  const pendingReviewRequest = mastersStageStatus.state !== "done" && mastersStageStatus.assignedTo === reviewCompany && mastersStageStatus.reviewVersion === reviewScopeKey ? latestReviewRequest : undefined;
+  const reviewFollowUps = pendingReviewRequest
+    ? mastersReviewAudit.filter((entry) => (entry.action === "reminded" || entry.action === "updated") && entry.requestId === pendingReviewRequest.id)
+    : [];
+  const lastReviewContact = reviewFollowUps.at(-1) ?? pendingReviewRequest;
+  const lastMastersSent = [...reviewFollowUps].reverse().find((entry) => entry.action === "updated") ?? pendingReviewRequest;
+  const mastersChangedSinceSend = Boolean(lastMastersSent?.fingerprint && lastMastersSent.fingerprint !== reviewFingerprint);
   const commentsDeliverable = deliverables.find((deliverable) => deliverable.id === commentsDeliverableId);
   const markUpDeliverable = deliverables.find((deliverable) => deliverable.id === markUpDeliverableId);
   const markUpSourceDeliverable = markUpDeliverable ? getRecutSource(markUpDeliverable, deliverables) : undefined;
@@ -177,24 +209,30 @@ export function MastersPage({ project }: { project: Project }) {
   const downloadVersion = downloadDeliverable?.versions.find((version) => version.id === downloadSelection?.versionId)
     ?? (downloadDeliverable ? getPresentedVersion(downloadDeliverable, selectedVersionByDeliverable) : undefined);
   const orderedDeliverables = useMemo(() => orderDeliverables(deliverables, collapsedParentIds), [collapsedParentIds, deliverables]);
-  const readyDeliverables = deliverables.filter(
-    (deliverable) => deliverable.status === "waiting_for_customer" && deliverable.versions.length > 0,
-  );
   const canDownloadAll = deliverables.length > 0
     && deliverables.every((deliverable) => deliverable.versions.length > 0);
   const hasDrawingAttachment = drawingPaths.length > 0 || activeDrawingPath !== null;
   const pendingDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
 
   useEffect(() => {
-    if (!completionRecord) return;
-    setDeliverables((current) => applyCompletedDeliverables(current, completionRecord.approvedDeliverableIds));
-  }, [completionRecord]);
+    try {
+      const stored = window.localStorage.getItem(auditStorageKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : [];
+      setMastersReviewAudit(Array.isArray(parsed) ? parsed.filter(isMastersReviewAuditEntry) : []);
+    } catch {
+      setMastersReviewAudit([]);
+    }
+  }, [auditStorageKey]);
 
   useEffect(() => {
-    if (!completionRecord || undoSeconds <= 0) return;
-    const intervalId = window.setInterval(() => setClock(Date.now()), 1000);
-    return () => window.clearInterval(intervalId);
-  }, [completionRecord, undoSeconds]);
+    if (!linkedDeliverableId) return;
+    const linkedDeliverable = deliverables.find((deliverable) => deliverable.id === linkedDeliverableId);
+    if (!linkedDeliverable) return;
+    setExpandedDeliverableId(linkedDeliverableId);
+    if (linkedVersionId && linkedDeliverable.versions.some((version) => version.id === linkedVersionId)) {
+      setSelectedVersionByDeliverable((current) => ({ ...current, [linkedDeliverableId]: linkedVersionId }));
+    }
+  }, [linkedDeliverableId, linkedVersionId]);
 
   useEffect(() => {
     setCommentVisibility(role === "Customer" ? "external" : "internal");
@@ -221,54 +259,127 @@ export function MastersPage({ project }: { project: Project }) {
     return () => window.cancelAnimationFrame(frameId);
   }, [expandedDeliverableId]);
 
-  const showToast = (message: string, canUndo = false) => {
-    setToast({ message, canUndo });
+  const showToast = (message: string) => {
+    setToast({ message });
     window.setTimeout(() => setToast(null), 2600);
   };
 
-  const startConfetti = () => {
-    setIsConfettiVisible(true);
-    window.setTimeout(() => setIsConfettiVisible(false), 2000);
+  const recordMastersReviewAudit = (entry: MastersReviewAuditEntry) => {
+    setMastersReviewAudit((current) => {
+      const next = [...current, entry];
+      try {
+        window.localStorage.setItem(auditStorageKey, JSON.stringify(next));
+        window.setTimeout(() => window.dispatchEvent(new Event("brisk:masters-activity-updated")), 0);
+      } catch {
+        // The prototype review controls remain usable if local storage is unavailable.
+      }
+      return next;
+    });
   };
 
-  const finaliseProject = (
-    nextDeliverables: MastersDeliverable[],
-    approvedDeliverableIds: string[],
-    snapshot: Record<string, DeliverableApprovalSnapshot>,
-    toastMessage?: string,
-  ) => {
+  const sendMastersReview = (message: string) => {
+    const sendsToStudio = role === "Customer" || role === "Studio Freelancer";
+    const recipients = sendsToStudio ? studioRecipientNames : clientRecipientNames;
+    const occurredAt = new Date().toISOString();
+    recordMastersReviewAudit({
+      id: `masters-send-${project.id}-${Date.now()}`,
+      action: "sent",
+      actor: reviewActorName,
+      company: reviewCompany,
+      recipients: recipients.length > 0 ? recipients : [reviewCompany],
+      occurredAt,
+      scopeKey: reviewScopeKey,
+      scopeLabel: reviewScopeLabel,
+      href: reviewHref,
+      fingerprint: reviewFingerprint,
+      message: message.trim() || undefined,
+    });
+    setProjectStageStatus(project.id, "masters", {
+      state: sendsToStudio ? "in_progress" : "waiting",
+      daysAgo: 0,
+      assignedTo: reviewCompany,
+      reviewVersion: reviewScopeKey,
+    });
+    publishStageReviewFollowUp({
+      projectId: project.id,
+      projectName: project.name,
+      stage: "masters",
+      targetLabel: reviewScopeLabel,
+      actorName: reviewActorName,
+      recipientRole: sendsToStudio ? "Studio Staff" : "Customer",
+      reviewers: recipients.length > 0 ? recipients : [reviewCompany],
+      href: reviewHref,
+      message: message.trim(),
+      kind: "request",
+      occurredAt,
+    });
+  };
+
+  const followUpMastersReview = (action: "reminded" | "updated", message: string) => {
+    if (!pendingReviewRequest || !lastReviewContact || !lastMastersSent) return;
+    if (action === "reminded" && mastersChangedSinceSend) return;
+    if (action === "updated" && !mastersChangedSinceSend) return;
+    const occurredAt = new Date().toISOString();
+    recordMastersReviewAudit({
+      id: `masters-${action}-${project.id}-${Date.now()}`,
+      action,
+      actor: reviewActorName,
+      company: pendingReviewRequest.company,
+      recipients: pendingReviewRequest.recipients,
+      occurredAt,
+      scopeKey: pendingReviewRequest.scopeKey,
+      scopeLabel: pendingReviewRequest.scopeLabel,
+      href: reviewHref,
+      requestId: pendingReviewRequest.id,
+      fingerprint: action === "updated" ? reviewFingerprint : undefined,
+      message: message.trim() || undefined,
+    });
+    publishStageReviewFollowUp({
+      projectId: project.id,
+      projectName: project.name,
+      stage: "masters",
+      targetLabel: pendingReviewRequest.scopeLabel,
+      actorName: reviewActorName,
+      recipientRole: pendingReviewRequest.company === mastersStudioName ? "Studio Staff" : "Customer",
+      reviewers: pendingReviewRequest.recipients,
+      href: reviewHref,
+      message: message.trim(),
+      kind: action === "updated" ? "updated" : "reminder",
+      occurredAt,
+    });
+  };
+
+  const completeVideo = () => {
+    if (role !== "Studio Staff" || !canDownloadAll || completionRecords[project.id]) return;
     const deliveredAt = new Date().toISOString();
-    setDeliverables(nextDeliverables);
     completeProject(project.id, {
       deliveredAt,
-      deliveredBy: isClient ? "client-jess-taylor" : "studio-tom-evans",
-      undoExpiresAt: new Date(Date.now() + 30_000).toISOString(),
-      approvedDeliverableIds,
-      deliverableSnapshots: snapshot,
+      deliveredBy: reviewActorName,
+      undoExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      approvedDeliverableIds: [],
+      deliverableSnapshots: Object.fromEntries(deliverables.map((deliverable) => [deliverable.id, {
+        status: deliverable.status,
+        currentVersionId: deliverable.currentVersionId,
+        approvedVersionIds: [],
+      }])),
     });
-    setProjectStageStatus(project.id, "masters", {
-      state: "done",
-      daysAgo: 0,
-      approvedAt: "17 Aug",
-      approvedBy: role === "Customer" ? "Avery Taylor" : "Tom",
+    setProjectStageStatus(project.id, "masters", { state: "done", daysAgo: 0 });
+    const id = `masters-completed-${project.id}-${deliveredAt}`;
+    appendSharedReviewActivity(sharedReviewActivityStorageKey(state.session.activeWorkspaceId, project.id), {
+      id,
+      requestId: id,
+      action: "completed",
+      actor: reviewActorName,
+      company: mastersStudioName,
+      recipients: [],
+      occurredAt: deliveredAt,
+      scopeKey: "masters",
+      scopeLabel: "Masters",
+      stage: "masters",
+      href: `/projects/${project.id}/stages/masters`,
+      message: "",
     });
-    setClock(Date.now());
-    setIsBannerDismissed(false);
-    startConfetti();
-    if (toastMessage) showToast(toastMessage, true);
-  };
-
-  const undoApproval = () => {
-    if (!completionRecord || undoSeconds <= 0) return;
-    setDeliverables((current) => restoreDeliverableSnapshots(current, completionRecord.deliverableSnapshots));
-    undoProjectCompletion(project.id);
-    setProjectStageStatus(project.id, "masters", {
-      state: role === "Customer" ? "waiting" : "in_progress",
-      daysAgo: 0,
-    });
-    setIsBannerDismissed(false);
-    setToast(null);
-    showToast("Approval undone.");
+    showToast("Video completed.");
   };
 
   const closeMenus = () => {
@@ -280,25 +391,17 @@ export function MastersPage({ project }: { project: Project }) {
     closeMenus();
   };
 
-  const markApprovedAssetDelivered = (deliverableId: string) => {
-    setDeliverables((current) => current.map((deliverable) =>
-      deliverable.id === deliverableId && deliverable.status === "approved"
-        ? { ...deliverable, status: "delivered" }
-        : deliverable,
-    ));
-  };
-
   const downloadSelectedAssets = (assetIds: DownloadableAsset["id"][]) => {
     if (!downloadDeliverable) return;
-    const wasApproved = downloadDeliverable.status === "approved";
     const assets = getDownloadableAssets(downloadDeliverable, downloadVersion)
       .filter((asset) => assetIds.includes(asset.id));
     assets.forEach((asset) => downloadPrototypeFile(asset.filename, showToast));
-    markApprovedAssetDelivered(downloadDeliverable.id);
+    if (downloadVersion && assetIds.includes("video")) {
+      const downloadedKey = getDownloadedVersionKey(downloadDeliverable.id, downloadVersion.id);
+      setDownloadedVersionKeys((current) => new Set(current).add(downloadedKey));
+    }
     setDownloadSelection(null);
-    showToast(wasApproved
-      ? `${assets.length} ${assets.length === 1 ? "asset" : "assets"} downloading. ${downloadDeliverable.name} is now delivered.`
-      : `${assets.length} ${assets.length === 1 ? "asset" : "assets"} downloading.`);
+    showToast(`${assets.length} ${assets.length === 1 ? "asset" : "assets"} downloading.`);
   };
 
   const expandDeliverable = (deliverableId: string) => {
@@ -395,80 +498,6 @@ export function MastersPage({ project }: { project: Project }) {
     showToast("Current version updated.");
   };
 
-  const approveDeliverable = (deliverableId: string, versionId?: string) => {
-    const nextDeliverables = deliverables.map((deliverable) => {
-      if (deliverable.id !== deliverableId) return deliverable;
-      const version = deliverable.versions.find((item) => item.id === versionId)
-        ?? getPresentedVersion(deliverable, selectedVersionByDeliverable)
-        ?? deliverable.versions[deliverable.versions.length - 1];
-      if (!version) return deliverable;
-      return {
-        ...deliverable,
-        approvedVersionId: version.id,
-        currentVersionId: version.id,
-        status: "approved" as const,
-        versions: deliverable.versions.map((item) => ({ ...item, approved: item.id === version.id })),
-      };
-    });
-    setDeliverables(nextDeliverables);
-    showToast("Version approved.");
-  };
-
-  const unapproveDeliverable = (deliverableId: string, versionId: string) => {
-    setDeliverables((current) => current.map((deliverable) => {
-      if (deliverable.id !== deliverableId) return deliverable;
-      return {
-        ...deliverable,
-        approvedVersionId: undefined,
-        status: "waiting_for_customer" as const,
-        versions: deliverable.versions.map((version) => (
-          version.id === versionId ? { ...version, approved: false } : version
-        )),
-      };
-    }));
-    if (completionRecord) undoProjectCompletion(project.id);
-    setProjectStageStatus(project.id, "masters", {
-      state: role === "Customer" ? "waiting" : "in_progress",
-      daysAgo: 0,
-    });
-    setBulkApproveStep(null);
-    setIsBannerDismissed(false);
-    showToast("Approval removed. This version is ready for review again.");
-  };
-
-  const approveAllReady = (selectedIds: string[]) => {
-    const snapshot = createDeliverableSnapshots(deliverables);
-    const selectedReadyIds = new Set(selectedIds);
-    const downloadableIds = new Set(deliverables
-      .filter((deliverable) => deliverable.versions.length > 0 && (
-        selectedReadyIds.has(deliverable.id)
-        || deliverable.status === "approved"
-        || deliverable.status === "delivered"
-      ))
-      .map((deliverable) => deliverable.id));
-    const nextDeliverables = deliverables.map((deliverable) => {
-      if (!downloadableIds.has(deliverable.id)) return deliverable;
-      const approvedVersion = deliverable.versions.find((version) => version.id === deliverable.approvedVersionId)
-        ?? deliverable.versions.find((version) => version.id === deliverable.currentVersionId)
-        ?? deliverable.versions[deliverable.versions.length - 1];
-      if (!approvedVersion) return deliverable;
-      return {
-        ...deliverable,
-        approvedVersionId: approvedVersion.id,
-        currentVersionId: approvedVersion.id,
-        status: "delivered" as const,
-        versions: deliverable.versions.map((version) => ({ ...version, approved: version.id === approvedVersion.id })),
-      };
-    });
-    finaliseProject(
-      nextDeliverables,
-      [...downloadableIds],
-      snapshot,
-      `${selectedIds.length} deliverable${selectedIds.length === 1 ? "" : "s"} approved. Download all is ready.`,
-    );
-    setBulkApproveStep("success");
-  };
-
   const openUpload = (deliverableId: string, mode: "new-version" | "replace" = "new-version") => {
     if (!isFilmmaker) return;
     uploadTargetIdRef.current = deliverableId;
@@ -498,7 +527,6 @@ export function MastersPage({ project }: { project: Project }) {
       fileSize: formatFileSize(file.size),
       durationSeconds: previousVersion?.durationSeconds ?? durationLabelToSeconds(target.duration),
       shadePath: `Shade/${project.name}/Masters/${target.name}/V${nextNumber}`,
-      approved: false,
     };
 
     setDeliverables((current) => current.map((deliverable) =>
@@ -509,8 +537,7 @@ export function MastersPage({ project }: { project: Project }) {
               ? deliverable.versions.map((version) => version.id === nextVersion.id ? nextVersion : version)
               : [...deliverable.versions, nextVersion],
             currentVersionId: nextVersion.id,
-            approvedVersionId: undefined,
-            status: "waiting_for_customer",
+            status: "available",
             srt: deliverable.kind === "video"
               ? deliverable.srt ?? createMockSrt(`${deliverable.id}-caption`, `${file.name.replace(/\.[^.]+$/, "")}_en-AU.srt`, nextVersion.durationSeconds)
               : deliverable.srt,
@@ -540,19 +567,13 @@ export function MastersPage({ project }: { project: Project }) {
 
   const downloadSrt = (deliverable: MastersDeliverable) => {
     if (!deliverable.srt) return;
-    const wasApproved = deliverable.status === "approved";
     downloadTextFile(deliverable.srt.filename, formatSrtFile(deliverable.srt.lines), "application/x-subrip", showToast);
-    markApprovedAssetDelivered(deliverable.id);
-    if (wasApproved) showToast(`${deliverable.name} is now delivered.`);
   };
 
   const downloadThumbnail = (deliverable: MastersDeliverable) => {
     const thumbnailAsset = getDownloadableAssets(deliverable).find((asset) => asset.id === "thumbnail");
     if (!thumbnailAsset) return;
-    const wasApproved = deliverable.status === "approved";
     downloadPrototypeFile(thumbnailAsset.filename, showToast);
-    markApprovedAssetDelivered(deliverable.id);
-    if (wasApproved) showToast(`${deliverable.name} is now delivered.`);
   };
 
   const copyThumbnailImage = async (deliverable: MastersDeliverable) => {
@@ -694,7 +715,6 @@ export function MastersPage({ project }: { project: Project }) {
       fileSize: formatFileSize(file.size),
       durationSeconds,
       shadePath: `Shade/${project.name}/Masters/${target.name}/Source`,
-      approved: true,
     };
     setDeliverables((current) => current.map((deliverable) =>
       deliverable.id === target.id
@@ -716,14 +736,12 @@ export function MastersPage({ project }: { project: Project }) {
     setDeliverables((current) => current.map((deliverable) => {
       if (deliverable.id !== deliverableId) return deliverable;
       const versions = deliverable.versions.filter((version) => version.id !== versionId);
-      const approvedVersionId = deliverable.approvedVersionId === versionId ? undefined : deliverable.approvedVersionId;
       const currentVersionId = deliverable.currentVersionId === versionId
         ? versions[versions.length - 1]?.id
         : deliverable.currentVersionId;
       return {
         ...deliverable,
         versions,
-        approvedVersionId,
         currentVersionId,
         status: versions.length ? deliverable.status : "not_started",
       };
@@ -1081,38 +1099,8 @@ export function MastersPage({ project }: { project: Project }) {
         <ProjectStageHeader
         project={project}
         activeStage="masters"
-        actions={isFilmmaker && isProjectDelivered && undoSeconds === 0 ? (
-          <div className="masters-project-menu-wrap">
-            <button
-              className="masters-project-menu-button"
-              type="button"
-              aria-label="Masters project actions"
-              aria-expanded={isProjectMenuOpen}
-              onClick={() => setIsProjectMenuOpen((current) => !current)}
-            >
-              <DsIcon name="dots-three" size={18} />
-            </button>
-            {isProjectMenuOpen ? (
-              <div className="masters-project-menu">
-                <button type="button" className="label-xs-semibold" onClick={() => { setIsProjectMenuOpen(false); setIsReopenDialogOpen(true); }}>
-                  Reopen project
-                </button>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        showProjectShare={false}
       />
-
-        {isProjectDelivered && completionRecord && !isBannerDismissed ? (
-        <div className="masters-delivered-banner" role="status">
-          <span>{isClient ? "🎉 Project delivered. Thanks for your work with North Star Films." : `🎉 Project delivered to ${project.clientName}.`}</span>
-          <button type="button" aria-label="Dismiss delivered message" onClick={() => setIsBannerDismissed(true)}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </div>
-      ) : null}
-
-        {isConfettiVisible ? <ConfettiBurst /> : null}
 
         <section className="masters-register-workspace">
         <section className="masters-register">
@@ -1145,7 +1133,7 @@ export function MastersPage({ project }: { project: Project }) {
                   const canExpand = Boolean(selectedVersion || deliverable.recutBrief || isMarkingUpTarget);
                   const expanded = canExpand && deliverable.id === expandedDeliverableId;
                   const isMainVideo = deliverable.briefDeliverableId === "main-video";
-                  const recutActionLabel = isFilmmaker && isMainVideo && selectedVersion
+                  const recutActionLabel = isMainVideo && selectedVersion
                     ? isMarkingUpTarget
                       ? "Continue mark-up"
                       : deliverable.recutBrief
@@ -1164,6 +1152,7 @@ export function MastersPage({ project }: { project: Project }) {
                         hasChildren={childCount > 0}
                         childrenExpanded={childCount > 0 && childrenExpanded}
                         selectedVersion={selectedVersion}
+                        downloaded={Boolean(selectedVersion && downloadedVersionKeys.has(getDownloadedVersionKey(deliverable.id, selectedVersion.id)))}
                         commentCount={deliverable.comments.filter((comment) => role !== "Customer" || comment.visibility === "external").length}
                         isFilmmaker={isFilmmaker}
                         editingName={editingNameId === deliverable.id}
@@ -1208,7 +1197,14 @@ export function MastersPage({ project }: { project: Project }) {
                         onSelect={() => expandDeliverable(deliverable.id)}
                         onToggleChildren={() => toggleParentChildren(deliverable.id)}
                         onShare={() => {
-                          void copyShareLink(deliverable.id, showToast);
+                          const versionToShare = selectedVersion ?? getPresentedVersion(sourceDeliverable, selectedVersionByDeliverable);
+                          if (versionToShare) setSelectedVersionByDeliverable((current) => ({ ...current, [deliverable.id]: versionToShare.id }));
+                          setExpandedDeliverableId(deliverable.id);
+                          setCommentsDeliverableId(null);
+                          setAssetInspector(null);
+                          setRecutPanelDeliverableId(null);
+                          setMarkUpDeliverableId(null);
+                          setSharePanelOpenSignal((current) => current + 1);
                           closeMenus();
                         }}
                         onToggleComments={() => toggleDeliverableComments(deliverable.id)}
@@ -1225,8 +1221,9 @@ export function MastersPage({ project }: { project: Project }) {
                           deliverable={deliverable}
                           sourceDeliverable={sourceDeliverable}
                           version={playbackVersion}
+                          isDownloaded={Boolean(playbackVersion && downloadedVersionKeys.has(getDownloadedVersionKey(deliverable.id, playbackVersion.id)))}
                           role={role}
-                          customerName={project.clientName}
+                          studioName={mastersStudioName}
                           isFilmmaker={isFilmmaker}
                           currentTimeSeconds={currentTimeSeconds}
                           isPlaying={isPlaying}
@@ -1309,6 +1306,7 @@ export function MastersPage({ project }: { project: Project }) {
                                 <VersionsPanel
                                   deliverable={deliverable}
                                   selectedVersionId={getPresentedVersion(deliverable, selectedVersionByDeliverable)?.id}
+                                  downloadedVersionKeys={downloadedVersionKeys}
                                   isFilmmaker={isFilmmaker}
                                   onDelete={(versionId) => deleteVersion(deliverable.id, versionId)}
                                   onDownload={(version) => openDownloadSelection(deliverable.id, version.id)}
@@ -1381,37 +1379,6 @@ export function MastersPage({ project }: { project: Project }) {
                           selectedRecutMarkId={selectedRecutMarkId}
                           canUndoRecut={recutMarkHistory.length > 0}
                           canRedoRecut={recutMarkFuture.length > 0}
-                          onRequestReview={(recipient) => {
-                            if (!playbackVersion) return;
-
-                            setProjectStageStatus(project.id, "masters", {
-                              state: recipient === "customer" ? "waiting" : "in_progress",
-                              daysAgo: 0,
-                            });
-
-                            if (recipient !== "customer") return;
-
-                            publishStageReviewRequest({
-                              projectId: project.id,
-                              projectCode,
-                              projectName: project.name,
-                              stage: "masters",
-                              versionLabel: `v${playbackVersion.number}`,
-                              actorName: "Tom",
-                              href: `/projects/${project.id}/stages/masters?deliverable=${encodeURIComponent(deliverable.id)}`,
-                            });
-                          }}
-                          onSendToStudio={() => {
-                            setDeliverables((current) => current.map((item) =>
-                              item.id === deliverable.id
-                                ? { ...item, status: "waiting_for_studio" as const }
-                                : item,
-                            ));
-                            setProjectStageStatus(project.id, "masters", {
-                              state: "in_progress",
-                              daysAgo: 0,
-                            });
-                          }}
                           onDownload={(versionToDownload) => openDownloadSelection(deliverable.id, versionToDownload.id)}
                           onBeginRecutInstruction={() => {
                             setDraftRecutRange(null);
@@ -1475,7 +1442,7 @@ export function MastersPage({ project }: { project: Project }) {
               <div className="masters-page-empty">
                 <DsIcon name="film-strip" size={28} />
                 <h2>{isFilmmaker ? "No deliverables yet" : "No Masters are ready yet"}</h2>
-                <p className="label-s">{isFilmmaker ? "Add the first output for this video." : "The Studio will share approved deliverables here when they are ready."}</p>
+                <p className="label-s">{isFilmmaker ? "Add the first output for this video." : "The Studio will share deliverables here when they are ready."}</p>
                 {isFilmmaker ? (
                   <button className="masters-primary-button label-s-semibold" type="button" onClick={addDeliverable}>
                     <DsIcon name="plus" size={16} />Add deliverable
@@ -1488,22 +1455,57 @@ export function MastersPage({ project }: { project: Project }) {
 
         <footer className="masters-action-footer" aria-label="Masters actions">
           <div className="masters-action-footer-inner">
-            <button className="masters-footer-share" type="button" aria-label="Copy share link" onClick={() => copyShareLink("all-deliverables", showToast)}>
-              <DsIcon name="link" size={20} />
-            </button>
+            <ShareActionRow
+              context="masters"
+              scopeType={expandedVersion ? "version" : "stage"}
+              shareTitle={reviewScopeLabel}
+              allowProjectScope
+              userRole={role}
+              projectId={project.id}
+              projectName={project.name}
+              studioName={mastersStudioName}
+              customerName={project.clientName}
+              copyLinkLabel="Share"
+              shareUrl={reviewHref}
+              openPanelSignal={sharePanelOpenSignal}
+              sendChangesProjectStatus
+              sendButtonVariant="secondary"
+              sendCompanyName={reviewCompany}
+              sendLabel={`Send Masters to ${reviewCompany}`}
+              isWaitingOnReview={Boolean(pendingReviewRequest)}
+              pendingReviewDetails={pendingReviewRequest && lastReviewContact ? {
+                requestedBy: pendingReviewRequest.actor,
+                requestedAt: pendingReviewRequest.occurredAt,
+                recipients: pendingReviewRequest.recipients,
+                lastSentAt: lastReviewContact.occurredAt,
+                lastSentKind: lastReviewContact.action === "reminded" ? "reminder" : lastReviewContact.action === "updated" ? "updated" : "request",
+                hasChanged: mastersChangedSinceSend,
+                onSendReminder: (message) => followUpMastersReview("reminded", message),
+                onSendUpdated: (message) => followUpMastersReview("updated", message),
+              } : undefined}
+              onSend={sendMastersReview}
+              showApprove={false}
+            />
             <span
               className="masters-download-all-wrap"
               data-tooltip={canDownloadAll ? undefined : "Available when every Masters slot has a file."}
             >
               <button
-                className="masters-primary-button label-s-semibold"
+                className="masters-secondary-button label-s-semibold"
                 type="button"
                 disabled={!canDownloadAll}
-                onClick={() => downloadPrototypeFile(`${project.name}-Masters.zip`, showToast)}
+                onClick={() => { downloadPrototypeFile(`${project.name}-Masters.zip`, showToast); setHasDownloadedAll(true); }}
               >
-                <DsIcon name="download" size={18} />Download All
+                <DsIcon name="download" size={18} />{hasDownloadedAll ? "Downloaded" : "Download All"}
               </button>
             </span>
+            {role === "Studio Staff" ? <button
+              className="masters-primary-button label-s-semibold"
+              type="button"
+              disabled={!canDownloadAll || Boolean(completionRecords[project.id])}
+              title={!canDownloadAll ? "Add a file to every Masters slot before completing the video" : completionRecords[project.id] ? `Completed by ${completionRecords[project.id].deliveredBy}` : undefined}
+              onClick={completeVideo}
+            ><DsIcon name="check" size={18} />{completionRecords[project.id] ? "Completed" : "Complete video"}</button> : null}
           </div>
         </footer>
       </section>
@@ -1552,9 +1554,6 @@ export function MastersPage({ project }: { project: Project }) {
           onSubmit={submitRequest}
         />
       ) : null}
-      {isReopenDialogOpen ? (
-        <ReopenProjectDialog onCancel={() => setIsReopenDialogOpen(false)} />
-      ) : null}
       {deleteConfirmId ? (
         <DeleteDeliverableDialog
           deliverableName={deliverables.find((deliverable) => deliverable.id === deleteConfirmId)?.name ?? "this deliverable"}
@@ -1565,7 +1564,6 @@ export function MastersPage({ project }: { project: Project }) {
         {toast ? (
         <div className="masters-toast label-s-semibold" role="status">
           <span>{toast.message}</span>
-          {toast.canUndo && undoSeconds > 0 ? <button type="button" onClick={undoApproval}>Undo</button> : null}
         </div>
         ) : null}
       </div>
@@ -1580,6 +1578,7 @@ function DeliverableRow({
   hasChildren,
   childrenExpanded,
   selectedVersion,
+  downloaded,
   commentCount,
   isFilmmaker,
   editingName,
@@ -1610,6 +1609,7 @@ function DeliverableRow({
   hasChildren: boolean;
   childrenExpanded: boolean;
   selectedVersion?: MastersVersion;
+  downloaded: boolean;
   commentCount: number;
   isFilmmaker: boolean;
   editingName: boolean;
@@ -1636,7 +1636,7 @@ function DeliverableRow({
 }) {
   const hasThumbnail = Boolean(deliverable.thumbnail);
   const hasCaptions = Boolean(deliverable.srt && deliverable.captions.some((caption) => caption !== "None"));
-  const primaryAction = getDeliverablePrimaryAction(deliverable.status, selectedVersion, isFilmmaker);
+  const primaryAction = getDeliverablePrimaryAction(deliverable.status, selectedVersion, isFilmmaker, downloaded);
   const primaryActionIsDownload = primaryAction?.kind === "download";
 
   const runPrimaryAction = () => {
@@ -1802,7 +1802,7 @@ function DeliverableRow({
               {selectedVersion && !primaryActionIsDownload ? (
                 <button className="label-xs-semibold" type="button" onClick={onDownload}><DsIcon name="download" size={14} />Download</button>
               ) : null}
-              <button className="label-xs-semibold" type="button" onClick={onShare}><DsIcon name="link" size={14} />Copy share link</button>
+              <button className="label-xs-semibold" type="button" onClick={onShare}><DsIcon name="link" size={14} />Share item</button>
               {isFilmmaker ? (
                 <>
                   {selectedVersion ? <button className="label-xs-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={14} />Upload new version</button> : null}
@@ -1824,8 +1824,9 @@ function ExpandedDeliverable({
   deliverable,
   sourceDeliverable,
   version,
+  isDownloaded,
   role,
-  customerName,
+  studioName,
   isFilmmaker,
   currentTimeSeconds,
   isPlaying,
@@ -1844,8 +1845,6 @@ function ExpandedDeliverable({
   selectedRecutMarkId,
   canUndoRecut,
   canRedoRecut,
-  onRequestReview,
-  onSendToStudio,
   onClearDrawing,
   onDoneDrawing,
   onDownload,
@@ -1871,8 +1870,9 @@ function ExpandedDeliverable({
   deliverable: MastersDeliverable;
   sourceDeliverable: MastersDeliverable;
   version?: MastersVersion;
+  isDownloaded: boolean;
   role: MastersRole;
-  customerName: string;
+  studioName: string;
   isFilmmaker: boolean;
   currentTimeSeconds: number;
   isPlaying: boolean;
@@ -1891,8 +1891,6 @@ function ExpandedDeliverable({
   selectedRecutMarkId: string | null;
   canUndoRecut: boolean;
   canRedoRecut: boolean;
-  onRequestReview: (recipient: RequestReviewRecipient) => void;
-  onSendToStudio: () => void;
   onClearDrawing: () => void;
   onDoneDrawing: () => void;
   onDownload: (version: MastersVersion) => void;
@@ -1987,7 +1985,7 @@ function ExpandedDeliverable({
                 <span className="label-s">
                   {isFilmmaker
                     ? "Upload V1 when the editor has completed this recut."
-                    : `${mastersStudioName} still needs to upload the first version for you to review.`}
+                    : `${studioName} still needs to upload the first version for you to review.`}
                 </span>
               </div>
               {isFilmmaker ? (
@@ -1998,21 +1996,7 @@ function ExpandedDeliverable({
             </div>
           ) : !isMarkUpMode && version ? (
             <div className="masters-expanded-actions">
-              <ShareActionRow
-                context="masters"
-                userRole={role}
-                initialLinkOpens="videoOnly"
-                initialAccess="canComment"
-                projectName={deliverable.name}
-                studioName={mastersStudioName}
-                customerName={customerName}
-                customerReviewLabel="Request a change"
-                showCopyLink={false}
-                showApprove={false}
-                onRequestReview={onRequestReview}
-                onSendToStudio={onSendToStudio}
-              />
-              <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => onDownload(version)}><DsIcon name="download" size={16} />Download</button>
+              <button className="masters-secondary-button label-s-semibold" type="button" aria-label={isDownloaded ? `Download ${version.filename} again` : `Download ${version.filename}`} onClick={() => onDownload(version)}><DsIcon name="download" size={16} />{isDownloaded ? "Downloaded" : "Download"}</button>
             </div>
           ) : null}
           {deliverable.recutBrief && deliverable.versions.length > 0 ? (
@@ -2191,8 +2175,8 @@ function CompactPlayer({
         ) : contextDeliverable.recutBrief && contextDeliverable.versions.length === 0 ? (
           <span className="masters-recut-brief-chip label-xs-semibold">Recut brief - awaiting V1 · target {contextDeliverable.recutBrief.targetDurationSec}s</span>
         ) : (
-          <span className={`masters-player-version label-xs-semibold ${version.approved ? "approved" : ""}`}>
-            V{version.number}{version.approved ? " · Approved" : " · In review"}
+          <span className="masters-player-version label-xs-semibold">
+            V{version.number}{version.id === contextDeliverable.currentVersionId ? " · Current" : " · Previous"}
           </span>
         )}
       </div>
@@ -2565,14 +2549,15 @@ function getDeliverablePrimaryAction(
   status: DeliverableStatus,
   selectedVersion: MastersVersion | undefined,
   isFilmmaker: boolean,
+  isDownloaded: boolean,
 ): DeliverablePrimaryAction | null {
   if (!isFilmmaker) {
-    return { kind: "download", label: "Download", style: "secondary", disabled: !selectedVersion };
+    return { kind: "download", label: isDownloaded ? "Downloaded" : "Download", style: "secondary", disabled: !selectedVersion };
   }
   if (status === "not_started") return isFilmmaker ? { kind: "upload", label: "Upload", style: "primary" } : null;
   if (status === "waiting_for_studio") return isFilmmaker ? { kind: "upload", label: "Upload new version", style: "primary" } : null;
 
-  if (selectedVersion?.approved) return { kind: "download", label: "Download", style: "secondary" };
+  if (selectedVersion) return { kind: "download", label: isDownloaded ? "Downloaded" : "Download", style: "secondary" };
   return null;
 }
 
@@ -2581,7 +2566,7 @@ function getPrimaryActionIcon(kind: DeliverablePrimaryAction["kind"]) {
   return "download" as const;
 }
 
-function VersionsPanel({ deliverable, selectedVersionId, isFilmmaker, onDelete, onDownload, onSelect, onSetCurrent, onUpload }: { deliverable: MastersDeliverable; selectedVersionId?: string; isFilmmaker: boolean; onDelete: (versionId: string) => void; onDownload: (version: MastersVersion) => void; onSelect: (versionId: string) => void; onSetCurrent: (versionId: string) => void; onUpload: () => void }) {
+function VersionsPanel({ deliverable, selectedVersionId, downloadedVersionKeys, isFilmmaker, onDelete, onDownload, onSelect, onSetCurrent, onUpload }: { deliverable: MastersDeliverable; selectedVersionId?: string; downloadedVersionKeys: Set<string>; isFilmmaker: boolean; onDelete: (versionId: string) => void; onDownload: (version: MastersVersion) => void; onSelect: (versionId: string) => void; onSetCurrent: (versionId: string) => void; onUpload: () => void }) {
   const versions = [...deliverable.versions].reverse();
   const nextNumber = Math.max(0, ...deliverable.versions.map((version) => version.number)) + 1;
   return (
@@ -2593,16 +2578,17 @@ function VersionsPanel({ deliverable, selectedVersionId, isFilmmaker, onDelete, 
       <div className="masters-version-list">
         {versions.length ? versions.map((version) => {
           const isCurrent = version.id === deliverable.currentVersionId;
+          const isDownloaded = downloadedVersionKeys.has(getDownloadedVersionKey(deliverable.id, version.id));
           return (
             <article className={`masters-version-card ${version.id === selectedVersionId ? "selected" : ""}`} key={version.id}>
               <button className="masters-version-select" type="button" onClick={() => onSelect(version.id)}>
                 <span className="masters-version-thumbnail"><DsIcon name={deliverable.kind === "captions" ? "file-text" : "play"} size={18} /></span>
                 <span className="masters-version-copy"><span className="label-s-semibold">V{version.number}</span><span className="label-xs">{version.filename}</span><span className="label-xs">{formatShortDate(version.uploadedAt)} · {version.uploadedBy}</span></span>
               </button>
-              <span className={`masters-version-state label-xs-semibold ${version.approved ? "approved" : ""}`}>{version.approved ? "Approved" : isCurrent ? "Current" : "Previous"}</span>
+              <span className="masters-version-state label-xs-semibold">{isCurrent ? "Current" : "Previous"}</span>
               <div className="masters-version-card-actions">
                 {!isCurrent ? <button type="button" aria-label={`Set V${version.number} as current`} data-tooltip="Set as current" onClick={() => onSetCurrent(version.id)}><DsIcon name="eye" size={14} /></button> : null}
-                <button className="masters-version-download label-xs-semibold" type="button" aria-label={`Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />Download</button>
+                <button className="masters-version-download label-xs-semibold" type="button" aria-label={isDownloaded ? `Download V${version.number} again` : `Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />{isDownloaded ? "Downloaded" : "Download"}</button>
                 {isFilmmaker ? <button className="delete" type="button" aria-label={`Delete V${version.number}`} data-tooltip="Delete" onClick={() => onDelete(version.id)}><DsIcon name="trash" size={14} /></button> : null}
               </div>
             </article>
@@ -3193,96 +3179,6 @@ function RecutSourceDialog({
   );
 }
 
-function BulkApproveDialog({
-  deliverables,
-  isSuccess,
-  onCancel,
-  onConfirm,
-  onDownload,
-}: {
-  deliverables: MastersDeliverable[];
-  isSuccess: boolean;
-  onCancel: () => void;
-  onConfirm: (selectedIds: string[]) => void;
-  onDownload: () => void;
-}) {
-  const [selectedIds, setSelectedIds] = useState(() => deliverables.map((deliverable) => deliverable.id));
-
-  if (isSuccess) {
-    return (
-      <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-        <section className="masters-modal" role="dialog" aria-modal="true" aria-labelledby="bulk-approve-success-title" onMouseDown={(event) => event.stopPropagation()}>
-          <div className="masters-modal-header">
-            <h2 id="bulk-approve-success-title">🎉 Project delivered. Download your files below.</h2>
-            <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-          </div>
-          <div className="masters-modal-actions">
-            <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Close</button>
-            <button className="masters-primary-button label-s-semibold" type="button" onClick={onDownload}>
-              <DsIcon name="download" size={16} />Download all (.zip)
-            </button>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  return (
-    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section className="masters-modal" role="dialog" aria-modal="true" aria-labelledby="bulk-approve-title" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="masters-modal-header">
-          <h2 id="bulk-approve-title">Approve all ready deliverables?</h2>
-          <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-        </div>
-        <p className="label-s">Only deliverables ready for review are listed below. Not started deliverables will remain unchanged.</p>
-        <ul className="masters-approval-list">
-          {deliverables.map((deliverable) => {
-            const latest = deliverable.versions[deliverable.versions.length - 1];
-            const checked = selectedIds.includes(deliverable.id);
-            return (
-              <li key={deliverable.id}>
-                <label className="masters-approval-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => setSelectedIds((current) => checked ? current.filter((id) => id !== deliverable.id) : [...current, deliverable.id])}
-                  />
-                  <span aria-hidden="true">{checked ? <DsIcon name="check" size={13} /> : null}</span>
-                  <span><strong className="label-s-semibold">{deliverable.name}</strong><small className="label-xs">V{latest.number} · {latest.filename}</small></span>
-                </label>
-              </li>
-            );
-          })}
-        </ul>
-        <div className="masters-modal-actions">
-          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-primary-button label-s-semibold" type="button" disabled={selectedIds.length === 0} onClick={() => onConfirm(selectedIds)}>
-            <DsIcon name="checks" size={16} />Approve all ready
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function ReopenProjectDialog({ onCancel }: { onCancel: () => void }) {
-  return (
-    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section className="masters-modal" role="dialog" aria-modal="true" aria-labelledby="reopen-project-title" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="masters-modal-header">
-          <h2 id="reopen-project-title">Reopen project?</h2>
-          <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-        </div>
-        <p className="label-s">Reopen project for further work? Deliverables return to their previous status.</p>
-        <div className="masters-modal-actions">
-          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-primary-button label-s-semibold" type="button" onClick={onCancel}>Reopen project</button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
 function DeleteDeliverableDialog({
   deliverableName,
   onCancel,
@@ -3315,94 +3211,33 @@ function DeleteDeliverableDialog({
   );
 }
 
-function CountdownRing({ seconds }: { seconds: number }) {
-  return (
-    <span className="masters-countdown-ring" style={{ "--masters-countdown": `${Math.max(0, Math.min(30, seconds)) / 30 * 360}deg` } as CSSProperties} aria-label={`${seconds} seconds remaining`}>
-      <span>{seconds}</span>
-    </span>
-  );
-}
-
-function ConfettiBurst() {
-  return (
-    <div className="masters-confetti" aria-hidden="true">
-      {Array.from({ length: 24 }, (_, index) => (
-        <span
-          key={index}
-          style={{
-            "--confetti-index": index,
-            "--confetti-x": `${8 + (index * 17) % 84}%`,
-            "--confetti-delay": `${(index % 8) * 45}ms`,
-          } as CSSProperties}
-        />
-      ))}
-    </div>
-  );
-}
-
 function RequestDialog({ source, tab, name, format, duration, notes, onCancel, onChangeDuration, onChangeFormat, onChangeName, onChangeNotes, onChangeTab, onSubmit }: { source?: MastersDeliverable; tab: RequestTab; name: string; format: string; duration: string; notes: string; onCancel: () => void; onChangeDuration: (value: string) => void; onChangeFormat: (value: string) => void; onChangeName: (value: string) => void; onChangeNotes: (value: string) => void; onChangeTab: (tab: RequestTab) => void; onSubmit: () => void }) {
   return <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}><section className="masters-modal masters-request-modal" role="dialog" aria-modal="true" aria-labelledby="request-title" onMouseDown={(event) => event.stopPropagation()}><div className="masters-modal-header"><div><span className="masters-modal-kicker label-xs-semibold">NEW DELIVERABLE</span><h2 id="request-title">Request a cut-down or reformat</h2></div><button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button></div><p className="label-s">Source master: <strong>{source?.name}</strong>. Your note stays attached to this request, not the source master.</p><div className="masters-request-tabs" role="tablist">{(["cutdown", "reformat", "script"] as RequestTab[]).map((option) => <button className={`label-s-semibold ${tab === option ? "active" : ""}`} key={option} type="button" role="tab" aria-selected={tab === option} onClick={() => onChangeTab(option)}>{option === "cutdown" ? "Cut-Downs" : option === "reformat" ? "Reformats" : "Script optional"}</button>)}</div><div className="masters-request-form"><label><span className="label-xs-semibold">Request name</span><input value={name} onChange={(event) => onChangeName(event.target.value)} /></label>{tab === "cutdown" ? <label><span className="label-xs-semibold">Duration</span><select value={duration} onChange={(event) => onChangeDuration(event.target.value)}>{mastersDurationOptions.map((option) => <option key={option}>{option}</option>)}</select></label> : null}{tab === "reformat" ? <label><span className="label-xs-semibold">Format</span><select value={format} onChange={(event) => onChangeFormat(event.target.value)}>{mastersFormatOptions.map((option) => <option key={option}>{option}</option>)}</select></label> : null}{tab === "script" ? <p className="masters-request-hint label-s">Add an optional script or wording note below. The filmmaker will confirm the edit approach.</p> : null}<label><span className="label-xs-semibold">Comments</span><textarea rows={4} value={notes} placeholder="What should change in this new deliverable?" onChange={(event) => onChangeNotes(event.target.value)} /></label></div><div className="masters-modal-actions"><button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="masters-primary-button label-s-semibold" type="button" disabled={!name.trim()} onClick={onSubmit}>Submit request</button></div></section></div>;
 }
 
-function createDeliverableSnapshots(deliverables: MastersDeliverable[]) {
-  return Object.fromEntries(deliverables.map((deliverable) => [deliverable.id, {
-    status: deliverable.status,
-    approvedVersionId: deliverable.approvedVersionId,
-    currentVersionId: deliverable.currentVersionId,
-    approvedVersionIds: deliverable.versions.filter((version) => version.approved).map((version) => version.id),
-  } satisfies DeliverableApprovalSnapshot]));
-}
-
-function applyCompletedDeliverables(deliverables: MastersDeliverable[], approvedDeliverableIds: string[]) {
-  const approvedIds = new Set(approvedDeliverableIds);
-  return deliverables.map((deliverable) => {
-    if (!approvedIds.has(deliverable.id)) return deliverable;
-    const latest = deliverable.versions[deliverable.versions.length - 1];
-    if (!latest) return deliverable;
-    return {
-      ...deliverable,
-      status: "delivered" as const,
-      approvedVersionId: latest.id,
-      currentVersionId: latest.id,
-      versions: deliverable.versions.map((version) => ({ ...version, approved: version.id === latest.id })),
-    };
-  });
-}
-
-function areAllDeliveredFilesApproved(deliverables: MastersDeliverable[]) {
-  return deliverables.length > 0 && deliverables.every((deliverable) => {
-    if (!deliverable.approvedVersionId || deliverable.versions.length === 0) return false;
-    const approvedVersion = deliverable.versions.find((version) => version.id === deliverable.approvedVersionId);
-    return Boolean(
-      approvedVersion?.approved
-      && deliverable.status === "delivered",
-    );
-  });
-}
-
-function restoreDeliverableSnapshots(
-  deliverables: MastersDeliverable[],
-  snapshots: Record<string, DeliverableApprovalSnapshot>,
-) {
-  return deliverables.map((deliverable) => {
-    const snapshot = snapshots[deliverable.id];
-    if (!snapshot) return deliverable;
-    return {
-      ...deliverable,
-      status: snapshot.status,
-      approvedVersionId: snapshot.approvedVersionId,
-      currentVersionId: snapshot.currentVersionId,
-      versions: deliverable.versions.map((version) => ({ ...version, approved: snapshot.approvedVersionIds.includes(version.id) })),
-    };
-  });
+function isMastersReviewAuditEntry(value: unknown): value is MastersReviewAuditEntry {
+  if (!value || typeof value !== "object") return false;
+  const entry = value as Record<string, unknown>;
+  return typeof entry.id === "string"
+    && (entry.action === "sent" || entry.action === "reminded" || entry.action === "updated")
+    && typeof entry.actor === "string"
+    && typeof entry.company === "string"
+    && Array.isArray(entry.recipients)
+    && entry.recipients.every((recipient) => typeof recipient === "string")
+    && typeof entry.occurredAt === "string"
+    && typeof entry.scopeKey === "string"
+    && typeof entry.scopeLabel === "string";
 }
 
 function getPresentedVersion(deliverable: MastersDeliverable, selections: Record<string, string>) {
   const selectedId = selections[deliverable.id];
   return deliverable.versions.find((version) => version.id === selectedId)
     ?? deliverable.versions.find((version) => version.id === deliverable.currentVersionId)
-    ?? deliverable.versions.find((version) => version.id === deliverable.approvedVersionId)
     ?? deliverable.versions[deliverable.versions.length - 1];
+}
+
+function getDownloadedVersionKey(deliverableId: string, versionId: string) {
+  return `${deliverableId}:${versionId}`;
 }
 
 function formatRowMetadata(deliverable: MastersDeliverable, version?: MastersVersion) {
@@ -3425,7 +3260,6 @@ function getRecutSource(deliverable: MastersDeliverable, deliverables: MastersDe
       duration: formatRecutDuration(deliverable.recutSourceUpload.durationSeconds),
       versions: [deliverable.recutSourceUpload],
       currentVersionId: deliverable.recutSourceUpload.id,
-      approvedVersionId: deliverable.recutSourceUpload.id,
       comments: [],
       unreadCommentCount: 0,
       thumbnail: undefined,
@@ -3570,9 +3404,4 @@ function downloadTextFile(filename: string, content: string, mimeType: string, s
 
 function downloadPrototypeFile(filename: string, showToast: (message: string) => void) {
   downloadTextFile(filename, `Brisk prototype download: ${filename}\n`, "text/plain", showToast);
-}
-
-async function copyShareLink(deliverableId: string, showToast: (message: string) => void) {
-  try { await navigator.clipboard?.writeText(`https://share.brisk.prototype/masters/${deliverableId}`); } catch { /* Prototype feedback remains available when clipboard access is blocked. */ }
-  showToast("Share link copied.");
 }

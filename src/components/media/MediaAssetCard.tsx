@@ -58,7 +58,7 @@ export function MediaAssetCard({
       }}
     >
       <MediaThumbnail asset={asset} />
-      {capabilities.canMoveAssets ? <button className={`media-asset-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}
+      {capabilities.canCopyLink ? <button className={`media-asset-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}
       <div className="media-card-copy">
         <p className="media-card-meta label-xs">{formatAssetMeta(asset)}</p>
         <p className="media-card-name label-s-semibold" title={asset.name}>{asset.name}</p>

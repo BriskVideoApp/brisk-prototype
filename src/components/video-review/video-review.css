@@ -2671,6 +2671,63 @@
 }
 
 @media (max-width: 720px) {
+  .video-review-shell {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  .review-workspace {
+    display: flex;
+    height: auto;
+    min-height: 100%;
+    flex: none;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .review-media-pane {
+    width: 100%;
+    min-height: calc(var(--brisk-space-3xl) * 6);
+    flex: none;
+    container-type: normal;
+    padding: var(--brisk-space-m);
+  }
+
+  .review-media-pane > .video-column,
+  .review-media-pane > .review-version-library {
+    width: 100%;
+  }
+
+  .comment-panel {
+    width: 100%;
+    min-width: var(--brisk-space-none);
+    min-height: calc(var(--brisk-space-3xl) * 5);
+    height: auto;
+  }
+
+  .review-action-footer {
+    position: sticky;
+    bottom: var(--brisk-space-none);
+    width: 100%;
+    height: auto;
+    flex: none;
+  }
+
+  .review-action-footer-inner,
+  .review-action-footer .share-action-row,
+  .review-action-footer .share-action-buttons {
+    width: 100%;
+  }
+
+  .review-action-footer-inner {
+    padding: var(--brisk-space-s) var(--brisk-space-m);
+  }
+
+  .review-action-footer .share-action-buttons {
+    flex-wrap: wrap;
+  }
+
   .review-edit-empty-state {
     min-height: calc(var(--brisk-space-3xl) * 8);
     padding: var(--brisk-space-xl);

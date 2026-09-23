@@ -30,6 +30,7 @@ export type RecipientInboxItem = {
   canonicalEventId: string;
   eventKey: NotificationEventKey;
   recipientId: string;
+  recipientNames?: readonly string[];
   recipientRole: PrototypeRole;
   recipientResponsibility: NotificationResponsibility;
   category: NotificationInboxCategory;
@@ -41,7 +42,7 @@ export type RecipientInboxItem = {
   projectId?: string;
   projectCode?: string;
   projectName?: string;
-  stage?: StageKey;
+  stage?: StageKey | "storyboard";
   occurredAt: string;
   href: string | null;
   deepLinkTarget: NotificationDeepLinkTarget;
@@ -61,6 +62,7 @@ export type StageReviewRequestedNotificationInput = {
   stage: StageKey;
   versionLabel?: string;
   actorName: string;
+  message?: string;
   href: string;
   occurredAt?: string;
 };
@@ -90,6 +92,7 @@ export function createClientStageReviewNotification({
   stage,
   versionLabel,
   actorName,
+  message,
   href,
   occurredAt = new Date().toISOString(),
 }: StageReviewRequestedNotificationInput): RecipientInboxItem {
@@ -108,7 +111,7 @@ export function createClientStageReviewNotification({
     state: "warning",
     label: "Needs attention",
     title: `${reviewTarget} is ready for review`,
-    copy: stageReviewNotificationCopy[stage],
+    copy: message?.trim() || stageReviewNotificationCopy[stage],
     actorName,
     projectId,
     projectCode,

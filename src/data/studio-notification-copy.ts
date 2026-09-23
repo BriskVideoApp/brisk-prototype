@@ -38,8 +38,8 @@ export const studioNotificationCopyCategories = [
     notifications: [
       {
         id: "review-requested",
-        label: "Review requested",
-        sentWhen: "When a filmmaker clicks Request review in Edit.",
+        label: "Edit sent for review",
+        sentWhen: "When a filmmaker sends an Edit version for review.",
         recipient: "A client or filmmaker chosen to review it.",
         demonstration: "edit-request-review",
         editable: true,

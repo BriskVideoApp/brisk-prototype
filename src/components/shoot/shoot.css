@@ -3955,7 +3955,7 @@ body.is-call-sheet-focus :is(.brisk-ai-launcher, .app-user-menu) {
     transform: translate(var(--brisk-space-none), -50%);
   }
 
-  .shoot-preproduction-layout.is-navigation-expanded {
+  .shoot-preproduction-layout.is-navigation-expanded:not(.without-navigation) {
     grid-template-columns: calc(var(--brisk-space-3xl) * 5) minmax(0, 1fr);
     gap: var(--brisk-space-xl);
   }

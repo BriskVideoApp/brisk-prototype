@@ -14,6 +14,7 @@ type ScriptRouteProps = {
     preview?: string | string[];
     briefApproved?: string | string[];
     scriptWriter?: string | string[];
+    version?: string | string[];
   }>;
 };
 
@@ -37,6 +38,7 @@ export default async function ScriptRoute({ params, searchParams }: ScriptRouteP
       project={project}
       initialSubtab={subtab}
       initialTranscriptClipId={clip}
+      initialVersionId={getSingleValue(query.version)}
       initialVersions={isClientNewVideo ? clientNewScriptVersions : undefined}
       initiallyEmpty={isClientNewVideo || getSingleValue(query.preview) === "empty"}
       initialToastMessage={getBriefApprovalToast(query.briefApproved, query.scriptWriter)}

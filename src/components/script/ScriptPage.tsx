@@ -17,7 +17,7 @@ import type { Project } from "@/components/active-videos/types";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
@@ -45,7 +45,6 @@ import {
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { TranscriptsPanel } from "@/components/script-transcripts/TranscriptsPanel";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { mediaAssets } from "@/data/media";
 import {
   initialScriptComments,
@@ -160,6 +159,7 @@ type ScriptPageProps = {
   project: Project;
   initialSubtab: ScriptSubtabId;
   initialTranscriptClipId: string | null;
+  initialVersionId?: string | null;
   initialToastMessage?: string;
   initiallyEmpty?: boolean;
   initialVersions?: ScriptVersion[];
@@ -179,6 +179,7 @@ export function ScriptPage({
   project,
   initialSubtab,
   initialTranscriptClipId,
+  initialVersionId = null,
   initialToastMessage = "",
   initiallyEmpty = false,
   initialVersions = scriptVersions,
@@ -186,7 +187,7 @@ export function ScriptPage({
   const router = useRouter();
   const { openAssistant, registerResponseDraftHandler, view: aiView } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
-  const { publishStageReviewRequest } = useNotificationInbox();
+  const studioCompanyName = useStudioCompanyName();
   const { getProjectFlow } = useProjectFlow();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const { createStoryboard } = useStoryboard();
@@ -194,6 +195,7 @@ export function ScriptPage({
   const hasStoryboardStage = getProjectFlow(project).stages.includes("storyboard");
   const startingVersions = initialVersions.length > 0 ? initialVersions : scriptVersions;
   const latestVersion = startingVersions[startingVersions.length - 1];
+  const initialSelectedVersion = startingVersions.find((version) => version.id === initialVersionId) ?? latestVersion;
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
   const isCustomer = role === "customer";
   const [density] = useState<ScriptDensity>("compact");
@@ -204,9 +206,9 @@ export function ScriptPage({
   const [versionMetaById, setVersionMetaById] = useState<Record<string, ScriptVersionMeta>>(() =>
     createInitialVersionMeta(startingVersions, initiallyEmpty ? null : latestVersion.id),
   );
-  const [selectedVersionId, setSelectedVersionId] = useState(latestVersion.id);
-  const [rows, setRows] = useState<ScriptRow[]>(() => initiallyEmpty ? [] : cloneRows(latestVersion.rows));
-  const [rowHistory, setRowHistory] = useState<ScriptRow[][]>(() => [initiallyEmpty ? [] : cloneRows(latestVersion.rows)]);
+  const [selectedVersionId, setSelectedVersionId] = useState(initialSelectedVersion.id);
+  const [rows, setRows] = useState<ScriptRow[]>(() => initiallyEmpty ? [] : cloneRows(initialSelectedVersion.rows));
+  const [rowHistory, setRowHistory] = useState<ScriptRow[][]>(() => [initiallyEmpty ? [] : cloneRows(initialSelectedVersion.rows)]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectionState, setSelectionState] = useState<SelectionState>({
     lastRowId: null,
@@ -693,11 +695,11 @@ export function ScriptPage({
     ]);
   };
 
-  const setSelectedVersionLatestAction = (latestAction: VersionLatestAction) => {
+  const setSelectedVersionLatestAction = (latestAction: VersionLatestAction, versionId = selectedVersionId) => {
     setVersionMetaById((currentMeta) => ({
       ...currentMeta,
-      [selectedVersionId]: {
-        ...(currentMeta[selectedVersionId] ?? defaultVersionMeta),
+      [versionId]: {
+        ...(currentMeta[versionId] ?? defaultVersionMeta),
         latestAction,
       },
     }));
@@ -1153,7 +1155,7 @@ export function ScriptPage({
       projectId: project.id,
       projectName: project.name,
       clientName: project.clientName,
-      studioName: scriptBrief.studioName,
+      studioName: studioCompanyName,
       documentTitle: getVersionHistoryTitle(
         selectedVersion,
         versionMetaById[selectedVersion.id] ?? defaultVersionMeta,
@@ -1249,8 +1251,15 @@ export function ScriptPage({
 
   const approveScript = () => {
     if (selectedRole === "Studio Freelancer") return;
+    const approvalVersion = dropdownVersion;
     const approvedAt = formatSnapshotDate(new Date());
-    const previouslyApprovedVersion = versions.find((version) => version.approvedSnapshot && version.id !== selectedVersionId);
+    const approver = scriptUsers.find((user) => user.id === currentUserId)?.name ?? (selectedRole === "Customer" ? project.clientName : "Studio Staff");
+    const previouslyApprovedVersion = versions.find((version) => version.approvedSnapshot && version.id !== approvalVersion.id);
+
+    if (isPreviewingVersion) {
+      setSelectedVersionId(approvalVersion.id);
+      setPreviewVersionId(null);
+    }
 
     setIsScriptApproved(true);
     setStatus("Approved");
@@ -1258,15 +1267,15 @@ export function ScriptPage({
       state: "done",
       daysAgo: 0,
       approvedAt,
-      approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+      approvedBy: approver,
     });
     setVersions((currentVersions) =>
       currentVersions.map((version) =>
-        version.id === selectedVersionId
+        version.id === approvalVersion.id
           ? {
               ...version,
               approvedSnapshot: true,
-              approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+              approvedBy: approver,
               approvedAt,
               snapshotName: `${version.label} - Approved`,
             }
@@ -1287,15 +1296,15 @@ export function ScriptPage({
       });
     }
     addDocHistoryEntry({
-      title: `Tom approved ${selectedVersion.label}`,
+      title: `${approver} approved ${approvalVersion.label}`,
       detail: "Approval recorded for this version.",
-      actor: "Tom",
+      actor: approver,
       time: "Just now",
     });
     setToastMessage(
       previouslyApprovedVersion
-        ? `${selectedVersion.label} approved. ${previouslyApprovedVersion.label} no longer marked approved.`
-        : `${selectedVersion.label} approved.`,
+        ? `${approvalVersion.label} approved. ${previouslyApprovedVersion.label} no longer marked approved.`
+        : `${approvalVersion.label} approved.`,
     );
   };
 
@@ -1705,39 +1714,33 @@ export function ScriptPage({
     setToastMessage(includeVisuals ? "Words and visuals copied to clipboard" : "Words copied to clipboard");
   };
 
-  const handleReviewRequestSent = (recipient: RequestReviewRecipient) => {
+  const handleReviewRequestSent = (recipient: RequestReviewRecipient, message: string) => {
     setProjectStageStatus(project.id, "script", {
-      state: recipient === "customer" ? "waiting" : "in_progress",
+      state: "waiting",
       daysAgo: 0,
+      assignedTo: recipient === "customer" ? project.clientName : studioCompanyName,
+      reviewVersion: dropdownVersion.id,
     });
     setSelectedVersionLatestAction({
       kind: "shared",
       target: recipient === "customer" ? "Customer" : "Studio",
       date: formatSnapshotDate(new Date()),
-    });
-    if (recipient === "customer") {
-      publishStageReviewRequest({
-        projectId: project.id,
-        projectCode: customerDashboardProjects.find((item) => item.id === project.id)?.code,
-        projectName: project.name,
-        stage: "script",
-        versionLabel: selectedVersion.label,
-        actorName: scriptUsers.find((user) => user.id === currentUserId)?.name ?? "Studio",
-        href: `/projects/${project.id}/script`,
-      });
-    }
+    }, dropdownVersion.id);
+    void message;
   };
 
   const sendCurrentVersionToStudio = () => {
     setProjectStageStatus(project.id, "script", {
       state: "in_progress",
       daysAgo: 0,
+      assignedTo: studioCompanyName,
+      reviewVersion: dropdownVersion.id,
     });
     setSelectedVersionLatestAction({
       kind: "shared",
       target: "Studio",
       date: formatSnapshotDate(new Date()),
-    });
+    }, dropdownVersion.id);
   };
 
   const activateScriptSubtab = (subtabId: ScriptSubtabId) => {
@@ -1958,18 +1961,27 @@ export function ScriptPage({
       <ShareActionRow
         context="script"
         userRole={selectedRole}
+        scopeType="version"
+        shareTitle={`${getVersionShortLabel(dropdownVersion)} Script`}
+        projectId={project.id}
+        reviewScopeKey={dropdownVersion.id}
+        reviewFingerprint={JSON.stringify(dropdownVersion)}
+        allowProjectScope
         initialLinkOpens="stageOnly"
-        initialAccess="canComment"
-        projectName={scriptBrief.projectName}
-        studioName={scriptBrief.studioName}
-        customerName={scriptBrief.customerName}
+        projectName={project.name}
+        studioName={studioCompanyName}
+        customerName={project.clientName}
+        isWaitingOnReview={scriptStageStatus.state === "waiting" && scriptStageStatus.reviewVersion === dropdownVersion.id}
+        waitingOnCompany={scriptStageStatus.assignedTo}
+        shareUrl={`/projects/${project.id}/script?version=${encodeURIComponent(dropdownVersion.id)}`}
         copyLinkIconOnly
-        approveLabel="Approve this version"
-        approvedAt={selectedVersion.approvedAt}
-        approvedBy={selectedVersion.approvedBy}
-        disabled={isPreviewingVersion}
-        disabledTooltip="Return to the latest version to approve or share."
-        isApproved={isScriptApproved && !isPreviewingVersion}
+        copyLinkLabel="Share Script"
+        sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review the ${getVersionShortLabel(dropdownVersion)} Script`}
+        approveLabel={`Approve ${getVersionShortLabel(dropdownVersion)} Script`}
+        approveDisabled={selectedRole === "Studio Freelancer"}
+        approvedAt={dropdownVersion.approvedAt}
+        approvedBy={dropdownVersion.approvedBy}
+        isApproved={dropdownVersion.approvedSnapshot}
         onApprove={approveScript}
         onRequestReview={handleReviewRequestSent}
         onSendToStudio={sendCurrentVersionToStudio}
@@ -1983,6 +1995,7 @@ export function ScriptPage({
       <ProjectStageHeader
         activeStage="script"
         project={project}
+        showProjectShare={false}
       />
 
       {scriptDocumentHeader}
@@ -2114,7 +2127,7 @@ export function ScriptPage({
             projectId={project.id}
             projectName={project.name}
             clientName={project.clientName}
-            studioName={scriptBrief.studioName}
+            studioName={studioCompanyName}
             sentSourceKeys={sentTranscriptSourceKeys}
             onCommentsChange={mergeScopedComments}
             onSendRows={appendTranscriptRows}

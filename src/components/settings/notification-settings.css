@@ -2,6 +2,8 @@
 .notification-settings *,
 .personal-notification-settings-page,
 .personal-notification-settings-page *,
+.review-request-default-page,
+.review-request-default-page *,
 .project-notification-settings,
 .project-notification-settings *,
 .customer-message-templates-page,
@@ -13,6 +15,40 @@
 .personal-notification-settings-form {
   display: grid;
   gap: var(--brisk-space-xl);
+}
+
+.review-request-default-field {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.review-request-default-field textarea {
+  width: 100%;
+  min-height: calc(var(--brisk-space-3xl) * 3);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-m);
+  resize: vertical;
+}
+
+.review-request-default-preview {
+  display: grid;
+  gap: var(--brisk-space-xs);
+  border-top: 1px solid var(--brisk-border-secondary);
+  padding-top: var(--brisk-space-l);
+}
+
+.review-request-default-preview p {
+  margin: 0;
+}
+
+.review-request-default-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--brisk-space-m);
 }
 
 .notification-settings-section {

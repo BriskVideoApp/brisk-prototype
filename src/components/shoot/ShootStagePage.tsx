@@ -41,7 +41,7 @@ import { ScriptMediaPicker, type ScriptMediaPickerOption } from "@/components/sc
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
-import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAssetView } from "@/data/media";
@@ -220,7 +220,7 @@ type QuickStartAnswers = {
   mustHaveShots: string;
   letBriskSuggestShots: boolean;
 };
-type ShootReadinessAction = "share" | "review" | "approve" | "start";
+type ShootReadinessAction = "share" | "send" | "approve" | "start";
 type SuggestionUndo =
   | { kind: "dismiss-shot"; shots: Array<{ entry: ProductionEntry; shotIndex: number }> }
   | { kind: "dismiss-question"; questions: Array<{ question: InterviewQuestion; questionIndex: number }> }
@@ -352,7 +352,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   const scriptStageIndex = projectFlow.stages.indexOf("script");
   const isInterviewLed = briefIncludesInterviews(projectBrief?.fields.liveFootage.value ?? "")
     || (shootStageIndex >= 0 && scriptStageIndex >= 0 && shootStageIndex < scriptStageIndex);
-  const { studio } = useStudioSettings();
+  const studioCompanyName = useStudioCompanyName();
   const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
   const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project))));
   const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project).days[0]?.id ?? "day-1");
@@ -420,7 +420,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [focusedShotDescriptionId, setFocusedShotDescriptionId] = useState<string | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState<ShootWorkspaceSection>("quick-start");
-  const [accessSettings, setAccessSettings] = useState<ShootAccessSettings>({ freelancer: "canEdit", client: "viewOnly" });
+  const [accessSettings, setAccessSettings] = useState<ShootAccessSettings>({ freelancer: "canEdit", client: "canEdit" });
   const [isAccessOpen, setIsAccessOpen] = useState(false);
   const toastTimeoutRef = useRef<number | null>(null);
   const saveRecoveryTimeoutRef = useRef<number | null>(null);
@@ -498,8 +498,17 @@ export function ShootStagePage({ project }: { project: Project }) {
       const hasEntries = nextCallSheet.entries.length > 0;
       const configuredCallSheet = isCallSheetConfigured(nextCallSheet);
       const nextSetupState = storedSetupState ?? createInitialShootSetupState(nextCallSheet, initialSetupRoleRef.current);
-      const nextWorkflowSetup = storedWorkflowSetup ?? createInitialShootWorkflowSetup(nextCallSheet, isInterviewLed);
-      const hasStarted = nextSetupState.scheduleStarted || nextSetupState.shotListStarted || configuredCallSheet || hasEntries || storedPreferences?.hasStarted === true;
+      const isApprovedShoot = !isEmptyPlanFixture
+        && (nextSetupState.status === "released" || project.stages.shoot.state === "done");
+      const nextWorkflowSetup = isApprovedShoot
+        ? {
+          version: 1 as const,
+          isComplete: true,
+          mode: "planned" as const,
+          modules: getDefaultShootPlanningModules(isInterviewLed || nextCallSheet.questions.length > 0),
+        }
+        : storedWorkflowSetup ?? createInitialShootWorkflowSetup(nextCallSheet, isInterviewLed);
+      const hasStarted = isApprovedShoot || nextSetupState.scheduleStarted || nextSetupState.shotListStarted || configuredCallSheet || hasEntries || storedPreferences?.hasStarted === true;
       const callSheetEnabled = nextSetupState.scheduleStarted || storedPreferences?.callSheetEnabled
         || configuredCallSheet || (storedPreferences?.hasStarted === true && storedPreferences.scheduleView === "schedule");
       const shotListEnabled = nextSetupState.shotListStarted || storedPreferences?.shotListEnabled || nextCallSheet.entries.some((entry) => entry.type === "shot");
@@ -520,7 +529,16 @@ export function ShootStagePage({ project }: { project: Project }) {
       setExistingPlan(isEmptyPlanFixture ? null : parseExistingShootPlan(window.localStorage.getItem(existingShootPlanStorageKey(project.id))));
       const storedSection = isEmptyPlanFixture ? null : parseShootWorkspaceSection(window.localStorage.getItem(shootWorkspaceSectionStorageKey(project.id)));
       const availableStoredSection = storedSection === "questions" && !isInterviewLed ? "shots" : storedSection;
-      const restoredSection = !nextWorkflowSetup.isComplete
+      const approvedSection = requestedShootSection === "quick-start"
+        ? "quick-start"
+        : initialRequestedShootSectionRef.current && initialRequestedShootSectionRef.current !== "quick-start"
+          ? initialRequestedShootSectionRef.current
+          : hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
+            ? availableStoredSection
+            : "shots";
+      const restoredSection = isApprovedShoot
+        ? approvedSection
+        : !nextWorkflowSetup.isComplete
         ? "quick-start"
         : initialRequestedShootSectionRef.current ?? (hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
         ? availableStoredSection
@@ -533,7 +551,7 @@ export function ShootStagePage({ project }: { project: Project }) {
         ? "quick-start"
         : initialRequestedShootModeRef.current === "on-set" && !onSetSections.includes(restoredSection) ? (usesCallSheetOnSet ? "call-sheet" : "schedule") : restoredSection);
       setAccessSettings(isEmptyPlanFixture
-        ? { freelancer: "canEdit", client: "viewOnly" }
+        ? { freelancer: "canEdit", client: "canEdit" }
         : parseShootAccessSettings(window.localStorage.getItem(shootAccessStorageKey(project.id))));
     } catch {
       setSaveStatus("error");
@@ -666,11 +684,11 @@ export function ShootStagePage({ project }: { project: Project }) {
       updatedAt: new Date().toISOString(),
     }));
     setProjectStageStatus(project.id, "shoot", {
-      state: owner === "client" ? "waiting" : "in_progress",
+      state: "waiting",
       daysAgo: 0,
-      assignedTo: owner === "client" ? project.clientName : "Studio",
+      assignedTo: owner === "client" ? project.clientName : studioCompanyName,
     });
-    showToast(owner === "client" ? "Shoot setup sent to the Client." : "Shoot setup sent to the Studio.");
+    showToast(`Submitted Shoot to ${owner === "client" ? project.clientName : studioCompanyName}.`);
   };
 
   const approveShootPlan = () => {
@@ -1673,7 +1691,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   return (
     <main className={`shoot-shell ${activeSection === "quick-start" ? "is-setup-screen" : ""}`}>
       <div className="shoot-main">
-        <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} />
+        <ProjectStageHeader project={project} activeStage="shoot" showUtilities={false} showProjectShare={false} />
         {!hasLoaded ? <ShootSetupLoading /> : <ShootPreProductionWorkspace
           accessLevel={accessLevel}
           activeSection={activeSection}
@@ -1690,7 +1708,7 @@ export function ShootStagePage({ project }: { project: Project }) {
           selectedRole={selectedRole}
           setupState={setupState}
           workflowSetup={workflowSetup}
-          studioName={studio.details.name}
+          studioName={studioCompanyName}
           onApprove={approveShootPlan}
           onBuildWithBrisk={updatePlanWithBrisk}
           onCallSheetChange={mutateCallSheet}
@@ -1994,7 +2012,7 @@ function ShootPreProductionWorkspace({
   const [readinessReviewSection, setReadinessReviewSection] = useState<ReadyShootSection | null>(null);
   const [planningReadiness, setPlanningReadiness] = useState<PlanningReadinessState>(() => createEmptyPlanningReadinessState(""));
   const [shootMode, setShootMode] = useState<ShootMode>(initialShootMode);
-  const [isNavigationExpanded, setIsNavigationExpanded] = useState(false);
+  const [isNavigationExpanded, setIsNavigationExpanded] = useState(true);
   const [scheduleGuide, setScheduleGuide] = useState<AiScheduleGuideState | null>(null);
   const [reopenAiScheduleRequest, setReopenAiScheduleRequest] = useState(0);
   const searchParams = useSearchParams();
@@ -2193,6 +2211,14 @@ function ShootPreProductionWorkspace({
     setPendingAction(() => next);
   };
 
+  const beforeShootShareAction: ShootGlobalActions["beforeAction"] = (action, proceed) => {
+    if (action === "send") {
+      proceed();
+      return;
+    }
+    runReadinessAction(action === "copy" ? "share" : action, proceed);
+  };
+
   const changeShootMode = (nextMode: ShootMode) => {
     setShootMode(nextMode);
     const nextSection = nextMode === "on-set"
@@ -2290,31 +2316,38 @@ function ShootPreProductionWorkspace({
   };
 
   const sendSchedule = (confirmUpdates = false) => {
-    runReadinessAction("review", () => recordScheduleSent(selectedRole === "Customer" ? "studio" : "customer", confirmUpdates));
+    runReadinessAction("send", () => recordScheduleSent(selectedRole === "Customer" ? "studio" : "customer", confirmUpdates));
   };
   shootGlobalActionHandlersRef.current = {
-    beforeAction: (action, proceed) => runReadinessAction(action === "copy" ? "share" : action, proceed),
+    beforeAction: beforeShootShareAction,
     onApprove,
     onRequestReview: (recipient) => recordScheduleSent(recipient),
     onSendToStudio: () => recordScheduleSent("studio"),
     onUnapprove,
   };
-  useEffect(() => registerShootGlobalActions({
-    canApprove: canManage || selectedRole === "Customer",
-    canEdit,
-    customerName: project.clientName,
-    initialAccess: accessLevel === "viewOnly" ? "viewOnly" : "canEdit",
-    isApproved: setupState.status === "released",
-    projectName: project.name,
-    shareUrl: `/share/call-sheet/${project.id}?day=${encodeURIComponent(currentDay?.id ?? "")}`,
-    studioName,
-    userRole: selectedRole,
-    beforeAction: (action, proceed) => shootGlobalActionHandlersRef.current.beforeAction(action, proceed),
-    onApprove: () => runShootGlobalAction("onApprove"),
-    onRequestReview: (recipient) => shootGlobalActionHandlersRef.current.onRequestReview(recipient),
-    onSendToStudio: () => shootGlobalActionHandlersRef.current.onSendToStudio(),
-    onUnapprove: () => runShootGlobalAction("onUnapprove"),
-  }), [accessLevel, canEdit, canManage, currentDay?.id, project.clientName, project.id, project.name, registerShootGlobalActions, runShootGlobalAction, selectedRole, setupState.status, studioName]);
+  useEffect(() => {
+    if (shootMode === "on-set" && activeSection === "call-sheet") return;
+    return registerShootGlobalActions({
+      canApprove: canManage || selectedRole === "Customer",
+      canEdit,
+      customerName: project.clientName,
+      initialAccess: accessLevel === "viewOnly" ? "viewOnly" : "canEdit",
+      isApproved: setupState.status === "released",
+      isWaitingOnReview: setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client",
+      waitingOnCompany: setupState.status === "waiting_on_studio" ? studioName : project.clientName,
+      projectId: project.id,
+      reviewFingerprint: JSON.stringify(callSheet),
+      projectName: project.name,
+      shareUrl: `/projects/${project.id}/stages/shoot`,
+      studioName,
+      userRole: selectedRole,
+      beforeAction: (action, proceed) => shootGlobalActionHandlersRef.current.beforeAction(action, proceed),
+      onApprove: () => runShootGlobalAction("onApprove"),
+      onRequestReview: (recipient) => shootGlobalActionHandlersRef.current.onRequestReview(recipient),
+      onSendToStudio: () => shootGlobalActionHandlersRef.current.onSendToStudio(),
+      onUnapprove: () => runShootGlobalAction("onUnapprove"),
+    });
+  }, [accessLevel, activeSection, callSheet, canEdit, canManage, currentDay?.id, project.clientName, project.id, project.name, registerShootGlobalActions, runShootGlobalAction, selectedRole, setupState.status, shootMode, studioName]);
   const openCallSheetSectionFocus = (sectionId: string) => {
     const url = new URL(window.location.href);
     url.searchParams.set("section", "call-sheet");
@@ -2554,16 +2587,18 @@ function ShootPreProductionWorkspace({
           context="shoot"
           userRole={selectedRole}
           density="compact"
+          scopeType="stage"
+          shareTitle="Call Sheet"
+          stageLabelOverride="Call Sheet"
+          allowProjectScope
+          projectId={project.id}
           projectName={project.name}
           studioName={studioName}
           customerName={project.clientName}
+          shareUrl={`/projects/${project.id}/stages/shoot?section=call-sheet&day=${encodeURIComponent(currentDay?.id ?? "")}&view=on-set`}
           copyLinkLabel="Share Call Sheet"
-          shareUrl={`/share/call-sheet/${project.id}?day=${encodeURIComponent(currentDay?.id ?? "")}`}
-          stageLabelOverride="Call Sheet"
+          showSend={false}
           showApprove={false}
-          showReview={false}
-          canConfigureLink={false}
-          beforeAction={(_action, proceed) => runReadinessAction("share", proceed)}
         />
         {canEdit ? <a className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot?section=schedule&day=${encodeURIComponent(currentDay?.id ?? "")}`}><DsIcon name="pencil-simple-ds" size={16} />Edit</a> : null}
         <a className="shoot-button secondary shoot-call-sheet-pdf label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
@@ -2575,7 +2610,7 @@ function ShootPreProductionWorkspace({
         </details>
       </header> : null}
       {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
-      {existingPlan ? <ExistingPlanCallSheetAttachment plan={existingPlan} onReplace={onOpenExistingPlan} onNotify={onNotify} /> : null}
+      {existingPlan ? <ExistingPlanCallSheetAttachment plan={existingPlan} onReplace={onOpenExistingPlan} /> : null}
       <div className="shoot-live-call-sheet-frame">
         <SharedCallSheetPage
           project={project}
@@ -2633,6 +2668,35 @@ function ShootPreProductionWorkspace({
           ) : undefined}
         />
       </div>
+      {!focusedCallSheetSection ? <footer className="shoot-stage-share-footer" aria-label="Shoot review actions">
+        <ShareActionRow
+          context="shoot"
+          userRole={selectedRole}
+          density="compact"
+          presentation="brief-summary"
+          scopeType="stage"
+          shareTitle="Shoot"
+          showCopyLink={false}
+          projectId={project.id}
+          projectName={project.name}
+          studioName={studioName}
+          customerName={project.clientName}
+          reviewScopeKey="shoot"
+          reviewFingerprint={JSON.stringify(callSheet)}
+          shareUrl={`/projects/${project.id}/stages/shoot`}
+          sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName} to review the Shoot`}
+          approveLabel="Approve Shoot"
+          approveDisabled={!canManage && selectedRole !== "Customer"}
+          isApproved={setupState.status === "released"}
+          isWaitingOnReview={setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client"}
+          waitingOnCompany={setupState.status === "waiting_on_studio" ? studioName : project.clientName}
+          onApprove={onApprove}
+          onRequestReview={(recipient) => recordScheduleSent(recipient)}
+          onSendToStudio={() => recordScheduleSent("studio")}
+          onUnapprove={onUnapprove}
+          beforeAction={beforeShootShareAction}
+        />
+      </footer> : null}
     </section>;
   }
 
@@ -2697,7 +2761,6 @@ function ShootPreProductionWorkspace({
           <div><strong>Existing plan attached</strong><small className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)} · Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div>
           {existingPlan.url ? <a className="shoot-button secondary label-xs-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}
           {canEdit ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={onOpenExistingPlan}>Replace</button> : null}
-          {canManage ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => onNotify("Review requested for the attached plan.")}>Request review</button> : null}
         </aside> : null}
         {activeReadySection && activePlanningReadiness?.hasChanges && activeReadinessConfig ? <PlanningSectionChangesNotice
           label={activeReadinessConfig.label}
@@ -6394,10 +6457,10 @@ function PreProductionDocuments({ callSheet, canEdit, onChange, onOpenDocuments 
   </section>;
 }
 
-function ExistingPlanCallSheetAttachment({ plan, onReplace, onNotify }: { plan: ExistingShootPlan; onReplace: () => void; onNotify: (message: string) => void }) {
+function ExistingPlanCallSheetAttachment({ plan, onReplace }: { plan: ExistingShootPlan; onReplace: () => void }) {
   const callSheetName = plan.secondaryName ?? (plan.coverage === "day" || plan.coverage === "both" ? plan.name : "");
   if (!callSheetName) return null;
-  return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-xs-semibold" type="button" onClick={onReplace}>Replace</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => onNotify("Review requested for the attached plan.")}>Request review</button></aside>;
+  return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-xs-semibold" type="button" onClick={onReplace}>Replace</button></aside>;
 }
 
 function ScheduleReadinessModal({ isUpdate, readiness, onCancel, onConfirm }: {
@@ -6466,7 +6529,7 @@ function PlanningReadinessModal({ config, isUpdate, readiness, onCancel, onConfi
 }
 
 function ShootReadinessModal({ action, missing, onAddDetails, onCancel, onContinue }: { action: ShootReadinessAction; missing: string[]; onAddDetails: () => void; onCancel: () => void; onContinue: () => void }) {
-  const labels: Record<ShootReadinessAction, string> = { share: "share the Call Sheet", review: "request review", approve: "approve the Shoot", start: "start the shoot" };
+  const labels: Record<ShootReadinessAction, string> = { share: "share the Call Sheet", send: "submit the Shoot", approve: "approve the Shoot", start: "start the shoot" };
   return <div className="shoot-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onCancel(); }}><section className="shoot-modal shoot-readiness-modal" role="dialog" aria-modal="true" aria-labelledby="shoot-readiness-title"><header><span className="shoot-modal-icon warning"><DsIcon name="alert-triangle" size={22} /></span><div><h2 id="shoot-readiness-title">Some Call Sheet details are not confirmed</h2><p>You can still {labels[action]}.</p></div></header><div className="shoot-readiness-list">{missing.map((item) => <span className="label-s" key={item}><DsIcon name="info" size={15} />{item}</span>)}</div><div className="shoot-modal-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={onContinue}>Continue anyway</button><button className="shoot-button primary label-s-semibold" type="button" onClick={onAddDetails}>Add details</button></div></section></div>;
 }
 
@@ -6668,23 +6731,33 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
         </div>
       </article>
     </div>
-    {existingPlan ? <section className="shoot-existing-plan"><span className="shoot-dashboard-card-icon"><DsIcon name={existingPlan.source === "link" ? "link-simple-horizontal" : "file-text"} size={22} /></span><div><strong>Existing plan attached</strong><span className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)}</span><small className="label-xs">Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div><div>{existingPlan.url ? <a className="shoot-button secondary label-s-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-s-semibold" type="button" onClick={onAttachPlan}>Replace</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={() => onHandover("client")}>Request review</button></div></section> : null}
     <button className="shoot-use-existing-plan label-s-semibold" type="button" onClick={onAttachPlan}><DsIcon name="upload-simple" size={18} />{existingPlan ? "Replace the existing shoot plan" : "Use an existing shoot plan"}</button>
     <div className="shoot-dashboard-review-row">
       <ShareActionRow
         context="shoot"
         userRole={selectedRole}
+        presentation="brief-summary"
+        scopeType="stage"
+        shareTitle="Shoot"
+        allowProjectScope
         density="compact"
         initialAccess="canEdit"
         initialLinkOpens="stageOnly"
         projectName={project.name}
+        projectId={project.id}
+        reviewScopeKey="shoot"
+        reviewFingerprint={JSON.stringify(callSheet)}
         studioName={studioName}
         customerName={project.clientName}
-        copyLinkIconOnly
+        shareUrl={`/projects/${project.id}/stages/shoot`}
+        copyLinkLabel="Share"
+        sendLabel={`Ask ${selectedRole === "Studio Freelancer" ? studioName : project.clientName} to review the Shoot`}
         approveLabel="Approve Shoot"
         approveDisabled={!canApprove}
         approveDisabledTooltip="Complete or skip both planning modules first"
         isApproved={setupState.status === "released"}
+        isWaitingOnReview={setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client"}
+        waitingOnCompany={setupState.status === "waiting_on_studio" ? studioName : project.clientName}
         onApprove={onApprove}
         onRequestReview={(recipient) => onHandover(recipient === "customer" ? "client" : "studio")}
         onSendToStudio={() => onHandover("studio")}
@@ -9761,7 +9834,7 @@ function parseShootWorkspaceSection(value: string | null): ShootWorkspaceSection
 }
 
 function parseShootAccessSettings(rawValue: string | null): ShootAccessSettings {
-  const fallback: ShootAccessSettings = { freelancer: "canEdit", client: "viewOnly" };
+  const fallback: ShootAccessSettings = { freelancer: "canEdit", client: "canEdit" };
   if (!rawValue) return fallback;
   try {
     const value: unknown = JSON.parse(rawValue);

@@ -2598,6 +2598,10 @@ button.script-version-row-body:focus-visible {
   pointer-events: auto;
 }
 
+.script-word-footer:has(.share-popover) {
+  z-index: 40;
+}
+
 .script-word-footer-inner {
   display: flex;
   width: 100%;

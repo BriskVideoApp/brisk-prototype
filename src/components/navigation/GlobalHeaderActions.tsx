@@ -69,6 +69,7 @@ export function GlobalHeaderActions() {
       <button className="app-global-action-button app-global-history-forward" type="button" aria-label="Go forward" data-tooltip="Forward" onClick={() => window.history.forward()}>
         <DsIcon name="arrow-left" size={20} />
       </button>
+      <div className="app-global-brief-actions-slot" data-brief-global-actions-slot />
       {chatControl}
       <NotificationBell />
     </nav>
@@ -197,18 +198,25 @@ function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
     context="shoot"
     userRole={actions.userRole}
     presentation="overflow"
+    allowProjectScope
     initialAccess={actions.initialAccess}
     initialLinkOpens="stageOnly"
+    projectId={actions.projectId}
     projectName={actions.projectName}
+    reviewScopeKey="shoot"
+    reviewFingerprint={actions.reviewFingerprint}
     studioName={actions.studioName}
     customerName={actions.customerName}
     shareUrl={actions.shareUrl}
+    sendLabel={`Ask ${actions.userRole === "Customer" || actions.userRole === "Studio Freelancer" ? actions.studioName : actions.customerName} to review the Shoot`}
     approveLabel="Approve Shoot"
     approveDisabled={!actions.canApprove}
     approveDisabledTooltip="Only Studio Staff or Clients can approve the Shoot"
-    reviewDisabled={!actions.canEdit}
-    reviewDisabledTooltip="You need edit access to request a review"
+    sendDisabled={!actions.canEdit}
+    sendDisabledTooltip="You need edit access to send the Shoot"
     isApproved={actions.isApproved}
+    isWaitingOnReview={actions.isWaitingOnReview}
+    waitingOnCompany={actions.waitingOnCompany}
     beforeAction={actions.beforeAction}
     onApprove={actions.onApprove}
     onRequestReview={actions.onRequestReview}

@@ -39,6 +39,7 @@ export type StageStatus = {
   approvedAt?: string;
   approvedBy?: string;
   assignedTo?: string;
+  reviewVersion?: string;
 };
 
 export type ProjectDeadline = {

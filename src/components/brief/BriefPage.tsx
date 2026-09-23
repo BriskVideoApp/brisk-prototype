@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 import {
   useEffect,
   useRef,
@@ -11,16 +13,20 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
+import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { ShareActionRow, type ShareAccess } from "@/components/share/ShareActionRow";
+import type { SubmitDestination } from "@/data/submit-review";
+import { getProjectStageHref } from "@/data/project-fixtures";
 import {
   briefClarifyingQuestions,
   briefDraftOptions,
@@ -47,7 +53,7 @@ import {
   type InputAttachment,
   type Logline,
 } from "@/data/brief";
-import { getProjectStageHref } from "@/data/project-fixtures";
+import { productionFlowStages } from "@/data/production-flow";
 
 type BriefPageProps = {
   project: Project;
@@ -56,6 +62,22 @@ type BriefPageProps = {
   initialFields?: BriefFields;
   onFieldsChange?: (fields: BriefFields) => void;
 };
+
+type BriefReviewAuditEntry = {
+  id: string;
+  action: "sent" | "reminded" | "updated";
+  actor: string;
+  company: string;
+  recipients: string[];
+  occurredAt: string;
+  requestId?: string;
+  fingerprint?: string;
+  message?: string;
+};
+
+type BriefActionAuditEntry =
+  | BriefReviewAuditEntry
+  | { id: string; action: "approved" | "unapproved"; actor: string; occurredAt: string };
 
 type BriefMode = "landing" | "steps";
 
@@ -492,8 +514,22 @@ export function getBriefConfigurableOptions(
 export function BriefPage({ approvalDestination, initialFields, onFieldsChange, project, studioName = "North Star Films" }: BriefPageProps) {
   const router = useRouter();
   const { selectedRole } = usePrototypeRole();
+  const { publishStageReviewFollowUp } = useNotificationInbox();
+  const { state } = usePrototypeState();
+  const { getProjectFlow } = useProjectFlow();
+  const projectFlow = getProjectFlow(project);
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const briefStageStatus = getProjectStages(project).brief;
+  const projectState = state.projects.find((candidate) => candidate.id === project.id);
+  const projectClient = state.clients.find((candidate) => candidate.id === project.clientId);
+  const clientRecipientNames = projectClient?.contacts
+    .filter((contact) => (projectState?.clientMemberIds.includes(contact.id) ?? contact.projectIds.includes(project.id)) && contact.portalAccess !== "Paused")
+    .map((contact) => contact.name) ?? [];
+  const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
+  const briefActorName = selectedRole === "Customer"
+    ? clientRecipientNames[0] ?? project.clientName
+    : activeUser?.name ?? (selectedRole === "Studio Freelancer" ? "Filmmaker" : studioName);
+  const auditStorageKey = `brisk-brief-action-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const isBriefApproved = briefStageStatus.state === "done";
   const [briefMode, setBriefMode] = useState<BriefMode>("landing");
   const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
@@ -507,14 +543,51 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   const [clarifyingAnswerCount, setClarifyingAnswerCount] = useState(0);
   const [hasDraftedBrief, setHasDraftedBrief] = useState(false);
   const [sourcePrompt, setSourcePrompt] = useState("");
+  const [briefAudit, setBriefAudit] = useState<BriefActionAuditEntry[]>([]);
+  const [briefShareAccess, setBriefShareAccess] = useState<ShareAccess>("viewOnly");
+  const [isApprovalConfirmationOpen, setIsApprovalConfirmationOpen] = useState(false);
+  const [isApprovalCelebrationVisible, setIsApprovalCelebrationVisible] = useState(false);
+  const approvalNavigationTimeoutRef = useRef<number | null>(null);
   const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
   const activeStep = briefSteps[activeStepIndex] ?? briefSteps[0];
+  const nextStage = projectFlow.stages[projectFlow.stages.indexOf("brief") + 1] ?? "masters";
+  const nextStageLabel = nextStage === "edit" && projectFlow.postProductionTerm === "animation"
+    ? "Animation"
+    : productionFlowStages[nextStage].label;
   const isSummaryStep = activeStepId === "summary";
-  const summaryMissingCount = isSummaryStep ? getSummaryMissingCount(briefFields, logline, studioName) : 0;
+  const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
+  const lastBriefAudit = briefAudit[briefAudit.length - 1];
+  const reviewCompany = briefStageStatus.assignedTo ?? (selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName);
+  const latestReviewRequest = [...briefAudit].reverse().find((entry): entry is BriefReviewAuditEntry => entry.action === "sent" && entry.company === reviewCompany);
+  const pendingReviewRequest = !isBriefApproved && briefStageStatus.assignedTo === reviewCompany ? latestReviewRequest : undefined;
+  const reviewFollowUps = pendingReviewRequest
+    ? briefAudit.filter((entry): entry is BriefReviewAuditEntry => (entry.action === "reminded" || entry.action === "updated") && entry.requestId === pendingReviewRequest.id)
+    : [];
+  const lastReviewContact = reviewFollowUps.at(-1) ?? pendingReviewRequest;
+  const lastBriefSent = [...reviewFollowUps].reverse().find((entry) => entry.action === "updated") ?? pendingReviewRequest;
+  const briefHasChangedSinceSend = Boolean(lastBriefSent?.fingerprint && lastBriefSent.fingerprint !== getBriefReviewFingerprint(briefFields, logline.text));
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(auditStorageKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : [];
+      setBriefAudit(Array.isArray(parsed) ? parsed.filter(isBriefActionAuditEntry).map((entry) => entry.action === "sent" && !entry.fingerprint
+        ? { ...entry, fingerprint: getBriefReviewFingerprint(briefFieldsRef.current, logline.text) }
+        : entry) : []);
+    } catch {
+      setBriefAudit([]);
+    }
+  }, [auditStorageKey]);
 
   useEffect(() => {
     summaryMissingActiveIndexRef.current = -1;
   }, [summaryMissingCount]);
+
+  useEffect(() => () => {
+    if (approvalNavigationTimeoutRef.current !== null) {
+      window.clearTimeout(approvalNavigationTimeoutRef.current);
+    }
+  }, []);
 
   function commitBriefFields(update: BriefFields | ((current: BriefFields) => BriefFields)) {
     const nextFields = typeof update === "function" ? update(briefFieldsRef.current) : update;
@@ -736,32 +809,145 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     );
   }
 
-  function approveBrief() {
-    const approvedAt = formatBriefApprovalDate(new Date());
-    const approvedBy = selectedRole === "Customer" ? "Avery Taylor" : "Tom";
-    const scriptWriter = "Tom";
-
-    console.log("Brief approved", {
-      projectId: project.id,
-      approvedBy,
-      fields: briefFields,
-      logline,
-      scriptWriter,
+  function recordBriefAudit(entry: BriefActionAuditEntry) {
+    setBriefAudit((currentEntries) => {
+      const nextEntries = [...currentEntries, entry];
+      try {
+        window.localStorage.setItem(auditStorageKey, JSON.stringify(nextEntries));
+        window.setTimeout(() => window.dispatchEvent(new Event("brisk:brief-activity-updated")), 0);
+      } catch {
+        // The visible Brief controls still work when prototype audit storage is unavailable.
+      }
+      return nextEntries;
     });
+  }
+
+  function sendBrief(destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) {
+    const sendsToStudio = destination === "studio";
+    const company = sendsToStudio ? studioName : project.clientName;
+    const recipients = [...notifiedPeople];
+    const occurredAt = new Date().toISOString();
+
+    setProjectStageStatus(project.id, "brief", {
+      state: "waiting",
+      daysAgo: 0,
+      assignedTo: company,
+    });
+    recordBriefAudit({
+      id: `brief-send-${project.id}-${Date.now()}`,
+      action: "sent",
+      actor: briefActorName,
+      company,
+      recipients,
+      occurredAt,
+      fingerprint: getBriefReviewFingerprint(briefFieldsRef.current, logline.text),
+      message,
+    });
+    if (recipients.length > 0) publishStageReviewFollowUp({
+      projectId: project.id,
+      projectName: project.name,
+      stage: "brief",
+      targetLabel: "Brief",
+      actorName: briefActorName,
+      recipientRole: sendsToStudio ? "Studio Staff" : "Customer",
+      reviewers: recipients,
+      href: `/projects/${project.id}/stages/brief`,
+      message,
+      kind: "request",
+      occurredAt,
+    });
+  }
+
+  function followUpBriefReview(action: "reminded" | "updated", message: string) {
+    if (!pendingReviewRequest || !lastReviewContact || !lastBriefSent) return;
+    const changed = lastBriefSent.fingerprint && lastBriefSent.fingerprint !== getBriefReviewFingerprint(briefFieldsRef.current, logline.text);
+    if (action === "reminded" && changed) return;
+    if (action === "updated" && !changed) return;
+
+    const occurredAt = new Date().toISOString();
+    recordBriefAudit({
+      id: `brief-${action}-${project.id}-${Date.now()}`,
+      action,
+      actor: briefActorName,
+      company: pendingReviewRequest.company,
+      recipients: pendingReviewRequest.recipients,
+      occurredAt,
+      requestId: pendingReviewRequest.id,
+      fingerprint: action === "updated" ? getBriefReviewFingerprint(briefFieldsRef.current, logline.text) : undefined,
+      message: message.trim() || undefined,
+    });
+    publishStageReviewFollowUp({
+      projectId: project.id,
+      projectName: project.name,
+      stage: "brief",
+      targetLabel: "Brief",
+      actorName: briefActorName,
+      recipientRole: pendingReviewRequest.company === studioName ? "Studio Staff" : "Customer",
+      reviewers: pendingReviewRequest.recipients,
+      href: `/projects/${project.id}/stages/brief`,
+      message: message.trim(),
+      kind: action === "updated" ? "updated" : "reminder",
+      occurredAt,
+    });
+  }
+
+  function requestApproveBrief() {
+    if (selectedRole === "Studio Freelancer" || isBriefApproved) return;
+    if (summaryMissingCount > 0) {
+      setIsApprovalConfirmationOpen(true);
+      return;
+    }
+    approveBrief();
+  }
+
+  function approveBrief() {
+    if (selectedRole === "Studio Freelancer" || isBriefApproved) return;
+    const now = new Date();
+    const approvedAt = formatBriefApprovalDate(now);
     setProjectStageStatus(project.id, "brief", {
       state: "done",
       daysAgo: 0,
       approvedAt,
-      approvedBy,
+      approvedBy: briefActorName,
     });
+    recordBriefAudit({
+      id: `brief-approval-${project.id}-${now.getTime()}`,
+      action: "approved",
+      actor: briefActorName,
+      occurredAt: now.toISOString(),
+    });
+    setIsApprovalConfirmationOpen(false);
+    if (approvalDestination) {
+      router.push(withBriefApprovalToast(approvalDestination, "Tom"));
+      return;
+    }
+    setIsApprovalCelebrationVisible(true);
+    const celebrationDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 700 : 3800;
+    approvalNavigationTimeoutRef.current = window.setTimeout(goToNextStageAfterApproval, celebrationDuration);
+  }
 
-    router.push(withBriefApprovalToast(approvalDestination ?? getProjectStageHref(project.id, "script"), scriptWriter));
+  function goToNextStageAfterApproval() {
+    if (approvalNavigationTimeoutRef.current !== null) {
+      window.clearTimeout(approvalNavigationTimeoutRef.current);
+      approvalNavigationTimeoutRef.current = null;
+    }
+    setIsApprovalCelebrationVisible(false);
+    const nextStageHref = getProjectStageHref(project.id, nextStage);
+    router.push(nextStage === "script" ? withBriefApprovalToast(nextStageHref, "Tom") : nextStageHref);
   }
 
   function unapproveBrief() {
+    if (selectedRole === "Studio Freelancer" || !isBriefApproved) return;
+    const now = new Date();
     setProjectStageStatus(project.id, "brief", {
       state: selectedRole === "Customer" ? "waiting" : "in_progress",
       daysAgo: 0,
+    });
+    recordBriefAudit({
+      id: `brief-unapproval-${project.id}-${now.getTime()}`,
+      action: "unapproved",
+      actor: briefActorName,
+      occurredAt: now.toISOString(),
     });
   }
 
@@ -847,13 +1033,62 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
       onToggleCollapsed={toggleChat}
     />
   );
+  const briefActionsRow = (
+    <ShareActionRow
+      context="brief"
+      userRole={selectedRole}
+      density="compact"
+      presentation={isSummaryStep ? "brief-summary" : "overflow"}
+      briefControls
+      allowProjectScope
+      initialAccess={briefShareAccess}
+      onAccessChange={setBriefShareAccess}
+      initialLinkOpens="stageOnly"
+      projectId={project.id}
+      projectName={project.name}
+      studioName={studioName}
+      customerName={project.clientName}
+      scopeType="stage"
+      shareTitle="Brief"
+      shareUrl={`/projects/${project.id}/stages/brief`}
+      sendCompanyName={reviewCompany}
+      sendMessageEnabled
+      isWaitingOnReview={!isBriefApproved && briefStageStatus.state === "waiting" && Boolean(pendingReviewRequest)}
+      waitingOnCompany={reviewCompany}
+      pendingReviewDetails={pendingReviewRequest && lastReviewContact ? {
+        requestedBy: pendingReviewRequest.actor,
+        requestedAt: pendingReviewRequest.occurredAt,
+        recipients: pendingReviewRequest.recipients,
+        lastSentAt: lastReviewContact.occurredAt,
+        lastSentKind: lastReviewContact.action === "reminded" ? "reminder" : lastReviewContact.action === "updated" ? "updated" : "request",
+        hasChanged: briefHasChangedSinceSend,
+        onSendReminder: (message) => followUpBriefReview("reminded", message),
+        onSendUpdated: (message) => followUpBriefReview("updated", message),
+      } : undefined}
+      copyLinkIconOnly
+      copyLinkLabel="Share"
+      approveLabel="Approve Brief"
+      approveDisabled={selectedRole === "Studio Freelancer"}
+      approveDisabledTooltip="Only Studio Staff and Clients can approve this Brief"
+      approvedAt={briefStageStatus.approvedAt}
+      approvedBy={briefStageStatus.approvedBy ?? briefActorName}
+      isApproved={isBriefApproved}
+      onSubmit={sendBrief}
+      onApprove={requestApproveBrief}
+      onUnapprove={unapproveBrief}
+    />
+  );
 
   return (
     <main className="brief-shell">
       <div className="brief-main">
+        {(briefMode === "landing" || (briefMode === "steps" && !isSummaryStep)) ? (
+          <BriefGlobalActionsPortal>{briefActionsRow}</BriefGlobalActionsPortal>
+        ) : null}
         <ProjectStageHeader
           activeStage="brief"
           project={project}
+          showProjectShare={false}
         />
         {briefMode === "landing" ? (
           <BriefLandingScreen
@@ -879,27 +1114,28 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
                 </Button>
               )
             }
-            footerShare={
-              <ShareActionRow
-                context="brief"
-                userRole={selectedRole}
-                density="compact"
-                initialAccess="canEdit"
-                initialLinkOpens="stageOnly"
-                projectName={project.name}
-                studioName={studioName}
-                customerName={project.clientName}
-                copyLinkIconOnly
-                approveLabel="Approve Brief"
-                approveDisabled={!isSummaryStep}
-                approveDisabledTooltip="Review the Summary before approving"
-                approvedAt={briefStageStatus.approvedAt}
-                approvedBy={briefStageStatus.approvedBy ?? (selectedRole === "Customer" ? "Avery Taylor" : "Tom")}
-                isApproved={isBriefApproved}
-                onApprove={approveBrief}
-                onUnapprove={unapproveBrief}
-              />
-            }
+            footerShare={isSummaryStep ? (
+              <div className="brief-footer-share-layout">
+                {lastBriefAudit ? <span
+                  className="brief-action-audit label-xs"
+                  role="status"
+                  title={describeBriefAuditEntry(lastBriefAudit)}
+                  aria-label={describeBriefAuditEntry(lastBriefAudit)}
+                >
+                  {summariseBriefAuditEntry(lastBriefAudit)}
+                </span> : null}
+                {briefActionsRow}
+              </div>
+            ) : lastBriefAudit ? (
+              <span
+                className="brief-action-audit label-xs"
+                role="status"
+                title={describeBriefAuditEntry(lastBriefAudit)}
+                aria-label={describeBriefAuditEntry(lastBriefAudit)}
+              >
+                {summariseBriefAuditEntry(lastBriefAudit)}
+              </span>
+            ) : null}
             onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
             onStartWithAi={resetToLanding}
             onSelectStep={setActiveStepId}
@@ -996,6 +1232,15 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
           </BriefStepShell>
         )}
       </div>
+      {isApprovalConfirmationOpen ? <BriefApprovalConfirmation
+        missingCount={summaryMissingCount}
+        onClose={() => setIsApprovalConfirmationOpen(false)}
+        onApprove={approveBrief}
+      /> : null}
+      {isApprovalCelebrationVisible ? <BriefApprovalCelebration
+        nextStageLabel={nextStageLabel}
+        onContinue={goToNextStageAfterApproval}
+      /> : null}
     </main>
   );
 }
@@ -1145,6 +1390,152 @@ export function BriefGuidedExperience({
   );
 }
 
+function BriefApprovalConfirmation({
+  missingCount,
+  onClose,
+  onApprove,
+}: {
+  missingCount: number;
+  onClose: () => void;
+  onApprove: () => void;
+}) {
+  useEffect(() => {
+    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [onClose]);
+
+  const missingDetailsCopy = missingCount === 1
+    ? "One detail is still missing. You can approve it now, but it will still need to be completed."
+    : `${missingCount} details are still missing. You can approve it now, but they will still need to be completed.`;
+
+  return (
+    <div className="brief-approval-confirm-backdrop" onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <section className="brief-approval-confirm" role="dialog" aria-modal="true" aria-labelledby="brief-approval-confirm-title" aria-describedby="brief-approval-confirm-description">
+        <h2 className="headings-s-bold" id="brief-approval-confirm-title">Approve this Brief?</h2>
+        <p className="paragraph-s" id="brief-approval-confirm-description">{missingDetailsCopy}</p>
+        <div className="brief-approval-confirm-actions">
+          <Button size="S" variant="secondary" onClick={onClose}>Go back</Button>
+          <Button size="S" variant="primary" onClick={onApprove}>Approve anyway</Button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BriefApprovalCelebration({
+  nextStageLabel,
+  onContinue,
+}: {
+  nextStageLabel: string;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="brief-approval-celebration">
+      <div className="brief-approval-confetti" aria-hidden="true">
+        {Array.from({ length: 420 }, (_, index) => (
+          <span
+            key={index}
+            style={{
+              "--confetti-index": index,
+              "--confetti-x": `${2 + (index * 37) % 96}%`,
+              "--confetti-delay": `${(index % 32) * 15}ms`,
+              "--confetti-duration": `${2600 + (index % 6) * 150}ms`,
+              "--confetti-drift": (index * 29) % 31 - 15,
+            } as CSSProperties}
+          />
+        ))}
+      </div>
+      <section
+        className="brief-approval-celebration-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="brief-approval-celebration-title"
+        aria-describedby="brief-approval-celebration-description"
+      >
+        <span className="brief-approval-celebration-icon" aria-hidden="true">
+          <DsIcon name="check" size={28} />
+        </span>
+        <span className="label-xs-semibold brief-approval-celebration-kicker">BRIEF APPROVED</span>
+        <h2 className="headings-m-bold" id="brief-approval-celebration-title">On to {nextStageLabel}</h2>
+        <p className="paragraph-s" id="brief-approval-celebration-description">
+          Your Brief is approved. Taking you to the next Stage.
+        </p>
+        <Button size="S" type="button" variant="primary" onClick={onContinue}>
+          Continue to {nextStageLabel}
+        </Button>
+      </section>
+    </div>
+  );
+}
+
+function isBriefActionAuditEntry(value: unknown): value is BriefActionAuditEntry {
+  if (!value || typeof value !== "object") return false;
+  const entry = value as Record<string, unknown>;
+  if (typeof entry.id !== "string" || typeof entry.actor !== "string" || typeof entry.occurredAt !== "string") return false;
+  if (entry.action === "approved") return true;
+  if (entry.action === "unapproved") return true;
+  return ["sent", "reminded", "updated"].includes(String(entry.action))
+    && typeof entry.company === "string"
+    && Array.isArray(entry.recipients)
+    && entry.recipients.every((recipient) => typeof recipient === "string")
+    && (entry.action === "sent" || typeof entry.requestId === "string")
+    && (entry.fingerprint === undefined || typeof entry.fingerprint === "string")
+    && (entry.message === undefined || typeof entry.message === "string");
+}
+
+function getBriefReviewFingerprint(fields: BriefFields, logline: string) {
+  return JSON.stringify({ fields, logline });
+}
+
+function formatBriefAuditDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("en-AU", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function describeBriefAuditEntry(entry: BriefActionAuditEntry) {
+  const date = formatBriefAuditDate(entry.occurredAt);
+  if (entry.action === "sent") {
+    return `${entry.actor} submitted the Brief to ${entry.company} at ${date}. ${entry.recipients.length ? `Notified ${entry.recipients.join(", ")}.` : "No one was directly notified."}`;
+  }
+  if (entry.action === "reminded") {
+    return `${entry.actor} reminded ${entry.company} to review the Brief at ${date}.${entry.message ? ` Message: ${entry.message}` : ""}`;
+  }
+  if (entry.action === "updated") {
+    return `${entry.actor} sent the updated Brief to ${entry.company} at ${date}.${entry.message ? ` Message: ${entry.message}` : ""}`;
+  }
+
+  return entry.action === "approved"
+    ? `Approved by ${entry.actor} at ${date}.`
+    : `Brief approval removed by ${entry.actor} at ${date}.`;
+}
+
+function summariseBriefAuditEntry(entry: BriefActionAuditEntry) {
+  const date = formatBriefAuditDate(entry.occurredAt);
+  if (entry.action === "sent") {
+    return `${entry.actor} submitted Brief to ${entry.company} · ${date}`;
+  }
+  if (entry.action === "reminded") {
+    return `${entry.actor} reminded ${entry.company} to review the Brief · ${date}`;
+  }
+  if (entry.action === "updated") {
+    return `${entry.actor} sent the updated Brief to ${entry.company} · ${date}`;
+  }
+
+  return entry.action === "approved"
+    ? `Approved by ${entry.actor} · ${date}`
+    : `Approval removed by ${entry.actor} · ${date}`;
+}
+
 function BriefStepShell({
   activeStepId,
   activeStepIndex,
@@ -1191,12 +1582,27 @@ function BriefStepShell({
             {footerAction}
           </span>
         </div>
-        <div className="brief-step-footer-share">
-          {footerShare}
-        </div>
+        {footerShare ? <div className="brief-step-footer-share">{footerShare}</div> : null}
       </footer>
     </>
   );
+}
+
+function BriefGlobalActionsPortal({ children }: { children: ReactNode }) {
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const findTarget = () => {
+      const nextTarget = document.querySelector<HTMLElement>("[data-brief-global-actions-slot]");
+      setTarget((current) => current === nextTarget ? current : nextTarget);
+    };
+    findTarget();
+    const observer = new MutationObserver(findTarget);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  return target ? createPortal(children, target) : null;
 }
 
 function BriefStepDots({
@@ -5521,19 +5927,21 @@ function sentenceCase(value: string) {
 }
 
 function formatBriefApprovalDate(date: Date) {
-  return new Intl.DateTimeFormat("en-AU", { day: "2-digit", month: "short" }).format(date);
+  return new Intl.DateTimeFormat("en-AU", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
 }
 
 function withBriefApprovalToast(href: string, scriptWriter: string) {
   const [pathWithQuery, hash] = href.split("#");
   const [path, queryString] = pathWithQuery.split("?");
   const params = new URLSearchParams(queryString);
-
   params.set("briefApproved", "1");
   params.set("scriptWriter", scriptWriter);
-
   const query = params.toString();
-
   return `${path}${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`;
 }
 

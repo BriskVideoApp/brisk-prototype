@@ -156,7 +156,7 @@ export function StudioNotificationCategoryPage({ category }: { category: StudioN
                 <dt className="label-xs-semibold">When it sends</dt>
                 <dd className="paragraph-s">
                   {notification.demonstration === "edit-request-review"
-                    ? <>When a filmmaker clicks <strong>Request review</strong> in Edit.</>
+                    ? <>When a filmmaker sends an Edit version for review.</>
                     : notification.sentWhen}
                 </dd>
               </div>
@@ -215,7 +215,7 @@ export function StudioNotificationCategoryPage({ category }: { category: StudioN
                         </button>
                       </header>
                       <p className="notification-trigger-popover-sentence paragraph-s">
-                        <strong>David Ryan</strong>, Producer, clicks <strong>Request review</strong>. <strong>Sarah Chen</strong>, Editor, receives the notification.
+                        <strong>David Ryan</strong>, Producer, sends Edit V3 to <strong>Sarah Chen</strong>, Editor.
                       </p>
                       <ReviewRequestDemonstration key={demonstrationRun} />
                       <footer>
@@ -299,13 +299,13 @@ function StudioNotificationPreviewCard({
 
 function ReviewRequestDemonstration() {
   return (
-    <section className="notification-trigger-demonstration" aria-label="Request review demonstration">
+    <section className="notification-trigger-demonstration" aria-label="Edit send demonstration">
       <div className="notification-trigger-source">
         <span className="notification-trigger-person">
           <strong className="label-xs-semibold">David Ryan</strong>
           <small className="label-xs">Producer · Edit</small>
         </span>
-        <span className="notification-trigger-demo-button label-s-semibold">Request review</span>
+        <span className="notification-trigger-demo-button label-s-semibold">Send Edit V3</span>
         <span className="notification-trigger-pointer" aria-hidden="true">
           <DsIcon name="cursor" size={20} />
         </span>

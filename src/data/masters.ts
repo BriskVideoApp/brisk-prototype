@@ -18,9 +18,7 @@ export type DeliverableCaption = "SRT file" | "Baked in captions" | "None";
 export type DeliverableStatus =
   | "not_started"
   | "waiting_for_studio"
-  | "waiting_for_customer"
-  | "approved"
-  | "delivered";
+  | "available";
 
 export type RecutMarkVerb = "keep" | "cut" | "trim" | "move";
 
@@ -56,7 +54,6 @@ export type MastersVersion = {
   fileSize: string;
   durationSeconds: number;
   shadePath: string;
-  approved: boolean;
 };
 
 export type MastersComment = {
@@ -110,7 +107,6 @@ export type MastersDeliverable = {
   deadline?: string;
   status: DeliverableStatus;
   versions: MastersVersion[];
-  approvedVersionId?: string;
   currentVersionId?: string;
   comments: MastersComment[];
   unreadCommentCount: number;
@@ -186,7 +182,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     duration: "3 mins",
     captions: ["SRT file"],
     deadline: "2026-08-07",
-    status: "waiting_for_customer",
+    status: "available",
     currentVersionId: "main-v2",
     addedBy: "filmmaker",
     kind: "video",
@@ -211,7 +207,6 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "8.4 GB",
         durationSeconds: 180,
         shadePath: "Shade/Good Citizens/Masters/Main Video/V1",
-        approved: false,
       },
       {
         id: "main-v2",
@@ -224,7 +219,6 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "8.7 GB",
         durationSeconds: 180,
         shadePath: "Shade/Good Citizens/Masters/Main Video/V2",
-        approved: false,
       },
     ],
   },
@@ -237,7 +231,7 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
     duration: "30 secs",
     captions: ["Baked in captions"],
     deadline: "2026-08-12",
-    status: "waiting_for_customer",
+    status: "available",
     currentVersionId: "cutdown-v1",
     addedBy: "filmmaker",
     kind: "video",
@@ -274,7 +268,6 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
         fileSize: "146 MB",
         durationSeconds: 30,
         shadePath: "Shade/Good Citizens/Masters/Instagram 30s/V1",
-        approved: false,
       },
     ],
   },
@@ -326,7 +319,6 @@ export function createMastersSlotsFromApprovedBrief(): MastersDeliverable[] {
     ...deliverable,
     status: "not_started",
     versions: [],
-    approvedVersionId: undefined,
     currentVersionId: undefined,
     comments: [],
     unreadCommentCount: 0,

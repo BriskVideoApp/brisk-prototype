@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   useEffect,
   useRef,
@@ -17,6 +18,7 @@ import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import {
   ScriptMediaPicker,
   scriptMediaPickerOptions,
@@ -51,7 +53,9 @@ type StoryboardDropTarget = {
 const storyboardOverallCommentAnchor = { kind: "overall", label: "Overall" } as const;
 
 export function StoryboardPage({ project }: { project: Project }) {
+  const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
+  const studioCompanyName = useStudioCompanyName();
   const { addAssets, assetViews } = useMediaLibrary();
   const { getProjectStages } = useProjectStageStatus();
   const {
@@ -79,6 +83,14 @@ export function StoryboardPage({ project }: { project: Project }) {
   const record = getStoryboard(project.id);
   const currentVersion = record?.versions.find((version) => version.id === record.currentVersionId)
     ?? record?.versions.at(-1);
+  const linkedVersionId = searchParams.get("version");
+  const appliedLinkedVersionRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (linkedVersionId && appliedLinkedVersionRef.current !== linkedVersionId && record?.versions.some((version) => version.id === linkedVersionId)) {
+      appliedLinkedVersionRef.current = linkedVersionId;
+      selectVersion(project.id, linkedVersionId);
+    }
+  }, [linkedVersionId, project.id, record?.currentVersionId, record?.versions, selectVersion]);
   const scriptStatus = getProjectStages(project).script;
   const isScriptApproved = scriptStatus.state === "done";
   const isStoryboardApproved = Boolean(currentVersion?.approvedSnapshot && record?.status.state === "done");
@@ -276,7 +288,7 @@ export function StoryboardPage({ project }: { project: Project }) {
 
   return (
     <main className={`storyboard-shell ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
-      <ProjectStageHeader activeStage="storyboard" project={project} />
+      <ProjectStageHeader activeStage="storyboard" project={project} showProjectShare={!record || !currentVersion} />
       <input ref={uploadInputRef} type="file" accept="image/*" hidden onChange={uploadImage} />
 
       {record && currentVersion ? (
@@ -483,19 +495,30 @@ export function StoryboardPage({ project }: { project: Project }) {
               <ShareActionRow
                 context="storyboard"
                 userRole={selectedRole}
-                initialAccess="canComment"
+                scopeType="version"
+                shareTitle={`${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
+                projectId={project.id}
+                reviewScopeKey={currentVersion.id}
+                reviewFingerprint={JSON.stringify(currentVersion)}
+                allowProjectScope
                 projectName={project.name}
                 customerName={project.clientName}
-                studioName="North Star Films"
+                studioName={studioCompanyName}
+                isWaitingOnReview={record.status.state === "waiting" && record.status.reviewVersion === currentVersion.id}
+                waitingOnCompany={record.status.assignedTo}
+                shareUrl={`/projects/${project.id}/stages/storyboard?version=${encodeURIComponent(currentVersion.id)}`}
                 copyLinkIconOnly
-                approveLabel="Approve Storyboard"
+                copyLinkLabel="Share Storyboard"
+                sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
+                approveLabel={`Approve ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
+                approveDisabled={selectedRole === "Studio Freelancer"}
                 approvedAt={currentVersion.approvedAt}
                 approvedBy={currentVersion.approvedBy}
                 isApproved={isStoryboardApproved}
                 onApprove={() => approveStoryboard(project.id, selectedRole === "Customer" ? project.clientName : "Tom")}
                 onUnapprove={() => unapproveStoryboard(project.id)}
-                onRequestReview={() => requestStoryboardReview(project.id)}
-                onSendToStudio={() => requestStoryboardReview(project.id)}
+                onRequestReview={(recipient) => requestStoryboardReview(project.id, recipient === "studio" ? studioCompanyName : project.clientName)}
+                onSendToStudio={() => requestStoryboardReview(project.id, studioCompanyName)}
               />
             </div>
           </footer>

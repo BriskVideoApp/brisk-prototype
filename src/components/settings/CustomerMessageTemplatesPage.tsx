@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
@@ -8,6 +9,7 @@ import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   cloneCustomerMessageTemplateCopy,
+  customerMessageTemplateStorageKey,
   customerMessageTemplates,
   resolveCustomerMessageText,
   type CustomerMessageTemplateCopy,
@@ -16,10 +18,11 @@ import {
 } from "@/data/notification-templates";
 
 type TemplateOverrides = Partial<Record<CustomerMessageTemplateId, CustomerMessageTemplateCopy>>;
-const templateStorageKey = "brisk-customer-message-templates-v1";
 const studioName = "North Star Films";
 
 export function CustomerMessageTemplatesPage() {
+  const searchParams = useSearchParams();
+  const requestedTemplateId = searchParams.get("message");
   const [selectedTemplateId, setSelectedTemplateId] = useState<CustomerMessageTemplateId>("edit-review");
   const [overrides, setOverrides] = useState<TemplateOverrides>({});
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -31,6 +34,11 @@ export function CustomerMessageTemplatesPage() {
   useEffect(() => {
     setOverrides(readTemplateOverrides());
   }, []);
+
+  useEffect(() => {
+    const requestedTemplate = customerMessageTemplates.find((message) => message.id === requestedTemplateId);
+    if (requestedTemplate) setSelectedTemplateId(requestedTemplate.id);
+  }, [requestedTemplateId]);
 
   useEffect(() => {
     if (!toast) return;
@@ -46,7 +54,7 @@ export function CustomerMessageTemplatesPage() {
       } else {
         nextOverrides[templateDefinition.id] = cloneCustomerMessageTemplateCopy(nextCopy);
       }
-      window.localStorage.setItem(templateStorageKey, JSON.stringify(nextOverrides));
+      window.localStorage.setItem(customerMessageTemplateStorageKey, JSON.stringify(nextOverrides));
       return nextOverrides;
     });
     setIsEditorOpen(false);
@@ -57,7 +65,7 @@ export function CustomerMessageTemplatesPage() {
     setOverrides((current) => {
       const nextOverrides = { ...current };
       delete nextOverrides[templateDefinition.id];
-      window.localStorage.setItem(templateStorageKey, JSON.stringify(nextOverrides));
+      window.localStorage.setItem(customerMessageTemplateStorageKey, JSON.stringify(nextOverrides));
       return nextOverrides;
     });
     setToast(`${templateDefinition.label} restored.`);
@@ -242,7 +250,7 @@ function messagesMatch(left: CustomerMessageTemplateCopy, right: CustomerMessage
 
 function readTemplateOverrides(): TemplateOverrides {
   try {
-    const storedValue = window.localStorage.getItem(templateStorageKey);
+    const storedValue = window.localStorage.getItem(customerMessageTemplateStorageKey);
     if (!storedValue) return {};
     const storedOverrides = JSON.parse(storedValue) as TemplateOverrides;
     return customerMessageTemplates.reduce<TemplateOverrides>((normalisedOverrides, templateDefinition) => {

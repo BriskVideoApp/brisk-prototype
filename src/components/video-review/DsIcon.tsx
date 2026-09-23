@@ -83,6 +83,7 @@ const iconPaths = {
   "at-mail": "/brisk-icons/at-mail.svg",
   "users-three": "/brisk-icons/users-three.svg",
   "user-switch": "/brisk-icons/user-switch.svg",
+  "user-plus": "/brisk-icons/user-plus.svg",
   "headphones": "/brisk-icons/headphones.svg",
   "chopchop-ai": "/brisk-icons/chopchop-ai.svg?v=4",
   "heart": "/brisk-icons/heart.svg",

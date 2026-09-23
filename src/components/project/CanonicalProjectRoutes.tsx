@@ -18,10 +18,12 @@ export function CanonicalProjectBriefRoute({ projectId }: { projectId: string })
   const { state, updateProjectBrief } = usePrototypeState();
   const project = selectProject(state, projectId);
   const brief = selectProjectBrief(state, projectId);
+  const workspace = state.workspaces.find((candidate) => candidate.id === state.session.activeWorkspaceId);
   if (!project || !brief) return <ProjectUnavailable />;
   return (
     <BriefPage
       project={project}
+      studioName={workspace?.name ?? "Studio"}
       initialFields={brief.fields}
       onFieldsChange={(fields) => updateProjectBrief(project.id, fields)}
     />

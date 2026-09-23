@@ -43,7 +43,7 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
         }
       }}
     >
-      <td>{props.capabilities.canMoveAssets ? <button className={`media-row-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); props.onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}</td>
+      <td>{props.capabilities.canCopyLink ? <button className={`media-row-select ${isSelected ? "is-selected" : ""}`} type="button" aria-label={`${isSelected ? "Deselect" : "Select"} ${asset.name}`} aria-pressed={isSelected} onClick={(event) => { event.stopPropagation(); props.onToggleSelect(asset); }}><DsIcon name="check" size={14} /></button> : null}</td>
       <td><MediaThumbnail asset={asset} small /></td>
       <td><span className="media-list-name label-s-semibold" title={asset.name}>{asset.name}</span></td>
       <td className="label-s">{asset.kind}</td>

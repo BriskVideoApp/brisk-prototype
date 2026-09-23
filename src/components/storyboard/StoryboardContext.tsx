@@ -45,7 +45,7 @@ type StoryboardContextValue = {
     targetFrameId: string,
     position: "before" | "after",
   ) => void;
-  requestStoryboardReview: (projectId: string) => void;
+  requestStoryboardReview: (projectId: string, company: string) => void;
   redoStoryboard: (projectId: string) => void;
   renameVersion: (projectId: string, versionId: string, displayName: string) => void;
   selectVersion: (projectId: string, versionId: string) => void;
@@ -317,13 +317,13 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
         return { ...version, frames };
       });
     },
-    requestStoryboardReview(projectId) {
+    requestStoryboardReview(projectId, company) {
       commitRecords((current) => current[projectId]
         ? {
             ...current,
             [projectId]: {
               ...current[projectId],
-              status: { state: "waiting", daysAgo: 0 },
+              status: { state: "waiting", daysAgo: 0, assignedTo: company, reviewVersion: current[projectId].currentVersionId },
             },
           }
         : current);

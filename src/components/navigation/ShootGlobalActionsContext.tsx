@@ -10,11 +10,15 @@ export type ShootGlobalActions = {
   customerName: string;
   initialAccess: ShareAccess;
   isApproved: boolean;
+  isWaitingOnReview: boolean;
+  waitingOnCompany?: string;
   projectName: string;
+  projectId: string;
+  reviewFingerprint: string;
   shareUrl: string;
   studioName: string;
   userRole: ShareUserRole;
-  beforeAction: (action: "copy" | "review" | "approve", proceed: () => void) => void;
+  beforeAction: (action: "copy" | "send" | "approve", proceed: () => void) => void;
   onApprove: () => void;
   onRequestReview: (recipient: RequestReviewRecipient) => void;
   onSendToStudio: () => void;

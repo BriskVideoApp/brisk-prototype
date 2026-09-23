@@ -1,20 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { customerDashboardProjects } from "@/data/customer-dashboard";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
 import type { RecutBrief } from "@/data/masters";
 import type { Project } from "@/components/active-videos/types";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
-import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { DsIcon } from "./DsIcon";
@@ -73,11 +71,10 @@ export function VideoReviewScreen({
   project: Project;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
-  const { studio } = useStudioSettings();
-  const { publishStageReviewRequest } = useNotificationInbox();
+  const studioCompanyName = useStudioCompanyName();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
-  const projectCode = customerDashboardProjects.find((item) => item.id === project.id)?.code;
   const editReadiness = getEditReadiness(project);
   const editStageStatus = getProjectStages(project).edit;
   const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
@@ -98,7 +95,10 @@ export function VideoReviewScreen({
     () => new Set(initialReviewComments.filter((comment) => comment.resolved).map((comment) => comment.id)),
   );
   const [expandedResolvedIds, setExpandedResolvedIds] = useState(new Set<string>());
-  const [selectedVersionLabel, setSelectedVersionLabel] = useState(initialReviewVersions[0]?.label ?? "");
+  const [selectedVersionLabel, setSelectedVersionLabel] = useState(() => {
+    const linkedVersion = searchParams.get("version");
+    return initialReviewVersions.find((version) => version.label === linkedVersion)?.label ?? initialReviewVersions[0]?.label ?? "";
+  });
   const [versionStatuses, setVersionStatuses] = useState<Record<string, ReviewVersionStatus>>(() =>
     Object.fromEntries(initialReviewVersions.map((version) => [version.label, version.status])),
   );
@@ -987,6 +987,7 @@ export function VideoReviewScreen({
         <ProjectStageHeader
           activeStage="edit"
           project={project}
+          showProjectShare={!editReadiness.ready || isEditEmpty}
         />
         {canUploadVersions ? (
           <input
@@ -1176,42 +1177,47 @@ export function VideoReviewScreen({
             <ShareActionRow
               context="edit"
               userRole={selectedRole}
+              projectId={project.id}
+              reviewScopeKey={selectedReviewVersion?.label}
+              reviewFingerprint={selectedReviewVersion ? JSON.stringify(selectedReviewVersion) : undefined}
+              scopeType={selectedReviewVersion ? "version" : "stage"}
+              allowProjectScope
+              shareTitle={selectedReviewVersion ? `V${selectedReviewVersion.number}` : "Edit"}
               initialLinkOpens="videoOnly"
-              initialAccess="canComment"
-              projectName={activeVideo.fileName}
-              studioName="Brisk Studios"
-              customerName="Jess T."
+              projectName={project.name}
+              studioName={studioCompanyName}
+              customerName={project.clientName}
+              isWaitingOnReview={editStageStatus.state === "waiting" && editStageStatus.reviewVersion === selectedReviewVersion?.label}
+              waitingOnCompany={editStageStatus.assignedTo}
+              shareUrl={selectedReviewVersion ? `/projects/${project.id}/stages/edit?version=${encodeURIComponent(selectedReviewVersion.label)}` : `/projects/${project.id}/stages/edit`}
               copyLinkIconOnly
-              approveLabel="Approve this version"
+              copyLinkLabel={selectedReviewVersion ? `Share V${selectedReviewVersion.number}` : "Share Edit"}
+              sendLabel={selectedReviewVersion ? `Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review V${selectedReviewVersion.number}` : undefined}
+              approveLabel={selectedReviewVersion ? `Approve V${selectedReviewVersion.number}` : "Approve Edit"}
+              approveDisabled={selectedRole === "Studio Freelancer"}
               approvedAt={editStageStatus.approvedAt}
               approvedBy={editStageStatus.approvedBy}
               isApproved={selectedVersionStatus === "approved"}
               showApprove={Boolean(selectedReviewVersion)}
               onApprove={approveSelectedVersion}
-              onRequestReview={(recipient) => {
+              onRequestReview={(recipient, message) => {
                 if (!selectedReviewVersion) return;
 
                 setProjectStageStatus(project.id, "edit", {
-                  state: recipient === "customer" ? "waiting" : "in_progress",
+                  state: "waiting",
                   daysAgo: 0,
+                  assignedTo: recipient === "customer" ? project.clientName : studioCompanyName,
+                  reviewVersion: selectedReviewVersion.label,
                 });
 
-                if (recipient !== "customer") return;
-
-                publishStageReviewRequest({
-                  projectId: project.id,
-                  projectCode,
-                  projectName: project.name,
-                  stage: "edit",
-                  versionLabel: selectedReviewVersion.label,
-                  actorName: reviewUsers.find((user) => user.id === currentUserId)?.name ?? "Studio",
-                  href: `/projects/${project.id}/stages/edit`,
-                });
+                void message;
               }}
               onSendToStudio={() => {
                 setProjectStageStatus(project.id, "edit", {
                   state: "in_progress",
                   daysAgo: 0,
+                  assignedTo: studioCompanyName,
+                  reviewVersion: selectedReviewVersion?.label,
                 });
               }}
               onUnapprove={unapproveSelectedVersion}

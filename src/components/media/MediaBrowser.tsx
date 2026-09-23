@@ -4,9 +4,12 @@ import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent }
 import { useRouter } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { getRoleHome } from "@/components/navigation/navigationConfig";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
+import { appendSharedReviewActivity, sharedReviewActivityStorageKey } from "@/data/share-review-activity";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { mockTeamPeople } from "@/data/active-videos/teamDefaults";
 import { mediaCloudFiles, mediaStorageLocations, mediaStorageOptions, mediaStoragePlans, mediaTranscriptNotes, type MediaAssetView, type MediaCloudFile, type MediaCloudProvider, type MediaCollection, type MediaFolder, type MediaKind } from "@/data/media";
@@ -25,14 +28,17 @@ import { StorageUsageMeter } from "./StorageUsageMeter";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type GlobalTab = "media" | "masters" | "archived";
-type MediaBrowserProps = { scope: "project" | "global"; project?: Project; initialProjectId?: string | null; initialFolderId?: string | null; initialAssetId?: string | null };
-export function MediaBrowser({ scope, project, initialProjectId = null, initialFolderId = null, initialAssetId = null }: MediaBrowserProps) {
+type MediaBrowserProps = { scope: "project" | "global"; project?: Project; initialProjectId?: string | null; initialFolderId?: string | null; initialAssetId?: string | null; initialAssetIds?: string[] };
+export function MediaBrowser({ scope, project, initialProjectId = null, initialFolderId = null, initialAssetId = null, initialAssetIds = [] }: MediaBrowserProps) {
   const router = useRouter();
   const { selectedRole, allPages } = usePrototypeRole();
+  const { state: prototypeState } = usePrototypeState();
+  const studioName = useStudioCompanyName();
   const { activeScenario } = usePrototypeScenario();
   const library = useMediaLibrary();
   const isClientView = selectedRole === "Customer";
   const linkedAsset = library.assetViews.find((asset) => asset.id === initialAssetId && (!project || asset.projectId === project.id));
+  const linkedBatchAssets = library.assetViews.filter((asset) => initialAssetIds.includes(asset.id) && !asset.archivedAt && asset.collection === "media" && (!project || asset.projectId === project.id));
   const scenarioProjects = useMemo(
     () => {
       if (scope === "global") return activeVideoProjects;
@@ -52,13 +58,14 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const activeProjectId = project?.id ?? selectedProjectId;
   const hasClientFolderRail = scope === "global" && isClientView && Boolean(activeProjectId);
   const [tab, setTab] = useState<GlobalTab>(linkedAsset?.archivedAt ? "archived" : linkedAsset?.collection === "masters" ? "masters" : "media");
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(initialFolderId ?? (!linkedAsset?.archivedAt ? linkedAsset?.folderId ?? null : null));
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(linkedBatchAssets.length ? null : initialFolderId ?? (!linkedAsset?.archivedAt ? linkedAsset?.folderId ?? null : null));
   const [railCollapsed, setRailCollapsed] = useState(false);
   const [typeFilter, setTypeFilter] = useState<MediaTypeFilter>("all");
   const [viewMode, setViewMode] = useState<MediaViewMode>("card");
   const [sort, setSort] = useState<MediaSort>("newest");
   const [query, setQuery] = useState("");
-  const [selectedAssetIds, setSelectedAssetIds] = useState<Set<string>>(new Set());
+  const [selectedAssetIds, setSelectedAssetIds] = useState<Set<string>>(() => new Set(linkedBatchAssets.map((asset) => asset.id)));
+  const [sharePanelOpenSignal, setSharePanelOpenSignal] = useState(0);
   const [activeAssetId, setActiveAssetId] = useState<string | null>(linkedAsset?.id ?? null);
   const [drawerTab, setDrawerTab] = useState<MediaAssetDrawerTab>("details");
   const [openUploadMenu, setOpenUploadMenu] = useState<"toolbar" | "empty" | null>(null);
@@ -116,6 +123,31 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
     ...scenarioProjects.map((item) => ({ id: `project-${item.id}`, label: item.name, kind: "project" as const })),
   ], [scenarioProjects]);
   const selectedFolderName = folders.find((folder) => folder.id === selectedFolderId)?.name ?? "All media";
+  const selectedSharingAssets = visibleAssets.filter((asset) => selectedAssetIds.has(asset.id));
+  const singleSharingAsset = selectedSharingAssets.length === 1 ? selectedSharingAssets[0] : null;
+  const shareProject = scenarioProjects.find((item) => item.id === (singleSharingAsset?.projectId ?? selectedSharingAssets[0]?.projectId ?? activeProjectId));
+  const shareTitle = singleSharingAsset?.name ?? (selectedSharingAssets.length > 1
+    ? `${selectedSharingAssets.length} files`
+    : selectedFolderId ? selectedFolderName : "Media");
+  const shareScopeType = selectedSharingAssets.length === 1
+    ? "item"
+    : selectedSharingAssets.length > 1 ? "selection" : "stage";
+  const shareUrl = activeProjectId
+    ? singleSharingAsset
+      ? `/projects/${activeProjectId}/stages/media?asset=${encodeURIComponent(singleSharingAsset.id)}`
+      : selectedSharingAssets.length > 1
+        ? `/projects/${activeProjectId}/stages/media?assets=${encodeURIComponent(selectedSharingAssets.map((asset) => asset.id).join(","))}`
+        : `/projects/${activeProjectId}/stages/media${selectedFolderId ? `?folder=${encodeURIComponent(selectedFolderId)}` : ""}`
+    : singleSharingAsset
+      ? `/media/${encodeURIComponent(singleSharingAsset.id)}`
+      : `/media${selectedSharingAssets.length > 1 ? `?assets=${encodeURIComponent(selectedSharingAssets.map((asset) => asset.id).join(","))}` : ""}`;
+  const sendCompanyName = selectedRole === "Studio Staff"
+    ? shareProject?.clientName ?? "Client"
+    : studioName;
+  const canSendSelection = selectedSharingAssets.length > 0 && (
+    selectedRole !== "Studio Staff"
+    || new Set(selectedSharingAssets.map((asset) => scenarioProjects.find((item) => item.id === asset.projectId)?.clientName)).size === 1
+  );
   const configuredStorage = mediaStorageOptions.find((option) => option.provider === library.workspaceStorage.provider) ?? mediaStorageOptions[2];
   const storagePlan = mediaStoragePlans.find((plan) => plan.id === library.workspaceStorage.planId) ?? mediaStoragePlans[1];
   const uploadProgressAssets = trackedUploadIds.map((id) => library.assetViews.find((asset) => asset.id === id)).filter((asset): asset is MediaAssetView => Boolean(asset));
@@ -169,7 +201,10 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const commonAction = {
     onComment: (asset: MediaAssetView) => { setActiveAssetId(asset.id); setDrawerTab("comments"); },
     onTranscript: (asset: MediaAssetView) => asset.transcriptStatus === "ready" ? router.push(`/projects/${asset.projectId}/script?subtab=transcripts&clip=${encodeURIComponent(asset.id)}#transcript-${encodeURIComponent(asset.id)}`) : (setActiveAssetId(asset.id), setDrawerTab("transcript")),
-    onShare: (asset: MediaAssetView) => { void copyLink(`/media/${asset.id}`); },
+    onShare: (asset: MediaAssetView) => {
+      setSelectedAssetIds(new Set([asset.id]));
+      setSharePanelOpenSignal((current) => current + 1);
+    },
     onDownload: (asset: MediaAssetView) => asset.originalAvailable ? notify(`Downloading ${asset.name}.`) : notify("The original file is unavailable. Playback is still available."),
     onDelete: (asset: MediaAssetView) => setDeleteAssetIds([asset.id]),
     onArchive: (asset: MediaAssetView) => setArchiveAssetIds([asset.id]),
@@ -191,9 +226,69 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
       {hasClientFolderRail ? <MediaFolderTree folders={folders} selectedFolderId={selectedFolderId} collapsed={false} canManage={capabilities.canManageFolders} canMoveAssets={capabilities.canMoveAssets} canCopyLink={capabilities.canCopyLink} canCollapse={false} onSelect={setSelectedFolderId} onAdd={(parentId) => activeProjectId ? library.createFolder(activeProjectId, parentId) : null} onRename={library.renameFolder} onMove={library.moveFolder} onMoveAssetsToFolder={(assetIds, folderId) => { library.moveAssets(assetIds, folderId); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} onDelete={(id) => { if (!library.deleteFolder(id)) notify("Only empty folders can be deleted."); }} onCopyLink={(id) => { void copyLink(`/media?project=${activeProjectId}&folder=${id}`); }} onToggleCollapsed={() => {}} /> : null}
       <section className="media-main-area">
         {scope === "global" ? <div className="media-library-tabs" role="tablist" aria-label="Media library sections">{(["media", "masters", "archived"] as const).map((id) => <button type="button" role="tab" key={id} className={`label-s-semibold ${tab === id ? "is-active" : ""}`} aria-selected={tab === id} onClick={() => { setTab(id); setSelectedFolderId(null); setActiveAssetId(null); }}>{id === "media" ? "Media" : id === "masters" ? "Masters" : "Archived"}</button>)}</div> : null}
-        <div className="media-main-actions"><div className="media-action-buttons">{browserCapabilities.canUpload ? <MediaUploadMenu open={openUploadMenu === "toolbar"} onOpenChange={(open) => setOpenUploadMenu(open ? "toolbar" : null)} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }} /> : null}{capabilities.canDownload ? <button className="media-tertiary-button label-s-semibold" type="button" onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}><DsIcon name="download" size={16} />Download all</button> : null}{browserCapabilities.canCopyLink ? <ShareActionRow context="media" userRole={selectedRole} density="compact" showReview={false} showApprove={false} copyLinkLabel={selectedFolderId ? `Share ${selectedFolderName}` : "Share media"} stageLabelOverride={selectedFolderId ? selectedFolderName : "All media"} shareUrl={activeProjectId ? `/projects/${activeProjectId}/stages/media${selectedFolderId ? `?folder=${encodeURIComponent(selectedFolderId)}` : ""}` : "/media"} /> : null}<input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} /></div></div>
+        <div className="media-main-actions">
+          <div className="media-action-buttons">
+            {browserCapabilities.canUpload ? <MediaUploadMenu
+              open={openUploadMenu === "toolbar"}
+              onOpenChange={(open) => setOpenUploadMenu(open ? "toolbar" : null)}
+              onComputerUpload={() => inputRef.current?.click()}
+              onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }}
+            /> : null}
+            {capabilities.canDownload ? <button
+              className="media-tertiary-button label-s-semibold"
+              type="button"
+              onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}
+            ><DsIcon name="download" size={16} />Download all</button> : null}
+            <input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} />
+          </div>
+        </div>
         <MediaFilterBar typeFilter={typeFilter} viewMode={viewMode} sort={sort} query={query} onTypeFilterChange={setTypeFilter} onViewModeChange={setViewMode} onSortChange={setSort} onQueryChange={setQuery} />
         <MediaAssetGrid assets={visibleAssets} folders={childFolders} folderPath={folderPath} viewMode={viewMode} selectedAssetIds={selectedAssetIds} activeAssetId={activeAssetId} capabilities={browserCapabilities} onActivate={activate} {...commonAction} onBatchDownload={() => notify(`Downloading ${visibleAssets.filter((asset) => selectedAssetIds.has(asset.id) && asset.originalAvailable).length} files.`)} onBatchMove={() => setMoveAssetIds([...selectedAssetIds])} onBatchArchive={() => setArchiveAssetIds([...selectedAssetIds])} onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])} onDeselectAll={() => { setSelectedAssetIds(new Set()); lastSelectedAssetIdRef.current = null; }} onToggleSelect={(asset) => { setSelectedAssetIds((current) => { const next = new Set(current); if (next.has(asset.id)) next.delete(asset.id); else next.add(asset.id); return next; }); lastSelectedAssetIdRef.current = asset.id; }} onMoveAssetsToFolder={(assetIds, folderId) => { library.moveAssets(assetIds, folderId); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} emptyUploadAction={browserCapabilities.canUpload ? <MediaUploadMenu open={openUploadMenu === "empty"} onOpenChange={(open) => setOpenUploadMenu(open ? "empty" : null)} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }} /> : null} emptyKind={(query || typeFilter !== "all") ? "filtered" : selectedFolderId ? "folder" : "project"} onClearControls={() => { setQuery(""); setTypeFilter("all"); }} onFolderOpen={setSelectedFolderId} />
+        {selectedSharingAssets.length > 0 && browserCapabilities.canCopyLink ? <div className="media-stage-footer">
+          <ShareActionRow
+            context="media"
+            userRole={selectedRole}
+            density="compact"
+            scopeType={shareScopeType}
+            shareTitle={shareTitle}
+            stageLabelOverride={shareTitle}
+            projectName={shareProject?.name ?? "Media library"}
+            studioName={studioName}
+            customerName={shareProject?.clientName}
+            sendCompanyName={sendCompanyName}
+            sendLabel={`Send selected ${selectedSharingAssets.length === 1 ? "file" : "files"} to ${sendCompanyName}`}
+            sendChangesProjectStatus={false}
+            onSend={() => {
+              const actor = prototypeState.users.find((user) => user.id === prototypeState.session.activeUserId)?.name ?? (selectedRole === "Customer" ? shareProject?.clientName : studioName) ?? "Filmmaker";
+              const occurredAt = new Date().toISOString();
+              for (const selectedProjectId of new Set(selectedSharingAssets.map((asset) => asset.projectId))) {
+                const files = selectedSharingAssets.filter((asset) => asset.projectId === selectedProjectId);
+                const label = files.length === 1 ? files[0].name : `${files.length} Media files`;
+                const id = `media-files-sent-${selectedProjectId}-${occurredAt}`;
+                appendSharedReviewActivity(sharedReviewActivityStorageKey(prototypeState.session.activeWorkspaceId, selectedProjectId), {
+                  id,
+                  requestId: id,
+                  action: "files-sent",
+                  actor,
+                  company: sendCompanyName,
+                  recipients: [sendCompanyName],
+                  occurredAt,
+                  scopeKey: files.map((file) => file.id).join(","),
+                  scopeLabel: label,
+                  stage: "media",
+                  href: `/projects/${selectedProjectId}/stages/media?assets=${encodeURIComponent(files.map((file) => file.id).join(","))}`,
+                  message: "",
+                });
+              }
+              notify(`${selectedSharingAssets.length} ${selectedSharingAssets.length === 1 ? "file" : "files"} sent to ${sendCompanyName}.`);
+            }}
+            openPanelSignal={sharePanelOpenSignal}
+            showSend={canSendSelection}
+            showApprove={false}
+            copyLinkLabel="Copy link"
+            shareUrl={shareUrl}
+          />
+        </div> : null}
       </section>
       {activeAsset && activeProject ? <MediaAssetDrawer asset={activeAsset} projectName={activeProject.name} folders={library.folders.filter((folder) => folder.projectId === activeAsset.projectId)} comments={library.comments} transcriptNotes={mediaTranscriptNotes} storageLocations={mediaStorageLocations} capabilities={getMediaCapabilities(selectedRole, activeAsset.projectId, scenarioProjects, allPages)} globalScope={scope === "global"} activeTab={drawerTab} mentionOptions={mentionOptions} onTabChange={setDrawerTab} onRename={library.renameAsset} onAddComment={(assetId, body) => library.addComment(assetId, selectedRole === "Customer" ? "Avery Taylor" : selectedRole === "Studio Freelancer" ? "Jordan Lee" : "Tom Evans", selectedRole === "Customer" ? "external" : "internal", body)} onClose={() => setActiveAssetId(null)} {...commonAction} /> : null}
     </div>

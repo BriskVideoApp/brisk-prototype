@@ -1,6 +1,7 @@
 export type CustomerMessageTemplateId =
   | "invitation"
   | "brief-review"
+  | "brief-reminder"
   | "script-review"
   | "call-sheet-published"
   | "shoot-details-changed"
@@ -99,12 +100,32 @@ export const customerMessageTemplates = [
     briskDefault: {
       subject: "Brief ready for review",
       greeting: "Hi {{first_name}},",
-      context: "Please check the latest Brief and add any feedback in Brisk.",
+      context: "Please review the Brief for {{project_name}} and share any feedback.",
       signOff: "Thanks,",
       tone: "direct",
       allowOneOffEdit: true,
     },
     regeneratedContext: "The latest Brief is ready. Please review it when you have a moment.",
+  }),
+  template({
+    id: "brief-reminder",
+    label: "Brief reminder",
+    description: "Sent when a filmmaker reminds a Client to review a Brief.",
+    stage: "Brief",
+    fixedFact: "{{project_name}} Brief is still waiting for your review.",
+    ctaLabel: "Review Brief",
+    ctaDestination: "Exact Brief review",
+    variables: [...sharedVariables, { key: "{{stage_name}}", label: "Stage", example: "Brief" }],
+    requiredSubjectVariables: ["{{project_name}}"],
+    briskDefault: {
+      subject: "Reminder: Brief review",
+      greeting: "Hi {{first_name}},",
+      context: "Just a reminder to review the Brief for {{project_name}} and share any feedback.",
+      signOff: "Thanks,",
+      tone: "direct",
+      allowOneOffEdit: true,
+    },
+    regeneratedContext: "A quick reminder that the Brief is ready for your review.",
   }),
   template({
     id: "script-review",
@@ -327,6 +348,33 @@ export const customerMessageTemplates = [
     regeneratedContext: "We need one correction before this invoice can be approved.",
   }),
 ] as const satisfies readonly CustomerMessageTemplateDefinition[];
+
+export const customerMessageTemplateStorageKey = "brisk-customer-message-templates-v1";
+
+export function readCustomerMessageTemplateContext(
+  id: CustomerMessageTemplateId,
+  { projectName, stageName, studioName, firstName }: { projectName: string; stageName: string; studioName: string; firstName: string },
+) {
+  const definition = customerMessageTemplates.find((message) => message.id === id);
+  if (!definition) return "";
+
+  let context: string = definition.briskDefault.context;
+  try {
+    const stored = window.localStorage.getItem(customerMessageTemplateStorageKey);
+    if (stored) {
+      const overrides = JSON.parse(stored) as Partial<Record<CustomerMessageTemplateId, CustomerMessageTemplateCopy>>;
+      context = overrides[id]?.context || context;
+    }
+  } catch {
+    // Use the Brisk default when prototype storage is unavailable.
+  }
+
+  return context
+    .replaceAll("{{project_name}}", projectName)
+    .replaceAll("{{stage_name}}", stageName)
+    .replaceAll("{{studio_name}}", studioName)
+    .replaceAll("{{first_name}}", firstName);
+}
 
 export const customerMessageToneOptions: ReadonlyArray<{ value: CustomerMessageTone; label: string }> = [
   { value: "warm", label: "Warm" },
