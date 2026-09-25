@@ -54,6 +54,7 @@ import {
   recentCalls,
 } from "@/data/chat";
 import { appendMessageOnce, resolveOutboundSource } from "@/components/chat/chat-utils";
+import { isStoredChatState, mergeChatState, type StoredChatState } from "@/components/chat/chat-persistence";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 type ChatPageProps = {
@@ -67,6 +68,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
+  const chatStorageKey = `brisk-chat-v1:${prototypeState.session.activeWorkspaceId}`;
   const { studio } = useStudioSettings();
   const { activeScenario } = usePrototypeScenario();
   const searchParams = useSearchParams();
@@ -76,6 +78,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
   const [dmConversations, setDmConversations] = useState(directConversations);
   const [groupConversationList, setGroupConversationList] = useState(initialGroupConversations);
+  const [loadedChatKey, setLoadedChatKey] = useState<string | null>(null);
+  const savedChatRef = useRef<StoredChatState | null>(null);
   const [activeView, setActiveView] = useState<ChatRailView>("projects");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(() => {
     if (isEmptyPreview) {
@@ -111,6 +115,53 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [customerFilter, setCustomerFilter] = useState<ChatCustomerFilter>("Active");
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
   const openedInitialMessageRef = useRef(false);
+
+  useEffect(() => {
+    let restored: StoredChatState | null = null;
+    try {
+      const stored = window.localStorage.getItem(chatStorageKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : null;
+      if (isStoredChatState(parsed)) {
+        restored = parsed;
+        setProjects(parsed.projects);
+        setMessages(parsed.messages);
+        setDmConversations(parsed.dmConversations);
+        setGroupConversationList(parsed.groupConversations);
+      }
+    } catch {
+      // Keep the chat fixture if a browser draft cannot be read.
+    }
+    savedChatRef.current = restored ?? {
+      projects: initialProjects,
+      messages: [...initialMessages, ...initialDirectMessages, ...groupMessages],
+      dmConversations: directConversations,
+      groupConversations: initialGroupConversations,
+    };
+    setLoadedChatKey(chatStorageKey);
+  }, [chatStorageKey]);
+
+  useEffect(() => {
+    if (loadedChatKey !== chatStorageKey || isEmptyPreview) return;
+    const current: StoredChatState = { projects, messages, dmConversations, groupConversations: groupConversationList };
+    const base = savedChatRef.current;
+    if (!base || JSON.stringify(current) === JSON.stringify(base)) return;
+    try {
+      const stored = window.localStorage.getItem(chatStorageKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : null;
+      const latest = isStoredChatState(parsed) ? parsed : base;
+      const merged = mergeChatState(base, current, latest);
+      window.localStorage.setItem(chatStorageKey, JSON.stringify(merged));
+      savedChatRef.current = merged;
+      if (JSON.stringify(current) !== JSON.stringify(merged)) {
+        setProjects(merged.projects);
+        setMessages(merged.messages);
+        setDmConversations(merged.dmConversations);
+        setGroupConversationList(merged.groupConversations);
+      }
+    } catch {
+      setToast("This browser could not save Chat changes.");
+    }
+  }, [chatStorageKey, dmConversations, groupConversationList, isEmptyPreview, loadedChatKey, messages, projects]);
 
   const effectiveCurrentUserId = viewer?.chatUserId ?? chatWorkspace.currentUserId;
   const isCustomer = selectedRole === "Customer";

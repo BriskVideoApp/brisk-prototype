@@ -131,6 +131,7 @@ export type PrototypeOnboardingProgress = {
   studioSetupCommitted: boolean;
   clientId: string | null;
   projectId: string | null;
+  projectNameDraft?: string;
   clientPreviewed: boolean;
   clientInvited: boolean;
 };
@@ -685,6 +686,15 @@ export function updateProjectStatusState(
     ...state,
     projects: state.projects.map((project) => project.id === projectId && project.workspaceId === state.session.activeWorkspaceId
       ? { ...project, status }
+      : project),
+  };
+}
+
+export function updateProjectTagsState(state: PrototypeState, projectId: string, tags: string[]): PrototypeState {
+  return {
+    ...state,
+    projects: state.projects.map((project) => project.id === projectId && project.workspaceId === state.session.activeWorkspaceId
+      ? { ...project, tags: [...tags] }
       : project),
   };
 }

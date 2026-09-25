@@ -402,13 +402,13 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
   const selectedVideoType = briefVideoTypeDetails.find((videoType) => videoType.name === initialVideoTypeId)
     ?? briefVideoTypeDetails[0];
   const [clientName, setClientName] = useState(onboardingClient?.name ?? "");
-  const [projectName, setProjectName] = useState(onboardingProject?.name ?? "");
+  const projectName = onboardingProject?.name ?? state.onboarding.projectNameDraft ?? "";
   const [showSkipConfirmation, setShowSkipConfirmation] = useState(false);
   const hasRedirectedExistingProjectRef = useRef(false);
 
   useEffect(() => {
-    if (onboardingClient && !projectName) setProjectName(`${onboardingClient.name} first video`);
-  }, [onboardingClient, projectName]);
+    if (onboardingClient && !projectName) updateOnboardingProgress({ projectNameDraft: `${onboardingClient.name} first video` });
+  }, [onboardingClient, projectName, updateOnboardingProgress]);
 
   useEffect(() => {
     document.querySelector<HTMLElement>(".prototype-test-content")?.scrollTo({ top: 0, left: 0 });
@@ -425,7 +425,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
     if (!clientName.trim()) return;
     const client = createClient({ name: clientName.trim() });
     setClientName(client.name);
-    setProjectName(`${client.name} first video`);
+    updateOnboardingProgress({ projectNameDraft: `${client.name} first video` });
   }
 
   function skipClientSetup() {
@@ -570,7 +570,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
           label="Video name"
           placeholder={`${onboardingClient.name} first video`}
           value={projectName}
-          onChange={(event) => setProjectName(event.target.value)}
+          onChange={(event) => updateOnboardingProgress({ projectNameDraft: event.target.value })}
         />
         <div className="studio-first-project-meta">
           <div>

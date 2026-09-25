@@ -24,6 +24,7 @@ import {
   selectWorkspaceProjects,
   updateOnboardingProgressState,
   updateProjectBriefState,
+  updateProjectTagsState,
   updateStudioBriefTemplateState,
 } from "@/data/prototype-state";
 
@@ -61,6 +62,16 @@ function createFirstProjectState() {
 }
 
 describe("prototype workspace and Client isolation", () => {
+  it("keeps project tags in the shared project record through serialisation", () => {
+    const original = createPopulatedStudioFixture();
+    const updated = updateProjectTagsState(original, "loom-launch-film", ["Rush", "Client review"]);
+    const restored = clonePrototypeState(JSON.parse(JSON.stringify(updated)) as typeof updated);
+
+    expect(restored.projects.find((project) => project.id === "loom-launch-film")?.tags).toEqual(["Rush", "Client review"]);
+    expect(original.projects.find((project) => project.id === "loom-launch-film")?.tags).not.toEqual(["Rush", "Client review"]);
+    expect(updateProjectTagsState(updated, "missing-project", ["Other"])).toEqual(updated);
+  });
+
   it("uses the active Studio viewer for a preview after a Client scenario", () => {
     const state = createPopulatedStudioFixture();
     state.session.activeUserId = "client-jess";
@@ -88,6 +99,14 @@ describe("prototype workspace and Client isolation", () => {
 });
 
 describe("onboarding-empty fixture", () => {
+  it("restores the first video name draft before a project is created", () => {
+    const updated = updateOnboardingProgressState(createOnboardingEmptyFixture(), { projectNameDraft: "Good Citizens launch film" });
+    const restored = clonePrototypeState(JSON.parse(JSON.stringify(updated)) as typeof updated);
+
+    expect(restored.onboarding.projectNameDraft).toBe("Good Citizens launch film");
+    expect(restored.projects).toEqual([]);
+  });
+
   it("contains only the provisional Studio and signed-in Studio Staff user", () => {
     const state = createOnboardingEmptyFixture();
 

@@ -534,7 +534,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       const storedSection = isEmptyPlanFixture ? null : parseShootWorkspaceSection(window.localStorage.getItem(shootWorkspaceSectionStorageKey(project.id)));
       const availableStoredSection = storedSection === "questions" && !isInterviewLed ? "shots" : storedSection;
       const approvedSection = requestedShootSection === "quick-start"
-        ? "quick-start"
+        ? availableStoredSection && availableStoredSection !== "quick-start" ? availableStoredSection : "shots"
         : initialRequestedShootSectionRef.current && initialRequestedShootSectionRef.current !== "quick-start"
           ? initialRequestedShootSectionRef.current
           : hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
@@ -544,7 +544,7 @@ export function ShootStagePage({ project }: { project: Project }) {
         ? approvedSection
         : !nextWorkflowSetup.isComplete
         ? "quick-start"
-        : initialRequestedShootSectionRef.current ?? (hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
+        : (initialRequestedShootSectionRef.current === "quick-start" ? null : initialRequestedShootSectionRef.current) ?? (hasStarted && availableStoredSection && availableStoredSection !== "quick-start"
         ? availableStoredSection
         : hasStarted
           ? "shots"

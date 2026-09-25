@@ -159,7 +159,7 @@ export function ActiveVideosPage() {
 
 function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
-  const { state, updateProjectStatus } = usePrototypeState();
+  const { state, updateProjectStatus, updateProjectTags } = usePrototypeState();
   const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
@@ -180,9 +180,7 @@ function ActiveVideosWorkspace() {
     status: null,
     deadline: null,
   });
-  const [projectTags, setProjectTags] = useState<Record<string, string[]>>(() =>
-    Object.fromEntries(canonicalProjects.map((project) => [project.id, project.tags ?? []])),
-  );
+  const projectTags: Record<string, string[]> = Object.fromEntries(canonicalProjects.map((project) => [project.id, project.tags ?? []]));
   const [projectDeadlines, setProjectDeadlines] = useState<Record<string, ProjectDeadline | undefined>>(() =>
     Object.fromEntries(canonicalProjects.map((project) => [project.id, project.deadline])),
   );
@@ -440,26 +438,13 @@ function ActiveVideosWorkspace() {
   };
 
   const addProjectTag = (projectId: string, tag: string) => {
-    setProjectTags((current) => {
-      const currentTags = current[projectId] ?? [];
-
-      if (currentTags.includes(tag)) {
-        return current;
-      }
-
-      return {
-        ...current,
-        [projectId]: [...currentTags, tag],
-      };
-    });
+    const currentTags = projectTags[projectId] ?? [];
+    if (!currentTags.includes(tag)) updateProjectTags(projectId, [...currentTags, tag]);
     setOpenTagProjectId(null);
   };
 
   const removeProjectTag = (projectId: string, tag: string) => {
-    setProjectTags((current) => ({
-      ...current,
-      [projectId]: (current[projectId] ?? []).filter((currentTag) => currentTag !== tag),
-    }));
+    updateProjectTags(projectId, (projectTags[projectId] ?? []).filter((currentTag) => currentTag !== tag));
   };
 
   const createProjectTag = (projectId: string, tagName: string, tagClass: TagClass) => {

@@ -110,6 +110,25 @@ type ScriptVersionMeta = {
   latestAction?: VersionLatestAction;
 };
 
+type StoredScriptDraft = {
+  versions: ScriptVersion[];
+  versionMetaById: Record<string, ScriptVersionMeta>;
+  selectedVersionId: string;
+  comments: ScriptComment[];
+  lastSavedAt: string;
+};
+
+function isStoredScriptDraft(value: unknown): value is StoredScriptDraft {
+  if (!value || typeof value !== "object") return false;
+  const draft = value as Partial<StoredScriptDraft>;
+  return Array.isArray(draft.versions) && draft.versions.length > 0
+    && draft.versions.every((version) => typeof version.id === "string" && Array.isArray(version.rows))
+    && Array.isArray(draft.comments)
+    && typeof draft.selectedVersionId === "string"
+    && typeof draft.lastSavedAt === "string"
+    && !!draft.versionMetaById && typeof draft.versionMetaById === "object";
+}
+
 type VersionRoleLabel = "Studio" | "Customer";
 
 type VersionLatestAction =
@@ -192,6 +211,7 @@ export function ScriptPage({
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
   const currentUserId = viewer?.chatUserId ?? "user-tom";
+  const draftStorageKey = `brisk-script-draft-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
   const studioCompanyName = useStudioCompanyName();
   const { getProjectFlow } = useProjectFlow();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
@@ -257,6 +277,7 @@ export function ScriptPage({
   const [toastMessage, setToastMessage] = useState(initialToastMessage);
   const [saveState, setSaveState] = useState<"Saved" | "Saving...">("Saved");
   const [lastSavedAt, setLastSavedAt] = useState(initialSavedAt);
+  const [loadedDraftKey, setLoadedDraftKey] = useState<string | null>(null);
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
   const [aiPanelPreset, setAiPanelPreset] = useState<ScriptAiPanelPreset | undefined>(undefined);
@@ -348,6 +369,40 @@ export function ScriptPage({
   useEffect(() => {
     setIsScriptApproved(scriptStageStatus.state === "done");
   }, [scriptStageStatus.state]);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(draftStorageKey);
+      if (stored) {
+        const parsed: unknown = JSON.parse(stored);
+        if (isStoredScriptDraft(parsed)) {
+          const restoredVersions = cloneVersions(parsed.versions);
+          const restoredVersion = restoredVersions.find((version) => version.id === parsed.selectedVersionId)
+            ?? restoredVersions[restoredVersions.length - 1];
+          setVersions(restoredVersions);
+          setVersionMetaById(parsed.versionMetaById);
+          setSelectedVersionId(restoredVersion.id);
+          setRows(cloneRows(restoredVersion.rows));
+          setRowHistory([cloneRows(restoredVersion.rows)]);
+          setHistoryIndex(0);
+          setComments(cloneComments(parsed.comments));
+          setLastSavedAt(new Date(parsed.lastSavedAt));
+        }
+      }
+    } catch {
+      // A damaged browser draft leaves the fixture available for this prototype.
+    }
+    setLoadedDraftKey(draftStorageKey);
+  }, [draftStorageKey]);
+
+  useEffect(() => {
+    if (loadedDraftKey !== draftStorageKey) return;
+    try {
+      window.localStorage.setItem(draftStorageKey, JSON.stringify({ versions, versionMetaById, selectedVersionId, comments, lastSavedAt }));
+    } catch {
+      setSaveState("Saving...");
+    }
+  }, [comments, draftStorageKey, lastSavedAt, loadedDraftKey, selectedVersionId, versionMetaById, versions]);
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
@@ -600,7 +655,9 @@ export function ScriptPage({
 
     const nextIndex = historyIndex - 1;
     setHistoryIndex(nextIndex);
-    setRows(cloneRows(rowHistory[nextIndex]));
+    const nextRows = cloneRows(rowHistory[nextIndex]);
+    setRows(nextRows);
+    setVersions((current) => current.map((version) => version.id === selectedVersionId ? { ...version, rows: cloneRows(nextRows) } : version));
     markSaving();
   };
 
@@ -611,7 +668,9 @@ export function ScriptPage({
 
     const nextIndex = historyIndex + 1;
     setHistoryIndex(nextIndex);
-    setRows(cloneRows(rowHistory[nextIndex]));
+    const nextRows = cloneRows(rowHistory[nextIndex]);
+    setRows(nextRows);
+    setVersions((current) => current.map((version) => version.id === selectedVersionId ? { ...version, rows: cloneRows(nextRows) } : version));
     markSaving();
   };
 

@@ -65,6 +65,23 @@ const quickReactionOptions = [
 ].filter((reaction): reaction is { emoji: ReactionEmoji; label: string } => Boolean(reaction));
 const reactionLibraryOptions = reactionOptions;
 
+type StoredEditReview = {
+  versions: ReviewVersion[];
+  comments: ReviewComment[];
+  resolvedIds: string[];
+  statuses: Record<string, ReviewVersionStatus>;
+};
+
+function isStoredEditReview(value: unknown): value is StoredEditReview {
+  if (!value || typeof value !== "object") return false;
+  const review = value as Partial<StoredEditReview>;
+  return Array.isArray(review.versions)
+    && review.versions.every((version) => typeof version.label === "string")
+    && Array.isArray(review.comments)
+    && Array.isArray(review.resolvedIds)
+    && !!review.statuses && typeof review.statuses === "object";
+}
+
 export function VideoReviewScreen({
   initiallyEmpty = false,
   project,
@@ -77,6 +94,7 @@ export function VideoReviewScreen({
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
+  const reviewStorageKey = `brisk-edit-review-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
   const currentUserId = viewer?.chatUserId ?? "user-tom";
   const studioCompanyName = useStudioCompanyName();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
@@ -133,6 +151,7 @@ export function VideoReviewScreen({
   const [videoVersions, setVideoVersions] = useState<ReviewVersion[]>(() =>
     initialReviewVersions.map((version) => ({ ...version })),
   );
+  const [loadedReviewKey, setLoadedReviewKey] = useState<string | null>(null);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [drawingPaths, setDrawingPaths] = useState<DrawingPath[]>([]);
   const [activeDrawingPath, setActiveDrawingPath] = useState<DrawingPath | null>(null);
@@ -149,6 +168,43 @@ export function VideoReviewScreen({
   const toastRemoveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const usersById = useMemo(() => new Map(reviewUsers.map((user) => [user.id, user])), []);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(reviewStorageKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : null;
+      if (isStoredEditReview(parsed)) {
+        setVideoVersions(parsed.versions.map((version) => version.sourceUrl?.startsWith("blob:")
+          ? { ...version, sourceUrl: undefined }
+          : version));
+        setReviewComments(parsed.comments);
+        setResolvedIds(new Set(parsed.resolvedIds));
+        setVersionStatuses(parsed.statuses);
+        setSelectedVersionLabel((current) => parsed.versions.some((version) => version.label === current)
+          ? current
+          : parsed.versions[0]?.label ?? "");
+      }
+    } catch {
+      // Keep the fixture if a browser draft cannot be read.
+    }
+    setLoadedReviewKey(reviewStorageKey);
+  }, [reviewStorageKey]);
+
+  useEffect(() => {
+    if (loadedReviewKey !== reviewStorageKey) return;
+    try {
+      window.localStorage.setItem(reviewStorageKey, JSON.stringify({
+        versions: videoVersions.map((version) => version.sourceUrl?.startsWith("blob:")
+          ? { ...version, sourceUrl: undefined }
+          : version),
+        comments: reviewComments,
+        resolvedIds: [...resolvedIds],
+        statuses: versionStatuses,
+      }));
+    } catch {
+      setToastMessage("This browser could not save review changes.");
+    }
+  }, [loadedReviewKey, reviewComments, reviewStorageKey, resolvedIds, versionStatuses, videoVersions]);
   const versionComments = reviewComments.filter((comment) => comment.versionLabel === selectedVersionLabel);
   const roleVisibleVersionComments = canChooseCommentVisibility
     ? versionComments

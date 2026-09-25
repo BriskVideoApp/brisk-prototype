@@ -113,6 +113,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   const reviewActorName = viewer?.name ?? activeUser?.name ?? mastersStudioName;
   const reviewCompany = role === "Customer" || role === "Studio Freelancer" ? mastersStudioName : project.clientName;
   const auditStorageKey = `brisk-masters-review-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
+  const deliverablesStorageKey = `brisk-masters-deliverables-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
   const linkedDeliverableId = searchParams.get("deliverable");
@@ -123,6 +124,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
       ? startFromBrief ? createMastersSlotsFromBrief(initialBriefFields) : []
       : structuredClone(initialMastersDeliverables),
   );
+  const [loadedDeliverablesKey, setLoadedDeliverablesKey] = useState<string | null>(null);
   const [expandedDeliverableId, setExpandedDeliverableId] = useState<string | null>(
     startFromBrief || previewState === "empty"
       ? null
@@ -220,6 +222,30 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
     && deliverables.every((deliverable) => deliverable.versions.length > 0);
   const hasDrawingAttachment = drawingPaths.length > 0 || activeDrawingPath !== null;
   const pendingDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
+
+  useEffect(() => {
+    if (previewState !== "empty") {
+      try {
+        const stored = window.localStorage.getItem(deliverablesStorageKey);
+        const parsed: unknown = stored ? JSON.parse(stored) : null;
+        if (Array.isArray(parsed) && parsed.every((item) => item && typeof item.id === "string" && Array.isArray(item.versions) && Array.isArray(item.comments))) {
+          setDeliverables(parsed as MastersDeliverable[]);
+        }
+      } catch {
+        // Keep the fixture if a browser draft cannot be read.
+      }
+    }
+    setLoadedDeliverablesKey(deliverablesStorageKey);
+  }, [deliverablesStorageKey, previewState]);
+
+  useEffect(() => {
+    if (loadedDeliverablesKey !== deliverablesStorageKey || previewState === "empty") return;
+    try {
+      window.localStorage.setItem(deliverablesStorageKey, JSON.stringify(deliverables));
+    } catch {
+      setToast({ message: "This browser could not save Masters changes." });
+    }
+  }, [deliverables, deliverablesStorageKey, loadedDeliverablesKey, previewState]);
 
   useEffect(() => {
     try {
