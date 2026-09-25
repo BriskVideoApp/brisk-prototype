@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import {
   createMediaAssetViews,
   initialMediaAssets,
@@ -68,6 +69,7 @@ type StoredMediaLibrary = {
 };
 
 export function MediaLibraryProvider({ children }: { children: React.ReactNode }) {
+  const viewer = usePrototypeViewer();
   const [assets, setAssets] = useState<MediaAsset[]>(initialMediaAssets);
   const [versions, setVersions] = useState<MediaAssetVersion[]>(initialMediaAssetVersions);
   const [comments, setComments] = useState<MediaAssetComment[]>(initialMediaComments);
@@ -169,7 +171,7 @@ export function MediaLibraryProvider({ children }: { children: React.ReactNode }
           assetId,
           number: 1,
           uploadedAt: new Date().toISOString(),
-          uploadedById: "tom-evans",
+          uploadedById: viewer?.chatUserId ?? "user-tom",
           sizeBytes: file.sizeBytes,
           durationSeconds: file.durationSeconds,
           thumbnailUrl: file.thumbnailUrl,

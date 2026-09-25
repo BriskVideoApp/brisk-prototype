@@ -12,6 +12,9 @@ import {
   openCustomerLatestActivityEventName,
 } from "@/components/navigation/GlobalHeaderActions";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canActOnProject } from "@/data/prototype-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { isDemoProject } from "@/data/projects";
@@ -101,6 +104,8 @@ export function CustomerDashboard({
   studioPreview = false,
 }: CustomerDashboardProps = {}) {
   const { selectedRole } = usePrototypeRole();
+  const { state: prototypeState } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const { activeScenario } = usePrototypeScenario();
   const { studio } = useStudioSettings();
   const router = useRouter();
@@ -108,6 +113,10 @@ export function CustomerDashboard({
   const previewState = searchParams.get("preview");
   const isScenarioEmpty = activeScenario?.state === "new";
   const isStudioPreview = studioPreview || searchParams.get("studio-preview") === "1";
+  const canManageProjectStatus = (projectId: string) => {
+    const project = prototypeState.projects.find((candidate) => candidate.id === projectId);
+    return !isStudioPreview && Boolean(project && canActOnProject(viewer, project, prototypeState, "status"));
+  };
   const isClientView = selectedRole === "Customer";
   const showStandaloneClientBrand = isClientView && !activeScenario;
   const resolvedStudioName = studioName ?? studio.details.name;
@@ -376,6 +385,7 @@ export function CustomerDashboard({
   };
 
   const changeProjectStatus = (projectId: string, status: CustomerDashboardStatus) => {
+    if (!canManageProjectStatus(projectId)) return;
     const project = projectsById.get(projectId);
 
     if (!project) {
@@ -457,10 +467,10 @@ export function CustomerDashboard({
             ) : null}
             <div className="customer-dashboard-title-row">
               <h1>Your videos</h1>
-              <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
+              {isStudioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
                 <DsIcon name="plus" size={16} />
                 Start Video
-              </button>
+              </button>}
             </div>
           </div>
         </header>
@@ -495,14 +505,14 @@ export function CustomerDashboard({
                     <ProductionCard
                       clientName={clientName}
                       interactive={!isClientView}
-                      canManageTeam={selectedRole === "Studio Staff"}
+                      canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                       key={project.id}
                       project={project}
                       variant="action"
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
-                      onChangeStatus={(status) => changeProjectStatus(project.id, status)}
+                      onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
                       statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
                       isMenuOpen={openMenuProjectId === project.id}
                       onToggleMenu={() => {
@@ -566,14 +576,14 @@ export function CustomerDashboard({
                     <ProductionCard
                       clientName={clientName}
                       interactive={!isClientView}
-                      canManageTeam={selectedRole === "Studio Staff"}
+                      canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                       key={project.id}
                       project={project}
                       variant="compact"
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
-                      onChangeStatus={(status) => changeProjectStatus(project.id, status)}
+                      onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
                       statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
                       isMenuOpen={openMenuProjectId === project.id}
                       onToggleMenu={() => {
@@ -668,7 +678,7 @@ export function CustomerDashboard({
                   if (entry.kind === "project") {
                     return (
                       <QueueProjectRow
-                        canManageTeam={selectedRole === "Studio Staff"}
+                        canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                         clientName={clientName}
                         interactive={canReorderQueue}
                         isDragging={dragItem?.token === entry.token}
@@ -687,6 +697,7 @@ export function CustomerDashboard({
                         onOpenChat={() => setChatProjectId(entry.project.id)}
                         onCopyProjectLink={() => { void copyProjectLink(entry.project); }}
                         onStart={() => startProject(entry.project.id)}
+                        canManageStatus={canManageProjectStatus(entry.project.id)}
                         isStatusMenuOpen={openStatusProjectId === entry.project.id}
                         statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
                         onToggleStatusMenu={() => {
@@ -785,7 +796,7 @@ export function CustomerDashboard({
                       {isExpanded
                         ? entry.visibleChildren.map((project) => (
                             <QueueProjectRow
-                              canManageTeam={selectedRole === "Studio Staff"}
+                              canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                               clientName={clientName}
                               key={project.id}
                               project={project}
@@ -810,6 +821,7 @@ export function CustomerDashboard({
                               onOpenChat={() => setChatProjectId(project.id)}
                               onCopyProjectLink={() => { void copyProjectLink(project); }}
                               onStart={() => startProject(project.id)}
+                              canManageStatus={canManageProjectStatus(project.id)}
                               isStatusMenuOpen={openStatusProjectId === project.id}
                               statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
                               onToggleStatusMenu={() => {
@@ -1093,6 +1105,7 @@ function ProductionCard({
 }
 
 function QueueProjectRow({
+  canManageStatus,
   canManageTeam,
   clientName,
   project,
@@ -1116,6 +1129,7 @@ function QueueProjectRow({
   onToggleMenu,
   studioName,
 }: {
+  canManageStatus: boolean;
   canManageTeam: boolean;
   clientName: string;
   project: CustomerDashboardProject;
@@ -1190,13 +1204,13 @@ function QueueProjectRow({
         </div>
       </div>
       <div className="customer-queue-status" role="cell">
-        {child ? null : <ProjectStatusControl
+        {child ? null : canManageStatus ? <ProjectStatusControl
           project={project}
           isOpen={isStatusMenuOpen}
           onToggle={onToggleStatusMenu}
           onChange={onChangeStatus}
           statusOptions={statusOptions}
-        />}
+        /> : <span className={`status-pill status-${toStatusClass(project.status)} label-xs-semibold`}>{project.status}</span>}
       </div>
       <time className="customer-queue-created label-xs" dateTime={project.createdAt} role="cell">
         {formatCreatedDate(project.createdAt)}
@@ -1220,11 +1234,11 @@ function QueueProjectRow({
             <ProjectActionsMenu
               project={project}
               canManageTeam={canManageTeam}
-              onChangeStatus={onChangeStatus}
+              onChangeStatus={canManageStatus ? onChangeStatus : undefined}
               onCopyProjectLink={onCopyProjectLink}
               onOpenChat={onOpenChat}
-              onStart={interactive ? onStart : undefined}
-              statusOptions={statusOptions}
+              onStart={canManageStatus && interactive ? onStart : undefined}
+              statusOptions={canManageStatus ? statusOptions : undefined}
             />
           ) : null}
         </div>

@@ -16,6 +16,8 @@ import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canActOnProject } from "@/data/prototype-access";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
@@ -90,9 +92,12 @@ const commentFilters: Array<{ value: CommentFilter; label: string }> = [
 
 export function MastersPage({ project, initiallyEmpty = false, initialBriefFields }: { project: Project; initiallyEmpty?: boolean; initialBriefFields?: BriefFields }) {
   const { selectedRole: role } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const mastersStudioName = useStudioCompanyName();
   const { completionRecords, completeProject } = useProjectCompletion();
   const { state } = usePrototypeState();
+  const canUploadMasters = canActOnProject(viewer, project, state, "upload", "masters");
+  const canCommentMasters = canActOnProject(viewer, project, state, "comment", "masters");
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
   const { publishStageReviewFollowUp } = useNotificationInbox();
   const mastersStageStatus = getProjectStages(project).masters;
@@ -105,7 +110,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
     .filter((user) => user.workspaceId === state.session.activeWorkspaceId && user.role !== "Client")
     .map((user) => user.name);
   const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
-  const reviewActorName = role === "Customer" ? clientRecipientNames[0] ?? project.clientName : activeUser?.name ?? mastersStudioName;
+  const reviewActorName = viewer?.name ?? activeUser?.name ?? mastersStudioName;
   const reviewCompany = role === "Customer" || role === "Studio Freelancer" ? mastersStudioName : project.clientName;
   const auditStorageKey = `brisk-masters-review-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const searchParams = useSearchParams();
@@ -181,7 +186,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   const recutSourceUploadTargetIdRef = useRef<string | null>(null);
   const pendingExpandedScrollIdRef = useRef<string | null>(null);
 
-  const isFilmmaker = role !== "Customer";
+  const isFilmmaker = role !== "Customer" && canActOnProject(viewer, project, state, "edit", "masters");
   const expandedDeliverable = deliverables.find((deliverable) => deliverable.id === expandedDeliverableId);
   const expandedVersion = expandedDeliverable ? getPresentedVersion(expandedDeliverable, selectedVersionByDeliverable) : undefined;
   const reviewScopeKey = expandedDeliverable && expandedVersion ? `${expandedDeliverable.id}:${expandedVersion.id}` : "masters";
@@ -280,6 +285,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const sendMastersReview = (message: string) => {
+    if (!canActOnProject(viewer, project, state, "send", "masters")) return;
     const sendsToStudio = role === "Customer" || role === "Studio Freelancer";
     const recipients = sendsToStudio ? studioRecipientNames : clientRecipientNames;
     const occurredAt = new Date().toISOString();
@@ -520,7 +526,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const uploadVersion = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!isFilmmaker) return;
+    if (!isFilmmaker || !canUploadMasters) return;
     const file = event.target.files?.[0];
     const target = deliverables.find((deliverable) => deliverable.id === uploadTargetIdRef.current);
     if (!file || !target) return;
@@ -534,7 +540,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
       number: isReplacingCurrent && previousVersion ? previousVersion.number : nextNumber,
       filename: file.name,
       uploadedAt: new Date().toISOString(),
-      uploadedBy: "Tom Evans",
+      uploadedBy: reviewActorName,
       codec: target.kind === "captions" ? "UTF-8 subtitles" : "H.264 High",
       resolution: target.kind === "captions" ? "Timed text" : target.format === "9:16" ? "1080 × 1920" : "3840 × 2160",
       fileSize: formatFileSize(file.size),
@@ -627,6 +633,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const uploadAsset = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadMasters) return;
     const file = event.target.files?.[0];
     const deliverableId = assetUploadTargetIdRef.current;
     const deliverable = deliverables.find((item) => item.id === deliverableId);
@@ -675,6 +682,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const replaceThumbnail = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadMasters) return;
     const file = event.target.files?.[0];
     const deliverableId = thumbnailUploadTargetIdRef.current;
     if (!file || !deliverableId) return;
@@ -711,6 +719,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const uploadRecutSource = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadMasters) return;
     const file = event.target.files?.[0];
     const targetId = recutSourceUploadTargetIdRef.current;
     const target = deliverables.find((deliverable) => deliverable.id === targetId);
@@ -722,7 +731,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
       number: 1,
       filename: file.name,
       uploadedAt: new Date().toISOString(),
-      uploadedBy: role === "Customer" ? "Jess Taylor" : "Tom Evans",
+      uploadedBy: reviewActorName,
       codec: "H.264 High",
       resolution: target.format === "9:16" ? "1080 × 1920" : "3840 × 2160",
       fileSize: formatFileSize(file.size),
@@ -924,12 +933,13 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   };
 
   const postComment = () => {
+    if (!canCommentMasters) return;
     const trimmedDraft = commentDraft.trim();
     if (!commentsDeliverable || (!trimmedDraft && !hasDrawingAttachment)) return;
     const comment: MastersComment = {
       id: `masters-comment-${Date.now()}`,
-      author: role === "Customer" ? "Jess Taylor" : "Tom Evans",
-      initials: role === "Customer" ? "JT" : "TE",
+      author: reviewActorName,
+      initials: reviewActorName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join(""),
       visibility: commentVisibility,
       ...(hasCommentAnchor ? { timecodeSeconds: currentTimeSeconds } : {}),
       body: trimmedDraft || "Drawing note",
@@ -1398,9 +1408,12 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
                                 role={role}
                                 selectedCommentId={selectedCommentId}
                                 onFilter={setCommentFilter}
-                                onCommentsChange={(comments) => setDeliverables((current) => current.map((item) =>
-                                  item.id === deliverable.id ? { ...item, comments } : item,
-                                ))}
+                                onCommentsChange={(comments) => {
+                                  if (!canCommentMasters) return;
+                                  setDeliverables((current) => current.map((item) =>
+                                    item.id === deliverable.id ? { ...item, comments } : item,
+                                  ));
+                                }}
                                 onSelect={(comment) => {
                                   setSelectedCommentId(comment.id);
                                   if (typeof comment.timecodeSeconds === "number") {
@@ -1409,7 +1422,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
                                   }
                                 }}
                               />
-                              <ReviewCommentComposer
+                              {canCommentMasters ? <ReviewCommentComposer
                                 body={commentDraft}
                                 currentTimeSeconds={currentTimeSeconds}
                                 visibility={commentVisibility}
@@ -1432,7 +1445,7 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
                                   setIsDrawingMode((current) => !current);
                                 }}
                                 onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
-                              />
+                              /> : null}
                             </aside>
                           ) : undefined}
                           recutMarks={isMarkingUpTarget
@@ -2703,6 +2716,7 @@ function CommentsPanel({
   onFilter: (filter: CommentFilter) => void;
   onSelect: (comment: MastersComment) => void;
 }) {
+  const currentUserId = usePrototypeViewer()?.chatUserId ?? "user-tom";
   const [expandedResolvedIds, setExpandedResolvedIds] = useState<Set<string>>(() => new Set());
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState("");
@@ -2778,7 +2792,7 @@ function CommentsPanel({
         ...(comment.replies ?? []),
         {
           id: `masters-reply-${Date.now()}`,
-          authorId: "user-tom",
+          authorId: currentUserId,
           createdAgo: "Just now",
           body,
         },
@@ -2791,7 +2805,7 @@ function CommentsPanel({
   const toggleReaction = (commentId: string, emoji: ReactionEmoji) => {
     updateComment(commentId, (comment) => ({
       ...comment,
-      reactions: toggleReviewReactionInList(comment.reactions, emoji),
+      reactions: toggleReviewReactionInList(comment.reactions, emoji, currentUserId),
     }));
   };
 
@@ -2799,7 +2813,7 @@ function CommentsPanel({
     updateComment(commentId, (comment) => ({
       ...comment,
       replies: (comment.replies ?? []).map((reply) => reply.id === replyId
-        ? { ...reply, reactions: toggleReviewReactionInList(reply.reactions, emoji) }
+        ? { ...reply, reactions: toggleReviewReactionInList(reply.reactions, emoji, currentUserId) }
         : reply),
     }));
   };

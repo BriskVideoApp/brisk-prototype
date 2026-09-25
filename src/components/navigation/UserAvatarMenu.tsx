@@ -13,7 +13,8 @@ import { usePeople } from "@/components/people/PeopleDataContext";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatUsers, chatWorkspace } from "@/data/chat";
-import { hasStudioAdministrationAccess, prototypeCustomerPersonId, prototypeFreelancerPersonId, prototypeStudioPersonId } from "@/data/people";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { hasStudioAdministrationAccess, prototypeCustomerPersonId, prototypeStudioPersonId } from "@/data/people";
 
 type UserAvatarMenuProps = {
   placement: "sidebar" | "header";
@@ -35,6 +36,7 @@ const organisationByRole: Record<PrototypeRole, string> = {
 export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const { people } = usePeople();
   const { account, access, buildHref } = useClientAccountSettings();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,13 +45,13 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
   const menuRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstActionRef = useRef<HTMLAnchorElement>(null);
-  const user = chatUsers.find((candidate) => candidate.id === prototypeUserIdByRole[selectedRole]);
+  const user = chatUsers.find((candidate) => candidate.id === (viewer?.chatUserId ?? prototypeUserIdByRole[selectedRole]));
   const isClient = selectedRole === "Customer";
   const isFreelancer = selectedRole === "Studio Freelancer";
   const isStudioStaff = selectedRole === "Studio Staff";
   const hasPersonalProfile = true;
   const customer = isClient ? people.find((person) => person.id === prototypeCustomerPersonId) ?? null : null;
-  const freelancer = isFreelancer ? people.find((person) => person.id === prototypeFreelancerPersonId) ?? null : null;
+  const freelancer = isFreelancer ? people.find((person) => person.id === viewer?.personId) ?? null : null;
   const studioMember = isStudioStaff ? people.find((person) => person.id === prototypeStudioPersonId) ?? null : null;
   const canManageStudioSettings = hasStudioAdministrationAccess(studioMember);
 
@@ -102,8 +104,8 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
     throw new Error(`Prototype user is missing for ${selectedRole}`);
   }
 
-  const displayName = isClient ? customer?.name ?? account.profile.fullName : isFreelancer ? freelancer?.name ?? user.name : studioMember?.name ?? user.name;
-  const displayEmail = isClient ? customer?.email ?? account.profile.signInEmail : isFreelancer ? freelancer?.email ?? user.email : studioMember?.email ?? user.email;
+  const displayName = viewer?.name ?? (isClient ? customer?.name ?? account.profile.fullName : isFreelancer ? freelancer?.name ?? user.name : studioMember?.name ?? user.name);
+  const displayEmail = viewer?.email ?? (isClient ? customer?.email ?? account.profile.signInEmail : isFreelancer ? freelancer?.email ?? user.email : studioMember?.email ?? user.email);
   const photoUrl = isClient ? customer?.avatarUrl ?? account.profile.photoUrl : isFreelancer ? freelancer?.avatarUrl ?? null : studioMember?.avatarUrl ?? null;
   const organisationName = isClient ? account.company.name : organisationByRole[selectedRole];
   const roleLine = isClient

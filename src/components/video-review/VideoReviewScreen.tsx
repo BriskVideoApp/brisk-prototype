@@ -13,6 +13,9 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectStageStatus, type EditReadinessItem } from "@/components/project/ProjectStageStatusContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { canActOnProject } from "@/data/prototype-access";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { DsIcon } from "./DsIcon";
@@ -33,7 +36,6 @@ import type {
   Video,
 } from "./types";
 
-const currentUserId = "user-tom";
 type RecutHandoff = { childDeliverableId: string; childName: string; brief: RecutBrief };
 const versionUploadInputId = "video-version-upload";
 const editCompletionHoldMs = 7200;
@@ -73,14 +75,18 @@ export function VideoReviewScreen({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  const { state: prototypeState } = usePrototypeState();
+  const currentUserId = viewer?.chatUserId ?? "user-tom";
   const studioCompanyName = useStudioCompanyName();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
   const editReadiness = getEditReadiness(project);
   const editStageStatus = getProjectStages(project).edit;
   const outstandingEditPrerequisites = editReadiness.items.filter((item) => !item.approved);
-  const canMarkReadyToEdit = selectedRole !== "Studio Freelancer"
+  const canMarkReadyToEdit = viewer?.role === "Studio Staff"
+    && canActOnProject(viewer, project, prototypeState, "status", "edit")
     && !outstandingEditPrerequisites.some((item) => item.key === "storyboard");
-  const canUploadVersions = selectedRole !== "Customer";
+  const canUploadVersions = canActOnProject(viewer, project, prototypeState, "upload", "edit");
   const canChooseCommentVisibility = selectedRole !== "Customer";
   const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
   const initialReviewComments = initialReviewVersions.length === 0
@@ -590,7 +596,7 @@ export function VideoReviewScreen({
         sourceUrl,
         durationSeconds: reviewVideo.durationSeconds,
         uploadedAt: new Date().toISOString(),
-        uploadedBy: "Tom Evans",
+        uploadedBy: viewer?.name ?? "Tom Mitchell",
         codec: "H.264 High",
         resolution: "1920 × 1080",
         fileSize: formatFileSize(file.size),
@@ -635,7 +641,7 @@ export function VideoReviewScreen({
   };
 
   const approveSelectedVersion = () => {
-    if (!selectedReviewVersion || isCompletionVisible) {
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "edit") || !selectedReviewVersion || isCompletionVisible) {
       return;
     }
 
@@ -644,7 +650,7 @@ export function VideoReviewScreen({
       state: "done",
       daysAgo: 0,
       approvedAt: "17 Aug",
-      approvedBy: selectedRole === "Customer" ? "Avery Taylor" : "Tom",
+      approvedBy: viewer?.name ?? "Tom Mitchell",
     });
 
     if (selectedRole === "Customer") {
@@ -657,7 +663,7 @@ export function VideoReviewScreen({
   };
 
   const unapproveSelectedVersion = () => {
-    if (!selectedReviewVersion) {
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "edit") || !selectedReviewVersion) {
       return;
     }
 
@@ -718,7 +724,7 @@ export function VideoReviewScreen({
               sourceUrl,
               fileSize: formatFileSize(file.size),
               uploadedAt: new Date().toISOString(),
-              uploadedBy: "Tom Evans",
+              uploadedBy: viewer?.name ?? "Tom Mitchell",
               status: "in_review",
             }
           : currentVersion,
@@ -774,7 +780,7 @@ export function VideoReviewScreen({
   const toggleReaction = (commentId: string, emoji: ReactionEmoji) => {
     setReviewComments((current) =>
       current.map((comment) =>
-        comment.id === commentId ? { ...comment, reactions: toggleReviewReactionInList(comment.reactions, emoji) } : comment,
+        comment.id === commentId ? { ...comment, reactions: toggleReviewReactionInList(comment.reactions, emoji, currentUserId) } : comment,
       ),
     );
   };
@@ -786,7 +792,7 @@ export function VideoReviewScreen({
           ? {
               ...comment,
               replies: comment.replies.map((reply) =>
-                reply.id === replyId ? { ...reply, reactions: toggleReviewReactionInList(reply.reactions, emoji) } : reply,
+                reply.id === replyId ? { ...reply, reactions: toggleReviewReactionInList(reply.reactions, emoji, currentUserId) } : reply,
               ),
             }
           : comment,
@@ -1201,7 +1207,7 @@ export function VideoReviewScreen({
               showApprove={Boolean(selectedReviewVersion)}
               onApprove={approveSelectedVersion}
               onRequestReview={(recipient, message) => {
-                if (!selectedReviewVersion) return;
+                if (!canActOnProject(viewer, project, prototypeState, "send", "edit") || !selectedReviewVersion) return;
 
                 setProjectStageStatus(project.id, "edit", {
                   state: "waiting",
@@ -1213,6 +1219,7 @@ export function VideoReviewScreen({
                 void message;
               }}
               onSendToStudio={() => {
+                if (!canActOnProject(viewer, project, prototypeState, "send", "edit")) return;
                 setProjectStageStatus(project.id, "edit", {
                   state: "in_progress",
                   daysAgo: 0,
@@ -1233,6 +1240,7 @@ export function VideoReviewScreen({
           items={outstandingEditPrerequisites}
           onCancel={() => setIsReadyConfirmationOpen(false)}
           onConfirm={() => {
+            if (!canMarkReadyToEdit) return;
             markReadyToEdit(project);
             setIsReadyConfirmationOpen(false);
           }}
@@ -2915,6 +2923,7 @@ function ReactionPills({
   usersById: Map<string, User>;
   onToggleReaction: (emoji: ReactionEmoji) => void;
 }) {
+  const currentUserId = usePrototypeViewer()?.chatUserId ?? "user-tom";
   if (reactions.length === 0) {
     return null;
   }
@@ -2953,6 +2962,7 @@ function QuickReactionActions({
   reactions: Reaction[];
   onToggleReaction: (commentId: string, emoji: ReactionEmoji) => void;
 }) {
+  const currentUserId = usePrototypeViewer()?.chatUserId ?? "user-tom";
   return (
     <span className="quick-reaction-actions" aria-label="Quick reactions">
       {quickReactionOptions.map((reaction) => {
@@ -3216,7 +3226,7 @@ function getUser(usersById: Map<string, User>, id: string) {
   return user;
 }
 
-export function toggleReviewReactionInList(reactions: Reaction[] | undefined, emoji: ReactionEmoji) {
+export function toggleReviewReactionInList(reactions: Reaction[] | undefined, emoji: ReactionEmoji, currentUserId = "user-tom") {
   const reactionOption = reactionOptions.find((reaction) => reaction.emoji === emoji);
 
   if (!reactionOption) {

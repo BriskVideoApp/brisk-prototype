@@ -2,8 +2,8 @@ import type { InvitationPaymentBasis, Project, StageKey } from "@/components/act
 import { stageLabels, teamRoleLabels } from "@/data/active-videos/teamDefaults";
 
 export const freelancerPreviewViewer = {
-  id: "jl",
-  name: "Jordan Lee",
+  id: "np",
+  name: "Nina Patel",
 } as const;
 
 export type FreelancerPaymentStatus =
@@ -55,7 +55,10 @@ export function getFreelancerEngagements(
   personId: string,
 ): FreelancerEngagement[] {
   return projects.flatMap((project) => project.team.flatMap((roleSlot) => {
-    const invitation = roleSlot.invitations.find((candidate) => candidate.personId === personId);
+    const invitations = roleSlot.invitations.filter((candidate) => candidate.personId === personId);
+    const invitation = invitations.find((candidate) => candidate.id === roleSlot.acceptedInvitationId)
+      ?? invitations.findLast((candidate) => candidate.status === "invited" || candidate.status === "seen")
+      ?? invitations.at(-1);
     if (!invitation) return [];
 
     const stages = roleSlot.stages.map((stage) => stage.stageId);
@@ -82,6 +85,19 @@ export function getFreelancerEngagements(
       toolAccess: getFreelancerProjectToolAccess(personId, project.id),
     }];
   }));
+}
+
+export function getAcceptedFreelancerEngagements(projects: Project[], personId: string): FreelancerEngagement[] {
+  return getFreelancerEngagements(projects, personId).filter((engagement) =>
+    engagement.invitationStatus === "accepted"
+    && engagement.project.team.some((slot) => slot.id === engagement.roleSlotId
+      && slot.acceptedInvitationId === engagement.invitationId));
+}
+
+export function getPendingFreelancerEngagements(projects: Project[], personId: string): FreelancerEngagement[] {
+  return getFreelancerEngagements(projects, personId).filter((engagement) =>
+    (engagement.invitationStatus === "invited" || engagement.invitationStatus === "seen")
+    && engagement.project.team.some((slot) => slot.id === engagement.roleSlotId && !slot.acceptedInvitationId));
 }
 
 export function getFreelancerProjectToolAccess(

@@ -61,6 +61,13 @@ function createFirstProjectState() {
 }
 
 describe("prototype workspace and Client isolation", () => {
+  it("uses the active Studio viewer for a preview after a Client scenario", () => {
+    const state = createPopulatedStudioFixture();
+    state.session.activeUserId = "client-jess";
+    expect(selectClientPortalData(state, northStarWorkspaceId, "loom", { kind: "studio-preview" })).toBeNull();
+    expect(selectClientPortalData(state, northStarWorkspaceId, "loom", { kind: "studio-preview", viewerId: "user-tom" })?.client.id).toBe("loom");
+  });
+
   it("never resolves Loom data for Harbour Health", () => {
     const state = createPopulatedStudioFixture();
     const portal = selectClientPortalData(state, northStarWorkspaceId, "harbour-health", { kind: "studio-preview" });

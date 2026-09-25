@@ -27,6 +27,9 @@ import { ChatThreadPane } from "@/components/chat/ChatThreadPane";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canViewProject } from "@/data/prototype-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getDemoProjectDestination } from "@/data/projects";
@@ -62,6 +65,8 @@ type ChatPageProps = {
 
 export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  const { state: prototypeState } = usePrototypeState();
   const { studio } = useStudioSettings();
   const { activeScenario } = usePrototypeScenario();
   const searchParams = useSearchParams();
@@ -107,27 +112,21 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
   const openedInitialMessageRef = useRef(false);
 
-  const effectiveCurrentUserId =
-    selectedRole === "Customer"
-      ? "user-jess"
-      : selectedRole === "Studio Freelancer"
-        ? "user-nina"
-        : chatWorkspace.currentUserId;
+  const effectiveCurrentUserId = viewer?.chatUserId ?? chatWorkspace.currentUserId;
   const isCustomer = selectedRole === "Customer";
   const isStudioStaff = selectedRole === "Studio Staff";
   const accessibleProjects = useMemo(() => {
     if (isEmptyPreview) return [];
 
-    const roleProjects = selectedRole === "Customer"
-      ? projects.filter((project) => project.clientMemberIds.includes(effectiveCurrentUserId))
-      : selectedRole === "Studio Freelancer"
-        ? projects.filter((project) => project.memberIds.includes(effectiveCurrentUserId))
-        : projects;
+    const roleProjects = selectedRole === "Studio Staff" ? projects : projects.filter((project) => {
+      const scoped = prototypeState.projects.find((candidate) => candidate.id === project.id);
+      return Boolean(scoped && canViewProject(viewer, scoped, prototypeState));
+    });
 
     return clientName
       ? roleProjects.filter((project) => project.clientName === clientName)
       : roleProjects;
-  }, [clientName, effectiveCurrentUserId, isEmptyPreview, projects, selectedRole]);
+  }, [clientName, isEmptyPreview, projects, prototypeState, selectedRole, viewer]);
 
   useEffect(() => {
     if (!initialMessageId || openedInitialMessageRef.current) return;
@@ -154,9 +153,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     const highlightTimeout = window.setTimeout(() => setHighlightedMessageId(null), 2000);
     return () => window.clearTimeout(highlightTimeout);
   }, [accessibleProjects, initialMessageId, messages, selectedRole]);
-  const accessibleClients = clientName
-    ? clients.filter((client) => client.name === clientName)
-    : clients;
+  const accessibleClients = clients.filter((client) =>
+    (!clientName || client.name === clientName)
+    && (isStudioStaff || accessibleProjects.some((project) => project.clientName === client.name)));
   const customerStatusByName = useMemo(
     () => new Map(clients.map((client) => [client.name, client.status])),
     [clients],
@@ -195,7 +194,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     ? clients.find((client) => client.name === selectedClientName) ?? null
     : null;
   const selectedClientProjects = selectedClientName
-    ? projects.filter((project) => project.clientName === selectedClientName)
+    ? accessibleProjects.filter((project) => project.clientName === selectedClientName)
     : [];
   const selectedClientUsers = selectedClient
     ? chatUsers.filter((user) => selectedClient.userIds.includes(user.id))

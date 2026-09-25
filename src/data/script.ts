@@ -140,17 +140,31 @@ export const scriptGenres: ScriptGenre[] = [
 export const scriptUsers: User[] = [
   {
     id: "user-tom",
-    name: "Tom",
+    name: "Tom Mitchell",
     initials: "T",
     team: "studio",
     avatarTone: "sand",
   },
   {
     id: "user-jess",
-    name: "Jess T.",
+    name: "Jess Taylor",
     initials: "JT",
     team: "customer",
     avatarTone: "pink",
+  },
+  {
+    id: "user-nina",
+    name: "Nina Patel",
+    initials: "NP",
+    team: "studio",
+    avatarTone: "cyan",
+  },
+  {
+    id: "user-jordan",
+    name: "Jordan Lee",
+    initials: "JL",
+    team: "studio",
+    avatarTone: "lime",
   },
   {
     id: "user-david",

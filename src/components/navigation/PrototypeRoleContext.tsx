@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 export type PrototypeRole = "Studio Staff" | "Studio Freelancer" | "Customer";
@@ -14,6 +14,7 @@ type PrototypeRoleContextValue = {
 };
 
 const PrototypeRoleContext = createContext<PrototypeRoleContextValue | null>(null);
+const selectedRoleStorageKey = "brisk-prototype-role-v1";
 export const prototypeRoles: readonly PrototypeRole[] = [
   "Studio Staff",
   "Studio Freelancer",
@@ -29,17 +30,20 @@ export const prototypeCustomerSlug = "loom";
 
 export function PrototypeRoleProvider({ children }: { children: React.ReactNode }) {
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
-  const [selectedRole, setSelectedRole] = useState<PrototypeRole>("Studio Staff");
+  const [selectedRole, setSelectedRoleState] = useState<PrototypeRole>("Studio Staff");
   const [allPages, setAllPages] = useState(false);
 
-  useEffect(() => {
-    if (activeScenario) {
-      setSelectedRole(activeScenario.accessRole);
-      setAllPages(false);
-      return;
-    }
+  const setSelectedRole = useCallback((role: PrototypeRole) => {
+    window.sessionStorage.setItem(selectedRoleStorageKey, role);
+    setSelectedRoleState(role);
+  }, []);
 
-  }, [activeScenario]);
+  useEffect(() => {
+    if (!hasLoadedScenario) return;
+    const storedRole = window.sessionStorage.getItem(selectedRoleStorageKey);
+    setSelectedRoleState(prototypeRoles.find((role) => role === storedRole) ?? activeScenario?.accessRole ?? "Studio Staff");
+    setAllPages(false);
+  }, [activeScenario, hasLoadedScenario]);
 
   const value = useMemo(
     () => ({
@@ -49,7 +53,7 @@ export function PrototypeRoleProvider({ children }: { children: React.ReactNode 
       setSelectedRole,
       setAllPages,
     }),
-    [allPages, hasLoadedScenario, selectedRole],
+    [allPages, hasLoadedScenario, selectedRole, setSelectedRole],
   );
 
   return (

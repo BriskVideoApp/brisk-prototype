@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import { GlobalHeaderActions, openCustomerGlobalChatEventName } from "@/components/navigation/GlobalHeaderActions";
 import { ShootGlobalActionsProvider } from "@/components/navigation/ShootGlobalActionsContext";
@@ -12,6 +12,7 @@ import { PrototypeScenarioToolbar } from "@/components/prototype-scenarios/Proto
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { prototypeCustomerSlug, usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { getAppShellPresentation, getClientPortalDestination } from "@/components/navigation/prototypeNavigation";
 import { ChatPage } from "@/components/chat/ChatPage";
@@ -19,13 +20,19 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [hasMounted, setHasMounted] = useState(false);
   const [isGlobalChatOpen, setIsGlobalChatOpen] = useState(false);
   const { activeScenario } = usePrototypeScenario();
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const { studio } = useStudioSettings();
-  const presentation = getAppShellPresentation(pathname, Boolean(activeScenario));
-  const clientPortalHref = getClientPortalDestination(state);
+  const isClientPreview = pathname.startsWith("/workspaces/") && searchParams.get("studio-preview") === "1";
+  const presentation = isClientPreview ? "clean-entry" : getAppShellPresentation(pathname, Boolean(activeScenario));
+  const clientPortalHref = viewer?.role === "Customer" && viewer.clientId
+    ? `/workspaces/${encodeURIComponent(viewer.workspaceId)}/clients/${encodeURIComponent(viewer.clientId)}/portal`
+    : getClientPortalDestination(state);
   const isStudioStaff = selectedRole === "Studio Staff";
   const isStudioUser = selectedRole !== "Customer";
   const videosHref = selectedRole === "Customer" ? clientPortalHref ?? "/prototype/scenarios" : "/active-videos";
@@ -38,6 +45,8 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener(openCustomerGlobalChatEventName, openGlobalChat);
   }, [pathname]);
 
+  useEffect(() => setHasMounted(true), []);
+
   useEffect(() => {
     if (!isGlobalChatOpen) return;
     const closeWithEscape = (event: KeyboardEvent) => {
@@ -46,6 +55,8 @@ export function AppShell({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", closeWithEscape);
     return () => window.removeEventListener("keydown", closeWithEscape);
   }, [isGlobalChatOpen]);
+
+  if (!hasMounted && presentation !== "standalone") return null;
 
   if (presentation === "standalone" || isClientJourneyEntry) {
     return children;

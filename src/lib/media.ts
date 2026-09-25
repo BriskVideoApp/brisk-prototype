@@ -16,23 +16,23 @@ export type MediaCapabilities = {
   canViewStorage: boolean;
 };
 
-export function getMediaProjectsForRole(role: PrototypeRole, projects: Project[], allPages = false) {
-  if (allPages || role === "Studio Staff") return projects;
+export function getMediaProjectsForRole(role: PrototypeRole, projects: Project[], _allPages = false, personId: string = freelancerPreviewViewer.id) {
+  if (role === "Studio Staff") return projects;
   if (role === "Customer") return projects.filter((project) => project.clientId === prototypeCustomerSlug);
-  const ids = new Set(getFreelancerEngagements(projects, freelancerPreviewViewer.id)
+  const ids = new Set(getFreelancerEngagements(projects, personId)
     .filter((engagement) => engagement.invitationStatus === "accepted")
     .map((engagement) => engagement.project.id));
   return projects.filter((project) => ids.has(project.id));
 }
 
-export function getMediaCapabilities(role: PrototypeRole, projectId: string | null, projects: Project[], allPages = false): MediaCapabilities {
-  if (allPages || role === "Studio Staff") {
+export function getMediaCapabilities(role: PrototypeRole, projectId: string | null, projects: Project[], _allPages = false, personId: string = freelancerPreviewViewer.id): MediaCapabilities {
+  if (role === "Studio Staff") {
     return { canUpload: Boolean(projectId), canManageFolders: Boolean(projectId), canMoveAssets: Boolean(projectId), canArchive: true, canDelete: true, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: true };
   }
   if (role === "Customer") {
     return { canUpload: Boolean(projectId), canManageFolders: Boolean(projectId), canMoveAssets: false, canArchive: false, canDelete: false, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: false };
   }
-  const engagement = projectId ? getFreelancerEngagements(projects, freelancerPreviewViewer.id)
+  const engagement = projectId ? getFreelancerEngagements(projects, personId)
     .find((candidate) => candidate.project.id === projectId && candidate.invitationStatus === "accepted") : undefined;
   return { canUpload: Boolean(engagement?.toolAccess.files), canManageFolders: false, canMoveAssets: false, canArchive: false, canDelete: false, canComment: true, canCopyLink: true, canDownload: true, canViewStorage: false };
 }

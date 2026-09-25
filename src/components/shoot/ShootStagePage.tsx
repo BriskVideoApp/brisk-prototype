@@ -30,6 +30,7 @@ import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import {
   FloatingCommentShell,
@@ -45,6 +46,7 @@ import { useStudioCompanyName } from "@/components/prototype-state/useStudioComp
 import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets, type MediaAssetView } from "@/data/media";
+import { canActOnProject } from "@/data/prototype-access";
 import type { Person } from "@/data/people";
 import { selectProjectBrief } from "@/data/prototype-state";
 import { scriptUsers, type ScriptComment, type ScriptCommentAnchor } from "@/data/script";
@@ -344,6 +346,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   const isEmptyPlanFixture = searchParams.get("preview") === "empty"
     || activeScenario?.testOverrides?.shootPlanStartsEmpty === true;
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const { setProjectStageStatus } = useProjectStageStatus();
   const { state: prototypeState } = usePrototypeState();
   const projectBrief = selectProjectBrief(prototypeState, project.id);
@@ -613,7 +616,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       shotListStep: view === "shots" && typeof step === "number" ? step : current.shotListStep,
       owner: selectedRole === "Customer" ? "client" : "studio",
       status: current.status === "released" ? "released" : "working",
-      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      lastContributor: viewer?.name ?? selectedRole,
       updatedAt: new Date().toISOString(),
     }));
     setHasStartedShootPlan(true);
@@ -676,12 +679,13 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   const handoverShootSetup = (owner: ShootSetupOwner) => {
+    if (!canActOnProject(viewer, project, prototypeState, "send", "shoot")) return;
     const status = owner === "client" ? "waiting_on_client" : "waiting_on_studio";
     setSetupState((current) => ({
       ...current,
       owner,
       status,
-      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      lastContributor: viewer?.name ?? selectedRole,
       updatedAt: new Date().toISOString(),
     }));
     setProjectStageStatus(project.id, "shoot", {
@@ -693,6 +697,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   const approveShootPlan = () => {
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "shoot")) return;
     setSetupState((current) => ({
       ...current,
       status: "released",
@@ -709,12 +714,13 @@ export function ShootStagePage({ project }: { project: Project }) {
       state: "done",
       daysAgo: 0,
       approvedAt: "Today",
-      approvedBy: selectedRole === "Customer" ? project.clientName : selectedRole,
+      approvedBy: viewer?.name,
     });
     showToast("Shoot plan approved.");
   };
 
   const unapproveShootPlan = () => {
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "shoot")) return;
     setSetupState((current) => ({
       ...current,
       status: "ready_to_finalise",
@@ -731,7 +737,8 @@ export function ShootStagePage({ project }: { project: Project }) {
   };
 
   const finaliseCallSheet = () => {
-    if (!hasMinimumCallSheetDetails(callSheet) || selectedRole === "Customer") return;
+    if (!hasMinimumCallSheetDetails(callSheet) || selectedRole === "Customer"
+      || !canActOnProject(viewer, project, prototypeState, "approve", "shoot")) return;
     setSetupState((current) => ({
       ...current,
       status: "released",
@@ -749,7 +756,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       state: "done",
       daysAgo: 0,
       approvedAt: "Today",
-      approvedBy: selectedRole,
+      approvedBy: viewer?.name,
     });
     showToast("Shoot approved.");
   };
@@ -1618,7 +1625,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       shotListStarted: true,
       aiGenerated: true,
       status: current.status === "released" ? "released" : "working",
-      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      lastContributor: viewer?.name ?? selectedRole,
       updatedAt: new Date().toISOString(),
     }));
     setActiveSection("shots");
@@ -1678,7 +1685,10 @@ export function ShootStagePage({ project }: { project: Project }) {
     window.history.replaceState(window.history.state, "", url);
   };
 
-  const accessLevel: ShootAccessLevel = selectedRole === "Studio Staff"
+  const accessLevel: ShootAccessLevel = selectedRole === "Studio Freelancer"
+    && !canActOnProject(viewer, project, prototypeState, "edit", "shoot")
+    ? "viewOnly"
+    : selectedRole === "Studio Staff"
     ? "canManage"
     : selectedRole === "Studio Freelancer"
       ? accessSettings.freelancer
@@ -1991,6 +2001,7 @@ function ShootPreProductionWorkspace({
   onUnapprove,
   onWorkflowSetupChange,
 }: ShootPreProductionWorkspaceProps) {
+  const viewer = usePrototypeViewer();
   const canEdit = accessLevel !== "viewOnly";
   const canManage = accessLevel === "canManage";
   const { registerActions: registerShootGlobalActions } = useShootGlobalActions();
@@ -2254,7 +2265,7 @@ function ShootPreProductionWorkspace({
       scheduleConfirmedFingerprint: scheduleFingerprint,
       scheduleConfirmedAt: confirmedAt,
       status: current.status === "working" ? "ready_to_finalise" : current.status,
-      lastContributor: selectedRole === "Customer" ? "Client" : selectedRole,
+      lastContributor: viewer?.name ?? selectedRole,
       updatedAt: confirmedAt,
     }));
     setReadinessReviewSection(null);

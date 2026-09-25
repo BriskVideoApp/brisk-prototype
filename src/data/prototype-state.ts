@@ -148,7 +148,7 @@ export type PrototypeState = {
   onboarding: PrototypeOnboardingProgress;
 };
 
-export type PortalAccess = { kind: "studio-preview" } | { kind: "external" };
+export type PortalAccess = { kind: "studio-preview"; viewerId?: string } | { kind: "external"; viewerId?: string };
 
 export type ClientPortalData = {
   workspace: PrototypeWorkspace;
@@ -715,6 +715,14 @@ export function selectProject(state: PrototypeState, projectId: string) {
     && project.workspaceId === state.session.activeWorkspaceId) ?? null;
 }
 
+export function updateProjectTeamState(state: PrototypeState, projectId: string, team: Project["team"]): PrototypeState {
+  return {
+    ...state,
+    projects: state.projects.map((project) => project.id === projectId
+      && project.workspaceId === state.session.activeWorkspaceId ? { ...project, team } : project),
+  };
+}
+
 export function selectProjectBrief(state: PrototypeState, projectId: string) {
   return state.projectBriefSnapshots.find((snapshot) => snapshot.projectId === projectId
     && snapshot.workspaceId === state.session.activeWorkspaceId) ?? null;
@@ -729,14 +737,14 @@ export function selectClientPortalData(
   const workspace = selectWorkspace(state, workspaceId);
   const client = selectScopedClient(state, workspaceId, clientId);
   if (!workspace || !client || state.session.activeWorkspaceId !== workspaceId) return null;
-  const user = state.users.find((candidate) => candidate.id === state.session.activeUserId);
+  const user = state.users.find((candidate) => candidate.id === (access.viewerId ?? state.session.activeUserId));
   if (!user) return null;
   if (access.kind === "studio-preview") {
-    if (user.role !== "Studio Staff" && user.role !== "Studio Freelancer") return null;
+    if (user.workspaceId !== workspaceId || (user.role !== "Studio Staff" && user.role !== "Studio Freelancer")) return null;
     return { workspace, client, projects: selectClientProjects(state, workspaceId, clientId) };
   }
   if (user.role !== "Client" || user.workspaceId !== workspaceId || user.clientId !== clientId
-    || state.session.activeClientId !== clientId) return null;
+    || client.contacts.find((contact) => contact.id === user.id)?.portalAccess === "Paused") return null;
   const invitations = state.invitations.filter((invitation) => invitation.workspaceId === workspaceId
     && invitation.clientId === clientId && invitation.userId === user.id
     && invitation.status !== "Expired");

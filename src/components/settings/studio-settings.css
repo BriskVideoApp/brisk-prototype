@@ -734,6 +734,10 @@
   gap: var(--brisk-space-s);
 }
 
+.studio-team-billing-cell .brand-action-menu {
+  right: calc(100% + var(--brisk-space-xs));
+}
+
 .studio-team-status,
 .studio-team-billing-access {
   display: inline-flex;

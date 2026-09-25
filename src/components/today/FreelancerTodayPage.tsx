@@ -9,8 +9,8 @@ import type { StageKey } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
 import {
-  freelancerPreviewViewer,
-  getFreelancerEngagements,
+  getAcceptedFreelancerEngagements,
+  getPendingFreelancerEngagements,
   type FreelancerEngagement,
 } from "@/data/freelancer-videos";
 import { getDemoProjectDestination, type DemoProjectExperience } from "@/data/projects";
@@ -21,6 +21,8 @@ import {
   type SharedTimeEntry,
 } from "@/data/timeEntries/sharedTimeEntries";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 
 const freelancerTodayDate = "2026-08-18";
 
@@ -44,19 +46,22 @@ const experienceByStage: Record<StageKey, DemoProjectExperience> = {
 
 export function FreelancerTodayPage() {
   const { activeScenario } = usePrototypeScenario();
+  const viewer = usePrototypeViewer();
+  const { state } = usePrototypeState();
+  const personId = viewer?.personId ?? "";
   const router = useRouter();
   const searchParams = useSearchParams();
   const [sharedEntries, setSharedEntries] = useState<SharedTimeEntry[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
-  const engagements = useMemo(
-    () => getFreelancerEngagements(scenarioProjects, freelancerPreviewViewer.id),
-    [scenarioProjects],
-  );
-  const accepted = engagements.filter((engagement) => engagement.invitationStatus === "accepted");
+  const scenarioProjects = useMemo(() => activeScenario?.state === "new" ? [] : activeVideoProjects.flatMap((project) => {
+    const scoped = state.projects.find((candidate) => candidate.id === project.id
+      && candidate.workspaceId === state.session.activeWorkspaceId);
+    return scoped ? [{ ...project, team: scoped.team }] : [];
+  }), [activeScenario?.state, state.projects, state.session.activeWorkspaceId]);
+  const accepted = getAcceptedFreelancerEngagements(scenarioProjects, personId);
   const currentWork = accepted.filter((engagement) => !["Completed", "Archived"].includes(engagement.project.status));
   const completed = accepted.filter((engagement) => engagement.project.status === "Completed").slice(0, 3);
-  const offers = engagements.filter((engagement) => engagement.invitationStatus === "invited" || engagement.invitationStatus === "seen");
+  const offers = getPendingFreelancerEngagements(scenarioProjects, personId);
   const waiting = currentWork.filter((engagement) => getProjectWaitingLabel(engagement));
   const selectedProjectId = searchParams.get("project");
   const selectedEngagement = accepted.find((engagement) => engagement.project.id === selectedProjectId) ?? currentWork[0] ?? accepted[0] ?? null;
@@ -65,7 +70,7 @@ export function FreelancerTodayPage() {
     ? requestedStage
     : selectedEngagement ? getPrimaryAssignedStage(selectedEngagement) : null;
   const isLogFormOpen = searchParams.get("log") === "1" && Boolean(selectedEngagement && selectedStage);
-  const todayEntries = sharedEntries.filter((entry) => entry.personId === freelancerPreviewViewer.id && entry.date === freelancerTodayDate);
+  const todayEntries = sharedEntries.filter((entry) => entry.personId === personId && entry.date === freelancerTodayDate);
   const loggedToday = todayEntries.reduce((total, entry) => total + entry.hours, 0);
 
   useEffect(() => {
@@ -97,7 +102,7 @@ export function FreelancerTodayPage() {
     <main className="freelancer-today-page">
       <header className="freelancer-today-header">
         <div>
-          <span className="label-xs-semibold">{freelancerPreviewViewer.name} - Freelancer</span>
+          <span className="label-xs-semibold">{viewer?.name ?? "Freelancer"} - Freelancer</span>
           <p className="label-s-semibold">{formatLongDate(freelancerTodayDate)}</p>
           <h1 className="headings-m-bold">Today</h1>
         </div>
@@ -145,7 +150,7 @@ export function FreelancerTodayPage() {
 
       {completed.length ? <section className="freelancer-today-completed"><header className="freelancer-today-section-header"><div><span className="label-xs-semibold">History</span><h2 className="headings-xs-bold">Recently completed</h2></div></header><div>{completed.map((engagement) => <article key={engagement.id}><span className="freelancer-today-complete-icon"><DsIcon name="check" size={16} /></span><span><strong className="label-s-semibold">{engagement.project.name}</strong><small className="label-xs">{engagement.roleLabel} - ready for invoicing</small></span><Link className="freelancer-today-text-action label-s-semibold" href="/active-videos">View video</Link></article>)}</div></section> : null}
 
-      {isLogFormOpen && selectedEngagement && selectedStage ? <FreelancerTimeDialog engagement={selectedEngagement} initialStage={selectedStage} onClose={closeLogForm} onSave={(entry) => { appendSharedTimeEntry(entry); setSharedEntries(readSharedTimeEntries()); closeLogForm(); setToast(`${formatHours(entry.hours)} logged to ${selectedEngagement.project.name}`); }} /> : null}
+      {isLogFormOpen && selectedEngagement && selectedStage ? <FreelancerTimeDialog engagement={selectedEngagement} initialStage={selectedStage} personId={personId} onClose={closeLogForm} onSave={(entry) => { appendSharedTimeEntry(entry); setSharedEntries(readSharedTimeEntries()); closeLogForm(); setToast(`${formatHours(entry.hours)} logged to ${selectedEngagement.project.name}`); }} /> : null}
       {toast ? <div className="freelancer-today-toast" role="status"><DsIcon name="check-circle" size={16} /><span className="label-s-semibold">{toast}</span></div> : null}
     </main>
   );
@@ -158,14 +163,14 @@ function FreelancerWorkCard({ engagement }: { engagement: FreelancerEngagement }
   return <article className="freelancer-today-work-card"><div className="freelancer-today-stage-icon" aria-hidden="true"><DsIcon name={stageIcons[stage]} size={22} /></div><div className="freelancer-today-work-copy"><span className="label-xs-semibold">{engagement.project.clientBadge} - {engagement.roleLabel}</span><h3 className="headings-xs-bold">{engagement.project.name}</h3><div className="freelancer-today-work-meta"><span className={`freelancer-today-state is-${stageState} label-xs-semibold`}>{getStageStateCopy(engagement, stage)}</span><span className="label-xs">Due {formatShortDate(engagement.project.deadlineAt)}</span><span className="label-xs">{getPaymentCopy(engagement)}</span></div></div><div className="freelancer-today-work-actions">{destination ? <Link className="freelancer-today-secondary-action label-s-semibold" href={destination.href}>{stageState === "done" ? `Review ${stageLabels[stage]}` : `Open ${stageLabels[stage]}`}</Link> : <span className="freelancer-today-disabled-action label-xs">Demo not available</span>}<Link className="freelancer-today-primary-action label-s-semibold" href={makeLogHref(engagement, stage)}>{engagement.paymentBasis === "hourly" ? "Log hours" : "Log time - optional"}</Link></div></article>;
 }
 
-function FreelancerTimeDialog({ engagement, initialStage, onClose, onSave }: { engagement: FreelancerEngagement; initialStage: StageKey; onClose: () => void; onSave: (entry: SharedTimeEntry) => void }) {
+function FreelancerTimeDialog({ engagement, initialStage, personId, onClose, onSave }: { engagement: FreelancerEngagement; initialStage: StageKey; personId: string; onClose: () => void; onSave: (entry: SharedTimeEntry) => void }) {
   const [date, setDate] = useState(freelancerTodayDate);
   const [stage, setStage] = useState<StageKey>(initialStage);
   const [hours, setHours] = useState("1");
   const [note, setNote] = useState("");
   const parsedHours = Number.parseFloat(hours);
   const canSave = Number.isFinite(parsedHours) && parsedHours > 0 && parsedHours <= 24;
-  return <div className="freelancer-time-dialog-backdrop" role="presentation" onClick={onClose}><section className="freelancer-time-dialog" role="dialog" aria-modal="true" aria-labelledby="freelancer-log-time-title" onClick={(event) => event.stopPropagation()}><header><div><span className="label-xs-semibold">{engagement.project.clientBadge} - {engagement.roleLabel}</span><h2 className="headings-s-bold" id="freelancer-log-time-title">{engagement.paymentBasis === "hourly" ? "Log hours" : "Log time"}</h2><p className="paragraph-s">{engagement.project.name}</p></div><button type="button" aria-label="Close time entry" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header><div className="freelancer-time-guidance"><DsIcon name="info" size={16} /><span className="label-xs">{engagement.paymentBasis === "hourly" ? "Time logging is required for this hourly engagement." : "Time logging is optional. Your flat-rate payment will not change."}</span></div><div className="freelancer-time-fields"><label><span className="label-s-semibold">Date</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label><label><span className="label-s-semibold">Stage</span><select value={stage} onChange={(event) => setStage(event.target.value as StageKey)}>{engagement.stages.map((assignedStage) => <option value={assignedStage} key={assignedStage}>{stageLabels[assignedStage]}</option>)}</select></label><label><span className="label-s-semibold">Hours</span><input min="0.25" max="24" step="0.25" type="number" value={hours} onChange={(event) => setHours(event.target.value)} /></label><label className="is-wide"><span className="label-s-semibold">Note</span><textarea placeholder="What did you work on?" value={note} onChange={(event) => setNote(event.target.value)} /></label></div><footer><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>{canSave ? <Button size="M" onClick={() => onSave({ id: `freelancer-time-${Date.now()}`, projectId: engagement.project.id, roleSlotId: engagement.roleSlotId, personId: freelancerPreviewViewer.id, stageId: stage, date, startMinutes: 0, hours: parsedHours, note: note.trim(), loggedAt: `${date}T17:00:00+10:00`, createdAt: new Date().toISOString() })}>Save time</Button> : <button className="freelancer-time-disabled-save label-m-semibold" type="button" disabled>Save time</button>}</footer></section></div>;
+  return <div className="freelancer-time-dialog-backdrop" role="presentation" onClick={onClose}><section className="freelancer-time-dialog" role="dialog" aria-modal="true" aria-labelledby="freelancer-log-time-title" onClick={(event) => event.stopPropagation()}><header><div><span className="label-xs-semibold">{engagement.project.clientBadge} - {engagement.roleLabel}</span><h2 className="headings-s-bold" id="freelancer-log-time-title">{engagement.paymentBasis === "hourly" ? "Log hours" : "Log time"}</h2><p className="paragraph-s">{engagement.project.name}</p></div><button type="button" aria-label="Close time entry" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header><div className="freelancer-time-guidance"><DsIcon name="info" size={16} /><span className="label-xs">{engagement.paymentBasis === "hourly" ? "Time logging is required for this hourly engagement." : "Time logging is optional. Your flat-rate payment will not change."}</span></div><div className="freelancer-time-fields"><label><span className="label-s-semibold">Date</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label><label><span className="label-s-semibold">Stage</span><select value={stage} onChange={(event) => setStage(event.target.value as StageKey)}>{engagement.stages.map((assignedStage) => <option value={assignedStage} key={assignedStage}>{stageLabels[assignedStage]}</option>)}</select></label><label><span className="label-s-semibold">Hours</span><input min="0.25" max="24" step="0.25" type="number" value={hours} onChange={(event) => setHours(event.target.value)} /></label><label className="is-wide"><span className="label-s-semibold">Note</span><textarea placeholder="What did you work on?" value={note} onChange={(event) => setNote(event.target.value)} /></label></div><footer><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>{canSave ? <Button size="M" onClick={() => onSave({ id: `freelancer-time-${Date.now()}`, projectId: engagement.project.id, roleSlotId: engagement.roleSlotId, personId, stageId: stage, date, startMinutes: 0, hours: parsedHours, note: note.trim(), loggedAt: `${date}T17:00:00+10:00`, createdAt: new Date().toISOString() })}>Save time</Button> : <button className="freelancer-time-disabled-save label-m-semibold" type="button" disabled>Save time</button>}</footer></section></div>;
 }
 
 function FreelancerTodayEmpty({ action, body, href, title }: { action: string; body: string; href: string; title: string }) {

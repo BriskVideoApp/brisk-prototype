@@ -5,6 +5,7 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
@@ -17,7 +18,6 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { PersonalProfile } from "@/data/client-account-settings";
 import {
   prototypeCustomerPersonId,
-  prototypeFreelancerPersonId,
   prototypeStudioPersonId,
   type Person,
   type PersonAvailability,
@@ -42,11 +42,12 @@ const availabilityOptions: ReadonlyArray<{ value: PersonAvailability; label: str
 
 export function PersonalProfilePage() {
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const studioName = useStudioCompanyName();
   const { account, access, saveProfile } = useClientAccountSettings();
   const { people, updatePersonIdentity } = usePeople();
   const customer = people.find((person) => person.id === prototypeCustomerPersonId) ?? null;
-  const freelancer = people.find((person) => person.id === prototypeFreelancerPersonId) ?? null;
+  const freelancer = people.find((person) => person.id === viewer?.personId) ?? null;
   const studioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
 
   if (selectedRole === "Studio Staff" && !studioMember) {

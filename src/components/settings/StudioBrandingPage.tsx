@@ -135,14 +135,7 @@ export function StudioBrandingPage() {
   return (
     <section className="studio-settings-section studio-branding-settings" aria-label="Studio branding">
       <div className="studio-branding-controls">
-          <section className="studio-settings-subsection" aria-labelledby="studio-brand-heading">
-            <div className="studio-settings-section-heading">
-              <div>
-                <h2 className="headings-xs-bold" id="studio-brand-heading">Brand</h2>
-                <p className="paragraph-s">Set the identity used across Studio-branded experiences.</p>
-              </div>
-            </div>
-
+          <section className="studio-settings-subsection">
             <div className="studio-branding-field">
               <div>
                 <h3 className="headings-2xs-bold">Logo</h3>
@@ -234,14 +227,6 @@ export function StudioBrandingPage() {
               <Link className="client-secondary-button label-s-semibold" href="/settings/plan-billing?compare=plans&target=business">View Business plan</Link>
             </div>
 
-            <div className="studio-branding-locked-feature is-secondary">
-              <span><DsIcon name="globe" size={18} /></span>
-              <div>
-                <strong className="label-m-semibold">Custom domain</strong>
-                <p className="paragraph-s">Enterprise</p>
-              </div>
-              <span className="studio-settings-locked-badge label-xs-semibold"><DsIcon name="lock" size={12} /> Locked</span>
-            </div>
           </section>
       </div>
 

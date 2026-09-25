@@ -22,9 +22,10 @@ import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { StageKey } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import {
-  freelancerPreviewViewer,
+  getAcceptedFreelancerEngagements,
   getFreelancerEngagements,
   getFreelancerPaymentLabel,
+  getPendingFreelancerEngagements,
   type FreelancerEngagement,
   type FreelancerPaymentStatus,
 } from "@/data/freelancer-videos";
@@ -33,16 +34,19 @@ import { getDemoProjectDestination } from "@/data/projects";
 import { getFileLocationHref } from "@/lib/project-files";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 
 type FreelancerView = "videos" | "offers";
 type OfferView = "open" | "history";
 type PaymentFilter = "all" | Exclude<FreelancerPaymentStatus, "not_ready">;
 type FreelancerColumnKey = "work" | "progress" | "latestAction" | "deadline" | "time" | "commercial";
 type FreelancerTableColumnKey = "video" | FreelancerColumnKey;
-type CostedFreelancerEngagement = FreelancerEngagement & {
-  offer: ContractorOffer;
+type FreelancerJobEngagement = FreelancerEngagement & {
+  offer: ContractorOffer | null;
   invoices: ContractorInvoice[];
 };
+type OfferedFreelancerEngagement = FreelancerJobEngagement & { offer: ContractorOffer };
 
 const paymentFilterOptions: Array<{ value: PaymentFilter; label: string }> = [
   { value: "all", label: "All payment states" },
@@ -87,23 +91,30 @@ const stageMeta: Record<StageKey, { label: string; icon: DsIconName }> = {
 
 export function FreelancerVideosPage() {
   const searchParams = useSearchParams();
+  const viewer = usePrototypeViewer();
+  const { state, updateProjectTeam } = usePrototypeState();
+  const personId = viewer?.personId ?? "";
   const { activeScenario } = usePrototypeScenario();
   const { completionRecords } = useProjectCompletion();
   const { getProjectStages } = useProjectStageStatus();
   const { invoices, offers, setOfferState } = useCostsData();
   const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
-  const projects = useMemo(() => scenarioProjects.map((project) => {
+  const projects = useMemo(() => scenarioProjects.flatMap((project) => {
     const completion = completionRecords[project.id];
-    return {
+    const scoped = state.projects.find((candidate) => candidate.id === project.id
+      && candidate.workspaceId === state.session.activeWorkspaceId);
+    if (!scoped) return [];
+    return [{
       ...project,
+      team: scoped.team,
       status: completion ? "Completed" as const : project.status,
       stages: getProjectStages(project),
       deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
-    };
-  }), [completionRecords, getProjectStages, scenarioProjects]);
+    }];
+  }), [completionRecords, getProjectStages, scenarioProjects, state.projects, state.session.activeWorkspaceId]);
   const baseEngagements = useMemo(
-    () => getFreelancerEngagements(projects, freelancerPreviewViewer.id),
-    [projects],
+    () => getFreelancerEngagements(projects, personId),
+    [personId, projects],
   );
   const [view, setView] = useState<FreelancerView>(() => searchParams.get("scenario-view") === "offer-history" ? "offers" : "videos");
   const [offerView, setOfferView] = useState<OfferView>(() => searchParams.get("scenario-view") === "offer-history" ? "history" : "open");
@@ -119,18 +130,20 @@ export function FreelancerVideosPage() {
     return () => window.clearTimeout(timeout);
   }, [toast]);
 
-  const engagements = useMemo<CostedFreelancerEngagement[]>(() => baseEngagements.flatMap((engagement) => {
-    const offer = offers.find((offerItem) => offerItem.projectId === engagement.project.id && offerItem.contractorId === freelancerPreviewViewer.id);
-    if (!offer) return [];
-    return [{
+  const engagements = useMemo<FreelancerJobEngagement[]>(() => baseEngagements.map((engagement) => {
+    const offer = offers.find((offerItem) => offerItem.projectId === engagement.project.id && offerItem.contractorId === personId);
+    return {
       ...engagement,
-      offer,
-      invoices: invoices.filter((invoiceItem) => invoiceItem.offerId === offer.id),
-    }];
-  }), [baseEngagements, invoices, offers]);
-  const acceptedEngagements = engagements.filter((engagement) => engagement.offer.state === "Accepted");
-  const openOffers = engagements.filter((engagement) => engagement.offer.state === "Pending");
-  const offerHistory = engagements.filter((engagement) => engagement.offer.state === "Declined" || engagement.offer.state === "Revoked");
+      offer: offer ?? null,
+      invoices: offer ? invoices.filter((invoiceItem) => invoiceItem.offerId === offer.id) : [],
+    };
+  }), [baseEngagements, invoices, offers, personId]);
+  const acceptedInvitationIds = new Set(getAcceptedFreelancerEngagements(projects, personId).map((engagement) => engagement.invitationId));
+  const pendingInvitationIds = new Set(getPendingFreelancerEngagements(projects, personId).map((engagement) => engagement.invitationId));
+  const acceptedEngagements = engagements.filter((engagement) => acceptedInvitationIds.has(engagement.invitationId));
+  const openOffers = engagements.filter((engagement): engagement is OfferedFreelancerEngagement =>
+    engagement.offer?.state === "Pending" && pendingInvitationIds.has(engagement.invitationId));
+  const offerHistory = engagements.filter((engagement): engagement is OfferedFreelancerEngagement => engagement.offer?.state === "Declined" || engagement.offer?.state === "Revoked");
   const normalisedQuery = query.trim().toLocaleLowerCase("en-AU");
   const visibleVideos = acceptedEngagements
     .filter((engagement) => {
@@ -144,12 +157,25 @@ export function FreelancerVideosPage() {
     !normalisedQuery || `${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`.toLocaleLowerCase("en-AU").includes(normalisedQuery),
   );
 
-  const acceptOffer = (engagement: CostedFreelancerEngagement) => {
+  const acceptOffer = (engagement: OfferedFreelancerEngagement) => {
+    if (!pendingInvitationIds.has(engagement.invitationId)) return;
+    const respondedAt = new Date().toISOString();
+    updateProjectTeam(engagement.project.id, engagement.project.team.map((slot) => slot.id === engagement.roleSlotId ? {
+      ...slot,
+      acceptedInvitationId: engagement.invitationId,
+      invitations: slot.invitations.map((invitation) => {
+        if (invitation.id === engagement.invitationId) return { ...invitation, status: "accepted" as const, respondedAt };
+        if (invitation.status === "invited" || invitation.status === "seen") {
+          return { ...invitation, status: "declined" as const, respondedAt, declinedReason: "role_filled" as const };
+        }
+        return invitation;
+      }),
+    } : slot));
     setOfferState(engagement.offer.id, "Accepted");
     setView("videos");
     setToast(`${engagement.project.name} added to Active jobs`);
   };
-  const declineOffer = (engagement: CostedFreelancerEngagement) => {
+  const declineOffer = (engagement: OfferedFreelancerEngagement) => {
     setOfferState(engagement.offer.id, "Declined");
     setToast(`Offer declined for ${engagement.project.name}`);
   };
@@ -162,7 +188,7 @@ export function FreelancerVideosPage() {
     <main className="freelancer-videos-page">
       <header className="freelancer-videos-header">
         <div>
-          <span className="label-xs-semibold">{freelancerPreviewViewer.name} - Freelancer</span>
+          <span className="label-xs-semibold">{viewer?.name ?? "Freelancer"} - Freelancer</span>
           <h1 className="headings-m-bold">My jobs</h1>
           <p className="paragraph-s">Review offers, follow active project work and submit contractor invoices.</p>
         </div>
@@ -210,7 +236,7 @@ function FreelancerVideoTable({
   onSubmitInvoice,
   table,
 }: {
-  engagements: CostedFreelancerEngagement[];
+  engagements: FreelancerJobEngagement[];
   onSubmitInvoice: (offer: ContractorOffer) => void;
   table: FreelancerVideoTableController;
 }) {
@@ -321,7 +347,7 @@ function FreelancerVideoRow({
 }: {
   draggedColumn: FreelancerColumnKey | null;
   droppedColumn: FreelancerColumnKey | null;
-  engagement: CostedFreelancerEngagement;
+  engagement: FreelancerJobEngagement;
   getColumnShiftDirection: (columnKey: FreelancerTableColumnKey) => "left" | "right" | null;
   onSubmitInvoice: (offer: ContractorOffer) => void;
   visibleColumns: FreelancerColumnKey[];
@@ -357,7 +383,7 @@ function FreelancerVideoDataCell({
   shiftDirection,
 }: {
   columnKey: FreelancerColumnKey;
-  engagement: CostedFreelancerEngagement;
+  engagement: FreelancerJobEngagement;
   isDragging: boolean;
   isDropped: boolean;
   onSubmitInvoice: (offer: ContractorOffer) => void;
@@ -392,7 +418,7 @@ function FreelancerVideoDataCell({
   }
 
   const paymentStatus = getPaymentStatus(engagement);
-  return <td className={className} data-label="Commercial"><PaymentBadge status={paymentStatus} /><small className="label-xs">{getEngagementRateLabel(engagement)}</small>{paymentStatus === "invoice_required" || paymentStatus === "sent_back" ? <button className="freelancer-inline-action label-xs-semibold" type="button" onClick={() => onSubmitInvoice(engagement.offer)}>{paymentStatus === "sent_back" ? "Submit another invoice" : "Submit invoice"}</button> : null}</td>;
+  return <td className={className} data-label="Commercial"><PaymentBadge status={paymentStatus} /><small className="label-xs">{getEngagementRateLabel(engagement)}</small>{engagement.offer && (paymentStatus === "invoice_required" || paymentStatus === "sent_back") ? <button className="freelancer-inline-action label-xs-semibold" type="button" onClick={() => { if (engagement.offer) onSubmitInvoice(engagement.offer); }}>{paymentStatus === "sent_back" ? "Submit another invoice" : "Submit invoice"}</button> : null}</td>;
 }
 
 function FreelancerTableHeaderCell({
@@ -533,7 +559,7 @@ function FreelancerProjectIdentity({ engagement, destinationHref }: { engagement
   return <div className="project-cell-inner freelancer-project-identity"><span className="client-badge label-xs-semibold">{project.clientBadge}</span><div className="project-title-row">{destinationHref ? <Link className="project-title heading-3xs" href={destinationHref}>{project.name}</Link> : <span className="project-title is-static heading-3xs" title="This project is visible for context but does not have a complete demo route.">{project.name}<small className="project-demo-unavailable label-xs">Demo not available</small></span>}<div className="project-quick-actions" aria-label={`Project tools for ${project.name}`}>{toolAccess.chat ? <Link className="project-quick-action" href={`/chat?project=${encodeURIComponent(project.id)}`} aria-label={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"} data-tooltip={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"}><DsIcon name="chats" size={20} /><CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} /></Link> : null}{toolAccess.files && filesHref ? <a className="project-quick-action" href={filesHref} aria-label="Open project files" data-tooltip="Open project files" target={filesExternal ? "_blank" : undefined} rel={filesExternal ? "noopener" : undefined}><DsIcon name="folder" size={20} /></a> : null}{toolAccess.queue ? <Link className="project-quick-action" href="/customer-dashboard" aria-label="Open Client queue" data-tooltip="Open Client queue"><DsIcon name="queue" size={20} /></Link> : null}</div></div>{toolAccess.tags && project.tags?.length ? <div className="project-meta-row" aria-label="Project tags">{project.tags.map((tag) => <span className={`project-tag-chip tag-option ${getReadOnlyTagClass(tag)} label-s-semibold`} key={tag}>{tag}</span>)}</div> : null}{engagement.assignmentMethod === "direct" ? <small className="freelancer-direct-tag label-xs-semibold">Direct assignment</small> : null}</div>;
 }
 
-function FreelancerOfferCard({ engagement, isOpen, onAccept, onDecline }: { engagement: CostedFreelancerEngagement; isOpen: boolean; onAccept: () => void; onDecline: () => void }) {
+function FreelancerOfferCard({ engagement, isOpen, onAccept, onDecline }: { engagement: OfferedFreelancerEngagement; isOpen: boolean; onAccept: () => void; onDecline: () => void }) {
   const destination = getDemoProjectDestination(engagement.project.id, "brief");
   return <article className="freelancer-offer-card"><header><div><span className="label-xs-semibold">{engagement.project.clientName}</span><h2 className="headings-xs-bold">{engagement.project.name}</h2></div><span className={`freelancer-offer-status is-${engagement.offer.state.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{engagement.offer.state}</span></header><dl><div><dt className="label-xs">Your role</dt><dd className="label-s-semibold">{engagement.offer.role}</dd></div><div><dt className="label-xs">Assigned Stages</dt><dd><StageAssignmentPills stages={engagement.stages} /></dd></div><div><dt className="label-xs">Estimated work</dt><dd className="label-s-semibold">{formatHours(engagement.estimatedHours)}</dd></div><div><dt className="label-xs">Agreed rate</dt><dd className="label-s-semibold">{formatCostAmount(engagement.offer.agreedRate, engagement.offer.currency)}</dd></div><div><dt className="label-xs">Final delivery</dt><dd className="label-s-semibold">{formatDeadline(engagement.project.deadlineAt)}</dd></div></dl><footer>{destination ? <Link className="freelancer-offer-brief label-s-semibold" href={destination.href}>View brief</Link> : <span className="freelancer-offer-brief is-disabled label-s-semibold" title="This project does not have a complete demo route.">Demo not available</span>}{isOpen ? <div><Button size="S" variant="ghost" onClick={onDecline}>Decline</Button><Button size="S" onClick={onAccept}>Accept offer</Button></div> : null}</footer></article>;
 }
@@ -550,7 +576,8 @@ function FreelancerEmptyState({ action, body, onAction, title }: { action: strin
   return <section className="freelancer-videos-empty"><span aria-hidden="true"><DsIcon name="video-camera-ds" size={28} /></span><h2 className="headings-xs-bold">{title}</h2><p className="paragraph-s">{body}</p><Button size="M" onClick={onAction}>{action}</Button></section>;
 }
 
-function getPaymentStatus(engagement: CostedFreelancerEngagement): FreelancerPaymentStatus {
+function getPaymentStatus(engagement: FreelancerJobEngagement): FreelancerPaymentStatus {
+  if (engagement.offer?.state !== "Accepted") return "not_ready";
   const latestInvoice = [...engagement.invoices].sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())[0];
   if (!latestInvoice) return "invoice_required";
   if (latestInvoice.state === "Submitted") return "invoice_submitted";
@@ -560,8 +587,8 @@ function getPaymentStatus(engagement: CostedFreelancerEngagement): FreelancerPay
 }
 
 function compareFreelancerVideos(
-  first: CostedFreelancerEngagement,
-  second: CostedFreelancerEngagement,
+  first: FreelancerJobEngagement,
+  second: FreelancerJobEngagement,
 ) {
   const priorityDifference = getFreelancerVideoPriority(first) - getFreelancerVideoPriority(second);
 
@@ -571,7 +598,7 @@ function compareFreelancerVideos(
 }
 
 function getFreelancerVideoPriority(
-  engagement: CostedFreelancerEngagement,
+  engagement: FreelancerJobEngagement,
 ) {
   if (engagement.project.status === "In Production") return 0;
   if (engagement.project.status === "Queued") return 1;
@@ -599,8 +626,10 @@ function formatActivityAge(daysAgo: number) {
   return `${daysAgo} days ago`;
 }
 
-function getEngagementRateLabel(engagement: CostedFreelancerEngagement) {
-  return `${formatCostAmount(engagement.offer.agreedRate, engagement.offer.currency)} agreed rate`;
+function getEngagementRateLabel(engagement: FreelancerJobEngagement) {
+  return engagement.offer?.state === "Accepted"
+    ? `${formatCostAmount(engagement.offer.agreedRate, engagement.offer.currency)} agreed rate`
+    : "No accepted offer recorded";
 }
 
 function getReadOnlyTagClass(tag: string) {

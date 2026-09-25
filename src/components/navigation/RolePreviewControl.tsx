@@ -13,6 +13,7 @@ import {
 } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import {
   getClientPortalDestination,
   getScopedRoleHome,
@@ -29,12 +30,16 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
     setAllPages,
   } = usePrototypeRole();
   const { state } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const projectIdFromPath = pathname.match(/^\/projects\/([^/]+)/u)?.[1] ?? null;
   const projectId = searchParams.get("project") ?? (projectIdFromPath ? decodeURIComponent(projectIdFromPath) : null);
   const contextualProject = projectId
     ? state.projects.find((project) => project.id === projectId && project.workspaceId === state.session.activeWorkspaceId)
     : null;
-  const clientPortalDestination = getClientPortalDestination(state, contextualProject?.clientId);
+  const clientPortalDestination = getClientPortalDestination(state, viewer?.role === "Customer" ? viewer.clientId : undefined);
+  const clientHome = state.users.find((user) => user.role === "Client" && user.clientId === "loom" && user.name === "Jess Taylor")
+    ? `/workspaces/${encodeURIComponent(state.session.activeWorkspaceId)}/clients/loom/portal`
+    : null;
   const currentItem = getNavigationItem(pathname, searchParams.toString());
 
   function selectRole(role: PrototypeRole) {
@@ -42,8 +47,11 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
 
     const isClientsPermissionPreview = pathname === "/clients" || pathname.startsWith("/clients/");
     const keepsRolePreviewOnCurrentPage = isClientsPermissionPreview || pathname === "/prototype/production-flow";
-    if (!keepsRolePreviewOnCurrentPage && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
-      router.push(getScopedRoleHome(role, clientPortalDestination));
+    const destination = role === "Customer" ? clientHome : clientPortalDestination;
+    if (role === "Customer" && pathname.startsWith("/projects/") && contextualProject?.clientId !== "loom") {
+      router.push(getScopedRoleHome(role, destination));
+    } else if (!keepsRolePreviewOnCurrentPage && currentItem && !canRoleSeeNavigationItem(currentItem, role, allPages)) {
+      router.push(getScopedRoleHome(role, destination));
     }
   }
 

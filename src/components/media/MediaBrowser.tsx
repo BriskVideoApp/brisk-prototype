@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { getRoleHome } from "@/components/navigation/navigationConfig";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -13,7 +15,7 @@ import { appendSharedReviewActivity, sharedReviewActivityStorageKey } from "@/da
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { mockTeamPeople } from "@/data/active-videos/teamDefaults";
 import { mediaCloudFiles, mediaStorageLocations, mediaStorageOptions, mediaStoragePlans, mediaTranscriptNotes, type MediaAssetView, type MediaCloudFile, type MediaCloudProvider, type MediaCollection, type MediaFolder, type MediaKind } from "@/data/media";
-import { compareMediaAssets, getMediaCapabilities, getMediaProjectsForRole } from "@/lib/media";
+import { compareMediaAssets, getMediaCapabilities } from "@/lib/media";
 import { MediaAssetDrawer, type MediaAssetDrawerTab, type MediaMentionOption } from "./MediaAssetDrawer";
 import { MediaArchiveDialog, MediaDeleteDialog, MediaMoveDialog } from "./MediaActionDialogs";
 import { MediaAssetGrid } from "./MediaAssetGrid";
@@ -34,6 +36,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const router = useRouter();
   const { selectedRole, allPages } = usePrototypeRole();
   const { state: prototypeState, hasHydrated: hasHydratedPrototypeState } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const studioName = useStudioCompanyName();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const library = useMediaLibrary();
@@ -52,18 +55,23 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
     },
     [activeScenario, project, prototypeState.projects, prototypeState.session.activeWorkspaceId, scope],
   );
-  // A Client's library is always limited to their own projects, even while
-  // previewing prototype scenarios that otherwise expose every page.
+  // The active viewer's project membership is the source for every media location.
   const accessibleProjects = useMemo(
-    () => getMediaProjectsForRole(selectedRole, scenarioProjects, isClientView ? false : allPages),
-    [allPages, isClientView, scenarioProjects, selectedRole],
+    () => scenarioProjects.flatMap((candidate) => {
+      const scoped = prototypeState.projects.find((item) => item.id === candidate.id);
+      return scoped && canViewProject(viewer, scoped, prototypeState) ? [scoped] : [];
+    }),
+    [prototypeState, scenarioProjects, viewer],
   );
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(project?.id ?? linkedAsset?.projectId ?? initialProjectId);
   const [selectedClientName, setSelectedClientName] = useState<string | null>(() => {
     const projectId = project?.id ?? linkedAsset?.projectId ?? initialProjectId;
     return project?.clientName ?? scenarioProjects.find((item) => item.id === projectId)?.clientName ?? null;
   });
-  const activeProjectId = project?.id ?? selectedProjectId;
+  const activeProjectId = accessibleProjects.some((candidate) => candidate.id === (project?.id ?? selectedProjectId))
+    ? project?.id ?? selectedProjectId : null;
+  const activeClientName = accessibleProjects.some((candidate) => candidate.clientName === selectedClientName)
+    ? selectedClientName : null;
   const hasStudioClientRail = scope === "global" && !isClientView;
   const hasProjectFolderRail = scope === "global" && Boolean(activeProjectId);
   const [tab, setTab] = useState<GlobalTab>(linkedAsset?.archivedAt ? "archived" : linkedAsset?.collection === "masters" ? "masters" : "media");
@@ -96,15 +104,30 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
       return groups;
     }, new Map<string, Project[]>()),
   ).map(([name, projects]) => ({ name, projectCount: projects.length })).toSorted((left, right) => left.name.localeCompare(right.name)), [accessibleProjects]);
-  const clientProjects = useMemo(() => selectedClientName
-    ? accessibleProjects.filter((item) => item.clientName === selectedClientName)
-    : accessibleProjects, [accessibleProjects, selectedClientName]);
+  const clientProjects = useMemo(() => activeClientName
+    ? accessibleProjects.filter((item) => item.clientName === activeClientName)
+    : accessibleProjects, [accessibleProjects, activeClientName]);
   const projectIds = useMemo(() => new Set(clientProjects.map((item) => item.id)), [clientProjects]);
   useEffect(() => {
     if (!hasLoadedScenario || !hasHydratedPrototypeState) return;
     if (scope === "project" && project && !projectIds.has(project.id)) router.replace(getRoleHome(selectedRole));
   }, [hasHydratedPrototypeState, hasLoadedScenario, project, projectIds, router, scope, selectedRole]);
-  const capabilities = getMediaCapabilities(selectedRole, activeProjectId, scenarioProjects, allPages);
+  const mediaProject = accessibleProjects.find((candidate) => candidate.id === activeProjectId);
+  const canMediaAction = (action: "upload" | "edit" | "comment" | "send", target: Project | undefined = mediaProject) =>
+    Boolean(target && canActOnProject(viewer, target, prototypeState, action, "media"));
+  const mediaCapabilitiesFor = (target: Project | undefined) => {
+    const base = getMediaCapabilities(selectedRole, target?.id ?? null, accessibleProjects, allPages, viewer?.personId ?? undefined);
+    return {
+      ...base,
+      canUpload: base.canUpload && canMediaAction("upload", target),
+      canManageFolders: base.canManageFolders && canMediaAction("edit", target),
+      canMoveAssets: base.canMoveAssets && canMediaAction("edit", target),
+      canArchive: base.canArchive && canMediaAction("edit", target),
+      canDelete: base.canDelete && canMediaAction("edit", target),
+      canComment: base.canComment && canMediaAction("comment", target),
+    };
+  };
+  const capabilities = mediaCapabilitiesFor(mediaProject);
   const browserCapabilities = { ...capabilities, canUpload: scope === "project" && capabilities.canUpload };
   const folders = library.folders.filter((folder) => folder.projectId === activeProjectId);
   const collection: MediaCollection = tab === "masters" ? "masters" : "media";
@@ -130,8 +153,8 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const activeProject = scenarioProjects.find((item) => item.id === (activeAsset?.projectId ?? activeProjectId));
   const mentionOptions = useMemo<MediaMentionOption[]>(() => [
     ...mockTeamPeople.map((person) => ({ id: `person-${person.id}`, label: person.name, kind: "person" as const })),
-    ...scenarioProjects.map((item) => ({ id: `project-${item.id}`, label: item.name, kind: "project" as const })),
-  ], [scenarioProjects]);
+    ...accessibleProjects.map((item) => ({ id: `project-${item.id}`, label: item.name, kind: "project" as const })),
+  ], [accessibleProjects]);
   const selectedFolderName = folders.find((folder) => folder.id === selectedFolderId)?.name ?? "All media";
   const selectedSharingAssets = visibleAssets.filter((asset) => selectedAssetIds.has(asset.id));
   const singleSharingAsset = selectedSharingAssets.length === 1 ? selectedSharingAssets[0] : null;
@@ -154,7 +177,8 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const sendCompanyName = selectedRole === "Studio Staff"
     ? shareProject?.clientName ?? "Client"
     : studioName;
-  const canSendSelection = selectedSharingAssets.length > 0 && (
+  const canSendSelection = selectedSharingAssets.length > 0
+    && selectedSharingAssets.every((asset) => canMediaAction("send", accessibleProjects.find((candidate) => candidate.id === asset.projectId))) && (
     selectedRole !== "Studio Staff"
     || new Set(selectedSharingAssets.map((asset) => scenarioProjects.find((item) => item.id === asset.projectId)?.clientName)).size === 1
   );
@@ -193,7 +217,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   };
   const copyLink = async (path: string) => { try { await navigator.clipboard?.writeText(new URL(path, window.location.origin).toString()); } catch { /* Clipboard may be blocked in the prototype. */ } notify("Link copied. Anyone with project access can view it."); };
   const uploadFiles = (files: File[]) => {
-    if (!activeProjectId || files.length === 0) return;
+    if (!activeProjectId || !capabilities.canUpload || files.length === 0) return;
     const ids = library.addAssets(activeProjectId, selectedFolderId, files.map((file) => {
       const kind = inferKind(file);
       const localUrl = URL.createObjectURL(file);
@@ -202,7 +226,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
     setTrackedUploadIds(ids);
   };
   const importFiles = (files: MediaCloudFile[]) => {
-    if (!activeProjectId) return;
+    if (!activeProjectId || !capabilities.canUpload) return;
     const ids = library.addAssets(activeProjectId, selectedFolderId, files.map((file) => ({ name: file.name, kind: file.kind, sizeBytes: file.sizeBytes, durationSeconds: file.durationSeconds, thumbnailUrl: file.thumbnailUrl, playbackUrl: file.playbackUrl, storageLocationId: file.provider === "google-drive" ? "drive-main" : "dropbox-main", providerFileId: file.id, sourceLocationLabel: file.sourcePath, simulateFailure: file.simulateFailure })));
     setTrackedUploadIds(ids);
     setCloudProvider(null);
@@ -227,16 +251,16 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
 
   return <div className={`media-browser ${scope === "global" ? "is-global" : "is-project"}`} onDragEnter={handleDragEnter} onDragOver={(event) => { if (browserCapabilities.canUpload) event.preventDefault(); }} onDragLeave={handleDragLeave} onDrop={handleDrop}>
     <div className={`media-mobile-location is-${scope} ${hasStudioClientRail ? "has-client-picker" : ""}`} aria-label="Media location">
-      {hasStudioClientRail ? <label><span className="label-xs-semibold">Client</span><select className="label-s" value={selectedClientName ?? ""} onChange={(event) => selectClient(event.target.value || null)}><option value="">All clients</option>{clientGroups.map((client) => <option value={client.name} key={client.name}>{client.name}</option>)}</select></label> : null}
-      {scope === "global" ? <label><span className="label-xs-semibold">Project</span><select className="label-s" value={selectedProjectId ?? ""} onChange={(event) => selectProject(event.target.value || null)}><option value="">All projects</option>{clientProjects.map((item) => <option value={item.id} key={item.id}>{item.name} - {item.clientName}</option>)}</select></label> : null}
+      {hasStudioClientRail ? <label><span className="label-xs-semibold">Client</span><select className="label-s" value={activeClientName ?? ""} onChange={(event) => selectClient(event.target.value || null)}><option value="">All clients</option>{clientGroups.map((client) => <option value={client.name} key={client.name}>{client.name}</option>)}</select></label> : null}
+      {scope === "global" ? <label><span className="label-xs-semibold">Project</span><select className="label-s" value={activeProjectId ?? ""} onChange={(event) => selectProject(event.target.value || null)}><option value="">All projects</option>{clientProjects.map((item) => <option value={item.id} key={item.id}>{item.name} - {item.clientName}</option>)}</select></label> : null}
       {activeProjectId ? <label><span className="label-xs-semibold">Folder</span><select className="label-s" value={selectedFolderId ?? ""} onChange={(event) => setSelectedFolderId(event.target.value || null)}><option value="">All media</option>{folders.map((folder) => <option value={folder.id} key={folder.id}>{folder.parentId ? `↳ ${folder.name}` : folder.name}</option>)}</select></label> : null}
     </div>
     <div className={`media-workspace ${hasStudioClientRail ? "has-client-rail" : ""} ${hasProjectFolderRail ? "has-project-folder-rail" : ""} ${railCollapsed ? "rail-collapsed" : ""} ${activeAsset ? "inspector-open" : ""}`}>
       {scope === "global" ? <MediaLocationNavigation
         clients={hasStudioClientRail ? clientGroups : undefined}
         projects={clientProjects}
-        selectedClientName={selectedClientName}
-        selectedProjectId={selectedProjectId}
+        selectedClientName={activeClientName}
+        selectedProjectId={activeProjectId}
         onSelectClient={selectClient}
         onSelectProject={selectProject}
       /> : <MediaFolderTree folders={folders} selectedFolderId={selectedFolderId} collapsed={railCollapsed} canManage={capabilities.canManageFolders} canMoveAssets={capabilities.canMoveAssets} canCopyLink={capabilities.canCopyLink} storageUsage={capabilities.canViewStorage ? <StorageUsageMeter label={configuredStorage.label} helper={configuredStorage.helper} usedBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.exampleUsedBytes : undefined} limitBytes={configuredStorage.provider === "brisk-storage" ? storagePlan.includedBytes : undefined} /> : null} onSelect={setSelectedFolderId} onAdd={(parentId) => activeProjectId ? library.createFolder(activeProjectId, parentId) : null} onRename={library.renameFolder} onMove={library.moveFolder} onMoveAssetsToFolder={(assetIds, folderId) => { library.moveAssets(assetIds, folderId); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} onDelete={(id) => { if (!library.deleteFolder(id)) notify("Only empty folders can be deleted."); }} onCopyLink={(id) => { void copyLink(`/projects/${activeProjectId}/stages/media?folder=${id}`); }} onToggleCollapsed={() => setRailCollapsed((current) => !current)} />}
@@ -276,7 +300,8 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
             sendLabel={`Send selected ${selectedSharingAssets.length === 1 ? "file" : "files"} to ${sendCompanyName}`}
             sendChangesProjectStatus={false}
             onSend={() => {
-              const actor = prototypeState.users.find((user) => user.id === prototypeState.session.activeUserId)?.name ?? (selectedRole === "Customer" ? shareProject?.clientName : studioName) ?? "Filmmaker";
+              if (!canSendSelection) return;
+              const actor = viewer?.name ?? studioName;
               const occurredAt = new Date().toISOString();
               for (const selectedProjectId of new Set(selectedSharingAssets.map((asset) => asset.projectId))) {
                 const files = selectedSharingAssets.filter((asset) => asset.projectId === selectedProjectId);
@@ -307,7 +332,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
           />
         </div> : null}
       </section>
-      {activeAsset && activeProject ? <MediaAssetDrawer asset={activeAsset} projectName={activeProject.name} folders={library.folders.filter((folder) => folder.projectId === activeAsset.projectId)} comments={library.comments} transcriptNotes={mediaTranscriptNotes} storageLocations={mediaStorageLocations} capabilities={getMediaCapabilities(selectedRole, activeAsset.projectId, scenarioProjects, allPages)} globalScope={scope === "global"} activeTab={drawerTab} mentionOptions={mentionOptions} onTabChange={setDrawerTab} onRename={library.renameAsset} onAddComment={(assetId, body) => library.addComment(assetId, selectedRole === "Customer" ? "Avery Taylor" : selectedRole === "Studio Freelancer" ? "Jordan Lee" : "Tom Evans", selectedRole === "Customer" ? "external" : "internal", body)} onClose={() => setActiveAssetId(null)} {...commonAction} /> : null}
+      {activeAsset && activeProject ? <MediaAssetDrawer asset={activeAsset} projectName={activeProject.name} folders={library.folders.filter((folder) => folder.projectId === activeAsset.projectId)} comments={library.comments} transcriptNotes={mediaTranscriptNotes} storageLocations={mediaStorageLocations} capabilities={mediaCapabilitiesFor(activeProject)} globalScope={scope === "global"} activeTab={drawerTab} mentionOptions={mentionOptions} onTabChange={setDrawerTab} onRename={library.renameAsset} onAddComment={(assetId, body) => { if (canMediaAction("comment", activeProject)) library.addComment(assetId, viewer?.name ?? "Filmmaker", selectedRole === "Customer" ? "external" : "internal", body); }} onClose={() => setActiveAssetId(null)} {...commonAction} /> : null}
     </div>
     <MediaUploadDropZone active={dragActive} folderName={selectedFolderName} />
     <MediaCloudPicker provider={cloudProvider} files={mediaCloudFiles} folderName={selectedFolderName} onClose={() => setCloudProvider(null)} onImport={importFiles} />

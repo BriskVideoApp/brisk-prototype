@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { usePathname } from "next/navigation";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import type { BriefFields } from "@/data/brief";
+import type { RoleSlot } from "@/components/active-videos/types";
 import type { Client, NewClientInput } from "@/data/clients";
 import {
   cloneStudioBriefConfiguration,
@@ -29,6 +30,7 @@ import {
   updateOnboardingProgressState,
   updateProjectBriefState,
   updateProjectStatusState,
+  updateProjectTeamState,
   updateWorkspaceBrandingState,
   updateWorkspaceDetailsState,
   type PrototypeOnboardingProgress,
@@ -59,6 +61,7 @@ type PrototypeStateContextValue = {
   updateOnboardingProgress: (update: Partial<PrototypeOnboardingProgress>) => void;
   updateProjectBrief: (projectId: string, fields: BriefFields) => void;
   updateProjectStatus: (projectId: string, status: ScopedProject["status"]) => void;
+  updateProjectTeam: (projectId: string, team: RoleSlot[]) => void;
   updateStudioTemplate: (update: Pick<StudioBriefTemplate, "configuration" | "videoTypeIds" | "customVideoTypes" | "customVideoType">) => void;
   updateWorkspaceBranding: (branding: StudioBranding) => void;
   updateWorkspaceDetails: (details: StudioDetails) => void;
@@ -169,6 +172,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     updateOnboardingProgress: (update) => commitState((current) => updateOnboardingProgressState(current, update)),
     updateProjectBrief: (projectId, fields) => commitState((current) => updateProjectBriefState(current, projectId, fields)),
     updateProjectStatus: (projectId, status) => commitState((current) => updateProjectStatusState(current, projectId, status)),
+    updateProjectTeam: (projectId, team) => commitState((current) => updateProjectTeamState(current, projectId, team)),
     updateStudioTemplate: (update) => commitState((current) => updateStudioBriefTemplateState(current, update)),
     updateWorkspaceBranding: (branding) => commitState((current) => updateWorkspaceBrandingState(current, branding)),
     updateWorkspaceDetails: (details) => commitState((current) => updateWorkspaceDetailsState(current, details)),

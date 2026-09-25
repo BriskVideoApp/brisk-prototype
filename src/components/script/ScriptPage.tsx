@@ -18,6 +18,9 @@ import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { canActOnProject } from "@/data/prototype-access";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
@@ -69,7 +72,6 @@ import {
   type ScriptExportPayload,
 } from "@/lib/document-export";
 
-const currentUserId = "user-tom";
 const scriptSurfaceId = "mock-project-script";
 const emptyScriptRowId = "script-empty-row";
 const emptyScriptPlaceholderRow: ScriptRow = {
@@ -187,6 +189,9 @@ export function ScriptPage({
   const router = useRouter();
   const { openAssistant, registerResponseDraftHandler, view: aiView } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  const { state: prototypeState } = usePrototypeState();
+  const currentUserId = viewer?.chatUserId ?? "user-tom";
   const studioCompanyName = useStudioCompanyName();
   const { getProjectFlow } = useProjectFlow();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
@@ -1260,7 +1265,7 @@ export function ScriptPage({
   };
 
   const approveScript = () => {
-    if (selectedRole === "Studio Freelancer") return;
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "script")) return;
     const approvalVersion = dropdownVersion;
     const approvedAt = formatSnapshotDate(new Date());
     const approver = scriptUsers.find((user) => user.id === currentUserId)?.name ?? (selectedRole === "Customer" ? project.clientName : "Studio Staff");

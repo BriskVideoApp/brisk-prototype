@@ -117,6 +117,15 @@ export const chatUsers: ChatUser[] = [
     roleLabel: "Freelance colourist",
     email: "nina@northstarfilms.com.au",
   },
+  {
+    id: "user-jordan",
+    name: "Jordan Lee",
+    initials: "JL",
+    team: "studio",
+    avatarTone: "lime",
+    roleLabel: "Freelance shooter",
+    email: "jordan@leevisuals.com",
+  },
 ];
 
 const connectorDefaults: ChatProject["connectors"] = {

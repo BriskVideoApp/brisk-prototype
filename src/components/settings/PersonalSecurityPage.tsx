@@ -5,6 +5,7 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import {
   PersonalSettingsAccessBoundary,
@@ -13,10 +14,11 @@ import {
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getAuthenticationMethodLabel } from "@/data/client-account-settings";
-import { prototypeCustomerPersonId, prototypeFreelancerPersonId, prototypeStudioPersonId } from "@/data/people";
+import { prototypeCustomerPersonId, prototypeStudioPersonId } from "@/data/people";
 
 export function PersonalSecurityPage() {
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const { people } = usePeople();
   const { account, access } = useClientAccountSettings();
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -24,7 +26,7 @@ export function PersonalSecurityPage() {
   const isFreelancer = selectedRole === "Studio Freelancer";
   const isStudioStaff = selectedRole === "Studio Staff";
   const customer = selectedRole === "Customer" ? people.find((person) => person.id === prototypeCustomerPersonId) ?? null : null;
-  const freelancer = isFreelancer ? people.find((person) => person.id === prototypeFreelancerPersonId) ?? null : null;
+  const freelancer = isFreelancer ? people.find((person) => person.id === viewer?.personId) ?? null : null;
   const studioMember = isStudioStaff ? people.find((person) => person.id === prototypeStudioPersonId) ?? null : null;
   const authenticationMethod = isStudioStaff ? "password" : access.authenticationMethod;
   const signInEmail = studioMember?.email ?? freelancer?.email ?? customer?.email ?? account.profile.signInEmail;

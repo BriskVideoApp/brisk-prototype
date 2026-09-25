@@ -66,6 +66,10 @@ export type MediaCloudProvider = "google-drive" | "dropbox";
 export type MediaCloudFile = { id: string; provider: MediaCloudProvider; name: string; kind: MediaKind; sizeBytes: number; durationSeconds?: number; modifiedLabel: string; sourcePath: string; ownerName: string; thumbnailUrl?: string; playbackUrl?: string; simulateFailure?: boolean };
 
 export const mediaPeople: Record<string, string> = {
+  "user-tom": "Tom Mitchell",
+  "user-nina": "Nina Patel",
+  "user-jordan": "Jordan Lee",
+  "user-jess": "Jess Taylor",
   "tom-evans": "Tom Evans",
   "maddie-lee": "Maddie Lee",
   "sam-chen": "Sam Chen",
