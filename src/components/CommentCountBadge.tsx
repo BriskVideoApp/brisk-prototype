@@ -1,10 +1,11 @@
 type CommentCountBadgeProps = {
   count: number;
   label: string;
+  showZero?: boolean;
 };
 
-export function CommentCountBadge({ count, label }: CommentCountBadgeProps) {
-  if (count <= 0) {
+export function CommentCountBadge({ count, label, showZero = false }: CommentCountBadgeProps) {
+  if (count <= 0 && !showZero) {
     return null;
   }
 

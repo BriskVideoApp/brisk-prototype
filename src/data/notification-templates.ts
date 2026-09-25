@@ -386,7 +386,7 @@ export function cloneCustomerMessageTemplateCopy(copy: CustomerMessageTemplateCo
   return { ...copy };
 }
 
-export function resolveCustomerMessageText(text: string, templateDefinition: CustomerMessageTemplateDefinition) {
+export function resolveCustomerMessageText(text: string, templateDefinition: CustomerMessageTemplateDefinition, studioName = "Studio") {
   const variableExamples = Object.fromEntries(
     templateDefinition.variables.map((variable) => [variable.key, variable.example]),
   );
@@ -394,7 +394,7 @@ export function resolveCustomerMessageText(text: string, templateDefinition: Cus
     ...variableExamples,
     "{{first_name}}": templateDefinition.recipient.split(" ")[0],
     "{{project_name}}": templateDefinition.projectName,
-    "{{studio_name}}": "North Star Films",
+    "{{studio_name}}": studioName,
     "{{stage_name}}": templateDefinition.stage ?? "Edit",
   };
 

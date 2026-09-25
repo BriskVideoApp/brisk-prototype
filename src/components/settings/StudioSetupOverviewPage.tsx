@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { StudioBrandingPage } from "@/components/settings/StudioBrandingPage";
+import { StudioDetailsPage } from "@/components/settings/StudioDetailsPage";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { StudioReviewDialog, StudioVideoTypeEditor } from "@/components/studio-onboard/StudioReviewEditors";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -17,10 +19,8 @@ import {
 import type { BriefFieldId } from "@/data/brief";
 import type { StudioBriefTemplate } from "@/data/prototype-state";
 
-const briefSections = ["Project goals", "Audience", "Key message", "Video type", "Timing", "References"];
-
 export function StudioSetupOverviewPage() {
-  const { studio, updateDetails } = useStudioSettings();
+  const { studio } = useStudioSettings();
   const { state, updateStudioTemplate } = usePrototypeState();
   const [isEditingServices, setIsEditingServices] = useState(false);
   const [isEditingBrief, setIsEditingBrief] = useState(false);
@@ -32,7 +32,6 @@ export function StudioSetupOverviewPage() {
   )) ? state.onboarding.clientId : state.session.activeClientId && state.clients.some((client) => (
     client.workspaceId === state.session.activeWorkspaceId && client.id === state.session.activeClientId
   )) ? state.session.activeClientId : null;
-  const brandColours = getStudioBrandColours(studio.branding);
   const serviceDraft = useMemo<StudioReviewDraft | null>(() => workspace && template ? ({
     view: "studio-setup",
     studioName: workspace.name,
@@ -52,14 +51,13 @@ export function StudioSetupOverviewPage() {
     ...serviceDraft.videoTypeIds.map((videoTypeId) => studioOnboardingVideoTypeLabels[videoTypeId]),
     ...getStudioCustomVideoTypes(serviceDraft).map((videoType) => videoType.name),
   ] : [];
+  const briefQuestions = template ? Object.values(template.fields)
+    .filter((field) => !template.configuration.excludedFieldIds.includes(field.id))
+    .map((field) => field.label) : [];
 
   function rewriteDescription() {
     const serviceSummary = offeredServices.slice(0, 3).join(", ").toLocaleLowerCase("en-AU");
-    updateDetails({
-      ...studio.details,
-      description: `${studio.details.name} creates ${serviceSummary || "video"} for Clients from first Brief to final delivery.`,
-    });
-    setToast("Studio description rewritten.");
+    return `${studio.details.name} creates ${serviceSummary || "video"} for Clients from first Brief to final delivery.`;
   }
 
   function saveServices(nextDraft: StudioReviewDraft) {
@@ -88,54 +86,31 @@ export function StudioSetupOverviewPage() {
 
   return (
     <section className="studio-settings-section studio-setup-overview" aria-label="Studio setup">
+      <nav className="studio-setup-jump-links label-s-semibold" aria-label="Studio setup sections">
+        <a href="#profile">Profile</a>
+        <a href="#branding">Branding</a>
+        <a href="#services">Services</a>
+        <a href="#client-experience">Client experience</a>
+      </nav>
+
+      <div className="studio-setup-combined-section" id="profile">
+        <div className="studio-setup-combined-heading">
+          <h2 className="headings-xs-bold">Profile</h2>
+          <p className="paragraph-s">The Studio identity shown to your team and Clients.</p>
+        </div>
+        <StudioDetailsPage rewriteDescription={rewriteDescription} />
+      </div>
+
+      <div className="studio-setup-combined-section" id="branding">
+        <div className="studio-setup-combined-heading">
+          <h2 className="headings-xs-bold">Branding</h2>
+          <p className="paragraph-s">Your Studio logo and colours across Client portals.</p>
+        </div>
+        <StudioBrandingPage />
+      </div>
+
       <div className="studio-setup-overview-grid">
-        <article className="studio-setup-settings-card">
-          <header>
-            <span className="studio-setup-settings-icon"><DsIcon name="settings" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">Studio profile</h2>
-              <p className="paragraph-s">The Studio identity shown to your team and Clients.</p>
-            </div>
-          </header>
-          <dl className="studio-setup-settings-list">
-            <div><dt>Studio name</dt><dd>{studio.details.name}</dd></div>
-            <div><dt>Description</dt><dd>{studio.details.description || "Not added"}</dd></div>
-            <div><dt>Website</dt><dd>{studio.details.website || "Not added"}</dd></div>
-            <div><dt>Studio type</dt><dd>{studio.details.studioType}</dd></div>
-          </dl>
-          <footer>
-            <Button size="S" variant="secondary" onClick={rewriteDescription}>
-              <span className="studio-settings-button-content"><DsIcon name="sparkle" size={16} /> Rewrite with AI</span>
-            </Button>
-            <Link className="client-secondary-button label-s-semibold" href="/settings/studio/details">Edit</Link>
-          </footer>
-        </article>
-
-        <article className="studio-setup-settings-card">
-          <header>
-            <span className="studio-setup-settings-icon"><DsIcon name="square-logo" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">Branding</h2>
-              <p className="paragraph-s">Used globally across this Studio&apos;s Client portals.</p>
-            </div>
-          </header>
-          <div className="studio-setup-brand-summary">
-            <span className="studio-setup-logo-summary">
-              {studio.branding.logoPreviewUrl ? <img src={studio.branding.logoPreviewUrl} alt="" /> : <DsIcon name="image-square" size={18} />}
-            </span>
-            <div className="studio-setup-palette" aria-label="Studio colour palette">
-              {brandColours.map((colour, index) => (
-                <span className="studio-setup-colour" key={`${colour.hex}-${index}`}>
-                  <i style={{ background: colour.hex }} />
-                  <span className="label-xs">{colour.hex}{colour.role === "primary" ? " - Primary" : ""}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-          <footer><span /><Link className="client-secondary-button label-s-semibold" href="/settings/studio/branding">Edit</Link></footer>
-        </article>
-
-        <article className="studio-setup-settings-card">
+        <article className="studio-setup-settings-card" id="services">
           <header>
             <span className="studio-setup-settings-icon"><DsIcon name="video-camera-ds" size={18} /></span>
             <div>
@@ -151,7 +126,7 @@ export function StudioSetupOverviewPage() {
           <footer><span /><Button size="S" variant="secondary" disabled={!serviceDraft} onClick={() => setIsEditingServices(true)}>Edit</Button></footer>
         </article>
 
-        <article className="studio-setup-settings-card">
+        <article className="studio-setup-settings-card" id="client-experience">
           <header>
             <span className="studio-setup-settings-icon"><DsIcon name="clipboard-text" size={18} /></span>
             <div>
@@ -162,7 +137,7 @@ export function StudioSetupOverviewPage() {
           <div className="studio-setup-client-defaults">
             <strong className="label-m-semibold">{template?.name ?? "Default Client Brief"}</strong>
             <ul className="label-xs">
-              {briefSections.map((section) => <li key={section}>{section}</li>)}
+              {briefQuestions.map((question) => <li key={question}>{question}</li>)}
             </ul>
             <p className="paragraph-s">
               Portal queue {studio.production.clientPortal.showProjectQueue ? "shown" : "hidden"}. Existing project Briefs will not change.

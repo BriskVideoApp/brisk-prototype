@@ -6,9 +6,11 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import {
   addMinutes,
+  applyShootStudioIdentity,
   callSheetStorageKey,
   formatShootDate,
   formatTime,
@@ -101,13 +103,14 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   renderRunOfDay?: (day: ShootDay, controls: CallSheetSectionControls) => ReactNode;
 }) {
   const { selectedRole } = usePrototypeRole();
+  const studioName = useStudioCompanyName();
   const searchParams = useSearchParams();
   const isEmptyPreview = searchParams.get("preview") === "empty";
   const requestedDayId = searchParams.get("day");
   const printAllDays = searchParams.get("all") === "1";
-  const [callSheet, setCallSheet] = useState(() => normaliseShootArchitecture(embeddedCallSheet ?? getInitialCallSheet(project)));
+  const [callSheet, setCallSheet] = useState(() => applyShootStudioIdentity(normaliseShootArchitecture(embeddedCallSheet ?? getInitialCallSheet(project, studioName)), studioName));
   const [selectedDayId, setSelectedDayId] = useState(() => {
-    const initialCallSheet = embeddedCallSheet ?? getInitialCallSheet(project);
+    const initialCallSheet = embeddedCallSheet ?? getInitialCallSheet(project, studioName);
     return initialCallSheet.days.some((day) => day.id === requestedDayId)
       ? requestedDayId ?? "day-1"
       : initialCallSheet.days[0]?.id ?? "day-1";
@@ -130,7 +133,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
   useEffect(() => {
     if (embedded) {
       if (embeddedCallSheet) {
-        const next = normaliseShootArchitecture(embeddedCallSheet);
+        const next = applyShootStudioIdentity(normaliseShootArchitecture(embeddedCallSheet), studioName);
         setCallSheet(next);
         setSelectedDayId((current) => next.days.some((day) => day.id === current)
           ? current
@@ -143,7 +146,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
       try {
         const stored = window.localStorage.getItem(callSheetStorageKey(project.id));
         if (stored) {
-          const next = normaliseShootArchitecture(JSON.parse(stored) as CallSheet);
+          const next = applyShootStudioIdentity(normaliseShootArchitecture(JSON.parse(stored) as CallSheet), studioName);
           if (next.notice.trim() && !next.visibleOptionalSections.includes("notice")) {
             next.visibleOptionalSections = ["notice", ...next.visibleOptionalSections];
           }
@@ -165,7 +168,7 @@ export function SharedCallSheetPage({ project, previewMode, printMode, viewerId,
     loadStoredCallSheet();
     window.addEventListener("storage", loadStoredCallSheet);
     return () => window.removeEventListener("storage", loadStoredCallSheet);
-  }, [embedded, embeddedCallSheet, project.id, requestedDayId]);
+  }, [embedded, embeddedCallSheet, project.id, requestedDayId, studioName]);
 
   useEffect(() => {
     if (!printMode || !hasLoaded) return;

@@ -102,6 +102,8 @@
 }
 
 .customer-dashboard-main {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   flex: 1 1 auto;
 }
@@ -117,6 +119,23 @@
   display: grid;
   min-width: 0;
   gap: var(--brisk-space-s);
+}
+
+.customer-dashboard-portal-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.customer-dashboard-portal-brand strong {
+  color: var(--brisk-text-primary);
+}
+
+.customer-dashboard-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--brisk-border-primary);
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-m) var(--brisk-space-2xl);
 }
 
 .customer-dashboard-title-row {

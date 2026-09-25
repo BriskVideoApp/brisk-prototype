@@ -140,6 +140,16 @@
   padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
+.project-stage-client-identity {
+  gap: var(--brisk-space-xs);
+}
+
+.project-stage-client-identity img {
+  width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  object-fit: contain;
+}
+
 .project-stage-identity-divider {
   flex: 0 0 auto;
   color: var(--brisk-text-secondary);
@@ -298,9 +308,13 @@ a.project-stage-chip:focus-visible {
 .project-stage-media-step .project-stage-icon-surface {
   border-color: var(--brisk-border-primary);
   border-style: solid;
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-brand-primary-click);
   opacity: 1;
+}
+
+.project-stage-media-step .quick-action-badge {
+  animation: none;
 }
 
 .project-stage-media-step .project-stage-chip::before {

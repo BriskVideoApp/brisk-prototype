@@ -275,12 +275,28 @@
   grid-template-columns: 240px minmax(0, 1fr) 360px;
 }
 
-.media-workspace.has-client-folder-rail {
+.media-workspace.has-project-folder-rail {
   grid-template-columns: 240px 240px minmax(0, 1fr);
 }
 
-.media-workspace.has-client-folder-rail.inspector-open {
+.media-workspace.has-project-folder-rail.inspector-open {
   grid-template-columns: 240px 240px minmax(0, 1fr) 360px;
+}
+
+.media-workspace.has-client-rail {
+  grid-template-columns: 180px 220px minmax(0, 1fr);
+}
+
+.media-workspace.has-client-rail.has-project-folder-rail {
+  grid-template-columns: 180px 220px 220px minmax(0, 1fr);
+}
+
+.media-workspace.has-client-rail.inspector-open {
+  grid-template-columns: 180px 220px minmax(0, 1fr) 360px;
+}
+
+.media-workspace.has-client-rail.has-project-folder-rail.inspector-open {
+  grid-template-columns: 180px 220px 220px minmax(0, 1fr) 360px;
 }
 
 .media-workspace.is-client-scoped {
@@ -2318,8 +2334,16 @@ button.media-timecode:hover {
     grid-template-columns: 56px minmax(0, 1fr);
   }
 
-  .media-workspace.has-client-folder-rail.inspector-open {
+  .media-workspace.has-project-folder-rail.inspector-open {
     grid-template-columns: 240px 240px minmax(0, 1fr);
+  }
+
+  .media-workspace.has-client-rail.inspector-open {
+    grid-template-columns: 180px 220px minmax(0, 1fr);
+  }
+
+  .media-workspace.has-client-rail.has-project-folder-rail.inspector-open {
+    grid-template-columns: 180px 220px 220px minmax(0, 1fr);
   }
 
   .media-workspace.is-client-scoped.inspector-open {
@@ -2352,6 +2376,10 @@ button.media-timecode:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .media-mobile-location.has-client-picker {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  }
+
   .media-mobile-location label {
     display: grid;
     min-width: var(--brisk-space-none);
@@ -2372,7 +2400,13 @@ button.media-timecode:hover {
   .media-workspace,
   .media-workspace.rail-collapsed,
   .media-workspace.inspector-open,
-  .media-workspace.rail-collapsed.inspector-open {
+  .media-workspace.rail-collapsed.inspector-open,
+  .media-workspace.has-project-folder-rail,
+  .media-workspace.has-project-folder-rail.inspector-open,
+  .media-workspace.has-client-rail,
+  .media-workspace.has-client-rail.inspector-open,
+  .media-workspace.has-client-rail.has-project-folder-rail,
+  .media-workspace.has-client-rail.has-project-folder-rail.inspector-open {
     grid-template-columns: minmax(0, 1fr);
   }
 

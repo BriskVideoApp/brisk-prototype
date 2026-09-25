@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   cloneCustomerMessageTemplateCopy,
@@ -18,9 +19,8 @@ import {
 } from "@/data/notification-templates";
 
 type TemplateOverrides = Partial<Record<CustomerMessageTemplateId, CustomerMessageTemplateCopy>>;
-const studioName = "North Star Films";
-
 export function CustomerMessageTemplatesPage() {
+  const studioName = useStudioCompanyName();
   const searchParams = useSearchParams();
   const requestedTemplateId = searchParams.get("message");
   const [selectedTemplateId, setSelectedTemplateId] = useState<CustomerMessageTemplateId>("edit-review");
@@ -120,7 +120,7 @@ export function CustomerMessageTemplatesPage() {
           </header>
 
           <div className="customer-message-template-detail-content">
-            <CustomerMessageEmailPreview copy={copy} templateDefinition={templateDefinition} />
+            <CustomerMessageEmailPreview copy={copy} studioName={studioName} templateDefinition={templateDefinition} />
           </div>
 
           <footer className="customer-message-template-actions">
@@ -147,14 +147,16 @@ export function CustomerMessageTemplatesPage() {
 
 function CustomerMessageEmailPreview({
   copy,
+  studioName,
   templateDefinition,
 }: {
   copy: CustomerMessageTemplateCopy;
+  studioName: string;
   templateDefinition: CustomerMessageTemplateDefinition;
 }) {
   const firstName = templateDefinition.recipient.split(" ")[0];
-  const resolvedSignOff = resolveCustomerMessageText(copy.signOff, templateDefinition);
-  const subject = getPreviewSubject(copy.subject, templateDefinition);
+  const resolvedSignOff = resolveCustomerMessageText(copy.signOff, templateDefinition, studioName);
+  const subject = getPreviewSubject(copy.subject, templateDefinition, studioName);
   const includesStudioName = resolvedSignOff.includes(studioName);
 
   return (
@@ -166,8 +168,8 @@ function CustomerMessageEmailPreview({
       </header>
       <div className="customer-message-email-body">
         <p className="paragraph-s">Hi {firstName},</p>
-        <p className="paragraph-s">{resolveCustomerMessageText(copy.context, templateDefinition)}</p>
-        <p className="paragraph-s"><strong>{resolveCustomerMessageText(templateDefinition.fixedFact, templateDefinition)}</strong></p>
+        <p className="paragraph-s">{resolveCustomerMessageText(copy.context, templateDefinition, studioName)}</p>
+        <p className="paragraph-s"><strong>{resolveCustomerMessageText(templateDefinition.fixedFact, templateDefinition, studioName)}</strong></p>
         <span className="customer-message-preview-cta label-s-semibold">{templateDefinition.ctaLabel}</span>
         {resolvedSignOff ? (
           <div className="customer-message-email-signoff">
@@ -225,8 +227,8 @@ function MessageEditorModal({
   );
 }
 
-function getPreviewSubject(subject: string, templateDefinition: CustomerMessageTemplateDefinition) {
-  if (subject.includes("{{")) return resolveCustomerMessageText(subject, templateDefinition);
+function getPreviewSubject(subject: string, templateDefinition: CustomerMessageTemplateDefinition, studioName: string) {
+  if (subject.includes("{{")) return resolveCustomerMessageText(subject, templateDefinition, studioName);
   return `${templateDefinition.projectCode} - ${templateDefinition.projectName}: ${subject}`;
 }
 

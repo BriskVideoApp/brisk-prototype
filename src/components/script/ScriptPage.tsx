@@ -193,7 +193,17 @@ export function ScriptPage({
   const { createStoryboard } = useStoryboard();
   const scriptStageStatus = getProjectStages(project).script;
   const hasStoryboardStage = getProjectFlow(project).stages.includes("storyboard");
-  const startingVersions = initialVersions.length > 0 ? initialVersions : scriptVersions;
+  const startingVersions = initiallyEmpty
+    ? [{
+        id: `${project.id}-script-v1`,
+        label: "V1",
+        snapshotName: "First draft",
+        approvedSnapshot: false,
+        createdBy: "Studio" as const,
+        createdAt: project.latestUpdate.timestamp,
+        rows: [],
+      }]
+    : initialVersions.length > 0 ? initialVersions : scriptVersions;
   const latestVersion = startingVersions[startingVersions.length - 1];
   const initialSelectedVersion = startingVersions.find((version) => version.id === initialVersionId) ?? latestVersion;
   const role: ScriptRole = selectedRole === "Customer" ? "customer" : "studio";
@@ -1975,7 +1985,7 @@ export function ScriptPage({
         waitingOnCompany={scriptStageStatus.assignedTo}
         shareUrl={`/projects/${project.id}/script?version=${encodeURIComponent(dropdownVersion.id)}`}
         copyLinkIconOnly
-        copyLinkLabel="Share Script"
+        copyLinkLabel="Copy link"
         sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review the ${getVersionShortLabel(dropdownVersion)} Script`}
         approveLabel={`Approve ${getVersionShortLabel(dropdownVersion)} Script`}
         approveDisabled={selectedRole === "Studio Freelancer"}

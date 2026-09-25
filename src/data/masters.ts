@@ -1,4 +1,5 @@
 import type { CommentReply, Reaction } from "@/components/video-review/types";
+import type { BriefFields } from "@/data/brief";
 
 export type MastersRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 
@@ -54,6 +55,7 @@ export type MastersVersion = {
   fileSize: string;
   durationSeconds: number;
   shadePath: string;
+  prototypeSample?: boolean;
 };
 
 export type MastersComment = {
@@ -314,19 +316,108 @@ export const initialMastersDeliverables: MastersDeliverable[] = [
   },
 ];
 
-export function createMastersSlotsFromApprovedBrief(): MastersDeliverable[] {
-  return structuredClone(initialMastersDeliverables).map((deliverable) => ({
-    ...deliverable,
-    status: "not_started",
-    versions: [],
-    currentVersionId: undefined,
-    comments: [],
-    unreadCommentCount: 0,
-    srt: undefined,
-    thumbnail: undefined,
-    recutBrief: undefined,
-    recutSourceUpload: undefined,
-  }));
+export function createMastersSlotsFromBrief(fields?: BriefFields): MastersDeliverable[] {
+  if (!fields?.deliverables.value.trim()) return [];
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(fields.deliverables.value);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  return parsed.filter(isBriefDeliverable).map((row, index) => {
+    const captions = (row.captionOptions ?? []).filter(isDeliverableCaption);
+    const duration = normaliseBriefDuration(row);
+    return {
+      id: `masters-${fields.workingTitle.value.trim() || "project"}-${row.id ?? index}`,
+      briefDeliverableId: row.id ?? `brief-deliverable-${index + 1}`,
+      name: row.name.trim() || (row.isMain ? fields.workingTitle.value.trim() : "") || `Version ${index + 1}`,
+      platform: normaliseBriefPlatform(row.platform),
+      format: normaliseBriefFormat(row.format, row.customFormat),
+      duration,
+      captions: captions.length > 0 ? captions : row.captions ? ["Baked in captions"] : ["None"],
+      deadline: row.deadline || fields.deadline.value || undefined,
+      status: "not_started",
+      versions: [],
+      comments: [],
+      unreadCommentCount: 0,
+      addedBy: "filmmaker",
+      kind: "video",
+    };
+  });
+}
+
+type BriefDeliverableRow = {
+  id?: string;
+  name: string;
+  platform: string;
+  format: string;
+  customFormat: string;
+  duration: string;
+  customMinutes: string;
+  customSeconds: string;
+  captions: boolean;
+  captionOptions?: string[];
+  deadline?: string;
+  isMain: boolean;
+};
+
+function isBriefDeliverable(value: unknown): value is BriefDeliverableRow {
+  if (!value || typeof value !== "object") return false;
+  const row = value as Partial<BriefDeliverableRow>;
+  return typeof row.name === "string"
+    && typeof row.platform === "string"
+    && typeof row.format === "string"
+    && typeof row.customFormat === "string"
+    && typeof row.duration === "string"
+    && typeof row.customMinutes === "string"
+    && typeof row.customSeconds === "string"
+    && typeof row.captions === "boolean"
+    && typeof row.isMain === "boolean";
+}
+
+function isDeliverableCaption(value: string): value is DeliverableCaption {
+  return value === "SRT file" || value === "Baked in captions" || value === "None";
+}
+
+function normaliseBriefPlatform(platform: string): DeliverablePlatform {
+  const value = platform.toLocaleLowerCase("en-AU");
+  if (value.includes("youtube")) return "YouTube (Main)";
+  if (value.includes("instagram")) return "Instagram";
+  if (value.includes("tiktok")) return "TikTok";
+  if (value.includes("linkedin")) return "LinkedIn";
+  if (value.includes("facebook")) return "Facebook";
+  if (value.includes("vimeo")) return "Vimeo";
+  if (value.includes("website")) return "Website";
+  return "Other";
+}
+
+function normaliseBriefFormat(format: string, customFormat: string): DeliverableFormat {
+  if (format === "Custom") return customFormat.trim() || "Custom";
+  const value = format.toLocaleLowerCase("en-AU");
+  if (value.includes("vertical")) return "9:16";
+  if (value.includes("square")) return "1:1";
+  if (value.includes("landscape")) return "16:9";
+  return format;
+}
+
+function normaliseBriefDuration(row: BriefDeliverableRow) {
+  if (row.duration === "Custom") {
+    const minutes = Number.parseInt(row.customMinutes, 10) || 0;
+    const seconds = Number.parseInt(row.customSeconds, 10) || 0;
+    if (minutes && seconds) return `${minutes} min ${seconds} secs`;
+    if (minutes) return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
+    return `${seconds || 30} secs`;
+  }
+  const duration = row.duration.trim();
+  if (/^\d+(?:\.\d+)?m$/i.test(duration)) {
+    const minutes = Number.parseFloat(duration);
+    return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
+  }
+  if (/^\d+(?:\.\d+)?s$/i.test(duration)) return `${Number.parseFloat(duration)} secs`;
+  return duration || "30 secs";
 }
 
 export const mastersPlatformOptions: DeliverablePlatform[] = [

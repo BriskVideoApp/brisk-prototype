@@ -282,7 +282,7 @@
 .share-confirm-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 1000;
   display: grid;
   place-items: center;
   background: var(--brisk-overlay-dark);
@@ -290,6 +290,7 @@
 }
 
 .share-confirm-dialog {
+  box-sizing: border-box;
   display: grid;
   width: min(440px, calc(100vw - 32px));
   max-height: calc(100dvh - (var(--brisk-space-2xl) * 2));

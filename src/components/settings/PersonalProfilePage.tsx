@@ -6,6 +6,7 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import {
   PersonalSettingsAccessBoundary,
@@ -41,6 +42,7 @@ const availabilityOptions: ReadonlyArray<{ value: PersonAvailability; label: str
 
 export function PersonalProfilePage() {
   const { selectedRole } = usePrototypeRole();
+  const studioName = useStudioCompanyName();
   const { account, access, saveProfile } = useClientAccountSettings();
   const { people, updatePersonIdentity } = usePeople();
   const customer = people.find((person) => person.id === prototypeCustomerPersonId) ?? null;
@@ -68,7 +70,7 @@ export function PersonalProfilePage() {
             <PersonalProfileForm
               personType="Team"
               showClientMembership={false}
-              studioName="North Star Films"
+              studioName={studioName}
               value={profileFromPerson(studioMember)}
               onSave={(profile) => updatePersonIdentity(studioMember.id, {
                 name: profile.fullName,
@@ -77,14 +79,14 @@ export function PersonalProfilePage() {
                 timezone: profile.timezone,
               })}
             />
-            <TeamMemberWorkDetailsCard person={studioMember} onSave={(update) => updatePersonIdentity(studioMember.id, update)} />
+            <TeamMemberWorkDetailsCard person={studioMember} studioName={studioName} onSave={(update) => updatePersonIdentity(studioMember.id, update)} />
           </>
         ) : selectedRole === "Studio Freelancer" && freelancer ? (
           <>
             <PersonalProfileForm
               personType="Freelancer"
               showClientMembership={false}
-              studioName="North Star Films"
+              studioName={studioName}
               value={profileFromPerson(freelancer)}
               onSave={(profile) => updatePersonIdentity(freelancer.id, {
                 name: profile.fullName,
@@ -100,7 +102,7 @@ export function PersonalProfilePage() {
             <PersonalProfileForm
               companyName={account.company.name}
               roleLabel={access.role}
-              studioName="North Star Films"
+              studioName={studioName}
               value={profileFromPerson(customer)}
               onSave={(profile) => updatePersonIdentity(customer.id, {
                 name: profile.fullName,
@@ -109,13 +111,13 @@ export function PersonalProfilePage() {
                 timezone: profile.timezone,
               })}
             />
-            <ClientContactWorkDetailsCard person={customer} onSave={(update) => updatePersonIdentity(customer.id, update)} />
+            <ClientContactWorkDetailsCard person={customer} studioName={studioName} onSave={(update) => updatePersonIdentity(customer.id, update)} />
           </>
         ) : (
           <PersonalProfileForm
             companyName={account.company.name}
             roleLabel={access.role}
-            studioName="North Star Films"
+            studioName={studioName}
             value={account.profile}
             onSave={saveProfile}
           />
@@ -283,9 +285,11 @@ export function PersonalProfileForm({
 function TeamMemberWorkDetailsCard({
   onSave,
   person,
+  studioName,
 }: {
   onSave: (update: PersonProfileUpdate) => void;
   person: Person;
+  studioName: string;
 }) {
   const savedDetails = useMemo(() => ({
     primaryRole: person.jobTitles[0] ?? "",
@@ -413,9 +417,11 @@ function TeamMemberWorkDetailsCard({
 function ClientContactWorkDetailsCard({
   onSave,
   person,
+  studioName,
 }: {
   onSave: (update: PersonProfileUpdate) => void;
   person: Person;
+  studioName: string;
 }) {
   const savedDetails = useMemo(() => ({
     jobTitle: person.jobTitles[0] ?? "",
@@ -449,7 +455,7 @@ function ClientContactWorkDetailsCard({
           <span><DsIcon name="users-three" size={20} /></span>
           <div>
             <h2 className="headings-xs-bold" id="client-work-details-heading">Work details</h2>
-            <p className="paragraph-s">Keep the details North Star Films uses when working with you up to date.</p>
+            <p className="paragraph-s">Keep the details {studioName} uses when working with you up to date.</p>
           </div>
         </header>
 
@@ -468,7 +474,7 @@ function ClientContactWorkDetailsCard({
 
         <div className="account-settings-info-block">
           <DsIcon name="info" size={18} />
-          <p className="paragraph-s">Your Client role and project access are managed separately by your Client Admin and North Star Films.</p>
+          <p className="paragraph-s">Your Client role and project access are managed separately by your Client Admin and {studioName}.</p>
         </div>
 
         <div className="account-settings-form-actions">

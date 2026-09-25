@@ -1922,7 +1922,6 @@
 
 .studio-onboarding-step-actions,
 .studio-onboarding-skip-confirmation > div,
-.studio-onboarding-brief-choice-actions,
 .studio-first-client-ready-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2010,36 +2009,17 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.studio-onboarding-skip-confirmation,
-.studio-onboarding-brief-choice,
-.studio-onboarding-brief-choice > div:first-child {
+.studio-onboarding-skip-confirmation {
   display: grid;
   gap: var(--brisk-space-s);
 }
 
-.studio-onboarding-skip-confirmation p,
-.studio-onboarding-brief-choice h2,
-.studio-onboarding-brief-choice p {
+.studio-onboarding-skip-confirmation p {
   margin: var(--brisk-space-none);
 }
 
-.studio-onboarding-skip-confirmation p,
-.studio-onboarding-brief-choice p {
+.studio-onboarding-skip-confirmation p {
   color: var(--brisk-text-secondary);
-}
-
-.studio-onboarding-brief-choice {
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-m);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-s);
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-xl);
-}
-
-.studio-onboarding-brief-choice-actions {
-  align-items: center;
-  justify-content: flex-start;
 }
 
 .studio-onboarding-toast {
@@ -2073,9 +2053,6 @@
 .studio-first-project-section h2,
 .studio-first-project-section p,
 .studio-first-project-preview-copy h2,
-.studio-first-project-portal-heading h1,
-.studio-first-project-portal-title h2,
-.studio-first-project-portal-title p,
 .studio-onboarding-complete h1,
 .studio-onboarding-complete p {
   margin: var(--brisk-space-none);
@@ -2083,7 +2060,6 @@
 
 .studio-first-project-heading p,
 .studio-first-project-summary p,
-.studio-first-project-portal-title p,
 .studio-onboarding-complete p {
   color: var(--brisk-text-secondary);
 }
@@ -2116,23 +2092,18 @@
 .studio-first-project-actions,
 .studio-first-project-actions > div,
 .studio-first-project-preview-card > header,
-.studio-first-project-portal-header,
-.studio-first-project-portal-title,
-.studio-first-project-portal-actions,
 .studio-onboarding-complete-actions {
   display: flex;
   align-items: center;
 }
 
 .studio-first-project-section-heading,
-.studio-first-project-actions,
-.studio-first-project-portal-title {
+.studio-first-project-actions {
   justify-content: space-between;
 }
 
 .studio-first-project-section-heading > div,
 .studio-first-project-preview-card > header > div,
-.studio-first-project-portal-header > div,
 .studio-onboarding-complete > div {
   display: grid;
   gap: var(--brisk-space-xs);
@@ -2167,8 +2138,7 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.studio-first-project-preview-card > header,
-.studio-first-project-portal-header {
+.studio-first-project-preview-card > header {
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-m);
 }
@@ -2187,8 +2157,7 @@
 }
 
 .studio-first-project-stage,
-.studio-first-project-selection,
-.studio-first-project-customer {
+.studio-first-project-selection {
   display: inline-flex;
   width: fit-content;
   align-items: center;
@@ -2202,8 +2171,7 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.studio-first-project-preview-card .studio-first-project-stage,
-.studio-first-project-portal .studio-first-project-stage {
+.studio-first-project-preview-card .studio-first-project-stage {
   background: var(--studio-client-accent-soft);
   color: var(--studio-client-accent-ink);
 }
@@ -2271,124 +2239,10 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.studio-first-project-team-message {
-  margin: var(--brisk-space-none);
-  color: var(--brisk-text-secondary);
-}
-
-.studio-first-project-portal-screen {
-  display: grid;
-  width: min(100%, calc(var(--brisk-space-3xl) * 24));
-  flex: 1;
-  align-content: start;
-  gap: var(--brisk-space-xl);
-  margin: 0 auto;
-  overflow-y: auto;
-  padding: var(--brisk-space-3xl) var(--brisk-space-2xl) calc(var(--brisk-space-3xl) * 2);
-}
-
-.studio-first-project-portal-heading {
-  display: grid;
-  justify-items: center;
-  gap: var(--brisk-space-s);
-  text-align: center;
-}
-
-.studio-first-project-portal-heading > span {
-  display: inline-flex;
-  align-items: center;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-}
-
-.studio-first-project-portal {
-  overflow: hidden;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-m);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.studio-first-project-portal-header {
-  border-bottom: 1px solid var(--brisk-gray-20);
-}
-
-.studio-first-project-portal-content {
-  display: grid;
-  gap: var(--brisk-space-xl);
-  padding: var(--brisk-space-2xl);
-}
-
-.studio-first-project-customer {
-  background: var(--studio-client-accent-soft);
-  color: var(--studio-client-accent-ink);
-}
-
-.studio-first-project-portal-title {
-  align-items: flex-start;
-  gap: var(--brisk-space-xl);
-}
-
-.studio-first-project-portal-title > div {
-  display: grid;
-  max-width: calc(var(--brisk-space-3xl) * 15);
-  gap: var(--brisk-space-s);
-}
-
-.studio-first-project-portal-card {
-  display: grid;
-  grid-template-columns: calc(var(--brisk-space-3xl) * 5) minmax(0, 1fr) auto;
-  align-items: center;
-  overflow: hidden;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  gap: var(--brisk-space-l);
-  padding: var(--brisk-space-m);
-}
-
-.studio-first-project-portal-card > img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: var(--brisk-radius-xs);
-  object-fit: cover;
-}
-
-.studio-first-project-portal-card > div {
-  display: grid;
-  gap: var(--brisk-space-xs);
-}
-
-.studio-first-project-portal-card > div > span {
-  color: var(--brisk-text-secondary);
-}
-
-.studio-first-project-client-action {
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--studio-client-accent);
-  color: var(--studio-client-accent-contrast);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-}
-
-.studio-first-project-client-action:hover,
-.studio-first-project-client-action:focus-visible {
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.studio-first-project-client-action:active {
-  box-shadow: none;
-}
-
-.studio-first-project-portal-actions,
 .studio-onboarding-complete-actions {
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--brisk-space-s);
-}
-
-.studio-first-project-portal-screen > .studio-first-project-team-message {
-  text-align: center;
 }
 
 .studio-onboarding-complete {
@@ -2935,8 +2789,7 @@
     padding-left: var(--brisk-space-l);
   }
 
-  .studio-first-project,
-  .studio-first-project-portal-screen {
+  .studio-first-project {
     padding-right: var(--brisk-space-l);
     padding-left: var(--brisk-space-l);
   }
@@ -2948,7 +2801,6 @@
 
   .studio-onboarding-step-actions,
   .studio-onboarding-skip-confirmation > div,
-  .studio-onboarding-brief-choice-actions,
   .studio-first-client-ready-actions {
     align-items: stretch;
     flex-direction: column;
@@ -2984,18 +2836,9 @@
     justify-self: center;
   }
 
-  .studio-first-project-actions,
-  .studio-first-project-portal-title {
+  .studio-first-project-actions {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .studio-first-project-portal-card {
-    grid-template-columns: 1fr;
-  }
-
-  .studio-first-project-portal-card > img {
-    max-width: calc(var(--brisk-space-3xl) * 10);
   }
 
   .studio-follow-up-video-grid {

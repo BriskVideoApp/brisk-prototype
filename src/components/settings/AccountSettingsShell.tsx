@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { getRoleHome } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import {
   useClientAccountSettings,
   type ClientAccountAccess,
@@ -140,6 +141,7 @@ export function ClientSettingsAccessBoundary({
 }) {
   const { selectedRole } = usePrototypeRole();
   const { access, buildHref } = useClientAccountSettings();
+  const studioName = useStudioCompanyName();
 
   if (selectedRole !== "Customer") {
     return (
@@ -164,7 +166,7 @@ export function ClientSettingsAccessBoundary({
   }
 
   if (requireBilling && !access.canAccessBilling) {
-    const unavailableBillingCopy = getUnavailableBillingCopy(access.billingAvailability);
+    const unavailableBillingCopy = getUnavailableBillingCopy(access.billingAvailability, studioName);
     return (
       <AccountSettingsPermissionState
         description={unavailableBillingCopy.description}
@@ -180,11 +182,11 @@ export function ClientSettingsAccessBoundary({
   return children;
 }
 
-function getUnavailableBillingCopy(availability: ClientAccountAccess["billingAvailability"]) {
+function getUnavailableBillingCopy(availability: ClientAccountAccess["billingAvailability"], studioName: string) {
   if (availability === "managed-externally") {
     return {
       title: "Billing is managed outside Brisk",
-      description: "North Star Films will send invoices and payment instructions through its chosen billing system.",
+      description: `${studioName} will send invoices and payment instructions through its chosen billing system.`,
       eyebrow: "Client billing",
       icon: "file-text" as const satisfies DsIconName,
     };
@@ -192,7 +194,7 @@ function getUnavailableBillingCopy(availability: ClientAccountAccess["billingAva
   if (availability === "setup-required") {
     return {
       title: "Online payments are unavailable",
-      description: "North Star Films is updating its payment setup. Contact your producer if you need help with an invoice.",
+      description: `${studioName} is updating its payment setup. Contact your producer if you need help with an invoice.`,
       eyebrow: "Payment setup",
       icon: "info" as const satisfies DsIconName,
     };

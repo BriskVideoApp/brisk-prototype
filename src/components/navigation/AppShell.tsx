@@ -29,6 +29,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isStudioStaff = selectedRole === "Studio Staff";
   const isStudioUser = selectedRole !== "Customer";
   const videosHref = selectedRole === "Customer" ? clientPortalHref ?? "/prototype/scenarios" : "/active-videos";
+  const isClientJourneyEntry = pathname === "/prototype/journey-entry" && activeScenario?.entry === "client-magic-link";
 
   useEffect(() => {
     if (pathname === "/customer-dashboard") return;
@@ -46,7 +47,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", closeWithEscape);
   }, [isGlobalChatOpen]);
 
-  if (presentation === "standalone") {
+  if (presentation === "standalone" || isClientJourneyEntry) {
     return children;
   }
 
@@ -67,14 +68,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             <header className="app-global-header">
               <div className="app-account-header">
                 <div className="app-account-header-leading">
-                  <Link
+                  {isStudioUser ? <Link
                     className="app-account-brisk-brand"
                     href={videosHref}
                     aria-label="Videos"
                     data-tooltip="Videos"
                   >
                     <Image src="/assets/logos/brisk.svg" alt="" width={24} height={16} priority />
-                  </Link>
+                  </Link> : null}
                   <StudioHeaderBrand selectedRole={selectedRole} studioName={studio.details.name} logoPreviewUrl={studio.branding.logoPreviewUrl} />
                 </div>
                 <div className="app-account-header-trailing">
@@ -154,6 +155,7 @@ function StudioHeaderBrand({
       {logoPreviewUrl ? <img src={logoPreviewUrl} alt="" /> : <span className="label-s-semibold">{initials}</span>}
     </span>
     <strong className="label-m-semibold">{studioName}</strong>
+    {selectedRole !== "Customer" ? <DsIcon name="caret-down" size={14} /> : null}
   </>;
 
   if (selectedRole === "Studio Staff") {

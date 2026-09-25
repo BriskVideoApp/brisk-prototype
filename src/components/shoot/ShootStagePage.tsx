@@ -50,6 +50,7 @@ import { selectProjectBrief } from "@/data/prototype-state";
 import { scriptUsers, type ScriptComment, type ScriptCommentAnchor } from "@/data/script";
 import {
   addMinutes,
+  applyShootStudioIdentity,
   callSheetStorageKey,
   ensureShotNumbers,
   existingPeople,
@@ -354,8 +355,8 @@ export function ShootStagePage({ project }: { project: Project }) {
     || (shootStageIndex >= 0 && scriptStageIndex >= 0 && shootStageIndex < scriptStageIndex);
   const studioCompanyName = useStudioCompanyName();
   const { createPerson, people: directoryPeople, updatePersonIdentity } = usePeople();
-  const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project))));
-  const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project).days[0]?.id ?? "day-1");
+  const [callSheet, setCallSheet] = useState<CallSheet>(() => normaliseSimpleShootCallSheet(ensureShotNumbers(getInitialCallSheet(project, studioCompanyName))));
+  const [selectedDayId, setSelectedDayId] = useState(() => getInitialCallSheet(project, studioCompanyName).days[0]?.id ?? "day-1");
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("loading");
   const [toast, setToast] = useState("");
   const [toastAction, setToastAction] = useState<"add-person" | "undo-suggestion" | null>(null);
@@ -390,9 +391,9 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [questionPersonFilter, setQuestionPersonFilter] = useState("all");
   const [personFilter, setPersonFilter] = useState<PersonFilter>("all");
   const [scheduleView, setScheduleView] = useState<ScheduleView>("schedule");
-  const [setupState, setSetupState] = useState<ShootSetupState>(() => createInitialShootSetupState(getInitialCallSheet(project), selectedRole));
+  const [setupState, setSetupState] = useState<ShootSetupState>(() => createInitialShootSetupState(getInitialCallSheet(project, studioCompanyName), selectedRole));
   const [workflowSetup, setWorkflowSetup] = useState<ShootWorkflowSetup>(() => createInitialShootWorkflowSetup(
-    normaliseSimpleShootCallSheet(ensureShotNumbers(isEmptyPlanFixture ? getEmptyCallSheet(project) : getInitialCallSheet(project))),
+    normaliseSimpleShootCallSheet(ensureShotNumbers(isEmptyPlanFixture ? getEmptyCallSheet(project, studioCompanyName) : getInitialCallSheet(project, studioCompanyName))),
     isInterviewLed,
   ));
   const initialSetupRoleRef = useRef(selectedRole);
@@ -403,11 +404,11 @@ export function ShootStagePage({ project }: { project: Project }) {
   const [existingPlan, setExistingPlan] = useState<ExistingShootPlan | null>(null);
   const [hasStartedShootPlan, setHasStartedShootPlan] = useState(() => {
     if (isEmptyPlanFixture) return false;
-    const initialCallSheet = getInitialCallSheet(project);
+    const initialCallSheet = getInitialCallSheet(project, studioCompanyName);
     return initialCallSheet.entries.length > 0 || isCallSheetConfigured(initialCallSheet);
   });
-  const [hasCallSheet, setHasCallSheet] = useState(() => !isEmptyPlanFixture && isCallSheetConfigured(getInitialCallSheet(project)));
-  const [isShotListEnabled, setIsShotListEnabled] = useState(() => !isEmptyPlanFixture && getInitialCallSheet(project).entries.length > 0);
+  const [hasCallSheet, setHasCallSheet] = useState(() => !isEmptyPlanFixture && isCallSheetConfigured(getInitialCallSheet(project, studioCompanyName)));
+  const [isShotListEnabled, setIsShotListEnabled] = useState(() => !isEmptyPlanFixture && getInitialCallSheet(project, studioCompanyName).entries.length > 0);
   const [scheduleStatusFilter, setScheduleStatusFilter] = useState<ScheduleStatusFilter>("all");
   const [scheduleTypeFilters, setScheduleTypeFilters] = useState<ScheduleType[]>([]);
   const [scheduleLocationFilters, setScheduleLocationFilters] = useState<string[]>([]);
@@ -464,7 +465,7 @@ export function ShootStagePage({ project }: { project: Project }) {
   const filteredPeople = people.filter((person) => personFilter === "all" || person.type === personFilter);
   const directoryShootPeople = directoryPeople
     .filter((person) => person.status !== "Archived" && (person.type !== "Client contact" || person.clientId === project.clientId))
-    .map((person) => personToShootPerson(person, currentDay?.generalCallTime ?? ""));
+    .map((person) => personToShootPerson(person, currentDay?.generalCallTime ?? "", studioCompanyName));
   const availableDirectoryPeople = directoryShootPeople.filter((person) => !callSheet.people.some((existing) => isSameShootPerson(existing, person)));
   const peopleDatabase = [
     ...callSheet.people,
@@ -482,9 +483,9 @@ export function ShootStagePage({ project }: { project: Project }) {
   useEffect(() => {
     try {
       const stored = isEmptyPlanFixture ? null : window.localStorage.getItem(callSheetStorageKey(project.id));
-      let nextCallSheet = normaliseSimpleShootCallSheet(ensureShotNumbers(isEmptyPlanFixture ? getEmptyCallSheet(project) : getInitialCallSheet(project)));
+      let nextCallSheet = normaliseSimpleShootCallSheet(ensureShotNumbers(isEmptyPlanFixture ? getEmptyCallSheet(project, studioCompanyName) : getInitialCallSheet(project, studioCompanyName)));
       if (stored) {
-        const parsed = normaliseSimpleShootCallSheet(ensureShotNumbers(JSON.parse(stored) as CallSheet));
+        const parsed = applyShootStudioIdentity(normaliseSimpleShootCallSheet(ensureShotNumbers(JSON.parse(stored) as CallSheet)), studioCompanyName);
         if (parsed.notice.trim() && !parsed.visibleOptionalSections.includes("notice")) {
           parsed.visibleOptionalSections = ["notice", ...parsed.visibleOptionalSections];
         }
@@ -558,7 +559,7 @@ export function ShootStagePage({ project }: { project: Project }) {
     } finally {
       setHasLoaded(true);
     }
-  }, [isEmptyPlanFixture, isInterviewLed, project.id, requestedShootDayId]);
+  }, [isEmptyPlanFixture, isInterviewLed, project.id, requestedShootDayId, studioCompanyName]);
 
   useEffect(() => {
     if (!hasLoaded || isEmptyPlanFixture) return;
@@ -6750,7 +6751,8 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
         studioName={studioName}
         customerName={project.clientName}
         shareUrl={`/projects/${project.id}/stages/shoot`}
-        copyLinkLabel="Share"
+        copyLinkIconOnly
+        copyLinkLabel="Copy link"
         sendLabel={`Ask ${selectedRole === "Studio Freelancer" ? studioName : project.clientName} to review the Shoot`}
         approveLabel="Approve Shoot"
         approveDisabled={!canApprove}
@@ -9280,7 +9282,7 @@ function personToDraft(person: ShootPerson): PersonDraft {
   return { ...person };
 }
 
-function personToShootPerson(person: Person, callTime: string): ShootPerson {
+function personToShootPerson(person: Person, callTime: string, studioName: string): ShootPerson {
   const shootType: ShootPersonType = person.type === "Client contact" ? "client" : person.type === "Contact" ? "talent" : "crew";
   const shootRole = person.jobTitles[0] ?? (person.type === "Client contact" ? "Client representative" : person.type === "Contact" ? "Talent" : "Crew");
   return {
@@ -9288,7 +9290,7 @@ function personToShootPerson(person: Person, callTime: string): ShootPerson {
     name: person.name,
     type: shootType,
     role: shootRole,
-    company: person.clientName ?? (person.type === "Team" ? "North Star Films" : undefined),
+    company: person.clientName ?? (person.type === "Team" ? studioName : undefined),
     contactSource: person.type === "Team" ? "team-member" : "saved-contact",
     phone: person.phone,
     email: person.email,

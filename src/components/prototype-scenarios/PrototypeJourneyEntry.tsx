@@ -6,10 +6,14 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 
 export function PrototypeJourneyEntry() {
   const router = useRouter();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
+  const { studio } = useStudioSettings();
+  const { state } = usePrototypeState();
   const [name, setName] = useState("Jess Taylor");
   const [email, setEmail] = useState("jess@loom.com");
 
@@ -31,6 +35,9 @@ export function PrototypeJourneyEntry() {
   const isClient = activeScenario.entry === "client-magic-link";
   const isFreelancer = activeScenario.entry === "freelancer-invitation";
   const isTeamMember = activeScenario.entry === "studio-invitation";
+  const entryClient = activeScenario.clientId
+    ? state.clients.find((client) => client.workspaceId === activeScenario.workspaceId && client.id === activeScenario.clientId) ?? null
+    : null;
 
   if (!isClient && !isFreelancer && !isTeamMember) return null;
 
@@ -41,7 +48,15 @@ export function PrototypeJourneyEntry() {
   };
 
   return (
-    <main className="prototype-entry-page">
+    <main className={`prototype-entry-page ${isClient ? "is-client-entry" : ""}`}>
+      {isClient ? (
+        <header className="prototype-entry-brand" aria-label={`${studio.details.name} Client portal`}>
+          <span className="prototype-entry-brand-logo" aria-hidden="true">
+            {studio.branding.logoPreviewUrl ? <img src={studio.branding.logoPreviewUrl} alt="" /> : studio.details.name.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("")}
+          </span>
+          <strong className="label-m-semibold">{studio.details.name}</strong>
+        </header>
+      ) : null}
       <section className="prototype-entry-card" aria-labelledby="prototype-entry-title">
         <header>
           <span className="prototype-entry-mark" aria-hidden="true"><DsIcon name={isClient ? "link" : "users-three"} size={24} /></span>
@@ -63,16 +78,10 @@ export function PrototypeJourneyEntry() {
               : "Join the Studio workspace using the access included in this invitation."}
         </p>
 
-        <div className="prototype-entry-access">
+        {!isClient ? <div className="prototype-entry-access">
           <DsIcon name="lock" size={16} />
-          <span className="label-s">
-            {isClient
-              ? "You can only see the Loom Client workspace."
-              : isFreelancer
-                ? "Access role: Studio Freelancer"
-                : "Access role: Studio Staff"}
-          </span>
-        </div>
+          <span className="label-s">{isFreelancer ? "Access role: Studio Freelancer" : "Access role: Studio Staff"}</span>
+        </div> : null}
 
         <form onSubmit={continueJourney}>
           {isClient ? (
@@ -87,11 +96,19 @@ export function PrototypeJourneyEntry() {
             </dl>
           )}
 
+          {isClient ? <div className="prototype-entry-access prototype-entry-client-identity">
+            <span className="prototype-entry-client-mark label-xs-semibold" aria-hidden="true">
+              {entryClient?.logoUrl ? <img src={entryClient.logoUrl} alt="" /> : entryClient?.name.slice(0, 1) ?? "C"}
+            </span>
+            <span><small className="label-xs">Client workspace</small><strong className="label-s-semibold">{entryClient?.name ?? "Client"}</strong></span>
+          </div> : null}
+
           <Button type="submit" size="M" disabled={isClient && (!name.trim() || !email.trim())}>
             {isClient ? "Open Client portal" : isFreelancer ? "Accept invitation" : "Join Studio"}
           </Button>
         </form>
       </section>
+      {isClient ? <footer className="prototype-entry-footer label-xs">Powered by Brisk</footer> : null}
     </main>
   );
 }

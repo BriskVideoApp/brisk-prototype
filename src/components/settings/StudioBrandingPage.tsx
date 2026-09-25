@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { ActionMenu } from "@/components/brand-kits/AssetManagement";
+import { BrandTile, ColourSwatch } from "@/components/brand-kits/BrandKitPrimitives";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
@@ -41,10 +43,10 @@ export function StudioBrandingPage() {
     : null;
 
   useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
+    setHasUnsavedChanges(hasChanges, "branding");
   }, [hasChanges, setHasUnsavedChanges]);
 
-  useEffect(() => () => setHasUnsavedChanges(false), [setHasUnsavedChanges]);
+  useEffect(() => () => setHasUnsavedChanges(false, "branding"), [setHasUnsavedChanges]);
 
   useEffect(() => {
     if (!toast) return;
@@ -70,7 +72,7 @@ export function StudioBrandingPage() {
 
   const saveBranding = () => {
     updateBranding(draft);
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(false, "branding");
     setToast("Studio branding updated.");
   };
 
@@ -108,6 +110,7 @@ export function StudioBrandingPage() {
       ...current,
       brandColours: getStudioBrandColours(current).filter((_, index) => index !== colourIndex),
     }));
+    setEditingBrandColourIndex(null);
   };
 
   const saveColour = (hex: string) => {
@@ -121,6 +124,12 @@ export function StudioBrandingPage() {
       return { ...current, brandColours: nextColours };
     });
     setEditingBrandColourIndex(null);
+  };
+
+  const copyColours = (value: string) => {
+    void navigator.clipboard.writeText(value)
+      .then(() => setToast("HEX code copied."))
+      .catch(() => setToast("Could not copy HEX code."));
   };
 
   return (
@@ -157,31 +166,47 @@ export function StudioBrandingPage() {
               </div>
             </div>
 
-            <div className="studio-branding-field studio-branding-palette-field">
-              <div>
-                <h3 className="headings-2xs-bold">Brand colours</h3>
-                <p className="paragraph-s">The primary colour is used for portal buttons and active states. Text contrast is selected automatically.</p>
-              </div>
-              <div className="studio-branding-palette-list">
-                {brandColours.map((colour, index) => (
-                  <div className="studio-branding-palette-row" key={`${colour.hex}-${index}`}>
-                    <span className="studio-branding-palette-swatch" style={{ backgroundColor: colour.hex }} aria-hidden="true" />
-                    <strong className="label-s-semibold">{colour.hex}</strong>
-                    {colour.role === "primary" ? <span className="studio-branding-primary-badge label-xs-semibold">Primary</span> : (
-                      <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => setPrimaryColour(index)}>Set as primary</button>
-                    )}
-                    <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => setEditingBrandColourIndex(index)}>Edit</button>
-                    {brandColours.length > 1 ? (
-                      <button className="studio-review-text-button label-xs-semibold" type="button" onClick={() => removeColour(index)}>Remove</button>
-                    ) : null}
+            <div className="studio-branding-palette-field">
+              <BrandTile
+                className="brand-colours-tile studio-branding-colours-tile"
+                title="Colours"
+                action={(
+                  <div className="brand-tile-actions">
+                    <Button size="S" variant="secondary" onClick={() => setEditingBrandColourIndex("new")}>+ Add colour</Button>
+                    <ActionMenu
+                      label="Colour actions"
+                      items={[{
+                        label: "Copy all HEX codes",
+                        icon: "copy",
+                        onSelect: () => copyColours(brandColours.map((colour) => colour.hex).join(", ")),
+                      }]}
+                    />
                   </div>
-                ))}
-              </div>
-              <div>
-                <Button size="S" variant="secondary" onClick={() => setEditingBrandColourIndex("new")}>
-                  <span className="studio-settings-button-content"><DsIcon name="plus" size={16} /> Add colour</span>
-                </Button>
-              </div>
+                )}
+              >
+                <p className="paragraph-s">The primary colour is used for portal buttons and active states. Text contrast is selected automatically.</p>
+                <div className="colour-swatch-grid" aria-label="Studio colour palette">
+                  {brandColours.map((colour, index) => (
+                    <ColourSwatch
+                      key={index}
+                      colour={{ name: colour.role === "primary" ? "Primary" : `Colour ${index + 1}`, hex: colour.hex, role: colour.role === "primary" ? "primary" : "accent" }}
+                      editable
+                      editorOpen={editingBrandColourIndex === index}
+                      onEditorOpen={() => setEditingBrandColourIndex(index)}
+                      onEditorClose={() => setEditingBrandColourIndex(null)}
+                      onChange={(nextColour) => setDraft((current) => ({
+                        ...current,
+                        brandColours: getStudioBrandColours(current).map((candidate, candidateIndex) => (
+                          candidateIndex === index ? { ...candidate, hex: nextColour.hex } : candidate
+                        )),
+                      }))}
+                      onCopy={copyColours}
+                      onSetPrimary={colour.role === "primary" ? undefined : () => setPrimaryColour(index)}
+                      onDelete={brandColours.length > 1 ? () => removeColour(index) : undefined}
+                    />
+                  ))}
+                </div>
+              </BrandTile>
             </div>
           </section>
 
@@ -240,9 +265,9 @@ export function StudioBrandingPage() {
         </ClientModal>
       ) : null}
 
-      {editingBrandColourIndex !== null ? (
+      {editingBrandColourIndex === "new" ? (
         <StudioBrandColourEditor
-          colour={editingBrandColourIndex === "new" ? null : brandColours[editingBrandColourIndex]}
+          colour={null}
           onCancel={() => setEditingBrandColourIndex(null)}
           onSave={saveColour}
         />

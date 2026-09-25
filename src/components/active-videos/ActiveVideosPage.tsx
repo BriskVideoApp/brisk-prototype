@@ -38,6 +38,7 @@ import { StageProgress, stageOrder } from "@/components/active-videos/StageProgr
 import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideosPage";
 import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { selectWorkspaceProjects, type ScopedProject } from "@/data/prototype-state";
 import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
 import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
@@ -1231,6 +1232,7 @@ function ProjectDetailPanel({
   onSaveStatus: (status: Project["status"]) => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
 }) {
+  const studioName = useStudioCompanyName();
   const projectFlowHref = getProjectFlowHref(project.id);
   const unreadMessages = project.unreadMessages ?? 0;
   const [panelStatus, setPanelStatus] = useState<Project["status"]>(project.status);
@@ -1616,7 +1618,7 @@ function ProjectDetailPanel({
           presentation="brief-summary"
           projectId={project.id}
           projectName={project.name}
-          studioName="North Star Films"
+          studioName={studioName}
           customerName={project.clientName}
           copyLinkLabel="Copy link"
           shareUrl={projectFlowHref ?? undefined}
@@ -2604,6 +2606,7 @@ function ProjectDataCell({
   onOpenDetails: () => void;
   onOpenLatestActions: () => void;
 }) {
+  const studioName = useStudioCompanyName();
   const [teamAvatarTooltip, setTeamAvatarTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
   const columnClassName = [
     `column-${columnKey}`,
@@ -2622,7 +2625,7 @@ function ProjectDataCell({
             projectId={project.id}
             projectName={project.name}
             stages={project.stages}
-            studioName="North Star Films"
+            studioName={studioName}
             customerName={project.clientName}
             videoType={project.videoType}
           />

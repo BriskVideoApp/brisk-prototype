@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   createMediaAssetViews,
   initialMediaAssets,
@@ -57,6 +57,15 @@ type MediaLibraryContextValue = {
 };
 
 const MediaLibraryContext = createContext<MediaLibraryContextValue | null>(null);
+const mediaLibraryStorageKey = "brisk-media-library-v1";
+
+type StoredMediaLibrary = {
+  assets: MediaAsset[];
+  versions: MediaAssetVersion[];
+  comments: MediaAssetComment[];
+  folders: MediaFolder[];
+  workspaceStorage: MediaWorkspaceStorageSetting;
+};
 
 export function MediaLibraryProvider({ children }: { children: React.ReactNode }) {
   const [assets, setAssets] = useState<MediaAsset[]>(initialMediaAssets);
@@ -64,7 +73,55 @@ export function MediaLibraryProvider({ children }: { children: React.ReactNode }
   const [comments, setComments] = useState<MediaAssetComment[]>(initialMediaComments);
   const [folders, setFolders] = useState<MediaFolder[]>(mediaFolders);
   const [workspaceStorage, setWorkspaceStorage] = useState<MediaWorkspaceStorageSetting>(initialMediaWorkspaceStorage);
+  const [hasLoadedStoredLibrary, setHasLoadedStoredLibrary] = useState(false);
   const assetViews = useMemo(() => createMediaAssetViews(assets, versions, comments), [assets, comments, versions]);
+
+  useEffect(() => {
+    try {
+      const serialized = window.localStorage.getItem(mediaLibraryStorageKey);
+      if (serialized) {
+        const parsed: unknown = JSON.parse(serialized);
+        if (isStoredMediaLibrary(parsed)) {
+          setAssets(parsed.assets.map((asset) => asset.status === "uploading" || asset.status === "stored" || asset.status === "preparing"
+            ? { ...asset, status: "ready", processingProgress: 100, processingError: undefined }
+            : asset));
+          setVersions(parsed.versions.map((version) => ({
+            ...version,
+            originalAvailable: version.playbackUrl?.startsWith("blob:") ? false : version.originalAvailable,
+            playbackUrl: version.playbackUrl?.startsWith("blob:") ? undefined : version.playbackUrl,
+            thumbnailUrl: version.thumbnailUrl?.startsWith("blob:") ? undefined : version.thumbnailUrl,
+          })));
+          setComments(parsed.comments);
+          setFolders(parsed.folders);
+          setWorkspaceStorage(parsed.workspaceStorage);
+        }
+      }
+    } catch {
+      // Ignore stale or unavailable browser storage and keep the in-memory prototype data.
+    }
+    setHasLoadedStoredLibrary(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedStoredLibrary) return;
+    const storedLibrary: StoredMediaLibrary = {
+      assets,
+      versions: versions.map((version) => ({
+        ...version,
+        originalAvailable: version.playbackUrl?.startsWith("blob:") ? false : version.originalAvailable,
+        playbackUrl: version.playbackUrl?.startsWith("blob:") ? undefined : version.playbackUrl,
+        thumbnailUrl: version.thumbnailUrl?.startsWith("blob:") ? undefined : version.thumbnailUrl,
+      })),
+      comments,
+      folders,
+      workspaceStorage,
+    };
+    try {
+      window.localStorage.setItem(mediaLibraryStorageKey, JSON.stringify(storedLibrary));
+    } catch {
+      // Browser storage can be full or disabled; media remains available until the page closes.
+    }
+  }, [assets, comments, folders, hasLoadedStoredLibrary, versions, workspaceStorage]);
 
   const value = useMemo<MediaLibraryContextValue>(() => ({
     assets,
@@ -144,6 +201,17 @@ export function MediaLibraryProvider({ children }: { children: React.ReactNode }
   }), [assetViews, assets, comments, folders, versions, workspaceStorage]);
 
   return <MediaLibraryContext.Provider value={value}>{children}</MediaLibraryContext.Provider>;
+}
+
+function isStoredMediaLibrary(value: unknown): value is StoredMediaLibrary {
+  if (typeof value !== "object" || value === null) return false;
+  const library = value as Partial<StoredMediaLibrary>;
+  return Array.isArray(library.assets)
+    && Array.isArray(library.versions)
+    && Array.isArray(library.comments)
+    && Array.isArray(library.folders)
+    && typeof library.workspaceStorage === "object"
+    && library.workspaceStorage !== null;
 }
 
 function scheduleProcessing(ids: string[], failures: boolean[], setAssets: React.Dispatch<React.SetStateAction<MediaAsset[]>>) {

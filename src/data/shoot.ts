@@ -560,12 +560,12 @@ export const shootAddressSuggestions: ShootAddressSuggestion[] = [
   { id: "adelaide-studios", name: "Adelaide Studios", address: "1 Mulberry Road, Glenside SA 5065" },
 ];
 
-export function getEmptyCallSheet(project: Project): CallSheet {
+export function getEmptyCallSheet(project: Project, studioName = "North Star Films"): CallSheet {
   return {
     projectId: project.id,
     projectName: project.name,
-    studioName: "North Star Films",
-    studioInitials: "NS",
+    studioName,
+    studioInitials: getStudioInitials(studioName),
     days: [],
     notice: "",
     weather: "Weather will appear after a date and primary location are set.",
@@ -583,9 +583,9 @@ export function getEmptyCallSheet(project: Project): CallSheet {
   };
 }
 
-export function getInitialCallSheet(project: Project): CallSheet {
+export function getInitialCallSheet(project: Project, studioName = "North Star Films"): CallSheet {
   if (project.id === completeCallSheet.projectId) {
-    return normaliseShootArchitecture(structuredClone(completeCallSheet));
+    return applyShootStudioIdentity(normaliseShootArchitecture(structuredClone(completeCallSheet)), studioName);
   }
 
   const locationId = `location-${project.id}`;
@@ -595,8 +595,8 @@ export function getInitialCallSheet(project: Project): CallSheet {
   return {
     projectId: project.id,
     projectName: project.name,
-    studioName: "North Star Films",
-    studioInitials: "NS",
+    studioName,
+    studioInitials: getStudioInitials(studioName),
     days: isPartial
       ? [{
         id: dayId,
@@ -646,6 +646,21 @@ export function getInitialCallSheet(project: Project): CallSheet {
     visibleOptionalSections: [],
     updatedAt: new Date().toISOString(),
   };
+}
+
+export function applyShootStudioIdentity(callSheet: CallSheet, studioName: string): CallSheet {
+  return {
+    ...callSheet,
+    studioName,
+    studioInitials: getStudioInitials(studioName),
+    people: callSheet.people.map((person) => person.company === "North Star Films"
+      ? { ...person, company: studioName }
+      : person),
+  };
+}
+
+function getStudioInitials(studioName: string) {
+  return studioName.trim().split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("").toLocaleUpperCase("en-AU");
 }
 
 export function callSheetStorageKey(projectId: string) {

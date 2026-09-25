@@ -8,6 +8,7 @@ import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { selectWorkspaceProjects } from "@/data/prototype-state";
 import type { InvitationRole, InvitePersonPrefill } from "@/data/invitations";
@@ -320,6 +321,7 @@ function JobTitleField({ choice, jobTitle, label, onChoiceChange, onCustomChange
 function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clientIds: string[]; inviteeName: string; projectIds: string[]; role: InvitationRole }) {
   const { clients } = useClients();
   const { state } = usePrototypeState();
+  const studioName = useStudioCompanyName();
   const selectedClients = clients.filter((client) => clientIds.includes(client.id));
   const selectedProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId).filter((project) => projectIds.includes(project.id));
   const firstProject = selectedProjects[0];
@@ -333,7 +335,7 @@ function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clien
   const destinationSentence = role === "Customer"
     ? null
     : role === "Studio Staff"
-      ? "The invitation opens the North Star Films Studio workspace."
+      ? `The invitation opens the ${studioName} Studio workspace.`
       : firstProject
       ? `The invitation opens ${firstProject.name}.`
       : "The invitation opens their selected project access.";

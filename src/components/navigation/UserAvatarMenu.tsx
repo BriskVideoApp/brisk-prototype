@@ -111,6 +111,7 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
     : isStudioStaff
       ? `${studioMember?.studioPermission ?? "Team Member"} · ${organisationName}`
       : `${prototypeRoleLabels[selectedRole]} · ${organisationName}`;
+  const organisationInitials = organisationName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
 
   const closeAfterNavigation = () => {
     setIsOpen(false);
@@ -180,6 +181,7 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
                   <span className="app-user-menu-identity-copy">
                     <strong className="label-m-semibold">{displayName}</strong>
                     <span className="label-xs">{displayEmail}</span>
+                    {isClient ? <span className="app-user-menu-client-organisation"><span className="app-user-menu-client-logo label-xs-semibold" aria-hidden="true">{account.company.logoUrl ? <img src={account.company.logoUrl} alt="" /> : organisationInitials}</span><strong className="label-s-semibold">{organisationName}</strong></span> : null}
                     <span className="label-xs">{roleLine}</span>
                   </span>
                 </Link>
@@ -191,6 +193,7 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
                   <span className="app-user-menu-identity-copy">
                     <strong className="label-m-semibold">{displayName}</strong>
                     <span className="label-xs">{displayEmail}</span>
+                    {isClient ? <span className="app-user-menu-client-organisation"><span className="app-user-menu-client-logo label-xs-semibold" aria-hidden="true">{account.company.logoUrl ? <img src={account.company.logoUrl} alt="" /> : organisationInitials}</span><strong className="label-s-semibold">{organisationName}</strong></span> : null}
                     <span className="label-xs">{roleLine}</span>
                   </span>
                 </div>

@@ -4,6 +4,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ProjectVideoType, StageKey, StageStatus } from "@/components/active-videos/types";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
+import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import {
@@ -42,12 +43,14 @@ export function StageProgress({
   showAge?: boolean;
 }) {
   const { getProjectStages } = useProjectStageStatus();
+  const { assetViews } = useMediaLibrary();
   const { getStoryboardStatus } = useStoryboard();
   const { getProjectFlow } = useProjectFlow();
   const currentStages = getProjectStages({ id: projectId, stages });
   const flow = getProjectFlow({ id: projectId, videoType });
   const visibleStages = flow.stages.map((stage) => getProductionFlowStageDefinition(stage, flow.postProductionTerm));
   const mediaStage = { key: "media" as const, label: "Media", icon: "image-square" as const };
+  const mediaCount = assetViews.filter((asset) => asset.projectId === projectId && !asset.archivedAt && asset.collection === "media").length;
 
   return (
     <div
@@ -74,6 +77,7 @@ export function StageProgress({
         customerName={customerName}
         showConnector={false}
         showAge={showAge}
+        mediaCount={mediaCount}
       />
     </div>
   );
@@ -87,6 +91,7 @@ export function StageChip({
   customerName,
   showConnector,
   showAge = true,
+  mediaCount,
 }: {
   stage: { key: ProductionFlowStageKey | "media"; label: string; icon: StageIconName };
   status: StageStatus;
@@ -95,7 +100,13 @@ export function StageChip({
   customerName: string;
   showConnector: boolean;
   showAge?: boolean;
+  mediaCount?: number;
 }) {
+  const isMedia = stage.key === "media";
+  const displayLabel = isMedia ? `${stage.label} (${mediaCount ?? 0})` : stage.label;
+  const tooltip = isMedia
+    ? `${mediaCount ?? 0} media ${(mediaCount ?? 0) === 1 ? "file" : "files"}`
+    : getStageTooltip(stage.label, status.state, studioName, customerName);
   const stageHref = getProjectStageHref(projectId, stage.key);
   const stageLabel = getProjectStageLinkLabel(stage.key, stage.label);
   const chipContent = (
@@ -105,29 +116,29 @@ export function StageChip({
   );
 
   return (
-    <div className={`stage-step ${stage.key === "media" ? "is-media-pinned" : ""}`.trim()}>
+    <div className={`stage-step ${isMedia ? "is-media-pinned" : ""}`.trim()}>
       {stageHref ? (
         <a
-          className={`stage-chip stage-${status.state}`}
+          className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`}`}
           href={stageHref}
-          aria-label={`Open ${stageLabel}`}
-          data-tooltip={getStageTooltip(stage.label, status.state, studioName, customerName)}
+          aria-label={isMedia ? `Open ${displayLabel}. ${tooltip}` : `Open ${stageLabel}`}
+          data-tooltip={tooltip}
           onClick={(event) => event.stopPropagation()}
         >
           {chipContent}
         </a>
       ) : (
         <span
-          className={`stage-chip stage-${status.state} is-static`}
-          aria-label={`${stage.label} stage`}
-          data-tooltip={getStageTooltip(stage.label, status.state, studioName, customerName)}
+          className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`} is-static`}
+          aria-label={isMedia ? displayLabel : `${stage.label} stage`}
+          data-tooltip={tooltip}
           onClick={(event) => event.stopPropagation()}
         >
           {chipContent}
         </span>
       )}
-      <span className="stage-label label-xs">{stage.label}</span>
-      {showAge ? (
+      <span className="stage-label label-xs">{displayLabel}</span>
+      {showAge && !isMedia ? (
         <span className="stage-age label-xs">
           {status.daysAgo !== undefined ? `${status.daysAgo}d ago` : "\u00a0"}
         </span>

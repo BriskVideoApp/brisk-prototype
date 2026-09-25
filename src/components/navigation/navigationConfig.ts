@@ -253,7 +253,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
       {
         id: "studio-branding",
         label: "Branding",
-        href: "/settings/studio/branding",
+        href: "/settings/studio#branding",
         icon: "square-logo",
         roles: studioOnly,
         sidebarHidden: true,

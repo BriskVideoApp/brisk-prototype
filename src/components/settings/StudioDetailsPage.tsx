@@ -40,7 +40,7 @@ const currencyOptions = [
   { value: "USD", label: "USD - US dollar" },
 ] as const;
 
-export function StudioDetailsPage() {
+export function StudioDetailsPage({ rewriteDescription }: { rewriteDescription?: () => string }) {
   const { studio, updateDetails } = useStudioSettings();
   const { setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const [draft, setDraft] = useState<StudioDetails>(() => ({ ...studio.details }));
@@ -48,10 +48,10 @@ export function StudioDetailsPage() {
   const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(studio.details), [draft, studio.details]);
 
   useEffect(() => {
-    setHasUnsavedChanges(hasChanges);
+    setHasUnsavedChanges(hasChanges, "profile");
   }, [hasChanges, setHasUnsavedChanges]);
 
-  useEffect(() => () => setHasUnsavedChanges(false), [setHasUnsavedChanges]);
+  useEffect(() => () => setHasUnsavedChanges(false, "profile"), [setHasUnsavedChanges]);
 
   useEffect(() => {
     if (!toast) return;
@@ -66,13 +66,13 @@ export function StudioDetailsPage() {
   const saveChanges = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     updateDetails(draft);
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(false, "profile");
     setToast("Studio details updated.");
   };
 
   const discardChanges = () => {
     setDraft({ ...studio.details });
-    setHasUnsavedChanges(false);
+    setHasUnsavedChanges(false, "profile");
   };
 
   return (
@@ -87,15 +87,23 @@ export function StudioDetailsPage() {
             value={draft.studioType}
             onChange={(value) => updateField("studioType", value)}
           />
-          <label className="studio-settings-textarea-field">
-            <span className="label-m-semibold">Studio description</span>
+          <div className="studio-settings-textarea-field">
+            <span className="studio-settings-textarea-heading">
+              <label className="label-m-semibold" htmlFor="studio-description">Studio description</label>
+              {rewriteDescription ? (
+                <Button size="S" type="button" variant="secondary" onClick={() => updateField("description", rewriteDescription())}>
+                  <span className="studio-settings-button-content"><DsIcon name="sparkle" size={16} /> Rewrite with AI</span>
+                </Button>
+              ) : null}
+            </span>
             <textarea
               className="studio-settings-textarea paragraph-s"
+              id="studio-description"
               rows={5}
               value={draft.description}
               onChange={(event) => updateField("description", event.target.value)}
             />
-          </label>
+          </div>
           <Input label="Website" type="url" value={draft.website} onChange={(event) => updateField("website", event.target.value)} />
           <Input label="Main contact email" type="email" value={draft.contactEmail} onChange={(event) => updateField("contactEmail", event.target.value)} />
           <StudioSelectField

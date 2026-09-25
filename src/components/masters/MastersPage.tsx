@@ -39,7 +39,7 @@ import type {
 import { reviewUsers } from "@/data/video-review";
 import {
   createMockSrt,
-  createMastersSlotsFromApprovedBrief,
+  createMastersSlotsFromBrief,
   initialMastersDeliverables,
   mastersDurationOptions,
   mastersFormatOptions,
@@ -52,6 +52,7 @@ import {
   type MastersSrtLine,
   type MastersVersion,
 } from "@/data/masters";
+import type { BriefFields } from "@/data/brief";
 
 type CommentFilter = "all" | "unresolved" | "internal" | "external";
 type RequestTab = "cutdown" | "reformat" | "script";
@@ -87,7 +88,7 @@ const commentFilters: Array<{ value: CommentFilter; label: string }> = [
   { value: "external", label: "Client" },
 ];
 
-export function MastersPage({ project }: { project: Project }) {
+export function MastersPage({ project, initiallyEmpty = false, initialBriefFields }: { project: Project; initiallyEmpty?: boolean; initialBriefFields?: BriefFields }) {
   const { selectedRole: role } = usePrototypeRole();
   const mastersStudioName = useStudioCompanyName();
   const { completionRecords, completeProject } = useProjectCompletion();
@@ -111,13 +112,14 @@ export function MastersPage({ project }: { project: Project }) {
   const previewState = searchParams.get("preview");
   const linkedDeliverableId = searchParams.get("deliverable");
   const linkedVersionId = searchParams.get("version");
+  const startFromBrief = initiallyEmpty && previewState !== "empty";
   const [deliverables, setDeliverables] = useState<MastersDeliverable[]>(() =>
-    previewState === "empty"
-      ? createMastersSlotsFromApprovedBrief()
+    startFromBrief || previewState === "empty"
+      ? startFromBrief ? createMastersSlotsFromBrief(initialBriefFields) : []
       : structuredClone(initialMastersDeliverables),
   );
   const [expandedDeliverableId, setExpandedDeliverableId] = useState<string | null>(
-    previewState === "empty"
+    startFromBrief || previewState === "empty"
       ? null
       : initialMastersDeliverables.find((deliverable) => deliverable.name === "Main Video")?.id
         ?? initialMastersDeliverables[0]?.id
@@ -395,7 +397,18 @@ export function MastersPage({ project }: { project: Project }) {
     if (!downloadDeliverable) return;
     const assets = getDownloadableAssets(downloadDeliverable, downloadVersion)
       .filter((asset) => assetIds.includes(asset.id));
-    assets.forEach((asset) => downloadPrototypeFile(asset.filename, showToast));
+    assets.forEach((asset) => {
+      if (asset.id === "video" && downloadVersion?.prototypeSample) {
+        downloadTextFile(asset.filename, JSON.stringify({
+          type: "Brisk prototype Master sample",
+          project: project.name,
+          deliverable: downloadDeliverable.name,
+          note: "This JSON file verifies the prototype download flow. It is not a rendered video Master.",
+        }, null, 2), "application/json", showToast);
+      } else {
+        downloadPrototypeFile(asset.filename, showToast);
+      }
+    });
     if (downloadVersion && assetIds.includes("video")) {
       const downloadedKey = getDownloadedVersionKey(downloadDeliverable.id, downloadVersion.id);
       setDownloadedVersionKeys((current) => new Set(current).add(downloadedKey));
@@ -788,6 +801,56 @@ export function MastersPage({ project }: { project: Project }) {
     setEditingNameId(id);
   };
 
+  const addPrototypeDownloadSample = (targetDeliverableId?: string) => {
+    if (!isFilmmaker) return;
+    const target = deliverables.find((item) => item.id === targetDeliverableId);
+    const sampleId = target?.id ?? `masters-prototype-sample-${project.id}`;
+    const sampleName = target?.name ?? "Prototype download sample";
+    const number = Math.max(0, ...(target?.versions ?? []).map((version) => version.number)) + 1;
+    const versionId = `${sampleId}-prototype-v${number}`;
+    const projectFilename = project.name.replaceAll(/[^a-z0-9]+/gi, "-").replaceAll(/^-|-$/g, "");
+    const deliverableFilename = sampleName.replaceAll(/[^a-z0-9]+/gi, "-").replaceAll(/^-|-$/g, "");
+    const version: MastersVersion = {
+      id: versionId,
+      number,
+      filename: `${projectFilename}-${deliverableFilename}-prototype-master.json`,
+      uploadedAt: new Date().toISOString(),
+      uploadedBy: "Prototype",
+      codec: "JSON",
+      resolution: "Prototype data file",
+      fileSize: "Generated on download",
+      durationSeconds: durationLabelToSeconds(target?.duration ?? "60 secs"),
+      shadePath: `Prototype/${project.name}/Masters`,
+      prototypeSample: true,
+    };
+    if (target) {
+      setDeliverables((current) => current.map((item) => item.id === target.id
+        ? { ...item, versions: [...item.versions, version], currentVersionId: version.id, status: "available" }
+        : item));
+    } else {
+      const sampleDeliverable: MastersDeliverable = {
+        id: sampleId,
+        briefDeliverableId: sampleId,
+        name: sampleName,
+        platform: "Internal",
+        format: "16:9",
+        duration: "60 secs",
+        captions: ["None"],
+        status: "available",
+        versions: [version],
+        currentVersionId: version.id,
+        comments: [],
+        unreadCommentCount: 0,
+        addedBy: "filmmaker",
+        kind: "video",
+      };
+      setDeliverables((current) => current.some((item) => item.id === sampleId) ? current : [...current, sampleDeliverable]);
+    }
+    setExpandedDeliverableId(sampleId);
+    setSelectedVersionByDeliverable((current) => ({ ...current, [sampleId]: version.id }));
+    showToast("Prototype sample added. It is a data file, not a rendered video.");
+  };
+
   const openRequest = (deliverable: MastersDeliverable) => {
     setRequestSourceId(deliverable.id);
     setRequestTab("cutdown");
@@ -1130,7 +1193,7 @@ export function MastersPage({ project }: { project: Project }) {
                     : selectedVersion ?? getPresentedVersion(sourceDeliverable, selectedVersionByDeliverable);
                   const childCount = deliverables.filter((item) => item.parentDeliverableId === deliverable.id).length;
                   const childrenExpanded = !collapsedParentIds.has(deliverable.id);
-                  const canExpand = Boolean(selectedVersion || deliverable.recutBrief || isMarkingUpTarget);
+                  const canExpand = Boolean(selectedVersion || deliverable.recutBrief || isMarkingUpTarget || initiallyEmpty);
                   const expanded = canExpand && deliverable.id === expandedDeliverableId;
                   const isMainVideo = deliverable.briefDeliverableId === "main-video";
                   const recutActionLabel = isMainVideo && selectedVersion
@@ -1235,6 +1298,8 @@ export function MastersPage({ project }: { project: Project }) {
                             deliverable.comments.find((comment) => comment.id === selectedCommentId)?.drawingPaths ?? []
                           }
                           isMarkUpMode={isMarkingUpTarget}
+                          showPrototypeSample={initiallyEmpty}
+                          onAddPrototypeSample={() => addPrototypeDownloadSample(deliverable.id)}
                           recutSourceName={markUpSourceDeliverable?.name}
                           recutSourceVersionNumber={markUpSourceVersion?.number}
                           onChangeRecutSource={() => setRecutSourcePickerTargetId(deliverable.id)}
@@ -1444,9 +1509,19 @@ export function MastersPage({ project }: { project: Project }) {
                 <h2>{isFilmmaker ? "No deliverables yet" : "No Masters are ready yet"}</h2>
                 <p className="label-s">{isFilmmaker ? "Add the first output for this video." : "The Studio will share deliverables here when they are ready."}</p>
                 {isFilmmaker ? (
-                  <button className="masters-primary-button label-s-semibold" type="button" onClick={addDeliverable}>
-                    <DsIcon name="plus" size={16} />Add deliverable
-                  </button>
+                  <>
+                    <div className="masters-page-empty-actions">
+                      <button className="masters-primary-button label-s-semibold" type="button" onClick={addDeliverable}>
+                        <DsIcon name="plus" size={16} />Add deliverable
+                      </button>
+                      {initiallyEmpty ? (
+                        <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => addPrototypeDownloadSample()}>
+                          <DsIcon name="download" size={16} />Add downloadable prototype sample
+                        </button>
+                      ) : null}
+                    </div>
+                    {initiallyEmpty ? <p className="label-xs">The sample downloads as a JSON data file, not a rendered video.</p> : null}
+                  </>
                 ) : <Link className="masters-primary-button label-s-semibold" href={`/chat?project=${project.id}`}><DsIcon name="chats" size={16} />Message the Studio</Link>}
               </div>
             )}
@@ -1465,7 +1540,8 @@ export function MastersPage({ project }: { project: Project }) {
               projectName={project.name}
               studioName={mastersStudioName}
               customerName={project.clientName}
-              copyLinkLabel="Share"
+              copyLinkIconOnly
+              copyLinkLabel="Copy link"
               shareUrl={reviewHref}
               openPanelSignal={sharePanelOpenSignal}
               sendChangesProjectStatus
@@ -1496,7 +1572,7 @@ export function MastersPage({ project }: { project: Project }) {
                 disabled={!canDownloadAll}
                 onClick={() => { downloadPrototypeFile(`${project.name}-Masters.zip`, showToast); setHasDownloadedAll(true); }}
               >
-                <DsIcon name="download" size={18} />{hasDownloadedAll ? "Downloaded" : "Download All"}
+                <DsIcon name="download" size={18} />{hasDownloadedAll ? "Download started" : "Download All"}
               </button>
             </span>
             {role === "Studio Staff" ? <button
@@ -1836,6 +1912,8 @@ function ExpandedDeliverable({
   activeDrawingPath,
   selectedDrawingPaths,
   isMarkUpMode,
+  showPrototypeSample,
+  onAddPrototypeSample,
   recutSourceName,
   recutSourceVersionNumber,
   onChangeRecutSource,
@@ -1882,6 +1960,8 @@ function ExpandedDeliverable({
   activeDrawingPath: DrawingPath | null;
   selectedDrawingPaths: DrawingPath[];
   isMarkUpMode: boolean;
+  showPrototypeSample: boolean;
+  onAddPrototypeSample: () => void;
   recutSourceName?: string;
   recutSourceVersionNumber?: number;
   onChangeRecutSource: () => void;
@@ -1970,9 +2050,16 @@ function ExpandedDeliverable({
               <DsIcon name={deliverable.kind === "captions" ? "file-text" : "film-strip"} size={26} />
               <strong>Nothing delivered here yet.</strong>
               {isFilmmaker ? (
-                <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onUpload}>
-                  <DsIcon name="upload-simple" size={14} />Upload V1
-                </button>
+                <div className="masters-inline-empty-actions">
+                  <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onUpload}>
+                    <DsIcon name="upload-simple" size={14} />Upload V1
+                  </button>
+                  {showPrototypeSample ? (
+                    <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onAddPrototypeSample}>
+                      <DsIcon name="download" size={14} />Add downloadable prototype sample
+                    </button>
+                  ) : null}
+                </div>
               ) : null}
             </div>
           )}
@@ -1996,7 +2083,7 @@ function ExpandedDeliverable({
             </div>
           ) : !isMarkUpMode && version ? (
             <div className="masters-expanded-actions">
-              <button className="masters-secondary-button label-s-semibold" type="button" aria-label={isDownloaded ? `Download ${version.filename} again` : `Download ${version.filename}`} onClick={() => onDownload(version)}><DsIcon name="download" size={16} />{isDownloaded ? "Downloaded" : "Download"}</button>
+              <button className="masters-secondary-button label-s-semibold" type="button" aria-label={isDownloaded ? `Download ${version.filename} again` : `Download ${version.filename}`} onClick={() => onDownload(version)}><DsIcon name="download" size={16} />{isDownloaded ? "Download started" : "Download"}</button>
             </div>
           ) : null}
           {deliverable.recutBrief && deliverable.versions.length > 0 ? (
@@ -2552,12 +2639,12 @@ function getDeliverablePrimaryAction(
   isDownloaded: boolean,
 ): DeliverablePrimaryAction | null {
   if (!isFilmmaker) {
-    return { kind: "download", label: isDownloaded ? "Downloaded" : "Download", style: "secondary", disabled: !selectedVersion };
+    return { kind: "download", label: isDownloaded ? "Download started" : "Download", style: "secondary", disabled: !selectedVersion };
   }
   if (status === "not_started") return isFilmmaker ? { kind: "upload", label: "Upload", style: "primary" } : null;
   if (status === "waiting_for_studio") return isFilmmaker ? { kind: "upload", label: "Upload new version", style: "primary" } : null;
 
-  if (selectedVersion) return { kind: "download", label: isDownloaded ? "Downloaded" : "Download", style: "secondary" };
+  if (selectedVersion) return { kind: "download", label: isDownloaded ? "Download started" : "Download", style: "secondary" };
   return null;
 }
 
@@ -2588,7 +2675,7 @@ function VersionsPanel({ deliverable, selectedVersionId, downloadedVersionKeys, 
               <span className="masters-version-state label-xs-semibold">{isCurrent ? "Current" : "Previous"}</span>
               <div className="masters-version-card-actions">
                 {!isCurrent ? <button type="button" aria-label={`Set V${version.number} as current`} data-tooltip="Set as current" onClick={() => onSetCurrent(version.id)}><DsIcon name="eye" size={14} /></button> : null}
-                <button className="masters-version-download label-xs-semibold" type="button" aria-label={isDownloaded ? `Download V${version.number} again` : `Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />{isDownloaded ? "Downloaded" : "Download"}</button>
+                <button className="masters-version-download label-xs-semibold" type="button" aria-label={isDownloaded ? `Download V${version.number} again` : `Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />{isDownloaded ? "Download started" : "Download"}</button>
                 {isFilmmaker ? <button className="delete" type="button" aria-label={`Delete V${version.number}`} data-tooltip="Delete" onClick={() => onDelete(version.id)}><DsIcon name="trash" size={14} /></button> : null}
               </div>
             </article>
@@ -3397,8 +3484,11 @@ function downloadTextFile(filename: string, content: string, mimeType: string, s
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = filename;
+  anchor.style.display = "none";
+  document.body.append(anchor);
   anchor.click();
-  URL.revokeObjectURL(url);
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   showToast(`Downloading ${filename}`);
 }
 

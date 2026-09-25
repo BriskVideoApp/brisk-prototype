@@ -29,7 +29,12 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
     setAllPages,
   } = usePrototypeRole();
   const { state } = usePrototypeState();
-  const clientPortalDestination = getClientPortalDestination(state);
+  const projectIdFromPath = pathname.match(/^\/projects\/([^/]+)/u)?.[1] ?? null;
+  const projectId = searchParams.get("project") ?? (projectIdFromPath ? decodeURIComponent(projectIdFromPath) : null);
+  const contextualProject = projectId
+    ? state.projects.find((project) => project.id === projectId && project.workspaceId === state.session.activeWorkspaceId)
+    : null;
+  const clientPortalDestination = getClientPortalDestination(state, contextualProject?.clientId);
   const currentItem = getNavigationItem(pathname, searchParams.toString());
 
   function selectRole(role: PrototypeRole) {

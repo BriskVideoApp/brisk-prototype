@@ -250,7 +250,7 @@ export function StoryboardPage({ project }: { project: Project }) {
       projectId: project.id,
       projectName: project.name,
       clientName: project.clientName,
-      studioName: "North Star Films",
+      studioName: studioCompanyName,
       documentTitle: currentVersion.snapshotName,
       versionLabel: currentVersion.label,
       createdAt: currentVersion.createdAt,
@@ -508,7 +508,7 @@ export function StoryboardPage({ project }: { project: Project }) {
                 waitingOnCompany={record.status.assignedTo}
                 shareUrl={`/projects/${project.id}/stages/storyboard?version=${encodeURIComponent(currentVersion.id)}`}
                 copyLinkIconOnly
-                copyLinkLabel="Share Storyboard"
+                copyLinkLabel="Copy link"
                 sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
                 approveLabel={`Approve ${currentVersion.label.replace(/^v(?=\d)/u, "V")} Storyboard`}
                 approveDisabled={selectedRole === "Studio Freelancer"}

@@ -2384,6 +2384,20 @@
   margin: 0;
 }
 
+.masters-page-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--brisk-space-s);
+}
+
+.masters-inline-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--brisk-space-xs);
+}
+
 .masters-add-deliverable {
   display: flex;
   width: 100%;

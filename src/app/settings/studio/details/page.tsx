@@ -1,10 +1,5 @@
-import { StudioDetailsPage } from "@/components/settings/StudioDetailsPage";
-import { StudioSettingsShell } from "@/components/settings/StudioSettingsShell";
+import { redirect } from "next/navigation";
 
 export default function StudioDetailsRoute() {
-  return (
-    <StudioSettingsShell sectionId="details">
-      <StudioDetailsPage />
-    </StudioSettingsShell>
-  );
+  redirect("/settings/studio#profile");
 }

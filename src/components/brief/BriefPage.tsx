@@ -24,6 +24,7 @@ import { useProjectStageStatus } from "@/components/project/ProjectStageStatusCo
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { ShareActionRow, type ShareAccess } from "@/components/share/ShareActionRow";
 import type { SubmitDestination } from "@/data/submit-review";
 import { getProjectStageHref } from "@/data/project-fixtures";
@@ -511,8 +512,10 @@ export function getBriefConfigurableOptions(
   return [];
 }
 
-export function BriefPage({ approvalDestination, initialFields, onFieldsChange, project, studioName = "North Star Films" }: BriefPageProps) {
+export function BriefPage({ approvalDestination, initialFields, onFieldsChange, project, studioName: providedStudioName }: BriefPageProps) {
   const router = useRouter();
+  const currentStudioName = useStudioCompanyName();
+  const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
   const { publishStageReviewFollowUp } = useNotificationInbox();
   const { state } = usePrototypeState();
@@ -1066,7 +1069,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
         onSendUpdated: (message) => followUpBriefReview("updated", message),
       } : undefined}
       copyLinkIconOnly
-      copyLinkLabel="Share"
+      copyLinkLabel="Copy link"
       approveLabel="Approve Brief"
       approveDisabled={selectedRole === "Studio Freelancer"}
       approveDisabledTooltip="Only Studio Staff and Clients can approve this Brief"

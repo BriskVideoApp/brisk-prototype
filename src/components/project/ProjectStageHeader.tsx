@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
+import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
   getClientPortalDestination,
@@ -51,14 +52,13 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
   const studioName = state.workspaces.find((workspace) => workspace.id === state.session.activeWorkspaceId)?.name ?? "Studio";
+  const projectClient = state.clients.find((client) => client.workspaceId === state.session.activeWorkspaceId && client.id === project.clientId) ?? null;
   const homeHref = getScopedRoleHome(selectedRole, getClientPortalDestination(state));
   const projectMediaCount = mediaCount ?? assetViews.filter((asset) => asset.projectId === project.id && !asset.archivedAt && asset.collection === "media").length;
-  const mediaStatus: StageStatus = isProjectDelivered ? { state: "done" } : projectStages.media;
-  const mediaStatusLabel = getProjectStageStatusLabel(mediaStatus.state, project.clientName, studioName);
   const mediaTooltip = projectMediaCount > 0
     ? `${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`
-    : "No media uploaded";
-  const mediaLabel = `Media${projectMediaCount > 0 ? ` (${projectMediaCount})` : ""}`;
+    : "0 media files";
+  const mediaLabel = "Media";
   const mediaHref = getProjectStageHref(project.id, "media");
 
   return (
@@ -76,7 +76,12 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
                 Back to dashboard
               </span>
             </Link>
-            <span className="project-stage-client-badge label-xs-semibold">{project.clientBadge}</span>
+            {selectedRole === "Customer" ? (
+              <span className="project-stage-client-badge project-stage-client-identity label-xs-semibold">
+                {projectClient?.logoUrl ? <img src={projectClient.logoUrl} alt="" /> : null}
+                {projectClient?.name ?? project.clientName}
+              </span>
+            ) : <span className="project-stage-client-badge label-xs-semibold">{project.clientBadge}</span>}
             <span className="project-stage-identity-divider" aria-hidden="true">
               /
             </span>
@@ -153,25 +158,35 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
                 );
               })}
             </ol>
-            <div className={`project-stage-step project-stage-media-step is-${mediaStatus.state} ${activeUtility === "media" ? "is-current" : ""}`}>
+            <div className={`project-stage-step project-stage-media-step ${activeUtility === "media" ? "is-current" : ""}`}>
               {mediaHref ? <Link
                 className="project-stage-chip"
-                data-tooltip={mediaStatusLabel}
+                data-tooltip={mediaTooltip}
                 href={mediaHref}
                 aria-current={activeUtility === "media" ? "page" : undefined}
-                aria-label={`${mediaLabel}: ${mediaStatusLabel}. ${mediaTooltip}`}
+                aria-label={`${mediaLabel}. ${mediaTooltip}`}
               >
                 <span className="project-stage-icon-surface" aria-hidden="true">
                   <DsIcon name="image-square" size={24} />
+                  <CommentCountBadge
+                    count={projectMediaCount}
+                    label={`${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`}
+                    showZero
+                  />
                 </span>
               </Link> : <span
                 className="project-stage-chip"
-                data-tooltip={mediaStatusLabel}
-                aria-label={`${mediaLabel}: ${mediaStatusLabel}. ${mediaTooltip}`}
+                data-tooltip={mediaTooltip}
+                aria-label={`${mediaLabel}. ${mediaTooltip}`}
                 role="img"
               >
                 <span className="project-stage-icon-surface" aria-hidden="true">
                   <DsIcon name="image-square" size={24} />
+                  <CommentCountBadge
+                    count={projectMediaCount}
+                    label={`${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`}
+                    showZero
+                  />
                 </span>
               </span>}
               <span className="project-stage-label label-xs-semibold">{mediaLabel}</span>

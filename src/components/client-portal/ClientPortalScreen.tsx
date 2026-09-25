@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -25,11 +26,14 @@ type ClientPortalScreenProps = {
 
 export function ClientPortalScreen({ workspaceId, clientId, studioPreview = false, embedded = false }: ClientPortalScreenProps) {
   const { state } = usePrototypeState();
+  const { selectedRole } = usePrototypeRole();
+  const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
+  const isStudioPreview = studioPreview || (selectedRole === "Customer" && activeUser?.role !== "Client");
   const portal = selectClientPortalData(
     state,
     workspaceId,
     clientId,
-    studioPreview ? { kind: "studio-preview" } : { kind: "external" },
+    isStudioPreview ? { kind: "studio-preview" } : { kind: "external" },
   );
 
   if (!portal) return <ClientPortalUnavailable embedded={embedded} />;
@@ -56,6 +60,7 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
         initialSeries={dashboardSeries}
         key={`${workspaceId}:${clientId}`}
         logoPreviewUrl={portal.workspace.logoPreviewUrl}
+        studioPreview={isStudioPreview}
         storageScopeKey={`${workspaceId}:${clientId}`}
         studioName={portal.workspace.name}
       />
@@ -64,7 +69,7 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
 
   return (
     <main
-      className={`customer-dashboard-shell studio-client-accent-${portal.workspace.brandAccentId} ${studioPreview ? "is-studio-preview" : "is-client-view"} ${embedded ? "is-embedded" : ""}`}
+      className={`customer-dashboard-shell studio-client-accent-${portal.workspace.brandAccentId} ${isStudioPreview ? "is-studio-preview" : "is-client-view"} ${embedded ? "is-embedded" : ""}`}
       style={getStudioBrandThemeStyle(portal.workspace)}
     >
       <div className="customer-dashboard-main">
@@ -78,7 +83,7 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
               <h1>Your videos</h1>
             </div>
           </div>
-          {studioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : null}
+          {isStudioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : null}
         </header>
 
         <div className="customer-dashboard-layout">

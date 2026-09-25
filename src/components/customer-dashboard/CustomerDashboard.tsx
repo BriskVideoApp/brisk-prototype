@@ -65,6 +65,7 @@ type CustomerDashboardProps = {
   logoPreviewUrl?: string | null;
   storageScopeKey?: string;
   studioName?: string;
+  studioPreview?: boolean;
 };
 
 const queueTabs: QueueTab[] = ["All", "Active", "Queued", "Completed", "Paused", "Archived"];
@@ -97,6 +98,7 @@ export function CustomerDashboard({
   logoPreviewUrl,
   storageScopeKey = "legacy:loom",
   studioName,
+  studioPreview = false,
 }: CustomerDashboardProps = {}) {
   const { selectedRole } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
@@ -105,8 +107,9 @@ export function CustomerDashboard({
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
   const isScenarioEmpty = activeScenario?.state === "new";
-  const isStudioPreview = searchParams.get("studio-preview") === "1";
+  const isStudioPreview = studioPreview || searchParams.get("studio-preview") === "1";
   const isClientView = selectedRole === "Customer";
+  const showStandaloneClientBrand = isClientView && !activeScenario;
   const resolvedStudioName = studioName ?? studio.details.name;
   const resolvedLogoPreviewUrl = logoPreviewUrl === undefined ? studio.branding.logoPreviewUrl : logoPreviewUrl;
   const resolvedBrandAccentId = brandAccentId ?? studio.branding.brandAccentId;
@@ -444,6 +447,14 @@ export function CustomerDashboard({
       <div className="customer-dashboard-main">
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
+            {showStandaloneClientBrand ? (
+              <div className="customer-dashboard-portal-brand">
+                <span className="customer-dashboard-studio-logo label-m-semibold" aria-label={`${resolvedStudioName} logo`}>
+                  {resolvedLogoPreviewUrl ? <img src={resolvedLogoPreviewUrl} alt="" /> : resolvedStudioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("")}
+                </span>
+                <strong className="label-m-semibold">{resolvedStudioName}</strong>
+              </div>
+            ) : null}
             <div className="customer-dashboard-title-row">
               <h1>Your videos</h1>
               <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
@@ -842,6 +853,7 @@ export function CustomerDashboard({
           </div>
 
         </div>
+        {isClientView ? <footer className="customer-dashboard-footer label-xs">Powered by Brisk</footer> : null}
       </div>
 
       {isActivityOpen ? (

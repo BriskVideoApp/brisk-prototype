@@ -825,6 +825,40 @@
   gap: var(--brisk-space-xxs);
 }
 
+.app-user-menu-client-organisation {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-xs);
+}
+
+.app-user-menu-client-organisation strong {
+  overflow: hidden;
+  color: var(--brisk-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-user-menu-client-logo {
+  display: inline-flex;
+  width: var(--brisk-space-xl);
+  height: var(--brisk-space-xl);
+  flex: 0 0 var(--brisk-space-xl);
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary-click);
+  font-weight: 700;
+}
+
+.app-user-menu-client-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .app-user-menu-close {
   display: inline-flex;
   width: var(--brisk-space-2xl);

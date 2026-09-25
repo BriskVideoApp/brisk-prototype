@@ -36,11 +36,14 @@ const studioSettingsStorageKey = "brisk-studio-settings-v2";
 export function StudioSettingsProvider({ children }: { children: ReactNode }) {
   const {
     commitStudioSetup,
+    hasHydrated,
+    state: prototypeState,
     updateWorkspaceBranding,
     updateWorkspaceDetails,
   } = usePrototypeState();
   const [studio, setStudio] = useState<StudioSettings>(() => cloneStudioSettings(initialStudioSettings));
   const studioRef = useRef(studio);
+  const activeWorkspaceName = prototypeState.workspaces.find((workspace) => workspace.id === prototypeState.session.activeWorkspaceId)?.name;
 
   useEffect(() => {
     const storedStudio = readStoredStudioSettings();
@@ -67,6 +70,14 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(studioSettingsStorageKey, JSON.stringify(nextStudio));
     setStudio(nextStudio);
   }, []);
+
+  useEffect(() => {
+    if (!hasHydrated || !activeWorkspaceName || studioRef.current.details.name === activeWorkspaceName) return;
+    commitStudio((current) => ({
+      ...current,
+      details: { ...current.details, name: activeWorkspaceName },
+    }));
+  }, [activeWorkspaceName, commitStudio, hasHydrated]);
 
   const updateDetails = useCallback((details: StudioDetails) => {
     updateWorkspaceDetails(details);

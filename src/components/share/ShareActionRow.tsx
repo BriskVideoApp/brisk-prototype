@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { RequestReviewRecipient } from "@/components/share/RequestReviewModal";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -266,7 +267,7 @@ export function ShareActionRow({
   const defaultDestination: SubmitDestination = isCustomerView || isStudioFreelancer ? "studio" : "customer";
   const submitCompanyName = selectedDestination === "studio" ? studioName : customerName;
   const currentReviewCompanyName = isWaitingOnReview && waitingOnCompany ? waitingOnCompany : resolvedSendCompanyName;
-  const submitActionLabel = context === "edit" ? `Submit ${resolvedShareTitle}` : `Submit ${stageLabel}`;
+  const submitActionLabel = `Send ${stageLabel}`;
   const submitMembers = membersForDestination(selectedDestination);
   const mentionedMembers = mentionedProjectMembers(sendMessage, submitMembers);
   const notifiedMembers = mentionedMembers.length ? mentionedMembers : submitMembers;
@@ -372,9 +373,26 @@ export function ShareActionRow({
   const sharedProjectId = projectId ?? shareUrl?.match(/\/projects\/([^/?#]+)/)?.[1];
   const canChooseProjectScope = allowProjectScope && (resolvedScopeType === "stage" || resolvedScopeType === "version") && Boolean(sharedProjectId);
   const linkScopeType = canChooseProjectScope && selectedLinkScope === "project" ? "project" : resolvedScopeType;
-  const panelShareTitle = canChooseProjectScope && selectedLinkScope === "project" ? "project" : resolvedShareTitle;
+  const linkScopeTitle = linkScopeType === "project"
+    ? "Project"
+    : linkScopeType === "selection"
+    ? "Selected files"
+    : linkScopeType === "stage"
+    ? stageLabel
+    : resolvedShareTitle;
+  const linkScopeSubject = linkScopeType === "project"
+    ? "the whole project"
+    : linkScopeType === "selection"
+    ? "these selected files"
+    : `the ${resolvedShareTitle}`;
   const selectedAccess = canChooseProjectScope && selectedLinkScope === "project" ? projectAccess : access;
   const linkAccess = selectedAccess;
+  const linkAccessVerb = linkAccess === "canEdit" ? "edit" : linkAccess === "canComment" ? "comment on" : "open";
+  const copyLinkActionLabel = linkScopeType === "project"
+    ? "Copy project link"
+    : linkScopeType === "selection"
+    ? "Copy selected files link"
+    : `Copy ${linkScopeTitle} link`;
   const clientTeamWithAccess = account.team.filter((member) => member.status === "Active" && sharedProjectId && member.projectIds.includes(sharedProjectId));
   const canManageClientTeam = isCustomerView && clientAccountAccess.role === "Client Admin";
 
@@ -500,7 +518,7 @@ export function ShareActionRow({
       else if (selectedDestination === "studio") onSendToStudio?.(sendMessage.trim());
       else onSend?.(sendMessage.trim());
       if (!providedPendingReviewDetails && context !== "brief") appendReviewActivity("sent", sendMessage.trim(), undefined, submitCompanyName, notifiedMembers);
-      showActionToast(`Submitted ${reviewSubject} to ${submitCompanyName}`);
+      showActionToast(`Sent ${reviewSubject} to ${submitCompanyName}`);
     } else {
       onSend?.(sendMessage.trim());
       showActionToast(`Sent to ${resolvedSendCompanyName}`);
@@ -821,10 +839,10 @@ export function ShareActionRow({
       ) : null}
 
       {isPopoverOpen ? (
-        <aside className="share-popover" aria-label={`Share ${panelShareTitle}`} onPointerDown={(event) => event.stopPropagation()}>
+        <aside className="share-popover" aria-label={`${linkScopeTitle} link access`} onPointerDown={(event) => event.stopPropagation()}>
           <header className="share-panel-heading">
             <div>
-              <h2 className="headings-xs-bold">Share {panelShareTitle}</h2>
+              <h2 className="headings-xs-bold">{linkScopeTitle} link access</h2>
               {canChooseProjectScope ? <div className="share-scope-toggle" role="group" aria-label="Link scope">
                 <button className={`label-xs-semibold ${selectedLinkScope === "current" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "current"} onClick={() => { setSelectedLinkScope("current"); setHasCopied(false); }}>{resolvedScopeType === "version" ? resolvedShareTitle : stageLabel} only</button>
                 <button className={`label-xs-semibold ${selectedLinkScope === "project" ? "is-active" : ""}`} type="button" aria-pressed={selectedLinkScope === "project"} onClick={() => { setSelectedLinkScope("project"); setHasCopied(false); }}>Whole project</button>
@@ -844,10 +862,10 @@ export function ShareActionRow({
             ))}
           </ShareOptionSection> : <p className="share-link-access-static label-xs">Link access: {accessLabels[linkAccess]}</p>}
 
-          <p className="share-link-explanation label-xs">Anyone with this link can {linkAccess === "canEdit" ? "edit" : linkAccess === "canComment" ? "comment on" : "open"} {linkScopeType === "stage" ? `the ${resolvedShareTitle}` : linkScopeType === "project" ? "the whole project" : linkScopeType === "version" ? resolvedShareTitle : linkScopeType === "selection" ? "these selected files" : resolvedShareTitle}. No password required.</p>
+          <p className="share-link-explanation label-xs">Anyone with this link can {linkAccessVerb} {linkScopeSubject}. No password required.</p>
 
           <button className="share-copy-primary label-s-semibold" type="button" onClick={() => runAction("copy", copyLink)}>
-            <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : "Copy link"}
+            <DsIcon name={hasCopied ? "check" : "link"} size={16} />{hasCopied ? "Copied" : copyLinkActionLabel}
           </button>
           {clientTeamWithAccess.length > 0 ? <section className="share-client-team" aria-label={`${account.company.name} team with access: ${clientTeamWithAccess.map((member) => member.name).join(", ")}`}>
             <div className="share-client-team-members">
@@ -862,15 +880,15 @@ export function ShareActionRow({
         </aside>
       ) : null}
 
-      {isSendConfirmationOpen ? <div className="share-confirm-backdrop" role="presentation" onMouseDown={() => setIsSendConfirmationOpen(false)}>
+      {isSendConfirmationOpen && typeof document !== "undefined" ? createPortal(<div className="share-confirm-backdrop" role="presentation" onMouseDown={() => setIsSendConfirmationOpen(false)}>
         <section className="share-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="share-send-confirm-title" onMouseDown={(event) => event.stopPropagation()}>
-          <h2 className="headings-xs-bold" id="share-send-confirm-title">{followUpKind === "reminder" ? `Remind ${currentReviewCompanyName} to review the ${reviewSubjectTitle}?` : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle} to ${currentReviewCompanyName}?` : sendsStageForReview ? `Submit ${reviewSubjectTitle} to ${submitCompanyName}?` : `Send ${resolvedShareTitle} to ${resolvedSendCompanyName}?`}</h2>
+          <h2 className="headings-xs-bold" id="share-send-confirm-title">{followUpKind === "reminder" ? `Remind ${currentReviewCompanyName} to review the ${reviewSubjectTitle}?` : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle} to ${currentReviewCompanyName}?` : sendsStageForReview ? `Send ${reviewSubjectTitle} to ${submitCompanyName}?` : `Send ${resolvedShareTitle} to ${resolvedSendCompanyName}?`}</h2>
           <p className="paragraph-s">{followUpKind
             ? `This will send ${currentReviewCompanyName} another notification. The project will remain Waiting on ${currentReviewCompanyName}.`
             : sendsStageForReview
             ? `This will notify ${submitCompanyName} and set the project status to Waiting on ${submitCompanyName}.`
             : `This records the selected item as sent. The project status will not change.`}</p>
-          {sendsStageForReview && !followUpKind ? <div className="share-submit-destinations" role="radiogroup" aria-label="Submit to">
+          {sendsStageForReview && !followUpKind ? <div className="share-submit-destinations" role="radiogroup" aria-label="Send to">
             {(isStudioFreelancer ? ["studio"] as SubmitDestination[] : [defaultDestination, defaultDestination === "customer" ? "studio" : "customer"] as SubmitDestination[]).map((destination) => (
               <button className={`share-submit-destination ${selectedDestination === destination ? "is-selected" : ""}`} type="button" role="radio" aria-checked={selectedDestination === destination} key={destination} onClick={() => {
                 setSelectedDestination(destination);
@@ -917,10 +935,10 @@ export function ShareActionRow({
           </div> : null}
           <div className="share-confirm-actions">
             <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsSendConfirmationOpen(false)}>Cancel</button>
-            <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : sendsStageForReview ? `Submit to ${submitCompanyName}` : resolvedSendLabel}</button>
+            <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : sendsStageForReview ? `Send to ${submitCompanyName}` : resolvedSendLabel}</button>
           </div>
         </section>
-      </div> : null}
+      </div>, document.body) : null}
     </div>
   );
 }

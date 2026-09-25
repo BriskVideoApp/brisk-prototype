@@ -1191,7 +1191,7 @@ export function VideoReviewScreen({
               waitingOnCompany={editStageStatus.assignedTo}
               shareUrl={selectedReviewVersion ? `/projects/${project.id}/stages/edit?version=${encodeURIComponent(selectedReviewVersion.label)}` : `/projects/${project.id}/stages/edit`}
               copyLinkIconOnly
-              copyLinkLabel={selectedReviewVersion ? `Share V${selectedReviewVersion.number}` : "Share Edit"}
+              copyLinkLabel="Copy link"
               sendLabel={selectedReviewVersion ? `Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review V${selectedReviewVersion.number}` : undefined}
               approveLabel={selectedReviewVersion ? `Approve V${selectedReviewVersion.number}` : "Approve Edit"}
               approveDisabled={selectedRole === "Studio Freelancer"}

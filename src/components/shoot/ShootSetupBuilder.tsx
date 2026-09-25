@@ -326,6 +326,7 @@ export function ShootSetupBuilder({
               studioName={studioName}
               customerName={customerName}
               copyLinkIconOnly
+              copyLinkLabel="Copy link"
               approveLabel="Approve Shoot"
               approveDisabled={!canApproveShootPlan}
               approveDisabledTooltip="Complete Creative Plan and Plan the Day first"

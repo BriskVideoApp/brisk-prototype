@@ -1445,6 +1445,14 @@
   opacity: 0.72;
 }
 
+.stage-media .stage-icon-surface {
+  border-color: var(--brisk-border-primary);
+  border-style: solid;
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-brand-primary-click);
+  opacity: 1;
+}
+
 .stage-not_started:hover .stage-icon-surface {
   box-shadow: none;
 }

@@ -59,13 +59,16 @@ function InlinePrototypeScenarioToolbar() {
 
   return (
     <div className="prototype-scenario-toolbar-inline-group">
-      <RolePreviewControl compact />
       <details className="prototype-scenario-toolbar-inline" aria-label="Prototype controls" ref={menuRef}>
         <summary className="label-s-semibold">
           Test mode
           <DsIcon name="caret-down" size={16} />
         </summary>
         <div className="prototype-scenario-toolbar-inline-panel">
+          <div className="prototype-scenario-toolbar-inline-role-picker">
+            <span className="label-xs-semibold">View as role</span>
+            <RolePreviewControl compact />
+          </div>
           <Button size="S" variant="secondary" onClick={resetScenario}>Reset</Button>
           <div className="prototype-scenario-toolbar-inline-links">
             <Link href="/prototype/scenarios">

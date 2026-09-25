@@ -32,6 +32,7 @@ import { formatCostAmount, type ContractorInvoice, type ContractorOffer } from "
 import { getDemoProjectDestination } from "@/data/projects";
 import { getFileLocationHref } from "@/lib/project-files";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 
 type FreelancerView = "videos" | "offers";
 type OfferView = "open" | "history";
@@ -362,6 +363,7 @@ function FreelancerVideoDataCell({
   onSubmitInvoice: (offer: ContractorOffer) => void;
   shiftDirection: "left" | "right" | null;
 }) {
+  const studioName = useStudioCompanyName();
   const className = [
     `column-${columnKey}`,
     isDragging ? "column-is-dragging" : "",
@@ -374,7 +376,7 @@ function FreelancerVideoDataCell({
   }
 
   if (columnKey === "progress") {
-    return <td className={`${className} freelancer-progress-cell`} data-label="Progress"><StageProgress compact projectId={engagement.project.id} projectName={engagement.project.name} stages={engagement.project.stages} studioName="North Star Films" customerName={engagement.project.clientName} videoType={engagement.project.videoType} /></td>;
+    return <td className={`${className} freelancer-progress-cell`} data-label="Progress"><StageProgress compact projectId={engagement.project.id} projectName={engagement.project.name} stages={engagement.project.stages} studioName={studioName} customerName={engagement.project.clientName} videoType={engagement.project.videoType} /></td>;
   }
 
   if (columnKey === "latestAction") {

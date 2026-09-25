@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
@@ -12,7 +12,6 @@ import {
 } from "@/components/studio-onboard/StudioAiFollowUp";
 import { StudioAiQuestion } from "@/components/studio-onboard/StudioAiQuestion";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { ClientPortalScreen } from "@/components/client-portal/ClientPortalScreen";
 import { useInvitations } from "@/components/invitations/InvitationContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
@@ -393,7 +392,6 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
     completeOnboarding,
     createClient,
     createProject,
-    markClientPreviewed,
     updateOnboardingProgress,
   } = usePrototypeState();
   const onboardingClient = state.clients.find((client) => client.workspaceId === state.session.activeWorkspaceId
@@ -406,11 +404,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
   const [clientName, setClientName] = useState(onboardingClient?.name ?? "");
   const [projectName, setProjectName] = useState(onboardingProject?.name ?? "");
   const [showSkipConfirmation, setShowSkipConfirmation] = useState(false);
-  const [screen, setScreen] = useState<"setup" | "portal-preview">(() => (
-    ["client-preview", "invite-client", "complete"].includes(state.onboarding.step)
-      ? "portal-preview"
-      : "setup"
-  ));
+  const hasRedirectedExistingProjectRef = useRef(false);
 
   useEffect(() => {
     if (onboardingClient && !projectName) setProjectName(`${onboardingClient.name} first video`);
@@ -418,13 +412,14 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
 
   useEffect(() => {
     document.querySelector<HTMLElement>(".prototype-test-content")?.scrollTo({ top: 0, left: 0 });
-  }, [screen, state.onboarding.step]);
+  }, [state.onboarding.step]);
 
-  function finishOnProject() {
-    if (!onboardingProject) return;
+  useEffect(() => {
+    if (!onboardingProject || hasRedirectedExistingProjectRef.current) return;
+    hasRedirectedExistingProjectRef.current = true;
     completeOnboarding();
-    router.push(`/projects/${encodeURIComponent(onboardingProject.id)}/stages/brief`);
-  }
+    router.replace("/active-videos");
+  }, [completeOnboarding, onboardingProject, router]);
 
   function addFirstClient() {
     if (!clientName.trim()) return;
@@ -435,7 +430,7 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
 
   function skipClientSetup() {
     completeOnboarding();
-    router.push("/today?onboarding=add-client");
+    router.push("/active-videos");
   }
 
   function startFirstVideo() {
@@ -445,8 +440,9 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
       name: projectName.trim(),
     });
     if (!project) return;
-    markClientPreviewed();
-    setScreen("portal-preview");
+    hasRedirectedExistingProjectRef.current = true;
+    completeOnboarding();
+    router.push("/active-videos");
   }
 
   function inviteFirstClientTeammate() {
@@ -461,15 +457,13 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
 
   function continueToFirstVideo() {
     if (onboardingProject) {
-      updateOnboardingProgress({
-        step: state.onboarding.clientPreviewed ? "invite-client" : "client-preview",
-      });
-      setScreen("portal-preview");
+      hasRedirectedExistingProjectRef.current = true;
+      completeOnboarding();
+      router.push("/active-videos");
       return;
     }
 
     updateOnboardingProgress({ step: "first-project" });
-    setScreen("setup");
   }
 
   if (!onboardingClient) {
@@ -545,49 +539,6 @@ function StudioFirstProjectHandoff({ draft }: { draft: StudioReviewDraft }) {
               {onboardingProject ? "Return to first video" : "Start first video"}
             </button>
           </div>
-        </footer>
-      </section>
-    );
-  }
-
-  if (screen === "portal-preview" && onboardingProject) {
-    return (
-      <section className="studio-first-project-portal-screen" aria-labelledby="studio-first-project-portal-heading">
-        <header className="studio-first-project-portal-heading">
-          <span className="label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span>
-          <h1 className="headings-s-bold" id="studio-first-project-portal-heading">Preview the Client experience</h1>
-          <p className="paragraph-s">
-            This is {onboardingClient.name}&apos;s real dashboard and Brief for {onboardingProject.name}. Nothing has been sent.
-          </p>
-        </header>
-
-        <ClientPortalScreen
-          clientId={onboardingClient.id}
-          embedded
-          studioPreview
-          workspaceId={state.session.activeWorkspaceId}
-        />
-
-        <section className="studio-onboarding-brief-choice" aria-labelledby="studio-onboarding-brief-choice-heading">
-          <div>
-            <span className="label-xs-semibold">Brief</span>
-            <h2 className="headings-xs-bold" id="studio-onboarding-brief-choice-heading">How would you like to begin?</h2>
-            <p className="paragraph-s">Choose an option when you are ready. No invitation or email has been sent.</p>
-          </div>
-          <div className="studio-onboarding-brief-choice-actions">
-            <Button size="M" variant="primary" onClick={() => {
-              openInvitePerson(
-                { role: "Customer", clientId: onboardingClient.id, projectId: onboardingProject.id },
-                finishOnProject,
-              );
-            }}>Invite Client to complete the Brief</Button>
-            <Button size="M" variant="secondary" onClick={finishOnProject}>Complete the Brief with the Client</Button>
-            <Button size="M" variant="tertiary" onClick={finishOnProject}>Do this later</Button>
-          </div>
-        </section>
-
-        <footer className="studio-first-project-portal-actions">
-          <Button size="M" variant="secondary" onClick={() => setScreen("setup")}>Back to video</Button>
         </footer>
       </section>
     );

@@ -23,8 +23,6 @@ import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/p
 
 export type StudioSettingsSectionId =
   | "overview"
-  | "details"
-  | "branding"
   | "team"
   | "production"
   | "ai-playbook"
@@ -49,21 +47,7 @@ export const studioSettingsNavigation = [
     label: "Studio setup",
     href: "/settings/studio",
     icon: "settings",
-    description: "Review and manage the defaults used across your Studio.",
-  },
-  {
-    id: "details",
-    label: "Studio profile",
-    href: "/settings/studio/details",
-    icon: "settings",
-    description: "Manage your Studio’s identity and regional settings.",
-  },
-  {
-    id: "branding",
-    label: "Branding",
-    href: "/settings/studio/branding",
-    icon: "square-logo",
-    description: "Control how your Studio appears in every Client portal.",
+    description: "Manage your Studio profile, branding, services and Client defaults.",
   },
   {
     id: "team",
@@ -129,9 +113,85 @@ const studioWorkspaceNavigation = [
   { label: "Clients", href: "/clients", icon: "users-three" as const },
 ] as const;
 
+type StudioWorkspaceSectionId = "people" | "clients";
+
+function StudioSettingsSidebar({ activeHref }: { activeHref: string }) {
+  return (
+    <nav className="studio-settings-navigation" aria-label="Studio Settings">
+      {studioSettingsNavigation.slice(0, 2).map((item) => (
+        <Link
+          className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
+          href={item.href}
+          aria-current={item.href === activeHref ? "page" : undefined}
+          key={item.id}
+        >
+          <DsIcon name={item.icon} size={16} />
+          <span>{item.label}</span>
+          <DsIcon name="caret-right" size={14} />
+        </Link>
+      ))}
+      {studioWorkspaceNavigation.map((item) => (
+        <Link
+          className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
+          href={item.href}
+          aria-current={item.href === activeHref ? "page" : undefined}
+          key={item.href}
+        >
+          <DsIcon name={item.icon} size={16} />
+          <span>{item.label}</span>
+          <DsIcon name="caret-right" size={14} />
+        </Link>
+      ))}
+      {studioSettingsNavigation.slice(2).map((item) => (
+        <Link
+          className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
+          href={item.href}
+          aria-current={item.href === activeHref ? "page" : undefined}
+          key={item.id}
+        >
+          <DsIcon name={item.icon} size={16} />
+          <span>{item.label}</span>
+          <DsIcon name="caret-right" size={14} />
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function StudioWorkspacePageFrame({ children, section }: { children: ReactNode; section: StudioWorkspaceSectionId }) {
+  const router = useRouter();
+  const { selectedRole } = usePrototypeRole();
+  const { people } = usePeople();
+  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
+  const canManageStudioSettings = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
+  if (!canManageStudioSettings) return <>{children}</>;
+
+  const activeHref = `/${section}`;
+  return (
+    <div className="studio-settings-shell studio-workspace-settings-shell">
+      <div className="studio-settings-mobile-navigation">
+        <span className="label-xs-semibold">Settings section</span>
+        <BriskSelect
+          ariaLabel="Choose Studio Settings section"
+          clearable={false}
+          options={[...studioSettingsNavigation, ...studioWorkspaceNavigation].map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
+          placeholder="Choose section"
+          searchable={false}
+          value={activeHref}
+          onChange={(href) => { if (href && href !== activeHref) router.push(href); }}
+        />
+      </div>
+      <div className="studio-settings-layout">
+        <StudioSettingsSidebar activeHref={activeHref} />
+        <div className="studio-settings-main">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 type StudioSettingsUnsavedContextValue = {
   hasUnsavedChanges: boolean;
-  setHasUnsavedChanges: (hasUnsavedChanges: boolean) => void;
+  setHasUnsavedChanges: (hasUnsavedChanges: boolean, section?: string) => void;
 };
 
 const StudioSettingsUnsavedContext = createContext<StudioSettingsUnsavedContextValue | null>(null);
@@ -144,8 +204,16 @@ export function StudioSettingsShell({
   children: ReactNode;
   sectionId: StudioSettingsSectionId;
 }) {
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const contextValue = useMemo(() => ({ hasUnsavedChanges, setHasUnsavedChanges }), [hasUnsavedChanges]);
+  const [dirtySections, setDirtySections] = useState<Record<string, boolean>>({});
+  const hasUnsavedChanges = Object.values(dirtySections).some(Boolean);
+  const setHasUnsavedChanges = useCallback((dirty: boolean, section = "default") => {
+    setDirtySections((current) => {
+      if (!dirty && section === "default") return {};
+      if (current[section] === dirty) return current;
+      return { ...current, [section]: dirty };
+    });
+  }, []);
+  const contextValue = useMemo(() => ({ hasUnsavedChanges, setHasUnsavedChanges }), [hasUnsavedChanges, setHasUnsavedChanges]);
 
   return (
     <StudioSettingsUnsavedContext.Provider value={contextValue}>
@@ -192,6 +260,9 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
       if (!(anchor instanceof HTMLAnchorElement) || anchor.target === "_blank") return;
       const destination = new URL(anchor.href, window.location.href);
       if (destination.href === window.location.href) return;
+      if (destination.origin === window.location.origin
+        && destination.pathname === window.location.pathname
+        && destination.search === window.location.search) return;
       if (!window.confirm(unsavedChangesMessage)) {
         event.preventDefault();
         event.stopPropagation();
@@ -286,39 +357,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
       </div>
 
       <div className="studio-settings-layout">
-        <nav className="studio-settings-navigation" aria-label="Studio Settings">
-          {studioSettingsNavigation.slice(0, 4).map((item) => (
-            <Link
-              className={`studio-settings-navigation-link label-s-semibold ${item.id === sectionId ? "is-active" : ""}`}
-              href={item.href}
-              aria-current={item.id === sectionId ? "page" : undefined}
-              key={item.id}
-            >
-              <DsIcon name={item.icon} size={16} />
-              <span>{item.label}</span>
-              <DsIcon name="caret-right" size={14} />
-            </Link>
-          ))}
-          {studioWorkspaceNavigation.map((item) => (
-            <Link className="studio-settings-navigation-link label-s-semibold" href={item.href} key={item.href}>
-              <DsIcon name={item.icon} size={16} />
-              <span>{item.label}</span>
-              <DsIcon name="caret-right" size={14} />
-            </Link>
-          ))}
-          {studioSettingsNavigation.slice(4).map((item) => (
-            <Link
-              className={`studio-settings-navigation-link label-s-semibold ${item.id === sectionId ? "is-active" : ""}`}
-              href={item.href}
-              aria-current={item.id === sectionId ? "page" : undefined}
-              key={item.id}
-            >
-              <DsIcon name={item.icon} size={16} />
-              <span>{item.label}</span>
-              <DsIcon name="caret-right" size={14} />
-            </Link>
-          ))}
-        </nav>
+        <StudioSettingsSidebar activeHref={activeSection.href} />
         <div className="studio-settings-main">{children}</div>
       </div>
     </div>

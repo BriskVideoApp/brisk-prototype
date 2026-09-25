@@ -45,7 +45,7 @@ export function shouldHideLegacyCurrentVideo(
     || isClientPortal;
 }
 
-export function getClientPortalDestination(state: PrototypeState) {
+export function getClientPortalDestination(state: PrototypeState, preferredClientId?: string | null) {
   const workspaceId = state.session.activeWorkspaceId;
   const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
 
@@ -60,9 +60,15 @@ export function getClientPortalDestination(state: PrototypeState) {
     return `/workspaces/${encodeURIComponent(workspaceId)}/clients/${encodeURIComponent(clientId)}/portal`;
   }
 
-  const clientId = state.onboarding.clientId;
+  const clientId = [
+    preferredClientId,
+    state.onboarding.clientId,
+    state.clients.find((client) => client.workspaceId === workspaceId
+      && state.projects.some((project) => project.workspaceId === workspaceId && project.clientId === client.id))?.id,
+    state.clients.find((client) => client.workspaceId === workspaceId)?.id,
+  ].find((candidate): candidate is string => Boolean(candidate && selectScopedClient(state, workspaceId, candidate)));
 
-  if (!clientId || !selectScopedClient(state, workspaceId, clientId)) return null;
+  if (!clientId) return null;
 
   return `/workspaces/${encodeURIComponent(workspaceId)}/clients/${encodeURIComponent(clientId)}/portal?studio-preview=1`;
 }

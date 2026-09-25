@@ -40,8 +40,8 @@ export type PrototypeScenario = {
 };
 
 export const prototypeScenarioPersonas = [
-  { id: "studio-owner", label: "Studio Staff", accessRole: "Studio Staff" },
-  { id: "producer", label: "Studio Staff", accessRole: "Studio Staff" },
+  { id: "studio-owner", label: "Studio Owner / Admin", accessRole: "Studio Staff" },
+  { id: "producer", label: "Studio Staff / Producer", accessRole: "Studio Staff" },
   { id: "freelancer", label: "Studio Freelancer", accessRole: "Studio Freelancer" },
   { id: "client", label: "Client", accessRole: "Customer" },
 ] as const satisfies readonly {
@@ -132,7 +132,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "studio-owner-new",
     personaId: "studio-owner",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Owner / Admin",
     state: "new",
     stateLabel: "New",
     accessRole: "Studio Staff",
@@ -141,13 +141,13 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
     entry: "studio-sign-up",
     startHref: "/studio-onboard",
     continuationHref: "/studio-onboard",
-    summary: "A first-time Studio Staff user with no projects or activity.",
+    summary: "A first-time Studio Owner / Admin with no projects or activity.",
     supportedStates: ["Studio sign-up", "AI-assisted Studio onboarding", "First-video empty states"],
   },
   {
     id: "studio-owner-active",
     personaId: "studio-owner",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Owner / Admin",
     state: "active",
     stateLabel: "Active",
     accessRole: "Studio Staff",
@@ -156,13 +156,13 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
     entry: "workspace",
     startHref: "/today",
     continuationHref: "/today",
-    summary: "A Studio Staff user with the complete North Star Films workspace and administration access.",
+    summary: "A Studio Owner / Admin with the complete North Star Films workspace and administration access.",
     supportedStates: ["Active videos", "Media and comments", "Notifications", "Studio administration"],
   },
   {
     id: "studio-owner-edge",
     personaId: "studio-owner",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Owner / Admin",
     state: "edge",
     stateLabel: "Edge Case",
     accessRole: "Studio Staff",
@@ -177,7 +177,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "producer-new",
     personaId: "producer",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Staff / Producer",
     state: "new",
     stateLabel: "New",
     accessRole: "Studio Staff",
@@ -192,7 +192,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "producer-active",
     personaId: "producer",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Staff / Producer",
     state: "active",
     stateLabel: "Active",
     accessRole: "Studio Staff",
@@ -207,7 +207,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "producer-edge",
     personaId: "producer",
-    personaLabel: "Studio Staff",
+    personaLabel: "Studio Staff / Producer",
     state: "edge",
     stateLabel: "Edge Case",
     accessRole: "Studio Staff",
