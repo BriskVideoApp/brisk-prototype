@@ -14,7 +14,8 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { InvitationStatusBadge, useInvitations, type InvitationStatus } from "@/components/invitations/InvitationContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { selectClientProjects } from "@/data/prototype-state";
-import { getBrandKitCustomer } from "@/data/brand-kits";
+import { getBrandKitCustomer, getBrandKitCustomerForClient } from "@/data/brand-kits";
+import { getBrandKitStorageKey, readStoredBrandKit, type StoredBrandKit } from "@/components/brand-kits/BrandKitContext";
 import type { Client, ClientContact } from "@/data/clients";
 
 type ClientProfileSection = "Overview" | "Contacts" | "Brand Kit";
@@ -309,7 +310,15 @@ function ContactsSection({
 }
 
 function BrandKitSection({ client }: { client: Client }) {
-  const brandKit = client.defaultBrandKitSlug ? getBrandKitCustomer(client.defaultBrandKitSlug) : null;
+  const { state } = usePrototypeState();
+  const [savedKit, setSavedKit] = useState<StoredBrandKit | null>(null);
+  useEffect(() => {
+    setSavedKit(readStoredBrandKit(getBrandKitStorageKey(state.session.activeWorkspaceId, client.id)));
+  }, [client.id, state.session.activeWorkspaceId]);
+  const seededKit = client.defaultBrandKitSlug ? getBrandKitCustomer(client.defaultBrandKitSlug) : null;
+  const brandKit = seededKit ?? (savedKit?.profile || savedKit?.subBrands.length
+    ? { ...getBrandKitCustomerForClient(client), lastUpdated: "Just now" }
+    : null);
   return (
     <section className="client-section-stack" aria-labelledby="client-brand-kit-heading">
       <header className="client-section-header">
@@ -325,18 +334,18 @@ function BrandKitSection({ client }: { client: Client }) {
             <span className="client-brand-type headings-xs-bold">Aa</span>
           </div>
           <div>
-            <span className="label-xs-semibold">Default for new projects</span>
+            <span className="label-xs-semibold">{seededKit ? "Default for new projects" : "Client Brand Kit"}</span>
             <h3 className="headings-xs-bold">{brandKit.name} Brand Kit</h3>
             <p className="paragraph-s">Logos, colours, fonts, imagery, voice and brand guidelines stay managed in one Brand Kit.</p>
             <div><ClientStatusBadge status="Active" /><span className="label-xs">Updated {brandKit.lastUpdated}</span></div>
           </div>
           <div className="client-brand-kit-actions">
             <Link className="client-secondary-button label-s-semibold" href={`/brand-kits/${brandKit.slug}`}>Add logo, colours and assets</Link>
-            <span className="label-xs"><DsIcon name="check-circle" size={14} /> Default Brand Kit selected</span>
+            <span className="label-xs"><DsIcon name="check-circle" size={14} /> {seededKit ? "Default Brand Kit selected" : "Brand Kit started"}</span>
           </div>
         </article>
       ) : (
-        <div className="client-section-empty is-brand-kit"><img src="/brisk-visuals/brand-kit-empty-state-purple-shadow.png" alt="" /><h3 className="headings-xs-bold">No Brand Kit yet</h3><p className="paragraph-s">Add logos, colours and brand assets, then choose this as the default for new projects.</p><Link className="client-primary-link label-m-semibold" href="/brand-kits">Add Brand Kit</Link></div>
+        <div className="client-section-empty is-brand-kit"><img src="/brisk-visuals/brand-kit-empty-state-purple-shadow.png" alt="" /><h3 className="headings-xs-bold">No Brand Kit yet</h3><p className="paragraph-s">Add logos, colours and brand assets, then choose this as the default for new projects.</p><Link className="client-primary-link label-m-semibold" href={`/brand-kits/${client.id}`}>Add Brand Kit</Link></div>
       )}
     </section>
   );

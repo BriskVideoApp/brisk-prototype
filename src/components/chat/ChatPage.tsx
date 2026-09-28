@@ -30,7 +30,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canViewProject } from "@/data/prototype-access";
-import { getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
+import { createChatProjectForRecord, getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getDemoProjectDestination } from "@/data/projects";
@@ -67,13 +67,13 @@ type ChatPageProps = {
 export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
-  const { state: prototypeState } = usePrototypeState();
+  const { state: prototypeState, hasHydrated: hasHydratedPrototypeState } = usePrototypeState();
   const chatUsers = useMemo(() => getChatUsers(prototypeState), [prototypeState]);
   const chatStorageKey = `brisk-chat-v1:${prototypeState.session.activeWorkspaceId}`;
   const { studio } = useStudioSettings();
   const { activeScenario } = usePrototypeScenario();
   const searchParams = useSearchParams();
-  const isEmptyPreview = searchParams.get("preview") === "empty" || activeScenario?.state === "new";
+  const isEmptyPreview = searchParams.get("preview") === "empty" || (activeScenario?.state === "new" && prototypeState.projects.length === 0);
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
   const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
@@ -91,7 +91,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       return null;
     }
 
-    if (initialProjectId && initialProjects.some((project) => project.id === initialProjectId)) {
+    if (initialProjectId) {
       return initialProjectId;
     }
 
@@ -140,6 +140,20 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     };
     setLoadedChatKey(chatStorageKey);
   }, [chatStorageKey]);
+
+  useEffect(() => {
+    if (!hasHydratedPrototypeState || loadedChatKey !== chatStorageKey) return;
+    const workspaceClients = prototypeState.clients.filter((client) => client.workspaceId === prototypeState.session.activeWorkspaceId);
+    setClients((current) => {
+      const missing = workspaceClients.filter((client) => !current.some((entry) => entry.name === client.name));
+      return missing.length ? [...current, ...missing.map((client) => ({ name: client.name, status: client.status, userIds: [] }))] : current;
+    });
+    setProjects((current) => {
+      const missing = prototypeState.projects.filter((project) => project.workspaceId === prototypeState.session.activeWorkspaceId
+        && !current.some((entry) => entry.id === project.id));
+      return missing.length ? [...current, ...missing.map((project) => createChatProjectForRecord(project, prototypeState))] : current;
+    });
+  }, [chatStorageKey, hasHydratedPrototypeState, loadedChatKey, prototypeState]);
 
   useEffect(() => {
     if (loadedChatKey !== chatStorageKey || isEmptyPreview) return;
@@ -211,8 +225,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     (!clientName || client.name === clientName)
     && (isStudioStaff || accessibleProjects.some((project) => project.clientName === client.name)));
   const customerStatusByName = useMemo(
-    () => new Map(clients.map((client) => [client.name, client.status])),
-    [clients],
+    () => new Map(accessibleClients.map((client) => [client.name, client.status])),
+    [accessibleClients],
   );
   const customerFilteredProjects = isStudioStaff && customerFilter !== "All"
     ? accessibleProjects.filter(

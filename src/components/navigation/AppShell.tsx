@@ -10,7 +10,7 @@ import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { BriskAiAssistant, BriskAiHeaderButton } from "@/components/ai/BriskAiAssistant";
 import { PrototypeScenarioToolbar } from "@/components/prototype-scenarios/PrototypeScenarioToolbar";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
-import { prototypeCustomerSlug, usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
@@ -110,7 +110,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </Link> : null}
                   <Link
                     className={`app-header-navigation-link label-s-semibold ${pathname.startsWith("/brand-kits") ? "is-active" : ""}`}
-                    href={isStudioUser ? "/brand-kits" : `/brand-kits/${prototypeCustomerSlug}`}
+                    href={isStudioUser ? "/brand-kits" : viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios"}
                   >
                     {isStudioUser ? "Brand Kits" : "Brand Kit"}
                   </Link>

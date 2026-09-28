@@ -45,7 +45,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const linkedBatchAssets = library.assetViews.filter((asset) => initialAssetIds.includes(asset.id) && !asset.archivedAt && asset.collection === "media" && (!project || asset.projectId === project.id));
   const scenarioProjects = useMemo(
     () => {
-      if (scope === "global") return activeVideoProjects;
+      if (scope === "global") return prototypeState.projects.filter((item) => item.workspaceId === prototypeState.session.activeWorkspaceId);
       if (!project) return activeScenario?.state === "new" ? [] : activeVideoProjects;
       if (activeVideoProjects.some((item) => item.id === project.id)) return activeVideoProjects;
       const belongsToActiveWorkspace = prototypeState.projects.some((item) => item.id === project.id && item.workspaceId === prototypeState.session.activeWorkspaceId);

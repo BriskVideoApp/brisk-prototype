@@ -513,6 +513,31 @@ export function getBrandKitCustomer(slug: string) {
   return brandKitCustomers.find((customer) => customer.slug === slug);
 }
 
+export function getBrandKitCustomerForClient(client: Pick<import("@/data/clients").Client, "id" | "name" | "badge" | "website" | "logoUrl">): BrandKitCustomer {
+  const seeded = getBrandKitCustomer(client.id);
+  if (seeded) return { ...seeded, name: client.name, badge: client.badge, website: client.website, logoUrl: client.logoUrl ?? seeded.logoUrl };
+  return {
+    slug: client.id,
+    name: client.name,
+    badge: client.badge,
+    website: client.website,
+    logoUrl: client.logoUrl,
+    lastUpdated: "Not set up",
+    profile: null,
+    aiBrandProfile: makeAiBrandProfile(client.name, null, {
+      summary: `Brisk is still learning about ${client.name}.`,
+      sources: ["Client record"],
+      learning: true,
+    }),
+    clientCanEdit: true,
+    shareToken: `${client.id}-brand`,
+    showPoweredBy: true,
+    motionPreview: { posterUrl: "", videoUrl: "" },
+    editorFileVersions: [],
+    subBrands: [],
+  };
+}
+
 export function getBrandKitCustomerByBadge(badge: string) {
   return brandKitCustomers.find((customer) => customer.badge === badge);
 }

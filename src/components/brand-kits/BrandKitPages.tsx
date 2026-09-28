@@ -3,16 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import {
-  prototypeCustomerSlug,
   usePrototypeRole,
 } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   brandKitCustomers,
   createManualBrandProfile,
+  getBrandKitCustomerForClient,
+  makeSubBrandFallback,
   mockAudioAsset,
   type BrandColour,
   type BrandGuidelineFile,
@@ -28,7 +31,10 @@ import {
 import { getBrandFromSources } from "@/lib/brand-profile-adapter";
 import {
   BrandKitProvider,
+  getBrandKitStorageKey,
+  readStoredBrandKit,
   useBrandKit,
+  type StoredBrandKit,
   type SetupMode,
   type SetupSource,
 } from "./BrandKitContext";
@@ -345,15 +351,35 @@ export function BrandKitsLandingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  const { state, hasHydrated } = usePrototypeState();
   const [query, setQuery] = useState("");
+  const [savedKits, setSavedKits] = useState<Record<string, StoredBrandKit>>({});
   const isStudioView = hasLoadedRole && (allPages || selectedRole !== "Customer");
   const previewState = searchParams.get("preview");
-  const customers = previewState === "empty" ? [] : brandKitCustomers;
+  const customers = previewState === "empty" ? [] : hasHydrated
+    ? state.clients.filter((client) => client.workspaceId === state.session.activeWorkspaceId).map((client) => {
+      const customer = getBrandKitCustomerForClient(client);
+      const saved = savedKits[client.id];
+      return saved ? { ...customer, profile: profileHasBrandContent(saved.profile) ? saved.profile : customer.profile,
+        subBrands: saved.subBrands, lastUpdated: "Just now" } : customer;
+    })
+    : brandKitCustomers;
   const filteredCustomers = previewState === "no-results"
     ? []
     : customers.filter((customer) =>
         `${customer.name} ${customer.website}`.toLowerCase().includes(query.trim().toLowerCase()),
       );
+
+  useEffect(() => {
+    if (!hasHydrated) return;
+    const saved = Object.fromEntries(state.clients.flatMap((client) => {
+      if (client.workspaceId !== state.session.activeWorkspaceId) return [];
+      const kit = readStoredBrandKit(getBrandKitStorageKey(client.workspaceId, client.id));
+      return kit ? [[client.id, kit]] : [];
+    }));
+    setSavedKits(saved);
+  }, [hasHydrated, state.clients, state.session.activeWorkspaceId]);
 
   const clearSearch = () => {
     setQuery("");
@@ -364,9 +390,9 @@ export function BrandKitsLandingPage() {
 
   useEffect(() => {
     if (hasLoadedRole && selectedRole === "Customer" && !allPages) {
-      router.replace(`/brand-kits/${prototypeCustomerSlug}`);
+      router.replace(viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios");
     }
-  }, [allPages, hasLoadedRole, router, selectedRole]);
+  }, [allPages, hasLoadedRole, router, selectedRole, viewer?.clientId]);
 
   if (!isStudioView) {
     return <BrandKitPermissionTransition />;
@@ -485,13 +511,39 @@ export function BrandKitPage({
         ? [...customer.subBrands, subBrand]
         : customer.subBrands}
       isGuest={isGuest}
+      subBrandSlug={subBrand?.slug}
     >
-      <BrandKitSurface subBrand={subBrand} />
+      <BrandKitActiveSurface subBrand={subBrand} />
     </BrandKitProvider>
   );
 }
 
+function BrandKitActiveSurface({ subBrand }: { subBrand?: SubBrand }) {
+  const { subBrands } = useBrandKit();
+  return <BrandKitSurface subBrand={subBrand ? subBrands.find((brand) => brand.slug === subBrand.slug) ?? subBrand : undefined} />;
+}
+
+export function BrandKitClientRoute({ customerSlug, subBrandSlug, relationship, setup }: {
+  customerSlug: string;
+  subBrandSlug?: string;
+  relationship?: string;
+  setup?: string;
+}) {
+  const { state, hasHydrated } = usePrototypeState();
+  if (!hasHydrated) return <BrandKitPermissionTransition />;
+  const client = state.clients.find((candidate) => candidate.id === customerSlug
+    && candidate.workspaceId === state.session.activeWorkspaceId);
+  if (!client) notFound();
+  const customer = getBrandKitCustomerForClient(client);
+  const relationshipOverride = relationship === "master" || relationship === "sub-brand" ? relationship : undefined;
+  const storedSubBrand = customer.subBrands.find((candidate) => candidate.slug === subBrandSlug);
+  const subBrand = subBrandSlug ? storedSubBrand ?? makeSubBrandFallback(customer, subBrandSlug,
+    relationshipOverride ?? "sub-brand", setup === "manual" ? createManualBrandProfile() : undefined) : undefined;
+  return <BrandKitPage customer={customer} subBrand={subBrand} />;
+}
+
 function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
+  const viewer = usePrototypeViewer();
   const {
     addBrand,
     banner,
@@ -535,7 +587,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
   const [uploadProgress, setUploadProgress] = useState<{ kind: TargetedUploadKind; value: number } | null>(null);
   const [hasMotionPackage, setHasMotionPackage] = useState(() => profileHasMotionPackage(profile));
   const [setupStage, setSetupStage] = useState<BrandKitSetupStage>(() =>
-    profileHasBrandContent(profile) ? "complete" : "empty",
+    profileHasBrandContent(profile) ? "complete" : subBrands.length > 0 ? "manual" : "empty",
   );
   const [editorVersions, setEditorVersions] = useState<EditorFileVersion[]>(() =>
     customer.editorFileVersions.map((version) => ({ ...version, files: [...version.files] })),
@@ -566,20 +618,16 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
   const visibleImagery = imageryFilter === "audio" && filteredImagery.length === 0
     ? [mockAudioAsset]
     : filteredImagery;
-  const canViewCustomer = isGuest || role !== "client" || customer.slug === prototypeCustomerSlug;
+  const clientBrandKitSlug = viewer?.clientId ?? "";
+  const canViewCustomer = isGuest || role !== "client" || customer.slug === clientBrandKitSlug;
   const canManageBrands = !isGuest && (canEdit || role === "client");
   const canManageMotion = canEdit && role !== "client";
-  const hasMasterBrand = Boolean(customer.profile)
-    || (!subBrand && Boolean(profile))
-    || subBrand?.relationship === "master"
-    || subBrands.some((brand) => brand.relationship === "master");
-  const newBrandRelationship: BrandRelationship = hasMasterBrand ? "sub-brand" : "master";
 
   useEffect(() => {
     if (hasLoadedRole && !canViewCustomer) {
-      router.replace(`/brand-kits/${prototypeCustomerSlug}`);
+      router.replace(clientBrandKitSlug ? `/brand-kits/${clientBrandKitSlug}` : "/prototype/scenarios");
     }
-  }, [canViewCustomer, hasLoadedRole, router]);
+  }, [canViewCustomer, clientBrandKitSlug, hasLoadedRole, router]);
 
   useEffect(() => {
     if (subBrand) setCurrentRelationship(subBrand.relationship);
@@ -702,10 +750,9 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
     const nextBrand = addBrand(
       nextName,
       createManualBrandProfile(),
-      newBrandRelationship,
+      "sub-brand",
     );
     const query = new URLSearchParams({ setup: "manual" });
-    if (newBrandRelationship === "master") query.set("relationship", "master");
     router.push(`/brand-kits/${customer.slug}/${nextBrand.slug}?${query.toString()}`);
   };
 
@@ -871,6 +918,9 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
     const nextRelationship: BrandRelationship = currentRelationship === "master"
       ? "sub-brand"
       : "master";
+    updateSubBrands(subBrands.map((brand) => brand.slug === subBrand.slug
+      ? { ...brand, relationship: nextRelationship }
+      : brand));
     setCurrentRelationship(nextRelationship);
     router.replace(
       `/brand-kits/${customer.slug}/${subBrand.slug}?relationship=${nextRelationship}`,
@@ -985,7 +1035,7 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
             </div>
           ) : (
             <nav className="brand-breadcrumbs label-xs-semibold" aria-label="Breadcrumb">
-              <Link href={role === "client" ? `/brand-kits/${prototypeCustomerSlug}` : "/brand-kits"}>Brand Kits</Link>
+              <Link href={role === "client" ? clientBrandKitSlug ? `/brand-kits/${clientBrandKitSlug}` : "/prototype/scenarios" : "/brand-kits"}>Brand Kits</Link>
               <DsIcon name="caret-right" size={14} />
               {subBrand ? (
                 <>

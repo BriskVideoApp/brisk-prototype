@@ -15,9 +15,8 @@ import {
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { brandKitCustomers } from "@/data/brand-kits";
 import { chatClients, chatProjects } from "@/data/chat";
-import { getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
+import { createChatProjectForRecord, getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
 import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -85,9 +84,12 @@ export function AppSidebar({
   const historyPressTimerRef = useRef<number | null>(null);
   const historyOpenedByPressRef = useRef(false);
   const currentHref = currentSearch ? `${pathname}?${currentSearch}` : pathname;
+  const contextualProject = state.projects.find((project) => project.id === contextualProjectId
+    && project.workspaceId === state.session.activeWorkspaceId);
   const accessProject = contextualProjectId
     ? getScopedChatProject(accessProjectsById[contextualProjectId]
       ?? chatProjects.find((project) => project.id === contextualProjectId)
+      ?? (contextualProject ? createChatProjectForRecord(contextualProject, state) : null)
       ?? null, state)
     : null;
   const accessClient = accessProject
@@ -97,7 +99,7 @@ export function AppSidebar({
     ? chatUsers.filter((user) => accessClient.userIds.includes(user.id))
     : [];
   const projectBrandKit = accessProject
-    ? brandKitCustomers.find((customer) => customer.name === accessProject.clientName) ?? null
+    ? state.clients.find((client) => client.name === accessProject.clientName && client.workspaceId === state.session.activeWorkspaceId) ?? null
     : null;
   const canSeeProjectFiles = allPages || selectedRole !== "Customer";
 
@@ -267,12 +269,12 @@ export function AppSidebar({
               ) : null}
               {projectBrandKit ? (
                 <SidebarLink
-                  active={pathname === `/brand-kits/${projectBrandKit.slug}`}
+                  active={pathname === `/brand-kits/${projectBrandKit.id}`}
                   collapsed={isCollapsed}
                   item={{
                     id: `project-brand-kit-${contextualProjectId}`,
                     label: `${projectBrandKit.name}'s Brand Kit`,
-                    href: `/brand-kits/${projectBrandKit.slug}`,
+                    href: `/brand-kits/${projectBrandKit.id}`,
                     icon: "sparkle",
                     roles: [],
                   }}

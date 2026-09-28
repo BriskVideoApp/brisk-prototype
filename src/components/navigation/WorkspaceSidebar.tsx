@@ -3,11 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import {
-  prototypeCustomerSlug,
-  usePrototypeRole,
-  type PrototypeRole,
-} from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
@@ -34,6 +31,7 @@ export function WorkspaceSidebar({
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [recentPages, setRecentPages] = useState<RecentPage[]>([]);
   const { selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const pathname = usePathname();
   const navigationId = useId();
   const historyMenuId = useId();
@@ -41,12 +39,12 @@ export function WorkspaceSidebar({
   const historyPressTimerRef = useRef<number | null>(null);
   const historyOpenedByPressRef = useRef(false);
   const brandKitHref = selectedRole === "Customer"
-    ? `/brand-kits/${prototypeCustomerSlug}`
+    ? viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios"
     : "/brand-kits";
   const brandKitLabel = selectedRole === "Customer" ? "Brand Kit" : "Brand Kits";
   const visibleHistoryPages = recentPages
     .filter((page) => page.href !== pathname)
-    .filter((page) => canRoleSeeRecentPage(page.href, selectedRole));
+    .filter((page) => canRoleSeeRecentPage(page.href, selectedRole, viewer?.clientId));
   const sidebarClassName = [
     "today-sidebar",
     "workspace-sidebar",
@@ -324,7 +322,7 @@ function getPageIcon(pathname: string): DsIconName {
   return "folder-open";
 }
 
-function canRoleSeeRecentPage(pathname: string, role: PrototypeRole) {
+function canRoleSeeRecentPage(pathname: string, role: PrototypeRole, clientId: string | null | undefined) {
   if (role !== "Customer") {
     return true;
   }
@@ -337,8 +335,8 @@ function canRoleSeeRecentPage(pathname: string, role: PrototypeRole) {
     return true;
   }
 
-  return pathname === `/brand-kits/${prototypeCustomerSlug}`
-    || pathname.startsWith(`/brand-kits/${prototypeCustomerSlug}/`);
+  return Boolean(clientId && (pathname === `/brand-kits/${clientId}`
+    || pathname.startsWith(`/brand-kits/${clientId}/`)));
 }
 
 function titleCase(value: string) {

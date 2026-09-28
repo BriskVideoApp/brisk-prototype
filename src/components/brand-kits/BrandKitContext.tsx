@@ -3,11 +3,13 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import {
   cloneBrandProfile,
   createManualBrandProfile,
@@ -46,6 +48,31 @@ type BrandKitContextValue = {
 };
 
 const BrandKitContext = createContext<BrandKitContextValue | null>(null);
+export type StoredBrandKit = { profile: BrandProfile | null; subBrands: SubBrand[] };
+
+export function getBrandKitStorageKey(workspaceId: string, slug: string) {
+  return `brisk-brand-kit-v1:${workspaceId}:${slug}`;
+}
+
+export function readStoredBrandKit(key: string): StoredBrandKit | null {
+  try {
+    const stored = window.localStorage.getItem(key);
+    const parsed: unknown = stored ? JSON.parse(stored) : null;
+    if (parsed && typeof parsed === "object" && "subBrands" in parsed && Array.isArray(parsed.subBrands)
+      && "profile" in parsed) return parsed as StoredBrandKit;
+  } catch {
+    // Keep the seeded Brand Kit if browser storage is unavailable.
+  }
+  return null;
+}
+
+function writeStoredBrandKit(key: string, value: StoredBrandKit) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // The prototype remains editable for this visit if browser storage is unavailable.
+  }
+}
 const profileSections: BrandProfileSection[] = [
   "logos",
   "colours",
@@ -75,14 +102,17 @@ export function BrandKitProvider({
   initialProfile,
   initialSubBrands,
   isGuest = false,
+  subBrandSlug,
 }: {
   children: ReactNode;
   customer: BrandKitCustomer;
   initialProfile?: BrandProfile | null;
   initialSubBrands?: SubBrand[];
   isGuest?: boolean;
+  subBrandSlug?: string;
 }) {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { state } = usePrototypeState();
   const role: BrandKitRole = isGuest
     ? "client"
     : selectedRole === "Studio Staff"
@@ -97,11 +127,34 @@ export function BrandKitProvider({
   const [subBrands, setSubBrands] = useState<SubBrand[]>(
     () => initialSubBrands ?? customer.subBrands,
   );
+  const [loadedStorageKey, setLoadedStorageKey] = useState<string | null>(null);
+  const storageKey = getBrandKitStorageKey(state.session.activeWorkspaceId, customer.slug);
   const [banner, setBanner] = useState<string | null>(null);
   const [autoDetectedSections, setAutoDetectedSections] = useState<Set<BrandProfileSection>>(
     () => new Set(),
   );
   const canEdit = !isGuest && (role !== "client" || customer.clientCanEdit);
+
+  useEffect(() => {
+    if (isGuest) return;
+    const stored = readStoredBrandKit(storageKey);
+    const nextSubBrands = stored?.subBrands ?? initialSubBrands ?? customer.subBrands;
+    const nextProfile = subBrandSlug
+      ? nextSubBrands.find((brand) => brand.slug === subBrandSlug)?.profile ?? initialProfile ?? null
+      : stored?.profile ?? customer.profile;
+    setSubBrands(nextSubBrands);
+    setProfile(nextProfile ? cloneBrandProfile(nextProfile) : null);
+    setLoadedStorageKey(storageKey);
+  }, [customer.slug, isGuest, storageKey, subBrandSlug]);
+
+  useEffect(() => {
+    if (isGuest || loadedStorageKey !== storageKey) return;
+    const stored = readStoredBrandKit(storageKey);
+    const nextSubBrands = subBrandSlug
+      ? subBrands.map((brand) => brand.slug === subBrandSlug ? { ...brand, profile: profile ?? brand.profile } : brand)
+      : subBrands;
+    writeStoredBrandKit(storageKey, { profile: subBrandSlug ? stored?.profile ?? customer.profile : profile, subBrands: nextSubBrands });
+  }, [customer.profile, isGuest, loadedStorageKey, profile, storageKey, subBrandSlug, subBrands]);
 
   const updateSection = <Section extends BrandProfileSection>(
     section: Section,
@@ -158,12 +211,17 @@ export function BrandKitProvider({
       profile: cloneBrandProfile(brandProfile),
     };
 
-    setSubBrands((current) => [...current, nextSubBrand]);
+    const nextSubBrands = [...subBrands, nextSubBrand];
+    setSubBrands(nextSubBrands);
+    const stored = readStoredBrandKit(storageKey);
+    writeStoredBrandKit(storageKey, { profile: subBrandSlug ? stored?.profile ?? customer.profile : profile, subBrands: nextSubBrands });
     return nextSubBrand;
   };
 
   const updateSubBrands = (nextSubBrands: SubBrand[]) => {
     setSubBrands(nextSubBrands);
+    const stored = readStoredBrandKit(storageKey);
+    writeStoredBrandKit(storageKey, { profile: subBrandSlug ? stored?.profile ?? customer.profile : profile, subBrands: nextSubBrands });
   };
 
   const value = useMemo<BrandKitContextValue>(
@@ -195,7 +253,7 @@ export function BrandKitProvider({
     ],
   );
 
-  return <BrandKitContext.Provider value={value}>{children}</BrandKitContext.Provider>;
+  return <BrandKitContext.Provider value={value}>{isGuest || loadedStorageKey === storageKey ? children : null}</BrandKitContext.Provider>;
 }
 
 export function useBrandKit() {

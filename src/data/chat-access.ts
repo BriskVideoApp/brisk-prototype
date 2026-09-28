@@ -1,6 +1,6 @@
 import type { ChatClient, ChatProject, ChatUser } from "@/components/chat/types";
 import { chatUsers as seededChatUsers } from "@/data/chat";
-import type { PrototypeState, PrototypeUser } from "@/data/prototype-state";
+import type { PrototypeState, PrototypeUser, ScopedProject } from "@/data/prototype-state";
 
 function chatIdForUser(user: PrototypeUser): string {
   return seededChatUsers.find((candidate) => candidate.email.toLowerCase() === user.email.toLowerCase())?.id ?? user.id;
@@ -29,6 +29,7 @@ export function getScopedChatClient(client: ChatClient, state: PrototypeState): 
     && (candidate.name === client.name || candidate.id === client.name.toLowerCase()));
   return {
     ...client,
+    status: record?.status ?? client.status,
     userIds: record?.contacts
       .filter((contact) => contact.portalAccess !== "Paused")
       .flatMap((contact) => {
@@ -54,7 +55,30 @@ export function getScopedChatProject(project: ChatProject | null, state: Prototy
   return {
     ...project,
     clientName: record.clientName,
+    status: record.status,
     clientMemberIds,
     memberIds: [...new Set([...studioMemberIds, ...clientMemberIds])],
+  };
+}
+
+export function createChatProjectForRecord(project: ScopedProject, state: PrototypeState): ChatProject {
+  const studioMemberIds = state.users
+    .filter((user) => user.workspaceId === project.workspaceId && user.role === "Studio Staff")
+    .map(chatIdForUser);
+  return {
+    id: project.id,
+    code: project.clientBadge,
+    title: project.name,
+    clientName: project.clientName,
+    status: project.status,
+    memberIds: studioMemberIds,
+    clientMemberIds: [],
+    externalUnread: 0,
+    internalUnread: 0,
+    preferredSource: "brisk",
+    connectors: {
+      whatsapp: { enabled: false, detail: "Not configured for this project", numberOwner: "studio", conversationName: "Select a Client conversation", audience: { kind: "shared" } },
+      slack: { enabled: false, detail: "Not configured for this project", setup: "brisk-app", channelName: "" },
+    },
   };
 }
