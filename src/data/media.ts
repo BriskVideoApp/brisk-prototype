@@ -141,9 +141,9 @@ type Seed = Omit<MediaAsset, "currentVersionId"> & Omit<MediaAssetVersion, "id" 
   originalAvailable?: boolean;
 };
 const seeds: Seed[] = [
-  { id: "media-01", projectId: "loom-launch-film", folderId: "interviews", name: "Mia-interview-camera-a.mov", kind: "video", collection: "media", status: "ready", transcriptStatus: "ready", linkedScriptRowId: "script-03", uploadedAt: "2026-07-08T14:24:00+10:00", uploadedById: "maddie-lee", sizeBytes: 4_800_000_000, durationSeconds: 1122, thumbnailUrl: peopleImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main", versionNumber: 3 },
-  { id: "media-02", projectId: "loom-launch-film", folderId: "interviews", name: "Mia-interview-camera-b.mov", kind: "video", collection: "media", status: "preparing", processingProgress: 72, transcriptStatus: "processing", uploadedAt: "2026-07-08T14:21:00+10:00", uploadedById: "maddie-lee", sizeBytes: 3_900_000_000, durationSeconds: 1119, thumbnailUrl: officeImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main" },
-  { id: "media-03", projectId: "loom-launch-film", folderId: "interviews", name: "Mia-lapel-audio.wav", kind: "audio", collection: "media", status: "ready", transcriptStatus: "ready", linkedScriptRowId: "script-03", uploadedAt: "2026-07-08T14:18:00+10:00", uploadedById: "sam-chen", sizeBytes: 862_400_000, durationSeconds: 1144, playbackUrl: mediaSampleAudioUrl, storageLocationId: "brisk-main" },
+  { id: "media-01", projectId: "loom-launch-film", folderId: "interviews", name: "Jess-interview-camera-a.mov", kind: "video", collection: "media", status: "ready", transcriptStatus: "ready", linkedScriptRowId: "script-03", uploadedAt: "2026-07-08T14:24:00+10:00", uploadedById: "maddie-lee", sizeBytes: 4_800_000_000, durationSeconds: 1122, thumbnailUrl: peopleImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main", versionNumber: 3 },
+  { id: "media-02", projectId: "loom-launch-film", folderId: "interviews", name: "Jess-interview-camera-b.mov", kind: "video", collection: "media", status: "preparing", processingProgress: 72, transcriptStatus: "processing", uploadedAt: "2026-07-08T14:21:00+10:00", uploadedById: "maddie-lee", sizeBytes: 3_900_000_000, durationSeconds: 1119, thumbnailUrl: officeImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main" },
+  { id: "media-03", projectId: "loom-launch-film", folderId: "interviews", name: "Jess-lapel-audio.wav", kind: "audio", collection: "media", status: "ready", transcriptStatus: "ready", linkedScriptRowId: "script-03", uploadedAt: "2026-07-08T14:18:00+10:00", uploadedById: "sam-chen", sizeBytes: 862_400_000, durationSeconds: 1144, playbackUrl: mediaSampleAudioUrl, storageLocationId: "brisk-main" },
   { id: "media-04", projectId: "loom-launch-film", folderId: "day-one", name: "Dashboard-wide-take-03.mov", kind: "video", collection: "media", status: "ready", transcriptStatus: "none", linkedScriptRowId: "script-07", uploadedAt: "2026-07-08T12:41:00+10:00", uploadedById: "sam-chen", sizeBytes: 2_200_000_000, durationSeconds: 258, thumbnailUrl: productImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main" },
   { id: "media-05", projectId: "loom-launch-film", folderId: "day-one", name: "Sales-team-collaboration-01.mov", kind: "video", collection: "media", status: "ready", transcriptStatus: "processing", uploadedAt: "2026-07-08T12:12:00+10:00", uploadedById: "sam-chen", sizeBytes: 1_700_000_000, durationSeconds: 186, thumbnailUrl: detailImage, playbackUrl: mediaSampleVideoUrl, storageLocationId: "brisk-main" },
   { id: "media-06", projectId: "loom-launch-film", folderId: "product-captures", name: "Pipeline-screen-recording.mp4", kind: "video", collection: "media", status: "uploading", processingProgress: 28, transcriptStatus: "none", uploadedAt: "2026-07-08T11:58:00+10:00", uploadedById: "tom-evans", sizeBytes: 306_600, durationSeconds: 42, thumbnailUrl: productImage, storageLocationId: "brisk-main" },
@@ -192,6 +192,19 @@ export const initialMediaAssets: MediaAsset[] = seeds.map(({
   versionNumber = 1,
   ...asset
 }) => ({ ...asset, currentVersionId: `${asset.id}-v${versionNumber}` }));
+
+const formerLoomSeedNames: Record<string, string> = {
+  "media-01": "Mia-interview-camera-a.mov",
+  "media-02": "Mia-interview-camera-b.mov",
+  "media-03": "Mia-lapel-audio.wav",
+};
+
+export function correctFormerLoomSeedName(asset: MediaAsset): MediaAsset {
+  if (asset.projectId !== "loom-launch-film" || asset.name !== formerLoomSeedNames[asset.id]) return asset;
+  const seeded = initialMediaAssets.find((candidate) => candidate.id === asset.id);
+  return seeded ? { ...asset, name: seeded.name } : asset;
+}
+
 export const initialMediaAssetVersions: MediaAssetVersion[] = [
   ...seeds.map(({ id, projectId, kind, uploadedAt, uploadedById, sizeBytes, durationSeconds, thumbnailUrl, playbackUrl, muxPlaybackId, storageLocationId, providerFileId, sourceLocationLabel, originalAvailable, versionNumber = 1 }) => {
     const identity = getSourceIdentity(storageLocationId, projectId, id);

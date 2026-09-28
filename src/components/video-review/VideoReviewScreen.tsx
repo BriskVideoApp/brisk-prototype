@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ChangeEvent, KeyboardEvent, MouseEvent, PointerEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { reviewUsers, reviewVersions, reviewVideo } from "@/data/video-review";
+import { recoverLegacyEditReview } from "@/data/project-legacy-recovery";
 import type { RecutBrief } from "@/data/masters";
 import type { Project } from "@/components/active-videos/types";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
@@ -84,9 +85,11 @@ function isStoredEditReview(value: unknown): value is StoredEditReview {
 
 export function VideoReviewScreen({
   initiallyEmpty = false,
+  isolateLegacyReview = false,
   project,
 }: {
   initiallyEmpty?: boolean;
+  isolateLegacyReview?: boolean;
   project: Project;
 }) {
   const router = useRouter();
@@ -94,7 +97,10 @@ export function VideoReviewScreen({
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
-  const reviewStorageKey = `brisk-edit-review-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
+  const legacyReviewStorageKey = `brisk-edit-review-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
+  const reviewStorageKey = isolateLegacyReview
+    ? `brisk-edit-review-v2:${prototypeState.session.activeWorkspaceId}:${project.id}`
+    : legacyReviewStorageKey;
   const currentUserId = viewer?.chatUserId ?? "user-tom";
   const studioCompanyName = useStudioCompanyName();
   const { getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus } = useProjectStageStatus();
@@ -171,24 +177,43 @@ export function VideoReviewScreen({
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(reviewStorageKey);
-      const parsed: unknown = stored ? JSON.parse(stored) : null;
-      if (isStoredEditReview(parsed)) {
-        setVideoVersions(parsed.versions.map((version) => version.sourceUrl?.startsWith("blob:")
+      const currentRaw = window.localStorage.getItem(reviewStorageKey);
+      const currentParsed: unknown = currentRaw ? JSON.parse(currentRaw) : null;
+      let restored = isStoredEditReview(currentParsed) ? currentParsed : null;
+      if (isolateLegacyReview) {
+        const legacyRaw = window.localStorage.getItem(legacyReviewStorageKey);
+        const legacyParsed: unknown = legacyRaw ? JSON.parse(legacyRaw) : null;
+        const legacy = isStoredEditReview(legacyParsed) ? recoverLegacyEditReview(legacyParsed) : null;
+        if (legacy && (!restored || (restored.versions.length === 0 && restored.comments.length === 0))) restored = legacy;
+        else if (legacy && restored) {
+          const current = restored;
+          restored = {
+            ...current,
+            versions: [...current.versions, ...legacy.versions.filter((version) =>
+              !current.versions.some((candidate) => candidate.label === version.label))],
+            comments: [...current.comments, ...legacy.comments.filter((comment) =>
+              !current.comments.some((candidate) => candidate.id === comment.id))],
+            resolvedIds: [...new Set([...current.resolvedIds, ...legacy.resolvedIds])],
+            statuses: { ...legacy.statuses, ...current.statuses },
+          };
+        }
+      }
+      if (restored) {
+        setVideoVersions(restored.versions.map((version) => version.sourceUrl?.startsWith("blob:")
           ? { ...version, sourceUrl: undefined }
           : version));
-        setReviewComments(parsed.comments);
-        setResolvedIds(new Set(parsed.resolvedIds));
-        setVersionStatuses(parsed.statuses);
-        setSelectedVersionLabel((current) => parsed.versions.some((version) => version.label === current)
+        setReviewComments(restored.comments);
+        setResolvedIds(new Set(restored.resolvedIds));
+        setVersionStatuses(restored.statuses);
+        setSelectedVersionLabel((current) => restored.versions.some((version) => version.label === current)
           ? current
-          : parsed.versions[0]?.label ?? "");
+          : restored.versions[0]?.label ?? "");
       }
     } catch {
       // Keep the fixture if a browser draft cannot be read.
     }
     setLoadedReviewKey(reviewStorageKey);
-  }, [reviewStorageKey]);
+  }, [isolateLegacyReview, legacyReviewStorageKey, reviewStorageKey]);
 
   useEffect(() => {
     if (loadedReviewKey !== reviewStorageKey) return;

@@ -42,7 +42,7 @@ export function CanonicalProjectBriefRoute({ projectId }: { projectId: string })
 export function CanonicalProjectStageRoute({ projectId, stage, query = {} }: ProjectStageRouteProps) {
   const { state, hasHydrated } = usePrototypeState();
   const project = selectProject(state, projectId) ?? getProjectFixture(projectId);
-  const isNewProject = Boolean(project && !getProjectFixture(project.id));
+  const hasHarbourScriptFixture = project?.id === "harbour-health-care-journey";
   const projectBrief = selectProjectBrief(state, projectId);
 
   if (!project) return hasHydrated ? <ProjectUnavailable /> : null;
@@ -57,7 +57,8 @@ export function CanonicalProjectStageRoute({ projectId, stage, query = {} }: Pro
           initialSubtab={getSingleValue(query.subtab) === "transcripts" ? "transcripts" : "script"}
           initialTranscriptClipId={getSingleValue(query.clip) ?? null}
           initialVersionId={getSingleValue(query.version) ?? null}
-          initiallyEmpty={isNewProject || isClientNewVideo || getSingleValue(query.preview) === "empty"}
+          initiallyEmpty={!hasHarbourScriptFixture && !isClientNewVideo || getSingleValue(query.preview) === "empty"}
+          isolateLegacyDraft={!hasHarbourScriptFixture && !isClientNewVideo && Boolean(getProjectFixture(project.id))}
           initialVersions={isClientNewVideo ? clientNewScriptVersions : undefined}
           initialToastMessage={getBriefApprovalToast(query.briefApproved, query.scriptWriter)}
         />
@@ -67,8 +68,8 @@ export function CanonicalProjectStageRoute({ projectId, stage, query = {} }: Pro
 
   if (stage === "shoot") return <Suspense fallback={null}><ShootStagePage project={project} /></Suspense>;
   if (stage === "storyboard") return <Suspense fallback={null}><StoryboardPage project={project} /></Suspense>;
-  if (stage === "edit") return <Suspense fallback={null}><VideoReviewScreen initiallyEmpty={project.stages.edit.state === "not_started" || getSingleValue(query.preview) === "empty"} project={project} /></Suspense>;
-  if (stage === "masters") return <Suspense fallback={null}><MastersPage key={project.id} initiallyEmpty={isNewProject || getSingleValue(query.preview) === "empty"} initialBriefFields={projectBrief?.fields} project={project} /></Suspense>;
+  if (stage === "edit") return <Suspense fallback={null}><VideoReviewScreen initiallyEmpty isolateLegacyReview={Boolean(getProjectFixture(project.id))} project={project} /></Suspense>;
+  if (stage === "masters") return <Suspense fallback={null}><MastersPage key={project.id} initiallyEmpty isolateLegacyDeliverables={Boolean(getProjectFixture(project.id))} initialBriefFields={projectBrief?.fields} project={project} /></Suspense>;
 
   return (
     <Suspense fallback={null}>

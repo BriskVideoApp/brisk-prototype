@@ -39,6 +39,8 @@ import { FreelancerVideosPage } from "@/components/active-videos/FreelancerVideo
 import { useRoleVideoTable } from "@/components/active-videos/useRoleVideoTable";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canViewProject } from "@/data/prototype-access";
 import { selectWorkspaceProjects, type ScopedProject } from "@/data/prototype-state";
 import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
 import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
@@ -160,7 +162,9 @@ export function ActiveVideosPage() {
 function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
   const { state, updateProjectStatus, updateProjectTags } = usePrototypeState();
-  const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
+  const viewer = usePrototypeViewer();
+  const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId)
+    .filter((project) => canViewProject(viewer, project, state));
   const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
   const { getProjectStages } = useProjectStageStatus();

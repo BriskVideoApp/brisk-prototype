@@ -599,7 +599,14 @@ export function getAutomaticBriskAiSources({
   return sources;
 }
 
-export function getMockBriskAiResponse(prompt: string, stage: BriskAiStage): BriskAiResponse {
+export function getMockBriskAiResponse(prompt: string, stage: BriskAiStage, projectId: string | null = null): BriskAiResponse {
+  if (projectId && projectId !== "loom-launch-film") {
+    return {
+      title: "Project-specific suggestion unavailable",
+      body: "This prototype does not have an AI draft for this project. Use the current project's Brief and Script to prepare the next version.",
+      citations: [],
+    };
+  }
   const normalisedPrompt = prompt.toLocaleLowerCase("en-AU");
 
   if (normalisedPrompt.includes("last approve") || normalisedPrompt.includes("last approved")) {

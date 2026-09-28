@@ -30,6 +30,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canViewProject } from "@/data/prototype-access";
+import { getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getDemoProjectDestination } from "@/data/projects";
@@ -46,7 +47,6 @@ import {
   chatClients,
   directMessages as initialDirectMessages,
   chatProjects as initialProjects,
-  chatUsers,
   chatWorkspace,
   directConversations,
   groupConversations as initialGroupConversations,
@@ -68,6 +68,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
+  const chatUsers = useMemo(() => getChatUsers(prototypeState), [prototypeState]);
   const chatStorageKey = `brisk-chat-v1:${prototypeState.session.activeWorkspaceId}`;
   const { studio } = useStudioSettings();
   const { activeScenario } = usePrototypeScenario();
@@ -169,9 +170,11 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const accessibleProjects = useMemo(() => {
     if (isEmptyPreview) return [];
 
-    const roleProjects = selectedRole === "Studio Staff" ? projects : projects.filter((project) => {
+    const roleProjects = projects.flatMap((project) => {
       const scoped = prototypeState.projects.find((candidate) => candidate.id === project.id);
-      return Boolean(scoped && canViewProject(viewer, scoped, prototypeState));
+      if (!scoped || !canViewProject(viewer, scoped, prototypeState)) return [];
+      const chatProject = getScopedChatProject(project, prototypeState);
+      return chatProject ? [chatProject] : [];
     });
 
     return clientName
@@ -204,7 +207,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     const highlightTimeout = window.setTimeout(() => setHighlightedMessageId(null), 2000);
     return () => window.clearTimeout(highlightTimeout);
   }, [accessibleProjects, initialMessageId, messages, selectedRole]);
-  const accessibleClients = clients.filter((client) =>
+  const accessibleClients = clients.map((client) => getScopedChatClient(client, prototypeState)).filter((client) =>
     (!clientName || client.name === clientName)
     && (isStudioStaff || accessibleProjects.some((project) => project.clientName === client.name)));
   const customerStatusByName = useMemo(
@@ -242,7 +245,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     ? accessibleProjects.find((project) => project.id === selectedProjectId) ?? null
     : null;
   const selectedClient = selectedClientName
-    ? clients.find((client) => client.name === selectedClientName) ?? null
+    ? accessibleClients.find((client) => client.name === selectedClientName) ?? null
     : null;
   const selectedClientProjects = selectedClientName
     ? accessibleProjects.filter((project) => project.clientName === selectedClientName)
@@ -252,7 +255,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     : [];
   const selectedProjectCompanyUsers = selectedProject
     ? chatUsers.filter((user) =>
-        clients.find((client) => client.name === selectedProject.clientName)?.userIds.includes(user.id),
+        accessibleClients.find((client) => client.name === selectedProject.clientName)?.userIds.includes(user.id),
       )
     : [];
   const selectedCompanyChatProject = useMemo<ChatProject | null>(() => {
@@ -315,8 +318,11 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const visibleDmConversations = (isEmptyPreview ? [] : dmConversations).filter((conversation) =>
     conversation.memberIds.includes(effectiveCurrentUserId),
   );
+  const visibleGroupConversations = (isEmptyPreview ? [] : groupConversationList).filter((conversation) =>
+    conversation.memberIds.includes(effectiveCurrentUserId),
+  );
   const selectedDm = selectedDmId
-    ? dmConversations.find((conversation) => conversation.id === selectedDmId) ?? null
+    ? visibleDmConversations.find((conversation) => conversation.id === selectedDmId) ?? null
     : null;
   const selectedDmUser = selectedDm
     ? chatUsers.find(
@@ -357,7 +363,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
   const selectedGroup = selectedGroupId
-    ? groupConversationList.find((conversation) => conversation.id === selectedGroupId) ?? null
+    ? visibleGroupConversations.find((conversation) => conversation.id === selectedGroupId) ?? null
     : null;
   const selectedGroupProject: ChatProject | null = selectedGroup
     ? {
@@ -1372,7 +1378,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
         {activeView === "calls" ? (
           <ChatCallsView
-            calls={isEmptyPreview ? [] : recentCalls}
+            calls={isEmptyPreview ? [] : recentCalls.filter((call) =>
+              call.memberIds.includes(effectiveCurrentUserId)
+              && (!call.projectId || accessibleProjects.some((project) => project.id === call.projectId)))}
             projects={accessibleProjects}
             users={chatUsers}
             workspaceName={chatWorkspace.name}
@@ -1620,7 +1628,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             messages={messages}
             users={chatUsers}
             directConversations={visibleDmConversations}
-            groupConversations={isEmptyPreview ? [] : groupConversationList}
+            groupConversations={visibleGroupConversations}
             customerContext={isCustomer}
             onConversationSelect={selectDirectConversation}
             onGroupConversationSelect={selectGroupConversation}
@@ -1647,6 +1655,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           project={selectedProject}
           users={chatUsers}
           companyUsers={selectedProjectCompanyUsers}
+          canManage={false}
           onClose={() => setIsSettingsOpen(false)}
           onProjectChange={updateProject}
         />

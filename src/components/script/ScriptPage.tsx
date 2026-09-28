@@ -49,6 +49,7 @@ import type { RequestReviewRecipient } from "@/components/share/RequestReviewMod
 import { TranscriptsPanel } from "@/components/script-transcripts/TranscriptsPanel";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { mediaAssets } from "@/data/media";
+import { recoverLegacyScriptDraft } from "@/data/project-legacy-recovery";
 import {
   initialScriptComments,
   scriptBrief,
@@ -183,6 +184,7 @@ type ScriptPageProps = {
   initialVersionId?: string | null;
   initialToastMessage?: string;
   initiallyEmpty?: boolean;
+  isolateLegacyDraft?: boolean;
   initialVersions?: ScriptVersion[];
 };
 
@@ -203,6 +205,7 @@ export function ScriptPage({
   initialVersionId = null,
   initialToastMessage = "",
   initiallyEmpty = false,
+  isolateLegacyDraft = false,
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
   const router = useRouter();
@@ -211,7 +214,10 @@ export function ScriptPage({
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
   const currentUserId = viewer?.chatUserId ?? "user-tom";
-  const draftStorageKey = `brisk-script-draft-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
+  const legacyDraftStorageKey = `brisk-script-draft-v1:${prototypeState.session.activeWorkspaceId}:${project.id}`;
+  const draftStorageKey = isolateLegacyDraft
+    ? `brisk-script-draft-v2:${prototypeState.session.activeWorkspaceId}:${project.id}`
+    : legacyDraftStorageKey;
   const studioCompanyName = useStudioCompanyName();
   const { getProjectFlow } = useProjectFlow();
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
@@ -372,28 +378,50 @@ export function ScriptPage({
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(draftStorageKey);
-      if (stored) {
-        const parsed: unknown = JSON.parse(stored);
-        if (isStoredScriptDraft(parsed)) {
-          const restoredVersions = cloneVersions(parsed.versions);
-          const restoredVersion = restoredVersions.find((version) => version.id === parsed.selectedVersionId)
-            ?? restoredVersions[restoredVersions.length - 1];
-          setVersions(restoredVersions);
-          setVersionMetaById(parsed.versionMetaById);
-          setSelectedVersionId(restoredVersion.id);
-          setRows(cloneRows(restoredVersion.rows));
-          setRowHistory([cloneRows(restoredVersion.rows)]);
-          setHistoryIndex(0);
-          setComments(cloneComments(parsed.comments));
-          setLastSavedAt(new Date(parsed.lastSavedAt));
+      const currentRaw = window.localStorage.getItem(draftStorageKey);
+      const currentParsed: unknown = currentRaw ? JSON.parse(currentRaw) : null;
+      let restored = isStoredScriptDraft(currentParsed) ? currentParsed : null;
+      if (isolateLegacyDraft) {
+        const legacyRaw = window.localStorage.getItem(legacyDraftStorageKey);
+        const legacyParsed: unknown = legacyRaw ? JSON.parse(legacyRaw) : null;
+        const legacy = isStoredScriptDraft(legacyParsed) ? recoverLegacyScriptDraft(legacyParsed) : null;
+        if (legacy && (!restored || !recoverLegacyScriptDraft(restored))) restored = legacy;
+        else if (legacy && restored) {
+          const current = restored;
+          const versions: ScriptVersion[] = cloneVersions(current.versions);
+          for (const oldVersion of legacy.versions) {
+            const existing = versions.find((version) => version.id === oldVersion.id);
+            if (!existing) versions.push(oldVersion);
+            else existing.rows = [...existing.rows, ...oldVersion.rows.filter((row) =>
+              !existing.rows.some((candidate) => candidate.id === row.id))];
+          }
+          restored = {
+            ...current,
+            versions,
+            comments: [...current.comments, ...legacy.comments.filter((comment) =>
+              !current.comments.some((candidate) => candidate.id === comment.id))],
+            versionMetaById: { ...legacy.versionMetaById, ...current.versionMetaById },
+          };
         }
+      }
+      if (restored) {
+        const restoredVersions = cloneVersions(restored.versions);
+        const restoredVersion = restoredVersions.find((version) => version.id === restored.selectedVersionId)
+          ?? restoredVersions[restoredVersions.length - 1];
+        setVersions(restoredVersions);
+        setVersionMetaById(restored.versionMetaById);
+        setSelectedVersionId(restoredVersion.id);
+        setRows(cloneRows(restoredVersion.rows));
+        setRowHistory([cloneRows(restoredVersion.rows)]);
+        setHistoryIndex(0);
+        setComments(cloneComments(restored.comments));
+        setLastSavedAt(new Date(restored.lastSavedAt));
       }
     } catch {
       // A damaged browser draft leaves the fixture available for this prototype.
     }
     setLoadedDraftKey(draftStorageKey);
-  }, [draftStorageKey]);
+  }, [draftStorageKey, isolateLegacyDraft, legacyDraftStorageKey]);
 
   useEffect(() => {
     if (loadedDraftKey !== draftStorageKey) return;
@@ -2009,7 +2037,7 @@ export function ScriptPage({
           <button
             className="script-header-action-button label-s-semibold"
             type="button"
-            aria-label={activeSubtabId === "transcripts" ? "Back to script" : `Open transcripts, ${initiallyEmpty ? 0 : projectTranscriptClips.length} available`}
+            aria-label={activeSubtabId === "transcripts" ? "Back to script" : `Open transcripts, ${projectTranscriptClips.length} available`}
             onClick={() => activateScriptSubtab(activeSubtabId === "transcripts" ? "script" : "transcripts")}
           >
             {activeSubtabId === "transcripts" ? (
@@ -2020,7 +2048,7 @@ export function ScriptPage({
             ) : (
               <>
                 <span>Transcripts</span>
-                <span className="script-header-action-count label-xs-semibold">{initiallyEmpty ? 0 : projectTranscriptClips.length}</span>
+                <span className="script-header-action-count label-xs-semibold">{projectTranscriptClips.length}</span>
               </>
             )}
           </button>
@@ -2194,7 +2222,7 @@ export function ScriptPage({
           </>
         ) : activeSubtabId === "transcripts" ? (
           <TranscriptsPanel
-            clips={initiallyEmpty ? [] : scriptBrief.hasDialogueMedia ? projectTranscriptClips : []}
+            clips={projectTranscriptClips}
             comments={visibleComments}
             initialFocusAssetId={initialTranscriptClipId}
             isCustomer={isCustomer}

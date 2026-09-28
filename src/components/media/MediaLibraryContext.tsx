@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import {
   createMediaAssetViews,
+  correctFormerLoomSeedName,
   initialMediaAssets,
   initialMediaAssetVersions,
   initialMediaComments,
@@ -84,9 +85,12 @@ export function MediaLibraryProvider({ children }: { children: React.ReactNode }
       if (serialized) {
         const parsed: unknown = JSON.parse(serialized);
         if (isStoredMediaLibrary(parsed)) {
-          setAssets(parsed.assets.map((asset) => asset.status === "uploading" || asset.status === "stored" || asset.status === "preparing"
-            ? { ...asset, status: "ready", processingProgress: 100, processingError: undefined }
-            : asset));
+          setAssets(parsed.assets.map((storedAsset) => {
+            const asset = correctFormerLoomSeedName(storedAsset);
+            return asset.status === "uploading" || asset.status === "stored" || asset.status === "preparing"
+              ? { ...asset, status: "ready", processingProgress: 100, processingError: undefined }
+              : asset;
+          }));
           setVersions(parsed.versions.map((version) => ({
             ...version,
             originalAvailable: version.playbackUrl?.startsWith("blob:") ? false : version.originalAvailable,

@@ -166,10 +166,10 @@ export function createMockSrt(id: string, filename: string, durationSeconds: num
     language: "English",
     source: "auto-generated",
     lines: [
-      { id: `${id}-1`, startSeconds: 0, endSeconds: segment, text: "Meet Maya, bringing calm and clarity to every decision." },
-      { id: `${id}-2`, startSeconds: segment, endSeconds: segment * 2, text: "One guided place keeps the people and the paperwork connected." },
-      { id: `${id}-3`, startSeconds: segment * 2, endSeconds: segment * 3, text: "Everyone can see what is happening now and what comes next." },
-      { id: `${id}-4`, startSeconds: segment * 3, endSeconds: durationSeconds, text: "Good Citizens. Work that moves people forward." },
+      { id: `${id}-1`, startSeconds: 0, endSeconds: segment, text: "The opening introduces the story and its audience." },
+      { id: `${id}-2`, startSeconds: segment, endSeconds: segment * 2, text: "The middle develops the central idea through the approved footage." },
+      { id: `${id}-3`, startSeconds: segment * 2, endSeconds: segment * 3, text: "The final section brings the key message together." },
+      { id: `${id}-4`, startSeconds: segment * 3, endSeconds: durationSeconds, text: "The story closes with the approved end card." },
     ],
   };
 }

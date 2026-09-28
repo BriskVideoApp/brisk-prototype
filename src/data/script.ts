@@ -121,7 +121,7 @@ export type ScriptBrief = {
 export const scriptBrief: ScriptBrief = {
   targetDurationSeconds: 60,
   genre: "Documentary",
-  customerName: "Avery Taylor",
+  customerName: "Mia Chen",
   studioName: "North Star Films",
   projectName: "Harbour Health - Care Journey",
   hasDialogueMedia: true,
@@ -144,6 +144,13 @@ export const scriptUsers: User[] = [
     initials: "T",
     team: "studio",
     avatarTone: "sand",
+  },
+  {
+    id: "harbour-health-contact-1",
+    name: "Mia Chen",
+    initials: "MC",
+    team: "customer",
+    avatarTone: "pink",
   },
   {
     id: "user-jess",
@@ -429,7 +436,7 @@ export const initialScriptComments: ScriptComment[] = [
   },
   {
     id: "script-comment-row-03-resolved-01",
-    authorId: "user-jess",
+    authorId: "harbour-health-contact-1",
     visibility: "external",
     anchor: { kind: "row", label: "Row 03", rowId: "row-03" },
     createdAgo: "1d",

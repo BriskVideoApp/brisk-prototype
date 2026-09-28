@@ -135,7 +135,9 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     studioName: studio.details.name,
   }), [conversationContext.clientName, conversationContext.projectName, conversationContext.stage, studio.details.name]);
   const visibleAutomaticSources = automaticSources.filter((source) => selectedRole !== "Customer" || source.clientVisible);
-  const visibleManualSources = manualSources.filter((source) => selectedRole !== "Customer" || source.clientVisible);
+  const visibleManualSources = manualSources.filter((source) =>
+    (!conversationContext.projectId || conversationContext.projectId === "loom-launch-film")
+    && (selectedRole !== "Customer" || source.clientVisible));
   const visibleChatHistory = chatHistory.filter((chat) => selectedRole !== "Customer" || chat.clientName === routeContext.clientName);
   const activeChatTitle = activeChatId ? chatHistory.find((chat) => chat.id === activeChatId)?.title ?? "New chat" : "New chat";
   const allVisibleSources = [...visibleAutomaticSources, ...visibleManualSources];
@@ -213,7 +215,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
             citations: [],
           }
         : limitResponseToSelectedSources(
-            applyCreativeApproach(getMockBriskAiResponse(prompt, conversationContext.stage), selectedApproach),
+            applyCreativeApproach(getMockBriskAiResponse(prompt, conversationContext.stage, conversationContext.projectId), selectedApproach),
             selectedSources,
           );
       const assistantMessage: AssistantMessage = {

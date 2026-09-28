@@ -16,7 +16,8 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { brandKitCustomers } from "@/data/brand-kits";
-import { chatClients, chatProjects, chatUsers } from "@/data/chat";
+import { chatClients, chatProjects } from "@/data/chat";
+import { getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
 import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -54,6 +55,7 @@ export function AppSidebar({
   const { selectedRole, allPages } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
   const { state } = usePrototypeState();
+  const chatUsers = getChatUsers(state);
   const clientPortalDestination = getClientPortalDestination(state);
   const { people } = usePeople();
   const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
@@ -84,12 +86,12 @@ export function AppSidebar({
   const historyOpenedByPressRef = useRef(false);
   const currentHref = currentSearch ? `${pathname}?${currentSearch}` : pathname;
   const accessProject = contextualProjectId
-    ? accessProjectsById[contextualProjectId]
+    ? getScopedChatProject(accessProjectsById[contextualProjectId]
       ?? chatProjects.find((project) => project.id === contextualProjectId)
-      ?? null
+      ?? null, state)
     : null;
   const accessClient = accessProject
-    ? chatClients.find((client) => client.name === accessProject.clientName) ?? null
+    ? getScopedChatClient(chatClients.find((client) => client.name === accessProject.clientName) ?? { name: accessProject.clientName, status: "Active", userIds: [] }, state)
     : null;
   const companyUsers = accessClient
     ? chatUsers.filter((user) => accessClient.userIds.includes(user.id))
@@ -338,7 +340,7 @@ export function AppSidebar({
           project={accessProject}
           users={chatUsers}
           companyUsers={companyUsers}
-          canManage={selectedRole === "Studio Staff"}
+          canManage={false}
           onClose={() => setIsProjectPeopleOpen(false)}
           onProjectChange={(project) => setAccessProjectsById((current) => ({
             ...current,

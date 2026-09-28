@@ -45,7 +45,8 @@ import { SharedCallSheetPage } from "@/components/shoot/SharedCallSheetPage";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import type { ShootSetupOwner, ShootSetupState } from "@/components/shoot/ShootSetupBuilder";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { mediaAssets, type MediaAssetView } from "@/data/media";
+import type { MediaAssetView } from "@/data/media";
+import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
 import { canActOnProject } from "@/data/prototype-access";
 import type { Person } from "@/data/people";
 import { selectProjectBrief } from "@/data/prototype-state";
@@ -7867,11 +7868,11 @@ function ShotReferenceImagePicker({ entry, projectId, compact = false, table = f
 }
 
 function ShotMediaLibraryModal({ source, projectId, onClose, onSelect }: { source: "stock" | "project-media"; projectId: string; onClose: () => void; onSelect: (asset: MediaAssetView) => void }) {
-  const projectAssets = mediaAssets.filter((asset) => asset.thumbnailUrl && (asset.projectId === projectId || !mediaAssets.some((item) => item.projectId === projectId && item.thumbnailUrl)));
-  const stockAssets = mediaAssets.filter((asset) => asset.thumbnailUrl).slice(0, 8);
-  const assets = source === "stock" ? stockAssets : projectAssets;
+  const { assetViews } = useMediaLibrary();
+  const assets = source === "stock" ? [] : assetViews.filter((asset) =>
+    asset.projectId === projectId && !asset.archivedAt && asset.thumbnailUrl);
   return <ModalShell title={source === "stock" ? "Choose stock" : "Choose from Project Media"} onClose={onClose} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button></div>}>
-    {assets.length ? <div className="shoot-shot-media-library">{assets.map((asset) => <button type="button" key={asset.id} onClick={() => onSelect(asset)}><img src={asset.thumbnailUrl} alt="" /><span><strong className="label-s-semibold">{asset.name}</strong><small className="label-xs">{source === "stock" ? "Stock library" : "Referenced from Project Media"}</small></span></button>)}</div> : <p className="paragraph-s">No image references are available from this source yet.</p>}
+    {assets.length ? <div className="shoot-shot-media-library">{assets.map((asset) => <button type="button" key={asset.id} onClick={() => onSelect(asset)}><img src={asset.thumbnailUrl} alt="" /><span><strong className="label-s-semibold">{asset.name}</strong><small className="label-xs">Referenced from Project Media</small></span></button>)}</div> : <p className="paragraph-s">{source === "stock" ? "Stock search is not available in this prototype." : "No image references are available in this project's Media yet."}</p>}
   </ModalShell>;
 }
 

@@ -55,6 +55,7 @@ import {
   type MastersVersion,
 } from "@/data/masters";
 import type { BriefFields } from "@/data/brief";
+import { mergeRecoveredMastersDeliverables, recoverLegacyMastersDeliverables } from "@/data/project-legacy-recovery";
 
 type CommentFilter = "all" | "unresolved" | "internal" | "external";
 type RequestTab = "cutdown" | "reformat" | "script";
@@ -90,7 +91,7 @@ const commentFilters: Array<{ value: CommentFilter; label: string }> = [
   { value: "external", label: "Client" },
 ];
 
-export function MastersPage({ project, initiallyEmpty = false, initialBriefFields }: { project: Project; initiallyEmpty?: boolean; initialBriefFields?: BriefFields }) {
+export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeliverables = false, initialBriefFields }: { project: Project; initiallyEmpty?: boolean; isolateLegacyDeliverables?: boolean; initialBriefFields?: BriefFields }) {
   const { selectedRole: role } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const mastersStudioName = useStudioCompanyName();
@@ -113,7 +114,10 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   const reviewActorName = viewer?.name ?? activeUser?.name ?? mastersStudioName;
   const reviewCompany = role === "Customer" || role === "Studio Freelancer" ? mastersStudioName : project.clientName;
   const auditStorageKey = `brisk-masters-review-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
-  const deliverablesStorageKey = `brisk-masters-deliverables-v1:${state.session.activeWorkspaceId}:${project.id}`;
+  const legacyDeliverablesStorageKey = `brisk-masters-deliverables-v1:${state.session.activeWorkspaceId}:${project.id}`;
+  const deliverablesStorageKey = isolateLegacyDeliverables
+    ? `brisk-masters-deliverables-v2:${state.session.activeWorkspaceId}:${project.id}`
+    : legacyDeliverablesStorageKey;
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
   const linkedDeliverableId = searchParams.get("deliverable");
@@ -226,17 +230,28 @@ export function MastersPage({ project, initiallyEmpty = false, initialBriefField
   useEffect(() => {
     if (previewState !== "empty") {
       try {
-        const stored = window.localStorage.getItem(deliverablesStorageKey);
-        const parsed: unknown = stored ? JSON.parse(stored) : null;
-        if (Array.isArray(parsed) && parsed.every((item) => item && typeof item.id === "string" && Array.isArray(item.versions) && Array.isArray(item.comments))) {
-          setDeliverables(parsed as MastersDeliverable[]);
+        const currentRaw = window.localStorage.getItem(deliverablesStorageKey);
+        const currentParsed: unknown = currentRaw ? JSON.parse(currentRaw) : null;
+        const isStoredDeliverables = (value: unknown): value is MastersDeliverable[] =>
+          Array.isArray(value) && value.every((item) => item && typeof item.id === "string"
+            && Array.isArray(item.versions) && Array.isArray(item.comments));
+        let restored = isStoredDeliverables(currentParsed) ? currentParsed : null;
+        if (isolateLegacyDeliverables) {
+          const legacyRaw = window.localStorage.getItem(legacyDeliverablesStorageKey);
+          const legacyParsed: unknown = legacyRaw ? JSON.parse(legacyRaw) : null;
+          if (isStoredDeliverables(legacyParsed)) {
+            const cleanSlots = createMastersSlotsFromBrief(initialBriefFields);
+            const legacy = recoverLegacyMastersDeliverables(legacyParsed, cleanSlots);
+            restored = restored ? mergeRecoveredMastersDeliverables(restored, legacy, cleanSlots) : legacy;
+          }
         }
+        if (restored) setDeliverables(restored);
       } catch {
         // Keep the fixture if a browser draft cannot be read.
       }
     }
     setLoadedDeliverablesKey(deliverablesStorageKey);
-  }, [deliverablesStorageKey, previewState]);
+  }, [deliverablesStorageKey, initialBriefFields, isolateLegacyDeliverables, legacyDeliverablesStorageKey, previewState]);
 
   useEffect(() => {
     if (loadedDeliverablesKey !== deliverablesStorageKey || previewState === "empty") return;

@@ -213,7 +213,7 @@ export const notificationInboxItems = [
     state: "success",
     label: "Completed",
     title: "Interview transcript is ready",
-    copy: "The transcript for Mia-interview-camera-b.mov finished processing.",
+    copy: "The transcript for Jess-interview-camera-b.mov finished processing.",
     projectId: "loom-launch-film",
     projectCode: "LOOM-24",
     projectName: "Launch Film - Sales Narrative",

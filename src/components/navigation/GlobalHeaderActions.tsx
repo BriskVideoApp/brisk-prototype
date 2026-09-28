@@ -10,8 +10,11 @@ import { useShootGlobalActions, type ShootGlobalActions } from "@/components/nav
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatProjects } from "@/data/chat";
-import { notificationInboxRecipientByRole } from "@/data/notification-inbox";
+import { canViewProject, type PrototypeViewer } from "@/data/prototype-access";
+import type { PrototypeState } from "@/data/prototype-state";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canRoleSeeNavigationItem, getNavigationItem } from "@/components/navigation/navigationConfig";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
@@ -30,10 +33,12 @@ export function GlobalHeaderActions() {
   const searchParams = useSearchParams();
   const { selectedRole, allPages } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
+  const { state } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const { actions: shootActions } = useShootGlobalActions();
   const usesCustomerDashboardDrawers = selectedRole !== "Studio Freelancer" && pathname === "/customer-dashboard";
   const isScenarioEmpty = activeScenario?.state === "new";
-  const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(selectedRole);
+  const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(viewer, state);
 
   const openCustomerChat = () => {
     window.dispatchEvent(new Event(openCustomerGlobalChatEventName));
@@ -215,13 +220,14 @@ function ShootActionsMenu({ actions }: { actions: ShootGlobalActions }) {
   />;
 }
 
-function getChatUnreadCount(role: PrototypeRole) {
-  const recipientId = notificationInboxRecipientByRole[role];
-
+function getChatUnreadCount(viewer: PrototypeViewer | null, state: PrototypeState) {
   return chatProjects
-    .filter((project) => project.memberIds.includes(recipientId))
+    .filter((project) => {
+      const scoped = state.projects.find((candidate) => candidate.id === project.id);
+      return Boolean(scoped && canViewProject(viewer, scoped, state));
+    })
     .reduce(
-      (total, project) => total + project.externalUnread + (role === "Customer" ? 0 : project.internalUnread),
+      (total, project) => total + project.externalUnread + (viewer?.role === "Customer" ? 0 : project.internalUnread),
       0,
     );
 }
