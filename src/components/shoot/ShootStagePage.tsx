@@ -2003,6 +2003,8 @@ function ShootPreProductionWorkspace({
   onWorkflowSetupChange,
 }: ShootPreProductionWorkspaceProps) {
   const viewer = usePrototypeViewer();
+  const { getProjectStages } = useProjectStageStatus();
+  const shootApproval = getProjectStages(project).shoot;
   const canEdit = accessLevel !== "viewOnly";
   const canManage = accessLevel === "canManage";
   const { registerActions: registerShootGlobalActions } = useShootGlobalActions();
@@ -2511,6 +2513,16 @@ function ShootPreProductionWorkspace({
         <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => selectNavigationItem("quick-start")}><DsIcon name="sparkle" size={16} />Edit Setup</button>
       </div>
       {currentDay && hasOnSetShootStarted(callSheet, currentDay) ? <OnSetNowNextStrip callSheet={callSheet} day={currentDay} onOpenCurrent={openCurrentOnSetBlock} onSelectDay={selectOnSetDay} /> : null}
+      {currentDay && !hasOnSetShootStarted(callSheet, currentDay) && callSheet.days.length > 1 ? <div className="shoot-on-set-global-day"><BriskSelect
+        ariaLabel="Choose shoot day"
+        className="shoot-on-set-global-day-select"
+        clearable={false}
+        searchable={false}
+        value={currentDay.id}
+        options={callSheet.days.map((day) => ({ value: day.id, label: day.date ? `${day.label} - ${formatEditorDate(day.date)}` : day.label }))}
+        placeholder="Choose day"
+        onChange={(value) => { if (value) selectOnSetDay(value); }}
+      /></div> : null}
       <PreProductionSchedule
         aiScheduleOpenRequest={reopenAiScheduleRequest}
         callSheet={callSheet}
@@ -2701,6 +2713,8 @@ function ShootPreProductionWorkspace({
           approveLabel="Approve Shoot"
           approveDisabled={!canManage && selectedRole !== "Customer"}
           isApproved={setupState.status === "released"}
+          approvedAt={shootApproval.approvedAt}
+          approvedBy={shootApproval.approvedBy}
           isWaitingOnReview={setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client"}
           waitingOnCompany={setupState.status === "waiting_on_studio" ? studioName : project.clientName}
           onApprove={onApprove}
@@ -5250,7 +5264,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
       const isPickup = status === "pickup-needed";
       const shotNumber = displayShotNumberById.get(shot.id) ?? String(shots.indexOf(shot) + 1);
       const shotDetails = [shot.shotSize, shot.cameraMovement].filter(Boolean).join(" · ");
-      const disposition = isPickup ? "Pickup" : isSkipped ? "Skipped" : null;
+      const disposition = isPickup ? "Pickup" : isSkipped ? "Skipped" : status === "not-required" ? "Not required" : null;
       const visiblePriority = shot.priority === "Critical" || shot.priority === "Bonus" ? shot.priority : null;
       return <div className={`shoot-on-set-row is-${isPickup ? "pickup-needed" : isSkipped ? "skipped" : status}`} data-on-set-shot-id={shot.id} role="row" key={shot.id}>
         <OnSetCaptureControl canEdit={canEdit} shotNumber={shotNumber} status={status} onChange={(value) => updateShot(shot.id, { captureStatus: value, captured: value === "captured", skippedShootDayIds: value === "captured" ? shot.skippedShootDayIds?.filter((id) => id !== currentDay?.id) : shot.skippedShootDayIds })} />
@@ -5264,6 +5278,9 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
           <div role="menu">
             {isSkipped ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotSkippedForToday(shot, false); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Return to today</button> : <>
             <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotSkippedForToday(shot, true); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Skip</button>
+            {status === "not-required"
+              ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "to-capture", captured: false }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Mark as required</button>
+              : <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "not-required", captured: false }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Mark as not required</button>}
             {isPickup ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "to-capture" }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Clear pickup</button> : <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotForPickup(shot); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Pickup later</button>}
           </>}</div>
         </details> : <span aria-hidden="true" />}
@@ -6665,6 +6682,8 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
   onUnapprove: () => void;
 }) {
   const [clientReview, setClientReview] = useState<"creative" | "details" | null>(null);
+  const { getProjectStages } = useProjectStageStatus();
+  const shootApproval = getProjectStages(project).shoot;
   const isClient = selectedRole === "Customer";
   const shotCount = callSheet.entries.filter((entry) => entry.type === "shot").length;
   const questionCount = callSheet.questions.length;
@@ -6770,6 +6789,8 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
         approveDisabled={!canApprove}
         approveDisabledTooltip="Complete or skip both planning modules first"
         isApproved={setupState.status === "released"}
+        approvedAt={shootApproval.approvedAt}
+        approvedBy={shootApproval.approvedBy}
         isWaitingOnReview={setupState.status === "waiting_on_studio" || setupState.status === "waiting_on_client"}
         waitingOnCompany={setupState.status === "waiting_on_studio" ? studioName : project.clientName}
         onApprove={onApprove}

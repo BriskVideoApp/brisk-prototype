@@ -291,6 +291,12 @@ export function VideoReviewScreen({
   const isEditEmpty = allReviewVersions.length === 0;
 
   useEffect(() => {
+    if (loadedReviewKey === reviewStorageKey && isEditEmpty && editStageStatus.state === "done") {
+      setProjectStageStatus(project.id, "edit", { state: "in_progress", daysAgo: 0 });
+    }
+  }, [editStageStatus.state, isEditEmpty, loadedReviewKey, project.id, reviewStorageKey, setProjectStageStatus]);
+
+  useEffect(() => {
     if (allReviewVersions.length !== 2) {
       return;
     }
@@ -730,7 +736,7 @@ export function VideoReviewScreen({
     setProjectStageStatus(project.id, "edit", {
       state: "done",
       daysAgo: 0,
-      approvedAt: "17 Aug",
+      approvedAt: new Date().toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "Australia/Sydney" }),
       approvedBy: viewer?.name ?? "Tom Mitchell",
     });
 

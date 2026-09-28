@@ -331,8 +331,10 @@ export function ScriptPage({
   const wordState = wordDelta <= 10 ? "good" : wordDelta <= 25 ? "warning" : "danger";
   const durationDeltaText = wordState === "good" ? "" : formatFooterDelta(actualDurationSeconds - targetDurationSeconds, totalWords - targetWords);
   const visibleComments = useMemo(
-    () => (isCustomer ? comments.filter((comment) => comment.visibility === "external") : comments),
-    [comments, isCustomer],
+    () => comments.filter((comment) =>
+      (!isCustomer || comment.visibility === "external")
+      && (!comment.anchor.rowId || rows.some((row) => row.id === comment.anchor.rowId))),
+    [comments, isCustomer, rows],
   );
   const commentsByRow = useMemo(() => groupCommentsByRow(visibleComments), [visibleComments]);
   const projectTranscriptClips = useMemo(
@@ -431,6 +433,12 @@ export function ScriptPage({
       setSaveState("Saving...");
     }
   }, [comments, draftStorageKey, lastSavedAt, loadedDraftKey, selectedVersionId, versionMetaById, versions]);
+  useEffect(() => {
+    if (loadedDraftKey !== draftStorageKey || scriptStageStatus.state !== "done") return;
+    const hasVersionContent = versions.some((version) => version.rows.some((row) =>
+      !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0)));
+    if (!hasVersionContent) setProjectStageStatus(project.id, "script", { state: "in_progress", daysAgo: 0 });
+  }, [draftStorageKey, loadedDraftKey, project.id, scriptStageStatus.state, setProjectStageStatus, versions]);
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) {
@@ -1148,6 +1156,7 @@ export function ScriptPage({
     );
 
     setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    if (scriptStageStatus.state === "done") setProjectStageStatus(project.id, "script", { state: "in_progress", daysAgo: 0 });
     setVersionMetaById((currentMeta) => ({
       ...currentMeta,
       [nextVersion.id]: { ...defaultVersionMeta },
@@ -1178,6 +1187,7 @@ export function ScriptPage({
     );
 
     setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    if (scriptStageStatus.state === "done") setProjectStageStatus(project.id, "script", { state: "in_progress", daysAgo: 0 });
     setVersionMetaById((currentMeta) => ({
       ...currentMeta,
       [nextVersion.id]: { ...defaultVersionMeta },
@@ -1338,6 +1348,7 @@ export function ScriptPage({
     );
 
     setVersions((currentVersions) => [...currentVersions, nextVersion]);
+    if (scriptStageStatus.state === "done") setProjectStageStatus(project.id, "script", { state: "in_progress", daysAgo: 0 });
     setVersionMetaById((currentMeta) => ({
       ...currentMeta,
       [nextVersion.id]: { ...defaultVersionMeta },
@@ -1354,6 +1365,10 @@ export function ScriptPage({
   const approveScript = () => {
     if (!canActOnProject(viewer, project, prototypeState, "approve", "script")) return;
     const approvalVersion = dropdownVersion;
+    if (!approvalVersion.rows.some((row) => !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0))) {
+      setToastMessage("Add Script content before approving this version.");
+      return;
+    }
     const approvedAt = formatSnapshotDate(new Date());
     const approver = scriptUsers.find((user) => user.id === currentUserId)?.name ?? (selectedRole === "Customer" ? project.clientName : "Studio Staff");
     const previouslyApprovedVersion = versions.find((version) => version.approvedSnapshot && version.id !== approvalVersion.id);
@@ -1411,18 +1426,23 @@ export function ScriptPage({
   };
 
   const unapproveScript = (shouldDuplicateSnapshot: boolean) => {
+    if (!canActOnProject(viewer, project, prototypeState, "approve", "script")) return;
+    const approvalVersion = dropdownVersion;
     setIsScriptApproved(false);
-    setStatus(selectedRole === "Customer" ? "Waiting on Customer" : "In script");
+    setStatus("In script");
     setProjectStageStatus(project.id, "script", {
-      state: selectedRole === "Customer" ? "waiting" : "in_progress",
+      state: "in_progress",
       daysAgo: 0,
     });
+    setVersions((currentVersions) => currentVersions.map((version) => version.id === approvalVersion.id
+      ? { ...version, approvedSnapshot: false, approvedBy: undefined, approvedAt: undefined }
+      : version));
 
     if (shouldDuplicateSnapshot) {
       const actor = role === "customer" ? "Customer" : "Studio";
       const editLabel = role === "customer" ? "Client Edit" : "Studio Edit";
       const snapshotDate = formatSnapshotDate(new Date());
-      const snapshotLabel = `${selectedVersion.label} (${editLabel})`;
+      const snapshotLabel = `${approvalVersion.label} (${editLabel})`;
       const snapshotName = `${snapshotLabel} - ${snapshotDate}`;
       const snapshot: ScriptVersion = {
         id: `${snapshotLabel.toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-|-$/gu, "")}-${Date.now()}`,
@@ -1433,7 +1453,7 @@ export function ScriptPage({
         approvedAt: undefined,
         createdBy: actor,
         createdAt: snapshotDate,
-        rows: cloneRows(rows),
+        rows: cloneRows(approvalVersion.rows),
       };
 
       setVersions((currentVersions) => [...currentVersions, snapshot]);
@@ -1448,13 +1468,13 @@ export function ScriptPage({
         time: "Just now",
       });
       setSelectedVersionId(snapshot.id);
+      setPreviewVersionId(null);
+      setRows(cloneRows(snapshot.rows));
+      setRowHistory([cloneRows(snapshot.rows)]);
+      setHistoryIndex(0);
     }
 
-    setToastMessage(
-      role === "customer"
-        ? "You edited an approved script. This moved the project back to 'Waiting on Customer.' Work is paused until you re-approve the new version."
-        : `Heads up: ${scriptBrief.customerName} edited an approved script. The project is back in 'Waiting on Customer' and work is paused until re-approved.`,
-    );
+    setToastMessage("Script approval removed. Review the current version before approving again.");
   };
 
   const proceedWithApprovedEdit = () => {
@@ -2080,7 +2100,8 @@ export function ScriptPage({
         copyLinkLabel="Copy link"
         sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review the ${getVersionShortLabel(dropdownVersion)} Script`}
         approveLabel={`Approve ${getVersionShortLabel(dropdownVersion)} Script`}
-        approveDisabled={selectedRole === "Studio Freelancer"}
+        approveDisabled={selectedRole === "Studio Freelancer" || !dropdownVersion.rows.some((row) => !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0))}
+        approveDisabledTooltip={selectedRole === "Studio Freelancer" ? "Only Studio Staff and Clients can approve this Script" : "Add Script content before approving"}
         approvedAt={dropdownVersion.approvedAt}
         approvedBy={dropdownVersion.approvedBy}
         isApproved={dropdownVersion.approvedSnapshot}
@@ -3341,7 +3362,7 @@ function getVersionHistoryBaseTitle(version: ScriptVersion) {
 
 function getNextVersionLabel(versions: ScriptVersion[]) {
   const highestVersionNumber = versions.reduce((highestNumber, version) => {
-    const versionNumber = Number.parseInt(version.label.replace(/^v/u, ""), 10);
+    const versionNumber = Number.parseInt(version.label.replace(/^v/iu, ""), 10);
     return Number.isNaN(versionNumber) ? highestNumber : Math.max(highestNumber, versionNumber);
   }, 0);
 

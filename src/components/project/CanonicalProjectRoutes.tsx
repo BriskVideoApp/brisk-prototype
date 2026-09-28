@@ -25,6 +25,7 @@ type ProjectStageRouteProps = {
 
 export function CanonicalProjectBriefRoute({ projectId }: { projectId: string }) {
   const { state, hasHydrated, updateProjectBrief } = usePrototypeState();
+  if (!hasHydrated) return null;
   const project = selectProject(state, projectId);
   const brief = selectProjectBrief(state, projectId);
   const workspace = state.workspaces.find((candidate) => candidate.id === state.session.activeWorkspaceId);

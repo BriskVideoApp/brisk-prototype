@@ -518,7 +518,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
   const { publishStageReviewFollowUp } = useNotificationInbox();
-  const { state } = usePrototypeState();
+  const { state, hasHydrated } = usePrototypeState();
   const { getProjectFlow } = useProjectFlow();
   const projectFlow = getProjectFlow(project);
   const { getProjectStages, setProjectStageStatus } = useProjectStageStatus();
@@ -559,6 +559,12 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     : productionFlowStages[nextStage].label;
   const isSummaryStep = activeStepId === "summary";
   const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
+  const hasBriefContent = Object.values(briefFields).some((field) => field.value.trim());
+  useEffect(() => {
+    if (hasHydrated && isBriefApproved && !hasBriefContent) {
+      setProjectStageStatus(project.id, "brief", { state: "in_progress", daysAgo: 0 });
+    }
+  }, [hasHydrated, hasBriefContent, isBriefApproved, project.id, setProjectStageStatus]);
   const lastBriefAudit = briefAudit[briefAudit.length - 1];
   const reviewCompany = briefStageStatus.assignedTo ?? (selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioName : project.clientName);
   const latestReviewRequest = [...briefAudit].reverse().find((entry): entry is BriefReviewAuditEntry => entry.action === "sent" && entry.company === reviewCompany);
@@ -594,6 +600,10 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
 
   function commitBriefFields(update: BriefFields | ((current: BriefFields) => BriefFields)) {
     const nextFields = typeof update === "function" ? update(briefFieldsRef.current) : update;
+    if (isBriefApproved && Object.keys(nextFields).some((key) => {
+      const fieldId = key as BriefFieldId;
+      return nextFields[fieldId].value !== briefFieldsRef.current[fieldId].value;
+    })) unapproveBrief();
     briefFieldsRef.current = nextFields;
     setBriefFields(nextFields);
     onFieldsChange?.(cloneBriefFields(nextFields));
@@ -710,6 +720,11 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function applyBriefDraft(draft: BriefDraft) {
+    if (isBriefApproved && sentenceCase(draft.logline) !== logline.text
+      && !Object.keys(draft.fields).some((key) => {
+        const fieldId = key as BriefFieldId;
+        return draft.fields[fieldId].value !== briefFieldsRef.current[fieldId].value;
+      })) unapproveBrief();
     commitBriefFields(cloneBriefFields(draft.fields));
     setLogline({
       text: sentenceCase(draft.logline),
@@ -786,6 +801,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function regenerateLogline() {
+    if (isBriefApproved && sentenceCase(createLoglineFromFields(briefFields)) !== logline.text) unapproveBrief();
     setLogline({
       text: sentenceCase(createLoglineFromFields(briefFields)),
       status: "synced",
@@ -794,6 +810,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function updateLogline(nextText: string) {
+    if (isBriefApproved && nextText !== logline.text) unapproveBrief();
     setLogline((currentLogline) => ({
       ...currentLogline,
       text: nextText,
@@ -895,7 +912,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function requestApproveBrief() {
-    if (selectedRole === "Studio Freelancer" || isBriefApproved) return;
+    if (selectedRole === "Studio Freelancer" || isBriefApproved || !hasBriefContent) return;
     if (summaryMissingCount > 0) {
       setIsApprovalConfirmationOpen(true);
       return;
@@ -904,7 +921,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function approveBrief() {
-    if (selectedRole === "Studio Freelancer" || isBriefApproved) return;
+    if (selectedRole === "Studio Freelancer" || isBriefApproved || !hasBriefContent) return;
     const now = new Date();
     const approvedAt = formatBriefApprovalDate(now);
     setProjectStageStatus(project.id, "brief", {
@@ -1071,8 +1088,8 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
       copyLinkIconOnly
       copyLinkLabel="Copy link"
       approveLabel="Approve Brief"
-      approveDisabled={selectedRole === "Studio Freelancer"}
-      approveDisabledTooltip="Only Studio Staff and Clients can approve this Brief"
+      approveDisabled={selectedRole === "Studio Freelancer" || !hasBriefContent}
+      approveDisabledTooltip={selectedRole === "Studio Freelancer" ? "Only Studio Staff and Clients can approve this Brief" : "Add Brief details before approving"}
       approvedAt={briefStageStatus.approvedAt}
       approvedBy={briefStageStatus.approvedBy ?? briefActorName}
       isApproved={isBriefApproved}
@@ -5743,7 +5760,7 @@ function createWrittenSummaryModel(
   const referenceVideo = referenceVideos[0];
   const audiences = parseAudienceList(fields.audience.value).filter(Boolean);
   const [footageChoices, shooterChoice, filmingContentChoices] = parseLiveFootageValue(fields.liveFootage.value);
-  const platform = fields.platform.value || primaryDeliverable.platform;
+  const platform = primaryDeliverable.platform || fields.platform.value;
   const deadlineValue = primaryDeliverable.deadline || fields.deadline.value;
   const deadline = formatBriefDate(deadlineValue);
   const shortDeadline = formatBriefShortDate(deadlineValue);
@@ -5769,9 +5786,7 @@ function createWrittenSummaryModel(
     : "Shoot mode";
   const footageSource = shootMode;
   const platformDisplay = formatPlatformForSentence(platform);
-  const captionsState = getDeliverableCaptionOptions(primaryDeliverable).includes("Baked in captions")
-    ? "Captions on"
-    : "Captions off";
+  const captionsState = formatDeliverableCaptionSummary(primaryDeliverable);
   const durationsJoined = deliverableRows
     .map((row) => (row.duration === "Custom" ? formatCustomDuration(row) : formatDurationLabel(row.duration)))
     .filter(Boolean)
@@ -5809,12 +5824,12 @@ function createWrittenSummaryModel(
           },
           {
             id: "platform",
-            confidence: fields.platform.confidence,
+            confidence: primaryDeliverable.platform ? fields.deliverables.confidence : fields.platform.confidence,
             icon: "play",
             required: true,
             value: platformDisplay,
             subValue: "Platform",
-            target: "videoType",
+            target: primaryDeliverable.platform ? "deliverablesTiming" : "videoType",
           },
           {
             id: "format",

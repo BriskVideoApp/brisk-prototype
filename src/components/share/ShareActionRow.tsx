@@ -207,7 +207,7 @@ export function ShareActionRow({
   approveLabel = "Approve",
   approveDisabled = false,
   approveDisabledTooltip,
-  approvedAt = "17 Aug",
+  approvedAt,
   approvedBy,
   allowRoleApproval = false,
   canConfigureLink = true,
@@ -774,7 +774,7 @@ export function ShareActionRow({
           allowRoleApproval={allowRoleApproval}
           disabled={disabled || approveDisabled}
           disabledTooltip={approveDisabledTooltip}
-        /> : <span className="brief-approved-action label-m-semibold" role="status" title={`Approved on ${approvedAt} by ${approvedBy ?? (isCustomerView ? customerName : "Tom")}.`}>
+        /> : <span className="brief-approved-action label-m-semibold" role="status" title={approvedAt ? `Approved on ${approvedAt} by ${approvedBy ?? (isCustomerView ? customerName : "Tom")}.` : `Approved by ${approvedBy ?? (isCustomerView ? customerName : "Tom")}.`}>
           Approved
         </span> : <button
           className={`share-button ${isCustomerView ? "share-button-primary" : "share-button-secondary"} label-s-semibold`}
@@ -954,7 +954,7 @@ export function StageApprovalControl({
   approvedLabel,
   approvedClassName,
   approvedTextClassName = "label-s-semibold",
-  approvedAt = "17 Aug",
+  approvedAt,
   approvedBy,
   tooltip,
   customerName = "Avery Taylor",
@@ -968,7 +968,7 @@ export function StageApprovalControl({
   const isRoleDisabled = userRole === "Share Link Viewer" || (userRole === "Studio Freelancer" && !allowRoleApproval);
   const isDisabled = disabled || isRoleDisabled;
   const approvalActor = approvedBy ?? (userRole === "Customer" ? customerName : "Tom");
-  const approvalDetails = `Approved on ${approvedAt} by ${approvalActor}.`;
+  const approvalDetails = approvedAt ? `Approved on ${approvedAt} by ${approvalActor}.` : `Approved by ${approvalActor}.`;
   const roleTooltip = userRole === "Studio Freelancer" ? "Only Studio Staff or Clients can approve" : "Sign in to approve";
 
   useEffect(() => {

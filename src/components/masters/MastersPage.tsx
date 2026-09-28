@@ -64,7 +64,7 @@ type RecutDraftRange = { inSec: number; outSec: number };
 type DownloadSelection = { deliverableId: string; versionId?: string };
 type MastersReviewAuditEntry = {
   id: string;
-  action: "sent" | "reminded" | "updated";
+  action: "sent" | "reminded" | "updated" | "approved";
   actor: string;
   company: string;
   recipients: string[];
@@ -151,6 +151,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   const [downloadedVersionKeys, setDownloadedVersionKeys] = useState<Set<string>>(() => new Set());
   const [hasDownloadedAll, setHasDownloadedAll] = useState(false);
   const [mastersReviewAudit, setMastersReviewAudit] = useState<MastersReviewAuditEntry[]>([]);
+  const [hasLoadedReviewAudit, setHasLoadedReviewAudit] = useState(false);
   const [sharePanelOpenSignal, setSharePanelOpenSignal] = useState(0);
   const [requestSourceId, setRequestSourceId] = useState<string | null>(null);
   const [requestTab, setRequestTab] = useState<RequestTab>("cutdown");
@@ -203,8 +204,28 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   const reviewFingerprint = expandedDeliverable && expandedVersion
     ? JSON.stringify({ version: expandedVersion, name: expandedDeliverable.name, captions: expandedDeliverable.srt, thumbnail: expandedDeliverable.thumbnail })
     : JSON.stringify(deliverables.map((deliverable) => ({ id: deliverable.id, name: deliverable.name, versions: deliverable.versions, captions: deliverable.srt, thumbnail: deliverable.thumbnail })));
-  const latestReviewRequest = [...mastersReviewAudit].reverse().find((entry) => entry.action === "sent" && entry.scopeKey === reviewScopeKey && entry.company === reviewCompany);
-  const pendingReviewRequest = mastersStageStatus.state !== "done" && mastersStageStatus.assignedTo === reviewCompany && mastersStageStatus.reviewVersion === reviewScopeKey ? latestReviewRequest : undefined;
+  const latestReviewRequest = [...mastersReviewAudit].reverse().find((entry) => entry.action === "sent" && entry.scopeKey === reviewScopeKey && entry.company === (role === "Customer" ? project.clientName : reviewCompany));
+  const clientReviewRequests = [...new Map(mastersReviewAudit.filter((entry) => entry.action === "sent" && entry.company === project.clientName)
+    .map((entry) => [entry.scopeKey === "masters" ? "masters" : entry.scopeKey.split(":")[0], entry])).values()];
+  const isClientReviewApproved = (request: MastersReviewAuditEntry) => mastersReviewAudit.some((entry) =>
+    entry.action === "approved" && entry.requestId === request.id
+      && entry.fingerprint === getMastersScopeFingerprint(request.scopeKey, deliverables));
+  const pendingClientReviewRequests = clientReviewRequests.filter((request) => !isClientReviewApproved(request));
+  const hasWholeMastersApproval = clientReviewRequests.some((request) => request.scopeKey === "masters" && isClientReviewApproved(request));
+  const hasUnapprovedCurrentMaster = clientReviewRequests.length > 0 && !hasWholeMastersApproval
+    && deliverables.some((deliverable) => {
+      const currentVersion = deliverable.versions.find((version) => version.id === deliverable.currentVersionId)
+        ?? deliverable.versions[deliverable.versions.length - 1];
+      return !currentVersion || !clientReviewRequests.some((request) =>
+        request.scopeKey === `${deliverable.id}:${currentVersion.id}` && isClientReviewApproved(request));
+    });
+  const approvedReviewEntry = latestReviewRequest && mastersReviewAudit.find((entry) =>
+    entry.action === "approved" && entry.requestId === latestReviewRequest.id
+      && entry.fingerprint === reviewFingerprint);
+  const pendingReviewRequest = role === "Customer"
+    ? mastersStageStatus.state !== "done" ? pendingClientReviewRequests.find((entry) => entry.id === latestReviewRequest?.id) : undefined
+    : mastersStageStatus.state !== "done" && mastersStageStatus.reviewVersion === reviewScopeKey && mastersStageStatus.assignedTo === reviewCompany
+      ? latestReviewRequest : undefined;
   const reviewFollowUps = pendingReviewRequest
     ? mastersReviewAudit.filter((entry) => (entry.action === "reminded" || entry.action === "updated") && entry.requestId === pendingReviewRequest.id)
     : [];
@@ -224,6 +245,11 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   const orderedDeliverables = useMemo(() => orderDeliverables(deliverables, collapsedParentIds), [collapsedParentIds, deliverables]);
   const canDownloadAll = deliverables.length > 0
     && deliverables.every((deliverable) => deliverable.versions.length > 0);
+  const hasUnresolvedClientComments = deliverables.some((deliverable) =>
+    deliverable.comments.some((comment) => comment.visibility === "external" && !comment.resolved));
+  const isWaitingOnClientReview = mastersStageStatus.state === "waiting" && mastersStageStatus.assignedTo === project.clientName;
+  const canCompleteVideo = canDownloadAll && hasLoadedReviewAudit && !isWaitingOnClientReview
+    && pendingClientReviewRequests.length === 0 && !hasUnapprovedCurrentMaster && !hasUnresolvedClientComments;
   const hasDrawingAttachment = drawingPaths.length > 0 || activeDrawingPath !== null;
   const pendingDrawingPaths = [...drawingPaths, ...(activeDrawingPath ? [activeDrawingPath] : [])];
 
@@ -261,6 +287,11 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
       setToast({ message: "This browser could not save Masters changes." });
     }
   }, [deliverables, deliverablesStorageKey, loadedDeliverablesKey, previewState]);
+  useEffect(() => {
+    if (loadedDeliverablesKey === deliverablesStorageKey && mastersStageStatus.state === "done" && !canDownloadAll) {
+      setProjectStageStatus(project.id, "masters", { state: "in_progress", daysAgo: 0 });
+    }
+  }, [canDownloadAll, deliverablesStorageKey, loadedDeliverablesKey, mastersStageStatus.state, project.id, setProjectStageStatus]);
 
   useEffect(() => {
     try {
@@ -270,6 +301,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     } catch {
       setMastersReviewAudit([]);
     }
+    setHasLoadedReviewAudit(true);
   }, [auditStorageKey]);
 
   useEffect(() => {
@@ -326,7 +358,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   };
 
   const sendMastersReview = (message: string) => {
-    if (!canActOnProject(viewer, project, state, "send", "masters")) return;
+    if ((!expandedVersion && !canDownloadAll) || !canActOnProject(viewer, project, state, "send", "masters")) return;
     const sendsToStudio = role === "Customer" || role === "Studio Freelancer";
     const recipients = sendsToStudio ? studioRecipientNames : clientRecipientNames;
     const occurredAt = new Date().toISOString();
@@ -398,8 +430,36 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     });
   };
 
+  const approveMastersReview = () => {
+    if (role !== "Customer" || !pendingReviewRequest || mastersChangedSinceSend
+      || !canActOnProject(viewer, project, state, "approve", "masters")) return;
+    if (reviewScopeKey === "masters" ? hasUnresolvedClientComments
+      : expandedDeliverable?.comments.some((comment) => comment.visibility === "external" && !comment.resolved)) return;
+    recordMastersReviewAudit({
+      id: `masters-approved-${project.id}-${Date.now()}`,
+      action: "approved",
+      actor: reviewActorName,
+      company: project.clientName,
+      recipients: studioRecipientNames,
+      occurredAt: new Date().toISOString(),
+      scopeKey: reviewScopeKey,
+      scopeLabel: reviewScopeLabel,
+      href: reviewHref,
+      requestId: pendingReviewRequest.id,
+      fingerprint: reviewFingerprint,
+    });
+    const nextPendingRequest = pendingClientReviewRequests.find((entry) => entry.id !== pendingReviewRequest.id);
+    setProjectStageStatus(project.id, "masters", {
+      state: nextPendingRequest ? "waiting" : "in_progress",
+      daysAgo: 0,
+      assignedTo: nextPendingRequest ? project.clientName : mastersStudioName,
+      reviewVersion: nextPendingRequest?.scopeKey,
+    });
+    showToast(`${reviewScopeLabel} approved.`);
+  };
+
   const completeVideo = () => {
-    if (role !== "Studio Staff" || !canDownloadAll || completionRecords[project.id]) return;
+    if (role !== "Studio Staff" || !canCompleteVideo || completionRecords[project.id]) return;
     const deliveredAt = new Date().toISOString();
     completeProject(project.id, {
       deliveredAt,
@@ -1602,6 +1662,8 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
               sendButtonVariant="secondary"
               sendCompanyName={reviewCompany}
               sendLabel={`Send Masters to ${reviewCompany}`}
+              sendDisabled={!expandedVersion && !canDownloadAll}
+              sendDisabledTooltip="Add a Master before sending it for review"
               isWaitingOnReview={Boolean(pendingReviewRequest)}
               pendingReviewDetails={pendingReviewRequest && lastReviewContact ? {
                 requestedBy: pendingReviewRequest.actor,
@@ -1614,7 +1676,14 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
                 onSendUpdated: (message) => followUpMastersReview("updated", message),
               } : undefined}
               onSend={sendMastersReview}
-              showApprove={false}
+              showApprove={Boolean(approvedReviewEntry) || (role === "Customer" && Boolean(pendingReviewRequest))}
+              approveLabel={`Approve ${reviewScopeLabel}`}
+              approveDisabled={mastersChangedSinceSend || (reviewScopeKey === "masters" ? hasUnresolvedClientComments : Boolean(expandedDeliverable?.comments.some((comment) => comment.visibility === "external" && !comment.resolved)))}
+              approveDisabledTooltip={mastersChangedSinceSend ? "Ask the Studio to send the updated Master before approving" : "Resolve Client comments before approving"}
+              isApproved={Boolean(approvedReviewEntry)}
+              approvedAt={approvedReviewEntry ? new Date(approvedReviewEntry.occurredAt).toLocaleDateString("en-AU", { day: "numeric", month: "short", timeZone: "Australia/Sydney" }) : undefined}
+              approvedBy={approvedReviewEntry?.actor}
+              onApprove={approveMastersReview}
             />
             <span
               className="masters-download-all-wrap"
@@ -1632,8 +1701,8 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
             {role === "Studio Staff" ? <button
               className="masters-primary-button label-s-semibold"
               type="button"
-              disabled={!canDownloadAll || Boolean(completionRecords[project.id])}
-              title={!canDownloadAll ? "Add a file to every Masters slot before completing the video" : completionRecords[project.id] ? `Completed by ${completionRecords[project.id].deliveredBy}` : undefined}
+              disabled={!canCompleteVideo || Boolean(completionRecords[project.id])}
+              title={!canDownloadAll ? "Add a file to every Masters slot before completing the video" : isWaitingOnClientReview || pendingClientReviewRequests.length > 0 || hasUnapprovedCurrentMaster ? "Wait for Client approval of the current Masters before completing the video" : hasUnresolvedClientComments ? "Resolve Client comments before completing the video" : completionRecords[project.id] ? `Completed by ${completionRecords[project.id].deliveredBy}` : undefined}
               onClick={completeVideo}
             ><DsIcon name="check" size={18} />{completionRecords[project.id] ? "Completed" : "Complete video"}</button> : null}
           </div>
@@ -3361,7 +3430,7 @@ function isMastersReviewAuditEntry(value: unknown): value is MastersReviewAuditE
   if (!value || typeof value !== "object") return false;
   const entry = value as Record<string, unknown>;
   return typeof entry.id === "string"
-    && (entry.action === "sent" || entry.action === "reminded" || entry.action === "updated")
+    && (entry.action === "sent" || entry.action === "reminded" || entry.action === "updated" || entry.action === "approved")
     && typeof entry.actor === "string"
     && typeof entry.company === "string"
     && Array.isArray(entry.recipients)
@@ -3369,6 +3438,16 @@ function isMastersReviewAuditEntry(value: unknown): value is MastersReviewAuditE
     && typeof entry.occurredAt === "string"
     && typeof entry.scopeKey === "string"
     && typeof entry.scopeLabel === "string";
+}
+
+function getMastersScopeFingerprint(scopeKey: string, deliverables: MastersDeliverable[]): string {
+  const [deliverableId, versionId] = scopeKey.split(":");
+  const deliverable = deliverables.find((item) => item.id === deliverableId);
+  const version = deliverable?.versions.find((item) => item.id === versionId);
+  if (deliverable && version) {
+    return JSON.stringify({ version, name: deliverable.name, captions: deliverable.srt, thumbnail: deliverable.thumbnail });
+  }
+  return JSON.stringify(deliverables.map((item) => ({ id: item.id, name: item.name, versions: item.versions, captions: item.srt, thumbnail: item.thumbnail })));
 }
 
 function getPresentedVersion(deliverable: MastersDeliverable, selections: Record<string, string>) {
