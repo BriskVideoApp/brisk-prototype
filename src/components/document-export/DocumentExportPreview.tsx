@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { canViewProject } from "@/data/prototype-access";
+import { selectProject } from "@/data/prototype-state";
 import {
   readDocumentExportPayload,
   type DocumentExportPayload,
@@ -24,6 +28,8 @@ export function DocumentExportPreview({
   initialPayload: DocumentExportPayload;
   project: Project;
 }) {
+  const { state, hasHydrated } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const [payload, setPayload] = useState(initialPayload);
 
   useEffect(() => {
@@ -56,6 +62,12 @@ export function DocumentExportPreview({
   useEffect(() => {
     document.title = documentName;
   }, [documentName]);
+
+  if (!hasHydrated) return null;
+  const scopedProject = selectProject(state, project.id);
+  if (scopedProject && !canViewProject(viewer, scopedProject, state)) {
+    return <main className="client-not-found"><h1 className="headings-s-bold">Document unavailable</h1></main>;
+  }
 
   return (
     <main className="document-export-shell">

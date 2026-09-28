@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { DocumentExportPreview } from "@/components/document-export/DocumentExportPreview";
+import { DynamicDocumentExportPreview } from "@/components/document-export/DynamicDocumentExportPreview";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { mediaAssets } from "@/data/media";
 import { clientNewVideoScriptProject } from "@/data/prototype-scenarios";
@@ -34,10 +35,12 @@ export default async function DocumentExportRoute({ params, searchParams }: Docu
   const kind = getDocumentExportKind(rawKind);
   const project = documentExportProjects.find((candidate) => candidate.id === projectId);
 
-  if (!kind || !project) notFound();
+  if (!kind) notFound();
+
+  const clipId = Array.isArray(query.clip) ? query.clip[0] : query.clip;
+  if (!project) return <DynamicDocumentExportPreview kind={kind} projectId={projectId} clipId={clipId} />;
 
   const initialPayload = createInitialPayload(kind, projectId);
-  const clipId = Array.isArray(query.clip) ? query.clip[0] : query.clip;
 
   return (
     <DocumentExportPreview

@@ -417,7 +417,7 @@ export function TranscriptsPanel({
   };
 
   if (resolvedClips.length === 0) {
-    return <TranscriptEmptyState projectId={clips[0]?.projectId ?? "loom-launch-film"} />;
+    return <TranscriptEmptyState projectId={projectId} />;
   }
 
   return (

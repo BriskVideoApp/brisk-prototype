@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { BriefPage } from "@/components/brief/BriefPage";
+import { ProjectCostsPage } from "@/components/costs/ProjectCostsPage";
 import { MediaStagePage } from "@/components/media/MediaStagePage";
 import { MastersPage } from "@/components/masters/MastersPage";
 import { ShootStagePage } from "@/components/shoot/ShootStagePage";
@@ -38,6 +39,13 @@ export function CanonicalProjectBriefRoute({ projectId }: { projectId: string })
       onFieldsChange={(fields) => updateProjectBrief(project.id, fields)}
     />
   );
+}
+
+export function CanonicalProjectCostsRoute({ projectId }: { projectId: string }) {
+  const { state, hasHydrated } = usePrototypeState();
+  if (!hasHydrated) return null;
+  const project = selectProject(state, projectId);
+  return project ? <ProjectCostsPage project={project} /> : <ProjectUnavailable />;
 }
 
 export function CanonicalProjectStageRoute({ projectId, stage, query = {} }: ProjectStageRouteProps) {
