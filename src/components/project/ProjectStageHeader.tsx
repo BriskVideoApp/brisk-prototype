@@ -6,7 +6,7 @@ import type { Project, StageKey, StageStatus } from "@/components/active-videos/
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
-  getClientPortalDestination,
+  getActiveClientPortalDestination,
   getScopedRoleHome,
 } from "@/components/navigation/prototypeNavigation";
 import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
@@ -17,6 +17,7 @@ import { ProjectFlowAdjuster } from "@/components/production-flow/ProjectFlowAdj
 import { ShareActionRow } from "@/components/share/ShareActionRow";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import {
@@ -51,9 +52,11 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const currentStageKey = activeUtility ? undefined : activeStage ?? getCurrentProjectStage(projectHeaderStages, projectStages, storyboardStatus)?.key;
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const studioName = state.workspaces.find((workspace) => workspace.id === state.session.activeWorkspaceId)?.name ?? "Studio";
   const projectClient = state.clients.find((client) => client.workspaceId === state.session.activeWorkspaceId && client.id === project.clientId) ?? null;
-  const homeHref = getScopedRoleHome(selectedRole, getClientPortalDestination(state));
+  const clientPortalHref = getActiveClientPortalDestination(state, viewer);
+  const homeHref = getScopedRoleHome(selectedRole, clientPortalHref);
   const projectMediaCount = mediaCount ?? assetViews.filter((asset) => asset.projectId === project.id && !asset.archivedAt && asset.collection === "media").length;
   const mediaTooltip = projectMediaCount > 0
     ? `${projectMediaCount} media ${projectMediaCount === 1 ? "file" : "files"}`

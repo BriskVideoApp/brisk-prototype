@@ -15,6 +15,7 @@ import {
 import {
   addClientToPrototypeState,
   clonePrototypeState,
+  createClientVideoState,
   commitStudioSetupState,
   completeOnboardingState,
   createOnboardingEmptyFixture,
@@ -55,6 +56,7 @@ type PrototypeStateContextValue = {
   commitStudioSetup: (draft: StudioReviewDraft) => void;
   createClient: (input: NewClientInput) => ScopedClient;
   createProject: (input: CreateProjectInput) => ScopedProject | null;
+  createClientVideo: (input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => ScopedProject | null;
   inviteClientTeammate: (input: { clientId: string; name: string; email: string }) => void;
   inviteClient: (input: { clientId: string; projectId: string; name: string; email: string }) => void;
   markClientPreviewed: () => void;
@@ -140,6 +142,15 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     return result.project;
   }, [persistState]);
 
+  const createClientVideo = useCallback((input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => {
+    const result = createClientVideoState(stateRef.current, input);
+    if (!result) return null;
+    stateRef.current = result.state;
+    persistState(result.state);
+    setState(result.state);
+    return result.project;
+  }, [persistState]);
+
   const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string }) => {
     commitState((current) => inviteClientToProjectState(current, input));
   }, [commitState]);
@@ -167,6 +178,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     commitStudioSetup,
     createClient,
     createProject,
+    createClientVideo,
     inviteClientTeammate,
     inviteClient,
     markClientPreviewed: () => commitState(markClientPreviewedState),
@@ -180,7 +192,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     updateWorkspaceBranding: (branding) => commitState((current) => updateWorkspaceBrandingState(current, branding)),
     updateWorkspaceDetails: (details) => commitState((current) => updateWorkspaceDetailsState(current, details)),
     replaceWorkspaceClients,
-  }), [commitState, commitStudioSetup, createClient, createProject, hasHydrated, inviteClient, inviteClientTeammate, replaceWorkspaceClients, state]);
+  }), [commitState, commitStudioSetup, createClient, createClientVideo, createProject, hasHydrated, inviteClient, inviteClientTeammate, replaceWorkspaceClients, state]);
 
   return <PrototypeStateContext.Provider value={value}>{children}</PrototypeStateContext.Provider>;
 }

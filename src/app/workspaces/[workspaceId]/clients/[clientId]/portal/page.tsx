@@ -2,11 +2,9 @@ import { ClientPortalScreen } from "@/components/client-portal/ClientPortalScree
 
 export default async function ScopedClientPortalRoute({
   params,
-  searchParams,
 }: {
   params: Promise<{ workspaceId: string; clientId: string }>;
-  searchParams: Promise<{ "studio-preview"?: string }>;
 }) {
-  const [{ workspaceId, clientId }, query] = await Promise.all([params, searchParams]);
-  return <ClientPortalScreen workspaceId={workspaceId} clientId={clientId} studioPreview={query["studio-preview"] === "1"} />;
+  const { workspaceId, clientId } = await params;
+  return <ClientPortalScreen workspaceId={workspaceId} clientId={clientId} />;
 }

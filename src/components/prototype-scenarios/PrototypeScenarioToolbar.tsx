@@ -55,7 +55,7 @@ function InlinePrototypeScenarioToolbar() {
     };
   }, []);
 
-  if (!hasLoadedScenario || !activeScenario) return null;
+  if (!hasLoadedScenario) return null;
 
   return (
     <div className="prototype-scenario-toolbar-inline-group">
@@ -69,7 +69,7 @@ function InlinePrototypeScenarioToolbar() {
             <span className="label-xs-semibold">View as role</span>
             <RolePreviewControl compact />
           </div>
-          <Button size="S" variant="secondary" onClick={resetScenario}>Reset</Button>
+          <Button size="S" variant="secondary" disabled={!activeScenario} onClick={resetScenario}>Reset</Button>
           <div className="prototype-scenario-toolbar-inline-links">
             <Link href="/prototype/scenarios">
               <DsIcon name="circles-three" size={16} />

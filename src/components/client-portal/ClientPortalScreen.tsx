@@ -5,9 +5,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { StageProgress } from "@/components/active-videos/StageProgress";
 import { CustomerDashboard } from "@/components/customer-dashboard/CustomerDashboard";
-import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { getClientPortalAccess } from "@/data/prototype-access";
+import { getActiveClientPortalDestination } from "@/components/navigation/prototypeNavigation";
 import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
@@ -21,20 +22,19 @@ import { selectClientPortalData, selectScopedClient, selectWorkspace, type Scope
 type ClientPortalScreenProps = {
   workspaceId: string;
   clientId: string;
-  studioPreview?: boolean;
   embedded?: boolean;
 };
 
-export function ClientPortalScreen({ workspaceId, clientId, studioPreview = false, embedded = false }: ClientPortalScreenProps) {
+export function ClientPortalScreen({ workspaceId, clientId, embedded = false }: ClientPortalScreenProps) {
   const { state } = usePrototypeState();
-  const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
-  const isStudioPreview = studioPreview && selectedRole === "Studio Staff";
-  const portal = selectClientPortalData(
+  const isStudioPreview = viewer?.role === "Studio Staff";
+  const access = getClientPortalAccess(viewer);
+  const portal = access && selectClientPortalData(
     state,
     workspaceId,
     clientId,
-    isStudioPreview ? { kind: "studio-preview", viewerId: viewer?.id } : { kind: "external", viewerId: viewer?.id },
+    access,
   );
 
   if (!portal) return <ClientPortalUnavailable embedded={embedded} />;
@@ -56,6 +56,7 @@ export function ClientPortalScreen({ workspaceId, clientId, studioPreview = fals
       <CustomerDashboard
         activity={dashboardActivity}
         brandAccentId={portal.workspace.brandAccentId}
+        clientId={clientId}
         clientName={portal.client.name}
         initialProjects={dashboardProjects}
         initialSeries={dashboardSeries}
@@ -117,7 +118,7 @@ function createDashboardProjects(projects: ScopedProject[]): CustomerDashboardPr
     return {
       ...(existingProject ?? {
         id: project.id,
-        code: project.clientBadge,
+        code: project.code ?? project.clientBadge,
         name: project.name,
         createdAt: project.latestUpdate.timestamp,
         latestAction: {
@@ -148,20 +149,24 @@ function getDashboardStatusDetail(project: ScopedProject): CustomerDashboardProj
 
 export function LegacyClientPortalRoute() {
   const router = useRouter();
-  const { state } = usePrototypeState();
+  const { state, hasHydrated } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const { activeWorkspaceId, activeClientId } = state.session;
-  const destinationIsVerified = Boolean(
-    activeClientId
-    && selectWorkspace(state, activeWorkspaceId)
-    && selectScopedClient(state, activeWorkspaceId, activeClientId),
-  );
+  const sessionDestinationIsVerified = Boolean(activeClientId && selectWorkspace(state, activeWorkspaceId)
+    && selectScopedClient(state, activeWorkspaceId, activeClientId));
+  const destination = viewer?.role === "Customer"
+    ? getActiveClientPortalDestination(state, viewer)
+    : sessionDestinationIsVerified && activeClientId
+      ? `/workspaces/${encodeURIComponent(activeWorkspaceId)}/clients/${encodeURIComponent(activeClientId)}/portal`
+      : null;
 
   useEffect(() => {
-    if (!destinationIsVerified || !activeClientId) return;
-    router.replace(`/workspaces/${encodeURIComponent(activeWorkspaceId)}/clients/${encodeURIComponent(activeClientId)}/portal`);
-  }, [activeClientId, activeWorkspaceId, destinationIsVerified, router]);
+    if (!hasHydrated || !destination) return;
+    router.replace(destination);
+  }, [destination, hasHydrated, router]);
 
-  if (!destinationIsVerified) return <ClientPortalUnavailable />;
+  if (!hasHydrated) return null;
+  if (!destination) return <ClientPortalUnavailable />;
   return <ClientPortalUnavailable title="Opening the verified Client portal" description="Taking you to the scoped Client workspace." />;
 }
 

@@ -1,4 +1,5 @@
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import type { PrototypeViewer } from "@/data/prototype-access";
 import {
   selectScopedClient,
   type PrototypeState,
@@ -11,6 +12,8 @@ const scopedClientPortalPattern = /^\/workspaces\/[^/]+\/clients\/[^/]+\/portal$
 export function getAppShellPresentation(
   pathname: string,
   testModeIsActive: boolean,
+  role?: PrototypeRole,
+  studioPreview = false,
 ): AppShellPresentation {
   const isStandaloneDocument = pathname.startsWith("/print/")
     || pathname.startsWith("/share/call-sheet/");
@@ -22,6 +25,9 @@ export function getAppShellPresentation(
   const isEntryRoute = pathname === "/prototype/journey-entry";
   const isClientPortal = scopedClientPortalPattern.test(pathname)
     || pathname === "/customer-dashboard";
+
+  if (isClientPortal && role === "Studio Staff") return "product";
+  if (isClientPortal && studioPreview) return "clean-entry";
 
   if (!testModeIsActive && (isEntryRoute || isClientPortal)) return "clean-entry";
 
@@ -71,6 +77,17 @@ export function getClientPortalDestination(state: PrototypeState, preferredClien
   if (!clientId) return null;
 
   return `/workspaces/${encodeURIComponent(workspaceId)}/clients/${encodeURIComponent(clientId)}/portal?studio-preview=1`;
+}
+
+export function getActiveClientPortalDestination(state: PrototypeState, viewer: PrototypeViewer | null) {
+  if (!viewer) return null;
+  if (viewer.role !== "Customer") return getClientPortalDestination(state);
+  if (!viewer.clientId || viewer.workspaceId !== state.session.activeWorkspaceId
+    || !selectScopedClient(state, viewer.workspaceId, viewer.clientId)
+    || !state.users.some((user) => user.id === viewer.id && user.role === "Client"
+      && user.workspaceId === viewer.workspaceId && user.clientId === viewer.clientId)) return null;
+
+  return `/workspaces/${encodeURIComponent(viewer.workspaceId)}/clients/${encodeURIComponent(viewer.clientId)}/portal`;
 }
 
 export function getScopedRoleHome(

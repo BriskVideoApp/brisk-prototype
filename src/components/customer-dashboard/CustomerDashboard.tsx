@@ -14,6 +14,7 @@ import {
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { canActOnProject } from "@/data/prototype-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -23,6 +24,7 @@ import {
   customerDashboardActivity,
   customerDashboardProjects,
   customerDashboardSeries,
+  withSavedClientStageStatus,
   type CustomerDashboardActivity,
   type CustomerDashboardProject,
   type CustomerDashboardSeries,
@@ -62,6 +64,7 @@ type DashboardSharedState = {
 type CustomerDashboardProps = {
   activity?: CustomerDashboardActivity[];
   brandAccentId?: "purple" | "cyan" | "pink";
+  clientId?: string;
   clientName?: string;
   initialProjects?: CustomerDashboardProject[];
   initialSeries?: CustomerDashboardSeries[];
@@ -95,6 +98,7 @@ const dashboardReferenceDate = new Date("2026-07-27T09:00:00+10:00");
 export function CustomerDashboard({
   activity = customerDashboardActivity,
   brandAccentId,
+  clientId,
   clientName = "Loom",
   initialProjects = customerDashboardProjects,
   initialSeries = customerDashboardSeries,
@@ -105,6 +109,7 @@ export function CustomerDashboard({
 }: CustomerDashboardProps = {}) {
   const { selectedRole } = usePrototypeRole();
   const { state: prototypeState } = usePrototypeState();
+  const { getProjectStages } = useProjectStageStatus();
   const viewer = usePrototypeViewer();
   const { activeScenario } = usePrototypeScenario();
   const { studio } = useStudioSettings();
@@ -313,7 +318,16 @@ export function CustomerDashboard({
     return () => window.removeEventListener("mousedown", closeMenus);
   }, [isFilterOpen, openMenuProjectId, openStatusProjectId]);
 
-  const displayProjects = previewState === "empty" || isScenarioEmpty ? [] : projects;
+  const visibleProjects = previewState === "empty" ? [] : isScenarioEmpty
+    ? projects.filter((project) => project.id === prototypeState.onboarding.projectId)
+    : projects;
+  const displayProjects = visibleProjects.map((project) => {
+    const scopedProject = prototypeState.projects.find((candidate) => candidate.id === project.id
+      && candidate.workspaceId === prototypeState.session.activeWorkspaceId);
+    return scopedProject
+      ? withSavedClientStageStatus(project, getProjectStages(scopedProject), clientName)
+      : project;
+  });
   const projectsById = useMemo(() => new Map(displayProjects.map((project) => [project.id, project])), [displayProjects]);
   const seriesById = useMemo(
     () => new Map(initialSeries.map((series) => [series.id, series])),
@@ -449,7 +463,9 @@ export function CustomerDashboard({
   };
 
   const startVideo = () => {
-    router.push("/customer-dashboard/start-video");
+    router.push(clientId
+      ? `/customer-dashboard/start-video?client=${encodeURIComponent(clientId)}`
+      : "/customer-dashboard/start-video");
   };
 
   return (
@@ -467,10 +483,13 @@ export function CustomerDashboard({
             ) : null}
             <div className="customer-dashboard-title-row">
               <h1>Your videos</h1>
-              {isStudioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
-                <DsIcon name="plus" size={16} />
-                Start Video
-              </button>}
+              <div className="customer-dashboard-heading-actions">
+                {isStudioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : null}
+                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
+                  <DsIcon name="plus" size={16} />
+                  Start Video
+                </button>
+              </div>
             </div>
           </div>
         </header>

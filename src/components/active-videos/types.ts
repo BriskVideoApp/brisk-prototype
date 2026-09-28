@@ -119,6 +119,7 @@ export type ProjectFileLocation = {
 
 export type Project = {
   id: string;
+  code?: string;
   clientId: string;
   clientBadge: string;
   clientName: string;

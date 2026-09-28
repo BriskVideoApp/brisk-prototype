@@ -1,5 +1,5 @@
 import type { Project, StageKey } from "@/components/active-videos/types";
-import type { PrototypeState } from "@/data/prototype-state";
+import type { PortalAccess, PrototypeState } from "@/data/prototype-state";
 
 export type PrototypeViewer = {
   role: "Studio Staff" | "Studio Freelancer" | "Customer";
@@ -13,6 +13,12 @@ export type PrototypeViewer = {
 };
 
 export type ProjectAction = "status" | "upload" | "send" | "approve" | "comment" | "edit";
+
+export function getClientPortalAccess(viewer: PrototypeViewer | null): PortalAccess | null {
+  if (viewer?.role === "Studio Staff") return { kind: "studio-preview", viewerId: viewer.id };
+  if (viewer?.role === "Customer") return { kind: "external", viewerId: viewer.id };
+  return null;
+}
 
 export function canViewProject(viewer: PrototypeViewer | null, project: Project, state: PrototypeState): boolean {
   if (!viewer || viewer.workspaceId !== state.session.activeWorkspaceId) return false;

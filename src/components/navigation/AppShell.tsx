@@ -14,7 +14,7 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
-import { getAppShellPresentation, getClientPortalDestination } from "@/components/navigation/prototypeNavigation";
+import { getActiveClientPortalDestination, getAppShellPresentation } from "@/components/navigation/prototypeNavigation";
 import { ChatPage } from "@/components/chat/ChatPage";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
@@ -28,11 +28,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { state } = usePrototypeState();
   const viewer = usePrototypeViewer();
   const { studio } = useStudioSettings();
-  const isClientPreview = pathname.startsWith("/workspaces/") && searchParams.get("studio-preview") === "1";
-  const presentation = isClientPreview ? "clean-entry" : getAppShellPresentation(pathname, Boolean(activeScenario));
-  const clientPortalHref = viewer?.role === "Customer" && viewer.clientId
-    ? `/workspaces/${encodeURIComponent(viewer.workspaceId)}/clients/${encodeURIComponent(viewer.clientId)}/portal`
-    : getClientPortalDestination(state);
+  const presentation = getAppShellPresentation(pathname, Boolean(activeScenario), selectedRole,
+    searchParams.get("studio-preview") === "1");
+  const clientPortalHref = getActiveClientPortalDestination(state, viewer);
   const isStudioStaff = selectedRole === "Studio Staff";
   const isStudioUser = selectedRole !== "Customer";
   const videosHref = selectedRole === "Customer" ? clientPortalHref ?? "/prototype/scenarios" : "/active-videos";
@@ -58,7 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   if (!hasMounted && presentation !== "standalone") return null;
 
-  if (presentation === "standalone" || isClientJourneyEntry) {
+  if (presentation === "standalone" || (isClientJourneyEntry && selectedRole !== "Studio Staff")) {
     return children;
   }
 

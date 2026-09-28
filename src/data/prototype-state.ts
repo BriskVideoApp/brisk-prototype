@@ -10,6 +10,7 @@ import {
   type NewClientInput,
 } from "@/data/clients";
 import { createInitialBriefFields, type BriefFields, type BriefVideoTypeId } from "@/data/brief";
+import { getNextClientProjectCode } from "@/data/project-naming";
 import {
   cloneStudioBriefConfiguration,
   createRecommendedStudioBriefConfiguration,
@@ -494,6 +495,55 @@ export function createProjectFromStudioTemplateState(
         latestActivity: { label: `${project.name} created`, occurredAt: now },
       } : candidate),
       onboarding: { ...state.onboarding, step: "client-preview", clientId: client.id, projectId },
+    },
+  };
+}
+
+export function createClientVideoState(
+  state: PrototypeState,
+  input: { clientId: string; userId: string; name: string; fields?: BriefFields },
+): { state: PrototypeState; project: ScopedProject } | null {
+  const workspaceId = state.session.activeWorkspaceId;
+  const client = selectScopedClient(state, workspaceId, input.clientId);
+  const user = state.users.find((candidate) => candidate.id === input.userId && candidate.role === "Client"
+    && candidate.clientId === input.clientId && candidate.workspaceId === workspaceId);
+  const invitation = state.invitations.find((candidate) => candidate.userId === input.userId
+    && candidate.clientId === input.clientId && candidate.workspaceId === workspaceId
+    && candidate.status !== "Expired");
+  if (!client || !user || !invitation || !input.name.trim()
+    || client.contacts.find((contact) => contact.id === user.id)?.portalAccess === "Paused") return null;
+
+  const code = getNextClientProjectCode(client.badge, state.projects.flatMap((project) => project.code ? [project.code] : []));
+  const created = createProjectFromStudioTemplateState(state, {
+    clientId: client.id,
+    name: input.name.trim(),
+    fields: input.fields,
+    requestedId: `${client.id}-${code}`,
+  });
+  if (!created) return null;
+  const now = new Date().toISOString();
+  const project: ScopedProject = {
+    ...created.project,
+    code,
+    clientMemberIds: [user.id],
+    latestUpdate: { label: "Video started by Client", daysAgo: 0, timestamp: now },
+  };
+  return {
+    project,
+    state: {
+      ...created.state,
+      projects: created.state.projects.map((candidate) => candidate.id === project.id ? project : candidate),
+      clients: created.state.clients.map((candidate) => candidate.id === client.id && candidate.workspaceId === workspaceId ? {
+        ...candidate,
+        latestActivity: { label: `${project.name} started`, occurredAt: now },
+        contacts: candidate.contacts.map((contact) => contact.id === user.id
+          ? { ...contact, projectIds: [...new Set([...contact.projectIds, project.id])] }
+          : contact),
+      } : candidate),
+      invitations: created.state.invitations.map((candidate) => candidate.id === invitation.id
+        ? { ...candidate, projectIds: [...new Set([...candidate.projectIds, project.id])] }
+        : candidate),
+      onboarding: { ...state.onboarding, projectId: project.id },
     },
   };
 }

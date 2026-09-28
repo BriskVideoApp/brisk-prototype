@@ -88,6 +88,80 @@
   margin: 0;
 }
 
+.client-video-naming-page,
+.client-video-naming-unavailable {
+  display: grid;
+  min-height: calc(100dvh - var(--brisk-space-3xl));
+  place-items: center;
+  background: var(--brisk-page-primary);
+  padding: var(--brisk-space-2xl);
+}
+
+.client-video-naming-form {
+  display: grid;
+  width: min(100%, calc(var(--brisk-space-3xl) * 14));
+  gap: var(--brisk-space-l);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xxs);
+  background: var(--brisk-bg-block-primary);
+  box-shadow: var(--brisk-shadow-m);
+  padding: var(--brisk-space-2xl);
+}
+
+.client-video-naming-form > h1,
+.client-video-naming-form > p {
+  margin: 0;
+}
+
+.client-video-naming-form > p,
+.client-video-naming-unavailable p {
+  color: var(--brisk-text-secondary);
+}
+
+.client-video-naming-fields {
+  display: grid;
+  gap: var(--brisk-space-xl);
+  padding-block: var(--brisk-space-s);
+}
+
+.client-video-naming-code {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.client-video-naming-code strong,
+.client-video-naming-preview strong {
+  color: var(--brisk-text-primary);
+}
+
+.client-video-naming-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--brisk-space-s);
+}
+
+@media (max-width: 720px) {
+  .client-video-naming-page,
+  .client-video-naming-unavailable {
+    align-items: start;
+    padding: var(--brisk-space-l);
+  }
+
+  .client-video-naming-form {
+    padding: var(--brisk-space-l);
+  }
+
+  .client-video-naming-actions {
+    flex-direction: column-reverse;
+  }
+
+  .client-video-naming-actions button {
+    width: 100%;
+  }
+}
+
 @media (max-width: 720px) {
   .customer-dashboard-header,
   .customer-dashboard-layout {
@@ -144,6 +218,14 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--brisk-space-xl);
+}
+
+.customer-dashboard-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
 }
 
 .customer-dashboard-studio-brand {

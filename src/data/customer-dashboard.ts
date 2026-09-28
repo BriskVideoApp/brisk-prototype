@@ -38,6 +38,29 @@ export type CustomerDashboardActivity = {
   href: string;
 };
 
+export function withSavedClientStageStatus(
+  project: CustomerDashboardProject,
+  stages: Record<StageKey, StageStatus>,
+  clientName: string,
+): CustomerDashboardProject {
+  if (project.status !== "In Production") return { ...project, stages };
+
+  const waitingStages = stageOrder.filter((stage) => stages[stage].state === "waiting");
+  const assignedWaitingStages = waitingStages.filter((stage) => stages[stage].assignedTo);
+  const waitingOnClient = assignedWaitingStages.length > 0
+    ? assignedWaitingStages.some((stage) => stages[stage].assignedTo === clientName)
+    : project.statusDetail === "Waiting on you" && waitingStages.some((stage) =>
+      project.stages[stage].state === "waiting");
+
+  return {
+    ...project,
+    stages,
+    statusDetail: waitingOnClient ? "Waiting on you" : "Waiting on studio",
+  };
+}
+
+const stageOrder: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
+
 const thumbnailOne = "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=900&q=80";
 const thumbnailTwo = "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=80";
 const thumbnailThree = "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80";
@@ -96,10 +119,10 @@ export const customerDashboardProjects: CustomerDashboardProject[] = [
     code: "LOOM-27",
     name: "Customer Story - Healthcare",
     status: "In Production",
-    statusDetail: "Waiting on you",
+    statusDetail: "Waiting on studio",
     createdAt: "2026-05-27T15:20:00+10:00",
-    latestAction: { label: "Edit V2 shared by Maddie", timestamp: "2026-07-23T10:05:00+10:00" },
-    stages: makeStageProgress("edit", "waiting"),
+    latestAction: { label: "Edit preparation started by Maddie", timestamp: "2026-07-23T10:05:00+10:00" },
+    stages: makeStageProgress("edit", "in_progress"),
     seriesId: "customer-stories",
     thumbnailUrl: thumbnailFour,
     unreadMessages: 4,
@@ -334,7 +357,7 @@ export const customerDashboardActivity: CustomerDashboardActivity[] = [
   activity("activity-01", "Maddie", "shared", "the shoot interviews", "loom-launch-film", "LOOM-24", "2026-07-26T09:12:00+10:00", "upload-simple", "/projects/loom-launch-film/stages/media"),
   activity("activity-02", "Marcus", "uploaded", "rough cut V1", "loom-wacf-01", "LOOM-31", "2026-07-25T16:40:00+10:00", "stage-edit", "/review?project=loom-wacf-01"),
   activity("activity-03", "Emma", "approved", "the script", "loom-product-tour", "LOOM-34", "2026-07-24T12:18:00+10:00", "check-circle", "/projects/loom-product-tour/script"),
-  activity("activity-04", "Marcus", "shared", "Edit V2 for review", "loom-customer-stories", "LOOM-27", "2026-07-23T10:05:00+10:00", "stage-edit", "/review?project=loom-customer-stories"),
+  activity("activity-04", "Maddie", "started", "Edit preparation", "loom-customer-stories", "LOOM-27", "2026-07-23T10:05:00+10:00", "stage-edit", "/projects/loom-customer-stories/stages/edit"),
   activity("activity-05", "Priya", "organised", "the edit media", "loom-q3-recap", "LOOM-36", "2026-07-22T17:32:00+10:00", "image-square", "/projects/loom-q3-recap/stages/media"),
   activity("activity-06", "Emma", "updated", "the brief", "loom-wacf-02", "LOOM-32", "2026-07-21T14:04:00+10:00", "clipboard-text", "/projects/loom-wacf-02/stages/brief"),
   activity("activity-07", "David", "confirmed", "interview talent", "loom-customer-story-finance", "LOOM-28", "2026-07-20T11:25:00+10:00", "video-camera-ds", "/projects/loom-customer-story-finance/stages/brief"),

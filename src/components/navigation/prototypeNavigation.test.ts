@@ -6,6 +6,7 @@ import {
   setFixtureClientSession,
 } from "@/data/prototype-state";
 import {
+  getActiveClientPortalDestination,
   getAppShellPresentation,
   getClientPortalDestination,
   getScopedRoleHome,
@@ -38,6 +39,13 @@ describe("test mode layout navigation", () => {
   it("keeps project overviews in the product shell", () => {
     expect(getAppShellPresentation("/projects/harbour-health-care-journey", false)).toBe("product");
     expect(getAppShellPresentation("/projects/harbour-health-care-journey", true)).toBe("product");
+  });
+
+  it("keeps the full Studio header on Client portal previews", () => {
+    const portal = "/workspaces/northstar-films/clients/loom/portal";
+    expect(getAppShellPresentation(portal, true, "Studio Staff")).toBe("product");
+    expect(getAppShellPresentation(portal, false, "Studio Staff", true)).toBe("product");
+    expect(getAppShellPresentation(portal, true, "Customer", true)).toBe("clean-entry");
   });
 
   it.each([
@@ -78,6 +86,23 @@ describe("scoped Client portal navigation", () => {
     expect(getClientPortalDestination(state)).toBe(
       "/workspaces/northstar-films/clients/harbour-health/portal",
     );
+  });
+
+  it("uses the active Test Mode Client when the stored session belongs to another Client", () => {
+    const state = setFixtureClientSession(createPopulatedStudioFixture(), "harbour-health");
+    const jess = state.users.find((user) => user.name === "Jess Taylor");
+    expect(jess).toBeDefined();
+
+    expect(getActiveClientPortalDestination(state, {
+      role: "Customer",
+      id: jess!.id,
+      name: jess!.name,
+      email: jess!.email,
+      workspaceId: jess!.workspaceId,
+      clientId: jess!.clientId,
+      personId: null,
+      chatUserId: "user-jess",
+    })).toBe("/workspaces/northstar-films/clients/loom/portal");
   });
 
   it("does not create a portal destination for mismatched active scope", () => {

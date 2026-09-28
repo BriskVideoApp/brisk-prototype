@@ -34,6 +34,8 @@ Brisk has two access-role groups: **Studio** (the production company) and **Cust
 
 Every feature must answer: which roles can see it, and which can act on it. Clients never see Studio-only data, and never see another Client's projects.
 
+Studio Staff can open Client-facing screens for any Client in their own Studio. The Client portal opens as a Studio preview, without changing the Staff member's identity or recording Client-authored actions. Client and Studio Freelancer access remains scoped to their own memberships.
+
 ## Studio isolation
 
 - Each Studio has its own data, files, members, and branding.
@@ -97,6 +99,10 @@ Three settings scopes, never mixed:
 3. **Project** (project-level settings, client access, deliverables)
 
 Each scope has its own settings entry point.
+
+## Project naming
+
+Show a unique project code before the editable project name when a Client starts a video. Follow [the project naming conventions](Docs/project-naming-conventions.md) for Client codes, edit versions, email subjects and invoices.
 
 ## Do
 

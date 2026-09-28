@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { canActOnProject, canViewProject, type PrototypeViewer } from "@/data/prototype-access";
-import { createPopulatedStudioFixture, northStarWorkspaceId, updateProjectTeamState } from "@/data/prototype-state";
+import { canActOnProject, canViewProject, getClientPortalAccess, type PrototypeViewer } from "@/data/prototype-access";
+import { createPopulatedStudioFixture, northStarWorkspaceId, selectClientPortalData, updateProjectTeamState } from "@/data/prototype-state";
 import { getPrototypeFreelancerViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { getMediaCapabilities } from "@/lib/media";
 import { getAcceptedFreelancerEngagements, getFreelancerEngagements, getPendingFreelancerEngagements } from "@/data/freelancer-videos";
@@ -14,6 +14,23 @@ const loom = state.projects.find((project) => project.id === "loom-launch-film")
 const otherClient = state.projects.find((project) => project.clientId === "harbour-health")!;
 const ninaProject = state.projects.find((project) => project.team.some((slot) => slot.invitations.some((invitation) => invitation.personId === "np" && invitation.status === "accepted" && slot.acceptedInvitationId === invitation.id)))!;
 const unassigned = state.projects.find((project) => !project.team.some((slot) => slot.invitations.some((invitation) => invitation.personId === "np" && invitation.status === "accepted" && slot.acceptedInvitationId === invitation.id)))!;
+
+describe("Client portal access", () => {
+  it("lets Studio Staff preview any Client in their workspace without a URL flag", () => {
+    const access = getClientPortalAccess(staff);
+    expect(access?.kind).toBe("studio-preview");
+    expect(access && selectClientPortalData(state, northStarWorkspaceId, "loom", access)?.client.id).toBe("loom");
+    expect(access && selectClientPortalData(state, northStarWorkspaceId, "harbour-health", access)?.client.id).toBe("harbour-health");
+  });
+
+  it("keeps Client membership checks and denies Freelancer portal access", () => {
+    const access = getClientPortalAccess(client);
+    expect(access?.kind).toBe("external");
+    expect(access && selectClientPortalData(state, northStarWorkspaceId, "loom", access)?.client.id).toBe("loom");
+    expect(access && selectClientPortalData(state, northStarWorkspaceId, "harbour-health", access)).toBeNull();
+    expect(getClientPortalAccess(freelancer)).toBeNull();
+  });
+});
 
 describe("prototype project access", () => {
   it("keeps the Studio Owner on normal projects and stages", () => {

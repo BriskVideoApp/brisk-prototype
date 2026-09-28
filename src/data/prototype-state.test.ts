@@ -13,6 +13,7 @@ import {
   commitStudioSetupState,
   createOnboardingEmptyFixture,
   createPopulatedStudioFixture,
+  createClientVideoState,
   createProjectFromStudioTemplateState,
   getActiveProjectCount,
   inviteClientTeammateState,
@@ -62,6 +63,31 @@ function createFirstProjectState() {
 }
 
 describe("prototype workspace and Client isolation", () => {
+  it("creates a named Client video with a stable code and access for its Client", () => {
+    const original = createPopulatedStudioFixture();
+    const jess = original.users.find((user) => user.name === "Jess Taylor" && user.clientId === "loom");
+    expect(jess).toBeDefined();
+    const fields = createInitialBriefFields();
+    fields.workingTitle.value = "A saved first video";
+    const result = createClientVideoState(original, {
+      clientId: "loom",
+      userId: jess!.id,
+      name: "Healthcare customer story",
+      fields,
+    });
+    expect(result?.project.code).toBe("loom044");
+    expect(result?.project.name).toBe("Healthcare customer story");
+    expect(result?.project.clientMemberIds).toContain(jess!.id);
+    expect(result?.state.projectBriefSnapshots.find((brief) => brief.projectId === result.project.id)?.fields.workingTitle.value).toBe("A saved first video");
+
+    const restored = clonePrototypeState(JSON.parse(JSON.stringify(result!.state)) as typeof original);
+    const visible = selectClientPortalData(restored, northStarWorkspaceId, "loom", { kind: "external", viewerId: jess!.id });
+    expect(visible?.projects.find((project) => project.id === result!.project.id)?.code).toBe("loom044");
+    expect(createClientVideoState(restored, { clientId: "loom", userId: jess!.id, name: "Another video" })?.project.code).toBe("loom045");
+    expect(selectClientPortalData(restored, northStarWorkspaceId, "hims", { kind: "external", viewerId: jess!.id })).toBeNull();
+    expect(createClientVideoState(original, { clientId: "hims", userId: jess!.id, name: "Wrong Client" })).toBeNull();
+  });
+
   it("keeps project tags in the shared project record through serialisation", () => {
     const original = createPopulatedStudioFixture();
     const updated = updateProjectTagsState(original, "loom-launch-film", ["Rush", "Client review"]);
