@@ -25,6 +25,7 @@ type ChatRailProps = {
   customerFilter: ChatCustomerFilter;
   showUnreadOnly: boolean;
   companyUnreadCounts?: Record<string, number>;
+  globalUnreadCounts: Record<Exclude<ChatRailView, "projects">, number>;
   onProjectSelect: (projectId: string | null) => void;
   onClientSelect: (clientName: string) => void;
   onViewSelect: (view: ChatRailView) => void;
@@ -38,14 +39,13 @@ type ChatRailProps = {
 const globalItems: Array<{
   id: Exclude<ChatRailView, "projects">;
   label: string;
-  count: number;
   icon: DsIconName;
 }> = [
-  { id: "dms", label: "DMs", count: 2, icon: "chats" },
-  { id: "mentions", label: "Mentions", count: 4, icon: "at-mail" },
-  { id: "groups", label: "Groups", count: 3, icon: "users-three" },
-  { id: "threads", label: "Threads", count: 6, icon: "chat-centered-dots" },
-  { id: "calls", label: "Calls", count: 0, icon: "headphones" },
+  { id: "dms", label: "DMs", icon: "chats" },
+  { id: "mentions", label: "Mentions", icon: "at-mail" },
+  { id: "groups", label: "Groups", icon: "users-three" },
+  { id: "threads", label: "Threads", icon: "chat-centered-dots" },
+  { id: "calls", label: "Calls", icon: "headphones" },
 ];
 
 export function ChatRail({
@@ -59,6 +59,7 @@ export function ChatRail({
   customerFilter,
   showUnreadOnly,
   companyUnreadCounts = {},
+  globalUnreadCounts,
   onProjectSelect,
   onClientSelect,
   onViewSelect,
@@ -69,9 +70,6 @@ export function ChatRail({
   onSearchOpen,
 }: ChatRailProps) {
   const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
-  const [globalUnreadCounts, setGlobalUnreadCounts] = useState<Record<string, number>>(
-    () => Object.fromEntries(globalItems.map((item) => [item.id, item.count])),
-  );
   const showClients = role === "Studio Staff";
   const clientStatusByName = new Map(clients.map((client) => [client.name, client.status]));
   const lifecycleProjects = showClients && customerFilter !== "All"
@@ -160,10 +158,7 @@ export function ChatRail({
                   <ChatUnreadControl
                     count={unreadCount}
                     ariaLabel={`Mark ${unreadCount} unread ${item.label.toLowerCase()} as read`}
-                    onMarkRead={() => {
-                      setGlobalUnreadCounts((current) => ({ ...current, [item.id]: 0 }));
-                      onGlobalMarkRead(item.id);
-                    }}
+                    onMarkRead={() => onGlobalMarkRead(item.id)}
                   />
                 </div>
               );

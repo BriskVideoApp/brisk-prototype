@@ -6,13 +6,14 @@ import { usePrototypeScenario } from "@/components/prototype-scenarios/Prototype
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { mockTeamPeople } from "@/data/active-videos/teamDefaults";
 import { initialNativePeople } from "@/data/people";
+import { getFreelancerNotificationRecipientId } from "@/data/notification-inbox";
 import type { PrototypeViewer } from "@/data/prototype-access";
 
 export function getPrototypeFreelancerViewer(workspaceId: string, participantName = "Nina Patel"): PrototypeViewer | null {
   const person = mockTeamPeople.find((candidate) => candidate.name === participantName && candidate.personType === "Studio Freelancer");
   const profile = initialNativePeople.find((candidate) => candidate.id === person?.id);
   if (!person || !profile) return null;
-  const id = person.id === "np" ? "user-nina" : `user-${person.name.split(" ")[0].toLowerCase()}`;
+  const id = getFreelancerNotificationRecipientId(person.id, person.name);
   return { role: "Studio Freelancer", id, name: profile.name, email: profile.email,
     workspaceId, clientId: null, personId: person.id, chatUserId: id };
 }

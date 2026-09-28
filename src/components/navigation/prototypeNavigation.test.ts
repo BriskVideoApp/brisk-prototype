@@ -12,6 +12,8 @@ import {
   getScopedRoleHome,
   shouldHideLegacyCurrentVideo,
 } from "@/components/navigation/prototypeNavigation";
+import { getRoleHome } from "@/components/navigation/navigationConfig";
+import { prototypeScenarios } from "@/data/prototype-scenarios";
 
 describe("test mode layout navigation", () => {
   it.each([
@@ -118,5 +120,12 @@ describe("scoped Client portal navigation", () => {
       "Customer",
       "/workspaces/northstar-films/clients/harbour-health/portal",
     )).toBe("/workspaces/northstar-films/clients/harbour-health/portal");
+  });
+
+  it("opens Freelancer jobs instead of the retired Today page", () => {
+    expect(getRoleHome("Studio Freelancer")).toBe("/active-videos");
+    expect(getScopedRoleHome("Studio Freelancer", null)).toBe("/active-videos");
+    expect(prototypeScenarios.find((scenario) => scenario.id === "freelancer-active")?.startHref).toBe("/active-videos");
+    expect(getRoleHome("Studio Staff")).toBe("/today");
   });
 });

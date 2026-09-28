@@ -90,7 +90,8 @@ export const navigationGroups: readonly NavigationGroup[] = [
         label: "Today",
         href: "/today",
         icon: "check-circle",
-        roles: studioRoles,
+        roles: ["Studio Staff"],
+        strictRoleVisibility: true,
       },
       {
         id: "videos",
@@ -442,6 +443,6 @@ export function canRoleSeeNavigationItem(
 
 export function getRoleHome(selectedRole: PrototypeRole) {
   if (selectedRole === "Studio Staff") return "/today";
-  if (selectedRole === "Studio Freelancer") return "/today";
+  if (selectedRole === "Studio Freelancer") return "/active-videos";
   return "/prototype/scenarios";
 }

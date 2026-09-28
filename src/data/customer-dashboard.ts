@@ -355,7 +355,7 @@ export const customerDashboardProjects: CustomerDashboardProject[] = [
 
 export const customerDashboardActivity: CustomerDashboardActivity[] = [
   activity("activity-01", "Maddie", "shared", "the shoot interviews", "loom-launch-film", "LOOM-24", "2026-07-26T09:12:00+10:00", "upload-simple", "/projects/loom-launch-film/stages/media"),
-  activity("activity-02", "Marcus", "uploaded", "rough cut V1", "loom-wacf-01", "LOOM-31", "2026-07-25T16:40:00+10:00", "stage-edit", "/review?project=loom-wacf-01"),
+  activity("activity-02", "Marcus", "uploaded", "rough cut V1", "loom-wacf-01", "LOOM-31", "2026-07-25T16:40:00+10:00", "stage-edit", "/projects/loom-wacf-01/stages/edit"),
   activity("activity-03", "Emma", "approved", "the script", "loom-product-tour", "LOOM-34", "2026-07-24T12:18:00+10:00", "check-circle", "/projects/loom-product-tour/script"),
   activity("activity-04", "Maddie", "started", "Edit preparation", "loom-customer-stories", "LOOM-27", "2026-07-23T10:05:00+10:00", "stage-edit", "/projects/loom-customer-stories/stages/edit"),
   activity("activity-05", "Priya", "organised", "the edit media", "loom-q3-recap", "LOOM-36", "2026-07-22T17:32:00+10:00", "image-square", "/projects/loom-q3-recap/stages/media"),

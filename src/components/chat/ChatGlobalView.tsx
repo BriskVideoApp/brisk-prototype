@@ -13,6 +13,7 @@ import type {
 } from "@/components/chat/types";
 import { formatCompactDate } from "@/components/chat/chat-utils";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
+import { getGlobalViewMessages } from "@/components/chat/chat-unread";
 
 type ChatGlobalViewProps = {
   view: Exclude<ChatRailView, "projects" | "calls">;
@@ -118,20 +119,7 @@ export function ChatGlobalView({
     );
   }
 
-  const visibleMessages =
-    view === "mentions"
-      ? scopedMessages.filter(
-          (message) =>
-            message.threadId === null &&
-            message.mentions.includes(currentUserId) &&
-            !message.deletedAt,
-        )
-      : scopedMessages.filter(
-          (message) =>
-            message.threadId === null &&
-            scopedMessages.some((reply) => reply.threadId === message.id) &&
-            !message.deletedAt,
-        );
+  const visibleMessages = getGlobalViewMessages(view, messages, projects, currentUserId, customerContext);
   const filteredMessages = visibleMessages.filter((message) => {
     const project = projectsById.get(message.projectId);
     return (

@@ -22,6 +22,9 @@ import {
 } from "@/data/notification-inbox";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import type { NotificationEventKey } from "@/data/notification-registry";
+import type { NotificationEmailReminderPreview } from "@/data/notification-inbox";
 
 type ReadIdsByRecipient = Record<string, string[]>;
 
@@ -39,6 +42,22 @@ type StageReviewFollowUpInput = {
   occurredAt: string;
 };
 
+type OfferNotificationInput = {
+  eventKey: Extract<NotificationEventKey, "freelancer.offer.sent" | "freelancer.offer.reminded" | "freelancer.offer.revoked" | "freelancer.offer.accepted" | "freelancer.offer.declined" | "freelancer.assignment.removed">;
+  offerId: string;
+  recipientId: string;
+  recipientRole: "Studio Staff" | "Studio Freelancer";
+  actorName: string;
+  projectId: string;
+  projectName: string;
+  title: string;
+  copy: string;
+  href: string;
+  ctaLabel: string;
+  occurredAt?: string;
+  emailPreview?: NotificationEmailReminderPreview;
+};
+
 type NotificationInboxContextValue = {
   items: readonly RecipientInboxItem[];
   unreadCount: number;
@@ -48,6 +67,7 @@ type NotificationInboxContextValue = {
   retryEmail: (itemId: string) => void;
   publishStageReviewRequest: (input: StageReviewRequestedNotificationInput) => void;
   publishStageReviewFollowUp: (input: StageReviewFollowUpInput) => void;
+  publishOfferNotification: (input: OfferNotificationInput) => void;
 };
 
 const notificationReadStorageKey = "brisk-notification-inbox-read-v1";
@@ -57,18 +77,19 @@ const NotificationInboxContext = createContext<NotificationInboxContextValue | n
 export function NotificationInboxProvider({ children }: { children: ReactNode }) {
   const { selectedRole } = usePrototypeRole();
   const { state: prototypeState } = usePrototypeState();
+  const viewer = usePrototypeViewer();
   const { activeScenario } = usePrototypeScenario();
-  const currentRecipientName = selectedRole === "Customer"
+  const currentRecipientName = viewer?.name ?? (selectedRole === "Customer"
     ? prototypeState.clients.find((client) => client.id === prototypeState.session.activeClientId)?.contacts[0]?.name ?? "Jess Taylor"
-    : selectedRole === "Studio Freelancer" ? "Nina Patel"
-    : prototypeState.users.find((user) => user.id === prototypeState.session.activeUserId)?.name ?? "Tom Mitchell";
+    : "Tom Mitchell");
+  const recipientId = viewer?.id ?? notificationInboxRecipientByRole[selectedRole];
   const [readIdsByRecipient, setReadIdsByRecipient] = useState<ReadIdsByRecipient>({});
   const [emailDeliveryOverrides, setEmailDeliveryOverrides] = useState<Record<string, NotificationEmailDeliveryState>>({});
   const [generatedItems, setGeneratedItems] = useState<RecipientInboxItem[]>([]);
   const authorisedItems = useMemo(
     () => {
-      const fixtureItems = activeScenario?.state === "new" ? [] : getAuthorisedNotificationInboxItems(selectedRole);
-      const authorisedGeneratedItems = getAuthorisedNotificationInboxItems(selectedRole, generatedItems)
+      const fixtureItems = activeScenario?.state === "new" ? [] : getAuthorisedNotificationInboxItems(selectedRole, undefined, recipientId);
+      const authorisedGeneratedItems = getAuthorisedNotificationInboxItems(selectedRole, generatedItems, recipientId)
         .filter((item) => !item.recipientNames || item.recipientNames.includes(currentRecipientName));
       const uniqueItems = new Map<string, RecipientInboxItem>();
 
@@ -78,7 +99,7 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
 
       return [...uniqueItems.values()].sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
     },
-    [activeScenario?.state, currentRecipientName, generatedItems, selectedRole],
+    [activeScenario?.state, currentRecipientName, generatedItems, recipientId, selectedRole],
   );
   const items = useMemo(
     () => authorisedItems.map((item) => {
@@ -104,7 +125,6 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     }),
     [authorisedItems, emailDeliveryOverrides],
   );
-  const recipientId = notificationInboxRecipientByRole[selectedRole];
   const personalReadIds = readIdsByRecipient[recipientId] ?? [];
 
   useEffect(() => {
@@ -200,6 +220,38 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     });
   }, []);
 
+  const publishOfferNotification = useCallback((input: OfferNotificationInput) => {
+    const occurredAt = input.occurredAt ?? new Date().toISOString();
+    const item: RecipientInboxItem = {
+      id: `offer-${input.offerId}-${input.eventKey}-${occurredAt}`,
+      canonicalEventId: `offer-${input.offerId}-${input.eventKey}-${occurredAt}`,
+      eventKey: input.eventKey,
+      recipientId: input.recipientId,
+      recipientRole: input.recipientRole,
+      recipientResponsibility: input.recipientRole === "Studio Freelancer" ? "offer-recipient" : "project-lead",
+      category: input.eventKey === "freelancer.offer.sent" || input.eventKey === "freelancer.offer.declined" ? "action-required" : "update",
+      state: input.eventKey === "freelancer.offer.declined" || input.eventKey === "freelancer.offer.revoked" || input.eventKey === "freelancer.assignment.removed" ? "warning" : input.eventKey === "freelancer.offer.accepted" ? "success" : "information",
+      label: input.eventKey === "freelancer.offer.accepted" ? "Completed" : input.eventKey === "freelancer.offer.sent" ? "Needs attention" : "Update",
+      title: input.title,
+      copy: input.copy,
+      actorName: input.actorName,
+      projectId: input.projectId,
+      projectName: input.projectName,
+      occurredAt,
+      href: input.href,
+      deepLinkTarget: input.recipientRole === "Studio Freelancer" ? "freelancer-offer" : "project-overview",
+      ctaLabel: input.ctaLabel,
+      emailPreview: input.emailPreview,
+      initiallyRead: false,
+    };
+
+    setGeneratedItems((current) => {
+      const nextItems = [item, ...current];
+      window.localStorage.setItem(generatedNotificationStorageKey, JSON.stringify(nextItems));
+      return nextItems;
+    });
+  }, []);
+
   const value = useMemo<NotificationInboxContextValue>(() => ({
     items,
     unreadCount,
@@ -212,7 +264,8 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     },
     publishStageReviewRequest,
     publishStageReviewFollowUp,
-  }), [items, personalReadIds, publishStageReviewFollowUp, publishStageReviewRequest, recipientId, unreadCount]);
+    publishOfferNotification,
+  }), [items, personalReadIds, publishOfferNotification, publishStageReviewFollowUp, publishStageReviewRequest, recipientId, unreadCount]);
 
   return (
     <NotificationInboxContext.Provider value={value}>

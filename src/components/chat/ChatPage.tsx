@@ -25,6 +25,7 @@ import type {
 import { ChatMessageList } from "@/components/chat/ChatMessageList";
 import { ChatThreadPane } from "@/components/chat/ChatThreadPane";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
+import { getConversationUnreadCount, getGlobalUnreadCounts, getGlobalViewMessages, getProjectUnreadCount } from "@/components/chat/chat-unread";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -33,7 +34,7 @@ import { canViewProject } from "@/data/prototype-access";
 import { createChatProjectForRecord, getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { getDemoProjectDestination } from "@/data/projects";
+import { getProjectStageHref } from "@/data/project-fixtures";
 import type {
   ChatAttachment,
   ChatChannel,
@@ -62,9 +63,10 @@ type ChatPageProps = {
   initialMessageId?: string;
   embedded?: boolean;
   clientName?: string;
+  onNavigate?: () => void;
 };
 
-export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName }: ChatPageProps) {
+export function ChatPage({ initialProjectId, initialMessageId, embedded = false, clientName, onNavigate }: ChatPageProps) {
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState, hasHydrated: hasHydratedPrototypeState } = usePrototypeState();
@@ -188,13 +190,16 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       const scoped = prototypeState.projects.find((candidate) => candidate.id === project.id);
       if (!scoped || !canViewProject(viewer, scoped, prototypeState)) return [];
       const chatProject = getScopedChatProject(project, prototypeState);
-      return chatProject ? [chatProject] : [];
+      return chatProject ? [{ ...chatProject,
+        externalUnread: getProjectUnreadCount(messages, project.id, effectiveCurrentUserId, "external"),
+        internalUnread: getProjectUnreadCount(messages, project.id, effectiveCurrentUserId, "internal"),
+      }] : [];
     });
 
     return clientName
       ? roleProjects.filter((project) => project.clientName === clientName)
       : roleProjects;
-  }, [clientName, isEmptyPreview, projects, prototypeState, selectedRole, viewer]);
+  }, [clientName, effectiveCurrentUserId, isEmptyPreview, messages, projects, prototypeState, viewer]);
 
   useEffect(() => {
     if (!initialMessageId || openedInitialMessageRef.current) return;
@@ -249,7 +254,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           messages.filter(
             (message) =>
               message.projectId === getCompanyChatId(clientName) &&
-              !message.readBy.includes(effectiveCurrentUserId),
+              !message.deletedAt && message.senderId !== effectiveCurrentUserId
+              && !message.readBy.includes(effectiveCurrentUserId),
           ).length,
         ]),
       ),
@@ -297,14 +303,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       status: "In Production",
       memberIds: [...new Set(clientProjects.flatMap((project) => project.memberIds))],
       clientMemberIds: [...new Set(clientProjects.flatMap((project) => project.clientMemberIds))],
-      externalUnread: companyMessages.filter(
-        (message) =>
-          message.channel === "external" && !message.readBy.includes(effectiveCurrentUserId),
-      ).length,
-      internalUnread: companyMessages.filter(
-        (message) =>
-          message.channel === "internal" && !message.readBy.includes(effectiveCurrentUserId),
-      ).length,
+      externalUnread: getProjectUnreadCount(companyMessages, companyChatId, effectiveCurrentUserId, "external"),
+      internalUnread: getProjectUnreadCount(companyMessages, companyChatId, effectiveCurrentUserId, "internal"),
       preferredSource: referenceProject.preferredSource,
       connectors: referenceProject.connectors,
     };
@@ -329,12 +329,14 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         .filter((message) => message.threadId === threadParent.id)
         .sort((left, right) => left.createdAt.localeCompare(right.createdAt))
     : [];
-  const visibleDmConversations = (isEmptyPreview ? [] : dmConversations).filter((conversation) =>
-    conversation.memberIds.includes(effectiveCurrentUserId),
-  );
-  const visibleGroupConversations = (isEmptyPreview ? [] : groupConversationList).filter((conversation) =>
-    conversation.memberIds.includes(effectiveCurrentUserId),
-  );
+  const visibleDmConversations = (isEmptyPreview ? [] : dmConversations)
+    .filter((conversation) => conversation.memberIds.includes(effectiveCurrentUserId))
+    .map((conversation) => ({ ...conversation, unread: getConversationUnreadCount(messages, conversation.id, effectiveCurrentUserId) }));
+  const visibleGroupConversations = (isEmptyPreview ? [] : groupConversationList)
+    .filter((conversation) => conversation.memberIds.includes(effectiveCurrentUserId))
+    .map((conversation) => ({ ...conversation, unread: getConversationUnreadCount(messages, conversation.id, effectiveCurrentUserId) }));
+  const globalUnreadCounts = getGlobalUnreadCounts(messages, accessibleProjects, visibleDmConversations,
+    visibleGroupConversations, effectiveCurrentUserId, isCustomer);
   const selectedDm = selectedDmId
     ? visibleDmConversations.find((conversation) => conversation.id === selectedDmId) ?? null
     : null;
@@ -419,10 +421,11 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
   const markRailTargetRead = useCallback(
     (target: ChatRailReadTarget) => {
+      const accessibleProjectIds = new Set(accessibleProjects.map((project) => project.id));
       const matchesProject = (project: ChatProject) =>
-        target.type === "all" ||
+        accessibleProjectIds.has(project.id) && (target.type === "all" ||
         (target.type === "client" && project.clientName === target.clientName) ||
-        (target.type === "project" && project.id === target.projectId);
+        (target.type === "project" && project.id === target.projectId));
 
       setProjects((current) =>
         current.map((project) =>
@@ -432,21 +435,12 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         ),
       );
 
-      if (target.type !== "project") {
-        const companyChatIds = new Set(
-          accessibleProjects
-            .filter((project) => target.type === "all" || project.clientName === target.clientName)
-            .map((project) => getCompanyChatId(project.clientName)),
-        );
-
-        setMessages((current) =>
-          current.map((message) =>
-            companyChatIds.has(message.projectId) && !message.readBy.includes(effectiveCurrentUserId)
-              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
-              : message,
-          ),
-        );
-      }
+      const matchingProjects = accessibleProjects.filter(matchesProject);
+      const matchingIds = new Set(matchingProjects.map((project) => project.id));
+      if (target.type !== "project") matchingProjects.forEach((project) => matchingIds.add(getCompanyChatId(project.clientName)));
+      setMessages((current) => current.map((message) => matchingIds.has(message.projectId)
+        && !message.readBy.includes(effectiveCurrentUserId)
+        ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] } : message));
 
       notify(target.type === "all" ? "All messages marked as read" : "Messages marked as read");
     },
@@ -455,35 +449,18 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
   const markProjectChannelRead = useCallback(
     (project: ChatProject, channel: ChatChannel) => {
-      const storedProject = projects.some((candidate) => candidate.id === project.id);
-
-      if (storedProject) {
-        setProjects((current) =>
-          current.map((candidate) =>
-            candidate.id === project.id
-              ? {
-                  ...candidate,
-                  externalUnread: channel === "external" ? 0 : candidate.externalUnread,
-                  internalUnread: channel === "internal" ? 0 : candidate.internalUnread,
-                }
-              : candidate,
-          ),
-        );
-      } else {
-        setMessages((current) =>
-          current.map((message) =>
-            message.projectId === project.id &&
-            message.channel === channel &&
-            !message.readBy.includes(effectiveCurrentUserId)
-              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
-              : message,
-          ),
-        );
-      }
+      setProjects((current) => current.map((candidate) => candidate.id === project.id
+        ? { ...candidate,
+          externalUnread: channel === "external" ? 0 : candidate.externalUnread,
+          internalUnread: channel === "internal" ? 0 : candidate.internalUnread,
+        } : candidate));
+      setMessages((current) => current.map((message) => message.projectId === project.id
+        && message.channel === channel && !message.readBy.includes(effectiveCurrentUserId)
+        ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] } : message));
 
       notify(`${channel === "external" ? "External" : "Internal"} messages marked as read`);
     },
-    [effectiveCurrentUserId, notify, projects],
+    [effectiveCurrentUserId, notify],
   );
 
   useEffect(() => {
@@ -588,6 +565,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
   const markConversationRead = useCallback(
     (view: "dms" | "groups", conversationId: string) => {
+      const visibleConversations = view === "dms" ? visibleDmConversations : visibleGroupConversations;
+      if (!visibleConversations.some((conversation) => conversation.id === conversationId)) return;
       if (view === "dms") {
         setDmConversations((current) =>
           current.map((conversation) =>
@@ -602,34 +581,48 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         );
       }
 
+      setMessages((current) => current.map((message) => message.projectId === conversationId
+        && !message.readBy.includes(effectiveCurrentUserId)
+        ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] } : message));
+
       notify("Messages marked as read");
     },
-    [notify],
+    [effectiveCurrentUserId, notify, visibleDmConversations, visibleGroupConversations],
   );
 
   const markGlobalViewRead = useCallback(
     (view: Exclude<ChatRailView, "projects">) => {
+      const conversationIds = new Set((view === "dms" ? visibleDmConversations
+        : view === "groups" ? visibleGroupConversations : []).map((conversation) => conversation.id));
       if (view === "dms") {
         setDmConversations((current) =>
-          current.map((conversation) => ({ ...conversation, unread: 0 })),
+          current.map((conversation) => conversationIds.has(conversation.id) ? { ...conversation, unread: 0 } : conversation),
         );
       } else if (view === "groups") {
         setGroupConversationList((current) =>
-          current.map((conversation) => ({ ...conversation, unread: 0 })),
-        );
-      } else if (view === "mentions" || view === "threads") {
-        setMessages((current) =>
-          current.map((message) =>
-            !message.readBy.includes(effectiveCurrentUserId)
-              ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] }
-              : message,
-          ),
+          current.map((conversation) => conversationIds.has(conversation.id) ? { ...conversation, unread: 0 } : conversation),
         );
       }
 
+      const messageIds = view === "mentions"
+        ? new Set(getGlobalViewMessages("mentions", messages, accessibleProjects, effectiveCurrentUserId, isCustomer)
+          .map((message) => message.id))
+        : view === "threads"
+          ? new Set(getGlobalViewMessages("threads", messages, accessibleProjects, effectiveCurrentUserId, isCustomer)
+            .map((message) => message.id))
+          : null;
+      if (view !== "calls") setMessages((current) => current.map((message) => {
+        const matches = conversationIds.has(message.projectId)
+          || (view === "mentions" && messageIds?.has(message.id))
+          || (view === "threads" && message.threadId !== null && messageIds?.has(message.threadId)
+            && !message.deletedAt && (!isCustomer || message.channel === "external"));
+        return matches && !message.readBy.includes(effectiveCurrentUserId)
+          ? { ...message, readBy: [...message.readBy, effectiveCurrentUserId] } : message;
+      }));
+
       notify("Messages marked as read");
     },
-    [effectiveCurrentUserId, notify],
+    [accessibleProjects, effectiveCurrentUserId, isCustomer, messages, notify, visibleDmConversations, visibleGroupConversations],
   );
 
   useEffect(() => {
@@ -1190,6 +1183,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           customerFilter={customerFilter}
           showUnreadOnly={showUnreadOnly}
           companyUnreadCounts={companyUnreadCounts}
+          globalUnreadCounts={globalUnreadCounts}
           onProjectSelect={selectProject}
           onClientSelect={selectClient}
           onViewSelect={selectGlobalView}
@@ -1355,18 +1349,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             ) : null}
             {selectedProject && activeView === "projects" && !isCustomer ? (
               <>
-                {getDemoProjectDestination(selectedProject.id, "brief") ? (
-                  <Link
-                    className="chat-secondary-button label-s-semibold"
-                    href={getDemoProjectDestination(selectedProject.id, "brief")?.href ?? ""}
-                  >
-                    Go to project
-                  </Link>
-                ) : (
-                  <span className="chat-secondary-button is-disabled label-s-semibold" aria-disabled="true">
-                    Demo not available
-                  </span>
-                )}
+                <Link className="chat-secondary-button label-s-semibold" href={getProjectStageHref(selectedProject.id, "brief")} onClick={onNavigate}>
+                  Go to project
+                </Link>
                 <button
                   className="chat-icon-button"
                   type="button"

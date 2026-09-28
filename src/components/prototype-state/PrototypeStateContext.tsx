@@ -208,6 +208,11 @@ function readStoredState(): PrototypeState | null {
   if (!stored) return null;
   try {
     const state = clonePrototypeState(JSON.parse(stored) as PrototypeState);
+    const loomShooter = state.projects.find((project) => project.id === "loom-launch-film")?.team.find((slot) => slot.role === "shooter");
+    const jordanInvitation = loomShooter?.invitations.find((invitation) => invitation.id === "loom-launch-film-shooter-jl-pending");
+    if (jordanInvitation && (jordanInvitation.status === "invited" || jordanInvitation.status === "seen") && jordanInvitation.rateSnapshot === 95) {
+      jordanInvitation.rateSnapshot = 122.5;
+    }
     state.workspaces = state.workspaces.map((workspace) => ({
       ...workspace,
       website: workspace.website ?? "",

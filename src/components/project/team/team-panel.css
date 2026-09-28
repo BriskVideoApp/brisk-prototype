@@ -977,8 +977,46 @@
 
 .team-role-settings-row {
   display: flex;
-  align-items: end;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--brisk-space-l);
+}
+
+.team-stage-hours-list {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-s);
+}
+
+.team-stage-hours-row {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
+.team-stage-hours-row > label {
+  min-width: var(--brisk-space-3xl);
+}
+
+.team-stage-hours-remove {
+  display: inline-flex;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: var(--brisk-space-none);
+}
+
+.team-stage-hours-remove:hover .team-checkbox,
+.team-stage-hours-remove:focus-visible .team-checkbox {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.team-stage-hours-total {
+  color: var(--brisk-text-secondary);
+}
+
+.team-role-save {
+  justify-self: start;
 }
 
 .team-setting-field {
@@ -1004,6 +1042,16 @@
 .team-current-person {
   display: grid;
   gap: var(--brisk-space-s);
+}
+
+.team-person-options {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.team-person-options.is-expanded {
+  max-height: calc(var(--brisk-space-3xl) * 5);
+  overflow-y: auto;
 }
 
 .team-stage-list.compact {

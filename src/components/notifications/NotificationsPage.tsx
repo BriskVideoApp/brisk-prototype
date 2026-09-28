@@ -192,7 +192,7 @@ function NotificationEmptyState({
     );
   }
 
-  const homeHref = role === "Customer" ? "/customer-dashboard" : role === "Studio Freelancer" ? "/today" : "/active-videos";
+  const homeHref = role === "Customer" ? "/customer-dashboard" : "/active-videos";
   return (
     <div className="notifications-state">
       <span className="notifications-state-icon"><DsIcon name="bell" size={28} /></span>

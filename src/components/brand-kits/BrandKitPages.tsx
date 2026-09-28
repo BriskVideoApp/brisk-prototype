@@ -11,6 +11,7 @@ import {
   usePrototypeRole,
 } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { canViewClientBrandKit } from "@/data/prototype-access";
 import {
   brandKitCustomers,
   createManualBrandProfile,
@@ -358,13 +359,14 @@ export function BrandKitsLandingPage() {
   const isStudioView = hasLoadedRole && (allPages || selectedRole !== "Customer");
   const previewState = searchParams.get("preview");
   const customers = previewState === "empty" ? [] : hasHydrated
-    ? state.clients.filter((client) => client.workspaceId === state.session.activeWorkspaceId).map((client) => {
+    ? state.clients.filter((client) => client.workspaceId === state.session.activeWorkspaceId
+      && (selectedRole !== "Studio Freelancer" || canViewClientBrandKit(viewer, client.id, state))).map((client) => {
       const customer = getBrandKitCustomerForClient(client);
       const saved = savedKits[client.id];
       return saved ? { ...customer, profile: profileHasBrandContent(saved.profile) ? saved.profile : customer.profile,
         subBrands: saved.subBrands, lastUpdated: "Just now" } : customer;
     })
-    : brandKitCustomers;
+    : selectedRole === "Studio Freelancer" ? [] : brandKitCustomers;
   const filteredCustomers = previewState === "no-results"
     ? []
     : customers.filter((customer) =>
@@ -421,6 +423,12 @@ export function BrandKitsLandingPage() {
         <section className="brand-kits-page-content" aria-label="Client Brand Kits">
           {filteredCustomers.length > 0 ? (
             <CustomerGrid customers={filteredCustomers} />
+          ) : customers.length === 0 && selectedRole === "Studio Freelancer" ? (
+            <div className="brand-kits-directory-empty">
+              <span className="brand-kits-directory-empty-icon" aria-hidden="true"><DsIcon name="folder" size={28} /></span>
+              <h2 className="headings-xs-bold">No Brand Kits available</h2>
+              <p className="paragraph-s">Brand Kits appear when you join a Client project.</p>
+            </div>
           ) : customers.length === 0 ? (
             <div className="brand-kits-directory-empty">
               <span className="brand-kits-directory-empty-icon" aria-hidden="true"><DsIcon name="folder" size={28} /></span>
@@ -530,10 +538,13 @@ export function BrandKitClientRoute({ customerSlug, subBrandSlug, relationship, 
   setup?: string;
 }) {
   const { state, hasHydrated } = usePrototypeState();
-  if (!hasHydrated) return <BrandKitPermissionTransition />;
+  const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  if (!hasHydrated || !hasLoadedRole) return <BrandKitPermissionTransition />;
   const client = state.clients.find((candidate) => candidate.id === customerSlug
     && candidate.workspaceId === state.session.activeWorkspaceId);
   if (!client) notFound();
+  if (selectedRole === "Studio Freelancer" && !canViewClientBrandKit(viewer, client.id, state)) notFound();
   const customer = getBrandKitCustomerForClient(client);
   const relationshipOverride = relationship === "master" || relationship === "sub-brand" ? relationship : undefined;
   const storedSubBrand = customer.subBrands.find((candidate) => candidate.slug === subBrandSlug);

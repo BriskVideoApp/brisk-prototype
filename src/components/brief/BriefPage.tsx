@@ -1271,6 +1271,7 @@ export function BriefGuidedExperience({
   excludedFieldIds = [],
   excludedOptionValues = {},
   fields,
+  initialStepId = "basics",
   onDone,
   onEditFieldOptions,
   onFieldsChange,
@@ -1286,6 +1287,7 @@ export function BriefGuidedExperience({
   excludedFieldIds?: readonly BriefFieldId[];
   excludedOptionValues?: Partial<Record<BriefFieldId, readonly string[]>>;
   fields: BriefFields;
+  initialStepId?: BriefStepId;
   onDone: () => void;
   onEditFieldOptions?: (fieldId: BriefFieldId) => void;
   onFieldsChange?: (fields: BriefFields) => void;
@@ -1296,7 +1298,7 @@ export function BriefGuidedExperience({
   videoTypeIds: readonly BriefVideoTypeId[];
   videoTypeOptionIds?: readonly BriefVideoTypeId[];
 }) {
-  const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
+  const [activeStepId, setActiveStepId] = useState<BriefStepId>(initialStepId);
   const [logline, setLogline] = useState<Logline>({ text: "", status: "not_generated" });
   const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
   const availableVideoTypeIds = videoTypeOptionIds ?? videoTypeIds;

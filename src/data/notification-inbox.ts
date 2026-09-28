@@ -18,7 +18,7 @@ export type NotificationInboxCategory = "update" | "mention" | "action-required"
 export type NotificationEmailDeliveryState = "sent" | "reminder-scheduled" | "failed";
 export type NotificationEmailReminderPreview = {
   recipient: string;
-  scheduledFor: string;
+  scheduledFor?: string;
   subject: string;
   body: readonly string[];
   ctaLabel: string;
@@ -52,6 +52,7 @@ export type RecipientInboxItem = {
   emailDeliveryState?: NotificationEmailDeliveryState;
   emailRetrySuccess?: { title: string; copy: string };
   emailReminderPreview?: NotificationEmailReminderPreview;
+  emailPreview?: NotificationEmailReminderPreview;
   initiallyRead: boolean;
 };
 
@@ -131,6 +132,10 @@ export const notificationInboxRecipientByRole = {
   "Studio Freelancer": "user-nina",
   Customer: "user-jess",
 } as const satisfies Record<PrototypeRole, string>;
+
+export function getFreelancerNotificationRecipientId(personId: string, personName: string) {
+  return personId === "np" ? "user-nina" : `user-${personName.split(" ")[0].toLowerCase()}`;
+}
 
 export const notificationInboxItems = [
   {
@@ -489,10 +494,10 @@ export const notificationInboxItems = [
 export function getAuthorisedNotificationInboxItems(
   role: PrototypeRole,
   sourceItems: readonly RecipientInboxItem[] = notificationInboxItems,
+  viewerRecipientId: string = notificationInboxRecipientByRole[role],
 ) {
-  const recipientId = notificationInboxRecipientByRole[role];
   const authorisedItems = sourceItems
-    .filter((item) => item.recipientId === recipientId && item.recipientRole === role)
+    .filter((item) => item.recipientId === viewerRecipientId && item.recipientRole === role)
     .filter(isAuthorisedNotificationInboxItem);
   const uniqueItems = new Map<string, RecipientInboxItem>();
 
@@ -529,7 +534,7 @@ function isAuthorisedNotificationInboxItem(item: RecipientInboxItem) {
   const registryDeepLink = typeof eventDefinition.deepLink === "string"
     ? eventDefinition.deepLink
     : eventDefinition.deepLink.audienceOverrides[
-        item.recipientResponsibility === "affected-person"
+        item.recipientResponsibility === "affected-person" || item.recipientResponsibility === "offer-recipient"
           ? "affected-person"
           : item.recipientRole === "Customer"
             ? "customer"

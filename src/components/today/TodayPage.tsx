@@ -17,7 +17,6 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, StageKey, TeamPerson } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
-import { FreelancerTodayPage } from "./FreelancerTodayPage";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 
 const stageOptions: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
@@ -55,13 +54,27 @@ type EntryTotals = {
 };
 
 export function TodayPage() {
-  const { selectedRole } = usePrototypeRole();
+  const { selectedRole, hasLoadedRole } = usePrototypeRole();
+
+  if (!hasLoadedRole) return null;
 
   if (selectedRole === "Studio Freelancer") {
-    return <FreelancerTodayPage />;
+    return <FreelancerTodayRedirect />;
   }
 
   return <StudioTodayPage />;
+}
+
+function FreelancerTodayRedirect() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.toString();
+
+  useEffect(() => {
+    router.replace(query ? `/active-videos?${query}` : "/active-videos");
+  }, [query, router]);
+
+  return null;
 }
 
 function StudioTodayPage() {

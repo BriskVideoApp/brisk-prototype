@@ -976,6 +976,14 @@ export const notificationEventRegistry = {
     grouping: entityGrouping, quietHours: "respect", projectMute: "bypass", retention: "billing-record",
     privacy: "commercial-confidential", actorSuppression: "suppress-synchronous-success",
   }),
+  "freelancer.offer.reminded": registerEvent({
+    family: "freelancer", project: "required", stage: null, entityType: "offer",
+    audiences: ["studio"], recipientResponsibilities: ["project-lead"], visibility: ["internal"],
+    severity: "info", publicationStates: ["published"], safeExternalCopy: null,
+    deepLink: "project-overview", activityOnly: false, outcomes: internalActionOutcomes,
+    grouping: entityGrouping, quietHours: "respect", projectMute: "bypass", retention: "billing-record",
+    privacy: "commercial-confidential", actorSuppression: "include",
+  }),
   "freelancer.offer.revoked": registerEvent({
     family: "freelancer", actor: "person-required", project: "required", stage: null, entityType: "offer",
     audiences: ["affected-person", "studio"], recipientResponsibilities: ["offer-recipient", "project-lead"],
@@ -984,6 +992,15 @@ export const notificationEventRegistry = {
     deepLink: "freelancer-offer", activityOnly: false, outcomes: privateActionOutcomes,
     grouping: replacementGrouping, quietHours: "respect", projectMute: "bypass", retention: "billing-record",
     privacy: "commercial-confidential", actorSuppression: "include", idempotency: transitionIdempotency,
+  }),
+  "freelancer.assignment.removed": registerEvent({
+    family: "freelancer", actor: "person-required", project: "required", stage: null, entityType: "offer",
+    audiences: ["affected-person", "studio"], recipientResponsibilities: ["offer-recipient", "project-lead"],
+    visibility: ["recipient-private", "internal"], severity: "warning", publicationStates: ["withdrawn"],
+    safeExternalCopy: externalCopy("Removed from project", "Your role on this project has ended.", "View jobs"),
+    deepLink: audienceLink("project-overview", { "affected-person": "freelancer-offer" }), activityOnly: false, outcomes: privateActionOutcomes,
+    grouping: entityGrouping, quietHours: "respect", projectMute: "bypass", retention: "billing-record",
+    privacy: "commercial-confidential", actorSuppression: "include",
   }),
   "freelancer.offer.expired": registerEvent({
     family: "freelancer", project: "required", stage: null, entityType: "offer",

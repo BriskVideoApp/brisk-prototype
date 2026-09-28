@@ -15,10 +15,9 @@ import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
-import { canActOnProject } from "@/data/prototype-access";
+import { canActOnProject, canViewProject } from "@/data/prototype-access";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { isDemoProject } from "@/data/projects";
 import { getProjectEntryHref } from "@/data/project-fixtures";
 import {
   customerDashboardActivity,
@@ -328,6 +327,12 @@ export function CustomerDashboard({
       ? withSavedClientStageStatus(project, getProjectStages(scopedProject), clientName)
       : project;
   });
+  const visibleActivityProjectIds = new Set(displayProjects.filter((project) => {
+    const scopedProject = prototypeState.projects.find((candidate) => candidate.id === project.id
+      && candidate.workspaceId === prototypeState.session.activeWorkspaceId);
+    return scopedProject && canViewProject(viewer, scopedProject, prototypeState);
+  }).map((project) => project.id));
+  const visibleActivity = activity.filter((item) => visibleActivityProjectIds.has(item.projectId));
   const projectsById = useMemo(() => new Map(displayProjects.map((project) => [project.id, project])), [displayProjects]);
   const seriesById = useMemo(
     () => new Map(initialSeries.map((series) => [series.id, series])),
@@ -905,9 +910,9 @@ export function CustomerDashboard({
               <DsIcon name="x-close-cross" size={18} />
             </button>
             <ActivityPanel
-              activity={activity}
+              activity={visibleActivity}
               clientName={clientName}
-              empty={previewState === "empty" || isScenarioEmpty}
+              empty={previewState === "empty" || isScenarioEmpty || visibleActivity.length === 0}
               onClose={() => setIsActivityOpen(false)}
             />
           </aside>
@@ -984,19 +989,13 @@ function ActivityPanel({
                 </span>
                 <span>{activity.projectLabel} · {formatRelativeTime(activity.timestamp)}</span>
               </span>
-              {isDemoProject(activity.projectId) ? <DsIcon name="caret-right" size={13} /> : <span className="customer-demo-indicator" title="Demo not available" />}
+              <DsIcon name="caret-right" size={13} />
             </>
           );
 
-          return isDemoProject(activity.projectId) ? (
-            <Link className="customer-activity-row" href={activity.href} key={activity.id}>
-              {activityContent}
-            </Link>
-          ) : (
-            <div className="customer-activity-row is-static" aria-disabled="true" title="Demo not available" key={activity.id}>
-              {activityContent}
-            </div>
-          );
+          return <Link className="customer-activity-row" href={activity.href} key={activity.id}>
+            {activityContent}
+          </Link>;
         })}
       </div>
     </section>

@@ -14,6 +14,21 @@
   color: var(--brisk-text-primary);
 }
 
+.freelancer-offer-brief-preview {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--brisk-white);
+}
+
+.freelancer-offer-brief-preview .studio-review-brief-experience-header {
+  justify-content: space-between;
+}
+
+.freelancer-offer-brief-preview .studio-review-brief-experience-header span {
+  color: var(--brisk-brand-primary-click);
+}
+
 .freelancer-videos-header {
   display: flex;
   min-height: 118px;
@@ -24,23 +39,8 @@
   padding: var(--brisk-space-xl) var(--brisk-space-2xl);
 }
 
-.freelancer-videos-header h1,
-.freelancer-videos-header p {
+.freelancer-videos-header h1 {
   margin: var(--brisk-space-none);
-}
-
-.freelancer-videos-header > div {
-  display: grid;
-  gap: var(--brisk-space-xs);
-}
-
-.freelancer-videos-header > div > span {
-  color: var(--brisk-brand-primary-click);
-  text-transform: uppercase;
-}
-
-.freelancer-videos-header p {
-  color: var(--brisk-text-secondary);
 }
 
 .freelancer-videos-search {
@@ -310,15 +310,13 @@
 }
 
 .freelancer-progress-cell .stage-track {
-  min-width: 330px;
+  width: 100%;
+  min-width: 0;
+  gap: var(--brisk-space-s);
 }
 
 .freelancer-progress-cell .stage-step {
   width: 56px;
-}
-
-.freelancer-progress-cell .stage-track {
-  gap: var(--brisk-space-s);
 }
 
 .freelancer-progress-cell .stage-connector {
@@ -428,19 +426,6 @@
 .freelancer-offer-brief:focus-visible {
   outline: none;
   box-shadow: var(--brisk-shadow-s);
-}
-
-.freelancer-demo-unavailable,
-.freelancer-offer-brief.is-disabled {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  border: 1px solid var(--brisk-border-secondary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-  cursor: not-allowed;
-  padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
 .freelancer-offer-grid {

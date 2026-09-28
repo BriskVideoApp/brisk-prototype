@@ -9,8 +9,6 @@ import {
   getSlotLabel,
   getVisibleInvitations,
   mockTeamPeople,
-  redistributeRoleHours,
-  setRoleStages,
   stageKeys,
   teamRoleLabels,
   teamRoleOptions,
@@ -19,6 +17,12 @@ import type { Invitation, InvitationPaymentTerms, ProjectVideoType, RoleSlot, St
 import { usePeople, type ProjectStaffWorkload } from "@/components/people/PeopleDataContext";
 import { useInvitations } from "@/components/invitations/InvitationContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { useCostsData } from "@/components/costs/CostsDataContext";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
+import { getFreelancerNotificationRecipientId, notificationInboxRecipientByRole } from "@/data/notification-inbox";
+import type { CostCurrency } from "@/data/costs";
 import type { Person } from "@/data/people";
 import { AddRoleButton } from "./AddRoleButton";
 import { RoleEditorModal } from "./RoleEditorModal";
@@ -55,6 +59,12 @@ export function TeamPanel({
 }: TeamPanelProps) {
   const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
   const { studio } = useStudioSettings();
+  const { offers, createOffer, setOfferState } = useCostsData();
+  const { publishOfferNotification } = useNotificationInbox();
+  const viewer = usePrototypeViewer();
+  const studioName = useStudioCompanyName();
+  const studioCurrency: CostCurrency = studio.details.currency === "USD" || studio.details.currency === "NZD" || studio.details.currency === "GBP"
+    ? studio.details.currency : "AUD";
   const { openInvitePerson } = useInvitations();
   const { setProjectTeam, teamsByProjectId } = useProjectTeams();
   const [extraPeople, setExtraPeople] = useState<TeamPerson[]>([]);
@@ -119,7 +129,41 @@ export function TeamPanel({
     setProjectTeam(projectId, (currentTeam) => currentTeam.map((slot) => (slot.id === slotId ? updater(slot) : slot)));
   };
 
+  const revokePendingOffers = (slot: RoleSlot, invitationIds: readonly string[], roleFilled = false) => {
+    slot.invitations.filter((invitation) => invitationIds.includes(invitation.id)).forEach((invitation) => {
+      const offer = offers.find((candidate) => candidate.projectId === projectId && candidate.contractorId === invitation.personId && candidate.state === "Pending");
+      if (!offer) return;
+      setOfferState(offer.id, "Revoked");
+      publishOfferNotification({
+        eventKey: "freelancer.offer.revoked",
+        offerId: offer.id,
+        recipientId: getFreelancerNotificationRecipientId(offer.contractorId, offer.contractorName),
+        recipientRole: "Studio Freelancer",
+        actorName: viewer?.name ?? "Studio",
+        projectId,
+        projectName,
+        title: roleFilled ? "Role filled" : "Project offer withdrawn",
+        copy: roleFilled
+          ? `The ${getSlotLabel(slot)} role on ${projectName} has been filled. Thanks for your interest.`
+          : `The ${getSlotLabel(slot)} offer for ${projectName} is no longer available.`,
+        href: "/active-videos?view=offers",
+        ctaLabel: "View offers",
+        emailPreview: {
+          recipient: directoryPeople.find((candidate) => candidate.id === offer.contractorId)?.email ?? offer.contractorName,
+          subject: `${projectName} - offer update`,
+          body: roleFilled
+            ? [`Hi ${offer.contractorName.split(" ")[0]},`, `The ${getSlotLabel(slot)} role on ${projectName} has been filled. Thanks for your interest. We hope to work with you soon.`]
+            : [`Hi ${offer.contractorName.split(" ")[0]},`, `The ${getSlotLabel(slot)} offer on ${projectName} has been withdrawn.`],
+          ctaLabel: "View offers",
+          ctaHref: "/active-videos?view=offers",
+        },
+      });
+    });
+  };
+
   const addStaffToSlot = (slotId: string, person: TeamPerson) => {
+    const existingSlot = team.find((candidate) => candidate.id === slotId);
+    if (existingSlot) revokePendingOffers(existingSlot, existingSlot.invitations.filter((invitation) => invitation.status === "invited" || invitation.status === "seen").map((invitation) => invitation.id), true);
     const acceptedInvitationId = `${slotId}-${person.id}-accepted-${Date.now()}`;
     const acceptedInvitation: Invitation = {
       id: acceptedInvitationId,
@@ -148,7 +192,10 @@ export function TeamPanel({
     }));
   };
 
-  const inviteFreelancerToSlot = (slotId: string, person: TeamPerson, paymentTerms: InvitationPaymentTerms) => {
+  const inviteFreelancerToSlot = (slotId: string, person: TeamPerson, paymentTerms: InvitationPaymentTerms, message?: string) => {
+    const slot = team.find((candidate) => candidate.id === slotId);
+    if (!slot || getVisibleInvitations(slot).some((invitation) => invitation.personId === person.id)) return;
+
     updateSlot(slotId, (slot) => {
       if (getVisibleInvitations(slot).some((invitation) => invitation.personId === person.id)) {
         return slot;
@@ -171,9 +218,49 @@ export function TeamPanel({
         ],
       };
     });
+    const existingOffer = offers.find((candidate) => candidate.projectId === projectId && candidate.contractorId === person.id && candidate.state === "Pending");
+    const offer = existingOffer ?? createOffer({
+      projectId,
+      contractorId: person.id,
+      contractorName: person.name,
+      role: getSlotLabel(slot),
+      agreedRate: paymentTerms.projectRate ?? (paymentTerms.basis === "flat"
+        ? paymentTerms.flatRate ?? 0
+        : (paymentTerms.hourlyRate ?? person.hourlyRate ?? 0) * getRoleEstimatedHours(slot)),
+      currency: studioCurrency,
+    });
+    const offerHref = `/offers/${encodeURIComponent(projectId)}/brief`;
+    const recipientEmail = directoryPeople.find((candidate) => candidate.id === person.id)?.email ?? "";
+    const invitationMessage = message?.trim() || `${studioName} invited you to work on ${projectName}. Review the Brief and respond to the offer.`;
+    publishOfferNotification({
+      eventKey: "freelancer.offer.sent",
+      offerId: offer.id,
+      recipientId: getFreelancerNotificationRecipientId(person.id, person.name),
+      recipientRole: "Studio Freelancer",
+      actorName: viewer?.name ?? "Studio",
+      projectId,
+      projectName,
+      title: `New ${getSlotLabel(slot)} offer`,
+      copy: invitationMessage,
+      href: offerHref,
+      ctaLabel: "View Brief",
+      emailPreview: {
+        recipient: recipientEmail || person.name,
+        subject: `${projectName} - project offer`,
+        body: [
+          `Hi ${person.name.split(" ")[0]},`,
+          invitationMessage,
+        ],
+        ctaLabel: "View Brief",
+        ctaHref: offerHref,
+      },
+    });
+    setToast({ id: offer.id, message: `Offer created for ${person.name}.` });
   };
 
   const assignFreelancerDirectlyToSlot = (slotId: string, person: TeamPerson, paymentTerms: InvitationPaymentTerms) => {
+    const existingSlot = team.find((candidate) => candidate.id === slotId);
+    if (existingSlot) revokePendingOffers(existingSlot, existingSlot.invitations.filter((invitation) => invitation.personId !== person.id && (invitation.status === "invited" || invitation.status === "seen")).map((invitation) => invitation.id), true);
     const acceptedInvitationId = `${slotId}-${person.id}-accepted-${Date.now()}`;
     const now = new Date().toISOString();
 
@@ -204,10 +291,27 @@ export function TeamPanel({
       ],
       acceptedInvitationId,
     }));
+    if (existingSlot) {
+      const existingOffer = offers.find((candidate) => candidate.projectId === projectId && candidate.contractorId === person.id && candidate.state === "Pending");
+      const offer = existingOffer ?? createOffer({
+        projectId,
+        contractorId: person.id,
+        contractorName: person.name,
+        role: getSlotLabel(existingSlot),
+        agreedRate: paymentTerms.projectRate ?? (paymentTerms.basis === "flat"
+          ? paymentTerms.flatRate ?? 0
+          : (paymentTerms.hourlyRate ?? person.hourlyRate ?? 0) * getRoleEstimatedHours(existingSlot)),
+        currency: studioCurrency,
+      });
+      setOfferState(offer.id, "Accepted");
+    }
   };
 
   const unassignSlot = (slotId: string) => {
     const now = new Date().toISOString();
+    const slot = team.find((candidate) => candidate.id === slotId);
+    const acceptedInvitation = slot && getAcceptedInvitation(slot);
+    const person = people.find((candidate) => candidate.id === acceptedInvitation?.personId);
 
     updateSlot(slotId, (slot) => {
       const acceptedInvitation = getAcceptedInvitation(slot);
@@ -230,6 +334,46 @@ export function TeamPanel({
         acceptedInvitationId: undefined,
       };
     });
+    if (person?.personType === "Studio Freelancer") {
+      const offer = offers.find((candidate) => candidate.projectId === projectId && candidate.contractorId === person.id && candidate.state === "Accepted");
+      if (offer) {
+        setOfferState(offer.id, "Revoked");
+        publishOfferNotification({
+          eventKey: "freelancer.assignment.removed",
+          offerId: offer.id,
+          recipientId: getFreelancerNotificationRecipientId(person.id, person.name),
+          recipientRole: "Studio Freelancer",
+          actorName: viewer?.name ?? "Studio",
+          projectId,
+          projectName,
+          title: "Removed from project",
+          copy: `Your ${offer.role} role on ${projectName} has ended.`,
+          href: "/active-videos",
+          ctaLabel: "View jobs",
+          emailPreview: {
+            recipient: directoryPeople.find((candidate) => candidate.id === person.id)?.email ?? person.name,
+            subject: `${projectName} - role update`,
+            body: [`Hi ${person.name.split(" ")[0]},`, `You have been removed from the ${offer.role} role on ${projectName}. Thank you for your work so far.`],
+            ctaLabel: "View jobs",
+            ctaHref: "/active-videos",
+          },
+        });
+        publishOfferNotification({
+          eventKey: "freelancer.assignment.removed",
+          offerId: offer.id,
+          recipientId: notificationInboxRecipientByRole["Studio Staff"],
+          recipientRole: "Studio Staff",
+          actorName: viewer?.name ?? "Studio",
+          projectId,
+          projectName,
+          title: `${person.name} removed from project`,
+          copy: `The ${offer.role} role on ${projectName} is open again.`,
+          href: `/projects/${encodeURIComponent(projectId)}/stages/brief`,
+          ctaLabel: "View project",
+        });
+        setToast({ id: offer.id, message: `${person.name} removed from ${projectName}.` });
+      }
+    }
   };
 
   const openNewFreelancerInvite = (slot: RoleSlot) => {
@@ -281,6 +425,8 @@ export function TeamPanel({
   };
 
   const withdrawInvitation = (slotId: string, invitationId: string) => {
+    const slot = team.find((candidate) => candidate.id === slotId);
+    if (slot) revokePendingOffers(slot, [invitationId]);
     updateSlot(slotId, (slot) => ({
       ...slot,
       invitations: slot.invitations.map((invitation) =>
@@ -296,6 +442,8 @@ export function TeamPanel({
   };
 
   const withdrawAllInvitations = (slotId: string) => {
+    const slot = team.find((candidate) => candidate.id === slotId);
+    if (slot) revokePendingOffers(slot, slot.invitations.filter((invitation) => invitation.status === "invited" || invitation.status === "seen").map((invitation) => invitation.id));
     updateSlot(slotId, (slot) => ({
       ...slot,
       invitations: slot.invitations.map((invitation) =>
@@ -380,20 +528,21 @@ export function TeamPanel({
       {activeRoleEditorSlot ? (
         <RoleEditorModal
           slot={activeRoleEditorSlot}
+          projectName={projectName}
           people={people}
           stages={stageKeys}
           assignedPersonIds={assignedPersonIds}
           showCosts={showCosts}
           onAddStaff={(person) => addStaffToSlot(activeRoleEditorSlot.id, person)}
-          onInviteFreelancer={(person, paymentTerms) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
+          onInviteFreelancer={(person, paymentTerms, message) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person, paymentTerms, message)}
           onAssignFreelancer={(person, paymentTerms) => assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
           onUnassign={() => unassignSlot(activeRoleEditorSlot.id)}
           onInviteNewFreelancer={() => openNewFreelancerInvite(activeRoleEditorSlot)}
           onWithdrawInvitation={(invitationId) => withdrawInvitation(activeRoleEditorSlot.id, invitationId)}
           onWithdrawAll={() => withdrawAllInvitations(activeRoleEditorSlot.id)}
           onRemove={() => updateSlot(activeRoleEditorSlot.id, (teamSlot) => ({ ...teamSlot, archivedAt: new Date().toISOString() }))}
-          onSaveSettings={(hours, nextStages) => {
-            updateSlot(activeRoleEditorSlot.id, (slot) => redistributeRoleHours(setRoleStages(slot, nextStages), hours));
+          onSaveSettings={(nextStages) => {
+            updateSlot(activeRoleEditorSlot.id, (slot) => ({ ...slot, stages: nextStages }));
             setRoleEditorSlotId(null);
           }}
           onClose={() => setRoleEditorSlotId(null)}

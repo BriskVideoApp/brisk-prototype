@@ -17,6 +17,7 @@ export type ContractorOffer = {
   state: ContractorOfferState;
   createdAt: string;
   respondedAt?: string;
+  createdInPrototype?: boolean;
 };
 
 export type ContractorInvoice = {
@@ -53,7 +54,7 @@ export const invoiceForwardingDestinations: readonly InvoiceForwardingDestinatio
 ] as const;
 
 export const initialContractorOffers: ContractorOffer[] = [
-  offer("offer-loom-jl", "loom-launch-film", "jl", "Jordan Lee", "Shooter", 950, "AUD", "Pending", "2026-08-18T09:20:00+10:00"),
+  offer("offer-loom-jl", "loom-launch-film", "jl", "Jordan Lee", "Shooter", 980, "AUD", "Pending", "2026-08-18T09:20:00+10:00"),
   offer("offer-loom-ct", "loom-launch-film", "ct", "Chris Taylor", "Editor", 2040, "USD", "Accepted", "2026-08-01T10:00:00+10:00", "2026-08-02T08:45:00+10:00"),
   offer("offer-loom-ak", "loom-launch-film", "ak", "Aisha Khan", "Colourist", 880, "AUD", "Declined", "2026-08-03T14:10:00+10:00", "2026-08-03T15:02:00+10:00"),
   offer("offer-deel-jl", "deel-customer-story", "jl", "Jordan Lee", "Shooter", 1140, "AUD", "Accepted", "2026-07-23T11:20:00+10:00", "2026-07-23T13:15:00+10:00"),

@@ -97,7 +97,7 @@ export function getAcceptedFreelancerEngagements(projects: Project[], personId: 
 export function getPendingFreelancerEngagements(projects: Project[], personId: string): FreelancerEngagement[] {
   return getFreelancerEngagements(projects, personId).filter((engagement) =>
     (engagement.invitationStatus === "invited" || engagement.invitationStatus === "seen")
-    && engagement.project.team.some((slot) => slot.id === engagement.roleSlotId && !slot.acceptedInvitationId));
+    && engagement.project.team.some((slot) => slot.id === engagement.roleSlotId && !slot.archivedAt && !slot.acceptedInvitationId));
 }
 
 export function getFreelancerProjectToolAccess(

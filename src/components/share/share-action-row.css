@@ -339,7 +339,6 @@
 .share-submit-destination:hover,
 .share-submit-destination:focus-visible {
   background: var(--brisk-brand-secondary);
-  outline: none;
 }
 
 .share-submit-destination.is-selected .share-radio-control {
@@ -358,6 +357,21 @@
 .share-submit-destination > span:last-child {
   display: grid;
   gap: var(--brisk-space-xs);
+}
+
+.share-submit-destinations.is-compact {
+  display: flex;
+  align-items: center;
+}
+
+.share-submit-destinations.is-compact .share-submit-destination {
+  border: 1px solid var(--brisk-border-primary);
+  padding: var(--brisk-space-xs) var(--brisk-space-m);
+}
+
+.share-submit-destinations.is-compact .share-submit-destination.is-selected {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-brand-primary);
 }
 
 .share-submit-destination small,

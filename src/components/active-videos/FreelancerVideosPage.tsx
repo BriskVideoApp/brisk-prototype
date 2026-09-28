@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -10,6 +10,7 @@ import { useCostsData } from "@/components/costs/CostsDataContext";
 import { InvoiceUploadModal } from "@/components/costs/CostsPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { StageProgress } from "@/components/active-videos/StageProgress";
+import { FreelancerTimeDialog } from "@/components/active-videos/FreelancerTimeDialog";
 import {
   useRoleVideoTable,
   type RoleVideoColumnContextMenuState,
@@ -31,11 +32,17 @@ import {
 } from "@/data/freelancer-videos";
 import { formatCostAmount, type ContractorInvoice, type ContractorOffer } from "@/data/costs";
 import { getDemoProjectDestination } from "@/data/projects";
+import { getProjectEntryHref } from "@/data/project-fixtures";
 import { getFileLocationHref } from "@/lib/project-files";
+import { appendSharedTimeEntry, readSharedTimeEntries, sharedTimeEntriesEventName, toProjectTimeEntry, type SharedTimeEntry } from "@/data/timeEntries/sharedTimeEntries";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
+import { getFreelancerNotificationRecipientId, notificationInboxRecipientByRole } from "@/data/notification-inbox";
+import { usePeople } from "@/components/people/PeopleDataContext";
+import { ClientModal } from "@/components/clients/ClientPrimitives";
 
 type FreelancerView = "videos" | "offers";
 type OfferView = "open" | "history";
@@ -61,7 +68,7 @@ const freelancerColumnStorageKey = "brisk-freelancer-videos-column-order-v1";
 const freelancerColumnOrder: FreelancerColumnKey[] = ["work", "progress", "latestAction", "deadline", "time", "commercial"];
 const freelancerColumnConfig: Record<FreelancerColumnKey, { label: string; width: number }> = {
   work: { label: "Your work", width: 138 },
-  progress: { label: "Progress", width: 318 },
+  progress: { label: "Progress", width: 520 },
   latestAction: { label: "Latest action", width: 235 },
   deadline: { label: "Deadline", width: 138 },
   time: { label: "Time", width: 124 },
@@ -90,6 +97,7 @@ const stageMeta: Record<StageKey, { label: string; icon: DsIconName }> = {
 };
 
 export function FreelancerVideosPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const viewer = usePrototypeViewer();
   const { state, updateProjectTeam } = usePrototypeState();
@@ -98,6 +106,9 @@ export function FreelancerVideosPage() {
   const { completionRecords } = useProjectCompletion();
   const { getProjectStages } = useProjectStageStatus();
   const { invoices, offers, setOfferState } = useCostsData();
+  const { publishOfferNotification } = useNotificationInbox();
+  const { people } = usePeople();
+  const [sharedTimeEntries, setSharedTimeEntries] = useState<SharedTimeEntry[]>([]);
   const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
   const projects = useMemo(() => scenarioProjects.flatMap((project) => {
     const completion = completionRecords[project.id];
@@ -107,21 +118,24 @@ export function FreelancerVideosPage() {
     return [{
       ...project,
       team: scoped.team,
+      timeEntries: [...project.timeEntries, ...sharedTimeEntries.filter((entry) => entry.projectId === project.id
+        && !project.timeEntries.some((existing) => existing.id === entry.id)).map(toProjectTimeEntry)],
       status: completion ? "Completed" as const : project.status,
       stages: getProjectStages(project),
       deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
     }];
-  }), [completionRecords, getProjectStages, scenarioProjects, state.projects, state.session.activeWorkspaceId]);
+  }), [completionRecords, getProjectStages, scenarioProjects, sharedTimeEntries, state.projects, state.session.activeWorkspaceId]);
   const baseEngagements = useMemo(
     () => getFreelancerEngagements(projects, personId),
     [personId, projects],
   );
-  const [view, setView] = useState<FreelancerView>(() => searchParams.get("scenario-view") === "offer-history" ? "offers" : "videos");
+  const [view, setView] = useState<FreelancerView>(() => searchParams.get("view") === "offers" || searchParams.get("scenario-view") === "offer-history" ? "offers" : "videos");
   const [offerView, setOfferView] = useState<OfferView>(() => searchParams.get("scenario-view") === "offer-history" ? "history" : "open");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
   const [query, setQuery] = useState("");
   const [invoiceOffer, setInvoiceOffer] = useState<ContractorOffer | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [offerResponse, setOfferResponse] = useState<{ outcome: "accepted" | "declined"; projectId: string; projectName: string } | null>(null);
   const videoTable = useFreelancerVideoTable();
 
   useEffect(() => {
@@ -129,6 +143,17 @@ export function FreelancerVideosPage() {
     const timeout = window.setTimeout(() => setToast(null), 4000);
     return () => window.clearTimeout(timeout);
   }, [toast]);
+
+  useEffect(() => {
+    const syncTimeEntries = () => setSharedTimeEntries(readSharedTimeEntries());
+    syncTimeEntries();
+    window.addEventListener(sharedTimeEntriesEventName, syncTimeEntries);
+    window.addEventListener("storage", syncTimeEntries);
+    return () => {
+      window.removeEventListener(sharedTimeEntriesEventName, syncTimeEntries);
+      window.removeEventListener("storage", syncTimeEntries);
+    };
+  }, []);
 
   const engagements = useMemo<FreelancerJobEngagement[]>(() => baseEngagements.map((engagement) => {
     const offer = offers.find((offerItem) => offerItem.projectId === engagement.project.id && offerItem.contractorId === personId);
@@ -141,6 +166,12 @@ export function FreelancerVideosPage() {
   const acceptedInvitationIds = new Set(getAcceptedFreelancerEngagements(projects, personId).map((engagement) => engagement.invitationId));
   const pendingInvitationIds = new Set(getPendingFreelancerEngagements(projects, personId).map((engagement) => engagement.invitationId));
   const acceptedEngagements = engagements.filter((engagement) => acceptedInvitationIds.has(engagement.invitationId));
+  const logEngagement = searchParams.get("log") === "1"
+    ? acceptedEngagements.find((engagement) => engagement.project.id === searchParams.get("project")) ?? null
+    : null;
+  const requestedLogStage = searchParams.get("stage") as StageKey | null;
+  const logStage = logEngagement && requestedLogStage && logEngagement.stages.includes(requestedLogStage)
+    ? requestedLogStage : logEngagement?.stages[0] ?? null;
   const openOffers = engagements.filter((engagement): engagement is OfferedFreelancerEngagement =>
     engagement.offer?.state === "Pending" && pendingInvitationIds.has(engagement.invitationId));
   const offerHistory = engagements.filter((engagement): engagement is OfferedFreelancerEngagement => engagement.offer?.state === "Declined" || engagement.offer?.state === "Revoked");
@@ -172,26 +203,89 @@ export function FreelancerVideosPage() {
       }),
     } : slot));
     setOfferState(engagement.offer.id, "Accepted");
+    publishOfferNotification({
+      eventKey: "freelancer.offer.accepted",
+      offerId: engagement.offer.id,
+      recipientId: notificationInboxRecipientByRole["Studio Staff"],
+      recipientRole: "Studio Staff",
+      actorName: viewer?.name ?? engagement.offer.contractorName,
+      projectId: engagement.project.id,
+      projectName: engagement.project.name,
+      title: `${engagement.offer.contractorName} accepted the offer`,
+      copy: `${engagement.offer.contractorName} is confirmed as ${engagement.offer.role} on ${engagement.project.name}.`,
+      href: `/projects/${encodeURIComponent(engagement.project.id)}/stages/brief`,
+      ctaLabel: "View project",
+    });
+    const roleSlot = engagement.project.team.find((slot) => slot.id === engagement.roleSlotId);
+    roleSlot?.invitations.filter((invitation) => invitation.id !== engagement.invitationId && (invitation.status === "invited" || invitation.status === "seen")).forEach((invitation) => {
+      const competingOffer = offers.find((candidate) => candidate.projectId === engagement.project.id && candidate.contractorId === invitation.personId && candidate.state === "Pending");
+      if (!competingOffer) return;
+      setOfferState(competingOffer.id, "Revoked");
+      publishOfferNotification({
+        eventKey: "freelancer.offer.revoked",
+        offerId: competingOffer.id,
+        recipientId: getFreelancerNotificationRecipientId(competingOffer.contractorId, competingOffer.contractorName),
+        recipientRole: "Studio Freelancer",
+        actorName: "Studio",
+        projectId: engagement.project.id,
+        projectName: engagement.project.name,
+        title: "Role filled",
+        copy: `The ${competingOffer.role} role on ${engagement.project.name} has been filled. Thanks for your interest.`,
+        href: "/active-videos?view=offers",
+        ctaLabel: "View offers",
+        emailPreview: {
+          recipient: people.find((person) => person.id === competingOffer.contractorId)?.email ?? competingOffer.contractorName,
+          subject: `${engagement.project.name} - role filled`,
+          body: [`Hi ${competingOffer.contractorName.split(" ")[0]},`, `The ${competingOffer.role} role on ${engagement.project.name} has been filled. Thanks for your interest. We hope to work with you soon.`],
+          ctaLabel: "View offers",
+          ctaHref: "/active-videos?view=offers",
+        },
+      });
+    });
     setView("videos");
     setToast(`${engagement.project.name} added to Active jobs`);
+    setOfferResponse({ outcome: "accepted", projectId: engagement.project.id, projectName: engagement.project.name });
   };
   const declineOffer = (engagement: OfferedFreelancerEngagement) => {
+    updateProjectTeam(engagement.project.id, engagement.project.team.map((slot) => slot.id === engagement.roleSlotId ? {
+      ...slot,
+      invitations: slot.invitations.map((invitation) => invitation.id === engagement.invitationId
+        ? { ...invitation, status: "declined" as const, declinedReason: "manual" as const, respondedAt: new Date().toISOString() }
+        : invitation),
+    } : slot));
     setOfferState(engagement.offer.id, "Declined");
+    publishOfferNotification({
+      eventKey: "freelancer.offer.declined",
+      offerId: engagement.offer.id,
+      recipientId: notificationInboxRecipientByRole["Studio Staff"],
+      recipientRole: "Studio Staff",
+      actorName: viewer?.name ?? engagement.offer.contractorName,
+      projectId: engagement.project.id,
+      projectName: engagement.project.name,
+      title: `${engagement.offer.contractorName} declined the offer`,
+      copy: `The ${engagement.offer.role} role on ${engagement.project.name} still needs someone.`,
+      href: `/projects/${encodeURIComponent(engagement.project.id)}/stages/brief`,
+      ctaLabel: "View project",
+    });
     setToast(`Offer declined for ${engagement.project.name}`);
+    setOfferResponse({ outcome: "declined", projectId: engagement.project.id, projectName: engagement.project.name });
   };
   const clearControls = () => {
     setQuery("");
     setPaymentFilter("all");
   };
+  const closeTimeDialog = () => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete("log");
+    nextParams.delete("project");
+    nextParams.delete("stage");
+    router.replace(nextParams.size ? `/active-videos?${nextParams.toString()}` : "/active-videos");
+  };
 
   return (
     <main className="freelancer-videos-page">
       <header className="freelancer-videos-header">
-        <div>
-          <span className="label-xs-semibold">{viewer?.name ?? "Freelancer"} - Freelancer</span>
-          <h1 className="headings-m-bold">My jobs</h1>
-          <p className="paragraph-s">Review offers, follow active project work and submit contractor invoices.</p>
-        </div>
+        <h1 className="headings-m-bold">My jobs</h1>
         <label className="freelancer-videos-search" htmlFor="freelancer-videos-search">
           <DsIcon name="search" size={16} />
           <span className="sr-only">Search your jobs</span>
@@ -226,6 +320,17 @@ export function FreelancerVideosPage() {
       )}
 
       {toast ? <div className="freelancer-videos-toast" role="status"><DsIcon name="check-circle" size={16} /><span className="label-s-semibold">{toast}</span></div> : null}
+      {offerResponse ? <ClientModal
+        title={offerResponse.outcome === "accepted" ? "You're in" : "Offer declined"}
+        description={offerResponse.outcome === "accepted"
+          ? `${offerResponse.projectName} is now in your active jobs.`
+          : `You declined the offer for ${offerResponse.projectName}.`}
+        onClose={() => setOfferResponse(null)}
+        footer={offerResponse.outcome === "accepted"
+          ? <Button size="M" onClick={() => { router.push(`/projects/${encodeURIComponent(offerResponse.projectId)}/stages/brief`); setOfferResponse(null); }}>View Brief</Button>
+          : <Button size="M" variant="secondary" onClick={() => setOfferResponse(null)}>Close</Button>}
+      >{offerResponse.outcome === "accepted" ? <p className="paragraph-s">You can now start your assigned work.</p> : null}</ClientModal> : null}
+      {logEngagement && logStage ? <FreelancerTimeDialog engagement={logEngagement} initialStage={logStage} personId={personId} onClose={closeTimeDialog} onSave={(entry) => { appendSharedTimeEntry(entry); setSharedTimeEntries(readSharedTimeEntries()); closeTimeDialog(); setToast(`${formatHours(entry.hours)} logged to ${logEngagement.project.name}`); }} /> : null}
       {invoiceOffer ? <InvoiceUploadModal offer={invoiceOffer} onClose={() => setInvoiceOffer(null)} onSubmitted={(invoiceItem) => { setInvoiceOffer(null); setToast(`${invoiceItem.fileNames.length} ${invoiceItem.fileNames.length === 1 ? "PDF" : "PDFs"} submitted for review`); }} /> : null}
     </main>
   );
@@ -352,12 +457,10 @@ function FreelancerVideoRow({
   onSubmitInvoice: (offer: ContractorOffer) => void;
   visibleColumns: FreelancerColumnKey[];
 }) {
-  const destination = getDemoProjectDestination(engagement.project.id, "brief");
-
   return (
     <tr>
       <td className="column-video" data-label="Video">
-        <FreelancerProjectIdentity engagement={engagement} destinationHref={destination?.href ?? null} />
+        <FreelancerProjectIdentity engagement={engagement} />
       </td>
       {visibleColumns.map((columnKey) => (
         <FreelancerVideoDataCell
@@ -414,7 +517,7 @@ function FreelancerVideoDataCell({
   }
 
   if (columnKey === "time") {
-    return <td className={className} data-label="Time"><strong className="label-s-semibold">{formatHours(engagement.loggedHours)} / {formatHours(engagement.estimatedHours)}</strong><small className="label-xs">{engagement.paymentBasis === "hourly" ? "Logged / estimated" : "Logged / planned - optional"}</small><Link className="freelancer-inline-action label-xs-semibold" href={makeFreelancerLogHref(engagement)}>{engagement.paymentBasis === "hourly" ? "Log hours" : "Log time"}</Link></td>;
+    return <td className={className} data-label="Time"><strong className="label-s-semibold">{formatHours(engagement.loggedHours)} / {formatHours(engagement.estimatedHours)}</strong><Link className="freelancer-inline-action label-xs-semibold" href={makeFreelancerLogHref(engagement)}>{engagement.paymentBasis === "hourly" ? "Log hours" : "Log time"}</Link></td>;
   }
 
   const paymentStatus = getPaymentStatus(engagement);
@@ -548,20 +651,20 @@ function FreelancerColumnHeaderMenu({
   );
 }
 
-function FreelancerProjectIdentity({ engagement, destinationHref }: { engagement: FreelancerEngagement; destinationHref: string | null }) {
+function FreelancerProjectIdentity({ engagement }: { engagement: FreelancerEngagement }) {
   const { project, toolAccess } = engagement;
+  const destinationHref = getProjectEntryHref(project);
   const unreadMessages = project.unreadMessages ?? 0;
   const fileDestination = getDemoProjectDestination(project.id, "files");
   const primaryFileLocation = project.file_locations[0];
   const filesHref = fileDestination?.href ?? (primaryFileLocation ? getFileLocationHref(primaryFileLocation.url) : null);
   const filesExternal = !fileDestination && Boolean(primaryFileLocation);
 
-  return <div className="project-cell-inner freelancer-project-identity"><span className="client-badge label-xs-semibold">{project.clientBadge}</span><div className="project-title-row">{destinationHref ? <Link className="project-title heading-3xs" href={destinationHref}>{project.name}</Link> : <span className="project-title is-static heading-3xs" title="This project is visible for context but does not have a complete demo route.">{project.name}<small className="project-demo-unavailable label-xs">Demo not available</small></span>}<div className="project-quick-actions" aria-label={`Project tools for ${project.name}`}>{toolAccess.chat ? <Link className="project-quick-action" href={`/chat?project=${encodeURIComponent(project.id)}`} aria-label={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"} data-tooltip={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"}><DsIcon name="chats" size={20} /><CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} /></Link> : null}{toolAccess.files && filesHref ? <a className="project-quick-action" href={filesHref} aria-label="Open project files" data-tooltip="Open project files" target={filesExternal ? "_blank" : undefined} rel={filesExternal ? "noopener" : undefined}><DsIcon name="folder" size={20} /></a> : null}{toolAccess.queue ? <Link className="project-quick-action" href="/customer-dashboard" aria-label="Open Client queue" data-tooltip="Open Client queue"><DsIcon name="queue" size={20} /></Link> : null}</div></div>{toolAccess.tags && project.tags?.length ? <div className="project-meta-row" aria-label="Project tags">{project.tags.map((tag) => <span className={`project-tag-chip tag-option ${getReadOnlyTagClass(tag)} label-s-semibold`} key={tag}>{tag}</span>)}</div> : null}{engagement.assignmentMethod === "direct" ? <small className="freelancer-direct-tag label-xs-semibold">Direct assignment</small> : null}</div>;
+  return <div className="project-cell-inner freelancer-project-identity"><span className="client-badge label-xs-semibold">{project.clientBadge}</span><div className="project-title-row"><Link className="project-title heading-3xs" href={destinationHref}>{project.name}</Link><div className="project-quick-actions" aria-label={`Project tools for ${project.name}`}>{toolAccess.chat ? <Link className="project-quick-action" href={`/chat?project=${encodeURIComponent(project.id)}`} aria-label={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"} data-tooltip={unreadMessages ? `Open chat (${unreadMessages} unread)` : "Open chat"}><DsIcon name="chats" size={20} /><CommentCountBadge count={unreadMessages} label={`${unreadMessages} unread messages`} /></Link> : null}{toolAccess.files && filesHref ? <a className="project-quick-action" href={filesHref} aria-label="Open project files" data-tooltip="Open project files" target={filesExternal ? "_blank" : undefined} rel={filesExternal ? "noopener" : undefined}><DsIcon name="folder" size={20} /></a> : null}{toolAccess.queue ? <Link className="project-quick-action" href="/customer-dashboard" aria-label="Open Client queue" data-tooltip="Open Client queue"><DsIcon name="queue" size={20} /></Link> : null}</div></div>{toolAccess.tags && project.tags?.length ? <div className="project-meta-row" aria-label="Project tags">{project.tags.map((tag) => <span className={`project-tag-chip tag-option ${getReadOnlyTagClass(tag)} label-s-semibold`} key={tag}>{tag}</span>)}</div> : null}{engagement.assignmentMethod === "direct" ? <small className="freelancer-direct-tag label-xs-semibold">Direct assignment</small> : null}</div>;
 }
 
 function FreelancerOfferCard({ engagement, isOpen, onAccept, onDecline }: { engagement: OfferedFreelancerEngagement; isOpen: boolean; onAccept: () => void; onDecline: () => void }) {
-  const destination = getDemoProjectDestination(engagement.project.id, "brief");
-  return <article className="freelancer-offer-card"><header><div><span className="label-xs-semibold">{engagement.project.clientName}</span><h2 className="headings-xs-bold">{engagement.project.name}</h2></div><span className={`freelancer-offer-status is-${engagement.offer.state.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{engagement.offer.state}</span></header><dl><div><dt className="label-xs">Your role</dt><dd className="label-s-semibold">{engagement.offer.role}</dd></div><div><dt className="label-xs">Assigned Stages</dt><dd><StageAssignmentPills stages={engagement.stages} /></dd></div><div><dt className="label-xs">Estimated work</dt><dd className="label-s-semibold">{formatHours(engagement.estimatedHours)}</dd></div><div><dt className="label-xs">Agreed rate</dt><dd className="label-s-semibold">{formatCostAmount(engagement.offer.agreedRate, engagement.offer.currency)}</dd></div><div><dt className="label-xs">Final delivery</dt><dd className="label-s-semibold">{formatDeadline(engagement.project.deadlineAt)}</dd></div></dl><footer>{destination ? <Link className="freelancer-offer-brief label-s-semibold" href={destination.href}>View brief</Link> : <span className="freelancer-offer-brief is-disabled label-s-semibold" title="This project does not have a complete demo route.">Demo not available</span>}{isOpen ? <div><Button size="S" variant="ghost" onClick={onDecline}>Decline</Button><Button size="S" onClick={onAccept}>Accept offer</Button></div> : null}</footer></article>;
+  return <article className="freelancer-offer-card"><header><div><span className="label-xs-semibold">{engagement.project.clientName}</span><h2 className="headings-xs-bold">{engagement.project.name}</h2></div><span className={`freelancer-offer-status is-${engagement.offer.state.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{engagement.offer.state}</span></header><dl><div><dt className="label-xs">Your role</dt><dd className="label-s-semibold">{engagement.offer.role}</dd></div><div><dt className="label-xs">Assigned Stages</dt><dd><StageAssignmentPills stages={engagement.stages} /></dd></div><div><dt className="label-xs">Estimated work</dt><dd className="label-s-semibold">{formatHours(engagement.estimatedHours)}</dd></div><div><dt className="label-xs">Estimated total</dt><dd className="label-s-semibold">{formatCostAmount(engagement.offer.agreedRate, engagement.offer.currency)}</dd></div><div><dt className="label-xs">Final delivery</dt><dd className="label-s-semibold">{formatDeadline(engagement.project.deadlineAt)}</dd></div></dl>{isOpen ? <footer><Link className="freelancer-offer-brief label-s-semibold" href={`/offers/${encodeURIComponent(engagement.project.id)}/brief`}>View brief</Link><div><Button size="S" variant="ghost" onClick={onDecline}>Decline</Button><Button size="S" onClick={onAccept}>Accept offer</Button></div></footer> : null}</article>;
 }
 
 function StageAssignmentPills({ stages }: { stages: StageKey[] }) {
@@ -641,5 +744,5 @@ function getReadOnlyTagClass(tag: string) {
 
 function makeFreelancerLogHref(engagement: FreelancerEngagement) {
   const stage = engagement.stages.find((assignedStage) => engagement.project.stages[assignedStage].state !== "done") ?? engagement.stages.at(-1) ?? "brief";
-  return `/today?log=1&project=${encodeURIComponent(engagement.project.id)}&stage=${stage}`;
+  return `/active-videos?log=1&project=${encodeURIComponent(engagement.project.id)}&stage=${stage}`;
 }

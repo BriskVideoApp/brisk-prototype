@@ -95,5 +95,5 @@ export function getScopedRoleHome(
   clientPortalDestination: string | null,
 ) {
   if (role === "Customer") return clientPortalDestination ?? "/prototype/scenarios";
-  return "/today";
+  return role === "Studio Freelancer" ? "/active-videos" : "/today";
 }

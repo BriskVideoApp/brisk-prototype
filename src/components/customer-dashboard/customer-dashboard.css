@@ -1568,23 +1568,6 @@
   outline: 0;
 }
 
-.customer-activity-row.is-static {
-  color: var(--brisk-text-secondary);
-  cursor: default;
-}
-
-.customer-activity-row.is-static:hover {
-  background: transparent;
-}
-
-.customer-demo-indicator {
-  width: var(--brisk-space-xs);
-  height: var(--brisk-space-xs);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-text-tertiary);
-  justify-self: center;
-}
-
 .customer-activity-icon {
   width: var(--brisk-space-2xl);
   height: var(--brisk-space-2xl);

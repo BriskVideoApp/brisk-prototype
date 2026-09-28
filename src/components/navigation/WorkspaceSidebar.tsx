@@ -214,7 +214,7 @@ export function WorkspaceSidebar({
           <DsIcon name="queue" size={16} />
           <span className="workspace-sidebar-link-label">Videos</span>
         </Link>
-        {selectedRole !== "Customer" ? (
+        {selectedRole === "Studio Staff" ? (
           <Link
             className={`today-sidebar-link label-s-semibold ${activeItem === "today" ? "active" : ""}`}
             href="/today"
@@ -323,6 +323,7 @@ function getPageIcon(pathname: string): DsIconName {
 }
 
 function canRoleSeeRecentPage(pathname: string, role: PrototypeRole, clientId: string | null | undefined) {
+  if (role === "Studio Freelancer" && pathname === "/today") return false;
   if (role !== "Customer") {
     return true;
   }

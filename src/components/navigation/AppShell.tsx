@@ -97,7 +97,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link className={`app-header-navigation-link is-primary label-s-semibold ${pathname === videosHref ? "is-active" : ""}`} href={videosHref}>
                     Videos
                   </Link>
-                  {isStudioUser ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/today" ? "is-active" : ""}`} href="/today">
+                  {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/today" ? "is-active" : ""}`} href="/today">
                     Today
                   </Link> : null}
                   <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/media" ? "is-active" : ""}`} href="/media">
@@ -139,7 +139,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 >
                   <DsIcon name="x-close-cross" size={18} />
                 </button>
-                <ChatPage key="global-chat-drawer" embedded initialProjectId={null} />
+                <ChatPage key="global-chat-drawer" embedded initialProjectId={null} onNavigate={() => setIsGlobalChatOpen(false)} />
               </aside>
             </div>
           ) : null}

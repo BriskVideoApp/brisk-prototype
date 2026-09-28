@@ -1,0 +1,112 @@
+.freelancer-time-dialog h2,
+.freelancer-time-dialog p {
+  margin: var(--brisk-space-none);
+}
+
+.freelancer-time-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--brisk-text-primary) 36%, transparent);
+  padding: var(--brisk-space-xl);
+}
+
+.freelancer-time-dialog {
+  display: grid;
+  width: min(600px, calc(100vw - var(--brisk-space-2xl)));
+  margin: auto;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-elevated-primary);
+  box-shadow: var(--brisk-shadow-m);
+  gap: var(--brisk-space-l);
+  padding: var(--brisk-space-xl);
+}
+
+.freelancer-time-dialog > header,
+.freelancer-time-dialog > footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.freelancer-time-dialog > header > div {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.freelancer-time-dialog > header > div > span {
+  color: var(--brisk-brand-primary-click);
+}
+
+.freelancer-time-dialog > header button {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--brisk-text-secondary);
+}
+
+.freelancer-time-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--brisk-space-m);
+}
+
+.freelancer-time-fields label,
+.freelancer-time-date {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.freelancer-time-fields label.is-wide {
+  grid-column: 1 / -1;
+}
+
+.freelancer-time-fields input,
+.freelancer-time-fields select,
+.freelancer-time-fields textarea {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.freelancer-time-fields textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+.freelancer-time-dialog > footer {
+  justify-content: flex-end;
+}
+
+.freelancer-time-disabled-save {
+  min-height: 48px;
+  border: 1px solid var(--brisk-border-secondary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-tertiary);
+  padding: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+@media (max-width: 760px) {
+  .freelancer-time-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .freelancer-time-fields label.is-wide {
+    grid-column: auto;
+  }
+}

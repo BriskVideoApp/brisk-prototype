@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
-import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   NotificationEmailReminderPreview,
   RecipientInboxItem,
@@ -26,8 +26,9 @@ export function NotificationInboxItem({
   onNavigate?: () => void;
 }) {
   const [isReminderPreviewOpen, setIsReminderPreviewOpen] = useState(false);
+  const emailPreview = item.emailPreview ?? item.emailReminderPreview;
   const metadata = [
-    item.actorName ? `From ${item.actorName}` : null,
+    !compact && item.actorName ? item.actorName : null,
     item.projectCode,
     formatStage(item.stage),
   ]
@@ -35,37 +36,33 @@ export function NotificationInboxItem({
     .join(" · ");
   const absoluteTime = formatAbsoluteNotificationTime(item.occurredAt);
   const status = item.emailDeliveryState === "sent"
-    ? { label: "Email sent", tone: "success" } as const
+    ? { label: "Email example", tone: "success" } as const
     : null;
   const copyContent = (
     <>
       <span className="notification-inbox-item-title-row">
-        {!read ? <span className="notification-inbox-item-unread-dot"><span className="sr-only">Unread</span></span> : null}
+        <span className="sr-only">{`${read ? "Read" : "Unread"}. ${getSemanticStatusLabel(item)}. `}</span>
         <strong className="label-s-semibold">{item.title}</strong>
-        {status ? <span className={`notification-inbox-item-status is-${status.tone} label-xs-semibold`}>{status.label}</span> : null}
+        {!compact && status ? <span className={`notification-inbox-item-status is-${status.tone} label-xs-semibold`}>{status.label}</span> : null}
       </span>
       <span className="notification-inbox-item-body label-s">{item.copy}</span>
-      {metadata ? <span className="notification-inbox-item-meta label-xs">{metadata}</span> : null}
+      <span className="notification-inbox-item-meta label-xs">
+        {metadata ? `${metadata} · ` : null}
+        <time dateTime={item.occurredAt} title={absoluteTime}>{formatNotificationRelativeTime(item.occurredAt)}</time>
+      </span>
     </>
   );
 
   return (
     <article
-      className={`notification-inbox-item ${read ? "is-read" : "is-unread"} ${compact ? "is-compact" : ""}`}
+      className={`notification-inbox-item is-${item.state} ${read ? "is-read" : "is-unread"} ${compact ? "is-compact" : ""}`}
     >
       <div className="notification-inbox-item-layout">
-        <span
-          className={`notification-inbox-item-icon is-${item.state}`}
-          role="img"
-          aria-label={`Status: ${getSemanticStatusLabel(item)}`}
-        >
-          <DsIcon name={getSemanticIcon(item)} size={16} />
-        </span>
         {item.href ? (
           <Link
             className="notification-inbox-item-main-link"
             href={item.href}
-            aria-label={`${item.title}. ${item.copy}. ${absoluteTime}`}
+            aria-label={`${read ? "Read" : "Unread"}. ${getSemanticStatusLabel(item)}. ${item.title}. ${item.copy}. ${absoluteTime}`}
             onClick={() => {
               onMarkAsRead(item.id);
               onNavigate?.();
@@ -76,24 +73,22 @@ export function NotificationInboxItem({
         ) : (
           <div className="notification-inbox-item-main-link is-static">{copyContent}</div>
         )}
-        <time className="notification-inbox-item-time label-xs" dateTime={item.occurredAt} title={absoluteTime}>
-          {formatNotificationRelativeTime(item.occurredAt)}
-        </time>
         <NotificationItemAction
           item={item}
           read={read}
           onMarkAsRead={() => onMarkAsRead(item.id)}
           onNavigate={onNavigate}
-          onPreview={item.emailReminderPreview ? () => {
+          onPreview={emailPreview ? () => {
             onMarkAsRead(item.id);
             setIsReminderPreviewOpen(true);
           } : undefined}
           onRetry={item.emailDeliveryState === "failed" && onRetryEmail ? () => onRetryEmail(item.id) : undefined}
         />
       </div>
-      {isReminderPreviewOpen && item.emailReminderPreview ? (
+      {isReminderPreviewOpen && emailPreview ? (
         <EmailReminderPreview
-          preview={item.emailReminderPreview}
+          preview={emailPreview}
+          simulated={Boolean(item.emailPreview)}
           onClose={() => setIsReminderPreviewOpen(false)}
           onNavigate={onNavigate}
         />
@@ -127,7 +122,6 @@ function NotificationItemAction({
           onRetry();
         }}
       >
-        <DsIcon name="arrows-clockwise" size={14} />
         Retry
       </button>
     );
@@ -140,7 +134,7 @@ function NotificationItemAction({
         type="button"
         onClick={onPreview}
       >
-        {item.ctaLabel ?? "Preview reminder"}
+        {item.emailPreview ? "Preview email" : item.ctaLabel ?? "Preview reminder"}
       </button>
     );
   }
@@ -161,33 +155,13 @@ function NotificationItemAction({
     );
   }
 
-  if (item.href) {
-    return (
-      <Link
-        className="notification-inbox-item-chevron"
-        href={item.href}
-        aria-label={`Open ${item.title}`}
-        onClick={() => {
-          onMarkAsRead();
-          onNavigate?.();
-        }}
-      >
-        <DsIcon name="caret-right" size={16} />
-      </Link>
-    );
-  }
+  if (item.href) return null;
 
   return !read ? (
     <button className="notification-inbox-mark-read label-xs-semibold" type="button" onClick={onMarkAsRead}>
       Mark as read
     </button>
   ) : null;
-}
-
-function getSemanticIcon(item: RecipientInboxItem): DsIconName {
-  if (item.state === "failure" || item.state === "warning") return "alert-triangle";
-  if (item.state === "success") return "check-circle";
-  return "info";
 }
 
 function getSemanticStatusLabel(item: RecipientInboxItem) {
@@ -200,18 +174,20 @@ function getSemanticStatusLabel(item: RecipientInboxItem) {
 
 function EmailReminderPreview({
   preview,
+  simulated = false,
   onClose,
   onNavigate,
 }: {
   preview: NotificationEmailReminderPreview;
+  simulated?: boolean;
   onClose: () => void;
   onNavigate?: () => void;
 }) {
   return (
     <ClientModal
       className="notification-reminder-preview-modal"
-      title="Scheduled reminder"
-      description="Read-only Client email preview"
+      title={simulated ? "Email preview" : "Scheduled reminder"}
+      description={simulated ? "Prototype preview - no email was sent" : "Read-only Client email preview"}
       onClose={onClose}
       footer={<Button size="M" variant="secondary" onClick={onClose}>Close</Button>}
     >
@@ -220,12 +196,12 @@ function EmailReminderPreview({
           <small className="label-xs">To</small>
           <strong className="label-s-semibold">{preview.recipient}</strong>
         </span>
-        <span>
+        {preview.scheduledFor ? <span>
           <small className="label-xs">Scheduled</small>
           <time className="label-s-semibold" dateTime={preview.scheduledFor}>
             {formatReminderSchedule(preview.scheduledFor)}
           </time>
-        </span>
+        </span> : null}
       </div>
       <article className="notification-reminder-email-preview" aria-label="Reminder email text">
         <header>
@@ -251,7 +227,7 @@ function EmailReminderPreview({
       </article>
       <p className="notification-reminder-safety label-xs">
         <DsIcon name="lock" size={14} />
-        Client-safe preview. Internal notes and commercial details are excluded.
+        {simulated ? "Preview only. No email was sent." : "Client-safe preview. Internal notes and commercial details are excluded."}
       </p>
     </ClientModal>
   );

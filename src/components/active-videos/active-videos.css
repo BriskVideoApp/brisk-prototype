@@ -645,22 +645,6 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.project-title.is-static {
-  display: grid;
-  color: var(--brisk-text-secondary);
-  cursor: default;
-  gap: var(--brisk-space-xxs);
-}
-
-.project-title.is-static:hover {
-  color: var(--brisk-text-secondary);
-}
-
-.project-demo-unavailable {
-  color: var(--brisk-text-tertiary);
-  font-weight: 500;
-}
-
 .project-title-row {
   display: flex;
   max-width: 100%;

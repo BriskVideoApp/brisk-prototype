@@ -209,7 +209,7 @@ export function ScriptPage({
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
   const router = useRouter();
-  const { openAssistant, registerResponseDraftHandler, view: aiView } = useBriskAi();
+  const { openAssistant, registerResponseDraftHandler } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state: prototypeState } = usePrototypeState();
@@ -288,7 +288,6 @@ export function ScriptPage({
   const [isAiPanelMinimised, setIsAiPanelMinimised] = useState(false);
   const [aiPanelPreset, setAiPanelPreset] = useState<ScriptAiPanelPreset | undefined>(undefined);
   const [showAiToCustomer] = useState(scriptBrief.showAiToCustomer);
-  const [hasInteractedWithAiEntry, setHasInteractedWithAiEntry] = useState(false);
   const [hasTypedThisSession, setHasTypedThisSession] = useState(() =>
     !initiallyEmpty && latestVersion.rows.some((row) => row.words.trim() || row.visuals.trim()),
   );
@@ -312,7 +311,6 @@ export function ScriptPage({
   const selectedRows = rows.filter((row) => selectionState.selectedRowIds.has(row.id));
   const visibleRows = rows.filter((row) => !row.deletedMeta);
   const hasScriptContent = visibleRows.some((row) => row.words.trim() || row.visuals.trim() || row.media.length > 0);
-  const shouldShowLabelledAiEntry = !hasScriptContent && !hasInteractedWithAiEntry;
   const aiSelectionContext = {
     activeRowLabel:
       activeCommentAnchor.rowId
@@ -1366,7 +1364,7 @@ export function ScriptPage({
     if (!canActOnProject(viewer, project, prototypeState, "approve", "script")) return;
     const approvalVersion = dropdownVersion;
     if (!approvalVersion.rows.some((row) => !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0))) {
-      setToastMessage("Add Script content before approving this version.");
+      setToastMessage("Add Script content first.");
       return;
     }
     const approvedAt = formatSnapshotDate(new Date());
@@ -2101,7 +2099,7 @@ export function ScriptPage({
         sendLabel={`Ask ${selectedRole === "Customer" || selectedRole === "Studio Freelancer" ? studioCompanyName : project.clientName} to review the ${getVersionShortLabel(dropdownVersion)} Script`}
         approveLabel={`Approve ${getVersionShortLabel(dropdownVersion)} Script`}
         approveDisabled={selectedRole === "Studio Freelancer" || !dropdownVersion.rows.some((row) => !row.deletedMeta && (row.words.trim() || row.visuals.trim() || row.media.length > 0))}
-        approveDisabledTooltip={selectedRole === "Studio Freelancer" ? "Only Studio Staff and Clients can approve this Script" : "Add Script content before approving"}
+        approveDisabledTooltip={selectedRole === "Studio Freelancer" ? "Only Studio Staff or Clients can approve." : "Add Script content first."}
         approvedAt={dropdownVersion.approvedAt}
         approvedBy={dropdownVersion.approvedBy}
         isApproved={dropdownVersion.approvedSnapshot}
@@ -2311,27 +2309,6 @@ export function ScriptPage({
           },
         ]}
       /> : null}
-
-      {activeSubtabId === "script" && (aiView === "closed" || aiView === "minimised") ? (
-        <button
-          className={`script-ai-fab ${shouldShowLabelledAiEntry ? "is-labelled" : "is-compact"}`}
-          type="button"
-          aria-label={shouldShowLabelledAiEntry ? "Draft with Brisk AI" : "Ask Brisk AI"}
-          onClick={() => {
-            setHasInteractedWithAiEntry(true);
-            openAssistant(shouldShowLabelledAiEntry
-              ? { expanded: true, prompt: "Draft this script" }
-              : undefined);
-          }}
-        >
-          <span className="script-ai-fab-icon"><DsIcon name="sparkle" size={20} /></span>
-          {shouldShowLabelledAiEntry ? (
-            <span>Draft with Brisk AI</span>
-          ) : (
-            <span className="script-ai-fab-tooltip" role="tooltip">Ask Brisk AI</span>
-          )}
-        </button>
-      ) : null}
 
       {isApprovedEditModalOpen ? (
         <div className="script-modal-backdrop" role="presentation">

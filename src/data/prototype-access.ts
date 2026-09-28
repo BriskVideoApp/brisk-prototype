@@ -1,5 +1,6 @@
 import type { Project, StageKey } from "@/components/active-videos/types";
 import type { PortalAccess, PrototypeState } from "@/data/prototype-state";
+import type { ContractorOffer } from "@/data/costs";
 
 export type PrototypeViewer = {
   role: "Studio Staff" | "Studio Freelancer" | "Customer";
@@ -35,6 +36,32 @@ export function canViewProject(viewer: PrototypeViewer | null, project: Project,
   return state.invitations.some((invitation) => invitation.workspaceId === viewer.workspaceId
     && invitation.clientId === viewer.clientId && invitation.userId === viewer.id
     && invitation.projectIds.includes(project.id) && invitation.status !== "Expired");
+}
+
+export function canViewClientBrandKit(viewer: PrototypeViewer | null, clientId: string, state: PrototypeState): boolean {
+  if (!viewer || viewer.workspaceId !== state.session.activeWorkspaceId) return false;
+  const client = state.clients.find((candidate) => candidate.id === clientId && candidate.workspaceId === viewer.workspaceId);
+  if (!client) return false;
+  if (viewer.role === "Studio Staff") return true;
+  if (viewer.role === "Customer") return viewer.clientId === clientId;
+  return state.projects.some((project) => project.clientId === clientId && canViewProject(viewer, project, state));
+}
+
+export function canViewPendingOfferBrief(
+  viewer: PrototypeViewer | null,
+  project: Project,
+  state: PrototypeState,
+  offers: readonly ContractorOffer[],
+): boolean {
+  if (viewer?.role !== "Studio Freelancer" || !viewer.personId
+    || viewer.workspaceId !== state.session.activeWorkspaceId) return false;
+  const scoped = state.projects.find((candidate) => candidate.id === project.id && candidate.workspaceId === viewer.workspaceId);
+  if (!scoped) return false;
+  const pendingOffer = offers.some((offer) => offer.projectId === project.id
+    && offer.contractorId === viewer.personId && offer.state === "Pending");
+  return pendingOffer && scoped.team.some((slot) => !slot.archivedAt && !slot.acceptedInvitationId
+    && slot.invitations.some((invitation) => invitation.personId === viewer.personId
+      && (invitation.status === "invited" || invitation.status === "seen")));
 }
 
 export function canActOnProject(

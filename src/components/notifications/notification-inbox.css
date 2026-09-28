@@ -212,17 +212,25 @@
 }
 
 .notification-inbox-item {
-  background: var(--brisk-white);
+  background: var(--brisk-item-tertiary);
 }
 
-.notification-inbox-item.is-unread {
-  background: color-mix(in srgb, var(--brisk-brand-secondary) 45%, var(--brisk-white));
+.notification-inbox-item.is-warning {
+  background: color-mix(in srgb, var(--brisk-system-warning) 12%, var(--brisk-white));
+}
+
+.notification-inbox-item.is-failure {
+  background: color-mix(in srgb, var(--brisk-system-error) 8%, var(--brisk-white));
+}
+
+.notification-inbox-item.is-success {
+  background: color-mix(in srgb, var(--brisk-system-success) 8%, var(--brisk-white));
 }
 
 .notification-inbox-item-layout {
   display: grid;
   min-width: var(--brisk-space-none);
-  grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr) max-content minmax(var(--brisk-space-3xl), max-content);
+  grid-template-columns: minmax(var(--brisk-space-none), 1fr) max-content;
   align-items: center;
   gap: var(--brisk-space-l);
   padding: var(--brisk-space-m) var(--brisk-space-xl);
@@ -236,44 +244,16 @@
   text-decoration: none;
 }
 
-.notification-inbox-item:has(.notification-inbox-item-main-link:hover),
-.notification-inbox-item:has(.notification-inbox-item-main-link:focus-visible) {
-  background: var(--brisk-item-tertiary);
+.notification-inbox-item-main-link:hover .notification-inbox-item-title-row strong {
+  text-decoration: underline;
 }
 
 .notification-inbox-item-main-link:focus-visible,
 .notification-inbox-item-action:focus-visible,
-.notification-inbox-item-chevron:focus-visible,
 .notification-inbox-mark-read:focus-visible {
   border-radius: var(--brisk-radius-xs);
   box-shadow: var(--brisk-shadow-s);
   outline: var(--brisk-space-none);
-}
-
-.notification-inbox-item-icon {
-  display: inline-flex;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  align-self: start;
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-secondary);
-}
-
-.notification-inbox-item-icon.is-warning {
-  background: color-mix(in srgb, var(--brisk-system-warning) 12%, var(--brisk-white));
-  color: var(--brisk-system-warning);
-}
-
-.notification-inbox-item-icon.is-failure {
-  background: color-mix(in srgb, var(--brisk-system-error) 8%, var(--brisk-white));
-  color: var(--brisk-system-error);
-}
-
-.notification-inbox-item-icon.is-success {
-  color: var(--brisk-system-success);
 }
 
 .notification-inbox-item-title-row {
@@ -297,8 +277,7 @@
 }
 
 .notification-inbox-item-body,
-.notification-inbox-item-meta,
-.notification-inbox-item-time {
+.notification-inbox-item-meta {
   color: var(--brisk-text-secondary);
 }
 
@@ -306,12 +285,6 @@
   overflow: hidden;
   color: var(--brisk-text-tertiary);
   text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.notification-inbox-item-time {
-  min-width: calc(var(--brisk-space-3xl) * 2);
-  text-align: right;
   white-space: nowrap;
 }
 
@@ -359,24 +332,6 @@
 .notification-inbox-item-action.is-tertiary:focus-visible {
   background: transparent;
   text-decoration: underline;
-}
-
-.notification-inbox-item-chevron {
-  display: inline-flex;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  justify-self: end;
-  border-radius: var(--brisk-radius-full);
-  color: var(--brisk-text-secondary);
-  text-decoration: none;
-}
-
-.notification-inbox-item-chevron:hover,
-.notification-inbox-item-chevron:focus-visible {
-  background: var(--brisk-item-tertiary);
-  color: var(--brisk-text-primary);
 }
 
 .notification-reminder-preview-modal.client-modal {
@@ -458,7 +413,6 @@
   margin: var(--brisk-space-none);
 }
 
-.notification-inbox-item-unread-dot,
 .app-notification-dot {
   display: inline-block;
   width: var(--brisk-space-xs);
@@ -721,17 +675,13 @@
 }
 
 .notification-popover .notification-inbox-item-layout {
-  grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr) max-content max-content;
+  grid-template-columns: minmax(var(--brisk-space-none), 1fr) max-content;
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-m) var(--brisk-space-l);
 }
 
-.notification-popover .notification-inbox-item-time {
-  align-self: start;
-}
-
 .notification-popover .notification-inbox-item-meta {
-  max-width: calc(var(--brisk-space-3xl) * 5);
+  max-width: 100%;
 }
 
 .notification-popover .notification-inbox-item-body {
@@ -740,7 +690,15 @@
 
 .notification-popover .notification-inbox-item-action {
   min-height: var(--brisk-space-xl);
-  padding: var(--brisk-space-xxs) var(--brisk-space-s);
+  border: 0;
+  background: transparent;
+  padding: var(--brisk-space-xxs);
+}
+
+.notification-popover .notification-inbox-item-action:hover,
+.notification-popover .notification-inbox-item-action:focus-visible {
+  background: transparent;
+  text-decoration: underline;
 }
 
 .notification-popover-empty {
@@ -831,33 +789,15 @@
 
   .notification-inbox-item-layout,
   .notification-popover .notification-inbox-item-layout {
-    grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr);
+    grid-template-columns: minmax(var(--brisk-space-none), 1fr);
     align-items: start;
     gap: var(--brisk-space-m);
     padding: var(--brisk-space-l);
   }
 
-  .notification-inbox-item-icon {
-    grid-row: 1 / span 3;
-  }
-
-  .notification-inbox-item-time,
   .notification-inbox-item-action,
-  .notification-inbox-item-chevron,
   .notification-inbox-mark-read {
-    grid-column: 2;
-  }
-
-  .notification-inbox-item-action,
-  .notification-inbox-item-chevron,
-  .notification-inbox-mark-read {
-    justify-self: end;
-  }
-
-  .notification-inbox-item-time {
-    min-width: var(--brisk-space-none);
-    justify-self: start;
-    text-align: left;
+    grid-column: 1;
   }
 
   .notification-reminder-preview-meta {

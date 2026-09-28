@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   getAcceptedInvitation,
@@ -9,34 +10,37 @@ import {
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
+  formatHours,
   snapToQuarter,
   stageLabels,
   teamRoleLabels,
 } from "@/data/active-videos/teamDefaults";
-import type { Invitation, InvitationPaymentTerms, RoleSlot, StageKey, TeamPerson, TeamRole } from "@/components/active-videos/types";
+import type { Invitation, InvitationPaymentTerms, RoleSlot, StageAssignment, StageKey, TeamPerson, TeamRole } from "@/components/active-videos/types";
 import { getCapacitySummary } from "@/data/people";
 import { FreelancePill, StaffPill } from "./RoleRow";
 
 type RoleEditorModalProps = {
   slot: RoleSlot;
+  projectName: string;
   people: TeamPerson[];
   stages: StageKey[];
   assignedPersonIds: Set<string>;
   showCosts: boolean;
   onAddStaff: (person: TeamPerson) => void;
-  onInviteFreelancer: (person: TeamPerson, paymentTerms: InvitationPaymentTerms) => void;
+  onInviteFreelancer: (person: TeamPerson, paymentTerms: InvitationPaymentTerms, message: string) => void;
   onAssignFreelancer: (person: TeamPerson, paymentTerms: InvitationPaymentTerms) => void;
   onUnassign: () => void;
   onInviteNewFreelancer: () => void;
   onWithdrawInvitation: (invitationId: string) => void;
   onWithdrawAll: () => void;
   onRemove: () => void;
-  onSaveSettings: (hours: number, stages: StageKey[]) => void;
+  onSaveSettings: (stages: StageAssignment[]) => void;
   onClose: () => void;
 };
 
 export function RoleEditorModal({
   slot,
+  projectName,
   people,
   stages,
   assignedPersonIds,
@@ -53,12 +57,13 @@ export function RoleEditorModal({
   onClose,
 }: RoleEditorModalProps) {
   const roleLabel = getSlotLabel(slot);
-  const roleHours = getRoleEstimatedHours(slot);
   const acceptedInvitation = getAcceptedInvitation(slot);
   const acceptedPerson = acceptedInvitation ? people.find((person) => person.id === acceptedInvitation.personId) : undefined;
   const currentAssigneeId = acceptedPerson?.id;
   const [selectedStages, setSelectedStages] = useState<StageKey[]>(slot.stages.map((stageAssignment) => stageAssignment.stageId));
-  const [draftHours, setDraftHours] = useState(roleHours > 0 ? String(roleHours) : "");
+  const [draftHoursByStage, setDraftHoursByStage] = useState<Partial<Record<StageKey, string>>>(() =>
+    Object.fromEntries(slot.stages.map((stage) => [stage.stageId, String(stage.estimatedHours)])),
+  );
   const [isStagesExpanded, setIsStagesExpanded] = useState(false);
   const [activeFillTab, setActiveFillTab] = useState<"team" | "gig">(() => (acceptedPerson?.personType === "Studio Freelancer" || getVisibleInvitations(slot).length > 0 ? "gig" : "team"));
   const [staffPendingConfirmation, setStaffPendingConfirmation] = useState<TeamPerson | null>(null);
@@ -66,14 +71,20 @@ export function RoleEditorModal({
   const [projectRateOverridesByPersonId, setProjectRateOverridesByPersonId] = useState<Record<string, string>>(() => getInitialProjectRateOverrides(slot));
   const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [selectedFreelancerIds, setSelectedFreelancerIds] = useState<string[]>([]);
+  const [isInviteConfirmOpen, setIsInviteConfirmOpen] = useState(false);
+  const [inviteMessage, setInviteMessage] = useState("");
   const [isAllStaffVisible, setIsAllStaffVisible] = useState(false);
   const [isAllFreelancersVisible, setIsAllFreelancersVisible] = useState(false);
   const staff = people.filter((person) => person.personType === "Studio Staff");
   const freelancers = people.filter((person) => person.personType === "Studio Freelancer");
-  const draftRoleHours = snapToQuarter(Number.parseFloat(draftHours) || 0);
+  const draftRoleHours = selectedStages.reduce((total, stage) => total + snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stage] ?? "") || 0)), 0);
+  const availableStages = stages.filter((stage) => !selectedStages.includes(stage));
+  const areSettingsDirty = selectedStages.length !== slot.stages.length || selectedStages.some((stage) => {
+    const savedStage = slot.stages.find((assignment) => assignment.stageId === stage);
+    return !savedStage || snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stage] ?? "") || 0)) !== savedStage.estimatedHours;
+  });
   const activeInvitations = getVisibleInvitations(slot);
   const historicalInvitations = slot.invitations.filter((invitation) => invitation.status === "withdrawn" || invitation.status === "declined" || invitation.status === "expired");
-  const selectedStageSummary = selectedStages.map((stage) => stageLabels[stage]).join(", ") || "No stages selected";
   const selectedFreelancersHaveValidRates = selectedFreelancerIds.every((personId) => {
     const person = freelancers.find((candidate) => candidate.id === personId);
     const projectRate = person ? Number.parseFloat(getProjectRateValue(slot, person, draftRoleHours, projectRateOverridesByPersonId)) : Number.NaN;
@@ -94,6 +105,16 @@ export function RoleEditorModal({
     (person) => Boolean(getFreelancerProjectDisabledReason(slot, person, assignedPersonIds)) || isFreelancerAlreadyInvited(slot, person),
   );
   const visibleFreelancers = isAllFreelancersVisible ? freelancers : suggestedFreelancers;
+
+  useEffect(() => {
+    setProjectRateOverridesByPersonId((currentRates) => {
+      const emptyPersonIds = Object.keys(currentRates).filter((personId) => !currentRates[personId]?.trim());
+      if (emptyPersonIds.length === 0) return currentRates;
+      const nextRates = { ...currentRates };
+      emptyPersonIds.forEach((personId) => delete nextRates[personId]);
+      return nextRates;
+    });
+  }, [draftRoleHours]);
 
   useEffect(() => {
     setSelectedFreelancerIds((currentIds) => {
@@ -123,6 +144,7 @@ export function RoleEditorModal({
     setSelectedStages((currentStages) =>
       currentStages.includes(stage) ? currentStages.filter((currentStage) => currentStage !== stage) : [...currentStages, stage],
     );
+    setIsStagesExpanded(false);
   };
 
   const addStaff = (person: TeamPerson) => {
@@ -177,7 +199,19 @@ export function RoleEditorModal({
     });
   };
 
+  const selectedFreelancers = selectedFreelancerIds
+    .map((personId) => freelancers.find((person) => person.id === personId))
+    .filter((person): person is TeamPerson => Boolean(person));
+
+  const openInviteConfirmation = () => {
+    if (selectedFreelancers.length === 0 || !selectedFreelancersHaveValidRates) return;
+    setInviteMessage(`Please review the Brief for ${projectName} and let us know if you can take on the ${roleLabel} role.`);
+    setIsInviteConfirmOpen(true);
+  };
+
   const sendSelectedInvites = () => {
+    const message = inviteMessage.trim();
+    if (!message || selectedFreelancers.length === 0 || !selectedFreelancersHaveValidRates) return;
     selectedFreelancerIds
       .map((personId) => freelancers.find((person) => person.id === personId))
       .filter((person): person is TeamPerson => Boolean(person))
@@ -186,9 +220,10 @@ export function RoleEditorModal({
           getProjectHourlyRate(slot, person),
           getProjectRateValue(slot, person, draftRoleHours, projectRateOverridesByPersonId),
         );
-        if (paymentTerms) onInviteFreelancer(person, paymentTerms);
+        if (paymentTerms) onInviteFreelancer(person, paymentTerms, message);
       });
     setSelectedFreelancerIds([]);
+    setIsInviteConfirmOpen(false);
   };
 
   const assignSelectedFreelancer = () => {
@@ -212,7 +247,10 @@ export function RoleEditorModal({
   };
 
   const saveSettings = () => {
-    onSaveSettings(snapToQuarter(Number.parseFloat(draftHours) || 0), selectedStages);
+    onSaveSettings(selectedStages.map((stageId) => {
+      const estimatedHours = snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stageId] ?? "") || 0));
+      return { stageId, estimatedHours, manualEstimate: estimatedHours > 0 };
+    }));
   };
 
   const openNewFreelancerInvite = () => {
@@ -232,8 +270,6 @@ export function RoleEditorModal({
                 {acceptedPerson.personType === "Studio Freelancer" ? <FreelancePill /> : <StaffPill />}
                 {acceptedPerson.personType === "Studio Freelancer" && acceptedInvitation.assignmentMethod === "direct" ? <span className="team-assigned-indicator label-xs-semibold">Assigned</span> : null}
               </span>
-            ) : activeInvitations.length === 0 ? (
-              <span className="team-modal-empty-slot label-s">No-one assigned yet.</span>
             ) : null}
           </div>
           <div className="team-modal-header-actions">
@@ -271,43 +307,41 @@ export function RoleEditorModal({
 
         <section className="team-role-settings" aria-label="Role settings">
           <div className="team-role-settings-row">
-            <div className="team-setting-field">
-              <label className="label-xs-semibold" htmlFor={`role-hours-${slot.id}`}>
-                Hours needed
-              </label>
-              <input
-                className="team-inline-input team-hours-needed-input label-s"
-                id={`role-hours-${slot.id}`}
-                inputMode="decimal"
-                min="0"
-                step="0.25"
-                type="number"
-                value={draftHours}
-                onChange={(event) => setDraftHours(event.target.value)}
-              />
-            </div>
-            <div className="team-setting-field grow">
-              <span className="team-stage-summary label-s">{selectedStageSummary}</span>
-              <button className="team-inline-action label-s-semibold" type="button" onClick={() => setIsStagesExpanded((isExpanded) => !isExpanded)}>
-                {isStagesExpanded ? "Done" : "Edit stages"}
-              </button>
-            </div>
+            <span className="label-xs-semibold">Stages &amp; hours</span>
+            {availableStages.length > 0 ? <button className="team-inline-action label-s-semibold" type="button" aria-expanded={isStagesExpanded} onClick={() => setIsStagesExpanded((isExpanded) => !isExpanded)}>
+              Add stage
+            </button> : null}
+          </div>
+          <div className="team-stage-hours-list">
+            {selectedStages.map((stage) => <div className="team-stage-hours-row" key={stage}>
+                <button className="team-stage-hours-remove" type="button" aria-label={`Remove ${stageLabels[stage]} stage`} onClick={() => toggleStage(stage)}><span className="team-checkbox checked" aria-hidden="true">✓</span></button>
+                <label className="label-s" htmlFor={`role-hours-${slot.id}-${stage}`}>{stageLabels[stage]}</label>
+                <input
+                  className="team-inline-input team-hours-needed-input label-s"
+                  id={`role-hours-${slot.id}-${stage}`}
+                  aria-label={`${stageLabels[stage]} hours needed`}
+                  inputMode="decimal"
+                  min="0"
+                  step="0.25"
+                  type="number"
+                  value={draftHoursByStage[stage] ?? "0"}
+                  onChange={(event) => setDraftHoursByStage((currentHours) => ({ ...currentHours, [stage]: event.target.value }))}
+                />
+              </div>)}
+            {selectedStages.length > 1 && draftRoleHours > 0 ? <span className="team-stage-hours-total label-xs">Total {formatHours(draftRoleHours)}</span> : null}
           </div>
 
           {isStagesExpanded ? (
             <div className="team-stage-list compact">
-              {stages.map((stage) => {
-                const isSelected = selectedStages.includes(stage);
-
-                return (
-                  <button className={`team-stage-option ${isSelected ? "selected" : ""}`} type="button" key={stage} onClick={() => toggleStage(stage)}>
-                    <span className={`team-checkbox ${isSelected ? "checked" : ""}`}>{isSelected ? "✓" : ""}</span>
+              {availableStages.map((stage) => (
+                  <button className="team-stage-option" type="button" key={stage} onClick={() => toggleStage(stage)}>
+                    <span className="team-checkbox" aria-hidden="true" />
                     <span className="label-s-semibold">{stageLabels[stage]}</span>
                   </button>
-                );
-              })}
+              ))}
             </div>
           ) : null}
+          {areSettingsDirty ? <button className="team-secondary-button team-role-save label-s-semibold" type="button" onClick={saveSettings}>Save changes</button> : null}
         </section>
 
         {!acceptedPerson && !acceptedInvitation && activeInvitations.length > 0 ? (
@@ -323,73 +357,84 @@ export function RoleEditorModal({
           <div className="team-person-group-heading">
             <div className="team-segmented-control" role="tablist" aria-label="Fill type">
               <button className={`team-segment ${activeFillTab === "team" ? "active" : ""} label-s-semibold`} type="button" role="tab" aria-selected={activeFillTab === "team"} onClick={() => setActiveFillTab("team")}>
-                Studio Staff
+                Staff
               </button>
               <button className={`team-segment ${activeFillTab === "gig" ? "active" : ""} label-s-semibold`} type="button" role="tab" aria-selected={activeFillTab === "gig"} onClick={() => setActiveFillTab("gig")}>
-                Studio Freelancer
+                Freelancers
               </button>
             </div>
           </div>
 
           {activeFillTab === "team" ? (
             <PersonGroup>
-              {visibleStaff.map((person) => {
-                const disabledReason = getStaffDisabledReason(slot, person, assignedPersonIds);
-                const isSelected = selectedStaffId === person.id;
+              <div className={`team-person-options ${isAllStaffVisible ? "is-expanded" : ""}`}>
+                {visibleStaff.map((person) => {
+                  const disabledReason = getStaffDisabledReason(slot, person, assignedPersonIds);
+                  const isSelected = selectedStaffId === person.id;
 
-                return <StaffOption key={person.id} person={person} roleHours={draftRoleHours} isCurrentAssignee={person.id === currentAssigneeId} disabledReason={disabledReason} isSelected={isSelected} onSelect={() => toggleStaffSelection(person)} />;
-              })}
+                  return <StaffOption key={person.id} person={person} roleHours={draftRoleHours} isCurrentAssignee={person.id === currentAssigneeId} disabledReason={disabledReason} isSelected={isSelected} onSelect={() => toggleStaffSelection(person)} />;
+                })}
+              </div>
               {staff.length > suggestedStaff.length ? (
                 <button className="team-show-all-button label-s-semibold" type="button" onClick={() => setIsAllStaffVisible((isVisible) => !isVisible)}>
-                  {isAllStaffVisible ? "Show suggested" : `Show all Studio Staff (${staff.length})`}
+                  {isAllStaffVisible ? "Show suggested" : `Show all ${staff.length}`}
                 </button>
               ) : null}
-              <div className="team-fill-actions">
+              {selectedStaffId ? <div className="team-fill-actions">
                 <button className="team-secondary-button label-s-semibold" type="button" disabled={!selectedStaffId} onClick={assignSelectedStaff}>
                   {selectedStaffId === currentAssigneeId ? "Unassign" : "Assign"}
                 </button>
-              </div>
+              </div> : null}
             </PersonGroup>
           ) : (
-            <PersonGroup meta={formatInvitationCount(activeInvitations.length)}>
-              {visibleFreelancers.map((person) => {
-                const projectDisabledReason = getFreelancerProjectDisabledReason(slot, person, assignedPersonIds);
-                const isAlreadyInvited = isFreelancerAlreadyInvited(slot, person);
-                const isSelected = selectedFreelancerIds.includes(person.id);
-                const isCurrentAssignee = person.id === currentAssigneeId;
-                const isSelectionDisabled = !isCurrentAssignee && (Boolean(projectDisabledReason) || isAlreadyInvited);
+            <PersonGroup>
+              <div className={`team-person-options ${isAllFreelancersVisible ? "is-expanded" : ""}`}>
+                {visibleFreelancers.map((person) => {
+                  const projectDisabledReason = getFreelancerProjectDisabledReason(slot, person, assignedPersonIds);
+                  const isAlreadyInvited = isFreelancerAlreadyInvited(slot, person);
+                  const isSelected = selectedFreelancerIds.includes(person.id);
+                  const isCurrentAssignee = person.id === currentAssigneeId;
+                  const isSelectionDisabled = !isCurrentAssignee && (Boolean(projectDisabledReason) || isAlreadyInvited);
 
-                return (
-                  <FreelancerOption
-                    key={person.id}
-                    person={person}
-                    hourlyRate={getProjectHourlyRate(slot, person)}
-                    projectRate={getProjectRateValue(slot, person, draftRoleHours, projectRateOverridesByPersonId)}
-                    projectDisabledReason={projectDisabledReason}
-                    isAlreadyInvited={isAlreadyInvited}
-                    isSelected={isSelected}
-                    isSelectionDisabled={isSelectionDisabled}
-                    onProjectRateChange={(projectRate) => setProjectRateOverridesByPersonId((currentRates) => ({ ...currentRates, [person.id]: projectRate }))}
-                    onSelect={() => toggleFreelancerSelection(person)}
-                  />
-                );
-              })}
+                  return (
+                    <FreelancerOption
+                      key={person.id}
+                      person={person}
+                      showDefaultRole={person.defaultRole !== slot.role}
+                      hourlyRate={getProjectHourlyRate(slot, person)}
+                      projectRate={getProjectRateValue(slot, person, draftRoleHours, projectRateOverridesByPersonId)}
+                      projectDisabledReason={projectDisabledReason}
+                      isAlreadyInvited={isAlreadyInvited}
+                      isSelected={isSelected}
+                      isSelectionDisabled={isSelectionDisabled}
+                      onProjectRateChange={(projectRate) => setProjectRateOverridesByPersonId((currentRates) => ({ ...currentRates, [person.id]: projectRate }))}
+                      onProjectRateBlur={() => setProjectRateOverridesByPersonId((currentRates) => {
+                        if (currentRates[person.id]?.trim()) return currentRates;
+                        const nextRates = { ...currentRates };
+                        delete nextRates[person.id];
+                        return nextRates;
+                      })}
+                      onSelect={() => toggleFreelancerSelection(person)}
+                    />
+                  );
+                })}
+              </div>
               {freelancers.length > suggestedFreelancers.length ? (
                 <button className="team-show-all-button label-s-semibold" type="button" onClick={() => setIsAllFreelancersVisible((isVisible) => !isVisible)}>
-                  {isAllFreelancersVisible ? "Show suggested" : `Show all Studio Freelancers (${freelancers.length})`}
+                  {isAllFreelancersVisible ? "Show suggested" : `Show all ${freelancers.length}`}
                 </button>
               ) : null}
               <div className="team-fill-actions">
-                <span className="team-fill-primary-actions">
-                  <button className="team-primary-button team-send-invites-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length === 0 || !selectedFreelancersHaveValidRates} onClick={sendSelectedInvites}>
-                    {selectedFreelancerIds.length > 0 ? `Send ${selectedFreelancerIds.length} ${selectedFreelancerIds.length === 1 ? "invite" : "invites"}` : "Send invites"}
+                {selectedFreelancerIds.length > 0 ? <span className="team-fill-primary-actions">
+                  <button className="team-primary-button team-send-invites-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length === 0 || !selectedFreelancersHaveValidRates} onClick={openInviteConfirmation}>
+                    {selectedFreelancerIds.length > 1 ? `Invite ${selectedFreelancerIds.length}` : "Invite"}
                   </button>
                   <button className="team-secondary-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length !== 1 || !selectedFreelancersHaveValidRates} onClick={assignSelectedFreelancer}>
-                    {selectedFreelancerIds.length === 1 && selectedFreelancerIds[0] === currentAssigneeId ? "Unassign" : "Assign"}
+                    {selectedFreelancerIds.length === 1 && selectedFreelancerIds[0] === currentAssigneeId ? "Unassign" : "Assign now"}
                   </button>
-                </span>
+                </span> : null}
                 <button className="team-invite-email-link label-s-semibold" type="button" onClick={openNewFreelancerInvite}>
-                  + Invite new Studio Freelancer
+                  + Invite new freelancer
                 </button>
               </div>
             </PersonGroup>
@@ -397,14 +442,6 @@ export function RoleEditorModal({
         </section>
 
         {historicalInvitations.length > 0 ? <InvitationHistory invitations={historicalInvitations} people={people} /> : null}
-
-        <div className="team-modal-actions">
-          <span className="team-modal-action-group">
-            <button className="team-primary-button label-s-semibold" type="button" onClick={saveSettings}>
-              Save
-            </button>
-          </span>
-        </div>
 
         {staffPendingConfirmation ? (
           <div className="team-popconfirm" role="alertdialog" aria-label="Confirm staff assignment">
@@ -428,6 +465,22 @@ export function RoleEditorModal({
           </div>
         ) : null}
       </section>
+      {isInviteConfirmOpen && typeof document !== "undefined" ? createPortal(
+        <div className="share-confirm-backdrop" role="presentation" onMouseDown={() => setIsInviteConfirmOpen(false)} onClick={(event) => event.stopPropagation()}>
+          <section className="share-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="freelancer-invite-confirm-title" onMouseDown={(event) => event.stopPropagation()}>
+            <h2 className="headings-xs-bold" id="freelancer-invite-confirm-title">Send {selectedFreelancers.length === 1 ? "invite" : "invites"}?</h2>
+            <p className="paragraph-s">To: {selectedFreelancers.map((person) => person.name).join(", ")}</p>
+            <div className="share-send-message">
+              <label className="label-s-semibold" htmlFor="freelancer-invite-message">Message</label>
+              <textarea className="label-s" id="freelancer-invite-message" rows={4} maxLength={240} value={inviteMessage} onChange={(event) => setInviteMessage(event.target.value)} />
+            </div>
+            <div className="share-confirm-actions">
+              <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsInviteConfirmOpen(false)}>Cancel</button>
+              <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!inviteMessage.trim()} onClick={sendSelectedInvites}>{selectedFreelancers.length === 1 ? "Send invite" : `Send ${selectedFreelancers.length} invites`}</button>
+            </div>
+          </section>
+        </div>, document.body,
+      ) : null}
     </div>
   );
 }
@@ -522,6 +575,7 @@ function StaffOption({
 
 function FreelancerOption({
   person,
+  showDefaultRole,
   hourlyRate,
   projectRate,
   projectDisabledReason,
@@ -529,9 +583,11 @@ function FreelancerOption({
   isSelected,
   isSelectionDisabled,
   onProjectRateChange,
+  onProjectRateBlur,
   onSelect,
 }: {
   person: TeamPerson;
+  showDefaultRole: boolean;
   hourlyRate: number | undefined;
   projectRate: string;
   projectDisabledReason?: string;
@@ -539,6 +595,7 @@ function FreelancerOption({
   isSelected: boolean;
   isSelectionDisabled: boolean;
   onProjectRateChange: (value: string) => void;
+  onProjectRateBlur: () => void;
   onSelect: () => void;
 }) {
   const hasValidHourlyRate = typeof hourlyRate === "number" && hourlyRate > 0;
@@ -557,7 +614,7 @@ function FreelancerOption({
           {isAlreadyInvited ? <span className="team-person-disabled label-xs">Already invited</span> : null}
         </span>
         <span className="team-role-rate label-xs">
-          {teamRoleLabels[person.defaultRole]} · {hasValidHourlyRate ? `${formatHourlyRate(hourlyRate)}/hr` : "Hourly rate not set"}
+          {showDefaultRole ? `${teamRoleLabels[person.defaultRole]} · ` : ""}{hasValidHourlyRate ? `${formatHourlyRate(hourlyRate)}/hr` : "Hourly rate not set"}
         </span>
       </span>
       <label className="team-freelancer-project-rate label-xs-semibold">
@@ -573,6 +630,7 @@ function FreelancerOption({
             value={projectRate}
             disabled={isSelectionDisabled}
             onChange={(event) => onProjectRateChange(event.target.value)}
+            onBlur={onProjectRateBlur}
           />
         </span>
       </label>
@@ -669,10 +727,6 @@ function formatSentTime(sentAt: string) {
 
 function formatCurrency(value: number) {
   return `$${Math.round(value).toLocaleString("en-AU")}`;
-}
-
-function formatInvitationCount(count: number) {
-  return `${count} invited`;
 }
 
 function getInitialProjectRateOverrides(slot: RoleSlot) {

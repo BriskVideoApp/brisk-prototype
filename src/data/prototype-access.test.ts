@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { canActOnProject, canViewProject, getClientPortalAccess, type PrototypeViewer } from "@/data/prototype-access";
+import { canActOnProject, canViewPendingOfferBrief, canViewProject, getClientPortalAccess, type PrototypeViewer } from "@/data/prototype-access";
 import { createPopulatedStudioFixture, northStarWorkspaceId, selectClientPortalData, updateProjectTeamState } from "@/data/prototype-state";
 import { getPrototypeFreelancerViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { getMediaCapabilities } from "@/lib/media";
 import { getAcceptedFreelancerEngagements, getFreelancerEngagements, getPendingFreelancerEngagements } from "@/data/freelancer-videos";
 import { initialContractorOffers } from "@/data/costs";
+import { getProjectEntryHref, projectFixtureIds } from "@/data/project-fixtures";
 
 const state = createPopulatedStudioFixture();
 const staff: PrototypeViewer = { role: "Studio Staff", id: "user-tom", name: "Tom Mitchell", email: "tom@northstarfilms.com.au", workspaceId: northStarWorkspaceId, clientId: null, personId: "te", chatUserId: "user-tom" };
@@ -52,6 +53,26 @@ describe("prototype project access", () => {
     expect(canViewProject(freelancer, unassigned, state)).toBe(false);
     expect(canActOnProject(freelancer, ninaProject, state, "status")).toBe(false);
     expect(canActOnProject(freelancer, unassigned, state, "upload", "masters")).toBe(false);
+  });
+
+  it("lets a pending invitee read the offer Brief without opening the project or gaining actions", () => {
+    const jordan = getPrototypeFreelancerViewer(northStarWorkspaceId, "Jordan Lee");
+    if (!jordan) throw new Error("Jordan fixture is missing");
+    expect(canViewPendingOfferBrief(jordan, loom, state, initialContractorOffers)).toBe(true);
+    expect(canViewProject(jordan, loom, state)).toBe(false);
+    expect(canActOnProject(jordan, loom, state, "edit", "brief")).toBe(false);
+    expect(canViewPendingOfferBrief(freelancer, loom, state, initialContractorOffers)).toBe(false);
+    expect(canViewPendingOfferBrief(client, loom, state, initialContractorOffers)).toBe(false);
+    expect(canViewPendingOfferBrief(jordan, otherClient, state, initialContractorOffers)).toBe(false);
+    expect(canViewPendingOfferBrief(jordan, loom, state, initialContractorOffers.map((offer) =>
+      offer.id === "offer-loom-jl" ? { ...offer, state: "Declined" as const } : offer))).toBe(false);
+    const pendingSlot = loom.team.find((slot) => slot.invitations.some((invitation) => invitation.personId === "jl"
+      && (invitation.status === "invited" || invitation.status === "seen")));
+    if (!pendingSlot) throw new Error("Jordan's pending role fixture is missing");
+    const archived = updateProjectTeamState(state, loom.id, loom.team.map((slot) => slot.id === pendingSlot.id
+      ? { ...slot, archivedAt: "2026-09-28T09:00:00+10:00" } : slot));
+    expect(canViewPendingOfferBrief(jordan, loom, archived, initialContractorOffers)).toBe(false);
+    expect(getPendingFreelancerEngagements(archived.projects, "jl").some((engagement) => engagement.project.id === loom.id)).toBe(false);
   });
 
   it("rejects access outside the active workspace and paused Client contacts", () => {
@@ -139,6 +160,12 @@ describe("prototype project access", () => {
     const deel = state.projects.find((project) => project.id === "deel-customer-story")!;
     expect(getMediaCapabilities("Studio Freelancer", deel.id, [deel], false, "jl").canUpload).toBe(true);
     expect(getMediaCapabilities("Studio Freelancer", deel.id, [deel], false, "np").canUpload).toBe(false);
+    expect(canViewProject(jordan, deel, state)).toBe(true);
+    expect(getProjectEntryHref(deel)).toBe("/projects/deel-customer-story/stages/media");
+    const linear = state.projects.find((project) => project.id === "linear-roadmap-film")!;
+    expect(canViewProject(jordan, linear, state)).toBe(true);
+    expect(projectFixtureIds).toContain(linear.id);
+    expect(getProjectEntryHref(linear)).toBe("/projects/linear-roadmap-film/stages/masters");
   });
 
   it("does not offer a withdrawn invitation as open work", () => {

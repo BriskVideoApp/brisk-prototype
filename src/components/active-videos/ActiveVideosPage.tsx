@@ -18,7 +18,7 @@ import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLog
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { todayCurrentUserId } from "@/data/today/mockData";
-import { getDemoProjectDestination } from "@/data/projects";
+import { getProjectStageHref } from "@/data/project-fixtures";
 import { formatCostAmount, type ContractorInvoice, type ContractorOffer, type CostCurrency } from "@/data/costs";
 import {
   readSharedTimeEntries,
@@ -123,7 +123,7 @@ const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "statu
 const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
 
 function getProjectFlowHref(projectId: string) {
-  return getDemoProjectDestination(projectId, "brief")?.href ?? `/projects/${encodeURIComponent(projectId)}/stages/brief`;
+  return getProjectStageHref(projectId, "brief");
 }
 
 const filterLabels: Record<FilterKey, string> = {
@@ -342,11 +342,13 @@ function ActiveVideosWorkspace() {
     [panelProjectId, projects],
   );
 
-  const updateProjectQuery = (projectId: string | null, mode: "push" | "replace" = "push") => {
+  const updateProjectQuery = (projectId: string | null, mode: "push" | "replace" = "push", section?: ProjectPanelSection) => {
     const url = new URL(window.location.href);
 
     if (projectId) {
       url.searchParams.set("project", projectId);
+      if (section) url.searchParams.set("section", section);
+      else url.searchParams.delete("section");
     } else {
       url.searchParams.delete("project");
       url.searchParams.delete("section");
@@ -393,7 +395,7 @@ function ActiveVideosWorkspace() {
     }
 
     setIsProjectPanelOpen(true);
-    updateProjectQuery(projectId, mode);
+    updateProjectQuery(projectId, mode, nextFocusSection ?? undefined);
   };
 
   const closeProjectPanel = (mode: "push" | "replace" = "push") => {
@@ -1290,7 +1292,7 @@ function ProjectDetailPanel({
       setEditingSection(sectionRequest.section);
     }
     scrollPanelSectionToTop(sectionRequest.section);
-  }, [scrollPanelSectionToTop, sectionRequest]);
+  }, [project.id, scrollPanelSectionToTop, sectionRequest]);
 
   const selectPanelSection = useCallback((section: ProjectPanelSection) => {
     setFocusedPanelSection(section);
@@ -1411,15 +1413,9 @@ function ProjectDetailPanel({
       <div className={`project-detail-panel-body ${isSwitching ? "switching" : ""}`} ref={panelBodyRef}>
         <section className="project-detail-section">
           <div className="project-detail-actions">
-            {projectFlowHref ? (
-              <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
-                Open full project
-              </a>
-            ) : (
-              <span className="project-detail-action-button project-detail-action-primary is-disabled label-s-semibold" aria-disabled="true">
-                Demo not available
-              </span>
-            )}
+            <a className="project-detail-action-button project-detail-action-primary label-s-semibold" href={projectFlowHref}>
+              Open full project
+            </a>
             <a className="project-detail-action-button label-s-semibold" href={`/chat?project=${encodeURIComponent(project.id)}`}>
               <span className="project-detail-action-icon">
                 <DsIcon name="chats" size={20} />
@@ -1427,12 +1423,6 @@ function ProjectDetailPanel({
               </span>
               Open chat
             </a>
-            <span className="project-detail-action-button is-disabled label-s-semibold" aria-disabled="true" title="Demo not available">
-              <span className="project-detail-action-icon">
-                <DsIcon name="queue" size={20} />
-              </span>
-              Client queue
-            </span>
           </div>
         </section>
 
@@ -2231,6 +2221,20 @@ function ProjectRow({
           return;
         }
 
+        const sectionByColumn: Partial<Record<DataColumnKey, ProjectPanelSection>> = {
+          latestUpdate: "latestActions",
+          deadline: "deadline",
+          hours: "hours",
+          costs: "costs",
+          team: "team",
+        };
+        const matchingColumn = visibleColumns.find((columnKey) => cell?.classList.contains(`column-${columnKey}`));
+        const matchingSection = matchingColumn ? sectionByColumn[matchingColumn] : undefined;
+        if (matchingSection) {
+          onOpenPanelSection(matchingSection);
+          return;
+        }
+
         onOpenDetails();
       }}
     >
@@ -2290,7 +2294,7 @@ function ProjectCell({
   project: ScopedProject;
   fileLocations: ProjectFileLocation[];
   hasLoadedRole: boolean;
-  projectFlowHref: string | null;
+  projectFlowHref: string;
   selectedRole: PrototypeRole;
   tags: string[];
   tagOptions: string[];
@@ -2354,16 +2358,9 @@ function ProjectCell({
           <span className="client-badge label-xs-semibold">{project.clientBadge}</span>
         )}
         <div className="project-title-row">
-          {projectFlowHref ? (
-            <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
-              {project.name}
-            </a>
-          ) : (
-            <span className="project-title is-static heading-3xs" title="Demo not available">
-              {project.name}
-              <small className="project-demo-unavailable label-xs">Demo not available</small>
-            </span>
-          )}
+          <a className="project-title heading-3xs" href={projectFlowHref} onClick={(event) => event.stopPropagation()}>
+            {project.name}
+          </a>
           <div className="project-quick-actions" aria-label={`Quick actions for ${project.name}`}>
             <a
               className="project-quick-action"

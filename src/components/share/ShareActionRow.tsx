@@ -361,7 +361,7 @@ export function ShareActionRow({
   const waitingTooltip = canOpenReviewDetails ? `${lastSentLabel}. Send reminder to ${currentReviewCompanyName}.` : undefined;
   const submitTooltip = isStudioFreelancer
     ? `Send to ${studioName} for review.`
-    : `Choose who to send this to for review: ${isCustomerView ? studioName : customerName} or your team.`;
+    : `Send to ${isCustomerView ? studioName : customerName} or your team.`;
   const sendTooltip = isWaitingOnReview ? waitingTooltip : sendsStageForReview ? submitTooltip : undefined;
 
   useEffect(() => {
@@ -886,18 +886,23 @@ export function ShareActionRow({
           <p className="paragraph-s">{followUpKind
             ? `This will send ${currentReviewCompanyName} another notification. The project will remain Waiting on ${currentReviewCompanyName}.`
             : sendsStageForReview
-            ? `This will notify ${submitCompanyName} and set the project status to Waiting on ${submitCompanyName}.`
+            ? isStudioFreelancer || userRole === "Studio Staff"
+              ? `Status changes to Waiting on ${selectedDestination === "studio" ? "studio" : "client"}.`
+              : `This will notify ${submitCompanyName} and set the project status to Waiting on ${submitCompanyName}.`
             : `This records the selected item as sent. The project status will not change.`}</p>
-          {sendsStageForReview && !followUpKind ? <div className="share-submit-destinations" role="radiogroup" aria-label="Send to">
-            {(isStudioFreelancer ? ["studio"] as SubmitDestination[] : [defaultDestination, defaultDestination === "customer" ? "studio" : "customer"] as SubmitDestination[]).map((destination) => (
-              <button className={`share-submit-destination ${selectedDestination === destination ? "is-selected" : ""}`} type="button" role="radio" aria-checked={selectedDestination === destination} key={destination} onClick={() => {
+          {sendsStageForReview && !followUpKind && !isStudioFreelancer ? <div className={`share-submit-destinations ${userRole === "Studio Staff" ? "is-compact" : ""}`} role="radiogroup" aria-label="Send to">
+            {userRole === "Studio Staff" ? <span className="label-s-semibold">To</span> : null}
+            {([defaultDestination, defaultDestination === "customer" ? "studio" : "customer"] as SubmitDestination[]).map((destination) => (
+              <button className={`share-submit-destination ${selectedDestination === destination ? "is-selected" : ""}`} type="button" role="radio" aria-label={`${destination === "studio" ? "Studio" : "Client"}: ${destination === "studio" ? studioName : customerName}`} aria-checked={selectedDestination === destination} key={destination} onClick={() => {
                 setSelectedDestination(destination);
                 setSendMessage(submitMessageFor(destination));
                 setMentionCursor(null);
                 setMentionPickerMode(null);
               }}>
-                <span className="share-radio-control" aria-hidden="true" />
-                <span><strong className="label-s-semibold">{destination === "studio" ? studioName : customerName}</strong><small className="label-xs">{destination === defaultDestination ? destination === "studio" ? isCustomerView ? "Studio" : "Studio team" : isCustomerView ? "Your team" : "Client" : destination === "studio" ? "Studio team" : "Your team"}</small></span>
+                {userRole === "Studio Staff" ? <span className="label-s-semibold">{destination === "studio" ? "Studio" : "Client"}</span> : <>
+                  <span className="share-radio-control" aria-hidden="true" />
+                  <span><strong className="label-s-semibold">{destination === "studio" ? studioName : customerName}</strong><small className="label-xs">{destination === defaultDestination ? destination === "studio" ? isCustomerView ? "Studio" : "Studio team" : isCustomerView ? "Your team" : "Client" : destination === "studio" ? "Studio team" : "Your team"}</small></span>
+                </>}
               </button>
             ))}
           </div> : null}
@@ -907,7 +912,7 @@ export function ShareActionRow({
           </div> : null}
           {(followUpKind || (sendsStageForReview && (sendMessageEnabled || context !== "brief"))) ? <div className="share-send-message">
             <div className="share-send-message-heading">
-              <label className="label-s-semibold" id={`${sendMessageId}-label`} htmlFor={sendMessageId} onClick={() => sendMessageRef.current?.focus()}>Message to {followUpKind ? currentReviewCompanyName : sendsStageForReview ? submitCompanyName : resolvedSendCompanyName}</label>
+              <label className="label-s-semibold" id={`${sendMessageId}-label`} htmlFor={sendMessageId} onClick={() => sendMessageRef.current?.focus()}>{!followUpKind && sendsStageForReview && (isStudioFreelancer || userRole === "Studio Staff") ? "Message" : `Message to ${followUpKind ? currentReviewCompanyName : sendsStageForReview ? submitCompanyName : resolvedSendCompanyName}`}</label>
               {userRole === "Studio Staff" && followUpKind !== "updated" ? <Link className="label-xs-semibold" href={context === "brief" && (followUpKind === "reminder" || selectedDestination === "customer") ? followUpKind === "reminder" ? reminderMessageSettingsHref : reviewMessageSettingsHref : `/settings/review-request-message?destination=${selectedDestination}&stage=${encodeURIComponent(reviewSubjectTitle)}&project=${encodeURIComponent(projectName)}&returnTo=${encodeURIComponent(shareUrl ?? "/active-videos")}`}>Edit default in settings</Link> : null}
             </div>
             <div className="share-submit-message-editor">
@@ -928,14 +933,14 @@ export function ShareActionRow({
               </div> : null}
             </div>
             {sendsStageForReview && !followUpKind ? <>
-              <p className="share-submit-notice label-xs">{mentionedMembers.length
+              {(!isStudioFreelancer && userRole !== "Studio Staff") || mentionedMembers.length ? <p className="share-submit-notice label-xs">{mentionedMembers.length
                 ? `Only ${formatMentionedPeople(mentionedMembers)} will be notified. Other ${submitCompanyName} project members can still view this.`
-                : `Everyone from ${submitCompanyName} on this project will be notified.`}</p>
+                : `Everyone from ${submitCompanyName} on this project will be notified.`}</p> : null}
             </> : null}
           </div> : null}
           <div className="share-confirm-actions">
             <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsSendConfirmationOpen(false)}>Cancel</button>
-            <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : sendsStageForReview ? `Send to ${submitCompanyName}` : resolvedSendLabel}</button>
+            <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!followUpKind && sendsStageForReview && !sendMessage.trim()} onClick={performSend}>{followUpKind === "reminder" ? "Send reminder" : followUpKind === "updated" ? `Send updated ${reviewSubjectTitle}` : sendsStageForReview ? isStudioFreelancer || userRole === "Studio Staff" ? `Send ${reviewSubjectTitle}` : `Send to ${submitCompanyName}` : resolvedSendLabel}</button>
           </div>
         </section>
       </div>, document.body) : null}

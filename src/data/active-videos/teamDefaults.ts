@@ -317,7 +317,13 @@ export function createDefaultRoleSlots({
     }
 
     if (roleName === "shooter" && scenario === "pendingShooterTwo") {
-      return createPendingFreelanceSlot(baseSlot, ["jl", "ak"], ["seen", "invited"]);
+      const pendingSlot = createPendingFreelanceSlot(baseSlot, ["jl", "ak"], ["seen", "invited"]);
+      return {
+        ...pendingSlot,
+        invitations: pendingSlot.invitations.map((invitation) => invitation.personId === "jl"
+          ? { ...invitation, rateSnapshot: 122.5 }
+          : invitation),
+      };
     }
 
     if (roleName === "shooter" && scenario === "pendingShooterThree") {

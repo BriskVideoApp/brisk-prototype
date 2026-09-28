@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { RoleSlot } from "@/components/active-videos/types";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -17,6 +17,7 @@ export function ProjectTeamDataProvider({ children }: { children: ReactNode }) {
   const [teamsByProjectId, setTeamsByProjectId] = useState<Record<string, RoleSlot[]>>(() => Object.fromEntries(
     activeVideoProjects.map((project) => [project.id, project.team]),
   ));
+  const teamsRef = useRef(teamsByProjectId);
 
   useEffect(() => {
     if (!hasHydrated) return;
@@ -25,16 +26,18 @@ export function ProjectTeamDataProvider({ children }: { children: ReactNode }) {
       for (const project of state.projects) {
         if (Object.hasOwn(current, project.id) || project.team.length > 0) next[project.id] = project.team;
       }
+      teamsRef.current = next;
       return next;
     });
   }, [hasHydrated, state.projects]);
 
   const setProjectTeam = useCallback((projectId: string, update: RoleSlot[] | ((currentTeam: RoleSlot[]) => RoleSlot[])) => {
-    const currentTeam = teamsByProjectId[projectId] ?? state.projects.find((project) => project.id === projectId)?.team ?? [];
+    const currentTeam = teamsRef.current[projectId] ?? state.projects.find((project) => project.id === projectId)?.team ?? [];
     const nextTeam = typeof update === "function" ? update(currentTeam) : update;
+    teamsRef.current = { ...teamsRef.current, [projectId]: nextTeam };
     setTeamsByProjectId((current) => ({ ...current, [projectId]: nextTeam }));
     updateProjectTeam(projectId, nextTeam);
-  }, [state.projects, teamsByProjectId, updateProjectTeam]);
+  }, [state.projects, updateProjectTeam]);
 
   const value = useMemo<ProjectTeamDataContextValue>(() => ({ teamsByProjectId, setProjectTeam }), [setProjectTeam, teamsByProjectId]);
 

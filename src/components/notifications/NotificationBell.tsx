@@ -83,7 +83,6 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
           <header className="notification-popover-header">
             <div>
               <h2 className="headings-xs-bold">Notifications</h2>
-              <span className="label-xs">Updates that need your attention.</span>
             </div>
             <div className="notification-popover-actions">
               <button
@@ -119,9 +118,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
             </div>
           ) : (
             <div className="notification-popover-empty">
-              <DsIcon name="bell" size={24} />
               <strong className="label-s-semibold">No notifications yet</strong>
-              <span className="label-xs">Important updates for you will appear here.</span>
             </div>
           )}
 
@@ -131,7 +128,6 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
               onNavigate?.();
             }}>
               View all notifications
-              <DsIcon name="caret-right" size={16} />
             </Link>
           </footer>
         </section>

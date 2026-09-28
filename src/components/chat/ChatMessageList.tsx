@@ -10,10 +10,7 @@ import {
 import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { ProjectSystemPost } from "@/components/notifications/ProjectSystemPost";
-import {
-  getDemoProjectDestination,
-  type DemoProjectExperience,
-} from "@/data/projects";
+import { getProjectStageHref } from "@/data/project-fixtures";
 import type {
   ChatAttachment,
   ChatChannel,
@@ -295,31 +292,20 @@ export function ChatMessageCard({
             </time>
           </span>
           <span className="chat-project-update-cta label-s-semibold">
-            {getProjectUpdateHref(project.id, projectUpdate.asset) ? projectUpdate.ctaLabel : "Demo not available"}
+            {projectUpdate.ctaLabel}
           </span>
         </>
       );
       const projectUpdateHref = getProjectUpdateHref(project.id, projectUpdate.asset);
 
-      return projectUpdateHref ? (
-        <a
-          className={`chat-project-update-card ${highlighted ? "highlighted" : ""}`}
-          href={projectUpdateHref}
-          id={`chat-message-${message.id}`}
-          aria-label={`${projectUpdate.ctaLabel}: ${projectUpdate.context}`}
-        >
-          {projectUpdateContent}
-        </a>
-      ) : (
-        <div
-          className={`chat-project-update-card is-static ${highlighted ? "highlighted" : ""}`}
-          id={`chat-message-${message.id}`}
-          aria-disabled="true"
-          title="Demo not available"
-        >
-          {projectUpdateContent}
-        </div>
-      );
+      return <a
+        className={`chat-project-update-card ${highlighted ? "highlighted" : ""}`}
+        href={projectUpdateHref}
+        id={`chat-message-${message.id}`}
+        aria-label={`${projectUpdate.ctaLabel}: ${projectUpdate.context}`}
+      >
+        {projectUpdateContent}
+      </a>;
     }
 
     return (
@@ -682,13 +668,13 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
 }
 
 function getProjectUpdateHref(projectId: string, asset: "Script" | "Edit" | "Masters") {
-  const experienceByAsset: Record<typeof asset, DemoProjectExperience> = {
+  const stageByAsset = {
     Script: "script",
     Edit: "edit",
     Masters: "masters",
-  };
+  } as const;
 
-  return getDemoProjectDestination(projectId, experienceByAsset[asset])?.href ?? null;
+  return getProjectStageHref(projectId, stageByAsset[asset]);
 }
 
 function stripEventEmoji(copy: string) {

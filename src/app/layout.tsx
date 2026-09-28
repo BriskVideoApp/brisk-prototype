@@ -6,7 +6,7 @@ import "@/components/video-review/video-review.css";
 import "@/components/active-videos/active-videos.css";
 import "@/components/active-videos/freelancer-videos.css";
 import "@/components/today/today.css";
-import "@/components/today/freelancer-today.css";
+import "@/components/active-videos/freelancer-time-dialog.css";
 import "@/components/project/team/team-panel.css";
 import "@/components/notifications/project-history.css";
 import "@/components/notifications/notification-inbox.css";
