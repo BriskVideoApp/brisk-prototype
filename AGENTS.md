@@ -1,26 +1,30 @@
-# AGENTS.md (master rules for Codex)
-
-<aside>
-📄
-
-**File name:** `AGENTS.md` • Place at the **root** of the `brisk-prototype` repo. Codex and Claude Code both read this file first on every session. Keep it short - this is the rule book, not the spec.
-
-</aside>
-
-## How to use this file
-
-- Export the markdown block below as `AGENTS.md` and drop it at the **root** of the repo (not in `/docs/`).
-- Update it when house rules change. Don't add feature specs here - they live in `/docs/`.
-- After any change, prompt Codex: *"Re-read AGENTS.md before continuing."*
-
-Read Brisk DS/guidelines/Guidelines.md before using any component - it has the exact prefixes, token paths, and missing-asset protocol
-
-## File content
-
-```markdown
 # AGENTS.md - Brisk Prototype
 
 You are working on the Brisk prototype. Brisk is a SaaS for video production teams. This repo is a front-end-only reference. The developer will rebuild it for production. Read this file fully before doing anything else.
+
+Read `Brisk DS/guidelines/Guidelines.md` before using any component; it defines the exact prefixes, token paths and missing-asset protocol.
+
+## Working repository and approved rules
+
+- Work in `BriskVideoApp/brisk-prototype` on `codex/unified-brisk-prototype`. Do not switch to or update `main`, or create another branch, unless Tom explicitly asks.
+- Latest explicit user-approved decisions take precedence over older planning documents and screenshots. Existing code is evidence of current behaviour, not proof that a conflicting product decision was approved.
+- The only prototype access roles are **Studio Staff**, **Studio Freelancer** and **Customer**, defined in `src/components/navigation/PrototypeRoleContext.tsx`. Job titles do not create additional access roles.
+- Never use legacy assets from `Brisk Visuals/Flow icons/`. Use the current `StageChip` stage presentation and approved assets exposed through `DsIcon` under `/public/brisk-icons/`.
+- Keep the prototype front-end only with mock data. Product plans for authentication, Studio isolation or integrations do not authorise backend work.
+- Preserve this branch's newer production flows, optional Storyboard, Animation, pinned Media, Client preview and project naming behaviour. Do not replace them with older fixed-stage or five-role guidance from `main` or Notion. Resolve material conflicts before changing the affected behaviour.
+- The `brisk-*.md` files are reusable project guidance, not installed Codex `SKILL.md` packages.
+
+## Ticket preflight
+
+When asked to implement a ticket from any source:
+
+1. Read the full ticket from its supplied source, using an available connector when needed. If inaccessible, ask the user to paste the full ticket before implementation.
+2. Read relevant Brisk instructions, screen references and existing prototype/code. Look up available facts rather than asking the user to repeat them.
+3. Treat the ticket as the working specification. Identify only material unanswered product decisions, conflicts or assumptions whose consequences could change the experience. Do not repeat questions already answered by the ticket or code, or reopen settled decisions without a material conflict.
+4. If blockers remain, ask a short, grouped set of independent questions with a sensible recommendation and brief reason for each. Ask a short follow-up round only when an answer reveals another material dependency. Do not guess consequential product choices or implement blocked behaviour before it is resolved.
+5. If there are no blockers, proceed with one-ticket-at-a-time implementation. The user does not need to repeat this preflight in every prompt.
+
+Do not automatically run Matt Pocock's full Grill Me, To Spec or To Tickets flow, or generate a redundant specification. Use deeper discovery or ticket splitting only when requested or when the scope requires it; resolve the necessary scope decision first.
 
 ## Mission
 
@@ -59,7 +63,7 @@ brisk-prototype/
 
 ├── Brisk DS/                       ← Yura's components (do not rebuild)
 
-├── Brisk Visuals/                  ← exported DS visual assets: flow icons, logos, illustrations, pictograms
+├── Brisk Visuals/                  ← exported visual references; archived Flow icons must not be used
 
 ├── docs/                           ← feature briefs (added as we go)
 
@@ -71,17 +75,18 @@ brisk-prototype/
 
 	└── data/                       ← hard-coded mock data
 
+```
 
-## Skill file routing
+## Project guidance routing
 
-Before generating any screen, load the right skill:
+Before generating any screen, read the relevant project guidance:
 
 - **Anything visual** (colour, type, spacing, components, states) → `brisk-design-system.md`
 - **Filmmaker language, stages, statuses, terminology** → `brisk-production-journey.md`
 - **Roles, white-label, client portal, onboarding** → `brisk-saas-patterns.md`
 - **Component code** → import from `Brisk DS/`. Do not rebuild components that already exist there.
 
-If a question spans multiple skills (most do), load all relevant ones.
+If a question spans multiple topics (most do), read all relevant guidance files.
 
 ## Screen references
 
@@ -110,15 +115,23 @@ Use this verification ladder instead:
 
 `tsc` + a runtime HTTP check is the minimum bar for "work complete". `npm run build` passing is neither necessary nor sufficient - it doesn't catch hydration errors, and it breaks the dev server.
 
+## Final review and handoff
+
+Before marking a ticket complete:
+
+1. Review the diff against the full ticket and acceptance criteria, then against Brisk's role, visibility, visual, terminology and scope rules.
+2. For application changes, run the approved verification above and inspect the affected behaviour in the running prototype. An HTTP 200 alone does not verify browser interactions or role visibility. Do not add tests or run a production build unless requested.
+3. Fix in-scope issues found during review. Report unresolved gaps, consequential decisions and any checks that could not be run; do not claim unverified behaviour works.
+4. For instruction-only or documentation-only changes, verify the saved text, links and diff instead of running application checks. Confirm application code and assets are unchanged.
+
 ## Design system rules
 
 - **Always import from `Brisk DS/`.** Do not rebuild Button, Input, Card, Modal, Table, etc.
 - If a component is missing from `Brisk DS/`, ask before creating it locally. Don't silently invent.
 - Use Brisk DS tokens (CSS variables) for every colour, spacing, radius, shadow, and text style. No magic numbers.
-- Use Flow icons only (in `Brisk DS/`). Do not import icons from other libraries.
-- Use exported visual assets from `Brisk Visuals/` for Flow icons, logos, illustrations, and pictograms.
-- Flow icons live in `Brisk Visuals/Flow icons/`. Use these SVGs for production stages before falling back to placeholder or generic icons.
-- Do not recreate Flow icons with generic Phosphor icons, letter tiles, or local approximations.
+- Use existing `StageChip` stage icons and `DsIcon` general UI icons, with approved assets under `/public/brisk-icons/`. Do not import icons from other libraries.
+- Use approved visual assets for logos, illustrations and pictograms. Never import archived stage icons from `Brisk Visuals/Flow icons/`.
+- If an approved icon is missing, follow the missing-asset protocol and use text until it is supplied. Do not substitute generic icons, letter tiles or local approximations.
 - Current production-flow UI uses the circular stage treatment. The adaptable flow supports Brief, Script, Shoot, Storyboard, Edit or Animation, and Masters. Media stays pinned outside the reorderable flow because it is available throughout a project.
 - Show Shoot once in the project flow. Pre-production and On Set are substages inside Shoot. Do not add Shoot Plan or On Set as separate project-flow stages.
 - Storyboard is an optional project-flow stage after Script. Animation replaces Edit as the user-facing stage name for animation projects while retaining the same version, review and approval behaviour.
@@ -131,7 +144,7 @@ The prototype must include a persistent role switcher in the top bar that lets t
 - Studio Freelancer
 - Customer
 
-V1 keeps the role model deliberately simple - three roles, no granular permissions. The original five-role split (Owner/Manager/Filmmaker on Studio side; Account Owner/Teammate on Customer side) is deferred to V2.
+Keep the prototype to exactly these three access roles. The former five-role split is superseded for the current prototype; do not introduce additional roles or granular permission screens unless explicitly requested.
 
 This is a prototype demo affordance only - in production, role is set by the user account.
 
@@ -155,12 +168,12 @@ This is a prototype demo affordance only - in production, role is set by the use
 
 ## Behaviour rules
 
-- **Read AGENTS.md and the relevant skills before generating code.** If you didn't, stop and re-read.
+- **Read AGENTS.md and relevant Brisk guidance before generating code.** If you didn't, stop and re-read.
 - **Ask before destructive changes.** Deleting files, renaming top-level folders, changing the stack - confirm first.
-- **Stop after the happy path.** Don't add edge cases, error states, or loading states unless asked.
+- **Keep implementation to the requested happy path.** Include applicable design-system interaction and empty states, but do not invent unrelated error, loading or edge-case flows. Still surface consequential product risks during preflight.
 - **One feature at a time.** Don't bundle multiple features in one session.
-- **If a spec is ambiguous, ask.** Don't guess at product behaviour.
-- **Surface trade-offs.** If two approaches are reasonable, name both and ask.
+- **Resolve material product ambiguity through the ticket preflight.** Do not guess consequential behaviour.
+- **Surface material trade-offs with recommendations.** Routine implementation choices within the ticket and existing patterns do not need a new approval round.
 
 ## Don't
 
@@ -168,7 +181,7 @@ This is a prototype demo affordance only - in production, role is set by the use
 - Don't add libraries to the stack without asking.
 - Don't rebuild components that already exist in `Brisk DS/`.
 - Don't write tests or set up CI/CD unless asked.
-- Don't use the word "task" for units of work - use "Stage" (see Production Journey skill).
+- Use "Stage" for units of work inside a video's production journey (see Production Journey guidance). Development tickets and the existing Today to-do terminology are not additional production stages.
 - Don't use Style Frames / Styleframes as an Active Videos stage. It is redundant for Brisk's current production flow.
 - Don't design Quote, Proposal, or Concept flows - they're not in Brisk yet.
 - Don't ship desktop-only client-facing flows - client surfaces must work on mobile.
@@ -184,4 +197,3 @@ Never em dashes (—). Use hyphens (-).
 ## When in doubt
 
 Ask Tom. Better to pause for a clarifying question than to ship guesses.
-```

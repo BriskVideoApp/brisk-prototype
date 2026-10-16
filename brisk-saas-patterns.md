@@ -20,7 +20,7 @@ You are designing for Brisk, a SaaS platform used by many production companies. 
 
 ## User roles
 
-Brisk has two access-role groups: **Studio** (the production company) and **Customer** (the client side). The current V1 access roles are **Studio Staff**, **Studio Freelancer** and **Customer**. See the Production Journey skill for full role definitions.
+Brisk has two access-role groups: **Studio** (the production company) and **Customer** (the client side). The only prototype access roles are **Studio Staff**, **Studio Freelancer** and **Customer**. See the Production Journey guidance for role definitions. These are mock-data visibility rules, not production authentication.
 
 ### User-facing terminology
 
@@ -38,7 +38,7 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 
 ## Studio isolation
 
-- Each Studio has its own data, files, members, and branding.
+- Each Studio is intended to have its own data, files, members and branding. Represent this with mock data only in the current front-end prototype.
 - Never reference another Studio's data in a screen.
 - If a user belongs to multiple Studios, show a Studio switcher in the top-left.
 
@@ -56,14 +56,14 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 ## White-label
 
 - Clients see the production company's brand, not Brisk's.
-- Studio Owner uploads logo, sets primary colour (within neo-brutalism constraints from the kit).
+- Studio Staff can demonstrate logo and primary-colour settings using mock data and the approved kit; do not introduce a separate Studio Owner access role.
 - Brisk branding is hidden in client-facing views by default.
 - Lower-tier plans may include a small "Powered by Brisk" footer.
 - Internal team views may show Brisk branding lightly; client views never.
 
 ## Client experience
 
-- Magic-link access only. No password required for clients.
+- Demonstrate the intended password-free magic-link experience as UI only. Do not add real authentication, email delivery or backend services.
 - First-time access prompts name + email only, not a full signup.
 - Returning clients are remembered by email.
 - Client portal shows only relevant items: deliverables, approvals, messages.
@@ -81,8 +81,8 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 
 - If a user can't do something, explain why in plain English.
 - Bad: "Insufficient permissions."
-- Good: "Only Studio Owners can change billing. Ask Tom (Studio Owner) for access."
-- Always name the role that *can* do the action.
+- Good: "Only Studio Staff can manage Studio settings in this prototype."
+- Name the relevant prototype role when access matters without suggesting production access controls are implemented.
 
 ## Empty states (SaaS-specific)
 
