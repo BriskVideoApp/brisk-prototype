@@ -2,6 +2,10 @@
 
 You are designing screens for **Brisk**, a multi-tenant SaaS platform for video production teams. Apply the rules below to every component, layout, and screen you generate. These rules override generic design defaults.
 
+## Current source of truth
+
+The current prototype and latest approved decisions take precedence over archived design references. The prototype has exactly three roles: **Studio Staff**, **Studio Freelancer**, and **Customer**. The old five-role model is not used. Legacy Flow icons are prohibited; the current `StageChip` stage icons and `<DsIcon />` general icons are the approved sources.
+
 ## Visual language: Neo-brutalism
 
 - Style is neo-brutalism: clean, confident, slightly raw. Not skeuomorphic. Not glassy. Not soft.
@@ -81,8 +85,8 @@ These are the workflow progress icons rendered on Active Videos and any other st
 ### General UI icons
 All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 
-- Come from the DS icon library in `Brisk DS/`.
-- Import via the `<DsIcon />` component. Never inline SVG paths, never reference an icon by file path.
+- Use the current Brisk icon assets exposed through `<DsIcon />` at `src/components/video-review/DsIcon.tsx`. The component maps approved names to SVG assets under `/public/brisk-icons/`.
+- Use `<DsIcon />` by name. Do not inline SVG paths or reference assets directly when constructing general UI.
 - Default size: 16px in dense surfaces, 20px in headers, 24px only for hero moments.
 - Default colour: `--gray-60` for passive, `--gray-90` for active, `--brand-primary` only inside primary buttons.
 - Banned: Lucide, Heroicons, Feather, Font Awesome, Material Icons, Unicode glyphs, emoji-as-icon. Emoji are allowed in user-generated content only.
@@ -91,13 +95,13 @@ All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 ## Components
 
 - Always import from the `Brisk DS/` folder. Do not rebuild Button, Input, Card, Modal, Table, etc.
-- **Desktop components** are marked `D` in the kit. Use these for Studio surfaces.
-- **Mobile components** are marked `M`. Use these for all client-facing flows and for any Studio surface that must remain usable on mobile. Mobile is a first-class target alongside desktop.
+- Prefer existing components and responsive patterns used by the current prototype over any older kit naming conventions.
+- Make all Customer-facing flows usable on mobile. Studio surfaces may be desktop-first but should remain usable on mobile.
 - If a component is missing from the kit, ask before creating a local one. Don't silently invent.
 
 ## States
 
-Every interactive element must define:
+Follow the design system's applicable interaction states. For a requested feature, implement the relevant states rather than inventing unrelated error or loading flows:
 
 - Default
 - Hover (shadow appears)
@@ -123,7 +127,7 @@ Every interactive element must define:
 - Apply dark strokes to interactive elements and major containers.
 - Design desktop and mobile in parallel. Client-facing flows are mobile-first.
 - Preserve the tag negative-spacing workaround.
-- Use Flow icons only.
+- Use the current `StageChip` icon mapping for the six production stages and `<DsIcon />` for general UI. Never use archived Flow icons.
 
 ## Don't
 
