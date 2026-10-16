@@ -1,13 +1,3 @@
-# Skill: Brisk Production Journey
-
-## How to use this skill
-
-- Load alongside the Design System and SaaS Patterns skills for any feature that touches a project, deliverable, or client workflow.
-- This skill grounds the AI in how real video production teams work, so screens are filmmaker-first, not generic SaaS.
-
-## Skill file content
-
-```markdown
 # Brisk Production Journey Skill
 
 You are designing for video production teams using **Brisk**. Filmmakers think in projects, stages, and deliverables, not generic "tasks". Every screen must respect the production journey below.
@@ -46,18 +36,13 @@ When designing, ask: which phase and stage(s) does this feature serve?
 
 ## User roles
 
-Brisk has two role groups: **Studio** (the production company) and **Customer** (the client).
+The **current Brisk prototype has exactly three roles**, defined in `src/components/navigation/PrototypeRoleContext.tsx`:
 
-### Studio
-- **Studio Owner** - full super-admin. Can edit anything, including billing and subscription.
-- **Studio Manager** - same as Owner, minus billing and subscription.
-- **Filmmaker** - reduced permissions. Sees only assigned projects. Covers producers, editors, shooters, and other crew. Stage-level access is configurable per project.
+- **Studio Staff** - internal production team working across Studio projects.
+- **Studio Freelancer** - freelance collaborators working on relevant production work.
+- **Customer** - client-facing view of relevant projects, feedback and approvals.
 
-### Customer
-- **Account Owner** - sees all projects for their company. Invites users, manages subscription and company details.
-- **Teammate** - sees and edits only the projects they're assigned to.
-
-When designing, always ask: which role is this screen for, and what should they see vs not see?
+Use only these three names for the role switcher, screen specifications, mock data and prototype visibility rules. The former five-role breakdown is superseded and must not be reintroduced. The role switcher is a demo control, not real account authentication or production-level permissions.
 
 ## Project structure conventions
 
@@ -110,7 +95,7 @@ Design rule: every In-production video must show both a stage and a within-video
 - One customer = one client portal view. They see their queue of videos: Queued, In production, Paused, Completed.
 - For each video, they see: brief summary, current stage, latest version, pending approvals, messages, and within-video status (especially "Waiting on you" when it's their turn).
 - White-label: shows the Studio's brand (see SaaS Patterns skill).
-- Magic-link access, no signup required (see SaaS Patterns skill).
+- Magic-link access is a proposed product experience, represented as UI only in this front-end prototype (see SaaS Patterns guidance).
 
 ## Production-specific terminology
 
@@ -124,7 +109,7 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 - "Masters" or "deliverables" not "final files"
 - "Brief" not "requirements"
 - "Pre-production" not "planning phase"
-- "Stage" not "task" (a unit of work inside a video)
+- "Stage" not the generic "task" for a unit of work inside a video. The Today to-do area can still refer to work items as appropriate to the current prototype.
 
 ## Mobile considerations
 
@@ -135,8 +120,8 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 ## Do
 
 - Use production terminology.
-- Always tag the phase and stage(s) a feature serves.
-- Always tag the role(s) (Studio Owner, Studio Manager, Filmmaker, Account Owner, Teammate) a screen serves.
+- Identify the production phase and stage(s) a feature serves. Use current approved `StageChip` stage icons, never archived Flow icons.
+- Identify which of the three prototype roles (Studio Staff, Studio Freelancer, Customer) a screen serves.
 - Default to working days for deadlines.
 - Make every screen filmmaker-first: think in projects, stages, deliverables.
 - Design client flows mobile-first.
@@ -159,4 +144,3 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 ## Punctuation
 
 - Never em dashes (—). Use hyphens (-).
-```
