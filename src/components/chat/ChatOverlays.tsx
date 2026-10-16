@@ -1,5 +1,10 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
 import { useMemo, useState } from "react";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
@@ -202,25 +207,10 @@ export function CustomerSettings({
   const [activeTab, setActiveTab] = useState<"overview" | "people">("overview");
 
   return (
-    <div className="chat-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        className="chat-settings-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="chat-settings-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header>
-          <div>
+    <> <EditingDialog title={<>{clientName}</>} onCancel={onClose} size="wide" description={<>  <div>
             <p className="label-xs">Customer settings</p>
-            <h2 className="headings-2xs-bold" id="chat-settings-title">{clientName}</h2>
-          </div>
-          <button className="chat-icon-button" type="button" aria-label="Close settings" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
 
-        <div className="chat-settings-tabs two-column" role="tablist" aria-label="Customer settings sections">
+          </div>    </>}>  <div className="chat-settings-tabs two-column" role="tablist" aria-label="Customer settings sections">
           {(["overview", "people"] as const).map((tab) => (
             <button
               className={`label-s-semibold ${activeTab === tab ? "active" : ""}`}
@@ -233,20 +223,14 @@ export function CustomerSettings({
               {tab[0].toUpperCase() + tab.slice(1)}
             </button>
           ))}
-        </div>
-
-        {activeTab === "overview" ? (
+        </div>  {activeTab === "overview" ? (
           <div className="chat-settings-section">
             <label className="chat-settings-field">
               <span>
                 <strong className="label-s-semibold">Customer status</strong>
                 <small className="label-xs">Controls where {clientName} appears in customer filters.</small>
               </span>
-              <select className="label-s" value={status} onChange={(event) => onStatusChange(event.target.value as ChatClientStatus)}>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Archived">Archived</option>
-              </select>
+              <BriskSelect<string> ariaLabel={"Client status"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={status} onChange={(value) => onStatusChange(value as ChatClientStatus)} options={[{ value: "Active", label: "Active" }, { value: "Inactive", label: "Inactive" }, { value: "Archived", label: "Archived" }]} />
             </label>
             <div className="chat-settings-summary-grid">
               <article>
@@ -259,19 +243,17 @@ export function CustomerSettings({
               </article>
             </div>
           </div>
-        ) : null}
-
-        {activeTab === "people" ? (
+        ) : null}  {activeTab === "people" ? (
           <div className="chat-settings-section">
             <div className="chat-settings-section-heading">
               <span>
                 <strong className="label-s-semibold">People at {clientName}</strong>
                 <small className="label-xs">These people can be added to individual projects.</small>
               </span>
-              <button className="chat-primary-button label-s-semibold" type="button" onClick={() => onNotify(`Invite to ${clientName} ready`)}>
+              <Button size="S" variant="primary" className="chat-primary-button" type="button" onClick={() => onNotify(`Invite to ${clientName} ready`)}>
                 <DsIcon name="plus" size={15} />
                 Invite person
-              </button>
+              </Button>
             </div>
             <div className="chat-settings-member-list">
               {companyUsers.map((user) => (
@@ -285,10 +267,7 @@ export function CustomerSettings({
               ))}
             </div>
           </div>
-        ) : null}
-
-      </section>
-    </div>
+        ) : null} </EditingDialog> </>
   );
 }
 
@@ -328,16 +307,10 @@ export function ProjectMemberSettings({ project, users, companyUsers, canManage 
   });
 
   return (
-    <div className="chat-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="chat-settings-modal" role="dialog" aria-modal="true" aria-labelledby="project-members-title" onMouseDown={(event) => event.stopPropagation()}>
-        <header>
-          <div>
-            <h2 className="headings-2xs-bold" id="project-members-title">People with access</h2>
+    <> <EditingDialog title={<>People with access</>} onCancel={onClose} size="wide" description={<>  <div>
+
             <span className="label-s">{project.code} {project.title}</span>
-          </div>
-          <button className="chat-icon-button" type="button" aria-label="Close settings" onClick={onClose}><DsIcon name="x-close-cross" size={18} /></button>
-        </header>
-        <div className="chat-settings-section">
+          </div>    </>}>  <div className="chat-settings-section">
           <div className="chat-settings-member-group">
             <strong className="label-s-semibold">Studio team</strong>
             <div className="chat-settings-member-list">
@@ -345,7 +318,7 @@ export function ProjectMemberSettings({ project, users, companyUsers, canManage 
                 <article className="chat-settings-member-row" key={user.id}>
                   <CommentAvatar user={user} />
                   <span className="chat-settings-member-copy"><strong className="label-s-semibold">{user.name}</strong><small className="label-xs">{user.roleLabel}</small></span>
-                  {canManage ? <button className="chat-secondary-button label-xs-semibold" type="button" onClick={() => removeStudioMember(user.id)}>Remove</button> : null}
+                  {canManage ? <Button size="S" variant="secondary" className="chat-secondary-button" type="button" onClick={() => removeStudioMember(user.id)}>Remove</Button> : null}
                 </article>
               ))}
             </div>
@@ -358,7 +331,7 @@ export function ProjectMemberSettings({ project, users, companyUsers, canManage 
                   <article className="chat-settings-member-row" key={user.id}>
                     <CommentAvatar user={user} />
                     <span className="chat-settings-member-copy"><strong className="label-s-semibold">{user.name}</strong><small className="label-xs">{user.roleLabel}</small></span>
-                    <button className="chat-primary-button label-xs-semibold" type="button" onClick={() => addStudioMember(user.id)}><DsIcon name="plus" size={14} />Add</button>
+                    <Button size="S" variant="primary" className="chat-primary-button" type="button" onClick={() => addStudioMember(user.id)}><DsIcon name="plus" size={14} />Add</Button>
                   </article>
                 ))}
               </div>
@@ -371,7 +344,7 @@ export function ProjectMemberSettings({ project, users, companyUsers, canManage 
                 <article className="chat-settings-member-row" key={user.id}>
                   <CommentAvatar user={user} />
                   <span className="chat-settings-member-copy"><strong className="label-s-semibold">{user.name}</strong><small className="label-xs">{user.roleLabel} · {user.email}</small></span>
-                  {canManage ? <button className="chat-secondary-button label-xs-semibold" type="button" onClick={() => removeCustomer(user.id)}>Remove</button> : null}
+                  {canManage ? <Button size="S" variant="secondary" className="chat-secondary-button" type="button" onClick={() => removeCustomer(user.id)}>Remove</Button> : null}
                 </article>
               ))}
             </div>
@@ -384,15 +357,13 @@ export function ProjectMemberSettings({ project, users, companyUsers, canManage 
                   <article className="chat-settings-member-row" key={user.id}>
                     <CommentAvatar user={user} />
                     <span className="chat-settings-member-copy"><strong className="label-s-semibold">{user.name}</strong><small className="label-xs">{user.roleLabel} · {user.email}</small></span>
-                    <button className="chat-primary-button label-xs-semibold" type="button" onClick={() => addCustomer(user.id)}><DsIcon name="plus" size={14} />Add</button>
+                    <Button size="S" variant="primary" className="chat-primary-button" type="button" onClick={() => addCustomer(user.id)}><DsIcon name="plus" size={14} />Add</Button>
                   </article>
                 ))}
               </div>
             </div>
           ) : null}
-        </div>
-      </section>
-    </div>
+        </div> </EditingDialog> </>
   );
 }
 

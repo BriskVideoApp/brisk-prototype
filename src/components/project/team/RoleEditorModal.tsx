@@ -1,8 +1,13 @@
 "use client";
 
+import { EditingDialog } from "../../../../Brisk DS/src/app/components/EditingDialog";
+
+import { Button } from "../../../../Brisk DS/src/app/components/Button";
+import { ConfirmationDialog } from "../../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   getAcceptedInvitation,
@@ -10,12 +15,10 @@ import {
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
-  formatHours,
   snapToQuarter,
-  stageLabels,
   teamRoleLabels,
 } from "@/data/active-videos/teamDefaults";
-import type { Invitation, InvitationPaymentTerms, RoleSlot, StageAssignment, StageKey, TeamPerson, TeamRole } from "@/components/active-videos/types";
+import type { Invitation, InvitationPaymentTerms, RoleSlot, TeamPerson, TeamRole } from "@/components/active-videos/types";
 import { getCapacitySummary } from "@/data/people";
 import { FreelancePill, StaffPill } from "./RoleRow";
 
@@ -23,7 +26,6 @@ type RoleEditorModalProps = {
   slot: RoleSlot;
   projectName: string;
   people: TeamPerson[];
-  stages: StageKey[];
   assignedPersonIds: Set<string>;
   showCosts: boolean;
   onAddStaff: (person: TeamPerson) => void;
@@ -34,7 +36,8 @@ type RoleEditorModalProps = {
   onWithdrawInvitation: (invitationId: string) => void;
   onWithdrawAll: () => void;
   onRemove: () => void;
-  onSaveSettings: (stages: StageAssignment[]) => void;
+  onSaveSettings: (hours: number) => void;
+  initialPersonId?: string;
   onClose: () => void;
 };
 
@@ -42,7 +45,6 @@ export function RoleEditorModal({
   slot,
   projectName,
   people,
-  stages,
   assignedPersonIds,
   showCosts,
   onAddStaff,
@@ -54,35 +56,29 @@ export function RoleEditorModal({
   onWithdrawAll,
   onRemove,
   onSaveSettings,
+  initialPersonId,
   onClose,
 }: RoleEditorModalProps) {
   const roleLabel = getSlotLabel(slot);
   const acceptedInvitation = getAcceptedInvitation(slot);
   const acceptedPerson = acceptedInvitation ? people.find((person) => person.id === acceptedInvitation.personId) : undefined;
   const currentAssigneeId = acceptedPerson?.id;
-  const [selectedStages, setSelectedStages] = useState<StageKey[]>(slot.stages.map((stageAssignment) => stageAssignment.stageId));
-  const [draftHoursByStage, setDraftHoursByStage] = useState<Partial<Record<StageKey, string>>>(() =>
-    Object.fromEntries(slot.stages.map((stage) => [stage.stageId, String(stage.estimatedHours)])),
-  );
-  const [isStagesExpanded, setIsStagesExpanded] = useState(false);
-  const [activeFillTab, setActiveFillTab] = useState<"team" | "gig">(() => (acceptedPerson?.personType === "Studio Freelancer" || getVisibleInvitations(slot).length > 0 ? "gig" : "team"));
+  const [draftTotalHours, setDraftTotalHours] = useState(String(getRoleEstimatedHours(slot)));
+  const initialPerson = initialPersonId ? people.find((person) => person.id === initialPersonId) : undefined;
+  const [activeFillTab, setActiveFillTab] = useState<"team" | "gig">(() => initialPerson?.personType === "Studio Freelancer" || acceptedPerson?.personType === "Studio Freelancer" || getVisibleInvitations(slot).length > 0 ? "gig" : "team");
   const [staffPendingConfirmation, setStaffPendingConfirmation] = useState<TeamPerson | null>(null);
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = useState(false);
   const [projectRateOverridesByPersonId, setProjectRateOverridesByPersonId] = useState<Record<string, string>>(() => getInitialProjectRateOverrides(slot));
-  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
-  const [selectedFreelancerIds, setSelectedFreelancerIds] = useState<string[]>([]);
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(() => initialPerson?.personType === "Studio Staff" ? initialPerson.id : null);
+  const [selectedFreelancerIds, setSelectedFreelancerIds] = useState<string[]>(() => initialPerson?.personType === "Studio Freelancer" ? [initialPerson.id] : []);
   const [isInviteConfirmOpen, setIsInviteConfirmOpen] = useState(false);
   const [inviteMessage, setInviteMessage] = useState("");
-  const [isAllStaffVisible, setIsAllStaffVisible] = useState(false);
-  const [isAllFreelancersVisible, setIsAllFreelancersVisible] = useState(false);
+  const [isAllStaffVisible, setIsAllStaffVisible] = useState(initialPerson?.personType === "Studio Staff");
+  const [isAllFreelancersVisible, setIsAllFreelancersVisible] = useState(initialPerson?.personType === "Studio Freelancer");
   const staff = people.filter((person) => person.personType === "Studio Staff");
   const freelancers = people.filter((person) => person.personType === "Studio Freelancer");
-  const draftRoleHours = selectedStages.reduce((total, stage) => total + snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stage] ?? "") || 0)), 0);
-  const availableStages = stages.filter((stage) => !selectedStages.includes(stage));
-  const areSettingsDirty = selectedStages.length !== slot.stages.length || selectedStages.some((stage) => {
-    const savedStage = slot.stages.find((assignment) => assignment.stageId === stage);
-    return !savedStage || snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stage] ?? "") || 0)) !== savedStage.estimatedHours;
-  });
+  const draftRoleHours = snapToQuarter(Math.max(0, Number.parseFloat(draftTotalHours) || 0));
+  const areSettingsDirty = draftRoleHours !== getRoleEstimatedHours(slot);
   const activeInvitations = getVisibleInvitations(slot);
   const historicalInvitations = slot.invitations.filter((invitation) => invitation.status === "withdrawn" || invitation.status === "declined" || invitation.status === "expired");
   const selectedFreelancersHaveValidRates = selectedFreelancerIds.every((personId) => {
@@ -140,14 +136,8 @@ export function RoleEditorModal({
     });
   }, [assignedPersonIds, staff, slot]);
 
-  const toggleStage = (stage: StageKey) => {
-    setSelectedStages((currentStages) =>
-      currentStages.includes(stage) ? currentStages.filter((currentStage) => currentStage !== stage) : [...currentStages, stage],
-    );
-    setIsStagesExpanded(false);
-  };
-
   const addStaff = (person: TeamPerson) => {
+    if (areSettingsDirty) onSaveSettings(draftRoleHours);
     if (activeInvitations.length > 0) {
       setStaffPendingConfirmation(person);
       return;
@@ -212,6 +202,7 @@ export function RoleEditorModal({
   const sendSelectedInvites = () => {
     const message = inviteMessage.trim();
     if (!message || selectedFreelancers.length === 0 || !selectedFreelancersHaveValidRates) return;
+    if (areSettingsDirty) onSaveSettings(draftRoleHours);
     selectedFreelancerIds
       .map((personId) => freelancers.find((person) => person.id === personId))
       .filter((person): person is TeamPerson => Boolean(person))
@@ -241,16 +232,14 @@ export function RoleEditorModal({
         getProjectRateValue(slot, person, draftRoleHours, projectRateOverridesByPersonId),
       );
       if (!paymentTerms) return;
+      if (areSettingsDirty) onSaveSettings(draftRoleHours);
       onAssignFreelancer(person, paymentTerms);
       setSelectedFreelancerIds([]);
     }
   };
 
   const saveSettings = () => {
-    onSaveSettings(selectedStages.map((stageId) => {
-      const estimatedHours = snapToQuarter(Math.max(0, Number.parseFloat(draftHoursByStage[stageId] ?? "") || 0));
-      return { stageId, estimatedHours, manualEstimate: estimatedHours > 0 };
-    }));
+    onSaveSettings(draftRoleHours);
   };
 
   const openNewFreelancerInvite = () => {
@@ -258,103 +247,36 @@ export function RoleEditorModal({
     onClose();
   };
 
-  return (
-    <div className="team-modal-backdrop" role="presentation" onClick={onClose}>
-      <section className="team-modal team-role-editor" role="dialog" aria-modal="true" aria-label={`Edit ${roleLabel} role`} onClick={(event) => event.stopPropagation()}>
-        <header className="team-modal-header">
-          <div className="team-modal-heading">
-            <h2 className="team-modal-title heading-3xs">{roleLabel}</h2>
-            {acceptedPerson && acceptedInvitation ? (
+  return (<> <EditingDialog title={roleLabel} description={<>{acceptedPerson && acceptedInvitation ? (
               <span className="team-modal-current-person team-role-person-name label-s">
                 {acceptedPerson.name}
                 {acceptedPerson.personType === "Studio Freelancer" ? <FreelancePill /> : <StaffPill />}
                 {acceptedPerson.personType === "Studio Freelancer" && acceptedInvitation.assignmentMethod === "direct" ? <span className="team-assigned-indicator label-xs-semibold">Assigned</span> : null}
               </span>
-            ) : null}
-          </div>
-          <div className="team-modal-header-actions">
-            <div className="team-modal-header-action-wrap">
-              <button className="team-modal-icon-action danger" type="button" aria-label="Remove role" aria-expanded={isRemoveConfirmOpen} onClick={() => setIsRemoveConfirmOpen((isOpen) => !isOpen)}>
-                <DsIcon name="trash-simple" size={14} />
-              </button>
-              {isRemoveConfirmOpen ? (
-                <div className="team-popconfirm team-remove-popconfirm" role="alertdialog" aria-label="Confirm remove role">
-                  <p className="label-s-semibold">Remove this role?</p>
-                  <p className="label-xs">Assignments and invitations for this role will be removed from the project.</p>
-                  <div className="team-popconfirm-actions">
-                    <button className="team-secondary-button label-s-semibold" type="button" onClick={() => setIsRemoveConfirmOpen(false)}>
-                      Cancel
-                    </button>
-                    <button
-                      className="team-primary-button label-s-semibold"
-                      type="button"
-                      onClick={() => {
-                        onRemove();
-                        onClose();
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-            <button className="team-modal-close" type="button" aria-label="Close role editor" onClick={onClose}>
-              <DsIcon name="x-close-cross" size={16} />
-            </button>
-          </div>
-        </header>
-
-        <section className="team-role-settings" aria-label="Role settings">
-          <div className="team-role-settings-row">
-            <span className="label-xs-semibold">Stages &amp; hours</span>
-            {availableStages.length > 0 ? <button className="team-inline-action label-s-semibold" type="button" aria-expanded={isStagesExpanded} onClick={() => setIsStagesExpanded((isExpanded) => !isExpanded)}>
-              Add stage
-            </button> : null}
-          </div>
-          <div className="team-stage-hours-list">
-            {selectedStages.map((stage) => <div className="team-stage-hours-row" key={stage}>
-                <button className="team-stage-hours-remove" type="button" aria-label={`Remove ${stageLabels[stage]} stage`} onClick={() => toggleStage(stage)}><span className="team-checkbox checked" aria-hidden="true">✓</span></button>
-                <label className="label-s" htmlFor={`role-hours-${slot.id}-${stage}`}>{stageLabels[stage]}</label>
-                <input
-                  className="team-inline-input team-hours-needed-input label-s"
-                  id={`role-hours-${slot.id}-${stage}`}
-                  aria-label={`${stageLabels[stage]} hours needed`}
-                  inputMode="decimal"
-                  min="0"
-                  step="0.25"
-                  type="number"
-                  value={draftHoursByStage[stage] ?? "0"}
-                  onChange={(event) => setDraftHoursByStage((currentHours) => ({ ...currentHours, [stage]: event.target.value }))}
-                />
-              </div>)}
-            {selectedStages.length > 1 && draftRoleHours > 0 ? <span className="team-stage-hours-total label-xs">Total {formatHours(draftRoleHours)}</span> : null}
-          </div>
-
-          {isStagesExpanded ? (
-            <div className="team-stage-list compact">
-              {availableStages.map((stage) => (
-                  <button className="team-stage-option" type="button" key={stage} onClick={() => toggleStage(stage)}>
-                    <span className="team-checkbox" aria-hidden="true" />
-                    <span className="label-s-semibold">{stageLabels[stage]}</span>
-                  </button>
-              ))}
-            </div>
-          ) : null}
-          {areSettingsDirty ? <button className="team-secondary-button team-role-save label-s-semibold" type="button" onClick={saveSettings}>Save changes</button> : null}
-        </section>
-
-        {!acceptedPerson && !acceptedInvitation && activeInvitations.length > 0 ? (
+            ) : null}</>} size="wide" onCancel={onClose} actions={<><Button size="S" variant="danger" onClick={() => setIsRemoveConfirmOpen(true)}>Remove role</Button><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button></>}>  <section className="team-role-settings" aria-label="Role settings">
+          <label className="team-role-hours-field label-xs-semibold" htmlFor={`role-hours-${slot.id}`}>Total hours needed</label>
+          <input
+            className="team-inline-input team-hours-needed-input label-s"
+            id={`role-hours-${slot.id}`}
+            aria-label={`Total hours needed for ${roleLabel}`}
+            inputMode="decimal"
+            min="0"
+            step="0.25"
+            type="number"
+            value={draftTotalHours}
+            onChange={(event) => setDraftTotalHours(event.target.value)}
+          />
+          {areSettingsDirty ? <Button size="S" variant="secondary" className="team-secondary-button team-role-save" type="button" onClick={saveSettings}>Save changes</Button> : null}
+        </section>  {!acceptedPerson && !acceptedInvitation && activeInvitations.length > 0 ? (
           <section className="team-editor-section">
             <InvitationEditorList invitations={activeInvitations} people={people} roleHours={draftRoleHours} showCosts={showCosts} onWithdrawInvitation={onWithdrawInvitation} />
-            <button className="team-inline-action label-s-semibold" type="button" onClick={onWithdrawAll}>
+            <Button size="S" variant="ghost" className="team-inline-action" type="button" onClick={onWithdrawAll}>
               Withdraw all
-            </button>
+            </Button>
           </section>
-        ) : null}
-
-        <section className="team-editor-section">
+        ) : null}  <section className="team-editor-section">
           <div className="team-person-group-heading">
+            <h3 className="team-assign-heading headings-2xs-bold">Assign a person</h3>
             <div className="team-segmented-control" role="tablist" aria-label="Fill type">
               <button className={`team-segment ${activeFillTab === "team" ? "active" : ""} label-s-semibold`} type="button" role="tab" aria-selected={activeFillTab === "team"} onClick={() => setActiveFillTab("team")}>
                 Staff
@@ -376,14 +298,14 @@ export function RoleEditorModal({
                 })}
               </div>
               {staff.length > suggestedStaff.length ? (
-                <button className="team-show-all-button label-s-semibold" type="button" onClick={() => setIsAllStaffVisible((isVisible) => !isVisible)}>
+                <Button size="S" variant="ghost" className="team-show-all-button" type="button" onClick={() => setIsAllStaffVisible((isVisible) => !isVisible)}>
                   {isAllStaffVisible ? "Show suggested" : `Show all ${staff.length}`}
-                </button>
+                </Button>
               ) : null}
-              {selectedStaffId ? <div className="team-fill-actions">
-                <button className="team-secondary-button label-s-semibold" type="button" disabled={!selectedStaffId} onClick={assignSelectedStaff}>
+              {selectedStaffId ? <div className="team-fill-actions team-fill-actions-staff">
+                <Button size="S" variant="primary" className="team-primary-button team-assign-button" type="button" disabled={!selectedStaffId} onClick={assignSelectedStaff}>
                   {selectedStaffId === currentAssigneeId ? "Unassign" : "Assign"}
-                </button>
+                </Button>
               </div> : null}
             </PersonGroup>
           ) : (
@@ -420,69 +342,45 @@ export function RoleEditorModal({
                 })}
               </div>
               {freelancers.length > suggestedFreelancers.length ? (
-                <button className="team-show-all-button label-s-semibold" type="button" onClick={() => setIsAllFreelancersVisible((isVisible) => !isVisible)}>
+                <Button size="S" variant="ghost" className="team-show-all-button" type="button" onClick={() => setIsAllFreelancersVisible((isVisible) => !isVisible)}>
                   {isAllFreelancersVisible ? "Show suggested" : `Show all ${freelancers.length}`}
-                </button>
+                </Button>
               ) : null}
               <div className="team-fill-actions">
                 {selectedFreelancerIds.length > 0 ? <span className="team-fill-primary-actions">
-                  <button className="team-primary-button team-send-invites-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length === 0 || !selectedFreelancersHaveValidRates} onClick={openInviteConfirmation}>
+                  <Button size="S" variant="secondary" className="team-secondary-button team-send-invites-button" type="button" disabled={selectedFreelancerIds.length === 0 || !selectedFreelancersHaveValidRates} onClick={openInviteConfirmation}>
                     {selectedFreelancerIds.length > 1 ? `Invite ${selectedFreelancerIds.length}` : "Invite"}
-                  </button>
-                  <button className="team-secondary-button label-s-semibold" type="button" disabled={selectedFreelancerIds.length !== 1 || !selectedFreelancersHaveValidRates} onClick={assignSelectedFreelancer}>
+                  </Button>
+                  <Button size="S" variant="primary" className="team-primary-button team-assign-button" type="button" disabled={selectedFreelancerIds.length !== 1 || !selectedFreelancersHaveValidRates} onClick={assignSelectedFreelancer}>
                     {selectedFreelancerIds.length === 1 && selectedFreelancerIds[0] === currentAssigneeId ? "Unassign" : "Assign now"}
-                  </button>
+                  </Button>
                 </span> : null}
-                <button className="team-invite-email-link label-s-semibold" type="button" onClick={openNewFreelancerInvite}>
+                <Button size="S" variant="ghost" className="team-invite-email-link" type="button" onClick={openNewFreelancerInvite}>
                   + Invite new freelancer
-                </button>
+                </Button>
               </div>
             </PersonGroup>
           )}
-        </section>
-
-        {historicalInvitations.length > 0 ? <InvitationHistory invitations={historicalInvitations} people={people} /> : null}
-
-        {staffPendingConfirmation ? (
-          <div className="team-popconfirm" role="alertdialog" aria-label="Confirm staff assignment">
-            <p className="label-s-semibold">This will withdraw pending invitations. Continue?</p>
-            <div className="team-popconfirm-actions">
-              <button className="team-secondary-button label-s-semibold" type="button" onClick={() => setStaffPendingConfirmation(null)}>
-                Cancel
-              </button>
-              <button
-                className="team-primary-button label-s-semibold"
-                type="button"
-                onClick={() => {
+        </section>  {historicalInvitations.length > 0 ? <InvitationHistory invitations={historicalInvitations} people={people} /> : null}  {staffPendingConfirmation ? (
+          <ConfirmationDialog title={<>This will withdraw pending invitations. Continue?</>} onCancel={() => setStaffPendingConfirmation(null)} onConfirm={() => {
                   onAddStaff(staffPendingConfirmation);
                   setSelectedStaffId(null);
                   setStaffPendingConfirmation(null);
-                }}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        ) : null}
-      </section>
-      {isInviteConfirmOpen && typeof document !== "undefined" ? createPortal(
-        <div className="share-confirm-backdrop" role="presentation" onMouseDown={() => setIsInviteConfirmOpen(false)} onClick={(event) => event.stopPropagation()}>
-          <section className="share-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="freelancer-invite-confirm-title" onMouseDown={(event) => event.stopPropagation()}>
-            <h2 className="headings-xs-bold" id="freelancer-invite-confirm-title">Send {selectedFreelancers.length === 1 ? "invite" : "invites"}?</h2>
-            <p className="paragraph-s">To: {selectedFreelancers.map((person) => person.name).join(", ")}</p>
-            <div className="share-send-message">
+                }} confirmLabel={<>Continue
+              </>}  />
+        ) : null} {isRemoveConfirmOpen ? (
+                <ConfirmationDialog title={<>Remove this role?</>} description={<>Assignments and invitations for this role will be removed from the project.</>} onCancel={() => setIsRemoveConfirmOpen(false)} onConfirm={() => {
+                        onRemove();
+                        onClose();
+                      }} confirmLabel={<>Remove
+                    </>} tone="danger" />
+              ) : null}</EditingDialog>  {isInviteConfirmOpen && typeof document !== "undefined" ? <ConfirmationDialog title={<>Send  {selectedFreelancers.length === 1 ? "invite" : "invites"} ?</>} description={<>To:  {selectedFreelancers.map((person) => person.name).join(", ")}</>} expanded onCancel={() => setIsInviteConfirmOpen(false)} actions={<>
+              <Button size="S" variant="secondary"  type="button" onClick={() => setIsInviteConfirmOpen(false)}>Cancel</Button>
+              <Button size="S" variant="primary"  type="button" disabled={!inviteMessage.trim()} onClick={sendSelectedInvites}>{selectedFreelancers.length === 1 ? "Send invite" : `Send ${selectedFreelancers.length} invites`}</Button>
+            </>}>   <div className="share-send-message">
               <label className="label-s-semibold" htmlFor="freelancer-invite-message">Message</label>
               <textarea className="label-s" id="freelancer-invite-message" rows={4} maxLength={240} value={inviteMessage} onChange={(event) => setInviteMessage(event.target.value)} />
-            </div>
-            <div className="share-confirm-actions">
-              <button className="share-button share-button-secondary label-s-semibold" type="button" onClick={() => setIsInviteConfirmOpen(false)}>Cancel</button>
-              <button className="share-button share-button-primary label-s-semibold" type="button" disabled={!inviteMessage.trim()} onClick={sendSelectedInvites}>{selectedFreelancers.length === 1 ? "Send invite" : `Send ${selectedFreelancers.length} invites`}</button>
-            </div>
-          </section>
-        </div>, document.body,
-      ) : null}
-    </div>
-  );
+            </div>  </ConfirmationDialog> : null} </>);
 }
 
 function InvitationEditorList({
@@ -513,9 +411,9 @@ function InvitationEditorList({
             ) : null}
             <span>{formatInvitationStatus(invitation.status)}</span>
             <span>{formatSentTime(invitation.sentAt)}</span>
-            <button className="team-inline-action label-s-semibold" type="button" onClick={() => onWithdrawInvitation(invitation.id)}>
+            <Button size="S" variant="ghost" className="team-inline-action" type="button" onClick={() => onWithdrawInvitation(invitation.id)}>
               Withdraw
-            </button>
+            </Button>
           </p>
         ) : null;
       })}
@@ -563,7 +461,7 @@ function StaffOption({
       <span className="team-person-option-copy">
         <span className="team-person-option-primary">
           <span className="team-role-person-name label-s">{person.name}</span>
-          <span className={`team-capacity-status is-${capacity.level} label-xs-semibold`}><span aria-hidden="true" />{capacity.label}</span>
+          <span className={`team-capacity-status is-${capacity.level}`} role="img" tabIndex={0} aria-label={`Capacity: ${capacity.label}`} title={capacity.label}><span aria-hidden="true" /></span>
         </span>
         <span className="team-role-rate label-xs">
           {teamRoleLabels[person.defaultRole]} · {disabledReason ?? `${capacity.availableHours}h available`}

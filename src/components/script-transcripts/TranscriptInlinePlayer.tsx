@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { InlinePlayer } from "@/components/video-review/VideoReviewScreen";
+import { InlinePlayer } from "@/components/video-review/InlinePlayer";
 import type { MediaAssetView } from "@/data/media";
 import type { TranscriptClip } from "@/data/transcripts";
 

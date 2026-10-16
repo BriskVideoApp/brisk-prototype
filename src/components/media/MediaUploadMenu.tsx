@@ -1,3 +1,4 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useEffect, useRef } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaCloudProvider } from "@/data/media";
@@ -37,8 +38,8 @@ export function MediaUploadMenu({
 
   return (
     <div className="media-upload-menu-wrap" ref={menuRef}>
-      <button
-        className="media-primary-button label-s-semibold"
+      <Button size="S" variant="primary"
+        className="media-primary-button"
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -47,7 +48,7 @@ export function MediaUploadMenu({
         <DsIcon name="plus" size={16} />
         Upload
         <DsIcon name="caret-down" size={14} />
-      </button>
+      </Button>
       {open ? (
         <div className="media-upload-menu" role="menu" aria-label="Upload media">
           <button

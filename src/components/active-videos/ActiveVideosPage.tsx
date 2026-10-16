@@ -7,12 +7,23 @@ import type {
   PointerEvent as ReactPointerEvent,
   ReactNode,
 } from "react";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BriskDatePicker } from "@/components/brief/BriefPage";
+import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { useClients } from "@/components/clients/ClientDataContext";
+import { BriskSelect } from "@/components/form/BriskSelect";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatHours, getAcceptedPerson, getProjectEstimatedHours, getProjectLoggedHours, getSlotLabel, getTeamPerson, getVisibleInvitations } from "@/data/active-videos/teamDefaults";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
@@ -161,6 +172,7 @@ export function ActiveVideosPage() {
 
 function ActiveVideosWorkspace() {
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
+  const { clients } = useClients();
   const { state, updateProjectStatus, updateProjectTags } = usePrototypeState();
   const viewer = usePrototypeViewer();
   const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId)
@@ -170,10 +182,15 @@ function ActiveVideosWorkspace() {
   const { getProjectStages } = useProjectStageStatus();
   const { invoices, offers } = useCostsData();
   const router = useRouter();
+  const [isStartVideoClientPickerOpen, setIsStartVideoClientPickerOpen] = useState(false);
+  const [selectedStartVideoClientId, setSelectedStartVideoClientId] = useState("");
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
   const panelSectionFromParams = searchParams.get("section");
+  const assignPersonIdFromParams = searchParams.get("assignPerson");
   const previewState = searchParams.get("preview");
+  const availableClients = clients.filter((client) => client.status !== "Archived");
+  const startVideoClientOptions = availableClients.map((client) => ({ value: client.id, label: client.name }));
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
   const [query, setQuery] = useState("");
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
@@ -335,6 +352,11 @@ function ActiveVideosWorkspace() {
     const url = new URL(window.location.href);
     url.searchParams.delete("preview");
     router.replace(`${url.pathname}${url.search}`);
+  };
+
+  const startVideoForClient = (clientId: string) => {
+    router.push(`/customer-dashboard/start-video?client=${encodeURIComponent(clientId)}`);
+    setIsStartVideoClientPickerOpen(false);
   };
 
   const panelProject = useMemo(
@@ -569,7 +591,7 @@ function ActiveVideosWorkspace() {
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
       <div className="active-videos-main">
         <section className="active-videos-header" aria-label="Videos header">
-          <h1 className="active-videos-title">Videos ({projects.length})</h1>
+          <h1 className="active-videos-title">Videos</h1>
           <div className="active-videos-header-actions">
             <label className="active-videos-search label-s" htmlFor="active-videos-search">
               <span className="sr-only">Search projects</span>
@@ -581,6 +603,12 @@ function ActiveVideosWorkspace() {
                 placeholder="Search projects..."
               />
             </label>
+            {selectedRole === "Studio Staff" ? (
+              <div className="active-videos-utility-links">
+                <Link className="active-videos-utility-link label-s-semibold" href="/outstanding-invoices">Expenses</Link>
+                <Link className="active-videos-utility-link label-s-semibold" href="/media">All media</Link>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -745,12 +773,31 @@ function ActiveVideosWorkspace() {
                     ? "Videos will appear here when a Studio adds you to the team."
                     : selectedRole === "Customer"
                       ? "Videos shared by your Studio will appear in your Client dashboard."
-                      : "Add a Client, then start their first video."}
+                      : availableClients.length > 0
+                        ? "Start a video for one of your Clients. They won’t be notified unless you invite them."
+                        : "Add a Client before you can start a video."}
                 </p>
                 <div className="active-videos-empty-actions">
-                  <Link className="active-videos-empty-primary label-s-semibold" href={selectedRole === "Studio Freelancer" ? "/chat" : selectedRole === "Customer" ? "/customer-dashboard" : "/clients"}>
-                    {selectedRole === "Studio Freelancer" ? "Open Chat" : selectedRole === "Customer" ? "Back to dashboard" : "Add Client"}
-                  </Link>
+                  {selectedRole === "Studio Freelancer" || selectedRole === "Customer" ? (
+                    <Link className="active-videos-empty-primary label-s-semibold" href={selectedRole === "Studio Freelancer" ? "/chat" : "/customer-dashboard"}>
+                      {selectedRole === "Studio Freelancer" ? "Open Chat" : "Back to dashboard"}
+                    </Link>
+                  ) : availableClients.length === 0 ? (
+                    <Link className="active-videos-empty-primary label-s-semibold" href="/clients">Add Client</Link>
+                  ) : availableClients.length === 1 ? (
+                    <Link className="active-videos-empty-primary label-s-semibold" href={`/customer-dashboard/start-video?client=${encodeURIComponent(availableClients[0].id)}`}>Start a video</Link>
+                  ) : (
+                    <Button size="S" variant="primary"
+                      className="active-videos-empty-primary"
+                      type="button"
+                      onClick={() => {
+                        setSelectedStartVideoClientId("");
+                        setIsStartVideoClientPickerOpen(true);
+                      }}
+                    >
+                      Start a video
+                    </Button>
+                  )}
                 </div>
               </div>
             ) : (
@@ -758,7 +805,7 @@ function ActiveVideosWorkspace() {
                 <span className="active-videos-empty-icon" aria-hidden="true"><DsIcon name="search" size={28} /></span>
                 <h2 className="headings-xs-bold">No videos match these controls</h2>
                 <p className="paragraph-s">Try another search, status or production-stage filter.</p>
-                <button className="active-videos-empty-secondary label-s-semibold" type="button" onClick={clearControls}>Clear controls</button>
+                <Button size="S" variant="secondary" className="active-videos-empty-secondary" type="button" onClick={clearControls}>Clear controls</Button>
               </div>
             )
           ) : null}
@@ -788,10 +835,33 @@ function ActiveVideosWorkspace() {
           isSwitching={isPanelContentSwitching}
           selectedRole={selectedRole}
           sectionRequest={panelSectionRequest}
+          assignPersonId={assignPersonIdFromParams}
           onClose={() => closeProjectPanel()}
           onSaveStatus={(status) => saveProjectStatus(panelProject.id, status)}
           onSaveDeadline={(deadline) => saveProjectDeadline(panelProject.id, deadline)}
         />
+      ) : null}
+      {isStartVideoClientPickerOpen ? (
+        <ClientModal
+          title="Choose a Client"
+          description="Choose who this video is for. They won’t be notified unless you invite them."
+          onClose={() => setIsStartVideoClientPickerOpen(false)}
+          footer={
+            <>
+              <Button size="S" variant="secondary" onClick={() => setIsStartVideoClientPickerOpen(false)}>Cancel</Button>
+              <Button size="S" disabled={!selectedStartVideoClientId} onClick={() => startVideoForClient(selectedStartVideoClientId)}>Continue</Button>
+            </>
+          }
+        >
+          <BriskSelect
+            ariaLabel="Choose a Client"
+            options={startVideoClientOptions}
+            placeholder="Select a Client"
+            searchable={availableClients.length > 7}
+            value={selectedStartVideoClientId}
+            onChange={setSelectedStartVideoClientId}
+          />
+        </ClientModal>
       ) : null}
       </div>
     </main>
@@ -954,48 +1024,20 @@ function FilterDropdown({
   const buttonLabel =
     filterKey === "tags" && selectedValues.length > 1 ? `${selectedValues.length} tags` : selectedValues[0] ?? label;
 
-  return (
-    <div className="active-filter-wrap">
-      <button
-        className={`active-filter-button label-s-semibold ${hasValue ? "has-value" : ""}`}
-        type="button"
-        aria-expanded={isOpen}
-        onClick={onToggle}
-      >
-        <span>{buttonLabel}</span>
-        <DsIcon name="caret-down" size={14} />
-      </button>
-      {isOpen ? (
-        <div className={`active-filter-menu active-filter-menu-${filterKey}`}>
-          {options.map((option) => {
-            const isSelected = selectedValues.includes(option);
-
-            return (
-              <button
-                className="active-filter-option label-s"
-                type="button"
-                key={option}
-                aria-pressed={filterKey === "tags" ? isSelected : undefined}
-                onClick={() => onSelect(option)}
-              >
-                <span className={`filter-checkbox ${isSelected ? "checked" : ""}`}>
-                  {isSelected ? <DsIcon name="check" size={12} /> : null}
-                </span>
-                <span className={filterKey === "tags" ? `tag-option ${getTagClass(option, tagClasses)}` : ""}>
-                  {option}
-                </span>
-              </button>
-            );
-          })}
-          {hasValue ? (
-            <button className="active-filter-clear label-s-semibold" type="button" onClick={() => onSelect(null)}>
-              Clear filter
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
-  );
+  const shared = {
+    ariaLabel: label, className: "active-filter-wrap", clearLabel: "Clear filter", placeholder: label,
+    open: isOpen, onOpenChange: (open: boolean) => { if (open !== isOpen) onToggle(); },
+    triggerClassName: `active-filter-button label-s-semibold ${hasValue ? "has-value" : ""}`,
+    triggerContent: <span>{buttonLabel}</span>,
+    options: options.map((option) => ({ value: option, label: option,
+      content: filterKey === "tags" ? <span className={`tag-option ${getTagClass(option, tagClasses)}`}>{option}</span> : undefined,
+    })),
+  };
+  return filterKey === "tags" ? <BriskSelect<string> {...shared} multiple value={selectedValues} onChange={(next) => {
+    if (!next.length) { onSelect(null); return; }
+    const changed = next.find((option) => !selectedValues.includes(option)) ?? selectedValues.find((option) => !next.includes(option));
+    if (changed) onSelect(changed);
+  }} /> : <BriskSelect<string> {...shared} value={selectedValues[0] ?? ""} onChange={(next) => onSelect(next || null)} />;
 }
 
 function ColumnHeaderMenu({
@@ -1208,6 +1250,7 @@ function ProjectDetailPanel({
   isSwitching,
   selectedRole,
   sectionRequest,
+  assignPersonId,
   onClose,
   onSaveStatus,
   onSaveDeadline,
@@ -1219,6 +1262,7 @@ function ProjectDetailPanel({
   isSwitching: boolean;
   selectedRole: PrototypeRole;
   sectionRequest: { section: ProjectPanelSection; requestId: number } | null;
+  assignPersonId?: string | null;
   onClose: () => void;
   onSaveStatus: (status: Project["status"]) => void;
   onSaveDeadline: (deadline: ProjectDeadline | undefined) => void;
@@ -1490,6 +1534,7 @@ function ProjectDetailPanel({
             timeEntries={project.timeEntries}
             access={teamAccess}
             hideHeader
+            assignPersonId={assignPersonId ?? undefined}
             viewerPersonId={selectedRole === "Studio Freelancer" ? freelancerViewerPersonId : selectedRole === "Studio Staff" ? staffViewerPersonId : undefined}
           />
         </ProjectDetailCollapsibleSection>
@@ -1604,12 +1649,12 @@ function ProjectDetailPanel({
           showSend={false}
           showApprove={false}
         />
-        <button className="project-detail-footer-button label-s-semibold" type="button" onClick={() => onSaveStatus("Completed")}>
+        <Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => onSaveStatus("Completed")}>
           Mark complete
-        </button>
-        <button className="project-detail-footer-button label-s-semibold" type="button" onClick={() => onSaveStatus("Archived")}>
+        </Button>
+        <Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => onSaveStatus("Archived")}>
           Archive
-        </button>
+        </Button>
       </div>
 
       {isTimeSpentOpen ? (
@@ -1697,12 +1742,12 @@ function ProjectDetailEditableHeader({ title, onEdit }: { title: string; onEdit:
 function ProjectDetailInlineActions({ onCancel, onSave }: { onCancel: () => void; onSave: () => void }) {
   return (
     <div className="project-detail-inline-actions">
-      <button className="project-detail-inline-cancel label-xs-semibold" type="button" onClick={onCancel}>
+      <Button size="S" variant="ghost" className="project-detail-inline-cancel" type="button" onClick={onCancel}>
         Cancel
-      </button>
-      <button className="project-detail-inline-save label-xs-semibold" type="button" onClick={onSave}>
+      </Button>
+      <Button size="S" variant="primary" className="project-detail-inline-save" type="button" onClick={onSave}>
         Save
-      </button>
+      </Button>
     </div>
   );
 }
@@ -1993,12 +2038,12 @@ function DeadlineReadFirstRow({
       </div>
       {isEditing ? (
         <div className="deadline-inline-actions">
-          <button className="deadline-inline-cancel label-xs-semibold" type="button" onClick={onCancel}>
+          <Button size="S" variant="ghost" className="deadline-inline-cancel" type="button" onClick={onCancel}>
             Cancel
-          </button>
-          <button className="deadline-inline-save label-xs-semibold" type="button" onClick={onSave}>
+          </Button>
+          <Button size="S" variant="primary" className="deadline-inline-save" type="button" onClick={onSave}>
             Save
-          </button>
+          </Button>
         </div>
       ) : (
         <button className="deadline-edit-link label-xs-semibold" type="button" onClick={onEdit}>
@@ -2516,8 +2561,8 @@ function ProjectCell({
                     ))}
                   </div>
                   <div className="project-tag-create-actions">
-                    <button
-                      className="project-tag-create-submit label-s-semibold"
+                    <Button size="S" variant="primary"
+                      className="project-tag-create-submit"
                       type="button"
                       disabled={draftTagName.trim().length === 0}
                       onClick={(event) => {
@@ -2526,9 +2571,9 @@ function ProjectCell({
                       }}
                     >
                       Create
-                    </button>
-                    <button
-                      className="project-tag-create-cancel label-s-semibold"
+                    </Button>
+                    <Button size="S" variant="ghost"
+                      className="project-tag-create-cancel"
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
@@ -2537,7 +2582,7 @@ function ProjectCell({
                       }}
                     >
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -2641,17 +2686,10 @@ function ProjectDataCell({
     return (
       <td className={columnClassName}>
         {canEditStatus ? (
-          <select
-            className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} project-status-select label-s-semibold`}
-            aria-label={`Change status for ${project.name}`}
-            value={project.status}
-            onChange={(event) => {
-              const nextStatus = projectStatusOptions.find((status) => status === event.target.value);
+          <BriskSelect<string> ariaLabel={`Change status for ${project.name}`} clearable={false} placeholder={"Choose an option"} triggerClassName={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} project-status-select label-s-semibold`} value={project.status} onChange={(value) => {
+              const nextStatus = projectStatusOptions.find((status) => status === value);
               if (nextStatus) onSaveStatus(nextStatus);
-            }}
-          >
-            {projectStatusOptions.map((status) => <option key={status} value={status}>{getStatusLabel(status)}</option>)}
-          </select>
+            }} options={[...projectStatusOptions.map((status) => ({ value: status, label: (getStatusLabel(status)) }))]} />
         ) : (
           <span className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} label-s-semibold`}>
             {getStatusLabel(project.status)}

@@ -67,13 +67,7 @@ export function MediaFilterBar(props: MediaFilterBarProps) {
         </div>
         <label className="media-select-shell label-s">
           <span className="sr-only">Sort media</span>
-          <select value={props.sort} onChange={(event) => props.onSortChange(event.target.value as MediaSort)}>
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="name-asc">Name A-Z</option>
-            <option value="largest">Largest first</option>
-          </select>
-          <DsIcon name="caret-down" size={16} />
+          <BriskSelect<string> ariaLabel={"Sort media"} clearable={false} placeholder={"Choose an option"} value={props.sort} onChange={(value) => props.onSortChange(value as MediaSort)} options={[{ value: "newest", label: "Newest first" }, { value: "oldest", label: "Oldest first" }, { value: "name-asc", label: "Name A-Z" }, { value: "largest", label: "Largest first" }]} />
         </label>
         <label className="media-search-shell">
           <DsIcon name="search" size={16} />
@@ -89,3 +83,4 @@ export function MediaFilterBar(props: MediaFilterBarProps) {
     </div>
   );
 }
+import { BriskSelect } from "@/components/form/BriskSelect";

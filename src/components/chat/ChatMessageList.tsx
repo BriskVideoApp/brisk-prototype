@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DragEvent, KeyboardEvent, ReactNode } from "react";
 import {
@@ -456,8 +457,8 @@ export function ChatMessageCard({
               </>
             ) : null}
             {!threadContext ? (
-              <button
-                className="chat-message-reply-action label-xs-semibold"
+              <Button size="S" variant="ghost"
+                className="chat-message-reply-action"
                 type="button"
                 data-message-action
                 data-tooltip="Reply in thread"
@@ -465,7 +466,7 @@ export function ChatMessageCard({
                 onClick={() => onOpenThread?.(message.id)}
               >
                 Reply
-              </button>
+              </Button>
             ) : null}
             <button
               className="chat-message-icon-action"

@@ -905,6 +905,7 @@
 }
 
 .script-row-drag-button:hover,
+.script-row-drag-button:focus-visible,
 .script-row-menu-button:hover,
 .script-row-menu-button:focus-visible,
 .script-row-menu-button[aria-expanded="true"] {
@@ -3175,3 +3176,5 @@ button.script-version-row-body:focus-visible {
     height: 68px;
   }
 }
+
+.script-ai-sources-control.brisk-select { width: auto; }

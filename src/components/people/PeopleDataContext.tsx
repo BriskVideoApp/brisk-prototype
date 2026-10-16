@@ -1,12 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useClients } from "@/components/clients/ClientDataContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import type { Client, ClientContact } from "@/data/clients";
 import {
   clientContactMetadata,
   createNativePerson,
   initialNativePeople,
+  prototypeStudioPersonId,
   type NewPersonInput,
   type Person,
   type PersonActivity,
@@ -47,12 +49,22 @@ type PeopleDataContextValue = {
 const PeopleDataContext = createContext<PeopleDataContextValue | null>(null);
 
 export function PeopleDataProvider({ children }: { children: ReactNode }) {
+  const { hasHydrated, state: prototypeState } = usePrototypeState();
   const { addContact, clients, removeContact, updateContact, updateContactAccess, updateContactProjects, updateContactRole } = useClients();
   const [nativePeople, setNativePeople] = useState<Person[]>(initialNativePeople);
   const [archivedContactIds, setArchivedContactIds] = useState<string[]>([]);
   const [contactNotes, setContactNotes] = useState<Record<string, string>>({});
   const [contactProfileOverrides, setContactProfileOverrides] = useState<Record<string, PersonProfileUpdate>>({});
   const [contactActivityOverrides, setContactActivityOverrides] = useState<Record<string, PersonActivity[]>>({});
+
+  useEffect(() => {
+    if (!hasHydrated || prototypeState.fixtureKind !== "onboarding-empty" || !prototypeState.onboarding.ownerName) return;
+    const owner = prototypeState.users.find((user) => user.id === prototypeState.session.activeUserId);
+    if (!owner) return;
+    setNativePeople((current) => current.map((person) => person.id === prototypeStudioPersonId
+      ? { ...person, name: owner.name, email: owner.email }
+      : person));
+  }, [hasHydrated, prototypeState.fixtureKind, prototypeState.onboarding.ownerName, prototypeState.session.activeUserId, prototypeState.users]);
 
   const clientContacts = useMemo(() => clients.flatMap((client) => client.contacts.map((contact) => makeClientContactPerson(
     client,
@@ -341,6 +353,7 @@ const studioDetailsFieldLabels: Record<keyof PersonStudioDetailsUpdate, string> 
   testingStatus: "Testing status",
   onboardingStatus: "Onboarding status",
   agreementStatus: "Agreement status",
+  agreementDocument: "Agreement document",
   weeklyCapacityHours: "Weekly capacity",
   defaultRate: "Default rate",
   rateType: "Rate type",

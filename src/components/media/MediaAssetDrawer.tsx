@@ -1,3 +1,4 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
@@ -153,7 +154,7 @@ function MediaCommentComposer({ assetId, mentionOptions, onSubmit }: { assetId: 
       </div> : null}
     </div>
     <p className="media-comment-hint label-xs">Type @ to mention people or projects · Cmd+Enter to post</p>
-    <button className="media-primary-button label-s-semibold" type="submit" disabled={!draft.trim()}>Comment</button>
+    <Button size="S" variant="primary" className="media-primary-button" type="submit" disabled={!draft.trim()}>Comment</Button>
   </form>;
 }
 

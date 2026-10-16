@@ -40,7 +40,7 @@ export function StudioIntegrationsPage() {
       <div className="studio-settings-info-block">
         <DsIcon name="info" size={18} />
         <div>
-          <h2 className="label-m-semibold" id="studio-integrations-title">One connection for the whole Studio</h2>
+          <h2 className="label-m-semibold" id="studio-integrations-title">Studio messaging connections</h2>
           <p className="paragraph-s">
             Reconnect shared accounts here. Project-specific channels and conversations stay in each project’s External Chat settings.
           </p>

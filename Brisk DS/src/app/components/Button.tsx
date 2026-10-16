@@ -1,11 +1,15 @@
-interface ButtonProps {
-  children: React.ReactNode;
+import type { ComponentPropsWithRef, ReactNode } from 'react';
+import styles from './Button.module.css';
+
+interface ButtonProps extends Omit<ComponentPropsWithRef<'button'>, 'size'> {
+  children: ReactNode;
   type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
   size?: 'S' | 'M' | 'L';
   disabled?: boolean;
-  onClick?: () => void;
   className?: string;
+  tooltip?: string;
+  'data-tooltip'?: string;
 }
 
 export function Button({
@@ -15,33 +19,28 @@ export function Button({
   size = 'M',
   disabled = false,
   onClick,
-  className = ''
+  className = '',
+  tooltip,
+  ...buttonProps
 }: ButtonProps) {
-  // Radius: 8px (radius/s) for buttons
-  const baseStyles = "transition-all border-[1px] cursor-pointer rounded-[8px] disabled:cursor-not-allowed disabled:border-[#C6CBD0] disabled:bg-[#F3F4F5] disabled:text-[#8B9298] disabled:shadow-none";
-
-  // Size variants - using Label text styles
-  const sizeStyles = {
-    S: "label-s-semibold px-[12px] py-[8px]",
-    M: "label-m-semibold px-[16px] py-[12px]",
-    L: "label-l-semibold px-[24px] py-[16px]"
-  };
-
-  // Color and interaction variants - buttons get shadow on hover only (hard shadow: 4px 4px 0)
-  // Using direct hex values to ensure proper rendering
-  const variantStyles = {
-    primary: "bg-[#8B2CFF] text-white border-black hover:bg-[#F3EEFF] hover:text-[#0E1114] hover:shadow-[4px_4px_0_#000000] active:bg-[#6625CD]",
-    secondary: "bg-white text-[#0E1114] border-black hover:bg-[#F3EEFF] hover:shadow-[4px_4px_0_#000000] active:bg-[#DCCDFF]",
-    tertiary: "bg-[#F3EEFF] text-[#0E1114] border-black hover:bg-[#F3EEFF] hover:shadow-[4px_4px_0_#000000] active:bg-[#DCCDFF]",
-    ghost: "bg-transparent text-[#0E1114] border-transparent hover:bg-[#F3EEFF] active:bg-[#DCCDFF]"
+  const textStyles = {
+    S: 'label-s-semibold',
+    M: 'label-m-semibold',
+    L: 'label-l-semibold',
   };
 
   return (
     <button
+      {...buttonProps}
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      data-tooltip={tooltip ?? buttonProps['data-tooltip']}
+      aria-description={buttonProps['aria-description'] ?? tooltip}
+      data-brisk-button=""
+      data-variant={variant}
+      data-size={size}
+      className={`${styles.button} ${textStyles[size]} ${className}`}
     >
       {children}
     </button>

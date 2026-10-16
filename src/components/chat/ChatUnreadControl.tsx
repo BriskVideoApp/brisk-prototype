@@ -1,3 +1,4 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 type ChatUnreadControlProps = {
   count: number;
   ariaLabel: string;
@@ -25,13 +26,13 @@ export function ChatUnreadControl({
       >
         {count}
       </button>
-      <button
-        className="chat-unread-mark-action label-xs-semibold"
+      <Button size="S" variant="ghost"
+        className="chat-unread-mark-action"
         type="button"
         onClick={onMarkRead}
       >
         Mark as read
-      </button>
+      </Button>
     </span>
   );
 }

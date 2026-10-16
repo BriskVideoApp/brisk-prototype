@@ -201,7 +201,7 @@ export function cloneClientAccountSettings(settings: ClientAccountSettings): Cli
 }
 
 export function getAuthenticationMethodLabel(method: ClientAuthenticationMethod) {
-  if (method === "magic-link") return "Email magic link";
+  if (method === "magic-link") return "Email link";
   if (method === "google") return "Google";
   if (method === "microsoft") return "Microsoft";
   return "Password";

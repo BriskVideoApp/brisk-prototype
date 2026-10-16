@@ -87,7 +87,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
     items: [
       {
         id: "today",
-        label: "Today",
+        label: "To Do",
         href: "/today",
         icon: "check-circle",
         roles: ["Studio Staff"],
@@ -218,6 +218,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
         href: "/brand-kits",
         icon: "frame-corners",
         roles: studioRoles,
+        sidebarHidden: true,
       },
     ],
   },
@@ -261,15 +262,6 @@ export const navigationGroups: readonly NavigationGroup[] = [
         strictRoleVisibility: true,
       },
       {
-        id: "studio-team-access",
-        label: "Team & access",
-        href: "/settings/studio/team",
-        icon: "users-three",
-        roles: studioOnly,
-        sidebarHidden: true,
-        strictRoleVisibility: true,
-      },
-      {
         id: "studio-production-defaults",
         label: "Production defaults",
         href: "/settings/studio/production",
@@ -298,7 +290,7 @@ export const navigationGroups: readonly NavigationGroup[] = [
       },
       {
         id: "plan-billing",
-        label: "Plan & billing",
+        label: "Brisk plan & billing",
         href: "/settings/plan-billing",
         icon: "settings",
         roles: studioOnly,

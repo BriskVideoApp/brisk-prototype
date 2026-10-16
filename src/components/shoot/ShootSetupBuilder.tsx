@@ -1,9 +1,11 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { BriskDatePicker } from "@/components/brief/BriefPage";
+import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { ShareActionRow } from "@/components/share/ShareActionRow";
@@ -306,7 +308,7 @@ export function ShootSetupBuilder({
           </span>
           <ShootSetupStepDots activeStep={currentStep} path={state.activePath} steps={steps} onSelectStep={changeStep} />
           <span className="shoot-setup-footer-side right">
-            {!isLastStep && (state.activePath === "schedule" || isOptionalStep(state.activePath, currentStep)) ? <button className="shoot-text-action label-s-semibold" type="button" onClick={() => changeStep(currentStep + 1)}>Skip for now</button> : null}
+            {!isLastStep && (state.activePath === "schedule" || isOptionalStep(state.activePath, currentStep)) ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => changeStep(currentStep + 1)}>Skip for now</Button> : null}
               <Button size="S" variant="primary" disabled={(!isLastStep && !canContinue) || isGenerating} onClick={continueSetup}>
                 {isGenerating
                   ? "Creating Creative Plan..."
@@ -531,7 +533,7 @@ function CallSheetCompanionSection({ children, count, title, onEdit }: { childre
     <section className="shoot-setup-call-sheet-section">
       <header>
         <div><h3 className="label-s-semibold">{title}</h3>{typeof count === "number" ? <span className="label-xs-semibold">{count}</span> : null}</div>
-        {onEdit ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={onEdit}>Edit</button> : null}
+        {onEdit ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onEdit}>Edit</Button> : null}
       </header>
       {children}
     </section>
@@ -569,7 +571,7 @@ function renderScheduleStep({ callSheet, currentStep, isClient, briskContacts, m
   if (currentStep === 0) {
     return <div className="shoot-setup-stack">
       {callSheet.days.map((day, index) => <section className="shoot-setup-day-card" key={day.id}>
-        <header><strong>Shoot day {index + 1}</strong>{callSheet.days.length > 1 ? <button className="shoot-text-action danger label-xs-semibold" type="button" onClick={() => onRemoveShootDay(day.id)}>Remove day</button> : null}</header>
+        <header><strong>Shoot day {index + 1}</strong>{callSheet.days.length > 1 ? <Button size="S" variant="danger" className="shoot-text-action danger" type="button" onClick={() => onRemoveShootDay(day.id)}>Remove day</Button> : null}</header>
         <div className="shoot-setup-grid three-column">
           <div className="shoot-setup-field"><span className="label-xs-semibold">Shoot date</span><BriskDatePicker ariaLabel={`${day.label} shoot date`} placeholder="Choose date" value={day.date} variant="field" onChange={(value) => mutateCallSheet((current) => updateShootDay(current, day.id, { date: value }))} /></div>
           <div className="shoot-setup-field"><span className="label-xs-semibold">General call time</span><BriskTimePicker ariaLabel={`${day.label} general call time`} value={day.generalCallTime} onChange={(value) => mutateCallSheet((current) => updateShootDay(current, day.id, { generalCallTime: value }))} /></div>
@@ -600,7 +602,7 @@ function renderScheduleStep({ callSheet, currentStep, isClient, briskContacts, m
     return <div className="shoot-setup-stack">
       {callSheet.people.length ? <div className="shoot-setup-person-list">{callSheet.people.map((person) => <article className="shoot-setup-person-card" key={person.id}>
         <div className="shoot-setup-grid four-column">
-          <SetupField label="Type"><select value={person.type} onChange={(event) => mutateCallSheet((current) => updatePerson(current, person.id, { type: event.target.value as ShootPersonType }))}>{Object.entries(personTypeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></SetupField>
+          <SetupField label="Type"><BriskSelect<string> ariaLabel={"Person type"} clearable={false} placeholder={"Choose an option"} value={person.type} onChange={(value) => mutateCallSheet((current) => updatePerson(current, person.id, { type: value as ShootPersonType }))} options={[...Object.entries(personTypeLabels).map(([value, label]) => ({ value: value, label: (label) }))]} /></SetupField>
           <SetupField label="Name"><input placeholder="Full name" value={person.name} onChange={(event) => mutateCallSheet((current) => updatePerson(current, person.id, { name: event.target.value }))} /></SetupField>
           <SetupField label="Role"><input placeholder="e.g. Director of Photography" value={person.role} onChange={(event) => mutateCallSheet((current) => updatePerson(current, person.id, { role: event.target.value }))} /></SetupField>
           <div className="shoot-setup-field"><span className="label-xs-semibold">Call time</span><BriskTimePicker ariaLabel={`${person.name || personTypeLabels[person.type]} call time`} value={person.callTime} onChange={(value) => mutateCallSheet((current) => updatePerson(current, person.id, { callTime: value }))} /></div>
@@ -610,7 +612,7 @@ function renderScheduleStep({ callSheet, currentStep, isClient, briskContacts, m
       </article>)}</div> : <SetupEmpty title="No people added yet" body="Add Crew, Talent or a Client contact. You can skip this and return later." />}
       <div className="shoot-setup-inline-actions">
         <BriskContactPicker contacts={availableContacts} onAdd={(contact) => mutateCallSheet((current) => ({ ...current, people: [...current.people, { ...contact, id: `${contact.id}-${Date.now()}`, showContactDetails: true }] }))} />
-        <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, people: [...current.people, createSetupPerson("crew", firstDay)] }))}><DsIcon name="plus" size={16} />Create new contact</button>
+        <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, people: [...current.people, createSetupPerson("crew", firstDay)] }))}><DsIcon name="plus" size={16} />Create new contact</Button>
       </div>
       <p className="shoot-setup-helper label-xs">Assign each person as Crew, Talent or Client contact. A person can be added again with another shoot role when needed.</p>
     </div>;
@@ -621,9 +623,9 @@ function renderScheduleStep({ callSheet, currentStep, isClient, briskContacts, m
     const unscheduledShots = callSheet.entries.filter((entry) => entry.type === "shot" && !entry.startTime);
     return <div className="shoot-setup-stack">
       <SetupEntryList entries={scheduledEntries} days={callSheet.days} mutateCallSheet={mutateCallSheet} />
-      <button className="shoot-button secondary label-s-semibold shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createSetupEntry(current, true)] }))}><DsIcon name="plus" size={16} />Add Schedule block</button>
+      <Button size="S" variant="secondary" className="shoot-button secondary shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createSetupEntry(current, true)] }))}><DsIcon name="plus" size={16} />Add Schedule block</Button>
       <section className="shoot-setup-unscheduled">
-        <header><div><strong>Unscheduled shots</strong><span className="label-xs">Shots that have not been assigned to a time yet.</span></div><button className="shoot-text-action label-s-semibold" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createSetupEntry(current, false)] }))}><DsIcon name="plus" size={16} />Add shot</button></header>
+        <header><div><strong>Unscheduled shots</strong><span className="label-xs">Shots that have not been assigned to a time yet.</span></div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createSetupEntry(current, false)] }))}><DsIcon name="plus" size={16} />Add shot</Button></header>
         {unscheduledShots.length ? <SetupEntryList entries={unscheduledShots} days={callSheet.days} mutateCallSheet={mutateCallSheet} /> : <SetupEmpty title="No unscheduled shots" body="Flexible coverage can stay here until you assign it to a time." />}
       </section>
     </div>;
@@ -673,14 +675,14 @@ function renderShotListStep({ callSheet, currentStep, isGenerating, state, mutat
   if (currentStep === 1) {
     return <div className="shoot-setup-stack">
       {isInterviewLed ? <section className="shoot-setup-creative-section">
-        <header><div><strong>What should we ask?</strong><span className="label-xs">Interview Questions suggested from the approved Brief and Script.</span></div><button className="shoot-text-action label-s-semibold" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, questions: [...current.questions, createAdditionalInterviewQuestion(current)] }))}><DsIcon name="sparkle" size={16} />Generate more questions</button></header>
+        <header><div><strong>What should we ask?</strong><span className="label-xs">Interview Questions suggested from the approved Brief and Script.</span></div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, questions: [...current.questions, createAdditionalInterviewQuestion(current)] }))}><DsIcon name="sparkle" size={16} />Generate more questions</Button></header>
         {callSheet.questions.length ? <div className="shoot-setup-question-list">{callSheet.questions.map((question, index) => <article key={question.id}>
           <span className="shoot-setup-shot-number label-xs-semibold">{index + 1}</span>
           <input aria-label={`Interview question ${index + 1}`} value={question.question} onChange={(event) => mutateCallSheet((current) => updateInterviewQuestion(current, question.id, event.target.value))} />
           <div className="shoot-setup-reorder-actions"><button className="shoot-icon-button" type="button" disabled={index === 0} aria-label={`Move question ${index + 1} up`} onClick={() => mutateCallSheet((current) => moveInterviewQuestion(current, question.id, -1))}><DsIcon name="caret-left" size={16} /></button><button className="shoot-icon-button" type="button" disabled={index === callSheet.questions.length - 1} aria-label={`Move question ${index + 1} down`} onClick={() => mutateCallSheet((current) => moveInterviewQuestion(current, question.id, 1))}><DsIcon name="caret-right" size={16} /></button></div>
           <button className="shoot-icon-button" type="button" aria-label={`Remove question ${index + 1}`} onClick={() => mutateCallSheet((current) => ({ ...current, questions: current.questions.filter((item) => item.id !== question.id) }))}><DsIcon name="trash-simple" size={16} /></button>
         </article>)}</div> : <SetupEmpty title="No Interview Questions yet" body="Generate suggestions or add a question manually." />}
-        <button className="shoot-button secondary label-s-semibold shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, questions: [...current.questions, createBlankInterviewQuestion(current)] }))}><DsIcon name="plus" size={16} />Add question</button>
+        <Button size="S" variant="secondary" className="shoot-button secondary shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, questions: [...current.questions, createBlankInterviewQuestion(current)] }))}><DsIcon name="plus" size={16} />Add question</Button>
       </section> : null}
       <section className="shoot-setup-creative-section"><header><div><strong>What should we capture?</strong><span className="label-xs">Add, edit, remove and reorder the shots planned for the shoot.</span></div></header>
       {shots.length ? <div className="shoot-setup-shot-review-list">{shots.map((shot, index) => <article key={shot.id}>
@@ -689,7 +691,7 @@ function renderShotListStep({ callSheet, currentStep, isGenerating, state, mutat
         <span className="shoot-setup-included label-xs-semibold"><DsIcon name="check" size={14} />Included</span>
         <button className="shoot-icon-button" type="button" aria-label={`Remove shot ${index + 1}`} onClick={() => onRemoveShot(shot.id)}><DsIcon name="trash-simple" size={16} /></button>
       </article>)}</div> : <SetupEmpty title="Start adding shots" body="Your blank Shot List is ready. Add the first piece of coverage below." />}
-      <button className="shoot-button secondary label-s-semibold shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createBlankShot(current)] }))}><DsIcon name="plus" size={16} />Add shot</button>
+      <Button size="S" variant="secondary" className="shoot-button secondary shoot-setup-add-button" type="button" onClick={() => mutateCallSheet((current) => ({ ...current, entries: [...current.entries, createBlankShot(current)] }))}><DsIcon name="plus" size={16} />Add shot</Button>
       </section>
     </div>;
   }
@@ -701,10 +703,10 @@ function renderShotListStep({ callSheet, currentStep, isGenerating, state, mutat
         <div className="shoot-setup-grid two-column">
           <SetupField label="Description"><input value={shot.description} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { description: event.target.value }))} /></SetupField>
           <SetupField label="Talent or subject"><input placeholder="Person, product or action" value={shot.subject ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { subject: event.target.value }))} /></SetupField>
-          <SetupField label="Location"><select value={shot.locationId ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { locationId: event.target.value || undefined }))}><option value="">No location yet</option>{callSheet.locations.map((location) => <option value={location.id} key={location.id}>{location.name}</option>)}</select></SetupField>
-          <SetupField label="Priority"><select value={shot.priority ?? "Medium"} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { priority: event.target.value as ProductionEntry["priority"] }))}><option>Critical</option><option>High</option><option>Medium</option><option>Bonus</option></select></SetupField>
+          <SetupField label="Location"><BriskSelect<string> ariaLabel={"Location"} clearable={false} placeholder={"No location yet"} value={shot.locationId ?? ""} onChange={(value) => mutateCallSheet((current) => updateEntry(current, shot.id, { locationId: value || undefined }))} options={[{ value: "", label: "No location yet" }, ...callSheet.locations.map((location) => ({ value: location.id, label: (location.name) }))]} /></SetupField>
+          <SetupField label="Priority"><BriskSelect<string> ariaLabel={"Priority"} clearable={false} placeholder={"Choose an option"} value={shot.priority ?? "Medium"} onChange={(value) => mutateCallSheet((current) => updateEntry(current, shot.id, { priority: value as ProductionEntry["priority"] }))} options={[{ value: "Critical", label: "Critical" }, { value: "High", label: "High" }, { value: "Medium", label: "Medium" }, { value: "Bonus", label: "Bonus" }]} /></SetupField>
         </div>
-        <details className="shoot-setup-more-details"><summary className="label-s-semibold">More details</summary><div className="shoot-setup-grid three-column"><SetupField label="Shot size"><select value={shot.shotSize ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { shotSize: event.target.value as ProductionEntry["shotSize"] || undefined }))}><option value="">Choose size</option>{["Extreme close-up", "Close-up", "Medium", "Wide", "Extreme wide"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Camera approach"><select value={shot.cameraMovement ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { cameraMovement: event.target.value as ProductionEntry["cameraMovement"] || undefined }))}><option value="">Choose approach</option>{["Static", "Handheld", "Pan", "Tilt", "Push in", "Pull out", "Tracking", "Gimbal", "Drone"].map((value) => <option value={value} key={value}>{value}</option>)}</select></SetupField><SetupField label="Reference image"><input type="url" placeholder="Paste an image link" value={shot.imageReferenceUrl ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { imageReferenceUrl: event.target.value || undefined, imageReferenceSource: event.target.value ? "link" : undefined }))} /></SetupField></div></details>
+        <details className="shoot-setup-more-details"><summary className="label-s-semibold">More details</summary><div className="shoot-setup-grid three-column"><SetupField label="Shot size"><BriskSelect<string> ariaLabel={"Shot size"} clearable={false} placeholder={"Choose size"} value={shot.shotSize ?? ""} onChange={(value) => mutateCallSheet((current) => updateEntry(current, shot.id, { shotSize: value as ProductionEntry["shotSize"] || undefined }))} options={[{ value: "", label: "Choose size" }, ...["Extreme close-up", "Close-up", "Medium", "Wide", "Extreme wide"].map((value) => ({ value: value, label: (value) }))]} /></SetupField><SetupField label="Camera approach"><BriskSelect<string> ariaLabel={"Camera approach"} clearable={false} placeholder={"Choose approach"} value={shot.cameraMovement ?? ""} onChange={(value) => mutateCallSheet((current) => updateEntry(current, shot.id, { cameraMovement: value as ProductionEntry["cameraMovement"] || undefined }))} options={[{ value: "", label: "Choose approach" }, ...["Static", "Handheld", "Pan", "Tilt", "Push in", "Pull out", "Tracking", "Gimbal", "Drone"].map((value) => ({ value: value, label: (value) }))]} /></SetupField><SetupField label="Reference image"><input type="url" placeholder="Paste an image link" value={shot.imageReferenceUrl ?? ""} onChange={(event) => mutateCallSheet((current) => updateEntry(current, shot.id, { imageReferenceUrl: event.target.value || undefined, imageReferenceSource: event.target.value ? "link" : undefined }))} /></SetupField></div></details>
       </section>) : <SetupEmpty title="No shots to detail" body="Go back to add a shot, or continue and add one in the working Shot List." />}
     </div>;
   }
@@ -738,9 +740,9 @@ function SetupEntryList({ entries, days, mutateCallSheet }: { entries: Productio
   return <div className="shoot-setup-entry-list">{entries.map((entry, index) => <article key={entry.id}>
     <span className="shoot-setup-shot-number label-xs-semibold">{index + 1}</span>
     <input aria-label={`Schedule block ${index + 1} description`} placeholder="Describe this block" value={entry.description} onChange={(event) => mutateCallSheet((current) => updateEntry(current, entry.id, { description: event.target.value }))} />
-    <select aria-label={`Schedule block ${index + 1} type`} value={entry.type} onChange={(event) => mutateCallSheet((current) => updateEntry(current, entry.id, { type: event.target.value as ScheduleType }))}>{Object.entries(scheduleTypeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select>
+    <BriskSelect<string> ariaLabel={`Schedule block ${index + 1} type`} clearable={false} placeholder={"Choose an option"} value={entry.type} onChange={(value) => mutateCallSheet((current) => updateEntry(current, entry.id, { type: value as ScheduleType }))} options={[...Object.entries(scheduleTypeLabels).map(([value, label]) => ({ value: value, label: (label) }))]} />
     <BriskTimePicker ariaLabel={`Schedule block ${index + 1} time`} value={entry.startTime} onChange={(value) => mutateCallSheet((current) => updateEntry(current, entry.id, { startTime: value }))} />
-    <select aria-label={`Schedule block ${index + 1} shoot day`} value={entry.dayId} onChange={(event) => mutateCallSheet((current) => updateEntry(current, entry.id, { dayId: event.target.value }))}>{days.map((day) => <option value={day.id} key={day.id}>{day.label}</option>)}</select>
+    <BriskSelect<string> ariaLabel={`Schedule block ${index + 1} shoot day`} clearable={false} placeholder={"Choose an option"} value={entry.dayId} onChange={(value) => mutateCallSheet((current) => updateEntry(current, entry.id, { dayId: value }))} options={[...days.map((day) => ({ value: day.id, label: (day.label) }))]} />
     <button className="shoot-icon-button" type="button" aria-label={`Remove ${entry.description || `Schedule block ${index + 1}`}`} onClick={() => mutateCallSheet((current) => removeEntry(current, entry.id))}><DsIcon name="trash-simple" size={16} /></button>
   </article>)}</div>;
 }
@@ -773,15 +775,12 @@ function ProductionNotesBuilder({ callSheet, isClient, mutateCallSheet }: { call
 }
 
 function BriskContactPicker({ contacts, onAdd }: { contacts: ShootPerson[]; onAdd: (contact: ShootPerson) => void }) {
-  const [query, setQuery] = useState("");
-  const filteredContacts = contacts.filter((contact) => `${contact.name} ${contact.email} ${contact.role}`.toLowerCase().includes(query.trim().toLowerCase()));
-  return <details className="shoot-setup-contact-picker">
-    <summary className="shoot-button secondary label-s-semibold"><DsIcon name="users-three" size={16} />Add from Brisk</summary>
-    <div className="shoot-setup-contact-picker-menu">
-      <label className="shoot-setup-contact-search"><span className="sr-only">Search Brisk contacts</span><DsIcon name="search" size={16} /><input placeholder="Search contacts" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
-      {filteredContacts.length ? filteredContacts.map((contact) => <button className="label-s" type="button" key={`${contact.id}-${contact.type}`} onClick={() => onAdd(contact)}><span><strong>{contact.name}</strong><small>{contact.role || personTypeLabels[contact.type]} · {contact.email}</small></span><DsIcon name="plus" size={16} /></button>) : <span className="label-xs">{contacts.length ? "No contacts match your search." : "All matching Brisk contacts are already added."}</span>}
-    </div>
-  </details>;
+  return <BriskSelect<string> multiple ariaLabel="Brisk contacts" className="shoot-setup-contact-picker" clearable={false} searchable
+    placeholder="Add from Brisk" triggerContent={<><DsIcon name="users-three" size={16} /><span>Add from Brisk</span></>} value={[]}
+    searchPlaceholder="Search contacts" emptyLabel={contacts.length ? "No contacts match your search." : "All matching Brisk contacts are already added."}
+    options={contacts.map((contact) => ({ value: `${contact.id}-${contact.type}`, label: contact.name,
+      description: `${contact.role || personTypeLabels[contact.type]} · ${contact.email}`, searchText: `${contact.email} ${contact.role}`,
+    }))} onChange={(next) => { const contact = contacts.find((person) => next.includes(`${person.id}-${person.type}`)); if (contact) onAdd(contact); }} />;
 }
 
 function SetupField({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {

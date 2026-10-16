@@ -419,9 +419,9 @@
   height: var(--brisk-space-3xl);
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--brisk-border-primary);
+  border: 1px solid transparent;
   border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
+  background: transparent;
   color: var(--brisk-text-primary);
   padding: var(--brisk-space-none);
   text-decoration: none;
@@ -439,14 +439,15 @@
 
 .app-global-action-button:hover,
 .app-global-action-button:focus-visible {
-  box-shadow: var(--brisk-shadow-s);
-  outline: var(--brisk-space-none);
-  transform: translate(-1px, -1px);
+  background: var(--brisk-brand-secondary);
+}
+
+.app-global-action-button:focus-visible {
+  outline: 2px solid var(--brisk-border-focus);
 }
 
 .app-global-action-button:active {
-  box-shadow: none;
-  transform: none;
+  background: var(--brisk-brand-secondary-click);
 }
 
 .app-global-action-button.is-active {
@@ -779,7 +780,7 @@
   display: grid;
   min-width: var(--brisk-space-none);
   grid-template-columns: max-content minmax(var(--brisk-space-none), 1fr);
-  align-items: start;
+  align-items: center;
   border: 1px solid transparent;
   border-radius: var(--brisk-radius-s);
   color: var(--brisk-text-primary);
@@ -825,40 +826,6 @@
   gap: var(--brisk-space-xxs);
 }
 
-.app-user-menu-client-organisation {
-  display: flex;
-  align-items: center;
-  gap: var(--brisk-space-xs);
-}
-
-.app-user-menu-client-organisation strong {
-  overflow: hidden;
-  color: var(--brisk-text-primary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.app-user-menu-client-logo {
-  display: inline-flex;
-  width: var(--brisk-space-xl);
-  height: var(--brisk-space-xl);
-  flex: 0 0 var(--brisk-space-xl);
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary-click);
-  font-weight: 700;
-}
-
-.app-user-menu-client-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
 .app-user-menu-close {
   display: inline-flex;
   width: var(--brisk-space-2xl);
@@ -883,6 +850,11 @@
 .app-user-menu-actions {
   display: grid;
   padding: var(--brisk-space-s);
+}
+
+.app-user-menu-group-label {
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-s) var(--brisk-space-m) var(--brisk-space-xs);
 }
 
 .app-user-menu-actions a,
@@ -1378,6 +1350,7 @@ button.app-sidebar-link {
 
   .app-user-menu-header .app-user-menu-popover {
     position: fixed;
+    top: auto;
     right: var(--brisk-space-s);
     bottom: var(--brisk-space-s);
     left: var(--brisk-space-s);

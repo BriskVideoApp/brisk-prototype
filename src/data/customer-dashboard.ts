@@ -76,6 +76,20 @@ export const customerDashboardSeries: CustomerDashboardSeries[] = [
   },
 ];
 
+export const sampleClientPortalProjects: CustomerDashboardProject[] = [
+  {
+    id: "sample-client-brand-film",
+    code: "SAMPLE-001",
+    name: "Brand launch film",
+    status: "In Production",
+    statusDetail: "Waiting on you",
+    createdAt: "2026-09-28T10:00:00+10:00",
+    latestAction: { label: "Media ready for review", timestamp: "2026-09-28T10:00:00+10:00" },
+    stages: makeStageProgress("media", "waiting"),
+    unreadMessages: 1,
+  },
+];
+
 export const customerDashboardProjects: CustomerDashboardProject[] = [
   {
     id: "loom-launch-film",

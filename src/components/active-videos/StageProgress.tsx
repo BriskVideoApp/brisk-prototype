@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ProjectVideoType, StageKey, StageStatus } from "@/components/active-videos/types";
 import { useProjectFlow } from "@/components/project/ProjectFlowContext";
@@ -118,7 +119,7 @@ export function StageChip({
   return (
     <div className={`stage-step ${isMedia ? "is-media-pinned" : ""}`.trim()}>
       {stageHref ? (
-        <a
+        <Link
           className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`}`}
           href={stageHref}
           aria-label={isMedia ? `Open ${displayLabel}. ${tooltip}` : `Open ${stageLabel}`}
@@ -126,7 +127,7 @@ export function StageChip({
           onClick={(event) => event.stopPropagation()}
         >
           {chipContent}
-        </a>
+        </Link>
       ) : (
         <span
           className={`stage-chip ${isMedia ? "stage-media" : `stage-${status.state}`} is-static`}

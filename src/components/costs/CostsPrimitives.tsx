@@ -1,5 +1,8 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import { useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
@@ -104,7 +107,7 @@ export function CreateOfferModal({ projectId, onClose, onCreated }: { projectId:
       title="Create contractor offer"
       description="Set the commercial terms for this project. The contractor can accept or decline from My jobs."
       onClose={onClose}
-      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Send offer</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Send offer</Button></>}
     >
       <div className="costs-form-grid">
         <label className="costs-field is-wide">
@@ -143,7 +146,7 @@ export function InvoiceUploadModal({ offer, onClose, onSubmitted }: { offer: Con
       title={`Submit invoice for ${offer.role}`}
       description={`Upload one or more PDFs against your accepted ${formatCostAmount(offer.agreedRate, offer.currency)} offer.`}
       onClose={onClose}
-      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Submit invoice</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Submit invoice</Button></>}
     >
       <div className="costs-form-grid">
         <label className="costs-upload-field is-wide">
@@ -213,7 +216,7 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
         title={previewFileName}
         description="Invoice PDF preview"
         onClose={onClose}
-        footer={<Button size="M" variant="secondary" onClick={() => setIsViewingPdf(false)}>Back to invoice</Button>}
+        footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="secondary" onClick={() => setIsViewingPdf(false)}>Back to invoice</Button></>}
       >
         {invoiceItem.fileNames.length > 1 ? <div className="costs-pdf-file-tabs" role="tablist" aria-label="Invoice PDF files">{invoiceItem.fileNames.map((fileName) => <button className={`label-s-semibold ${previewFileName === fileName ? "is-active" : ""}`} type="button" role="tab" aria-selected={previewFileName === fileName} key={fileName} onClick={() => setPreviewFileName(fileName)}>{fileName}</button>)}</div> : null}
         <article className="costs-pdf-preview" aria-label={`Preview of ${previewFileName}`}>
@@ -232,77 +235,50 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
 
   if (step === "forward") {
     return (
-      <ClientModal
-        title="Invoice approved"
-        description="Approval is complete. Forwarding the PDFs to one or more accounts inboxes is optional."
-        onClose={onClose}
-        footer={<><Button size="M" variant="secondary" onClick={onClose}>Done</Button><Button size="M" onClick={forward} className={!destinationIds.length ? "costs-button-disabled" : ""}>Email invoice</Button></>}
-      >
-        <div className="costs-success-block"><DsIcon name="check-circle" size={20} /><p className="label-s"><strong>Approved.</strong> You can close this window without forwarding anything.</p></div>
-        <label className="costs-field">
+      <ConfirmationDialog title="Invoice approved" description="Approval is complete. Forwarding the PDFs to one or more accounts inboxes is optional." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={onClose}>Done</Button><Button size="S" onClick={forward} className={!destinationIds.length ? "costs-button-disabled" : ""}>Email invoice</Button></>}> <div className="costs-success-block"><DsIcon name="check-circle" size={20} /><p className="label-s"><strong>Approved.</strong> You can close this window without forwarding anything.</p></div>  <label className="costs-field">
           <span className="label-m-semibold">Forward to</span>
           <BriskSelect multiple ariaLabel="Forward invoice to accounts" clearLabel="Clear destinations" searchable={false} options={invoiceForwardingDestinations.map((destination) => ({ value: destination.id, label: `${destination.label} - ${destination.email}` }))} placeholder="Choose accounts inboxes" selectionLabel={(selectedOptions) => `${selectedOptions.length} accounts selected`} value={destinationIds} onChange={setDestinationIds} />
-        </label>
-      </ClientModal>
+        </label> </ConfirmationDialog>
     );
   }
 
   if (step === "send-back") {
     return (
-      <ClientModal
-        title="Send invoice back"
-        description="The contractor will see this reason in My jobs and can submit another invoice."
-        onClose={onClose}
-        footer={<><Button size="M" variant="secondary" onClick={() => setStep("review")}>Back</Button><Button size="M" onClick={sendBack} className={!sendBackReason.trim() ? "costs-button-disabled" : ""}>Send back</Button></>}
-      >
-        <label className="costs-field">
+      <ConfirmationDialog title="Send invoice back" description="The contractor will see this reason in My jobs and can submit another invoice." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={() => setStep("review")}>Back</Button><Button size="S" onClick={sendBack} className={!sendBackReason.trim() ? "costs-button-disabled" : ""}>Send back</Button></>}> <label className="costs-field">
           <span className="label-m-semibold">Reason <small className="label-xs">Required</small></span>
-          <textarea autoFocus value={sendBackReason} placeholder="Explain what needs to change" onChange={(event) => setSendBackReason(event.target.value)} />
-        </label>
-      </ClientModal>
+          <textarea autoFocus data-confirmation-autofocus value={sendBackReason} placeholder="Explain what needs to change" onChange={(event) => setSendBackReason(event.target.value)} />
+        </label> </ConfirmationDialog>
     );
   }
 
   const reviewFooter = isApprovalReview ? (
     <>
-      <Button size="M" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
-      <Button size="M" variant="secondary" onClick={() => setStep("send-back")}>Send back</Button>
-      <Button size="M" onClick={approve} className={mismatch && !approvalNote.trim() ? "costs-button-disabled" : ""}>Approve invoice</Button>
+      <Button size="S" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
+      <Button size="S" variant="secondary" onClick={() => setStep("send-back")}>Send back</Button>
+      <Button size="S" onClick={approve} className={mismatch && !approvalNote.trim() ? "costs-button-disabled" : ""}>Approve invoice</Button>
     </>
   ) : invoiceItem.state === "Approved" ? (
     <>
-      <Button size="M" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
-      <Button size="M" variant="secondary" onClick={() => setStep("forward")}>Forward invoice</Button>
-      {onMarkPaid ? <Button size="M" onClick={markPaid}>Mark as paid</Button> : null}
+      <Button size="S" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
+      <Button size="S" variant="secondary" onClick={() => setStep("forward")}>Forward invoice</Button>
+      {onMarkPaid ? <Button size="S" onClick={markPaid}>Mark as paid</Button> : null}
     </>
   ) : (
     <>
-      <Button size="M" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
-      <Button size="M" onClick={onClose}>Close</Button>
+      <Button size="S" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
+      <Button size="S" onClick={onClose}>Close</Button>
     </>
   );
 
   return (
-    <ClientModal
-      title={isApprovalReview ? "Review contractor invoice" : "Contractor invoice"}
-      description={`${invoiceItem.contractorName} submitted ${invoiceItem.fileNames.length} ${invoiceItem.fileNames.length === 1 ? "PDF" : "PDFs"}.`}
-      onClose={onClose}
-      footer={reviewFooter}
-    >
-      <dl className="costs-review-summary">
+    <ConfirmationDialog title={isApprovalReview ? "Review contractor invoice" : "Contractor invoice"} description={`${invoiceItem.contractorName} submitted ${invoiceItem.fileNames.length} ${invoiceItem.fileNames.length === 1 ? "PDF" : "PDFs"}.`} expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>{reviewFooter}</>}> <dl className="costs-review-summary">
         <div><dt className="label-xs">Agreed rate</dt><dd className="label-m-semibold">{formatCostAmount(offerItem.agreedRate, offerItem.currency)}</dd></div>
         <div><dt className="label-xs">Invoice total</dt><dd className="label-m-semibold">{formatCostAmount(invoiceItem.amount, invoiceItem.currency)}</dd></div>
         <div className="is-wide"><dt className="label-xs">Files</dt><dd className="label-s">{invoiceItem.fileNames.join(", ")}</dd></div>
-      </dl>
-      {mismatch ? <div className="costs-warning-block"><DsIcon name="alert-triangle" size={18} /><p className="label-s"><strong>Different from the offer.</strong> {isApprovalReview ? "Add a note before approving. Approval remains available." : "The approved invoice has a different rate or currency."}</p></div> : null}
-      {invoiceItem.contractorNote ? <div className="costs-info-block"><DsIcon name="info" size={18} /><p className="label-s"><strong>Contractor note:</strong> {invoiceItem.contractorNote}</p></div> : null}
-      {invoiceItem.approvalNote && invoiceItem.state !== "Submitted" ? <div className="costs-info-block"><DsIcon name="check-circle" size={18} /><p className="label-s"><strong>Approval note:</strong> {invoiceItem.approvalNote}</p></div> : null}
-      {invoiceItem.sendBackReason ? <div className="costs-info-block"><DsIcon name="arrow-counter-clockwise" size={18} /><p className="label-s"><strong>Sent back reason:</strong> {invoiceItem.sendBackReason}</p></div> : null}
-      {isApprovalReview ? <label className="costs-field">
+      </dl>  {mismatch ? <div className="costs-warning-block"><DsIcon name="alert-triangle" size={18} /><p className="label-s"><strong>Different from the offer.</strong> {isApprovalReview ? "Add a note before approving. Approval remains available." : "The approved invoice has a different rate or currency."}</p></div> : null}  {invoiceItem.contractorNote ? <div className="costs-info-block"><DsIcon name="info" size={18} /><p className="label-s"><strong>Contractor note:</strong> {invoiceItem.contractorNote}</p></div> : null}  {invoiceItem.approvalNote && invoiceItem.state !== "Submitted" ? <div className="costs-info-block"><DsIcon name="check-circle" size={18} /><p className="label-s"><strong>Approval note:</strong> {invoiceItem.approvalNote}</p></div> : null}  {invoiceItem.sendBackReason ? <div className="costs-info-block"><DsIcon name="arrow-counter-clockwise" size={18} /><p className="label-s"><strong>Sent back reason:</strong> {invoiceItem.sendBackReason}</p></div> : null}  {isApprovalReview ? <label className="costs-field">
         <span className="label-m-semibold">Approval note <small className="label-xs">{mismatch ? "Required" : "Optional"}</small></span>
         <textarea value={approvalNote} placeholder={mismatch ? "Explain why this difference is approved" : "Add an internal approval note"} onChange={(event) => setApprovalNote(event.target.value)} />
-      </label> : null}
-    </ClientModal>
+      </label> : null} </ConfirmationDialog>
   );
 }
 

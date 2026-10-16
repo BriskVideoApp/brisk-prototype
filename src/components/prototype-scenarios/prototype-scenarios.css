@@ -112,7 +112,7 @@
   gap: var(--brisk-space-s);
 }
 
-.prototype-scenario-fields select {
+.prototype-scenario-fields .brisk-select-trigger {
   width: 100%;
   padding: var(--brisk-space-m) var(--brisk-space-l);
   border: 1px solid var(--brisk-border-primary);
@@ -121,8 +121,8 @@
   color: var(--brisk-text-primary);
 }
 
-.prototype-scenario-fields select:hover,
-.prototype-scenario-fields select:focus-visible {
+.prototype-scenario-fields .brisk-select-trigger:hover,
+.prototype-scenario-fields .brisk-select-trigger:focus-visible {
   background: var(--brisk-brand-primary-hover);
   box-shadow: var(--brisk-shadow-s);
   outline: none;

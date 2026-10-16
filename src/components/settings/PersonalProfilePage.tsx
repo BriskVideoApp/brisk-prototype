@@ -99,21 +99,23 @@ export function PersonalProfilePage() {
             <FreelancerWorkDetailsCard person={freelancer} onSave={(update) => updatePersonIdentity(freelancer.id, update)} />
           </>
         ) : selectedRole === "Customer" && customer ? (
-          <>
-            <PersonalProfileForm
-              companyName={account.company.name}
-              roleLabel={access.role}
-              studioName={studioName}
-              value={profileFromPerson(customer)}
-              onSave={(profile) => updatePersonIdentity(customer.id, {
-                name: profile.fullName,
-                avatarUrl: profile.photoUrl,
-                phone: profile.phoneNumber,
-                timezone: profile.timezone,
-              })}
-            />
-            <ClientContactWorkDetailsCard person={customer} studioName={studioName} onSave={(update) => updatePersonIdentity(customer.id, update)} />
-          </>
+          <PersonalProfileForm
+            companyName={account.company.name}
+            roleLabel={access.role}
+            studioName={studioName}
+            value={profileFromPerson(customer)}
+            clientWorkDetails={{ jobTitle: customer.jobTitles[0] ?? "", location: customer.location }}
+            onSave={(profile, workDetails) => updatePersonIdentity(customer.id, {
+              name: profile.fullName,
+              avatarUrl: profile.photoUrl,
+              phone: profile.phoneNumber,
+              timezone: profile.timezone,
+              ...(workDetails ? {
+                jobTitles: [workDetails.jobTitle.trim() || "Client contact"],
+                location: workDetails.location.trim(),
+              } : {}),
+            })}
+          />
         ) : (
           <PersonalProfileForm
             companyName={account.company.name}
@@ -129,6 +131,7 @@ export function PersonalProfilePage() {
 }
 
 export function PersonalProfileForm({
+  clientWorkDetails,
   companyName,
   onSave,
   personType = "Client contact",
@@ -137,8 +140,9 @@ export function PersonalProfileForm({
   studioName,
   value,
 }: {
+  clientWorkDetails?: { jobTitle: string; location: string };
   companyName?: string;
-  onSave: (profile: PersonalProfile) => void;
+  onSave: (profile: PersonalProfile, workDetails?: { jobTitle: string; location: string }) => void;
   personType?: PersonType;
   roleLabel?: string;
   showClientMembership?: boolean;
@@ -146,11 +150,14 @@ export function PersonalProfileForm({
   value: PersonalProfile;
 }) {
   const [draft, setDraft] = useState<PersonalProfile>(() => ({ ...value }));
+  const [workDraft, setWorkDraft] = useState(() => ({ jobTitle: clientWorkDetails?.jobTitle ?? "", location: clientWorkDetails?.location ?? "" }));
   const [toast, setToast] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
-  const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(value), [draft, value]);
+  const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(value)
+    || (clientWorkDetails !== undefined && (workDraft.jobTitle !== clientWorkDetails.jobTitle || workDraft.location !== clientWorkDetails.location)), [clientWorkDetails, draft, value, workDraft]);
 
   useEffect(() => setDraft({ ...value }), [value]);
+  useEffect(() => setWorkDraft({ jobTitle: clientWorkDetails?.jobTitle ?? "", location: clientWorkDetails?.location ?? "" }), [clientWorkDetails?.jobTitle, clientWorkDetails?.location]);
 
   useEffect(() => {
     if (!toast) return;
@@ -172,7 +179,7 @@ export function PersonalProfileForm({
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSave({ ...draft });
+    onSave({ ...draft }, clientWorkDetails ? { ...workDraft } : undefined);
     setToast("Your profile was updated.");
   };
 
@@ -226,6 +233,10 @@ export function PersonalProfileForm({
               value={draft.phoneNumber}
               onChange={(event) => setDraft((current) => ({ ...current, phoneNumber: event.target.value }))}
             />
+            {clientWorkDetails ? <>
+              <Input label="Job title" value={workDraft.jobTitle} onChange={(event) => setWorkDraft((current) => ({ ...current, jobTitle: event.target.value }))} />
+              <Input label="Location" value={workDraft.location} onChange={(event) => setWorkDraft((current) => ({ ...current, location: event.target.value }))} />
+            </> : null}
             <label className="account-settings-select-field">
               <span className="label-m-semibold">Personal timezone</span>
               <BriskSelect
@@ -265,7 +276,10 @@ export function PersonalProfileForm({
         </section>
 
         <div className="account-settings-form-actions">
-          <Button size="M" type="button" variant="secondary" onClick={() => setDraft({ ...value })}>
+          <Button size="M" type="button" variant="secondary" onClick={() => {
+            setDraft({ ...value });
+            setWorkDraft({ jobTitle: clientWorkDetails?.jobTitle ?? "", location: clientWorkDetails?.location ?? "" });
+          }}>
             Discard changes
           </Button>
           <Button size="M" type="submit">Save changes</Button>
@@ -400,7 +414,7 @@ function TeamMemberWorkDetailsCard({
 
         <div className="account-settings-info-block">
           <DsIcon name="info" size={18} />
-          <p className="paragraph-s">Studio Owners and Admins control your department, weekly capacity, worker type and Studio access.</p>
+          <p className="paragraph-s">Studio Owners control your department, weekly capacity, worker type and Studio access.</p>
         </div>
 
         <div className="account-settings-form-actions">
@@ -410,88 +424,6 @@ function TeamMemberWorkDetailsCard({
       </form>
 
       {toast ? <div className="account-settings-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} />{toast}</div> : null}
-      {!hasChanges ? <span className="sr-only">All work detail changes are saved.</span> : null}
-    </section>
-  );
-}
-
-function ClientContactWorkDetailsCard({
-  onSave,
-  person,
-  studioName,
-}: {
-  onSave: (update: PersonProfileUpdate) => void;
-  person: Person;
-  studioName: string;
-}) {
-  const savedDetails = useMemo(() => ({
-    jobTitle: person.jobTitles[0] ?? "",
-    location: person.location,
-  }), [person.jobTitles, person.location]);
-  const [draft, setDraft] = useState(savedDetails);
-  const [toast, setToast] = useState<string | null>(null);
-  const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(savedDetails), [draft, savedDetails]);
-
-  useEffect(() => setDraft(savedDetails), [savedDetails]);
-
-  useEffect(() => {
-    if (!toast) return;
-    const timeout = window.setTimeout(() => setToast(null), 4000);
-    return () => window.clearTimeout(timeout);
-  }, [toast]);
-
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    onSave({
-      jobTitles: [draft.jobTitle.trim() || "Client contact"],
-      location: draft.location.trim(),
-    });
-    setToast("Your work details were updated.");
-  };
-
-  return (
-    <section className="account-settings-card account-work-details-card" aria-labelledby="client-work-details-heading">
-      <form onSubmit={submit}>
-        <header className="account-settings-card-heading">
-          <span><DsIcon name="users-three" size={20} /></span>
-          <div>
-            <h2 className="headings-xs-bold" id="client-work-details-heading">Work details</h2>
-            <p className="paragraph-s">Keep the details {studioName} uses when working with you up to date.</p>
-          </div>
-        </header>
-
-        <div className="account-settings-field-grid">
-          <Input
-            label="Job title"
-            value={draft.jobTitle}
-            onChange={(event) => setDraft((current) => ({ ...current, jobTitle: event.target.value }))}
-          />
-          <Input
-            label="Location"
-            value={draft.location}
-            onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))}
-          />
-        </div>
-
-        <div className="account-settings-info-block">
-          <DsIcon name="info" size={18} />
-          <p className="paragraph-s">Your Client role and project access are managed separately by your Client Admin and {studioName}.</p>
-        </div>
-
-        <div className="account-settings-form-actions">
-          <Button size="M" type="button" variant="secondary" onClick={() => setDraft(savedDetails)}>
-            Discard changes
-          </Button>
-          <Button size="M" type="submit">Save changes</Button>
-        </div>
-      </form>
-
-      {toast ? (
-        <div className="account-settings-toast label-s-semibold" role="status">
-          <DsIcon name="check-circle" size={16} />
-          {toast}
-        </div>
-      ) : null}
       {!hasChanges ? <span className="sr-only">All work detail changes are saved.</span> : null}
     </section>
   );

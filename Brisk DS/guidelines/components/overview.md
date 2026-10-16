@@ -142,3 +142,19 @@ Step-by-step progress tracking?
 - Controls at rest → none
 - Controls on hover → `--box-shadow/elevated/m` (large, 40px+) or `--box-shadow/elevated/s` (small)
 - Elevated surfaces at rest → `--box-shadow/elevated/m`
+
+## React confirmation standard
+
+All app confirmation prompts use the approved [ConfirmationDialog](confirmation-dialog.md), with compact and expanded variants. Use DS Button's `danger` variant for destructive actions. Preserve each action's validation, impact details and callbacks. See the documented browser navigation exception.
+
+## React editing standard
+
+Centred forms and settings dialogs use the approved [EditingDialog](editing-dialog.md). It shares its surface and keyboard behaviour with ConfirmationDialog. No top-right X: retain a visible Cancel, Close or Done action. Use the existing fields and callbacks, with wider sizes for complex forms and a fixed footer above the scrollable body.
+
+## React dropdown standard
+
+Dropdown fields and multi-selection pickers use the approved [BriskSelect](dropdown.md). The DS owns the menu surface, borderless search, option states, positioning and keyboard behaviour. Keep specialised content, selection limits and creation actions through the documented variants, rather than making another local dropdown.
+
+## React labelled-button standard
+
+Ordinary labelled actions use the approved [Button](buttons.md), with primary, secondary, tertiary, ghost and danger variants. Retain S/M/L sizes, native button behaviour and all existing action handlers. The DS owns appearance and states; consumer classes provide layout hooks only. Keep navigation links, icon-only controls and specialised patterns within their documented scope boundaries.

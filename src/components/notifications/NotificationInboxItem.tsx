@@ -114,8 +114,8 @@ function NotificationItemAction({
 }) {
   if (onRetry) {
     return (
-      <button
-        className="notification-inbox-item-action label-xs-semibold"
+      <Button size="S" variant="secondary"
+        className="notification-inbox-item-action"
         type="button"
         onClick={() => {
           onMarkAsRead();
@@ -123,19 +123,19 @@ function NotificationItemAction({
         }}
       >
         Retry
-      </button>
+      </Button>
     );
   }
 
   if (onPreview) {
     return (
-      <button
-        className="notification-inbox-item-action is-tertiary label-xs-semibold"
+      <Button size="S" variant="tertiary"
+        className="notification-inbox-item-action is-tertiary"
         type="button"
         onClick={onPreview}
       >
         {item.emailPreview ? "Preview email" : item.ctaLabel ?? "Preview reminder"}
-      </button>
+      </Button>
     );
   }
 
@@ -158,9 +158,9 @@ function NotificationItemAction({
   if (item.href) return null;
 
   return !read ? (
-    <button className="notification-inbox-mark-read label-xs-semibold" type="button" onClick={onMarkAsRead}>
+    <Button size="S" variant="ghost" className="notification-inbox-mark-read" type="button" onClick={onMarkAsRead}>
       Mark as read
-    </button>
+    </Button>
   ) : null;
 }
 
@@ -189,7 +189,7 @@ function EmailReminderPreview({
       title={simulated ? "Email preview" : "Scheduled reminder"}
       description={simulated ? "Prototype preview - no email was sent" : "Read-only Client email preview"}
       onClose={onClose}
-      footer={<Button size="M" variant="secondary" onClick={onClose}>Close</Button>}
+      footer={<Button size="S" variant="secondary" onClick={onClose}>Close</Button>}
     >
       <div className="notification-reminder-preview-meta">
         <span>

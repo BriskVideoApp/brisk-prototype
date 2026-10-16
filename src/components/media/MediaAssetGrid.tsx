@@ -1,3 +1,4 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useState, type DragEvent, type MouseEvent, type ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView, MediaFolder } from "@/data/media";
@@ -111,10 +112,10 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
             <button className="media-selection-clear" type="button" aria-label="Clear selection" data-tooltip="Clear selection" onClick={props.onDeselectAll}><DsIcon name="x-close-cross" size={16} /></button>
           </div>
           <div className="media-selection-actions">
-            {props.capabilities.canMoveAssets ? <button className="is-primary" type="button" onClick={props.onBatchMove}><DsIcon name="folder" size={16} />Move to folder</button> : null}
-            {props.capabilities.canDownload ? <button type="button" disabled={!hasDownloadableSelection} onClick={props.onBatchDownload}><DsIcon name="download" size={16} />Download</button> : null}
-            {props.capabilities.canArchive ? <button type="button" onClick={props.onBatchArchive}><DsIcon name="folder" size={16} />Archive</button> : null}
-            {props.capabilities.canDelete ? <button className="is-danger" type="button" onClick={props.onBatchDelete}><DsIcon name="trash" size={16} />Delete</button> : null}
+            {props.capabilities.canMoveAssets ? <Button size="S" variant="primary" type="button" onClick={props.onBatchMove}><DsIcon name="folder" size={16} />Move to folder</Button> : null}
+            {props.capabilities.canDownload ? <Button size="S" variant="secondary" type="button" disabled={!hasDownloadableSelection} onClick={props.onBatchDownload}><DsIcon name="download" size={16} />Download</Button> : null}
+            {props.capabilities.canArchive ? <Button size="S" variant="secondary" type="button" onClick={props.onBatchArchive}><DsIcon name="folder" size={16} />Archive</Button> : null}
+            {props.capabilities.canDelete ? <Button size="S" variant="danger" type="button" onClick={props.onBatchDelete}><DsIcon name="trash" size={16} />Delete</Button> : null}
           </div>
         </div>
       ) : null}
@@ -132,7 +133,7 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
                 : "Upload files from your computer or import them from connected storage."}
           </p>
           {props.emptyKind === "filtered" ? (
-            <button className="media-secondary-button label-s-semibold" type="button" onClick={props.onClearControls}>Clear controls</button>
+            <Button size="S" variant="secondary" className="media-secondary-button" type="button" onClick={props.onClearControls}>Clear controls</Button>
           ) : props.capabilities.canUpload ? props.emptyUploadAction : null}
         </div>
       ) : props.viewMode === "card" ? (

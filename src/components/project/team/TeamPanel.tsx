@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   applyStudioDefaultTeam,
   fallbackRoleStages,
@@ -8,6 +9,7 @@ import {
   getRoleEstimatedHours,
   getSlotLabel,
   getVisibleInvitations,
+  redistributeRoleHours,
   mockTeamPeople,
   stageKeys,
   teamRoleLabels,
@@ -41,6 +43,7 @@ type TeamPanelProps = {
   access: TeamPanelAccess;
   viewerPersonId?: string;
   hideHeader?: boolean;
+  assignPersonId?: string;
 };
 
 type ToastState = {
@@ -56,7 +59,9 @@ export function TeamPanel({
   access,
   viewerPersonId,
   hideHeader = false,
+  assignPersonId,
 }: TeamPanelProps) {
+  const router = useRouter();
   const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
   const { studio } = useStudioSettings();
   const { offers, createOffer, setOfferState } = useCostsData();
@@ -70,6 +75,8 @@ export function TeamPanel({
   const [extraPeople, setExtraPeople] = useState<TeamPerson[]>([]);
   const [roleEditorSlotId, setRoleEditorSlotId] = useState<string | null>(null);
   const [isRolePickerOpen, setIsRolePickerOpen] = useState(false);
+  const [pendingAssignmentPersonId, setPendingAssignmentPersonId] = useState<string | undefined>();
+  const handledAssignmentRequest = useRef<string | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
   const storedTeam = teamsByProjectId[projectId];
   const startingTeam = useMemo(() => applyStudioDefaultTeam({
@@ -96,7 +103,25 @@ export function TeamPanel({
     setExtraPeople([]);
     setRoleEditorSlotId(null);
     setIsRolePickerOpen(false);
+    setPendingAssignmentPersonId(undefined);
+    handledAssignmentRequest.current = null;
   }, [projectId]);
+
+  useEffect(() => {
+    if (!assignPersonId || !storedTeam || access !== "producerAdmin") return;
+    const requestKey = `${projectId}:${assignPersonId}`;
+    if (handledAssignmentRequest.current === requestKey) return;
+    handledAssignmentRequest.current = requestKey;
+    const person = people.find((candidate) => candidate.id === assignPersonId);
+    if (!person) return;
+    setPendingAssignmentPersonId(assignPersonId);
+    const matchingRole = person.defaultRole === "custom" ? undefined : team.find((slot) => !slot.archivedAt && slot.role === person.defaultRole);
+    if (matchingRole) setRoleEditorSlotId(matchingRole.id);
+    else setIsRolePickerOpen(true);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("assignPerson");
+    router.replace(`${url.pathname}${url.search}${url.hash}`, { scroll: false });
+  }, [access, assignPersonId, people, projectId, router, storedTeam, team]);
 
   useEffect(() => {
     syncProjectStaffWorkloads(projectId, getProjectStaffWorkloads(projectId, team, people));
@@ -520,7 +545,7 @@ export function TeamPanel({
 
         {canEdit ? (
           <div className="team-panel-actions">
-            <AddRoleButton isOpen={isRolePickerOpen} roles={teamRoleOptions} onAddRole={addRole} onToggle={() => setIsRolePickerOpen((value) => !value)} />
+            <AddRoleButton isOpen={isRolePickerOpen} roles={teamRoleOptions} onAddRole={addRole} onOpenChange={setIsRolePickerOpen} />
           </div>
         ) : null}
       </div>
@@ -530,7 +555,6 @@ export function TeamPanel({
           slot={activeRoleEditorSlot}
           projectName={projectName}
           people={people}
-          stages={stageKeys}
           assignedPersonIds={assignedPersonIds}
           showCosts={showCosts}
           onAddStaff={(person) => addStaffToSlot(activeRoleEditorSlot.id, person)}
@@ -541,10 +565,10 @@ export function TeamPanel({
           onWithdrawInvitation={(invitationId) => withdrawInvitation(activeRoleEditorSlot.id, invitationId)}
           onWithdrawAll={() => withdrawAllInvitations(activeRoleEditorSlot.id)}
           onRemove={() => updateSlot(activeRoleEditorSlot.id, (teamSlot) => ({ ...teamSlot, archivedAt: new Date().toISOString() }))}
-          onSaveSettings={(nextStages) => {
-            updateSlot(activeRoleEditorSlot.id, (slot) => ({ ...slot, stages: nextStages }));
-            setRoleEditorSlotId(null);
+          onSaveSettings={(hours) => {
+            updateSlot(activeRoleEditorSlot.id, (slot) => redistributeRoleHours(slot, hours));
           }}
+          initialPersonId={pendingAssignmentPersonId}
           onClose={() => setRoleEditorSlotId(null)}
         />
       ) : null}

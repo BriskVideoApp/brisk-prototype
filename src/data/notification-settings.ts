@@ -74,30 +74,9 @@ export const studioNotificationCategories = [
     description: "Important changes to people, dates and the project.",
   },
   {
-    id: "published-shoot-updates",
-    label: "Shoot changes",
-    description: "Published call sheets and important changes to shoot details.",
-  },
-  {
-    id: "assignments-offers",
-    label: "Work and offers",
-    description: "New project work, Freelancer offers and responses.",
-  },
-  {
-    id: "media-requests",
-    label: "Files and transcripts",
-    description: "File requests, completed transcripts and files that need attention.",
-  },
-  {
     id: "contractor-invoices",
     label: "Invoices",
     description: "Invoices requiring forwarding, approval or payment updates.",
-  },
-  {
-    id: "billing-security",
-    label: "Account and access",
-    description: "Important account, access and security emails are always sent.",
-    mandatory: true,
   },
 ] as const satisfies readonly StudioNotificationCategory[];
 

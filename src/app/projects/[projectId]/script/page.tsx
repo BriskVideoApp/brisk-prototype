@@ -1,4 +1,4 @@
-import { CanonicalProjectStageRoute } from "@/components/project/CanonicalProjectRoutes";
+import { CanonicalScriptRoute } from "@/components/project/CanonicalScriptRoute";
 
 type ScriptRouteProps = {
   params: Promise<{ projectId: string }>;
@@ -7,5 +7,5 @@ type ScriptRouteProps = {
 
 export default async function ScriptRoute({ params, searchParams }: ScriptRouteProps) {
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
-  return <CanonicalProjectStageRoute projectId={projectId} stage="script" query={query} />;
+  return <CanonicalScriptRoute projectId={projectId} query={query} />;
 }

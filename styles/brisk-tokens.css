@@ -21,6 +21,9 @@
   --brisk-border-primary: #0e1114;
   --brisk-border-secondary: #cdd5de;
   --brisk-border-focus: #91baff;
+  --brisk-button-disabled-border: #c6cbd0;
+  --brisk-button-disabled-fill: #f3f4f5;
+  --brisk-button-disabled-text: #8b9298;
   --brisk-brand-primary: #8b2cff;
   --brisk-brand-primary-hover: #f3eeff;
   --brisk-brand-primary-click: #6625cd;

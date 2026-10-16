@@ -890,9 +890,9 @@
 }
 
 .masters-add-grid input,
-.masters-add-grid select,
+.masters-add-grid .brisk-select-trigger,
 .masters-request-form input,
-.masters-request-form select,
+.masters-request-form .brisk-select-trigger,
 .masters-request-form textarea {
   width: 100%;
   min-height: 36px;
@@ -1350,7 +1350,7 @@
 
 .masters-shell button:focus-visible,
 .masters-shell input:focus-visible,
-.masters-shell select:focus-visible,
+.masters-shell .brisk-select-trigger:focus-visible,
 .masters-shell textarea:focus-visible {
   outline: none;
   box-shadow: var(--brisk-shadow-s);
@@ -2436,9 +2436,9 @@
 }
 
 .masters-add-grid input,
-.masters-add-grid select,
+.masters-add-grid .brisk-select-trigger,
 .masters-request-form input,
-.masters-request-form select,
+.masters-request-form .brisk-select-trigger,
 .masters-request-form textarea {
   width: 100%;
   min-height: 36px;
@@ -3914,7 +3914,7 @@
 .masters-recut-mark-editor textarea,
 .masters-recut-panel-footer input,
 .masters-recut-panel-footer textarea,
-.masters-recut-panel-footer select {
+.masters-recut-panel-footer .brisk-select-trigger {
   width: 100%;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);

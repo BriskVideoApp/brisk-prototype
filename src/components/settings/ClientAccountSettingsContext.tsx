@@ -15,11 +15,12 @@ import {
   initialClientAccountSettings,
   type ClientAccountSettings,
   type ClientAuthenticationMethod,
-  type ClientCompanyDetails,
   type ClientMembershipRole,
   type ClientPersonalProfile,
 } from "@/data/client-account-settings";
 import { useClientBilling } from "@/components/settings/ClientBillingContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { selectWorkspaceClients } from "@/data/prototype-state";
 
 type ClientBillingAvailability = "available" | "managed-externally" | "setup-required" | "no-access";
 
@@ -30,27 +31,11 @@ export type ClientAccountAccess = {
   authenticationMethod: ClientAuthenticationMethod;
 };
 
-type InviteClientMemberInput = {
-  memberId?: string;
-  name: string;
-  email: string;
-  role: ClientMembershipRole;
-  projectIds: string[];
-};
-
 type ClientAccountSettingsContextValue = {
   account: ClientAccountSettings;
   access: ClientAccountAccess;
   buildHref: (pathname: string) => string;
   saveProfile: (profile: ClientPersonalProfile) => void;
-  saveCompany: (company: ClientCompanyDetails) => void;
-  inviteTeamMember: (input: InviteClientMemberInput) => void;
-  resendInvitation: (memberId: string) => void;
-  cancelInvitation: (memberId: string) => void;
-  removeTeamMember: (memberId: string) => void;
-  updateTeamMemberRole: (memberId: string, role: ClientMembershipRole) => void;
-  updateTeamMemberProjects: (memberId: string, projectIds: string[]) => void;
-  markInvoicePaid: (invoiceId: string) => void;
 };
 
 const ClientAccountSettingsContext = createContext<ClientAccountSettingsContextValue | null>(null);
@@ -59,8 +44,33 @@ const previewParameterNames = ["client-role", "billing", "auth"] as const;
 
 export function ClientAccountSettingsProvider({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
+  const { state } = usePrototypeState();
   const { billingSettings } = useClientBilling();
-  const [account, setAccount] = useState<ClientAccountSettings>(() => cloneClientAccountSettings(initialClientAccountSettings));
+  const [storedAccount, setAccount] = useState<ClientAccountSettings>(() => cloneClientAccountSettings(initialClientAccountSettings));
+  const activeClient = selectWorkspaceClients(state, state.session.activeWorkspaceId)
+    .find((client) => client.id === (state.session.activeClientId ?? "loom"));
+  const account = useMemo<ClientAccountSettings>(() => {
+    if (!activeClient) return storedAccount;
+    const primaryContact = activeClient.contacts.find((contact) => contact.id === activeClient.primaryContactId);
+    return {
+      ...storedAccount,
+      company: {
+        ...storedAccount.company,
+        name: activeClient.name,
+        logoUrl: activeClient.logoUrl,
+        mainContact: primaryContact?.name ?? "",
+      },
+      team: activeClient.contacts.filter((contact) => contact.portalAccess !== "Paused").map((contact) => ({
+        id: contact.id,
+        name: contact.name,
+        email: contact.email,
+        role: contact.membershipRole,
+        status: contact.portalAccess === "Invited" ? "Pending invitation" as const : "Active" as const,
+        projectIds: contact.projectIds,
+        avatarUrl: null,
+      })),
+    };
+  }, [activeClient, storedAccount]);
 
   useEffect(() => {
     const storedAccount = readStoredClientAccountSettings();
@@ -106,104 +116,12 @@ export function ClientAccountSettingsProvider({ children }: { children: ReactNod
     commitAccount((current) => ({ ...current, profile: { ...profile } }));
   }, [commitAccount]);
 
-  const saveCompany = useCallback((company: ClientCompanyDetails) => {
-    commitAccount((current) => ({ ...current, company: { ...company } }));
-  }, [commitAccount]);
-
-  const inviteTeamMember = useCallback((input: InviteClientMemberInput) => {
-    commitAccount((current) => {
-      const nextMember = {
-        id: input.memberId ?? `client-invite-${Date.now()}`,
-        name: input.name,
-        email: input.email,
-        role: input.role,
-        status: "Pending invitation" as const,
-        projectIds: [...input.projectIds],
-        avatarUrl: null,
-        invitationSentAt: "Just now",
-      };
-      return { ...current, team: [...current.team, nextMember] };
-    });
-  }, [commitAccount]);
-
-  const resendInvitation = useCallback((memberId: string) => {
-    commitAccount((current) => ({
-      ...current,
-      team: current.team.map((member) => (
-        member.id === memberId ? { ...member, invitationSentAt: "Just now" } : member
-      )),
-    }));
-  }, [commitAccount]);
-
-  const cancelInvitation = useCallback((memberId: string) => {
-    commitAccount((current) => ({
-      ...current,
-      team: current.team.filter((member) => member.id !== memberId),
-    }));
-  }, [commitAccount]);
-
-  const removeTeamMember = useCallback((memberId: string) => {
-    commitAccount((current) => ({
-      ...current,
-      team: current.team.filter((member) => member.id !== memberId),
-    }));
-  }, [commitAccount]);
-
-  const updateTeamMemberRole = useCallback((memberId: string, role: ClientMembershipRole) => {
-    commitAccount((current) => ({
-      ...current,
-      team: current.team.map((member) => member.id === memberId ? { ...member, role } : member),
-    }));
-  }, [commitAccount]);
-
-  const updateTeamMemberProjects = useCallback((memberId: string, projectIds: string[]) => {
-    commitAccount((current) => ({
-      ...current,
-      team: current.team.map((member) => (
-        member.id === memberId ? { ...member, projectIds: [...projectIds] } : member
-      )),
-    }));
-  }, [commitAccount]);
-
-  const markInvoicePaid = useCallback((invoiceId: string) => {
-    commitAccount((current) => ({
-      ...current,
-      invoices: current.invoices.map((invoice) => invoice.id === invoiceId ? {
-        ...invoice,
-        status: "Paid",
-        paidOn: "21 Aug 2026",
-        receiptAvailable: true,
-      } : invoice),
-    }));
-  }, [commitAccount]);
-
   const value = useMemo<ClientAccountSettingsContextValue>(() => ({
     account,
     access,
     buildHref,
     saveProfile,
-    saveCompany,
-    inviteTeamMember,
-    resendInvitation,
-    cancelInvitation,
-    removeTeamMember,
-    updateTeamMemberRole,
-    updateTeamMemberProjects,
-    markInvoicePaid,
-  }), [
-    access,
-    account,
-    buildHref,
-    cancelInvitation,
-    inviteTeamMember,
-    markInvoicePaid,
-    removeTeamMember,
-    resendInvitation,
-    saveCompany,
-    saveProfile,
-    updateTeamMemberProjects,
-    updateTeamMemberRole,
-  ]);
+  }), [access, account, buildHref, saveProfile]);
 
   return <ClientAccountSettingsContext.Provider value={value}>{children}</ClientAccountSettingsContext.Provider>;
 }

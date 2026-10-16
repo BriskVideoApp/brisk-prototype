@@ -548,9 +548,9 @@
   height: var(--brisk-space-3xl);
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--brisk-border-primary);
+  border: 1px solid transparent;
   border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
+  background: transparent;
   color: var(--brisk-text-primary);
   padding: var(--brisk-space-none);
   text-decoration: none;
@@ -562,14 +562,15 @@
 
 .app-notification-bell:hover,
 .app-notification-bell:focus-visible {
-  box-shadow: var(--brisk-shadow-s);
-  outline: var(--brisk-space-none);
-  transform: translate(-1px, -1px);
+  background: var(--brisk-brand-secondary);
+}
+
+.app-notification-bell:focus-visible {
+  outline: 2px solid var(--brisk-border-focus);
 }
 
 .app-notification-bell:active {
-  box-shadow: none;
-  transform: none;
+  background: var(--brisk-brand-secondary-click);
 }
 
 .app-notification-bell.is-active {

@@ -7,10 +7,7 @@ import {
   scriptMediaPickerOptions,
 } from "@/components/script/ScriptMediaPicker";
 import { ReviewCommentComposer } from "@/components/video-review/ReviewCommentComposer";
-import {
-  ReviewCommentThread,
-  toggleReviewReactionInList,
-} from "@/components/video-review/VideoReviewScreen";
+import { ReviewCommentThread, toggleReviewReactionInList } from "@/components/video-review/ReviewCommentThread";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   CommentFilter,

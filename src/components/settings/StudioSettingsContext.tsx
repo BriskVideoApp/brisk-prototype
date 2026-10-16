@@ -100,9 +100,7 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
     commitStudio((current) => ({
       ...current,
       production: {
-        ...production,
         defaultTeam: production.defaultTeam.map((member) => ({ ...member })),
-        clientPortal: { ...production.clientPortal },
       },
     }));
   }, [commitStudio]);
@@ -138,16 +136,7 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
       details: {
         ...current.details,
         name: draft.studioName,
-        legalName: `${draft.studioName} Pty Ltd`,
         studioType: draft.studioType,
-        description: draft.studioDescription,
-        website: draft.studioWebsite ?? current.details.website,
-      },
-      branding: {
-        logoPreviewUrl: draft.logoPreviewUrl,
-        logoOptions: [...draft.logoOptions],
-        brandAccentId: draft.brandAccentId,
-        brandColours: getStudioBrandColours(draft),
       },
     }));
   }, [commitStudio, commitStudioSetup]);

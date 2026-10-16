@@ -1,5 +1,7 @@
 "use client";
 
+import { useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import { usePathname } from "next/navigation";
 import {
   useCallback,
@@ -84,6 +86,7 @@ const launcherPositionStorageKey = "brisk-ai-launcher-position-v1";
 const launcherDragThreshold = 5;
 
 export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: boolean }) {
+  const { confirm, confirmationDialog } = useConfirmation();
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
   const { studio } = useStudioSettings();
@@ -270,11 +273,6 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
 
   useEffect(() => {
     const handleGlobalKeyDown = (event: globalThis.KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key.toLocaleLowerCase("en-AU") === "b") {
-        event.preventDefault();
-        openAssistant();
-      }
-
       if (event.key !== "Escape") return;
       if (previewSourceId) setPreviewSourceId(null);
       else if (isHistoryOpen) {
@@ -291,7 +289,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
 
     window.addEventListener("keydown", handleGlobalKeyDown);
     return () => window.removeEventListener("keydown", handleGlobalKeyDown);
-  }, [closeAssistant, isHistoryOpen, openAssistant, previewSourceId, sourcePickerView, view]);
+  }, [closeAssistant, isHistoryOpen, previewSourceId, sourcePickerView, view]);
 
   useEffect(() => {
     if (!isHistoryOpen) return;
@@ -405,20 +403,20 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     window.requestAnimationFrame(() => promptRef.current?.focus());
   };
 
-  const startNewChat = () => {
-    if (inputValue.trim() && !window.confirm("Discard your unsent message and start a new chat?")) return;
+  const startNewChat = async () => {
+    if (inputValue.trim() && !(await confirm({ title: "Discard your unsent message?", description: "Start a new chat without sending this message.", tone: "danger", confirmLabel: "Discard and start chat" }))) return;
     saveCurrentConversation();
     resetConversationToCurrentScreen();
   };
 
-  const openHistoryChat = (chatId: string) => {
+  const openHistoryChat = async (chatId: string) => {
     if (chatId === activeChatId) {
       setIsHistoryOpen(false);
       setHistoryQuery("");
       window.requestAnimationFrame(() => promptRef.current?.focus());
       return;
     }
-    if (inputValue.trim() && !window.confirm("Discard your unsent message and open this chat?")) return;
+    if (inputValue.trim() && !(await confirm({ title: "Discard your unsent message?", description: "Open the selected chat without sending this message.", tone: "danger", confirmLabel: "Discard and open chat" }))) return;
 
     const chat = chatHistory.find((candidate) => candidate.id === chatId);
     if (!chat) return;
@@ -460,8 +458,8 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     setRenameValue("");
   };
 
-  const deleteHistoryChat = (chat: ChatHistoryItem) => {
-    if (!window.confirm(`Delete “${chat.title}”? This only removes the mocked chat history.`)) return;
+  const deleteHistoryChat = async (chat: ChatHistoryItem) => {
+    if (!(await confirm({ title: `Delete “${chat.title}”?`, description: "This only removes the mocked chat history.", tone: "danger", confirmLabel: "Delete chat" }))) return;
     setChatHistory((current) => current.filter((candidate) => candidate.id !== chat.id));
     if (chat.id === activeChatId) resetConversationToCurrentScreen();
   };
@@ -672,15 +670,15 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
             />
           ) : null}
         </div>
-        <button
-          className="brisk-ai-send-button label-xs-semibold"
+        <Button size="S" variant="primary"
+          className="brisk-ai-send-button"
           type="button"
           disabled={!inputValue.trim() || isProcessing}
           onClick={() => submitPrompt()}
         >
           {isProcessing ? <span className="brisk-ai-spinner" aria-hidden="true" /> : <DsIcon name="paper-plane-tilt" size={14} />}
           {isProcessing ? "Working" : "Send"}
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -738,6 +736,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
 
   return (
     <>
+      {confirmationDialog}
       {showLauncher && (view === "closed" || view === "minimised") ? (
         <button
           ref={launcherRef}
@@ -862,23 +861,6 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
 
       {toast ? <div className="brisk-ai-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={16} />{toast}</div> : null}
     </>
-  );
-}
-
-export function BriskAiHeaderButton() {
-  const { openAssistant, view } = useBriskAi();
-
-  return (
-    <button
-      className="app-global-client-brand-kit app-global-brisk-ai label-s-semibold"
-      type="button"
-      aria-expanded={view !== "closed" && view !== "minimised"}
-      aria-label="Open Brisk AI"
-      onClick={() => openAssistant()}
-    >
-      <DsIcon name="sparkle" size={16} />
-      Brisk AI
-    </button>
   );
 }
 
@@ -1188,7 +1170,7 @@ function AssistantResponse({
             <>
               <Button className="brisk-ai-primary-response-action" size="S" onClick={() => onAction("use")}>{message.status === "using" ? "Adding..." : primaryActionLabel}</Button>
               <Button size="S" variant="secondary" onClick={() => onAction("edit")}>Edit</Button>
-              <button className="brisk-ai-try-again-button label-xs-semibold" type="button" onClick={() => onAction("retry")}>{message.status === "retrying" ? "Trying again..." : "Try again"}</button>
+              <Button size="S" variant="ghost" className="brisk-ai-try-again-button" type="button" onClick={() => onAction("retry")}>{message.status === "retrying" ? "Trying again..." : "Try again"}</Button>
             </>
           )}
         </div>
@@ -1291,7 +1273,7 @@ function SourcePicker({
       </div>
       <div className="brisk-ai-source-picker-list">
         {!hasResults ? (
-          <div className="brisk-ai-source-empty"><DsIcon name="search" size={20} /><strong className="label-s-semibold">No sources found</strong><button className="brisk-ai-text-action label-xs-semibold" type="button" onClick={() => onQueryChange("")}>Clear search</button></div>
+          <div className="brisk-ai-source-empty"><DsIcon name="search" size={20} /><strong className="label-s-semibold">No sources found</strong><Button size="S" variant="ghost" className="brisk-ai-text-action" type="button" onClick={() => onQueryChange("")}>Clear search</Button></div>
         ) : (
           <SourcePickerSection title={normalisedQuery ? "Search results" : "Suggested"} sources={visibleSources} onSelect={onSelect} />
         )}

@@ -49,6 +49,7 @@ export type ConfidenceChipModel = {
 export type ChatMessage = {
   id: string;
   role: "client" | "ai";
+  authorLabel?: "You" | "Client";
   body: string;
   createdAt: string;
   attachments?: InputAttachment[];

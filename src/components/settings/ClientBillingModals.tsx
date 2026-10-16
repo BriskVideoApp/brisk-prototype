@@ -1,5 +1,8 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -21,10 +24,10 @@ export function ConnectStripeModal({
         description="Setting up the secure hand-off to Stripe."
         onClose={() => undefined}
         footer={(
-          <button className="billing-disabled-button client-billing-loading-button label-s-semibold" type="button" disabled>
+          <Button size="S" variant="secondary"  type="button" disabled>
             <DsIcon name="arrows-clockwise" size={16} />
             Connecting to Stripe
-          </button>
+          </Button>
         )}
       >
         <p className="paragraph-s">This prototype will return with a mocked connected account.</p>
@@ -39,8 +42,8 @@ export function ConnectStripeModal({
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={onContinue}>Continue to Stripe</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={onContinue}>Continue to Stripe</Button>
         </>
       )}
     >
@@ -63,18 +66,11 @@ export function DisconnectStripeModal({
   onConfirm: () => void;
 }) {
   return (
-    <ClientModal
-      className="billing-modal billing-confirmation-modal client-billing-modal"
-      title="Disconnect Stripe?"
-      onClose={onClose}
-      footer={(
+    <ConfirmationDialog title="Disconnect Stripe?" onCancel={onClose} actions={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Keep connected</Button>
-          <button className="billing-danger-button label-m-semibold" type="button" onClick={onConfirm}>Disconnect Stripe</button>
+          <Button size="S" variant="secondary" onClick={onClose}>Keep connected</Button>
+          <Button size="S" variant="danger"  type="button" onClick={onConfirm}>Disconnect Stripe</Button>
         </>
-      )}
-    >
-      <p className="paragraph-s">Brisk will remove its connection to Stripe. Your Stripe products, subscriptions, invoices and payments will remain in Stripe.</p>
-    </ClientModal>
+      )}> <p className="paragraph-s">Brisk will remove its connection to Stripe. Your Stripe products, subscriptions, invoices and payments will remain in Stripe.</p> </ConfirmationDialog>
   );
 }

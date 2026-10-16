@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import type {
   CSSProperties,
   DragEvent as ReactDragEvent,
@@ -18,6 +21,7 @@ import type { Project, StageKey, TeamPerson } from "@/components/active-videos/t
 import type { DsIconName } from "@/components/video-review/DsIcon";
 import type { PrototypeRole, TodayEntryStatus, TodayProjectCard, TodayTimeEntry, WeekDay } from "./types";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 
 const stageOptions: StageKey[] = ["brief", "script", "shoot", "media", "edit", "masters"];
 const defaultBlockHours = 2;
@@ -80,6 +84,7 @@ function FreelancerTodayRedirect() {
 function StudioTodayPage() {
   const { selectedRole } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
+  const currentPersonId = usePrototypeViewer()?.personId ?? todayCurrentUserId;
   const router = useRouter();
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
@@ -87,7 +92,8 @@ function StudioTodayPage() {
   const effectivePreviewState = activeScenario?.state === "new" ? "empty" : previewState;
   const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
   const [weekOffset, setWeekOffset] = useState(0);
-  const [viewedPersonId, setViewedPersonId] = useState(todayCurrentUserId);
+  const [viewerSelection, setViewerSelection] = useState("me");
+  const viewedPersonId = viewerSelection === "me" ? currentPersonId : viewerSelection;
   const [entries, setEntries] = useState<TodayTimeEntry[]>(todayTimeEntries);
   const [editorState, setEditorState] = useState<EntryEditorState | null>(null);
   const [todoLanePercent, setTodoLanePercent] = useState(defaultTodoLanePercent);
@@ -176,7 +182,7 @@ function StudioTodayPage() {
 
   return (
     <main className="today-shell">
-      <section className="today-main" aria-label="Today workspace">
+      <section className="today-main" aria-label="To Do workspace">
         <TodayHeader
           weekDays={weekDays}
           weekTotals={weekTotals}
@@ -184,9 +190,10 @@ function StudioTodayPage() {
           onNextWeek={() => setWeekOffset((currentOffset) => currentOffset + 1)}
           onThisWeek={() => setWeekOffset(0)}
           teamMembers={studioTeamMembers}
-          viewedPersonId={viewedPersonId}
+          currentPersonId={currentPersonId}
+          viewerSelection={viewerSelection}
           onViewedPersonChange={(personId) => {
-            setViewedPersonId(personId);
+            setViewerSelection(personId);
             setEditorState(null);
           }}
         />
@@ -212,8 +219,8 @@ function StudioTodayPage() {
               <section className="today-page-empty is-workspace">
                 <span className="today-page-empty-icon" aria-hidden="true"><DsIcon name={effectivePreviewState === "complete" ? "check-circle" : "clock-clockwise"} size={28} /></span>
                 <h2 className="headings-xs-bold">{effectivePreviewState === "complete" ? "You’re clear for today" : "Plan your day"}</h2>
-                <p className="paragraph-s">{effectivePreviewState === "complete" ? "Everything you planned for today is complete." : "Drag an active video into Today, or add a time entry to get started."}</p>
-                <button className="today-page-empty-button label-s-semibold" type="button" onClick={() => addPreviewEntry(effectivePreviewState === "complete" ? weekDays.find((day) => day.date > todayReferenceDate)?.date ?? todayReferenceDate : todayReferenceDate)}>{effectivePreviewState === "complete" ? "Plan tomorrow" : "Add time"}</button>
+                <p className="paragraph-s">{effectivePreviewState === "complete" ? "Everything you planned for today is complete." : "Drag an active video here, or add a time entry to get started."}</p>
+                <Button size="S" variant="primary" className="today-page-empty-button" type="button" onClick={() => addPreviewEntry(effectivePreviewState === "complete" ? weekDays.find((day) => day.date > todayReferenceDate)?.date ?? todayReferenceDate : todayReferenceDate)}>{effectivePreviewState === "complete" ? "Plan tomorrow" : "Add time"}</Button>
               </section>
             ) : (
               <WeekGrid
@@ -261,7 +268,8 @@ function TodayHeader({
   onNextWeek,
   onThisWeek,
   teamMembers,
-  viewedPersonId,
+  currentPersonId,
+  viewerSelection,
   onViewedPersonChange,
 }: {
   weekDays: WeekDay[];
@@ -270,7 +278,8 @@ function TodayHeader({
   onNextWeek: () => void;
   onThisWeek: () => void;
   teamMembers: TeamPerson[];
-  viewedPersonId: string;
+  currentPersonId: string;
+  viewerSelection: string;
   onViewedPersonChange: (personId: string) => void;
 }) {
   const firstDay = weekDays[0];
@@ -280,7 +289,7 @@ function TodayHeader({
     <header className="today-header">
       <div className="today-header-title">
         <span className="today-date label-s-semibold">{formatLongDate(todayReferenceDate)}</span>
-        <h1>Today</h1>
+        <h1>To Do</h1>
       </div>
       <div className="today-header-actions">
         <div className="today-week-nav" aria-label="Week navigator">
@@ -296,9 +305,7 @@ function TodayHeader({
         </div>
         <label className="today-viewer-picker label-s-semibold">
           <span>Viewing</span>
-          <select value={viewedPersonId} aria-label="Choose whose Today view to see" onChange={(event) => onViewedPersonChange(event.target.value)}>
-            {teamMembers.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
-          </select>
+          <BriskSelect<string> ariaLabel={"Choose whose work to view"} clearable={false} placeholder={"Choose an option"} value={viewerSelection} onChange={(value) => onViewedPersonChange(value)} options={[{ value: "me", label: "Me" }, ...teamMembers.filter((person) => person.id !== currentPersonId).sort((a, b) => a.name.localeCompare(b.name, "en-AU")).map((person) => ({ value: person.id, label: (person.name) }))]} />
         </label>
         <span className="today-week-total label-s-semibold">
           {formatHours(weekTotals.planned)} planned · {formatHours(weekTotals.done)} done
@@ -701,14 +708,7 @@ function TimeEntryEditor({
         Stage
         <span className="today-stage-select-wrap">
           {draftStage ? <StageFlowIcon stage={draftStage} /> : null}
-          <select value={draftStage} onChange={(event) => setDraftStage(event.target.value as StageKey | "")}>
-            <option value="">Select stage</option>
-            {stageOptions.map((stage) => (
-              <option value={stage} key={stage}>
-                {stageLabels[stage]}
-              </option>
-            ))}
-          </select>
+          <BriskSelect<string> ariaLabel={"Stage"} clearable={false} placeholder={"Select stage"} value={draftStage} onChange={(value) => setDraftStage(value as StageKey | "")} options={[{ value: "", label: "Select stage" }, ...stageOptions.map((stage) => ({ value: stage, label: (stageLabels[stage]) }))]} />
         </span>
       </label>
       <label className="today-field label-s-semibold">
@@ -720,16 +720,16 @@ function TimeEntryEditor({
         <textarea value={draftNote} onChange={(event) => setDraftNote(event.target.value)} />
       </label>
       <div className="today-entry-editor-actions">
-        <button className="today-delete-time label-s-semibold" type="button" onClick={onDelete}>
+        <Button size="S" variant="danger" className="today-delete-time" type="button" onClick={onDelete}>
           Delete
-        </button>
+        </Button>
         <span className="today-entry-editor-action-group">
-          <button className="today-cancel-time label-s-semibold" type="button" onClick={onClose}>
+          <Button size="S" variant="secondary" className="today-cancel-time" type="button" onClick={onClose}>
             Cancel
-          </button>
-          <button className="today-save-time label-s-semibold" type="button" onClick={saveEntry}>
+          </Button>
+          <Button size="S" variant="primary" className="today-save-time" type="button" onClick={saveEntry}>
             Save
-          </button>
+          </Button>
         </span>
       </div>
     </aside>
@@ -739,9 +739,9 @@ function TimeEntryEditor({
 function TodayUnavailable({ selectedRole }: { selectedRole: PrototypeRole }) {
   return (
     <section className="today-unavailable">
-      <h2>Today is for Studio Staff</h2>
+      <h2>To Do is for Studio Staff</h2>
       <p className="paragraph-s">
-        {selectedRole} users do not log Brisk time here. The Today nav item is hidden for this role.
+        {selectedRole} users do not log Brisk time here. The To Do nav item is hidden for this role.
       </p>
       <Link className="today-secondary-link label-s-semibold" href="/active-videos">
         Go to Videos

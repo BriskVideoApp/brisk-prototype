@@ -218,10 +218,10 @@ export function WorkspaceSidebar({
           <Link
             className={`today-sidebar-link label-s-semibold ${activeItem === "today" ? "active" : ""}`}
             href="/today"
-            title={isCollapsed ? "Today" : undefined}
+            title={isCollapsed ? "To Do" : undefined}
           >
             <DsIcon name="check-circle" size={16} />
-            <span className="workspace-sidebar-link-label">Today</span>
+            <span className="workspace-sidebar-link-label">To Do</span>
           </Link>
         ) : null}
         <Link
@@ -281,7 +281,7 @@ function getPageLabel(pathname: string, activeItem?: WorkspaceSidebarItem) {
     return "Brand Kits";
   }
   if (activeItem === "today" || pathname === "/" || pathname === "/today") {
-    return "Today";
+    return "To Do";
   }
   if (activeItem === "chat" || pathname === "/chat") {
     return "Chat";

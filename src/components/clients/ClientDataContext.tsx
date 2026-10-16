@@ -14,7 +14,7 @@ import { selectWorkspaceClients } from "@/data/prototype-state";
 type ClientDataContextValue = {
   clients: Client[];
   createClient: (input: NewClientInput) => Client;
-  updateClient: (clientId: string, update: Partial<Pick<Client, "name" | "type" | "website" | "logoUrl">>) => void;
+  updateClient: (clientId: string, update: Partial<Pick<Client, "name" | "type" | "website" | "logoUrl" | "projectCodePrefix" | "primaryContactId">>) => void;
   archiveClient: (clientId: string) => void;
   restoreClient: (clientId: string) => void;
   addContact: (clientId: string, contact: Pick<ClientContact, "name" | "email">) => ClientContact;

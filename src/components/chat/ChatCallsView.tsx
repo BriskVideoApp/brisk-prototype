@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useMemo, useState } from "react";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -48,36 +51,18 @@ export function ChatCallsView({
           <div className="chat-call-filters" aria-label="Filter recent calls">
             <label className="label-xs-semibold">
               <span className="sr-only">Call type</span>
-              <select
-                value={kindFilter}
-                onChange={(event) => setKindFilter(event.target.value as "all" | ChatCall["kind"])}
-              >
-                <option value="all">All calls</option>
-                <option value="audio">Audio calls</option>
-                <option value="video">Video calls</option>
-              </select>
-              <DsIcon name="caret-down" size={12} />
+              <BriskSelect<string> ariaLabel={"Call type"} clearable={false} placeholder={"Choose an option"} value={kindFilter} onChange={(value) => setKindFilter(value as "all" | ChatCall["kind"])} options={[{ value: "all", label: "All calls" }, { value: "audio", label: "Audio calls" }, { value: "video", label: "Video calls" }]} />
             </label>
             <label className="label-xs-semibold">
               <span className="sr-only">Participant</span>
-              <select value={memberFilter} onChange={(event) => setMemberFilter(event.target.value)}>
-                <option value="all">With anyone</option>
-                {users
+              <BriskSelect<string> ariaLabel={"Participant"} clearable={false} placeholder={"Choose an option"} value={memberFilter} onChange={(value) => setMemberFilter(value)} options={[{ value: "all", label: "With anyone" }, ...users
                   .filter((user) => user.team === "studio")
-                  .map((user) => <option value={user.id} key={user.id}>{user.name}</option>)}
-              </select>
-              <DsIcon name="caret-down" size={12} />
+                  .sort((a, b) => a.name.localeCompare(b.name, "en-AU"))
+                  .map((user) => ({ value: user.id, label: (user.name) }))]} />
             </label>
             <label className="label-xs-semibold">
               <span className="sr-only">Project</span>
-              <select value={projectFilter} onChange={(event) => setProjectFilter(event.target.value)}>
-                <option value="all">In any project</option>
-                <option value="company">Client calls</option>
-                {projects.map((project) => (
-                  <option value={project.id} key={project.id}>{project.code}</option>
-                ))}
-              </select>
-              <DsIcon name="caret-down" size={12} />
+              <BriskSelect<string> ariaLabel={"Project"} clearable={false} placeholder={"Choose an option"} value={projectFilter} onChange={(value) => setProjectFilter(value)} options={[{ value: "all", label: "In any project" }, { value: "company", label: "Client calls" }, ...projects.map((project) => ({ value: project.id, label: (project.code) }))]} />
             </label>
           </div>
         </header>
@@ -105,14 +90,14 @@ export function ChatCallsView({
                   })}
                 </span>
                 {call.notesAvailable ? (
-                  <button
-                    className="chat-secondary-button label-xs-semibold"
+                  <Button size="S" variant="secondary"
+                    className="chat-secondary-button"
                     type="button"
                     onClick={() => onNotify(`Notes opened for ${call.title}`)}
                   >
                     <DsIcon name="file-text" size={14} />
                     View notes
-                  </button>
+                  </Button>
                 ) : (
                   <span className="chat-call-no-notes label-xs">No notes</span>
                 )}

@@ -1,5 +1,7 @@
 "use client";
 
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -231,13 +233,13 @@ export function EmptyTile({
         </Button>
       ) : null}
       {secondaryAction ? (
-        <button
-          className="brand-text-button brand-empty-secondary-action label-s-semibold"
+        <Button size="S" variant="ghost"
+          className="brand-text-button brand-empty-secondary-action"
           type="button"
           onClick={secondaryAction.onClick}
         >
           {secondaryAction.label}
-        </button>
+        </Button>
       ) : null}
       {note ? <p className="brand-empty-note paragraph-s">{note}</p> : null}
       {action && isUploadAction ? (
@@ -747,19 +749,8 @@ export function SetupModal({
   };
 
   return (
-    <div className="brand-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        className="brand-modal setup-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="setup-modal-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header className="brand-modal-header">
-          <div>
-            <h2 className="headings-xs-bold" id="setup-modal-title">
-              {brandRelationship ? "Add a brand" : "Build Brand Kit"}
-            </h2>
+    <> <EditingDialog title={<> {brandRelationship ? "Add a brand" : "Build Brand Kit"} </>} onCancel={onClose} size="wide" description={<>  <div>
+
             {brandRelationship ? (
               <p className="paragraph-s">
                 {mode === "quick"
@@ -767,13 +758,7 @@ export function SetupModal({
                   : "Build the kit from the files you already have."}
               </p>
             ) : null}
-          </div>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-
-        <div className="brand-modal-body">
+          </div>    </>}>  <div className="brand-setup-fields">
           {isLoading ? (
             <div className="brand-setup-loading" role="status">
               <span className="brand-loading-mark"><DsIcon name="sparkle" size={24} /></span>
@@ -814,9 +799,9 @@ export function SetupModal({
               />
               <UploadZone files={files} onFilesChange={setFiles} uploadKind="guidelines" />
               <Button onClick={handleSubmit}>Build Brand Kit</Button>
-              <button className="brand-setup-alt label-s-semibold" type="button" onClick={handleManualSetup}>
+              <Button size="S" variant="ghost" className="brand-setup-alt" type="button" onClick={handleManualSetup}>
                 Set up manually
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="brand-setup-form">
@@ -831,8 +816,8 @@ export function SetupModal({
               ) : null}
               <UploadZone files={files} onFilesChange={setFiles} />
               <Button onClick={handleSubmit}>Set up Brand Kit</Button>
-              <button
-                className="brand-setup-alt label-s-semibold"
+              <Button size="S" variant="ghost"
+                className="brand-setup-alt"
                 type="button"
                 onClick={() => {
                   setFiles([]);
@@ -840,12 +825,10 @@ export function SetupModal({
                 }}
               >
                 Use {isCustomerView ? "your" : "their"} website or brand guidelines instead
-              </button>
+              </Button>
             </div>
           )}
-        </div>
-      </section>
-    </div>
+        </div> </EditingDialog> </>
   );
 }
 

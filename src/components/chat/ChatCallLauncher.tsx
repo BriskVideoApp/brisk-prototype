@@ -1,5 +1,10 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useEffect, useMemo, useState } from "react";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -29,6 +34,9 @@ export function ChatCallLauncher({
   const [isPeoplePickerOpen, setIsPeoplePickerOpen] = useState(false);
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
+  const [microphone, setMicrophone] = useState("MacBook microphone");
+  const [speaker, setSpeaker] = useState("MacBook speakers");
+  const [camera, setCamera] = useState("FaceTime HD camera");
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(defaultMemberIds);
   const defaultMembersKey = defaultMemberIds.join("|");
 
@@ -136,29 +144,19 @@ export function ChatCallLauncher({
       </div>
 
       {isPreviewOpen ? (
-        <div className="chat-modal-backdrop chat-call-backdrop" role="presentation" onMouseDown={() => setIsPreviewOpen(false)}>
-          <section
-            className="chat-call-preview-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="chat-call-preview-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <header className="chat-call-preview-header">
-              <div>
-                <h2 id="chat-call-preview-title">{contextName}</h2>
-              </div>
-              <button
-                className="chat-icon-button"
-                type="button"
-                aria-label="Close call preview"
-                onClick={() => setIsPreviewOpen(false)}
-              >
-                <DsIcon name="x-close-cross" size={18} />
-              </button>
-            </header>
+        <EditingDialog title={contextName} size="full" onCancel={() => setIsPreviewOpen(false)} actions={<> <Button size="S" variant="secondary"  type="button" onClick={() => setIsPreviewOpen(false)}>
+                Cancel
+              </Button>  <Button size="S" variant="primary"
 
-            <div className="chat-call-preview-content">
+                type="button"
+                onClick={() => {
+                  setIsPreviewOpen(false);
+                  onNotify(`Call started in ${contextName} with ${selectedUsers.length} people`);
+                }}
+              >
+                <DsIcon name="headphones" size={18} />
+                Start call
+              </Button> </>}>  <div className="chat-call-preview-content">
               <div className="chat-call-participant-bar">
                 <div className="chat-call-selected-people" aria-label={`${selectedUsers.length} people in this call`}>
                   {selectedUsers.slice(0, 5).map((user) => (
@@ -167,15 +165,15 @@ export function ChatCallLauncher({
                   <span className="label-s-semibold">{selectedUsers.length} people</span>
                 </div>
                 <div className="chat-call-add-people">
-                  <button
-                    className="chat-secondary-button label-s-semibold"
+                  <Button size="S" variant="secondary"
+                    className="chat-secondary-button"
                     type="button"
                     aria-expanded={isPeoplePickerOpen}
                     onClick={() => setIsPeoplePickerOpen((current) => !current)}
                   >
                     <DsIcon name="users-three" size={16} />
                     Add people
-                  </button>
+                  </Button>
                   {isPeoplePickerOpen ? (
                     <div className="chat-call-people-picker" role="dialog" aria-label="Add people to call">
                       <p className="label-xs-semibold">Invite people</p>
@@ -235,46 +233,18 @@ export function ChatCallLauncher({
               <div className="chat-call-device-grid">
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="headphones" size={16} /> Microphone</span>
-                  <select className="label-s" aria-label="Microphone">
-                    <option>MacBook microphone</option>
-                    <option>Studio headset</option>
-                  </select>
+                  <BriskSelect ariaLabel="Microphone" clearable={false} placeholder="Choose microphone" value={microphone} onChange={setMicrophone} options={["MacBook microphone", "Studio headset"].map((value) => ({ value, label: value }))} />
                 </label>
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="speaker-high" size={16} /> Speaker</span>
-                  <select className="label-s" aria-label="Speaker">
-                    <option>MacBook speakers</option>
-                    <option>Studio headset</option>
-                  </select>
+                  <BriskSelect ariaLabel="Speaker" clearable={false} placeholder="Choose speaker" value={speaker} onChange={setSpeaker} options={["MacBook speakers", "Studio headset"].map((value) => ({ value, label: value }))} />
                 </label>
                 <label>
                   <span className="label-xs-semibold"><DsIcon name="video-camera" size={16} /> Camera</span>
-                  <select className="label-s" aria-label="Camera">
-                    <option>FaceTime HD camera</option>
-                    <option>External camera</option>
-                  </select>
+                  <BriskSelect ariaLabel="Camera" clearable={false} placeholder="Choose camera" value={camera} onChange={setCamera} options={["FaceTime HD camera", "External camera"].map((value) => ({ value, label: value }))} />
                 </label>
               </div>
-            </div>
-
-            <footer className="chat-call-preview-footer">
-              <button className="chat-secondary-button label-s-semibold" type="button" onClick={() => setIsPreviewOpen(false)}>
-                Cancel
-              </button>
-              <button
-                className="chat-primary-button label-s-semibold"
-                type="button"
-                onClick={() => {
-                  setIsPreviewOpen(false);
-                  onNotify(`Call started in ${contextName} with ${selectedUsers.length} people`);
-                }}
-              >
-                <DsIcon name="headphones" size={18} />
-                Start call
-              </button>
-            </footer>
-          </section>
-        </div>
+            </div>  </EditingDialog>
       ) : null}
     </>
   );

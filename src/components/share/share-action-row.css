@@ -383,7 +383,8 @@
   display: grid;
   position: absolute;
   z-index: 2;
-  top: calc(100% + var(--brisk-space-xs));
+  top: auto;
+  bottom: calc(100% + var(--brisk-space-xs));
   right: var(--brisk-space-none);
   left: var(--brisk-space-none);
   max-height: calc(var(--brisk-space-3xl) * 4);

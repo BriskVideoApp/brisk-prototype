@@ -1677,16 +1677,10 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.studio-review-dialog-body {
+.studio-editor-fields {
   display: grid;
-  min-height: var(--brisk-space-none);
-  flex: 1;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  touch-action: pan-y;
-  gap: var(--brisk-space-xl);
-  padding: var(--brisk-space-xl);
+  min-width: 0;
+  gap: var(--brisk-space-l);
 }
 
 .studio-review-dialog-actions {
@@ -2324,6 +2318,19 @@
   gap: var(--brisk-space-xl);
 }
 
+.studio-review-bento-grid.is-branding-review {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.studio-generated-client-preview {
+  display: grid;
+  gap: var(--brisk-space-l);
+}
+
+.studio-generated-client-preview h2 {
+  margin: var(--brisk-space-none);
+}
+
 .studio-review-bento-card {
   display: flex;
   min-width: 0;
@@ -2870,6 +2877,10 @@
   }
 
   .studio-review-bento-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-review-bento-grid.is-branding-review {
     grid-template-columns: 1fr;
   }
 

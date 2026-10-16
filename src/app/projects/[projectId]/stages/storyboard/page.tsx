@@ -1,6 +1,6 @@
-import { CanonicalProjectStageRoute } from "@/components/project/CanonicalProjectRoutes";
+import { CanonicalStoryboardRoute } from "@/components/project/CanonicalStoryboardRoute";
 
 export default async function StoryboardRoute({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
-  return <CanonicalProjectStageRoute projectId={projectId} stage="storyboard" />;
+  return <CanonicalStoryboardRoute projectId={projectId} />;
 }

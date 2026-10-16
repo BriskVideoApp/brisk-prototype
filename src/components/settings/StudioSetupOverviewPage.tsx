@@ -1,17 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { StudioBrandingPage } from "@/components/settings/StudioBrandingPage";
-import { StudioDetailsPage } from "@/components/settings/StudioDetailsPage";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { RowDragHandle } from "@/components/script/RowDragHandle";
 import { StudioReviewDialog, StudioVideoTypeEditor } from "@/components/studio-onboard/StudioReviewEditors";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
   cloneStudioBriefConfiguration,
   getStudioBrandColours,
+  getStudioBriefFieldOrder,
   getStudioCustomVideoTypes,
   studioOnboardingVideoTypeLabels,
   type StudioReviewDraft,
@@ -19,19 +20,41 @@ import {
 import type { BriefFieldId } from "@/data/brief";
 import type { StudioBriefTemplate } from "@/data/prototype-state";
 
+const briefQuestionWording: Partial<Record<BriefFieldId, string>> = {
+  workingTitle: "What is the working title of this video?",
+  videoType: "What type of video do you want to make?",
+  platform: "Where will the main video be used?",
+  description: "What is the video about? Include anything it must say or avoid.",
+  purpose: "What should this video achieve?",
+};
+
+const briefQuestionShortLabels: Record<BriefFieldId, string> = {
+  workingTitle: "Working title",
+  videoType: "Video type",
+  platform: "Platform",
+  description: "Description",
+  purpose: "Purpose",
+  audience: "Audience",
+  feeling: "Tone",
+  referenceVideos: "Similar videos",
+  brandKit: "Brand kit",
+  liveFootage: "Footage",
+  voiceover: "Voiceover",
+  callToAction: "Viewer action",
+  deliverables: "Versions",
+  deadline: "Deadline",
+};
+
 export function StudioSetupOverviewPage() {
-  const { studio } = useStudioSettings();
+  const { studio, updateBranding, updateDetails } = useStudioSettings();
   const { state, updateStudioTemplate } = usePrototypeState();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingLogo, setIsEditingLogo] = useState(false);
   const [isEditingServices, setIsEditingServices] = useState(false);
   const [isEditingBrief, setIsEditingBrief] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const workspace = state.workspaces.find((candidate) => candidate.id === state.session.activeWorkspaceId) ?? null;
   const template = state.studioBriefTemplates.find((candidate) => candidate.workspaceId === state.session.activeWorkspaceId) ?? null;
-  const previewClientId = state.onboarding.clientId && state.clients.some((client) => (
-    client.workspaceId === state.session.activeWorkspaceId && client.id === state.onboarding.clientId
-  )) ? state.onboarding.clientId : state.session.activeClientId && state.clients.some((client) => (
-    client.workspaceId === state.session.activeWorkspaceId && client.id === state.session.activeClientId
-  )) ? state.session.activeClientId : null;
   const serviceDraft = useMemo<StudioReviewDraft | null>(() => workspace && template ? ({
     view: "studio-setup",
     studioName: workspace.name,
@@ -51,14 +74,8 @@ export function StudioSetupOverviewPage() {
     ...serviceDraft.videoTypeIds.map((videoTypeId) => studioOnboardingVideoTypeLabels[videoTypeId]),
     ...getStudioCustomVideoTypes(serviceDraft).map((videoType) => videoType.name),
   ] : [];
-  const briefQuestions = template ? Object.values(template.fields)
-    .filter((field) => !template.configuration.excludedFieldIds.includes(field.id))
-    .map((field) => field.label) : [];
-
-  function rewriteDescription() {
-    const serviceSummary = offeredServices.slice(0, 3).join(", ").toLocaleLowerCase("en-AU");
-    return `${studio.details.name} creates ${serviceSummary || "video"} for Clients from first Brief to final delivery.`;
-  }
+  const includedQuestionCount = template ? Object.values(template.fields)
+    .filter((field) => !template.configuration.excludedFieldIds.includes(field.id)).length : 0;
 
   function saveServices(nextDraft: StudioReviewDraft) {
     if (!template) return;
@@ -72,10 +89,10 @@ export function StudioSetupOverviewPage() {
     setToast("Services updated for future videos.");
   }
 
-  function saveBriefFields(excludedFieldIds: BriefFieldId[]) {
+  function saveBriefFields(excludedFieldIds: BriefFieldId[], fieldOrder: BriefFieldId[]) {
     if (!template) return;
     updateStudioTemplate({
-      configuration: { ...template.configuration, excludedFieldIds },
+      configuration: { ...template.configuration, excludedFieldIds, fieldOrder },
       videoTypeIds: template.videoTypeIds,
       customVideoTypes: template.customVideoTypes,
       customVideoType: template.customVideoType,
@@ -86,79 +103,88 @@ export function StudioSetupOverviewPage() {
 
   return (
     <section className="studio-settings-section studio-setup-overview" aria-label="Studio setup">
-      <nav className="studio-setup-jump-links label-s-semibold" aria-label="Studio setup sections">
-        <a href="#profile">Profile</a>
-        <a href="#branding">Branding</a>
-        <a href="#services">Services</a>
-        <a href="#client-experience">Client experience</a>
-      </nav>
-
-      <div className="studio-setup-combined-section" id="profile">
-        <div className="studio-setup-combined-heading">
-          <h2 className="headings-xs-bold">Profile</h2>
-          <p className="paragraph-s">The Studio identity shown to your team and Clients.</p>
-        </div>
-        <StudioDetailsPage rewriteDescription={rewriteDescription} />
-      </div>
-
-      <div className="studio-setup-combined-section" id="branding">
-        <div className="studio-setup-combined-heading">
-          <h2 className="headings-xs-bold">Branding</h2>
-          <p className="paragraph-s">Your Studio logo and colours across Client portals.</p>
-        </div>
-        <StudioBrandingPage />
-      </div>
-
-      <div className="studio-setup-overview-grid">
-        <article className="studio-setup-settings-card" id="services">
-          <header>
-            <span className="studio-setup-settings-icon"><DsIcon name="video-camera-ds" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">Services</h2>
-              <p className="paragraph-s">Video types offered by your Studio.</p>
+      <div className="studio-setup-overview-sections">
+        <section className="studio-setup-settings-group" aria-labelledby="studio-identity-heading">
+          <h2 className="headings-s-bold" id="studio-identity-heading">Studio identity</h2>
+          <div className="studio-setup-settings-panel">
+            <div className="studio-setup-settings-row">
+              <div className="studio-setup-settings-row-copy">
+                <h3 className="label-s">Studio name</h3>
+                <strong className="label-m-semibold">{studio.details.name}</strong>
+              </div>
+              <Button size="S" variant="secondary" onClick={() => setIsEditingName(true)}>Edit name</Button>
             </div>
-          </header>
-          <div className="studio-setup-service-list">
-            {offeredServices.length > 0 ? offeredServices.map((service) => (
-              <span className="label-xs-semibold" key={service}>{service}</span>
-            )) : <p className="paragraph-s">No video types added.</p>}
+            <div className="studio-setup-settings-row">
+              <div className="studio-setup-settings-row-copy">
+                <h3 className="label-s">Studio logo</h3>
+                <span className="studio-setup-logo-summary studio-setup-logo-summary-row studio-client-accent-purple" aria-label={`${studio.details.name} logo`}>
+                  {studio.branding.logoPreviewUrl
+                    ? <img src={studio.branding.logoPreviewUrl} alt="" />
+                    : <span className="headings-2xs-bold">{getInitials(studio.details.name)}</span>}
+                </span>
+              </div>
+              <Button size="S" variant="secondary" onClick={() => setIsEditingLogo(true)}>{studio.branding.logoPreviewUrl ? "Change logo" : "Add logo"}</Button>
+            </div>
           </div>
-          <footer><span /><Button size="S" variant="secondary" disabled={!serviceDraft} onClick={() => setIsEditingServices(true)}>Edit</Button></footer>
-        </article>
+        </section>
 
-        <article className="studio-setup-settings-card" id="client-experience">
-          <header>
-            <span className="studio-setup-settings-icon"><DsIcon name="clipboard-text" size={18} /></span>
-            <div>
-              <h2 className="headings-xs-bold">Client experience</h2>
-              <p className="paragraph-s">Defaults used when future videos are created.</p>
+        <section className="studio-setup-settings-group" aria-labelledby="video-setup-heading">
+          <h2 className="headings-s-bold" id="video-setup-heading">Video setup</h2>
+          <div className="studio-setup-settings-panel">
+            <div className="studio-setup-settings-row">
+              <div className="studio-setup-settings-row-copy">
+                <h3 className="label-s">Video types</h3>
+                <div className="studio-setup-service-list">
+                  {offeredServices.length > 0 ? offeredServices.map((service) => (
+                    <span className="label-xs-semibold" key={service}>{service}</span>
+                  )) : <p className="paragraph-s">No video types added.</p>}
+                </div>
+              </div>
+              <Button size="S" variant="secondary" disabled={!serviceDraft} onClick={() => setIsEditingServices(true)}>Edit video types</Button>
             </div>
-          </header>
-          <div className="studio-setup-client-defaults">
-            <strong className="label-m-semibold">{template?.name ?? "Default Client Brief"}</strong>
-            <ul className="label-xs">
-              {briefQuestions.map((question) => <li key={question}>{question}</li>)}
-            </ul>
-            <p className="paragraph-s">
-              Portal queue {studio.production.clientPortal.showProjectQueue ? "shown" : "hidden"}. Existing project Briefs will not change.
-            </p>
+            <div className="studio-setup-settings-row">
+              <div className="studio-setup-settings-row-copy">
+                <h3 className="label-s">Default Client Brief</h3>
+                <strong className="label-m-semibold">
+                  {includedQuestionCount} {includedQuestionCount === 1 ? "question" : "questions"} in new Briefs
+                </strong>
+              </div>
+              <Button size="S" variant="secondary" disabled={!template} onClick={() => setIsEditingBrief(true)}>Edit questions</Button>
+            </div>
           </div>
-          <footer>
-            {previewClientId ? (
-              <Link
-                className="client-secondary-button label-s-semibold"
-                href={`/workspaces/${state.session.activeWorkspaceId}/clients/${previewClientId}/portal?studio-preview=1`}
-              >Preview Client portal</Link>
-            ) : (
-              <span className="label-xs">Add or choose a Client to preview their portal.</span>
-            )}
-            <div className="studio-setup-card-actions">
-              <Button size="S" variant="secondary" disabled={!template} onClick={() => setIsEditingBrief(true)}>Edit default Brief</Button>
-              <Link className="client-secondary-button label-s-semibold" href="/settings/studio/production">Edit portal defaults</Link>
-            </div>
-          </footer>
-        </article>
+        </section>
       </div>
+
+      {isEditingName ? (
+        <StudioNameEditor
+          name={studio.details.name}
+          onCancel={() => setIsEditingName(false)}
+          onSave={(name) => {
+            updateDetails({ ...studio.details, name });
+            setIsEditingName(false);
+            setToast("Studio name updated.");
+          }}
+        />
+      ) : null}
+
+      {isEditingLogo ? (
+        <StudioLogoEditor
+          logoPreviewUrl={studio.branding.logoPreviewUrl}
+          studioName={studio.details.name}
+          onCancel={() => setIsEditingLogo(false)}
+          onSave={(logoPreviewUrl) => {
+            updateBranding({
+              ...studio.branding,
+              logoPreviewUrl,
+              logoOptions: logoPreviewUrl
+                ? [...new Set([...studio.branding.logoOptions, logoPreviewUrl])]
+                : [...studio.branding.logoOptions],
+            });
+            setIsEditingLogo(false);
+            setToast("Studio logo updated.");
+          }}
+        />
+      ) : null}
 
       {isEditingServices && serviceDraft ? (
         <StudioVideoTypeEditor draft={serviceDraft} onCancel={() => setIsEditingServices(false)} onSave={saveServices} />
@@ -181,46 +207,185 @@ export function StudioSetupOverviewPage() {
   );
 }
 
+function StudioNameEditor({
+  name,
+  onCancel,
+  onSave,
+}: {
+  name: string;
+  onCancel: () => void;
+  onSave: (name: string) => void;
+}) {
+  const [draftName, setDraftName] = useState(name);
+
+  return (
+    <StudioReviewDialog title="Edit Studio name" onClose={onCancel} actions={<>
+        <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
+        <Button size="S" variant="primary" disabled={!draftName.trim()} onClick={() => onSave(draftName.trim())}>Save name</Button>
+      </>}> <div className="studio-editor-fields">
+        <Input label="Studio name" value={draftName} onChange={(event) => setDraftName(event.target.value)} />
+      </div>  </StudioReviewDialog>
+  );
+}
+
+function StudioLogoEditor({
+  logoPreviewUrl,
+  studioName,
+  onCancel,
+  onSave,
+}: {
+  logoPreviewUrl: string | null;
+  studioName: string;
+  onCancel: () => void;
+  onSave: (logoPreviewUrl: string | null) => void;
+}) {
+  const [draftLogoUrl, setDraftLogoUrl] = useState(logoPreviewUrl);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      if (typeof reader.result === "string") setDraftLogoUrl(reader.result);
+    });
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
+  return (
+    <StudioReviewDialog title="Edit Studio logo" description="Shown in every Client portal." onClose={onCancel} actions={<>
+        <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
+        <Button size="S" variant="primary" onClick={() => onSave(draftLogoUrl)}>Save logo</Button>
+      </>}> <div className="studio-editor-fields">
+        <div className="studio-setup-logo-editor-preview">
+          <span className="studio-setup-logo-summary studio-client-accent-purple" aria-label={`${studioName} logo`}>
+            {draftLogoUrl ? <img src={draftLogoUrl} alt="" /> : <span className="headings-2xs-bold">{getInitials(studioName)}</span>}
+          </span>
+          <Button size="S" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+            <DsIcon name="upload-simple" size={16} /> Upload logo
+          </Button>
+          {draftLogoUrl ? <Button size="S" variant="secondary" onClick={() => setDraftLogoUrl(null)}>Remove logo</Button> : null}
+          <input ref={fileInputRef} className="sr-only" type="file" accept="image/*" onChange={uploadLogo} />
+        </div>
+      </div>  </StudioReviewDialog>
+  );
+}
+
 function StudioDefaultBriefEditor({
   onCancel,
   onSave,
   template,
 }: {
   onCancel: () => void;
-  onSave: (excludedFieldIds: BriefFieldId[]) => void;
+  onSave: (excludedFieldIds: BriefFieldId[], fieldOrder: BriefFieldId[]) => void;
   template: StudioBriefTemplate;
 }) {
   const [excludedFieldIds, setExcludedFieldIds] = useState<BriefFieldId[]>([...template.configuration.excludedFieldIds]);
+  const [fieldOrder, setFieldOrder] = useState<BriefFieldId[]>(() => getStudioBriefFieldOrder(template.configuration, template.fields));
+  const [draggingFieldId, setDraggingFieldId] = useState<BriefFieldId | null>(null);
+  const [dropFieldId, setDropFieldId] = useState<BriefFieldId | null>(null);
+
+  function moveField(fieldId: BriefFieldId, direction: -1 | 1) {
+    setFieldOrder((current) => {
+      const index = current.indexOf(fieldId);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= current.length) return current;
+      const next = [...current];
+      [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+      return next;
+    });
+  }
+
+  function reorderField(sourceId: BriefFieldId, targetId: BriefFieldId) {
+    if (sourceId !== targetId) {
+      setFieldOrder((current) => {
+        const sourceIndex = current.indexOf(sourceId);
+        const targetIndex = current.indexOf(targetId);
+        if (sourceIndex < 0 || targetIndex < 0) return current;
+        const next = [...current];
+        const [moving] = next.splice(sourceIndex, 1);
+        next.splice(targetIndex, 0, moving);
+        return next;
+      });
+    }
+    setDraggingFieldId(null);
+    setDropFieldId(null);
+  }
 
   return (
     <StudioReviewDialog
       title="Edit default Client Brief"
-      description="Choose the questions included when future videos are created. Existing project Briefs will not change."
+      description="Choose which questions appear and their order in future Briefs. Existing project Briefs will not change."
       onClose={onCancel}
-    >
-      <div className="studio-review-dialog-body studio-video-type-editor-grid" role="group" aria-label="Default Brief questions">
-        {Object.values(template.fields).map((field) => {
-          const isIncluded = !excludedFieldIds.includes(field.id);
+     actions={<>
+        <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
+        <Button size="S" variant="primary" onClick={() => onSave(excludedFieldIds, fieldOrder)}>Save default Brief</Button>
+      </>}> <div className="studio-editor-fields studio-brief-question-editor" role="group" aria-label="Default Brief questions">
+        {fieldOrder.map((fieldId, index) => {
+          const field = template.fields[fieldId];
           return (
-            <button
-              className={`studio-video-type-editor-option ${isIncluded ? "selected" : ""}`}
-              type="button"
-              aria-pressed={isIncluded}
-              key={field.id}
-              onClick={() => setExcludedFieldIds((current) => current.includes(field.id)
-                ? current.filter((fieldId) => fieldId !== field.id)
-                : [...current, field.id])}
+            <div
+              className={`studio-brief-question-row ${draggingFieldId && dropFieldId === fieldId && draggingFieldId !== fieldId ? "drop-target" : ""}`}
+              draggable
+              key={fieldId}
+              onDragStart={(event) => {
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData("text/plain", fieldId);
+                setDraggingFieldId(fieldId);
+              }}
+              onDragOver={(event) => {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+                setDropFieldId(fieldId);
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                const sourceId = (event.dataTransfer.getData("text/plain") || draggingFieldId) as BriefFieldId | null;
+                if (sourceId && fieldOrder.includes(sourceId)) reorderField(sourceId, fieldId);
+                else setDropFieldId(null);
+              }}
+              onDragEnd={() => {
+                setDraggingFieldId(null);
+                setDropFieldId(null);
+              }}
             >
-              <span className="studio-video-type-editor-icon"><DsIcon name="clipboard-text" size={16} /></span>
-              <strong className="label-s-semibold">{field.label}</strong>
-            </button>
+              <span className="studio-brief-question-position label-xs-semibold">{index + 1}</span>
+              <RowDragHandle
+                label={`Drag ${briefQuestionShortLabels[fieldId]} to reorder. Use the up and down arrow keys to move it.`}
+                onDragEnd={() => {
+                  setDraggingFieldId(null);
+                  setDropFieldId(null);
+                }}
+                onDragStart={(event) => {
+                  event.dataTransfer.effectAllowed = "move";
+                  event.dataTransfer.setData("text/plain", fieldId);
+                  setDraggingFieldId(fieldId);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+                  event.preventDefault();
+                  moveField(fieldId, event.key === "ArrowUp" ? -1 : 1);
+                }}
+              />
+              <div className="studio-brief-question-copy">
+                <Checkbox
+                  label={briefQuestionShortLabels[fieldId]}
+                  checked={!excludedFieldIds.includes(fieldId)}
+                  checkedIcon={<DsIcon name="check" size={14} />}
+                  onChange={(included) => setExcludedFieldIds((current) => included
+                    ? current.filter((id) => id !== fieldId)
+                    : [...current, fieldId])}
+                />
+                <p className="label-xs">{briefQuestionWording[fieldId] ?? field.label}</p>
+              </div>
+            </div>
           );
         })}
-      </div>
-      <footer className="studio-review-dialog-actions">
-        <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button size="S" variant="primary" onClick={() => onSave(excludedFieldIds)}>Save default Brief</Button>
-      </footer>
-    </StudioReviewDialog>
+      </div>  </StudioReviewDialog>
   );
+}
+
+function getInitials(name: string) {
+  return name.split(/\s+/u).filter(Boolean).slice(0, 2).map((part) => part.charAt(0).toLocaleUpperCase("en-AU")).join("");
 }

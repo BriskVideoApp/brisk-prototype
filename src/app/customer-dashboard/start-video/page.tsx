@@ -7,6 +7,7 @@ import { Input } from "../../../../Brisk DS/src/app/components/Input";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { initialBriefFields, type BriefFields } from "@/data/brief";
+import { getDefaultProjectCodePrefix } from "@/data/clients";
 import { getNextClientProjectCode } from "@/data/project-naming";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { clientNewVideoProject } from "@/data/prototype-scenarios";
@@ -17,7 +18,7 @@ const legacyBriefStorageKey = `brisk-client-first-video-brief-v1:${northStarWork
 export default function ClientStartVideoRoute() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { state, hasHydrated, createClientVideo } = usePrototypeState();
+  const { state, hasHydrated, createClientVideo, createProject } = usePrototypeState();
   const viewer = usePrototypeViewer();
   const [name, setName] = useState("");
   const [loadedDraftKey, setLoadedDraftKey] = useState<string | null>(null);
@@ -26,14 +27,14 @@ export default function ClientStartVideoRoute() {
   const client = viewer && clientId
     ? selectScopedClient(state, viewer.workspaceId, clientId)
     : null;
-  const isStudioPreview = viewer?.role === "Studio Staff";
-  const canStart = Boolean(client && viewer?.role === "Customer" && client.contacts.some((contact) => contact.id === viewer.id && contact.portalAccess !== "Paused")
+  const canStart = Boolean(client && (viewer?.role === "Studio Staff" || (viewer?.role === "Customer"
+    && client.contacts.some((contact) => contact.id === viewer.id && contact.portalAccess !== "Paused")
     && state.invitations.some((invitation) => invitation.userId === viewer.id
       && invitation.clientId === client.id && invitation.workspaceId === viewer.workspaceId
-      && invitation.status !== "Expired"));
+      && invitation.status !== "Expired"))));
   const draftStorageKey = canStart && client ? `brisk-client-video-name-draft-v1:${client.workspaceId}:${client.id}` : null;
   const code = client
-    ? getNextClientProjectCode(client.badge, state.projects.flatMap((project) => project.code ? [project.code] : []))
+    ? getNextClientProjectCode(client.projectCodePrefix ?? getDefaultProjectCodePrefix(client.name), state.projects.flatMap((project) => project.code ? [project.code] : []))
     : null;
 
   useEffect(() => {
@@ -46,7 +47,9 @@ export default function ClientStartVideoRoute() {
     event.preventDefault();
     if (!canStart || !client || !viewer || !name.trim()) return;
     const legacyFields = client.id === clientNewVideoProject.clientId ? readLegacyBriefFields() : undefined;
-    const project = createClientVideo({ clientId: client.id, userId: viewer.id, name: name.trim(), fields: legacyFields });
+    const project = viewer.role === "Studio Staff"
+      ? createProject({ clientId: client.id, name: name.trim() })
+      : createClientVideo({ clientId: client.id, userId: viewer.id, name: name.trim(), fields: legacyFields });
     if (!project) return;
     if (draftStorageKey) window.localStorage.removeItem(draftStorageKey);
     if (legacyFields) window.localStorage.removeItem(legacyBriefStorageKey);
@@ -54,17 +57,14 @@ export default function ClientStartVideoRoute() {
   }
 
   if (!hasHydrated || (draftStorageKey && loadedDraftKey !== draftStorageKey)) return null;
-  if ((!canStart && !isStudioPreview) || !client || !code || !viewer) {
+  if (!canStart || !client || !code || !viewer) {
     return <main className="client-video-naming-unavailable"><h1 className="headings-s-bold">Start Video unavailable</h1><p className="paragraph-s">Open a Client portal to start a video.</p></main>;
   }
 
   return (
     <main className="client-video-naming-page">
       <form className="client-video-naming-form" onSubmit={handleSubmit}>
-        <span className="label-xs-semibold">START VIDEO</span>
         <h1 className="headings-s-bold">Name your video</h1>
-        <p className="paragraph-s">Give this video a name your team will recognise. Its project code will be assigned when you continue.</p>
-        {isStudioPreview ? <p className="paragraph-s">Studio preview. Switch to the Client role to create a video here.</p> : null}
         <div className="client-video-naming-fields">
           <div className="client-video-naming-code">
             <span className="label-m-semibold">Project code</span>
@@ -81,10 +81,9 @@ export default function ClientStartVideoRoute() {
             }}
           />
         </div>
-        <p className="paragraph-s client-video-naming-preview">This video will appear as <strong>{code}_{name.trim() || "Video name"}</strong>.</p>
         <div className="client-video-naming-actions">
           <Button type="button" variant="secondary" onClick={() => router.back()}>Cancel</Button>
-          <Button type="submit" disabled={isStudioPreview || !name.trim()}>Continue to Brief</Button>
+          <Button type="submit" disabled={!name.trim()}>Continue to Brief</Button>
         </div>
       </form>
     </main>

@@ -3307,3 +3307,7 @@
     padding: var(--brisk-space-l);
   }
 }
+
+.brand-setup-fields { display: grid; gap: var(--brisk-space-l); }
+
+.brand-version-picker.brisk-select { width: auto; }

@@ -1,10 +1,5 @@
-import { StudioSettingsShell } from "@/components/settings/StudioSettingsShell";
-import { StudioTeamAccessPage } from "@/components/settings/StudioTeamAccessPage";
+import { redirect } from "next/navigation";
 
 export default function StudioTeamAccessRoute() {
-  return (
-    <StudioSettingsShell sectionId="team">
-      <StudioTeamAccessPage />
-    </StudioSettingsShell>
-  );
+  redirect("/people?view=Studio%20Staff");
 }

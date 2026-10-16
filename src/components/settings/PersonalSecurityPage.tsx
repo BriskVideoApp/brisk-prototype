@@ -7,6 +7,7 @@ import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import {
   PersonalSettingsAccessBoundary,
   PersonalSettingsPageShell,
@@ -19,6 +20,7 @@ import { prototypeCustomerPersonId, prototypeStudioPersonId } from "@/data/peopl
 export function PersonalSecurityPage() {
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
+  const studioName = useStudioCompanyName();
   const { people } = usePeople();
   const { account, access } = useClientAccountSettings();
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -28,7 +30,7 @@ export function PersonalSecurityPage() {
   const customer = selectedRole === "Customer" ? people.find((person) => person.id === prototypeCustomerPersonId) ?? null : null;
   const freelancer = isFreelancer ? people.find((person) => person.id === viewer?.personId) ?? null : null;
   const studioMember = isStudioStaff ? people.find((person) => person.id === prototypeStudioPersonId) ?? null : null;
-  const authenticationMethod = isStudioStaff ? "password" : access.authenticationMethod;
+  const authenticationMethod = selectedRole === "Customer" ? "magic-link" : isStudioStaff ? "password" : access.authenticationMethod;
   const signInEmail = studioMember?.email ?? freelancer?.email ?? customer?.email ?? account.profile.signInEmail;
 
   useEffect(() => {
@@ -72,7 +74,9 @@ export function PersonalSecurityPage() {
               <div className="account-settings-info-block">
                 <DsIcon name="info" size={18} />
                 <p className="paragraph-s">
-                  Password changes are not available because you sign in with {getAuthenticationMethodLabel(authenticationMethod)}.
+                  {selectedRole === "Customer"
+                    ? `We send a sign-in link to your email. Ask ${studioName} to change this address.`
+                    : `You sign in with ${getAuthenticationMethodLabel(authenticationMethod)}.`}
                 </p>
               </div>
             )}
@@ -125,8 +129,8 @@ function ChangePasswordModal({ onClose, onSaved }: { onClose: () => void; onSave
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={savePassword}>Save password</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={savePassword}>Save password</Button>
         </>
       )}
     >

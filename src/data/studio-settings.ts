@@ -30,21 +30,8 @@ export type StudioBranding = {
   brandColours: StudioBrandColour[];
 };
 
-export type StudioBriefTemplateId = "brisk-standard" | "simple-request" | "none";
-export type StudioReviewReminderId = "none" | "one-working-day" | "two-working-days" | "three-working-days";
-
 export type StudioProductionDefaults = {
-  briefTemplateId: StudioBriefTemplateId;
-  projectNumberPrefix: string;
-  nextProjectNumber: string;
-  reviewReminderId: StudioReviewReminderId;
-  defaultActiveVideosPerClient: number;
   defaultTeam: DefaultProjectTeamMember[];
-  clientPortal: {
-    showProjectQueue: boolean;
-    showCompletedProjects: boolean;
-    allowClientsToInviteColleagues: boolean;
-  };
 };
 
 export type StudioStaffStatus = "Active" | "Pending invite" | "Expired invite" | "Paused" | "Removed";
@@ -92,11 +79,6 @@ export const initialStudioSettings: StudioSettings = {
     brandColours: createStudioBrandColours("purple"),
   },
   production: {
-    briefTemplateId: "brisk-standard",
-    projectNumberPrefix: "CC",
-    nextProjectNumber: "001",
-    reviewReminderId: "two-working-days",
-    defaultActiveVideosPerClient: 4,
     defaultTeam: [
       {
         id: "default-producer",
@@ -109,11 +91,6 @@ export const initialStudioSettings: StudioSettings = {
         personId: "sc",
       },
     ],
-    clientPortal: {
-      showProjectQueue: true,
-      showCompletedProjects: true,
-      allowClientsToInviteColleagues: true,
-    },
   },
   integrations: {
     whatsapp: {
@@ -154,10 +131,7 @@ export function cloneStudioSettings(settings: StudioSettings): StudioSettings {
       brandColours: getStudioBrandColours(settings.branding),
     },
     production: {
-      ...initialStudioSettings.production,
-      ...settings.production,
       defaultTeam: (settings.production.defaultTeam ?? initialStudioSettings.production.defaultTeam).map((member) => ({ ...member })),
-      clientPortal: { ...settings.production.clientPortal },
     },
     integrations: {
       whatsapp: { ...settings.integrations.whatsapp },

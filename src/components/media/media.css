@@ -863,20 +863,24 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.media-select-shell select {
+.media-select-shell .brisk-select-trigger {
   height: 100%;
   appearance: none;
   border: 0;
   background: transparent;
   color: var(--brisk-text-primary);
-  padding: var(--brisk-space-s) var(--brisk-space-3xl) var(--brisk-space-s) var(--brisk-space-m);
+  padding: var(--brisk-space-none) var(--brisk-space-m);
+  min-height: var(--brisk-space-3xl);
 }
 
-.media-select-shell .ds-icon {
+.media-select-shell > .ds-icon {
   position: absolute;
   right: var(--brisk-space-m);
   pointer-events: none;
 }
+
+.media-select-shell { height: auto; border: 0; background: transparent; }
+.media-select-shell:hover { box-shadow: none; }
 
 .media-search-shell {
   width: 220px;
@@ -2012,7 +2016,7 @@ button.media-timecode:hover {
   padding-left: var(--brisk-space-m);
 }
 
-.media-cloud-folder-filter select {
+.media-cloud-folder-filter .brisk-select-trigger {
   min-width: var(--brisk-space-none);
   width: 100%;
   height: 100%;
@@ -2386,7 +2390,7 @@ button.media-timecode:hover {
     gap: var(--brisk-space-xs);
   }
 
-  .media-mobile-location select {
+  .media-mobile-location .brisk-select-trigger {
     min-width: var(--brisk-space-none);
     width: 100%;
     height: 40px;
@@ -2558,3 +2562,10 @@ button.media-timecode:hover {
     justify-self: start;
   }
 }
+
+/* Form content uses the shared DS dialog padding and scroll area. */
+.media-import-context { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--brisk-space-l); }
+.media-import-context > div, .media-move-fields { display: grid; gap: var(--brisk-space-s); }
+.media-import-context .label-xs { color: var(--brisk-text-secondary); }
+.media-import-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--brisk-space-l); }
+.media-import-tools .media-search-shell { flex: 1 1 auto; min-width: 0; }

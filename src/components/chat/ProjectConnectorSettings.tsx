@@ -1,5 +1,9 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -112,32 +116,11 @@ export function ProjectConnectorSettings({
   ];
 
   return (
-    <div className="chat-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        className="chat-settings-modal chat-connector-settings-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="project-connectors-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header>
-          <div>
+    <> <EditingDialog title={<>External Chat settings
+            </>} onCancel={onClose} size="wide" description={<>  <div>
             <p className="label-xs">{project.code} · {project.title}</p>
-            <h2 className="headings-2xs-bold" id="project-connectors-title">
-              External Chat settings
-            </h2>
-          </div>
-          <button
-            className="chat-icon-button"
-            type="button"
-            aria-label="Close External Chat settings"
-            onClick={onClose}
-          >
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
 
-        <div className="chat-connector-intro">
+          </div>    </>}>  <div className="chat-connector-intro">
           <DsIcon name="lock" size={18} />
           <span>
             <strong className="label-s-semibold">External messages only</strong>
@@ -145,9 +128,7 @@ export function ProjectConnectorSettings({
               Brisk keeps the complete conversation here. Internal Chat, notes, rates, costs and invoices never leave Brisk.
             </p>
           </span>
-        </div>
-
-        <div className="chat-connector-settings-content">
+        </div>  <div className="chat-connector-settings-content">
           <div className="chat-project-connector-list">
             {connectorSources.map((source) => {
               const connection = studioConnectors[source];
@@ -213,29 +194,14 @@ export function ProjectConnectorSettings({
                               <strong className="label-xs-semibold">Business number</strong>
                               <small className="label-xs">Use a Studio-owned or Client-owned WhatsApp Business number.</small>
                             </span>
-                            <select
-                              className="label-s"
-                              value={whatsAppNumberOwner}
-                              onChange={(event) => setWhatsAppNumberOwner(event.target.value as "studio" | "client")}
-                            >
-                              <option value="studio">{studioName} Business</option>
-                              <option value="client">{project.clientName} Business</option>
-                            </select>
+                            <BriskSelect<string> ariaLabel={"Business number"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={whatsAppNumberOwner} onChange={(value) => setWhatsAppNumberOwner(value as "studio" | "client")} options={[{ value: "studio", label: ((studioName) + " Business") }, { value: "client", label: ((project.clientName) + " Business") }]} />
                           </label>
                           <label className="chat-connector-config-field">
                             <span>
                               <strong className="label-xs-semibold">Client conversation</strong>
                               <small className="label-xs">Incoming replies return to this project&apos;s External Chat.</small>
                             </span>
-                            <select
-                              className="label-s"
-                              value={whatsAppConversation}
-                              onChange={(event) => setWhatsAppConversation(event.target.value)}
-                            >
-                              <option>{project.clientName} project group</option>
-                              <option>{project.clientName} approvals</option>
-                              <option>{project.connectors.whatsapp.conversationName}</option>
-                            </select>
+                            <BriskSelect<string> ariaLabel={"Client conversation"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={whatsAppConversation} onChange={(value) => setWhatsAppConversation(value)} options={[{ value: ((project.clientName) + " project group"), label: ((project.clientName) + " project group") }, { value: ((project.clientName) + " approvals"), label: ((project.clientName) + " approvals") }, { value: (project.connectors.whatsapp.conversationName), label: (project.connectors.whatsapp.conversationName) }]} />
                           </label>
                           <p className="chat-connector-config-note label-xs">
                             First-contact messages use an approved WhatsApp template when required.
@@ -248,29 +214,14 @@ export function ProjectConnectorSettings({
                               <strong className="label-xs-semibold">Slack setup</strong>
                               <small className="label-xs">Use Slack Connect or the Brisk Slack app for this Client workspace.</small>
                             </span>
-                            <select
-                              className="label-s"
-                              value={slackSetup}
-                              onChange={(event) => setSlackSetup(event.target.value as "slack-connect" | "brisk-app")}
-                            >
-                              <option value="slack-connect">Slack Connect</option>
-                              <option value="brisk-app">Brisk Slack app</option>
-                            </select>
+                            <BriskSelect<string> ariaLabel={"Slack setup"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={slackSetup} onChange={(value) => setSlackSetup(value as "slack-connect" | "brisk-app")} options={[{ value: "slack-connect", label: "Slack Connect" }, { value: "brisk-app", label: "Brisk Slack app" }]} />
                           </label>
                           <label className="chat-connector-config-field">
                             <span>
                               <strong className="label-xs-semibold">Mapped channel</strong>
                               <small className="label-xs">Messages, files, threads and mentions stay with this project.</small>
                             </span>
-                            <select
-                              className="label-s"
-                              value={slackChannel}
-                              onChange={(event) => setSlackChannel(event.target.value)}
-                            >
-                              <option>#{project.code.toLowerCase()}-client</option>
-                              <option>#{project.clientName.toLowerCase().replaceAll(" ", "-")}-video-production</option>
-                              <option>{project.connectors.slack.channelName}</option>
-                            </select>
+                            <BriskSelect<string> ariaLabel={"Mapped channel"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={slackChannel} onChange={(value) => setSlackChannel(value)} options={[{ value: ("#" + (project.code.toLowerCase()) + "-client"), label: ("#" + (project.code.toLowerCase()) + "-client") }, { value: ("#" + (project.clientName.toLowerCase().replaceAll(" ", "-")) + "-video-production"), label: ("#" + (project.clientName.toLowerCase().replaceAll(" ", "-")) + "-video-production") }, { value: (project.connectors.slack.channelName), label: (project.connectors.slack.channelName) }]} />
                           </label>
                           <p className="chat-connector-config-note label-xs">
                             Slack reactions appear in Brisk as display-only in V1.
@@ -323,8 +274,6 @@ export function ProjectConnectorSettings({
               ))}
             </div>
           </fieldset>
-        </div>
-      </section>
-    </div>
+        </div> </EditingDialog> </>
   );
 }

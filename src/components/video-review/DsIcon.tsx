@@ -99,6 +99,7 @@ const iconPaths = {
   "x-close-cross": "/brisk-icons/x-close-cross.svg",
   "check-circle": "/brisk-icons/check-circle.svg",
   "sparkle": "/brisk-icons/sparkle.svg",
+  "star-four": "/brisk-icons/star-four.svg",
   "flag": "/brisk-icons/flag.svg",
   "instagram-logo": "/brisk-icons/instagram-logo.svg",
   "microphone": "/brisk-icons/microphone.svg",

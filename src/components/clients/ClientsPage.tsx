@@ -33,7 +33,7 @@ export function ClientsPage() {
   const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const { selectedRole } = usePrototypeRole();
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<StatusFilter>("Active");
+  const [status, setStatus] = useState<StatusFilter>("All");
   const [sort, setSort] = useState<SortOption>("activity");
   const requestedDialog = searchParams.get("dialog");
   const [isAddClientOpen, setIsAddClientOpen] = useState(requestedDialog === "add" || requestedDialog === "duplicate");
@@ -61,9 +61,9 @@ export function ClientsPage() {
       <header className="clients-page-header">
         <div className="clients-page-header-inner">
           <div>
-            <span className="label-xs-semibold">Studio workspace</span>
             <h1 className="headings-m-bold">Clients</h1>
             <p className="paragraph-s">Manage every Client, their projects, Brand Kit and private portal access.</p>
+            <Link className="clients-brand-kits-link label-s-semibold" href="/brand-kits">All Brand Kits</Link>
           </div>
           <Button size="M" onClick={() => setIsAddClientOpen(true)}>
             <span className="client-button-content"><DsIcon name="plus" size={16} /> Add Client</span>
@@ -129,11 +129,14 @@ export function ClientsPage() {
                 const projects = workspaceProjects.filter((project) => project.clientId === client.id);
                 const activeProjects = projects.filter((project) => project.status === "In Production");
                 const primaryContact = client.contacts.find((contact) => contact.id === client.primaryContactId) ?? null;
+                const profileHref = `/clients/${client.id}`;
+                const contactsHref = `${profileHref}?section=Contacts`;
+                const dashboardHref = `/workspaces/${encodeURIComponent(state.session.activeWorkspaceId)}/clients/${encodeURIComponent(client.id)}/portal?studio-preview=1`;
 
                 return (
                   <tr key={client.id}>
-                    <td data-label="Client">
-                      <Link className="client-name-cell" href={`/clients/${client.id}`}>
+                    <td data-label="Client" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(profileHref); }}>
+                      <Link className="client-name-cell" href={profileHref}>
                         <ClientAvatar client={client} />
                         <span>
                           <strong className="label-m-semibold">{client.name}</strong>
@@ -141,30 +144,30 @@ export function ClientsPage() {
                         </span>
                       </Link>
                     </td>
-                    <td data-label="Current projects">
+                    <td data-label="Current projects" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(dashboardHref); }}>
                       <div className="client-project-summary">
-                        <span className="label-xs-semibold">{activeProjects.length} active</span>
-                        {activeProjects.slice(0, 2).map((project) => <ProjectAtGlance key={project.id} project={project} />)}
-                        {activeProjects.length === 0 ? <span className="label-xs">No active projects</span> : null}
+                        <Link className="label-xs-semibold client-profile-link" href={dashboardHref}>{activeProjects.length} active</Link>
+                        {activeProjects.slice(0, 2).map((project) => <Link className="client-profile-link" href={`/projects/${project.id}`} key={project.id}><ProjectAtGlance project={project} /></Link>)}
+                        {activeProjects.length === 0 ? <Link className="label-xs client-profile-link" href={dashboardHref}>No active projects</Link> : null}
                       </div>
                     </td>
-                    <td data-label="Primary Client contact">
+                    <td data-label="Primary Client contact" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(contactsHref); }}>
                       {primaryContact ? (
-                        <span className="client-contact-cell">
+                        <Link className="client-contact-cell client-profile-link" href={contactsHref}>
                           <strong className="label-s-semibold">{primaryContact.name}</strong>
                           <small className="label-xs">{primaryContact.email}</small>
-                        </span>
-                      ) : <span className="label-s client-muted">No primary contact</span>}
+                        </Link>
+                      ) : <Link className="label-s client-muted client-profile-link" href={contactsHref}>No primary contact</Link>}
                     </td>
-                    <td data-label="Latest activity">
-                      <span className="client-activity-cell">
+                    <td data-label="Latest activity" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(profileHref); }}>
+                      <Link className="client-activity-cell client-profile-link" href={profileHref}>
                         <strong className="label-s-semibold">{client.latestActivity.label}</strong>
                         <small className="label-xs">{formatRelativeDate(client.latestActivity.occurredAt)}</small>
-                      </span>
+                      </Link>
                     </td>
-                    <td data-label="Portal"><ClientStatusBadge status={client.portal.status} /></td>
-                    <td data-label="Open Client">
-                      <Link className="client-row-open" href={`/clients/${client.id}`} aria-label={`Open ${client.name}`}>
+                    <td data-label="Portal" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(contactsHref); }}><Link className="client-profile-link" href={contactsHref}><ClientStatusBadge status={client.portal.status} /></Link></td>
+                    <td data-label="Open Client" onClick={(event) => { if (!(event.target instanceof Element && event.target.closest("a, button"))) router.push(profileHref); }}>
+                      <Link className="client-row-open" href={profileHref} aria-label={`Open ${client.name}`}>
                         <DsIcon name="caret-right" size={16} />
                       </Link>
                     </td>

@@ -202,8 +202,8 @@ function MessageEditorModal({
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={() => onSave(draft)}>Save</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={() => onSave(draft)}>Save</Button>
         </>
       )}
     >

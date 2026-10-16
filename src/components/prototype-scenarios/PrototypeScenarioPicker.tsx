@@ -1,5 +1,7 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
@@ -70,27 +72,11 @@ export function PrototypeScenarioPicker() {
         <div className="prototype-scenario-fields">
           <label>
             <span className="label-s-semibold">Role</span>
-            <select
-              className="label-s"
-              value={personaId}
-              onChange={(event) => setPersonaId(event.target.value as PrototypeScenarioPersonaId)}
-            >
-              {prototypeScenarioPersonas.map((persona) => (
-                <option value={persona.id} key={persona.id}>{persona.label}</option>
-              ))}
-            </select>
+            <BriskSelect<string> ariaLabel={"Preview person"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={personaId} onChange={(value) => setPersonaId(value as PrototypeScenarioPersonaId)} options={[...prototypeScenarioPersonas.map((persona) => ({ value: persona.id, label: (persona.label) }))]} />
           </label>
           <label>
             <span className="label-s-semibold">Starting state</span>
-            <select
-              className="label-s"
-              value={state}
-              onChange={(event) => setState(event.target.value as PrototypeScenarioState)}
-            >
-              {prototypeScenarioStates.map((scenarioState) => (
-                <option value={scenarioState.id} key={scenarioState.id}>{scenarioState.label}</option>
-              ))}
-            </select>
+            <BriskSelect<string> ariaLabel={"Preview scenario"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={state} onChange={(value) => setState(value as PrototypeScenarioState)} options={[...prototypeScenarioStates.map((scenarioState) => ({ value: scenarioState.id, label: (scenarioState.label) }))]} />
           </label>
         </div>
 

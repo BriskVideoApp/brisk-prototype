@@ -1,5 +1,7 @@
 "use client";
 
+import { useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -23,7 +25,6 @@ import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/p
 
 export type StudioSettingsSectionId =
   | "overview"
-  | "team"
   | "production"
   | "ai-playbook"
   | "integrations"
@@ -47,32 +48,25 @@ export const studioSettingsNavigation = [
     label: "Studio setup",
     href: "/settings/studio",
     icon: "settings",
-    description: "Manage your Studio profile, branding, services and Client defaults.",
-  },
-  {
-    id: "team",
-    label: "Team & access",
-    href: "/settings/studio/team",
-    icon: "users-three",
-    description: "Manage Studio Staff workspace and billing access.",
+    description: "Manage your Studio name, logo, video types and default Client Brief.",
   },
   {
     id: "production",
     label: "Production defaults",
     href: "/settings/studio/production",
     icon: "queue",
-    description: "Set the defaults used when new work is created.",
+    description: "Choose the roles and Staff added to new project teams.",
   },
   {
     id: "ai-playbook",
     label: "AI Playbook",
     href: "/settings/studio/ai-playbook",
     icon: "sparkle",
-    description: "Define how Brisk AI supports creative and production work across your Studio.",
+    description: "Add Studio instructions and references for Brisk AI.",
   },
   {
     id: "integrations",
-    label: "Apps and integrations",
+    label: "Messaging connections",
     href: "/settings/studio/integrations",
     icon: "link",
     description: "Manage the shared accounts that connect your Studio to external messaging apps.",
@@ -94,7 +88,7 @@ export const studioSettingsNavigation = [
   },
   {
     id: "plan-billing",
-    label: "Plan & billing",
+    label: "Brisk plan & billing",
     href: "/settings/plan-billing",
     icon: "settings",
     description: "Manage your Brisk plan, usage and billing details.",
@@ -108,41 +102,12 @@ export const studioSettingsNavigation = [
   },
 ] as const satisfies readonly StudioSettingsNavigationItem[];
 
-const studioWorkspaceNavigation = [
-  { label: "People", href: "/people", icon: "users-three" as const },
-  { label: "Clients", href: "/clients", icon: "users-three" as const },
-] as const;
-
 type StudioWorkspaceSectionId = "people" | "clients";
 
 function StudioSettingsSidebar({ activeHref }: { activeHref: string }) {
   return (
     <nav className="studio-settings-navigation" aria-label="Studio Settings">
-      {studioSettingsNavigation.slice(0, 2).map((item) => (
-        <Link
-          className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
-          href={item.href}
-          aria-current={item.href === activeHref ? "page" : undefined}
-          key={item.id}
-        >
-          <DsIcon name={item.icon} size={16} />
-          <span>{item.label}</span>
-          <DsIcon name="caret-right" size={14} />
-        </Link>
-      ))}
-      {studioWorkspaceNavigation.map((item) => (
-        <Link
-          className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
-          href={item.href}
-          aria-current={item.href === activeHref ? "page" : undefined}
-          key={item.href}
-        >
-          <DsIcon name={item.icon} size={16} />
-          <span>{item.label}</span>
-          <DsIcon name="caret-right" size={14} />
-        </Link>
-      ))}
-      {studioSettingsNavigation.slice(2).map((item) => (
+      {studioSettingsNavigation.map((item) => (
         <Link
           className={`studio-settings-navigation-link label-s-semibold ${item.href === activeHref ? "is-active" : ""}`}
           href={item.href}
@@ -174,7 +139,11 @@ export function StudioWorkspacePageFrame({ children, section }: { children: Reac
         <BriskSelect
           ariaLabel="Choose Studio Settings section"
           clearable={false}
-          options={[...studioSettingsNavigation, ...studioWorkspaceNavigation].map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
+          options={[
+            { value: "/people", label: "People", icon: "users-three" as const },
+            { value: "/clients", label: "Clients", icon: "users-three" as const },
+            ...studioSettingsNavigation.map((item) => ({ value: item.href, label: item.label, icon: item.icon })),
+          ]}
           placeholder="Choose section"
           searchable={false}
           value={activeHref}
@@ -225,6 +194,7 @@ export function StudioSettingsShell({
 function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sectionId: StudioSettingsSectionId }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { confirm, confirmationDialog } = useConfirmation();
   const { selectedRole } = usePrototypeRole();
   const { people } = usePeople();
   const { hasUnsavedChanges, setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
@@ -236,13 +206,13 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
   const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
   const canManageStudioSettings = hasStudioAdministrationAccess(currentStudioMember);
 
-  const confirmNavigation = useCallback(() => {
+  const confirmNavigation = useCallback(async () => {
     if (!hasUnsavedChanges) return true;
-    if (!window.confirm(unsavedChangesMessage)) return false;
+    if (!(await confirm({ title: "Discard unsaved changes?", description: unsavedChangesMessage, tone: "danger", confirmLabel: "Discard changes" }))) return false;
     allowNavigationRef.current = true;
     setHasUnsavedChanges(false);
     return true;
-  }, [hasUnsavedChanges, setHasUnsavedChanges]);
+  }, [confirm, hasUnsavedChanges, setHasUnsavedChanges]);
 
   useEffect(() => {
     if (!hasUnsavedChanges) return;
@@ -263,14 +233,16 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
       if (destination.origin === window.location.origin
         && destination.pathname === window.location.pathname
         && destination.search === window.location.search) return;
-      if (!window.confirm(unsavedChangesMessage)) {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
-      allowNavigationRef.current = true;
-      setHasUnsavedChanges(false);
+      event.preventDefault();
+      event.stopPropagation();
+      void confirmNavigation().then((accepted) => {
+        if (!accepted) return;
+        if (destination.origin === window.location.origin) router.push(`${destination.pathname}${destination.search}${destination.hash}`);
+        else window.location.assign(destination.href);
+      });
     };
+    // History traversal needs a synchronous decision before Next handles the event.
+    // Keep the native safeguard here, and on tab close/reload, to protect unsaved work.
     const handlePopState = () => {
       if (restoringHistoryRef.current) {
         restoringHistoryRef.current = false;
@@ -293,7 +265,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
       window.removeEventListener("popstate", handlePopState);
       document.removeEventListener("click", handleDocumentClick, true);
     };
-  }, [hasUnsavedChanges, setHasUnsavedChanges]);
+  }, [confirmNavigation, hasUnsavedChanges, router, setHasUnsavedChanges]);
 
   if (selectedRole !== "Studio Staff") {
     const isCustomer = selectedRole === "Customer";
@@ -320,7 +292,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
         <span className="studio-settings-permission-icon"><DsIcon name="lock" size={28} /></span>
         <span className="label-xs-semibold">Studio Settings</span>
         <h1 className="headings-s-bold">Studio Settings are restricted</h1>
-        <p className="paragraph-s">Only Studio Owners and Admins can manage Studio-wide details, access, defaults and billing.</p>
+        <p className="paragraph-s">Only Studio Owners can manage Studio-wide details, access, defaults and billing.</p>
         <Link className="client-secondary-button label-s-semibold" href="/settings/personal/profile">Open my profile</Link>
       </main>
     );
@@ -328,12 +300,19 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
 
   return (
     <div className="studio-settings-shell">
+      {confirmationDialog}
       <header className="studio-settings-header">
-        <div className="studio-settings-header-inner">
-          <span className="label-xs-semibold">Studio Settings</span>
-          <h1 className="headings-m-bold">{title}</h1>
-          <p className="paragraph-s">{activeSection.description}</p>
-          {activeSectionNote ? <div className="studio-settings-header-note label-s"><DsIcon name="info" size={16} /><span>{activeSectionNote}</span></div> : null}
+        <div className={`studio-settings-header-inner ${sectionId === "overview" ? "has-preview-action" : ""}`}>
+          <div className="studio-settings-header-copy">
+            <h1 className="headings-m-bold">{title}</h1>
+            {sectionId !== "overview" ? <p className="paragraph-s">{activeSection.description}</p> : null}
+            {activeSectionNote ? <div className="studio-settings-header-note label-s"><DsIcon name="info" size={16} /><span>{activeSectionNote}</span></div> : null}
+          </div>
+          {sectionId === "overview" ? (
+            <Link className="client-secondary-button label-s-semibold" href="/settings/studio/portal-preview">
+              <DsIcon name="eye" size={16} /> Preview sample Client portal
+            </Link>
+          ) : null}
         </div>
       </header>
 
@@ -342,15 +321,12 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
         <BriskSelect
           ariaLabel="Choose Studio Settings section"
           clearable={false}
-          options={[
-            ...studioSettingsNavigation,
-            ...studioWorkspaceNavigation,
-          ].map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
+          options={studioSettingsNavigation.map((item) => ({ value: item.href, label: item.label, icon: item.icon }))}
           placeholder="Choose section"
           searchable={false}
           value={activeSection.href}
-          onChange={(href) => {
-            if (!href || href === pathname || !confirmNavigation()) return;
+          onChange={async (href) => {
+            if (!href || href === pathname || !(await confirmNavigation())) return;
             router.push(href);
           }}
         />

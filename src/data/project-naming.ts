@@ -1,7 +1,8 @@
 import { customerDashboardProjects } from "@/data/customer-dashboard";
+import { getDefaultProjectCodePrefix } from "@/data/clients";
 
-export function getNextClientProjectCode(clientBadge: string, savedCodes: readonly string[]): string {
-  const prefix = clientBadge.toLowerCase().replace(/[^a-z0-9]/gu, "");
+export function getNextClientProjectCode(clientCodePrefix: string, savedCodes: readonly string[]): string {
+  const prefix = clientCodePrefix.toLocaleLowerCase("en-AU").replace(/[^a-z]/gu, "") || getDefaultProjectCodePrefix(clientCodePrefix);
   const existingCodes = [
     ...customerDashboardProjects.map((project) => project.code),
     ...savedCodes,

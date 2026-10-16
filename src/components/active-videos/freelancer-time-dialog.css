@@ -72,7 +72,7 @@
 }
 
 .freelancer-time-fields input,
-.freelancer-time-fields select,
+.freelancer-time-fields .brisk-select-trigger,
 .freelancer-time-fields textarea {
   width: 100%;
   min-height: 44px;

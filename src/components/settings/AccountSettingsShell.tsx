@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { getRoleHome } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -26,7 +27,7 @@ export function PersonalSettingsPageShell({
 }) {
   const { selectedRole } = usePrototypeRole();
   const resolvedBackHref = backHref ?? (selectedRole === "Studio Freelancer" ? "/active-videos" : selectedRole === "Studio Staff" ? "/today" : "/customer-dashboard");
-  const resolvedBackLabel = backLabel ?? (selectedRole === "Studio Freelancer" ? "Back to My jobs" : selectedRole === "Studio Staff" ? "Back to Today" : "Back to dashboard");
+  const resolvedBackLabel = backLabel ?? (selectedRole === "Studio Freelancer" ? "Back to My jobs" : selectedRole === "Studio Staff" ? "Back to To Do" : "Back to dashboard");
 
   return (
     <AccountSettingsPageShell
@@ -46,39 +47,18 @@ export function PersonalSettingsAccessBoundary({ children }: { children: ReactNo
 }
 
 export function ClientCompanySettingsPageShell({
-  activeSection,
   children,
   title,
 }: {
-  activeSection: "company" | "team";
   children: ReactNode;
   title: string;
 }) {
-  const { buildHref } = useClientAccountSettings();
   return (
     <AccountSettingsPageShell
       backHref="/customer-dashboard"
       backLabel="Back to dashboard"
       title={title}
     >
-      <nav className="account-settings-scope-navigation" aria-label="Company and team settings">
-        <Link
-          className={`label-s-semibold ${activeSection === "company" ? "is-active" : ""}`}
-          href={buildHref("/settings/client/company")}
-          aria-current={activeSection === "company" ? "page" : undefined}
-        >
-          <DsIcon name="settings" size={16} />
-          Company details
-        </Link>
-        <Link
-          className={`label-s-semibold ${activeSection === "team" ? "is-active" : ""}`}
-          href={buildHref("/settings/client/team")}
-          aria-current={activeSection === "team" ? "page" : undefined}
-        >
-          <DsIcon name="users-three" size={16} />
-          Team access
-        </Link>
-      </nav>
       {children}
     </AccountSettingsPageShell>
   );
@@ -89,7 +69,7 @@ export function ClientInvoicesPageShell({ children }: { children: ReactNode }) {
     <AccountSettingsPageShell
       backHref="/customer-dashboard"
       backLabel="Back to dashboard"
-      title="Invoices & payments"
+      title="Invoices"
     >
       {children}
     </AccountSettingsPageShell>
@@ -111,6 +91,7 @@ function AccountSettingsPageShell({
   eyebrow?: string;
   title: string;
 }) {
+  const { selectedRole } = usePrototypeRole();
   const { buildHref } = useClientAccountSettings();
   return (
     <main className="account-settings-page">
@@ -125,8 +106,65 @@ function AccountSettingsPageShell({
           {description ? <p className="paragraph-s">{description}</p> : null}
         </div>
       </header>
+      {selectedRole === "Customer" ? <ClientSettingsNavigation /> : null}
       <div className="account-settings-content">{children}</div>
     </main>
+  );
+}
+
+function ClientSettingsNavigation() {
+  const pathname = usePathname();
+  const { access, buildHref } = useClientAccountSettings();
+  const personal = [
+    { href: "/settings/personal/profile", label: "My profile" },
+    { href: "/settings/personal/notifications", label: "Notifications" },
+    { href: "/settings/personal/security", label: "Security" },
+  ];
+  const company = [
+    ...(access.role === "Client Admin" ? [
+      { href: "/settings/client/company", label: "Company details" },
+      { href: "/settings/client/team", label: "Team access" },
+    ] : []),
+    ...(access.canAccessBilling ? [{ href: "/client/invoices", label: "Invoices" }] : []),
+  ];
+  const isCompanyPage = pathname.startsWith("/settings/client/") || pathname === "/client/invoices";
+  const currentPages = isCompanyPage ? company : personal;
+
+  return (
+    <nav className="account-settings-page-navigation" aria-label="Client settings">
+      <div className="account-settings-page-navigation-inner">
+        <div className="account-settings-page-navigation-scopes">
+          <Link
+            className={`label-s-semibold ${isCompanyPage ? "" : "is-active"}`}
+            href={buildHref(personal[0].href)}
+            aria-current={isCompanyPage ? undefined : "location"}
+          >
+            Personal
+          </Link>
+          {company.length ? (
+            <Link
+              className={`label-s-semibold ${isCompanyPage ? "is-active" : ""}`}
+              href={buildHref(company[0].href)}
+              aria-current={isCompanyPage ? "location" : undefined}
+            >
+              Company
+            </Link>
+          ) : null}
+        </div>
+        <div className="account-settings-page-navigation-pages">
+          {currentPages.map((item) => (
+            <Link
+              key={item.href}
+              className={`label-s-semibold ${pathname === item.href ? "is-active" : ""}`}
+              href={buildHref(item.href)}
+              aria-current={pathname === item.href ? "page" : undefined}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </nav>
   );
 }
 

@@ -5435,7 +5435,7 @@ button.shoot-on-set-shot-copy:focus-visible {
   transform: translateY(-50%);
 }
 
-.shoot-hero-time :is(input, select) {
+.shoot-hero-time :is(input, .brisk-select-trigger) {
   width: calc(var(--brisk-space-3xl) * 6);
   max-width: 100%;
   border: var(--brisk-space-none);
@@ -5452,8 +5452,8 @@ button.shoot-on-set-shot-copy:focus-visible {
   display: none;
 }
 
-.shoot-hero-time :is(input, select):hover,
-.shoot-hero-time :is(input, select):focus {
+.shoot-hero-time :is(input, .brisk-select-trigger):hover,
+.shoot-hero-time :is(input, .brisk-select-trigger):focus {
   border-bottom-color: var(--brisk-brand-primary);
   outline: var(--brisk-space-none);
 }
@@ -5472,16 +5472,16 @@ button.shoot-on-set-shot-copy:focus-visible {
 }
 
 .shoot-inline-field input,
-.shoot-inline-field select,
+.shoot-inline-field .brisk-select-trigger,
 .shoot-field input,
-.shoot-field select,
+.shoot-field .brisk-select-trigger,
 .shoot-field textarea,
 .shoot-textarea-field textarea,
 .shoot-practical-field textarea,
 .shoot-notice textarea,
 .shoot-inline-add input,
 .shoot-document-form input,
-.shoot-document-form select {
+.shoot-document-form .brisk-select-trigger {
   width: 100%;
   min-height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
@@ -5533,20 +5533,20 @@ button.shoot-on-set-shot-copy:focus-visible {
 }
 
 .shoot-inline-field input:hover,
-.shoot-inline-field select:hover,
+.shoot-inline-field .brisk-select-trigger:hover,
 .shoot-field input:hover,
-.shoot-field select:hover,
+.shoot-field .brisk-select-trigger:hover,
 .shoot-field textarea:hover,
 .shoot-textarea-field textarea:hover,
 .shoot-practical-field textarea:hover,
 .shoot-inline-add input:hover,
 .shoot-document-form input:hover,
-.shoot-document-form select:hover {
+.shoot-document-form .brisk-select-trigger:hover {
   box-shadow: var(--brisk-shadow-s);
 }
 
 .shoot-shell input:focus-visible,
-.shoot-shell select:focus-visible,
+.shoot-shell .brisk-select-trigger:focus-visible,
 .shoot-shell textarea:focus-visible,
 .shoot-shell a:focus-visible {
   outline: none;
@@ -6519,7 +6519,7 @@ button.shoot-on-set-shot-copy:focus-visible {
   grid-template-columns: minmax(calc(var(--brisk-space-3xl) * 4), 1fr) minmax(calc(var(--brisk-space-3xl) * 5), 1.5fr) calc(var(--brisk-space-3xl) * 3) auto;
 }
 
-.shoot-inline-add select {
+.shoot-inline-add .brisk-select-trigger {
   min-height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
@@ -7186,7 +7186,7 @@ button.shoot-on-set-shot-copy:focus-visible {
     padding: var(--brisk-space-l);
   }
 
-  .shoot-hero-time :is(input, select) {
+  .shoot-hero-time :is(input, .brisk-select-trigger) {
     font-size: 32px;
     line-height: 40px;
   }
@@ -8279,8 +8279,8 @@ button.shoot-on-set-shot-copy:focus-visible {
   color: var(--brisk-text-secondary);
 }
 
-.shoot-setup-field :is(input, select, textarea),
-.shoot-setup-entry-list :is(input, select),
+.shoot-setup-field :is(input, .brisk-select-trigger, textarea),
+.shoot-setup-entry-list :is(input, .brisk-select-trigger),
 .shoot-setup-shot-review-list input {
   width: 100%;
   min-width: var(--brisk-space-none);
@@ -8296,15 +8296,15 @@ button.shoot-on-set-shot-copy:focus-visible {
   resize: vertical;
 }
 
-.shoot-setup-field :is(input, select, textarea):hover,
-.shoot-setup-entry-list :is(input, select):hover,
+.shoot-setup-field :is(input, .brisk-select-trigger, textarea):hover,
+.shoot-setup-entry-list :is(input, .brisk-select-trigger):hover,
 .shoot-setup-shot-review-list input:hover {
   background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);
 }
 
-.shoot-setup-field :is(input, select, textarea):focus-visible,
-.shoot-setup-entry-list :is(input, select):focus-visible,
+.shoot-setup-field :is(input, .brisk-select-trigger, textarea):focus-visible,
+.shoot-setup-entry-list :is(input, .brisk-select-trigger):focus-visible,
 .shoot-setup-shot-review-list input:focus-visible {
   background: var(--brisk-white);
   outline: none;
@@ -9095,7 +9095,7 @@ button.shoot-on-set-shot-copy:focus-visible {
     grid-template-columns: auto minmax(var(--brisk-space-none), 1fr) auto;
   }
 
-  .shoot-setup-entry-list > article > :is(select, input):nth-of-type(n + 2) {
+  .shoot-setup-entry-list > article > :is(.brisk-select, input):nth-of-type(n + 2) {
     grid-column: 2 / -1;
   }
 
@@ -10717,8 +10717,8 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 }
 
 .shoot-quick-field input,
-.shoot-quick-field select,
-.shoot-quick-more-options select {
+.shoot-quick-field .brisk-select-trigger,
+.shoot-quick-more-options .brisk-select-trigger {
   width: 100%;
   min-width: 0;
   min-height: var(--brisk-space-3xl);
@@ -11259,19 +11259,19 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   outline: none;
 }
 
-.shoot-call-sheet-hero :is(input, select, textarea):focus-visible,
-.shoot-section :is(input, select, textarea):focus-visible,
-.shoot-modal :is(input, select, textarea):focus-visible {
+.shoot-call-sheet-hero :is(input, .brisk-select-trigger, textarea):focus-visible,
+.shoot-section :is(input, .brisk-select-trigger, textarea):focus-visible,
+.shoot-modal :is(input, .brisk-select-trigger, textarea):focus-visible {
   border-color: var(--brisk-border-primary);
   box-shadow: var(--brisk-shadow-s);
   outline: none;
 }
 
-.shoot-shell button:hover {
+.shoot-shell button:not([data-brisk-button]):hover {
   box-shadow: none !important;
 }
 
-.shoot-shell button:focus-visible {
+.shoot-shell button:not([data-brisk-button]):focus-visible {
   box-shadow: var(--brisk-shadow-s) !important;
   outline: none;
 }
@@ -11283,30 +11283,30 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
 }
 
 .shoot-inline-field input,
-.shoot-inline-field select,
+.shoot-inline-field .brisk-select-trigger,
 .shoot-field input,
-.shoot-field select,
+.shoot-field .brisk-select-trigger,
 .shoot-field textarea,
 .shoot-textarea-field textarea,
 .shoot-practical-field textarea,
 .shoot-inline-add input,
-.shoot-inline-add select,
+.shoot-inline-add .brisk-select-trigger,
 .shoot-document-form input,
-.shoot-document-form select,
+.shoot-document-form .brisk-select-trigger,
 .shoot-checkbox-list {
   border-color: var(--shoot-soft-border);
 }
 
 .shoot-inline-field input:hover,
-.shoot-inline-field select:hover,
+.shoot-inline-field .brisk-select-trigger:hover,
 .shoot-field input:hover,
-.shoot-field select:hover,
+.shoot-field .brisk-select-trigger:hover,
 .shoot-field textarea:hover,
 .shoot-textarea-field textarea:hover,
 .shoot-practical-field textarea:hover,
 .shoot-inline-add input:hover,
 .shoot-document-form input:hover,
-.shoot-document-form select:hover {
+.shoot-document-form .brisk-select-trigger:hover {
   box-shadow: none;
 }
 
@@ -13202,77 +13202,6 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   width: 100%;
 }
 
-.shoot-day-multi-menu {
-  position: fixed;
-  z-index: 120;
-  box-sizing: border-box;
-  overflow-y: auto;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-bg-elevated-primary);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-xs);
-}
-
-.shoot-day-multi-options {
-  display: grid;
-}
-
-.shoot-day-multi-option {
-  display: grid;
-  width: 100%;
-  min-height: var(--brisk-space-3xl);
-  align-items: center;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  grid-template-columns: var(--brisk-space-xl) minmax(0, 1fr);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  cursor: pointer;
-  gap: var(--brisk-space-s);
-  padding: var(--brisk-space-s);
-  text-align: left;
-}
-
-.shoot-day-multi-option:hover,
-.shoot-day-multi-option:focus-visible {
-  background: var(--brisk-brand-secondary);
-  outline: 0;
-}
-
-.shoot-day-multi-option > span:last-child {
-  display: grid;
-  min-width: 0;
-  gap: var(--brisk-space-xxs);
-}
-
-.shoot-day-multi-option small {
-  color: var(--brisk-text-secondary);
-}
-
-.shoot-day-multi-option.is-all {
-  border-top: 1px solid var(--brisk-border-secondary);
-  border-radius: var(--brisk-radius-none);
-  margin-top: var(--brisk-space-xs);
-  padding-top: var(--brisk-space-m);
-}
-
-.shoot-day-multi-check {
-  display: inline-flex;
-  width: calc(var(--brisk-space-xl) - var(--brisk-space-xs));
-  height: calc(var(--brisk-space-xl) - var(--brisk-space-xs));
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-white);
-  color: var(--brisk-white);
-}
-
-.shoot-day-multi-check.is-checked {
-  background: var(--brisk-brand-primary);
-}
-
 /* Detailed Shot List */
 .shoot-detailed-shot-list {
   --shot-min-captured: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
@@ -13555,7 +13484,7 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.shoot-shot-cell > :is(input, select),
+.shoot-shot-cell > :is(input, .brisk-select-trigger),
 .shoot-shot-cell .shoot-duration-combobox > input {
   width: 100%;
   min-height: var(--brisk-space-3xl);
@@ -13588,8 +13517,8 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   box-shadow: none;
 }
 
-.shoot-shot-cell > :is(input, select):hover,
-.shoot-shot-cell > :is(input, select):focus,
+.shoot-shot-cell > :is(input, .brisk-select-trigger):hover,
+.shoot-shot-cell > :is(input, .brisk-select-trigger):focus,
 .shoot-shot-cell .shoot-duration-combobox > input:hover,
 .shoot-shot-cell .shoot-duration-combobox > input:focus {
   border-color: var(--shoot-soft-border);
@@ -14025,7 +13954,7 @@ button.shoot-call-sheet-section-count:is(:hover, :focus-visible) {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.shoot-quick-entry :is(input, select, textarea):focus-visible {
+.shoot-quick-entry :is(input, .brisk-select-trigger, textarea):focus-visible {
   border-color: var(--brisk-border-primary);
   outline: none;
   box-shadow: var(--brisk-shadow-s);

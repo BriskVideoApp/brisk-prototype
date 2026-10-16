@@ -67,7 +67,7 @@
 .chat-shell a,
 .chat-shell input,
 .chat-shell textarea,
-.chat-shell select {
+.chat-shell .brisk-select-trigger {
   transition:
     background 120ms ease,
     border-color 120ms ease,
@@ -81,7 +81,7 @@
 .chat-shell a:focus-visible,
 .chat-shell input:focus-visible,
 .chat-shell textarea:focus-visible,
-.chat-shell select:focus-visible {
+.chat-shell .brisk-select-trigger:focus-visible {
   outline: none;
   box-shadow: var(--brisk-shadow-s);
 }
@@ -2673,7 +2673,7 @@
   align-items: center;
 }
 
-.chat-call-filters select {
+.chat-call-filters .brisk-select-trigger {
   height: var(--brisk-space-3xl);
   appearance: none;
   border: 1px solid var(--brisk-border-primary);
@@ -2683,7 +2683,7 @@
   padding: 0 var(--brisk-space-2xl) 0 var(--brisk-space-m);
 }
 
-.chat-call-filters .ds-icon {
+.chat-call-filters > label > .ds-icon {
   position: absolute;
   right: var(--brisk-space-s);
   pointer-events: none;
@@ -2793,7 +2793,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--brisk-space-l);
-  padding: var(--brisk-space-xl);
+  padding: var(--brisk-space-none);
 }
 
 .chat-call-participant-bar {
@@ -2945,7 +2945,7 @@
   color: var(--brisk-text-secondary);
 }
 
-.chat-call-device-grid select {
+.chat-call-device-grid .brisk-select-trigger {
   width: 100%;
   min-height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
@@ -3141,10 +3141,7 @@
 .chat-settings-section {
   display: grid;
   min-height: 0;
-  max-height: 56vh;
   gap: var(--brisk-space-l);
-  overflow-y: auto;
-  padding: var(--brisk-space-l);
 }
 
 .chat-settings-field,
@@ -3177,7 +3174,7 @@
   color: var(--brisk-text-secondary);
 }
 
-.chat-settings-field select {
+.chat-settings-field .brisk-select-trigger {
   min-width: calc(var(--brisk-space-3xl) * 4);
   height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
@@ -3433,10 +3430,10 @@
 .chat-connector-settings-content {
   display: grid;
   min-height: var(--brisk-space-none);
-  max-height: 60vh;
+  max-height: none;
   gap: var(--brisk-space-l);
-  overflow-y: auto;
-  padding: var(--brisk-space-l);
+  overflow-y: visible;
+  padding: var(--brisk-space-none);
 }
 
 .chat-project-connector-list {
@@ -3536,7 +3533,7 @@
   gap: var(--brisk-space-xs);
 }
 
-.chat-connector-config-field select {
+.chat-connector-config-field .brisk-select-trigger {
   width: 100%;
   height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
@@ -3825,3 +3822,7 @@
     flex-direction: column-reverse;
   }
 }
+
+.chat-call-filters .brisk-select { min-width: 144px; width: auto; }
+
+.chat-source-picker.brisk-select { width: auto; }

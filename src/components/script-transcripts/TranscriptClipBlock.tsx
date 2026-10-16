@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -144,10 +145,10 @@ export function TranscriptClipBlock({
             </div>
           </div>
           <div className="transcript-clip-actions">
-            <button className="transcript-quiet-button label-s-semibold" type="button" onClick={onCopy}>
+            <Button size="S" variant="secondary" className="transcript-quiet-button" type="button" onClick={onCopy}>
               <DsIcon name="copy" size={15} />
               Copy text
-            </button>
+            </Button>
             <TranscriptClipMenu onDelete={onDelete} onDownload={onDownload} onHide={onHide} onRename={startRenaming} />
           </div>
         </header>

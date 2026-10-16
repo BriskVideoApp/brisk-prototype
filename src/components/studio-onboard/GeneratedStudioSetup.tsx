@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { StudioClientPortalPreview } from "@/components/studio-onboard/StudioClientPortalPreview";
 import { BriefGuidedExperience, getBriefConfigurableOptions } from "@/components/brief/BriefPage";
 import {
   StudioBrandColourEditor,
@@ -32,6 +33,7 @@ import {
 
 type GeneratedStudioSetupProps = {
   draft: StudioReviewDraft;
+  onboardingFocus?: boolean;
   openManualSetupInitially?: boolean;
   onBack: () => void;
   onDraftChange: (draft: StudioReviewDraft) => void;
@@ -43,6 +45,7 @@ type BriefSurfaceMode = "configure" | null;
 
 export function GeneratedStudioSetup({
   draft,
+  onboardingFocus = false,
   openManualSetupInitially = false,
   onBack,
   onDraftChange,
@@ -58,7 +61,6 @@ export function GeneratedStudioSetup({
     cloneStudioBriefConfiguration(draft.briefConfiguration));
   const [videoTypeIdsDraft, setVideoTypeIdsDraft] = useState<BriefVideoTypeId[]>([...draft.videoTypeIds]);
   const [briefPreviewFields, setBriefPreviewFields] = useState(createInitialBriefFields);
-  const [summaryGeneration, setSummaryGeneration] = useState(0);
   const [editingBrandColourIndex, setEditingBrandColourIndex] = useState<number | "new" | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const customVideoTypes = getStudioCustomVideoTypes(draft);
@@ -69,23 +71,6 @@ export function GeneratedStudioSetup({
     onDraftChange(nextDraft);
     setActiveDialogId(null);
     onManualSetupResolved?.();
-  }
-
-  function regenerateStudioSummary() {
-    const offeredVideoTypes = formatStudioSummaryList([
-      ...draft.videoTypeIds,
-      ...customVideoTypes.map((videoType) => videoType.name),
-    ].slice(0, 3));
-    const regeneratedSummaries = [
-      `We create ${offeredVideoTypes} projects for clients who need clear, well-crafted video.`,
-      `${draft.studioName} is a ${draft.studioType.toLocaleLowerCase("en-AU")} helping clients take video from first idea to final delivery.`,
-    ];
-
-    onDraftChange({
-      ...draft,
-      studioDescription: regeneratedSummaries[summaryGeneration % regeneratedSummaries.length],
-    });
-    setSummaryGeneration((currentGeneration) => currentGeneration + 1);
   }
 
   function setPrimaryBrandColour(primaryIndex: number) {
@@ -263,27 +248,27 @@ export function GeneratedStudioSetup({
     <section className="studio-generated-setup" aria-labelledby="studio-generated-heading">
       <header className="studio-generated-header">
         <div className="studio-generated-heading-copy">
-          <h1 className="headings-m-bold" id="studio-generated-heading">Your Studio setup is ready</h1>
+          <h1 className="headings-m-bold" id="studio-generated-heading">Review your Studio</h1>
           <p className="paragraph-s">
-            We&apos;ve created your Studio profile, Client Brief template and Client portal defaults. Check them before continuing.
+            Check your Studio name and branding before Clients see them. You can edit these details later.
           </p>
-          <ul className="studio-generated-ready-list" aria-label="Studio setup created">
+          {!onboardingFocus ? <ul className="studio-generated-ready-list" aria-label="Studio setup prepared">
             {[
-              "Studio profile created",
+              "Studio profile prepared",
               "Client Brief prepared",
-              "Video types added",
+              "Video types selected",
             ].map((item) => (
               <li className="label-xs-semibold" key={item}>
                 <DsIcon name="check-circle" size={16} />
                 {item}
               </li>
             ))}
-          </ul>
+          </ul> : null}
         </div>
       </header>
 
       <div className="studio-setup-overview">
-        <div className="studio-review-bento-grid">
+        <div className={`studio-review-bento-grid${onboardingFocus ? " is-branding-review" : ""}`}>
           <section
             className={`studio-review-bento-card studio-review-summary-tile studio-client-accent-${draft.brandAccentId}`}
             style={brandThemeStyle}
@@ -293,29 +278,14 @@ export function GeneratedStudioSetup({
               <h3 className="headings-s-bold">{draft.studioName}</h3>
             </header>
             <div className="studio-review-summary-content">
-              <textarea
-                className="studio-review-summary-textarea paragraph-m"
-                aria-label="Studio summary"
-                maxLength={220}
-                rows={3}
-                value={draft.studioDescription}
-                onChange={(event) => onDraftChange({ ...draft, studioDescription: event.target.value })}
-              />
-              <span className="studio-review-summary-type label-xs-semibold">{draft.studioType}</span>
+              <p className="paragraph-m">{draft.studioType}</p>
+              <span className="studio-review-summary-type label-xs-semibold">
+                {draft.videoTypeIds.map((videoTypeId) => studioOnboardingVideoTypeLabels[videoTypeId]).join(" · ")}
+              </span>
             </div>
-            <footer className="studio-review-card-footer studio-review-summary-footer">
-              <button
-                className="studio-review-card-footer-action label-s-semibold"
-                type="button"
-                onClick={regenerateStudioSummary}
-              >
-                <DsIcon name="arrows-clockwise" size={16} />
-                Regenerate
-              </button>
-            </footer>
           </section>
 
-          <section className="studio-review-bento-card studio-review-brief-tile" aria-labelledby="studio-review-brief-heading">
+          {!onboardingFocus ? <section className="studio-review-bento-card studio-review-brief-tile" aria-labelledby="studio-review-brief-heading">
             <header className="studio-review-bento-card-header">
               <h2 className="headings-xs-bold" id="studio-review-brief-heading">Client Brief template</h2>
             </header>
@@ -331,11 +301,11 @@ export function GeneratedStudioSetup({
               </ul>
             </div>
             <footer className="studio-review-card-footer">
-              <button className="studio-review-card-footer-action label-s-semibold" type="button" onClick={openBriefConfiguration}>
+              <Button size="S" variant="secondary" className="studio-review-card-footer-action" type="button" onClick={openBriefConfiguration}>
                 Review questions
-              </button>
+              </Button>
             </footer>
-          </section>
+          </section> : null}
 
           <section className="studio-review-bento-card studio-review-logo-tile" aria-labelledby="studio-review-logo-heading">
             <header className="studio-review-bento-card-header">
@@ -373,13 +343,13 @@ export function GeneratedStudioSetup({
               onChange={updateLogo}
             />
             <footer className="studio-review-card-footer">
-              <button
-                className="studio-review-card-footer-action label-s-semibold"
+              <Button size="S" variant="secondary"
+                className="studio-review-card-footer-action"
                 type="button"
                 onClick={() => logoInputRef.current?.click()}
               >
                 {draft.logoPreviewUrl ? "Edit logo" : "Upload logo"}
-              </button>
+              </Button>
             </footer>
           </section>
 
@@ -390,6 +360,9 @@ export function GeneratedStudioSetup({
                 + Add colour
               </Button>
             </header>
+            {onboardingFocus ? <p className="paragraph-s">
+              "Starting colours for your Client portal. Edit them to match your Studio."
+            </p> : null}
             <ul className="studio-brand-colour-list" aria-label="Studio Brand Kit colours">
               {brandColours.map((colour, index) => (
                 <li key={`${colour.hex}-${index}`}>
@@ -416,7 +389,7 @@ export function GeneratedStudioSetup({
             </ul>
           </section>
 
-          <section className="studio-review-bento-card studio-review-products-tile" aria-labelledby="studio-review-products-heading">
+          {!onboardingFocus ? <section className="studio-review-bento-card studio-review-products-tile" aria-labelledby="studio-review-products-heading">
             <header className="studio-review-bento-card-header">
               <h2 className="headings-xs-bold" id="studio-review-products-heading">Products offered</h2>
             </header>
@@ -433,16 +406,22 @@ export function GeneratedStudioSetup({
               ))}
             </div>
             <footer className="studio-review-card-footer">
-              <button
-                className="studio-review-card-footer-action label-s-semibold"
+              <Button size="S" variant="secondary"
+                className="studio-review-card-footer-action"
                 type="button"
                 onClick={() => setActiveDialogId("video-types")}
               >
                 Edit products
-              </button>
+              </Button>
             </footer>
-          </section>
+          </section> : null}
         </div>
+        {onboardingFocus ? (
+          <section className="studio-generated-client-preview" aria-label="Client portal preview">
+            <h2 className="headings-xs-bold">Client portal preview</h2>
+            <StudioClientPortalPreview draft={draft} onPreviewBrief={openBriefConfiguration} />
+          </section>
+        ) : null}
       </div>
 
       <footer className="studio-generated-actions">
@@ -450,7 +429,7 @@ export function GeneratedStudioSetup({
           <Button size="S" type="button" variant="secondary" onClick={onBack}>Back</Button>
         </div>
         <div className="studio-generated-primary-action">
-          <Button size="M" type="button" variant="primary" onClick={onUseSetup}>Use this setup</Button>
+          <Button size="M" type="button" variant="primary" onClick={onUseSetup}>Confirm Studio setup</Button>
         </div>
       </footer>
 
@@ -504,15 +483,6 @@ function readFileAsDataUrl(file: File) {
     reader.addEventListener("error", () => reject(reader.error ?? new Error("The selected logo could not be read.")));
     reader.readAsDataURL(file);
   });
-}
-
-function formatStudioSummaryList(items: readonly string[]) {
-  if (items.length === 0) return "video";
-  if (items.length === 1) return items[0].toLocaleLowerCase("en-AU");
-  if (items.length === 2) return `${items[0].toLocaleLowerCase("en-AU")} and ${items[1].toLocaleLowerCase("en-AU")}`;
-
-  const lastItem = items[items.length - 1].toLocaleLowerCase("en-AU");
-  return `${items.slice(0, -1).map((item) => item.toLocaleLowerCase("en-AU")).join(", ")} and ${lastItem}`;
 }
 
 function getBriefOptionsEditorTitle(fieldId: BriefFieldId) {

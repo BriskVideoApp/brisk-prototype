@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ClipboardEvent, DragEvent, KeyboardEvent } from "react";
 import { MentionChip } from "@/components/comments/CommentPrimitives";
@@ -542,66 +545,13 @@ export function ChatComposer({
                 <span>{getSourceLabel(outboundSource)}</span>
               </div>
             ) : channel === "external" ? (
-              <div
-                className="chat-source-picker"
-                onBlur={(event) => {
-                  const nextFocus = event.relatedTarget;
-
-                  if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-                    setIsSourceMenuOpen(false);
-                  }
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    setIsSourceMenuOpen(false);
-                  }
-                }}
-              >
-                <button
-                  className="chat-source-select label-xs-semibold"
-                  type="button"
-                  aria-haspopup="listbox"
-                  aria-expanded={isSourceMenuOpen}
-                  aria-label={`Choose outbound channel. ${getSourceLabel(outboundSource)} selected`}
-                  onClick={() => {
-                    setIsScheduleMenuOpen(false);
-                    setIsSourceMenuOpen((current) => !current);
-                  }}
-                >
-                  <SourceLogo
-                    source={outboundSource}
-                    project={project}
-                    direction="composer"
-                    tooltipPlacement="end"
-                    tooltipFocusable={false}
-                  />
-                  <span>{getSourceLabel(outboundSource)}</span>
-                  <DsIcon name="caret-down" size={12} />
-                </button>
-                {isSourceMenuOpen ? (
-                  <div className="chat-source-menu" role="listbox" aria-label="Send message through">
-                    {enabledSources.map((source) => (
-                      <button
-                        className={`chat-source-option label-s ${
-                          source === outboundSource ? "selected" : ""
-                        }`}
-                        type="button"
-                        role="option"
-                        aria-selected={source === outboundSource}
-                        key={source}
-                        onClick={() => {
-                          setOutboundSource(source);
-                          setIsSourceMenuOpen(false);
-                        }}
-                      >
-                        <SourceLogo source={source} size={20} tooltipFocusable={false} />
-                        <span>{getSourceLabel(source)}</span>
-                        {source === outboundSource ? <DsIcon name="check" size={16} /> : null}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
+              <BriskSelect<ChatSource> ariaLabel="Choose outbound channel" className="chat-source-picker" triggerClassName="chat-source-select label-xs-semibold"
+                clearable={false} searchable={false} open={isSourceMenuOpen}
+                onOpenChange={(open) => { setIsSourceMenuOpen(open); if (open) setIsScheduleMenuOpen(false); }}
+                triggerContent={<><SourceLogo source={outboundSource} project={project} direction="composer" tooltipPlacement="end" tooltipFocusable={false} /><span>{getSourceLabel(outboundSource)}</span></>}
+                placeholder="Choose channel" value={outboundSource}
+                options={enabledSources.map((source) => ({ value: source, label: getSourceLabel(source), content: <><SourceLogo source={source} size={20} tooltipFocusable={false} /><span>{getSourceLabel(source)}</span></> }))}
+                onChange={(source) => { if (source) setOutboundSource(source); }} />
             ) : null}
             <div
               className={`chat-send-split${isSendDisabled ? " disabled" : ""}`}
@@ -693,8 +643,8 @@ export function ChatComposer({
                         value={customScheduleValue}
                         onChange={(event) => setCustomScheduleValue(event.target.value)}
                       />
-                      <button
-                        className="chat-schedule-confirm label-s-semibold"
+                      <Button size="S" variant="primary"
+                        className="chat-schedule-confirm"
                         type="button"
                         disabled={!customScheduleValue}
                         onClick={() => {
@@ -707,7 +657,7 @@ export function ChatComposer({
                       >
                         <DsIcon name="clock-clockwise" size={16} />
                         Schedule message
-                      </button>
+                      </Button>
                     </div>
                   ) : null}
                 </div>

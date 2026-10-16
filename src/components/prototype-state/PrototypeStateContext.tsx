@@ -29,6 +29,7 @@ import {
   setFixtureClientSession,
   updateStudioBriefTemplateState,
   updateOnboardingProgressState,
+  updateOnboardingOwnerState,
   updateProjectBriefState,
   updateProjectStatusState,
   updateProjectTagsState,
@@ -59,9 +60,11 @@ type PrototypeStateContextValue = {
   createClientVideo: (input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => ScopedProject | null;
   inviteClientTeammate: (input: { clientId: string; name: string; email: string }) => void;
   inviteClient: (input: { clientId: string; projectId: string; name: string; email: string }) => void;
+  setClientMemberProjects: (input: { clientId: string; memberId: string; projectIds: string[]; role?: "Client Admin" | "Client Member" }) => void;
   markClientPreviewed: () => void;
   completeOnboarding: () => void;
   updateOnboardingProgress: (update: Partial<PrototypeOnboardingProgress>) => void;
+  updateOnboardingOwner: (name: string, email: string) => void;
   updateProjectBrief: (projectId: string, fields: BriefFields) => void;
   updateProjectStatus: (projectId: string, status: ScopedProject["status"]) => void;
   updateProjectTags: (projectId: string, tags: string[]) => void;
@@ -83,10 +86,14 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
   const [hasHydrated, setHasHydrated] = useState(false);
   const stateRef = useRef(state);
   const fixtureKeyRef = useRef<string | null>(null);
+  const lastPersistedStateRef = useRef<PrototypeState | null>(null);
   const persistState = useCallback((nextState: PrototypeState) => {
     const fixtureKey = fixtureKeyRef.current;
     if (!fixtureKey || !fixtureKey.endsWith(`:${nextState.fixtureKind}`)) return;
+    // A committed update is already saved before its persistence effect runs.
+    if (lastPersistedStateRef.current === nextState) return;
     window.localStorage.setItem(prototypeStateStorageKey, JSON.stringify(nextState));
+    lastPersistedStateRef.current = nextState;
   }, []);
   const commitState = useCallback((update: (current: PrototypeState) => PrototypeState) => {
     const nextState = update(stateRef.current);
@@ -116,10 +123,9 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
   }, [activeScenario, hasLoadedScenario, pathname]);
 
   useEffect(() => {
-    if (!hasLoadedScenario || fixtureKeyRef.current === null) return;
-    if (!fixtureKeyRef.current.endsWith(`:${state.fixtureKind}`)) return;
-    window.localStorage.setItem(prototypeStateStorageKey, JSON.stringify(state));
-  }, [activeScenario, hasLoadedScenario, state]);
+    if (!hasLoadedScenario) return;
+    persistState(state);
+  }, [activeScenario, hasLoadedScenario, persistState, state]);
 
   const commitStudioSetup = useCallback((draft: StudioReviewDraft) => {
     commitState((current) => commitStudioSetupState(current, draft));
@@ -159,6 +165,52 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     commitState((current) => inviteClientTeammateState(current, input));
   }, [commitState]);
 
+  const setClientMemberProjects = useCallback((input: { clientId: string; memberId: string; projectIds: string[]; role?: "Client Admin" | "Client Member" }) => {
+    commitState((current) => {
+      const workspaceId = current.session.activeWorkspaceId;
+      const client = current.clients.find((candidate) => candidate.id === input.clientId && candidate.workspaceId === workspaceId);
+      const member = client?.contacts.find((contact) => contact.id === input.memberId);
+      if (!client || !member) return current;
+      const projectIds = [...new Set(input.projectIds)].filter((projectId) => current.projects.some((project) => (
+        project.id === projectId && project.clientId === client.id && project.workspaceId === workspaceId
+      )));
+      const invitation = current.invitations.find((candidate) => candidate.clientId === client.id
+        && candidate.userId === member.id && candidate.workspaceId === workspaceId);
+      return {
+        ...current,
+        clients: current.clients.map((candidate) => candidate.id === client.id && candidate.workspaceId === workspaceId ? {
+          ...candidate,
+          contacts: candidate.contacts.map((contact) => contact.id === member.id ? {
+            ...contact,
+            projectIds,
+            membershipRole: input.role ?? contact.membershipRole,
+          } : contact),
+        } : candidate),
+        users: current.users.some((user) => user.id === member.id && user.workspaceId === workspaceId)
+          ? current.users
+          : [...current.users, { id: member.id, name: member.name, email: member.email, role: "Client" as const, workspaceId, clientId: client.id }],
+        projects: current.projects.map((project) => project.clientId === client.id && project.workspaceId === workspaceId ? {
+          ...project,
+          clientMemberIds: projectIds.includes(project.id)
+            ? [...new Set([...project.clientMemberIds, member.id])]
+            : project.clientMemberIds.filter((id) => id !== member.id),
+        } : project),
+        invitations: invitation
+          ? current.invitations.map((candidate) => candidate.id === invitation.id ? { ...candidate, projectIds } : candidate)
+          : [...current.invitations, {
+            id: `invitation-${member.id}`,
+            workspaceId,
+            clientId: client.id,
+            projectIds,
+            userId: member.id,
+            email: member.email,
+            status: "Pending" as const,
+            sentAt: new Date().toISOString(),
+          }],
+      };
+    });
+  }, [commitState]);
+
   const replaceWorkspaceClients = useCallback((clients: Client[]) => {
     commitState((current) => {
       const workspaceId = current.session.activeWorkspaceId;
@@ -181,9 +233,11 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     createClientVideo,
     inviteClientTeammate,
     inviteClient,
+    setClientMemberProjects,
     markClientPreviewed: () => commitState(markClientPreviewedState),
     completeOnboarding: () => commitState(completeOnboardingState),
     updateOnboardingProgress: (update) => commitState((current) => updateOnboardingProgressState(current, update)),
+    updateOnboardingOwner: (name, email) => commitState((current) => updateOnboardingOwnerState(current, name, email)),
     updateProjectBrief: (projectId, fields) => commitState((current) => updateProjectBriefState(current, projectId, fields)),
     updateProjectStatus: (projectId, status) => commitState((current) => updateProjectStatusState(current, projectId, status)),
     updateProjectTags: (projectId, tags) => commitState((current) => updateProjectTagsState(current, projectId, tags)),
@@ -192,7 +246,7 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     updateWorkspaceBranding: (branding) => commitState((current) => updateWorkspaceBrandingState(current, branding)),
     updateWorkspaceDetails: (details) => commitState((current) => updateWorkspaceDetailsState(current, details)),
     replaceWorkspaceClients,
-  }), [commitState, commitStudioSetup, createClient, createClientVideo, createProject, hasHydrated, inviteClient, inviteClientTeammate, replaceWorkspaceClients, state]);
+  }), [commitState, commitStudioSetup, createClient, createClientVideo, createProject, hasHydrated, inviteClient, inviteClientTeammate, replaceWorkspaceClients, setClientMemberProjects, state]);
 
   return <PrototypeStateContext.Provider value={value}>{children}</PrototypeStateContext.Provider>;
 }

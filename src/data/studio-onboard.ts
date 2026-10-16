@@ -1,6 +1,8 @@
 import {
   briefVideoTypeDetails,
+  initialBriefFields,
   type BriefFieldId,
+  type BriefFields,
   type BriefVideoTypeId,
 } from "@/data/brief";
 
@@ -11,6 +13,7 @@ export type StudioOnboardingSource = {
 };
 
 export type StudioOnboardingAnswer = {
+  studioName?: string;
   studioDescription: string;
   sources: StudioOnboardingSource[];
 };
@@ -215,6 +218,20 @@ export const studioBrandAccentOptions = [
   { id: "pink", label: "Signal pink" },
 ] as const satisfies readonly { id: StudioBrandAccentId; label: string }[];
 
+const studioWebsiteBrandSuggestions: Readonly<Record<string, StudioBrandAccentId>> = {
+  "northstarfilms.com.au": "purple",
+  "clearframefilms.com": "cyan",
+};
+
+export function getStudioWebsiteBrandSuggestion(website: string): StudioBrandAccentId | null {
+  try {
+    const hostname = new URL(website).hostname.replace(/^www\./iu, "");
+    return studioWebsiteBrandSuggestions[hostname] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export type StudioGeneratedSetupRecommendation = {
   defaultStudioName: string;
   studioType: string;
@@ -227,6 +244,7 @@ export type StudioGeneratedSetupRecommendation = {
 export type StudioBriefConfiguration = {
   excludedFieldIds: BriefFieldId[];
   excludedOptionValues: Partial<Record<BriefFieldId, string[]>>;
+  fieldOrder?: BriefFieldId[];
 };
 
 export type GeneratedStudioSetup = {
@@ -235,6 +253,7 @@ export type GeneratedStudioSetup = {
   logoPreviewUrl: string | null;
   logoOptions: string[];
   brandAccentId: StudioBrandAccentId;
+  brandSuggestionSource?: "website" | "default";
   brandColours?: StudioBrandColour[];
   studioType: string;
   studioDescription: string;
@@ -267,6 +286,7 @@ export function createRecommendedStudioBriefConfiguration(): StudioBriefConfigur
   return {
     excludedFieldIds: [],
     excludedOptionValues: {},
+    fieldOrder: Object.keys(initialBriefFields) as BriefFieldId[],
   };
 }
 
@@ -276,7 +296,14 @@ export function cloneStudioBriefConfiguration(configuration: StudioBriefConfigur
     excludedOptionValues: Object.fromEntries(
       Object.entries(configuration.excludedOptionValues).map(([fieldId, values]) => [fieldId, [...values]]),
     ),
+    fieldOrder: configuration.fieldOrder ? [...configuration.fieldOrder] : undefined,
   };
+}
+
+export function getStudioBriefFieldOrder(configuration: StudioBriefConfiguration, fields: BriefFields): BriefFieldId[] {
+  const fieldIds = Object.keys(fields) as BriefFieldId[];
+  const availableIds = new Set(fieldIds);
+  return [...new Set([...(configuration.fieldOrder ?? []).filter((id) => availableIds.has(id)), ...fieldIds])];
 }
 
 export const studioOnboardingScenarios = [
@@ -368,17 +395,20 @@ export function createStudioReviewDraft(
   scenario: StudioOnboardingScenario,
 ): StudioReviewDraft {
   const canonicalVideoTypes = new Set<BriefVideoTypeId>(briefVideoTypeDetails.map((videoType) => videoType.name));
+  const website = answer.sources.find((source) => source.type === "website")?.label ?? "";
+  const accentId = getStudioWebsiteBrandSuggestion(website) ?? scenario.generatedSetup.brandAccentId;
 
   return {
     view: "studio-setup",
-    studioName: inferStudioName(answer, scenario.generatedSetup.defaultStudioName),
-    studioWebsite: answer.sources.find((source) => source.type === "website")?.label ?? "",
+    studioName: answer.studioName?.trim() || inferStudioName(answer, scenario.generatedSetup.defaultStudioName),
+    studioWebsite: website,
     logoPreviewUrl: null,
     logoOptions: [],
-    brandAccentId: scenario.generatedSetup.brandAccentId,
-    brandColours: createStudioBrandColours(scenario.generatedSetup.brandAccentId),
+    brandAccentId: accentId,
+    brandSuggestionSource: getStudioWebsiteBrandSuggestion(website) ? "website" : "default",
+    brandColours: createStudioBrandColours(accentId),
     studioType: scenario.generatedSetup.studioType,
-    studioDescription: scenario.generatedSetup.studioDescription,
+    studioDescription: answer.studioDescription.trim(),
     videoTypeIds: scenario.generatedSetup.videoTypeNames.filter((videoTypeId) => canonicalVideoTypes.has(videoTypeId)),
     customVideoTypes: [],
     customVideoType: null,

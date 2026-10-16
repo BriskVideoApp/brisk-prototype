@@ -1,5 +1,11 @@
 "use client";
 
+import { Button } from "../../../../Brisk DS/src/app/components/Button";
+import { EditingDialog } from "../../../../Brisk DS/src/app/components/EditingDialog";
+
+import { ConfirmationDialog } from "../../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -75,28 +81,14 @@ export function InvitePersonPicker({
   };
 
   return (
-    <div className="team-modal-backdrop" role="presentation" onClick={onClose}>
-      <section className="team-modal team-person-picker" role="dialog" aria-modal="true" aria-label={`Fill ${roleLabel} role`} onClick={(event) => event.stopPropagation()}>
-        <header className="team-modal-header">
-          <div>
-            <h2 className="team-modal-title heading-3xs">
-              Fill {roleLabel} role · {formatHoursNeeded(roleHours)} needed
-            </h2>
-          </div>
-          <button className="team-modal-close" type="button" aria-label="Close fill picker" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </header>
-
-        <PersonGroup title="Studio Staff">
+    <> <EditingDialog title={<>Fill  {roleLabel} role ·  {formatHoursNeeded(roleHours)} needed
+            </>} size="wide" onCancel={onClose}>  <PersonGroup title="Studio Staff">
           {staff.map((person) => {
             const disabledReason = getStaffDisabledReason(slot, person, assignedPersonIds);
 
             return <StaffOption key={person.id} person={person} disabledReason={disabledReason} onAssign={() => addStaff(person)} />;
           })}
-        </PersonGroup>
-
-        <PersonGroup
+        </PersonGroup>  <PersonGroup
           title="Studio Freelancers"
           meta={`${activeInvitations.length} invited`}
         >
@@ -115,12 +107,10 @@ export function InvitePersonPicker({
               />
             );
           })}
-          <button className="team-invite-email-link label-s-semibold" type="button" onClick={() => setIsEmailInviteOpen((isOpen) => !isOpen)}>
+          <Button size="S" variant="ghost" className="team-invite-email-link" type="button" onClick={() => setIsEmailInviteOpen((isOpen) => !isOpen)}>
             + Invite by email
-          </button>
-        </PersonGroup>
-
-        {isEmailInviteOpen ? (
+          </Button>
+        </PersonGroup>  {isEmailInviteOpen ? (
           <form
             className="team-invite-form"
             onSubmit={(event) => {
@@ -161,9 +151,9 @@ export function InvitePersonPicker({
               value={newFreelancerRate}
               onChange={(event) => setNewFreelancerRate(event.target.value)}
             />
-            <button className="team-invite-email-link label-s-semibold" type="button" onClick={() => setIsEmailTextOpen(true)}>
+            <Button size="S" variant="ghost" className="team-invite-email-link" type="button" onClick={() => setIsEmailTextOpen(true)}>
               Edit email text
-            </button>
+            </Button>
             {isEmailTextOpen ? (
               <div className="team-email-popover" role="dialog" aria-label="Edit email text">
                 <label className="label-xs-semibold" htmlFor={`invite-message-${slot.id}`}>
@@ -176,48 +166,31 @@ export function InvitePersonPicker({
                   onChange={(event) => setEmailMessage(event.target.value)}
                 />
                 <div className="team-popconfirm-actions">
-                  <button className="team-secondary-button label-s-semibold" type="button" onClick={() => setIsEmailTextOpen(false)}>
+                  <Button size="S" variant="secondary" className="team-secondary-button" type="button" onClick={() => setIsEmailTextOpen(false)}>
                     Cancel
-                  </button>
-                  <button className="team-primary-button label-s-semibold" type="button" onClick={() => setIsEmailTextOpen(false)}>
+                  </Button>
+                  <Button size="S" variant="primary" className="team-primary-button" type="button" onClick={() => setIsEmailTextOpen(false)}>
                     Save text
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : null}
             <div className="team-modal-actions">
-              <button className="team-secondary-button label-s-semibold" type="button" onClick={() => setIsEmailInviteOpen(false)}>
+              <Button size="S" variant="secondary" className="team-secondary-button" type="button" onClick={() => setIsEmailInviteOpen(false)}>
                 Cancel
-              </button>
-              <button className="team-primary-button label-s-semibold" type="submit">
+              </Button>
+              <Button size="S" variant="primary" className="team-primary-button" type="submit">
                 Send invite
-              </button>
+              </Button>
             </div>
           </form>
-        ) : null}
-
-        {staffPendingConfirmation ? (
-          <div className="team-popconfirm" role="alertdialog" aria-label="Confirm staff assignment">
-            <p className="label-s-semibold">This will withdraw pending invitations. Continue?</p>
-            <div className="team-popconfirm-actions">
-              <button className="team-secondary-button label-s-semibold" type="button" onClick={() => setStaffPendingConfirmation(null)}>
-                Cancel
-              </button>
-              <button
-                className="team-primary-button label-s-semibold"
-                type="button"
-                onClick={() => {
+        ) : null}  {staffPendingConfirmation ? (
+          <ConfirmationDialog title={<>This will withdraw pending invitations. Continue?</>} onCancel={() => setStaffPendingConfirmation(null)} onConfirm={() => {
                   onAddStaff(staffPendingConfirmation);
                   setStaffPendingConfirmation(null);
-                }}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        ) : null}
-      </section>
-    </div>
+                }} confirmLabel={<>Continue
+              </>}  />
+        ) : null} </EditingDialog> </>
   );
 }
 
@@ -243,9 +216,9 @@ function StaffOption({ person, disabledReason, onAssign }: { person: TeamPerson;
         </span>
         {disabledReason ? <span className="team-person-disabled label-xs-semibold">{disabledReason}</span> : null}
       </span>
-      <button className="team-secondary-button label-s-semibold" type="button" disabled={Boolean(disabledReason)} onClick={onAssign}>
+      <Button size="S" variant="secondary" className="team-secondary-button" type="button" disabled={Boolean(disabledReason)} onClick={onAssign}>
         Assign
-      </button>
+      </Button>
     </div>
   );
 }
@@ -277,12 +250,12 @@ function FreelancerOption({
         {disabledReason ? <span className="team-person-disabled label-xs-semibold">{disabledReason}</span> : null}
       </span>
       <span className="team-person-option-actions">
-        <button className="team-secondary-button label-s-semibold" type="button" disabled={isInviteDisabled} onClick={onInvite}>
+        <Button size="S" variant="secondary" className="team-secondary-button" type="button" disabled={isInviteDisabled} onClick={onInvite}>
           Invite
-        </button>
-        <button className="team-secondary-button label-s-semibold" type="button" disabled={Boolean(disabledReason)} onClick={onAssign}>
+        </Button>
+        <Button size="S" variant="secondary" className="team-secondary-button" type="button" disabled={Boolean(disabledReason)} onClick={onAssign}>
           Assign directly
-        </button>
+        </Button>
       </span>
     </div>
   );

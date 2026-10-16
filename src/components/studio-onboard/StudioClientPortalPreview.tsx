@@ -31,7 +31,6 @@ export function StudioClientPortalPreview({
       <div className="studio-client-portal-content studio-client-portal-welcome">
         <div>
           <h2 className="headings-s-bold">Tell us about your video</h2>
-          <p className="paragraph-s">{draft.studioDescription}</p>
         </div>
         <section className="studio-client-offer-preview" aria-labelledby="studio-client-offer-heading">
           <h3 className="label-m-semibold" id="studio-client-offer-heading">Available video types</h3>

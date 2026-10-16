@@ -1,5 +1,9 @@
 "use client";
 
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { BrandFont } from "@/data/brand-kits";
@@ -182,60 +186,13 @@ export function AssetActions({
   );
 }
 
-export function DeleteConfirmation({
-  confirmName,
-  label,
-  onCancel,
-  onConfirm,
-}: {
-  confirmName?: string;
-  label: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
+export function DeleteConfirmation({ confirmName, label, onCancel, onConfirm }: { confirmName?: string; label: string; onCancel: () => void; onConfirm: () => void }) {
   const [name, setName] = useState("");
-  const canConfirm = !confirmName || name.trim() === confirmName;
-
-  return (
-    <div className="brand-modal-backdrop" role="presentation">
-      <section className="brand-modal brand-delete-modal" role="dialog" aria-modal="true" aria-labelledby="brand-delete-title">
-        <header className="brand-modal-header">
-          <div>
-            <h2 className="headings-xs-bold" id="brand-delete-title">Delete {label}?</h2>
-            <p className="paragraph-s">This won&apos;t be recoverable.</p>
-          </div>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onCancel}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className="brand-modal-body brand-delete-body">
-          {confirmName ? (
-            <label className="brand-delete-confirm-name">
-              <span className="label-s-semibold">Type {confirmName} to confirm</span>
-              <input
-                className="brand-inline-input paragraph-m"
-                value={name}
-                autoFocus
-                onChange={(event) => setName(event.target.value)}
-              />
-            </label>
-          ) : null}
-          <div className="brand-delete-actions">
-            <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
-            <button
-              className="brand-destructive-button label-s-semibold"
-              type="button"
-              disabled={!canConfirm}
-              onClick={onConfirm}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
+  return <ConfirmationDialog title={`Delete ${label}?`} description="This won't be recoverable." tone="danger" confirmLabel="Delete" confirmDisabled={Boolean(confirmName && name.trim() !== confirmName)} expanded={Boolean(confirmName)} onCancel={onCancel} onConfirm={onConfirm}>
+    {confirmName ? <label><span className="label-s-semibold">Type {confirmName} to confirm</span><input value={name} data-confirmation-autofocus autoFocus onChange={(event) => setName(event.target.value)} /></label> : null}
+  </ConfirmationDialog>;
 }
+
 
 export function RenameAssetDialog({
   initialName,
@@ -249,19 +206,14 @@ export function RenameAssetDialog({
   const [name, setName] = useState(initialName);
 
   return (
-    <div className="brand-modal-backdrop" role="presentation">
-      <section className="brand-modal brand-rename-modal" role="dialog" aria-modal="true" aria-labelledby="brand-rename-title">
-        <header className="brand-modal-header">
-          <div>
-            <h2 className="headings-xs-bold" id="brand-rename-title">Rename asset</h2>
-            <p className="paragraph-s">Use a name your whole team will recognise.</p>
-          </div>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onCancel}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className="brand-modal-body brand-delete-body">
-          <label className="brand-delete-confirm-name">
+    <EditingDialog title={<>Rename asset</>} description={<>Use a name your whole team will recognise.</>} size="standard" onCancel={onCancel} actions={<> <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>  <Button size="S" variant="primary"
+
+              type="button"
+              disabled={!name.trim()}
+              onClick={() => onSave(name.trim())}
+            >
+              Save
+            </Button> </>}> <label className="brand-delete-confirm-name">
             <span className="label-s-semibold">Name</span>
             <input
               className="brand-inline-input paragraph-m"
@@ -273,21 +225,7 @@ export function RenameAssetDialog({
                 if (event.key === "Enter" && name.trim()) onSave(name.trim());
               }}
             />
-          </label>
-          <div className="brand-delete-actions">
-            <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
-            <button
-              className="brand-save-button label-s-semibold"
-              type="button"
-              disabled={!name.trim()}
-              onClick={() => onSave(name.trim())}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
+          </label>  </EditingDialog>
   );
 }
 
@@ -333,19 +271,13 @@ export function FontRoleMatrixDialog({
   };
 
   return (
-    <div className="brand-modal-backdrop" role="presentation">
-      <section className="brand-modal brand-font-modal" role="dialog" aria-modal="true" aria-labelledby="brand-font-title">
-        <header className="brand-modal-header">
-          <div>
-            <h2 className="headings-xs-bold" id="brand-font-title">Font roles</h2>
-            <p className="paragraph-s">Set every type role together. Leave a font blank to remove it from this Brand Kit.</p>
-          </div>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onCancel}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className="brand-modal-body brand-font-matrix-body">
-          <div className="brand-font-matrix-frame">
+    <EditingDialog title={<>Font roles</>} description={<>Set every type role together. Leave a font blank to remove it from this Brand Kit.</>} size="wide" onCancel={onCancel} actions={<> <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>  <Button size="S" variant="primary"
+
+              type="button"
+              onClick={() => onSave(draftFonts.filter((font) => font.family.trim()).map((font) => ({ ...font, family: font.family.trim() })))}
+            >
+              Save font roles
+            </Button> </>}> <div className="brand-font-matrix-frame">
             <table className="brand-font-matrix">
               <thead>
                 <tr>
@@ -370,20 +302,7 @@ export function FontRoleMatrixDialog({
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="brand-delete-actions">
-            <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
-            <button
-              className="brand-save-button label-s-semibold"
-              type="button"
-              onClick={() => onSave(draftFonts.filter((font) => font.family.trim()).map((font) => ({ ...font, family: font.family.trim() })))}
-            >
-              Save font roles
-            </button>
-          </div>
-        </div>
-      </section>
-    </div>
+          </div>  </EditingDialog>
   );
 }
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -25,6 +27,7 @@ const currentFileUserByRole = {
 } as const;
 
 export function ProjectFilesPage({ project }: { project: Project }) {
+  const { confirm, confirmationDialog } = useConfirmation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
@@ -65,16 +68,15 @@ export function ProjectFilesPage({ project }: { project: Project }) {
     updateFileLocation(project.id, index, nextLocation);
   };
 
-  const removeLocation = (index: number) => {
-    const shouldRemove = window.confirm(
-      "Remove this file location? The files aren't deleted - just the link from Brisk.",
-    );
+  const removeLocation = async (index: number) => {
+    const shouldRemove = await confirm({ title: "Remove this file location?", description: "The files aren't deleted - just the link from Brisk.", tone: "danger", confirmLabel: "Remove location" });
 
     if (shouldRemove) removeFileLocation(project.id, index);
   };
 
   return (
     <main className="project-files-shell">
+      {confirmationDialog}
       <div className="project-files-main">
         <ProjectStageHeader activeUtility="files" project={project} />
         <section className="project-files-content" aria-labelledby="project-files-heading">
@@ -123,9 +125,9 @@ export function ProjectFilesPage({ project }: { project: Project }) {
               <section className="project-files-add-panel" aria-label="Add another file location">
                 <div className="project-files-add-heading">
                   <h2>Add another location</h2>
-                  <button className="project-files-text-action label-s-semibold" type="button" onClick={() => setIsAdding(false)}>
+                  <Button size="S" variant="ghost" className="project-files-text-action" type="button" onClick={() => setIsAdding(false)}>
                     Cancel
-                  </button>
+                  </Button>
                 </div>
                 <FileLocationForm submitLabel="Save location" onSubmit={saveNewLocation} />
               </section>
@@ -226,12 +228,12 @@ function FileLocationCard({
         </div>
         {canManage ? (
           <div className="project-file-location-edit-actions">
-            <button className="project-files-text-action label-s-semibold" type="button" onClick={() => setIsEditing((current) => !current)}>
+            <Button size="S" variant="ghost" className="project-files-text-action" type="button" onClick={() => setIsEditing((current) => !current)}>
               Edit
-            </button>
-            <button className="project-files-text-action is-remove label-s-semibold" type="button" onClick={onRemove}>
+            </Button>
+            <Button size="S" variant="danger" className="project-files-text-action is-remove" type="button" onClick={onRemove}>
               Remove
-            </button>
+            </Button>
           </div>
         ) : null}
       </div>
@@ -244,9 +246,9 @@ function FileLocationCard({
             submitLabel="Save changes"
             onSubmit={saveLocationEdit}
           />
-          <button className="project-files-text-action label-s-semibold" type="button" onClick={() => setIsEditing(false)}>
+          <Button size="S" variant="ghost" className="project-files-text-action" type="button" onClick={() => setIsEditing(false)}>
             Cancel editing
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="project-file-location-open-actions">
@@ -270,10 +272,10 @@ function FileLocationCard({
         Added by {addedBy} · {formatFileLocationRelativeDate(location.created_at)} · Last confirmed working: {formatFileLocationDate(location.last_confirmed_at)}
         {confirmedBy ? ` by ${confirmedBy}` : ""}
       </p>
-      <button className="project-files-confirm-action label-s-semibold" type="button" onClick={markConfirmed}>
+      <Button size="S" variant="secondary" className="project-files-confirm-action" type="button" onClick={markConfirmed}>
         <DsIcon name="check-circle" size={16} />
         Mark as confirmed working
-      </button>
+      </Button>
 
       <label className="project-file-location-notes">
         <span className="label-xs-semibold">Notes</span>

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useRouter } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
 import { useCostsData } from "@/components/costs/CostsDataContext";
@@ -176,7 +177,7 @@ export function ProjectCostsPage({ project }: { project: Project }) {
 
 function InvoiceActions({ invoiceItem, onOpenReview }: { invoiceItem: ContractorInvoice; onOpenReview: () => void }) {
   const label = invoiceItem.state === "Approved" ? "Manage invoice" : "Review invoice";
-  return <button className={`costs-row-action label-s-semibold ${invoiceItem.state === "Submitted" ? "is-primary" : ""}`} type="button" onClick={(event) => { event.stopPropagation(); onOpenReview(); }}>{label}</button>;
+  return <Button size="S" variant={invoiceItem.state === "Submitted" ? "primary" : "secondary"} className="costs-row-action" type="button" onClick={(event) => { event.stopPropagation(); onOpenReview(); }}>{label}</Button>;
 }
 
 function SummaryCard({ label, note, value }: { label: string; note: string; value: string }) {

@@ -1,5 +1,13 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
+import { ConfirmationDialog, useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import {
   useEffect,
   useMemo,
@@ -26,10 +34,7 @@ import { useNotificationInbox } from "@/components/notifications/NotificationInb
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { appendSharedReviewActivity, sharedReviewActivityStorageKey } from "@/data/share-review-activity";
 import { ReviewCommentComposer } from "@/components/video-review/ReviewCommentComposer";
-import {
-  ReviewCommentThread,
-  toggleReviewReactionInList,
-} from "@/components/video-review/VideoReviewScreen";
+import { ReviewCommentThread, toggleReviewReactionInList } from "@/components/video-review/ReviewCommentThread";
 import type {
   CommentVisibility,
   DrawingPath,
@@ -92,6 +97,7 @@ const commentFilters: Array<{ value: CommentFilter; label: string }> = [
 ];
 
 export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeliverables = false, initialBriefFields }: { project: Project; initiallyEmpty?: boolean; isolateLegacyDeliverables?: boolean; initialBriefFields?: BriefFields }) {
+  const { confirm, confirmationDialog } = useConfirmation();
   const { selectedRole: role } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const mastersStudioName = useStudioCompanyName();
@@ -1104,8 +1110,8 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
     closeMenus();
   };
 
-  const cancelRecutMarkup = () => {
-    if (recutMarks.length > 0 && !window.confirm("Discard this recut mark-up draft?")) return;
+  const cancelRecutMarkup = async () => {
+    if (recutMarks.length > 0 && !(await confirm({ title: "Discard this recut mark-up draft?", tone: "danger", confirmLabel: "Discard draft" }))) return;
     setMarkUpDeliverableId(null);
     setDraftRecutRange(null);
     setSelectedRecutMarkId(null);
@@ -1269,6 +1275,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
 
   return (
     <main className="masters-shell">
+      {confirmationDialog}
       <div className="masters-main">
         <ProjectStageHeader
         project={project}
@@ -1625,13 +1632,13 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
                 {isFilmmaker ? (
                   <>
                     <div className="masters-page-empty-actions">
-                      <button className="masters-primary-button label-s-semibold" type="button" onClick={addDeliverable}>
+                      <Button size="S" variant="primary" className="masters-primary-button" type="button" onClick={addDeliverable}>
                         <DsIcon name="plus" size={16} />Add deliverable
-                      </button>
+                      </Button>
                       {initiallyEmpty ? (
-                        <button className="masters-secondary-button label-s-semibold" type="button" onClick={() => addPrototypeDownloadSample()}>
+                        <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={() => addPrototypeDownloadSample()}>
                           <DsIcon name="download" size={16} />Add downloadable prototype sample
-                        </button>
+                        </Button>
                       ) : null}
                     </div>
                     {initiallyEmpty ? <p className="label-xs">The sample downloads as a JSON data file, not a rendered video.</p> : null}
@@ -1689,22 +1696,22 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
               className="masters-download-all-wrap"
               data-tooltip={canDownloadAll ? undefined : "Available when every Masters slot has a file."}
             >
-              <button
-                className="masters-secondary-button label-s-semibold"
+              <Button size="S" variant="secondary"
+                className="masters-secondary-button"
                 type="button"
                 disabled={!canDownloadAll}
                 onClick={() => { downloadPrototypeFile(`${project.name}-Masters.zip`, showToast); setHasDownloadedAll(true); }}
               >
                 <DsIcon name="download" size={18} />{hasDownloadedAll ? "Download started" : "Download All"}
-              </button>
+              </Button>
             </span>
-            {role === "Studio Staff" ? <button
-              className="masters-primary-button label-s-semibold"
+            {role === "Studio Staff" ? <Button size="S" variant="primary"
+              className="masters-primary-button"
               type="button"
               disabled={!canCompleteVideo || Boolean(completionRecords[project.id])}
               title={!canDownloadAll ? "Add a file to every Masters slot before completing the video" : isWaitingOnClientReview || pendingClientReviewRequests.length > 0 || hasUnapprovedCurrentMaster ? "Wait for Client approval of the current Masters before completing the video" : hasUnresolvedClientComments ? "Resolve Client comments before completing the video" : completionRecords[project.id] ? `Completed by ${completionRecords[project.id].deliveredBy}` : undefined}
               onClick={completeVideo}
-            ><DsIcon name="check" size={18} />{completionRecords[project.id] ? "Completed" : "Complete video"}</button> : null}
+            ><DsIcon name="check" size={18} />{completionRecords[project.id] ? "Completed" : "Complete video"}</Button> : null}
           </div>
         </footer>
       </section>
@@ -1960,8 +1967,8 @@ function DeliverableRow({
 
       <div className="masters-row-actions" role="cell">
         {recutActionLabel ? (
-          <button
-            className="masters-row-recut-action label-s-semibold"
+          <Button size="S" variant="secondary"
+            className="masters-row-recut-action"
             type="button"
             onClick={(event) => {
               event.stopPropagation();
@@ -1970,18 +1977,18 @@ function DeliverableRow({
           >
             <DsIcon name="stage-edit" size={14} />
             {recutActionLabel}
-          </button>
+          </Button>
         ) : null}
         {primaryAction ? (
-        <button
-          className={`masters-row-primary-action ${primaryAction.style} label-s-semibold`}
+        <Button size="S" variant={primaryAction.style}
+          className="masters-row-primary-action"
           type="button"
           disabled={primaryAction.disabled}
           onClick={(event) => { event.stopPropagation(); runPrimaryAction(); }}
         >
           <DsIcon name={getPrimaryActionIcon(primaryAction.kind)} size={14} />
           {primaryAction.label}
-        </button>
+        </Button>
         ) : null}
       </div>
 
@@ -2174,13 +2181,13 @@ function ExpandedDeliverable({
               <strong>Nothing delivered here yet.</strong>
               {isFilmmaker ? (
                 <div className="masters-inline-empty-actions">
-                  <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onUpload}>
+                  <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={onUpload}>
                     <DsIcon name="upload-simple" size={14} />Upload V1
-                  </button>
+                  </Button>
                   {showPrototypeSample ? (
-                    <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onAddPrototypeSample}>
+                    <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={onAddPrototypeSample}>
                       <DsIcon name="download" size={14} />Add downloadable prototype sample
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               ) : null}
@@ -2199,14 +2206,14 @@ function ExpandedDeliverable({
                 </span>
               </div>
               {isFilmmaker ? (
-                <button className="masters-primary-button label-s-semibold" type="button" onClick={onUpload}>
+                <Button size="S" variant="primary" className="masters-primary-button" type="button" onClick={onUpload}>
                   <DsIcon name="upload-simple" size={16} />Upload V1
-                </button>
+                </Button>
               ) : null}
             </div>
           ) : !isMarkUpMode && version ? (
             <div className="masters-expanded-actions">
-              <button className="masters-secondary-button label-s-semibold" type="button" aria-label={isDownloaded ? `Download ${version.filename} again` : `Download ${version.filename}`} onClick={() => onDownload(version)}><DsIcon name="download" size={16} />{isDownloaded ? "Download started" : "Download"}</button>
+              <Button size="S" variant="secondary" className="masters-secondary-button" type="button" aria-label={isDownloaded ? `Download ${version.filename} again` : `Download ${version.filename}`} onClick={() => onDownload(version)}><DsIcon name="download" size={16} />{isDownloaded ? "Download started" : "Download"}</Button>
             </div>
           ) : null}
           {deliverable.recutBrief && deliverable.versions.length > 0 ? (
@@ -2783,7 +2790,7 @@ function VersionsPanel({ deliverable, selectedVersionId, downloadedVersionKeys, 
     <div className="masters-versions-panel">
       <div className="masters-inline-panel-toolbar">
         <p className="label-s">Every upload stays in the version stack.</p>
-        {isFilmmaker ? <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={14} />Upload V{nextNumber}</button> : null}
+        {isFilmmaker ? <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={14} />Upload V{nextNumber}</Button> : null}
       </div>
       <div className="masters-version-list">
         {versions.length ? versions.map((version) => {
@@ -2798,7 +2805,7 @@ function VersionsPanel({ deliverable, selectedVersionId, downloadedVersionKeys, 
               <span className="masters-version-state label-xs-semibold">{isCurrent ? "Current" : "Previous"}</span>
               <div className="masters-version-card-actions">
                 {!isCurrent ? <button type="button" aria-label={`Set V${version.number} as current`} data-tooltip="Set as current" onClick={() => onSetCurrent(version.id)}><DsIcon name="eye" size={14} /></button> : null}
-                <button className="masters-version-download label-xs-semibold" type="button" aria-label={isDownloaded ? `Download V${version.number} again` : `Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />{isDownloaded ? "Download started" : "Download"}</button>
+                <Button size="S" variant="secondary" className="masters-version-download" type="button" aria-label={isDownloaded ? `Download V${version.number} again` : `Download V${version.number}`} onClick={() => onDownload(version)}><DsIcon name="download" size={14} />{isDownloaded ? "Download started" : "Download"}</Button>
                 {isFilmmaker ? <button className="delete" type="button" aria-label={`Delete V${version.number}`} data-tooltip="Delete" onClick={() => onDelete(version.id)}><DsIcon name="trash" size={14} /></button> : null}
               </div>
             </article>
@@ -3117,14 +3124,12 @@ function RecutMarkupPanel({
           <textarea className="label-s" rows={3} placeholder="Overall notes for the editor..." value={notes} onChange={(event) => onChangeNotes(event.target.value)} />
         </label>
         <label className="label-xs-semibold">Aspect ratio
-          <select className="label-s" value={targetAspect} onChange={(event) => onChangeTargetAspect(event.target.value)}>
-            {mastersFormatOptions.map((aspect) => <option key={aspect} value={aspect}>{aspect}</option>)}
-          </select>
+          <BriskSelect<string> ariaLabel={"Target format"} clearable={false} placeholder={"Choose an option"} triggerClassName="label-s" value={targetAspect} onChange={(value) => onChangeTargetAspect(value)} options={[...mastersFormatOptions.map((aspect) => ({ value: aspect, label: (aspect) }))]} />
         </label>
         <label className="label-xs-semibold">Deliverable name
           <input className="label-s" value={name} onChange={(event) => onChangeName(event.target.value)} />
         </label>
-        <button className="masters-primary-button label-s-semibold" type="button" disabled={marks.length === 0 || marks.some((mark) => mark.verb === "trim" && !mark.note?.trim())} onClick={onSubmit}>Send to editor</button>
+        <Button size="S" variant="primary" className="masters-primary-button" type="button" disabled={marks.length === 0 || marks.some((mark) => mark.verb === "trim" && !mark.note?.trim())} onClick={onSubmit}>Send to editor</Button>
       </footer>
     </>
   );
@@ -3171,9 +3176,9 @@ function RecutBriefPanel({
         {brief.notes ? <div className="masters-recut-overall-notes"><strong className="label-xs-semibold">Overall notes</strong><p className="label-s">{brief.notes}</p></div> : null}
       </div>
       <footer className="masters-recut-panel-footer">
-        <button className="masters-secondary-button label-s-semibold" type="button" onClick={onEditBrief}>
+        <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={onEditBrief}>
           <DsIcon name="pencil-simple" size={14} />Edit brief
-        </button>
+        </Button>
       </footer>
     </>
   );
@@ -3219,9 +3224,9 @@ function SrtInspector({
         ))}
       </div>
       <div className="masters-asset-inspector-actions">
-        <button className="masters-secondary-button label-xs-semibold" type="button" onClick={onDownload}>
+        <Button size="S" variant="secondary" className="masters-secondary-button" type="button" onClick={onDownload}>
           <DsIcon name="download" size={14} />Download SRT
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -3254,9 +3259,9 @@ function ThumbnailInspector({
         <img src={thumbnail.imageUrl} alt={`${deliverable.name} thumbnail`} />
       </div>
       <div className="masters-thumbnail-inspector-actions">
-        <button className="masters-primary-button masters-thumbnail-download label-s-semibold" type="button" onClick={onDownload}>
+        <Button size="S" variant="primary" className="masters-primary-button masters-thumbnail-download" type="button" onClick={onDownload}>
           <DsIcon name="download" size={14} />Download thumbnail
-        </button>
+        </Button>
         <div className="masters-row-menu-wrap masters-thumbnail-menu-wrap">
           <button
             className="masters-row-menu-button"
@@ -3296,22 +3301,17 @@ function DownloadAssetsDialog({
   const allSelected = selectedIds.length === assets.length;
 
   return (
-    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section className="masters-modal masters-download-assets-modal" role="dialog" aria-modal="true" aria-labelledby="download-assets-title" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="masters-modal-header">
-          <div>
-            <h2 id="download-assets-title">Download assets</h2>
+    <> <EditingDialog title={<>Download assets</>}  onCancel={onCancel} size="wide" actions={<> <Button size="S" variant="secondary"  type="button" onClick={onCancel}>Cancel</Button>  <Button size="S" variant="primary"  type="button" disabled={selectedIds.length === 0} onClick={() => onDownload(selectedIds)}>
+            <DsIcon name="download" size={16} />Download selected ({selectedIds.length})
+          </Button> </>} description={<>  <div>
+
             <p className="label-s">Choose some or all of the files for {deliverable.name}.</p>
-          </div>
-          <button type="button" aria-label="Close download assets" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-        </div>
-        <div className="masters-download-assets-toolbar">
+          </div>    </>}>  <div className="masters-download-assets-toolbar">
           <span className="label-xs-semibold">{selectedIds.length} of {assets.length} selected</span>
           <button className="label-xs-semibold" type="button" onClick={() => setSelectedIds(allSelected ? [] : assets.map((asset) => asset.id))}>
             {allSelected ? "Clear all" : "Select all"}
           </button>
-        </div>
-        <ul className="masters-approval-list">
+        </div>  <ul className="masters-approval-list">
           {assets.map((asset) => {
             const checked = selectedIds.includes(asset.id);
             return (
@@ -3331,15 +3331,7 @@ function DownloadAssetsDialog({
               </li>
             );
           })}
-        </ul>
-        <div className="masters-modal-actions">
-          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-primary-button label-s-semibold" type="button" disabled={selectedIds.length === 0} onClick={() => onDownload(selectedIds)}>
-            <DsIcon name="download" size={16} />Download selected ({selectedIds.length})
-          </button>
-        </div>
-      </section>
-    </div>
+        </ul>  </EditingDialog> </>
   );
 }
 
@@ -3359,16 +3351,10 @@ function RecutSourceDialog({
   onUpload: () => void;
 }) {
   return (
-    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section className="masters-modal masters-recut-source-modal" role="dialog" aria-modal="true" aria-labelledby="recut-source-title" onMouseDown={(event) => event.stopPropagation()}>
-        <div className="masters-modal-header">
-          <div>
-            <h2 id="recut-source-title">Choose a source video</h2>
+    <> <EditingDialog title={<>Choose a source video</>} onCancel={onCancel} size="wide" actions={<> <Button size="S" variant="secondary"  type="button" onClick={onCancel}>Cancel</Button>  <Button size="S" variant="primary"  type="button" onClick={onUpload}><DsIcon name="upload-simple" size={16} />Upload a different source</Button> </>} description={<>  <div>
+
             <p className="label-s">The mark-up will stay attached to {target.name}.</p>
-          </div>
-          <button type="button" aria-label="Close source picker" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-        </div>
-        <div className="masters-recut-source-options">
+          </div>    </>}>  <div className="masters-recut-source-options">
           {sources.map((source) => {
             const version = getPresentedVersion(source, {});
             const selected = source.id === currentSource.id && !target.recutSourceUpload;
@@ -3380,50 +3366,16 @@ function RecutSourceDialog({
               </button>
             );
           })}
-        </div>
-        <div className="masters-modal-actions">
-          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-primary-button label-s-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={16} />Upload a different source</button>
-        </div>
-      </section>
-    </div>
+        </div>  </EditingDialog> </>
   );
 }
 
-function DeleteDeliverableDialog({
-  deliverableName,
-  onCancel,
-  onConfirm,
-}: {
-  deliverableName: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section
-        className="masters-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-deliverable-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <div className="masters-modal-header">
-          <h2 id="delete-deliverable-title">Delete {deliverableName}?</h2>
-          <button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button>
-        </div>
-        <p className="label-s">This removes the asset, its versions, and comments from this project.</p>
-        <div className="masters-modal-actions">
-          <button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-          <button className="masters-danger-button label-s-semibold" type="button" onClick={onConfirm}>Delete asset</button>
-        </div>
-      </section>
-    </div>
-  );
+function DeleteDeliverableDialog({ deliverableName, onCancel, onConfirm }: { deliverableName: string; onCancel: () => void; onConfirm: () => void }) {
+  return <ConfirmationDialog title={`Delete ${deliverableName}?`} description="This removes the asset, its versions, and comments from this project." tone="danger" confirmLabel="Delete asset" onCancel={onCancel} onConfirm={onConfirm} />;
 }
 
 function RequestDialog({ source, tab, name, format, duration, notes, onCancel, onChangeDuration, onChangeFormat, onChangeName, onChangeNotes, onChangeTab, onSubmit }: { source?: MastersDeliverable; tab: RequestTab; name: string; format: string; duration: string; notes: string; onCancel: () => void; onChangeDuration: (value: string) => void; onChangeFormat: (value: string) => void; onChangeName: (value: string) => void; onChangeNotes: (value: string) => void; onChangeTab: (tab: RequestTab) => void; onSubmit: () => void }) {
-  return <div className="masters-modal-backdrop" role="presentation" onMouseDown={onCancel}><section className="masters-modal masters-request-modal" role="dialog" aria-modal="true" aria-labelledby="request-title" onMouseDown={(event) => event.stopPropagation()}><div className="masters-modal-header"><div><span className="masters-modal-kicker label-xs-semibold">NEW DELIVERABLE</span><h2 id="request-title">Request a cut-down or reformat</h2></div><button type="button" aria-label="Close" onClick={onCancel}><DsIcon name="x-close-cross" size={18} /></button></div><p className="label-s">Source master: <strong>{source?.name}</strong>. Your note stays attached to this request, not the source master.</p><div className="masters-request-tabs" role="tablist">{(["cutdown", "reformat", "script"] as RequestTab[]).map((option) => <button className={`label-s-semibold ${tab === option ? "active" : ""}`} key={option} type="button" role="tab" aria-selected={tab === option} onClick={() => onChangeTab(option)}>{option === "cutdown" ? "Cut-Downs" : option === "reformat" ? "Reformats" : "Script optional"}</button>)}</div><div className="masters-request-form"><label><span className="label-xs-semibold">Request name</span><input value={name} onChange={(event) => onChangeName(event.target.value)} /></label>{tab === "cutdown" ? <label><span className="label-xs-semibold">Duration</span><select value={duration} onChange={(event) => onChangeDuration(event.target.value)}>{mastersDurationOptions.map((option) => <option key={option}>{option}</option>)}</select></label> : null}{tab === "reformat" ? <label><span className="label-xs-semibold">Format</span><select value={format} onChange={(event) => onChangeFormat(event.target.value)}>{mastersFormatOptions.map((option) => <option key={option}>{option}</option>)}</select></label> : null}{tab === "script" ? <p className="masters-request-hint label-s">Add an optional script or wording note below. The filmmaker will confirm the edit approach.</p> : null}<label><span className="label-xs-semibold">Comments</span><textarea rows={4} value={notes} placeholder="What should change in this new deliverable?" onChange={(event) => onChangeNotes(event.target.value)} /></label></div><div className="masters-modal-actions"><button className="masters-secondary-button label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="masters-primary-button label-s-semibold" type="button" disabled={!name.trim()} onClick={onSubmit}>Submit request</button></div></section></div>;
+  return <><EditingDialog title={<>Request a cut-down or reformat</>} onCancel={onCancel} size="wide" actions={<><Button size="S" variant="secondary"  type="button" onClick={onCancel}>Cancel</Button> <Button size="S" variant="primary"  type="button" disabled={!name.trim()} onClick={onSubmit}>Submit request</Button></>} description={<> <div><span className="masters-modal-kicker label-xs-semibold">NEW DELIVERABLE</span></div>  </>}><p className="label-s">Source master: <strong>{source?.name}</strong>. Your note stays attached to this request, not the source master.</p> <div className="masters-request-tabs" role="tablist">{(["cutdown", "reformat", "script"] as RequestTab[]).map((option) => <button className={`label-s-semibold ${tab === option ? "active" : ""}`} key={option} type="button" role="tab" aria-selected={tab === option} onClick={() => onChangeTab(option)}>{option === "cutdown" ? "Cut-Downs" : option === "reformat" ? "Reformats" : "Script optional"}</button>)}</div> <div className="masters-request-form"><label><span className="label-xs-semibold">Request name</span><input value={name} onChange={(event) => onChangeName(event.target.value)} /></label>{tab === "cutdown" ? <label><span className="label-xs-semibold">Duration</span><BriskSelect<string> ariaLabel={"Duration"} clearable={false} placeholder={"Choose an option"} value={duration} onChange={(value) => onChangeDuration(value)} options={[...mastersDurationOptions.map((option) => ({ value: (option), label: (option) }))]} /></label> : null}{tab === "reformat" ? <label><span className="label-xs-semibold">Format</span><BriskSelect<string> ariaLabel={"Format"} clearable={false} placeholder={"Choose an option"} value={format} onChange={(value) => onChangeFormat(value)} options={[...mastersFormatOptions.map((option) => ({ value: (option), label: (option) }))]} /></label> : null}{tab === "script" ? <p className="masters-request-hint label-s">Add an optional script or wording note below. The filmmaker will confirm the edit approach.</p> : null}<label><span className="label-xs-semibold">Comments</span><textarea rows={4} value={notes} placeholder="What should change in this new deliverable?" onChange={(event) => onChangeNotes(event.target.value)} /></label></div></EditingDialog></>;
 }
 
 function isMastersReviewAuditEntry(value: unknown): value is MastersReviewAuditEntry {

@@ -25,6 +25,9 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import type { NotificationEventKey } from "@/data/notification-registry";
 import type { NotificationEmailReminderPreview } from "@/data/notification-inbox";
+import type { ChatMessage } from "@/components/chat/types";
+import { appendStoredProjectChatMessage } from "@/components/chat/chat-persistence";
+import { initialPersonalNotificationSettings, type PersonalNotificationSettings } from "@/data/notification-settings";
 
 type ReadIdsByRecipient = Record<string, string[]>;
 
@@ -38,7 +41,7 @@ type StageReviewFollowUpInput = {
   reviewers: readonly string[];
   href: string;
   message: string;
-  kind: "request" | "reminder" | "updated";
+  kind: "request" | "reminder" | "updated" | "approved";
   occurredAt: string;
 };
 
@@ -86,6 +89,24 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
   const [readIdsByRecipient, setReadIdsByRecipient] = useState<ReadIdsByRecipient>({});
   const [emailDeliveryOverrides, setEmailDeliveryOverrides] = useState<Record<string, NotificationEmailDeliveryState>>({});
   const [generatedItems, setGeneratedItems] = useState<RecipientInboxItem[]>([]);
+  const [customerPreferences, setCustomerPreferences] = useState<PersonalNotificationSettings>(initialPersonalNotificationSettings);
+  useEffect(() => {
+    const readPreferences = () => {
+      try {
+        const stored = window.localStorage.getItem("brisk-personal-notification-settings-v1:Customer");
+        setCustomerPreferences(stored ? { ...initialPersonalNotificationSettings, ...JSON.parse(stored) as Partial<PersonalNotificationSettings> } : initialPersonalNotificationSettings);
+      } catch {
+        setCustomerPreferences(initialPersonalNotificationSettings);
+      }
+    };
+    readPreferences();
+    window.addEventListener("brisk-personal-notifications-updated", readPreferences);
+    window.addEventListener("storage", readPreferences);
+    return () => {
+      window.removeEventListener("brisk-personal-notifications-updated", readPreferences);
+      window.removeEventListener("storage", readPreferences);
+    };
+  }, []);
   const authorisedItems = useMemo(
     () => {
       const fixtureItems = activeScenario?.state === "new" ? [] : getAuthorisedNotificationInboxItems(selectedRole, undefined, recipientId);
@@ -101,7 +122,7 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     },
     [activeScenario?.state, currentRecipientName, generatedItems, recipientId, selectedRole],
   );
-  const items = useMemo(
+  const allItems = useMemo(
     () => authorisedItems.map((item) => {
       const emailDeliveryState = emailDeliveryOverrides[item.id];
 
@@ -125,6 +146,11 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
     }),
     [authorisedItems, emailDeliveryOverrides],
   );
+  const items = useMemo(() => selectedRole === "Customer" ? allItems.filter((item) => {
+    if (item.category === "action-required") return customerPreferences.inAppActionRequired;
+    if (item.category === "mention") return customerPreferences.mentionsAndDms;
+    return customerPreferences.assignedProjectUpdates;
+  }) : allItems, [allItems, customerPreferences.assignedProjectUpdates, customerPreferences.inAppActionRequired, customerPreferences.mentionsAndDms, selectedRole]);
   const personalReadIds = readIdsByRecipient[recipientId] ?? [];
 
   useEffect(() => {
@@ -179,20 +205,36 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
   }, []);
 
   const publishStageReviewFollowUp = useCallback((input: StageReviewFollowUpInput) => {
-    const recipientId = notificationInboxRecipientByRole[input.recipientRole];
-    const item: RecipientInboxItem = {
-      id: `generated-${input.stage}-${input.kind}-${input.projectId}-${input.occurredAt}`,
-      canonicalEventId: `${input.stage}-${input.kind}-${input.projectId}-${input.occurredAt}`,
-      eventKey: input.kind === "request" ? "stage.review_requested" : input.kind === "reminder" ? "stage.review_reminded" : "stage.review_updated",
-      recipientId,
-      recipientNames: input.reviewers,
+    const eventKey = input.kind === "approved" ? "stage.approved" : input.kind === "request" ? "stage.review_requested" : input.kind === "reminder" ? "stage.review_reminded" : "stage.review_updated";
+    const recipientRole = input.recipientRole === "Customer" ? "Client" : input.recipientRole;
+    const resolvedRecipients = prototypeState.users
+      .filter((user) => user.workspaceId === prototypeState.session.activeWorkspaceId
+        && user.role === recipientRole
+        && input.reviewers.includes(user.name))
+      .map((user) => ({ id: user.id, name: user.name }));
+    const recipients = resolvedRecipients.length ? resolvedRecipients : [{
+      id: notificationInboxRecipientByRole[input.recipientRole],
+      name: input.reviewers[0] ?? currentRecipientName,
+    }];
+    const canonicalEventId = `${input.stage}-${input.kind}-${input.projectId}-${input.occurredAt}`;
+    const isApproval = input.kind === "approved";
+    const itemState = isApproval ? "success" as const : "warning" as const;
+    const itemLabel = isApproval ? "Approved" as const : "Needs attention" as const;
+    const itemTitle = isApproval ? `${input.targetLabel} approved` : input.kind === "request" ? `${input.targetLabel} ready for review` : input.kind === "reminder" ? `Reminder to review ${input.targetLabel}` : `Updated ${input.targetLabel} ready for review`;
+    const itemCopy = input.message || (isApproval ? `${input.actorName} approved the ${input.targetLabel}.` : input.kind === "request" ? `Review ${input.targetLabel} and add any feedback.` : input.kind === "reminder" ? `Please review ${input.targetLabel} when you can.` : `${input.targetLabel} has changed since it was sent for review.`);
+    const itemsForRecipients: RecipientInboxItem[] = recipients.map((recipient) => ({
+      id: `generated-${input.stage}-${input.kind}-${input.projectId}-${input.occurredAt}-${recipient.id}`,
+      canonicalEventId,
+      eventKey,
+      recipientId: recipient.id,
+      recipientNames: [recipient.name],
       recipientRole: input.recipientRole,
-      recipientResponsibility: "reviewer",
-      category: "action-required",
-      state: "warning",
-      label: "Needs attention",
-      title: input.kind === "request" ? `${input.targetLabel} ready for review` : input.kind === "reminder" ? `Reminder to review ${input.targetLabel}` : `Updated ${input.targetLabel} ready for review`,
-      copy: input.message || (input.kind === "request" ? `Review ${input.targetLabel} and add any feedback.` : input.kind === "reminder" ? `Please review ${input.targetLabel} when you can.` : `${input.targetLabel} has changed since it was sent for review.`),
+      recipientResponsibility: isApproval ? "project-lead" : "reviewer",
+      category: isApproval ? "update" : "action-required",
+      state: itemState,
+      label: itemLabel,
+      title: itemTitle,
+      copy: itemCopy,
       actorName: input.actorName,
       projectId: input.projectId,
       projectName: input.projectName,
@@ -200,25 +242,72 @@ export function NotificationInboxProvider({ children }: { children: ReactNode })
       occurredAt: input.occurredAt,
       href: input.href,
       deepLinkTarget: "project-stage",
-      ctaLabel: `Review ${input.targetLabel}`,
+      ctaLabel: isApproval ? `View ${input.targetLabel}` : `Review ${input.targetLabel}`,
       emailDeliveryState: "sent",
       initiallyRead: false,
-    };
+    }));
 
     setGeneratedItems((current) => {
-      const nextItems = [item, ...current];
+      const nextItems = [...itemsForRecipients, ...current.filter((candidate) => candidate.canonicalEventId !== canonicalEventId)];
       window.localStorage.setItem(generatedNotificationStorageKey, JSON.stringify(nextItems));
       return nextItems;
     });
     setReadIdsByRecipient((current) => {
-      const nextState = {
-        ...current,
-        [recipientId]: (current[recipientId] ?? []).filter((itemId) => itemId !== item.id),
-      };
+      const nextState = { ...current };
+      itemsForRecipients.forEach((item) => {
+        nextState[item.recipientId] = (nextState[item.recipientId] ?? []).filter((itemId) => itemId !== item.id);
+      });
       window.localStorage.setItem(notificationReadStorageKey, JSON.stringify(nextState));
       return nextState;
     });
-  }, []);
+
+    const isCrossRoleMessage = selectedRole === "Customer" || input.recipientRole === "Customer";
+    const channel = isCrossRoleMessage ? "external" : "internal";
+    const projectEventMessage: ChatMessage = {
+      id: `chat-event-${canonicalEventId}`,
+      projectId: input.projectId,
+      channel,
+      threadId: null,
+      senderId: null,
+      senderSystem: "Brisk",
+      senderRole: "system",
+      body: itemCopy,
+      attachments: [],
+      reactions: [],
+      sourceChannel: "brisk",
+      createdAt: input.occurredAt,
+      editedAt: null,
+      deletedAt: null,
+      readBy: viewer?.chatUserId ? [viewer.chatUserId] : [],
+      mentions: [],
+      projectUpdate: {
+        kind: "event",
+        eventKey,
+        canonicalEventId,
+        presentation: "actionable",
+        state: itemState,
+        label: itemLabel,
+        title: itemTitle,
+        copy: itemCopy,
+        href: input.href,
+        ctaLabel: isApproval ? `View ${input.targetLabel}` : `Review ${input.targetLabel}`,
+      },
+    };
+    appendStoredProjectChatMessage(prototypeState.session.activeWorkspaceId, projectEventMessage);
+    if (input.message.trim()) {
+      const senderChatId = viewer?.chatUserId ?? recipientId;
+      appendStoredProjectChatMessage(prototypeState.session.activeWorkspaceId, {
+        ...projectEventMessage,
+        id: `chat-note-${canonicalEventId}`,
+        senderId: senderChatId,
+        senderSystem: null,
+        senderRole: selectedRole === "Customer" ? "client" : "team",
+        body: input.message,
+        readBy: [senderChatId],
+        projectUpdate: undefined,
+      });
+    }
+  }, [currentRecipientName, prototypeState.session.activeWorkspaceId, prototypeState.users, recipientId, selectedRole, viewer]);
 
   const publishOfferNotification = useCallback((input: OfferNotificationInput) => {
     const occurredAt = input.occurredAt ?? new Date().toISOString();

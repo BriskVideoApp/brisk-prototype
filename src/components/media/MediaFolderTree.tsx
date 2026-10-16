@@ -1,3 +1,4 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useEffect, useState, type DragEvent, type MouseEvent, type ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaFolder } from "@/data/media";
@@ -116,10 +117,10 @@ export function MediaFolderTree(props: MediaFolderTreeProps) {
         {props.folders.length === 0 ? (
           <div className="media-folder-empty">
             <p className="label-s">Create a folder to organise your media, or just start uploading.</p>
-            {props.canManage ? <button className="media-text-button label-s-semibold" type="button" onClick={addFolder}>
+            {props.canManage ? <Button size="S" variant="ghost" className="media-text-button" type="button" onClick={addFolder}>
               <DsIcon name="folder-plus" size={16} />
               Add folder
-            </button> : null}
+            </Button> : null}
           </div>
         ) : (
           <FolderBranch

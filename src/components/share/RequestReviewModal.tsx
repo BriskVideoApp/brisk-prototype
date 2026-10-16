@@ -1,5 +1,10 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import { useEffect, useMemo, useState } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
@@ -92,18 +97,7 @@ export function RequestReviewModal({
   };
 
   return (
-    <div className="request-review-backdrop" role="presentation">
-      <section className="request-review-modal" role="dialog" aria-modal="true" aria-labelledby="request-review-title">
-        <header className="request-review-header">
-          <h2 className="request-review-title" id="request-review-title">
-            Request review
-          </h2>
-          <button className="request-review-close" type="button" aria-label="Close request review" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </header>
-
-        {role === "studio" ? (
+    <ConfirmationDialog title="Request review" expanded confirmLabel="Request review" onCancel={onClose} onConfirm={sendRequest}>  {role === "studio" ? (
           <fieldset className="request-review-send-to">
             <legend className="label-s-semibold">Send to</legend>
             <span className="request-review-recipient-options" role="radiogroup" aria-label="Send review request to">
@@ -119,24 +113,10 @@ export function RequestReviewModal({
               />
             </span>
           </fieldset>
-        ) : null}
-
-        <label className="request-review-field label-s-semibold">
+        ) : null}  <label className="request-review-field label-s-semibold">
           Choose a template
-          <select
-            className="request-review-select label-s"
-            value={selectedTemplateId}
-            onChange={(event) => selectTemplate(event.target.value as RequestReviewTemplateId)}
-          >
-            {requestReviewTemplates.map((template) => (
-              <option value={template.id} key={template.id}>
-                {template.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="request-review-field label-s-semibold">
+          <BriskSelect<string> ariaLabel={"Choose a template"} clearable={false} placeholder={"Choose an option"} triggerClassName="request-review-select label-s" value={selectedTemplateId} onChange={(value) => selectTemplate(value as RequestReviewTemplateId)} options={[...requestReviewTemplates.map((template) => ({ value: template.id, label: (template.label) }))]} />
+        </label>  <label className="request-review-field label-s-semibold">
           Message
           <textarea
             className="request-review-textarea label-s"
@@ -144,19 +124,11 @@ export function RequestReviewModal({
             rows={9}
             onChange={(event) => setMessageBody(event.target.value)}
           />
-        </label>
-
-        <div className="request-review-helper-row">
+        </label>  <div className="request-review-helper-row">
           <p className="request-review-helper label-xs">
             Sent as an email and in-app message to {recipientName}.
           </p>
-        </div>
-
-        <button className="request-review-send label-s-semibold" type="button" onClick={sendRequest}>
-          Request review
-        </button>
-      </section>
-    </div>
+        </div>  </ConfirmationDialog>
   );
 }
 

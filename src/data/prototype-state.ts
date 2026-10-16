@@ -3,6 +3,7 @@ import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { getProjectFixture } from "@/data/project-fixtures";
 import {
   clients as populatedClients,
+  getDefaultProjectCodePrefix,
   getClientInitials,
   makeClientId,
   type Client,
@@ -120,6 +121,7 @@ export type PrototypeInvitation = {
 };
 
 export type PrototypeOnboardingProgress = {
+  ownerName?: string;
   step: OnboardingStep;
   view: PrototypeOnboardingView;
   aiPhase: PrototypeOnboardingAiPhase;
@@ -338,11 +340,6 @@ export function commitStudioSetupState(state: PrototypeState, draft: StudioRevie
       name: draft.studioName,
       status: "active",
       studioType: draft.studioType,
-      description: draft.studioDescription,
-      website: draft.studioWebsite ?? "",
-      brandAccentId: draft.brandAccentId,
-      brandColours: getStudioBrandColours(draft),
-      logoPreviewUrl: draft.logoPreviewUrl,
     } : workspace),
     studioBriefTemplates: [
       ...state.studioBriefTemplates.filter((candidate) => candidate.workspaceId !== workspaceId),
@@ -445,9 +442,11 @@ export function createProjectFromStudioTemplateState(
   const template = state.studioBriefTemplates.find((candidate) => candidate.workspaceId === workspaceId);
   if (!client || !template) return null;
   const projectId = makeUniqueId(input.requestedId ?? makeClientId(input.name), state.projects.map((project) => project.id));
+  const code = getNextClientProjectCode(client.projectCodePrefix ?? getDefaultProjectCodePrefix(client.name), state.projects.flatMap((project) => project.code ? [project.code] : []));
   const now = "2026-09-02T09:00:00+10:00";
   const project: ScopedProject = {
     id: projectId,
+    code,
     workspaceId,
     clientId: client.id,
     clientBadge: client.badge,
@@ -513,7 +512,7 @@ export function createClientVideoState(
   if (!client || !user || !invitation || !input.name.trim()
     || client.contacts.find((contact) => contact.id === user.id)?.portalAccess === "Paused") return null;
 
-  const code = getNextClientProjectCode(client.badge, state.projects.flatMap((project) => project.code ? [project.code] : []));
+  const code = getNextClientProjectCode(client.projectCodePrefix ?? getDefaultProjectCodePrefix(client.name), state.projects.flatMap((project) => project.code ? [project.code] : []));
   const created = createProjectFromStudioTemplateState(state, {
     clientId: client.id,
     name: input.name.trim(),
@@ -714,6 +713,16 @@ export function updateOnboardingProgressState(
   return { ...state, onboarding: { ...state.onboarding, ...update } };
 }
 
+export function updateOnboardingOwnerState(state: PrototypeState, name: string, email: string): PrototypeState {
+  return {
+    ...state,
+    users: state.users.map((user) => user.id === state.session.activeUserId
+      ? { ...user, name, email: email || user.email }
+      : user),
+    onboarding: { ...state.onboarding, ownerName: name },
+  };
+}
+
 export function updateProjectBriefState(
   state: PrototypeState,
   projectId: string,
@@ -851,6 +860,7 @@ function createClientRecord(input: NewClientInput, id: string): Client {
   return {
     id,
     name: input.name.trim(),
+    projectCodePrefix: getDefaultProjectCodePrefix(input.name),
     badge: getClientInitials(input.name),
     type: input.type ?? "Organisation",
     status: "Active",

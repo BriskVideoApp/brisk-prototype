@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { ScriptGenre } from "@/data/script";
@@ -351,180 +354,33 @@ export function ScriptAiPanel({
             onToggle={() => setIsSourcesPopoverOpen((isOpen) => !isOpen)}
             onClose={() => setIsSourcesPopoverOpen(false)}
           />
-          <button
-            className="script-ai-send-button label-xs-semibold"
+          <Button size="S" variant="primary"
+            className="script-ai-send-button"
             type="button"
             disabled={!inputValue.trim()}
             onClick={() => submitPrompt(inputValue)}
           >
             <DsIcon name="paper-plane-tilt" size={14} />
             Send
-          </button>
+          </Button>
         </div>
       </div>
     </aside>
   );
 }
 
-function SourcesControl({
-  isOpen,
-  sources,
-  onAddSource,
-  onToggleSource,
-  onToggle,
-  onClose,
-}: {
-  isOpen: boolean;
-  sources: ScriptAiSource[];
-  onAddSource: () => void;
-  onToggleSource: (sourceId: string) => void;
-  onToggle: () => void;
-  onClose: () => void;
+function SourcesControl({ isOpen, sources, onAddSource, onToggleSource, onToggle, onClose }: {
+  isOpen: boolean; sources: ScriptAiSource[]; onAddSource: () => void; onToggleSource: (sourceId: string) => void; onToggle: () => void; onClose: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [activeIndex, setActiveIndex] = useState(0);
-  const controlRef = useRef<HTMLDivElement | null>(null);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const attachedCount = sources.filter((source) => source.attached).length;
-  const filteredSources = useMemo(() => {
-    const normalisedQuery = query.trim().toLowerCase();
-
-    if (!normalisedQuery) {
-      return sources;
-    }
-
-    return sources.filter((source) => source.label.toLowerCase().includes(normalisedQuery));
-  }, [query, sources]);
-  const chipLabel = attachedCount > 0 ? `Sources (${attachedCount})` : "Sources";
-  const chipAriaLabel = attachedCount > 0 ? `+ Sources (${attachedCount})` : "+ Sources";
-
-  useEffect(() => {
-    if (!isOpen) {
-      setQuery("");
-      setActiveIndex(0);
-      return;
-    }
-
-    searchInputRef.current?.focus();
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target;
-
-      if (target instanceof Node && controlRef.current?.contains(target)) {
-        return;
-      }
-
-      onClose();
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [isOpen, onClose]);
-
-  useEffect(() => {
-    setActiveIndex((currentIndex) => Math.min(currentIndex, Math.max(filteredSources.length - 1, 0)));
-  }, [filteredSources.length]);
-
-  const handlePickerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      onClose();
-      return;
-    }
-
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      setActiveIndex((currentIndex) => (filteredSources.length === 0 ? 0 : (currentIndex + 1) % filteredSources.length));
-      return;
-    }
-
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setActiveIndex((currentIndex) =>
-        filteredSources.length === 0 ? 0 : (currentIndex - 1 + filteredSources.length) % filteredSources.length,
-      );
-      return;
-    }
-
-    if (event.key === "Enter" && filteredSources[activeIndex]) {
-      event.preventDefault();
-      onToggleSource(filteredSources[activeIndex].id);
-    }
-  };
-
-  return (
-    <div className="script-ai-sources-control" ref={controlRef}>
-      <button
-        className="script-source-chip add label-xs-semibold"
-        type="button"
-        aria-label={chipAriaLabel}
-        aria-expanded={isOpen}
-        onClick={onToggle}
-      >
-        <DsIcon name="plus" size={12} />
-        {chipLabel}
-      </button>
-      {isOpen ? (
-        <div className="script-ai-sources-popover" role="listbox" aria-label="AI sources" onKeyDown={handlePickerKeyDown}>
-          <input
-            className="script-ai-source-search label-s"
-            ref={searchInputRef}
-            placeholder="Search sources…"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <div className="script-ai-source-options">
-            {filteredSources.length > 0 ? (
-              filteredSources.map((source, index) => (
-                <button
-                  className={`script-ai-source-row label-s ${index === activeIndex ? "active" : ""}`}
-                  type="button"
-                  key={source.id}
-                  role="option"
-                  aria-selected={source.attached}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => onToggleSource(source.id)}
-                >
-                  <span className="script-ai-source-label">
-                    <span className="script-ai-source-token" aria-hidden="true">
-                      @
-                    </span>
-                    {source.label}
-                  </span>
-                  {source.attached ? <DsIcon name="check" size={14} /> : null}
-                </button>
-              ))
-            ) : (
-              <p className="script-ai-source-empty label-s">No sources found.</p>
-            )}
-          </div>
-          <button
-            className="script-ai-add-source label-s"
-            type="button"
-            onClick={() => {
-              onAddSource();
-              setQuery("");
-            }}
-          >
-            <span className="script-ai-source-label">
-              <span className="script-ai-source-token" aria-hidden="true">
-                +
-              </span>
-              Add source
-            </span>
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
+  const attached = sources.filter((source) => source.attached).map((source) => source.id);
+  const chipLabel = attached.length > 0 ? `Sources (${attached.length})` : "Sources";
+  return <BriskSelect<string> multiple ariaLabel="AI sources" className="script-ai-sources-control" open={isOpen}
+    onOpenChange={(open) => { if (open !== isOpen) { if (open) onToggle(); else onClose(); } }}
+    triggerClassName="script-source-chip add label-xs-semibold" triggerContent={<><DsIcon name="plus" size={12} /><span>{chipLabel}</span></>} hideCaret
+    clearable={false} searchable searchPlaceholder="Search sources" placeholder="Sources" value={attached}
+    options={sources.map((source) => ({ value: source.id, label: source.label }))}
+    onChange={(next) => { const changed = next.find((id) => !attached.includes(id)) ?? attached.find((id) => !next.includes(id)); if (changed) onToggleSource(changed); }}
+    footerAction={{ label: "Add source", icon: "plus", keepOpen: true, onSelect: onAddSource }} />;
 }
 
 function getInitialPanelPosition(): PanelPosition {

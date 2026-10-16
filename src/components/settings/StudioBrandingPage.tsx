@@ -1,23 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { ActionMenu } from "@/components/brand-kits/AssetManagement";
-import { BrandTile, ColourSwatch } from "@/components/brand-kits/BrandKitPrimitives";
-import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { useStudioSettingsUnsavedChanges } from "@/components/settings/StudioSettingsShell";
-import { StudioBrandColourEditor } from "@/components/studio-onboard/StudioReviewEditors";
-import { getStudioBrandThemeStyle } from "@/components/studio-onboard/studioBrandTheme";
 import { DsIcon } from "@/components/video-review/DsIcon";
-import { getBillingPlan, subscriptionFixtures } from "@/data/billing";
-import { getStudioBrandColours, type StudioBrandColour } from "@/data/studio-onboard";
 import type { StudioBranding } from "@/data/studio-settings";
 
-const currentPlan = getBillingPlan(subscriptionFixtures.active.planId);
-const poweredByBriskRequired = currentPlan.id === "starter" || currentPlan.id === "professional";
 export function StudioBrandingPage() {
   const { studio, updateBranding } = useStudioSettings();
   const { state } = usePrototypeState();
@@ -25,14 +16,11 @@ export function StudioBrandingPage() {
   const [draft, setDraft] = useState<StudioBranding>(() => ({
     ...studio.branding,
     logoOptions: [...studio.branding.logoOptions],
-    brandColours: getStudioBrandColours(studio.branding),
   }));
-  const [editingBrandColourIndex, setEditingBrandColourIndex] = useState<number | "new" | null>(null);
   const [showSaveBeforePreview, setShowSaveBeforePreview] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(studio.branding), [draft, studio.branding]);
-  const brandColours = getStudioBrandColours(draft);
   const previewClientId = state.onboarding.clientId && state.clients.some((client) => (
     client.workspaceId === state.session.activeWorkspaceId && client.id === state.onboarding.clientId
   )) ? state.onboarding.clientId : state.session.activeClientId && state.clients.some((client) => (
@@ -73,7 +61,7 @@ export function StudioBrandingPage() {
   const saveBranding = () => {
     updateBranding(draft);
     setHasUnsavedChanges(false, "branding");
-    setToast("Studio branding updated.");
+    setToast("Studio logo updated.");
   };
 
   const openClientPortalPreview = () => {
@@ -95,43 +83,6 @@ export function StudioBrandingPage() {
     openClientPortalPreview();
   };
 
-  const setPrimaryColour = (primaryIndex: number) => {
-    setDraft((current) => ({
-      ...current,
-      brandColours: getStudioBrandColours(current).map((colour, index): StudioBrandColour => ({
-        ...colour,
-        role: index === primaryIndex ? "primary" : "supporting",
-      })),
-    }));
-  };
-
-  const removeColour = (colourIndex: number) => {
-    setDraft((current) => ({
-      ...current,
-      brandColours: getStudioBrandColours(current).filter((_, index) => index !== colourIndex),
-    }));
-    setEditingBrandColourIndex(null);
-  };
-
-  const saveColour = (hex: string) => {
-    setDraft((current) => {
-      const nextColours = getStudioBrandColours(current);
-      if (editingBrandColourIndex === "new") {
-        nextColours.push({ hex, role: "supporting" });
-      } else if (editingBrandColourIndex !== null) {
-        nextColours[editingBrandColourIndex] = { ...nextColours[editingBrandColourIndex], hex };
-      }
-      return { ...current, brandColours: nextColours };
-    });
-    setEditingBrandColourIndex(null);
-  };
-
-  const copyColours = (value: string) => {
-    void navigator.clipboard.writeText(value)
-      .then(() => setToast("HEX code copied."))
-      .catch(() => setToast("Could not copy HEX code."));
-  };
-
   return (
     <section className="studio-settings-section studio-branding-settings" aria-label="Studio branding">
       <div className="studio-branding-controls">
@@ -143,8 +94,7 @@ export function StudioBrandingPage() {
               </div>
               <div className="studio-branding-field-control">
                 <div
-                  className={`studio-branding-logo-row studio-client-accent-${draft.brandAccentId}`}
-                  style={getStudioBrandThemeStyle(draft)}
+                  className="studio-branding-logo-row studio-client-accent-purple"
                 >
                   <StudioBrandingLogo
                     logoPreviewUrl={draft.logoPreviewUrl}
@@ -159,103 +109,16 @@ export function StudioBrandingPage() {
               </div>
             </div>
 
-            <div className="studio-branding-palette-field">
-              <BrandTile
-                className="brand-colours-tile studio-branding-colours-tile"
-                title="Colours"
-                action={(
-                  <div className="brand-tile-actions">
-                    <Button size="S" variant="secondary" onClick={() => setEditingBrandColourIndex("new")}>+ Add colour</Button>
-                    <ActionMenu
-                      label="Colour actions"
-                      items={[{
-                        label: "Copy all HEX codes",
-                        icon: "copy",
-                        onSelect: () => copyColours(brandColours.map((colour) => colour.hex).join(", ")),
-                      }]}
-                    />
-                  </div>
-                )}
-              >
-                <p className="paragraph-s">The primary colour is used for portal buttons and active states. Text contrast is selected automatically.</p>
-                <div className="colour-swatch-grid" aria-label="Studio colour palette">
-                  {brandColours.map((colour, index) => (
-                    <ColourSwatch
-                      key={index}
-                      colour={{ name: colour.role === "primary" ? "Primary" : `Colour ${index + 1}`, hex: colour.hex, role: colour.role === "primary" ? "primary" : "accent" }}
-                      editable
-                      editorOpen={editingBrandColourIndex === index}
-                      onEditorOpen={() => setEditingBrandColourIndex(index)}
-                      onEditorClose={() => setEditingBrandColourIndex(null)}
-                      onChange={(nextColour) => setDraft((current) => ({
-                        ...current,
-                        brandColours: getStudioBrandColours(current).map((candidate, candidateIndex) => (
-                          candidateIndex === index ? { ...candidate, hex: nextColour.hex } : candidate
-                        )),
-                      }))}
-                      onCopy={copyColours}
-                      onSetPrimary={colour.role === "primary" ? undefined : () => setPrimaryColour(index)}
-                      onDelete={brandColours.length > 1 ? () => removeColour(index) : undefined}
-                    />
-                  ))}
-                </div>
-              </BrandTile>
-            </div>
-          </section>
-
-          <section className="studio-settings-subsection studio-branding-plan" aria-labelledby="studio-client-portal-branding-heading">
-            <div className="studio-settings-section-heading">
-              <div>
-                <div className="studio-branding-plan-heading">
-                  <h2 className="headings-xs-bold" id="studio-client-portal-branding-heading">Client portal branding</h2>
-                  <span className="studio-settings-plan-badge label-xs-semibold">{currentPlan.name}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="studio-branding-treatment">
-              <span className="label-xs">Current treatment</span>
-              <strong className="label-s-semibold">{poweredByBriskRequired ? "Studio branded with Powered by Brisk" : "Studio branded without Brisk branding"}</strong>
-            </div>
-
-            <div className="studio-branding-locked-feature">
-              <span><DsIcon name="lock" size={18} /></span>
-              <div>
-                <strong className="label-m-semibold">Remove Brisk branding</strong>
-                <p className="paragraph-s">Available on the Business plan.</p>
-              </div>
-              <Link className="client-secondary-button label-s-semibold" href="/settings/plan-billing?compare=plans&target=business">View Business plan</Link>
-            </div>
-
           </section>
       </div>
 
       <div className="studio-settings-form-actions">
         <Button size="M" variant="secondary" disabled={!clientPortalPreviewHref} onClick={previewClientPortal}>Preview Client portal</Button>
-        <Button size="M" onClick={saveBranding}>Save branding</Button>
+        <Button size="M" onClick={saveBranding}>Save logo</Button>
       </div>
 
       {showSaveBeforePreview ? (
-        <ClientModal
-          title="Save branding before previewing?"
-          onClose={() => setShowSaveBeforePreview(false)}
-          footer={(
-            <>
-              <Button size="M" variant="secondary" onClick={() => setShowSaveBeforePreview(false)}>Cancel</Button>
-              <Button size="M" onClick={saveAndPreview}>Save and preview</Button>
-            </>
-          )}
-        >
-          <p className="paragraph-s">Save your latest logo and colour before opening the Client portal preview.</p>
-        </ClientModal>
-      ) : null}
-
-      {editingBrandColourIndex === "new" ? (
-        <StudioBrandColourEditor
-          colour={null}
-          onCancel={() => setEditingBrandColourIndex(null)}
-          onSave={saveColour}
-        />
+        <ConfirmationDialog title="Save branding before previewing?" description="Save your latest logo before opening the Client portal preview." confirmLabel="Save and preview" onCancel={() => setShowSaveBeforePreview(false)} onConfirm={saveAndPreview} />
       ) : null}
 
       {toast ? (

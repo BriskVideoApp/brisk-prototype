@@ -1,6 +1,6 @@
-import { CanonicalProjectStageRoute } from "@/components/project/CanonicalProjectRoutes";
+import { CanonicalMastersRoute } from "@/components/project/CanonicalMastersRoute";
 
 export default async function MastersRoute({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
-  return <CanonicalProjectStageRoute projectId={projectId} stage="masters" />;
+  return <CanonicalMastersRoute projectId={projectId} />;
 }

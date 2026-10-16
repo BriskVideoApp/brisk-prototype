@@ -65,7 +65,7 @@ export const billingPlans: readonly BillingPlan[] = [
     limits: {
       users: { label: "1 account owner + 2 collaborators", value: 3 },
       activeProjects: { label: "3", value: 3 },
-      storage: { label: "100 GB", value: 100 },
+      storage: { label: "25 GB", value: 25 },
     },
     clientPortal: {
       access: "Unlimited Client collaborators",
@@ -99,7 +99,7 @@ export const billingPlans: readonly BillingPlan[] = [
     limits: {
       users: { label: "10", value: 10 },
       activeProjects: { label: "15", value: 15 },
-      storage: { label: "500 GB", value: 500 },
+      storage: { label: "100 GB", value: 100 },
     },
     clientPortal: {
       access: "Unlimited Client collaborators",
@@ -135,7 +135,7 @@ export const billingPlans: readonly BillingPlan[] = [
     limits: {
       users: { label: "25", value: 25 },
       activeProjects: { label: "Unlimited", value: null },
-      storage: { label: "2 TB", value: 2000 },
+      storage: { label: "250 GB", value: 250 },
     },
     clientPortal: {
       access: "Unlimited Client collaborators",
@@ -239,8 +239,8 @@ export type BillingUsage = {
 };
 
 export const billingUsageFixtures = {
-  standard: { studioStaff: 6, activeProjects: 9, storageGb: 310 },
-  approachingLimit: { studioStaff: 6, activeProjects: 14, storageGb: 420 },
+  standard: { studioStaff: 6, activeProjects: 9, storageGb: 68 },
+  approachingLimit: { studioStaff: 6, activeProjects: 14, storageGb: 86 },
 } satisfies Record<string, BillingUsage>;
 
 export type SubscriptionFixture = {
@@ -260,8 +260,8 @@ const activeSubscription: SubscriptionFixture = {
   status: "active",
   billingFrequency: "monthly",
   canManageBilling: true,
-  nextRenewal: "12 September 2026",
-  effectiveDate: "12 September 2026",
+  nextRenewal: "12 October 2026",
+  effectiveDate: "12 October 2026",
   usage: billingUsageFixtures.approachingLimit,
 };
 
@@ -270,10 +270,10 @@ export const subscriptionFixtures = {
   trial: {
     ...activeSubscription,
     status: "trial",
-    nextRenewal: "27 August 2026",
-    effectiveDate: "27 August 2026",
+    nextRenewal: "15 October 2026",
+    effectiveDate: "15 October 2026",
     trialDaysRemaining: 8,
-    trialEndDate: "27 August 2026",
+    trialEndDate: "15 October 2026",
   },
   overdue: { ...activeSubscription, status: "overdue" },
   cancelling: { ...activeSubscription, status: "cancelling" },

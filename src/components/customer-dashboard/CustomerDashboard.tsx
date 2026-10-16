@@ -1,12 +1,13 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
-import { ChatPage } from "@/components/chat/ChatPage";
+import { DeferredChatPage as ChatPage } from "@/components/chat/DeferredChatPage";
 import {
   openCustomerGlobalChatEventName,
   openCustomerLatestActivityEventName,
@@ -30,6 +31,7 @@ import {
   type CustomerDashboardStatus,
 } from "@/data/customer-dashboard";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { ClientPortalPreviewBanner } from "@/components/client-portal/ClientPortalPreviewBanner";
 
 type QueueTab = "All" | "Active" | "Queued" | "Completed" | "Paused" | "Archived";
 type QueueScope = "All videos" | "Series only" | "Standalone only";
@@ -62,12 +64,12 @@ type DashboardSharedState = {
 
 type CustomerDashboardProps = {
   activity?: CustomerDashboardActivity[];
-  brandAccentId?: "purple" | "cyan" | "pink";
   clientId?: string;
   clientName?: string;
   initialProjects?: CustomerDashboardProject[];
   initialSeries?: CustomerDashboardSeries[];
   logoPreviewUrl?: string | null;
+  samplePreview?: boolean;
   storageScopeKey?: string;
   studioName?: string;
   studioPreview?: boolean;
@@ -96,12 +98,12 @@ const dashboardReferenceDate = new Date("2026-07-27T09:00:00+10:00");
 
 export function CustomerDashboard({
   activity = customerDashboardActivity,
-  brandAccentId,
   clientId,
   clientName = "Loom",
   initialProjects = customerDashboardProjects,
   initialSeries = customerDashboardSeries,
   logoPreviewUrl,
+  samplePreview = false,
   storageScopeKey = "legacy:loom",
   studioName,
   studioPreview = false,
@@ -116,7 +118,8 @@ export function CustomerDashboard({
   const searchParams = useSearchParams();
   const previewState = searchParams.get("preview");
   const isScenarioEmpty = activeScenario?.state === "new";
-  const isStudioPreview = studioPreview || searchParams.get("studio-preview") === "1";
+  const isStudioPreview = samplePreview || (selectedRole !== "Customer"
+    && (studioPreview || searchParams.get("studio-preview") === "1"));
   const canManageProjectStatus = (projectId: string) => {
     const project = prototypeState.projects.find((candidate) => candidate.id === projectId);
     return !isStudioPreview && Boolean(project && canActOnProject(viewer, project, prototypeState, "status"));
@@ -125,7 +128,6 @@ export function CustomerDashboard({
   const showStandaloneClientBrand = isClientView && !activeScenario;
   const resolvedStudioName = studioName ?? studio.details.name;
   const resolvedLogoPreviewUrl = logoPreviewUrl === undefined ? studio.branding.logoPreviewUrl : logoPreviewUrl;
-  const resolvedBrandAccentId = brandAccentId ?? studio.branding.brandAccentId;
   const initialQueueOrder = useMemo(() => createInitialQueueOrder(initialProjects), [initialProjects]);
   const initialSeriesChildOrder = useMemo(
     () => createInitialSeriesChildOrder(initialProjects, initialSeries),
@@ -154,6 +156,7 @@ export function CustomerDashboard({
   const sharedStateStorageKey = `brisk-customer-dashboard-shared-state-v1:${storageScopeKey}`;
 
   useEffect(() => {
+    if (samplePreview) return;
     const storedSharedState = window.localStorage.getItem(sharedStateStorageKey);
 
     if (storedSharedState) {
@@ -186,6 +189,7 @@ export function CustomerDashboard({
   }, []);
 
   useEffect(() => {
+    if (samplePreview) return;
     setLoadedPreferenceRole(null);
     const storedPreferences = window.localStorage.getItem(preferenceStorageKey);
 
@@ -231,6 +235,7 @@ export function CustomerDashboard({
   }, [preferenceStorageKey, selectedRole]);
 
   useEffect(() => {
+    if (samplePreview) return;
     if (loadedPreferenceRole !== selectedRole) {
       return;
     }
@@ -245,6 +250,7 @@ export function CustomerDashboard({
   }, [expandedSeriesIds, loadedPreferenceRole, preferenceStorageKey, queueOrder, selectedRole, seriesChildOrder]);
 
   useEffect(() => {
+    if (samplePreview) return;
     if (!hasLoadedSharedState) {
       return;
     }
@@ -317,9 +323,7 @@ export function CustomerDashboard({
     return () => window.removeEventListener("mousedown", closeMenus);
   }, [isFilterOpen, openMenuProjectId, openStatusProjectId]);
 
-  const visibleProjects = previewState === "empty" ? [] : isScenarioEmpty
-    ? projects.filter((project) => project.id === prototypeState.onboarding.projectId)
-    : projects;
+  const visibleProjects = previewState === "empty" ? [] : projects;
   const displayProjects = visibleProjects.map((project) => {
     const scopedProject = prototypeState.projects.find((candidate) => candidate.id === project.id
       && candidate.workspaceId === prototypeState.session.activeWorkspaceId);
@@ -344,7 +348,7 @@ export function CustomerDashboard({
   const tabProjects = displayProjects.filter((project) => selectedTab === "All"
     || (selectedTab === "Active" ? project.status === "In Production" : project.status === selectedTab));
   const isQueueFilteredEmpty = previewState === "no-results" || (tabProjects.length === 0 && selectedTab !== "All");
-  const canReorderQueue = selectedTab === "Queued" && (isClientView || selectedRole === "Studio Staff");
+  const canReorderQueue = !samplePreview && selectedTab === "Queued" && (isClientView || selectedRole === "Studio Staff");
   const visibleQueueEntries = previewState === "no-results" ? [] : queueOrder.reduce<QueueEntry[]>((entries, token) => {
     const [kind, id] = token.split(":", 2);
 
@@ -474,8 +478,9 @@ export function CustomerDashboard({
   };
 
   return (
-    <main className={`customer-dashboard-shell studio-client-accent-${resolvedBrandAccentId} ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
+    <main className={`customer-dashboard-shell studio-client-accent-purple ${isClientView ? "is-client-view" : ""} ${isStudioPreview ? "is-studio-preview" : ""}`}>
       <div className="customer-dashboard-main">
+        {isStudioPreview ? <ClientPortalPreviewBanner clientName={clientName} sample={samplePreview} /> : null}
         <header className="customer-dashboard-header">
           <div className="customer-dashboard-heading">
             {showStandaloneClientBrand ? (
@@ -489,11 +494,12 @@ export function CustomerDashboard({
             <div className="customer-dashboard-title-row">
               <h1>Your videos</h1>
               <div className="customer-dashboard-heading-actions">
-                {isStudioPreview ? <span className="customer-portal-preview-badge label-xs-semibold"><DsIcon name="eye" size={14} /> Studio preview</span> : null}
-                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>
-                  <DsIcon name="plus" size={16} />
-                  Start Video
-                </button>
+                {!samplePreview ? (
+                  <Button size="S" variant="primary" className="customer-dashboard-primary-button" type="button" onClick={startVideo}>
+                    <DsIcon name="plus" size={16} />
+                    Start Video
+                  </Button>
+                ) : null}
               </div>
             </div>
           </div>
@@ -504,9 +510,11 @@ export function CustomerDashboard({
             {displayProjects.length === 0 ? (
               <section className="customer-dashboard-global-empty">
                 <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="video-camera-ds" size={24} /></span>
-                <h2 className="headings-s-bold">Your first video starts here</h2>
-                <p className="paragraph-s">Start a video with {resolvedStudioName} and follow it from Brief through Masters.</p>
-                <button className="customer-dashboard-primary-button label-s-semibold" type="button" onClick={startVideo}>Start Video</button>
+                <h2 className="headings-s-bold">{samplePreview ? "Your videos will appear here" : "Your first video starts here"}</h2>
+                <p className="paragraph-s">{samplePreview
+                  ? "Clients will see their videos here as they move from Brief through Masters."
+                  : `Start a video with ${resolvedStudioName} and follow it from Brief through Masters.`}</p>
+                {!samplePreview ? <Button size="S" variant="primary" className="customer-dashboard-primary-button" type="button" onClick={startVideo}>Start Video</Button> : null}
               </section>
             ) : (
               <>
@@ -527,12 +535,13 @@ export function CustomerDashboard({
                 <div className={`customer-action-grid action-count-${Math.min(needsInputProjects.length, 2)}`}>
                   {needsInputProjects.map((project) => (
                     <ProductionCard
+                      readOnly={samplePreview}
                       clientName={clientName}
                       interactive={!isClientView}
                       canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                       key={project.id}
                       project={project}
-                      variant="action"
+                      needsReview
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
@@ -598,12 +607,12 @@ export function CustomerDashboard({
                 <div className={`customer-production-grid production-count-${Math.min(inProgressProjects.length, 5)}`}>
                   {inProgressProjects.map((project) => (
                     <ProductionCard
+                      readOnly={samplePreview}
                       clientName={clientName}
                       interactive={!isClientView}
                       canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                       key={project.id}
                       project={project}
-                      variant="compact"
                       series={project.seriesId ? seriesById.get(project.seriesId) : undefined}
                       onOpenChat={() => { setChatProjectId(project.id); setOpenMenuProjectId(null); }}
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
@@ -623,7 +632,7 @@ export function CustomerDashboard({
                 <div className="customer-production-empty">
                   <strong className="headings-2xs-bold">No videos in production</strong>
                   <span className="label-s">Your planned videos appear in All videos.</span>
-                  <button className="customer-dashboard-secondary-button label-s-semibold" type="button" onClick={() => document.getElementById("customer-all-videos-title")?.scrollIntoView({ behavior: "smooth" })}>View all videos</button>
+                  <Button size="S" variant="secondary" className="customer-dashboard-secondary-button" type="button" onClick={() => document.getElementById("customer-all-videos-title")?.scrollIntoView({ behavior: "smooth" })}>View all videos</Button>
                 </div>
               )}
             </section>
@@ -702,6 +711,7 @@ export function CustomerDashboard({
                   if (entry.kind === "project") {
                     return (
                       <QueueProjectRow
+                        readOnly={samplePreview}
                         canManageTeam={selectedRole === "Studio Staff" && !isStudioPreview}
                         clientName={clientName}
                         interactive={canReorderQueue}
@@ -873,13 +883,12 @@ export function CustomerDashboard({
                     <span className="customer-queue-empty-icon"><DsIcon name="queue" size={24} /></span>
                     <strong className="headings-2xs-bold">{isQueueFilteredEmpty ? "No videos in this view" : "Plan your next video"}</strong>
                     <p className="paragraph-s">{isQueueFilteredEmpty ? "There are no videos matching this status or filter." : "Add videos here to plan ahead. Drag any into production when you’re ready."}</p>
-                    <button
-                      className={`${isQueueFilteredEmpty ? "customer-dashboard-secondary-button" : "customer-dashboard-primary-button"} label-s-semibold`}
+                    <Button size="S" variant={isQueueFilteredEmpty ? "secondary" : "primary"}
                       type="button"
                       onClick={isQueueFilteredEmpty ? clearQueueControls : startVideo}
                     >
                       {isQueueFilteredEmpty ? "Show all videos" : "Start Video"}
-                    </button>
+                    </Button>
                   </div>
                 ) : null}
               </div>
@@ -977,7 +986,7 @@ function ActivityPanel({
             <span className="customer-queue-empty-icon" aria-hidden="true"><DsIcon name="clock-clockwise" size={24} /></span>
             <h3 className="headings-2xs-bold">No activity yet</h3>
             <p className="paragraph-s">Approvals, uploads, messages and status changes will appear here.</p>
-            <button className="customer-dashboard-secondary-button label-s-semibold" type="button" onClick={onClose}>View videos</button>
+            <Button size="S" variant="secondary" className="customer-dashboard-secondary-button" type="button" onClick={onClose}>View videos</Button>
           </div>
         ) : activity.slice(0, 10).map((activity) => {
           const activityContent = (
@@ -1003,11 +1012,12 @@ function ActivityPanel({
 }
 
 function ProductionCard({
+  readOnly = false,
   clientName,
   interactive,
   canManageTeam,
   project,
-  variant,
+  needsReview = false,
   series,
   onOpenChat,
   onCopyProjectLink,
@@ -1017,11 +1027,12 @@ function ProductionCard({
   onToggleMenu,
   studioName,
 }: {
+  readOnly?: boolean;
   clientName: string;
   interactive: boolean;
   canManageTeam: boolean;
   project: CustomerDashboardProject;
-  variant: "action" | "compact";
+  needsReview?: boolean;
   series?: CustomerDashboardSeries;
   onOpenChat: () => void;
   onCopyProjectLink: () => void;
@@ -1034,32 +1045,39 @@ function ProductionCard({
   const projectHref = getProjectEntryHref(project);
 
   return (
-    <article
-      className={`customer-production-card customer-production-card-${variant}`}
-    >
-      <Link
-        className="customer-project-surface-link"
-        href={projectHref}
-        aria-label={`Open ${project.name}`}
-        draggable={false}
-      />
+    <article className="customer-production-card">
+      {!readOnly ? (
+        <Link
+          className="customer-project-surface-link"
+          href={projectHref}
+          aria-label={`Open ${project.name}`}
+          draggable={false}
+        />
+      ) : null}
       <div className="customer-production-card-top">
         <div className="customer-production-card-copy">
           <span className="customer-project-code label-xs-semibold">{project.code}</span>
           <CustomerProjectDestination className="customer-production-card-title headings-2xs-bold" project={project} />
-          {variant === "compact" ? (
+          {!needsReview ? (
             <span className="customer-project-next-step label-s">{getProgressStatusSentence(project, studioName)}</span>
           ) : null}
           <span className="customer-latest-action label-xs">
-            {getLatestActionCopy(project, variant)}
+            {getLatestActionCopy(project, needsReview)}
           </span>
-          {variant === "action" ? (
-            <Link className="customer-dashboard-primary-button customer-project-primary-action label-s-semibold" href={projectHref}>
-              {getClientActionLabel(project)}
-              <DsIcon name="arrow-right" size={16} />
-            </Link>
+          {needsReview ? (
+            readOnly ? (
+              <span className="customer-dashboard-primary-button customer-project-primary-action label-s-semibold">
+                {getClientActionLabel(project)}
+                <DsIcon name="arrow-right" size={16} />
+              </span>
+            ) : (
+              <Link className="customer-dashboard-primary-button customer-project-primary-action label-s-semibold" href={projectHref}>
+                {getClientActionLabel(project)}
+                <DsIcon name="arrow-right" size={16} />
+              </Link>
+            )
           ) : null}
-          {variant === "compact" && series ? (
+          {series ? (
             <div className="customer-production-card-tags">
               <span className="customer-series-chip label-xs-semibold">Series: {series.name}</span>
             </div>
@@ -1067,62 +1085,63 @@ function ProductionCard({
         </div>
       </div>
       <div className="customer-production-card-actions">
-        <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
-          <DsIcon name="chats" size={18} />
-          <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
-        </button>
-        <div className="customer-project-menu-wrap">
-          <button
-            className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
-            type="button"
-            aria-label={`Open actions for ${project.name}`}
-            aria-expanded={isMenuOpen}
-            onClick={onToggleMenu}
-          >
-            <DsIcon name="dots-three" size={18} />
-          </button>
-          {isMenuOpen ? (
-            <ProjectActionsMenu
-              project={project}
-              canManageTeam={canManageTeam}
-              onCopyProjectLink={onCopyProjectLink}
-              onOpenChat={onOpenChat}
-              onChangeStatus={onChangeStatus}
-              statusOptions={statusOptions}
-            />
-          ) : null}
-        </div>
+        {readOnly ? (
+          <>
+            <span className="customer-dashboard-icon-button" aria-hidden="true">
+              <DsIcon name="chats" size={18} />
+              <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
+            </span>
+            <span className="customer-dashboard-icon-button customer-dashboard-menu-trigger" aria-hidden="true">
+              <DsIcon name="dots-three" size={18} />
+            </span>
+          </>
+        ) : (
+          <>
+            <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
+              <DsIcon name="chats" size={18} />
+              <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
+            </button>
+            <div className="customer-project-menu-wrap">
+              <button
+                className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
+                type="button"
+                aria-label={`Open actions for ${project.name}`}
+                aria-expanded={isMenuOpen}
+                onClick={onToggleMenu}
+              >
+                <DsIcon name="dots-three" size={18} />
+              </button>
+              {isMenuOpen ? (
+                <ProjectActionsMenu
+                  project={project}
+                  canManageTeam={canManageTeam}
+                  onCopyProjectLink={onCopyProjectLink}
+                  onOpenChat={onOpenChat}
+                  onChangeStatus={onChangeStatus}
+                  statusOptions={statusOptions}
+                />
+              ) : null}
+            </div>
+          </>
+        )}
       </div>
 
-      {variant === "action" ? (
-        <div className="customer-client-stage-progress">
-          <StageProgress
-            showAge={false}
-            projectId={project.id}
-            projectName={project.name}
-            stages={project.stages}
-            studioName={studioName}
-            customerName={clientName}
-          />
-        </div>
-      ) : (
-        <div className="customer-client-stage-progress">
-          <StageProgress
-            compact
-            showAge={false}
-            projectId={project.id}
-            projectName={project.name}
-            stages={project.stages}
-            studioName={studioName}
-            customerName={clientName}
-          />
-        </div>
-      )}
+      <div className="customer-client-stage-progress" inert={readOnly ? true : undefined}>
+        <StageProgress
+          showAge={false}
+          projectId={project.id}
+          projectName={project.name}
+          stages={project.stages}
+          studioName={studioName}
+          customerName={clientName}
+        />
+      </div>
     </article>
   );
 }
 
 function QueueProjectRow({
+  readOnly = false,
   canManageStatus,
   canManageTeam,
   clientName,
@@ -1147,6 +1166,7 @@ function QueueProjectRow({
   onToggleMenu,
   studioName,
 }: {
+  readOnly?: boolean;
   canManageStatus: boolean;
   canManageTeam: boolean;
   clientName: string;
@@ -1194,12 +1214,14 @@ function QueueProjectRow({
         onDragEnd();
       } : undefined}
     >
-      <Link
-        className="customer-project-surface-link"
-        href={projectHref}
-        aria-label={`Open ${project.name}`}
-        draggable={false}
-      />
+      {!readOnly ? (
+        <Link
+          className="customer-project-surface-link"
+          href={projectHref}
+          aria-label={`Open ${project.name}`}
+          draggable={false}
+        />
+      ) : null}
       {interactive ? <span className="customer-queue-drag" aria-hidden="true"><DsIcon name="dots-six-vertical" size={18} /></span> : null}
       <div className="customer-queue-project" role="cell">
         <span className="customer-project-code label-xs-semibold">{project.code}</span>
@@ -1234,32 +1256,36 @@ function QueueProjectRow({
         {formatCreatedDate(project.createdAt)}
       </time>
       <div className="customer-queue-actions" role="cell">
-        <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
-          <DsIcon name="chats" size={18} />
-          <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
-        </button>
-        <div className="customer-project-menu-wrap">
-          <button
-            className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
-            type="button"
-            aria-label={`Open actions for ${project.name}`}
-            aria-expanded={isMenuOpen}
-            onClick={onToggleMenu}
-          >
-            <DsIcon name="dots-three" size={18} />
-          </button>
-          {isMenuOpen ? (
-            <ProjectActionsMenu
-              project={project}
-              canManageTeam={canManageTeam}
-              onChangeStatus={canManageStatus ? onChangeStatus : undefined}
-              onCopyProjectLink={onCopyProjectLink}
-              onOpenChat={onOpenChat}
-              onStart={canManageStatus && interactive ? onStart : undefined}
-              statusOptions={canManageStatus ? statusOptions : undefined}
-            />
-          ) : null}
-        </div>
+        {!readOnly ? (
+          <>
+            <button className="customer-dashboard-icon-button" type="button" aria-label={`Open chat for ${project.name}`} onClick={onOpenChat}>
+              <DsIcon name="chats" size={18} />
+              <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
+            </button>
+            <div className="customer-project-menu-wrap">
+              <button
+                className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
+                type="button"
+                aria-label={`Open actions for ${project.name}`}
+                aria-expanded={isMenuOpen}
+                onClick={onToggleMenu}
+              >
+                <DsIcon name="dots-three" size={18} />
+              </button>
+              {isMenuOpen ? (
+                <ProjectActionsMenu
+                  project={project}
+                  canManageTeam={canManageTeam}
+                  onChangeStatus={canManageStatus ? onChangeStatus : undefined}
+                  onCopyProjectLink={onCopyProjectLink}
+                  onOpenChat={onOpenChat}
+                  onStart={canManageStatus && interactive ? onStart : undefined}
+                  statusOptions={canManageStatus ? statusOptions : undefined}
+                />
+              ) : null}
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );
@@ -1400,14 +1426,14 @@ function getProgressStatusSentence(project: CustomerDashboardProject, studioName
   return `Waiting on ${studioName} to work on the ${stage}`;
 }
 
-function getLatestActionCopy(project: CustomerDashboardProject, variant: "action" | "compact") {
+function getLatestActionCopy(project: CustomerDashboardProject, needsReview: boolean) {
   const relativeTime = formatRelativeTime(project.latestAction.timestamp);
 
-  if (variant === "action" && project.latestAction.label.toLowerCase().includes("shared")) {
+  if (needsReview && project.latestAction.label.toLowerCase().includes("shared")) {
     return `${project.latestAction.label} · ${formatRelativeTimeWords(project.latestAction.timestamp)}`;
   }
 
-  return variant === "action" ? `Updated ${relativeTime}` : `${project.latestAction.label} · ${relativeTime}`;
+  return needsReview ? `Updated ${relativeTime}` : `${project.latestAction.label} · ${relativeTime}`;
 }
 
 function formatRelativeTimeWords(timestamp: string) {

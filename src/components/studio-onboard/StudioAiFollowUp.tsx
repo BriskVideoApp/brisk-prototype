@@ -114,7 +114,7 @@ export function StudioAiFollowUp({
     contextualAnswer: "",
     productionModel: null,
     productionScale: null,
-    videoTypeIds: scenario.generatedSetup.videoTypeNames.filter((videoTypeId) => videoTypeId !== "Live Action"),
+    videoTypeIds: [],
     customVideoTypes: [],
     customVideoType: null,
     customVideoTypeIcon: null,
@@ -128,10 +128,6 @@ export function StudioAiFollowUp({
     const initialAnswer = initialAnswers?.contextualAnswer ?? "";
     return initialAnswer.length > 0 && !scenario.suggestedAnswers.includes(initialAnswer);
   });
-  const [showProductionScaleQuestion, setShowProductionScaleQuestion] = useState(() => (
-    initialStepId === "production-model"
-      && initialAnswers?.productionModel === "shoot-and-post"
-  ));
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [showMoreVideoTypes, setShowMoreVideoTypes] = useState(() => Boolean(
     normaliseCustomVideoTypes(initialAnswers).length > 0
@@ -148,14 +144,9 @@ export function StudioAiFollowUp({
   const isCustomAnswer = showCustomAnswerOption && isCustomAnswerSelected;
   const canContinue = getCanContinue(activeStepId, answers)
     && !(activeStepId === "video-types" && isCustomVideoTypeInputOpen);
-  const usesProductionScale = answers.productionModel === "shoot-and-post";
-  const questionCount = usesProductionScale ? 4 : 3;
-  const questionNumber = activeStepId === "contextual"
-    ? 1
-    : activeStepId === "production-model"
-      ? showProductionScaleQuestion ? 3 : 2
-      : usesProductionScale ? 4 : 3;
-  const showExplicitAction = isCustomAnswer || activeStepId === "video-types";
+  const questionCount = 3;
+  const questionNumber = activeStepId === "contextual" ? 1 : activeStepId === "production-model" ? 2 : 3;
+  const showExplicitAction = isCustomAnswer || activeStepId === "video-types" || (canContinue && !isAdvancing);
 
   useEffect(() => () => {
     if (advanceTimerRef.current !== null) {
@@ -194,22 +185,11 @@ export function StudioAiFollowUp({
   }
 
   function selectProductionModel(productionModel: "shoot-and-post" | "post-production-only") {
-    if (productionModel === "shoot-and-post") {
-      updateAnswers({ ...answers, productionModel });
-      advanceAfterSelection(() => setShowProductionScaleQuestion(true));
-      return;
-    }
-
     updateAnswers({
       ...answers,
       productionModel,
       productionScale: null,
     });
-    advanceAfterSelection(() => goToStep("video-types"));
-  }
-
-  function selectProductionScale(productionScale: NonNullable<StudioFollowUpAnswers["productionScale"]>) {
-    updateAnswers({ ...answers, productionScale });
     advanceAfterSelection(() => goToStep("video-types"));
   }
 
@@ -225,32 +205,16 @@ export function StudioAiFollowUp({
       return;
     }
 
-    if (activeStepId === "contextual" && isCustomAnswer) {
+    if (activeStepId === "contextual") {
       goToStep("production-model");
+      return;
     }
+
+    goToStep("video-types");
   }
 
   function goBack() {
-    if (activeStepId === "contextual") {
-      onBack();
-      return;
-    }
-
-    if (activeStepId === "production-model" && showProductionScaleQuestion) {
-      setShowProductionScaleQuestion(false);
-      return;
-    }
-
-    if (activeStepId === "video-types") {
-      setShowProductionScaleQuestion(answers.productionModel === "shoot-and-post");
-      goToStep("production-model");
-      return;
-    }
-
-    if (activeStepId === "production-model") {
-      setShowProductionScaleQuestion(false);
-      goToStep("contextual");
-    }
+    onBack();
   }
 
   function toggleVideoType(videoTypeId: BriefVideoTypeId) {
@@ -363,7 +327,7 @@ export function StudioAiFollowUp({
           </>
         ) : null}
 
-        {activeStepId === "production-model" && !showProductionScaleQuestion ? (
+        {activeStepId === "production-model" ? (
           <>
             <FollowUpIntro
               question="Do you shoot footage, or do you only do post-production?"
@@ -383,32 +347,6 @@ export function StudioAiFollowUp({
                   onClick={() => selectProductionModel("post-production-only")}
                 />
               </div>
-            </div>
-          </>
-        ) : null}
-
-        {activeStepId === "production-model" && showProductionScaleQuestion ? (
-          <>
-            <FollowUpIntro question="What size are your crews?" />
-            <div className="studio-follow-up-chips" role="group" aria-label="Typical production size">
-              <FollowUpChip
-                label="Small (1-3 people)"
-                selected={answers.productionScale === "run-and-gun"}
-                disabled={isAdvancing}
-                onClick={() => selectProductionScale("run-and-gun")}
-              />
-              <FollowUpChip
-                label="Large (4+ people)"
-                selected={answers.productionScale === "larger-production"}
-                disabled={isAdvancing}
-                onClick={() => selectProductionScale("larger-production")}
-              />
-              <FollowUpChip
-                label="Varies by project"
-                selected={answers.productionScale === "varies"}
-                disabled={isAdvancing}
-                onClick={() => selectProductionScale("varies")}
-              />
             </div>
           </>
         ) : null}
@@ -434,8 +372,8 @@ export function StudioAiFollowUp({
                 );
               })}
             </div>
-            <button
-              className="studio-review-text-button studio-video-types-more-action label-s-semibold"
+            <Button size="S" variant="ghost"
+              className="studio-review-text-button studio-video-types-more-action"
               type="button"
               aria-controls="studio-additional-video-types"
               aria-expanded={showMoreVideoTypes}
@@ -445,7 +383,7 @@ export function StudioAiFollowUp({
               <span className={showMoreVideoTypes ? "is-expanded" : ""}>
                 <DsIcon name="caret-down" size={14} />
               </span>
-            </button>
+            </Button>
             {showMoreVideoTypes ? (
               <div
                 className="studio-follow-up-video-grid"
@@ -544,18 +482,18 @@ export function StudioAiFollowUp({
 
         <footer className="studio-follow-up-footer">
           <div className="studio-follow-up-actions">
-            <button
-              className="studio-follow-up-back label-s-semibold"
+            <Button size="S" variant="secondary"
+              className="studio-follow-up-back"
               type="button"
               onClick={goBack}
               disabled={isAdvancing}
             >
               Back
-            </button>
+            </Button>
             {showExplicitAction ? (
-              <button className="studio-follow-up-continue label-m-semibold" type="submit" disabled={!canContinue}>
+              <Button size="M" variant="primary" className="studio-follow-up-continue" type="submit" disabled={!canContinue}>
                 Continue
-              </button>
+              </Button>
             ) : <span />}
           </div>
         </footer>
@@ -639,12 +577,12 @@ function StudioVideoTypeCheckboxCard({
   );
 }
 
-function getCanContinue(stepId: StudioFollowUpStepId, answers: StudioFollowUpAnswers) {
+function getCanContinue(
+  stepId: StudioFollowUpStepId,
+  answers: StudioFollowUpAnswers,
+) {
   if (stepId === "contextual") return answers.contextualAnswer.trim().length > 0;
-  if (stepId === "production-model") {
-    return answers.productionModel === "post-production-only"
-      || (answers.productionModel === "shoot-and-post" && answers.productionScale !== null);
-  }
+  if (stepId === "production-model") return answers.productionModel !== null;
   if (stepId === "video-types") {
     return answers.videoTypeIds.length > 0 || Boolean(answers.customVideoTypes?.length);
   }

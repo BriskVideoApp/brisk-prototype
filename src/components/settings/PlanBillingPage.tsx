@@ -112,8 +112,7 @@ export function PlanBillingPage({ embedded = false }: { embedded?: boolean }) {
     <main className={`plan-billing-page ${embedded ? "is-embedded" : ""}`}>
       {embedded ? null : <header className="plan-billing-header">
         <div className="plan-billing-header-inner">
-          <span className="label-xs-semibold">Studio settings</span>
-          <h1 className="headings-m-bold">Plan &amp; billing</h1>
+          <h1 className="headings-m-bold">Brisk plan &amp; billing</h1>
           <p className="paragraph-s">Manage your Brisk plan, usage and billing details.</p>
         </div>
       </header>}
@@ -132,7 +131,7 @@ export function PlanBillingPage({ embedded = false }: { embedded?: boolean }) {
           <BillingAlert
             type="info"
             title={`${currentPlan.name} trial`}
-            body={`Your Professional trial ends in ${fixture.trialDaysRemaining ?? 0} days.`}
+            body={`Your ${currentPlan.name} trial ends in ${fixture.trialDaysRemaining ?? 0} days.`}
             action={canManageBilling ? <Button size="M" variant="secondary" onClick={openPlanComparison}>Compare plans</Button> : null}
           />
         ) : null}
@@ -159,10 +158,8 @@ export function PlanBillingPage({ embedded = false }: { embedded?: boolean }) {
 
         <div className="plan-billing-two-column">
           <UsageCard
-            canManageBilling={canManageBilling}
             plan={currentPlan}
             usage={fixture.usage}
-            onViewUpgrades={openPlanComparison}
           />
           <BillingAccountCard canManageBilling={canManageBilling} onManageBilling={manageBilling} />
         </div>
@@ -279,7 +276,6 @@ function CurrentPlanCard({
       </div>
 
       <dl className="billing-current-meta">
-        <div><dt className="label-xs">Billing frequency</dt><dd className="label-m-semibold">{frequencyLabel(billingFrequency)}</dd></div>
         {status === "trial" ? (
           <>
             <div><dt className="label-xs">Days remaining</dt><dd className="label-m-semibold">{trialDaysRemaining}</dd></div>
@@ -300,13 +296,9 @@ function CurrentPlanCard({
 }
 
 function UsageCard({
-  canManageBilling,
-  onViewUpgrades,
   plan,
   usage,
 }: {
-  canManageBilling: boolean;
-  onViewUpgrades: () => void;
   plan: BillingPlan;
   usage: BillingUsage;
 }) {
@@ -328,7 +320,6 @@ function UsageCard({
         <div className="billing-usage-warning">
           <span><DsIcon name="alert-triangle" size={16} /></span>
           <p className="label-s-semibold">You’re approaching your active project limit.</p>
-          {canManageBilling ? <Button size="S" variant="secondary" onClick={onViewUpgrades}>View upgrade options</Button> : null}
         </div>
       ) : null}
     </section>
@@ -441,7 +432,7 @@ function AddOnsCard({
               ) : !available ? (
                 canManageBilling ? <Button size="S" variant="secondary" onClick={onViewRequiredPlan}>View {addOn.requiredPlanLabel ?? "plan"}</Button> : <span className="billing-locked-badge label-xs-semibold">{addOn.requiredPlanLabel ?? "Higher plan"}</span>
               ) : added ? (
-                <button className="billing-disabled-button label-s-semibold" type="button" disabled>Added</button>
+                <Button size="S" variant="secondary" className="billing-disabled-button" type="button" disabled>Added</Button>
               ) : canManageBilling ? (
                 <Button size="S" variant="secondary" onClick={() => onAdd(addOn)}>Add</Button>
               ) : null}

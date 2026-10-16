@@ -49,6 +49,8 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   const { state } = usePrototypeState();
   const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const prefilledProjectIds = prefill.projectIds ?? [];
+  const isBriefSendInvite = prefill.purpose === "brief-send";
+  const briefProjectName = workspaceProjects.find((project) => project.id === (prefill.projectId ?? prefilledProjectIds[0]))?.name ?? "this project";
   const projectClientIds = prefilledProjectIds
     .map((projectId) => workspaceProjects.find((project) => project.id === projectId)?.clientId)
     .filter((clientId): clientId is string => Boolean(clientId));
@@ -158,18 +160,22 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   return (
     <ClientModal
       className="invite-person-modal"
-      title="Invite person"
-      description={`Step ${step} of 2 - ${step === 1 ? "Who are you inviting?" : "Add the relevant details"}`}
+      title={isBriefSendInvite ? "Invite Client and send Brief" : "Invite person"}
+      description={isBriefSendInvite
+        ? step === 1
+          ? `They can't access ${briefProjectName} yet. Invite them to Brisk with access to this project.`
+          : `We'll send the Brief to ${inviteeName} for review after you send the invite.`
+        : `Step ${step} of 2 - ${step === 1 ? "Who are you inviting?" : "Add the relevant details"}`}
       onClose={onClose}
       footer={step === 1 ? (
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <button className="client-primary-button label-m-semibold" type="button" disabled={!emailIsValid} onClick={goNext}>Next</button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" variant="primary"  type="button" disabled={!emailIsValid} onClick={goNext}>Next</Button>
         </>
       ) : (
         <>
-          <Button size="M" variant="secondary" onClick={() => setStep(1)}>Back</Button>
-          <button className="client-primary-button label-m-semibold" type="button" disabled={!canSend} onClick={send}>Send invite</button>
+          <Button size="S" variant="secondary" onClick={() => setStep(1)}>Back</Button>
+          <Button size="S" variant="primary"  type="button" disabled={!canSend} onClick={send}>{isBriefSendInvite ? "Invite and send Brief" : "Send invite"}</Button>
         </>
       )}
     >
@@ -203,7 +209,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
           <>
             <section className="invite-person-summary" aria-label="Person being invited">
               <span><strong className="label-m-semibold">{name.trim() || existingPerson?.name || normalisedEmail}</strong><small className="label-xs">{normalisedEmail}</small></span>
-              <button className="client-text-button label-xs-semibold" type="button" onClick={() => setStep(1)}>Change</button>
+              <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => setStep(1)}>Change</Button>
             </section>
 
             {role === "Studio Staff" ? (

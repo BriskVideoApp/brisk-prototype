@@ -1,7 +1,10 @@
 "use client";
 
+import { Button } from "../../../../Brisk DS/src/app/components/Button";
+
+import { EditingDialog } from "../../../../Brisk DS/src/app/components/EditingDialog";
+
 import { useState } from "react";
-import { DsIcon } from "@/components/video-review/DsIcon";
 import { stageLabels, teamRoleLabels } from "@/data/active-videos/teamDefaults";
 import type { RoleSlot, StageKey } from "@/components/active-videos/types";
 
@@ -23,18 +26,11 @@ export function EditStagesModal({ role, stages, onClose, onSave }: EditStagesMod
   };
 
   return (
-    <div className="team-modal-backdrop" role="presentation" onClick={onClose}>
-      <section className="team-modal" role="dialog" aria-modal="true" aria-label={`Edit stages for ${roleLabel}`} onClick={(event) => event.stopPropagation()}>
-        <header className="team-modal-header">
-          <div>
-            <h2 className="team-modal-title heading-3xs">Edit stages covered</h2>
-            <p className="team-modal-subtitle label-s">{roleLabel}</p>
-          </div>
-          <button className="team-modal-close" type="button" aria-label="Close stage editor" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </header>
-        <div className="team-stage-list">
+    <> <EditingDialog title="Edit stages covered" description={roleLabel} onCancel={onClose} size="standard" actions={<> <Button size="S" variant="secondary"  type="button" onClick={onClose}>
+            Cancel
+          </Button>  <Button size="S" variant="primary"  type="button" onClick={() => onSave(selectedStages)}>
+            Save
+          </Button> </>}>  <div className="team-stage-list">
           {stages.map((stage) => {
             const isSelected = selectedStages.includes(stage);
 
@@ -45,16 +41,6 @@ export function EditStagesModal({ role, stages, onClose, onSave }: EditStagesMod
               </button>
             );
           })}
-        </div>
-        <div className="team-modal-actions">
-          <button className="team-secondary-button label-s-semibold" type="button" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="team-primary-button label-s-semibold" type="button" onClick={() => onSave(selectedStages)}>
-            Save
-          </button>
-        </div>
-      </section>
-    </div>
+        </div>  </EditingDialog> </>
   );
 }

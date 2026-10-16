@@ -16,6 +16,7 @@ export type ClientContact = {
 export type Client = {
   id: string;
   name: string;
+  projectCodePrefix?: string;
   badge: string;
   type: ClientType;
   status: ClientStatus;
@@ -232,6 +233,10 @@ export function getClientInitials(name: string) {
     .slice(0, 2)
     .map((word) => word.charAt(0).toLocaleUpperCase("en-AU"))
     .join("");
+}
+
+export function getDefaultProjectCodePrefix(name: string) {
+  return name.toLocaleLowerCase("en-AU").replace(/[^a-z]/gu, "").slice(0, 5) || "client";
 }
 
 export function makeClientId(name: string) {

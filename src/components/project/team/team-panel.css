@@ -206,8 +206,7 @@
   padding: 8px;
 }
 
-.team-role-menu button,
-.team-add-role-menu button {
+.team-role-menu button {
   min-height: 34px;
   border: 0;
   background: transparent;
@@ -217,7 +216,6 @@
 }
 
 .team-role-menu button:hover,
-.team-add-role-menu button:hover,
 .team-person-option:hover,
 .team-stage-option:hover {
   background: var(--brisk-brand-secondary);
@@ -311,6 +309,8 @@
   position: relative;
 }
 
+.team-add-role-wrap.brisk-select { width: auto; }
+
 .team-add-role-button,
 .team-panel-reset,
 .team-primary-button,
@@ -349,27 +349,9 @@
   box-shadow: none;
 }
 
-.team-add-role-menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 25;
-  display: grid;
-  width: 240px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  gap: 4px;
-  padding: 8px;
-}
-
 .team-custom-role {
   display: grid;
-  border-top: 1px solid var(--brisk-border-secondary);
-  gap: 8px;
-  margin-top: 4px;
-  padding: 12px 8px 4px;
+  gap: var(--brisk-space-s);
 }
 
 .team-inline-input {
@@ -383,10 +365,10 @@
 }
 
 .team-hours-needed-input {
-  width: 56px;
-  min-height: 28px;
-  padding: 0 var(--brisk-space-s);
-  text-align: center;
+  width: calc(var(--brisk-space-3xl) * 2);
+  min-height: var(--brisk-space-3xl);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
+  text-align: left;
 }
 
 .team-modal-backdrop {
@@ -975,46 +957,6 @@
   gap: var(--brisk-space-s);
 }
 
-.team-role-settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--brisk-space-l);
-}
-
-.team-stage-hours-list {
-  display: grid;
-  justify-items: start;
-  gap: var(--brisk-space-s);
-}
-
-.team-stage-hours-row {
-  display: flex;
-  align-items: center;
-  gap: var(--brisk-space-m);
-}
-
-.team-stage-hours-row > label {
-  min-width: var(--brisk-space-3xl);
-}
-
-.team-stage-hours-remove {
-  display: inline-flex;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  padding: var(--brisk-space-none);
-}
-
-.team-stage-hours-remove:hover .team-checkbox,
-.team-stage-hours-remove:focus-visible .team-checkbox {
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.team-stage-hours-total {
-  color: var(--brisk-text-secondary);
-}
-
 .team-role-save {
   justify-self: start;
 }
@@ -1106,6 +1048,10 @@
   gap: var(--brisk-space-s);
 }
 
+.team-fill-actions-staff {
+  justify-content: flex-end;
+}
+
 .team-fill-primary-actions {
   display: inline-flex;
   flex-wrap: wrap;
@@ -1148,11 +1094,6 @@
 
   .team-role-row {
     grid-template-columns: minmax(var(--brisk-space-none), 1fr);
-  }
-
-  .team-role-settings-row {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .team-stage-list.compact {
@@ -1231,16 +1172,25 @@
 
 .team-capacity-status {
   display: inline-flex;
-  width: max-content;
+  width: var(--brisk-space-s);
+  height: var(--brisk-space-s);
+  flex: 0 0 auto;
   align-items: center;
-  gap: var(--brisk-space-xs);
+  justify-content: center;
+  border-radius: var(--brisk-radius-full);
+  cursor: help;
 }
 
 .team-capacity-status > span {
-  width: var(--brisk-space-s);
-  height: var(--brisk-space-s);
+  width: 100%;
+  height: 100%;
   border-radius: var(--brisk-radius-full);
   background: currentColor;
+}
+
+.team-capacity-status:focus-visible {
+  outline: 2px solid var(--brisk-brand-primary-click);
+  outline-offset: 2px;
 }
 
 .team-capacity-status.is-plenty {
@@ -1335,4 +1285,40 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--brisk-space-s);
+}
+
+.team-role-editor .team-modal-header {
+  align-items: center;
+}
+
+.team-role-editor .team-modal-title {
+  margin: 0;
+}
+
+.team-role-editor .team-person-group-heading {
+  display: grid;
+  justify-items: start;
+  gap: var(--brisk-space-s);
+}
+
+.team-assign-heading {
+  margin: 0;
+  color: var(--brisk-text-primary);
+}
+
+.team-assign-button {
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
+  padding-right: var(--brisk-space-xl);
+  padding-left: var(--brisk-space-xl);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.team-role-editor .team-show-all-button {
+  color: var(--brisk-text-secondary);
+  font-size: 12px;
+}
+
+.team-role-editor .team-show-all-button:hover {
+  color: var(--brisk-text-primary);
 }

@@ -1,5 +1,9 @@
 "use client";
 
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
+import { ConfirmationDialog, useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -21,7 +25,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
-import { BriskDatePicker } from "@/components/brief/BriefPage";
+import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
@@ -1902,7 +1906,7 @@ export function ShootStagePage({ project }: { project: Project }) {
       {skipSetupPath ? <SkipShootModuleModal path={skipSetupPath} onCancel={() => setSkipSetupPath(null)} onConfirm={confirmSkipSetup} /> : null}
       {isExistingPlanOpen ? <ExistingShootPlanModal existingPlan={existingPlan} onClose={() => setIsExistingPlanOpen(false)} onSave={attachExistingPlan} /> : null}
       {isAccessOpen ? <ShootAccessModal settings={accessSettings} onChange={setAccessSettings} onClose={() => setIsAccessOpen(false)} /> : null}
-      {toast ? <div className="shoot-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={18} />{toast}{toastAction === "add-person" ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => { setToast(""); setToastAction(null); setIsExistingPersonOpen(true); }}>Add another</button> : null}{toastAction === "undo-suggestion" ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={undoSuggestionAction}>Undo</button> : null}</div> : null}
+      {toast ? <div className="shoot-toast label-s-semibold" role="status"><DsIcon name="check-circle" size={18} />{toast}{toastAction === "add-person" ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setToast(""); setToastAction(null); setIsExistingPersonOpen(true); }}>Add another</Button> : null}{toastAction === "undo-suggestion" ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={undoSuggestionAction}>Undo</Button> : null}</div> : null}
     </main>
   );
 }
@@ -2510,7 +2514,7 @@ function ShootPreProductionWorkspace({
   if (workflowSetup.mode === "simple") {
     return <div className="shoot-preproduction-shell is-mode-on-set shoot-simple-workspace">
       <div className="shoot-simple-workspace-toolbar">
-        <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => selectNavigationItem("quick-start")}><DsIcon name="sparkle" size={16} />Edit Setup</button>
+        <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => selectNavigationItem("quick-start")}><DsIcon name="sparkle" size={16} />Edit Setup</Button>
       </div>
       {currentDay && hasOnSetShootStarted(callSheet, currentDay) ? <OnSetNowNextStrip callSheet={callSheet} day={currentDay} onOpenCurrent={openCurrentOnSetBlock} onSelectDay={selectOnSetDay} /> : null}
       {currentDay && !hasOnSetShootStarted(callSheet, currentDay) && callSheet.days.length > 1 ? <div className="shoot-on-set-global-day"><BriskSelect
@@ -2754,7 +2758,7 @@ function ShootPreProductionWorkspace({
         placeholder="Choose section"
         onChange={(value) => { if (value) selectNavigationItem(value); }}
       />
-      {usesCallSheetOnSet ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => changeShootMode("on-set")}><DsIcon name="file-text" size={16} />View Call Sheet</button> : null}
+      {usesCallSheetOnSet ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => changeShootMode("on-set")}><DsIcon name="file-text" size={16} />View Call Sheet</Button> : null}
     </div> : null}
 
     <div className={`shoot-preproduction-layout ${showSectionNavigation ? "" : "without-navigation"} ${isNavigationExpanded ? "is-navigation-expanded" : ""}`}>
@@ -2787,7 +2791,7 @@ function ShootPreProductionWorkspace({
           <span><DsIcon name={existingPlan.source === "link" ? "link" : "file-text"} size={20} /></span>
           <div><strong>Existing plan attached</strong><small className="label-xs">{existingPlan.name} · {formatExistingPlanCoverage(existingPlan.coverage)} · Added by {existingPlan.addedBy} on {existingPlan.addedAt}</small></div>
           {existingPlan.url ? <a className="shoot-button secondary label-xs-semibold" href={existingPlan.url} target="_blank" rel="noreferrer">Open</a> : null}
-          {canEdit ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={onOpenExistingPlan}>Replace</button> : null}
+          {canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onOpenExistingPlan}>Replace</Button> : null}
         </aside> : null}
         {activeReadySection && activePlanningReadiness?.hasChanges && activeReadinessConfig ? <PlanningSectionChangesNotice
           label={activeReadinessConfig.label}
@@ -3315,7 +3319,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
     />
     {briefCaptures && !includeCaptureStep ? <div className="shoot-quick-start-brief-source">
       <span><strong className="label-xs-semibold">Brief answer:</strong><small className="label-s">{formatQuickStartCaptures(briefCaptures)}</small></span>
-      <button className="shoot-text-action label-xs-semibold" type="button" disabled={!canEdit} onClick={() => { setIncludeCaptureStep(true); setActiveStepId("capture"); }}>Change</button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={!canEdit} onClick={() => { setIncludeCaptureStep(true); setActiveStepId("capture"); }}>Change</Button>
     </div> : null}
     {questionContent}
     <footer className="shoot-quick-start-footer">
@@ -3337,7 +3341,7 @@ function ShootQuickStart({ briefCaptures, callSheet, canEdit, contactOptions, is
       <span className="shoot-quick-start-footer-side right">
         {activeStepIndex === questionSteps.length - 1
           ? <>
-            <button className="shoot-text-action label-s-semibold" type="button" disabled={!canFinishSetup} onClick={() => finishSetup("manual")}>Start manually</button>
+            <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={!canFinishSetup} onClick={() => finishSetup("manual")}>Start manually</Button>
             <Button size="S" variant="primary" disabled={!canFinishSetup} onClick={() => finishSetup("ai")}><span className="shoot-button-content"><DsIcon name="sparkle" size={16} />Create with Brisk AI</span></Button>
           </>
           : <Button size="S" variant="primary" onClick={() => goToRelativeStep(1)}>Next</Button>}
@@ -3384,7 +3388,7 @@ function ShootAiSuggestionBar({ callSheet, canEdit, onAcceptAll }: { callSheet: 
           <p className="label-xs"><strong>Script</strong> - Shaped the story beats, demonstrations and supporting coverage.</p>
         </div>
       </details>
-      {canEdit ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={onAcceptAll}><DsIcon name="check" size={14} />Accept all</button> : null}
+      {canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onAcceptAll}><DsIcon name="check" size={14} />Accept all</Button> : null}
     </div>
   </div>;
 }
@@ -3767,8 +3771,8 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
         title="Shot List"
         action={<div className="shoot-shot-list-heading-actions">
           {canEdit ? <div className="shoot-shot-list-add-anchor" ref={addMenuRef}>
-            <button
-              className="shoot-button primary label-s-semibold"
+            <Button size="S" variant="primary"
+              className="shoot-button primary"
               type="button"
               aria-expanded={isAddMenuOpen}
               aria-haspopup="menu"
@@ -3778,7 +3782,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
               <DsIcon name="plus" size={16} />
               Add
               <DsIcon name="caret-down" size={14} />
-            </button>
+            </Button>
             {isAddMenuOpen ? <div className="shoot-shot-list-add-menu" role="menu" aria-label="Add to Shot List">
               <button className="label-s" type="button" role="menuitem" onClick={() => { setIsAddMenuOpen(false); addShot(); }}>Shot</button>
               <button className="label-s" type="button" role="menuitem" onClick={() => { setIsAddMenuOpen(false); addGroup(); }}>Shot group</button>
@@ -3897,8 +3901,8 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
                       </span>
                     </div>
                     <div className="shoot-shot-group-actions">
-                      {canEdit && (group.suggestionStatus || shots.some((shot) => shot.suggestionStatus)) ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => acceptGroupSuggestions(group.id)}><DsIcon name="check" size={14} />Accept group</button> : null}
-                      {canEdit && !collapsedGroupIds.includes(sectionId) ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</button> : null}
+                      {canEdit && (group.suggestionStatus || shots.some((shot) => shot.suggestionStatus)) ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => acceptGroupSuggestions(group.id)}><DsIcon name="check" size={14} />Accept group</Button> : null}
+                      {canEdit && !collapsedGroupIds.includes(sectionId) ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</Button> : null}
                     </div>
                   </div>
                 </td>
@@ -4008,7 +4012,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
                   </td>
                   <td>
                     <div className="shoot-shot-table-actions" ref={menuOpen ? actionMenuRef : undefined}>
-                      {canEdit && entry.suggestionStatus ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => acceptShotSuggestion(entry.id)}><DsIcon name="check" size={14} />Accept</button> : null}
+                      {canEdit && entry.suggestionStatus ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => acceptShotSuggestion(entry.id)}><DsIcon name="check" size={14} />Accept</Button> : null}
                       <ScriptAnnotationPin
                         count={shotComments.length}
                         hasUnresolved={shotComments.some((comment) => !comment.resolved)}
@@ -4157,12 +4161,12 @@ function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, gro
     <PreProductionSectionHeading
       title="Shot List"
       action={<div className="shoot-shot-list-heading-actions">
-        {canEdit && additionalCoverage ? <button className="shoot-button primary label-s-semibold" type="button" onClick={() => onAddShot(additionalCoverage.id)}><DsIcon name="plus" size={16} />Add unplanned shot</button> : null}
+        {canEdit && additionalCoverage ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={() => onAddShot(additionalCoverage.id)}><DsIcon name="plus" size={16} />Add unplanned shot</Button> : null}
       </div>}
     />
     <div className="shoot-on-set-toolbar">
       <div className="shoot-on-set-filters" role="group" aria-label="Filter shots">{(["all", "remaining", "captured"] as const).map((filter) => <button className={`${statusFilter === filter ? "active " : ""}label-s-semibold`} type="button" aria-pressed={statusFilter === filter} key={filter} onClick={() => setStatusFilter(filter)}>{filter === "all" ? "All" : filter === "remaining" ? "Remaining" : "Captured"}</button>)}</div>
-      {unassignedGroups.length && orderedDayCoverage.length ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setShowUnassigned((current) => !current)}>{showUnassigned ? "Hide unassigned" : `Show ${unassignedGroups.length} unassigned`}</button> : null}
+      {unassignedGroups.length && orderedDayCoverage.length ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => setShowUnassigned((current) => !current)}>{showUnassigned ? "Hide unassigned" : `Show ${unassignedGroups.length} unassigned`}</Button> : null}
     </div>
     {standaloneShots.length ? <div className="shoot-on-set-table shoot-on-set-standalone-shots" role="table" aria-label="Standalone shots">
       <div className="shoot-on-set-table-header label-xs" role="row"><span>Status</span><span>#</span><span>Description</span><span>Priority</span><span>Reference</span><span>Quick note</span></div>
@@ -4185,7 +4189,7 @@ function OnSetShotList({ callSheet, canEdit, displayShotNumberById, entries, gro
         const groupCaptured = groupRequiredShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured").length;
         const pickupCount = groupRequiredShots.filter((shot) => shot.captureStatus === "pickup-needed").length;
         return <section className={`shoot-on-set-group ${groupRequiredShots.length > 0 && groupCaptured === groupRequiredShots.length ? "is-complete" : ""}`} key={group.id}>
-          <header><div><h3>{group.name}</h3><p className="label-xs">{groupCaptured} of {groupRequiredShots.length} captured{pickupCount ? ` · ${pickupCount} pickup` : ""}</p></div>{canEdit && pickupCount ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={() => createPickupGroup(group)}>Create pickup group</button> : null}</header>
+          <header><div><h3>{group.name}</h3><p className="label-xs">{groupCaptured} of {groupRequiredShots.length} captured{pickupCount ? ` · ${pickupCount} pickup` : ""}</p></div>{canEdit && pickupCount ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => createPickupGroup(group)}>Create pickup group</Button> : null}</header>
           <div className="shoot-on-set-table" role="table" aria-label={group.name}>
             <div className="shoot-on-set-table-header label-xs" role="row"><span>Status</span><span>#</span><span>Description</span><span>Priority</span><span>Reference</span><span>Quick note</span></div>
             {shots.map((shot) => {
@@ -4390,9 +4394,9 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
         title={sectionTitle}
         count={<span className="shoot-call-sheet-section-count label-xs-semibold">{askedCount} of {dayQuestions.length}</span>}
         action={<div className="shoot-preproduction-heading-inline-actions">
-          {canEdit && isExpanded ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</button> : null}
+          {canEdit && isExpanded ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</Button> : null}
           {isFocused
-            ? onFocusChange ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</button> : null
+            ? onFocusChange ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</Button> : null
             : <>
               {onToggleCollapse ? <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} title={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} onClick={onToggleCollapse}><DsIcon name="caret-down" size={16} /></button> : null}
               {onFocusChange ? <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${sectionTitle}`} title={`Focus on ${sectionTitle}`} onClick={onFocusChange}><DsIcon name="frame-corners" size={18} /></button> : null}
@@ -4421,15 +4425,15 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
               <span className="shoot-on-set-question-number label-xs-semibold">{questionNumber}</span>
               <span className="shoot-on-set-question-copy"><strong>{question.question}</strong><small className="label-s">{person?.name ?? "Interviewee not assigned"}</small></span>
             </label>
-            {canEdit ? <button className="shoot-text-action shoot-on-set-question-edit label-xs-semibold" type="button" aria-label={`Edit question ${questionNumber}`} onClick={() => editQuestion(question)}><DsIcon name="pencil-simple-ds" size={14} />Edit</button> : null}
+            {canEdit ? <Button size="S" variant="ghost" className="shoot-text-action shoot-on-set-question-edit" type="button" aria-label={`Edit question ${questionNumber}`} onClick={() => editQuestion(question)}><DsIcon name="pencil-simple-ds" size={14} />Edit</Button> : null}
           </li>;
         })}
-      </ol> : <div className="shoot-question-empty"><p className="shoot-preproduction-empty-copy">{dayQuestions.length ? "No questions match this filter." : "No interview questions are assigned to this shoot day."}</p>{!dayQuestions.length && callSheet.questions.length && canEdit && onOpenPlanningSection ? <button className="shoot-text-action label-s-semibold" type="button" onClick={() => onOpenPlanningSection("questions")}>Manage question assignments<DsIcon name="arrow-right" size={14} /></button> : null}</div>}</> : null}
+      </ol> : <div className="shoot-question-empty"><p className="shoot-preproduction-empty-copy">{dayQuestions.length ? "No questions match this filter." : "No interview questions are assigned to this shoot day."}</p>{!dayQuestions.length && callSheet.questions.length && canEdit && onOpenPlanningSection ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => onOpenPlanningSection("questions")}>Manage question assignments<DsIcon name="arrow-right" size={14} /></Button> : null}</div>}</> : null}
     </section>{questionEditor}</>;
   }
 
   return <><section className="shoot-preproduction-section">
-    <PreProductionSectionHeading title="Interview Questions" action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</button> : null} />
+    <PreProductionSectionHeading title="Interview Questions" action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={addQuestion}><DsIcon name="plus" size={16} />Add question</Button> : null} />
     <ShootAiSuggestionBar callSheet={callSheet} canEdit={canEdit} onAcceptAll={onAcceptAllSuggestions} />
     {filterPeople.length ? <div className="shoot-question-filter-bar">
       <div className="shoot-filter-tabs" role="tablist" aria-label="Filter interview questions by person">
@@ -4515,15 +4519,15 @@ function PreProductionInterviewQuestions({ availablePeople, callSheet, canEdit, 
               </td>
               <td>
                 {canEdit ? <div className="shoot-shot-table-actions shoot-question-table-actions">
-                  <button className="shoot-text-action label-xs-semibold" type="button" aria-label={`Edit question ${questionNumber}`} onClick={() => editQuestion(question)}><DsIcon name="pencil-simple-ds" size={14} />Edit</button>
+                  <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-label={`Edit question ${questionNumber}`} onClick={() => editQuestion(question)}><DsIcon name="pencil-simple-ds" size={14} />Edit</Button>
                   {question.suggestionStatus ? <>
-                    <button className="shoot-text-action label-xs-semibold" type="button" aria-label={`Accept question ${questionNumber}`} onClick={() => acceptQuestionSuggestion(question.id)}><DsIcon name="check" size={14} />Accept</button>
-                    <button className="shoot-text-action danger label-xs-semibold" type="button" aria-label={`Dismiss question ${questionNumber}`} onClick={() => onDismissSuggestion(question.id)}><DsIcon name="x-close-cross" size={14} />Dismiss</button>
+                    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-label={`Accept question ${questionNumber}`} onClick={() => acceptQuestionSuggestion(question.id)}><DsIcon name="check" size={14} />Accept</Button>
+                    <Button size="S" variant="danger" className="shoot-text-action danger" type="button" aria-label={`Dismiss question ${questionNumber}`} onClick={() => onDismissSuggestion(question.id)}><DsIcon name="x-close-cross" size={14} />Dismiss</Button>
                   </> : <>
-                    <button className="shoot-text-action label-xs-semibold" type="button" aria-label={`Duplicate question ${questionNumber}`} onClick={() => duplicateQuestion(question)}><DsIcon name="copy" size={16} />Duplicate</button>
-                    <button className="shoot-text-action danger label-xs-semibold" type="button" aria-label={`Delete question ${questionNumber}`} onClick={() => {
+                    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-label={`Duplicate question ${questionNumber}`} onClick={() => duplicateQuestion(question)}><DsIcon name="copy" size={16} />Duplicate</Button>
+                    <Button size="S" variant="danger" className="shoot-text-action danger" type="button" aria-label={`Delete question ${questionNumber}`} onClick={() => {
                       onChange((current) => ({ ...current, questions: current.questions.filter((candidate) => candidate.id !== question.id) }));
-                    }}><DsIcon name="trash-simple" size={16} />Delete</button>
+                    }}><DsIcon name="trash-simple" size={16} />Delete</Button>
                   </>}
                 </div> : null}
               </td>
@@ -4563,8 +4567,8 @@ function InterviewQuestionEditorModal({ draft, days, people, onChange, onClose, 
     </div>
     {onOpenPlanningSection ? <div className="shoot-question-editor-related">
       <span className="label-xs-semibold">Related planning</span>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={() => openRelatedPlanning("people")}><DsIcon name="users-three" size={16} />Manage people</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={() => openRelatedPlanning("schedule")}><DsIcon name="clock-clockwise" size={16} />Manage schedule</button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => openRelatedPlanning("people")}><DsIcon name="users-three" size={16} />Manage people</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => openRelatedPlanning("schedule")}><DsIcon name="clock-clockwise" size={16} />Manage schedule</Button>
     </div> : null}
   </ModalShell>;
 }
@@ -4705,7 +4709,7 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
       }, librarySelection.replaceReferenceId);
       setLibrarySelection(null);
     }} /> : null}
-    {linkDraft ? <ModalShell compact title={linkDraft.replaceReferenceId ? "Replace link" : "Add link"} onClose={() => setLinkDraft(null)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setLinkDraft(null)}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={!linkDraft.url.trim()} onClick={() => {
+    {linkDraft ? <ModalShell compact title={linkDraft.replaceReferenceId ? "Replace link" : "Add link"} onClose={() => setLinkDraft(null)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setLinkDraft(null)}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!linkDraft.url.trim()} onClick={() => {
       const url = linkDraft.url.trim();
       saveReference({
         id: `reference-${Date.now()}`,
@@ -4716,13 +4720,13 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
         source: "link",
       }, linkDraft.replaceReferenceId);
       setLinkDraft(null);
-    }}>{linkDraft.replaceReferenceId ? "Replace link" : "Add link"}</button></div>}>
+    }}>{linkDraft.replaceReferenceId ? "Replace link" : "Add link"}</Button></div>}>
       <Field label="Link"><input autoFocus type="url" placeholder="Paste a link" value={linkDraft.url} onChange={(event) => setLinkDraft((current) => current ? { ...current, url: event.target.value } : null)} /></Field>
     </ModalShell> : null}
-    {editDraft ? <ModalShell compact title="Edit reference details" onClose={() => setEditDraft(null)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setEditDraft(null)}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={!editDraft.name.trim()} onClick={() => {
+    {editDraft ? <ModalShell compact title="Edit reference details" onClose={() => setEditDraft(null)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setEditDraft(null)}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!editDraft.name.trim()} onClick={() => {
       onChange((current) => ({ ...current, visualReferences: (current.visualReferences ?? []).map((reference) => reference.id === editDraft.id ? { ...editDraft, name: editDraft.name.trim(), description: editDraft.description?.trim() || undefined } : reference) }));
       setEditDraft(null);
-    }}>Save changes</button></div>}>
+    }}>Save changes</Button></div>}>
       <Field label="Title"><input autoFocus value={editDraft.name} onChange={(event) => setEditDraft((current) => current ? { ...current, name: event.target.value } : null)} /></Field>
       <Field label="Description (optional)"><textarea rows={3} placeholder="What should the team take from this reference?" value={editDraft.description ?? ""} onChange={(event) => setEditDraft((current) => current ? { ...current, description: event.target.value } : null)} /></Field>
     </ModalShell> : null}
@@ -4731,7 +4735,7 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
 
 function PreProductionLocations({ callSheet, canEdit, onEdit, onNew }: { callSheet: CallSheet; canEdit: boolean; onEdit: (location: ShootLocation) => void; onNew: () => void }) {
   return <section className="shoot-preproduction-section">
-    <PreProductionSectionHeading icon="push-pin-simple" title="Where are you shooting?" description="Add locations and choose which shoot days use them." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add location</button> : null} />
+    <PreProductionSectionHeading icon="push-pin-simple" title="Where are you shooting?" description="Add locations and choose which shoot days use them." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add location</Button> : null} />
     {callSheet.locations.length ? <div className="shoot-preproduction-location-list">{callSheet.locations.map((location) => {
       const mapValue = location.mapLink || location.address;
       return <article key={location.id}>
@@ -4744,7 +4748,7 @@ function PreProductionLocations({ callSheet, canEdit, onEdit, onNew }: { callShe
 
 function PreProductionPeople({ callSheet, canEdit, isStudioInternal, onChange, onEdit, onNew }: { callSheet: CallSheet; canEdit: boolean; isStudioInternal: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onEdit: (person: ShootPerson) => void; onNew: (event?: ReactMouseEvent<HTMLButtonElement>) => void }) {
   return <section className="shoot-preproduction-section">
-    <div data-shoot-guide-target="talent"><PreProductionSectionHeading icon="users-three" title="Who is involved?" description="Manage crew, talent and client roles for this shoot." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add person</button> : null} /></div>
+    <div data-shoot-guide-target="talent"><PreProductionSectionHeading icon="users-three" title="Who is involved?" description="Manage crew, talent and client roles for this shoot." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNew}><DsIcon name="plus" size={16} />Add person</Button> : null} /></div>
     {callSheet.people.length ? <div className="shoot-preproduction-people-list" role="table" aria-label="People involved in this shoot">
       <div className="shoot-preproduction-people-header label-s-semibold" role="row">
         <span role="columnheader">Person</span>
@@ -4819,7 +4823,7 @@ function ShootAssignmentEditor({ canEdit, person, days, onChange }: { canEdit: b
           }
           setDraft((current) => current ? { ...current, role: value } : null);
         }}
-      /> : draft.type === "crew" ? <div className="shoot-custom-crew-role"><input autoFocus placeholder="Enter crew role" value={draft.role} onChange={(event) => setDraft((current) => current ? { ...current, role: event.target.value } : null)} /><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => { setIsAddingCustomRole(false); setDraft((current) => current ? { ...current, role: "" } : null); }}>Choose a standard role</button></div> : <input autoFocus placeholder={draft.type === "client" ? "e.g. Client representative" : "Enter role"} value={draft.role} onChange={(event) => setDraft((current) => current ? { ...current, role: event.target.value } : null)} />}</Field>
+      /> : draft.type === "crew" ? <div className="shoot-custom-crew-role"><input autoFocus placeholder="Enter crew role" value={draft.role} onChange={(event) => setDraft((current) => current ? { ...current, role: event.target.value } : null)} /><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setIsAddingCustomRole(false); setDraft((current) => current ? { ...current, role: "" } : null); }}>Choose a standard role</Button></div> : <input autoFocus placeholder={draft.type === "client" ? "e.g. Client representative" : "Enter role"} value={draft.role} onChange={(event) => setDraft((current) => current ? { ...current, role: event.target.value } : null)} />}</Field>
       <div className="shoot-assignment-popover-actions"><Button size="S" variant="ghost" onClick={() => setDraft(null)}>Cancel</Button><Button size="S" variant="primary" disabled={!draft.assignmentId && !draft.role.trim()} onClick={saveAssignment}>{draft.assignmentId ? "Save role" : "Add role"}</Button></div>
     </div> : null}
   </div>;
@@ -5354,7 +5358,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
             {canEdit && selectedProgressShotIds.length ? <footer>
               <strong className="label-xs-semibold">{selectedProgressShotIds.length} selected</strong>
               <div>
-                {canReturnSelectedShot ? <button className="shoot-button secondary label-xs-semibold" type="button" onClick={returnSelectedShotToToday}>Return to today</button> : null}
+                {canReturnSelectedShot ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={returnSelectedShotToToday}>Return to today</Button> : null}
                 <BriskSelect<string>
                   ariaLabel="Move selected shots to a shoot day"
                   className="shoot-progress-move-select"
@@ -5366,7 +5370,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
                   value=""
                   onChange={(value) => { if (value) moveSelectedShotsToDay(value); }}
                 />
-                <button className="shoot-button secondary label-xs-semibold" type="button" onClick={markSelectedShotsAsNotRequired}>Mark as not required</button>
+                <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={markSelectedShotsAsNotRequired}>Mark as not required</Button>
               </div>
             </footer> : null}
           </section>, document.body) : null}
@@ -5381,7 +5385,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
           </div>
         </details> : null}
         {isFocused
-          ? onFocusChange ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</button> : null
+          ? onFocusChange ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</Button> : null
           : <>
             {onToggleCollapse ? <button className="shoot-icon-button shoot-call-sheet-collapse-button" type="button" aria-expanded={isExpanded} aria-label={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} title={`${isExpanded ? "Collapse" : "Expand"} ${sectionTitle}`} onClick={onToggleCollapse}><DsIcon name="caret-down" size={16} /></button> : null}
             {onFocusChange ? <button className="shoot-icon-button shoot-call-sheet-focus-button" type="button" aria-label={`Focus on ${sectionTitle}`} title={`Focus on ${sectionTitle}`} onClick={onFocusChange}><DsIcon name="frame-corners" size={18} /></button> : null}
@@ -5424,7 +5428,7 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
             <span className={`shoot-schedule-type is-${entry.type} label-xs-semibold`}>{scheduleType ? <DsIcon name={scheduleType.icon} size={14} /> : null}{linkedGroup ? "Shot group" : scheduleType?.label ?? "Schedule"}</span>
             {isExpandable ? <button className="shoot-on-set-run-expand" type="button" aria-expanded={isExpanded} onClick={() => toggleExpanded(entry.id)}><DsIcon name="caret-right" size={15} /><span className="shoot-on-set-run-copy"><strong>{linkedGroup?.name ?? entry.description}</strong><small className="label-xs">{[linkedGroup ? `${capturedShots} of ${requiredGroupShots.length} captured` : null, entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")}</small></span></button> : <span className="shoot-on-set-run-copy"><strong>{entry.description}</strong><small className="label-xs">{[entry.durationMinutes ? `${entry.durationMinutes} min` : null, location?.name].filter(Boolean).join(" · ")}</small></span>}
             <div className="shoot-on-set-run-actions">
-              {linkedGroup && isExpanded && canEdit ? <button className="shoot-text-action label-xs-semibold" type="button" onClick={() => addShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</button> : null}
+              {linkedGroup && isExpanded && canEdit ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => addShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</Button> : null}
               {!isComplete || disposition ? <span className={`shoot-on-set-run-status is-${status.toLowerCase()} label-xs-semibold`}>{status}</span> : null}
               {hasRowActions ? <details className="shoot-on-set-row-actions">
                 <summary aria-label={`More actions for ${linkedGroup?.name ?? entry.description}`}><DsIcon name="dots-three" size={18} /></summary>
@@ -5458,12 +5462,12 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
         const capturedGroupShots = requiredGroupShots.filter((shot) => (shot.captureStatus ?? (shot.captured ? "captured" : "to-capture")) === "captured").length;
         return <article className="shoot-on-set-unplanned-group" key={group.id}>
           <button type="button" aria-expanded={groupIsExpanded} onClick={() => toggleExpanded(groupKey)}><DsIcon name="caret-right" size={15} /><span><strong>{group.name}</strong><small className="label-xs">{capturedGroupShots} of {requiredGroupShots.length} captured</small></span></button>
-          {groupIsExpanded ? <>{renderCoverageDetails(group)}{simpleMode && canEdit ? <div className="shoot-simple-group-actions"><button className="shoot-text-action label-s-semibold" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</button></div> : null}</> : null}
+          {groupIsExpanded ? <>{renderCoverageDetails(group)}{simpleMode && canEdit ? <div className="shoot-simple-group-actions"><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => addShot(group.id)}><DsIcon name="plus" size={14} />Add shot</Button></div> : null}</> : null}
         </article>;
       })}
       {standaloneShots.length ? renderShotTable(standaloneShots, "Unscheduled standalone shots", "standalone") : null}
     </section> : null}</> : null}
-    {isExpanded && onOpenPlanning ? <footer className="shoot-on-set-section-planning-link"><button className="shoot-text-action label-s-semibold" type="button" onClick={onOpenPlanning}><DsIcon name="pencil-simple-ds" size={16} />Edit schedule in Planning</button></footer> : null}
+    {isExpanded && onOpenPlanning ? <footer className="shoot-on-set-section-planning-link"><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onOpenPlanning}><DsIcon name="pencil-simple-ds" size={16} />Edit schedule in Planning</Button></footer> : null}
   </section>;
 }
 
@@ -5790,7 +5794,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
     compact
     title="Add shot group"
     onClose={() => setNewShotGroupName(null)}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setNewShotGroupName(null)}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={!newShotGroupName.trim()} onClick={createShotGroup}>Add group</button></div>}
+    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setNewShotGroupName(null)}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!newShotGroupName.trim()} onClick={createShotGroup}>Add group</Button></div>}
   >
     <Field label="Group name"><input autoFocus placeholder="e.g. Founder interview" value={newShotGroupName} onChange={(event) => setNewShotGroupName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && newShotGroupName.trim()) createShotGroup(); }} /></Field>
   </ModalShell> : null;
@@ -5860,7 +5864,7 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
             </div>
             <label className="shoot-preproduction-field" data-shoot-guide-target="location"><span>Primary location</span><BriskSelect ariaLabel={`Primary location for ${dayEditDraft.label}`} value={dayEditDraft.primaryLocationId ?? ""} options={callSheet.locations.map((location) => ({ value: location.id, label: location.name }))} placeholder="Not confirmed" onChange={(primaryLocationId) => setDayEditDraft((draft) => draft ? { ...draft, primaryLocationId } : draft)} /></label>
           </div>
-          <div className="shoot-schedule-day-editor-actions"><Button size="S" variant="secondary" onClick={() => setDayEditDraft(null)}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="submit">Save</button></div>
+          <div className="shoot-schedule-day-editor-actions"><Button size="S" variant="secondary" onClick={() => setDayEditDraft(null)}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="submit">Save</Button></div>
         </form> : null}
         <div className={`shoot-preproduction-schedule-layout ${isBacklogCollapsed ? "is-backlog-collapsed" : ""}`}>
           <section className="shoot-run-of-day" data-shoot-guide-fallback>
@@ -5901,8 +5905,8 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
               emptyContent={canEdit && !manualScheduleDayIds.includes(currentDay.id) ? <div className="shoot-ai-schedule-empty">
                 <strong>No run of day yet</strong>
                 <div className="shoot-ai-schedule-empty-actions">
-                  <button className="shoot-button primary label-s-semibold" type="button" disabled={!backlogCount} onClick={() => setAiScheduleStep("check")}>Create with Brisk</button>
-                  <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => setManualScheduleDayIds((dayIds) => dayIds.includes(currentDay.id) ? dayIds : [...dayIds, currentDay.id])}>Add manually</button>
+                  <Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!backlogCount} onClick={() => setAiScheduleStep("check")}>Create with Brisk</Button>
+                  <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => setManualScheduleDayIds((dayIds) => dayIds.includes(currentDay.id) ? dayIds : [...dayIds, currentDay.id])}>Add manually</Button>
                 </div>
               </div> : undefined}
             />
@@ -5963,21 +5967,13 @@ function AiScheduleCheckModal({ readiness, onAddMissingDetails, onClose, onGener
   onClose: () => void;
   onGenerate: () => void;
 }) {
-  return <ModalShell
-    compact
-    title="Create schedule with Brisk"
-    description={readiness.shotCount ? `Brisk will arrange ${readiness.shotCount} ${readiness.shotCount === 1 ? "shot" : "shots"} into the run of day.` : "Add a shot before creating a schedule."}
-    onClose={onClose}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={!readiness.shotCount} onClick={onGenerate}>Create schedule</button></div>}
-  >
-    <div className="shoot-ai-schedule-check">
+  return <ConfirmationDialog title="Create schedule with Brisk" description={readiness.shotCount ? `Brisk will arrange ${readiness.shotCount} ${readiness.shotCount === 1 ? "shot" : "shots"} into the run of day.` : "Add a shot before creating a schedule."} onCancel={onClose} expanded actions={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!readiness.shotCount} onClick={onGenerate}>Create schedule</Button></>}> <div className="shoot-ai-schedule-check">
       {readiness.shotCount ? <div className="shoot-ai-schedule-check-line">
         <strong>{readiness.shotCount} {readiness.shotCount === 1 ? "shot is" : "shots are"} ready</strong>
         <span className="label-s">{readiness.assumptions.length ? `Brisk will estimate ${readiness.assumptions.length} missing ${readiness.assumptions.length === 1 ? "detail" : "details"}. You can edit the schedule afterwards.` : "Everything needed is ready."}</span>
-        {readiness.assumptions.length ? <button className="shoot-text-action label-s-semibold" type="button" onClick={onAddMissingDetails}>Add missing details</button> : null}
+        {readiness.assumptions.length ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onAddMissingDetails}>Add missing details</Button> : null}
       </div> : <p className="shoot-ai-schedule-blocker label-s-semibold" role="alert"><DsIcon name="alert-triangle" size={16} />Add at least one shot before Brisk creates a Schedule.</p>}
-    </div>
-  </ModalShell>;
+    </div> </ConfirmationDialog>;
 }
 
 type ScheduleGuidePosition = {
@@ -6088,14 +6084,14 @@ function ScheduleCompletionGuide({ activeSection, index, step, stepCount, onBack
       <div className="shoot-completion-guide-copy">
         <h2 className="heading-3xs">{content.title}</h2>
         <p className="label-s">{content.description}</p>
-        {step === "durations" ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => { onUseDefaultDurations(); onNext(); }}>Use 15 min and continue</button> : null}
-        {step === "talent" ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={() => { onUseGeneralCallForTalent(); onNext(); }}>Use general call and finish</button> : null}
+        {step === "durations" ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => { onUseDefaultDurations(); onNext(); }}>Use 15 min and continue</Button> : null}
+        {step === "talent" ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => { onUseGeneralCallForTalent(); onNext(); }}>Use general call and finish</Button> : null}
       </div>
       <footer>
-        <button className="shoot-text-action label-s-semibold" type="button" disabled={index === 0} onClick={onBack}>Back</button>
+        <Button size="S" variant="ghost" className="shoot-text-action" type="button" disabled={index === 0} onClick={onBack}>Back</Button>
         <div>
-          <button className="shoot-text-action label-s-semibold" type="button" onClick={onNext}>Let Brisk estimate</button>
-          <button className="shoot-button primary label-s-semibold" type="button" onClick={onNext}>{index === stepCount - 1 ? "Finish" : "Next"}</button>
+          <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onNext}>Let Brisk estimate</Button>
+          <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onNext}>{index === stepCount - 1 ? "Finish" : "Next"}</Button>
         </div>
       </footer>
     </section>
@@ -6408,7 +6404,7 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
         <strong className="label-xs-semibold">{selectedShotIds.length} selected</strong>
         <div className="shoot-schedule-bulk-actions">
           <div className="shoot-shot-list-add-anchor" ref={groupMenuRef}>
-            <button className="shoot-text-action label-xs-semibold" type="button" aria-expanded={isGroupMenuOpen} aria-haspopup="menu" onClick={() => { setIsGroupMenuOpen((open) => !open); setNewGroupName(null); }}>Add to group</button>
+            <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={isGroupMenuOpen} aria-haspopup="menu" onClick={() => { setIsGroupMenuOpen((open) => !open); setNewGroupName(null); }}>Add to group</Button>
             {isGroupMenuOpen ? <div className="shoot-shot-list-add-menu shoot-schedule-bulk-group-menu" role="menu" aria-label="Add selected shots to group">
               {newGroupName === null ? <>
                 {groupOptions.map((group) => <button className="label-s" type="button" role="menuitem" key={group.id} onClick={() => { onAddSelectedToGroup(group.id); setIsGroupMenuOpen(false); }}>{group.name}</button>)}
@@ -6417,11 +6413,11 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
               </> : <form className="shoot-schedule-bulk-new-group" onSubmit={(event) => { event.preventDefault(); if (!newGroupName.trim()) return; onCreateGroupForSelected(newGroupName); setIsGroupMenuOpen(false); setNewGroupName(null); }}>
                 <label className="label-xs-semibold" htmlFor={`new-unscheduled-group-${isMobile ? "mobile" : "desktop"}`}>Group name</label>
                 <input autoFocus id={`new-unscheduled-group-${isMobile ? "mobile" : "desktop"}`} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} placeholder="e.g. Product B-roll" />
-                <div><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setNewGroupName(null)}>Back</button><button className="shoot-button primary label-xs-semibold" type="submit" disabled={!newGroupName.trim()}>Create</button></div>
+                <div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => setNewGroupName(null)}>Back</Button><Button size="S" variant="primary" className="shoot-button primary" type="submit" disabled={!newGroupName.trim()}>Create</Button></div>
               </form>}
             </div> : null}
           </div>
-          <button className="shoot-text-action label-xs-semibold" type="button" onClick={onClearSelection}>Clear</button>
+          <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onClearSelection}>Clear</Button>
         </div>
       </div> : null}
       {renderBacklog()}
@@ -6466,10 +6462,10 @@ function PlanningReadinessFooter({ canEdit, config, hasChanges, isReady, needsSe
       </div>
     </details> : null}
     <div className="shoot-schedule-footer-actions">
-      {wasConfirmed && nextAction ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={nextAction.onSelect}><DsIcon name={nextAction.icon} size={16} />{nextAction.label}</button> : null}
-      {needsSending && canEdit ? <button className="shoot-button secondary label-s-semibold" type="button" onClick={onSendUpdated}><DsIcon name="paper-plane-tilt" size={16} />Send updated schedule</button> : null}
-      {!wasConfirmed && canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onReviewReadiness}>{config.markLabel}</button> : null}
-      {hasChanges && canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onReviewReadiness}>Confirm updates</button> : null}
+      {wasConfirmed && nextAction ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={nextAction.onSelect}><DsIcon name={nextAction.icon} size={16} />{nextAction.label}</Button> : null}
+      {needsSending && canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onSendUpdated}><DsIcon name="paper-plane-tilt" size={16} />Send updated schedule</Button> : null}
+      {!wasConfirmed && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>{config.markLabel}</Button> : null}
+      {hasChanges && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>Confirm updates</Button> : null}
       {isReady ? <details className="shoot-readiness-status-menu" ref={statusMenuRef}>
         <summary className="shoot-schedule-ready-button label-s-semibold" aria-label={`${config.readyLabel}. Open readiness actions`}><DsIcon name={config.icon} size={16} />{config.readyLabel}<DsIcon name="caret-down" size={14} /></summary>
         <div role="menu" aria-label={`${config.label} readiness actions`}>
@@ -6482,7 +6478,7 @@ function PlanningReadinessFooter({ canEdit, config, hasChanges, isReady, needsSe
 
 function PreProductionDocuments({ callSheet, canEdit, onChange, onOpenDocuments }: { callSheet: CallSheet; canEdit: boolean; onChange: (updater: (current: CallSheet) => CallSheet) => void; onOpenDocuments: () => void }) {
   return <section className="shoot-preproduction-section">
-    <PreProductionSectionHeading icon="folder" title="Supporting shoot documents" description="Attach reference files without changing the coverage or status of the native production plan." action={canEdit ? <button className="shoot-button primary label-s-semibold" type="button" onClick={onOpenDocuments}><DsIcon name="plus" size={16} />Add supporting document</button> : null} />
+    <PreProductionSectionHeading icon="folder" title="Supporting shoot documents" description="Attach reference files without changing the coverage or status of the native production plan." action={canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onOpenDocuments}><DsIcon name="plus" size={16} />Add supporting document</Button> : null} />
     {callSheet.documents.length ? <div className="shoot-supporting-document-list">{callSheet.documents.map((document) => <article key={document.id}><span><DsIcon name={document.kind === "link" ? "link" : "file-text"} size={20} /></span><div><strong>{document.name}</strong><small className="label-xs">{document.type ?? "Supporting document"} · {formatDayAssignment(document.shootDayIds, callSheet.days)}</small></div><a className="shoot-button secondary label-xs-semibold" href={document.url} target="_blank" rel="noreferrer">Open</a>{document.kind !== "link" ? <a className="shoot-icon-button" aria-label={`Download ${document.name}`} href={document.url} download><DsIcon name="download-simple" size={16} /></a> : null}{canEdit ? <button className="shoot-icon-button" type="button" aria-label={`Remove ${document.name}`} onClick={() => onChange((current) => ({ ...current, documents: current.documents.filter((item) => item.id !== document.id) }))}><DsIcon name="trash-simple" size={16} /></button> : null}</article>)}</div> : <p className="shoot-preproduction-empty-copy">No supporting shoot documents have been added.</p>}
   </section>;
 }
@@ -6490,7 +6486,7 @@ function PreProductionDocuments({ callSheet, canEdit, onChange, onOpenDocuments 
 function ExistingPlanCallSheetAttachment({ plan, onReplace }: { plan: ExistingShootPlan; onReplace: () => void }) {
   const callSheetName = plan.secondaryName ?? (plan.coverage === "day" || plan.coverage === "both" ? plan.name : "");
   if (!callSheetName) return null;
-  return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<button className="shoot-button secondary label-xs-semibold" type="button" onClick={onReplace}>Replace</button></aside>;
+  return <aside className="shoot-existing-call-sheet-attachment"><span><DsIcon name="paperclip" size={18} /></span><div><strong>Attached Call Sheet</strong><small className="label-xs">{callSheetName} · Added by {plan.addedBy} on {plan.addedAt}</small></div>{plan.secondaryUrl || plan.url ? <a className="shoot-button secondary label-xs-semibold" href={plan.secondaryUrl ?? plan.url} target="_blank" rel="noreferrer">Open</a> : null}<Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onReplace}>Replace</Button></aside>;
 }
 
 function ScheduleReadinessModal({ isUpdate, readiness, onCancel, onConfirm }: {
@@ -6509,22 +6505,13 @@ function ScheduleReadinessModal({ isUpdate, readiness, onCancel, onConfirm }: {
     `${readiness.unscheduledShotCount} unscheduled`,
   ].join(" · ");
 
-  return <ModalShell
-    compact
-    title={isUpdate ? "Confirm schedule updates" : "Schedule ready to use"}
-    description={isUpdate ? "Review the current Schedule before confirming the updates." : "Review the current Schedule before marking it ready."}
-    onClose={onCancel}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></div>}
-  >
-    <div className="shoot-schedule-ready-summary">
+  return <ConfirmationDialog title={isUpdate ? "Confirm schedule updates" : "Schedule ready to use"} description={isUpdate ? "Review the current Schedule before confirming the updates." : "Review the current Schedule before marking it ready."} onCancel={onCancel} expanded actions={<><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></>}> <div className="shoot-schedule-ready-summary">
       <strong>{readiness.dateSummary}</strong>
       <span className="label-s">{coverageSummary}</span>
-    </div>
-    {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-schedule-review-heading">
+    </div>  {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-schedule-review-heading">
       <strong id="shoot-schedule-review-heading">Review before confirming</strong>
       <div>{readiness.issues.map((issue) => <span className="label-s" key={issue}><DsIcon name="info" size={15} />{issue}</span>)}</div>
-    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />All Schedule checks passed.</p>}
-  </ModalShell>;
+    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />All Schedule checks passed.</p>} </ConfirmationDialog>;
 }
 
 function PlanningReadinessModal({ config, isUpdate, readiness, onCancel, onConfirm }: {
@@ -6541,26 +6528,19 @@ function PlanningReadinessModal({ config, isUpdate, readiness, onCancel, onConfi
     : isEmptyReferenceReview ? "No references needed"
       : hasIssues ? `${config.markLabel} anyway` : config.markLabel;
 
-  return <ModalShell
-    compact
-    title={isUpdate ? `Confirm ${config.label.toLowerCase()} updates` : `${config.label} ready to use`}
-    description={isUpdate ? `Review the current ${config.label} before confirming the updates.` : `Review the current ${config.label} before marking it ready.`}
-    onClose={onCancel}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></div>}
-  >
-    <div className="shoot-schedule-ready-summary">
+  return <ConfirmationDialog title={isUpdate ? `Confirm ${config.label.toLowerCase()} updates` : `${config.label} ready to use`} description={isUpdate ? `Review the current ${config.label} before confirming the updates.` : `Review the current ${config.label} before marking it ready.`} onCancel={onCancel} expanded actions={<><Button size="S" variant="secondary" onClick={onCancel}>Continue editing</Button><Button size="S" variant="primary" onClick={onConfirm}>{confirmLabel}</Button></>}> <div className="shoot-schedule-ready-summary">
       <strong>{readiness.summary}</strong>
-    </div>
-    {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-planning-readiness-review-heading">
+    </div>  {hasIssues ? <section className="shoot-schedule-review-issues" aria-labelledby="shoot-planning-readiness-review-heading">
       <strong id="shoot-planning-readiness-review-heading">Review before confirming</strong>
       <div>{readiness.issues.map((issue) => <span className="label-s" key={issue}><DsIcon name="info" size={15} />{issue}</span>)}</div>
-    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />{readiness.passedMessage}</p>}
-  </ModalShell>;
+    </section> : <p className="shoot-schedule-review-passed label-s"><DsIcon name="check" size={16} />{readiness.passedMessage}</p>} </ConfirmationDialog>;
 }
 
 function ShootReadinessModal({ action, missing, onAddDetails, onCancel, onContinue }: { action: ShootReadinessAction; missing: string[]; onAddDetails: () => void; onCancel: () => void; onContinue: () => void }) {
   const labels: Record<ShootReadinessAction, string> = { share: "share the Call Sheet", send: "submit the Shoot", approve: "approve the Shoot", start: "start the shoot" };
-  return <div className="shoot-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onCancel(); }}><section className="shoot-modal shoot-readiness-modal" role="dialog" aria-modal="true" aria-labelledby="shoot-readiness-title"><header><span className="shoot-modal-icon warning"><DsIcon name="alert-triangle" size={22} /></span><div><h2 id="shoot-readiness-title">Some Call Sheet details are not confirmed</h2><p>You can still {labels[action]}.</p></div></header><div className="shoot-readiness-list">{missing.map((item) => <span className="label-s" key={item}><DsIcon name="info" size={15} />{item}</span>)}</div><div className="shoot-modal-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="shoot-button secondary label-s-semibold" type="button" onClick={onContinue}>Continue anyway</button><button className="shoot-button primary label-s-semibold" type="button" onClick={onAddDetails}>Add details</button></div></section></div>;
+  return <ConfirmationDialog title="Some Call Sheet details are not confirmed" description={`You can still ${labels[action]}.`} expanded onCancel={onCancel} actions={<><Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button><Button size="S" variant="secondary" onClick={onContinue}>Continue anyway</Button><Button size="S" onClick={onAddDetails}>Add details</Button></>}>
+    <div className="shoot-readiness-list">{missing.map((item) => <span className="label-s" key={item}>{item}</span>)}</div>
+  </ConfirmationDialog>;
 }
 
 function ShootAccessModal({ settings, onChange, onClose }: { settings: ShootAccessSettings; onChange: (settings: ShootAccessSettings) => void; onClose: () => void }) {
@@ -6708,7 +6688,7 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
       <div className="shoot-dashboard-client-list">
         <ShootClientCard icon="film-slate" title="Creative Plan" description="Review the Interview Questions and shots planned for the shoot." action="Review Creative Plan" onClick={() => setClientReview("creative")} />
         <ShootClientCard icon="calendar" title="Shoot details" description="Confirm the date, location, Talent and access information." action="Review Shoot details" onClick={() => setClientReview("details")} />
-        <article className="shoot-dashboard-client-card"><span className="shoot-dashboard-card-icon"><DsIcon name="clipboard-text" size={24} /></span><div><h2>Call Sheet</h2><p className="paragraph-s">Everything you need for the shoot day.</p></div>{canOpenCallSheet ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <button className="shoot-button secondary label-s-semibold" type="button" disabled>Not ready yet</button>}</article>
+        <article className="shoot-dashboard-client-card"><span className="shoot-dashboard-card-icon"><DsIcon name="clipboard-text" size={24} /></span><div><h2>Call Sheet</h2><p className="paragraph-s">Everything you need for the shoot day.</p></div>{canOpenCallSheet ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <Button size="S" variant="secondary" className="shoot-button secondary" type="button" disabled>Not ready yet</Button>}</article>
       </div>
       {clientReview ? <ClientShootReview
         callSheet={callSheet}
@@ -6757,7 +6737,7 @@ function ShootDashboard({ callSheet, existingPlan, project, selectedRole, setupS
         <div><h2>On Set</h2><p className="paragraph-s">Call Sheet and live shoot</p></div>
         <strong className="shoot-dashboard-module-status label-s-semibold">{callSheetStatus}</strong>
         <div className="shoot-dashboard-module-actions">
-          {canOpenCallSheet ? <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <button className="shoot-button primary label-s-semibold" type="button" disabled title="Add shoot details or attach an existing plan first">Open Call Sheet</button>}
+          {canOpenCallSheet ? <Link className="shoot-button primary label-s-semibold" href={sharedCallSheetHref} target="_blank">Open Call Sheet</Link> : <Button size="S" variant="primary" className="shoot-button primary" type="button" disabled title="Add shoot details or attach an existing plan first">Open Call Sheet</Button>}
           {canOpenCallSheet ? <Link className="shoot-button secondary label-s-semibold" href={selectedDayPdfHref} target="_blank"><DsIcon name="download-simple" size={16} />PDF</Link> : null}
           <Link className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot?view=on-set&day=${encodeURIComponent(callSheet.days[0]?.id ?? "")}&section=schedule`}><DsIcon name="video-camera-ds" size={16} />Open On set</Link>
         </div>
@@ -6817,7 +6797,7 @@ function ShootDashboardModule({ icon, eyebrow, title, description, status, prima
     <header><span className="shoot-dashboard-card-icon"><DsIcon name={icon} size={24} /></span><span className="shoot-dashboard-card-number label-xs-semibold">{eyebrow}</span></header>
     <div><h2>{title}</h2><p className="paragraph-s">{description}</p></div>
     <strong className="shoot-dashboard-module-status label-s-semibold">{status}</strong>
-    <div className="shoot-dashboard-module-actions">{skipped ? <Button size="S" variant="primary" onClick={onRestore}>Restore</Button> : <><Button size="S" variant="primary" onClick={onPrimary}>{primaryLabel}</Button><button className="shoot-text-action label-s-semibold" type="button" onClick={onSkip}>Skip</button></>}</div>
+    <div className="shoot-dashboard-module-actions">{skipped ? <Button size="S" variant="primary" onClick={onRestore}>Restore</Button> : <><Button size="S" variant="primary" onClick={onPrimary}>{primaryLabel}</Button><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onSkip}>Skip</Button></>}</div>
   </article>;
 }
 
@@ -6848,15 +6828,9 @@ function ClientShootReview({ callSheet, mode, project, canApprove, onApprove, on
 
 function SkipShootModuleModal({ path, onCancel, onConfirm }: { path: ScheduleView; onCancel: () => void; onConfirm: () => void }) {
   const isCreative = path === "shots";
-  return <ModalShell
-    compact
-    title={`Skip ${isCreative ? "Creative Plan" : "Plan the Day"}?`}
-    description={isCreative
+  return <ConfirmationDialog title={`Skip ${isCreative ? "Creative Plan" : "Plan the Day"}?`} description={isCreative
       ? "Brisk will not create Interview Questions or a Shot List. You can restore this module later or add an existing plan."
-      : "Brisk will not create a native Schedule or Call Sheet. You can upload an existing plan or continue without one."}
-    onClose={onCancel}
-    footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button><Button size="S" variant="primary" onClick={onConfirm}>Skip {isCreative ? "Creative Plan" : "Plan the Day"}</Button></div>}
-  ><p className="paragraph-s">This will not delete any work already saved.</p></ModalShell>;
+      : "Brisk will not create a native Schedule or Call Sheet. You can upload an existing plan or continue without one."} onCancel={onCancel} expanded actions={<><Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button><Button size="S" variant="primary" onClick={onConfirm}>Skip {isCreative ? "Creative Plan" : "Plan the Day"}</Button></>}><p className="paragraph-s">This will not delete any work already saved.</p></ConfirmationDialog>;
 }
 
 function ExistingShootPlanModal({ existingPlan, onClose, onSave }: { existingPlan: ExistingShootPlan | null; onClose: () => void; onSave: (plan: ExistingShootPlan) => void }) {
@@ -6944,7 +6918,7 @@ function ScheduleFilterEmptyState({ label, onClear }: { label: string; onClear: 
   return (
     <div className="shoot-filter-empty">
       <strong>{label}</strong>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={onClear}>Clear filters</button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onClear}>Clear filters</Button>
     </div>
   );
 }
@@ -6956,10 +6930,10 @@ function ShootStageNavigation({ value, onBack, onEditSetup }: {
 }) {
   return <nav className="shoot-stage-navigation" aria-label="Shoot pages">
     <div className="shoot-stage-navigation-inner">
-      <button className="shoot-back-to-setup label-s-semibold" type="button" onClick={onBack}><DsIcon name="arrow-left" size={16} /><span>{value === "shots" ? "Back to Creative Plan" : "Back to Shoot"}</span></button>
+      <Button size="S" variant="ghost" className="shoot-back-to-setup" type="button" onClick={onBack}><DsIcon name="arrow-left" size={16} /><span>{value === "shots" ? "Back to Creative Plan" : "Back to Shoot"}</span></Button>
       <strong className="label-s-semibold">{value === "schedule" ? "Plan the Day" : "Creative Plan"}</strong>
       <div className="shoot-stage-navigation-actions">
-        <button className="shoot-back-to-setup label-s-semibold" type="button" onClick={onEditSetup}><DsIcon name="pencil-simple-ds" size={16} /><span>{value === "shots" ? "Edit questions" : "Edit setup"}</span></button>
+        <Button size="S" variant="ghost" className="shoot-back-to-setup" type="button" onClick={onEditSetup}><DsIcon name="pencil-simple-ds" size={16} /><span>{value === "shots" ? "Edit questions" : "Edit setup"}</span></Button>
       </div>
     </div>
   </nav>;
@@ -7008,9 +6982,9 @@ function ShootWorkspaceHeader({ callSheetReady, isCallSheetReleased, project, sa
   return <header className="shoot-page-heading">
     <div><p className="shoot-eyebrow label-xs-semibold">Shoot workspace</p><h1>{project.name}</h1><div className="shoot-heading-state"><SaveIndicator status={saveStatus} />{setupStatus === "waiting_on_studio" ? <span className="label-xs">Waiting on Studio</span> : setupStatus === "waiting_on_client" ? <span className="label-xs">Waiting on Client</span> : null}</div></div>
     <div className="shoot-heading-actions">
-      {callSheetReady ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank"><DsIcon name="eye" size={16} />Open Call Sheet</Link> : <button className="shoot-button secondary label-s-semibold" type="button" disabled title="Add a shoot date, times and primary location first"><DsIcon name="eye" size={16} />Open Call Sheet</button>}
+      {callSheetReady ? <Link className="shoot-button secondary label-s-semibold" href={sharedCallSheetHref} target="_blank"><DsIcon name="eye" size={16} />Open Call Sheet</Link> : <Button size="S" variant="secondary" className="shoot-button secondary" type="button" disabled title="Add a shoot date, times and primary location first"><DsIcon name="eye" size={16} />Open Call Sheet</Button>}
       <div className="shoot-workspace-actions" ref={actionsRef}>
-        <button className="shoot-button secondary label-s-semibold" type="button" aria-expanded={isActionsOpen} onClick={() => setIsActionsOpen((current) => !current)}>Actions<DsIcon name="caret-down" size={14} /></button>
+        <Button size="S" variant="secondary" className="shoot-button secondary" type="button" aria-expanded={isActionsOpen} onClick={() => setIsActionsOpen((current) => !current)}>Actions<DsIcon name="caret-down" size={14} /></Button>
         {isActionsOpen ? <div className="shoot-workspace-actions-menu" role="menu">
           <button className="label-s-semibold" type="button" role="menuitem" onClick={() => { setIsActionsOpen(false); onDocuments(); }}><DsIcon name="folder" size={16} />Documents</button>
           <Link className="label-s-semibold" href={selectedDayPdfHref} target="_blank" role="menuitem" onClick={() => setIsActionsOpen(false)}><DsIcon name="download-simple" size={16} />Download PDF</Link>
@@ -7101,7 +7075,7 @@ function ScheduleFilters({ status, selectedTypes, showType, locations, people, s
             </button>;
           })}
         </div> : null}
-        {activeCount > 0 ? <button className="shoot-filter-clear label-s-semibold" type="button" onClick={onClear}>Clear filters</button> : null}
+        {activeCount > 0 ? <Button size="S" variant="ghost" className="shoot-filter-clear" type="button" onClick={onClear}>Clear filters</Button> : null}
       </div> : null}
     </div>
   );
@@ -7142,7 +7116,7 @@ function PeopleFilters({ value, onChange }: { value: PersonFilter; onChange: (va
             <span>{option === "all" ? "All" : personTypeLabels[option]}</span>
           </button>)}
         </div>
-        {value !== "all" ? <button className="shoot-filter-clear label-s-semibold" type="button" onClick={() => { onChange("all"); setIsOpen(false); }}>Clear filter</button> : null}
+        {value !== "all" ? <Button size="S" variant="ghost" className="shoot-filter-clear" type="button" onClick={() => { onChange("all"); setIsOpen(false); }}>Clear filter</Button> : null}
       </div> : null}
     </div>
   );
@@ -7470,7 +7444,7 @@ function UnscheduledShotsPanel({ entries, isOpen, isMobileDrawer = false, onClos
     <button type="button" aria-expanded="false" onClick={onOpen}><DsIcon name="caret-right" size={16} /><span className="label-s-semibold">Unscheduled</span><span className="shoot-group-count label-xs-semibold">{entries.length}</span></button>
   </aside>;
 
-  return <aside className={`shoot-unscheduled-panel ${isMobileDrawer ? "is-mobile-drawer" : ""}`} aria-label="Unscheduled shots" onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
+  return <aside className={`shoot-unscheduled-panel ${isMobileDrawer ? "is-mobile-drawer" : ""}`} aria-label="Unscheduled shots" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); } }}>
     <header>
       <div className="shoot-entry-group-title"><h3>Unscheduled shots</h3><span className="shoot-group-count label-xs-semibold">{entries.length}</span></div>
       <button className="shoot-icon-button" type="button" aria-label="Collapse Unscheduled shots" onClick={onClose}><DsIcon name={isMobileDrawer ? "x-close-cross" : "caret-left"} size={16} /></button>
@@ -7723,7 +7697,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
     <header className="shoot-section-header shoot-shot-list-primary-toolbar">
       <div className="shoot-section-title"><DsIcon name="video-camera-ds" size={20} /><h2>Shot list</h2></div>
       <div className="shoot-section-actions">
-        <button className="shoot-button primary label-s-semibold" type="button" onClick={() => { resetFilters(); setSortBy("shotNumber"); onAddShot(); }}><DsIcon name="plus" size={16} />Add shot</button>
+        <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={() => { resetFilters(); setSortBy("shotNumber"); onAddShot(); }}><DsIcon name="plus" size={16} />Add shot</Button>
         <button
           className="shoot-button secondary shoot-shot-filter-toggle label-s-semibold"
           type="button"
@@ -7734,12 +7708,12 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
           Filters{activeFilterCount ? ` · ${activeFilterCount}` : ""}<DsIcon name="caret-down" size={14} />
         </button>
       <div className="shoot-fields-control" ref={fieldsControlRef}>
-        <button className="shoot-button secondary label-s-semibold" type="button" aria-expanded={isFieldsOpen} onClick={() => { setIsFiltersOpen(false); setIsFieldsOpen((current) => !current); }}><DsIcon name="settings" size={16} />Fields</button>
+        <Button size="S" variant="secondary" className="shoot-button secondary" type="button" aria-expanded={isFieldsOpen} onClick={() => { setIsFiltersOpen(false); setIsFieldsOpen((current) => !current); }}><DsIcon name="settings" size={16} />Fields</Button>
         {isFieldsOpen ? <div className="shoot-fields-popover" role="dialog" aria-label="Shot List fields">
           <header><strong>Fields</strong><span className="label-xs">Show, hide or reorder columns.</span></header>
           <section><h3 className="label-xs-semibold">Visible fields</h3>{visibleFieldSettings.map((field) => renderFieldSetting(field, true))}</section>
           {additionalFieldSettings.length ? <section><h3 className="label-xs-semibold">Additional fields</h3>{additionalFieldSettings.map((field) => renderFieldSetting(field, false))}</section> : null}
-          <button className="shoot-text-action label-s-semibold" type="button" onClick={() => { setOrderedFields([...defaultShotFields, ...allShotFields.filter((field) => !defaultShotFields.includes(field.id)).map((field) => field.id)]); setHiddenFields(allShotFields.filter((field) => field.optional).map((field) => field.id)); }}>Reset fields</button>
+          <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setOrderedFields([...defaultShotFields, ...allShotFields.filter((field) => !defaultShotFields.includes(field.id)).map((field) => field.id)]); setHiddenFields(allShotFields.filter((field) => field.optional).map((field) => field.id)); }}>Reset fields</Button>
         </div> : null}
       </div>
       </div>
@@ -7753,10 +7727,10 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
         <label><span className="label-xs-semibold">Status</span><BriskSelect ariaLabel="Filter by status" options={[{ value: "", label: "All" }, { value: "remaining", label: "Remaining" }, { value: "captured", label: "Captured" }]} placeholder="All" value={capturedFilter} onChange={(value) => setCapturedFilter(value as "" | "captured" | "remaining")} /></label>
         <label><span className="label-xs-semibold">Sort</span><BriskSelect clearable={false} ariaLabel="Sort shots" options={[{ value: "shotNumber", label: "Shot number" }, { value: "manual", label: "Manual order" }, { value: "category", label: "Shot type" }, { value: "location", label: "Location" }, { value: "subject", label: "Subject" }, { value: "captured", label: "Captured" }]} placeholder="Shot number" value={sortBy} onChange={(value) => { if (value) setSortBy(value as typeof sortBy); }} /></label>
       </div>
-      {activeFilterCount ? <div className="shoot-shot-filter-summary"><span className="shoot-count label-xs-semibold">{activeFilterCount}</span><span className="label-xs">active {activeFilterCount === 1 ? "filter" : "filters"}</span><button className="shoot-text-action label-xs-semibold" type="button" onClick={resetFilters}>Clear filters</button></div> : null}
+      {activeFilterCount ? <div className="shoot-shot-filter-summary"><span className="shoot-count label-xs-semibold">{activeFilterCount}</span><span className="label-xs">active {activeFilterCount === 1 ? "filter" : "filters"}</span><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={resetFilters}>Clear filters</Button></div> : null}
     </div> : null}
 
-    {entries.length === 0 ? <ShotListEmptyState onAdd={onAddShot} /> : filteredEntries.length === 0 ? <div className="shoot-filter-empty"><strong>No shots match these filters</strong><button className="shoot-text-action label-s-semibold" type="button" onClick={resetFilters}>Clear filters</button></div> : <>
+    {entries.length === 0 ? <ShotListEmptyState onAdd={onAddShot} /> : filteredEntries.length === 0 ? <div className="shoot-filter-empty"><strong>No shots match these filters</strong><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={resetFilters}>Clear filters</Button></div> : <>
       <div
         className={`shoot-shot-grid-wrap ${hasStickyPrefix ? "has-sticky-prefix" : ""} ${isGridScrolled ? "is-horizontally-scrolled" : ""}`}
         ref={gridRef}
@@ -7805,7 +7779,7 @@ function DetailedShotList({ entries, locations, people, projectId, focusedDescri
           <div className="shoot-shot-card-heading"><span className="shoot-schedule-type is-shot label-xs-semibold">{entry.shotNumber}</span><label className="shoot-checkbox" onClick={(event) => event.stopPropagation()}><input type="checkbox" checked={Boolean(entry.captured)} aria-label={`Mark ${entry.description} as captured`} onChange={() => onToggleCaptured(entry.id)} /><span aria-hidden="true"><DsIcon name="check" size={14} /></span></label></div>
           <strong>{entry.description}</strong>
           <p className="label-xs">{[entry.shotCategory, entry.shotSize, entry.durationMinutes ? `${entry.durationMinutes} min` : null].filter(Boolean).join(" · ")}</p>
-          <button className="shoot-text-action label-s-semibold" type="button" onClick={() => onEdit(entry)}>Edit shot<DsIcon name="arrow-right" size={16} /></button>
+          <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => onEdit(entry)}>Edit shot<DsIcon name="arrow-right" size={16} /></Button>
         </article>)}
       </div>
     </>}
@@ -7822,7 +7796,7 @@ function ShotGridCell({ entry, field, locations, projectId, autoFocusDescription
   if (field === "captured") return <div {...cellProps}><label className="shoot-checkbox"><input type="checkbox" checked={Boolean(entry.captured)} aria-label={`Mark ${entry.description} as captured`} onChange={onToggleCaptured} /><span aria-hidden="true"><DsIcon name="check" size={14} /></span></label></div>;
   if (field === "image") return <div {...cellProps}><ShotReferenceImagePicker entry={entry} projectId={projectId} onChange={onUpdate} /></div>;
   if (field === "shotNumber") return <div {...cellProps}>{showDragHandle ? <span className="shoot-shot-drag" draggable aria-label="Drag to reorder shot" onDragEnd={onDragEnd} onDragStart={onDragStart}><DsIcon name="dots-six-vertical" size={15} /></span> : null}<strong>{entry.shotNumber}</strong></div>;
-  if (field === "description") return <div {...cellProps}><input autoFocus={autoFocusDescription} required aria-label="Description" placeholder="Describe what needs to be captured…" value={entry.description} onFocus={onDescriptionFocused} onChange={(event) => onUpdate({ description: event.target.value })} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") event.currentTarget.blur(); }} /><button className="shoot-shot-edit-action label-xs-semibold" type="button" onClick={onEdit}>Edit shot</button></div>;
+  if (field === "description") return <div {...cellProps}><input autoFocus={autoFocusDescription} required aria-label="Description" placeholder="Describe what needs to be captured…" value={entry.description} onFocus={onDescriptionFocused} onChange={(event) => onUpdate({ description: event.target.value })} onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") event.currentTarget.blur(); }} /><Button size="S" variant="ghost" className="shoot-shot-edit-action" type="button" onClick={onEdit}>Edit shot</Button></div>;
   if (field === "subject") return <div {...cellProps}><input aria-label="Subject" placeholder="Person, product, place or activity" value={entry.subject ?? ""} onChange={(event) => onUpdate({ subject: event.target.value })} /></div>;
   if (field === "location") return <div {...cellProps}><BriskSelect ariaLabel="Location" options={[...locations.map((location) => ({ value: location.id, label: location.name })), { value: "create-new", label: "Create new location" }]} placeholder="No location" value={entry.locationId ?? ""} onChange={(value) => value === "create-new" ? onCreateLocation() : onUpdate({ locationId: value || undefined })} /></div>;
   if (field === "category") return <div {...cellProps}><ShotTaxonomySelect ariaLabel="Shot type" customPlaceholder="Add a custom shot type" options={shotCategoryOptions} placeholder="Shot type" value={entry.shotCategory} onChange={(value) => onUpdate({ shotCategory: value })} /></div>;
@@ -7883,8 +7857,8 @@ function ShotReferenceImagePicker({ entry, projectId, compact = false, table = f
       event.target.value = "";
     }} />
     {librarySource ? <ShotMediaLibraryModal source={librarySource} projectId={projectId} onClose={() => setLibrarySource(null)} onSelect={(asset) => { onChange({ imageReferenceUrl: asset.thumbnailUrl, imageReferenceId: asset.id, imageReferenceSource: librarySource }); setLibrarySource(null); }} /> : null}
-    {isLinkOpen ? <ModalShell compact title="Add image link" onClose={() => setIsLinkOpen(false)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setIsLinkOpen(false)}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={!linkValue.trim()} onClick={() => { onChange({ imageReferenceUrl: linkValue.trim(), imageReferenceId: `link-${Date.now()}`, imageReferenceSource: "link" }); setIsLinkOpen(false); }}>Add image</button></div>}><Field label="Image URL"><input autoFocus type="url" placeholder="https://" value={linkValue} onChange={(event) => setLinkValue(event.target.value)} /></Field></ModalShell> : null}
-    {isPreviewOpen && entry.imageReferenceUrl ? <ModalShell title={`Image for shot ${entry.shotNumber}`} onClose={() => setIsPreviewOpen(false)} footer={<><button className="shoot-text-action danger label-s-semibold" type="button" onClick={() => { clearImage(); setIsPreviewOpen(false); }}>Remove</button><div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={() => { setIsPreviewOpen(false); setIsSourceOpen(true); }}>Replace</Button><Button size="S" variant="primary" onClick={() => setIsPreviewOpen(false)}>Done</Button></div></>}><div className="shoot-shot-image-preview"><img src={entry.imageReferenceUrl} alt={`Reference for ${entry.description}`} /></div></ModalShell> : null}
+    {isLinkOpen ? <ModalShell compact title="Add image link" onClose={() => setIsLinkOpen(false)} footer={<div className="shoot-modal-actions align-right"><Button size="S" variant="secondary" onClick={() => setIsLinkOpen(false)}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!linkValue.trim()} onClick={() => { onChange({ imageReferenceUrl: linkValue.trim(), imageReferenceId: `link-${Date.now()}`, imageReferenceSource: "link" }); setIsLinkOpen(false); }}>Add image</Button></div>}><Field label="Image URL"><input autoFocus type="url" placeholder="https://" value={linkValue} onChange={(event) => setLinkValue(event.target.value)} /></Field></ModalShell> : null}
+    {isPreviewOpen && entry.imageReferenceUrl ? <ModalShell title={`Image for shot ${entry.shotNumber}`} onClose={() => setIsPreviewOpen(false)} footer={<><Button size="S" variant="danger"  type="button" onClick={() => { clearImage(); setIsPreviewOpen(false); }}>Remove</Button><div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={() => { setIsPreviewOpen(false); setIsSourceOpen(true); }}>Replace</Button><Button size="S" variant="primary" onClick={() => setIsPreviewOpen(false)}>Done</Button></div></>}><div className="shoot-shot-image-preview"><img src={entry.imageReferenceUrl} alt={`Reference for ${entry.description}`} /></div></ModalShell> : null}
   </div>;
 }
 
@@ -7933,7 +7907,7 @@ function EntryGroup({ title, description, hideHeader = false, tone = "default", 
             <span className="label-xs" id={tooltipId} role="tooltip">{description}</span>
           </span> : null}
         </div>
-        {onAdd ? <button className="shoot-text-action label-s-semibold" type="button" onClick={onAdd}><DsIcon name="plus" size={16} />Add shot</button> : null}
+        {onAdd ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onAdd}><DsIcon name="plus" size={16} />Add shot</Button> : null}
       </header> : null}
       {entries.length || inlineAdd ? (
         <div className="shoot-schedule-list" role="list" aria-label={title}>
@@ -8094,14 +8068,14 @@ function QuickEntryRow({ draft, shotOnly, locations, people, onCancel, onChange,
         </div>
       ) : showMoreOptions ? (
         <div className="shoot-quick-more-options">
-          <Field label="Location"><select value={draft.locationId ?? ""} onChange={(event) => onChange({ ...draft, locationId: event.target.value || undefined })}><option value="">No location</option>{locations.map((location) => <option value={location.id} key={location.id}>{location.name}</option>)}</select></Field>
+          <Field label="Location"><BriskSelect<string> ariaLabel={"Location"} clearable={false} placeholder={"No location"} value={draft.locationId ?? ""} onChange={(value) => onChange({ ...draft, locationId: value || undefined })} options={[{ value: "", label: "No location" }, ...locations.map((location) => ({ value: location.id, label: (location.name) }))]} /></Field>
           <PeoplePicker people={people} selectedIds={draft.personIds} onChange={(personIds) => onChange({ ...draft, personIds })} onCreatePerson={onCreatePerson} onSelectPerson={onSelectPerson} />
         </div>
       ) : null}
 
       <footer className="shoot-quick-entry-actions">
-        {shotOnly ? <button className="shoot-text-action label-xs-semibold" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer options" : "More options"}<DsIcon name="caret-down" size={14} /></button> : <span />}
-        <div><button className="shoot-text-action label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="shoot-button primary label-s-semibold" type="submit" disabled={!draft.description.trim() || requiresStartTime}><span className="shoot-add-label-desktop">{draft.type === "shot" ? "Add shot" : "Add to schedule"}</span><span className="shoot-add-label-mobile">Add</span></button></div>
+        {shotOnly ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer options" : "More options"}<DsIcon name="caret-down" size={14} /></Button> : <span />}
+        <div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onCancel}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="submit" disabled={!draft.description.trim() || requiresStartTime}><span className="shoot-add-label-desktop">{draft.type === "shot" ? "Add shot" : "Add to schedule"}</span><span className="shoot-add-label-mobile">Add</span></Button></div>
       </footer>
     </form>
   );
@@ -8287,11 +8261,11 @@ function DayEditorPopover({ draft, mode, error, locations, onCreateLocation, onC
         <Field label="Date"><input type="date" value={draft.date} onChange={(event) => onChange({ ...draft, date: event.target.value })} /></Field>
         <Field label="General call"><TimeSelect value={draft.generalCallTime} onChange={(value) => onChange({ ...draft, generalCallTime: value })} /></Field>
         <Field label="Expected wrap"><TimeSelect value={draft.expectedWrapTime} onChange={(value) => onChange({ ...draft, expectedWrapTime: value })} /></Field>
-        <Field label="Primary location"><select value={draft.primaryLocationId} onChange={(event) => event.target.value === "__add__" ? setIsAddingLocation(true) : onChange({ ...draft, primaryLocationId: event.target.value })}><option value="">Choose location</option>{locations.map((location) => <option value={location.id} key={location.id}>{location.name}</option>)}<option value="__add__">+ Add new location</option></select></Field>
-        {isAddingLocation ? <div className="shoot-day-inline-location"><Field label="Location name"><input autoFocus placeholder="e.g. Precinct Studio 2" value={newLocation.name} onChange={(event) => setNewLocation((current) => ({ ...current, name: event.target.value }))} /></Field><Field label="Address"><input placeholder="Street, suburb, state and postcode" value={newLocation.address} onChange={(event) => setNewLocation((current) => ({ ...current, address: event.target.value }))} /></Field><div><button className="shoot-text-action label-s-semibold" type="button" onClick={() => { setIsAddingLocation(false); setNewLocation({ name: "", address: "" }); }}>Cancel</button><button className="shoot-button secondary label-s-semibold" type="button" disabled={!newLocation.name.trim() || !newLocation.address.trim()} onClick={() => { onCreateLocation(newLocation.name, newLocation.address); setIsAddingLocation(false); setNewLocation({ name: "", address: "" }); }}>Add location</button></div></div> : null}
+        <Field label="Primary location"><BriskSelect<string> ariaLabel={"Primary location"} clearable={false} placeholder={"Choose location"} value={draft.primaryLocationId} onChange={(value) => value === "__add__" ? setIsAddingLocation(true) : onChange({ ...draft, primaryLocationId: value })} options={[{ value: "", label: "Choose location" }, ...locations.map((location) => ({ value: location.id, label: (location.name) })), { value: "__add__", label: "+ Add new location" }]} /></Field>
+        {isAddingLocation ? <div className="shoot-day-inline-location"><Field label="Location name"><input autoFocus placeholder="e.g. Precinct Studio 2" value={newLocation.name} onChange={(event) => setNewLocation((current) => ({ ...current, name: event.target.value }))} /></Field><Field label="Address"><input placeholder="Street, suburb, state and postcode" value={newLocation.address} onChange={(event) => setNewLocation((current) => ({ ...current, address: event.target.value }))} /></Field><div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setIsAddingLocation(false); setNewLocation({ name: "", address: "" }); }}>Cancel</Button><Button size="S" variant="secondary" className="shoot-button secondary" type="button" disabled={!newLocation.name.trim() || !newLocation.address.trim()} onClick={() => { onCreateLocation(newLocation.name, newLocation.address); setIsAddingLocation(false); setNewLocation({ name: "", address: "" }); }}>Add location</Button></div></div> : null}
       </div>
       {error ? <p className="shoot-day-draft-error label-xs-semibold" role="alert">{error}</p> : null}
-      <footer><button className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button><button className="shoot-button primary label-s-semibold" type="button" onClick={onSave}>{mode === "add" ? "Add day" : "Done"}</button></footer>
+      <footer><Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onCancel}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onSave}>{mode === "add" ? "Add day" : "Done"}</Button></footer>
     </div>
   );
 }
@@ -8341,8 +8315,8 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
       <p className="label-xs">Emergency number: 000</p>
     </div>
     <div className="shoot-safety-state-actions">
-      <button className="shoot-button secondary label-s-semibold" type="button" disabled>Suggest nearest hospital</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={onAddPrimaryLocation}>Add primary location</button>
+      <Button size="S" variant="secondary" className="shoot-button secondary" type="button" disabled>Suggest nearest hospital</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onAddPrimaryLocation}>Add primary location</Button>
     </div>
   </div>;
 
@@ -8352,8 +8326,8 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
       <span className="label-xs">{value.hospitalAddress}</span>
     </div>
     <div className="shoot-safety-summary-actions">
-      <button className="shoot-text-action shoot-safety-edit-action label-s-semibold" type="button" onClick={() => beginReview({ ...value, confirmed: false })}><DsIcon name="pencil-simple-ds" size={14} />Edit</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={suggest}>Suggest again</button>
+      <Button size="S" variant="ghost" className="shoot-text-action shoot-safety-edit-action" type="button" onClick={() => beginReview({ ...value, confirmed: false })}><DsIcon name="pencil-simple-ds" size={14} />Edit</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={suggest}>Suggest again</Button>
     </div>
   </div>;
 
@@ -8364,8 +8338,8 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
       <p className="label-xs">The previous details will not be shared until they are confirmed again.</p>
     </div>
     <div className="shoot-safety-state-actions">
-      <button className="shoot-button primary label-s-semibold" type="button" onClick={() => beginReview(value)}>Review details</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={suggest}>Suggest again</button>
+      <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={() => beginReview(value)}>Review details</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={suggest}>Suggest again</Button>
     </div>
   </div>;
 
@@ -8375,8 +8349,8 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
       <p className="label-xs">Emergency number: 000</p>
     </div>
     <div className="shoot-safety-state-actions">
-      <button className="shoot-button primary label-s-semibold" type="button" onClick={suggest}>Suggest nearest hospital</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={() => beginReview(emptyEmergencyInfo())}>Enter manually</button>
+      <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={suggest}>Suggest nearest hospital</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => beginReview(emptyEmergencyInfo())}>Enter manually</Button>
     </div>
   </div>;
 
@@ -8396,25 +8370,15 @@ function SafetyEmergencySection({ info, primaryLocation, onAddPrimaryLocation, o
     </div>
     {value.travelTime ? <p className="shoot-safety-travel-time label-xs">{value.travelTime}</p> : null}
     <div className="shoot-safety-actions">
-      <button className="shoot-text-action danger label-s-semibold" type="button" onClick={removeHospital}><DsIcon name="trash-simple" size={16} />Remove hospital</button>
-      <button className="shoot-button primary label-s-semibold" type="button" disabled={!canConfirm} onClick={() => { onChange({ ...value, emergencyNumber: "000", confirmed: true, needsReview: false }); setReviewSnapshot(undefined); setIsReviewing(false); }}>Confirm for Call Sheet</button>
-      <button className="shoot-text-action label-s-semibold" type="button" onClick={cancelReview}>Cancel</button>
+      <Button size="S" variant="danger" className="shoot-text-action danger" type="button" onClick={removeHospital}><DsIcon name="trash-simple" size={16} />Remove hospital</Button>
+      <Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!canConfirm} onClick={() => { onChange({ ...value, emergencyNumber: "000", confirmed: true, needsReview: false }); setReviewSnapshot(undefined); setIsReviewing(false); }}>Confirm for Call Sheet</Button>
+      <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={cancelReview}>Cancel</Button>
     </div>
   </div>;
 }
 
 function ModalShell({ title, description, compact = false, wide = false, onClose, children, footer }: { title: string; description?: string; compact?: boolean; wide?: boolean; onClose: () => void; children: ReactNode; footer: ReactNode }) {
-  if (typeof document === "undefined") return null;
-  return createPortal(
-    <div className="team-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className={`team-modal shoot-modal ${compact ? "is-compact" : ""} ${wide ? "is-wide" : ""}`} role="dialog" aria-modal="true" aria-label={title} onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
-        <header className="team-modal-header"><div><h2 className="team-modal-title headings-xs-bold">{title}</h2>{description ? <p className="team-modal-subtitle label-s">{description}</p> : null}</div><button className="team-modal-close" type="button" aria-label={`Close ${title}`} onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header>
-        <div className="shoot-modal-body">{children}</div>
-        <footer className="shoot-modal-footer">{footer}</footer>
-      </section>
-    </div>,
-    document.body,
-  );
+  return <EditingDialog title={title} description={description} size={wide ? "full" : compact ? "compact" : "wide"} onCancel={onClose} actions={footer}>{children}</EditingDialog>;
 }
 
 function CustomiseShootPlanModal({ hasShots, shotListEnabled, onClose, onShotListEnabledChange }: {
@@ -8441,19 +8405,7 @@ function CustomiseShootPlanModal({ hasShots, shotListEnabled, onClose, onShotLis
 }
 
 function DeleteShootItemModal({ title, message, confirmLabel, onCancel, onConfirm }: { title: string; message: string; confirmLabel: string; onCancel: () => void; onConfirm: () => void }) {
-  return (
-    <ModalShell
-      compact
-      title={title}
-      onClose={onCancel}
-      footer={<div className="shoot-modal-actions align-right">
-        <button autoFocus className="shoot-button secondary label-s-semibold" type="button" onClick={onCancel}>Cancel</button>
-        <button className="shoot-button danger label-s-semibold" type="button" onClick={onConfirm}><DsIcon name="trash-simple" size={16} />{confirmLabel}</button>
-      </div>}
-    >
-      <p className="paragraph-s">{message}</p>
-    </ModalShell>
-  );
+  return <ConfirmationDialog title={title} description={message} tone="danger" confirmLabel={confirmLabel} onCancel={onCancel} onConfirm={onConfirm} />;
 }
 
 function DeleteShootDayModal({ day, entries, onCancel, onConfirm }: { day?: ShootDay; entries: ProductionEntry[]; onCancel: () => void; onConfirm: () => void }) {
@@ -8521,8 +8473,8 @@ function EntryModal({ draft, hideScheduling, compactShotDetails = false, days, e
   return (
     <ModalShell title={title} onClose={onClose} footer={
       <>
-        {draft.id ? <div className="shoot-entry-footer-actions">{confirmDelete ? <div className="shoot-delete-confirm"><span className="label-xs-semibold">Delete permanently?</span><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={onDelete}>Yes, delete</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={onCancelDelete}>Keep it</button></div> : <>{!hideScheduling && canBeUntimed && !isUnscheduled ? <button className="shoot-text-action label-s-semibold" type="button" onClick={onUnschedule}>Unschedule item</button> : null}<button className="shoot-text-action danger label-s-semibold" type="button" onClick={onDelete}><DsIcon name="trash-simple" size={16} />Delete</button></>}</div> : <span />}
-        <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><button className="shoot-button primary label-s-semibold" type="button" disabled={requiresStartTime || !draft.description.trim()} onClick={() => onSave(draft)}>{draft.id ? "Save changes" : isUnscheduled ? "Add shot" : "Add to schedule"}</button></div>
+        {draft.id ? <div className="shoot-entry-footer-actions">{confirmDelete ? <ConfirmationDialog title="Delete permanently?" tone="danger" cancelLabel="Keep it" confirmLabel="Yes, delete" onCancel={onCancelDelete} onConfirm={onDelete} /> : <>{!hideScheduling && canBeUntimed && !isUnscheduled ? <Button size="S" variant="secondary"  type="button" onClick={onUnschedule}>Unschedule item</Button> : null}<Button size="S" variant="danger"  type="button" onClick={onDelete}><DsIcon name="trash-simple" size={16} />Delete</Button></>}</div> : <span />}
+        <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={requiresStartTime || !draft.description.trim()} onClick={() => onSave(draft)}>{draft.id ? "Save changes" : isUnscheduled ? "Add shot" : "Add to schedule"}</Button></div>
       </>
     }>
       <div className="shoot-entry-modal-form" onKeyDown={(event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !requiresStartTime && draft.description.trim()) { event.preventDefault(); onSave(draft); } }}>
@@ -8535,7 +8487,7 @@ function EntryModal({ draft, hideScheduling, compactShotDetails = false, days, e
       </div> : !isShot ? <Field label="Title"><input autoFocus placeholder="e.g. Crew call and gear unload" value={draft.description} onChange={(event) => onChange({ ...draft, description: event.target.value })} /></Field> : null}
 
       {isLinkedCoverage && linkedGroup ? <section className="shoot-schedule-group-shots">
-        <header><div><strong>Shots</strong><span className="label-xs">{linkedGroupShots.length} {linkedGroupShots.length === 1 ? "shot" : "shots"}</span></div><button className="shoot-text-action label-s-semibold" type="button" onClick={() => onAddGroupShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</button></header>
+        <header><div><strong>Shots</strong><span className="label-xs">{linkedGroupShots.length} {linkedGroupShots.length === 1 ? "shot" : "shots"}</span></div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => onAddGroupShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</Button></header>
         {linkedGroupShots.length ? <div>{linkedGroupShots.map((shot) => <button className="label-s" type="button" key={shot.id} onClick={() => onEditLinkedShot(shot)}><span>{shot.shotNumber ?? ""}</span><strong>{shot.description}</strong><DsIcon name="caret-right" size={14} /></button>)}</div> : <p className="label-s">No shots in this group yet.</p>}
       </section> : null}
 
@@ -8612,7 +8564,7 @@ function ShotDetailsForm({ compact = false, draft, locations, projectId, onChang
       <Field label="Shot size"><BriskSelect ariaLabel="Shot size" options={shotSizeOptions.map((option) => ({ value: option, label: option }))} placeholder="Shot size" value={draft.shotSize ?? ""} onChange={(value) => onChange({ ...draft, shotSize: value || undefined })} /></Field>
       <Field label="Est. filming time"><FilmingTimeInput value={draft.durationMinutes} onChange={(durationMinutes) => onChange({ ...draft, durationMinutes })} /></Field>
     </div>
-    <button className="shoot-text-action label-s-semibold" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer details" : "More details"}<DsIcon name="caret-down" size={14} /></button>
+    <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={showMoreOptions} onClick={() => setShowMoreOptions((current) => !current)}>{showMoreOptions ? "Fewer details" : "More details"}<DsIcon name="caret-down" size={14} /></Button>
     {showMoreOptions ? <>
     <div className="shoot-shot-details-secondary">
       <Field label="Camera approach"><ShotTaxonomySelect ariaLabel="Camera approach" customPlaceholder="Add a custom camera approach" options={cameraMovementOptions} placeholder="Camera approach" value={draft.cameraMovement} onChange={(value) => onChange({ ...draft, cameraMovement: value })} /></Field>
@@ -8629,83 +8581,13 @@ function ShotDetailsForm({ compact = false, draft, locations, projectId, onChang
 }
 
 function ShootDayMultiSelect({ days, value, onChange }: { days: ShootDay[]; value: ShootDayAssignment; onChange: (value: ShootDayAssignment) => void }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
   const selectedDayIds = value === "all" ? days.map((day) => day.id) : value;
-  const label = value === "all"
-    ? "All days"
-    : selectedDayIds.length === 0
-      ? "Choose shoot days"
-      : selectedDayIds.length === 1
-        ? days.find((day) => day.id === selectedDayIds[0])?.label ?? "1 day selected"
-        : `${selectedDayIds.length} days selected`;
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const positionMenu = () => {
-      const trigger = triggerRef.current;
-      if (!trigger) return;
-      const rect = trigger.getBoundingClientRect();
-      const viewportPadding = 8;
-      const gap = 4;
-      const width = Math.min(Math.max(rect.width, 240), window.innerWidth - (viewportPadding * 2));
-      const preferredHeight = menuRef.current?.scrollHeight ?? (((days.length + 1) * 52) + 16);
-      const spaceBelow = window.innerHeight - rect.bottom - gap - viewportPadding;
-      const spaceAbove = rect.top - gap - viewportPadding;
-      const openAbove = spaceBelow < preferredHeight && spaceAbove > spaceBelow;
-      const availableHeight = openAbove ? spaceAbove : spaceBelow;
-      setMenuStyle({
-        bottom: openAbove ? window.innerHeight - rect.top + gap : undefined,
-        left: Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - width - viewportPadding),
-        maxHeight: availableHeight >= preferredHeight ? "none" : Math.max(96, availableHeight),
-        top: openAbove ? undefined : rect.bottom + gap,
-        width,
-      });
-    };
-    const closeOnOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) setIsOpen(false);
-    };
-    positionMenu();
-    window.addEventListener("resize", positionMenu);
-    window.addEventListener("scroll", positionMenu, true);
-    document.addEventListener("mousedown", closeOnOutsideClick);
-    return () => {
-      window.removeEventListener("resize", positionMenu);
-      window.removeEventListener("scroll", positionMenu, true);
-      document.removeEventListener("mousedown", closeOnOutsideClick);
-    };
-  }, [days.length, isOpen]);
-
-  const toggleDay = (dayId: string) => {
-    const current = value === "all" ? days.map((day) => day.id) : value;
-    if (current.length === 1 && current.includes(dayId)) return;
-    const next = current.includes(dayId) ? current.filter((id) => id !== dayId) : [...current, dayId];
-    onChange(next);
-  };
-
-  return <div className="brisk-select shoot-day-multi-select">
-    <button className="brisk-select-trigger shoot-day-multi-trigger label-s" ref={triggerRef} type="button" aria-haspopup="listbox" aria-expanded={isOpen} onClick={() => setIsOpen((current) => !current)}>
-      <span>{label}</span><DsIcon name="caret-down" size={12} />
-    </button>
-    {isOpen ? createPortal(<div className="shoot-day-multi-menu" ref={menuRef} style={menuStyle} role="listbox" aria-label="Shoot days" aria-multiselectable="true" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); setIsOpen(false); triggerRef.current?.focus(); } }}>
-      <div className="shoot-day-multi-options">
-        {days.map((day) => {
-          const isSelected = selectedDayIds.includes(day.id);
-          return <button className="shoot-day-multi-option" type="button" role="option" aria-selected={isSelected} key={day.id} onClick={() => toggleDay(day.id)}>
-            <span className={`shoot-day-multi-check ${isSelected ? "is-checked" : ""}`} aria-hidden="true">{isSelected ? <DsIcon name="check" size={14} /> : null}</span>
-            <span><strong className="label-s-semibold">{day.label}</strong><small className="label-xs">{formatEditorDate(day.date)}</small></span>
-          </button>;
-        })}
-      </div>
-      <button className="shoot-day-multi-option is-all" type="button" role="option" aria-selected={value === "all"} onClick={() => { onChange("all"); setIsOpen(false); }}>
-        <span className={`shoot-day-multi-check ${value === "all" ? "is-checked" : ""}`} aria-hidden="true">{value === "all" ? <DsIcon name="check" size={14} /> : null}</span>
-        <span><strong className="label-s-semibold">All days</strong></span>
-      </button>
-    </div>, document.body) : null}
-  </div>;
+  const label = value === "all" ? "All days" : selectedDayIds.length === 0 ? "Choose shoot days" : selectedDayIds.length === 1 ? days.find((day) => day.id === selectedDayIds[0])?.label ?? "1 day selected" : `${selectedDayIds.length} days selected`;
+  return <BriskSelect<string> multiple ariaLabel="Shoot days" className="shoot-day-multi-select" clearable={false} placeholder="Choose shoot days"
+    triggerContent={<span>{label}</span>} value={selectedDayIds}
+    options={days.map((day) => ({ value: day.id, label: day.label, description: formatEditorDate(day.date) }))}
+    onChange={(next) => { if (next.length) onChange(next); }}
+    footerAction={{ label: "All days", onSelect: () => onChange("all") }} />;
 }
 
 function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSave }: { draft: PersonDraft; days: ShootDay[]; canDelete: boolean; onChange: (draft: PersonDraft) => void; onClose: () => void; onDelete: () => void; onSave: (draft: PersonDraft) => void }) {
@@ -8716,13 +8598,13 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
   const isCustomCrewRole = isAddingCrewRole || (draft.type === "crew" && Boolean(draft.role) && !crewRoleOptions.some((role) => role === draft.role));
   return (
     <ModalShell title={isExistingContact ? "Confirm person details" : draft.id ? "Edit person" : "Create new contact"} description={isExistingContact ? "Contact details are reused. Confirm their role, call time and shoot days for this production." : "Keep only the details needed on the day."} onClose={onClose} footer={<>
-      {canDelete ? <div className="shoot-delete-confirm">{confirmDelete ? <><span className="label-xs-semibold">Remove {draft.name}?</span><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={onDelete}>Yes, remove</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setConfirmDelete(false)}>Keep person</button></> : <button className="shoot-text-action danger label-s-semibold" type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</button>}</div> : <span />}
+      {canDelete ? <div className="shoot-delete-confirm">{confirmDelete ? <ConfirmationDialog title={`Remove ${draft.name}?`} tone="danger" cancelLabel="Keep person" confirmLabel="Yes, remove" onCancel={() => setConfirmDelete(false)} onConfirm={onDelete} /> : <Button size="S" variant="danger"  type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</Button>}</div> : <span />}
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" onClick={() => onSave(draft)}>{isExistingContact ? "Add person" : isCreating ? "Create and add" : "Save person"}</Button></div>
     </>}>
       {isCreating ? <span className="shoot-contact-source-badge is-new label-xs-semibold">New person</span> : null}
       <Field label="Name"><input autoFocus value={draft.name} onChange={(event) => onChange({ ...draft, name: event.target.value })} /></Field>
       <div className="shoot-form-grid two-column">
-        <Field label="Type"><select value={draft.type} onChange={(event) => onChange({ ...draft, type: event.target.value as ShootPersonType })}>{(Object.keys(personTypeLabels) as ShootPersonType[]).map((type) => <option value={type} key={type}>{personTypeLabels[type]}</option>)}</select></Field>
+        <Field label="Type"><BriskSelect<string> ariaLabel={"Person type"} clearable={false} placeholder={"Choose an option"} value={draft.type} onChange={(value) => onChange({ ...draft, type: value as ShootPersonType })} options={[...(Object.keys(personTypeLabels) as ShootPersonType[]).map((type) => ({ value: type, label: (personTypeLabels[type]) }))]} /></Field>
         <Field label={isCreating ? "Role (optional)" : "Role"}>{draft.type === "crew" && !isCustomCrewRole ? <BriskSelect
           ariaLabel="Crew role"
           options={[
@@ -8739,7 +8621,7 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
             }
             onChange({ ...draft, role: value });
           }}
-        /> : draft.type === "crew" ? <div className="shoot-custom-crew-role"><input autoFocus placeholder="Enter crew role" value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} /><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => { setIsAddingCrewRole(false); onChange({ ...draft, role: "" }); }}>Choose a standard role</button></div> : <input placeholder={draft.type === "client" ? "e.g. Client Rep" : "Enter role"} value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} />}</Field>
+        /> : draft.type === "crew" ? <div className="shoot-custom-crew-role"><input autoFocus placeholder="Enter crew role" value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} /><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setIsAddingCrewRole(false); onChange({ ...draft, role: "" }); }}>Choose a standard role</Button></div> : <input placeholder={draft.type === "client" ? "e.g. Client Rep" : "Enter role"} value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} />}</Field>
         <Field label={isCreating ? "Phone (optional)" : "Phone"}><input type="tel" value={draft.phone} onChange={(event) => onChange({ ...draft, phone: event.target.value })} /></Field>
         <Field label={isCreating ? "Email (optional)" : "Email"}><input type="email" value={draft.email} onChange={(event) => onChange({ ...draft, email: event.target.value })} /></Field>
         <Field label="Call time"><TimeSelect value={draft.callTime} onChange={(value) => onChange({ ...draft, callTime: value })} /></Field>
@@ -8793,7 +8675,7 @@ function ExistingPersonPopover({ anchor, existing, addedPersonIds, onAdd, onClos
   }, [anchor, onClose]);
 
   if (typeof document === "undefined") return null;
-  return createPortal(<section className="shoot-person-search-popover" ref={popoverRef} style={popoverStyle} role="dialog" aria-label="Add new contact" onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
+  return createPortal(<section className="shoot-person-search-popover" ref={popoverRef} style={popoverStyle} role="dialog" aria-label="Add new contact" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); } }}>
     <header><h2 className="headings-xs-bold">Add new contact</h2><button className="team-modal-close" type="button" aria-label="Close contact picker" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button></header>
     <label className="shoot-person-search-field"><span className="sr-only">Search people</span><DsIcon name="search" size={16} /><input ref={searchRef} type="search" placeholder="Search by name, role or email…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
     <div className="shoot-person-search-results">
@@ -8806,11 +8688,12 @@ function ExistingPersonPopover({ anchor, existing, addedPersonIds, onAdd, onClos
         </button>;
       }) : <p className="shoot-person-search-empty label-s">{normalisedQuery ? "No saved contacts match this search." : "No recent contacts to show."}</p>}
     </div>
-    <button className="shoot-create-person-action label-s-semibold" type="button" onClick={onCreate}><DsIcon name="plus" size={16} />Create new contact</button>
-  </section>, document.body);
+    <Button size="S" variant="secondary" className="shoot-create-person-action" type="button" onClick={onCreate}><DsIcon name="plus" size={16} />Create new contact</Button>
+  </section>, anchor?.closest("dialog") ?? document.body);
 }
 
 function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { activeDayId: string; days: ShootDay[]; documents: ShootDocument[]; onChange: (documents: ShootDocument[]) => void; onClose: () => void }) {
+  const { confirm, confirmationDialog } = useConfirmation();
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [linkDraft, setLinkDraft] = useState("");
   const [renamingDocumentId, setRenamingDocumentId] = useState<string | null>(null);
@@ -8822,8 +8705,8 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
   const hasUnsavedRename = renamingDocumentId !== null && renameDraft.trim() !== (documents.find((document) => document.id === renamingDocumentId)?.name ?? "");
   const hasUnsavedChanges = (isAddingLink && Boolean(linkDraft.trim())) || Boolean(commentDraft.trim()) || hasUnsavedRename;
   const resetLinkDraft = () => { setIsAddingLink(false); setLinkDraft(""); };
-  const requestClose = () => {
-    if (hasUnsavedChanges && !window.confirm("Discard your unsaved changes?")) return;
+  const requestClose = async () => {
+    if (hasUnsavedChanges && !(await confirm({ title: "Discard your unsaved changes?", tone: "danger", confirmLabel: "Discard changes" }))) return;
     onClose();
   };
   const addLink = () => {
@@ -8865,8 +8748,8 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
       <div className="shoot-documents-window-heading">
         <strong className="label-s-semibold">{documents.length ? `${documents.length} ${documents.length === 1 ? "document" : "documents"}` : "No documents attached"}</strong>
         {!isAddingLink ? <div className="shoot-documents-window-actions">
-          <button className="shoot-button primary label-s-semibold" type="button" onClick={() => uploadInputRef.current?.click()}><DsIcon name="upload-simple" size={16} />Upload documents</button>
-          <button className="shoot-text-action label-s-semibold" type="button" onClick={() => setIsAddingLink(true)}><DsIcon name="link" size={16} />Add link</button>
+          <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={() => uploadInputRef.current?.click()}><DsIcon name="upload-simple" size={16} />Upload documents</Button>
+          <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => setIsAddingLink(true)}><DsIcon name="link" size={16} />Add link</Button>
         </div> : null}
       </div>
       <input ref={uploadInputRef} className="sr-only" type="file" multiple accept=".pdf,.doc,.docx,.rtf,.txt,.xls,.xlsx,.ppt,.pptx,application/pdf" onChange={(event) => {
@@ -8887,21 +8770,21 @@ function DocumentsModal({ activeDayId, days, documents, onChange, onClose }: { a
             <button className="media-icon-button" type="button" aria-label={`Share ${document.name}`} data-tooltip="Share" title="Share" onClick={() => shareDocument(document)}><DsIcon name="link" size={16} /></button>
             <button className="media-icon-button" type="button" aria-label={`Comment on ${document.name}`} data-tooltip="Comment" title="Comment" onClick={() => { setCommentDocumentId((current) => current === document.id ? null : document.id); setCommentDraft(""); }}><DsIcon name="chat-circle" size={16} />{document.comments?.length ? <span className="media-comment-count label-xs-semibold">{document.comments.length}</span> : null}</button>
             <button className="media-icon-button" type="button" aria-label={`Rename ${document.name}`} data-tooltip="Rename" title="Rename" onClick={() => { setRenamingDocumentId(document.id); setRenameDraft(document.name); }}><DsIcon name="pencil-simple" size={16} /></button>
-            <button className="media-icon-button" type="button" aria-label={`Delete ${document.name}`} data-tooltip="Delete" title="Delete" onClick={() => { if (window.confirm(`Delete ${document.name}?`)) onChange(documents.filter((item) => item.id !== document.id)); }}><DsIcon name="trash" size={16} /></button>
+            <button className="media-icon-button" type="button" aria-label={`Delete ${document.name}`} data-tooltip="Delete" title="Delete" onClick={async () => { if (await confirm({ title: `Delete ${document.name}?`, tone: "danger", confirmLabel: "Delete document" })) onChange(documents.filter((item) => item.id !== document.id)); }}><DsIcon name="trash" size={16} /></button>
           </div>
         </article>
         {commentDocumentId === document.id ? <div className="shoot-document-comment-form">
           <label className="shoot-field"><span className="label-xs-semibold">Comment</span><textarea autoFocus rows={2} placeholder="Add a comment…" value={commentDraft} onChange={(event) => setCommentDraft(event.target.value)} /></label>
-          <div className="shoot-document-add-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={() => { setCommentDocumentId(null); setCommentDraft(""); }}>Cancel</button><button className="shoot-button primary label-s-semibold" type="button" disabled={!commentDraft.trim()} onClick={() => addComment(document.id)}>Add comment</button></div>
+          <div className="shoot-document-add-actions"><Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={() => { setCommentDocumentId(null); setCommentDraft(""); }}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!commentDraft.trim()} onClick={() => addComment(document.id)}>Add comment</Button></div>
         </div> : null}
       </div>)}</div> : <div className="shoot-documents-empty"><DsIcon name="file-text" size={24} /><strong className="label-s-semibold">Upload files for the shoot</strong><span className="label-xs">PDFs and common office documents are supported.</span></div>}
       {isAddingLink ? <div className="shoot-document-link-form">
         <Field label="Link"><input autoFocus type="url" placeholder="https://" value={linkDraft} onChange={(event) => setLinkDraft(event.target.value)} /></Field>
-        <div className="shoot-document-add-actions"><button className="shoot-button secondary label-s-semibold" type="button" onClick={resetLinkDraft}>Cancel</button><button className="shoot-button primary label-s-semibold" type="button" disabled={!linkDraft.trim()} onClick={addLink}>Add link</button></div>
+        <div className="shoot-document-add-actions"><Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={resetLinkDraft}>Cancel</Button><Button size="S" variant="primary" className="shoot-button primary" type="button" disabled={!linkDraft.trim()} onClick={addLink}>Add link</Button></div>
       </div> : null}
       <span className="sr-only" role="status" aria-live="polite">{actionMessage}</span>
     </div>
-  </ModalShell>;
+  {confirmationDialog}</ModalShell>;
 }
 
 function getDocumentNameFromUrl(value: string) {
@@ -8926,7 +8809,7 @@ function LocationModal({ draft, days, onChange, onClose, onDelete, onSave }: { d
   const selectedLocationName = draft.name.trim() || (/^https?:\/\//iu.test(locationValue.trim()) ? "Google Maps location" : "");
   return (
     <ModalShell compact title={draft.id ? "Edit location" : "Add location"} onClose={onClose} footer={<>
-      {draft.id ? <div className="shoot-delete-confirm">{confirmDelete ? <><span className="label-xs-semibold">Remove {draft.name}?</span><button className="shoot-text-action danger label-xs-semibold" type="button" onClick={onDelete}>Yes, remove</button><button className="shoot-text-action label-xs-semibold" type="button" onClick={() => setConfirmDelete(false)}>Keep location</button></> : <button className="shoot-text-action danger label-s-semibold" type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</button>}</div> : <span />}
+      {draft.id ? <div className="shoot-delete-confirm">{confirmDelete ? <ConfirmationDialog title={`Remove ${draft.name}?`} tone="danger" cancelLabel="Keep location" confirmLabel="Yes, remove" onCancel={() => setConfirmDelete(false)} onConfirm={onDelete} /> : <Button size="S" variant="danger"  type="button" onClick={() => setConfirmDelete(true)}><DsIcon name="trash-simple" size={16} />Delete</Button>}</div> : <span />}
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" disabled={!locationValue.trim()} onClick={() => onSave(draft)}>Save location</Button></div>
     </>}>
       <div className="shoot-preproduction-field">

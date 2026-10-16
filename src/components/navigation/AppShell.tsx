@@ -7,7 +7,8 @@ import { type ReactNode, useEffect, useState } from "react";
 import { GlobalHeaderActions, openCustomerGlobalChatEventName } from "@/components/navigation/GlobalHeaderActions";
 import { ShootGlobalActionsProvider } from "@/components/navigation/ShootGlobalActionsContext";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
-import { BriskAiAssistant, BriskAiHeaderButton } from "@/components/ai/BriskAiAssistant";
+import { DeferredBriskAiAssistant } from "@/components/ai/DeferredBriskAiAssistant";
+import { BriskAiHeaderButton } from "@/components/ai/BriskAiHeaderButton";
 import { PrototypeScenarioToolbar } from "@/components/prototype-scenarios/PrototypeScenarioToolbar";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -15,7 +16,7 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { getActiveClientPortalDestination, getAppShellPresentation } from "@/components/navigation/prototypeNavigation";
-import { ChatPage } from "@/components/chat/ChatPage";
+import { DeferredChatPage as ChatPage } from "@/components/chat/DeferredChatPage";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -98,20 +99,23 @@ export function AppShell({ children }: { children: ReactNode }) {
                     Videos
                   </Link>
                   {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/today" ? "is-active" : ""}`} href="/today">
-                    Today
+                    To Do
                   </Link> : null}
-                  <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/media" ? "is-active" : ""}`} href="/media">
+                  {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname.startsWith("/people") ? "is-active" : ""}`} href="/people">
+                    People
+                  </Link> : null}
+                  {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname.startsWith("/clients") ? "is-active" : ""}`} href="/clients">
+                    Clients
+                  </Link> : null}
+                  {!isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/media" ? "is-active" : ""}`} href="/media">
                     Media Library
-                  </Link>
-                  {isStudioStaff ? <Link className={`app-header-navigation-link label-s-semibold ${pathname === "/outstanding-invoices" ? "is-active" : ""}`} href="/outstanding-invoices">
-                    Expenses
                   </Link> : null}
-                  <Link
+                  {!isStudioStaff ? <Link
                     className={`app-header-navigation-link label-s-semibold ${pathname.startsWith("/brand-kits") ? "is-active" : ""}`}
                     href={isStudioUser ? "/brand-kits" : viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios"}
                   >
                     {isStudioUser ? "Brand Kits" : "Brand Kit"}
-                  </Link>
+                  </Link> : null}
                 </div>
                 <div className="app-global-header-trailing">
                   <GlobalHeaderActions />
@@ -121,7 +125,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </header>
             <div className="app-shell-content">{children}</div>
           </div>
-          <BriskAiAssistant />
+          <DeferredBriskAiAssistant />
           {isGlobalChatOpen ? (
             <div className="customer-chat-backdrop" role="presentation" onMouseDown={() => setIsGlobalChatOpen(false)}>
               <aside

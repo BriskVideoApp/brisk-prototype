@@ -155,6 +155,7 @@ function readStoredPlaybook(): StudioAiPlaybook | null {
       ...initialStudioAiPlaybook,
       ...storedPlaybook,
       exampleReferences: storedPlaybook.exampleReferences,
+      referenceLinks: storedPlaybook.referenceLinks ?? [],
       clientAccessEnabled: true,
     });
   } catch {

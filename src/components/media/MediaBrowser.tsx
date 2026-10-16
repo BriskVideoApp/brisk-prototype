@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "@/components/form/BriskSelect";
+
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Project } from "@/components/active-videos/types";
@@ -251,9 +254,9 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
 
   return <div className={`media-browser ${scope === "global" ? "is-global" : "is-project"}`} onDragEnter={handleDragEnter} onDragOver={(event) => { if (browserCapabilities.canUpload) event.preventDefault(); }} onDragLeave={handleDragLeave} onDrop={handleDrop}>
     <div className={`media-mobile-location is-${scope} ${hasStudioClientRail ? "has-client-picker" : ""}`} aria-label="Media location">
-      {hasStudioClientRail ? <label><span className="label-xs-semibold">Client</span><select className="label-s" value={activeClientName ?? ""} onChange={(event) => selectClient(event.target.value || null)}><option value="">All clients</option>{clientGroups.map((client) => <option value={client.name} key={client.name}>{client.name}</option>)}</select></label> : null}
-      {scope === "global" ? <label><span className="label-xs-semibold">Project</span><select className="label-s" value={activeProjectId ?? ""} onChange={(event) => selectProject(event.target.value || null)}><option value="">All projects</option>{clientProjects.map((item) => <option value={item.id} key={item.id}>{item.name} - {item.clientName}</option>)}</select></label> : null}
-      {activeProjectId ? <label><span className="label-xs-semibold">Folder</span><select className="label-s" value={selectedFolderId ?? ""} onChange={(event) => setSelectedFolderId(event.target.value || null)}><option value="">All media</option>{folders.map((folder) => <option value={folder.id} key={folder.id}>{folder.parentId ? `↳ ${folder.name}` : folder.name}</option>)}</select></label> : null}
+      {hasStudioClientRail ? <label><span className="label-xs-semibold">Client</span><BriskSelect<string> ariaLabel={"Client"} clearable={false} placeholder={"All clients"} triggerClassName="label-s" value={activeClientName ?? ""} onChange={(value) => selectClient(value || null)} options={[{ value: "", label: "All clients" }, ...clientGroups.map((client) => ({ value: client.name, label: (client.name) }))]} /></label> : null}
+      {scope === "global" ? <label><span className="label-xs-semibold">Project</span><BriskSelect<string> ariaLabel={"Project"} clearable={false} placeholder={"All projects"} triggerClassName="label-s" value={activeProjectId ?? ""} onChange={(value) => selectProject(value || null)} options={[{ value: "", label: "All projects" }, ...clientProjects.map((item) => ({ value: item.id, label: ((item.name) + " - " + (item.clientName)) }))]} /></label> : null}
+      {activeProjectId ? <label><span className="label-xs-semibold">Folder</span><BriskSelect<string> ariaLabel={"Folder"} clearable={false} placeholder={"All media"} triggerClassName="label-s" value={selectedFolderId ?? ""} onChange={(value) => setSelectedFolderId(value || null)} options={[{ value: "", label: "All media" }, ...folders.map((folder) => ({ value: folder.id, label: (folder.parentId ? `↳ ${folder.name}` : folder.name) }))]} /></label> : null}
     </div>
     <div className={`media-workspace ${hasStudioClientRail ? "has-client-rail" : ""} ${hasProjectFolderRail ? "has-project-folder-rail" : ""} ${railCollapsed ? "rail-collapsed" : ""} ${activeAsset ? "inspector-open" : ""}`}>
       {scope === "global" ? <MediaLocationNavigation
@@ -275,11 +278,11 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
               onComputerUpload={() => inputRef.current?.click()}
               onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }}
             /> : null}
-            {capabilities.canDownload ? <button
-              className="media-tertiary-button label-s-semibold"
+            {capabilities.canDownload ? <Button size="S" variant="tertiary"
+              className="media-tertiary-button"
               type="button"
               onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}
-            ><DsIcon name="download" size={16} />Download all</button> : null}
+            ><DsIcon name="download" size={16} />Download all</Button> : null}
             <input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} />
           </div>
         </div>

@@ -187,7 +187,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
     startHref: "/prototype/journey-entry",
     continuationHref: "/today",
     summary: "An invited Studio team member before joining the workspace.",
-    supportedStates: ["Studio invitation", "Empty Today view", "First assigned video empty state"],
+    supportedStates: ["Studio invitation", "Empty To Do view", "First assigned video empty state"],
   },
   {
     id: "producer-active",
@@ -202,7 +202,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
     startHref: "/today",
     continuationHref: "/today",
     summary: "A working producer using the existing Studio Staff access role.",
-    supportedStates: ["Today planning", "Active videos", "Project chat", "Media and notifications"],
+    supportedStates: ["To Do planning", "Active videos", "Project chat", "Media and notifications"],
   },
   {
     id: "producer-edge",

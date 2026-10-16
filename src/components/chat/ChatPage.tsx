@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -1281,15 +1282,15 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           <div className="chat-main-header-actions">
             {activeView === "dms" && !selectedDm ? (
               <>
-                <button
-                  className="chat-primary-button label-s-semibold"
+                <Button size="S" variant="primary"
+                  className="chat-primary-button"
                   type="button"
                   aria-expanded={isNewMessagePickerOpen}
                   onClick={() => setIsNewMessagePickerOpen((current) => !current)}
                 >
                   <DsIcon name="plus" size={16} />
                   New message
-                </button>
+                </Button>
                 {isNewMessagePickerOpen ? (
                   <div className="chat-member-picker" role="dialog" aria-label="Start a direct message">
                     <p className="label-xs-semibold">Message a studio member</p>
@@ -1327,14 +1328,14 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 ) : null}
               </>
             ) : activeView === "groups" && !selectedGroup ? (
-              <button
-                className="chat-primary-button label-s-semibold"
+              <Button size="S" variant="primary"
+                className="chat-primary-button"
                 type="button"
                 onClick={() => notify("New group ready")}
               >
                 <DsIcon name="plus" size={16} />
                 Create group
-              </button>
+              </Button>
             ) : null}
             {activeCallContext ? (
               <ChatCallLauncher

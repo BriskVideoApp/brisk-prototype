@@ -1,9 +1,13 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
+  createContext,
   useEffect,
+  useContext,
   useRef,
   useState,
   type ChangeEvent,
@@ -23,6 +27,7 @@ import { useProjectFlow } from "@/components/project/ProjectFlowContext";
 import { useProjectStageStatus } from "@/components/project/ProjectStageStatusContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
+import { useInvitations } from "@/components/invitations/InvitationContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { ShareActionRow, type ShareAccess } from "@/components/share/ShareActionRow";
@@ -55,14 +60,44 @@ import {
   type Logline,
 } from "@/data/brief";
 import { productionFlowStages } from "@/data/production-flow";
+import { getStudioBriefFieldOrder, type StudioBriefConfiguration } from "@/data/studio-onboard";
+import { BriskDatePicker } from "@/components/form/BriskDatePicker";
+import { formatBriefDate, parseBriefDateValue } from "@/lib/brief-dates";
 
 type BriefPageProps = {
   project: Project;
+  briefConfiguration?: StudioBriefConfiguration;
   studioName?: string;
   approvalDestination?: string;
   initialFields?: BriefFields;
   onFieldsChange?: (fields: BriefFields) => void;
 };
+
+const BriefFieldOrderContext = createContext<readonly BriefFieldId[] | null>(null);
+
+const briefStepFields: Partial<Record<BriefStepId, readonly BriefFieldId[]>> = {
+  basics: ["workingTitle", "description"],
+  videoType: ["videoType", "platform"],
+  purposeAudience: ["purpose", "audience", "callToAction", "feeling"],
+  similarVideos: ["referenceVideos"],
+  brandKit: ["brandKit"],
+  contentProduction: ["liveFootage", "voiceover"],
+  deadline: ["deadline"],
+  deliverablesTiming: ["deliverables"],
+};
+
+function getConfiguredBriefSteps(configuration: StudioBriefConfiguration | undefined, fields: BriefFields) {
+  if (!configuration) return briefSteps;
+  const order = getStudioBriefFieldOrder(configuration, fields);
+  const included = new Set(order.filter((fieldId) => !configuration.excludedFieldIds.includes(fieldId)));
+  const contentSteps = briefSteps.filter((step) => step.id !== "summary" && briefStepFields[step.id]?.some((fieldId) => included.has(fieldId)));
+  contentSteps.sort((a, b) => {
+    const firstA = Math.min(...(briefStepFields[a.id] ?? []).filter((id) => included.has(id)).map((id) => order.indexOf(id)));
+    const firstB = Math.min(...(briefStepFields[b.id] ?? []).filter((id) => included.has(id)).map((id) => order.indexOf(id)));
+    return firstA - firstB;
+  });
+  return [...contentSteps, briefSteps[briefSteps.length - 1]];
+}
 
 type BriefReviewAuditEntry = {
   id: string;
@@ -90,7 +125,7 @@ type BriefAiSubmit = {
 const maxBriefWords = 1000;
 const landingIntroPlaceholder = "__landing_intro_placeholder__";
 const summaryMissingSelector =
-  ".brief-summary-page .brief-summary-spec-chip.is-missing, .brief-summary-page .brief-summary-spec-chip.is-optional-missing, .brief-summary-page .brief-summary-spec-chip.is-guess, .brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing";
+  ".brief-summary-page .brief-written-slot.is-missing, .brief-summary-page .brief-written-slot.is-guess, .brief-summary-page .brief-summary-static-chip.is-missing, .brief-summary-page .brief-summary-static-chip.is-guess";
 
 const placeholderStepCopy: Record<Exclude<BriefStepId, "basics" | "summary">, string> = {
   videoType: "The video format, production category and primary platform will be shaped here.",
@@ -512,12 +547,13 @@ export function getBriefConfigurableOptions(
   return [];
 }
 
-export function BriefPage({ approvalDestination, initialFields, onFieldsChange, project, studioName: providedStudioName }: BriefPageProps) {
+export function BriefPage({ approvalDestination, briefConfiguration, initialFields, onFieldsChange, project, studioName: providedStudioName }: BriefPageProps) {
   const router = useRouter();
   const currentStudioName = useStudioCompanyName();
   const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
   const { publishStageReviewFollowUp } = useNotificationInbox();
+  const { openInvitePerson } = useInvitations();
   const { state, hasHydrated } = usePrototypeState();
   const { getProjectFlow } = useProjectFlow();
   const projectFlow = getProjectFlow(project);
@@ -529,13 +565,20 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     .filter((contact) => (projectState?.clientMemberIds.includes(contact.id) ?? contact.projectIds.includes(project.id)) && contact.portalAccess !== "Paused")
     .map((contact) => contact.name) ?? [];
   const activeUser = state.users.find((user) => user.id === state.session.activeUserId);
+  const initialBriefHasContent = Object.values(initialFields ?? initialBriefFields).some((field) => field.value.trim());
+  const clientHasBriefToApprove = selectedRole === "Customer"
+    && briefStageStatus.state === "waiting"
+    && briefStageStatus.assignedTo === project.clientName
+    && initialBriefHasContent;
   const briefActorName = selectedRole === "Customer"
     ? clientRecipientNames[0] ?? project.clientName
     : activeUser?.name ?? (selectedRole === "Studio Freelancer" ? "Filmmaker" : studioName);
   const auditStorageKey = `brisk-brief-action-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const isBriefApproved = briefStageStatus.state === "done";
-  const [briefMode, setBriefMode] = useState<BriefMode>("landing");
-  const [activeStepId, setActiveStepId] = useState<BriefStepId>("basics");
+  const [briefMode, setBriefMode] = useState<BriefMode>(() => clientHasBriefToApprove ? "steps" : "landing");
+  const [activeStepId, setActiveStepId] = useState<BriefStepId>(() => clientHasBriefToApprove
+    ? "summary"
+    : getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields)[0].id);
   const [briefFields, setBriefFields] = useState<BriefFields>(() => cloneBriefFields(initialFields ?? initialBriefFields));
   const briefFieldsRef = useRef(briefFields);
   const summaryMissingActiveIndexRef = useRef(-1);
@@ -551,8 +594,9 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   const [isApprovalConfirmationOpen, setIsApprovalConfirmationOpen] = useState(false);
   const [isApprovalCelebrationVisible, setIsApprovalCelebrationVisible] = useState(false);
   const approvalNavigationTimeoutRef = useRef<number | null>(null);
-  const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
-  const activeStep = briefSteps[activeStepIndex] ?? briefSteps[0];
+  const configuredSteps = getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields);
+  const activeStepIndex = configuredSteps.findIndex((step) => step.id === activeStepId);
+  const activeStep = configuredSteps[activeStepIndex] ?? configuredSteps[0];
   const nextStage = projectFlow.stages[projectFlow.stages.indexOf("brief") + 1] ?? "masters";
   const nextStageLabel = nextStage === "edit" && projectFlow.postProductionTerm === "animation"
     ? "Animation"
@@ -560,6 +604,11 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   const isSummaryStep = activeStepId === "summary";
   const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
   const hasBriefContent = Object.values(briefFields).some((field) => field.value.trim());
+  useEffect(() => {
+    if (!clientHasBriefToApprove) return;
+    setBriefMode("steps");
+    setActiveStepId("summary");
+  }, [clientHasBriefToApprove]);
   useEffect(() => {
     if (hasHydrated && isBriefApproved && !hasBriefContent) {
       setProjectStageStatus(project.id, "brief", { state: "in_progress", daysAgo: 0 });
@@ -629,6 +678,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     }
 
     const clientMessage = createChatMessage("client", trimmedPrompt || "Attached sources for the brief.", {
+      authorLabel: "You",
       attachments: [...attachments],
     });
 
@@ -878,6 +928,35 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
     });
   }
 
+  function checkBriefClientAccess(destination: SubmitDestination, message: string, notifiedPeople: readonly string[]) {
+    if (destination !== "customer") return true;
+
+    const hasClientProjectAccess = Boolean(projectClient && projectState?.clientMemberIds.some((contactId) => {
+      const contact = projectClient.contacts.find((candidate) => candidate.id === contactId);
+      return contact && contact.portalAccess !== "Paused" && state.invitations.some((invitation) =>
+        invitation.workspaceId === state.session.activeWorkspaceId
+        && invitation.clientId === project.clientId
+        && invitation.userId === contactId
+        && invitation.projectIds.includes(project.id)
+        && invitation.status !== "Expired");
+    }));
+
+    if (hasClientProjectAccess) return true;
+
+    const contactToInvite = projectClient?.contacts.find((contact) => contact.id === projectClient.primaryContactId && contact.portalAccess !== "Paused")
+      ?? projectClient?.contacts.find((contact) => contact.portalAccess !== "Paused");
+    openInvitePerson({
+      role: "Customer",
+      clientId: project.clientId,
+      projectId: project.id,
+      purpose: "brief-send",
+      ...(contactToInvite ? { name: contactToInvite.name, email: contactToInvite.email } : {}),
+    }, (person) => {
+      sendBrief("customer", message, [...new Set([...notifiedPeople, person.name])]);
+    });
+    return false;
+  }
+
   function followUpBriefReview(action: "reminded" | "updated", message: string) {
     if (!pendingReviewRequest || !lastReviewContact || !lastBriefSent) return;
     const changed = lastBriefSent.fingerprint && lastBriefSent.fingerprint !== getBriefReviewFingerprint(briefFieldsRef.current, logline.text);
@@ -936,6 +1015,24 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
       actor: briefActorName,
       occurredAt: now.toISOString(),
     });
+    if (selectedRole === "Customer") {
+      const studioReviewers = state.users
+        .filter((user) => user.workspaceId === state.session.activeWorkspaceId && user.role === "Studio Staff")
+        .map((user) => user.name);
+      if (studioReviewers.length) publishStageReviewFollowUp({
+        projectId: project.id,
+        projectName: project.name,
+        stage: "brief",
+        targetLabel: "Brief",
+        actorName: briefActorName,
+        recipientRole: "Studio Staff",
+        reviewers: studioReviewers,
+        href: `/projects/${project.id}/stages/brief`,
+        message: `${briefActorName} approved the Brief.`,
+        kind: "approved",
+        occurredAt: now.toISOString(),
+      });
+    }
     setIsApprovalConfirmationOpen(false);
     if (approvalDestination) {
       router.push(withBriefApprovalToast(approvalDestination, "Tom"));
@@ -972,7 +1069,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
   }
 
   function goToRelativeStep(direction: -1 | 1) {
-    const nextStep = briefSteps[activeStepIndex + direction];
+    const nextStep = configuredSteps[activeStepIndex + direction];
 
     if (nextStep) {
       setActiveStepId(nextStep.id);
@@ -988,7 +1085,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
 
   function enterStepFlow() {
     setBriefMode("steps");
-    setActiveStepId("basics");
+    setActiveStepId(configuredSteps[0].id);
     setIsChatCollapsed(true);
   }
 
@@ -1002,7 +1099,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
 
   function resetToLanding() {
     setBriefMode("landing");
-    setActiveStepId("basics");
+    setActiveStepId(configuredSteps[0].id);
     commitBriefFields(cloneBriefFields(initialFields ?? initialBriefFields));
     setLogline({ text: "", status: "not_generated" });
     setChatMessages([]);
@@ -1094,6 +1191,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
       approvedBy={briefStageStatus.approvedBy ?? briefActorName}
       isApproved={isBriefApproved}
       onSubmit={sendBrief}
+      onBeforeSubmit={checkBriefClientAccess}
       onApprove={requestApproveBrief}
       onUnapprove={unapproveBrief}
     />
@@ -1112,6 +1210,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
         />
         {briefMode === "landing" ? (
           <BriefLandingScreen
+            steps={configuredSteps}
             backHref={selectedRole === "Customer" ? "/customer-dashboard" : "/active-videos"}
             canDraft={clarifyingAnswerCount >= briefClarifyingQuestions.length && hasStartedClarifying && !hasDraftedBrief}
             messages={chatMessages}
@@ -1126,6 +1225,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
           <BriefStepShell
             activeStepId={activeStepId}
             activeStepIndex={activeStepIndex}
+            steps={configuredSteps}
             chatPanel={chatPanel}
             footerAction={
               isSummaryStep ? null : (
@@ -1135,7 +1235,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
               )
             }
             footerShare={isSummaryStep ? (
-              <div className="brief-footer-share-layout">
+            <div className="brief-footer-share-layout">
                 {lastBriefAudit ? <span
                   className="brief-action-audit label-xs"
                   role="status"
@@ -1160,8 +1260,10 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             onStartWithAi={resetToLanding}
             onSelectStep={setActiveStepId}
           >
+            <BriefFieldOrderContext.Provider value={briefConfiguration ? getStudioBriefFieldOrder(briefConfiguration, briefFields) : null}>
             {activeStepId === "basics" ? (
               <BriefBasicsSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1170,6 +1272,8 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "videoType" ? (
               <BriefVideoTypeSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
+                excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1178,6 +1282,8 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "purposeAudience" ? (
               <BriefPurposeAudienceSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
+                excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1186,6 +1292,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "similarVideos" ? (
               <BriefSimilarVideosSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1194,6 +1301,8 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "brandKit" ? (
               <BriefBrandKitSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
+                excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1202,6 +1311,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "contentProduction" ? (
               <BriefContentProductionSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 clientName={project.clientName}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
@@ -1212,6 +1322,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "deadline" ? (
               <BriefDeadlineSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1220,6 +1331,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
             ) : null}
             {activeStepId === "deliverablesTiming" ? (
               <BriefDeliverablesSection
+                excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
                 onFieldChange={updateBriefField}
@@ -1249,6 +1361,7 @@ export function BriefPage({ approvalDestination, initialFields, onFieldsChange, 
                 studioName={studioName}
               />
             ) : null}
+            </BriefFieldOrderContext.Provider>
           </BriefStepShell>
         )}
       </div>
@@ -1412,40 +1525,11 @@ export function BriefGuidedExperience({
   );
 }
 
-function BriefApprovalConfirmation({
-  missingCount,
-  onClose,
-  onApprove,
-}: {
-  missingCount: number;
-  onClose: () => void;
-  onApprove: () => void;
-}) {
-  useEffect(() => {
-    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [onClose]);
-
+function BriefApprovalConfirmation({ missingCount, onClose, onApprove }: { missingCount: number; onClose: () => void; onApprove: () => void }) {
   const missingDetailsCopy = missingCount === 1
     ? "One detail is still missing. You can approve it now, but it will still need to be completed."
     : `${missingCount} details are still missing. You can approve it now, but they will still need to be completed.`;
-
-  return (
-    <div className="brief-approval-confirm-backdrop" onPointerDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="brief-approval-confirm" role="dialog" aria-modal="true" aria-labelledby="brief-approval-confirm-title" aria-describedby="brief-approval-confirm-description">
-        <h2 className="headings-s-bold" id="brief-approval-confirm-title">Approve this Brief?</h2>
-        <p className="paragraph-s" id="brief-approval-confirm-description">{missingDetailsCopy}</p>
-        <div className="brief-approval-confirm-actions">
-          <Button size="S" variant="secondary" onClick={onClose}>Go back</Button>
-          <Button size="S" variant="primary" onClick={onApprove}>Approve anyway</Button>
-        </div>
-      </section>
-    </div>
-  );
+  return <ConfirmationDialog title="Approve this Brief?" description={missingDetailsCopy} cancelLabel="Go back" confirmLabel="Approve anyway" onCancel={onClose} onConfirm={onApprove} />;
 }
 
 function BriefApprovalCelebration({
@@ -1561,6 +1645,7 @@ function summariseBriefAuditEntry(entry: BriefActionAuditEntry) {
 function BriefStepShell({
   activeStepId,
   activeStepIndex,
+  steps,
   chatPanel,
   children,
   footerAction,
@@ -1572,6 +1657,7 @@ function BriefStepShell({
 }: {
   activeStepId: BriefStepId;
   activeStepIndex: number;
+  steps: typeof briefSteps;
   chatPanel: ReactNode;
   children: ReactNode;
   footerAction: ReactNode;
@@ -1598,7 +1684,7 @@ function BriefStepShell({
               </Button>
             ) : null}
           </span>
-          <BriefStepDots activeStepIndex={activeStepIndex} onSelectStep={onSelectStep} onStartWithAi={onStartWithAi} />
+          <BriefStepDots activeStepIndex={activeStepIndex} steps={steps} onSelectStep={onSelectStep} onStartWithAi={onStartWithAi} />
           <span className="brief-footer-side right">
             {footerNotice}
             {footerAction}
@@ -1629,11 +1715,13 @@ function BriefGlobalActionsPortal({ children }: { children: ReactNode }) {
 
 function BriefStepDots({
   activeStepIndex,
+  steps = briefSteps,
   onSelectStep,
   onStartWithAi,
   showAi = true,
 }: {
   activeStepIndex: number | null;
+  steps?: typeof briefSteps;
   onSelectStep: (stepId: BriefStepId) => void;
   onStartWithAi: () => void;
   showAi?: boolean;
@@ -1652,7 +1740,7 @@ function BriefStepDots({
           <span className="sr-only">Start with AI</span>
         </button>
       ) : null}
-      {briefSteps.map((step, index) => (
+      {steps.map((step, index) => (
         <button
           className={`brief-step-dot label-xs-semibold ${index === activeStepIndex ? "active" : ""} ${
             activeStepIndex !== null && index < activeStepIndex ? "complete" : ""
@@ -1660,10 +1748,10 @@ function BriefStepDots({
           key={step.id}
           type="button"
           aria-current={index === activeStepIndex ? "step" : undefined}
-          data-tooltip={`${step.index}. ${step.label}`}
+          data-tooltip={`${index + 1}. ${step.label}`}
           onClick={() => onSelectStep(step.id)}
         >
-          {step.id === "summary" ? step.shortLabel : step.index}
+          {step.id === "summary" ? step.shortLabel : index + 1}
         </button>
       ))}
     </nav>
@@ -1673,6 +1761,7 @@ function BriefStepDots({
 function BriefLandingScreen({
   backHref,
   canDraft,
+  steps,
   messages,
   onDraft,
   onRewind,
@@ -1683,6 +1772,7 @@ function BriefLandingScreen({
 }: {
   backHref: string;
   canDraft: boolean;
+  steps: typeof briefSteps;
   messages: ChatMessage[];
   onDraft: () => void;
   onRewind: (messageId: string) => void;
@@ -1839,27 +1929,27 @@ function BriefLandingScreen({
           attachments={attachments}
           landingActions={
             isClarifying ? (
-              <button
-                className="brief-landing-next label-s-semibold"
+              <Button size="S" variant="primary"
+                className="brief-landing-next"
                 type="button"
                 disabled={!canUseFooterContinue}
                 onClick={handleFooterContinue}
               >
                 {canDraft ? "OK, draft my brief" : "Continue"}
-              </button>
+              </Button>
             ) : (
               <>
-                <button className="brief-landing-skip label-s-semibold" type="button" onClick={onSkip}>
+                <Button size="S" variant="ghost" className="brief-landing-skip" type="button" onClick={onSkip}>
                   Fill manually
-                </button>
-                <button
-                  className="brief-landing-next label-s-semibold"
+                </Button>
+                <Button size="S" variant="primary"
+                  className="brief-landing-next"
                   type="button"
                   disabled={!canUseFooterContinue}
                   onClick={handleFooterContinue}
                 >
                   Continue
-                </button>
+                </Button>
               </>
             )
           }
@@ -1880,11 +1970,11 @@ function BriefLandingScreen({
         />
       </div>
       <footer className="brief-landing-footer">
-        <button className="brief-landing-back label-s-semibold" type="button" onClick={handleBack}>
+        <Button size="S" variant="ghost" className="brief-landing-back" type="button" onClick={handleBack}>
           Back
-        </button>
+        </Button>
         <div className="brief-landing-footer-centre">
-          <BriefStepDots activeStepIndex={null} onSelectStep={onSelectStep} onStartWithAi={() => undefined} />
+          <BriefStepDots activeStepIndex={null} steps={steps} onSelectStep={onSelectStep} onStartWithAi={() => undefined} />
         </div>
         <span aria-hidden="true" />
       </footer>
@@ -1935,7 +2025,7 @@ function BriefClarifyingThread({
             <div className="brief-clarifying-message-header">
               {shouldShowRole ? (
                 <span className="brief-landing-message-role label-xs-semibold">
-                  {message.role === "ai" ? studioName : "Client"}
+                  {message.role === "ai" ? studioName : message.authorLabel ?? "Client"}
                 </span>
               ) : (
                 <span aria-hidden="true" />
@@ -2305,14 +2395,14 @@ function BriefRichInput({
       {variant === "panel" ? (
         <div className="brief-rich-actions panel">
           <>
-            <button
-              className="brief-toolbar-button label-xs-semibold"
+            <Button size="S" variant="secondary"
+              className="brief-toolbar-button"
               type="button"
               onClick={() => addMockDocument("Uploaded brief notes")}
             >
               <DsIcon name="upload-simple" size={14} />
               Upload
-            </button>
+            </Button>
             <label className="brief-panel-link-entry label-xs" aria-label="Paste a link">
               <DsIcon name="link" size={14} />
               <input
@@ -2329,15 +2419,15 @@ function BriefRichInput({
                 }}
               />
             </label>
-            <button
-              className="brief-ai-send-button label-xs-semibold"
+            <Button size="S" variant="primary"
+              className="brief-ai-send-button"
               type="button"
               disabled={!canSubmit}
               onClick={onSubmit}
             >
               <DsIcon name="paper-plane-tilt" size={14} />
               Send
-            </button>
+            </Button>
           </>
         </div>
       ) : null}
@@ -2645,111 +2735,22 @@ function BriefPurposeAudienceSection({
   );
 }
 
-function BriefPurposeSelect({
-  excludedOptions = [],
-  onChange,
-  value,
-}: {
-  excludedOptions?: readonly string[];
-  onChange: (value: string) => void;
-  value: string;
+function BriefPurposeSelect({ excludedOptions = [], onChange, value }: {
+  excludedOptions?: readonly string[]; onChange: (value: string) => void; value: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const isKnownPurpose = briefPurposeOptions.includes(value as (typeof briefPurposeOptions)[number]);
   const isCustomPurpose = value === "Something else" || (!!value && !isKnownPurpose);
-  const customValue = isCustomPurpose && value !== "Something else" ? value : "";
-  const selectPurpose = (option: (typeof briefPurposeOptions)[number]) => {
-    onChange(option);
-    setIsOpen(false);
-  };
-  const menu = isOpen ? (
-    <div className="brief-purpose-menu" role="listbox" aria-label="Purpose options">
-      {briefPurposeOptions.filter((option) => !excludedOptions.includes(option)).map((option) => {
-        const isCustomOption = isBriefCustomOption(option);
-
-        return (
-          <button
-            className={`brief-purpose-option label-s${isCustomOption ? " brief-picker-custom-option" : ""}`}
-            key={option}
-            onClick={() => selectPurpose(option)}
-            role="option"
-            type="button"
-            aria-selected={option === (isCustomPurpose ? "Something else" : value)}
-          >
-            {isCustomOption ? (
-              <>
-                <span className="brief-platform-icon" aria-hidden="true">
-                  <DsIcon name="plus" size={16} />
-                </span>
-                <span className="brief-purpose-option-label">
-                  <strong>{briefCustomOptionLabel}</strong>
-                </span>
-              </>
-            ) : (
-              <BriefPurposeOptionLabel option={option} />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  ) : null;
-
-  if (isCustomPurpose) {
-    return (
-      <div
-        className="brief-custom-select-wrap"
-        onBlur={(event) => {
-          const nextFocus = event.relatedTarget;
-          if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-            setIsOpen(false);
-          }
-        }}
-      >
-        <input
-          className="brief-custom-select-input label-s"
-          aria-label="Custom purpose"
-          placeholder="Describe the purpose"
-          value={customValue}
-          onChange={(event) => onChange(event.target.value || "Something else")}
-        />
-        <button
-          className="brief-custom-select-menu"
-          type="button"
-          aria-label="Change purpose"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((current) => !current)}
-        >
-          <span className="sr-only">Change purpose</span>
-        </button>
-        <DsIcon name="caret-down" size={14} />
-        {menu}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="brief-custom-select brief-purpose-picker"
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <button
-        className={`brief-purpose-trigger label-s ${value ? "" : "is-placeholder"}`}
-        type="button"
-        aria-label="Purpose"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((current) => !current)}
-      >
-        {value ? <BriefPurposeOptionLabel option={value} /> : "Choose purpose"}
-        <DsIcon name="caret-down" size={14} />
-      </button>
-      {menu}
-    </div>
-  );
+  return <div className="brief-purpose-picker">
+    <BriskSelect ariaLabel="Purpose" clearable={false} placeholder="Choose purpose"
+      value={isCustomPurpose ? "Something else" : value}
+      options={briefPurposeOptions.filter((option) => !excludedOptions.includes(option)).map((option) => ({
+        value: option, label: isBriefCustomOption(option) ? briefCustomOptionLabel : option,
+        icon: isBriefCustomOption(option) ? "plus" : undefined,
+        content: isBriefCustomOption(option) ? undefined : <BriefPurposeOptionLabel option={option} />,
+      }))} onChange={onChange} />
+    {isCustomPurpose ? <input className="brief-custom-select-input label-s" aria-label="Custom purpose" placeholder="Describe the purpose"
+      value={value === "Something else" ? "" : value} onChange={(event) => onChange(event.target.value || "Something else")} /> : null}
+  </div>;
 }
 
 function BriefPurposeOptionLabel({ option }: { option: string }) {
@@ -3207,11 +3208,11 @@ function BriefDeliverablesTable({
           <thead>
             <tr>
               <BriefDeliverablesHeader title="Deliverable" />
+              <BriefDeliverablesHeader title="Duration" />
+              <BriefDeliverablesHeader title="Deadline" />
               <BriefDeliverablesHeader title="Platform" />
               <BriefDeliverablesHeader title="Format" />
-              <BriefDeliverablesHeader title="Duration" />
               <BriefDeliverablesHeader title="Captions" />
-              <BriefDeliverablesHeader title="Deadline" />
               <th aria-label="Version actions" />
             </tr>
           </thead>
@@ -3243,6 +3244,18 @@ function BriefDeliverablesTable({
                   ) : null}
                 </td>
                 <td>
+                  <BriefDeliverableDurationControl
+                    row={row}
+                    onChange={(updates) => updateRow(row.id, updates)}
+                  />
+                </td>
+                <td>
+                  <BriefDeliverableDeadlineControl
+                    value={row.deadline}
+                    onChange={(deadline) => updateRow(row.id, { deadline })}
+                  />
+                </td>
+                <td>
                   <BriefDeliverablePlatformSelect
                     value={row.platform}
                     onChange={(platform) => updateRow(row.id, { platform })}
@@ -3255,21 +3268,9 @@ function BriefDeliverablesTable({
                   />
                 </td>
                 <td>
-                  <BriefDeliverableDurationControl
-                    row={row}
-                    onChange={(updates) => updateRow(row.id, updates)}
-                  />
-                </td>
-                <td>
                   <BriefDeliverableCaptionsControl
                     row={row}
                     onChange={(updates) => updateRow(row.id, updates)}
-                  />
-                </td>
-                <td>
-                  <BriefDeliverableDeadlineControl
-                    value={row.deadline}
-                    onChange={(deadline) => updateRow(row.id, { deadline })}
                   />
                 </td>
                 <td>
@@ -3308,10 +3309,10 @@ function BriefDeliverablesTable({
           </tbody>
         </table>
       </div>
-      <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+      <Button size="S" variant="secondary" className="brief-add-version-button" type="button" onClick={addRow}>
         <DsIcon name="plus" size={14} />
         <span>Add version</span>
-      </button>
+      </Button>
     </div>
   );
 }
@@ -3336,385 +3337,63 @@ function BriefDeliverablesHeader({
   );
 }
 
-function BriefDeliverablePlatformSelect({
-  autoOpen = false,
-  excludedOptions = [],
-  onChange,
-  selectedCard = false,
-  value,
-}: {
-  autoOpen?: boolean;
-  excludedOptions?: readonly string[];
-  onChange: (value: string) => void;
-  selectedCard?: boolean;
-  value: string;
+function BriefDeliverablePlatformSelect({ autoOpen = false, excludedOptions = [], onChange, selectedCard = false, value }: {
+  autoOpen?: boolean; excludedOptions?: readonly string[]; onChange: (value: string) => void; selectedCard?: boolean; value: string;
 }) {
-  const [isPlatformMenuOpen, setIsPlatformMenuOpen] = useState(false);
-  const platformSelectRef = useBriefOutsidePointerClose<HTMLDivElement>(
-    isPlatformMenuOpen,
-    () => setIsPlatformMenuOpen(false),
-  );
-  const selectedPlatformLabel = getBriefOptionDisplayLabel(value);
-
-  useEffect(() => {
-    if (autoOpen) {
-      setIsPlatformMenuOpen(true);
-    }
-  }, [autoOpen]);
-
-  function selectPlatform(platform: string) {
-    onChange(platform);
-    setIsPlatformMenuOpen(false);
-  }
-
-  function handleTriggerKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      setIsPlatformMenuOpen((isOpen) => !isOpen);
-    }
-  }
-
-  return (
-    <div
-      className="brief-platform-select"
-      ref={platformSelectRef}
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsPlatformMenuOpen(false);
-        }
-      }}
-    >
-      {selectedCard && value ? (
-        <div
-          className="brief-video-type-card-list brief-platform-card-list"
-          role="button"
-          tabIndex={0}
-          aria-expanded={isPlatformMenuOpen}
-          aria-label="Choose platform"
-          onClick={() => setIsPlatformMenuOpen((isOpen) => !isOpen)}
-          onKeyDown={handleTriggerKeyDown}
-        >
-          <article className="brief-video-type-card brief-platform-card">
-            <div className="brief-video-type-card-body">
-              <div className="brief-video-type-card-head">
-                <h3 className="label-s-semibold">{selectedPlatformLabel}</h3>
-                <button
-                  className="brief-video-type-card-remove"
-                  type="button"
-                  aria-label={`Clear ${selectedPlatformLabel}`}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onChange("");
-                  }}
-                >
-                  <DsIcon name="x-close-cross" size={12} />
-                </button>
-              </div>
-            </div>
-          </article>
-        </div>
-      ) : (
-        <button
-          className={`brief-platform-trigger label-xs-semibold${value ? "" : " is-placeholder"}`}
-          type="button"
-          aria-expanded={isPlatformMenuOpen}
-          aria-label="Platform"
-          onClick={() => setIsPlatformMenuOpen((isOpen) => !isOpen)}
-        >
-          <span className="brief-deliverable-trigger-label">{value ? selectedPlatformLabel : "Choose platform"}</span>
-          <DsIcon name="caret-down" size={16} />
-        </button>
-      )}
-      {isPlatformMenuOpen ? (
-        <div className="brief-platform-menu" role="listbox" aria-label="Choose platform">
-          {deliverablePlatformGroups.map((group) => (
-            <div className="brief-platform-group" key={group.label}>
-              <span className="brief-platform-group-label label-xs-semibold">{group.label.toUpperCase()}</span>
-              {group.options.filter((option) => !excludedOptions.includes(option)).map((option) => {
-                const isCustomOption = isBriefCustomOption(option);
-
-                return (
-                  <button
-                    className={`brief-platform-option${option === value ? " selected" : ""}${isCustomOption ? " brief-picker-custom-option" : ""}`}
-                    key={option}
-                    type="button"
-                    role="option"
-                    aria-selected={option === value}
-                    onClick={() => selectPlatform(option)}
-                  >
-                    <span className="brief-platform-icon" aria-hidden="true">
-                      <DsIcon name={isCustomOption ? "plus" : deliverablePlatformIconMap[option] ?? "grid-four"} size={14} />
-                    </span>
-                    <span className="brief-platform-option-copy">
-                      <strong className="label-s-semibold">{getBriefOptionDisplayLabel(option)}</strong>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <div className="brief-platform-select">
+    <BriskSelect ariaLabel="Platform" autoOpen={autoOpen} clearable={false} placeholder="Choose platform" value={value}
+      options={deliverablePlatformGroups.flatMap((group) => group.options.filter((option) => !excludedOptions.includes(option)).map((option) => ({
+        value: option, label: getBriefOptionDisplayLabel(option), group: group.label,
+        icon: isBriefCustomOption(option) ? "plus" as const : deliverablePlatformIconMap[option] ?? "grid-four" as const,
+      })))} onChange={onChange} />
+    {selectedCard && value ? <button className="brief-platform-clear label-xs-semibold" type="button" aria-label={`Clear ${getBriefOptionDisplayLabel(value)}`} onClick={() => onChange("")}>Clear platform</button> : null}
+  </div>;
 }
 
-function BriefDeliverableFormatControl({
-  autoOpen = false,
-  onChange,
-  row,
-}: {
-  autoOpen?: boolean;
-  onChange: (updates: Partial<DeliverableRow>) => void;
-  row: DeliverableRow;
+function BriefDeliverableFormatControl({ autoOpen = false, onChange, row }: {
+  autoOpen?: boolean; onChange: (updates: Partial<DeliverableRow>) => void; row: DeliverableRow;
 }) {
   const selectedFormat = deliverableFormatOptions.find((format) => format.label === row.format) ?? deliverableFormatOptions[0];
-  const [isFormatMenuOpen, setIsFormatMenuOpen] = useState(false);
-  const formatSelectRef = useBriefOutsidePointerClose<HTMLDivElement>(
-    isFormatMenuOpen,
-    () => setIsFormatMenuOpen(false),
-  );
-
-  useEffect(() => {
-    if (autoOpen) {
-      setIsFormatMenuOpen(true);
-    }
-  }, [autoOpen]);
-
-  function selectFormat(format: string) {
-    onChange({ format, customFormat: "" });
-    setIsFormatMenuOpen(false);
-  }
-
-  return (
-    <div className="brief-deliverable-inline-control">
-      <div className="brief-format-select" ref={formatSelectRef}>
-        <button
-          className="brief-format-trigger label-xs-semibold"
-          type="button"
-          aria-expanded={isFormatMenuOpen}
-          aria-label="Format"
-          onClick={() => setIsFormatMenuOpen((isOpen) => !isOpen)}
-        >
-          <span className="brief-deliverable-trigger-label">{selectedFormat.label}</span>
-          <DsIcon name="caret-down" size={12} />
-        </button>
-        {isFormatMenuOpen ? (
-          <div className="brief-format-menu" role="listbox" aria-label="Choose format">
-            {deliverableFormatOptions.map((format) => {
-              const isCustomOption = format.label === "Custom";
-
-              return (
-                <button
-                  className={`brief-format-option label-s${format.label === row.format ? " selected" : ""}${isCustomOption ? " brief-picker-custom-option" : ""}`}
-                  key={format.label}
-                  type="button"
-                  role="option"
-                  aria-selected={format.label === row.format}
-                  onClick={() => selectFormat(format.label)}
-                >
-                  <span className="brief-format-option-icon" aria-hidden="true">
-                    {isCustomOption ? (
-                      <span className="brief-platform-icon">
-                        <DsIcon name="plus" size={14} />
-                      </span>
-                    ) : (
-                      <span className={`brief-aspect-icon ${format.iconClass}`} />
-                    )}
-                  </span>
-                  <span className="brief-format-option-value label-s-semibold">
-                    {isCustomOption ? briefCustomOptionLabel : format.label}
-                  </span>
-                  {!isCustomOption ? <span className="brief-format-option-helper label-s">{format.helper}</span> : null}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-      </div>
-      {row.format === "Custom" ? (
-        <input
-          className="brief-table-mini-input label-xs"
-          aria-label="Custom format"
-          placeholder="4:5"
-          value={row.customFormat}
-          onChange={(event) => onChange({ customFormat: event.target.value })}
-        />
-      ) : null}
-    </div>
-  );
+  return <div className="brief-deliverable-inline-control">
+    <BriskSelect ariaLabel="Format" autoOpen={autoOpen} clearable={false} searchable={false} placeholder="Choose format" value={selectedFormat.label}
+      options={deliverableFormatOptions.map((format) => ({ value: format.label, label: format.label === "Custom" ? briefCustomOptionLabel : format.label,
+        description: format.label === "Custom" ? undefined : format.helper,
+        content: <><span className="brief-format-option-icon" aria-hidden="true">{format.label === "Custom" ? <DsIcon name="plus" size={16} /> : <span className={`brief-aspect-icon ${format.iconClass}`} />}</span>{format.label === "Custom" ? briefCustomOptionLabel : format.label}</>,
+      }))} onChange={(format) => onChange({ format, customFormat: "" })} />
+    {row.format === "Custom" ? <input className="brief-table-mini-input label-xs" aria-label="Custom format" placeholder="4:5" value={row.customFormat} onChange={(event) => onChange({ customFormat: event.target.value })} /> : null}
+  </div>;
 }
 
-function BriefDeliverableDurationControl({
-  autoOpen = false,
-  onChange,
-  row,
-}: {
-  autoOpen?: boolean;
-  onChange: (updates: Partial<DeliverableRow>) => void;
-  row: DeliverableRow;
+function BriefDeliverableDurationControl({ autoOpen = false, onChange, row }: {
+  autoOpen?: boolean; onChange: (updates: Partial<DeliverableRow>) => void; row: DeliverableRow;
 }) {
-  const selectedDuration =
-    deliverableDurationOptions.find((duration) => duration.label === row.duration) ?? deliverableDurationOptions[0];
-  const selectedDurationLabel = row.duration
-    ? formatDurationLabel(row.duration)
-    : formatDurationLabel(selectedDuration.label);
-  const [isDurationMenuOpen, setIsDurationMenuOpen] = useState(false);
-  const durationSelectRef = useBriefOutsidePointerClose<HTMLDivElement>(
-    isDurationMenuOpen,
-    () => setIsDurationMenuOpen(false),
-  );
-
-  useEffect(() => {
-    if (autoOpen) {
-      setIsDurationMenuOpen(true);
-    }
-  }, [autoOpen]);
-
-  function selectDuration(duration: string) {
-    onChange({
-      duration,
-      customMinutes: duration === "Custom" ? row.customMinutes : "",
-      customSeconds: duration === "Custom" ? row.customSeconds : "",
-    });
-    setIsDurationMenuOpen(false);
-  }
-
-  return (
-    <div className="brief-deliverable-inline-control">
-      <div className="brief-duration-select" ref={durationSelectRef}>
-        <button
-          className="brief-duration-trigger"
-          type="button"
-          aria-expanded={isDurationMenuOpen}
-          aria-label="Duration"
-          onClick={() => setIsDurationMenuOpen((isOpen) => !isOpen)}
-        >
-          <span className="brief-deliverable-trigger-label brief-duration-value label-xs-semibold">{selectedDurationLabel}</span>
-          <DsIcon name="caret-down" size={12} />
-        </button>
-        {isDurationMenuOpen ? (
-          <div className="brief-duration-menu" role="listbox" aria-label="Choose duration">
-            {deliverableDurationOptions.map((duration) => {
-              const isCustomOption = duration.label === "Custom";
-
-              return (
-                <button
-                  className={`brief-duration-option${duration.label === row.duration ? " selected" : ""}${isCustomOption ? " brief-picker-custom-option" : ""}`}
-                  key={duration.label}
-                  type="button"
-                  role="option"
-                  aria-selected={duration.label === row.duration}
-                  onClick={() => selectDuration(duration.label)}
-                >
-                  {isCustomOption ? (
-                    <>
-                      <span className="brief-platform-icon" aria-hidden="true">
-                        <DsIcon name="plus" size={14} />
-                      </span>
-                      <span className="brief-duration-value label-s-semibold">{briefCustomOptionLabel}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="brief-duration-value label-s-semibold">{formatDurationLabel(duration.label)}</span>
-                      <span className="brief-duration-helper label-s">{duration.helper}</span>
-                    </>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-      </div>
-      {row.duration === "Custom" ? (
-        <div className="brief-custom-duration">
-          <input
-            className="brief-table-mini-input label-xs"
-            aria-label="Custom minutes"
-            inputMode="numeric"
-            placeholder="min"
-            value={row.customMinutes}
-            onChange={(event) => onChange({ customMinutes: event.target.value })}
-          />
-          <input
-            className="brief-table-mini-input label-xs"
-            aria-label="Custom seconds"
-            inputMode="numeric"
-            placeholder="sec"
-            value={row.customSeconds}
-            onChange={(event) => onChange({ customSeconds: event.target.value })}
-          />
-        </div>
-      ) : null}
-    </div>
-  );
+  const selectedDuration = deliverableDurationOptions.find((duration) => duration.label === row.duration) ?? deliverableDurationOptions[0];
+  return <div className="brief-deliverable-inline-control">
+    <BriskSelect ariaLabel="Duration" autoOpen={autoOpen} clearable={false} searchable={false} placeholder="Choose duration" value={row.duration || selectedDuration.label}
+      options={deliverableDurationOptions.map((duration) => ({ value: duration.label,
+        label: duration.label === "Custom" ? briefCustomOptionLabel : formatDurationLabel(duration.label),
+        description: duration.label === "Custom" ? undefined : duration.helper,
+        icon: duration.label === "Custom" ? "plus" : undefined,
+      }))} onChange={(duration) => onChange({ duration, customMinutes: duration === "Custom" ? row.customMinutes : "", customSeconds: duration === "Custom" ? row.customSeconds : "" })} />
+    {row.duration === "Custom" ? <div className="brief-custom-duration">
+      <input className="brief-table-mini-input label-xs" aria-label="Custom minutes" inputMode="numeric" placeholder="min" value={row.customMinutes} onChange={(event) => onChange({ customMinutes: event.target.value })} />
+      <input className="brief-table-mini-input label-xs" aria-label="Custom seconds" inputMode="numeric" placeholder="sec" value={row.customSeconds} onChange={(event) => onChange({ customSeconds: event.target.value })} />
+    </div> : null}
+  </div>;
 }
 
-function BriefDeliverableCaptionsControl({
-  onChange,
-  row,
-}: {
-  onChange: (updates: Partial<DeliverableRow>) => void;
-  row: DeliverableRow;
-}) {
-  const [isCaptionsMenuOpen, setIsCaptionsMenuOpen] = useState(false);
-  const captionsSelectRef = useBriefOutsidePointerClose<HTMLDivElement>(
-    isCaptionsMenuOpen,
-    () => setIsCaptionsMenuOpen(false),
-  );
+function BriefDeliverableCaptionsControl({ onChange, row }: { onChange: (updates: Partial<DeliverableRow>) => void; row: DeliverableRow }) {
   const selectedOptions = getDeliverableCaptionOptions(row);
-
-  function toggleCaptionOption(option: DeliverableCaptionOption) {
-    const nextOptions = getNextDeliverableCaptionOptions(selectedOptions, option);
-
-    onChange({
-      captionOptions: nextOptions,
-      captions: nextOptions.some((captionOption) => captionOption !== "None"),
-    });
-  }
-
-  return (
-    <div className="brief-captions-multi" ref={captionsSelectRef}>
-      <button
-        className="brief-captions-trigger label-xs-semibold"
-        type="button"
-        aria-expanded={isCaptionsMenuOpen}
-        aria-label="Caption options"
-        onClick={() => setIsCaptionsMenuOpen((isOpen) => !isOpen)}
-      >
-        <span className="brief-deliverable-trigger-label">{formatDeliverableCaptionSummary(row)}</span>
-        <DsIcon name="caret-down" size={12} />
-      </button>
-      {isCaptionsMenuOpen ? (
-        <div className="brief-captions-menu" role="listbox" aria-label="Choose caption options">
-          {deliverableCaptionOptions.map((option) => {
-            const isSelected = selectedOptions.includes(option.label);
-
-            return (
-              <button
-                className={`brief-captions-option${isSelected ? " selected" : ""}`}
-                key={option.label}
-                type="button"
-                role="option"
-                aria-selected={isSelected}
-                onClick={() => toggleCaptionOption(option.label)}
-              >
-                <span className="brief-captions-check" aria-hidden="true">
-                  {isSelected ? <DsIcon name="check" size={12} /> : null}
-                </span>
-                <span className="brief-captions-label label-s-semibold">{option.label}</span>
-                <span className="brief-captions-helper label-s">{option.helper}</span>
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <BriskSelect<DeliverableCaptionOption> multiple ariaLabel="Caption options" clearable={false} searchable={false}
+    placeholder="Choose captions" triggerContent={<span>{formatDeliverableCaptionSummary(row)}</span>} value={selectedOptions}
+    options={deliverableCaptionOptions.map((option) => ({ value: option.label, label: option.label, description: option.helper }))}
+    onChange={(next) => {
+      const changed = next.find((option) => !selectedOptions.includes(option)) ?? selectedOptions.find((option) => !next.includes(option));
+      if (!changed) return;
+      const captionOptions = getNextDeliverableCaptionOptions(selectedOptions, changed);
+      onChange({ captionOptions, captions: captionOptions.some((option) => option !== "None") });
+    }} />;
 }
-
-const briefCalendarWeekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 function BriefDeliverableDeadlineControl({
   onChange,
@@ -3750,224 +3429,6 @@ function BriefDeadlineField({
       <BriskDatePicker ariaLabel="Deadline" inline={inline} placeholder="Choose date" value={value} variant="field" onChange={onChange} />
     </div>
   );
-}
-
-export function BriskDatePicker({
-  ariaLabel,
-  defaultOpen = false,
-  disabled = false,
-  displayLabel,
-  inline = false,
-  isTertiary = false,
-  onChange,
-  placeholder,
-  value,
-  variant,
-}: {
-  ariaLabel: string;
-  defaultOpen?: boolean;
-  disabled?: boolean;
-  displayLabel?: string;
-  inline?: boolean;
-  isTertiary?: boolean;
-  onChange: (value: string) => void;
-  placeholder: string;
-  value: string;
-  variant: "field" | "pill" | "summary";
-}) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  const [visibleMonth, setVisibleMonth] = useState(() => getBriefCalendarMonthStart(value));
-  const pickerRef = useRef<HTMLDivElement | null>(null);
-  const readableDate = formatBriefDate(value);
-  const selectedDate = parseBriefDateValue(value);
-  const selectedValue = selectedDate ? toBriefDateInputValue(selectedDate) : "";
-  const todayValue = toBriefDateInputValue(new Date());
-  const calendarDays = createBriefCalendarDays(visibleMonth);
-  const displayText = displayLabel || readableDate || placeholder;
-  const triggerClassName =
-    variant === "summary"
-      ? `brief-summary-static-chip brief-date-summary-trigger label-xs-semibold${isTertiary ? " is-tertiary" : ""}`
-      : variant === "pill"
-      ? `brief-date-pill label-xs-semibold${readableDate ? "" : " is-placeholder"}`
-      : `brief-date-display label-s${readableDate ? "" : " is-placeholder"}`;
-
-  useEffect(() => {
-    if (inline) {
-      return;
-    }
-
-    if (!isOpen) {
-      setVisibleMonth(getBriefCalendarMonthStart(value));
-      return;
-    }
-
-    function closeOnPointerDown(event: PointerEvent) {
-      const target = event.target;
-
-      if (target instanceof Node && pickerRef.current?.contains(target)) {
-        return;
-      }
-
-      setIsOpen(false);
-    }
-
-    function closeOnEscape(event: globalThis.KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("pointerdown", closeOnPointerDown, true);
-    document.addEventListener("keydown", closeOnEscape);
-
-    return () => {
-      document.removeEventListener("pointerdown", closeOnPointerDown, true);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [inline, isOpen, value]);
-
-  function openPicker() {
-    setVisibleMonth(getBriefCalendarMonthStart(value));
-    setIsOpen((currentValue) => !currentValue);
-  }
-
-  function selectDate(nextValue: string) {
-    onChange(nextValue);
-
-    if (!inline) {
-      setIsOpen(false);
-    }
-  }
-
-  function selectToday() {
-    const today = new Date();
-
-    setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
-    selectDate(toBriefDateInputValue(today));
-  }
-
-  return (
-    <div
-      className={`brief-date-picker-wrap brief-date-picker-wrap-${variant}${inline ? " is-inline" : ""}`}
-      ref={pickerRef}
-      onBlur={(event) => {
-        if (inline) {
-          return;
-        }
-
-        const nextFocus = event.relatedTarget;
-
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      {inline ? null : (
-        <button className={triggerClassName} type="button" aria-expanded={isOpen} aria-haspopup="dialog" disabled={disabled} onClick={openPicker}>
-          <span className={variant !== "summary" ? "brief-deliverable-trigger-label" : undefined}>{displayText}</span>
-          {variant === "summary" ? null : <DsIcon name="caret-down" size={12} />}
-        </button>
-      )}
-      {inline || isOpen ? (
-        <div className="brief-date-popover" role={inline ? "group" : "dialog"} aria-label={ariaLabel}>
-          <div className="brief-date-popover-head">
-            <strong className="label-s-semibold">{formatBriefCalendarMonth(visibleMonth)}</strong>
-            <div className="brief-date-popover-nav" aria-label="Change month">
-              <button type="button" aria-label="Previous month" onClick={() => setVisibleMonth(addBriefCalendarMonths(visibleMonth, -1))}>
-                <DsIcon name="caret-left" size={16} />
-              </button>
-              <button type="button" aria-label="Next month" onClick={() => setVisibleMonth(addBriefCalendarMonths(visibleMonth, 1))}>
-                <DsIcon name="caret-right" size={16} />
-              </button>
-            </div>
-          </div>
-          <div className="brief-date-weekdays" aria-hidden="true">
-            {briefCalendarWeekdays.map((weekday) => (
-              <span className="label-xs-semibold" key={weekday}>
-                {weekday}
-              </span>
-            ))}
-          </div>
-          <div className="brief-date-grid">
-            {calendarDays.map((date) => {
-              const dateValue = toBriefDateInputValue(date);
-              const isOutsideMonth = date.getMonth() !== visibleMonth.getMonth();
-              const isSelected = dateValue === selectedValue;
-              const isToday = dateValue === todayValue;
-
-              return (
-                <button
-                  className={`brief-date-day label-xs-semibold${isOutsideMonth ? " is-outside-month" : ""}${isSelected ? " is-selected" : ""}${isToday ? " is-today" : ""}`}
-                  key={dateValue}
-                  type="button"
-                  aria-label={formatBriefCalendarDayLabel(date)}
-                  aria-pressed={isSelected}
-                  onClick={() => selectDate(dateValue)}
-                >
-                  {date.getDate()}
-                </button>
-              );
-            })}
-          </div>
-          <div className="brief-date-popover-actions">
-            <button className="label-xs-semibold" type="button" onClick={() => selectDate("")}>
-              Clear
-            </button>
-            <button className="label-xs-semibold" type="button" onClick={selectToday}>
-              Today
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function getBriefCalendarMonthStart(value: string) {
-  const parsedDate = parseBriefDateValue(value);
-  const baseDate = parsedDate ?? new Date();
-
-  return new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
-}
-
-function addBriefCalendarMonths(date: Date, monthOffset: number) {
-  return new Date(date.getFullYear(), date.getMonth() + monthOffset, 1);
-}
-
-function createBriefCalendarDays(monthDate: Date) {
-  const firstOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
-  const mondayOffset = (firstOfMonth.getDay() + 6) % 7;
-  const firstVisibleDate = new Date(firstOfMonth);
-
-  firstVisibleDate.setDate(firstOfMonth.getDate() - mondayOffset);
-
-  return Array.from({ length: 42 }, (_, index) => {
-    const date = new Date(firstVisibleDate);
-
-    date.setDate(firstVisibleDate.getDate() + index);
-    return date;
-  });
-}
-
-function toBriefDateInputValue(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
-
-function formatBriefCalendarMonth(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric" }).format(date);
-}
-
-function formatBriefCalendarDayLabel(date: Date) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    weekday: "long",
-    year: "numeric",
-  }).format(date);
 }
 
 function BriefLiveFootageToggle({
@@ -4323,15 +3784,15 @@ function BriefReferenceVideosField({
             }}
           />
         </label>
-        <button
-          className="brief-toolbar-button label-xs-semibold"
+        <Button size="S" variant="secondary"
+          className="brief-toolbar-button"
           type="button"
           disabled={!canAddMore}
           onClick={() => fileInputRef.current?.click()}
         >
           <DsIcon name="upload-simple" size={14} />
           Upload video
-        </button>
+        </Button>
         <input
           ref={fileInputRef}
           className="brief-hidden-file-input"
@@ -4379,71 +3840,17 @@ function BriefReferenceVideosField({
   );
 }
 
-function BriefBrandKitPicker({
-  excludedOptions = [],
-  onChange,
-  value,
-}: {
-  excludedOptions?: readonly string[];
-  onChange: (value: string) => void;
-  value: string;
+function BriefBrandKitPicker({ excludedOptions = [], onChange, value }: {
+  excludedOptions?: readonly string[]; onChange: (value: string) => void; value: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useBriefOutsidePointerClose<HTMLDivElement>(isOpen, () => setIsOpen(false));
   const availableKits = brandKitOptions.filter((kit) => !excludedOptions.includes(kit.name));
   const activeKit = availableKits.find((kit) => kit.name === value) ?? availableKits[0] ?? brandKitOptions[0];
-
-  function selectKit(nextValue: string) {
-    onChange(nextValue);
-    setIsOpen(false);
-  }
-
-  return (
-    <div className="brief-brand-kit-picker" ref={pickerRef}>
-      <button
-        className={`brief-brand-kit-card ${isOpen ? "is-open" : ""}`}
-        type="button"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((currentValue) => !currentValue)}
-      >
-        <div className="brief-brand-kit-thumb" aria-hidden="true">
-          <BriefBrandKitPreview kit={activeKit} />
-        </div>
-        <div className="brief-brand-kit-body">
-          <div className="brief-brand-kit-head">
-            <h3 className="label-s-semibold">{activeKit.name}</h3>
-            <span className="brief-brand-kit-change label-xs-semibold">Change kit</span>
-          </div>
-          <p className="label-s">{activeKit.description}</p>
-        </div>
-      </button>
-      {isOpen ? (
-        <div className="brief-brand-kit-menu" role="listbox" aria-label="Brand kit options">
-          {availableKits.map((kit) => (
-            <button
-              className={`brief-brand-kit-option ${kit.name === activeKit.name ? "selected" : ""}`}
-              key={kit.name}
-              type="button"
-              aria-selected={kit.name === activeKit.name}
-              role="option"
-              onClick={() => selectKit(kit.name)}
-            >
-              <span className="brief-brand-kit-option-thumb" aria-hidden="true">
-                <BriefBrandKitPreview compact kit={kit} />
-              </span>
-              <span className="brief-brand-kit-option-copy">
-                <span className="brief-brand-kit-option-head">
-                  <strong>{kit.name}</strong>
-                  {kit.name === activeKit.name ? <span className="brief-brand-kit-selected-label label-xs-semibold">Selected</span> : null}
-                </span>
-                <span>{kit.description}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <BriskSelect ariaLabel="Brand kit" className="brief-brand-kit-picker" clearable={false} placeholder="Choose brand kit" value={activeKit.name}
+    triggerClassName="brief-brand-kit-card"
+    triggerContent={<><span className="brief-brand-kit-thumb" aria-hidden="true"><BriefBrandKitPreview kit={activeKit} /></span><span className="brief-brand-kit-body"><span className="brief-brand-kit-head"><strong className="label-s-semibold">{activeKit.name}</strong><span className="brief-brand-kit-change label-xs-semibold">Change kit</span></span><span className="label-s">{activeKit.description}</span></span></>}
+    options={availableKits.map((kit) => ({ value: kit.name, label: kit.name, description: kit.description,
+      content: <><span className="brief-brand-kit-option-thumb" aria-hidden="true"><BriefBrandKitPreview compact kit={kit} /></span><strong>{kit.name}</strong></>,
+    }))} onChange={onChange} />;
 }
 
 function BriefBrandKitPreview({
@@ -4493,101 +3900,17 @@ function getBriefBrandKitSwatchTextTone(colour: string) {
   return luminance > 0.58 ? "dark-text" : "light-text";
 }
 
-function BriefMultiSelect({
-  ariaLabel,
-  onChange,
-  options,
-  value,
-}: {
-  ariaLabel: string;
-  onChange: (value: string) => void;
-  options: readonly string[];
-  value: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
+function BriefMultiSelect({ ariaLabel, onChange, options, value }: { ariaLabel: string; onChange: (value: string) => void; options: readonly string[]; value: string }) {
   const selectedValues = parseMultiSelectValue(value).slice(0, 3);
-  const canAddTone = selectedValues.length < 3;
-
-  function toggleOption(option: string) {
-    const nextValues = selectedValues.includes(option)
-      ? selectedValues.filter((selectedValue) => selectedValue !== option)
-      : canAddTone
-        ? [...selectedValues, option]
-        : selectedValues;
-
-    onChange(nextValues.join(", "));
-    setIsOpen(false);
-  }
-
-  function addOption(option: string) {
-    if (selectedValues.includes(option) || !canAddTone) {
-      return;
-    }
-
-    onChange([...selectedValues, option].join(", "));
-    setIsOpen(false);
-  }
-
-  return (
-    <div
-      className="brief-tone-chip-picker"
-      aria-label={ariaLabel}
-      role="group"
-      onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <div className="brief-tone-chip-row">
-        {selectedValues.map((option) => (
-          <button
-            className="brief-tone-chip selected label-xs-semibold"
-            key={option}
-            type="button"
-            aria-label={`Remove ${option}`}
-            onClick={() => toggleOption(option)}
-          >
-            {option}
-            <DsIcon name="x-close-cross" size={10} />
-          </button>
-        ))}
-        {canAddTone ? (
-          <button
-            className="brief-tone-chip brief-tone-chip-add label-xs-semibold"
-            type="button"
-            aria-expanded={isOpen}
-            onClick={() => setIsOpen((currentValue) => !currentValue)}
-          >
-            <DsIcon name="plus" size={12} />
-            Add tone
-          </button>
-        ) : null}
-      </div>
-      {isOpen ? (
-        <div className="brief-tone-popover" aria-label="Choose tone" role="listbox" aria-multiselectable="true">
-          {options.map((option) => {
-            const isSelected = selectedValues.includes(option);
-
-            return (
-              <button
-                className={`brief-tone-chip label-xs-semibold ${isSelected ? "selected" : ""}`}
-                key={option}
-                type="button"
-                disabled={isSelected}
-                aria-selected={isSelected}
-                role="option"
-                onClick={() => addOption(option)}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-    </div>
-  );
+  return <div className="brief-tone-chip-picker" aria-label={ariaLabel} role="group"><div className="brief-tone-chip-row">
+    {selectedValues.map((option) => <button className="brief-tone-chip selected label-xs-semibold" key={option} type="button" aria-label={`Remove ${option}`} onClick={() => onChange(selectedValues.filter((selected) => selected !== option).join(", "))}>
+      {option}<DsIcon name="x-close-cross" size={10} />
+    </button>)}
+    {selectedValues.length < 3 ? <BriskSelect ariaLabel={`Add ${ariaLabel.toLowerCase()}`} className="brief-tone-add-picker" clearable={false} placeholder="Add tone" value=""
+      triggerContent={<><DsIcon name="plus" size={12} /><span>Add tone</span></>} hideCaret
+      options={options.filter((option) => !selectedValues.includes(option)).map((option) => ({ value: option, label: option }))}
+      onChange={(option) => { if (option && !selectedValues.includes(option) && selectedValues.length < 3) onChange([...selectedValues, option].join(", ")); }} /> : null}
+  </div></div>;
 }
 
 function BriefInlineSelect({
@@ -5131,19 +4454,6 @@ function createBlankDeliverableRow(name = "Platform cutdown", deadline = ""): De
   };
 }
 
-function formatBriefDate(value: string) {
-  const [yearValue, monthValue, dayValue] = value.split("-").map(Number);
-
-  if (!yearValue || !monthValue || !dayValue) {
-    return "";
-  }
-
-  const date = new Date(yearValue, monthValue - 1, dayValue);
-  const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
-
-  return `${dayValue} ${month}, ${yearValue}`;
-}
-
 function getMockReferenceTags(source: string) {
   const seed = source.length % referenceVideoTagSets.length;
 
@@ -5172,6 +4482,7 @@ function BriefFieldRow({
   onToggleFieldExcluded?: (fieldId: BriefFieldId) => void;
 }) {
   const rowRef = useRef<HTMLDivElement | null>(null);
+  const fieldOrder = useContext(BriefFieldOrderContext);
   const isExcluded = excludedFieldIds.includes(field.id);
 
   function focusFieldControl() {
@@ -5185,7 +4496,7 @@ function BriefFieldRow({
   }
 
   return (
-    <div className={`brief-field-row ${isExcluded ? "is-excluded" : ""}`} ref={rowRef}>
+    <div className={`brief-field-row ${isExcluded ? "is-excluded" : ""}`} ref={rowRef} style={fieldOrder ? { order: fieldOrder.indexOf(field.id) } : undefined}>
       <div className="brief-field-meta">
         <label className="label-s-semibold">{field.label}</label>
         <div className="brief-field-meta-side">
@@ -5456,10 +4767,7 @@ type BriefSummarySpecId =
 type BriefSummarySpec = {
   id: BriefSummarySpecId;
   confidence: ConfidenceState;
-  icon: DsIconName;
-  required: boolean;
   value: string;
-  subValue: string;
   target: BriefStepId;
 };
 
@@ -5497,87 +4805,69 @@ function BriefSummarySpecStrip({
   onJump: (target: BriefStepId) => void;
   specGroups: BriefSummarySpecGroup[];
 }) {
-  const confirmedGroups = specGroups
-    .map((group) => ({
-      ...group,
-      specs: group.specs.filter((spec) => spec.value.trim()),
-    }))
-    .filter((group) => group.specs.length > 0);
-  const missingSpecs = specGroups.flatMap((group) => group.specs.filter((spec) => !spec.value.trim()));
+  const specOrder: BriefSummarySpecId[] = [
+    "video-type",
+    "duration",
+    "deadline",
+    "platform",
+    "format",
+    "captions",
+    "shoot-mode",
+    "brand-kit",
+  ];
+  const specs = specGroups.flatMap((group) => group.specs)
+    .sort((first, second) => specOrder.indexOf(first.id) - specOrder.indexOf(second.id));
 
   return (
-    <div className="brief-summary-spec-groups" aria-label="Brief quick specs">
+    <section className="brief-summary-spec-groups" aria-label="Main Video Details">
       <BriefSummaryCardHead
         index="02"
-        title="Details"
+        title="Main Video Details"
       />
-      <div className="brief-summary-spec-body">
-        {confirmedGroups.map((group) => (
-          <section className="brief-summary-spec-group" key={group.label} aria-label={group.label}>
-            {group.label !== "PRODUCTION" && group.label !== "MAIN VIDEO" ? (
-              <span className="brief-summary-section-label label-xs-semibold">{group.label}</span>
-            ) : null}
-            <div className="brief-summary-spec-strip">
-              {group.specs.map((spec) => <BriefSummarySpecChip key={spec.id} spec={spec} onJump={onJump} />)}
-            </div>
-          </section>
-        ))}
-        {missingSpecs.length > 0 ? (
-          <section className="brief-summary-spec-group brief-summary-needs-confirmation" aria-label="Needs confirmation">
-            <span className="brief-summary-section-label label-xs-semibold">Needs confirmation</span>
-            <div className="brief-summary-spec-strip">
-              {missingSpecs.map((spec) => <BriefSummarySpecChip key={spec.id} spec={spec} onJump={onJump} />)}
-            </div>
-          </section>
-        ) : null}
+      <div className="brief-summary-spec-table-wrap">
+        <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-spec-table">
+          <thead>
+            <tr>
+              {specs.map((spec) => <BriefDeliverablesHeader key={spec.id} title={getSummarySpecHeading(spec.id)} />)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {specs.map((spec) => (
+                <td key={spec.id}>
+                  <button
+                    className={`brief-summary-static-chip label-xs-semibold ${spec.value.trim() ? spec.confidence === "guess" ? "is-guess" : "" : "is-missing"}`}
+                    type="button"
+                    aria-label={spec.value.trim()
+                      ? `${spec.confidence === "guess" ? "Review" : "Edit"} ${getSummarySpecHeading(spec.id)}`
+                      : `Add ${getSummarySpecHeading(spec.id).toLocaleLowerCase("en-AU")}`}
+                    onClick={() => onJump(spec.target)}
+                  >
+                    {spec.value.trim() ? spec.value : `+ Add ${getSummarySpecHeading(spec.id).toLocaleLowerCase("en-AU")}`}
+                  </button>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </section>
   );
 }
 
-function BriefSummarySpecChip({
-  onJump,
-  spec,
-}: {
-  onJump: (target: BriefStepId) => void;
-  spec: BriefSummarySpec;
-}) {
-  const isMissing = !spec.value.trim();
-  const isGuess = !isMissing && spec.confidence === "guess" && !["duration", "video-type"].includes(spec.id);
-  const missingClass = isMissing ? (spec.required ? "is-missing" : "is-optional-missing") : "";
-
-  return (
-    <button
-      className={`brief-summary-spec-chip ${missingClass} ${isGuess ? "is-guess" : ""}`}
-      type="button"
-      onClick={() => onJump(spec.target)}
-    >
-      {!isMissing ? (
-        <span className="brief-summary-spec-icon" aria-hidden="true">
-          <DsIcon name={spec.icon} size={14} />
-        </span>
-      ) : null}
-      <span className="brief-summary-spec-copy">
-        <strong>{isMissing ? getMissingSummarySpecLabel(spec) : spec.value}</strong>
-        <span>{isMissing ? (spec.required ? "Required" : "Optional") : spec.subValue}</span>
-      </span>
-    </button>
-  );
-}
-
-function getMissingSummarySpecLabel(spec: BriefSummarySpec) {
-  const labels: Record<BriefSummarySpecId, string> = {
-    "brand-kit": "brand kit",
-    captions: "captions",
-    deadline: "deadline",
-    duration: "duration",
-    format: "format",
-    platform: "platform",
-    "shoot-mode": "shoot mode",
-    "video-type": "video type",
+function getSummarySpecHeading(id: BriefSummarySpecId) {
+  const headings: Record<BriefSummarySpecId, string> = {
+    "brand-kit": "Brand kit",
+    captions: "Captions",
+    deadline: "Deadline",
+    duration: "Duration",
+    format: "Format",
+    platform: "Platform",
+    "shoot-mode": "Shoot mode",
+    "video-type": "Video type",
   };
 
-  return `${spec.required ? "+ Add" : "Add"} ${labels[spec.id]}`;
+  return headings[id];
 }
 
 function BriefSummaryReferenceLink({
@@ -5818,46 +5108,31 @@ function createWrittenSummaryModel(
           {
             id: "duration",
             confidence: fields.deliverables.confidence,
-            icon: "film-slate",
-            required: true,
             value: duration,
-            subValue: "Duration",
             target: "deliverablesTiming",
           },
           {
             id: "platform",
             confidence: primaryDeliverable.platform ? fields.deliverables.confidence : fields.platform.confidence,
-            icon: "play",
-            required: true,
             value: platformDisplay,
-            subValue: "Platform",
             target: primaryDeliverable.platform ? "deliverablesTiming" : "videoType",
           },
           {
             id: "format",
             confidence: fields.deliverables.confidence,
-            icon: "image-square",
-            required: true,
             value: primaryDeliverable.format,
-            subValue: "Format",
             target: "deliverablesTiming",
           },
           {
             id: "captions",
             confidence: fields.deliverables.confidence,
-            icon: "file-text",
-            required: true,
             value: captionsState,
-            subValue: "Captions".trim(),
             target: "deliverablesTiming",
           },
           {
             id: "deadline",
-            confidence: fields.deadline.confidence,
-            icon: "push-pin-simple",
-            required: true,
+            confidence: primaryDeliverable.deadline ? fields.deliverables.confidence : fields.deadline.confidence,
             value: shortDeadline,
-            subValue: deadlineCountdown || "Deadline",
             target: "deadline",
           },
         ],
@@ -5868,28 +5143,19 @@ function createWrittenSummaryModel(
           {
             id: "video-type",
             confidence: fields.videoType.confidence,
-            icon: "film-strip",
-            required: true,
             value: videoType,
-            subValue: "Video type",
             target: "videoType",
           },
           {
             id: "shoot-mode",
             confidence: fields.liveFootage.confidence,
-            icon: "video-camera",
-            required: true,
             value: shootMode,
-            subValue: shootModeDetail,
             target: "contentProduction",
           },
           {
             id: "brand-kit",
             confidence: fields.brandKit.confidence,
-            icon: "image-square",
-            required: false,
             value: fields.brandKit.value,
-            subValue: "Brand kit",
             target: "brandKit",
           },
         ],
@@ -6006,16 +5272,6 @@ function formatDeadlineCountdown(value: string) {
   return `${Math.abs(dayDifference)} days ago`;
 }
 
-function parseBriefDateValue(value: string) {
-  const [yearValue, monthValue, dayValue] = value.split("-").map(Number);
-
-  if (!yearValue || !monthValue || !dayValue) {
-    return null;
-  }
-
-  return new Date(yearValue, monthValue - 1, dayValue);
-}
-
 function getSummaryMissingCount(fields: BriefFields, logline: Logline, studioName: string) {
   const deliverableRows = parseDeliverables(fields.deliverables.value, fields.deadline.value);
   const primaryDeliverable = deliverableRows[0] ?? createMainDeliverableRow(fields.deadline.value);
@@ -6040,10 +5296,7 @@ function countSummaryMissingSlots(
   const detailItems = model.specGroups
     .flatMap((group) => group.specs)
     .filter((spec) => !["duration", "video-type"].includes(spec.id))
-    .map((spec) => ({
-      field: getSummarySpecSourceField(spec.id, fields),
-      value: spec.value,
-    }));
+    .map((spec) => !spec.value.trim() || spec.confidence !== "confident");
   const deliverableItems = rows.filter((row) => !row.isMain).flatMap((row) => [
     row.name,
     row.platform,
@@ -6053,28 +5306,14 @@ function countSummaryMissingSlots(
   ]);
 
   return (
-    [...loglineItems, ...detailItems].filter(({ field, value }) => summaryValueNeedsConfirmation(value, field)).length +
+    [...loglineItems].filter(({ field, value }) => summaryValueNeedsConfirmation(value, field)).length +
+    detailItems.filter(Boolean).length +
     deliverableItems.filter((value) => !value.trim() || value === "Custom").length
   );
 }
 
 function summaryValueNeedsConfirmation(value: string, field: BriefField) {
   return !value.trim() || field.confidence !== "confident";
-}
-
-function getSummarySpecSourceField(id: BriefSummarySpecId, fields: BriefFields) {
-  const sourceFields: Record<BriefSummarySpecId, BriefField> = {
-    "brand-kit": fields.brandKit,
-    captions: fields.deliverables,
-    deadline: fields.deadline,
-    duration: fields.deliverables,
-    format: fields.deliverables,
-    platform: fields.platform,
-    "shoot-mode": fields.liveFootage,
-    "video-type": fields.videoType,
-  };
-
-  return sourceFields[id];
 }
 
 function formatDeliverablesInline(rows: DeliverableRow[]) {
@@ -6704,15 +5943,17 @@ function BriefSummaryDeliverablesTable({
     <div className="brief-summary-deliverables">
       {additionalRows.length > 0 ? (
         <>
-          <table className="brief-deliverables-table brief-deliverables-table-summary">
+          <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-version-table">
             <thead>
               <tr>
                 <BriefDeliverablesHeader title="Deliverable" />
+                <BriefDeliverablesHeader title="Duration" />
+                <BriefDeliverablesHeader title="Deadline" />
                 <BriefDeliverablesHeader title="Platform" />
                 <BriefDeliverablesHeader title="Format" />
-                <BriefDeliverablesHeader title="Duration" />
                 <BriefDeliverablesHeader title="Captions" />
-                <BriefDeliverablesHeader title="Deadline" />
+                <th aria-hidden="true" />
+                <th aria-hidden="true" />
               </tr>
             </thead>
             <tbody>
@@ -6725,6 +5966,34 @@ function BriefSummaryDeliverablesTable({
                       </span>
                       <span className="brief-deliverable-main-name label-s-semibold">{row.name}</span>
                     </span>
+                  </td>
+                  <td>
+                    {editingCell === `${row.id}:duration` ? (
+                      <BriefDeliverableDurationControl
+                        autoOpen
+                        row={row}
+                        onChange={(updates) => {
+                          updateRow(row.id, updates);
+                          onEditCell(null);
+                        }}
+                      />
+                    ) : (
+                      <button
+                        className={`brief-summary-static-chip label-xs-semibold ${row.duration ? "" : "is-missing"}`}
+                        type="button"
+                        onClick={() => onEditCell(`${row.id}:duration`)}
+                      >
+                        {row.duration ? formatDurationLabel(row.duration) : "+ Add duration"}
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <BriefSummaryDeadlineValue
+                      isInherited={!row.deadline}
+                      label={row.deadline ? formatBriefDate(row.deadline) : "Same as Main Video"}
+                      value={row.deadline || primaryDeadline}
+                      onChange={(deadline) => updateRow(row.id, { deadline })}
+                    />
                   </td>
                   <td>
                     {editingCell === `${row.id}:platform` ? (
@@ -6767,26 +6036,6 @@ function BriefSummaryDeliverablesTable({
                     )}
                   </td>
                   <td>
-                    {editingCell === `${row.id}:duration` ? (
-                      <BriefDeliverableDurationControl
-                        autoOpen
-                        row={row}
-                        onChange={(updates) => {
-                          updateRow(row.id, updates);
-                          onEditCell(null);
-                        }}
-                      />
-                    ) : (
-                      <button
-                        className={`brief-summary-static-chip label-xs-semibold ${row.duration ? "" : "is-missing"}`}
-                        type="button"
-                        onClick={() => onEditCell(`${row.id}:duration`)}
-                      >
-                        {row.duration ? formatDurationLabel(row.duration) : "+ Add duration"}
-                      </button>
-                    )}
-                  </td>
-                  <td>
                     {editingCell === `${row.id}:captions` ? (
                       <BriefDeliverableCaptionsControl
                         row={row}
@@ -6803,30 +6052,24 @@ function BriefSummaryDeliverablesTable({
                       </button>
                     )}
                   </td>
-                  <td>
-                    <BriefSummaryDeadlineValue
-                      isInherited={!row.deadline}
-                      label={row.deadline ? formatBriefDate(row.deadline) : "Same as Main Video"}
-                      value={row.deadline || primaryDeadline}
-                      onChange={(deadline) => updateRow(row.id, { deadline })}
-                    />
-                  </td>
+                  <td aria-hidden="true" />
+                  <td aria-hidden="true" />
                 </tr>
               ))}
             </tbody>
           </table>
-          <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+          <Button size="S" variant="secondary" className="brief-add-version-button" type="button" onClick={addRow}>
             <DsIcon name="plus" size={14} />
             <span>Add version</span>
-          </button>
+          </Button>
         </>
       ) : (
         <div className="brief-summary-empty-versions">
           <span className="label-s-semibold">No extra versions yet.</span>
-          <button className="brief-add-version-button label-xs-semibold" type="button" onClick={addRow}>
+          <Button size="S" variant="secondary" className="brief-add-version-button" type="button" onClick={addRow}>
             <DsIcon name="plus" size={14} />
             <span>Add cutdown</span>
-          </button>
+          </Button>
           <span className="label-xs">Reels, square cut, or social ad?</span>
         </div>
       )}

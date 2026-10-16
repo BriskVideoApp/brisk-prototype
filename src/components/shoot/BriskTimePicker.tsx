@@ -143,6 +143,13 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
     <div
       className="shoot-brisk-time-picker"
       ref={pickerRef}
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && isOpen) {
+          event.preventDefault();
+          event.stopPropagation();
+          setIsOpen(false);
+        }
+      }}
     >
       <div className="shoot-brisk-time-trigger" data-open={isOpen} ref={triggerRef}>
         <input
@@ -162,7 +169,9 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
               commitDraft();
               event.currentTarget.blur();
             }
-            if (event.key === "Escape") {
+            if (event.key === "Escape" && isOpen) {
+              event.preventDefault();
+              event.stopPropagation();
               setDraft(value ? formatTime(value) : "");
               setIsOpen(false);
               event.currentTarget.blur();
@@ -184,6 +193,7 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
         createPortal(<div
           className={`shoot-brisk-time-popover${popoverPosition?.opensUp ? " opens-up" : ""}`}
           role="dialog"
+          onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); setIsOpen(false); } }}
           aria-label={ariaLabel}
           ref={popoverRef}
           style={popoverPosition ? {
@@ -228,7 +238,7 @@ export function BriskTimePicker({ ariaLabel, placeholder = "Choose time", value,
             <button className="label-xs-semibold" type="button" onClick={selectCurrentTime}>Now</button>
             <button className="label-xs-semibold" type="button" onClick={() => setIsOpen(false)}>Done</button>
           </div>
-        </div>, document.body)
+        </div>, triggerRef.current?.closest("dialog") ?? document.body)
       ) : null}
     </div>
   );

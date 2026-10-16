@@ -45,6 +45,10 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
   function selectRole(role: PrototypeRole) {
     setSelectedRole(role);
 
+    // Test mode previews another role on the current screen. Keep the scenario
+    // and its in-progress page state in place while the role changes.
+    if (compact) return;
+
     const isClientsPermissionPreview = pathname === "/clients" || pathname.startsWith("/clients/");
     const keepsRolePreviewOnCurrentPage = isClientsPermissionPreview || pathname === "/prototype/production-flow";
     const destination = role === "Customer" ? clientHome : clientPortalDestination;

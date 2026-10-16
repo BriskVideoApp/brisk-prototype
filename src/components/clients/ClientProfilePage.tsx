@@ -1,9 +1,13 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { BriskSelect } from "@/components/form/BriskSelect";
 import type { Project } from "@/components/active-videos/types";
 import { ClientPicker, ClientAvatar, ClientModal, ClientStatusBadge } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
@@ -16,7 +20,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import { selectClientProjects } from "@/data/prototype-state";
 import { getBrandKitCustomer, getBrandKitCustomerForClient } from "@/data/brand-kits";
 import { getBrandKitStorageKey, readStoredBrandKit, type StoredBrandKit } from "@/components/brand-kits/BrandKitContext";
-import type { Client, ClientContact } from "@/data/clients";
+import { getDefaultProjectCodePrefix, type Client, type ClientContact } from "@/data/clients";
 
 type ClientProfileSection = "Overview" | "Contacts" | "Brand Kit";
 type ProfileModal = "start-project" | "archive" | "edit-project-access" | null;
@@ -66,7 +70,6 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
   }
 
   const projects = selectClientProjects(state, state.session.activeWorkspaceId, client.id);
-  const primaryContact = client.contacts.find((contact) => contact.id === client.primaryContactId) ?? null;
   const selectedContact = client.contacts.find((contact) => contact.id === selectedContactId) ?? null;
 
   const openInvite = () => openInvitePerson({ role: "Customer", clientId: client.id });
@@ -102,7 +105,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
         <section className="client-archive-banner" role="status">
           <DsIcon name="info" size={18} />
           <span className="label-s">This Client is archived. Projects and files are intact, and portal access is paused.</span>
-          <button className="client-text-button label-s-semibold" type="button" onClick={() => restoreClient(client.id)}>Restore Client</button>
+          <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => restoreClient(client.id)}>Restore Client</Button>
         </section>
       ) : null}
 
@@ -120,8 +123,8 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
         {section === "Overview" ? (
           <OverviewSection
             client={client}
+            clients={clients}
             dashboardHref={portalHref}
-            primaryContact={primaryContact}
             projects={projects}
             onArchive={() => setModal("archive")}
             onRestore={() => restoreClient(client.id)}
@@ -196,23 +199,32 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
 
 function OverviewSection({
   client,
+  clients,
   dashboardHref,
   onArchive,
   onRestore,
   onSave,
-  primaryContact,
   projects,
 }: {
   client: Client;
+  clients: Client[];
   dashboardHref: string;
   onArchive: () => void;
   onRestore: () => void;
-  onSave: (update: { name: string; website: string; logoUrl: string | null }) => void;
-  primaryContact: ClientContact | null;
+  onSave: (update: { name: string; website: string; logoUrl: string | null; projectCodePrefix: string; primaryContactId: string | null }) => void;
   projects: Project[];
 }) {
   const activeCount = projects.filter((project) => project.status === "In Production").length;
-  const [form, setForm] = useState({ name: client.name, website: client.website, logoUrl: client.logoUrl });
+  const [form, setForm] = useState({
+    name: client.name,
+    website: client.website,
+    logoUrl: client.logoUrl,
+    projectCodePrefix: client.projectCodePrefix ?? getDefaultProjectCodePrefix(client.name),
+    primaryContactId: client.primaryContactId,
+  });
+  const codeConflict = clients.some((candidate) => candidate.id !== client.id
+    && (candidate.projectCodePrefix ?? getDefaultProjectCodePrefix(candidate.name)) === form.projectCodePrefix);
+  const codeError = !/^[a-z]{1,10}$/u.test(form.projectCodePrefix) || codeConflict;
   return (
     <section className="client-overview-grid" aria-label="Client overview">
       <article className="client-summary-card is-identity">
@@ -220,6 +232,22 @@ function OverviewSection({
         <div className="client-overview-details-form">
           <label className="client-field"><span className="label-m-semibold">Client name</span><input value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} /></label>
           <label className="client-field"><span className="label-m-semibold">Website</span><input value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} /></label>
+          <div className="client-field">
+            <Input
+              label="Client code"
+              value={form.projectCodePrefix}
+              error={codeError}
+              hint={codeConflict
+                ? "This code is already used by another Client."
+                : !form.projectCodePrefix
+                  ? "Enter 1-10 letters."
+                  : "Prefix for new project codes. Existing codes stay the same."}
+              onChange={(event) => setForm((current) => ({
+                ...current,
+                projectCodePrefix: event.target.value.toLocaleLowerCase("en-AU").replace(/[^a-z]/gu, "").slice(0, 10),
+              }))}
+            />
+          </div>
           <label className="client-field is-wide"><span className="label-m-semibold">Logo</span><input type="file" accept="image/*" onChange={(event) => {
             const file = event.target.files?.[0];
             if (!file) return;
@@ -227,11 +255,24 @@ function OverviewSection({
             reader.addEventListener("load", () => setForm((current) => ({ ...current, logoUrl: typeof reader.result === "string" ? reader.result : null })));
             reader.readAsDataURL(file);
           }} /></label>
+          <div className="client-field">
+            <span className="label-m-semibold">Primary contact</span>
+            {client.contacts.length ? (
+              <BriskSelect
+                ariaLabel="Primary Client contact"
+                clearable={false}
+                options={client.contacts.map((contact) => ({ value: contact.id, label: contact.name }))}
+                placeholder="Choose a contact"
+                searchable={false}
+                value={form.primaryContactId ?? ""}
+                onChange={(primaryContactId) => setForm((current) => ({ ...current, primaryContactId: primaryContactId || null }))}
+              />
+            ) : <span className="label-s client-muted">Invite a contact to choose one.</span>}
+          </div>
           <dl className="client-overview-access-summary">
-            <div><dt className="label-xs">Primary contact</dt><dd>{primaryContact ? <span><strong className="label-s-semibold">{primaryContact.name}</strong><small className="label-xs">{primaryContact.email}</small></span> : <span className="label-s client-muted">Not added</span>}</dd></div>
             <div><dt className="label-xs">Portal status</dt><dd><ClientStatusBadge status={client.portal.status} /></dd></div>
           </dl>
-          <Button size="M" onClick={() => onSave(form)}>Save changes</Button>
+          <Button size="M" disabled={codeError} onClick={() => onSave(form)}>Save changes</Button>
         </div>
       </article>
       <Link className="client-metric-card is-link" href={dashboardHref} aria-label={`Open ${client.name}'s Client dashboard`}>
@@ -239,7 +280,6 @@ function OverviewSection({
         <strong className="headings-m-bold">{activeCount}</strong>
         <span className="label-s-semibold">Active {activeCount === 1 ? "project" : "projects"}</span>
         <small className="label-xs">{projects.length} total across this Client</small>
-        <span className="client-metric-link-hint label-xs-semibold">Open Client dashboard</span>
       </Link>
       <article className="client-metric-card">
         <span className="client-metric-icon"><DsIcon name="clock-clockwise" size={20} /></span>
@@ -249,7 +289,7 @@ function OverviewSection({
       </article>
       <section className="client-danger-zone client-overview-danger-zone">
         <div><h3 className="headings-2xs-bold">{client.status === "Archived" ? "Restore Client" : "Archive Client"}</h3><p className="paragraph-s">{client.status === "Archived" ? "Restore the Client to the active list and resume portal access." : "Remove the Client from the active list and pause portal access. Projects and files will not be deleted."}</p></div>
-        <button className={client.status === "Archived" ? "client-secondary-button label-s-semibold" : "client-danger-button label-s-semibold"} type="button" onClick={client.status === "Archived" ? onRestore : onArchive}>{client.status === "Archived" ? "Restore Client" : "Archive Client"}</button>
+        <Button size="S" variant={client.status === "Archived" ? "secondary" : "danger"} type="button" onClick={client.status === "Archived" ? onRestore : onArchive}>{client.status === "Archived" ? "Restore Client" : "Archive Client"}</Button>
       </section>
     </section>
   );
@@ -286,16 +326,16 @@ function ContactsSection({
               <article className="client-contact-row" key={contact.id}>
                 <span className="client-person-avatar label-s-semibold">{contact.name.split(/\s+/u).map((word) => word.charAt(0)).slice(0, 2).join("")}</span>
                 <Link className="client-contact-identity" href={`/people/${contact.id}`}><strong className="label-m-semibold">{contact.name}</strong><span className="label-s">{contact.email}</span></Link>
-                <div><span className="label-xs">Invitation</span><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? "Invite sent - waiting for them to join." : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : "Accepted"}</small></div>
+                <div><span className="label-xs">Invitation</span><InvitationStatusBadge status={invitationStatus} />{invitationStatus !== "Accepted" ? <small className="label-xs">{invitationStatus === "Pending" ? "Waiting for them to join." : "Invite expired. Send a new one."}</small> : null}</div>
                 <div><span className="label-xs">Last active</span><strong className="label-s-semibold">{contact.lastActive ? formatRelativeDate(contact.lastActive) : "Not yet"}</strong></div>
                 <div className="client-contact-projects"><span className="label-xs">Projects they can access</span><strong className="label-s-semibold">{accessibleProjects.length ? accessibleProjects.map((project) => project.name).join(", ") : "None selected"}</strong></div>
                 <div className="client-contact-actions">
-                  {invitationStatus !== "Accepted" ? <button className="client-text-button label-xs-semibold" type="button" onClick={() => onResend(contact)}>Resend invite</button> : null}
-                  <button className="client-secondary-button label-xs-semibold" type="button" onClick={() => onChangeProjects(contact)}>Change project access</button>
+                  {invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onResend(contact)}>Resend invite</Button> : null}
+                  <Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => onChangeProjects(contact)}>Change project access</Button>
                   {contact.portalAccess === "Paused" ? (
-                    <button className="client-text-button label-xs-semibold" type="button" onClick={() => onRestore(contact)}>Restore portal access</button>
+                    <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onRestore(contact)}>Restore portal access</Button>
                   ) : (
-                    <button className="client-danger-text-button label-xs-semibold" type="button" onClick={() => onRemove(contact)}>Remove portal access</button>
+                    <Button size="S" variant="danger" className="client-danger-text-button" type="button" onClick={() => onRemove(contact)}>Remove portal access</Button>
                   )}
                 </div>
               </article>
@@ -340,7 +380,6 @@ function BrandKitSection({ client }: { client: Client }) {
             <div><ClientStatusBadge status="Active" /><span className="label-xs">Updated {brandKit.lastUpdated}</span></div>
           </div>
           <div className="client-brand-kit-actions">
-            <Link className="client-secondary-button label-s-semibold" href={`/brand-kits/${brandKit.slug}`}>Add logo, colours and assets</Link>
             <span className="label-xs"><DsIcon name="check-circle" size={14} /> {seededKit ? "Default Brand Kit selected" : "Brand Kit started"}</span>
           </div>
         </article>
@@ -355,24 +394,22 @@ function StartProjectDialog({ initialClient, onClose, onCreate }: { initialClien
   const [projectName, setProjectName] = useState("");
   const [client, setClient] = useState(initialClient);
   return (
-    <ClientModal title="Start project" description="Every project has one primary Client. You can select an existing Client or add one without leaving this flow." onClose={onClose} footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><button className="client-primary-button label-m-semibold" type="button" disabled={!projectName.trim()} onClick={() => onCreate(projectName.trim(), client)}>Create project</button></>}>
+    <ClientModal title="Start project" description="Every project has one primary Client. You can select an existing Client or add one without leaving this flow." onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!projectName.trim()} onClick={() => onCreate(projectName.trim(), client)}>Create project</Button></>}>
       <div className="client-form-grid"><label className="client-field is-wide"><span className="label-m-semibold">Project name</span><input autoFocus value={projectName} onChange={(event) => setProjectName(event.target.value)} /></label><div className="is-wide"><ClientPicker value={client.id} onChange={setClient} /></div></div>
     </ClientModal>
   );
 }
 
 function ArchiveClientDialog({ client, onArchive, onClose, projectCount }: { client: Client; onArchive: () => void; onClose: () => void; projectCount: number }) {
-  return (
-    <ClientModal title={`Archive ${client.name}?`} description="This removes the Client from the active list and pauses portal access." onClose={onClose} footer={<><Button size="M" variant="secondary" onClick={onClose}>Keep Client active</Button><button className="client-danger-button label-m-semibold" type="button" onClick={onArchive}>Archive Client</button></>}>
-      <div className="client-archive-confirmation"><DsIcon name="alert-triangle" size={22} /><div><strong className="label-m-semibold">Projects and files will not be deleted</strong><p className="paragraph-s">All {projectCount} connected {projectCount === 1 ? "project" : "projects"}, files, Brand Kit assets and messages remain intact. Studio Staff can restore this Client later.</p></div></div>
-    </ClientModal>
-  );
+  return <ConfirmationDialog title={`Archive ${client.name}?`} description="This removes the Client from the active list and pauses portal access." cancelLabel="Keep Client active" confirmLabel="Archive Client" tone="danger" onCancel={onClose} onConfirm={onArchive}>
+    <p><strong>Projects and files will not be deleted.</strong> All {projectCount} connected {projectCount === 1 ? "project" : "projects"}, files, Brand Kit assets and messages remain intact. Studio Staff can restore this Client later.</p>
+  </ConfirmationDialog>;
 }
 
 function ProjectAccessDialog({ contact, onClose, onSave, projects }: { contact: ClientContact; onClose: () => void; onSave: (projectIds: string[]) => void; projects: Project[] }) {
   const [projectIds, setProjectIds] = useState(contact.projectIds);
   return (
-    <ClientModal title="Change project access" description={`Choose which ${contact.name} can open in the Client portal.`} onClose={onClose} footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={() => onSave(projectIds)}>Save access</Button></>}>
+    <ClientModal title="Change project access" description={`Choose which ${contact.name} can open in the Client portal.`} onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={() => onSave(projectIds)}>Save access</Button></>}>
       <div className="client-access-list">
         {projects.map((project) => <label className="client-access-option" key={project.id}><input type="checkbox" checked={projectIds.includes(project.id)} onChange={(event) => setProjectIds((current) => event.target.checked ? [...current, project.id] : current.filter((id) => id !== project.id))} /><span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.status} - {getWithinProjectStatus(project)}</small></span></label>)}
         {projects.length === 0 ? <p className="paragraph-s">There are no projects to share yet.</p> : null}

@@ -1,0 +1,10 @@
+.content { display: grid; gap: var(--brisk-space-l); min-width: 0; }
+.content label { display: grid; gap: var(--brisk-space-s); }
+.content input:not([type="checkbox"]):not([type="radio"]), .content textarea {
+  width: 100%;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+}

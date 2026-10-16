@@ -1,5 +1,7 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -25,7 +27,7 @@ import {
 } from "@/components/script/ScriptMediaPicker";
 import { ScriptDocumentControls } from "@/components/script/ScriptDocumentControls";
 import { ScriptVersionControl } from "@/components/script/ScriptVersionControl";
-import { ReusableScriptAvEditor } from "@/components/script/ScriptPage";
+import { ReusableScriptAvEditor } from "@/components/script/ScriptAvEditor";
 import { StoryboardFrameReview } from "@/components/storyboard/StoryboardFrameReview";
 import { useStoryboard } from "@/components/storyboard/StoryboardContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -570,7 +572,7 @@ export function StoryboardPage({ project }: { project: Project }) {
 
       {isDeleteVersionConfirmationOpen && currentVersion ? (
         <ConfirmationDialog
-          title={`Delete Storyboard ${currentVersion.label}?`}
+          tone="danger" title={`Delete Storyboard ${currentVersion.label}?`}
           description="This removes the selected Storyboard version. Other versions and the approved Script stay unchanged."
           confirmLabel="Delete version"
           onCancel={() => setIsDeleteVersionConfirmationOpen(false)}
@@ -948,33 +950,7 @@ function StoryboardDurationControl({
   );
 }
 
-function ConfirmationDialog({
-  title,
-  description,
-  confirmLabel,
-  onCancel,
-  onConfirm,
-}: {
-  title: string;
-  description: string;
-  confirmLabel: string;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="storyboard-dialog-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section className="storyboard-dialog" role="dialog" aria-modal="true" aria-labelledby="storyboard-dialog-title" onMouseDown={(event) => event.stopPropagation()}>
-        <span className="storyboard-dialog-icon" aria-hidden="true"><DsIcon name="grid-four" size={24} /></span>
-        <h2 className="headings-xs-bold" id="storyboard-dialog-title">{title}</h2>
-        <p className="label-s">{description}</p>
-        <div className="storyboard-dialog-actions">
-          <Button variant="secondary" size="S" onClick={onCancel}>Cancel</Button>
-          <Button size="S" onClick={onConfirm}>{confirmLabel}</Button>
-        </div>
-      </section>
-    </div>
-  );
-}
+
 
 function toReusableScriptRows(frames: StoryboardFrame[]): ScriptRow[] {
   const tones: ScriptMediaItem["tone"][] = ["cyan", "lime", "purple", "pink", "yellow"];

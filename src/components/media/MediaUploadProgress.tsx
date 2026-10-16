@@ -44,7 +44,7 @@ export function MediaUploadProgress({ assets, destinationLabel, projectName, onC
                   <span style={{ width: `${asset.processingProgress ?? 0}%` }} />
                 </div>
               </div>
-              {asset.status === "failed" ? <button className="media-secondary-button label-xs-semibold" type="button" onClick={() => onRetry(asset.id)}><DsIcon name="arrows-clockwise" size={14} />Retry</button> : null}
+              {asset.status === "failed" ? <Button size="S" variant="secondary" className="media-secondary-button" type="button" onClick={() => onRetry(asset.id)}><DsIcon name="arrows-clockwise" size={14} />Retry</Button> : null}
             </article>
           ))}
         </div>

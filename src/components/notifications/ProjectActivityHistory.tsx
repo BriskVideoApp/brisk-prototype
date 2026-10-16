@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { ChatRole } from "@/components/chat/types";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
-import { NotificationSemanticState } from "@/components/notifications/NotificationSemanticState";
-import { DsIcon } from "@/components/video-review/DsIcon";
 import { getVisibleProjectActivity } from "@/data/project-history";
 import { readSharedReviewActivity, sharedReviewActivityStorageKey } from "@/data/share-review-activity";
 
@@ -66,9 +64,6 @@ export function ProjectLatestActionsList({
   if (entries.length === 0) {
     return (
       <div className="project-detail-latest-actions-empty">
-        <span className="project-detail-latest-actions-empty-icon">
-          <DsIcon name="clock-clockwise" size={20} />
-        </span>
         <strong className="label-s-semibold">No actions to show</strong>
         <p className="label-s">
           Actions will appear here when work moves through production.
@@ -81,27 +76,17 @@ export function ProjectLatestActionsList({
     <>
       <ol className="project-detail-latest-actions-list">
         {entries.map((entry) => (
-          <li key={entry.id}>
+          <li className={`notification-inbox-item is-${entry.state}`} key={entry.id}>
             <Link
-              className="project-detail-latest-action"
+              className="notification-inbox-item-main-link"
               href={entry.href}
-              aria-label={`${entry.action}: ${entry.entityLabel}`}
             >
-              <span className="project-detail-latest-action-topline">
-                <NotificationSemanticState state={entry.state} label={entry.label} compact />
-                <time className="label-xs" dateTime={entry.occurredAt} title={entry.occurredAt}>
-                  {dateFormatter.format(new Date(entry.occurredAt))}
-                </time>
+              <span className="notification-inbox-item-title-row">
+                <strong className="label-s-semibold">{entry.action}</strong>
               </span>
-              <strong className="label-s-semibold">{entry.action}</strong>
-              <span className="project-detail-latest-action-detail label-s">{entry.detail}</span>
-              <span className="project-detail-latest-action-meta label-xs">
-                <span>{entry.entityLabel}</span>
-                {entry.stage ? <span>{stageLabels[entry.stage]}</span> : null}
-                {entry.activityOnly ? <span>Activity only</span> : null}
-              </span>
-              <span className="project-detail-latest-action-open">
-                <DsIcon name="caret-right" size={16} />
+              {entry.detail ? <span className="notification-inbox-item-body label-s">{entry.detail}</span> : null}
+              <span className="notification-inbox-item-meta label-xs">
+                {[entry.label, entry.entityLabel, entry.stage && stageLabels[entry.stage] !== entry.entityLabel ? stageLabels[entry.stage] : null, entry.activityOnly ? "Activity only" : null].filter(Boolean).join(" · ")} · <time dateTime={entry.occurredAt} title={entry.occurredAt}>{dateFormatter.format(new Date(entry.occurredAt))}</time>
               </span>
             </Link>
           </li>
@@ -109,7 +94,6 @@ export function ProjectLatestActionsList({
       </ol>
       {activity.hasPermissionFilteredEntries ? (
         <p className="project-detail-latest-actions-filtered label-xs">
-          <DsIcon name="eye-slash" size={14} />
           Some Studio-only or commercial actions are hidden.
         </p>
       ) : null}

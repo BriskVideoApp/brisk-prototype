@@ -100,31 +100,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--brisk-space-xs);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
   color: var(--brisk-text-secondary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-}
-
-.today-viewer-picker select {
   min-width: 0;
-  max-width: 200px;
-  border: 0;
-  background: transparent;
-  color: var(--brisk-text-primary);
-  font: inherit;
-  padding: var(--brisk-space-none);
 }
 
-.today-viewer-picker:hover {
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.today-viewer-picker:focus-within {
-  outline: 2px solid var(--brisk-border-focus);
-  outline-offset: 2px;
-  box-shadow: var(--brisk-shadow-s);
+.today-viewer-picker .brisk-select {
+  min-width: 0;
+  width: 200px;
 }
 
 .today-date {
@@ -169,6 +151,25 @@
   align-items: center;
   justify-content: center;
   padding: var(--brisk-space-none);
+}
+
+.today-week-nav .today-icon-button {
+  border-color: transparent;
+  background: transparent;
+}
+
+.today-week-nav .today-icon-button:hover,
+.today-week-nav .today-icon-button:focus-visible {
+  background: var(--brisk-brand-secondary);
+  box-shadow: none;
+}
+
+.today-week-nav .today-icon-button:focus-visible {
+  outline: 2px solid var(--brisk-border-focus);
+}
+
+.today-week-nav .today-icon-button:active {
+  background: var(--brisk-brand-secondary-click);
 }
 
 .today-week-current {
@@ -736,7 +737,7 @@
   flex: 0 0 32px;
 }
 
-.today-stage-select-wrap select {
+.today-stage-select-wrap .brisk-select-trigger {
   min-width: 0;
   flex: 1;
   border: 0;
@@ -889,4 +890,16 @@
   align-items: center;
   padding: var(--brisk-space-s) var(--brisk-space-l);
   text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .today-header {
+    align-items: stretch;
+    flex-direction: column;
+    padding: var(--brisk-space-xl) var(--brisk-space-l);
+  }
+  .today-header-actions { flex-wrap: wrap; min-width: 0; }
+  .today-viewer-picker { width: 100%; gap: var(--brisk-space-s); }
+  .today-viewer-picker .brisk-select { flex: 1; width: auto; }
+  .today-week-nav { gap: var(--brisk-space-xs); }
 }

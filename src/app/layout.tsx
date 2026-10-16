@@ -101,7 +101,7 @@ export default function RootLayout({
                                 <CostsDataProvider>
                                   <InvitationProvider>
                                     <BriskAiProvider>
-                                      <Suspense fallback={children}>
+                                      <Suspense fallback={null}>
                                         <AppShell>{children}</AppShell>
                                       </Suspense>
                                     </BriskAiProvider>

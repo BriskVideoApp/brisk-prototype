@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import {
   useEffect,
   useMemo,
@@ -475,9 +476,9 @@ function CompactCommentThread({
               onToggleReaction={onToggleReaction}
             />
             {comment.replies.length === 0 && !isReplying ? (
-              <button className="comment-reply-button label-xs-semibold" type="button" aria-label="Reply" onClick={() => onOpenReply(comment.id)}>
+              <Button size="S" variant="ghost" className="comment-reply-button" type="button" aria-label="Reply" onClick={() => onOpenReply(comment.id)}>
                 Reply
-              </button>
+              </Button>
             ) : null}
           </div>
           {comment.replies.length > 0 ? (
@@ -510,9 +511,9 @@ function CompactCommentThread({
                           onToggleReaction={(replyId, emoji) => onToggleReplyReaction(comment.id, replyId, emoji)}
                         />
                         {reply.id === lastReplyId && !isReplying ? (
-                          <button className="comment-reply-button label-xs-semibold" type="button" aria-label="Reply" onClick={() => onOpenReply(comment.id)}>
+                          <Button size="S" variant="ghost" className="comment-reply-button" type="button" aria-label="Reply" onClick={() => onOpenReply(comment.id)}>
                             Reply
-                          </button>
+                          </Button>
                         ) : null}
                       </div>
                     </div>
@@ -608,12 +609,12 @@ function InlineEditComposer({
         onKeyDown={saveOnEnter}
       />
       <div className="inline-edit-actions">
-        <button className="modal-cancel-button label-s-semibold" type="button" onClick={onCancel}>
+        <Button size="S" variant="secondary" className="modal-cancel-button" type="button" onClick={onCancel}>
           Cancel
-        </button>
-        <button className="modal-resolve-button label-s-semibold" type="button" disabled={!body.trim()} onClick={onSave}>
+        </Button>
+        <Button size="S" variant="primary" className="modal-resolve-button" type="button" disabled={!body.trim()} onClick={onSave}>
           Save
-        </button>
+        </Button>
       </div>
     </div>
   );

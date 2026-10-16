@@ -168,8 +168,8 @@ export function StudioNotificationCategoryPage({ category }: { category: StudioN
 
             {notification.demonstration === "edit-request-review" ? (
               <div className="notification-trigger-popover-anchor">
-                <button
-                  className="client-secondary-button label-s-semibold"
+                <Button size="S" variant="secondary"
+                  className="client-secondary-button"
                   type="button"
                   ref={demonstrationTriggerRef}
                   aria-haspopup="dialog"
@@ -185,7 +185,7 @@ export function StudioNotificationCategoryPage({ category }: { category: StudioN
                   }}
                 >
                   Show when this sends
-                </button>
+                </Button>
                 {isDemonstrationVisible ? (
                   <>
                     <button
@@ -341,8 +341,8 @@ function NotificationEditorModal({
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={() => onSave(draft)}>Save</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={() => onSave(draft)}>Save</Button>
         </>
       )}
     >

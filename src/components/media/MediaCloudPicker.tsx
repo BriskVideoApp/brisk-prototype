@@ -1,3 +1,5 @@
+import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
 import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { MediaCloudFile, MediaCloudProvider } from "@/data/media";
@@ -70,18 +72,18 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
   };
 
   return (
-    <div className="media-modal-backdrop" role="presentation" onMouseDown={handleBackdropClick}>
-      <section className="media-cloud-picker" role="dialog" aria-modal="true" aria-labelledby="media-cloud-picker-title">
-        <header className="media-cloud-picker-header">
-          <div>
-            <h2 id="media-cloud-picker-title">Import from {providerName}</h2>
-          </div>
-          <button className="media-icon-button" type="button" aria-label={`Close ${providerName}`} onClick={onClose}>
-            <DsIcon name="x-close-cross" size={16} />
-          </button>
-        </header>
+    <> <EditingDialog title={<>Import from  {providerName}</>} onCancel={onClose} size="wide" actions={<>   <>
+            <Button size="S" variant="secondary"  type="button" onClick={onClose}>Cancel</Button>
+            <Button size="S" variant="primary"
 
-        <div className="media-cloud-picker-context">
+              type="button"
+              disabled={selectedFiles.length === 0}
+              onClick={() => onImport(selectedFiles)}
+            >
+              <DsIcon name="plus" size={16} />
+              Import {selectedFiles.length > 0 ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "file" : "files"}` : "files"}
+            </Button>
+          </> </>} >  <div className="media-import-context">
           <div>
             <span className="label-xs">Account</span>
             <strong className="label-s-semibold">tom@briskstudios.com</strong>
@@ -90,16 +92,11 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
             <span className="label-xs">Destination</span>
             <strong className="label-s-semibold"><DsIcon name="folder" size={14} />{folderName}</strong>
           </div>
-        </div>
-
-        <div className="media-cloud-picker-tools">
+        </div>  <div className="media-import-tools">
           <label className="media-cloud-folder-filter">
             <span className="sr-only">Source folder</span>
             <DsIcon name="folder-open" size={16} />
-            <select value={sourceFolder} onChange={(event) => setSourceFolder(event.target.value)}>
-              <option value="__all__">All folders</option>
-              {sourceFolders.map((folder) => <option value={folder} key={folder}>{folder}</option>)}
-            </select>
+            <BriskSelect<string> ariaLabel={"Source folder"} clearable={false} placeholder={"Choose an option"} value={sourceFolder} onChange={(value) => setSourceFolder(value)} options={[{ value: "__all__", label: "All folders" }, ...sourceFolders.map((folder) => ({ value: folder, label: (folder) }))]} />
             <DsIcon name="caret-down" size={14} />
           </label>
           <label className="media-search-shell">
@@ -121,9 +118,7 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
             />
             <span className="label-xs">{visibleFiles.length} files</span>
           </div>
-        </div>
-
-        <div className="media-cloud-file-list" role="list" aria-label={`${providerName} files`}>
+        </div>  <div className="media-cloud-file-list" role="list" aria-label={`${providerName} files`}>
           {visibleFiles.length > 0 ? visibleFiles.map((file) => (
             <div className={`media-cloud-file-row ${selectedIds.has(file.id) ? "is-selected" : ""}`} role="listitem" key={file.id}>
               <div className={`media-cloud-file-preview is-${file.kind}`} style={file.thumbnailUrl ? { backgroundImage: `url(${file.thumbnailUrl})` } : undefined}>
@@ -145,27 +140,9 @@ export function MediaCloudPicker({ provider, files, folderName, onClose, onImpor
               <span className="label-xs">Try another filename or folder.</span>
             </div>
           )}
-        </div>
-
-        <footer className="media-cloud-picker-footer">
-          <p className="label-xs">
+        </div>  <p className="label-xs">
             Originals stay in {providerName}. Brisk creates a playable copy.
-          </p>
-          <div>
-            <button className="media-secondary-button label-s-semibold" type="button" onClick={onClose}>Cancel</button>
-            <button
-              className="media-primary-button label-s-semibold"
-              type="button"
-              disabled={selectedFiles.length === 0}
-              onClick={() => onImport(selectedFiles)}
-            >
-              <DsIcon name="plus" size={16} />
-              Import {selectedFiles.length > 0 ? `${selectedFiles.length} ${selectedFiles.length === 1 ? "file" : "files"}` : "files"}
-            </button>
-          </div>
-        </footer>
-      </section>
-    </div>
+          </p></EditingDialog> </>
   );
 }
 
@@ -206,3 +183,4 @@ function MediaCloudCheckbox({
     </button>
   );
 }
+import { BriskSelect } from "@/components/form/BriskSelect";

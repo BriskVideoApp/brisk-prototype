@@ -30,6 +30,7 @@ export type StudioAiPlaybook = {
   customModeName: string;
   customModeBehaviour: string;
   exampleReferences: string[];
+  referenceLinks: string[];
   clientAccessEnabled: boolean;
 };
 
@@ -281,15 +282,12 @@ export const initialStudioAiPlaybook: StudioAiPlaybook = {
   avoid:
     "Generic hype, invented claims, unapproved promises, celebrity imitation, hidden production costs and automatic publishing.",
   customInstructions:
-    "Challenge weak concepts, but keep Client feedback constructive. Explain the production consequence of every recommendation.",
+    "Use the approved Brief and Client AI Brand Profile. Keep feedback direct and constructive. Do not invent claims or promises.",
   customModeName: "Northstar challenger",
   customModeBehaviour:
     "Be candid about weak ideas, protect the core audience insight, and offer one practical alternative with a clear production trade-off.",
-  exampleReferences: [
-    "Loom launch script v4.pdf",
-    "Deel customer story treatment.pdf",
-    "Northstar review principles.docx",
-  ],
+  exampleReferences: [],
+  referenceLinks: [],
   clientAccessEnabled: true,
 };
 
@@ -738,5 +736,6 @@ export function cloneStudioAiPlaybook(playbook: StudioAiPlaybook): StudioAiPlayb
   return {
     ...playbook,
     exampleReferences: [...playbook.exampleReferences],
+    referenceLinks: [...playbook.referenceLinks],
   };
 }

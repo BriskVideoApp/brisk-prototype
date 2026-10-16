@@ -2,6 +2,7 @@ export type InvitationRole = "Studio Staff" | "Studio Freelancer" | "Customer";
 export type InvitationStatus = "Pending" | "Accepted" | "Expired";
 
 export type InvitePersonPrefill = {
+  purpose?: "brief-send";
   role?: InvitationRole;
   email?: string;
   name?: string;

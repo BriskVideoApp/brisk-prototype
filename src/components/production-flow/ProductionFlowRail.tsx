@@ -1,5 +1,7 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import { useId, useState, type DragEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -320,14 +322,7 @@ export function ProductionFlowAdjuster({
             </ol>
 
             {pendingHide ? (
-              <div className="production-flow-popconfirm" role="alert">
-                <strong className="label-s-semibold">Hide {getProductionFlowStageDefinition(pendingHide, postProductionTerm).label}?</strong>
-                <p className="label-xs">This stage will be hidden from the project flow. Its work will be preserved and restored if the stage is revealed again.</p>
-                <div>
-                  <Button size="S" variant="secondary" onClick={() => setPendingHide(null)}>Keep visible</Button>
-                  <Button size="S" onClick={() => { onHideStage(pendingHide); setPendingHide(null); }}>Hide stage</Button>
-                </div>
-              </div>
+              <ConfirmationDialog title={`Hide ${getProductionFlowStageDefinition(pendingHide, postProductionTerm).label}?`} description="This stage will be hidden from the project flow. Its work will be preserved and restored if the stage is revealed again." cancelLabel="Keep visible" confirmLabel="Hide stage" onCancel={() => setPendingHide(null)} onConfirm={() => { onHideStage(pendingHide); setPendingHide(null); }} />
             ) : null}
 
             {hiddenStages.length > 0 ? (

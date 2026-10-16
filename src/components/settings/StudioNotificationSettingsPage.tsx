@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -100,8 +99,8 @@ export function StudioNotificationSettingsPage() {
 
         <NotificationSettingsSection
           icon="bell"
-          title="Notifications for your team"
-          description="Choose what your team gets. Open an item to see or change the message."
+          title="Notifications"
+          description="Choose which updates Brisk sends. Open an item to see its message."
         >
           <div className="notification-policy-list">
             {studioNotificationCategories.map((category) => (
@@ -124,13 +123,9 @@ export function StudioNotificationSettingsPage() {
               >
                 <NotificationSettingsCheckbox
                   checked={draft.categoryDefaults[category.id]}
-                  disabled={"mandatory" in category && category.mandatory}
                   label={category.label}
                   onChange={(checked) => updateCategory(category.id, checked)}
                 />
-                {"mandatory" in category && category.mandatory ? (
-                  <span className="notification-mandatory-label label-xs-semibold"><DsIcon name="lock" size={13} />Always on</span>
-                ) : null}
                 <button
                   className="notification-category-row-chevron"
                   type="button"
@@ -142,34 +137,6 @@ export function StudioNotificationSettingsPage() {
               </div>
             ))}
           </div>
-        </NotificationSettingsSection>
-
-        <NotificationSettingsSection
-          icon="chat-circle-text"
-          title="Messages for Clients"
-          description="Choose which messages Clients get."
-        >
-          <div className="notification-policy-list">
-            <NotificationPolicyCheckbox
-              checked={draft.customerMessages.sendReviewRequests}
-              label="Work to review"
-              onChange={(checked) => setDraft((current) => ({ ...current, customerMessages: { ...current.customerMessages, sendReviewRequests: checked } }))}
-            />
-            <NotificationPolicyCheckbox
-              checked={draft.customerMessages.sendApprovalConfirmations}
-              label="Approval changes"
-              onChange={(checked) => setDraft((current) => ({ ...current, customerMessages: { ...current.customerMessages, sendApprovalConfirmations: checked } }))}
-            />
-            <NotificationPolicyCheckbox
-              checked={draft.customerMessages.notifyAssignedReplies}
-              label="Replies needed"
-              onChange={(checked) => setDraft((current) => ({ ...current, customerMessages: { ...current.customerMessages, notifyAssignedReplies: checked } }))}
-            />
-          </div>
-          <Link className="customer-message-template-link label-s-semibold" href="/settings/notifications/templates">
-            See and edit messages
-            <DsIcon name="caret-right" size={16} />
-          </Link>
         </NotificationSettingsSection>
 
         <NotificationSettingsSection

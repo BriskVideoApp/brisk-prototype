@@ -45,7 +45,8 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
   const menuRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstActionRef = useRef<HTMLAnchorElement>(null);
-  const user = chatUsers.find((candidate) => candidate.id === (viewer?.chatUserId ?? prototypeUserIdByRole[selectedRole]));
+  const user = chatUsers.find((candidate) => candidate.id === viewer?.chatUserId)
+    ?? chatUsers.find((candidate) => candidate.id === prototypeUserIdByRole[selectedRole]);
   const isClient = selectedRole === "Customer";
   const isFreelancer = selectedRole === "Studio Freelancer";
   const isStudioStaff = selectedRole === "Studio Staff";
@@ -113,8 +114,6 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
     : isStudioStaff
       ? `${studioMember?.studioPermission ?? "Team Member"} · ${organisationName}`
       : `${prototypeRoleLabels[selectedRole]} · ${organisationName}`;
-  const organisationInitials = organisationName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
-
   const closeAfterNavigation = () => {
     setIsOpen(false);
     onNavigate?.();
@@ -169,7 +168,7 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
             ref={menuRef}
           >
             <header className="app-user-menu-identity">
-              {hasPersonalProfile ? (
+              {hasPersonalProfile && !isClient ? (
                 <Link
                   className="app-user-menu-identity-link"
                   href={buildHref("/settings/personal/profile")}
@@ -183,7 +182,6 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
                   <span className="app-user-menu-identity-copy">
                     <strong className="label-m-semibold">{displayName}</strong>
                     <span className="label-xs">{displayEmail}</span>
-                    {isClient ? <span className="app-user-menu-client-organisation"><span className="app-user-menu-client-logo label-xs-semibold" aria-hidden="true">{account.company.logoUrl ? <img src={account.company.logoUrl} alt="" /> : organisationInitials}</span><strong className="label-s-semibold">{organisationName}</strong></span> : null}
                     <span className="label-xs">{roleLine}</span>
                   </span>
                 </Link>
@@ -195,7 +193,6 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
                   <span className="app-user-menu-identity-copy">
                     <strong className="label-m-semibold">{displayName}</strong>
                     <span className="label-xs">{displayEmail}</span>
-                    {isClient ? <span className="app-user-menu-client-organisation"><span className="app-user-menu-client-logo label-xs-semibold" aria-hidden="true">{account.company.logoUrl ? <img src={account.company.logoUrl} alt="" /> : organisationInitials}</span><strong className="label-s-semibold">{organisationName}</strong></span> : null}
                     <span className="label-xs">{roleLine}</span>
                   </span>
                 </div>
@@ -214,6 +211,12 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
             </header>
 
             <nav className="app-user-menu-actions" aria-label="Your settings">
+              {isClient ? <span className="app-user-menu-group-label label-xs-semibold">Personal</span> : null}
+              {isClient ? <Link href={buildHref("/settings/personal/profile")} ref={firstActionRef} onClick={closeAfterNavigation}>
+                <DsIcon name="user-switch" size={18} />
+                <span className="label-s-semibold">My profile</span>
+                <DsIcon name="caret-right" size={14} />
+              </Link> : null}
               <Link
                 href={buildHref("/settings/personal/notifications")}
                 ref={hasPersonalProfile ? undefined : firstActionRef}
@@ -223,6 +226,14 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
                 <span className="label-s-semibold">My notifications</span>
                 <DsIcon name="caret-right" size={14} />
               </Link>
+              {hasPersonalProfile ? (
+                <Link href={buildHref("/settings/personal/security")} onClick={closeAfterNavigation}>
+                  <DsIcon name="lock" size={18} />
+                  <span className="label-s-semibold">Security</span>
+                  <DsIcon name="caret-right" size={14} />
+                </Link>
+              ) : null}
+              {isClient && (access.role === "Client Admin" || access.canAccessBilling) ? <span className="app-user-menu-group-label label-xs-semibold">Company</span> : null}
               {isClient && access.role === "Client Admin" ? (
                 <Link href={buildHref("/settings/client/company")} onClick={closeAfterNavigation}>
                   <DsIcon name="users-three" size={18} />
@@ -233,14 +244,7 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
               {isClient && access.canAccessBilling ? (
                 <Link href={buildHref("/client/invoices")} onClick={closeAfterNavigation}>
                   <DsIcon name="file-text" size={18} />
-                  <span className="label-s-semibold">Invoices & payments</span>
-                  <DsIcon name="caret-right" size={14} />
-                </Link>
-              ) : null}
-              {hasPersonalProfile ? (
-                <Link href={buildHref("/settings/personal/security")} onClick={closeAfterNavigation}>
-                  <DsIcon name="lock" size={18} />
-                  <span className="label-s-semibold">Security</span>
+                  <span className="label-s-semibold">Invoices</span>
                   <DsIcon name="caret-right" size={14} />
                 </Link>
               ) : null}
@@ -278,5 +282,7 @@ function MenuAvatar({
   if (photoUrl) {
     return <span className="app-user-menu-photo" aria-label={user.name}><img src={photoUrl} alt="" /></span>;
   }
-  return <CommentAvatar user={user} />;
+  const initials = user.name.split(/\s+/u).filter(Boolean).slice(0, 2)
+    .map((part) => part.charAt(0).toLocaleUpperCase("en-AU")).join("");
+  return <CommentAvatar user={{ ...user, initials }} />;
 }

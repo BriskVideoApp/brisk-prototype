@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -105,7 +106,7 @@ export function OutstandingInvoicesPage() {
           })}</div>
         </div>
         <button className={`costs-archive-toggle label-s-semibold ${includeArchived ? "is-active" : ""}`} type="button" aria-pressed={includeArchived} onClick={() => setIncludeArchived((current) => !current)}><span aria-hidden="true">{includeArchived ? <DsIcon name="check" size={12} /> : null}</span>Include archived projects</button>
-        {(projectStatus !== "all" || selectedTags.length || includeArchived || query) ? <button className="costs-text-action label-s-semibold" type="button" onClick={clearFilters}>Clear filters</button> : null}
+        {(projectStatus !== "all" || selectedTags.length || includeArchived || query) ? <Button size="S" variant="ghost" className="costs-text-action" type="button" onClick={clearFilters}>Clear filters</Button> : null}
       </section>
 
       {visibleRows.length ? (
@@ -119,12 +120,12 @@ export function OutstandingInvoicesPage() {
               <td data-label="Total"><strong className="label-s-semibold">{formatCostAmount(invoice.amount, invoice.currency)}</strong></td>
               <td data-label="Status"><InvoiceStateBadge state={invoice.state} /></td>
               <td data-label="Tags"><span className="costs-tags">{invoice.tags.map((tag) => <InvoiceTagBadge key={tag} tag={tag} />)}</span></td>
-              <td data-label="Actions">{invoice.state === "Submitted" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => setReviewState({ invoice, offer })}>Review</button> : invoice.state === "Approved" ? <button className="costs-row-action label-s-semibold" type="button" onClick={() => { markInvoicePaid(invoice.id); setToast(`${invoice.fileNames[0]} marked as paid`); }}>Mark paid</button> : <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}/costs`}>View project costs</Link>}</td>
+              <td data-label="Actions">{invoice.state === "Submitted" ? <Button size="S" variant="secondary" className="costs-row-action" type="button" onClick={() => setReviewState({ invoice, offer })}>Review</Button> : invoice.state === "Approved" ? <Button size="S" variant="secondary" className="costs-row-action" type="button" onClick={() => { markInvoicePaid(invoice.id); setToast(`${invoice.fileNames[0]} marked as paid`); }}>Mark paid</Button> : <Link className="costs-text-action label-s-semibold" href={`/projects/${project.id}/costs`}>View project costs</Link>}</td>
             </tr>)}</tbody>
           </table>
         </section>
       ) : (
-        <section className="costs-empty costs-workspace-empty"><span><DsIcon name="file-text" size={24} /></span><h2 className="headings-xs-bold">No invoices match these filters</h2><p className="paragraph-s">Try another project status or tag.</p><button className="costs-row-action label-s-semibold" type="button" onClick={clearFilters}>Clear filters</button></section>
+        <section className="costs-empty costs-workspace-empty"><span><DsIcon name="file-text" size={24} /></span><h2 className="headings-xs-bold">No invoices match these filters</h2><p className="paragraph-s">Try another project status or tag.</p><Button size="S" variant="secondary" className="costs-row-action" type="button" onClick={clearFilters}>Clear filters</Button></section>
       )}
 
       {reviewState ? <InvoiceReviewModal invoiceItem={reviewState.invoice} offerItem={reviewState.offer} onClose={() => setReviewState(null)} onMarkPaid={() => markInvoicePaid(reviewState.invoice.id)} onUpdated={setToast} /> : null}

@@ -1,5 +1,9 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -19,46 +23,8 @@ export function ClientStatusBadge({ status }: { status: Client["status"] | Clien
   return <span className={`client-status-badge is-${status.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{status}</span>;
 }
 
-export function ClientModal({
-  children,
-  className = "",
-  description,
-  footer,
-  onClose,
-  title,
-}: {
-  children: ReactNode;
-  className?: string;
-  description?: string;
-  footer: ReactNode;
-  onClose: () => void;
-  title: string;
-}) {
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [onClose]);
-
-  return (
-    <div className="client-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className={`client-modal ${className}`} role="dialog" aria-modal="true" aria-labelledby="client-modal-title" onMouseDown={(event) => event.stopPropagation()}>
-        <header>
-          <div>
-            <h2 className="headings-xs-bold" id="client-modal-title">{title}</h2>
-            {description ? <p className="paragraph-s">{description}</p> : null}
-          </div>
-          <button className="client-icon-button" type="button" aria-label="Close" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className="client-modal-content">{children}</div>
-        <footer>{footer}</footer>
-      </section>
-    </div>
-  );
+export function ClientModal({ children, className = "", description, footer, onClose, title }: { children: ReactNode; className?: string; description?: string; footer: ReactNode; onClose: () => void; title: string }) {
+  return <EditingDialog title={title} description={description} size={className.includes("billing-plan-modal") ? "full" : /invite-person-modal|customer-message|notification-reminder/.test(className) ? "wide" : "standard"} onCancel={onClose} actions={footer}>{children}</EditingDialog>;
 }
 
 export function ClientPicker({
@@ -80,13 +46,6 @@ export function ClientPicker({
   const [isOpen, setIsOpen] = useState(!selectedClient);
   const [inlineDuplicate, setInlineDuplicate] = useState<Client | null>(null);
   const activeClients = useMemo(() => clients.filter((client) => client.status !== "Archived"), [clients]);
-  const matches = useMemo(() => {
-    const normalisedQuery = query.trim().toLocaleLowerCase("en-AU");
-    if (!normalisedQuery) return activeClients.slice(0, 6);
-    return activeClients
-      .filter((client) => `${client.name} ${client.website}`.toLocaleLowerCase("en-AU").includes(normalisedQuery))
-      .slice(0, 6);
-  }, [activeClients, query]);
 
   useEffect(() => {
     if (selectedClient) setQuery(selectedClient.name);
@@ -112,71 +71,31 @@ export function ClientPicker({
     createInline();
   };
 
-  return (
-    <div className="client-picker">
-      <label className="label-m-semibold" htmlFor="client-picker-search">{label}</label>
-      <div className="client-picker-input">
-        <DsIcon name="search" size={16} />
-        <input
-          id="client-picker-search"
-          type="search"
-          value={query}
-          placeholder="Search Clients"
-          onFocus={() => setIsOpen(true)}
-          onChange={(event) => {
-            setQuery(event.target.value);
-            setInlineDuplicate(null);
-            setIsOpen(true);
-          }}
-        />
-        {selectedClient ? <DsIcon name="check-circle" size={16} /> : null}
-      </div>
-      {isOpen ? (
-        <div className="client-picker-menu" role="listbox" aria-label="Clients">
-          {inlineDuplicate ? (
-            <div className="client-picker-duplicate">
-              <strong className="label-s-semibold">A similar Client already exists</strong>
-              <span className="label-xs">{inlineDuplicate.name}{inlineDuplicate.website ? ` - ${inlineDuplicate.website}` : ""}</span>
-              <div>
-                <button className="client-secondary-button label-xs-semibold" type="button" onClick={() => {
-                  setQuery(inlineDuplicate.name);
-                  setIsOpen(false);
-                  onChange(inlineDuplicate);
-                }}>Use existing Client</button>
-                <button className="client-text-button label-xs-semibold" type="button" onClick={createInline}>Create anyway</button>
-              </div>
-            </div>
-          ) : null}
-          {matches.map((client) => (
-            <button
-              className="client-picker-option"
-              type="button"
-              role="option"
-              aria-selected={client.id === value}
-              key={client.id}
-              onClick={() => {
-                setQuery(client.name);
-                setIsOpen(false);
-                onChange(client);
-              }}
-            >
-              <ClientAvatar client={client} size="S" />
-              <span>
-                <strong className="label-s-semibold">{client.name}</strong>
-                {client.website ? <small className="label-xs">{client.website}</small> : null}
-              </span>
-              {client.id === value ? <DsIcon name="check" size={14} /> : null}
-            </button>
-          ))}
-          <button className="client-picker-add label-s-semibold" type="button" disabled={!query.trim()} onClick={addInline}>
-            <DsIcon name="plus" size={16} />
-            Add new Client{query.trim() ? ` - ${query.trim()}` : ""}
-          </button>
-          <span className="client-picker-note label-xs">A private portal is created automatically. Contact details can be added later.</span>
-        </div>
-      ) : null}
-    </div>
-  );
+  return <div className="client-picker">
+    <label className="label-m-semibold" htmlFor="client-picker-search">{label}</label>
+    <BriskSelect ariaLabel="Clients" id="client-picker-search" searchable searchPlaceholder="Search Clients" clearable={false}
+      autoOpen={!selectedClient} open={isOpen} onOpenChange={setIsOpen} initialQuery={initialQuery}
+      onSearchChange={(next) => { setQuery(next); setInlineDuplicate(null); }}
+      placeholder="Search Clients" value={value ?? ""}
+      options={activeClients.map((client) => ({ value: client.id, label: client.name, searchText: client.website,
+        description: client.website || undefined,
+        content: <><ClientAvatar client={client} size="S" /><strong>{client.name}</strong></>,
+      }))}
+      onChange={(id) => { const client = clients.find((candidate) => candidate.id === id); if (client) { setQuery(client.name); onChange(client); } }}
+      footer={<>
+        {inlineDuplicate ? <div className="client-picker-duplicate">
+          <strong className="label-s-semibold">A similar Client already exists</strong>
+          <span className="label-xs">{inlineDuplicate.name}{inlineDuplicate.website ? ` - ${inlineDuplicate.website}` : ""}</span>
+          <div><Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => {
+            setQuery(inlineDuplicate.name); setIsOpen(false); onChange(inlineDuplicate);
+          }}>Use existing Client</Button><Button size="S" variant="ghost" className="client-text-button" type="button" onClick={createInline}>Create anyway</Button></div>
+        </div> : null}
+        <button className="client-picker-add label-s-semibold" type="button" disabled={!query.trim()} onClick={addInline}>
+          <DsIcon name="plus" size={16} />Add new Client{query.trim() ? ` - ${query.trim()}` : ""}
+        </button>
+        <span className="client-picker-note label-xs">A private portal is created automatically. Contact details can be added later.</span>
+      </>} />
+  </div>;
 }
 
 export function AddClientDialog({
@@ -216,8 +135,8 @@ export function AddClientDialog({
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <button className="client-primary-button label-m-semibold" type="button" disabled={!form.name.trim()} onClick={submit}>Create Client</button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" variant="primary"  type="button" disabled={!form.name.trim()} onClick={submit}>Create Client</Button>
         </>
       )}
     >
@@ -256,8 +175,8 @@ export function AddClientDialog({
             <strong className="label-m-semibold" id="duplicate-client-heading">This looks similar to an existing Client</strong>
             <span className="label-s">{duplicate.name}{duplicate.website ? ` - ${duplicate.website}` : ""}</span>
             <div>
-              <button className="client-secondary-button label-s-semibold" type="button" onClick={() => onCreated(duplicate)}>Use existing Client</button>
-              <button className="client-text-button label-s-semibold" type="button" onClick={() => onCreated(createClient(form))}>Create anyway</button>
+              <Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => onCreated(duplicate)}>Use existing Client</Button>
+              <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onCreated(createClient(form))}>Create anyway</Button>
             </div>
           </div>
         </section>

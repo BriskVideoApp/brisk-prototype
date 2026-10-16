@@ -4,17 +4,18 @@ Use a short, recognisable Client code so projects, edit versions, emails and inv
 
 ## Client and project codes
 
-- Prefer a Client code of fewer than five characters when it clearly identifies the Client. A longer code is acceptable when a short one would be unclear.
+- Default the Client code to the first five letters of the Client name, in lower case, ignoring spaces and punctuation. Use the available letters when the name has fewer than five. Studio Staff can adjust it in Client details using 1-10 letters.
+- Use the saved Client code as the prefix for new project codes. Keep Client codes unique within a Studio.
 - Give each new project a unique, three-digit sequence within its Client. The code is assigned once and remains stable when the project name changes.
 - Display the project code before the editable project name. Use an underscore when the two are combined in a filename or subject.
 
 | Client | Example Client code | Example first project code |
 | --- | --- | --- |
-| Australian Security Technology | `ast` | `ast001` |
-| 350.org | `350rg` | `350rg001` |
-| Sapphire | `saph` | `saph001` |
+| Australian Security Technology | `austr` | `austr001` |
+| 350.org | `org` | `org001` |
+| Sapphire | `sapph` | `sapph001` |
 
-Example combined label: `saph001_Product launch`. Existing prototype projects retain their current codes until a separate migration is agreed.
+Example combined label: `sapph002_Product launch`. Existing prototype projects retain their current codes until a separate migration is agreed.
 
 ## Edit versions
 

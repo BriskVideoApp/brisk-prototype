@@ -107,9 +107,8 @@ export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) 
     <main className={`plan-billing-page client-billing-page ${embedded ? "is-embedded" : ""}`}>
       {embedded ? null : <header className="plan-billing-header">
         <div className="plan-billing-header-inner">
-          <span className="label-xs-semibold">Studio settings</span>
           <h1 className="headings-m-bold">Client billing</h1>
-          <p className="paragraph-s">Choose how your Studio invoices and collects payments from Clients.</p>
+          <p className="paragraph-s">Choose how your Studio bills Clients. Your Brisk subscription is separate.</p>
         </div>
       </header>}
 
@@ -221,7 +220,6 @@ export function ClientBillingPage({ embedded = false }: { embedded?: boolean }) 
                   <p className="paragraph-s">Client billing is managed in your Studio’s Stripe account.</p>
                 </div>
               </div>
-              <span className="billing-status-pill is-active label-xs-semibold">Connected</span>
             </div>
 
             {canManageClientBilling ? (

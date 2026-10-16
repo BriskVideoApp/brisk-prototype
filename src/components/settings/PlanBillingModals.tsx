@@ -1,5 +1,8 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
+
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
@@ -45,7 +48,7 @@ export function PlanComparisonModal({
       title="Compare Brisk plans"
       description="Choose the plan and billing frequency that fit your Studio."
       onClose={onClose}
-      footer={<Button size="M" variant="secondary" onClick={onClose}>Close</Button>}
+      footer={<Button size="S" variant="secondary" onClick={onClose}>Close</Button>}
     >
       <div className="billing-modal-frequency" role="group" aria-label="Billing frequency for plan change">
         <button
@@ -155,7 +158,7 @@ function PlanComparisonCard({
 
       <div className="billing-plan-option-action">
         {currentSelection ? (
-          <button className="billing-disabled-button label-s-semibold" type="button" disabled>Current plan</button>
+          <Button size="S" variant="secondary" className="billing-disabled-button" type="button" disabled>Current plan</Button>
         ) : plan.selfService ? (
           <Button size="M" variant="secondary" onClick={onChoose}>{plan.actionLabel}</Button>
         ) : (
@@ -188,27 +191,18 @@ export function PlanChangeConfirmationModal({
   const newPlan = getBillingPlan(request.planId);
 
   return (
-    <ClientModal
-      className="billing-modal billing-confirmation-modal"
-      title={request.kind === "frequency" ? "Confirm billing frequency" : "Confirm plan change"}
-      description="Review the Brisk plan details before continuing."
-      onClose={onClose}
-      footer={(
+    <ConfirmationDialog title={request.kind === "frequency" ? "Confirm billing frequency" : "Confirm plan change"} description="Review the Brisk plan details before continuing." expanded onCancel={onClose} actions={(
         <>
-          <Button size="M" variant="secondary" onClick={onBack}>Back</Button>
-          <Button size="M" onClick={onConfirm}>Confirm change</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="secondary" onClick={onBack}>Back</Button>
+          <Button size="S" onClick={onConfirm}>Confirm change</Button>
         </>
-      )}
-    >
-      <dl className="billing-confirmation-list">
+      )}> <dl className="billing-confirmation-list">
         <div><dt className="label-s">Current plan</dt><dd className="label-m-semibold">{currentPlan.name}</dd></div>
         <div><dt className="label-s">New plan</dt><dd className="label-m-semibold">{newPlan.name}</dd></div>
         <div><dt className="label-s">Billing frequency</dt><dd className="label-m-semibold">{frequencyLabel(request.billingFrequency)}</dd></div>
         <div><dt className="label-s">New price</dt><dd className="label-m-semibold">{formatBillingPlanPrice(newPlan, request.billingFrequency)}</dd></div>
         <div><dt className="label-s">Effective date</dt><dd className="label-m-semibold">{effectiveDate}</dd></div>
-      </dl>
-      <p className="billing-modal-note paragraph-s">Final financial confirmation would be completed securely through Stripe in production.</p>
-    </ClientModal>
+      </dl>  <p className="billing-modal-note paragraph-s">Final financial confirmation would be completed securely through Stripe in production.</p> </ConfirmationDialog>
   );
 }
 
@@ -222,23 +216,15 @@ export function AddOnConfirmationModal({
   onConfirm: () => void;
 }) {
   return (
-    <ClientModal
-      className="billing-modal billing-confirmation-modal"
-      title={`Add ${addOn.name}?`}
-      description="This confirmation updates local prototype state only."
-      onClose={onClose}
-      footer={(
+    <ConfirmationDialog title={`Add ${addOn.name}?`} description="This confirmation updates local prototype state only." onCancel={onClose} actions={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={onConfirm}>Add to plan</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={onConfirm}>Add to plan</Button>
         </>
-      )}
-    >
-      <dl className="billing-confirmation-list">
+      )}> <dl className="billing-confirmation-list">
         <div><dt className="label-s">Add-on</dt><dd className="label-m-semibold">{addOn.name}</dd></div>
         <div><dt className="label-s">Price</dt><dd className="label-m-semibold">{formatBillingAddOnPrice(addOn)}</dd></div>
-      </dl>
-    </ClientModal>
+      </dl> </ConfirmationDialog>
   );
 }
 

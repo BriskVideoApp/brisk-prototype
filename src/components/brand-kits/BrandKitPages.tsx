@@ -1,5 +1,9 @@
 "use client";
 
+import { BriskSelect } from "@/components/form/BriskSelect";
+
+import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -441,7 +445,7 @@ export function BrandKitsLandingPage() {
               <span className="brand-kits-directory-empty-icon" aria-hidden="true"><DsIcon name="search" size={28} /></span>
               <h2 className="headings-xs-bold">No Brand Kits match your search</h2>
               <p className="paragraph-s">Try another Client name or clear the search.</p>
-              <button className="brand-secondary-button label-s-semibold" type="button" onClick={clearSearch}>Clear search</button>
+              <Button size="S" variant="secondary" className="brand-secondary-button" type="button" onClick={clearSearch}>Clear search</Button>
             </div>
           )}
         </section>
@@ -1068,24 +1072,24 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
         </div>
         <div className="brand-kit-header-actions">
           {!isGuest && subBrand && canManageBrands ? (
-            <button
-              className="brand-secondary-button label-s-semibold"
+            <Button size="S" variant="secondary"
+              className="brand-secondary-button"
               type="button"
               onClick={toggleBrandRelationship}
             >
               <DsIcon name="bookmark" size={16} />
               {currentRelationship === "master" ? "Make sub-brand" : "Make master brand"}
-            </button>
+            </Button>
           ) : null}
           {!isGuest && role === "client" ? (
-            <button
-              className="brand-secondary-button label-s-semibold"
+            <Button size="S" variant="secondary"
+              className="brand-secondary-button"
               type="button"
               onClick={openNewBrandSetup}
             >
               <DsIcon name="plus" size={16} />
               Add sub-brand
-            </button>
+            </Button>
           ) : null}
         </div>
       </header>
@@ -1353,25 +1357,25 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                                 if (inlineSetupWebsite.trim()) setInlineSetupWebsiteAdded(true);
                               }}
                             />
-                            <button
+                            <Button size="S" variant="primary"
                               aria-label="Add website"
-                              className="brand-hero-website-add-button label-xs-semibold"
+                              className="brand-hero-website-add-button"
                               disabled={!inlineSetupWebsite.trim()}
                               type="button"
                               onClick={() => setInlineSetupWebsiteAdded(true)}
                             >
                               Add
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       ) : (
-                        <button
-                          className="brand-text-button label-s-semibold brand-hero-website-link"
+                        <Button size="S" variant="ghost"
+                          className="brand-text-button brand-hero-website-link"
                           type="button"
                           onClick={() => setShowInlineSetupWebsite(true)}
                         >
                           Add your website
-                        </button>
+                        </Button>
                       )}
                     </div>
                   ) : null}
@@ -1850,11 +1854,11 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                           setIsAddingTone(false);
                         }}
                       />
-                      <button className="tone-tag-save label-xs-semibold" disabled={!toneDraft.trim()} type="submit">
+                      <Button size="S" variant="primary" className="tone-tag-save" disabled={!toneDraft.trim()} type="submit">
                         Add
-                      </button>
-                      <button
-                        className="tone-tag-cancel label-xs-semibold"
+                      </Button>
+                      <Button size="S" variant="ghost"
+                        className="tone-tag-cancel"
                         type="button"
                         onClick={() => {
                           setToneDraft("");
@@ -1862,16 +1866,16 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                         }}
                       >
                         Cancel
-                      </button>
+                      </Button>
                     </form>
                   ) : canEdit ? (
-                    <button
-                      className="tone-tag-add label-xs-semibold"
+                    <Button size="S" variant="ghost"
+                      className="tone-tag-add"
                       type="button"
                       onClick={beginAddingTone}
                     >
                       + Add tone
-                    </button>
+                    </Button>
                   ) : null}
                 </div>
               </>
@@ -2112,22 +2116,22 @@ function BrandKitSurface({ subBrand }: { subBrand?: SubBrand }) {
                   </div>
                   <div className="sub-brand-actions">
                     {canManageBrands ? (
-                      <button
-                        className="brand-text-button label-s-semibold"
+                      <Button size="S" variant="ghost"
+                        className="brand-text-button"
                         type="button"
                         onClick={openNewBrandSetup}
                       >
                         + Add sub-brand
-                      </button>
+                      </Button>
                     ) : null}
                     {subBrands.length > 3 ? (
-                      <button
-                        className="brand-text-button label-s-semibold"
+                      <Button size="S" variant="ghost"
+                        className="brand-text-button"
                         type="button"
                         onClick={() => setShowAllSubBrands(!showAllSubBrands)}
                       >
                         {showAllSubBrands ? "Show less" : "View all"}
-                      </button>
+                      </Button>
                     ) : null}
                   </div>
                 </>
@@ -2409,16 +2413,7 @@ function EditorFiles({
     <section className="editor-files" aria-label="Editor files">
       <header>
         <h3 className="label-m-semibold">Editor files</h3>
-        <select
-          className="brand-version-select label-xs-semibold"
-          value={activeVersion.id}
-          aria-label="Motion package version"
-          onChange={(event) => onSelectVersion(event.target.value as EditorFileVersion["id"])}
-        >
-          {versions.map((version) => (
-            <option value={version.id} key={version.id}>{version.label}</option>
-          ))}
-        </select>
+        <BriskSelect<string> ariaLabel={"Motion package version"} className="brand-version-picker" clearable={false} placeholder={"Choose an option"} triggerClassName="brand-version-select label-xs-semibold" value={activeVersion.id} onChange={(value) => onSelectVersion(value as EditorFileVersion["id"])} options={[...versions.map((version) => ({ value: version.id, label: (version.label) }))]} />
       </header>
       <a
         className="editor-files-download-all label-s-semibold"
@@ -2484,21 +2479,14 @@ function VoiceToneDialog({
   };
 
   return (
-    <div className="brand-modal-backdrop" role="presentation" onMouseDown={onCancel}>
-      <section
-        className="brand-modal brand-voice-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="brand-voice-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header className="brand-modal-header">
-          <h2 className="headings-xs-bold" id="brand-voice-title">Add voice & tone</h2>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onCancel}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className="brand-modal-body brand-voice-modal-body">
+    <> <EditingDialog title={<>Add voice & tone</>} onCancel={onCancel} size="standard" actions={<> <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>  <Button size="S" variant="primary"
+
+            type="button"
+            disabled={!summary.trim()}
+            onClick={() => onSave(summary.trim())}
+          >
+            Save
+          </Button> </>} >  <div className="brand-voice-modal-body">
           <label>
             <span className="label-s-semibold">
               {isCustomerView ? "How does your brand sound?" : "How does this brand sound?"}
@@ -2522,20 +2510,7 @@ function VoiceToneDialog({
                 : "Add a website, guidelines or sample content for a better suggestion. This adds an editable draft and does not save changes."}
             </p>
           </div>
-        </div>
-        <footer className="brand-modal-footer">
-          <Button size="S" variant="secondary" onClick={onCancel}>Cancel</Button>
-          <button
-            className="brand-save-button label-s-semibold"
-            type="button"
-            disabled={!summary.trim()}
-            onClick={() => onSave(summary.trim())}
-          >
-            Save
-          </button>
-        </footer>
-      </section>
-    </div>
+        </div>  </EditingDialog> </>
   );
 }
 
@@ -2553,27 +2528,17 @@ function LogoDownloadModal({
   const options = ["SVG", "PNG @1x", "PNG @2x", "PNG @3x", "Favicon"];
 
   return (
-    <div className="brand-modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        className="brand-modal logo-download-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="logo-download-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <header className="brand-modal-header">
-          <div>
-            <h2 className="headings-xs-bold" id="logo-download-title">Download logo</h2>
+    <> <EditingDialog title={<>Download logo</>}  onCancel={onClose} size="standard" actions={<> <Button size="S" variant="secondary" onClick={onReplace}>Replace</Button>  <ActionMenu items={[{
+            label: "Delete",
+            icon: "trash-simple",
+            destructive: true,
+            onSelect: onDelete,
+          }]} /> </>} description={<>  <div>
+
             <p className="paragraph-s">{logo.label}</p>
-          </div>
-          <button className="brand-modal-close" type="button" aria-label="Close" onClick={onClose}>
-            <DsIcon name="x-close-cross" size={18} />
-          </button>
-        </header>
-        <div className={`logo-download-preview is-${logo.variant}`}>
+          </div>    </>}>  <div className={`logo-download-preview is-${logo.variant}`}>
           <img src={logo.url} alt={logo.label} />
-        </div>
-        <div className="logo-download-options">
+        </div>  <div className="logo-download-options">
           {options.map((option) => (
             <a
               className="label-s-semibold"
@@ -2585,18 +2550,7 @@ function LogoDownloadModal({
               <DsIcon name="download-simple" size={16} />
             </a>
           ))}
-        </div>
-        <footer className="brand-modal-footer">
-          <Button size="S" variant="secondary" onClick={onReplace}>Replace</Button>
-          <ActionMenu items={[{
-            label: "Delete",
-            icon: "trash-simple",
-            destructive: true,
-            onSelect: onDelete,
-          }]} />
-        </footer>
-      </section>
-    </div>
+        </div>  </EditingDialog> </>
   );
 }
 

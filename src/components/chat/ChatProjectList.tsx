@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
@@ -71,10 +72,10 @@ export function ChatProjectList({
           </div>
           {showCompanyChat ? (
             <>
-              <button className="chat-secondary-button label-s-semibold" type="button" onClick={onCompanyChat}>
+              <Button size="S" variant="secondary" className="chat-secondary-button" type="button" onClick={onCompanyChat}>
                 <DsIcon name="chats" size={16} />
                 Client chat
-              </button>
+              </Button>
               <button className="chat-icon-button" type="button" aria-label={`Open ${clientName} settings`} onClick={onCustomerSettings}>
                 <DsIcon name="settings" size={18} />
               </button>

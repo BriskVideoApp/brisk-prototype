@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { ActionMenu, type BrandMenuItem } from "@/components/brand-kits/AssetManagement";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
+import { useInvitations } from "@/components/invitations/InvitationContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import {
   ClientCompanySettingsPageShell,
@@ -15,11 +17,12 @@ import {
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import {
-  clientProjectAccessOptions,
+  type ClientProjectAccess,
   type ClientMembershipRole,
   type ClientTeamMember,
 } from "@/data/client-account-settings";
 import { prototypeCustomerPersonId } from "@/data/people";
+import { selectClientProjects } from "@/data/prototype-state";
 
 const clientRoleOptions: ReadonlyArray<{ value: ClientMembershipRole; label: string }> = [
   { value: "Client Admin", label: "Client Admin" },
@@ -27,6 +30,11 @@ const clientRoleOptions: ReadonlyArray<{ value: ClientMembershipRole; label: str
 ];
 
 export function ClientTeamPage() {
+  const { state, setClientMemberProjects } = usePrototypeState();
+  const clientId = state.session.activeClientId ?? "loom";
+  const projectOptions = selectClientProjects(state, state.session.activeWorkspaceId, clientId)
+    .map((project) => ({ id: project.id, code: project.code ?? "", name: project.name }));
+  const { resendInvitation } = useInvitations();
   const {
     createPerson,
     deletePerson,
@@ -35,15 +43,7 @@ export function ClientTeamPage() {
     updatePersonClientMembershipRole,
     updatePersonProjectAccess,
   } = usePeople();
-  const {
-    account,
-    cancelInvitation,
-    inviteTeamMember,
-    removeTeamMember,
-    resendInvitation,
-    updateTeamMemberProjects,
-    updateTeamMemberRole,
-  } = useClientAccountSettings();
+  const { account } = useClientAccountSettings();
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [projectMember, setProjectMember] = useState<ClientTeamMember | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -62,8 +62,8 @@ export function ClientTeamPage() {
           label: "Resend invitation",
           icon: "envelope-simple",
           onSelect: () => {
-            resendInvitation(member.id);
-            setPersonStatus(member.id, "Invited");
+            const person = people.find((candidate) => candidate.id === member.id);
+            if (person) resendInvitation(person);
             setToast(`Invitation resent to ${member.email}.`);
           },
         },
@@ -72,7 +72,7 @@ export function ClientTeamPage() {
           icon: "trash-simple",
           destructive: true,
           onSelect: () => {
-            cancelInvitation(member.id);
+            setClientMemberProjects({ clientId, memberId: member.id, projectIds: [] });
             deletePerson(member.id);
             setToast(`Invitation for ${member.email} was cancelled.`);
           },
@@ -85,10 +85,10 @@ export function ClientTeamPage() {
       icon: "trash-simple",
       destructive: true,
       onSelect: () => {
-        removeTeamMember(member.id);
         updatePersonProjectAccess(member.id, []);
+        setClientMemberProjects({ clientId, memberId: member.id, projectIds: [] });
         setPersonStatus(member.id, "Paused");
-        setToast(`${member.name} was removed from Loom.`);
+        setToast(`${member.name} was removed from ${account.company.name}.`);
       },
     }];
   };
@@ -96,14 +96,13 @@ export function ClientTeamPage() {
   return (
     <ClientSettingsAccessBoundary requireAdmin>
       <ClientCompanySettingsPageShell
-        activeSection="team"
         title="Team access"
       >
         <section className="account-team-section" aria-labelledby="client-team-heading">
           <div className="account-settings-section-heading">
             <div>
-              <h2 className="headings-xs-bold" id="client-team-heading">Loom team</h2>
-              <p className="paragraph-s">Client Admins manage this list. Project access is selected per person.</p>
+              <h2 className="headings-xs-bold" id="client-team-heading">{account.company.name} team</h2>
+              <p className="paragraph-s">Client Admins manage access. Anyone on a project can review and approve.</p>
             </div>
             <Button size="S" onClick={() => setInviteModalOpen(true)}>
               <span className="account-settings-button-content"><DsIcon name="plus" size={16} />Invite colleague</span>
@@ -124,6 +123,7 @@ export function ClientTeamPage() {
               <tbody>
                 {account.team.map((member) => {
                   const isCurrentUser = member.id === prototypeCustomerPersonId;
+                  const projectCount = member.projectIds.filter((id) => projectOptions.some((project) => project.id === id)).length;
                   const visibleMember = isCurrentUser && currentCustomer ? {
                     ...member,
                     name: currentCustomer.name,
@@ -154,7 +154,6 @@ export function ClientTeamPage() {
                             value={member.role}
                             onChange={(role) => {
                               const nextRole = role as ClientMembershipRole;
-                              updateTeamMemberRole(member.id, nextRole);
                               updatePersonClientMembershipRole(member.id, nextRole);
                             }}
                           />
@@ -168,9 +167,9 @@ export function ClientTeamPage() {
                       </td>
                       <td data-label="Project access">
                         <button className="account-team-project-button label-s-semibold" type="button" onClick={() => setProjectMember(member)}>
-                          {member.projectIds.length === clientProjectAccessOptions.length
+                          {projectOptions.length > 0 && projectCount === projectOptions.length
                             ? "All projects"
-                            : `${member.projectIds.length} ${member.projectIds.length === 1 ? "project" : "projects"}`}
+                            : `${projectCount} ${projectCount === 1 ? "project" : "projects"}`}
                           <DsIcon name="caret-right" size={14} />
                         </button>
                       </td>
@@ -187,16 +186,18 @@ export function ClientTeamPage() {
 
         {inviteModalOpen ? (
           <InviteClientColleagueModal
+            clientName={account.company.name}
+            projectOptions={projectOptions}
             onClose={() => setInviteModalOpen(false)}
             onInvite={(input) => {
               const person = createPerson({
                 type: "Client contact",
                 name: input.name,
                 email: input.email,
-                clientId: "loom",
+                clientId,
                 projectIds: input.projectIds,
               });
-              inviteTeamMember({ ...input, memberId: person.id });
+              setClientMemberProjects({ clientId, memberId: person.id, projectIds: input.projectIds, role: input.role });
               setInviteModalOpen(false);
               setToast(`Invitation sent to ${input.email}.`);
             }}
@@ -206,10 +207,11 @@ export function ClientTeamPage() {
         {projectMember ? (
           <ProjectAccessModal
             member={projectMember}
+            projectOptions={projectOptions}
             onClose={() => setProjectMember(null)}
             onSave={(projectIds) => {
-              updateTeamMemberProjects(projectMember.id, projectIds);
               updatePersonProjectAccess(projectMember.id, projectIds);
+              setClientMemberProjects({ clientId, memberId: projectMember.id, projectIds });
               setProjectMember(null);
               setToast(`Project access updated for ${projectMember.name}.`);
             }}
@@ -223,26 +225,30 @@ export function ClientTeamPage() {
 }
 
 function InviteClientColleagueModal({
+  clientName,
   onClose,
   onInvite,
+  projectOptions,
 }: {
+  clientName: string;
   onClose: () => void;
   onInvite: (input: { name: string; email: string; role: ClientMembershipRole; projectIds: string[] }) => void;
+  projectOptions: readonly ClientProjectAccess[];
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<ClientMembershipRole>("Client Member");
-  const [projectIds, setProjectIds] = useState<string[]>([clientProjectAccessOptions[0]?.id ?? ""]);
+  const [projectIds, setProjectIds] = useState<string[]>(() => projectOptions[0] ? [projectOptions[0].id] : []);
 
   return (
     <ClientModal
       title="Invite a colleague"
-      description="They will receive access to the projects you choose."
+      description={`Invite someone to ${clientName} and choose the projects they can open.`}
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" disabled={!name.trim() || !email.trim()} onClick={() => {
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" disabled={!name.trim() || !email.trim()} onClick={() => {
             if (name.trim() && email.trim()) onInvite({ name: name.trim(), email: email.trim(), role, projectIds });
           }}>Send invitation</Button>
         </>
@@ -263,7 +269,7 @@ function InviteClientColleagueModal({
             onChange={(nextRole) => setRole(nextRole as ClientMembershipRole)}
           />
         </label>
-        <ProjectAccessChecklist projectIds={projectIds} onChange={setProjectIds} />
+        <ProjectAccessChecklist projectIds={projectIds} projectOptions={projectOptions} onChange={setProjectIds} />
       </div>
     </ClientModal>
   );
@@ -273,10 +279,12 @@ function ProjectAccessModal({
   member,
   onClose,
   onSave,
+  projectOptions,
 }: {
   member: ClientTeamMember;
   onClose: () => void;
   onSave: (projectIds: string[]) => void;
+  projectOptions: readonly ClientProjectAccess[];
 }) {
   const [projectIds, setProjectIds] = useState<string[]>(() => [...member.projectIds]);
   return (
@@ -286,12 +294,12 @@ function ProjectAccessModal({
       onClose={onClose}
       footer={(
         <>
-          <Button size="M" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button size="M" onClick={() => onSave(projectIds)}>Save access</Button>
+          <Button size="S" variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button size="S" onClick={() => onSave(projectIds)}>Save access</Button>
         </>
       )}
     >
-      <ProjectAccessChecklist projectIds={projectIds} onChange={setProjectIds} />
+      <ProjectAccessChecklist projectIds={projectIds} projectOptions={projectOptions} onChange={setProjectIds} />
     </ClientModal>
   );
 }
@@ -299,11 +307,13 @@ function ProjectAccessModal({
 function ProjectAccessChecklist({
   onChange,
   projectIds,
+  projectOptions,
 }: {
   onChange: (projectIds: string[]) => void;
   projectIds: string[];
+  projectOptions: readonly ClientProjectAccess[];
 }) {
-  const allSelected = useMemo(() => projectIds.length === clientProjectAccessOptions.length, [projectIds]);
+  const allSelected = projectOptions.length > 0 && projectOptions.every((project) => projectIds.includes(project.id));
   return (
     <fieldset className="account-team-project-checklist">
       <legend className="label-m-semibold">Project access</legend>
@@ -311,13 +321,13 @@ function ProjectAccessChecklist({
         <input
           type="checkbox"
           checked={allSelected}
-          onChange={(event) => onChange(event.target.checked ? clientProjectAccessOptions.map((project) => project.id) : [])}
+          onChange={(event) => onChange(event.target.checked ? projectOptions.map((project) => project.id) : [])}
         />
         <span><strong className="label-s-semibold">All current projects</strong><small className="label-xs">Give access to every project listed below.</small></span>
       </label>
       <div className="account-team-project-divider label-xs-semibold"><span>Or choose individual projects</span></div>
       <div className="account-team-project-options">
-        {clientProjectAccessOptions.map((project) => (
+        {projectOptions.map((project) => (
           <label key={project.id}>
             <input
               type="checkbox"

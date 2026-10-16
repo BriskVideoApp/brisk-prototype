@@ -327,8 +327,8 @@ export function FreelancerVideosPage() {
           : `You declined the offer for ${offerResponse.projectName}.`}
         onClose={() => setOfferResponse(null)}
         footer={offerResponse.outcome === "accepted"
-          ? <Button size="M" onClick={() => { router.push(`/projects/${encodeURIComponent(offerResponse.projectId)}/stages/brief`); setOfferResponse(null); }}>View Brief</Button>
-          : <Button size="M" variant="secondary" onClick={() => setOfferResponse(null)}>Close</Button>}
+          ? <Button size="S" onClick={() => { router.push(`/projects/${encodeURIComponent(offerResponse.projectId)}/stages/brief`); setOfferResponse(null); }}>View Brief</Button>
+          : <Button size="S" variant="secondary" onClick={() => setOfferResponse(null)}>Close</Button>}
       >{offerResponse.outcome === "accepted" ? <p className="paragraph-s">You can now start your assigned work.</p> : null}</ClientModal> : null}
       {logEngagement && logStage ? <FreelancerTimeDialog engagement={logEngagement} initialStage={logStage} personId={personId} onClose={closeTimeDialog} onSave={(entry) => { appendSharedTimeEntry(entry); setSharedTimeEntries(readSharedTimeEntries()); closeTimeDialog(); setToast(`${formatHours(entry.hours)} logged to ${logEngagement.project.name}`); }} /> : null}
       {invoiceOffer ? <InvoiceUploadModal offer={invoiceOffer} onClose={() => setInvoiceOffer(null)} onSubmitted={(invoiceItem) => { setInvoiceOffer(null); setToast(`${invoiceItem.fileNames.length} ${invoiceItem.fileNames.length === 1 ? "PDF" : "PDFs"} submitted for review`); }} /> : null}
@@ -521,7 +521,7 @@ function FreelancerVideoDataCell({
   }
 
   const paymentStatus = getPaymentStatus(engagement);
-  return <td className={className} data-label="Commercial"><PaymentBadge status={paymentStatus} /><small className="label-xs">{getEngagementRateLabel(engagement)}</small>{engagement.offer && (paymentStatus === "invoice_required" || paymentStatus === "sent_back") ? <button className="freelancer-inline-action label-xs-semibold" type="button" onClick={() => { if (engagement.offer) onSubmitInvoice(engagement.offer); }}>{paymentStatus === "sent_back" ? "Submit another invoice" : "Submit invoice"}</button> : null}</td>;
+  return <td className={className} data-label="Commercial"><PaymentBadge status={paymentStatus} /><small className="label-xs">{getEngagementRateLabel(engagement)}</small>{engagement.offer && (paymentStatus === "invoice_required" || paymentStatus === "sent_back") ? <Button size="S" variant="ghost" className="freelancer-inline-action" type="button" onClick={() => { if (engagement.offer) onSubmitInvoice(engagement.offer); }}>{paymentStatus === "sent_back" ? "Submit another invoice" : "Submit invoice"}</Button> : null}</td>;
 }
 
 function FreelancerTableHeaderCell({

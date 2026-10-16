@@ -1,4 +1,12 @@
 import type { ChatMessage, ChatProject, ConversationPreview } from "@/components/chat/types";
+import {
+  chatMessages,
+  chatProjects,
+  directConversations,
+  directMessages,
+  groupConversations,
+  groupMessages,
+} from "@/data/chat";
 
 export type StoredChatState = {
   projects: ChatProject[];
@@ -12,6 +20,29 @@ export function isStoredChatState(value: unknown): value is StoredChatState {
   const chat = value as Partial<StoredChatState>;
   return Array.isArray(chat.projects) && Array.isArray(chat.messages)
     && Array.isArray(chat.dmConversations) && Array.isArray(chat.groupConversations);
+}
+
+export function appendStoredProjectChatMessage(workspaceId: string, message: ChatMessage) {
+  const storageKey = `brisk-chat-v1:${workspaceId}`;
+  const fixtureState: StoredChatState = {
+    projects: [...chatProjects],
+    messages: [...chatMessages, ...directMessages, ...groupMessages],
+    dmConversations: [...directConversations],
+    groupConversations: [...groupConversations],
+  };
+
+  try {
+    const stored = window.localStorage.getItem(storageKey);
+    const parsed: unknown = stored ? JSON.parse(stored) : null;
+    const current = isStoredChatState(parsed) ? parsed : fixtureState;
+    if (current.messages.some((candidate) => candidate.id === message.id)) return;
+    window.localStorage.setItem(storageKey, JSON.stringify({
+      ...current,
+      messages: [...current.messages, message],
+    }));
+  } catch {
+    // Keep the Brief handoff available if prototype Chat storage is unavailable.
+  }
 }
 
 function changedFields<T extends { id: string }>(base: T, current: T, latest: T, excluded: (keyof T)[]): T {

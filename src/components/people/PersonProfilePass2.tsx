@@ -7,10 +7,9 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
-import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
-import type { InvitationStatus } from "@/data/invitations";
 import type {
   Person,
   PersonActivity,
@@ -26,10 +25,9 @@ import {
 } from "@/data/timeEntries/sharedTimeEntries";
 
 const seniorityOptions: ReadonlyArray<{ value: Person["seniority"]; label: string }> = [
-  { value: "Emerging", label: "Emerging" },
-  { value: "Midweight", label: "Midweight" },
+  { value: "Junior", label: "Junior" },
+  { value: "Mid", label: "Mid" },
   { value: "Senior", label: "Senior" },
-  { value: "Lead", label: "Lead" },
 ];
 
 const availabilityOptions: ReadonlyArray<{ value: PersonAvailability; label: string }> = [
@@ -64,7 +62,6 @@ const rateTypeOptions: ReadonlyArray<{ value: NonNullable<Person["commercial"]>[
 
 const studioPermissionOptions: ReadonlyArray<{ value: StudioPermission; label: string }> = [
   { value: "Team Member", label: "Team Member" },
-  { value: "Studio Admin", label: "Studio Admin" },
   { value: "Studio Owner", label: "Studio Owner" },
 ];
 
@@ -79,7 +76,7 @@ type PersonTimeEntry = {
   loggedAt: string;
 };
 
-type EventCategory = "All" | "Invitation" | "Access" | "Project" | "Time" | "Profile";
+type EventCategory = "All" | "Invitation" | "Access" | "Project" | "Profile";
 
 type PersonEvent = {
   id: string;
@@ -159,7 +156,7 @@ export function EditPersonProfileDialog({
       title={`Edit ${person.name}`}
       description="Update profile details. Role and access are managed separately."
       onClose={onClose}
-      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={save}>Save profile</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={save}>Save profile</Button></>}
     >
       <div className="person-edit-profile-layout">
         <section className="person-avatar-editor" aria-label="Profile image">
@@ -169,7 +166,7 @@ export function EditPersonProfileDialog({
             <span className="label-xs">Upload a JPG, PNG or WebP image. Initials remain as the fallback.</span>
             <div>
               <Button size="S" variant="secondary" onClick={() => fileInputRef.current?.click()}><span className="people-button-content"><DsIcon name="upload-simple" size={15} /> Upload image</span></Button>
-              {avatarUrl ? <button className="client-text-button label-xs-semibold" type="button" onClick={() => setAvatarUrl(null)}>Remove</button> : null}
+              {avatarUrl ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => setAvatarUrl(null)}>Remove</Button> : null}
             </div>
           </div>
           <input className="sr-only" ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" onChange={chooseAvatar} />
@@ -235,7 +232,7 @@ export function EditFreelancerStudioDetailsDialog({
       title={`Edit Studio details for ${person.name}`}
       description="Manage the Studio’s classification, contractor checks and default offer rate. Personal and professional details are managed by the Freelancer."
       onClose={onClose}
-      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={save}>Save Studio details</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={save}>Save Studio details</Button></>}
     >
       <div className="person-edit-profile-layout">
         <section className="person-edit-access-summary">
@@ -287,7 +284,7 @@ export function EditTeamStudioDetailsDialog({
       title={`Edit Studio details for ${person.name}`}
       description="Manage this person’s place in the Studio. Their contact and professional details stay synced from personal settings."
       onClose={onClose}
-      footer={<><Button size="M" variant="secondary" onClick={onClose}>Cancel</Button><Button size="M" onClick={save}>Save Studio details</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={save}>Save Studio details</Button></>}
     >
       <div className="person-edit-profile-layout">
         <section className="person-edit-access-summary">
@@ -332,53 +329,55 @@ export function PersonHoursSection({ person }: { person: Person }) {
       <header className="person-section-header">
         <div><h2 className="headings-s-bold">Logged hours</h2><p className="paragraph-s">A weekly history of time recorded against projects and Stages.</p></div>
         <div className="person-week-controls" aria-label="Choose week">
-          <button type="button" aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))}><DsIcon name="caret-left" size={15} /></button>
+          <button type="button" aria-label="Previous week" aria-description="Show logged hours for the previous week." data-tooltip="Show the previous week's hours." onClick={() => setWeekStart(addDays(weekStart, -7))}><DsIcon name="caret-left" size={15} /></button>
           <strong className="label-s-semibold">{formatWeekRange(weekStart, weekEnd)}</strong>
-          <button type="button" aria-label="Next week" disabled={weekStart >= latestWeek} onClick={() => setWeekStart(addDays(weekStart, 7))}><DsIcon name="caret-right" size={15} /></button>
+          <button type="button" aria-label="Next week" aria-description="Show logged hours for the next week." data-tooltip="Show the next week's hours." disabled={weekStart >= latestWeek} onClick={() => setWeekStart(addDays(weekStart, 7))}><DsIcon name="caret-right" size={15} /></button>
         </div>
       </header>
 
       <div className="person-hours-summary">
-        <span><strong className="headings-s-bold">{formatHours(totalHours)}</strong><small className="label-xs">Logged this week</small></span>
-        <span><strong className="headings-s-bold">{projectCount}</strong><small className="label-xs">{projectCount === 1 ? "Project" : "Projects"}</small></span>
-        <span><strong className="headings-s-bold">{weekEntries.length}</strong><small className="label-xs">Time entries</small></span>
+        <span tabIndex={0} data-tooltip="Total hours recorded for the selected week." aria-description="Total hours recorded for the selected week."><strong className="headings-s-bold">{formatHours(totalHours)}</strong><small className="label-xs">Logged this week</small></span>
+        <span tabIndex={0} data-tooltip="Projects with logged time in the selected week." aria-description="Projects with logged time in the selected week."><strong className="headings-s-bold">{projectCount}</strong><small className="label-xs">{projectCount === 1 ? "Project" : "Projects"}</small></span>
+        <span tabIndex={0} data-tooltip="Separate time entries for the selected week." aria-description="Separate time entries for the selected week."><strong className="headings-s-bold">{weekEntries.length}</strong><small className="label-xs">Time entries</small></span>
       </div>
 
       {person.type === "Freelancer" ? <div className="people-info-block"><DsIcon name="info" size={18} /><p className="label-s">Time is operational history for both hourly and flat-rate work. It does not change the agreed payment automatically.</p></div> : null}
 
-      {groupedEntries.length ? <div className="person-hours-history">{groupedEntries.map(([date, dateEntries]) => <section key={date}><header><strong className="label-m-semibold">{formatEventDate(date)}</strong><span className="label-xs-semibold">{formatHours(dateEntries.reduce((total, entry) => total + entry.hours, 0))}</span></header>{dateEntries.map((entry) => <article key={entry.id}><span className="person-event-icon is-time"><DsIcon name="clock-clockwise" size={16} /></span><div><Link className="label-s-semibold" href={`/projects/${entry.projectId}`}>{entry.projectName}</Link><small className="label-xs">{entry.clientName} - {stageLabels[entry.stageId]}</small><p className="label-s">{entry.note || "Time logged"}</p></div><strong className="label-m-semibold">{formatHours(entry.hours)}</strong></article>)}</section>)}</div> : <div className="person-section-empty is-bordered"><span><DsIcon name="clock-clockwise" size={28} /></span><h3 className="headings-xs-bold">No hours logged this week</h3><p className="paragraph-s">Choose another week to review earlier time entries.</p>{weekStart !== latestWeek ? <Button size="M" onClick={() => setWeekStart(latestWeek)}>Show latest week</Button> : null}</div>}
+      {groupedEntries.length ? <div className="person-hours-history">{groupedEntries.map(([date, dateEntries]) => <section key={date}><header><strong className="label-m-semibold">{formatEventDate(date)}</strong><span className="label-xs-semibold">{formatHours(dateEntries.reduce((total, entry) => total + entry.hours, 0))}</span></header>{dateEntries.map((entry) => <article key={entry.id}><span className="person-event-icon is-time"><DsIcon name="clock-clockwise" size={16} /></span><div><Link className="label-s-semibold" href={`/projects/${entry.projectId}`}>{entry.projectName}</Link><small className="label-xs">{entry.clientName} - {stageLabels[entry.stageId]}</small><p className="label-s">{entry.note || "Time logged"}</p></div><strong className="label-m-semibold">{formatHours(entry.hours)}</strong></article>)}</section>)}</div> : <div className="person-section-empty is-bordered"><span><DsIcon name="clock-clockwise" size={28} /></span><h3 className="headings-xs-bold">No hours logged this week</h3><p className="paragraph-s">Choose another week to review earlier time entries.</p>{weekStart !== latestWeek ? <Button size="M" tooltip="Return to the most recent logged week." onClick={() => setWeekStart(latestWeek)}>Show latest week</Button> : null}</div>}
     </section>
   );
 }
 
 export function PersonEventsLog({ person }: { person: Person }) {
-  const timeEntries = usePersonTimeEntries(person.id);
   const [category, setCategory] = useState<EventCategory>("All");
-  const events = useMemo(() => makePersonEvents(person.activity, timeEntries), [person.activity, timeEntries]);
+  const events = useMemo(() => makePersonEvents(person.activity), [person.activity]);
   const visibleEvents = category === "All" ? events : events.filter((event) => event.category === category);
-  const groupedEvents = groupEventsByDate(visibleEvents);
   const categoryOptions: ReadonlyArray<{ value: EventCategory; label: string }> = [
     { value: "All", label: "All activity" },
     { value: "Invitation", label: "Invitations" },
     { value: "Access", label: "Access" },
     { value: "Project", label: "Project work" },
-    { value: "Time", label: "Logged time" },
     { value: "Profile", label: "Profile changes" },
   ];
 
   return (
     <div className="person-events-log">
-      <header><div><h2 className="headings-xs-bold">Events log</h2><p className="paragraph-s">Invitations, access changes, project work and profile history.</p></div><div className="person-event-filter"><BriskSelect ariaLabel="Filter events" clearable={false} searchable={false} options={categoryOptions} placeholder="Filter events" value={category} onChange={(value) => value && setCategory(value)} /></div></header>
-      {groupedEvents.length ? groupedEvents.map(([date, dateEvents]) => <section className="person-event-day" key={date}><h3 className="label-m-semibold">{formatEventDate(date)}</h3><div>{dateEvents.map((event) => <article key={event.id}><span className={`person-event-icon is-${event.category.toLocaleLowerCase("en-AU")}`}><DsIcon name={eventIcon(event.category)} size={16} /></span><div><div className="person-event-title"><strong className="label-s-semibold">{event.label}</strong><span className="label-xs-semibold">{event.category}</span></div><p className="label-s">{event.detail}</p>{event.projectId && event.projectName ? <Link className="label-xs-semibold" href={`/projects/${event.projectId}`}>{event.projectName}{event.stageLabel ? ` - ${event.stageLabel}` : ""}</Link> : null}<small className="label-xs">{formatEventTime(event.occurredAt)}</small></div></article>)}</div></section>) : <div className="people-inline-empty"><strong className="label-s-semibold">No matching activity</strong><span className="label-xs">Choose another event type.</span></div>}
+      <header><h2 className="headings-xs-bold">Events log</h2><div className="person-event-filter"><BriskSelect ariaLabel="Filter events" tooltip="Show one type of activity." clearable={false} searchable={false} options={categoryOptions} placeholder="Filter events" value={category} onChange={(value) => value && setCategory(value)} /></div></header>
+      {visibleEvents.length ? <div className="person-events-list">{visibleEvents.map((event) => <PersonEventRow event={event} key={event.id} />)}</div> : <div className="people-inline-empty"><strong className="label-s-semibold">No matching activity</strong><span className="label-xs">Choose another event type.</span></div>}
     </div>
   );
 }
 
-export function PersonAccessSummary({ invitationStatus, person }: { invitationStatus: InvitationStatus; person: Person }) {
-  const projectIds = unique([...person.projectAccessIds, ...person.workloads.map((workload) => workload.projectId)]);
-  const projects = activeVideoProjects.filter((project) => projectIds.includes(project.id));
-  const clients = unique(projects.map((project) => project.clientName));
-  return <div className="person-access-summary-grid"><article className="person-detail-card"><span className="label-xs">Relationship</span><strong className="headings-xs-bold">{person.studioPermission ?? person.clientMembershipRole ?? person.accessRole}</strong><p className="paragraph-s">{profileAccessCopy(person)}</p></article><article className="person-detail-card"><span className="label-xs">Invitation</span><div className="person-access-status"><span className={`invitation-status is-${invitationStatus.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{invitationStatus}</span><strong className="label-s-semibold">{person.email}</strong></div><p className="paragraph-s">{invitationCopy(invitationStatus)}</p></article><article className="person-detail-card"><span className="label-xs">Current access</span><strong className="headings-xs-bold">{person.type === "Team" ? "Whole Studio" : `${projects.length} ${projects.length === 1 ? "project" : "projects"}`}</strong><p className="paragraph-s">{person.type === "Team" ? "All Clients and projects in V1." : clients.length ? clients.join(", ") : "No Client or project access yet."}</p></article></div>;
+function PersonEventRow({ event }: { event: PersonEvent }) {
+  const copy = <>
+    <span className="notification-inbox-item-title-row"><strong className="label-s-semibold">{event.label}</strong></span>
+    <span className="notification-inbox-item-body label-s">{event.detail}</span>
+    <span className="notification-inbox-item-meta label-xs">{[event.category, event.projectName, event.stageLabel].filter(Boolean).join(" · ")} · <time dateTime={event.occurredAt}>{formatEventTimestamp(event.occurredAt)}</time></span>
+  </>;
+
+  return <article className={`notification-inbox-item is-${personEventTone(event)}`}>
+    {event.projectId ? <Link className="notification-inbox-item-main-link" href={`/projects/${event.projectId}`}>{copy}</Link> : <div className="notification-inbox-item-main-link is-static">{copy}</div>}
+  </article>;
 }
 
 function usePersonTimeEntries(personId: string) {
@@ -430,19 +429,9 @@ function toPersonTimeEntry(entry: SharedTimeEntry): PersonTimeEntry {
   };
 }
 
-function makePersonEvents(activity: PersonActivity[], timeEntries: PersonTimeEntry[]): PersonEvent[] {
-  const profileEvents = activity.map((event): PersonEvent => ({ ...event, category: inferEventCategory(event) }));
-  const timeEvents = timeEntries.map((entry): PersonEvent => ({
-    id: `time-${entry.id}`,
-    category: "Time",
-    label: `${formatHours(entry.hours)} logged`,
-    detail: entry.note || "Time logged against project work",
-    occurredAt: entry.loggedAt,
-    projectId: entry.projectId,
-    projectName: entry.projectName,
-    stageLabel: stageLabels[entry.stageId],
-  }));
-  return [...profileEvents, ...timeEvents].sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
+function makePersonEvents(activity: PersonActivity[]): PersonEvent[] {
+  return activity.map((event): PersonEvent => ({ ...event, category: inferEventCategory(event) }))
+    .sort((left, right) => right.occurredAt.localeCompare(left.occurredAt));
 }
 
 function inferEventCategory(event: PersonActivity): PersonEvent["category"] {
@@ -453,12 +442,12 @@ function inferEventCategory(event: PersonActivity): PersonEvent["category"] {
   return "Project";
 }
 
-function eventIcon(category: PersonEvent["category"]): DsIconName {
-  if (category === "Invitation") return "envelope-simple";
-  if (category === "Access") return "lock";
-  if (category === "Time") return "clock-clockwise";
-  if (category === "Profile") return "pencil-simple-ds";
-  return "queue";
+function personEventTone(event: PersonEvent) {
+  const label = event.label.toLocaleLowerCase("en-AU");
+  if (/(failed|rejected|deleted)/u.test(label)) return "failure";
+  if (/(paused|overdue)/u.test(label)) return "warning";
+  if (/(approved|accepted|completed|restored)/u.test(label)) return "success";
+  return "information";
 }
 
 function profileAccessCopy(person: Person) {
@@ -468,12 +457,6 @@ function profileAccessCopy(person: Person) {
   if (person.type === "Freelancer") return "Access is limited to selected Clients and projects.";
   if (person.type === "Contact") return "This production contact has not been invited to Brisk.";
   return "Access is limited to one Client company and selected projects.";
-}
-
-function invitationCopy(status: InvitationStatus) {
-  if (status === "Pending") return "Invite sent - waiting for them to join.";
-  if (status === "Expired") return "This invite has expired and can be resent.";
-  return "They have accepted their Brisk invitation.";
 }
 
 function toList(value: string) {
@@ -489,15 +472,6 @@ function groupByDate(entries: PersonTimeEntry[]) {
   entries.forEach((entry) => {
     const date = entry.loggedAt.slice(0, 10);
     grouped.set(date, [...(grouped.get(date) ?? []), entry]);
-  });
-  return [...grouped.entries()].sort(([left], [right]) => right.localeCompare(left));
-}
-
-function groupEventsByDate(events: PersonEvent[]) {
-  const grouped = new Map<string, PersonEvent[]>();
-  events.forEach((event) => {
-    const date = event.occurredAt.slice(0, 10);
-    grouped.set(date, [...(grouped.get(date) ?? []), event]);
   });
   return [...grouped.entries()].sort(([left], [right]) => right.localeCompare(left));
 }
@@ -535,8 +509,8 @@ function formatEventDate(date: string) {
   return new Date(`${date}T12:00:00`).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
-function formatEventTime(date: string) {
-  return new Date(date).toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" });
+function formatEventTimestamp(date: string) {
+  return new Date(date).toLocaleString("en-AU", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 function formatHours(hours: number) {

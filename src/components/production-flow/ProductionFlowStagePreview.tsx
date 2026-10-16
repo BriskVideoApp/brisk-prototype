@@ -1,5 +1,7 @@
 "use client";
 
+import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
@@ -184,17 +186,7 @@ function ScriptPreview({
       </div>
 
       {confirmingEdit ? (
-        <div className="production-flow-warning" role="alert">
-          <DsIcon name="alert-triangle" size={20} />
-          <div>
-            <strong className="label-s-semibold">Editing will unapprove Script and Storyboard</strong>
-            <p className="label-xs">Storyboard images on unchanged rows will be preserved when Script is approved again.</p>
-            <div className="production-flow-inline-actions">
-              <Button size="S" variant="secondary" onClick={onCancelEdit}>Keep approved</Button>
-              <Button size="S" onClick={onConfirmEdit}>Edit Script</Button>
-            </div>
-          </div>
-        </div>
+        <ConfirmationDialog title="Editing will unapprove Script and Storyboard" description="Storyboard images on unchanged rows will be preserved when Script is approved again." cancelLabel="Keep approved" confirmLabel="Edit Script" onCancel={onCancelEdit} onConfirm={onConfirmEdit} />
       ) : null}
     </div>
   );
