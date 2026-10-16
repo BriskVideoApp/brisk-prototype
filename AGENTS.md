@@ -1,26 +1,16 @@
-# AGENTS.md (master rules for Codex)
-
-<aside>
-📄
-
-**File name:** `AGENTS.md` • Place at the **root** of the `brisk-prototype` repo. Codex and Claude Code both read this file first on every session. Keep it short - this is the rule book, not the spec.
-
-</aside>
-
-## How to use this file
-
-- Export the markdown block below as `AGENTS.md` and drop it at the **root** of the repo (not in `/docs/`).
-- Update it when house rules change. Don't add feature specs here - they live in `/docs/`.
-- After any change, prompt Codex: *"Re-read AGENTS.md before continuing."*
-
-Read Brisk DS/guidelines/Guidelines.md before using any component - it has the exact prefixes, token paths, and missing-asset protocol
-
-## File content
-
-```markdown
 # AGENTS.md - Brisk Prototype
 
 You are working on the Brisk prototype. Brisk is a SaaS for video production teams. This repo is a front-end-only reference. The developer will rebuild it for production. Read this file fully before doing anything else.
+
+## Latest approved prototype rules
+
+The current implemented Brisk prototype and latest user-approved decisions take precedence over older planning documents and screenshots.
+
+- The **only three prototype roles** are **Studio Staff**, **Studio Freelancer**, and **Customer**. These are defined in `src/components/navigation/PrototypeRoleContext.tsx`. Do not add or use the former five-role scheme.
+- **Never use the legacy Flow icons** from `Brisk Visuals/Flow icons/`. The six production stages use the current `StageChip` presentation and approved `/public/brisk-icons/` SVG assets. General UI icons use the existing `DsIcon` component.
+- If an older Brisk DS guide, screenshot or other file disagrees about roles or icons, follow these rules and `brisk-design-system.md`.
+- The `brisk-*.md` files are reusable project guidance (not installed Codex `SKILL.md` packages).
+
 
 ## Mission
 
@@ -72,16 +62,16 @@ brisk-prototype/
 	└── data/                       ← hard-coded mock data
 
 
-## Skill file routing
+## Project guidance routing
 
-Before generating any screen, load the right skill:
+Before generating any screen, read the relevant project guidance:
 
 - **Anything visual** (colour, type, spacing, components, states) → `brisk-design-system.md`
 - **Filmmaker language, stages, statuses, terminology** → `brisk-production-journey.md`
 - **Roles, white-label, client portal, onboarding** → `brisk-saas-patterns.md`
 - **Component code** → import from `Brisk DS/`. Do not rebuild components that already exist there.
 
-If a question spans multiple skills (most do), load all relevant ones.
+If a question spans multiple topics (most do), read all relevant guidance files.
 
 ## Screen references
 
@@ -115,10 +105,10 @@ Use this verification ladder instead:
 - **Always import from `Brisk DS/`.** Do not rebuild Button, Input, Card, Modal, Table, etc.
 - If a component is missing from `Brisk DS/`, ask before creating it locally. Don't silently invent.
 - Use Brisk DS tokens (CSS variables) for every colour, spacing, radius, shadow, and text style. No magic numbers.
-- Use Flow icons only (in `Brisk DS/`). Do not import icons from other libraries.
-- Use exported visual assets from `Brisk Visuals/` for Flow icons, logos, illustrations, and pictograms.
-- Flow icons live in `Brisk Visuals/Flow icons/`. Use these SVGs for production stages before falling back to placeholder or generic icons.
-- Do not recreate Flow icons with generic Phosphor icons, letter tiles, or local approximations.
+- Use existing `StageChip` stage icons and `DsIcon` general UI icons. Do not import icons from other libraries.
+- Use current approved visual assets for logos, illustrations, and pictograms, not archived stage icons.
+- Do not use the archived Flow icon directory. Follow the current six-stage asset mapping in `brisk-design-system.md`.
+- Do not substitute third-party icons, letter tiles, or local approximations for approved icons.
 - Current production-stage UI uses the circular six-stage treatment: Brief, Script, Shoot, Media, Edit, Masters. Do not use Style Frames / Styleframes, Storyboard, square flow tiles, or letter tiles for current Brisk stage pickers or progress rows.
 
 ## Role-switcher requirement
@@ -142,9 +132,9 @@ This is a prototype demo affordance only - in production, role is set by the use
 
 ## Behaviour rules
 
-- **Read AGENTS.md and the relevant skills before generating code.** If you didn't, stop and re-read.
+- **Read AGENTS.md and relevant Brisk guidance before generating code.** If you didn't, stop and re-read.
 - **Ask before destructive changes.** Deleting files, renaming top-level folders, changing the stack - confirm first.
-- **Stop after the happy path.** Don't add edge cases, error states, or loading states unless asked.
+- **Stop after the happy path.** Follow relevant visual design states, but don't implement additional edge-case, error or loading flows unless asked.
 - **One feature at a time.** Don't bundle multiple features in one session.
 - **If a spec is ambiguous, ask.** Don't guess at product behaviour.
 - **Surface trade-offs.** If two approaches are reasonable, name both and ask.
@@ -155,7 +145,7 @@ This is a prototype demo affordance only - in production, role is set by the use
 - Don't add libraries to the stack without asking.
 - Don't rebuild components that already exist in `Brisk DS/`.
 - Don't write tests or set up CI/CD unless asked.
-- Don't use the word "task" for units of work - use "Stage" (see Production Journey skill).
+- Use "Stage" for units of work within a video's production journey, not the generic "task" (see Production Journey guidance).
 - Don't use Style Frames / Styleframes as an Active Videos stage. It is redundant for Brisk's current production flow.
 - Don't design Quote, Proposal, or Concept flows - they're not in Brisk yet.
 - Don't ship desktop-only client-facing flows - client surfaces must work on mobile.
@@ -171,4 +161,3 @@ Never em dashes (—). Use hyphens (-).
 ## When in doubt
 
 Ask Tom. Better to pause for a clarifying question than to ship guesses.
-```
