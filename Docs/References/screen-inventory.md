@@ -7,7 +7,7 @@ This directory holds screenshots that Codex should consult when building feature
 ### `brisk/` — Source of visual truth (and partial design direction)
 Screens designed in the new Brisk DS. Use these as the authoritative reference for:
 - Visual styling (colours, type, spacing, borders, shadows, asymmetric corners)
-- Icon usage (Flow icons only)
+- Current approved icon usage (`StageChip` for the six production stages and `<DsIcon />` for general UI; never archived Flow icons)
 - Component appearance and states
 - Layout patterns where Brisk versions exist
 
@@ -40,16 +40,23 @@ Do not directly translate `current/` screens into code without operator approval
 
 ---
 
-## `brisk/` — Brisk DS references (6 files)
+## `brisk/` — Brisk DS references (13 files)
 
 | File | Description |
 |------|-------------|
-| `Brisk - Comment Client _ Team.png` | Comment thread screen — client and team views |
+| `Brisk - Comment Client : Team.png` | Comment thread screen — client and team views |
 | `Brisk - Comment component.png` | Comment UI component example (isolated) |
 | `Brisk - Comment component 2.png` | Additional comment component states/variants |
 | `Brisk - Video Review.png` | Full Video Review screen — comment thread, reactions, timeline markers, client/team toggle |
 | `Brisk - Video Review Drawing.png` | Video Review with drawing/annotation overlay |
 | `Brisk - Video Review Mobile.png` | Video Review screen, mobile breakpoint |
+| `Brisk - active-videos-overview.png` | Current Active Videos visual reference |
+| `Brisk - active-videos-sidebar.png` | Sidebar and row rhythm |
+| `Brisk - active-videos-status-pills.png` | Current status pill examples |
+| `Brisk - today-empty-state.png` | Current Today empty state |
+| `Brisk - today-summary-strip.png` | Current Today summary strip |
+| `Brisk - video-review-comment-panel.png` | Current Video Review comment panel |
+| `Brisk - video-review-overview.png` | Current Video Review overview |
 
 ---
 
