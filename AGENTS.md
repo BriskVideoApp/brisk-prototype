@@ -49,7 +49,7 @@ brisk-prototype/
 
 ├── Brisk DS/                       ← Yura's components (do not rebuild)
 
-├── Brisk Visuals/                  ← exported DS visual assets: flow icons, logos, illustrations, pictograms
+├── Brisk Visuals/                  ← exported DS visual assets (archived Flow icon assets must not be used)
 
 ├── docs/                           ← feature briefs (added as we go)
 
@@ -67,7 +67,7 @@ brisk-prototype/
 Before generating any screen, read the relevant project guidance:
 
 - **Anything visual** (colour, type, spacing, components, states) → `brisk-design-system.md`
-- **Filmmaker language, stages, statuses, terminology** → `brisk-production-journey.md`
+- **Production language, stages, statuses, terminology** → `brisk-production-journey.md`
 - **Roles, white-label, client portal, onboarding** → `brisk-saas-patterns.md`
 - **Component code** → import from `Brisk DS/`. Do not rebuild components that already exist there.
 
@@ -118,7 +118,7 @@ The prototype must include a persistent role switcher in the top bar that lets t
 - Studio Freelancer
 - Customer
 
-V1 keeps the role model deliberately simple - three roles, no granular permissions. The original five-role split (Owner/Manager/Filmmaker on Studio side; Account Owner/Teammate on Customer side) is deferred to V2.
+Keep this prototype to the three implemented roles. Do not introduce granular or additional roles unless explicitly requested.
 
 This is a prototype demo affordance only - in production, role is set by the user account.
 
