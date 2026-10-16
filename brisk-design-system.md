@@ -2,6 +2,10 @@
 
 You are designing screens for **Brisk**, a multi-tenant SaaS platform for video production teams. Apply the rules below to every component, layout, and screen you generate. These rules override generic design defaults.
 
+## Current authority
+
+Follow `AGENTS.md` for the three prototype access roles, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
+
 ## Visual language: Neo-brutalism
 
 - Style is neo-brutalism: clean, confident, slightly raw. Not skeuomorphic. Not glassy. Not soft.
@@ -83,8 +87,8 @@ These are the workflow progress icons rendered on Active Videos and any other st
 ### General UI icons
 All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 
-- Come from the DS icon library in `Brisk DS/`.
-- Import via the `<DsIcon />` component. Never inline SVG paths, never reference an icon by file path.
+- Use the approved icon assets exposed by `<DsIcon />` in `src/components/video-review/DsIcon.tsx`, which maps names to SVGs under `/public/brisk-icons/`.
+- Import via `<DsIcon />` by name. Never inline SVG paths or reference asset paths directly when constructing general UI.
 - Default size: 16px in dense surfaces, 20px in headers, 24px only for hero moments.
 - Default colour: `--gray-60` for passive, `--gray-90` for active, `--brand-primary` only inside primary buttons.
 - Banned: Lucide, Heroicons, Feather, Font Awesome, Material Icons, Unicode glyphs, emoji-as-icon. Emoji are allowed in user-generated content only.
@@ -99,7 +103,7 @@ All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 
 ## States
 
-Every interactive element must define:
+For the requested feature, include the applicable interaction states below. Do not use this list to add unrelated flows beyond the ticket:
 
 - Default
 - Hover (shadow appears)
@@ -125,7 +129,7 @@ Every interactive element must define:
 - Apply dark strokes to interactive elements and major containers.
 - Design desktop and mobile in parallel. Client-facing flows are mobile-first.
 - Preserve the tag negative-spacing workaround.
-- Use Flow icons only.
+- Use `StageChip` for stage icons and `DsIcon` for general UI. Never use archived Flow icons or substitute third-party icons.
 
 ## Don't
 

@@ -44,6 +44,10 @@ When designing, ask: which phase and stage(s) does this feature serve?
 
 > Note: Brisk does **not** currently support Quote, Proposal, Concept, or Treatment flows. These may come later. Do not design around them.
 
+## Conflicting production references
+
+Preserve the implemented flow described above while carrying out this instruction update. Some Notion tickets describe an Option B with separate Shoot Plan and Shoot stages, while this branch groups planning within Shoot. Media status rules also differ between scenarios and older references. If a ticket touches these differences, inspect its intended scenario and current code, surface any material conflict and ask Tom before changing the affected behaviour. Do not silently restore a fixed stage list or remove newer supported features.
+
 ## Core entities
 
 - **Project** - one production engagement, from brief to archive.
@@ -58,18 +62,13 @@ When designing, ask: which phase and stage(s) does this feature serve?
 
 ## User roles
 
-Brisk has two role groups: **Studio** (the production company) and **Customer** (the client).
+The prototype has exactly three access roles, defined in `src/components/navigation/PrototypeRoleContext.tsx`:
 
-### Studio
-- **Studio Owner** - full super-admin. Can edit anything, including billing and subscription.
-- **Studio Manager** - same as Owner, minus billing and subscription.
-- **Filmmaker** - reduced permissions. Sees only assigned projects. Covers producers, editors, shooters, and other crew. Stage-level access is configurable per project.
+- **Studio Staff** - internal Studio team view.
+- **Studio Freelancer** - collaborator view scoped to relevant memberships and projects.
+- **Customer** - Client-facing view of relevant projects, feedback and approvals.
 
-### Customer
-- **Account Owner** - sees all projects for their company. Invites users, manages subscription and company details.
-- **Teammate** - sees and edits only the projects they're assigned to.
-
-When designing, always ask: which role is this screen for, and what should they see vs not see?
+The former five-role scheme is superseded for the current prototype. Do not add it as separate roles or permission screens. Use **Filmmaker** and **Client** in normal interface copy as defined in `AGENTS.md`; these professional labels do not rename the underlying access roles. The role switcher is a prototype demo control, not real authentication.
 
 ## Project structure conventions
 
@@ -78,7 +77,7 @@ When designing, always ask: which role is this screen for, and what should they 
 	- **Client-facing deadline** (delivery date promised to the client)
 	- **Internal deadline** (when the team needs it done by)
 - Time math uses **working days**, not calendar days. Weekends and public holidays are excluded by default.
-- Time logging is at the **Stage**, deliverable, or project level. Never use the word "task".
+- Time logging is at the **Stage**, deliverable, or project level. Do not relabel these production units as generic tasks.
 
 ## Statuses
 
@@ -122,7 +121,7 @@ Design rule: every In-production video must show both a stage and a within-video
 - One customer = one client portal view. They see their queue of videos: Queued, In production, Paused, Completed.
 - For each video, they see: brief summary, current stage, latest version, pending approvals, messages, and within-video status (especially "Waiting on you" when it's their turn).
 - White-label: shows the Studio's brand (see SaaS Patterns skill).
-- Magic-link access, no signup required (see SaaS Patterns skill).
+- Magic-link access is a product experience to demonstrate as UI only, not real authentication (see SaaS Patterns guidance).
 
 ## Production-specific terminology
 
@@ -148,7 +147,7 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 
 - Use production terminology.
 - Always tag the phase and stage(s) a feature serves.
-- Always tag the role(s) (Studio Owner, Studio Manager, Filmmaker, Account Owner, Teammate) a screen serves.
+- Identify which prototype access roles (Studio Staff, Studio Freelancer, Customer) a screen serves. Use Filmmaker and Client in normal interface copy where the exact access distinction is not needed.
 - Default to working days for deadlines.
 - Make every screen filmmaker-first: think in projects, stages, deliverables.
 - Design client flows mobile-first.
@@ -156,7 +155,7 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 
 ## Don't
 
-- Don't use generic project-management language ("task", "ticket", "sprint"). Use "Stage".
+- Use "Stage" for units inside the production journey. This does not ban development tickets or rename the existing Today to-do area.
 - Don't design Quote, Proposal, or Concept flows - they're not in Brisk yet.
 - Don't conflate Studio-facing and client-facing views.
 - Don't assume calendar-day deadlines.
