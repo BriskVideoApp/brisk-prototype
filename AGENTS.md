@@ -12,11 +12,11 @@ The current implemented Brisk prototype and latest user-approved decisions take 
 - The `brisk-*.md` files are reusable project guidance (not installed Codex `SKILL.md` packages).
 
 
-## Notion ticket preflight
+## Ticket preflight
 
-When handed a Notion ticket:
+When handed a ticket:
 
-1. Read the full ticket through the Notion connector when available. If it is unavailable or inaccessible, ask the user to paste the full ticket before implementation.
+1. Read the full ticket from its supplied source, using an available connector when needed. If the source is unavailable or inaccessible, ask the user to paste the full ticket before implementation.
 2. Read the relevant Brisk guidance, screen references, and existing prototype/code before deciding whether clarification is needed.
 3. Treat the ticket as the working specification. Identify only material unanswered product decisions or conflicts. Do not repeat questions already answered by the ticket or code.
 4. If blockers remain, ask one short, grouped set of questions with a sensible recommendation for each. Do not guess consequential product choices or begin implementation until they are resolved.
