@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
         "**/.git/**",
         "**/.next-stale-active-videos/**",
         "**/.next-stale-active-videos-2/**",
-        "**/Brisk DS/**",
+        // Watch shared React components, while skipping the large design exports.
+        "**/Brisk DS/src/imports/**",
+        "**/Brisk DS/src/BriskDesignSystem/**",
+        "**/Brisk DS/guidelines/**",
         "**/Brisk Visuals/**",
         "**/Docs/**",
         "**/node_modules/**",

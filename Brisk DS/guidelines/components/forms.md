@@ -27,6 +27,8 @@ Same states as `d-Input`. Use for free-form multi-line text: comments, notes, de
 
 Use for mutually exclusive selection from 6+ options. For ≤5 options, prefer `d-Radio list`.
 
+For the approved React implementation, search threshold, menu geometry and keyboard behaviour, see [Dropdowns and selection pickers](dropdown.md).
+
 ---
 
 ## d-Multiselect
@@ -34,6 +36,8 @@ Use for mutually exclusive selection from 6+ options. For ≤5 options, prefer `
 **Variants:** Size · State
 
 Use when the user may select more than one option from a long list. For short lists, prefer `d-Checkbox list`.
+
+Use `BriskSelect` with `multiple` in the prototype. Preserve immediate updates, limits and the existing Clear/Done actions. See [Dropdowns and selection pickers](dropdown.md).
 
 ---
 
