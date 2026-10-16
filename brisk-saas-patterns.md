@@ -1,13 +1,3 @@
-# Skill: Brisk SaaS Patterns
-
-## How to use this skill
-
-- Load alongside the Design System skill whenever you're generating onboarding, settings, Studio, role, or client-portal screens.
-- This skill governs *behaviour and structure*, not visual styling.
-
-## Skill file content
-
-```markdown
 # Brisk SaaS Patterns Skill
 
 You are designing for Brisk, a SaaS platform used by many production companies. Every screen must respect the rules below. They override generic SaaS templates.
@@ -20,22 +10,17 @@ You are designing for Brisk, a SaaS platform used by many production companies. 
 
 ## User roles
 
-Brisk has two role groups: **Studio** (the production company) and **Customer** (the client). See the Production Journey skill for full role definitions.
+The **current prototype has exactly three roles**, defined in `src/components/navigation/PrototypeRoleContext.tsx`:
 
-### Studio roles
-1. **Studio Owner** - founder/director of the production company. Full super-admin including billing and subscription.
-2. **Studio Manager** - same as Owner, minus billing and subscription.
-3. **Filmmaker** - reduced permissions. Sees only assigned projects. Covers producers, editors, shooters, and other crew. Stage-level access is configurable per project.
+1. **Studio Staff** - internal Studio project and operations view.
+2. **Studio Freelancer** - studio-side view for freelance collaborators.
+3. **Customer** - client-facing view for relevant videos, feedback and approvals.
 
-### Customer roles
-4. **Account Owner** - sees all projects for their company. Invites users, manages subscription and company details.
-5. **Teammate** - sees and edits only the projects they're assigned to.
-
-Every feature must answer: which roles can see it, and which can act on it. Customers never see Studio-only data, and never see another customer's projects.
+The role switcher is a prototype-only demo control that changes mock-data visibility. This is not a real authentication or permissions implementation. The old five-role scheme (Studio Owner, Studio Manager, Filmmaker, Account Owner, Teammate) is superseded. Do not add those as separate roles or permission screens.
 
 ## Studio isolation
 
-- Each Studio has its own data, files, members, and branding.
+- The intended product gives each Studio separate data, files, members and branding. Represent this with mock data only in the current prototype.
 - Never reference another Studio's data in a screen.
 - If a user belongs to multiple Studios, show a Studio switcher in the top-left.
 
@@ -53,14 +38,14 @@ Every feature must answer: which roles can see it, and which can act on it. Cust
 ## White-label
 
 - Clients see the production company's brand, not Brisk's.
-- Studio Owner uploads logo, sets primary colour (within neo-brutalism constraints from the kit).
+- For the prototype, a Studio Staff view may demonstrate branding settings using mock data and the approved design system.
 - Brisk branding is hidden in client-facing views by default.
 - Lower-tier plans may include a small "Powered by Brisk" footer.
 - Internal team views may show Brisk branding lightly; client views never.
 
 ## Client experience
 
-- Magic-link access only. No password required for clients.
+- Magic-link client access is a future product interaction to demonstrate as UI only. Do not add real authentication in the prototype.
 - First-time access prompts name + email only, not a full signup.
 - Returning clients are remembered by email.
 - Client portal shows only relevant items: deliverables, approvals, messages.
@@ -78,8 +63,8 @@ Every feature must answer: which roles can see it, and which can act on it. Cust
 
 - If a user can't do something, explain why in plain English.
 - Bad: "Insufficient permissions."
-- Good: "Only Studio Owners can change billing. Ask Tom (Studio Owner) for access."
-- Always name the role that *can* do the action.
+- Good: "Only Studio Staff can manage studio settings in this prototype."
+- Name one of the three prototype roles that can take the action without suggesting real access controls exist.
 
 ## Empty states (SaaS-specific)
 
@@ -99,7 +84,7 @@ Each scope has its own settings entry point.
 
 ## Do
 
-- Design for the right role first, then check the others.
+- Design first for Studio Staff, Studio Freelancer, or Customer, then check the other two views.
 - Show locked features with a clear path to upgrade.
 - Use magic links for clients.
 - Make every empty state lead to action.
@@ -122,4 +107,3 @@ Each scope has its own settings entry point.
 ## Punctuation
 
 - Never em dashes (—). Use hyphens (-).
-```
