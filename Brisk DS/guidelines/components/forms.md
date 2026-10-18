@@ -64,6 +64,10 @@ Use when the user types a date directly (known date). Pair with `d-Date picker` 
 
 Use for multi-select among few options (2–5). Use `d-Checkbox list` for a pre-built vertical list of checkboxes.
 
+The approved React `Checkbox` uses one 20px square and a minimum 44px clickable row. It supplies the approved check icon and mixed-state bar, including disabled selections, and owns hover, pressed and visible keyboard-focus styling through semantic tokens. Do not resize or restyle its square in consumer CSS.
+
+Keep `onChange(checked)` as a boolean callback. Native input attributes, events and refs pass through; `indeterminate` sets both the native property and ARIA mixed state. Controlled `checked`, local `defaultChecked`, label-free ARIA labels and optional icon overrides are supported. Space uses the native action; Enter retains the existing DS shortcut. `label` accepts text or non-interactive descriptive content. Use `wrapperClassName` for row/card layout only and never nest this component inside another label. Preserve selection scope, persistence and existing save/cancel behaviour when migrating.
+
 ---
 
 ## d-Radio · d-Radio list
