@@ -117,15 +117,7 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.invite-role-choice input {
-  width: var(--brisk-space-l);
-  height: var(--brisk-space-l);
-  flex: 0 0 auto;
-  accent-color: var(--brisk-brand-primary);
-  margin: var(--brisk-space-xxs) var(--brisk-space-none) var(--brisk-space-none);
-}
-
-.invite-role-choice label span,
+.invite-role-choice label > span:last-child > span,
 .invite-selection-options label > span:last-child > span,
 .invite-person-summary > span {
   display: grid;

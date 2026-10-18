@@ -76,6 +76,12 @@ Keep `onChange(checked)` as a boolean callback. Native input attributes, events 
 
 Use for mutually exclusive selection among few options (2–5). Use `d-Radio list` for a pre-built vertical list of radio buttons.
 
+Tom approved the proposed single-size React `Radio` foundation on 19 October 2026. The code was missing from the kit; this is the approved implementation, not a claim that the original radio guidance specified a size. It uses a 20px circle, a minimum 44px target, the checkbox family's semantic tokens, a selected dot that remains identifiable when disabled, and visible keyboard focus.
+
+Import `Radio` from the DS and retain existing `fieldset`/`legend` groups and layout. Give mutually exclusive options the same native `name`; separate groups must use different names. Native input attributes, refs and event callbacks pass through unchanged, including `checked`, `defaultChecked`, `value`, `disabled`, `required`, form attributes and ARIA/data attributes. `onChange` receives the native event. The browser owns exclusivity, arrow keys, Space, tab order and form reset. Do not add a mixed state or an Enter shortcut.
+
+`label` accepts text or non-interactive descriptive content. Use `wrapperClassName` for existing row/card layout and never nest Radio inside another label. The DS owns the circle and its states. Preserve names, values, callbacks, save/cancel and immediate-update behaviour. Specialised Brief choices, filters, voice/icon selection and sharing/review workflows are outside the initial migration.
+
 ---
 
 ## d-Toggle

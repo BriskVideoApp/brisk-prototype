@@ -4,6 +4,7 @@ import { useEffect, useId, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
+import { Radio } from "../../../Brisk DS/src/app/components/Radio";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -192,10 +193,15 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
               <legend className="label-m-semibold">Who are you inviting?</legend>
               <div>
                 {roleOptions.map((option) => (
-                  <label className={role === option.role ? "is-selected" : ""} key={option.role}>
-                    <input type="radio" name="invitation-role" value={option.role} checked={role === option.role} onChange={() => changeRole(option.role)} />
-                    <span><strong className="label-s-semibold">{option.role === "Customer" ? "Client" : option.role}</strong><small className="label-xs">{option.description}</small></span>
-                  </label>
+                  <Radio
+                    wrapperClassName={role === option.role ? "is-selected" : ""}
+                    key={option.role}
+                    name="invitation-role"
+                    value={option.role}
+                    checked={role === option.role}
+                    onChange={() => changeRole(option.role)}
+                    label={<span><strong className="label-s-semibold">{option.role === "Customer" ? "Client" : option.role}</strong><small className="label-xs">{option.description}</small></span>}
+                  />
                 ))}
               </div>
             </fieldset>
