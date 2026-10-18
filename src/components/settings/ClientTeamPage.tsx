@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { ActionMenu, type BrandMenuItem } from "@/components/brand-kits/AssetManagement";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -314,30 +315,28 @@ function ProjectAccessChecklist({
   projectOptions: readonly ClientProjectAccess[];
 }) {
   const allSelected = projectOptions.length > 0 && projectOptions.every((project) => projectIds.includes(project.id));
+  const someSelected = projectOptions.some((project) => projectIds.includes(project.id));
   return (
     <fieldset className="account-team-project-checklist">
       <legend className="label-m-semibold">Project access</legend>
-      <label className="account-team-project-all">
-        <input
-          type="checkbox"
-          checked={allSelected}
-          onChange={(event) => onChange(event.target.checked ? projectOptions.map((project) => project.id) : [])}
-        />
-        <span><strong className="label-s-semibold">All current projects</strong><small className="label-xs">Give access to every project listed below.</small></span>
-      </label>
+      <Checkbox
+        wrapperClassName="account-team-project-all"
+        checked={allSelected}
+        indeterminate={someSelected && !allSelected}
+        onChange={(checked) => onChange(checked ? projectOptions.map((project) => project.id) : [])}
+        label={<span><strong className="label-s-semibold">All current projects</strong><small className="label-xs">Give access to every project listed below.</small></span>}
+      />
       <div className="account-team-project-divider label-xs-semibold"><span>Or choose individual projects</span></div>
       <div className="account-team-project-options">
         {projectOptions.map((project) => (
-          <label key={project.id}>
-            <input
-              type="checkbox"
-              checked={projectIds.includes(project.id)}
-              onChange={(event) => onChange(event.target.checked
-                ? [...new Set([...projectIds, project.id])]
-                : projectIds.filter((projectId) => projectId !== project.id))}
-            />
-            <span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.code}</small></span>
-          </label>
+          <Checkbox
+            key={project.id}
+            checked={projectIds.includes(project.id)}
+            onChange={(checked) => onChange(checked
+              ? [...new Set([...projectIds, project.id])]
+              : projectIds.filter((projectId) => projectId !== project.id))}
+            label={<span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.code}</small></span>}
+          />
         ))}
       </div>
     </fieldset>

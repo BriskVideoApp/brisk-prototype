@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -402,25 +403,24 @@ function SearchableSelection({ emptyMessage, label, onToggle, options, selectAll
           </label>
         ) : null}
         {selectAll && options.length > 0 ? (
-          <label className="invite-select-all label-s-semibold">
-            <input
-              ref={(element) => {
-                if (element) element.indeterminate = someSelected && !allSelected;
-              }}
-              type="checkbox"
-              checked={allSelected}
-              onChange={selectAll.onToggle}
-            />
-            <span>{selectAll.label}</span>
-          </label>
+          <Checkbox
+            wrapperClassName="invite-select-all label-s-semibold"
+            indeterminate={someSelected && !allSelected}
+            checked={allSelected}
+            onChange={selectAll.onToggle}
+            label={selectAll.label}
+          />
         ) : null}
       </legend>
       <div className="invite-selection-options">
         {filteredOptions.map((option) => (
-          <label className={selected.includes(option.value) ? "is-selected" : ""} key={option.value}>
-            <input type="checkbox" checked={selected.includes(option.value)} onChange={() => onToggle(option.value)} />
-            <span><strong className="label-s-semibold">{option.label}</strong><small className="label-xs">{option.description}</small></span>
-          </label>
+          <Checkbox
+            wrapperClassName={selected.includes(option.value) ? "is-selected" : ""}
+            key={option.value}
+            checked={selected.includes(option.value)}
+            onChange={() => onToggle(option.value)}
+            label={<span><strong className="label-s-semibold">{option.label}</strong><small className="label-xs">{option.description}</small></span>}
+          />
         ))}
         {filteredOptions.length === 0 ? <p className="invite-selection-empty label-s">{emptyMessage}</p> : null}
       </div>

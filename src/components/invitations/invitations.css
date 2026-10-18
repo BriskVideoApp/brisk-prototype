@@ -117,8 +117,7 @@
   color: var(--brisk-brand-primary-click);
 }
 
-.invite-role-choice input,
-.invite-selection-options input {
+.invite-role-choice input {
   width: var(--brisk-space-l);
   height: var(--brisk-space-l);
   flex: 0 0 auto;
@@ -127,7 +126,7 @@
 }
 
 .invite-role-choice label span,
-.invite-selection-options label span,
+.invite-selection-options label > span:last-child > span,
 .invite-person-summary > span {
   display: grid;
   min-width: var(--brisk-space-none);
@@ -222,14 +221,6 @@
 
 .invite-select-all:is(:hover, :focus-within) { color: var(--brisk-brand-primary-click); }
 
-.invite-select-all input {
-  width: var(--brisk-space-l);
-  height: var(--brisk-space-l);
-  accent-color: var(--brisk-brand-primary);
-  cursor: pointer;
-  margin: var(--brisk-space-none);
-}
-
 .invite-selection-search {
   width: calc(var(--brisk-space-3xl) * 8);
   min-width: calc(var(--brisk-space-3xl) * 7);
@@ -261,6 +252,7 @@
 .invite-selection-search input::placeholder { color: var(--brisk-text-tertiary); }
 
 .invite-selection-options {
+  grid-auto-rows: max-content;
   max-height: calc(var(--brisk-space-3xl) * 5);
   overflow-y: auto;
   gap: var(--brisk-space-s);

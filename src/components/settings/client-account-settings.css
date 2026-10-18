@@ -648,13 +648,7 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.account-team-project-checklist input {
-  width: var(--brisk-space-xl);
-  height: var(--brisk-space-xl);
-  accent-color: var(--brisk-brand-primary);
-}
-
-.account-team-project-checklist span {
+.account-team-project-checklist label > span:last-child > span {
   display: grid;
   gap: var(--brisk-space-xxs);
 }

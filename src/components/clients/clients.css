@@ -1025,8 +1025,7 @@
 .client-access-list { display: grid; gap: var(--brisk-space-s); }
 .client-access-option { align-items: center; border: 1px solid var(--brisk-border-secondary); border-radius: var(--brisk-radius-s); gap: var(--brisk-space-m); padding: var(--brisk-space-m); }
 .client-access-option:has(input:checked) { background: var(--brisk-brand-secondary); }
-.client-access-option input { width: var(--brisk-space-l); height: var(--brisk-space-l); accent-color: var(--brisk-brand-primary); }
-.client-access-option span { display: grid; gap: var(--brisk-space-xxs); }
+.client-access-option > span:last-child > span { display: grid; gap: var(--brisk-space-xxs); }
 .client-access-option small { color: var(--brisk-text-secondary); }
 
 .client-toast {

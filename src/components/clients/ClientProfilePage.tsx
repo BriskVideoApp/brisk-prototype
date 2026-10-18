@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import type { Project } from "@/components/active-videos/types";
 import { ClientPicker, ClientAvatar, ClientModal, ClientStatusBadge } from "@/components/clients/ClientPrimitives";
@@ -411,7 +412,17 @@ function ProjectAccessDialog({ contact, onClose, onSave, projects }: { contact: 
   return (
     <ClientModal title="Change project access" description={`Choose which ${contact.name} can open in the Client portal.`} onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={() => onSave(projectIds)}>Save access</Button></>}>
       <div className="client-access-list">
-        {projects.map((project) => <label className="client-access-option" key={project.id}><input type="checkbox" checked={projectIds.includes(project.id)} onChange={(event) => setProjectIds((current) => event.target.checked ? [...current, project.id] : current.filter((id) => id !== project.id))} /><span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.status} - {getWithinProjectStatus(project)}</small></span></label>)}
+        {projects.map((project) => (
+          <Checkbox
+            wrapperClassName="client-access-option"
+            key={project.id}
+            checked={projectIds.includes(project.id)}
+            onChange={(checked) => setProjectIds((current) => checked
+              ? [...current, project.id]
+              : current.filter((id) => id !== project.id))}
+            label={<span><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.status} - {getWithinProjectStatus(project)}</small></span>}
+          />
+        ))}
         {projects.length === 0 ? <p className="paragraph-s">There are no projects to share yet.</p> : null}
       </div>
     </ClientModal>
