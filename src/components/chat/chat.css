@@ -3570,7 +3570,6 @@
 
 .chat-default-route-option {
   display: flex;
-  min-height: var(--brisk-space-3xl);
   align-items: center;
   gap: var(--brisk-space-s);
   border: 1px solid var(--brisk-border-primary);
@@ -3590,8 +3589,10 @@
   color: var(--brisk-brand-primary);
 }
 
-.chat-default-route-option input {
-  accent-color: var(--brisk-brand-primary);
+.chat-default-route-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
 }
 
 .chat-shortcuts-modal dl {

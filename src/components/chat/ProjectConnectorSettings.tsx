@@ -7,6 +7,7 @@ import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialo
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Radio } from "../../../Brisk DS/src/app/components/Radio";
 import { SourceLogo, getSourceLabel } from "@/components/chat/SourceLogo";
 import type {
   ChatConnectorSource,
@@ -258,19 +259,15 @@ export function ProjectConnectorSettings({
             <p className="label-xs">Filmmakers can still choose another enabled route before sending.</p>
             <div className="chat-default-route-options">
               {availableDefaultRoutes.map((source) => (
-                <label className="chat-default-route-option" key={source}>
-                  <input
-                    type="radio"
-                    name={`default-route-${project.id}`}
-                    value={source}
-                    checked={project.preferredSource === source}
-                    onChange={() => onProjectChange({ ...project, preferredSource: source })}
-                  />
-                  <SourceLogo source={source} size={20} tooltipFocusable={false} />
-                  <span className="label-s-semibold">
-                    {source === "brisk" ? "Brisk only" : getSourceLabel(source)}
-                  </span>
-                </label>
+                <Radio
+                  wrapperClassName="chat-default-route-option"
+                  key={source}
+                  name={`default-route-${project.id}`}
+                  value={source}
+                  checked={project.preferredSource === source}
+                  onChange={() => onProjectChange({ ...project, preferredSource: source })}
+                  label={<span className="chat-default-route-copy"><SourceLogo source={source} size={20} tooltipFocusable={false} /><span className="label-s-semibold">{source === "brisk" ? "Brisk only" : getSourceLabel(source)}</span></span>}
+                />
               ))}
             </div>
           </fieldset>
