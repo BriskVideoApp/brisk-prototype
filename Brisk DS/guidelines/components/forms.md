@@ -13,6 +13,8 @@ All form components accept standardized props: Label, Hint/description, State, a
 - Input Typing glow → `--extra/purple-secondary`
 - Disabled stroke → `--disabled/border`
 
+For the strengthened React implementation, native attributes/events, accessible hints/errors and the ordinary Client-form pilot, see [Single-line inputs](inputs.md). Preserve existing form behaviour when migrating; support for a native attribute does not authorise adding new validation.
+
 ---
 
 ## d-Textarea

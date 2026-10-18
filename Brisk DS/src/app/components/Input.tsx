@@ -1,127 +1,100 @@
-import { useId, useState } from 'react';
+"use client";
 
-interface InputProps {
-  id?: string;
-  name?: string;
-  autoComplete?: string;
-  label?: string;
-  type?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  hint?: string;
+import { useId, useState, type ComponentPropsWithRef, type ReactNode } from 'react';
+import styles from './Input.module.css';
+
+interface InputProps extends Omit<ComponentPropsWithRef<'input'>, 'size'> {
+  label?: ReactNode;
+  labelSuffix?: ReactNode;
+  hint?: ReactNode;
   error?: boolean;
   size?: 'S' | 'M' | 'L';
-  iconStart?: React.ReactNode;
-  iconEnd?: React.ReactNode;
+  iconStart?: ReactNode;
+  iconEnd?: ReactNode;
+  wrapperClassName?: string;
 }
 
 export function Input({
   id,
-  name,
-  autoComplete,
   label,
+  labelSuffix,
   type = 'text',
-  placeholder,
-  value,
   onChange,
+  onBlur,
   hint,
   error = false,
   size = 'M',
   iconStart,
-  iconEnd
+  iconEnd,
+  className = '',
+  wrapperClassName = '',
+  disabled = false,
+  readOnly = false,
+  ...inputProps
 }: InputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
-  const [isFocused, setIsFocused] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [hasTyped, setHasTyped] = useState(false);
-
-  // Size variants for d-Input
-  const sizeStyles = {
-    S: "paragraph-s py-[8px]",
-    M: "paragraph-m py-[12px]",
-    L: "paragraph-l py-[16px]"
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    setHasTyped(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHasTyped(true);
-    if (onChange) onChange(e);
-  };
-
-  const getStateStyle = (): React.CSSProperties => {
-    if (error) {
-      return { border: '1px solid #FE2836', background: '#FFFFFF', color: '#0E1114', boxShadow: 'none' };
-    }
-    if (isFocused && hasTyped) {
-      return { border: '1px solid #000000', background: '#FFFFFF', color: '#0E1114', boxShadow: '0 0 0 4px #C6ABFF' };
-    }
-    if (isFocused) {
-      return { border: '1px solid #000000', background: '#FFFFFF', color: '#0E1114', boxShadow: '0 0 0 4px #91BAFF' };
-    }
-    if (isHovered) {
-      return { border: '1px solid #000000', background: '#F3EEFF', color: '#0E1114', boxShadow: '2px 2px 0 0 #000000' };
-    }
-    return { border: '1px solid #000000', background: '#FFFFFF', color: '#0E1114', boxShadow: 'none' };
+  const hintId = `${inputId}-hint`;
+  const hasHint = hint !== undefined && hint !== null && hint !== '' && hint !== false;
+  const invalid = error || inputProps['aria-invalid'] === true || inputProps['aria-invalid'] === 'true';
+  const describedBy = [inputProps['aria-describedby'], hasHint ? hintId : undefined].filter(Boolean).join(' ') || undefined;
+  const textStyles = {
+    S: 'paragraph-s',
+    M: 'paragraph-m',
+    L: 'paragraph-l',
   };
 
   return (
-    <div className="flex flex-col gap-[4px]">
+    <div className={`${styles.field} ${wrapperClassName}`}>
       {label && (
-        <label className="label-m-semibold" htmlFor={inputId} style={{ color: '#0E1114' }}>
-          {label}
+        <label className={`${styles.label} label-m-semibold`} htmlFor={inputId}>
+          <span>{label}</span>
+          {labelSuffix ? <> <span className={`${styles.labelSuffix} label-xs`}>{labelSuffix}</span></> : null}
         </label>
       )}
 
-      <div className="relative">
+      <div className={styles.control}>
         {iconStart && (
-          <div className="absolute left-[12px] top-1/2 -translate-y-1/2" style={{ color: '#0E1114' }}>
+          <span className={`${styles.icon} ${styles.iconStart}`}>
             {iconStart}
-          </div>
+          </span>
         )}
 
         {iconEnd && (
-          <div className="absolute right-[12px] top-1/2 -translate-y-1/2" style={{ color: '#0E1114' }}>
+          <span className={`${styles.icon} ${styles.iconEnd}`}>
             {iconEnd}
-          </div>
+          </span>
         )}
 
         <input
+          {...inputProps}
           id={inputId}
-          name={name}
-          autoComplete={autoComplete}
           type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          style={getStateStyle()}
-          className={`
-            w-full
-            ${sizeStyles[size]}
-            ${iconStart ? 'pl-[40px] pr-[12px]' : iconEnd ? 'pl-[12px] pr-[40px]' : 'px-[12px]'}
-            rounded-[8px]
-            transition-all
-            outline-none
-            placeholder:text-[#8FA0AF]
-          `}
+          disabled={disabled}
+          readOnly={readOnly}
+          aria-invalid={invalid || inputProps['aria-invalid']}
+          aria-describedby={describedBy}
+          data-brisk-input=""
+          data-size={size}
+          data-error={invalid}
+          data-typing={hasTyped}
+          data-icon-start={Boolean(iconStart)}
+          data-icon-end={Boolean(iconEnd)}
+          onChange={(event) => {
+            if (!disabled && !readOnly) setHasTyped(true);
+            onChange?.(event);
+          }}
+          onBlur={(event) => {
+            setHasTyped(false);
+            onBlur?.(event);
+          }}
+          className={`${styles.input} ${textStyles[size]} ${className}`}
         />
       </div>
 
-      {hint && (
-        <span className="label-xs" style={{ color: '#616C76' }}>
+      {hasHint && (
+        <span id={hintId} className={`${styles.hint} label-xs`}>
           {hint}
         </span>
       )}

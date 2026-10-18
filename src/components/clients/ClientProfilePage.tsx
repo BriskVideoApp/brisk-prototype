@@ -230,8 +230,8 @@ function OverviewSection({
       <article className="client-summary-card is-identity">
         <header><h2 className="headings-xs-bold">Client details</h2></header>
         <div className="client-overview-details-form">
-          <label className="client-field"><span className="label-m-semibold">Client name</span><input value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} /></label>
-          <label className="client-field"><span className="label-m-semibold">Website</span><input value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} /></label>
+          <Input label="Client name" value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} />
+          <Input label="Website" value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} />
           <div className="client-field">
             <Input
               label="Client code"
@@ -395,7 +395,7 @@ function StartProjectDialog({ initialClient, onClose, onCreate }: { initialClien
   const [client, setClient] = useState(initialClient);
   return (
     <ClientModal title="Start project" description="Every project has one primary Client. You can select an existing Client or add one without leaving this flow." onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary"  type="button" disabled={!projectName.trim()} onClick={() => onCreate(projectName.trim(), client)}>Create project</Button></>}>
-      <div className="client-form-grid"><label className="client-field is-wide"><span className="label-m-semibold">Project name</span><input autoFocus value={projectName} onChange={(event) => setProjectName(event.target.value)} /></label><div className="is-wide"><ClientPicker value={client.id} onChange={setClient} /></div></div>
+      <div className="client-form-grid"><Input wrapperClassName="is-wide" label="Project name" autoFocus value={projectName} onChange={(event) => setProjectName(event.target.value)} /><div className="is-wide"><ClientPicker value={client.id} onChange={setClient} /></div></div>
     </ClientModal>
   );
 }

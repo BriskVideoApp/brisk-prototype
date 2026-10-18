@@ -6,6 +6,7 @@ import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialo
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { getClientInitials, type Client, type ClientContact, type NewClientInput } from "@/data/clients";
@@ -141,14 +142,8 @@ export function AddClientDialog({
       )}
     >
       <div className="client-form-grid">
-        <label className="client-field is-wide">
-          <span className="label-m-semibold">Client name <small className="label-xs">Required</small></span>
-          <input autoFocus value={form.name} onChange={(event) => update("name", event.target.value)} />
-        </label>
-        <label className="client-field">
-          <span className="label-m-semibold">Website <small className="label-xs">Optional</small></span>
-          <input value={form.website ?? ""} placeholder="example.org" onChange={(event) => update("website", event.target.value)} />
-        </label>
+        <Input wrapperClassName="is-wide" label="Client name" labelSuffix="Required" autoFocus value={form.name} onChange={(event) => update("name", event.target.value)} />
+        <Input label="Website" labelSuffix="Optional" value={form.website ?? ""} placeholder="example.org" onChange={(event) => update("website", event.target.value)} />
         <label className="client-field">
           <span className="label-m-semibold">Logo <small className="label-xs">Optional</small></span>
           <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(event) => {
@@ -159,14 +154,8 @@ export function AddClientDialog({
             reader.readAsDataURL(file);
           }} />
         </label>
-        <label className="client-field">
-          <span className="label-m-semibold">Primary contact name <small className="label-xs">Optional</small></span>
-          <input value={form.primaryContactName ?? ""} onChange={(event) => update("primaryContactName", event.target.value)} />
-        </label>
-        <label className="client-field">
-          <span className="label-m-semibold">Primary contact email <small className="label-xs">Optional</small></span>
-          <input type="email" value={form.primaryContactEmail ?? ""} onChange={(event) => update("primaryContactEmail", event.target.value)} />
-        </label>
+        <Input label="Primary contact name" labelSuffix="Optional" value={form.primaryContactName ?? ""} onChange={(event) => update("primaryContactName", event.target.value)} />
+        <Input label="Primary contact email" labelSuffix="Optional" type="email" value={form.primaryContactEmail ?? ""} onChange={(event) => update("primaryContactEmail", event.target.value)} />
       </div>
       {duplicate ? (
         <section className="client-duplicate-warning" aria-labelledby="duplicate-client-heading">
