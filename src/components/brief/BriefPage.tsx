@@ -3833,9 +3833,7 @@ function BriefReferenceVideosField({
             </article>
           ))}
         </div>
-      ) : (
-        <p className="brief-empty-field-copy label-s">Add up to 5 reference videos.</p>
-      )}
+      ) : null}
     </div>
   );
 }
