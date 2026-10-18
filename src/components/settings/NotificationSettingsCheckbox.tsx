@@ -1,6 +1,6 @@
 "use client";
 
-import { DsIcon } from "@/components/video-review/DsIcon";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
 
 export function NotificationSettingsCheckbox({
   checked,
@@ -14,17 +14,12 @@ export function NotificationSettingsCheckbox({
   onChange?: (checked: boolean) => void;
 }) {
   return (
-    <label className={`notification-settings-checkbox ${disabled ? "is-disabled" : ""}`}>
-      <input
-        checked={checked}
-        disabled={disabled}
-        type="checkbox"
-        onChange={(event) => onChange?.(event.target.checked)}
-      />
-      <span className="notification-settings-checkbox-control" aria-hidden="true">
-        {checked ? <DsIcon name="check" size={14} /> : null}
-      </span>
-      <span className="label-s">{label}</span>
-    </label>
+    <Checkbox
+      checked={checked}
+      disabled={disabled}
+      label={label}
+      onChange={onChange}
+      wrapperClassName="notification-settings-checkbox"
+    />
   );
 }
