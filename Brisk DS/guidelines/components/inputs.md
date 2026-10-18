@@ -31,6 +31,12 @@ The ordinary fields in Add Client, Client profile details and Start project use 
 
 Search, Client selection, project-access checkboxes, logo uploads, rich composers, inline table editors, calendar/time controls and suggestion-based fields remain specialised. This pilot does not introduce Textarea, Checkbox, Radio or Toggle changes.
 
+## Follow-up batches - 19 October 2026
+
+- Live Team invitations already use Input for Email, Name and Custom role through `InvitePersonModal`. Preserve the existing role prefill, access selection, validation and invitation callbacks. The unmounted `InvitePersonPicker` is not the live form and was not migrated.
+- Shoot's live `PersonModal` uses Input for Name, Phone and Email in create, edit and existing-contact confirmation modes. Keep the original autofocus, optional-label conditions, tel/email types, draft values and save callbacks.
+- The conditional role controls, people/address suggestions, date/time/day pickers, messages, uploads and inline planning editors remain unchanged. The older `ShootSetupBuilder` and `DayEditorPopover` have no runtime consumers; do not count changes to them as a live rollout. No unused code was removed in these batches.
+
 ```tsx
 <Input
   label="Client name"

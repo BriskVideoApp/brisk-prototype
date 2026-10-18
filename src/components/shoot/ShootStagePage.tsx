@@ -24,6 +24,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
 import type { Project } from "@/components/active-videos/types";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -8602,7 +8603,7 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
       <div className="shoot-modal-actions"><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" variant="primary" onClick={() => onSave(draft)}>{isExistingContact ? "Add person" : isCreating ? "Create and add" : "Save person"}</Button></div>
     </>}>
       {isCreating ? <span className="shoot-contact-source-badge is-new label-xs-semibold">New person</span> : null}
-      <Field label="Name"><input autoFocus value={draft.name} onChange={(event) => onChange({ ...draft, name: event.target.value })} /></Field>
+      <Input label="Name" autoFocus value={draft.name} onChange={(event) => onChange({ ...draft, name: event.target.value })} />
       <div className="shoot-form-grid two-column">
         <Field label="Type"><BriskSelect<string> ariaLabel={"Person type"} clearable={false} placeholder={"Choose an option"} value={draft.type} onChange={(value) => onChange({ ...draft, type: value as ShootPersonType })} options={[...(Object.keys(personTypeLabels) as ShootPersonType[]).map((type) => ({ value: type, label: (personTypeLabels[type]) }))]} /></Field>
         <Field label={isCreating ? "Role (optional)" : "Role"}>{draft.type === "crew" && !isCustomCrewRole ? <BriskSelect
@@ -8622,8 +8623,8 @@ function PersonModal({ draft, days, canDelete, onChange, onClose, onDelete, onSa
             onChange({ ...draft, role: value });
           }}
         /> : draft.type === "crew" ? <div className="shoot-custom-crew-role"><input autoFocus placeholder="Enter crew role" value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} /><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => { setIsAddingCrewRole(false); onChange({ ...draft, role: "" }); }}>Choose a standard role</Button></div> : <input placeholder={draft.type === "client" ? "e.g. Client Rep" : "Enter role"} value={draft.role} onChange={(event) => onChange({ ...draft, role: event.target.value })} />}</Field>
-        <Field label={isCreating ? "Phone (optional)" : "Phone"}><input type="tel" value={draft.phone} onChange={(event) => onChange({ ...draft, phone: event.target.value })} /></Field>
-        <Field label={isCreating ? "Email (optional)" : "Email"}><input type="email" value={draft.email} onChange={(event) => onChange({ ...draft, email: event.target.value })} /></Field>
+        <Input label={isCreating ? "Phone (optional)" : "Phone"} type="tel" value={draft.phone} onChange={(event) => onChange({ ...draft, phone: event.target.value })} />
+        <Input label={isCreating ? "Email (optional)" : "Email"} type="email" value={draft.email} onChange={(event) => onChange({ ...draft, email: event.target.value })} />
         <Field label="Call time"><TimeSelect value={draft.callTime} onChange={(value) => onChange({ ...draft, callTime: value })} /></Field>
         <Field label="Shoot days"><ShootDayMultiSelect days={days} value={draft.shootDayIds} onChange={(shootDayIds) => onChange({ ...draft, shootDayIds })} /></Field>
       </div>
