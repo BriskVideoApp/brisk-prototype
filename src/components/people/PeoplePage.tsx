@@ -228,9 +228,9 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
       {currentProjects.length === 0 ? (
         <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)}>No active projects</Link>
       ) : currentProjects.slice(0, 2).map((project) => (
-        <Link className="people-project-entry" href={`/projects/${project.id}`} key={project.id}>
-          <span className="people-project-client label-xs">{project.clientName}</span>
-          <span className="people-project-title label-s-semibold">{project.name}</span>
+        <Link className="people-project-entry label-xs" href={`/projects/${project.id}`} key={project.id} title={`${project.clientName} · ${project.name}`}>
+          <span className="people-project-client">{project.clientName} · </span>
+          <span className="people-project-title label-xs-semibold">{project.name}</span>
         </Link>
       ))}
       {currentProjects.length > 2 ? <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)} aria-label={`+${currentProjects.length - 2} more active projects for ${person.name} - view all ${currentProjects.length}`}>+{currentProjects.length - 2} more</Link> : null}

@@ -452,25 +452,18 @@
 }
 
 .people-current-work.is-project-list {
-  gap: var(--brisk-space-l);
+  gap: var(--brisk-space-s);
 }
 
 .people-current-work .people-project-entry {
-  display: grid;
+  display: block;
   min-width: var(--brisk-space-none);
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
-  align-content: start;
-  gap: var(--brisk-space-xxs);
-  white-space: normal;
+  padding-block: var(--brisk-space-xs);
+  white-space: nowrap;
 }
 
 .people-project-client {
   color: var(--brisk-text-secondary);
-}
-
-.people-project-client,
-.people-project-title {
-  overflow-wrap: anywhere;
 }
 
 .people-current-work .people-project-entry:focus-visible {
