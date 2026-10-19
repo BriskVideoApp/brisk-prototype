@@ -17,6 +17,8 @@ export type BriskSelectOption<T extends string = string> = {
   searchText?: string;
   /** Action menus only. Disabled commands stay visible but cannot be invoked. */
   disabled?: boolean;
+  /** Preserve native explanations for unavailable commands. */
+  title?: string;
   /** Action menus only. Styling does not change confirmation or deletion behaviour. */
   tone?: "default" | "danger";
 };
@@ -434,6 +436,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
               className={`brisk-select-option label-s ${isSelected && mode !== "action" ? "selected" : ""} ${index === activeIndex && showActiveFocus ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`}
               type="button"
               disabled={mode === "action" && option.disabled}
+              title={option.title}
               role={mode === "action" ? "menuitem" : "option"}
               id={`${listboxId}-${index}`}
               tabIndex={-1}

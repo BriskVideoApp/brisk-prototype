@@ -249,6 +249,10 @@
   display: inline-flex;
 }
 
+.brisk-select.script-document-action-menu {
+  width: auto;
+}
+
 .script-current-version-menu {
   top: calc(100% + var(--brisk-space-s));
   bottom: auto;

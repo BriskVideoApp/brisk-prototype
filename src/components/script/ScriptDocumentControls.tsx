@@ -1,6 +1,8 @@
 "use client";
 
 import { Fragment } from "react";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 
 export type DocumentAction = {
@@ -17,6 +19,7 @@ export type DocumentAction = {
 export function ScriptDocumentControls({
   actions,
   actionsLabel,
+  actionMenu = "legacy",
   commentsLabel = "Comments",
   isActionsOpen,
   isCommentsOpen,
@@ -25,6 +28,7 @@ export function ScriptDocumentControls({
 }: {
   actions: DocumentAction[];
   actionsLabel: string;
+  actionMenu?: "legacy" | "quiet";
   commentsLabel?: string;
   isActionsOpen: boolean;
   isCommentsOpen: boolean;
@@ -34,6 +38,32 @@ export function ScriptDocumentControls({
   return (
     <>
       <div className="script-current-version-menu-wrap" aria-label={`${actionsLabel} document controls`}>
+        {actionMenu === "quiet" ? <BriskSelect
+          mode="action"
+          ariaLabel={`${actionsLabel} actions`}
+          placeholder={`${actionsLabel} actions`}
+          className="script-document-action-menu"
+          value=""
+          clearable={false}
+          open={isActionsOpen}
+          onOpenChange={onActionsOpenChange}
+          options={actions.map((action) => ({
+            value: action.id,
+            label: action.label,
+            disabled: action.disabled,
+            title: action.title,
+            tone: action.tone,
+            dividerAbove: action.dividerBefore || action.tone === "danger",
+          }))}
+          onChange={(id) => {
+            const action = actions.find((item) => item.id === id);
+            if (action && !action.disabled) action.onSelect();
+          }}
+          actionTrigger={(triggerProps) => <Button {...triggerProps} size="S" variant="ghost">
+            {actionsLabel} actions
+            <DsIcon name="caret-down" size={14} />
+          </Button>}
+        /> : <>
         <button
           className="script-header-action-button label-s-semibold"
           type="button"
@@ -66,6 +96,7 @@ export function ScriptDocumentControls({
             ))}
           </span>
         ) : null}
+        </>}
       </div>
       <button
         className={`script-header-action-button label-s-semibold ${isCommentsOpen ? "active" : ""}`}

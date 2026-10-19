@@ -1947,6 +1947,7 @@ export function ScriptPage({
     return (
       <ScriptDocumentControls
         actionsLabel="Script"
+        actionMenu="quiet"
         isActionsOpen={isCurrentVersionMenuOpen}
         isCommentsOpen={isCommentsOverviewOpen}
         onActionsOpenChange={(isOpen) => {

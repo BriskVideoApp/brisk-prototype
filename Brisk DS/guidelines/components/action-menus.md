@@ -20,6 +20,12 @@ Videos headers expose Shift+F10 and the Context Menu key alongside existing righ
 
 Hide column is a reversible view action, not a destructive action.
 
+## Script document actions
+
+Tom approved the Script actions migration on 19 October 2026. `ScriptDocumentControls` opts into `actionMenu="quiet"` on the Script page only; Storyboard retains its existing menu until reviewed separately. Use the shared action-mode surface with the default width for longer labels and a quiet DS Button labelled Script actions. Rows are text-only, including Undo and Redo, with equal 44px minimum targets. Existing group dividers become whitespace; Delete version stays last, using the shared danger tone and an 8px spacing break above it.
+
+Retain every supplied callback, action order, disabled condition and native explanation. `BriskSelectOption.title` passes the caller's explanation to the native option button without adding helper text or changing ordinary field styling. Keep the controlled open state so opening Comments or Versions closes the command menu. Use the shared keyboard navigation, outside dismissal, viewport fitting and focus return. Script copy/export scope, conditional Convert script to storyboard, approval guards, last-version safeguards and deletion confirmation remain unchanged. This migration does not restyle Comments, version pickers, the Script editor or Storyboard controls.
+
 ## Media menus
 
 Tom approved simplified Upload and quiet folder actions on 19 October 2026. Upload has three single-line, text-only commands: From your computer, Google Drive and Dropbox. Use equal 44px minimum rows without descriptions, option icons or extra gaps. Retain the existing Upload trigger and source callbacks, including the empty-folder entry point.
