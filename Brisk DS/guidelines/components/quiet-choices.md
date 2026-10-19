@@ -41,7 +41,19 @@ Import `Tabs` from `Brisk DS/src/app/components/Tabs.tsx`.
 - The component does not manage a dialog, close a form, trigger an invitation or alter the consumer's other actions. Root native attributes/events/ref pass through. Existing children remain under the consumer's conditional rendering.
 - Default `layout="inline"` retains the existing dialog layout. For page profiles, `layout="page"` supplies a full-width white tab strip, responsive page gutters and an unpadded panel wrapper. The consumer keeps its existing content wrapper and can set `--brisk-tabs-content-max` to an existing layout token for alignment. This changes no values, callbacks or URL handling and adds no attached-panel appearance.
 
-## Shared appearance
+## Project stage navigation
+
+Tom approved the quiet-selection extension for `ProjectStageHeader` on 19 October 2026. This remains linked page navigation, not a tabpanel: retain native links, existing destinations and `aria-current` semantics rather than replacing it with `Tabs`.
+
+- Keep every circular stage icon and Media the same size, with labels aligned. Do not enlarge or lift the current item as its selection treatment.
+- Production-status colours and their hard shadows remain independent of the page being viewed. Show the current page with primary text and the existing two-pixel DS purple underline beneath its label. Reserve the same underline space on every item to prevent layout shifts.
+- Keep Media separated and pinned outside the sequential flow, including its count. It receives the same selected-label treatment.
+- Keep keyboard focus temporary and distinct: the existing four-pixel DS blue outline and small hard shadow. Hover remains a separate temporary state.
+- On narrow screens, retain the horizontally scrollable strip and reveal the selected item on navigation or resizing without scrolling the page vertically or changing the URL.
+
+This approval covers the shared project header only. Videos-table progress rows and specialised production controls retain their existing presentation.
+
+## Shared appearance for filters and content tabs
 
 - All choices have at least 44px native targets and Label/S-semibold text. Counts use Label/XS. Use existing spacing, radius, colour and hard-shadow tokens.
 - List-filter selection uses a soft lavender surface with dark purple text. Quiet content tabs use a purple underline on a shared hairline, without an enclosing frame or individual dividing borders.

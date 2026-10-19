@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { Project, StageKey, StageStatus } from "@/components/active-videos/types";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -36,6 +36,7 @@ type ProjectStageHeaderProps = {
 };
 
 export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaCount, project, showProjectShare = true }: ProjectStageHeaderProps) {
+  const navigationRef = useRef<HTMLDivElement>(null);
   const dashboardTooltipId = `project-stage-dashboard-tooltip-${project.id}`;
   const { completionRecords } = useProjectCompletion();
   const { assetViews } = useMediaLibrary();
@@ -45,6 +46,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
   const projectStages = getProjectStages(project);
   const storyboardStatus = getStoryboardStatus(project.id);
   const projectFlow = getProjectFlow(project);
+  const flowStageOrder = projectFlow.stages.join(",");
   const projectHeaderStages = projectFlow.stages.map((stage) => getProductionFlowStageDefinition(stage, projectFlow.postProductionTerm));
   const hasApprovedStageFlow = Object.values(projectStages).every((status) => status.state === "done")
     && (!projectFlow.stages.includes("storyboard") || storyboardStatus.state === "done");
@@ -63,6 +65,30 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
     : "0 media files";
   const mediaLabel = "Media";
   const mediaHref = getProjectStageHref(project.id, "media");
+
+  useEffect(() => {
+    const navigation = navigationRef.current;
+    if (!navigation) return;
+
+    const revealCurrentItem = () => {
+      const currentItem = navigation.querySelector<HTMLElement>(".project-stage-step.is-current");
+      if (!currentItem || navigation.scrollWidth <= navigation.clientWidth) return;
+      const navigationBounds = navigation.getBoundingClientRect();
+      const itemBounds = currentItem.getBoundingClientRect();
+
+      // Reveal the selected item within the strip without moving the page vertically.
+      if (itemBounds.left < navigationBounds.left) {
+        navigation.scrollLeft += itemBounds.left - navigationBounds.left;
+      } else if (itemBounds.right > navigationBounds.right) {
+        navigation.scrollLeft += itemBounds.right - navigationBounds.right;
+      }
+    };
+
+    revealCurrentItem();
+    const observer = new ResizeObserver(revealCurrentItem);
+    observer.observe(navigation);
+    return () => observer.disconnect();
+  }, [project.id, currentStageKey, activeUtility, flowStageOrder]);
 
   return (
       <header className="project-stage-header" aria-label="Project stage progress">
@@ -108,7 +134,7 @@ export function ProjectStageHeader({ actions, activeStage, activeUtility, mediaC
           </div>
         </div>
         <div className="project-stage-flow-area" aria-label={`${project.clientBadge} ${project.name}`}>
-          <div className="project-stage-flow-navigation">
+          <div className="project-stage-flow-navigation" ref={navigationRef}>
             <ol
               className="project-stage-track"
               aria-label="Sequential production stages"
