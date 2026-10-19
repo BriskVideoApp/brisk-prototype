@@ -21,6 +21,7 @@ export function ScriptDocumentControls({
   actionsLabel,
   actionMenu = "legacy",
   commentsLabel = "Comments",
+  commentsStyle = "legacy",
   isActionsOpen,
   isCommentsOpen,
   onActionsOpenChange,
@@ -30,6 +31,7 @@ export function ScriptDocumentControls({
   actionsLabel: string;
   actionMenu?: "legacy" | "quiet";
   commentsLabel?: string;
+  commentsStyle?: "legacy" | "quiet";
   isActionsOpen: boolean;
   isCommentsOpen: boolean;
   onActionsOpenChange: (isOpen: boolean) => void;
@@ -98,7 +100,14 @@ export function ScriptDocumentControls({
         ) : null}
         </>}
       </div>
-      <button
+      {commentsStyle === "quiet" ? <Button
+        size="S"
+        variant="ghost"
+        aria-label={`Show all ${actionsLabel.toLocaleLowerCase("en-AU")} comments`}
+        aria-expanded={isCommentsOpen}
+        aria-pressed={isCommentsOpen}
+        onClick={onCommentsToggle}
+      >{commentsLabel}</Button> : <button
         className={`script-header-action-button label-s-semibold ${isCommentsOpen ? "active" : ""}`}
         type="button"
         aria-label={`Show all ${actionsLabel.toLocaleLowerCase("en-AU")} comments`}
@@ -108,7 +117,7 @@ export function ScriptDocumentControls({
       >
         <DsIcon name="chat-circle" size={16} />
         <span>{commentsLabel}</span>
-      </button>
+      </button>}
     </>
   );
 }

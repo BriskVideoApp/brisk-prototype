@@ -26,6 +26,8 @@ Tom approved the Script actions migration on 19 October 2026. `ScriptDocumentCon
 
 Retain every supplied callback, action order, disabled condition and native explanation. `BriskSelectOption.title` passes the caller's explanation to the native option button without adding helper text or changing ordinary field styling. Keep the controlled open state so opening Comments or Versions closes the command menu. Use the shared keyboard navigation, outside dismissal, viewport fitting and focus return. Script copy/export scope, conditional Convert script to storyboard, approval guards, last-version safeguards and deletion confirmation remain unchanged. This migration does not restyle Comments, version pickers, the Script editor or Storyboard controls.
 
+Tom subsequently approved the Script Comments trigger as a quiet text-only DS Button, matching Transcripts. Opt into `commentsStyle="quiet"` on Script only; preserve its accessible name, expanded/pressed state and existing toggle callback. Keep the comments panel, visibility rules and all comment tools unchanged. Storyboard retains its existing Comments trigger until reviewed separately.
+
 ## Media menus
 
 Tom approved simplified Upload and quiet folder actions on 19 October 2026. Upload has three single-line, text-only commands: From your computer, Google Drive and Dropbox. Use equal 44px minimum rows without descriptions, option icons or extra gaps. Retain the existing Upload trigger and source callbacks, including the empty-folder entry point.
