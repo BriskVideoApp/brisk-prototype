@@ -1,0 +1,69 @@
+.field {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--brisk-space-s);
+  color: var(--brisk-text-primary);
+}
+
+.labelSuffix,
+.hint {
+  color: var(--brisk-text-secondary);
+}
+
+/* The DS owns field appearance; callers retain rows and layout constraints. */
+.textarea.textarea.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: var(--brisk-space-none);
+  height: auto;
+  resize: vertical;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+  padding: var(--brisk-space-m);
+  outline: none;
+  box-shadow: none;
+  opacity: 1;
+}
+
+.textarea.textarea.textarea::placeholder {
+  color: var(--brisk-text-tertiary);
+  opacity: 1;
+}
+
+.textarea.textarea.textarea:not(:disabled):not([readonly]):not([data-error='true']):not(:focus):hover {
+  background: var(--brisk-brand-secondary);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.textarea.textarea.textarea[data-error='true'] {
+  border-color: var(--brisk-system-error);
+}
+
+.textarea.textarea.textarea:not(:disabled):focus {
+  background: var(--brisk-white);
+  outline: var(--brisk-space-xs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-none);
+  box-shadow: none;
+}
+
+.textarea.textarea.textarea:not(:disabled):not([readonly]):not([data-error='true'])[data-typing='true']:focus {
+  outline-color: var(--brisk-extra-purple-secondary);
+}
+
+.textarea.textarea.textarea:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-secondary);
+  color: var(--brisk-text-tertiary);
+  outline: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}

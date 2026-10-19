@@ -21,6 +21,8 @@ For the strengthened React implementation, native attributes/events, accessible 
 
 Same states as `d-Input`. Use for free-form multi-line text: comments, notes, descriptions. Never use `d-Input` for multi-line content.
 
+Tom authorised the missing React `Textarea` addition and Context-sized fields on 19 October 2026. Use the shared component for the approved ordinary-form pilot; retain native `rows`, limits and save behaviour. Height follows content needs, not one compulsory height for every field. See [React multi-line fields](textareas.md). Specialised editors and composers remain separate.
+
 ---
 
 ## d-Dropdown
