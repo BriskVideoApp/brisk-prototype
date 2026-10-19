@@ -62,6 +62,8 @@ export function TranscriptsPanel({
   clientName,
   studioName,
   sentSourceKeys,
+  scriptDestination,
+  onOpenScript,
   renderHeader,
   onCommentsChange,
   onSendRows,
@@ -75,9 +77,11 @@ export function TranscriptsPanel({
   clientName: string;
   studioName: string;
   sentSourceKeys: Set<string>;
+  scriptDestination: { id: string; label: string };
+  onOpenScript: () => void;
   renderHeader: (actions: ReactNode) => ReactNode;
   onCommentsChange: (previousScope: ScriptComment[], nextScope: ScriptComment[]) => void;
-  onSendRows: (payloads: TranscriptWordsRowPayload[]) => void;
+  onSendRows: (payloads: TranscriptWordsRowPayload[]) => boolean;
 }) {
   const [deletedClipIds, setDeletedClipIds] = useState<Set<string>>(new Set());
   const [hiddenClipIds, setHiddenClipIds] = useState<Set<string>>(new Set());
@@ -91,6 +95,7 @@ export function TranscriptsPanel({
   const [commentPosition, setCommentPosition] = useState<FloatingCommentPosition | null>(null);
   const [focusFlashAssetId, setFocusFlashAssetId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [addedToScript, setAddedToScript] = useState<{ id: string; label: string } | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
   const focusTimeoutRef = useRef<number | null>(null);
   const assetsById = useMemo(() => new Map(mediaAssets.map((asset) => [asset.id, asset])), []);
@@ -193,6 +198,7 @@ export function TranscriptsPanel({
   }, [selectionToolbar.visible]);
 
   const showStatus = (message: string) => {
+    setAddedToScript(null);
     setStatusMessage(message);
 
     if (statusTimeoutRef.current) {
@@ -316,8 +322,11 @@ export function TranscriptsPanel({
       return;
     }
 
-    onSendRows([payload]);
-    showStatus("Selection sent to the Words column.");
+    setAddedToScript(null);
+    if (onSendRows([payload])) {
+      setAddedToScript({ ...scriptDestination });
+      setSelectionToolbar(emptyToolbarState);
+    }
   };
 
   const toggleSelectedHighlight = () => {
@@ -418,8 +427,8 @@ export function TranscriptsPanel({
       return;
     }
 
-    onSendRows(orderedPayloads);
-    showStatus(`${orderedPayloads.length} highlights sent to the Words column.`);
+    setAddedToScript(null);
+    if (onSendRows(orderedPayloads)) setAddedToScript({ ...scriptDestination });
   };
 
   return (
@@ -561,7 +570,7 @@ export function TranscriptsPanel({
           <span className="label-s">{visibleHighlights.length} highlighted {visibleHighlights.length === 1 ? "range" : "ranges"}</span>
           <Button size="S" type="button" variant="primary" onClick={sendAllHighlights}>
             <DsIcon name="arrow-bend-up-right" size={16} />
-            Send all highlights to script
+            Send all highlights to Script {scriptDestination.label}
           </Button>
         </footer>
       ) : null}
@@ -572,7 +581,9 @@ export function TranscriptsPanel({
         actions={[
           {
             id: "send-to-script",
-            label: selectedSourceKey && sentSourceKeys.has(selectedSourceKey) ? "Sent to script" : "Send to script",
+            label: selectedSourceKey && sentSourceKeys.has(selectedSourceKey)
+              ? `Added to Script ${scriptDestination.label}`
+              : `Send to Script ${scriptDestination.label}`,
             icon: "arrow-bend-up-right",
             showLabel: true,
             disabled: Boolean(selectedSourceKey && sentSourceKeys.has(selectedSourceKey)),
@@ -618,7 +629,19 @@ export function TranscriptsPanel({
         />
       ) : null}
 
-      {statusMessage ? <div className="script-toast label-s-semibold" role="status">{statusMessage}</div> : null}
+      {addedToScript ? <div className="script-toast transcript-send-confirmation label-s-semibold" role="status">
+        <span>Added to Script {addedToScript.label}</span>
+        <a
+          className="transcript-open-script"
+          href={`/projects/${encodeURIComponent(projectId)}/script?version=${encodeURIComponent(addedToScript.id)}`}
+          onClick={(event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            onOpenScript();
+          }}
+        >Open script</a>
+        <Button size="S" variant="ghost" onClick={() => setAddedToScript(null)}>Dismiss</Button>
+      </div> : statusMessage ? <div className="script-toast label-s-semibold" role="status">{statusMessage}</div> : null}
       </>}
     </section>
   );

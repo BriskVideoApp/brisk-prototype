@@ -416,6 +416,25 @@
   flex-wrap: wrap;
 }
 
+.transcript-send-confirmation {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
+  max-width: calc(100vw - (var(--brisk-space-2xl) * 2));
+}
+
+.transcript-open-script {
+  color: var(--brisk-brand-primary-click);
+  text-decoration: underline;
+  text-underline-offset: var(--brisk-space-xs);
+}
+
+.transcript-open-script:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xs);
+}
+
 @media (max-width: 760px) {
   .transcripts-panel .script-floating-toolbar {
     width: max-content;

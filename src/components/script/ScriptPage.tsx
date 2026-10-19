@@ -635,6 +635,13 @@ export function ScriptPage({
   };
 
   const appendTranscriptRows = (payloads: TranscriptWordsRowPayload[]) => {
+    // A historical preview is not an editable destination. Approved work keeps
+    // the existing explicit unapproval flow and must never report a sent range.
+    if (isPreviewingVersion) return false;
+    if (selectedVersion.approvedSnapshot || isScriptApproved) {
+      setIsApprovedEditModalOpen(true);
+      return false;
+    }
     const existingSourceKeys = new Set(
       rows.flatMap((row) => row.source?.kind === "transcript" ? [row.source.sourceKey] : []),
     );
@@ -642,10 +649,9 @@ export function ScriptPage({
 
     if (uniquePayloads.length === 0) {
       setToastMessage("Those transcript ranges are already in the Words column.");
-      return;
+      return false;
     }
 
-    console.info("[Brisk prototype] Transcript Words row payload", uniquePayloads);
     updateRows((currentRows) => [
       ...currentRows,
       ...uniquePayloads.map((payload, index): ScriptRow => ({
@@ -668,11 +674,7 @@ export function ScriptPage({
         },
       })),
     ]);
-    setToastMessage(
-      uniquePayloads.length === 1
-        ? "Transcript range added to the Words column."
-        : `${uniquePayloads.length} transcript ranges added to the Words column.`,
-    );
+    return true;
   };
 
   const undoRows = () => {
@@ -1872,6 +1874,7 @@ export function ScriptPage({
     url.searchParams.delete("from");
     url.searchParams.delete("clip");
     url.searchParams.set("subtab", "script");
+    url.searchParams.set("version", selectedVersionId);
     url.hash = "";
     window.history.pushState({}, "", url);
   };
@@ -2194,6 +2197,8 @@ export function ScriptPage({
             clientName={project.clientName}
             studioName={studioCompanyName}
             sentSourceKeys={sentTranscriptSourceKeys}
+            scriptDestination={{ id: selectedVersion.id, label: getVersionShortLabel(selectedVersion) }}
+            onOpenScript={returnFromTranscriptsToScript}
             onCommentsChange={mergeScopedComments}
             onSendRows={appendTranscriptRows}
           />
