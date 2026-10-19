@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import {
   FloatingCommentShell,
   getFloatingCommentPosition,
@@ -60,6 +62,7 @@ export function TranscriptsPanel({
   clientName,
   studioName,
   sentSourceKeys,
+  renderHeader,
   onCommentsChange,
   onSendRows,
 }: {
@@ -72,6 +75,7 @@ export function TranscriptsPanel({
   clientName: string;
   studioName: string;
   sentSourceKeys: Set<string>;
+  renderHeader: (actions: ReactNode) => ReactNode;
   onCommentsChange: (previousScope: ScriptComment[], nextScope: ScriptComment[]) => void;
   onSendRows: (payloads: TranscriptWordsRowPayload[]) => void;
 }) {
@@ -277,7 +281,9 @@ export function TranscriptsPanel({
         },
         text: selectedText,
       },
-      x: Math.max(180, Math.min(window.innerWidth - 180, selectionRect.left + selectionRect.width / 2)),
+      x: window.innerWidth <= 760
+        ? window.innerWidth / 2
+        : Math.max(180, Math.min(window.innerWidth - 180, selectionRect.left + selectionRect.width / 2)),
       y: Math.max(12, selectionRect.top - 48),
     });
   };
@@ -416,52 +422,43 @@ export function TranscriptsPanel({
     showStatus(`${orderedPayloads.length} highlights sent to the Words column.`);
   };
 
-  if (resolvedClips.length === 0) {
-    return <TranscriptEmptyState projectId={projectId} />;
-  }
-
   return (
     <section className="transcripts-panel" aria-label="Project transcripts">
+      {renderHeader(<BriskSelect
+        mode="action"
+        ariaLabel="Transcript actions"
+        placeholder="Transcript actions"
+        value=""
+        clearable={false}
+        className="transcript-action-menu-wrap"
+        options={[
+          { value: "copy", label: "Copy all transcript text", disabled: visibleClips.length === 0 },
+          { value: "download", label: "Download transcripts PDF", disabled: visibleClips.length === 0 },
+        ]}
+        onChange={(action) => {
+          if (action === "copy") void copyAllText();
+          else if (action === "download") openTranscriptPdfPreview(visibleClips);
+        }}
+        actionTrigger={(triggerProps) => <Button {...triggerProps} size="S" variant="ghost" aria-label="Transcript actions">
+          Transcript actions <DsIcon name="caret-down" size={14} />
+        </Button>}
+      />)}
+      {resolvedClips.length === 0 ? <TranscriptEmptyState projectId={projectId} /> : <>
       <header className="transcripts-sticky-header">
-        <div className="transcripts-header-actions">
-          <Button
-            className="script-visuals-header-toggle"
-            size="S"
-            type="button"
-            variant="secondary"
-            onClick={() => void copyAllText()}
-          >
-            <DsIcon name="copy" size={12} />
-            Copy all text
-          </Button>
-          <Button
-            size="S"
-            type="button"
-            variant="secondary"
-            onClick={() => openTranscriptPdfPreview(visibleClips)}
-          >
-            <DsIcon name="download-simple" size={14} />
-            Download PDF
-          </Button>
-        </div>
-        <div className="transcript-view-toggle" role="group" aria-label="Transcript view">
-          <button
-            className={`label-xs-semibold ${view === "all" ? "active" : ""}`}
-            type="button"
-            aria-pressed={view === "all"}
+        <FilterGroup className="transcript-view-toggle" aria-label="Transcript view">
+          <FilterButton
+            selected={view === "all"}
             onClick={() => setView("all")}
           >
             All
-          </button>
-          <button
-            className={`label-xs-semibold ${view === "highlights" ? "active" : ""}`}
-            type="button"
-            aria-pressed={view === "highlights"}
+          </FilterButton>
+          <FilterButton
+            selected={view === "highlights"}
             onClick={() => setView("highlights")}
           >
             Highlights only
-          </button>
-        </div>
+          </FilterButton>
+        </FilterGroup>
       </header>
 
       <div className="transcript-clip-stack">
@@ -622,6 +619,7 @@ export function TranscriptsPanel({
       ) : null}
 
       {statusMessage ? <div className="script-toast label-s-semibold" role="status">{statusMessage}</div> : null}
+      </>}
     </section>
   );
 }

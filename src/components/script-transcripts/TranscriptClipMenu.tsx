@@ -1,14 +1,17 @@
 "use client";
 
 import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function TranscriptClipMenu({
+  onCopy,
   onDelete,
   onDownload,
   onHide,
   onRename,
 }: {
+  onCopy: () => void;
   onDelete: () => void;
   onDownload: () => void;
   onHide: () => void;
@@ -24,24 +27,26 @@ export function TranscriptClipMenu({
     value=""
     clearable={false}
     options={[
+      { value: "copy", label: "Copy text" },
       { value: "rename", label: "Rename" },
       { value: "download", label: "Download PDF" },
       { value: "hide", label: "Hide transcript" },
       { value: "delete", label: "Delete", tone: "danger", dividerAbove: true },
     ]}
     onChange={(action) => {
-      if (action === "rename") onRename();
+      if (action === "copy") onCopy();
+      else if (action === "rename") onRename();
       else if (action === "download") onDownload();
       else if (action === "hide") onHide();
       else if (action === "delete") onDelete();
     }}
-    actionTrigger={(triggerProps) => <button
+    actionTrigger={(triggerProps) => <IconButton
       {...triggerProps}
-      className="transcript-quiet-button transcript-overflow-button"
       type="button"
       aria-label="More transcript actions"
+      tooltipAlign="end"
     >
       <DsIcon name="dots-three" size={16} />
-    </button>}
+    </IconButton>}
   />;
 }

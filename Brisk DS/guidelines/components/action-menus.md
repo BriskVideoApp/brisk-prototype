@@ -34,7 +34,7 @@ The danger tone is visual only. It does not add a confirmation, Trash or Undo. E
 
 ## Transcript menus
 
-Tom approved compact quiet text-only Transcript actions on 19 October 2026. Use Rename, Download PDF, Hide transcript, then Delete. Keep equal 44px minimum rows, with the existing danger tone and 8px spacing break before Delete. No option icons or inner divider. The overflow trigger retains its current presentation.
+Tom approved compact quiet text-only Transcript actions on 19 October 2026. The subsequent approved page layout moves the per-clip Copy text shortcut into this menu: Copy text, Rename, Download PDF, Hide transcript, then Delete. Keep equal 44px minimum rows, with the existing danger tone and 8px spacing break before Delete. No option icons or inner divider. Use the shared quiet `IconButton` overflow trigger, including its 44px target and end-aligned tooltip.
 
 Use `actionMenuSize="compact"` for these short labels. At current tokens the preferred width is 180px, still bounded by the visual viewport and at least the trigger width. The default action-menu width and ordinary selection fields stay unchanged. Do not shrink row heights or labels to make a compact menu.
 
@@ -42,4 +42,6 @@ Use `actionMenuSize="compact"` for these short labels. At current tokens the pre
 
 Preserve the existing callbacks and visibility rules. In this front-end prototype Delete removes a transcript from the current panel session, not its source media file; Hide retains the existing collection-restore behaviour. Do not add confirmations, change persistence, or modify the transcript editor, PDF export, playback or text-selection tools in this styling batch.
 
-Verification found an existing mobile Transcript layout issue: the clip grid retains a 280px minimum player column alongside the copy column, clipping the overflow trigger at phone widths. The shared menu fits at 390px and 320px when opened by keyboard, but this does not establish working mobile pointer access. Flag the clip layout for the later one-off UI audit; it is unchanged by this menu batch.
+The approved Transcript page layout resolves the previously flagged mobile clip-grid issue. Clip identity and actions span the row above the player and text; below 760px the player and text stack, retaining pointer access to the overflow menu. Use the shared quiet All / Highlights only filters, borderless reading content with section hairlines, and inline speaker/timecode metadata. Remove the misleading transcript-line count from the page; retain language and full paragraph data in the existing export payload.
+
+Keep action scopes distinct. The header's Transcript actions menu contains Copy all transcript text and Download transcripts PDF, using the existing visible-collection callbacks even while Highlights only is selected. Disable these commands when no clips are visible. Script editing and Script export commands remain on the Script page through Back to script. Keep the existing Script version selector available; Rename version returns to the Script heading input. Comments retains the existing version-scoped visibility and comment tools. Preserve playback, text selection, highlighting, sending to Script, URL navigation and all session-only Hide/Delete behaviour. Do not add persistence or change source-media deletion.

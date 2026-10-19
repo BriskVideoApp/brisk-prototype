@@ -12,6 +12,7 @@ import {
   type ClipboardEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type ReactNode,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { Project } from "@/components/active-videos/types";
@@ -1934,7 +1935,10 @@ export function ScriptPage({
           setFloatingCommentPosition(null);
         }
       }}
-      onRenameCurrentVersion={startScriptTitleRename}
+      onRenameCurrentVersion={() => {
+        if (activeSubtabId === "transcripts") activateScriptSubtab("script");
+        startScriptTitleRename();
+      }}
       onSelectVersion={previewVersionForReadOnly}
     />
   );
@@ -2003,11 +2007,13 @@ export function ScriptPage({
     );
   }
 
-  const scriptDocumentHeader = (
+  const renderDocumentHeader = (transcriptActions?: ReactNode) => (
     <header className="script-document-header" ref={scriptDocumentHeaderRef}>
       <div className="script-document-identity">
         <div className="script-document-title-row">
-          {isRenamingScriptTitle ? (
+          {activeSubtabId === "transcripts" ? (
+            <h1 className="script-document-title headings-xs-bold">Transcripts</h1>
+          ) : isRenamingScriptTitle ? (
             <input
               ref={scriptTitleInputRef}
               aria-label="Rename version name"
@@ -2034,21 +2040,26 @@ export function ScriptPage({
               </button>
             </h1>
           )}
-          {scriptVersionControl}
+          {activeSubtabId === "transcripts" ? (
+            <div className="transcript-script-version">
+              <span className="label-xs">Script</span>
+              {scriptVersionControl}
+            </div>
+          ) : scriptVersionControl}
         </div>
       </div>
 
-      <div className="script-document-actions" aria-label="Script controls">
+      <div className="script-document-actions" aria-label={activeSubtabId === "transcripts" ? "Transcript controls" : "Script controls"}>
         {scriptBrief.hasDialogueMedia ? (
-          <button
-            className="script-header-action-button label-s-semibold"
+          <Button
+            variant={activeSubtabId === "transcripts" ? "ghost" : "secondary"}
+            size="S"
             type="button"
             aria-label={activeSubtabId === "transcripts" ? "Back to script" : `Open transcripts, ${projectTranscriptClips.length} available`}
             onClick={() => activateScriptSubtab(activeSubtabId === "transcripts" ? "script" : "transcripts")}
           >
             {activeSubtabId === "transcripts" ? (
               <>
-                <DsIcon name="arrow-left" size={14} />
                 <span>Back to script</span>
               </>
             ) : (
@@ -2057,9 +2068,17 @@ export function ScriptPage({
                 <span className="script-header-action-count label-xs-semibold">{projectTranscriptClips.length}</span>
               </>
             )}
-          </button>
+          </Button>
         ) : null}
-        {renderScriptDocumentControls()}
+        {transcriptActions ?? renderScriptDocumentControls()}
+        {transcriptActions ? <Button
+          size="S"
+          variant="ghost"
+          aria-label="Show all script comments"
+          aria-expanded={isCommentsOverviewOpen}
+          aria-pressed={isCommentsOverviewOpen}
+          onClick={openAllComments}
+        >Comments</Button> : null}
       </div>
     </header>
   );
@@ -2107,7 +2126,7 @@ export function ScriptPage({
         showProjectShare={false}
       />
 
-      {scriptDocumentHeader}
+      {activeSubtabId === "script" ? renderDocumentHeader() : null}
 
       <section
         className={`script-body ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}
@@ -2174,6 +2193,24 @@ export function ScriptPage({
           {showChanges ? <RedlineLegend /> : null}
         </div>
 
+        </>
+        ) : activeSubtabId === "transcripts" ? (
+          <TranscriptsPanel
+            renderHeader={renderDocumentHeader}
+            clips={projectTranscriptClips}
+            comments={visibleComments}
+            initialFocusAssetId={initialTranscriptClipId}
+            isCustomer={isCustomer}
+            projectId={project.id}
+            projectName={project.name}
+            clientName={project.clientName}
+            studioName={studioCompanyName}
+            sentSourceKeys={sentTranscriptSourceKeys}
+            onCommentsChange={mergeScopedComments}
+            onSendRows={appendTranscriptRows}
+          />
+        ) : null}
+
         {isCommentsOverviewOpen ? (
           <div
             className="script-comment-popover overview"
@@ -2224,22 +2261,6 @@ export function ScriptPage({
               setIsCommentComposerOpen(false);
               setFloatingCommentPosition(null);
             }}
-          />
-        ) : null}
-          </>
-        ) : activeSubtabId === "transcripts" ? (
-          <TranscriptsPanel
-            clips={projectTranscriptClips}
-            comments={visibleComments}
-            initialFocusAssetId={initialTranscriptClipId}
-            isCustomer={isCustomer}
-            projectId={project.id}
-            projectName={project.name}
-            clientName={project.clientName}
-            studioName={studioCompanyName}
-            sentSourceKeys={sentTranscriptSourceKeys}
-            onCommentsChange={mergeScopedComments}
-            onSendRows={appendTranscriptRows}
           />
         ) : null}
       </section>

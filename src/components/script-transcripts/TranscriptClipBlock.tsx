@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { useState, type KeyboardEvent, type MouseEvent } from "react";
 import { ScriptAnnotationPin } from "@/components/script/ScriptAnnotationPin";
-import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView } from "@/data/media";
 import type { ScriptComment } from "@/data/script";
 import type { Highlight, TranscriptClip, TranscriptParagraph } from "@/data/transcripts";
@@ -98,6 +96,42 @@ export function TranscriptClipBlock({
       id={`transcript-${asset.id}`}
       data-clip-id={asset.id}
     >
+      <header className="transcript-clip-header">
+        <div className="transcript-clip-title-wrap">
+          <div>
+            {isRenaming ? (
+              <input
+                autoFocus
+                className="transcript-clip-rename-input label-s-semibold"
+                id={`${clip.id}-title`}
+                value={renameDraft}
+                aria-label="Rename transcript"
+                onBlur={saveRename}
+                onChange={(event) => setRenameDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    saveRename();
+                  }
+
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    setRenameDraft(asset.name);
+                    setIsRenaming(false);
+                  }
+                }}
+              />
+            ) : (
+              <h2 className="label-s-semibold" id={`${clip.id}-title`}>{asset.name}</h2>
+            )}
+            <p className="label-xs">{asset.kind === "audio" ? "Audio" : "Video"}{asset.durationSeconds ? ` · ${formatReviewTime(asset.durationSeconds)}` : ""}</p>
+          </div>
+        </div>
+        <div className="transcript-clip-actions">
+          <TranscriptClipMenu onCopy={onCopy} onDelete={onDelete} onDownload={onDownload} onHide={onHide} onRename={startRenaming} />
+        </div>
+      </header>
+
       <div className="transcript-player-column">
         <div className="transcript-player-sticky">
           <TranscriptInlinePlayer
@@ -112,47 +146,6 @@ export function TranscriptClipBlock({
       </div>
 
       <section className="transcript-copy-column" aria-labelledby={`${clip.id}-title`}>
-        <header className="transcript-clip-header">
-          <div className="transcript-clip-title-wrap">
-            <DsIcon name={asset.kind === "audio" ? "file-audio" : "file-video"} size={18} />
-            <div>
-              {isRenaming ? (
-                <input
-                  autoFocus
-                  className="transcript-clip-rename-input label-s-semibold"
-                  id={`${clip.id}-title`}
-                  value={renameDraft}
-                  aria-label="Rename transcript"
-                  onBlur={saveRename}
-                  onChange={(event) => setRenameDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      saveRename();
-                    }
-
-                    if (event.key === "Escape") {
-                      event.preventDefault();
-                      setRenameDraft(asset.name);
-                      setIsRenaming(false);
-                    }
-                  }}
-                />
-              ) : (
-                <h2 className="label-s-semibold" id={`${clip.id}-title`}>{asset.name}</h2>
-              )}
-              <p className="label-xs">{paragraphs.length} transcript lines · {clip.language}</p>
-            </div>
-          </div>
-          <div className="transcript-clip-actions">
-            <Button size="S" variant="secondary" className="transcript-quiet-button" type="button" onClick={onCopy}>
-              <DsIcon name="copy" size={15} />
-              Copy text
-            </Button>
-            <TranscriptClipMenu onDelete={onDelete} onDownload={onDownload} onHide={onHide} onRename={startRenaming} />
-          </div>
-        </header>
-
         <div className="transcript-paragraph-list">
           {paragraphs.map((paragraph) => (
             <TranscriptParagraphRow
