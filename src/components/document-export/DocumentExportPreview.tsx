@@ -7,6 +7,7 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { canViewProject } from "@/data/prototype-access";
+import { getProjectTranscriptsHref } from "@/lib/transcript-navigation";
 import { selectProject } from "@/data/prototype-state";
 import {
   readDocumentExportPayload,
@@ -54,7 +55,7 @@ export function DocumentExportPreview({
     ? `/projects/${project.id}/stages/storyboard`
     : printablePayload.kind === "script"
       ? `/projects/${project.id}/script`
-      : `/projects/${project.id}/script?subtab=transcripts`;
+      : getProjectTranscriptsHref(project.id);
   const returnLabel = printablePayload.kind === "storyboard"
     ? "Storyboard"
     : printablePayload.kind === "script" ? "Script" : "Transcripts";

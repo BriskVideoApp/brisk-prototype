@@ -5,6 +5,8 @@ import { BriskSelect } from "@/components/form/BriskSelect";
 
 import { useEffect, useMemo, useRef, useState, type DragEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
+import { transcriptClips } from "@/data/transcripts";
+import { getProjectTranscriptsHref } from "@/lib/transcript-navigation";
 import type { Project } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -116,6 +118,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
     if (scope === "project" && project && !projectIds.has(project.id)) router.replace(getRoleHome(selectedRole));
   }, [hasHydratedPrototypeState, hasLoadedScenario, project, projectIds, router, scope, selectedRole]);
   const mediaProject = accessibleProjects.find((candidate) => candidate.id === activeProjectId);
+  const projectTranscriptCount = transcriptClips.filter((clip) => clip.projectId === activeProjectId).length;
   const canMediaAction = (action: "upload" | "edit" | "comment" | "send", target: Project | undefined = mediaProject) =>
     Boolean(target && canActOnProject(viewer, target, prototypeState, action, "media"));
   const mediaCapabilitiesFor = (target: Project | undefined) => {
@@ -236,7 +239,7 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   };
   const commonAction = {
     onComment: (asset: MediaAssetView) => { setActiveAssetId(asset.id); setDrawerTab("comments"); },
-    onTranscript: (asset: MediaAssetView) => asset.transcriptStatus === "ready" ? router.push(`/projects/${asset.projectId}/script?subtab=transcripts&clip=${encodeURIComponent(asset.id)}#transcript-${encodeURIComponent(asset.id)}`) : (setActiveAssetId(asset.id), setDrawerTab("transcript")),
+    onTranscript: (asset: MediaAssetView) => asset.transcriptStatus === "ready" ? router.push(getProjectTranscriptsHref(asset.projectId, asset.id)) : (setActiveAssetId(asset.id), setDrawerTab("transcript")),
     onShare: (asset: MediaAssetView) => {
       setSelectedAssetIds(new Set([asset.id]));
       setSharePanelOpenSignal((current) => current + 1);
@@ -272,6 +275,12 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
         {scope === "global" ? <div className="media-library-tabs" role="tablist" aria-label="Media library sections">{(["media", "masters", "archived"] as const).map((id) => <button type="button" role="tab" key={id} className={`label-s-semibold ${tab === id ? "is-active" : ""}`} aria-selected={tab === id} onClick={() => { setTab(id); setSelectedFolderId(null); setActiveAssetId(null); }}>{id === "media" ? "Media" : id === "masters" ? "Masters" : "Archived"}</button>)}</div> : null}
         <div className="media-main-actions">
           <div className="media-action-buttons">
+            {scope === "project" && activeProjectId ? <Button
+              size="S"
+              variant="ghost"
+              aria-label={`Open transcripts, ${projectTranscriptCount} available`}
+              onClick={() => router.push(getProjectTranscriptsHref(activeProjectId))}
+            >Transcripts <span className="script-header-action-count label-xs-semibold">{projectTranscriptCount}</span></Button> : null}
             {browserCapabilities.canUpload ? <MediaUploadMenu
               open={openUploadMenu === "toolbar"}
               onOpenChange={(open) => setOpenUploadMenu(open ? "toolbar" : null)}

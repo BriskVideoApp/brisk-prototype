@@ -170,6 +170,7 @@ type ScriptPageProps = {
   project: Project;
   initialSubtab: ScriptSubtabId;
   initialTranscriptClipId: string | null;
+  returnToScript?: boolean;
   initialVersionId?: string | null;
   initialToastMessage?: string;
   initiallyEmpty?: boolean;
@@ -191,6 +192,7 @@ export function ScriptPage({
   project,
   initialSubtab,
   initialTranscriptClipId,
+  returnToScript = false,
   initialVersionId = null,
   initialToastMessage = "",
   initiallyEmpty = false,
@@ -198,6 +200,7 @@ export function ScriptPage({
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
   const router = useRouter();
+  const [transcriptReturnToScript, setTranscriptReturnToScript] = useState(returnToScript);
   const { openAssistant, registerResponseDraftHandler } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
@@ -456,6 +459,7 @@ export function ScriptPage({
     const syncSubtabFromUrl = () => {
       const nextSubtab = getScriptSubtabFromLocation();
       setActiveSubtabId(nextSubtab);
+      setTranscriptReturnToScript(new URL(window.location.href).searchParams.get("from") === "script");
     };
 
     window.addEventListener("popstate", syncSubtabFromUrl);
@@ -1852,8 +1856,8 @@ export function ScriptPage({
     }, dropdownVersion.id);
   };
 
-  const activateScriptSubtab = (subtabId: ScriptSubtabId) => {
-    setActiveSubtabId(subtabId);
+  const returnFromTranscriptsToScript = () => {
+    setActiveSubtabId("script");
     setFloatingToolbar((currentToolbar) => ({ ...currentToolbar, visible: false }));
     setIsVersionsPanelOpen(false);
     setIsCurrentVersionMenuOpen(false);
@@ -1863,17 +1867,12 @@ export function ScriptPage({
     setIsCommentsOverviewOpen(false);
 
     const url = new URL(window.location.href);
-    const wasTranscriptTarget = url.searchParams.get("subtab") === "transcripts";
-    url.searchParams.set("subtab", subtabId);
-
-    if (subtabId !== "transcripts") {
-      url.searchParams.delete("clip");
-      url.hash = "";
-    } else if (!wasTranscriptTarget) {
-      url.searchParams.delete("clip");
-      url.hash = "";
-    }
-
+    url.pathname = `/projects/${project.id}/script`;
+    url.searchParams.delete("view");
+    url.searchParams.delete("from");
+    url.searchParams.delete("clip");
+    url.searchParams.set("subtab", "script");
+    url.hash = "";
     window.history.pushState({}, "", url);
   };
 
@@ -1935,10 +1934,7 @@ export function ScriptPage({
           setFloatingCommentPosition(null);
         }
       }}
-      onRenameCurrentVersion={() => {
-        if (activeSubtabId === "transcripts") activateScriptSubtab("script");
-        startScriptTitleRename();
-      }}
+      onRenameCurrentVersion={startScriptTitleRename}
       onSelectVersion={previewVersionForReadOnly}
     />
   );
@@ -2046,24 +2042,19 @@ export function ScriptPage({
       </div>
 
       <div className="script-document-actions" aria-label={activeSubtabId === "transcripts" ? "Transcript controls" : "Script controls"}>
-        {scriptBrief.hasDialogueMedia ? (
+        {activeSubtabId === "transcripts" ? (
           <Button
-            variant={activeSubtabId === "transcripts" ? "ghost" : "secondary"}
+            variant="ghost"
             size="S"
             type="button"
-            aria-label={activeSubtabId === "transcripts" ? "Back to script" : `Open transcripts, ${projectTranscriptClips.length} available`}
-            onClick={() => activateScriptSubtab(activeSubtabId === "transcripts" ? "script" : "transcripts")}
+            aria-label={transcriptReturnToScript ? "Back to script" : "Back to Media"}
+            onClick={() => {
+              if (!transcriptReturnToScript) {
+                router.push(`/projects/${project.id}/stages/media`);
+              } else returnFromTranscriptsToScript();
+            }}
           >
-            {activeSubtabId === "transcripts" ? (
-              <>
-                <span>Back to script</span>
-              </>
-            ) : (
-              <>
-                <span>Transcripts</span>
-                <span className="script-header-action-count label-xs-semibold">{projectTranscriptClips.length}</span>
-              </>
-            )}
+            {transcriptReturnToScript ? "Back to script" : "Back to Media"}
           </Button>
         ) : null}
         {transcriptActions ?? renderScriptDocumentControls()}
@@ -2117,7 +2108,8 @@ export function ScriptPage({
   return (
     <main className={`script-shell script-density-${density} ${isCustomer ? "customer" : "studio"} ${activeSubtabId === "transcripts" ? "transcripts-active" : "script-ai-entry-active"} ${isCommentsOverviewOpen ? "comments-overview-open" : ""}`}>
       <ProjectStageHeader
-        activeStage="script"
+        activeStage={activeSubtabId === "script" ? "script" : undefined}
+        activeUtility={activeSubtabId === "transcripts" ? "media" : undefined}
         project={project}
         showProjectShare={false}
       />
@@ -2703,8 +2695,10 @@ function getNextVersionLabel(versions: ScriptVersion[]) {
 }
 
 function getScriptSubtabFromLocation(): ScriptSubtabId {
-  const subtab = new URL(window.location.href).searchParams.get("subtab");
-  return subtab === "transcripts" ? subtab : "script";
+  const url = new URL(window.location.href);
+  return url.searchParams.get("subtab") === "transcripts"
+    || (url.pathname.endsWith("/stages/media") && url.searchParams.get("view") === "transcripts")
+    ? "transcripts" : "script";
 }
 
 function cloneRows(rows: ScriptRow[]) {

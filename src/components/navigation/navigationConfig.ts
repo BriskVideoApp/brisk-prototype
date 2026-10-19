@@ -74,7 +74,7 @@ function projectItem(
     icon: projectIconByExperience[experience],
     roles,
     activePath: destination.href.split("?")[0],
-    matchQuery: experience === "transcripts" ? { subtab: "transcripts" } : undefined,
+    matchQuery: experience === "transcripts" ? { view: "transcripts" } : undefined,
     external: destination.external,
     ...itemOptions,
   };

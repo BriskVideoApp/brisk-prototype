@@ -47,7 +47,7 @@ export const demoProjects: readonly DemoProject[] = [
         label: "Script",
       },
       transcripts: {
-        href: "/projects/loom-launch-film/script?subtab=transcripts",
+        href: "/projects/loom-launch-film/stages/media?view=transcripts",
         label: "Transcripts",
       },
       shoot: {

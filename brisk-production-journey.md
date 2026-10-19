@@ -26,6 +26,8 @@ Brisk projects use one adaptable production flow assembled from the completed Br
 
 **Media** is a permanent project area available throughout the flow. It supports ingest, backup, organisation and transcript generation, but it is not reordered with the production Stages.
 
+Project transcripts live in Media, alongside their source video and audio. Send selected transcript passages into Script to build a paper edit; Script does not own a separate transcript copy or transcript version. Keep Media selected while reviewing transcripts. Do not add an Add from transcripts button to the Script header: Tom explicitly removed that shortcut.
+
 ### Post-production
 5. **Edit or Animation** - Rough cut through fine cut, or animation production. The label and working language change with the production type while versions, comments and approvals remain consistent.
 6. **Masters** - Final exports, delivery files, social cutdowns, file handover, archive.

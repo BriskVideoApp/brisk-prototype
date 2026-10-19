@@ -1,13 +1,30 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getProjectTranscriptsHref } from "@/lib/transcript-navigation";
 import { ScriptPage } from "@/components/script/ScriptPage";
 import { clientNewScriptVersions, clientNewVideoScriptProject } from "@/data/prototype-scenarios";
 import { getProjectFixture } from "@/data/project-fixtures";
 import { getSingleValue, ProjectUnavailable, type RouteQuery, useCanonicalStageProject } from "./CanonicalStageProject";
 
-export function CanonicalScriptRoute({ projectId, query }: { projectId: string; query: RouteQuery }) {
+export function CanonicalScriptRoute({ projectId, query, mediaTranscripts = false }: { projectId: string; query: RouteQuery; mediaTranscripts?: boolean }) {
+  const router = useRouter();
+  const isLegacyTranscriptLink = !mediaTranscripts && getSingleValue(query.subtab) === "transcripts";
   const { project, hasHydrated } = useCanonicalStageProject(projectId);
+
+  useEffect(() => {
+    if (!isLegacyTranscriptLink) return;
+    const previous = new URL(window.location.href);
+    const destination = new URL(getProjectTranscriptsHref(projectId), previous.origin);
+    previous.searchParams.forEach((value, key) => {
+      if (key !== "subtab" && key !== "view") destination.searchParams.set(key, value);
+    });
+    destination.hash = previous.hash;
+    router.replace(`${destination.pathname}${destination.search}${destination.hash}`);
+  }, [isLegacyTranscriptLink, projectId, router]);
+
+  if (isLegacyTranscriptLink) return null;
   if (!project) return hasHydrated ? <ProjectUnavailable /> : null;
 
   const hasHarbourScriptFixture = project.id === "harbour-health-care-journey";
@@ -18,7 +35,8 @@ export function CanonicalScriptRoute({ projectId, query }: { projectId: string; 
       <ScriptPage
         key={project.id}
         project={project}
-        initialSubtab={getSingleValue(query.subtab) === "transcripts" ? "transcripts" : "script"}
+        initialSubtab={mediaTranscripts ? "transcripts" : "script"}
+        returnToScript={mediaTranscripts && getSingleValue(query.from) === "script"}
         initialTranscriptClipId={getSingleValue(query.clip) ?? null}
         initialVersionId={getSingleValue(query.version) ?? null}
         initiallyEmpty={(!hasHarbourScriptFixture && !isClientNewVideo) || getSingleValue(query.preview) === "empty"}

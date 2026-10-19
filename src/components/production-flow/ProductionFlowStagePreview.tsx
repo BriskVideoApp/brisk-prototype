@@ -164,7 +164,7 @@ function ScriptPreview({
             <h3 className="headings-xs-bold">Build your Script from the interviews</h3>
             <p className="paragraph-s">Select the strongest responses from the transcripts and send them to your Script.</p>
             <div className="production-flow-inline-actions">
-              <Link className="production-flow-primary-link label-s-semibold" href="/projects/loom-launch-film/script?subtab=transcripts">Open transcripts</Link>
+              <Link className="production-flow-primary-link label-s-semibold" href="/projects/loom-launch-film/stages/media?view=transcripts">Open transcripts</Link>
               <Link className="production-flow-secondary-link label-s-semibold" href="/projects/loom-launch-film/stages/media">Open Media</Link>
             </div>
           </div>
