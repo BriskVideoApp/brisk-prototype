@@ -100,3 +100,31 @@
   outline: var(--brisk-space-xs) solid var(--brisk-border-focus);
   outline-offset: var(--brisk-space-xxs);
 }
+
+.pageTabListFrame {
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-s) var(--brisk-space-2xl) var(--brisk-space-none);
+}
+
+.pageTabs .tabList {
+  width: 100%;
+  max-width: var(--brisk-tabs-content-max, 100%);
+  margin: var(--brisk-space-none) auto;
+  border-bottom: var(--brisk-space-none);
+}
+
+.pageTabs .panel {
+  padding: var(--brisk-space-none);
+}
+
+.pageTabs .panel:focus-visible {
+  outline-offset: calc(var(--brisk-space-xs) * -1);
+}
+
+@media (max-width: 680px) {
+  .pageTabListFrame {
+    padding-right: var(--brisk-space-l);
+    padding-left: var(--brisk-space-l);
+  }
+}

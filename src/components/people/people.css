@@ -68,8 +68,6 @@
 .person-profile-identity,
 .person-profile-actions,
 .person-profile-back,
-.person-profile-tabs,
-.person-profile-tabs-inner,
 .person-archive-banner,
 .person-pause-banner,
 .person-summary-card header,
@@ -204,54 +202,20 @@
   gap: var(--brisk-space-s);
 }
 
-.people-view-tabs,
-.person-profile-tabs {
+.people-view-tabs {
   justify-content: center;
   border-bottom: 1px solid var(--brisk-border-secondary);
   background: var(--brisk-bg-block-primary);
   padding: var(--brisk-space-none) var(--brisk-space-2xl);
 }
 
-.person-profile-tabs {
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: flex-end;
-  overflow-x: auto;
-}
-
-.people-view-tabs-inner,
-.person-profile-tabs-inner {
+.people-view-tabs-inner {
   width: 100%;
   max-width: var(--people-content-max);
 }
 
-.person-profile-tabs-inner {
-  align-items: stretch;
-  gap: var(--brisk-space-xl);
-}
-
-.person-profile-tabs button {
-  display: inline-flex;
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: center;
-  border: var(--brisk-space-none);
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-none) var(--brisk-space-xs);
-  white-space: nowrap;
-}
-
-.person-profile-tabs button:hover,
-.person-profile-tabs button:focus-visible {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-text-primary);
-  outline: var(--brisk-space-none);
-}
-
-.person-profile-tabs button.is-active {
-  border-bottom-color: var(--brisk-brand-primary);
-  color: var(--brisk-text-primary);
+.person-profile-tabs {
+  --brisk-tabs-content-max: var(--person-profile-max);
 }
 
 .people-controls {
@@ -778,7 +742,6 @@
 .person-pause-banner { background: var(--brisk-brand-secondary); }
 .person-archive-banner button,
 .person-pause-banner button { margin-left: var(--brisk-space-m); }
-.person-profile-tabs-inner { max-width: var(--person-profile-max); }
 
 .person-profile-content {
   width: 100%;
@@ -1387,9 +1350,7 @@
   .person-profile-actions > a { width: 100%; }
   .people-page-header-inner > .people-page-actions { align-items: stretch; flex-direction: column; }
   .people-page-actions > button { width: 100%; }
-  .people-view-tabs,
-  .person-profile-tabs { justify-content: flex-start; padding-right: var(--brisk-space-l); padding-left: var(--brisk-space-l); }
-  .person-profile-tabs-inner { min-width: max-content; }
+  .people-view-tabs { justify-content: flex-start; padding-right: var(--brisk-space-l); padding-left: var(--brisk-space-l); }
   .people-sort-control { width: 100%; flex: 1 0 100%; }
   .people-workload-rollup,
   .person-metrics,

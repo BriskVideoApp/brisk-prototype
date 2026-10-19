@@ -15,6 +15,7 @@ interface TabsProps<Value extends string> extends Omit<ComponentPropsWithRef<'di
   options: readonly TabOption<Value>[];
   onValueChange: (value: Value) => void;
   children: ReactNode;
+  layout?: 'inline' | 'page';
 }
 
 export function Tabs<Value extends string>({
@@ -23,6 +24,7 @@ export function Tabs<Value extends string>({
   options,
   onValueChange,
   children,
+  layout = 'inline',
   className = '',
   ...props
 }: TabsProps<Value>) {
@@ -48,29 +50,33 @@ export function Tabs<Value extends string>({
     onValueChange(options[next].value);
   };
 
+  const tabList = (
+    <div className={styles.tabList} role="tablist" aria-label={label} aria-orientation="horizontal">
+      {options.map((option, index) => (
+        <button
+          className={`${styles.choice} ${styles.tab} label-s-semibold`}
+          key={option.value}
+          ref={button => { buttons.current[index] = button; }}
+          type="button"
+          role="tab"
+          id={`${id}-tab-${index}`}
+          aria-selected={value === option.value}
+          aria-controls={`${id}-panel`}
+          tabIndex={value === option.value ? 0 : -1}
+          disabled={option.disabled}
+          data-brisk-tab=""
+          onClick={() => onValueChange(option.value)}
+          onKeyDown={event => navigate(event, index)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
-    <div {...props} data-brisk-tabs="" className={`${styles.tabs} ${className}`}>
-      <div className={styles.tabList} role="tablist" aria-label={label} aria-orientation="horizontal">
-        {options.map((option, index) => (
-          <button
-            className={`${styles.choice} ${styles.tab} label-s-semibold`}
-            key={option.value}
-            ref={button => { buttons.current[index] = button; }}
-            type="button"
-            role="tab"
-            id={`${id}-tab-${index}`}
-            aria-selected={value === option.value}
-            aria-controls={`${id}-panel`}
-            tabIndex={value === option.value ? 0 : -1}
-            disabled={option.disabled}
-            data-brisk-tab=""
-            onClick={() => onValueChange(option.value)}
-            onKeyDown={event => navigate(event, index)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+    <div {...props} data-brisk-tabs="" data-brisk-tabs-layout={layout} className={`${styles.tabs} ${layout === 'page' ? styles.pageTabs : ''} ${className}`}>
+      {layout === 'page' ? <div className={styles.pageTabListFrame}>{tabList}</div> : tabList}
       <div id={`${id}-panel`} role="tabpanel" aria-labelledby={selectedIndex >= 0 ? `${id}-tab-${selectedIndex}` : undefined} tabIndex={0} className={styles.panel}>
         {children}
       </div>

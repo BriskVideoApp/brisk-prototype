@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "r
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
+import { Tabs } from "../../../Brisk DS/src/app/components/Tabs";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -93,8 +94,14 @@ export function PersonProfilePage({ personId }: { personId: string }) {
       {person.status === "Archived" ? <section className="person-archive-banner"><DsIcon name="info" size={18} /><span className="label-s">This Person is archived. Projects, comments, files and history are intact.</span><Button size="S" variant="ghost" className="client-text-button" type="button" data-tooltip="Return this person to active lists." aria-description="Return this person to active lists." onClick={() => setPersonStatus(person.id, "Active")}>Restore person</Button></section> : null}
       {person.status === "Paused" ? <section className="person-pause-banner"><DsIcon name="lock" size={18} /><span className="label-s">Access is paused. This profile and all project history remain available to Studio Staff.</span></section> : null}
 
-      <nav className="person-profile-tabs" aria-label="Person profile sections"><div className="person-profile-tabs-inner">{sections.map((item) => <button className={`label-s-semibold ${activeSection === item ? "is-active" : ""}`} type="button" aria-current={activeSection === item ? "page" : undefined} key={item} onClick={() => setSection(item)}>{item}</button>)}</div></nav>
-
+      <Tabs
+        className="person-profile-tabs"
+        label="Person profile sections"
+        layout="page"
+        value={activeSection}
+        options={sections.map((item) => ({ value: item, label: item }))}
+        onValueChange={setSection}
+      >
       <div className="person-profile-content">
         {activeSection === "Overview" ? <div className="person-profile-sections">{person.type !== "Contact" ? <AccessSummarySection person={person} invitationStatus={invitationStatus} hasBillingAccess={staffAccess?.hasBillingAccess ?? false} onStudioUpdate={(update) => { updatePersonStudioDetails(person.id, update); setToast("Studio details updated"); }} onClientRoleChange={(role) => { updatePersonClientMembershipRole(person.id, role); setToast("Client role updated"); }} onBillingAccessChange={(hasBillingAccess) => {
           const nextAccess = studio.staffAccess.some((member) => member.personId === person.id)
@@ -110,6 +117,7 @@ export function PersonProfilePage({ personId }: { personId: string }) {
         {activeSection === "Commercial" && person.type === "Freelancer" ? <CommercialSection person={person} /> : null}
         {activeSection === "Notes and activity" ? <NotesActivitySection person={person} onSave={(notes) => { updatePersonNotes(person.id, notes); setToast("Internal notes saved"); }} /> : null}
       </div>
+      </Tabs>
 
       {dialog === "archive" ? <ArchivePersonDialog person={person} onClose={() => setDialog(null)} onArchive={() => { setPersonStatus(person.id, "Archived"); setDialog(null); setToast("Person archived"); }} /> : null}
       {dialog === "assign" ? <AssignPersonDialog person={person} onAssign={(projectId) => { setDialog(null); router.push(`/active-videos?project=${encodeURIComponent(projectId)}&section=team&assignPerson=${encodeURIComponent(person.id)}`); }} onClose={() => setDialog(null)} /> : null}
