@@ -31,3 +31,15 @@ Folder menus retain pointer/context access and support keyboard access, Escape a
 The existing mobile layout hides the folder-actions sidebar below 860px and provides a folder picker instead. This batch does not add a new mobile folder-management entry point.
 
 The danger tone is visual only. It does not add a confirmation, Trash or Undo. Existing folder deletion is unchanged: folders with non-archived assets or subfolders cannot be deleted; otherwise the existing callback removes the folder immediately. Do not broaden that behaviour, change permissions or alter specialised file actions in this batch.
+
+## Transcript menus
+
+Tom approved compact quiet text-only Transcript actions on 19 October 2026. Use Rename, Download PDF, Hide transcript, then Delete. Keep equal 44px minimum rows, with the existing danger tone and 8px spacing break before Delete. No option icons or inner divider. The overflow trigger retains its current presentation.
+
+Use `actionMenuSize="compact"` for these short labels. At current tokens the preferred width is 180px, still bounded by the visual viewport and at least the trigger width. The default action-menu width and ordinary selection fields stay unchanged. Do not shrink row heights or labels to make a compact menu.
+
+`actionFallbackFocus(trigger)` can capture a stable focus destination before Hide or Delete removes its own opener. Transcript actions use the collection's All filter; rename must still receive its existing input focus. Escape returns to the opener, Tab follows the existing page order, and the shared menu owns keyboard navigation and viewport positioning.
+
+Preserve the existing callbacks and visibility rules. In this front-end prototype Delete removes a transcript from the current panel session, not its source media file; Hide retains the existing collection-restore behaviour. Do not add confirmations, change persistence, or modify the transcript editor, PDF export, playback or text-selection tools in this styling batch.
+
+Verification found an existing mobile Transcript layout issue: the clip grid retains a 280px minimum player column alongside the copy column, clipping the overflow trigger at phone widths. The shared menu fits at 390px and 320px when opened by keyboard, but this does not establish working mobile pointer access. Flag the clip layout for the later one-off UI audit; it is unchanged by this menu batch.

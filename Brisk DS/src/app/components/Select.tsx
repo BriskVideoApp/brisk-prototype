@@ -45,6 +45,10 @@ type BriskSelectSharedProps<T extends string> = {
   /** Action-mode adapters retain the caller's existing trigger or context anchor. */
   actionTrigger?: (props: ActionTriggerProps) => ReactNode;
   actionContext?: BriskActionContext;
+  /** Opt-in width for short action labels; ordinary fields are unaffected. */
+  actionMenuSize?: "default" | "compact";
+  /** Capture a stable focus target before a command removes its own trigger. */
+  actionFallbackFocus?: (trigger: HTMLButtonElement | null) => HTMLElement | null;
   open?: boolean;
   footer?: ReactNode;
   hideCaret?: boolean;
@@ -165,7 +169,8 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       ? (options.filter((option) => option.dividerAbove).length * viewportPadding) + parseFloat(tokens.getPropertyValue("--brisk-space-xxs"))
       : 0;
     const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight + actionSpacing);
-    const preferredWidth = mode === "action" ? Math.max(rowHeight * 5, rect.width) : Math.max(192, rect.width);
+    const actionWidth = props.actionMenuSize === "compact" ? (rowHeight * 4) + triggerGap : rowHeight * 5;
+    const preferredWidth = mode === "action" ? Math.max(actionWidth, rect.width) : Math.max(192, rect.width);
     const width = Math.min(preferredWidth, viewportWidth - (viewportPadding * 2));
     const preferredLeft = mode === "action" && !context ? rect.right - width : rect.left;
     const left = Math.min(Math.max(viewportLeft + viewportPadding, preferredLeft), viewportLeft + viewportWidth - width - viewportPadding);
@@ -200,7 +205,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     onOpenChange?.(false);
     if (returnFocus) {
       const target = context?.anchor ?? triggerRef.current;
-      const fallback = context?.fallbackFocus;
+      const fallback = context?.fallbackFocus ?? (mode === "action" ? props.actionFallbackFocus?.(triggerRef.current) : undefined);
       window.requestAnimationFrame(() => (target?.isConnected ? target : fallback)?.focus({ preventScroll: true }));
     }
   };
@@ -213,7 +218,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       setQuery("");
       onOpenChange?.(false);
       const target = context?.anchor ?? triggerRef.current;
-      const fallback = context?.fallbackFocus;
+      const fallback = context?.fallbackFocus ?? props.actionFallbackFocus?.(triggerRef.current);
       (target?.isConnected ? target : fallback)?.focus({ preventScroll: true });
       if (!props.multiple) props.onChange(nextValue);
       window.requestAnimationFrame(() => {
