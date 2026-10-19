@@ -27,4 +27,9 @@ The strengthened Input family supplies the semantic-token treatment: lavender ho
 - Client message templates: the five-row Message field. Subject, sign-off, variable resolution, preview, normalisation, selection, save and restore logic are unchanged.
 - Editable Studio notification templates: the five-row Message field. Title, fixed-wording restrictions, category selection, preview, save and restore logic are unchanged.
 
-Studio instructions and People notes are later candidates, not part of this pilot. Unused Studio description and invitation screens are not counted as migrated. Chat, AI prompt/composer, Script, Brief, review and specialised Shoot editors remain unchanged. This pilot does not change send/submission workflows, notification preferences or access roles.
+Unused Studio description and invitation screens are not counted as migrated. Chat, AI prompt/composer, Script, Brief, review and specialised Shoot editors remain unchanged. This pilot does not change send/submission workflows, notification preferences or access roles.
+
+## Follow-up batches
+
+- Studio instructions in AI Playbook use Textarea with the existing 120px layout minimum and native two-row starting value. No character limit, requirement, auto-growth or validation was added. Uploads, links, save/discard, unsaved-change handling and Studio access restrictions are unchanged. The AI composer is not part of this batch.
+- People notes remain a later batch until separately migrated and verified.

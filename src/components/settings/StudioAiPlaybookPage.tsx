@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { useBriskAi } from "@/components/ai/BriskAiContext";
 import { useStudioSettingsUnsavedChanges } from "@/components/settings/StudioSettingsShell";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -68,15 +69,14 @@ export function StudioAiPlaybookPage() {
               <p className="paragraph-s">Tell Brisk AI how your Studio works. Client brand guidance stays in each Client Brand Kit.</p>
             </div>
           </div>
-          <label className="brisk-ai-playbook-textarea">
-            <span className="label-m-semibold">Studio instructions</span>
-            <textarea
-              className="paragraph-s"
-              value={draft.customInstructions}
-              onChange={(event) => setDraft((current) => ({ ...current, customInstructions: event.target.value }))}
-              placeholder="What should Brisk AI know about your Studio's work?"
-            />
-          </label>
+          <Textarea
+            label="Studio instructions"
+            wrapperClassName="brisk-ai-playbook-textarea"
+            rows={2}
+            value={draft.customInstructions}
+            onChange={(event) => setDraft((current) => ({ ...current, customInstructions: event.target.value }))}
+            placeholder="What should Brisk AI know about your Studio's work?"
+          />
         </section>
 
         <section className="studio-settings-subsection studio-production-section">

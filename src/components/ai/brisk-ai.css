@@ -1373,15 +1373,8 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   gap: var(--brisk-space-xs);
 }
 
-.brisk-ai-playbook-textarea textarea {
-  width: 100%;
+.brisk-ai-playbook-textarea [data-brisk-textarea] {
   min-height: calc(var(--brisk-space-3xl) * 3);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-bg-block-primary);
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-m);
-  resize: vertical;
 }
 
 .brisk-ai-playbook-rule {
