@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
+import { Tabs } from "../../../Brisk DS/src/app/components/Tabs";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import type { Project } from "@/components/active-videos/types";
 import { ClientPicker, ClientAvatar, ClientModal, ClientStatusBadge } from "@/components/clients/ClientPrimitives";
@@ -110,16 +111,14 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
         </section>
       ) : null}
 
-      <nav className="client-profile-tabs" aria-label="Client profile sections">
-        <div className="client-profile-tabs-inner">
-          {profileSections.map((item) => (
-            <button className={`label-s-semibold ${section === item ? "is-active" : ""}`} type="button" key={item} aria-current={section === item ? "page" : undefined} onClick={() => setSection(item)}>
-              {item}
-            </button>
-          ))}
-        </div>
-      </nav>
-
+      <Tabs
+        className="client-profile-tabs"
+        label="Client profile sections"
+        layout="page"
+        value={section}
+        options={profileSections.map((item) => ({ value: item, label: item }))}
+        onValueChange={setSection}
+      >
       <div className="client-profile-content">
         {section === "Overview" ? (
           <OverviewSection
@@ -157,6 +156,7 @@ export function ClientProfilePage({ clientId }: { clientId: string }) {
         ) : null}
         {section === "Brand Kit" ? <BrandKitSection client={client} /> : null}
       </div>
+      </Tabs>
 
       {modal === "start-project" ? (
         <StartProjectDialog

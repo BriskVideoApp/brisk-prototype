@@ -43,7 +43,6 @@
 .client-status-badge,
 .client-profile-breadcrumb a,
 .client-archive-banner,
-.client-profile-tabs,
 .client-section-header,
 .client-section-actions,
 .client-summary-card header,
@@ -615,47 +614,7 @@
 .client-archive-banner .client-text-button { margin-left: auto; }
 
 .client-profile-tabs {
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid var(--brisk-border-secondary);
-  background: var(--brisk-bg-block-primary);
-  padding: var(--brisk-space-l) var(--brisk-space-2xl) var(--brisk-space-none);
-}
-
-.client-profile-tabs-inner {
-  display: flex;
-  width: 100%;
-  max-width: var(--client-profile-max);
-  align-items: center;
-  gap: var(--brisk-space-xs);
-}
-
-.client-profile-tabs button {
-  display: inline-flex;
-  min-height: var(--brisk-space-3xl);
-  align-items: center;
-  border: 1px solid transparent;
-  border-bottom: var(--brisk-space-none);
-  border-radius: var(--brisk-radius-xs) var(--brisk-radius-xs) var(--brisk-radius-none) var(--brisk-radius-none);
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  padding: var(--brisk-space-s) var(--brisk-space-l);
-  text-decoration: none;
-}
-
-.client-profile-tabs button:hover,
-.client-profile-tabs button:focus-visible {
-  border-color: var(--brisk-border-secondary);
-  background: var(--brisk-brand-secondary);
-  box-shadow: var(--brisk-shadow-s);
-  color: var(--brisk-text-primary);
-  outline: var(--brisk-space-none);
-}
-
-.client-profile-tabs button.is-active {
-  border-color: var(--brisk-border-secondary);
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
+  --brisk-tabs-content-max: var(--client-profile-max);
 }
 
 .client-profile-content {
@@ -1017,8 +976,6 @@
   .clients-control-select { flex: 1; }
   .clients-result-count { width: 100%; margin: var(--brisk-space-none); }
   .client-profile-actions { flex-wrap: wrap; }
-  .client-profile-tabs { overflow-x: auto; }
-  .client-profile-tabs-inner { min-width: max-content; }
   .client-overview-grid { grid-template-columns: 1fr 1fr; }
   .client-summary-card.is-identity { grid-column: 1 / -1; }
   .client-contact-row { align-items: flex-start; flex-wrap: wrap; }
@@ -1038,7 +995,6 @@
   .client-profile-actions { display: grid; grid-template-columns: 1fr; }
   .client-profile-actions > button,
   .clients-page-header-inner > button { width: 100%; }
-  .client-profile-tabs { padding-right: var(--brisk-space-l); padding-left: var(--brisk-space-l); }
   .client-overview-grid,
   .client-form-grid,
   .client-overview-details-form,
