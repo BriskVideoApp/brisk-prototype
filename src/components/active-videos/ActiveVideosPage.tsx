@@ -21,6 +21,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Checkbox } from "../../../Brisk DS/src/app/components/Checkbox";
+import { Popover } from "../../../Brisk DS/src/app/components/Popover";
 import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
@@ -675,7 +677,7 @@ function ActiveVideosWorkspace() {
             isOpen={isColumnMenuOpen}
             hiddenColumns={hiddenColumns}
             visibleColumnCount={visibleDataColumns.filter((columnKey) => columnKey !== fixedEndColumn).length}
-            onToggleOpen={() => setIsColumnMenuOpen((current) => !current)}
+            onOpenChange={setIsColumnMenuOpen}
             onToggleColumn={toggleColumnVisibility}
             onReset={resetColumns}
           />
@@ -1138,7 +1140,7 @@ function ColumnVisibilityMenu({
   isOpen,
   hiddenColumns,
   visibleColumnCount,
-  onToggleOpen,
+  onOpenChange,
   onToggleColumn,
   onReset,
 }: {
@@ -1146,64 +1148,53 @@ function ColumnVisibilityMenu({
   isOpen: boolean;
   hiddenColumns: DataColumnKey[];
   visibleColumnCount: number;
-  onToggleOpen: () => void;
+  onOpenChange: (open: boolean) => void;
   onToggleColumn: (columnKey: DataColumnKey) => void;
   onReset: () => void;
 }) {
   return (
     <div className="active-columns-wrap">
-      <button
-        className="active-columns-button label-s-semibold"
-        type="button"
-        aria-expanded={isOpen}
-        onClick={onToggleOpen}
+      <Popover
+        open={isOpen}
+        onOpenChange={onOpenChange}
+        title="Columns"
+        description="Changes apply immediately"
+        trigger={(props) => <Button {...props} variant="secondary" size="S" className="active-columns-trigger">
+          <DsIcon name="columns" size={14} />
+          <span>Columns</span>
+          <DsIcon name="caret-down" size={14} />
+        </Button>}
+        footer={(close) => <>
+          <Button variant="ghost" size="S" onClick={() => { onReset(); close(); }}>Reset columns</Button>
+          <Button variant="secondary" size="S" onClick={close}>Done</Button>
+        </>}
       >
-        <DsIcon name="columns" size={14} />
-        <span>Columns</span>
-        <DsIcon name="caret-down" size={14} />
-      </button>
-      {isOpen ? (
-        <div className="active-columns-menu">
-          <div className="active-columns-option is-locked label-s">
-            <span className="filter-checkbox checked">
-              <DsIcon name="check" size={12} />
-            </span>
-            <span>Project</span>
-            <span className="active-columns-lock label-xs">Locked</span>
-          </div>
-          {availableColumns.map((columnKey) => {
-            const isHidden = hiddenColumns.includes(columnKey);
-            const isLastVisible = !isHidden && visibleColumnCount <= 1;
-            const isFixedEndColumn = columnKey === fixedEndColumn;
+        <Checkbox
+          checked
+          disabled
+          wrapperClassName="active-columns-option"
+          label={<span className="active-columns-label"><span>Project</span><span className="active-columns-lock label-xs">Locked</span></span>}
+        />
+        {availableColumns.map((columnKey) => {
+          const isHidden = hiddenColumns.includes(columnKey);
+          const isLastVisible = !isHidden && visibleColumnCount <= 1;
+          const isFixedEndColumn = columnKey === fixedEndColumn;
 
-            return (
-              <button
-                className={`active-columns-option label-s ${isFixedEndColumn ? "is-locked" : ""}`}
-                type="button"
-                key={columnKey}
-                disabled={isLastVisible || isFixedEndColumn}
-                onClick={() => onToggleColumn(columnKey)}
-              >
-                <span className={`filter-checkbox ${isHidden && !isFixedEndColumn ? "" : "checked"}`}>
-                  {isHidden && !isFixedEndColumn ? null : <DsIcon name="check" size={12} />}
-                </span>
+          return (
+            <Checkbox
+              wrapperClassName="active-columns-option"
+              key={columnKey}
+              checked={!isHidden || isFixedEndColumn}
+              disabled={isLastVisible || isFixedEndColumn}
+              onChange={() => onToggleColumn(columnKey)}
+              label={<span className="active-columns-label">
                 <span>{columnConfig[columnKey].label}</span>
                 {isFixedEndColumn ? <span className="active-columns-lock label-xs">Fixed</span> : null}
-              </button>
-            );
-          })}
-          <button
-            className="active-columns-reset label-s-semibold"
-            type="button"
-            onClick={() => {
-              onReset();
-              onToggleOpen();
-            }}
-          >
-            Reset columns
-          </button>
-        </div>
-      ) : null}
+              </span>}
+            />
+          );
+        })}
+      </Popover>
     </div>
   );
 }

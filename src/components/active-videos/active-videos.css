@@ -166,8 +166,7 @@
   margin-left: auto;
 }
 
-.active-filter-button,
-.active-columns-button {
+.active-filter-button {
   display: inline-flex;
   height: 44px;
   align-items: center;
@@ -184,28 +183,22 @@
   width: 180px;
 }
 
-.active-columns-button {
-  width: 138px;
-}
-
 .active-filter-button.has-value {
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
 }
 
-.active-filter-button:hover,
-.active-columns-button:hover {
+.active-filter-button:hover {
   box-shadow: var(--brisk-shadow-s);
   color: var(--brisk-text-primary);
 }
 
 .active-filter-button[aria-expanded="true"] .ds-icon,
-.active-columns-button[aria-expanded="true"] .ds-icon:last-child {
+.active-columns-trigger[aria-expanded="true"] .ds-icon:last-child {
   transform: rotate(180deg);
 }
 
-.active-filter-menu,
-.active-columns-menu {
+.active-filter-menu {
   position: absolute;
   top: calc(100% + 8px);
   z-index: 60;
@@ -223,20 +216,13 @@
   width: 220px;
 }
 
-.active-columns-menu {
-  right: 0;
-  width: 220px;
-}
-
 .active-filter-menu-status,
 .active-filter-menu-deadline {
   width: 240px;
 }
 
 .active-filter-option,
-.active-filter-clear,
-.active-columns-option,
-.active-columns-reset {
+.active-filter-clear {
   display: flex;
   min-height: 36px;
   align-items: center;
@@ -250,14 +236,11 @@
 }
 
 .active-filter-option:hover,
-.active-filter-clear:hover,
-.active-columns-option:hover:not(:disabled),
-.active-columns-reset:hover {
+.active-filter-clear:hover {
   background: var(--brisk-brand-secondary);
 }
 
-.active-filter-clear,
-.active-columns-reset {
+.active-filter-clear {
   border-top: 1px solid var(--brisk-border-secondary);
   border-radius: var(--brisk-radius-none);
   color: var(--brisk-brand-primary-click);
@@ -266,16 +249,23 @@
 }
 
 .active-columns-option {
-  justify-content: flex-start;
   width: 100%;
+  border-radius: var(--brisk-radius-xs);
+  padding: var(--brisk-space-none) var(--brisk-space-xs);
 }
 
-.active-columns-option:disabled {
-  color: var(--brisk-text-tertiary);
+.active-columns-option > span:last-child {
+  flex: 1;
 }
 
-.active-columns-option.is-locked {
-  cursor: default;
+.active-columns-option:not([data-disabled="true"]):hover {
+  background: var(--brisk-brand-secondary);
+}
+
+.active-columns-label {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-s);
 }
 
 .active-columns-lock {
