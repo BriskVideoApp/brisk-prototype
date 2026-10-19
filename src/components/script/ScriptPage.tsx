@@ -2042,7 +2042,6 @@ export function ScriptPage({
           )}
           {activeSubtabId === "transcripts" ? (
             <div className="transcript-script-version">
-              <span className="label-xs">Script</span>
               {scriptVersionControl}
             </div>
           ) : scriptVersionControl}
