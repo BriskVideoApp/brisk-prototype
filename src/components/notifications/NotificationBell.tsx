@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -94,9 +95,11 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
               >
                 Mark all as read
               </Button>
-              <button className="notification-popover-close" type="button" aria-label="Close notifications" onClick={() => setIsOpen(false)}>
-                <DsIcon name="x-close-cross" size={16} />
-              </button>
+              <span className="notification-popover-close">
+                <IconButton tooltipAlign="end" tooltipPlacement="bottom" type="button" aria-label="Close notifications" onClick={() => setIsOpen(false)}>
+                  <DsIcon name="x-close-cross" size={16} />
+                </IconButton>
+              </span>
             </div>
           </header>
 

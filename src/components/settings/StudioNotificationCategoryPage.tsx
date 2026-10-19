@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
@@ -205,15 +206,16 @@ export function StudioNotificationCategoryPage({ category }: { category: StudioN
                     >
                       <header>
                         <h4 className="label-l-semibold" id="notification-trigger-popover-title">When this sends</h4>
-                        <button
-                          className="client-icon-button"
+                        <IconButton
+                          tooltipAlign="end"
+                          tooltipPlacement="bottom"
                           type="button"
                           ref={demonstrationCloseRef}
                           aria-label="Close when this sends"
                           onClick={() => closeDemonstration(true)}
                         >
                           <DsIcon name="x-close-cross" size={16} />
-                        </button>
+                        </IconButton>
                       </header>
                       <p className="notification-trigger-popover-sentence paragraph-s">
                         <strong>David Ryan</strong>, Producer, sends Edit V3 to <strong>Sarah Chen</strong>, Editor.

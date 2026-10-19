@@ -640,8 +640,7 @@
   gap: var(--brisk-space-s);
 }
 
-.notification-text-action,
-.notification-popover-close {
+.notification-text-action {
   border: var(--brisk-space-none);
   background: transparent;
   color: var(--brisk-brand-primary-click);
@@ -658,12 +657,6 @@
 
 .notification-popover-close {
   display: none;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--brisk-radius-s);
-  padding: var(--brisk-space-s);
 }
 
 .notification-popover-list {
