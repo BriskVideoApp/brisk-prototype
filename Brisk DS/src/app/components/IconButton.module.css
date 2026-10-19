@@ -1,0 +1,137 @@
+/* The native target owns layout; the inner surface retains context-sized visuals. */
+.button.button.button {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  min-width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
+  border: var(--brisk-space-none);
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  font: inherit;
+  box-shadow: none;
+  outline: none;
+  opacity: 1;
+  transform: none;
+  transition: none;
+  cursor: pointer;
+}
+
+.control.control {
+  box-sizing: border-box;
+  display: inline-flex;
+  width: var(--brisk-space-2xl);
+  height: var(--brisk-space-2xl);
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--brisk-radius-s);
+  background: transparent;
+  color: inherit;
+  pointer-events: none;
+}
+
+.button[data-size='M'] .control.control {
+  width: var(--brisk-space-3xl);
+  height: var(--brisk-space-3xl);
+}
+
+.button[data-tooltip-align='start'] {
+  --tooltip-left: var(--brisk-space-none);
+  --tooltip-right: auto;
+  --tooltip-x: var(--brisk-space-none);
+}
+
+.button[data-tooltip-align='end'] {
+  --tooltip-left: auto;
+  --tooltip-right: var(--brisk-space-none);
+  --tooltip-x: var(--brisk-space-none);
+}
+
+.button[data-tooltip-placement='bottom'] {
+  --tooltip-top: calc(100% + var(--brisk-space-s));
+  --tooltip-bottom: auto;
+  --tooltip-y: calc(var(--brisk-space-xs) * -1);
+}
+
+.button[data-shape='circle'],
+.button[data-shape='circle'] .control.control {
+  border-radius: var(--brisk-radius-full);
+}
+
+.control.control > :global(.ds-icon) {
+  width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  color: inherit;
+}
+
+.button[data-size='M'] .control.control > :global(.ds-icon) {
+  width: calc(var(--brisk-space-l) + var(--brisk-space-xs));
+  height: calc(var(--brisk-space-l) + var(--brisk-space-xs));
+}
+
+.button[data-variant='secondary'] .control.control {
+  border-color: var(--brisk-border-primary);
+  background: var(--brisk-white);
+  color: var(--brisk-text-primary);
+}
+
+.button:not(:disabled):not([aria-disabled='true']):hover .control.control {
+  background: var(--brisk-brand-secondary);
+  color: var(--brisk-text-primary);
+}
+
+.button[data-variant='secondary']:not(:disabled):not([aria-disabled='true']):hover .control.control {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.button[data-variant='secondary'][data-size='M']:not(:disabled):not([aria-disabled='true']):hover .control.control {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.button:not(:disabled):not([aria-disabled='true']):focus-visible .control.control {
+  outline: var(--brisk-space-xs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.button[data-size='M']:not(:disabled):not([aria-disabled='true']):focus-visible .control.control {
+  box-shadow: var(--brisk-shadow-m);
+}
+
+.button:not(:disabled):not([aria-disabled='true']):active .control.control {
+  background: var(--brisk-brand-secondary-click);
+  box-shadow: none;
+}
+
+.button.button.button:disabled,
+.button.button.button[aria-disabled='true'] {
+  color: var(--brisk-button-disabled-text);
+  cursor: not-allowed;
+}
+
+.button:disabled .control.control,
+.button[aria-disabled='true'] .control.control {
+  color: var(--brisk-button-disabled-text);
+  outline: none;
+  box-shadow: none;
+}
+
+.button[data-variant='secondary']:disabled .control.control,
+.button[data-variant='secondary'][aria-disabled='true'] .control.control {
+  border-color: var(--brisk-button-disabled-border);
+  background: var(--brisk-button-disabled-fill);
+}
+
+.button.button.button[hidden] {
+  display: none;
+}

@@ -158,3 +158,7 @@ Dropdown fields and multi-selection pickers use the approved [BriskSelect](dropd
 ## React labelled-button standard
 
 Ordinary labelled actions use the approved [Button](buttons.md), with primary, secondary, tertiary, ghost and danger variants. Retain S/M/L sizes, native button behaviour and all existing action handlers. The DS owns appearance and states; consumer classes provide layout hooks only. Keep navigation links, icon-only controls and specialised patterns within their documented scope boundaries.
+
+## React icon-button standard
+
+Ordinary icon-only actions use the approved [IconButton](icon-buttons.md): quiet by default, context-sized 32/40px visual surfaces and 44px native targets. Preserve labels, callbacks, refs, visibility and native keyboard behaviour. Specialised controls retain their separate patterns.
