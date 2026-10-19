@@ -36,6 +36,12 @@ Board-frame and frame-review overflow commands use compact shared action menus a
 
 The board's Replace media command launches the existing ScriptMediaPicker from the stable frame-actions opener. Its new optional external anchor and hidden-trigger adapter do not change ordinary callers, source choices, file upload, library selection, stock selection or link behaviour. Shared command menus own keyboard navigation, outside dismissal, viewport fitting and focus return. Use stable Add frame / Storyboard actions fallbacks if a command removes its opener or closes the frame-review surface. Keep approval prompts, version and frame deletion behaviour, undo history, duration controls, AV editing, dragging, comments and drawing unchanged.
 
+## Shared Add/Replace media picker
+
+Tom approved the shared source picker's quiet presentation on 20 October 2026. Use single-line text-only rows with equal 44px minimum targets, DS small labels, small row radii and no internal dividers. Retain the white, primary-bordered, medium-radius surface and hard shadow. Keep all four commands in their existing order: Upload file, Add from your Media, Stock footage search and Add link.
+
+This is a presentation-only update to the existing specialised picker shared by Script, Storyboard and other source-picker consumers. Preserve trigger icons and labels, external anchors, viewport positioning, outside dismissal, permissions, approval safeguards and every existing source callback. Do not change upload, library, stock or link workflows or the specialised editor controls.
+
 ## Media menus
 
 Tom approved simplified Upload and quiet folder actions on 19 October 2026. Upload has three single-line, text-only commands: From your computer, Google Drive and Dropbox. Use equal 44px minimum rows without descriptions, option icons or extra gaps. Retain the existing Upload trigger and source callbacks, including the empty-folder entry point.

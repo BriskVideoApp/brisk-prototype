@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { Fragment, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { ScriptMediaType } from "@/data/script";
 
@@ -65,9 +65,9 @@ export function ScriptMediaPicker<T extends string>({
       const estimatedHeight = 192;
       const openAbove = window.innerHeight - rect.bottom < estimatedHeight && rect.top > estimatedHeight;
       setMenuStyle({
-        bottom: openAbove ? window.innerHeight - rect.top + menuGap : undefined,
+        bottom: openAbove ? window.innerHeight - rect.top + menuGap : "auto",
         left,
-        top: openAbove ? undefined : rect.bottom + menuGap,
+        top: openAbove ? "auto" : rect.bottom + menuGap,
         width,
       });
     };
@@ -92,13 +92,11 @@ export function ScriptMediaPicker<T extends string>({
       {triggerText ? <span>{triggerText}</span> : null}
     </button> : null}
     {isOpen ? createPortal(<div className={`script-media-menu is-portal ${menuClassName}`.trim()} ref={menuRef} style={menuStyle} role="menu">
-      {options.map((option, index) => <Fragment key={option.value}>
-        {index > 0 ? <span className="script-media-menu-divider" role="separator" /> : null}
-        <button className="label-s" type="button" role="menuitem" onClick={() => onSelect(option.value)}>
-          <DsIcon name={option.icon} size={18} />
+      {options.map((option) => (
+        <button key={option.value} className="label-s" type="button" role="menuitem" onClick={() => onSelect(option.value)}>
           {option.label}
         </button>
-      </Fragment>)}
+      ))}
     </div>, document.body) : null}
   </div>;
 }

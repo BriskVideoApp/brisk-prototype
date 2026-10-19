@@ -320,7 +320,7 @@
   z-index: 50;
   display: grid;
   border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
+  border-radius: var(--brisk-radius-m);
   background: var(--brisk-white);
   box-shadow: var(--brisk-shadow-m);
 }
@@ -1266,25 +1266,18 @@ body:has(.script-shell.script-ai-entry-active) .brisk-ai-launcher {
 
 .script-media-menu button {
   display: flex;
-  min-height: 34px;
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
   align-items: center;
-  gap: var(--brisk-space-m);
   border: 0;
-  border-radius: var(--brisk-radius-xs);
+  border-radius: var(--brisk-radius-s);
   background: transparent;
   color: var(--brisk-text-primary);
-  padding: 0 var(--brisk-space-m);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
   text-align: left;
 }
 
 .script-media-menu button:hover {
   background: var(--brisk-brand-secondary);
-}
-
-.script-media-menu-divider {
-  height: 1px;
-  background: var(--brisk-border-secondary);
-  margin: var(--brisk-space-xs) var(--brisk-space-m);
 }
 
 .script-row-comment-gutter {
