@@ -33,8 +33,6 @@
 .notifications-button-content,
 .notifications-filters,
 .notifications-filters-inner,
-.notifications-filter-tabs,
-.notifications-filter-tabs > button,
 .notification-inbox-item-title-row,
 .notifications-group-header,
 .notification-popover-header,
@@ -125,45 +123,14 @@
 }
 
 .notifications-filters-inner {
-  align-items: stretch;
+  align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--brisk-space-xl);
 }
 
 .notifications-filter-tabs {
   min-width: var(--brisk-space-none);
-  align-items: stretch;
-  overflow-x: auto;
-  gap: var(--brisk-space-l);
-}
-
-.notifications-filter-tabs > button {
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-s));
-  align-items: center;
-  border: var(--brisk-space-none);
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-none) var(--brisk-space-xs);
-  white-space: nowrap;
-}
-
-.notifications-filter-tabs > button:hover,
-.notifications-filter-tabs > button:focus-visible,
-.notifications-filter-tabs > button.is-active {
-  color: var(--brisk-text-primary);
-}
-
-.notifications-filter-tabs > button.is-active {
-  border-bottom-color: var(--brisk-brand-primary);
-}
-
-.notifications-filter-tabs > button > span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--brisk-text-tertiary);
 }
 
 .notifications-mark-all {
@@ -775,6 +742,10 @@
   .notifications-filters-inner {
     min-width: var(--brisk-space-none);
     gap: var(--brisk-space-m);
+  }
+
+  .notifications-filter-tabs {
+    flex-basis: 100%;
   }
 
   .notifications-content {

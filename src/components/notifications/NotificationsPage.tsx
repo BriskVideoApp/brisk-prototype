@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { NotificationInboxItem } from "@/components/notifications/NotificationInboxItem";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -71,20 +72,19 @@ export function NotificationsPage() {
 
       <div className="notifications-filters">
         <div className="notifications-filters-inner">
-          <nav className="notifications-filter-tabs" aria-label="Notification filters">
+          <FilterGroup className="notifications-filter-tabs" aria-label="Notification filters">
             {notificationFilters.map((item) => (
-              <button
-                className={`label-s-semibold ${filter === item.id ? "is-active" : ""}`}
+              <FilterButton
                 type="button"
-                aria-current={filter === item.id ? "page" : undefined}
+                selected={filter === item.id}
+                count={filterCounts[item.id]}
                 key={item.id}
                 onClick={() => setFilter(item.id)}
               >
                 {item.label}
-                <span className="label-xs">{filterCounts[item.id]}</span>
-              </button>
+              </FilterButton>
             ))}
-          </nav>
+          </FilterGroup>
           <Button size="S" variant="secondary" onClick={unreadCount ? markAllAsRead : undefined} className={unreadCount === 0 ? "notifications-mark-all is-disabled" : "notifications-mark-all"}>
             <span className="notifications-button-content">
               <DsIcon name="checks" size={14} />

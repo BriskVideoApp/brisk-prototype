@@ -150,9 +150,8 @@
 
 .clients-view-tabs {
   min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  overflow-x: auto;
   border-bottom: 1px solid var(--brisk-border-secondary);
   background: var(--brisk-bg-block-primary);
   padding: var(--brisk-space-none) var(--brisk-space-2xl);
@@ -161,46 +160,6 @@
 .clients-view-tabs-inner {
   width: 100%;
   max-width: var(--clients-content-max);
-  align-items: stretch;
-  gap: var(--brisk-space-xl);
-}
-
-.clients-view-tabs button {
-  display: inline-flex;
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: center;
-  border: var(--brisk-space-none);
-  border-bottom: 3px solid transparent;
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-none) var(--brisk-space-xs);
-  white-space: nowrap;
-}
-
-.clients-view-tabs button:hover,
-.clients-view-tabs button:focus-visible {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-text-primary);
-  outline: var(--brisk-space-none);
-}
-
-.clients-view-tabs button.is-active {
-  border-bottom-color: var(--brisk-brand-primary);
-  color: var(--brisk-text-primary);
-}
-
-.clients-view-tabs button span {
-  min-width: var(--brisk-space-l);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-gray-10);
-  color: var(--brisk-text-secondary);
-  padding: var(--brisk-space-xxs) var(--brisk-space-xs);
-}
-
-.clients-view-tabs button.is-active span {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary-click);
 }
 
 .clients-controls {
@@ -1075,7 +1034,6 @@
   .client-profile-content { padding: var(--brisk-space-l); }
   .clients-page-header-inner { align-items: stretch; flex-direction: column; }
   .clients-view-tabs { justify-content: flex-start; padding-right: var(--brisk-space-l); padding-left: var(--brisk-space-l); }
-  .clients-view-tabs-inner { min-width: max-content; }
   .client-profile-identity { align-items: flex-start; }
   .client-profile-actions { display: grid; grid-template-columns: 1fr; }
   .client-profile-actions > button,

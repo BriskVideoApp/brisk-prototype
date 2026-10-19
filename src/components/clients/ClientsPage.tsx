@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -71,22 +72,21 @@ export function ClientsPage() {
         </div>
       </header>
 
-      <nav className="clients-view-tabs" aria-label="Client views">
-        <div className="clients-view-tabs-inner">
+      <div className="clients-view-tabs">
+        <FilterGroup className="clients-view-tabs-inner" aria-label="Client views">
           {clientViews.map((item) => (
-            <button
-              className={`label-s-semibold ${status === item ? "is-active" : ""}`}
+            <FilterButton
               type="button"
-              aria-current={status === item ? "page" : undefined}
+              selected={status === item}
+              count={countClientView(clients, item)}
               key={item}
               onClick={() => setStatus(item)}
             >
               {item}
-              <span className="label-xs">{countClientView(clients, item)}</span>
-            </button>
+            </FilterButton>
           ))}
-        </div>
-      </nav>
+        </FilterGroup>
+      </div>
 
       <section className="clients-controls" aria-label="Client list controls">
         <div className="clients-controls-inner">
