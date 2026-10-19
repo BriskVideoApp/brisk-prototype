@@ -473,6 +473,6 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
         } else closeMenu();
         footerAction.onSelect(trigger);
       }}>{footerAction.icon ? <DsIcon name={footerAction.icon} size={16} /> : null}{footerAction.label}</button> : null}
-    </div>, (context?.anchor ?? triggerRef.current)?.closest("dialog") ?? document.body) : null}
+    </div>, (context?.anchor ?? triggerRef.current)?.closest(mode === "action" ? 'dialog, [role="dialog"]' : "dialog") ?? document.body) : null}
   </div>;
 }

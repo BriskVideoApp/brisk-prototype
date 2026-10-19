@@ -44,6 +44,23 @@
   gap: var(--brisk-space-l);
 }
 
+@media (max-width: 760px) {
+  .storyboard-toolbar {
+    flex-wrap: wrap;
+    padding: var(--brisk-space-m) var(--brisk-space-l);
+  }
+
+  .storyboard-toolbar-meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .storyboard-toolbar-meta .script-document-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
 .storyboard-shell.comments-overview-open .storyboard-board,
 .storyboard-shell.comments-overview-open > .script-av-surface {
   margin-right: var(--script-comments-overview-width);

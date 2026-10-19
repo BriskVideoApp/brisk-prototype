@@ -28,6 +28,8 @@ export function ScriptMediaPicker<T extends string>({
   triggerText,
   triggerTooltip,
   menuClassName = "",
+  anchorElement,
+  hideTrigger = false,
   onOpenChange,
   onSelect,
 }: {
@@ -40,6 +42,9 @@ export function ScriptMediaPicker<T extends string>({
   triggerText?: string;
   triggerTooltip?: string;
   menuClassName?: string;
+  /** A command menu can launch the unchanged picker from a stable opener. */
+  anchorElement?: HTMLElement | null;
+  hideTrigger?: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onSelect: (value: T) => void;
 }) {
@@ -50,7 +55,7 @@ export function ScriptMediaPicker<T extends string>({
   useEffect(() => {
     if (!isOpen) return;
     const positionMenu = () => {
-      const trigger = triggerRef.current;
+      const trigger = anchorElement ?? triggerRef.current;
       if (!trigger) return;
       const rect = trigger.getBoundingClientRect();
       const viewportPadding = 8;
@@ -68,7 +73,7 @@ export function ScriptMediaPicker<T extends string>({
     };
     const closeOnOutsideClick = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) onOpenChange(false);
+      if (!(anchorElement ?? triggerRef.current)?.contains(target) && !menuRef.current?.contains(target)) onOpenChange(false);
     };
     positionMenu();
     window.addEventListener("resize", positionMenu);
@@ -79,13 +84,13 @@ export function ScriptMediaPicker<T extends string>({
       window.removeEventListener("scroll", positionMenu, true);
       document.removeEventListener("mousedown", closeOnOutsideClick);
     };
-  }, [isOpen, onOpenChange]);
+  }, [anchorElement, isOpen, onOpenChange]);
 
   return <div className="script-media-menu-wrap">
-    <button className={`script-media-add ${triggerClassName}`.trim()} ref={triggerRef} type="button" aria-label={triggerLabel} aria-expanded={isOpen} data-tooltip={triggerTooltip} onClick={() => onOpenChange(!isOpen)}>
+    {!hideTrigger ? <button className={`script-media-add ${triggerClassName}`.trim()} ref={triggerRef} type="button" aria-label={triggerLabel} aria-expanded={isOpen} data-tooltip={triggerTooltip} onClick={() => onOpenChange(!isOpen)}>
       {triggerIcon ? <DsIcon name={triggerIcon} size={triggerIconSize} /> : null}
       {triggerText ? <span>{triggerText}</span> : null}
-    </button>
+    </button> : null}
     {isOpen ? createPortal(<div className={`script-media-menu is-portal ${menuClassName}`.trim()} ref={menuRef} style={menuStyle} role="menu">
       {options.map((option, index) => <Fragment key={option.value}>
         {index > 0 ? <span className="script-media-menu-divider" role="separator" /> : null}

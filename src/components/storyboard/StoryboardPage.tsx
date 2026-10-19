@@ -12,6 +12,8 @@ import {
   type DragEvent,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import type { Project } from "@/components/active-videos/types";
 import { CommentRail } from "@/components/comment-rail/CommentRail";
 import { useMediaLibrary } from "@/components/media/MediaLibraryContext";
@@ -343,6 +345,7 @@ export function StoryboardPage({ project }: { project: Project }) {
               <div className="script-document-actions" aria-label="Storyboard controls">
                 <ScriptDocumentControls
                   actionsLabel="Storyboard"
+                  actionMenu="quiet"
                   isActionsOpen={isActionsOpen}
                   isCommentsOpen={isCommentsOverviewOpen}
                   onActionsOpenChange={(isOpen) => {
@@ -684,6 +687,7 @@ function StoryboardBoard({
   onToggleFrameMenu: (frameId: string) => void;
   onToggleMedia: (frameId: string, origin: MediaPickerOrigin, isOpen: boolean) => void;
 }) {
+  const frameMenuAnchors = useRef(new Map<string, HTMLButtonElement>());
   return (
     <section className="storyboard-board" aria-label="Storyboard frames">
       {frames.map((frame, index) => {
@@ -728,43 +732,54 @@ function StoryboardBoard({
                 onChange={(durationSeconds) => onDurationChange(frame.id, durationSeconds)}
               />
               <div className="storyboard-card-menu-wrap">
-                <button className="storyboard-icon-button" type="button" aria-label={`Frame ${index + 1} actions`} onClick={() => onToggleFrameMenu(frame.id)}>
-                  <DsIcon name="dots-three-vertical" size={17} />
-                </button>
-                {openFrameMenuId === frame.id ? (
-                  <div className="storyboard-card-menu" role="menu">
-                    {frame.image ? (
-                      <>
-                        <ScriptMediaPicker
-                          isOpen={openMediaPicker?.frameId === frame.id && openMediaPicker.origin === "menu"}
-                          options={scriptMediaPickerOptions}
-                          triggerLabel={`Replace media for frame ${index + 1}`}
-                          triggerClassName="storyboard-card-menu-picker label-s"
-                          triggerIcon={null}
-                          triggerText="Replace media"
-                          onOpenChange={(isOpen) => onToggleMedia(frame.id, "menu", isOpen)}
-                          onSelect={(source) => {
-                            onImageSource(frame.id, source);
-                            onToggleFrameMenu(frame.id);
-                          }}
-                        />
-                        <button
-                          className="label-s danger"
-                          type="button"
-                          role="menuitem"
-                          onClick={() => {
-                            onRemoveImage(frame.id);
-                            onToggleFrameMenu(frame.id);
-                          }}
-                        >
-                          Delete media
-                        </button>
-                      </>
-                    ) : null}
-                    <button className="label-s" type="button" role="menuitem" onClick={() => onDuplicate(frame.id)}>Duplicate frame</button>
-                    <button className="label-s danger" type="button" role="menuitem" onClick={() => onDelete(frame.id)}>Delete frame</button>
-                  </div>
-                ) : null}
+                <BriskSelect
+                  mode="action"
+                  ariaLabel={`Frame ${index + 1} actions`}
+                  placeholder="Frame actions"
+                  value=""
+                  clearable={false}
+                  actionMenuSize="compact"
+                  open={openFrameMenuId === frame.id}
+                  onOpenChange={(isOpen) => {
+                    if (isOpen !== (openFrameMenuId === frame.id)) onToggleFrameMenu(frame.id);
+                  }}
+                  actionFallbackFocus={(trigger) => trigger?.closest(".storyboard-board")?.querySelector<HTMLButtonElement>("[data-storyboard-add-frame]") ?? null}
+                  options={[
+                    ...(frame.image ? [{ value: "replace", label: "Replace media" }] : []),
+                    { value: "duplicate", label: "Duplicate frame" },
+                    ...(frame.image ? [{ value: "remove", label: "Remove media", tone: "danger" as const, dividerAbove: true }] : []),
+                    { value: "delete", label: "Delete frame", tone: "danger", dividerAbove: !frame.image },
+                  ]}
+                  onChange={(action) => {
+                    if (action === "replace") onToggleMedia(frame.id, "menu", true);
+                    else if (action === "duplicate") onDuplicate(frame.id);
+                    else if (action === "remove") onRemoveImage(frame.id);
+                    else if (action === "delete") onDelete(frame.id);
+                  }}
+                  actionTrigger={(triggerProps) => <IconButton
+                    {...triggerProps}
+                    ref={(node) => {
+                      if (node) frameMenuAnchors.current.set(frame.id, node);
+                      else frameMenuAnchors.current.delete(frame.id);
+                      if (typeof triggerProps.ref === "function") triggerProps.ref(node);
+                      else if (triggerProps.ref) triggerProps.ref.current = node;
+                    }}
+                    aria-label={`Frame ${index + 1} actions`}
+                    tooltipAlign="end"
+                  ><DsIcon name="dots-three" size={16} /></IconButton>}
+                />
+                {frame.image ? <ScriptMediaPicker
+                  isOpen={openMediaPicker?.frameId === frame.id && openMediaPicker.origin === "menu"}
+                  options={scriptMediaPickerOptions}
+                  triggerLabel={`Replace media for frame ${index + 1}`}
+                  hideTrigger
+                  anchorElement={frameMenuAnchors.current.get(frame.id)}
+                  onOpenChange={(isOpen) => onToggleMedia(frame.id, "menu", isOpen)}
+                  onSelect={(source) => {
+                    onImageSource(frame.id, source);
+                    onToggleMedia(frame.id, "menu", false);
+                  }}
+                /> : null}
               </div>
             </header>
 
@@ -860,7 +875,7 @@ function StoryboardBoard({
         );
       })}
       <div className="storyboard-add-frame-cell">
-        <Button variant="secondary" size="S" onClick={onAdd}>+ Add frame</Button>
+        <Button variant="secondary" size="S" data-storyboard-add-frame onClick={onAdd}>+ Add frame</Button>
       </div>
     </section>
   );

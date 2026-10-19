@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import {
   ScriptMediaPicker,
@@ -78,24 +80,7 @@ export function StoryboardFrameReview({
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
   const [isFrameMenuOpen, setIsFrameMenuOpen] = useState(false);
-  const frameMenuRef = useRef<HTMLDivElement>(null);
   const commentRefs = useRef(new Map<string, HTMLElement>());
-
-  useEffect(() => {
-    if (!isFrameMenuOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!frameMenuRef.current?.contains(event.target as Node)) setIsFrameMenuOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsFrameMenuOpen(false);
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [isFrameMenuOpen]);
 
   const usersById = useMemo(() => new Map<string, User>(reviewUsers.map((user) => [user.id, user])), []);
   const roleVisibleComments = frame.comments
@@ -202,44 +187,34 @@ export function StoryboardFrameReview({
             >
               <DsIcon name="download" size={17} />
             </button>
-            <div className="storyboard-review-menu-wrap" ref={frameMenuRef}>
-              <button
-                className="storyboard-icon-button"
-                type="button"
-                aria-label={`More actions for frame ${frameNumber}`}
-                aria-expanded={isFrameMenuOpen}
-                data-tooltip="More actions"
-                onClick={() => setIsFrameMenuOpen((current) => !current)}
-              >
-                <DsIcon name="dots-three" size={18} />
-              </button>
-              {isFrameMenuOpen ? (
-                <div className="storyboard-review-menu" role="menu">
-                  <button className="label-s" type="button" role="menuitem" onClick={() => {
-                    setIsFrameMenuOpen(false);
-                    onDuplicate();
-                  }}>
-                    <DsIcon name="copy" size={16} />
-                    Duplicate frame
-                  </button>
-                  {imageUrl ? (
-                    <button className="label-s danger" type="button" role="menuitem" onClick={() => {
-                      setIsFrameMenuOpen(false);
-                      onRemoveMedia();
-                    }}>
-                      <DsIcon name="trash" size={16} />
-                      Delete media
-                    </button>
-                  ) : null}
-                  <button className="label-s danger" type="button" role="menuitem" onClick={() => {
-                    setIsFrameMenuOpen(false);
-                    onDelete();
-                  }}>
-                    <DsIcon name="trash" size={16} />
-                    Delete frame
-                  </button>
-                </div>
-              ) : null}
+            <div className="storyboard-review-menu-wrap">
+              <BriskSelect
+                mode="action"
+                ariaLabel={`More actions for frame ${frameNumber}`}
+                placeholder="Frame actions"
+                value=""
+                clearable={false}
+                actionMenuSize="compact"
+                open={isFrameMenuOpen}
+                onOpenChange={setIsFrameMenuOpen}
+                actionFallbackFocus={(trigger) => trigger?.closest(".storyboard-shell")?.querySelector<HTMLButtonElement>('[aria-label="Storyboard actions"]') ?? null}
+                options={[
+                  { value: "duplicate", label: "Duplicate frame" },
+                  ...(imageUrl ? [{ value: "remove", label: "Remove media", tone: "danger" as const, dividerAbove: true }] : []),
+                  { value: "delete", label: "Delete frame", tone: "danger", dividerAbove: !imageUrl },
+                ]}
+                onChange={(action) => {
+                  if (action === "duplicate") onDuplicate();
+                  else if (action === "remove") onRemoveMedia();
+                  else if (action === "delete") onDelete();
+                }}
+                actionTrigger={(triggerProps) => <IconButton
+                  {...triggerProps}
+                  aria-label={`More actions for frame ${frameNumber}`}
+                  tooltip="More actions"
+                  tooltipAlign="end"
+                ><DsIcon name="dots-three" size={16} /></IconButton>}
+              />
             </div>
           </div>
         </header>

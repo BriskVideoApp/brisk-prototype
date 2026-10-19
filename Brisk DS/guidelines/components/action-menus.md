@@ -14,7 +14,7 @@ Tom approved Quiet action menu on 19 October 2026. Extend the existing `BriskSel
 
 Arrow keys browse enabled commands with wrapping; Home and End reach the first and last enabled command. Enter/Space activates, Escape closes and restores focus, and Tab exits in the opener's logical page order. Type-ahead finds enabled commands. Outside pointer/focus dismisses without stealing focus. Opening an action dialog must not lose its initial focus to the closing menu.
 
-Context menus fit the visual viewport, flip above when appropriate, and update on scrolling/resizing. The portal stays within the nearest native dialog, otherwise the document body. A stable fallback handles actions such as Hide column that remove the original header. Actions and persistence remain the caller's responsibility.
+Context menus fit the visual viewport, flip above when appropriate, and update on scrolling/resizing. Action-menu portals stay within the nearest native dialog or custom `role="dialog"` surface, otherwise the document body. This keeps frame-review commands above their owning overlay without changing ordinary field selection portals. A stable fallback handles actions such as Hide column that remove the original header. Actions and persistence remain the caller's responsibility.
 
 Videos headers expose Shift+F10 and the Context Menu key alongside existing right-click access. Supply `keyboard: true` for a keyboard-opened context menu. Staff/Client headers preserve the Project and Actions anchors, and cannot move a data column past fixed Actions. The last optional column cannot be hidden. The Freelancer menu retains only Move left, Move right and Pin column; hiding remains unavailable.
 
@@ -27,6 +27,14 @@ Tom approved the Script actions migration on 19 October 2026. `ScriptDocumentCon
 Retain every supplied callback, action order, disabled condition and native explanation. `BriskSelectOption.title` passes the caller's explanation to the native option button without adding helper text or changing ordinary field styling. Keep the controlled open state so opening Comments or Versions closes the command menu. Use the shared keyboard navigation, outside dismissal, viewport fitting and focus return. Script copy/export scope, conditional Convert script to storyboard, approval guards, last-version safeguards and deletion confirmation remain unchanged. This migration does not restyle Comments, version pickers, the Script editor or Storyboard controls.
 
 Tom subsequently approved the Script Comments trigger as a quiet text-only DS Button, matching Transcripts. Opt into `commentsStyle="quiet"` on Script only; preserve its accessible name, expanded/pressed state and existing toggle callback. Keep the comments panel, visibility rules and all comment tools unchanged. Storyboard retains its existing Comments trigger until reviewed separately.
+
+## Storyboard action menus
+
+Tom approved Shared quiet menus on 20 October 2026. Storyboard now opts into the shared document action menu with a quiet Storyboard actions trigger. Preserve Undo, Redo, Download PDF and Delete version, with text-only rows, whitespace group breaks, and the existing disabled explanations, last-version safeguard and deletion confirmation. Storyboard's Comments button remains outside this menu-only change.
+
+Board-frame and frame-review overflow commands use compact shared action menus and quiet DS IconButtons. Board frames show Replace media when a frame has media, then Duplicate frame, followed by a whitespace break and red Remove media / Delete frame. Review retains its existing separate Replace media picker and shows Duplicate frame, then the applicable removal and deletion commands. Remove media is the approved replacement for the misleading Delete media label: it only detaches media from the frame, not from project Media. Keep the existing image-availability conditions and callbacks.
+
+The board's Replace media command launches the existing ScriptMediaPicker from the stable frame-actions opener. Its new optional external anchor and hidden-trigger adapter do not change ordinary callers, source choices, file upload, library selection, stock selection or link behaviour. Shared command menus own keyboard navigation, outside dismissal, viewport fitting and focus return. Use stable Add frame / Storyboard actions fallbacks if a command removes its opener or closes the frame-review surface. Keep approval prompts, version and frame deletion behaviour, undo history, duration controls, AV editing, dragging, comments and drawing unchanged.
 
 ## Media menus
 
