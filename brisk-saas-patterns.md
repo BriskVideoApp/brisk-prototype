@@ -111,7 +111,7 @@ Show a unique project code before the editable project name when a Client starts
 - Use magic links for clients.
 - Make every empty state lead to action.
 - Apply white-label by default.
-- Design every client-facing flow to work on mobile from day one.
+- Follow Tom's desktop-first design sequence in `AGENTS.md`, including Client-facing flows. Fix and sign off the full desktop UI before the mobile pass; defer mobile-only work and routine mobile verification unless explicitly requested. Preserve existing responsive behaviour.
 
 ## Don't
 

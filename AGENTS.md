@@ -37,6 +37,16 @@ Make screens that show how Brisk should look and behave. This is a reference, no
 - **No deployment.** `npm run dev` working locally is enough.
 - **No tests.** Skip unless asked.
 
+## Current design sequence
+
+Tom approved desktop-first sequencing on 20 October 2026. Get the full desktop UI fixed and signed off before starting the mobile design pass. This applies to both Studio and Client-facing screens.
+
+- Default reviews, recommendations, implementation and browser verification to desktop.
+- Defer mobile layouts, mobile-only fixes and routine mobile verification until the full design is signed off, unless Tom explicitly requests mobile work for a particular task.
+- Keep mobile findings for the later pass; do not make them the next active UI work or a blocker to desktop sign-off.
+- Preserve existing responsive code and functionality. Deferring mobile work does not authorise removing it or deliberately breaking it.
+- This sequencing supersedes older guidance requiring mobile-first design, parallel desktop/mobile work or mobile verification in every batch.
+
 ## Stack (kept deliberately small)
 
 - **Next.js 15** (App Router)
@@ -120,7 +130,7 @@ Use this verification ladder instead:
 Before marking a ticket complete:
 
 1. Review the diff against the full ticket and acceptance criteria, then against Brisk's role, visibility, visual, terminology and scope rules.
-2. For application changes, run the approved verification above and inspect the affected behaviour in the running prototype. An HTTP 200 alone does not verify browser interactions or role visibility. Do not add tests or run a production build unless requested.
+2. For application changes, run the approved verification above and inspect the affected behaviour in the running prototype on desktop. An HTTP 200 alone does not verify browser interactions or role visibility. Mobile verification is deferred under Current design sequence unless explicitly requested. Do not add tests or run a production build unless requested.
 3. Fix in-scope issues found during review. Report unresolved gaps, consequential decisions and any checks that could not be run; do not claim unverified behaviour works.
 4. For instruction-only or documentation-only changes, verify the saved text, links and diff instead of running application checks. Confirm application code and assets are unchanged.
 
@@ -184,7 +194,7 @@ This is a prototype demo affordance only - in production, role is set by the use
 - Use "Stage" for units of work inside a video's production journey (see Production Journey guidance). Development tickets and the existing Today to-do terminology are not additional production stages.
 - Don't use Style Frames / Styleframes as an Active Videos stage. It is redundant for Brisk's current production flow.
 - Don't design Quote, Proposal, or Concept flows - they're not in Brisk yet.
-- Don't ship desktop-only client-facing flows - client surfaces must work on mobile.
+- Don't expand desktop UI work into a mobile pass before the full design is signed off, unless Tom explicitly requests it. Preserve existing responsive behaviour.
 
 ## British English
 

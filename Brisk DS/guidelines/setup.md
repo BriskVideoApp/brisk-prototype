@@ -10,8 +10,8 @@
 
 ## Viewport
 
-- **Desktop only:** 1440px wide
-- **No mobile version of Brisk.** Do not create mobile layouts or responsive variants. If a mobile layout is requested, stop and report per the missing asset protocol in `overview.md`.
+- **Current design phase:** desktop first, using the 1440px kit reference. Tom approved fixing and signing off the full desktop UI before the mobile design pass on 20 October 2026; see Current design sequence in `AGENTS.md`.
+- Defer new mobile layouts, mobile-only fixes and routine mobile verification unless explicitly requested. Preserve existing responsive code and functionality. When mobile work requires a missing component or asset, follow the missing-asset protocol in `Guidelines.md`.
 
 ---
 

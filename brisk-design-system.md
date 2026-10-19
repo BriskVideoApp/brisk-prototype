@@ -6,6 +6,8 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 
 Follow `AGENTS.md` for the three prototype access roles, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
 
+Tom's approved sequence is desktop first: fix and sign off the full desktop UI before the mobile design pass. Default visual reviews, implementation and verification to desktop, including Client-facing screens. Defer mobile-only work and routine mobile checks unless explicitly requested; preserve existing responsive behaviour. See Current design sequence in `AGENTS.md`.
+
 ## Visual language: Neo-brutalism
 
 - Style is neo-brutalism: clean, confident, slightly raw. Not skeuomorphic. Not glassy. Not soft.
@@ -98,7 +100,7 @@ All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 
 - Always import from the `Brisk DS/` folder. Do not rebuild Button, Input, Card, Modal, Table, etc.
 - **Desktop components** are marked `D` in the kit. Use these for Studio surfaces.
-- **Mobile components** are marked `M`. Use these for all client-facing flows and for any Studio surface that must remain usable on mobile. Mobile is a first-class target alongside desktop.
+- Mobile component selection and layout work are deferred to the later mobile pass. Do not assume that a separate mobile component exists; follow the missing-asset protocol when one is needed.
 - If a component is missing from the kit, ask before creating a local one. Don't silently invent.
 
 ## States
@@ -127,14 +129,14 @@ For the requested feature, include the applicable interaction states below. Do n
 
 - Use kit tokens for every colour, spacing, radius, shadow, and text style.
 - Apply dark strokes to interactive elements and major containers.
-- Design desktop and mobile in parallel. Client-facing flows are mobile-first.
+- Fix and verify desktop UI first. Review mobile after the full design is signed off, unless explicitly requested earlier.
 - Preserve the tag negative-spacing workaround.
 - Use `StageChip` for stage icons and `DsIcon` for general UI. Never use archived Flow icons or substitute third-party icons.
 
 ## Don't
 
 - Don't introduce new colours, fonts, or shadows outside the kit.
-- Don't ship desktop-only client-facing flows. Client surfaces must work on mobile.
+- Don't turn the current desktop sign-off work into a parallel mobile redesign. Preserve existing responsive code and functionality.
 - Don't tint background layers above the page background.
 - Don't double-border (avoid borders inside already-bordered containers).
 - Don't substitute icons from other libraries.

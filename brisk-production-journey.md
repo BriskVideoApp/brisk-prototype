@@ -139,11 +139,11 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 - "Pre-production" not "planning phase"
 - "Stage" not "task" (a unit of work inside a video)
 
-## Mobile considerations
+## Desktop-first design sequence
 
-- Mobile is a high priority. Brisk is designed **alongside** the desktop app, not after it.
-- Every client-facing flow must work on mobile from day one.
-- Internal Studio flows (Active Videos, project management) can stay desktop-first, but must remain usable on mobile.
+- Tom approved fixing and signing off the full desktop UI before the mobile design pass on 20 October 2026. This includes Client-facing flows.
+- Default reviews, implementation and verification to desktop. Defer mobile-only fixes and routine mobile checks unless Tom explicitly requests them for a particular task.
+- Preserve existing responsive code and functionality, and keep mobile findings for the later pass. Follow Current design sequence in `AGENTS.md`.
 
 ## Do
 
@@ -152,7 +152,7 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 - Identify which prototype access roles (Studio Staff, Studio Freelancer, Customer) a screen serves. Use Filmmaker and Client in normal interface copy where the exact access distinction is not needed.
 - Default to working days for deadlines.
 - Make every screen filmmaker-first: think in projects, stages, deliverables.
-- Design client flows mobile-first.
+- Prioritise desktop sign-off for Client flows as well as Studio flows; mobile design follows later.
 - Show both the stage and the within-video status on every in-production video.
 
 ## Don't
@@ -163,7 +163,7 @@ Use the right words. Filmmakers notice when SaaS apps use the wrong language.
 - Don't assume calendar-day deadlines.
 - Don't bury the latest version under older ones for clients.
 - Don't design approval flows that allow approval by silence.
-- Don't ship desktop-only client flows.
+- Don't start a parallel mobile pass during desktop sign-off unless Tom explicitly requests it.
 
 ## British English
 
