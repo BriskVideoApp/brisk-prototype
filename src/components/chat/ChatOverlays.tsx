@@ -2,6 +2,7 @@
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { Tabs } from "../../../Brisk DS/src/app/components/Tabs";
 import { BriskSelect } from "@/components/form/BriskSelect";
 
 import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
@@ -211,20 +212,12 @@ export function CustomerSettings({
     <> <EditingDialog title={<>{clientName}</>} onCancel={onClose} size="wide" description={<>  <div>
             <p className="label-xs">Customer settings</p>
 
-          </div>    </>}>  <div className="chat-settings-tabs two-column" role="tablist" aria-label="Customer settings sections">
-          {(["overview", "people"] as const).map((tab) => (
-            <button
-              className={`label-s-semibold ${activeTab === tab ? "active" : ""}`}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab[0].toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>  {activeTab === "overview" ? (
+          </div>    </>}>  <Tabs
+          label="Customer settings sections"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          options={[{ value: "overview", label: "Overview" }, { value: "people", label: "People" }]}
+        >{activeTab === "overview" ? (
           <div className="chat-settings-section">
             <label className="chat-settings-field">
               <span>
@@ -268,7 +261,7 @@ export function CustomerSettings({
               ))}
             </div>
           </div>
-        ) : null} </EditingDialog> </>
+        ) : null}</Tabs> </EditingDialog> </>
   );
 }
 
