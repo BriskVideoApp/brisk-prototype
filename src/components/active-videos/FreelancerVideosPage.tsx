@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
@@ -357,6 +357,7 @@ function FreelancerVideoTable({
     getColumnShiftDirection,
     getColumnWidth,
     handleColumnContextMenu,
+    handleColumnKeyDown,
     handleColumnPointerDown,
     handleTableScroll,
     headerRefs,
@@ -404,6 +405,7 @@ function FreelancerVideoTable({
                     else delete headerRefs.current[columnKey];
                   }}
                   onContextMenu={handleColumnContextMenu}
+                  onKeyDown={handleColumnKeyDown}
                   onPointerDown={handleColumnPointerDown}
                 />
               ))}
@@ -432,6 +434,8 @@ function FreelancerVideoTable({
           state={columnContextMenu}
           columnOrder={columnOrder}
           hiddenColumns={hiddenColumns}
+          anchor={headerRefs.current[columnContextMenu.columnKey] ?? null}
+          fallbackFocus={headerRefs.current.video ?? null}
           onClose={() => setColumnContextMenu(null)}
           onMoveLeft={(columnKey) => moveColumnByStep(columnKey, -1)}
           onMoveRight={(columnKey) => moveColumnByStep(columnKey, 1)}
@@ -531,6 +535,7 @@ function FreelancerTableHeaderCell({
   isDragging,
   isDropped,
   onContextMenu,
+  onKeyDown,
   onPointerDown,
   setHeaderRef,
   shiftDirection,
@@ -541,6 +546,7 @@ function FreelancerTableHeaderCell({
   isDragging: boolean;
   isDropped: boolean;
   onContextMenu: (event: ReactMouseEvent<HTMLTableCellElement>, columnKey: FreelancerColumnKey) => void;
+  onKeyDown: (event: ReactKeyboardEvent<HTMLTableCellElement>, columnKey: FreelancerColumnKey) => void;
   onPointerDown: (event: ReactPointerEvent<HTMLTableCellElement>, columnKey: FreelancerColumnKey) => void;
   setHeaderRef: (element: HTMLTableCellElement | null) => void;
   shiftDirection: "left" | "right" | null;
@@ -549,7 +555,7 @@ function FreelancerTableHeaderCell({
   const showsDropAfter = dropIndex === columnIndex + 1 && columnKey !== "video";
 
   if (columnKey === "video") {
-    return <th className={`column-video ${showsDropAfter ? "has-drop-indicator-after" : ""}`} scope="col" ref={setHeaderRef}>Video</th>;
+    return <th className={`column-video ${showsDropAfter ? "has-drop-indicator-after" : ""}`} scope="col" ref={setHeaderRef} tabIndex={-1}>Video</th>;
   }
 
   const className = [
@@ -568,6 +574,10 @@ function FreelancerTableHeaderCell({
       scope="col"
       ref={setHeaderRef}
       onContextMenu={(event) => onContextMenu(event, columnKey)}
+      onKeyDown={(event) => onKeyDown(event, columnKey)}
+      tabIndex={0}
+      aria-haspopup="menu"
+      aria-keyshortcuts="Shift+F10"
       onPointerDown={(event) => onPointerDown(event, columnKey)}
     >
       {freelancerColumnConfig[columnKey].label}
@@ -616,6 +626,8 @@ function FreelancerColumnHeaderMenu({
   onMoveRight,
   onPin,
   state,
+  anchor,
+  fallbackFocus,
 }: {
   columnOrder: FreelancerColumnKey[];
   hiddenColumns: FreelancerColumnKey[];
@@ -624,31 +636,32 @@ function FreelancerColumnHeaderMenu({
   onMoveRight: (columnKey: FreelancerColumnKey) => void;
   onPin: (columnKey: FreelancerColumnKey) => void;
   state: RoleVideoColumnContextMenuState<FreelancerColumnKey>;
+  anchor: HTMLElement | null;
+  fallbackFocus: HTMLElement | null;
 }) {
   const visibleColumnOrder = columnOrder.filter((columnKey) => !hiddenColumns.includes(columnKey));
   const columnIndex = visibleColumnOrder.indexOf(state.columnKey);
 
-  useEffect(() => {
-    const closeMenu = () => onClose();
-    window.addEventListener("click", closeMenu);
-    window.addEventListener("keydown", closeMenu);
-    return () => {
-      window.removeEventListener("click", closeMenu);
-      window.removeEventListener("keydown", closeMenu);
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      className="column-header-menu"
-      style={{ left: state.x, top: state.y }}
-      onClick={(event) => event.stopPropagation()}
-    >
-      <button className="label-s-semibold" type="button" disabled={columnIndex <= 0} onClick={() => { onMoveLeft(state.columnKey); onClose(); }}>Move left</button>
-      <button className="label-s-semibold" type="button" disabled={columnIndex === -1 || columnIndex >= visibleColumnOrder.length - 1} onClick={() => { onMoveRight(state.columnKey); onClose(); }}>Move right</button>
-      <button className="label-s-semibold" type="button" onClick={() => { onPin(state.columnKey); onClose(); }}>Pin column</button>
-    </div>
-  );
+  return <BriskSelect
+    mode="action"
+    ariaLabel={`${freelancerColumnConfig[state.columnKey].label} column actions`}
+    placeholder="Column actions"
+    value=""
+    clearable={false}
+    open
+    actionContext={{ ...state, anchor, fallbackFocus }}
+    onOpenChange={(open) => { if (!open) onClose(); }}
+    options={[
+      { value: "left", label: "Move left", disabled: columnIndex <= 0 },
+      { value: "right", label: "Move right", disabled: columnIndex === -1 || columnIndex >= visibleColumnOrder.length - 1 },
+      { value: "pin", label: "Pin column" },
+    ]}
+    onChange={(action) => {
+      if (action === "left") onMoveLeft(state.columnKey);
+      else if (action === "right") onMoveRight(state.columnKey);
+      else if (action === "pin") onPin(state.columnKey);
+    }}
+  />;
 }
 
 function FreelancerProjectIdentity({ engagement }: { engagement: FreelancerEngagement }) {

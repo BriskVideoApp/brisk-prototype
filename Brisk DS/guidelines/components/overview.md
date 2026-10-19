@@ -167,8 +167,10 @@ Ordinary icon-only actions use the approved [IconButton](icon-buttons.md): quiet
 
 Use the approved [quiet FilterGroup/FilterButton and Tabs](quiet-choices.md) for the scoped list-filter and content-panel pilot. Filters remain ordinary pressed buttons; true tabs have linked panels and keyboard navigation. Preserve consumer state, callbacks, counts, roles and URLs. Segmented and specialised controls require their own reviewed migration.
 
-## React anchored-settings standard
+## React quiet-action-menu standard
 
 Short command lists use the approved [quiet action-menu pattern](action-menus.md), built on `BriskSelect` action mode. Keep these separate from settings checklists and ordinary selection fields. The initial pilot covers Chat call options and Videos column actions only.
+
+## React anchored-settings standard
 
 Use the approved [Popover](popover.md) for short contextual settings checklists. Compose the existing DS Checkbox and Button, with a scrollable body and visible footer. The Videos Columns pilot preserves its existing table logic and saved preferences. Dropdown fields, navigation menus and specialised pickers remain separate patterns.

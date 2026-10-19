@@ -19,13 +19,14 @@ export type BriskSelectOption<T extends string = string> = {
   disabled?: boolean;
 };
 
-type ActionTriggerProps = Pick<ComponentPropsWithRef<"button">, "ref" | "onClick" | "onKeyDown" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-label">;
+type ActionTriggerProps = Pick<ComponentPropsWithRef<"button">, "ref" | "disabled" | "onClick" | "onKeyDown" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-label">;
 
 export type BriskActionContext = {
   x: number;
   y: number;
   anchor: HTMLElement | null;
   fallbackFocus?: HTMLElement | null;
+  keyboard?: boolean;
 };
 
 type BriskSelectSharedProps<T extends string> = {
@@ -232,7 +233,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
 
   useEffect(() => {
     if (open === undefined || open === isOpen) return;
-    if (open) openMenu();
+    if (open) openMenu(undefined, context?.keyboard ?? false);
     else closeMenu();
   }, [open]);
 
@@ -363,11 +364,12 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
 
   const actionButtonProps: ActionTriggerProps = {
     ref: triggerRef,
+    disabled,
     "aria-label": ariaLabel,
     "aria-controls": isOpen ? listboxId : undefined,
     "aria-expanded": isOpen,
     "aria-haspopup": "menu",
-    onClick: () => isOpen ? closeMenu() : openMenu(undefined, true),
+    onClick: (event) => isOpen ? closeMenu() : openMenu(undefined, event.detail === 0),
     onKeyDown: (event) => {
       if (isOpen) { handleMenuKeyDown(event); return; }
       if (event.key === "ArrowDown" || event.key === "ArrowUp") {
@@ -396,7 +398,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       aria-activedescendant={!searchable && mode !== "action" && isOpen && filteredOptions[activeIndex] ? `${listboxId}-${activeIndex}` : undefined}
       aria-description={tooltip}
       data-tooltip={tooltip}
-      onClick={() => isOpen ? closeMenu() : openMenu()}
+      onClick={(event) => isOpen ? closeMenu() : openMenu(undefined, mode === "action" && event.detail === 0)}
       onKeyDown={(event) => {
         if (isOpen) { handleMenuKeyDown(event); return; }
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {

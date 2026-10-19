@@ -104,6 +104,7 @@ type ColumnContextMenuState = {
   columnKey: DataColumnKey;
   x: number;
   y: number;
+  keyboard?: boolean;
 };
 type ColumnSettlingGhostState = {
   label: string;
@@ -238,6 +239,7 @@ function ActiveVideosWorkspace() {
     getColumnShiftDirection: getSharedColumnShiftDirection,
     getColumnWidth: getSharedColumnWidth,
     handleColumnContextMenu,
+    handleColumnKeyDown,
     handleColumnPointerDown,
     handleTableScroll,
     headerRefs,
@@ -724,6 +726,7 @@ function ActiveVideosWorkspace() {
                     }}
                     onPointerDown={handleColumnPointerDown}
                     onContextMenu={handleColumnContextMenu}
+                    onKeyDown={handleColumnKeyDown}
                   />
                 ))}
               </tr>
@@ -825,6 +828,8 @@ function ActiveVideosWorkspace() {
           state={columnContextMenu}
           columnOrder={columnOrder}
           hiddenColumns={hiddenColumns}
+          anchor={headerRefs.current[columnContextMenu.columnKey] ?? null}
+          fallbackFocus={headerRefs.current.project ?? null}
           onMoveLeft={(columnKey) => moveColumnByStep(columnKey, -1)}
           onMoveRight={(columnKey) => moveColumnByStep(columnKey, 1)}
           onPin={pinColumn}
@@ -884,6 +889,7 @@ function TableHeaderCell({
   setHeaderRef,
   onPointerDown,
   onContextMenu,
+  onKeyDown,
 }: {
   columnKey: TableColumnKey;
   columnIndex: number;
@@ -894,6 +900,7 @@ function TableHeaderCell({
   setHeaderRef: (element: HTMLTableCellElement | null) => void;
   onPointerDown: (event: ReactPointerEvent<HTMLTableCellElement>, columnKey: DataColumnKey) => void;
   onContextMenu: (event: ReactMouseEvent<HTMLTableCellElement>, columnKey: DataColumnKey) => void;
+  onKeyDown: (event: ReactKeyboardEvent<HTMLTableCellElement>, columnKey: DataColumnKey) => void;
 }) {
   const showsDropBefore = dropIndex === columnIndex && columnKey !== "project";
   const showsDropAfter = dropIndex === columnIndex + 1 && columnKey !== "project";
@@ -904,6 +911,7 @@ function TableHeaderCell({
         className={`column-project ${showsDropAfter ? "has-drop-indicator-after" : ""}`}
         scope="col"
         ref={setHeaderRef}
+        tabIndex={-1}
       >
         <span className="table-heading label-s-semibold">
           Project
@@ -933,6 +941,10 @@ function TableHeaderCell({
         ref={setHeaderRef}
         onPointerDown={(event) => onPointerDown(event, columnKey)}
         onContextMenu={(event) => onContextMenu(event, columnKey)}
+        onKeyDown={(event) => onKeyDown(event, columnKey)}
+        tabIndex={0}
+        aria-haspopup="menu"
+        aria-keyshortcuts="Shift+F10"
       >
         <span className="table-heading label-s-semibold">
           Status
@@ -961,6 +973,10 @@ function TableHeaderCell({
       ref={setHeaderRef}
       onPointerDown={(event) => onPointerDown(event, columnKey)}
       onContextMenu={(event) => onContextMenu(event, columnKey)}
+      onKeyDown={(event) => onKeyDown(event, columnKey)}
+      tabIndex={0}
+      aria-haspopup="menu"
+      aria-keyshortcuts="Shift+F10"
     >
       {columnConfig[columnKey].label}
     </th>
@@ -1056,6 +1072,8 @@ function ColumnHeaderMenu({
   onPin,
   onHide,
   onClose,
+  anchor,
+  fallbackFocus,
 }: {
   state: ColumnContextMenuState;
   columnOrder: DataColumnKey[];
@@ -1065,74 +1083,36 @@ function ColumnHeaderMenu({
   onPin: (columnKey: DataColumnKey) => void;
   onHide: (columnKey: DataColumnKey) => void;
   onClose: () => void;
+  anchor: HTMLElement | null;
+  fallbackFocus: HTMLElement | null;
 }) {
   const visibleColumnOrder = columnOrder.filter((columnKey) => !hiddenColumns.includes(columnKey));
   const columnIndex = visibleColumnOrder.indexOf(state.columnKey);
   const canMoveLeft = columnIndex > 0;
-  const canMoveRight = columnIndex >= 0 && columnIndex < visibleColumnOrder.length - 1;
+  const canMoveRight = columnIndex >= 0 && visibleColumnOrder.slice(columnIndex + 1).some((columnKey) => columnKey !== fixedEndColumn);
 
-  useEffect(() => {
-    const closeMenu = () => onClose();
-
-    window.addEventListener("click", closeMenu);
-    window.addEventListener("keydown", closeMenu);
-
-    return () => {
-      window.removeEventListener("click", closeMenu);
-      window.removeEventListener("keydown", closeMenu);
-    };
-  }, [onClose]);
-
-  return (
-    <div
-      className="column-header-menu"
-      style={{ left: state.x, top: state.y } as CSSProperties}
-      onClick={(event) => event.stopPropagation()}
-    >
-      <button
-        className="label-s-semibold"
-        type="button"
-        disabled={!canMoveLeft}
-        onClick={() => {
-          onMoveLeft(state.columnKey);
-          onClose();
-        }}
-      >
-        Move left
-      </button>
-      <button
-        className="label-s-semibold"
-        type="button"
-        disabled={!canMoveRight}
-        onClick={() => {
-          onMoveRight(state.columnKey);
-          onClose();
-        }}
-      >
-        Move right
-      </button>
-      <button
-        className="label-s-semibold"
-        type="button"
-        onClick={() => {
-          onPin(state.columnKey);
-          onClose();
-        }}
-      >
-        Pin column
-      </button>
-      <button
-        className="label-s-semibold"
-        type="button"
-        onClick={() => {
-          onHide(state.columnKey);
-          onClose();
-        }}
-      >
-        Hide column
-      </button>
-    </div>
-  );
+  return <BriskSelect
+    mode="action"
+    ariaLabel={`${columnConfig[state.columnKey].label} column actions`}
+    placeholder="Column actions"
+    value=""
+    clearable={false}
+    open
+    actionContext={{ ...state, anchor, fallbackFocus }}
+    onOpenChange={(open) => { if (!open) onClose(); }}
+    options={[
+      { value: "left", label: "Move left", disabled: !canMoveLeft },
+      { value: "right", label: "Move right", disabled: !canMoveRight },
+      { value: "pin", label: "Pin column" },
+      { value: "hide", label: "Hide column", disabled: visibleColumnOrder.length <= 2 },
+    ]}
+    onChange={(action) => {
+      if (action === "left") onMoveLeft(state.columnKey);
+      else if (action === "right") onMoveRight(state.columnKey);
+      else if (action === "pin") onPin(state.columnKey);
+      else if (action === "hide") onHide(state.columnKey);
+    }}
+  />;
 }
 
 function ColumnVisibilityMenu({

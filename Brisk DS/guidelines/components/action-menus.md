@@ -16,4 +16,6 @@ Arrow keys browse enabled commands with wrapping; Home and End reach the first a
 
 Context menus fit the visual viewport, flip above when appropriate, and update on scrolling/resizing. The portal stays within the nearest native dialog, otherwise the document body. A stable fallback handles actions such as Hide column that remove the original header. Actions and persistence remain the caller's responsibility.
 
+Videos headers expose Shift+F10 and the Context Menu key alongside existing right-click access. Supply `keyboard: true` for a keyboard-opened context menu. Staff/Client headers preserve the Project and Actions anchors, and cannot move a data column past fixed Actions. The last optional column cannot be hidden. The Freelancer menu retains only Move left, Move right and Pin column; hiding remains unavailable.
+
 Do not add deletion, confirmation flows or new permissions as part of this pilot. Hide column is a reversible view action, not a destructive action.

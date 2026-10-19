@@ -2,6 +2,7 @@
 
 import type {
   CSSProperties,
+  KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
   UIEvent as ReactUIEvent,
@@ -32,6 +33,7 @@ export type RoleVideoColumnContextMenuState<ColumnKey extends string> = {
   columnKey: ColumnKey;
   x: number;
   y: number;
+  keyboard?: boolean;
 };
 
 export type RoleVideoColumnSettlingGhostState = {
@@ -295,6 +297,13 @@ export function useRoleVideoTable<ColumnKey extends string, PrimaryColumnKey ext
     setColumnContextMenu({ columnKey, x: event.clientX, y: event.clientY });
   };
 
+  const handleColumnKeyDown = (event: ReactKeyboardEvent<HTMLTableCellElement>, columnKey: ColumnKey) => {
+    if (event.key !== "ContextMenu" && !(event.key === "F10" && event.shiftKey)) return;
+    event.preventDefault();
+    const rect = event.currentTarget.getBoundingClientRect();
+    setColumnContextMenu({ columnKey, x: rect.left, y: rect.bottom, keyboard: true });
+  };
+
   const getColumnWidth = (columnKey: TableColumnKey) =>
     columnKey === primaryColumnKey ? primaryColumnWidth : columnConfig[columnKey as ColumnKey].width;
 
@@ -311,6 +320,7 @@ export function useRoleVideoTable<ColumnKey extends string, PrimaryColumnKey ext
     getColumnShiftDirection: getColumnShiftDirectionFor,
     getColumnWidth,
     handleColumnContextMenu,
+    handleColumnKeyDown,
     handleColumnPointerDown,
     handleTableScroll,
     headerRefs,
