@@ -27,8 +27,10 @@ export function PersonStatusBadge({ status }: { status: PersonStatus }) {
   return <span className={`people-status-badge is-${slug(status)} label-xs-semibold`}>{status}</span>;
 }
 
-export function CapacityButton({ onClick, person }: { onClick: () => void; person: Person }) {
+export function CapacityButton({ onClick, person, compact = false }: { onClick: () => void; person: Person; compact?: boolean }) {
   const rollup = getWorkloadRollup(person);
+  const capacityStatus = rollup.isOverCapacity ? "Over capacity" : rollup.level === "near" ? "Near capacity" : "At capacity";
+  const compactSummary = `${rollup.availableHours}h available, ${rollup.activeHours}/${person.weeklyCapacityHours ?? 0}h booked${rollup.potentialHours > 0 ? `, ${rollup.potentialHours}h awaiting Client` : ""}${rollup.level !== "plenty" ? `, ${capacityStatus}` : ""}`;
 
   if (person.type === "Client contact" || person.type === "Contact") return <span className="label-s people-muted">Not applicable</span>;
 
@@ -42,10 +44,20 @@ export function CapacityButton({ onClick, person }: { onClick: () => void; perso
   }
 
   return (
-    <button className={`people-capacity-button is-${rollup.level}`} type="button" onClick={onClick} aria-label={`View ${person.name}'s workload - ${rollup.label}`}>
+    <button className={`people-capacity-button is-${rollup.level}${compact ? " is-compact" : ""}`} type="button" onClick={onClick} aria-label={`View ${person.name}'s workload - ${compact ? compactSummary : rollup.label}`}>
       <strong className="label-s-semibold">{rollup.availableHours}h available</strong>
-      <small className="label-xs">{rollup.activeHours}/{person.weeklyCapacityHours ?? 0}h booked · +{rollup.potentialHours}h potential</small>
-      <span className={`people-capacity-status is-${rollup.level} label-xs-semibold`}><span aria-hidden="true" />{rollup.label}</span>
+      {compact ? (
+        <>
+          <small className="label-xs">{rollup.activeHours}/{person.weeklyCapacityHours ?? 0}h booked</small>
+          {rollup.potentialHours > 0 ? <small className="label-xs">{rollup.potentialHours}h awaiting Client</small> : null}
+          {rollup.level !== "plenty" ? <span className={`people-capacity-status is-${rollup.level} label-xs-semibold`}>{capacityStatus}</span> : null}
+        </>
+      ) : (
+        <>
+          <small className="label-xs">{rollup.activeHours}/{person.weeklyCapacityHours ?? 0}h booked · +{rollup.potentialHours}h potential</small>
+          <span className={`people-capacity-status is-${rollup.level} label-xs-semibold`}><span aria-hidden="true" />{rollup.label}</span>
+        </>
+      )}
     </button>
   );
 }
