@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskTimePicker } from "@/components/shoot/BriskTimePicker";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -612,17 +613,20 @@ function ActiveVideosWorkspace() {
           </div>
         </section>
 
-      <nav className="active-videos-tabs" aria-label="Project status">
-        {statusTabs.map((tab) => (
-          <button
-            className={`active-videos-tab label-s-semibold ${selectedTab === tab ? "selected" : ""}`}
-            type="button"
-            key={tab}
-            onClick={() => setSelectedTab(tab)}
-          >
-            {getStatusLabel(tab)} ({statusCounts[tab]})
-          </button>
-        ))}
+      <div className="active-videos-tabs">
+        <FilterGroup className="active-videos-status-filters" aria-label="Project status">
+          {statusTabs.map((tab) => (
+            <FilterButton
+              selected={selectedTab === tab}
+              count={statusCounts[tab]}
+              type="button"
+              key={tab}
+              onClick={() => setSelectedTab(tab)}
+            >
+              {getStatusLabel(tab)}
+            </FilterButton>
+          ))}
+        </FilterGroup>
         <button
           className={`active-filters-toggle label-s-semibold ${areFiltersVisible ? "selected" : ""}`}
           type="button"
@@ -642,7 +646,7 @@ function ActiveVideosWorkspace() {
           Filters
           <DsIcon name="caret-down" size={14} />
         </button>
-      </nav>
+      </div>
 
       {areFiltersVisible ? (
         <section className="active-videos-filters" id="active-videos-filters" aria-label="Filters">
