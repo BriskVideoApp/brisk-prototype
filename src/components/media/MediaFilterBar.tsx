@@ -23,7 +23,6 @@ const typeOptions: { label: string; value: MediaTypeFilter }[] = [
   { label: "Audio", value: "audio" },
   { label: "Image", value: "image" },
   { label: "Document", value: "document" },
-  { label: "Others", value: "other" },
 ];
 
 export function MediaFilterBar(props: MediaFilterBarProps) {
