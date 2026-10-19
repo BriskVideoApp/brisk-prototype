@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
@@ -95,10 +96,7 @@ export function ReviewRequestMessageSettingsPage() {
             </div>
           </header>
           <div className="notification-settings-section-content">
-            <label className="review-request-default-field label-s-semibold">
-              Default message
-              <textarea className="paragraph-s" maxLength={240} rows={5} required value={draft} onChange={(event) => { setDraft(event.target.value); setSavedNotice(false); }} />
-            </label>
+            <Textarea label="Default message" wrapperClassName="review-request-default-field" maxLength={240} rows={5} required value={draft} onChange={(event) => { setDraft(event.target.value); setSavedNotice(false); }} />
             <div className="review-request-default-preview">
               <span className="label-xs-semibold">Example</span>
               <p className="paragraph-s">{formatReviewRequestMessage(draft, previewStage, previewProject)}</p>

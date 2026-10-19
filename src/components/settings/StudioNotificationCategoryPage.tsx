@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type {
@@ -348,10 +349,7 @@ function NotificationEditorModal({
     >
       <div className="customer-message-template-fields">
         <Input label="Title" value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
-        <label className="customer-message-template-textarea">
-          <span className="label-m-semibold">Message</span>
-          <textarea maxLength={240} rows={5} value={draft.message} onChange={(event) => setDraft((current) => ({ ...current, message: event.target.value }))} />
-        </label>
+        <Textarea label="Message" wrapperClassName="customer-message-template-textarea" maxLength={240} rows={5} value={draft.message} onChange={(event) => setDraft((current) => ({ ...current, message: event.target.value }))} />
       </div>
     </ClientModal>
   );

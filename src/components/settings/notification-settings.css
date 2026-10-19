@@ -22,15 +22,8 @@
   gap: var(--brisk-space-s);
 }
 
-.review-request-default-field textarea {
-  width: 100%;
+.review-request-default-field [data-brisk-textarea] {
   min-height: calc(var(--brisk-space-3xl) * 3);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-m);
-  resize: vertical;
 }
 
 .review-request-default-preview {
@@ -721,22 +714,6 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(var(--brisk-space-none), 1fr));
   gap: var(--brisk-space-l);
-}
-
-.customer-message-template-textarea textarea {
-  width: 100%;
-  resize: vertical;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  color: var(--brisk-text-primary);
-  outline: var(--brisk-space-none);
-  padding: var(--brisk-space-m);
-}
-
-.customer-message-template-textarea textarea:focus-visible {
-  border-color: var(--brisk-border-primary);
-  box-shadow: var(--brisk-shadow-s);
 }
 
 .customer-message-automatic-details {

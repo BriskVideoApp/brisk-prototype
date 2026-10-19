@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -209,10 +210,7 @@ function MessageEditorModal({
     >
       <div className="customer-message-template-fields">
         <Input label="Subject" value={draft.subject} onChange={(event) => setDraft((current) => ({ ...current, subject: event.target.value }))} />
-        <label className="customer-message-template-textarea">
-          <span className="label-m-semibold">Message</span>
-          <textarea maxLength={240} rows={5} value={draft.context} onChange={(event) => setDraft((current) => ({ ...current, context: event.target.value }))} />
-        </label>
+        <Textarea label="Message" wrapperClassName="customer-message-template-textarea" maxLength={240} rows={5} value={draft.context} onChange={(event) => setDraft((current) => ({ ...current, context: event.target.value }))} />
         <Input label="Sign-off" value={draft.signOff} onChange={(event) => setDraft((current) => ({ ...current, signOff: event.target.value }))} />
         <div className="customer-message-automatic-details" aria-label="Information Brisk adds automatically">
           <span className="label-xs">Brisk adds these automatically</span>
