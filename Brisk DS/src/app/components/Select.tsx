@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type ComponentPropsWithRef, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 
 export type BriskSelectOption<T extends string = string> = {
@@ -15,6 +15,17 @@ export type BriskSelectOption<T extends string = string> = {
   content?: ReactNode;
   group?: string;
   searchText?: string;
+  /** Action menus only. Disabled commands stay visible but cannot be invoked. */
+  disabled?: boolean;
+};
+
+type ActionTriggerProps = Pick<ComponentPropsWithRef<"button">, "ref" | "onClick" | "onKeyDown" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-label">;
+
+export type BriskActionContext = {
+  x: number;
+  y: number;
+  anchor: HTMLElement | null;
+  fallbackFocus?: HTMLElement | null;
 };
 
 type BriskSelectSharedProps<T extends string> = {
@@ -28,6 +39,9 @@ type BriskSelectSharedProps<T extends string> = {
   emptyLabel?: string;
   /** Actions share the menu surface but do not represent a saved field value. */
   mode?: "select" | "action";
+  /** Action-mode adapters retain the caller's existing trigger or context anchor. */
+  actionTrigger?: (props: ActionTriggerProps) => ReactNode;
+  actionContext?: BriskActionContext;
   open?: boolean;
   footer?: ReactNode;
   hideCaret?: boolean;
@@ -81,6 +95,8 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     searchPlaceholder = "Search",
     emptyLabel = "No matching options",
     mode = "select",
+    actionTrigger,
+    actionContext,
     open,
     footer,
     hideCaret = false,
@@ -101,6 +117,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     tooltip,
   } = props;
   const searchable = mode !== "action" && (props.searchable ?? options.length > 15);
+  const context = mode === "action" ? actionContext : undefined;
   const listboxId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -127,24 +144,25 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   }, [options, query]);
 
   const positionMenu = () => {
-    const trigger = triggerRef.current;
-    if (!trigger) return;
-    const rect = trigger.getBoundingClientRect();
+    const anchor = context?.anchor ?? triggerRef.current;
+    if (!anchor) return;
+    const rect = context ? { left: context.x, right: context.x, top: context.y, bottom: context.y, width: 0 } : anchor.getBoundingClientRect();
     const viewport = window.visualViewport;
     const viewportTop = viewport?.offsetTop ?? 0;
     const viewportLeft = viewport?.offsetLeft ?? 0;
     const viewportHeight = viewport?.height ?? window.innerHeight;
     const viewportWidth = viewport?.width ?? window.innerWidth;
-    const tokens = getComputedStyle(trigger);
+    const tokens = getComputedStyle(anchor);
     const viewportPadding = parseFloat(tokens.getPropertyValue("--brisk-space-s"));
     const triggerGap = parseFloat(tokens.getPropertyValue("--brisk-space-xs"));
-    const rowHeight = parseFloat(tokens.getPropertyValue("--brisk-space-3xl"));
+    const rowHeight = parseFloat(tokens.getPropertyValue("--brisk-space-3xl")) + (mode === "action" ? parseFloat(tokens.getPropertyValue("--brisk-space-xs")) : 0);
     const searchHeight = searchable ? rowHeight + viewportPadding : viewportPadding;
     const actionHeight = (props.multiple ? rowHeight + viewportPadding : clearable && selectedValues.length ? rowHeight : 0) + (footerAction ? rowHeight : 0) + (footer ? rowHeight * 4 : 0);
     const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight);
-    const preferredWidth = Math.max(192, rect.width);
+    const preferredWidth = mode === "action" ? Math.max(rowHeight * 5, rect.width) : Math.max(192, rect.width);
     const width = Math.min(preferredWidth, viewportWidth - (viewportPadding * 2));
-    const left = Math.min(Math.max(viewportLeft + viewportPadding, rect.left), viewportLeft + viewportWidth - width - viewportPadding);
+    const preferredLeft = mode === "action" && !context ? rect.right - width : rect.left;
+    const left = Math.min(Math.max(viewportLeft + viewportPadding, preferredLeft), viewportLeft + viewportWidth - width - viewportPadding);
     const spaceBelow = viewportTop + viewportHeight - rect.bottom - triggerGap - viewportPadding;
     const spaceAbove = rect.top - viewportTop - triggerGap - viewportPadding;
     const openAbove = spaceBelow < preferredHeight && spaceAbove > spaceBelow;
@@ -162,7 +180,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
 
   const openMenu = (nextActiveIndex = Math.max(0, options.findIndex((option) => selectedValues.includes(option.value))), keyboard = false) => {
     if (disabled) return;
-    setActiveIndex(nextActiveIndex);
+    setActiveIndex(mode === "action" && options[nextActiveIndex]?.disabled ? Math.max(0, options.findIndex((option) => !option.disabled)) : nextActiveIndex);
     setShowActiveFocus(keyboard);
     setQuery(initialQuery);
     onSearchChange?.(initialQuery);
@@ -174,10 +192,31 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     setIsOpen(false);
     setQuery("");
     onOpenChange?.(false);
-    if (returnFocus) window.requestAnimationFrame(() => triggerRef.current?.focus());
+    if (returnFocus) {
+      const target = context?.anchor ?? triggerRef.current;
+      const fallback = context?.fallbackFocus;
+      window.requestAnimationFrame(() => (target?.isConnected ? target : fallback)?.focus({ preventScroll: true }));
+    }
   };
 
   const selectOption = (nextValue: T | "") => {
+    if (mode === "action" && options.find((option) => option.value === nextValue)?.disabled) return;
+    if (mode === "action") {
+      // Close first so an action can open a dialog without losing its focus to this menu.
+      setIsOpen(false);
+      setQuery("");
+      onOpenChange?.(false);
+      const target = context?.anchor ?? triggerRef.current;
+      const fallback = context?.fallbackFocus;
+      (target?.isConnected ? target : fallback)?.focus({ preventScroll: true });
+      if (!props.multiple) props.onChange(nextValue);
+      window.requestAnimationFrame(() => {
+        if (document.activeElement === document.body || document.activeElement === target) {
+          (target?.isConnected ? target : fallback)?.focus({ preventScroll: true });
+        }
+      });
+      return;
+    }
     if (props.multiple) {
       if (!nextValue) props.onChange([]);
       else props.onChange(selectedValues.includes(nextValue) ? selectedValues.filter((value) => value !== nextValue) : [...selectedValues, nextValue]);
@@ -203,7 +242,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const updatePosition = () => positionMenu();
     const closeOnOutsideClick = (event: PointerEvent) => {
       const target = event.target as Node;
-      if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) closeMenu();
+      if (!(context?.anchor ?? triggerRef.current)?.contains(target) && !menuRef.current?.contains(target)) closeMenu();
     };
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
@@ -211,7 +250,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     window.visualViewport?.addEventListener("scroll", updatePosition);
     const closeOnFocusOutside = (event: FocusEvent) => {
       const target = event.target as Node;
-      if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) closeMenu();
+      if (!(context?.anchor ?? triggerRef.current)?.contains(target) && !menuRef.current?.contains(target)) closeMenu();
     };
     document.addEventListener("pointerdown", closeOnOutsideClick);
     document.addEventListener("focusin", closeOnFocusOutside);
@@ -225,7 +264,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       document.removeEventListener("pointerdown", closeOnOutsideClick);
       document.removeEventListener("focusin", closeOnFocusOutside);
     };
-  }, [isOpen, searchable]);
+  }, [isOpen, searchable, context?.x, context?.y, context?.anchor]);
 
   useEffect(() => {
     setActiveIndex((current) => Math.min(current, Math.max(0, filteredOptions.length - 1)));
@@ -252,14 +291,15 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       (nextAction ?? (searchable ? searchRef.current : mode === "action" ? optionsRef.current : triggerRef.current))?.focus();
       return;
     }
-    const scope = triggerRef.current?.closest("dialog") ?? document;
+    const anchor = context?.anchor ?? triggerRef.current;
+    const scope = anchor?.closest("dialog") ?? document;
     const controls = Array.from(scope.querySelectorAll<HTMLElement>("button, input, textarea, select, a[href], [tabindex='0']"))
       .filter((element) => element.tabIndex >= 0 && !menuRef.current?.contains(element) && !element.matches(":disabled, [inert], [aria-hidden='true']") && element.getClientRects().length > 0);
-    const index = controls.indexOf(triggerRef.current!);
+    const index = controls.indexOf(anchor!);
     const next = controls[index + (event.shiftKey ? -1 : 1)];
     if (next) event.preventDefault();
     closeMenu();
-    (next ?? triggerRef.current)?.focus();
+    (next ?? anchor)?.focus();
   };
 
   const handleMenuKeyDown = (event: KeyboardEvent) => {
@@ -274,6 +314,27 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     if (event.target instanceof HTMLElement && event.target.closest(".brisk-select-custom-footer")) return;
     if (event.target instanceof HTMLButtonElement && menuRef.current?.contains(event.target) && !["option", "menuitem"].includes(event.target.getAttribute("role") ?? "")) return;
     const isSearch = event.target === searchRef.current;
+    if (mode === "action") {
+      const enabled = filteredOptions.map((option, index) => option.disabled ? -1 : index).filter((index) => index >= 0);
+      if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        event.preventDefault();
+        setShowActiveFocus(true);
+        const current = enabled.indexOf(activeIndex);
+        const next = event.key === "Home" ? 0 : event.key === "End" ? enabled.length - 1 : (current + (event.key === "ArrowDown" ? 1 : -1) + enabled.length) % enabled.length;
+        if (enabled[next] !== undefined) setActiveIndex(enabled[next]);
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        if (filteredOptions[activeIndex]) selectOption(filteredOptions[activeIndex].value);
+      } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        event.preventDefault();
+        const previous = typeaheadRef.current;
+        const text = Date.now() - previous.time > 700 ? event.key : previous.text + event.key;
+        typeaheadRef.current = { text, time: Date.now() };
+        const next = filteredOptions.findIndex((option) => !option.disabled && option.label.toLowerCase().startsWith(text.toLowerCase()));
+        if (next >= 0) { setActiveIndex(next); setShowActiveFocus(true); }
+      }
+      return;
+    }
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       setShowActiveFocus(true);
@@ -300,8 +361,25 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     }
   };
 
-  return <div className={`brisk-select ${className}`}>
-    <button
+  const actionButtonProps: ActionTriggerProps = {
+    ref: triggerRef,
+    "aria-label": ariaLabel,
+    "aria-controls": isOpen ? listboxId : undefined,
+    "aria-expanded": isOpen,
+    "aria-haspopup": "menu",
+    onClick: () => isOpen ? closeMenu() : openMenu(undefined, true),
+    onKeyDown: (event) => {
+      if (isOpen) { handleMenuKeyDown(event); return; }
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const index = event.key === "ArrowUp" ? options.findLastIndex((option) => !option.disabled) : undefined;
+        openMenu(index, true);
+      }
+    },
+  };
+
+  return <div className={`brisk-select ${className}`} data-brisk-select-mode={mode}>
+    {mode === "action" && context ? null : mode === "action" && actionTrigger ? actionTrigger(actionButtonProps) : <button
       className={`brisk-select-trigger label-s ${selectedOptions.length ? "" : "is-placeholder"} ${triggerClassName}`}
       data-brisk-select-placeholder-tone={placeholderTone}
       ref={triggerRef}
@@ -331,9 +409,9 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
         {triggerContent ?? <>{selectedLogoSrc ? <img className="brisk-select-option-logo" src={selectedLogoSrc} alt="" /> : showSelectedIcon && selectedIcon ? <DsIcon name={selectedIcon} size={16} /> : null}<span>{triggerLabel}</span></>}
       </span>
       {!hideCaret ? <DsIcon name="caret-down" size={12} /> : null}
-    </button>
+    </button>}
     {name ? selectedValues.map((value) => <input key={value} type="hidden" name={name} value={value} />) : null}
-    {isOpen ? createPortal(<div className="brisk-select-menu" ref={menuRef} style={menuStyle} onKeyDown={handleMenuKeyDown}>
+    {isOpen ? createPortal(<div className="brisk-select-menu" data-brisk-select-mode={mode} ref={menuRef} style={menuStyle} onKeyDown={handleMenuKeyDown}>
       {searchable ? <label className="brisk-select-search"><DsIcon name="search" size={16} /><input className="label-s" ref={searchRef} type="search" role="combobox" aria-label={`Search ${ariaLabel.toLowerCase()}`} aria-expanded={isOpen} aria-controls={listboxId} aria-autocomplete="list" aria-activedescendant={filteredOptions[activeIndex] ? `${listboxId}-${activeIndex}` : undefined} placeholder={searchPlaceholder} value={query} onChange={(event) => { setQuery(event.target.value); onSearchChange?.(event.target.value); setActiveIndex(0); }} /></label> : null}
       <div className="brisk-select-options" ref={optionsRef} role={mode === "action" ? "menu" : "listbox"} tabIndex={mode === "action" ? -1 : undefined} aria-activedescendant={mode === "action" && filteredOptions[activeIndex] ? `${listboxId}-${activeIndex}` : undefined} id={listboxId} aria-label={ariaLabel} aria-multiselectable={props.multiple || undefined}>
         {filteredOptions.map((option, index) => {
@@ -343,12 +421,13 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
             <button
               className={`brisk-select-option label-s ${isSelected && mode !== "action" ? "selected" : ""} ${index === activeIndex && showActiveFocus ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`}
               type="button"
+              disabled={mode === "action" && option.disabled}
               role={mode === "action" ? "menuitem" : "option"}
               id={`${listboxId}-${index}`}
               tabIndex={-1}
               aria-selected={mode === "action" ? undefined : isSelected}
               data-active={index === activeIndex}
-              onMouseEnter={() => { setActiveIndex(index); setShowActiveFocus(false); }}
+              onMouseEnter={() => { if (mode === "action" && option.disabled) return; setActiveIndex(index); setShowActiveFocus(false); }}
               onPointerDown={(event) => event.preventDefault()}
               onClick={() => selectOption(option.value)}
             >
@@ -378,6 +457,6 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
         } else closeMenu();
         footerAction.onSelect(trigger);
       }}>{footerAction.icon ? <DsIcon name={footerAction.icon} size={16} /> : null}{footerAction.label}</button> : null}
-    </div>, triggerRef.current?.closest("dialog") ?? document.body) : null}
+    </div>, (context?.anchor ?? triggerRef.current)?.closest("dialog") ?? document.body) : null}
   </div>;
 }

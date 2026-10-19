@@ -642,36 +642,14 @@
   border-left: 1px solid var(--brisk-border-secondary) !important;
 }
 
-.chat-call-control button:hover,
-.chat-call-menu button:hover {
+.chat-call-control button:hover {
   background: var(--brisk-brand-secondary);
 }
 
-.chat-call-menu {
-  position: absolute;
-  top: calc(100% + var(--brisk-space-s));
-  right: 0;
-  z-index: 30;
-  display: grid;
-  width: calc(var(--brisk-space-3xl) * 5);
-  gap: var(--brisk-space-xs);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-s);
-}
-
-.chat-call-menu button {
+.chat-call-actions {
   display: flex;
-  align-items: center;
-  gap: var(--brisk-space-m);
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-  text-align: left;
+  width: auto;
+  flex: 0 0 auto;
 }
 
 .chat-icon-button {

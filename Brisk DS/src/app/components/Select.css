@@ -167,6 +167,18 @@
 
 .brisk-select-option.active { outline: 2px solid var(--brisk-border-focus); outline-offset: -2px; }
 
+/* The approved action-menu pilot is separate from ordinary field density. */
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option {
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+}
+
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option:disabled {
+  color: var(--brisk-text-tertiary);
+  background: transparent;
+  outline: none;
+  cursor: not-allowed;
+}
+
 .brisk-select-option.has-divider {
   border-radius: var(--brisk-radius-s);
   margin-top: var(--brisk-space-xs);

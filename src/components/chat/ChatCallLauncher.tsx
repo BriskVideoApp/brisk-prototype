@@ -118,29 +118,24 @@ export function ChatCallLauncher({
             <DsIcon name="headphones" size={18} />
             {prominent ? <span>Start a call</span> : null}
           </button>
-          <button
-            className="chat-call-menu-button"
-            type="button"
-            aria-label="Open call options"
-            aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen((current) => !current)}
-          >
-            <DsIcon name="caret-down" size={14} />
-          </button>
+          <BriskSelect
+            mode="action"
+            ariaLabel="Open call options"
+            placeholder="Call options"
+            value=""
+            clearable={false}
+            open={isMenuOpen}
+            onOpenChange={setIsMenuOpen}
+            className="chat-call-actions"
+            actionTrigger={(props) => <button {...props} className="chat-call-menu-button" type="button"><DsIcon name="caret-down" size={14} /></button>}
+            options={[
+              { value: "start", label: "Start call", icon: "headphones" },
+              { value: "copy", label: "Copy call link", icon: "link" },
+            ]}
+            onChange={(action) => { if (action === "start") openPreview(); else if (action === "copy") void copyCallLink(); }}
+          />
         </div>
 
-        {isMenuOpen ? (
-          <div className="chat-call-menu" role="menu">
-            <button className="label-s" type="button" role="menuitem" onClick={openPreview}>
-              <DsIcon name="headphones" size={18} />
-              Start call
-            </button>
-            <button className="label-s" type="button" role="menuitem" onClick={copyCallLink}>
-              <DsIcon name="link" size={18} />
-              Copy call link
-            </button>
-          </div>
-        ) : null}
       </div>
 
       {isPreviewOpen ? (

@@ -169,4 +169,6 @@ Use the approved [quiet FilterGroup/FilterButton and Tabs](quiet-choices.md) for
 
 ## React anchored-settings standard
 
+Short command lists use the approved [quiet action-menu pattern](action-menus.md), built on `BriskSelect` action mode. Keep these separate from settings checklists and ordinary selection fields. The initial pilot covers Chat call options and Videos column actions only.
+
 Use the approved [Popover](popover.md) for short contextual settings checklists. Compose the existing DS Checkbox and Button, with a scrollable body and visible footer. The Videos Columns pilot preserves its existing table logic and saved preferences. Dropdown fields, navigation menus and specialised pickers remain separate patterns.
