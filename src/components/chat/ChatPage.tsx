@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -1216,8 +1217,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
             ((activeView === "projects" && activeProjectChat) ||
               (activeView === "dms" && selectedDm) ||
               (activeView === "groups" && selectedGroup)) ? (
-              <button
-                className="chat-header-back"
+              <IconButton
+                size="M"
+                tooltipAlign="start"
                 type="button"
                 aria-label={
                   selectedDm
@@ -1247,7 +1249,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 }}
               >
                 <DsIcon name="arrow-left" size={18} />
-              </button>
+              </IconButton>
             ) : null}
             {selectedDmUser && activeView === "dms" ? (
               <CommentAvatar user={selectedDmUser} compact />
@@ -1353,23 +1355,25 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                 <Link className="chat-secondary-button label-s-semibold" href={getProjectStageHref(selectedProject.id, "brief")} onClick={onNavigate}>
                   Go to project
                 </Link>
-                <button
-                  className="chat-icon-button"
+                <IconButton
+                  size="M"
+                  tooltipAlign="end"
                   type="button"
                   aria-label="Manage project members"
                   onClick={() => setIsSettingsOpen(true)}
                 >
                   <DsIcon name="users-three" size={19} />
-                </button>
+                </IconButton>
                 {activeChannel === "external" ? (
-                  <button
-                    className="chat-icon-button"
+                  <IconButton
+                    size="M"
+                    tooltipAlign="end"
                     type="button"
                     aria-label="Open External Chat settings"
                     onClick={() => setIsConnectorSettingsOpen(true)}
                   >
                     <DsIcon name="settings" size={19} />
-                  </button>
+                  </IconButton>
                 ) : null}
               </>
             ) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { BriskSelect } from "@/components/form/BriskSelect";
 
 import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
@@ -389,9 +390,9 @@ export function ShortcutSheet({ onClose }: { onClose: () => void }) {
       >
         <header>
           <h2 id="chat-shortcuts-title">Keyboard shortcuts</h2>
-          <button className="chat-icon-button" type="button" aria-label="Close shortcuts" onClick={onClose}>
+          <IconButton tooltipAlign="end" tooltipPlacement="bottom" type="button" aria-label="Close shortcuts" onClick={onClose}>
             <DsIcon name="x-close-cross" size={18} />
-          </button>
+          </IconButton>
         </header>
         <dl>
           {shortcuts.map(([keys, action]) => (

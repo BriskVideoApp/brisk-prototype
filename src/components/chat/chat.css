@@ -77,7 +77,7 @@
     transform 120ms ease;
 }
 
-.chat-shell button:focus-visible,
+.chat-shell button:not([data-brisk-icon-button]):focus-visible,
 .chat-shell a:focus-visible,
 .chat-shell input:focus-visible,
 .chat-shell textarea:focus-visible,
@@ -122,7 +122,6 @@
 .chat-main-header,
 .chat-main-header-title,
 .chat-main-header-actions,
-.chat-header-back,
 .chat-channel-tabs,
 .chat-channel-tab,
 .chat-composer-editing,
@@ -675,7 +674,6 @@
   text-align: left;
 }
 
-.chat-header-back,
 .chat-icon-button {
   width: var(--brisk-space-2xl);
   height: var(--brisk-space-2xl);
@@ -684,14 +682,12 @@
   border-radius: var(--brisk-radius-s);
 }
 
-.chat-header-back,
 .chat-icon-button {
   border: 1px solid var(--brisk-border-primary);
   background: var(--brisk-white);
   color: var(--brisk-text-primary);
 }
 
-.chat-header-back:hover,
 .chat-icon-button:hover,
 .chat-secondary-button:hover,
 .chat-primary-button:hover {

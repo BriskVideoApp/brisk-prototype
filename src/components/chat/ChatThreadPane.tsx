@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import type { ComposerSubmission } from "@/components/chat/ChatComposer";
 import { ChatDateDivider, ChatMessageCard } from "@/components/chat/ChatMessageList";
@@ -64,15 +65,15 @@ export function ChatThreadPane({
           <h2>Thread</h2>
           <span className="label-xs">{project.code}</span>
         </div>
-        <button
-          className="chat-icon-button"
+        <IconButton
+          tooltipAlign="end"
+          tooltipPlacement="bottom"
           type="button"
           aria-label="Close thread"
-          title="Close thread"
           onClick={onClose}
         >
           <DsIcon name="x-close-cross" size={18} />
-        </button>
+        </IconButton>
       </header>
 
       <div className="chat-thread-content">
