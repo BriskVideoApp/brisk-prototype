@@ -408,13 +408,6 @@
   z-index: 100;
 }
 
-.transcript-script-version {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--brisk-space-xs);
-  color: var(--brisk-text-secondary);
-}
-
 .transcripts-active .script-document-header {
   flex-wrap: wrap;
 }

@@ -2040,11 +2040,7 @@ export function ScriptPage({
               </button>
             </h1>
           )}
-          {activeSubtabId === "transcripts" ? (
-            <div className="transcript-script-version">
-              {scriptVersionControl}
-            </div>
-          ) : scriptVersionControl}
+          {activeSubtabId === "script" ? scriptVersionControl : null}
         </div>
       </div>
 
