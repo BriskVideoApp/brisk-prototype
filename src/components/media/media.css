@@ -594,31 +594,6 @@
   padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
-.media-folder-menu {
-  position: fixed;
-  z-index: 80;
-  display: grid;
-  width: 180px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-s);
-}
-
-.media-folder-menu button {
-  border: 0;
-  border-radius: var(--brisk-radius-s);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-  text-align: left;
-}
-
-.media-folder-menu button:hover {
-  background: var(--brisk-brand-secondary);
-}
-
 .media-main-area {
   display: flex;
   min-width: 0;
@@ -639,66 +614,13 @@
   gap: var(--brisk-space-s);
 }
 
-.media-upload-menu-wrap {
-  position: relative;
+.brisk-select.media-upload-menu-wrap {
   display: inline-flex;
+  width: auto;
 }
 
-.media-upload-menu {
-  position: absolute;
-  top: calc(100% + var(--brisk-space-s));
-  left: var(--brisk-space-none);
-  z-index: 65;
-  display: grid;
-  width: calc(var(--brisk-space-3xl) * 5);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-s);
-}
-
-.media-upload-menu button {
-  display: grid;
-  min-width: 0;
-  min-height: 48px;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  gap: var(--brisk-space-s);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-  text-align: left;
-}
-
-.media-upload-menu button:hover,
-.media-upload-menu button:focus-visible {
-  background: var(--brisk-brand-secondary);
-  outline: 0;
-}
-
-.media-upload-menu button > span {
-  display: grid;
-  min-width: 0;
-  grid-column: 1 / -1;
-  gap: var(--brisk-space-xxs);
-}
-
-.media-upload-menu button:has(> .ds-icon) > span {
-  grid-column: 2;
-}
-
-.media-upload-menu button span span {
-  color: var(--brisk-text-secondary);
-}
-
-.media-upload-menu-divider {
-  height: 1px;
-  background: var(--brisk-border-secondary);
-  margin: var(--brisk-space-xs) var(--brisk-space-s);
+.media-upload-menu-wrap > button {
+  width: 100%;
 }
 
 .media-primary-button,

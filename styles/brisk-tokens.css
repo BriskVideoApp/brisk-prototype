@@ -43,6 +43,8 @@
   --brisk-system-neutral: #8fa0af;
   --brisk-system-warning: #c89600;
   --brisk-system-error: #fe2836;
+  --brisk-red-60: #d60428;
+  --brisk-text-destructive: var(--brisk-red-60);
   --brisk-cyan-10: #d2f7ff;
   --brisk-cyan-70: #145b64;
   --brisk-purple-10: #f3eeff;

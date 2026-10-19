@@ -172,6 +172,15 @@
   min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
 }
 
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option[data-action-tone='danger'] {
+  color: var(--brisk-text-destructive);
+}
+
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option.has-divider {
+  margin-top: var(--brisk-space-s);
+  padding-top: var(--brisk-space-none);
+}
+
 .brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option:disabled {
   color: var(--brisk-text-tertiary);
   background: transparent;

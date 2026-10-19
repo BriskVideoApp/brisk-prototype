@@ -17,6 +17,8 @@ export type BriskSelectOption<T extends string = string> = {
   searchText?: string;
   /** Action menus only. Disabled commands stay visible but cannot be invoked. */
   disabled?: boolean;
+  /** Action menus only. Styling does not change confirmation or deletion behaviour. */
+  tone?: "default" | "danger";
 };
 
 type ActionTriggerProps = Pick<ComponentPropsWithRef<"button">, "ref" | "disabled" | "onClick" | "onKeyDown" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-label">;
@@ -159,7 +161,10 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const rowHeight = parseFloat(tokens.getPropertyValue("--brisk-space-3xl")) + (mode === "action" ? parseFloat(tokens.getPropertyValue("--brisk-space-xs")) : 0);
     const searchHeight = searchable ? rowHeight + viewportPadding : viewportPadding;
     const actionHeight = (props.multiple ? rowHeight + viewportPadding : clearable && selectedValues.length ? rowHeight : 0) + (footerAction ? rowHeight : 0) + (footer ? rowHeight * 4 : 0);
-    const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight);
+    const actionSpacing = mode === "action"
+      ? (options.filter((option) => option.dividerAbove).length * viewportPadding) + parseFloat(tokens.getPropertyValue("--brisk-space-xxs"))
+      : 0;
+    const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight + actionSpacing);
     const preferredWidth = mode === "action" ? Math.max(rowHeight * 5, rect.width) : Math.max(192, rect.width);
     const width = Math.min(preferredWidth, viewportWidth - (viewportPadding * 2));
     const preferredLeft = mode === "action" && !context ? rect.right - width : rect.left;
@@ -429,6 +434,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
               tabIndex={-1}
               aria-selected={mode === "action" ? undefined : isSelected}
               data-active={index === activeIndex}
+              data-action-tone={mode === "action" ? option.tone : undefined}
               onMouseEnter={() => { if (mode === "action" && option.disabled) return; setActiveIndex(index); setShowActiveFocus(false); }}
               onPointerDown={(event) => event.preventDefault()}
               onClick={() => selectOption(option.value)}
