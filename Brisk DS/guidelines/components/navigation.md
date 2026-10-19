@@ -43,6 +43,8 @@ Use for switching between content panels at the same page level. Do not use Tabs
 
 **Radius rule:** The tab container corners that abut the content panel below are `radius/none`. The outer top corners are `radius/xs`.
 
+For Tom's approved Quiet by purpose React extension and the scoped Overview/People pilot, see [Quiet filters and content tabs](quiet-choices.md). Its underlined treatment is an explicit approved alternative, not a reinterpretation of the attached-panel geometry above.
+
 ---
 
 ## d-Breadcrumbs

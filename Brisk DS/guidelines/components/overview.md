@@ -162,3 +162,7 @@ Ordinary labelled actions use the approved [Button](buttons.md), with primary, s
 ## React icon-button standard
 
 Ordinary icon-only actions use the approved [IconButton](icon-buttons.md): quiet by default, context-sized 32/40px visual surfaces and 44px native targets. Preserve labels, callbacks, refs, visibility and native keyboard behaviour. Specialised controls retain their separate patterns.
+
+## React quiet-choice standard
+
+Use the approved [quiet FilterGroup/FilterButton and Tabs](quiet-choices.md) for the scoped list-filter and content-panel pilot. Filters remain ordinary pressed buttons; true tabs have linked panels and keyboard navigation. Preserve consumer state, callbacks, counts, roles and URLs. Segmented and specialised controls require their own reviewed migration.
