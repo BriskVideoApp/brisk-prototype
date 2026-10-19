@@ -66,7 +66,7 @@ export function DocumentExportPreview({
 
   if (!hasHydrated) return null;
   const scopedProject = selectProject(state, project.id);
-  if (scopedProject && !canViewProject(viewer, scopedProject, state)) {
+  if (!scopedProject || !canViewProject(viewer, scopedProject, state)) {
     return <main className="client-not-found"><h1 className="headings-s-bold">Document unavailable</h1></main>;
   }
 

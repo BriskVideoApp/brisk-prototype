@@ -29,7 +29,10 @@ export function usePrototypeViewer(): PrototypeViewer | null {
     const workspaceId = state.session.activeWorkspaceId;
     const portalClientId = pathname.match(/^\/workspaces\/[^/]+\/clients\/([^/]+)\/portal$/u)?.[1];
     const routedClientId = portalClientId ? decodeURIComponent(portalClientId) : null;
-    const projectIdFromPath = pathname.match(/^\/projects\/([^/]+)/u)?.[1];
+    // Export previews keep the same simulated Client context as their project.
+    // Project membership and invitation checks still decide access downstream.
+    const projectIdFromPath = pathname.match(/^\/projects\/([^/]+)/u)?.[1]
+      ?? pathname.match(/^\/print\/(?:script|storyboard|transcript)\/([^/]+)\/?$/u)?.[1];
     const contextualProject = projectIdFromPath
       ? state.projects.find((project) => project.id === decodeURIComponent(projectIdFromPath)
         && project.workspaceId === workspaceId)
