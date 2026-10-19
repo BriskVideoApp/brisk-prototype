@@ -206,24 +206,29 @@
 
 .people-view-tabs,
 .person-profile-tabs {
-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
-  align-items: flex-end;
   justify-content: center;
-  overflow-x: auto;
   border-bottom: 1px solid var(--brisk-border-secondary);
   background: var(--brisk-bg-block-primary);
   padding: var(--brisk-space-none) var(--brisk-space-2xl);
+}
+
+.person-profile-tabs {
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
+  align-items: flex-end;
+  overflow-x: auto;
 }
 
 .people-view-tabs-inner,
 .person-profile-tabs-inner {
   width: 100%;
   max-width: var(--people-content-max);
+}
+
+.person-profile-tabs-inner {
   align-items: stretch;
   gap: var(--brisk-space-xl);
 }
 
-.people-view-tabs button,
 .person-profile-tabs button {
   display: inline-flex;
   min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-l));
@@ -237,8 +242,6 @@
   white-space: nowrap;
 }
 
-.people-view-tabs button:hover,
-.people-view-tabs button:focus-visible,
 .person-profile-tabs button:hover,
 .person-profile-tabs button:focus-visible {
   background: var(--brisk-brand-secondary);
@@ -246,23 +249,9 @@
   outline: var(--brisk-space-none);
 }
 
-.people-view-tabs button.is-active,
 .person-profile-tabs button.is-active {
   border-bottom-color: var(--brisk-brand-primary);
   color: var(--brisk-text-primary);
-}
-
-.people-view-tabs button span {
-  min-width: var(--brisk-space-l);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-gray-10);
-  color: var(--brisk-text-secondary);
-  padding: var(--brisk-space-xxs) var(--brisk-space-xs);
-}
-
-.people-view-tabs button.is-active span {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary-click);
 }
 
 .people-controls {
@@ -1400,7 +1389,6 @@
   .people-page-actions > button { width: 100%; }
   .people-view-tabs,
   .person-profile-tabs { justify-content: flex-start; padding-right: var(--brisk-space-l); padding-left: var(--brisk-space-l); }
-  .people-view-tabs-inner,
   .person-profile-tabs-inner { min-width: max-content; }
   .people-sort-control { width: 100%; flex: 1 0 100%; }
   .people-workload-rollup,

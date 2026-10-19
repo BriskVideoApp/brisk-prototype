@@ -49,6 +49,6 @@ Import `Tabs` from `Brisk DS/src/app/components/Tabs.tsx`.
 
 ## Pilot and boundaries
 
-Only the Client directory filters, notification-list filters and Chat Client settings Overview/People tabs are migrated. Preserve their option order, counts, selected values, search/sort/preview logic, role visibility, field values, actions and dialog focus/dismissal rules.
+The Client and People directory filters, notification-list filters and Chat Client settings Overview/People tabs are migrated. Preserve their option order, counts, selected values, search/sort/preview logic, role visibility, field values, actions and dialog focus/dismissal rules. People keeps its existing `view` query handling, unrelated URL parameters, view-specific columns and invitation defaults.
 
-People filters and URL behaviour, Videos filters, segmented inline switches, Chat Internal/External tabs and project-status filters, Shoot modes/day selectors, media/editor controls, player tools and grouped sharing/review controls remain unchanged. No unused SegmentedControl wrapper or attached-panel styling is added by this pilot. Review those consumers before migrating them.
+People profile tabs, Videos filters, segmented inline switches, Chat Internal/External tabs and project-status filters, Shoot modes/day selectors, media/editor controls, player tools and grouped sharing/review controls remain unchanged. No unused SegmentedControl wrapper or attached-panel styling is added by this pilot. Review those consumers before migrating them.

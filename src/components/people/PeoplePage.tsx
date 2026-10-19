@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
@@ -111,11 +112,15 @@ export function PeoplePage() {
         </div>
       </header>
 
-      <nav className="people-view-tabs" aria-label="People views">
-        <div className="people-view-tabs-inner">
-          {peopleViews.map((item) => <button className={`label-s-semibold ${view === item ? "is-active" : ""}`} type="button" aria-current={view === item ? "page" : undefined} key={item} onClick={() => changeView(item)}>{item}<span className="label-xs">{countView(people, item)}</span></button>)}
-        </div>
-      </nav>
+      <div className="people-view-tabs">
+        <FilterGroup className="people-view-tabs-inner" aria-label="People views">
+          {peopleViews.map((item) => (
+            <FilterButton selected={view === item} count={countView(people, item)} type="button" key={item} onClick={() => changeView(item)}>
+              {item}
+            </FilterButton>
+          ))}
+        </FilterGroup>
+      </div>
 
       <section className="people-controls" aria-label="People directory controls">
         <div className="people-controls-inner">
