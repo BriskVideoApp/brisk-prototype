@@ -224,11 +224,14 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
   if (column.id === "role") return <Link className="people-role-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.jobTitles.join(", ") || "Role not added"}</strong>{person.type === "Team" ? null : <small className="label-xs">{person.skills.slice(0, 2).join(" - ") || "Skills not added"}</small>}</Link>;
   if (column.id === "capacity") return <CapacityButton person={person} onClick={onWorkload} compact />;
   if (column.id === "work" && view === "Studio Staff") return (
-    <div className="people-current-work">
+    <div className="people-current-work is-project-list">
       {currentProjects.length === 0 ? (
         <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)}>No active projects</Link>
       ) : currentProjects.slice(0, 2).map((project) => (
-        <Link className="label-xs" href={`/projects/${project.id}`} key={project.id}>{project.name}</Link>
+        <Link className="people-project-entry" href={`/projects/${project.id}`} key={project.id}>
+          <span className="people-project-client label-xs">{project.clientName}</span>
+          <span className="people-project-title label-s-semibold">{project.name}</span>
+        </Link>
       ))}
       {currentProjects.length > 2 ? <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)} aria-label={`+${currentProjects.length - 2} more active projects for ${person.name} - view all ${currentProjects.length}`}>+{currentProjects.length - 2} more</Link> : null}
     </div>
