@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Radio } from "../../../Brisk DS/src/app/components/Radio";
+import { Toggle } from "../../../Brisk DS/src/app/components/Toggle";
 import { SourceLogo, getSourceLabel } from "@/components/chat/SourceLogo";
 import type {
   ChatConnectorSource,
@@ -153,22 +154,14 @@ export function ProjectConnectorSettings({
                   </div>
 
                   <div className="chat-project-connector-actions">
-                    <label className="chat-project-connector-switch">
-                      <span className="label-xs-semibold">Use for this project</span>
-                      <span className={`chat-toggle ${!connection.connected ? "is-disabled" : ""}`}>
-                        <input
-                          type="checkbox"
-                          role="switch"
-                          checked={connector.enabled}
-                          disabled={!connection.connected}
-                          aria-label={`Use ${getSourceLabel(source)} for ${project.code}`}
-                          onChange={(event) => updateEnabled(source, event.target.checked)}
-                        />
-                        <span className="chat-toggle-track" aria-hidden="true">
-                          <span className="chat-toggle-thumb" />
-                        </span>
-                      </span>
-                    </label>
+                    <Toggle
+                      wrapperClassName="chat-project-connector-switch"
+                      label={<span className="label-xs-semibold">Use for this project</span>}
+                      checked={connector.enabled}
+                      disabled={!connection.connected}
+                      aria-label={`Use ${getSourceLabel(source)} for ${project.code}`}
+                      onChange={(event) => updateEnabled(source, event.target.checked)}
+                    />
 
                     {connection.connected ? (
                       <Button

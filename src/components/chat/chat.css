@@ -3309,64 +3309,6 @@
   background: var(--brisk-brand-secondary);
 }
 
-.chat-toggle {
-  position: relative;
-  display: inline-flex;
-  width: 42px;
-  height: 22px;
-  flex: 0 0 42px;
-}
-
-.chat-toggle input {
-  position: absolute;
-  opacity: 0;
-}
-
-.chat-toggle-track {
-  position: relative;
-  display: inline-flex;
-  width: 42px;
-  height: 22px;
-  align-items: center;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
-  transition: background 120ms ease;
-}
-
-.chat-toggle-thumb {
-  position: absolute;
-  left: var(--brisk-space-xxs);
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-white);
-  transition: transform 120ms ease;
-}
-
-.chat-toggle input:checked + .chat-toggle-track {
-  background: var(--brisk-brand-primary);
-}
-
-.chat-toggle input:checked + .chat-toggle-track .chat-toggle-thumb {
-  transform: translateX(20px);
-}
-
-.chat-toggle:hover .chat-toggle-track,
-.chat-toggle:focus-within .chat-toggle-track {
-  box-shadow: var(--brisk-shadow-s);
-}
-
-.chat-toggle.is-disabled {
-  opacity: 0.48;
-}
-
-.chat-toggle.is-disabled:hover .chat-toggle-track,
-.chat-toggle.is-disabled:focus-within .chat-toggle-track {
-  box-shadow: none;
-}
-
 .chat-reconnect-button {
   border: 1px solid var(--brisk-system-error);
   border-radius: var(--brisk-radius-s);
