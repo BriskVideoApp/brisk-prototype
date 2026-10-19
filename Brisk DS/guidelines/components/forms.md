@@ -92,6 +92,8 @@ Import `Radio` from the DS and retain existing `fieldset`/`legend` groups and la
 
 Use for binary on/off settings where the change takes effect immediately (no submit needed). Do not use Toggle as a selection control inside a form that requires submission — use Checkbox instead.
 
+Tom approved the Single standard size proposal with DS blue keyboard focus on 19 October 2026. The React `Toggle` uses the existing Chat track dimensions, 42 x 22px, and a minimum 44px-high clickable row. This is an approved DS addition, not a verified original-kit S/M/L measurement. Native props/events/refs pass through; hover, focus, pressed and disabled states use shared tokens. See [React toggles](toggles.md). Save-based forms and specialised controls remain outside this migration.
+
 ---
 
 ## d-Segmented control

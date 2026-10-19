@@ -1,0 +1,100 @@
+.root {
+  position: relative;
+  display: inline-flex;
+  min-width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  align-items: center;
+  gap: var(--brisk-space-s);
+  cursor: pointer;
+}
+
+/* The native target covers the complete labelled row without resizing the track. */
+.input.input.input {
+  position: absolute;
+  inset: var(--brisk-space-none);
+  width: 100%;
+  height: 100%;
+  min-width: var(--brisk-space-none);
+  min-height: var(--brisk-space-none);
+  margin: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
+  border: var(--brisk-space-none);
+  border-radius: inherit;
+  opacity: 0;
+  cursor: inherit;
+  outline: none;
+  box-shadow: none;
+}
+
+.control.control.control {
+  position: relative;
+  order: 1;
+  box-sizing: border-box;
+  display: inline-flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-xxs));
+  height: calc(var(--brisk-space-l) + var(--brisk-space-xs) + var(--brisk-space-xxs));
+  flex: 0 0 calc(var(--brisk-space-3xl) + var(--brisk-space-xxs));
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-white);
+}
+
+.control::after {
+  position: absolute;
+  top: var(--brisk-space-xxs);
+  left: var(--brisk-space-xxs);
+  box-sizing: border-box;
+  width: var(--brisk-space-l);
+  height: var(--brisk-space-l);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-full);
+  background: var(--brisk-white);
+  content: '';
+}
+
+.label {
+  min-width: var(--brisk-space-none);
+  color: inherit;
+}
+
+.input:checked + .control.control.control {
+  background: var(--brisk-brand-primary);
+}
+
+.input:checked + .control::after {
+  transform: translateX(calc(var(--brisk-space-l) + var(--brisk-space-xs)));
+}
+
+.root:hover .input:not(:disabled) + .control.control.control {
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.input:not(:disabled):focus-visible + .control.control.control {
+  outline: var(--brisk-space-xs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-none);
+  box-shadow: var(--brisk-shadow-s);
+}
+
+.root:active .input:not(:disabled) + .control.control.control {
+  box-shadow: none;
+}
+
+.root:has(.input:disabled) {
+  cursor: not-allowed;
+}
+
+.input:disabled + .control.control.control {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-bg-block-secondary);
+  outline: none;
+  box-shadow: none;
+}
+
+.input:disabled + .control::after {
+  border-color: var(--brisk-text-secondary);
+  background: var(--brisk-text-tertiary);
+}
+
+.input:disabled ~ .label {
+  color: var(--brisk-text-tertiary);
+}
