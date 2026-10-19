@@ -46,6 +46,8 @@ type BriskSelectSharedProps<T extends string> = {
   onOpenChange?: (isOpen: boolean) => void;
   options: ReadonlyArray<BriskSelectOption<T>>;
   placeholder: string;
+  /** Filter category labels remain readable when no value is selected. */
+  placeholderTone?: "hint" | "label";
   searchable?: boolean;
   showSelectedIcon?: boolean;
   triggerContent?: ReactNode;
@@ -92,6 +94,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     onOpenChange,
     options,
     placeholder,
+    placeholderTone = "hint",
     showSelectedIcon = false,
     triggerContent,
     triggerClassName = "",
@@ -300,6 +303,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   return <div className={`brisk-select ${className}`}>
     <button
       className={`brisk-select-trigger label-s ${selectedOptions.length ? "" : "is-placeholder"} ${triggerClassName}`}
+      data-brisk-select-placeholder-tone={placeholderTone}
       ref={triggerRef}
       id={id}
       disabled={disabled}

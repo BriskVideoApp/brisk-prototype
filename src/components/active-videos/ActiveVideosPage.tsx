@@ -1030,6 +1030,7 @@ function FilterDropdown({
 
   const shared = {
     ariaLabel: label, className: "active-filter-wrap", clearLabel: "Clear filter", placeholder: label,
+    placeholderTone: "label" as const,
     open: isOpen, onOpenChange: (open: boolean) => { if (open !== isOpen) onToggle(); },
     triggerClassName: `active-filter-button label-s-semibold ${hasValue ? "has-value" : ""}`,
     triggerContent: <span>{buttonLabel}</span>,

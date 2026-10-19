@@ -26,6 +26,10 @@
   color: var(--brisk-text-tertiary);
 }
 
+.brisk-select-trigger.is-placeholder[data-brisk-select-placeholder-tone="label"]:not(:disabled) {
+  color: var(--brisk-text-secondary);
+}
+
 .brisk-select-trigger > span {
   min-width: 0;
   overflow: hidden;
