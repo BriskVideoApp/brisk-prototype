@@ -32,4 +32,4 @@ Unused Studio description and invitation screens are not counted as migrated. Ch
 ## Follow-up batches
 
 - Studio instructions in AI Playbook use Textarea with the existing 120px layout minimum and native two-row starting value. No character limit, requirement, auto-growth or validation was added. Uploads, links, save/discard, unsaved-change handling and Studio access restrictions are unchanged. The AI composer is not part of this batch.
-- People notes remain a later batch until separately migrated and verified.
+- People profile Internal notes use Textarea with their existing 200px minimum and native two-row starting value. The shared Paragraph/S appearance replaces the former local 16px field styling. The existing ARIA label, placeholder, absence of a character limit/requirement, Save action and Studio-only visibility remain. Unsaved drafts still discard when switching profile sections. Save retains notes in the current in-memory People provider; a full refresh still resets them to mock data. This pre-existing persistence limitation was not changed. The separate inline profile editor remains untouched.

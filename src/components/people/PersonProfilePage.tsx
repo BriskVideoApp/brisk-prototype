@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -429,7 +430,7 @@ function CommercialSection({ person }: { person: Person }) {
 
 function NotesActivitySection({ onSave, person }: { onSave: (notes: string) => void; person: Person }) {
   const [notes, setNotes] = useState(person.notes);
-  return <section className="person-notes-layout"><article className="person-detail-card"><h2 className="headings-xs-bold">Internal notes</h2><textarea aria-label="Internal notes" value={notes} placeholder="Add internal notes…" onChange={(event) => setNotes(event.target.value)} /><div className="person-note-actions"><span className="label-xs"><DsIcon name="lock" size={14} /> Never shown to this person</span><Button size="M" tooltip="Save for Studio Staff only." onClick={() => onSave(notes)}>Save notes</Button></div></article><PersonEventsLog person={person} /></section>;
+  return <section className="person-notes-layout"><article className="person-detail-card"><h2 className="headings-xs-bold">Internal notes</h2><Textarea aria-label="Internal notes" rows={2} value={notes} placeholder="Add internal notes…" onChange={(event) => setNotes(event.target.value)} /><div className="person-note-actions"><span className="label-xs"><DsIcon name="lock" size={14} /> Never shown to this person</span><Button size="M" tooltip="Save for Studio Staff only." onClick={() => onSave(notes)}>Save notes</Button></div></article><PersonEventsLog person={person} /></section>;
 }
 
 function ArchivePersonDialog({ onArchive, onClose, person }: { onArchive: () => void; onClose: () => void; person: Person }) {

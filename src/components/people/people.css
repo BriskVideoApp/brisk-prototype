@@ -636,8 +636,7 @@
 
 .people-field small { color: var(--brisk-text-secondary); }
 
-.people-field input,
-.person-notes-layout textarea {
+.people-field input {
   width: 100%;
   min-height: var(--brisk-space-3xl);
   border: 1px solid var(--brisk-border-primary);
@@ -648,9 +647,7 @@
 }
 
 .people-field input:hover,
-.people-field input:focus,
-.person-notes-layout textarea:hover,
-.person-notes-layout textarea:focus {
+.people-field input:focus {
   background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);
   outline: var(--brisk-space-none);
@@ -1032,7 +1029,7 @@
   grid-template-columns: minmax(var(--brisk-space-none), 0.8fr) minmax(var(--brisk-space-none), 1.2fr);
   gap: var(--brisk-space-l);
 }
-.person-notes-layout textarea { min-height: calc(var(--brisk-space-3xl) * 5); resize: vertical; }
+.person-notes-layout [data-brisk-textarea] { min-height: calc(var(--brisk-space-3xl) * 5); }
 .person-note-actions { align-items: center; justify-content: space-between; gap: var(--brisk-space-l); }
 .person-note-actions > span { display: inline-flex; align-items: center; color: var(--brisk-text-secondary); gap: var(--brisk-space-xs); }
 
