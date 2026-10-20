@@ -701,6 +701,7 @@
 
 .media-filter-bar {
   min-height: 64px;
+  flex-wrap: wrap;
   justify-content: space-between;
   border-bottom: 1px solid var(--brisk-border-secondary);
   gap: var(--brisk-space-l);
@@ -733,12 +734,21 @@
 }
 
 .media-filter-controls {
-  flex: 0 0 auto;
+  min-width: var(--brisk-space-none);
+  max-width: 100%;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
   gap: var(--brisk-space-s);
+}
+
+.media-filter-controls .media-search-shell {
+  min-width: var(--brisk-space-none);
+  max-width: 100%;
 }
 
 .media-view-toggle {
   display: inline-flex;
+  flex-shrink: 0;
   overflow: hidden;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-s);
