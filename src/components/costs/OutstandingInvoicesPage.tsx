@@ -114,7 +114,7 @@ export function OutstandingInvoicesPage() {
           <table className="costs-table costs-outstanding-table">
             <thead><tr><th>Project</th><th>Contractor</th><th>Invoice</th><th>Total</th><th>Status</th><th>Tags</th><th><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>{visibleRows.map(({ invoice, offer, project }) => <tr key={invoice.id}>
-              <td data-label="Project"><Link href={`/projects/${project.id}/costs`}><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.clientName} - {project.status}</small></Link></td>
+              <td data-label="Project"><Link className="costs-project-summary" href={`/projects/${project.id}/costs`}><strong className="label-s-semibold">{project.name}</strong><small className="label-xs">{project.clientName} - {project.status}</small></Link></td>
               <td data-label="Contractor"><strong className="label-s-semibold">{invoice.contractorName}</strong><small className="label-xs">{offer.role}</small></td>
               <td data-label="Invoice"><strong className="label-s-semibold">{invoice.fileNames[0]}</strong><small className="label-xs">Submitted {formatCostDate(invoice.submittedAt)}</small></td>
               <td data-label="Total"><strong className="label-s-semibold">{formatCostAmount(invoice.amount, invoice.currency)}</strong></td>

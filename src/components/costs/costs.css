@@ -199,6 +199,15 @@
   text-decoration: none;
 }
 
+.costs-table td > a.costs-project-summary {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.costs-project-summary > small {
+  color: var(--brisk-text-secondary);
+}
+
 .costs-table td > a:hover strong {
   color: var(--brisk-brand-primary-click);
   text-decoration: underline;
