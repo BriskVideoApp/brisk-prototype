@@ -25,6 +25,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import type { Project } from "@/components/active-videos/types";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -3462,10 +3463,6 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
     .sort((left, right) => left.order - right.order)
     .slice(1)
     .map((group) => group.id));
-  const actionMenuRef = useRef<HTMLDivElement>(null);
-  const actionMenuTriggerRef = useRef<HTMLButtonElement>(null);
-  const addMenuRef = useRef<HTMLDivElement>(null);
-  const addMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const groupRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
   const shotRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
   const pendingNewGroupIdRef = useRef<string | null>(null);
@@ -3718,40 +3715,6 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
     nextTopLevelOrder.splice(sourceTopLevelIndex < 0 ? nextTopLevelOrder.length : sourceTopLevelIndex + 1, 0, duplicate.id);
     return applyShotListTopLevelOrder(nextCallSheet, nextTopLevelOrder);
   });
-  useEffect(() => {
-    if (!openMenuShotId) return;
-    const closeMenu = (event: globalThis.MouseEvent) => {
-      if (!actionMenuRef.current?.contains(event.target as Node)) setOpenMenuShotId(null);
-    };
-    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setOpenMenuShotId(null);
-      window.requestAnimationFrame(() => actionMenuTriggerRef.current?.focus());
-    };
-    document.addEventListener("mousedown", closeMenu);
-    document.addEventListener("keydown", closeMenuWithKeyboard);
-    return () => {
-      document.removeEventListener("mousedown", closeMenu);
-      document.removeEventListener("keydown", closeMenuWithKeyboard);
-    };
-  }, [openMenuShotId]);
-  useEffect(() => {
-    if (!isAddMenuOpen) return;
-    const closeMenu = (event: globalThis.MouseEvent) => {
-      if (!addMenuRef.current?.contains(event.target as Node)) setIsAddMenuOpen(false);
-    };
-    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setIsAddMenuOpen(false);
-      window.requestAnimationFrame(() => addMenuTriggerRef.current?.focus());
-    };
-    document.addEventListener("mousedown", closeMenu);
-    document.addEventListener("keydown", closeMenuWithKeyboard);
-    return () => {
-      document.removeEventListener("mousedown", closeMenu);
-      document.removeEventListener("keydown", closeMenuWithKeyboard);
-    };
-  }, [isAddMenuOpen]);
 
   if (mode === "on-set") {
     return <OnSetShotList
@@ -3771,23 +3734,12 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
       <PreProductionSectionHeading
         title="Shot List"
         action={<div className="shoot-shot-list-heading-actions">
-          {canEdit ? <div className="shoot-shot-list-add-anchor" ref={addMenuRef}>
-            <Button size="S" variant="primary"
-              className="shoot-button primary"
-              type="button"
-              aria-expanded={isAddMenuOpen}
-              aria-haspopup="menu"
-              ref={addMenuTriggerRef}
-              onClick={() => setIsAddMenuOpen((current) => !current)}
-            >
-              <DsIcon name="plus" size={16} />
-              Add
-              <DsIcon name="caret-down" size={14} />
-            </Button>
-            {isAddMenuOpen ? <div className="shoot-shot-list-add-menu" role="menu" aria-label="Add to Shot List">
-              <button className="label-s" type="button" role="menuitem" onClick={() => { setIsAddMenuOpen(false); addShot(); }}>Shot</button>
-              <button className="label-s" type="button" role="menuitem" onClick={() => { setIsAddMenuOpen(false); addGroup(); }}>Shot group</button>
-            </div> : null}
+          {canEdit ? <div className="shoot-shot-list-add-anchor">
+            <BriskSelect mode="action" value="" clearable={false} ariaLabel="Add to Shot List" placeholder="Add" open={isAddMenuOpen} onOpenChange={setIsAddMenuOpen}
+              options={[{value: "shot", label: "Shot"}, {value: "group", label: "Shot group"}]}
+              onChange={(value) => { if (value === "shot") addShot(); else if (value === "group") addGroup(); }}
+              actionTrigger={(props) => <Button {...props} size="S" variant="primary"><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></Button>}
+            />
           </div> : null}
         </div>}
       />
@@ -4012,7 +3964,7 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
                     /> : <span className="shoot-shot-notes-static label-xs">{entry.notes || "No notes"}</span>}
                   </td>
                   <td>
-                    <div className="shoot-shot-table-actions" ref={menuOpen ? actionMenuRef : undefined}>
+                    <div className="shoot-shot-table-actions">
                       {canEdit && entry.suggestionStatus ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => acceptShotSuggestion(entry.id)}><DsIcon name="check" size={14} />Accept</Button> : null}
                       <ScriptAnnotationPin
                         count={shotComments.length}
@@ -4024,19 +3976,23 @@ function PreProductionShotList({ callSheet, canEdit, entries, mode, onAcceptAllS
                           setCommentPosition(getFloatingCommentPosition(triggerRect));
                         }}
                       />
-                      {canEdit ? <>
-                        <button className="shoot-shot-table-menu-button" type="button" aria-label={`More actions for shot ${shotNumber}`} aria-expanded={menuOpen} aria-haspopup="menu" onClick={(event) => { actionMenuTriggerRef.current = event.currentTarget; setOpenMenuShotId((current) => current === entry.id ? null : entry.id); }}><DsIcon name="dots-three" size={18} /></button>
-                        {menuOpen ? <div className="shoot-shot-table-menu" role="menu" onKeyDown={(event) => { if (event.key === "Escape") setOpenMenuShotId(null); }}>
-                          {shotListStatus === "not-required" ? <button className="label-s" type="button" role="menuitem" onClick={() => { updateShot(entry.id, { captureStatus: "to-capture", captured: false }); setOpenMenuShotId(null); }}><DsIcon name="arrow-counter-clockwise" size={16} />Mark as required</button> : null}
-                          {group ? <button className="label-s" type="button" role="menuitem" onClick={() => { moveShotToTopLevel(entry.id); setOpenMenuShotId(null); }}><DsIcon name="arrow-left" size={16} />Move to top level</button> : null}
-                          <button className="label-s" type="button" role="menuitem" onClick={() => { duplicateShot(entry); setOpenMenuShotId(null); }}><DsIcon name="copy" size={16} />Duplicate shot</button>
-                          <button className="danger label-s" type="button" role="menuitem" onClick={() => {
-                            setOpenMenuShotId(null);
-                            if (entry.suggestionStatus) onDismissSuggestion(entry.id);
-                            else onDelete(entry.id);
-                          }}><DsIcon name="trash-simple" size={16} />{entry.suggestionStatus ? "Dismiss suggestion" : "Delete shot"}</button>
-                        </div> : null}
-                      </> : null}
+                      {canEdit ? <BriskSelect mode="action" value="" clearable={false} ariaLabel={`More actions for shot ${shotNumber}`} placeholder="Shot actions"
+                        open={menuOpen} onOpenChange={(open) => setOpenMenuShotId((current) => open ? entry.id : current === entry.id ? null : current)}
+                        actionFallbackFocus={(trigger) => trigger?.closest('.shoot-preproduction-section')?.querySelector<HTMLButtonElement>('button[aria-label="Add to Shot List"]') ?? null}
+                        options={[
+                          ...(shotListStatus === "not-required" ? [{value: "required", label: "Mark as required"}] : []),
+                          ...(group ? [{value: "top-level", label: "Move to top level"}] : []),
+                          {value: "duplicate", label: "Duplicate shot"},
+                          {value: "delete", label: entry.suggestionStatus ? "Dismiss suggestion" : "Delete shot", tone: "danger", dividerAbove: true},
+                        ]}
+                        onChange={(value) => {
+                          if (value === "required") updateShot(entry.id, {captureStatus: "to-capture", captured: false});
+                          else if (value === "top-level") moveShotToTopLevel(entry.id);
+                          else if (value === "duplicate") duplicateShot(entry);
+                          else if (value === "delete") { if (entry.suggestionStatus) onDismissSuggestion(entry.id); else onDelete(entry.id); }
+                        }}
+                        actionTrigger={(props) => <IconButton {...props} aria-label={`More actions for shot ${shotNumber}`} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
+                      /> : null}
                     </div>
                   </td>
                 </tr>;

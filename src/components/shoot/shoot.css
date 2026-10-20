@@ -2392,6 +2392,11 @@
   gap: var(--brisk-space-2xs);
 }
 
+.shoot-shot-table-actions > .brisk-select {
+  width: auto;
+  flex: 0 0 auto;
+}
+
 .shoot-shot-review-cell {
   position: sticky !important;
   right: 0;
