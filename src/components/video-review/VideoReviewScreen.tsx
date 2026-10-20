@@ -90,6 +90,11 @@ export function VideoReviewScreen({
   const canMarkReadyToEdit = viewer?.role === "Studio Staff"
     && canActOnProject(viewer, project, prototypeState, "status", "edit")
     && !outstandingEditPrerequisites.some((item) => item.key === "storyboard");
+  const editReadinessBlockedReason = viewer?.role !== "Studio Staff"
+    ? "Only Studio Staff can mark Edit ready."
+    : !canActOnProject(viewer, project, prototypeState, "status", "edit")
+      ? "You don’t have permission to mark Edit ready for this project."
+      : "Approve the Storyboard before marking Edit ready.";
   const canUploadVersions = canActOnProject(viewer, project, prototypeState, "upload", "edit");
   const canChooseCommentVisibility = selectedRole !== "Customer";
   const initialReviewVersions = initiallyEmpty ? [] : reviewVersions;
@@ -1075,6 +1080,7 @@ export function VideoReviewScreen({
         {!editReadiness.ready ? (
           <section className="review-workspace is-empty" aria-label="Edit readiness">
             <EditReadinessEmptyState
+              blockedReason={editReadinessBlockedReason}
               canMarkReady={canMarkReadyToEdit}
               items={editReadiness.items}
               onMarkReady={() => setIsReadyConfirmationOpen(true)}
@@ -1364,11 +1370,13 @@ function EditCompletionMoment({ onDismiss }: { onDismiss: () => void }) {
 }
 
 function EditReadinessEmptyState({
+  blockedReason,
   canMarkReady,
   items,
   onMarkReady,
   projectId,
 }: {
+  blockedReason: string;
   canMarkReady: boolean;
   items: EditReadinessItem[];
   onMarkReady: () => void;
@@ -1418,7 +1426,7 @@ function EditReadinessEmptyState({
           </Button>
         ) : (
           <p className="review-edit-readiness-permission label-xs">
-            Freelancers can’t mark Edit ready.
+            {blockedReason}
           </p>
         )}
       </div>
