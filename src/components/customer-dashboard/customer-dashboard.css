@@ -860,6 +860,17 @@
   position: relative;
 }
 
+.customer-dashboard-filter-wrap {
+  width: calc(var(--brisk-space-3xl) * 5);
+  max-width: 100%;
+}
+
+.customer-dashboard-filter-label {
+  display: block;
+  margin-bottom: var(--brisk-space-xs);
+  color: var(--brisk-text-secondary);
+}
+
 .customer-status-trigger {
   cursor: pointer;
   gap: var(--brisk-space-xs);
@@ -973,16 +984,6 @@
   background: var(--brisk-brand-secondary);
 }
 
-.customer-dashboard-filter-menu {
-  top: calc(100% + var(--brisk-space-s));
-  right: 0;
-  width: 200px;
-}
-
-.customer-dashboard-filter-menu button {
-  justify-content: space-between;
-}
-
 .customer-project-actions-menu {
   top: calc(100% + var(--brisk-space-s));
   right: 0;
@@ -1024,53 +1025,9 @@
   justify-content: space-between;
 }
 
-.customer-queue-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--brisk-border-primary);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-none) var(--brisk-space-s);
-}
-
-.customer-queue-tab {
-  display: inline-flex;
-  min-height: var(--brisk-space-3xl);
-  align-items: center;
-  gap: var(--brisk-space-s);
-  border: 1px solid transparent;
-  border-bottom: 0;
-  border-radius: var(--brisk-radius-xs) var(--brisk-radius-xs) var(--brisk-radius-none) var(--brisk-radius-none);
-  background: transparent;
-  color: var(--brisk-text-secondary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-}
-
-.customer-queue-tab:hover {
-  border-color: var(--brisk-border-primary);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-s);
-  color: var(--brisk-text-primary);
-}
-
-.customer-queue-tab.selected {
-  border-color: var(--brisk-border-primary);
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-text-white);
-}
-
-.customer-queue-tab:first-child[data-tooltip]::after {
+.customer-all-videos-section [data-brisk-filter]:first-child[data-tooltip]::after {
   left: var(--brisk-space-none);
   --tooltip-x: var(--brisk-space-none);
-}
-
-.customer-queue-tab span {
-  display: inline-flex;
-  min-width: var(--brisk-space-xl);
-  height: var(--brisk-space-xl);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--brisk-radius-full);
-  background: color-mix(in srgb, currentColor 12%, transparent);
-  padding: var(--brisk-space-xs);
 }
 
 .customer-queue-table {
@@ -1683,8 +1640,7 @@
     flex-direction: column;
   }
 
-  .customer-queue-header-actions,
-  .customer-queue-tabs {
+  .customer-queue-header-actions {
     overflow-x: auto;
   }
 
@@ -1732,7 +1688,6 @@
   }
 
   .customer-dashboard-filter-wrap,
-  .customer-dashboard-filter-wrap > button,
   .customer-queue-header-actions > button {
     width: 100%;
   }

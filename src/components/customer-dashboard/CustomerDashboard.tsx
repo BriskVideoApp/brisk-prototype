@@ -2,9 +2,10 @@
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { BriskSelect, type BriskSelectOption } from "../../../Brisk DS/src/app/components/Select";
 import type { DragEvent as ReactDragEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StageProgress, stageOrder } from "@/components/active-videos/StageProgress";
@@ -140,6 +141,7 @@ export function CustomerDashboard({
   const [selectedTab, setSelectedTab] = useState<QueueTab>("All");
   const [queueScope, setQueueScope] = useState<QueueScope>("All videos");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const groupingFieldId = useId();
   const [queueOrder, setQueueOrder] = useState<string[]>(initialQueueOrder);
   const [seriesChildOrder, setSeriesChildOrder] = useState<Record<string, string[]>>(initialSeriesChildOrder);
   const [expandedSeriesIds, setExpandedSeriesIds] = useState<string[]>(initialExpandedSeriesIds);
@@ -305,7 +307,7 @@ export function CustomerDashboard({
   }, []);
 
   useEffect(() => {
-    if (!openMenuProjectId && !openStatusProjectId && !isFilterOpen) {
+    if (!openMenuProjectId && !openStatusProjectId) {
       return;
     }
 
@@ -323,7 +325,7 @@ export function CustomerDashboard({
 
     window.addEventListener("mousedown", closeMenus);
     return () => window.removeEventListener("mousedown", closeMenus);
-  }, [isFilterOpen, openMenuProjectId, openStatusProjectId]);
+  }, [openMenuProjectId, openStatusProjectId]);
 
   const visibleProjects = previewState === "empty" ? [] : projects;
   const displayProjects = visibleProjects.map((project) => {
@@ -646,59 +648,45 @@ export function CustomerDashboard({
                 </div>
                 <div className="customer-queue-header-actions">
                   <div className="customer-dashboard-filter-wrap">
-                    <button
-                      className={`customer-dashboard-secondary-button customer-dashboard-menu-trigger label-s-semibold ${queueScope !== "All videos" ? "selected" : ""}`}
-                      type="button"
-                      aria-expanded={isFilterOpen}
-                      onClick={() => {
-                        setOpenMenuProjectId(null);
-                        setOpenStatusProjectId(null);
-                        setIsFilterOpen((current) => !current);
+                    <label className="customer-dashboard-filter-label label-xs-semibold" htmlFor={groupingFieldId}>Video grouping</label>
+                    <BriskSelect<QueueScope>
+                      id={groupingFieldId}
+                      ariaLabel="Video grouping"
+                      placeholder="All videos"
+                      value={queueScope}
+                      options={queueScopes.map((scope) => ({ value: scope, label: scope }))}
+                      clearable={false}
+                      open={isFilterOpen}
+                      onOpenChange={(open) => {
+                        setIsFilterOpen(open);
+                        if (open) {
+                          setOpenMenuProjectId(null);
+                          setOpenStatusProjectId(null);
+                        }
                       }}
-                    >
-                      Filters
-                      <DsIcon name="caret-down" size={14} />
-                    </button>
-                    {isFilterOpen ? (
-                      <div className="customer-dashboard-menu customer-dashboard-filter-menu" role="menu">
-                        {queueScopes.map((scope) => (
-                          <button
-                            className={`label-s ${queueScope === scope ? "selected" : ""}`}
-                            type="button"
-                            role="menuitemradio"
-                            aria-checked={queueScope === scope}
-                            key={scope}
-                            onClick={() => {
-                              setQueueScope(scope);
-                              setIsFilterOpen(false);
-                            }}
-                          >
-                            <span>{scope}</span>
-                            {queueScope === scope ? <DsIcon name="check" size={15} /> : null}
-                          </button>
-                        ))}
-                      </div>
-                    ) : null}
+                      onChange={(scope) => {
+                        if (scope) setQueueScope(scope);
+                        setIsFilterOpen(false);
+                      }}
+                    />
                   </div>
                 </div>
               </div>
 
-              <nav className="customer-queue-tabs" aria-label="Video status">
+              <FilterGroup aria-label="Video status">
                 {queueTabs.map((tab) => (
-                  <button
-                    className={`customer-queue-tab label-s-semibold ${selectedTab === tab ? "selected" : ""}`}
-                    type="button"
+                  <FilterButton
                     key={tab}
                     aria-label={`${tab}. ${queueTabDescriptions[tab]}`}
-                    aria-pressed={selectedTab === tab}
+                    selected={selectedTab === tab}
+                    count={getTabCount(projects, tab)}
                     data-tooltip={queueTabDescriptions[tab]}
                     onClick={() => setSelectedTab(tab)}
                   >
                     {tab}
-                    <span className="label-xs">{getTabCount(projects, tab)}</span>
-                  </button>
+                  </FilterButton>
                 ))}
-              </nav>
+              </FilterGroup>
 
               <div className="customer-queue-table" role="table" aria-label={`${selectedTab} videos`}>
                 <div className="customer-queue-table-header label-xs-semibold" role="row">
