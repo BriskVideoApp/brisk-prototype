@@ -12,6 +12,8 @@ Tom approved Quiet action menu on 19 October 2026. Extend the existing `BriskSel
 
 ## Behaviour
 
+Tom approved native-link rows on 20 October 2026 for menus that mix navigation and commands. In action mode an option with `href` renders a real anchor, retaining its optional `target`, `rel` and `download`. Native context menus, modifier clicks and middle clicks remain available. Link activation closes the menu without invoking the command callback. Keyboard activation follows the active row, including keyboard modifiers; disabled links have no destination and are skipped. Ordinary selection fields ignore these action-only properties. Use the same text-first row, spacing and keyboard focus treatment as commands, not an imperative navigation substitute.
+
 Arrow keys browse enabled commands with wrapping; Home and End reach the first and last enabled command. Enter/Space activates, Escape closes and restores focus, and Tab exits in the opener's logical page order. Type-ahead finds enabled commands. Outside pointer/focus dismisses without stealing focus. Opening an action dialog must not lose its initial focus to the closing menu.
 
 Context menus fit the visual viewport, flip above when appropriate, and update on scrolling/resizing. Action-menu portals stay within the nearest native dialog or custom `role="dialog"` surface, otherwise the document body. This keeps frame-review commands above their owning overlay without changing ordinary field selection portals. A stable fallback handles actions such as Hide column that remove the original header. Actions and persistence remain the caller's responsibility.

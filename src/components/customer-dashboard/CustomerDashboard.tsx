@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { BriskSelect, type BriskSelectOption } from "../../../Brisk DS/src/app/components/Select";
 import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -310,7 +312,7 @@ export function CustomerDashboard({
     const closeMenus = (event: MouseEvent) => {
       const target = event.target;
 
-      if (target instanceof HTMLElement && target.closest(".customer-dashboard-menu, .customer-dashboard-menu-trigger")) {
+      if (target instanceof HTMLElement && target.closest(".customer-dashboard-menu, .customer-dashboard-menu-trigger, .brisk-select-menu[data-brisk-select-mode='action']")) {
         return;
       }
 
@@ -547,11 +549,11 @@ export function CustomerDashboard({
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
                       onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
                       statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
-                      isMenuOpen={openMenuProjectId === project.id}
+                      isMenuOpen={openMenuProjectId === `card:${project.id}`}
                       onToggleMenu={() => {
                         setOpenStatusProjectId(null);
                         setIsFilterOpen(false);
-                        setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
+                        setOpenMenuProjectId((current) => (current === `card:${project.id}` ? null : `card:${project.id}`));
                       }}
                       studioName={resolvedStudioName}
                     />
@@ -618,11 +620,11 @@ export function CustomerDashboard({
                       onCopyProjectLink={() => { void copyProjectLink(project); }}
                       onChangeStatus={canManageProjectStatus(project.id) ? (status) => changeProjectStatus(project.id, status) : undefined}
                       statusOptions={isClientView ? clientProjectStatuses : projectStatuses}
-                      isMenuOpen={openMenuProjectId === project.id}
+                      isMenuOpen={openMenuProjectId === `card:${project.id}`}
                       onToggleMenu={() => {
                         setOpenStatusProjectId(null);
                         setIsFilterOpen(false);
-                        setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
+                        setOpenMenuProjectId((current) => (current === `card:${project.id}` ? null : `card:${project.id}`));
                       }}
                       studioName={resolvedStudioName}
                     />
@@ -740,11 +742,11 @@ export function CustomerDashboard({
                           setOpenStatusProjectId((current) => (current === entry.project.id ? null : entry.project.id));
                         }}
                         onChangeStatus={(status) => changeProjectStatus(entry.project.id, status)}
-                        isMenuOpen={openMenuProjectId === entry.project.id}
+                        isMenuOpen={openMenuProjectId === `row:${entry.project.id}`}
                         onToggleMenu={() => {
                           setOpenStatusProjectId(null);
                           setIsFilterOpen(false);
-                          setOpenMenuProjectId((current) => (current === entry.project.id ? null : entry.project.id));
+                          setOpenMenuProjectId((current) => (current === `row:${entry.project.id}` ? null : `row:${entry.project.id}`));
                         }}
                         studioName={resolvedStudioName}
                       />
@@ -864,11 +866,11 @@ export function CustomerDashboard({
                                 setOpenStatusProjectId((current) => (current === project.id ? null : project.id));
                               }}
                               onChangeStatus={(status) => changeProjectStatus(project.id, status)}
-                              isMenuOpen={openMenuProjectId === project.id}
+                              isMenuOpen={openMenuProjectId === `row:${project.id}`}
                               onToggleMenu={() => {
                                 setOpenStatusProjectId(null);
                                 setIsFilterOpen(false);
-                                setOpenMenuProjectId((current) => (current === project.id ? null : project.id));
+                                setOpenMenuProjectId((current) => (current === `row:${project.id}` ? null : `row:${project.id}`));
                               }}
                               studioName={resolvedStudioName}
                             />
@@ -1102,17 +1104,9 @@ function ProductionCard({
               <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
             </button>
             <div className="customer-project-menu-wrap">
-              <button
-                className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
-                type="button"
-                aria-label={`Open actions for ${project.name}`}
-                aria-expanded={isMenuOpen}
-                onClick={onToggleMenu}
-              >
-                <DsIcon name="dots-three" size={18} />
-              </button>
-              {isMenuOpen ? (
                 <ProjectActionsMenu
+                  isOpen={isMenuOpen}
+                  onToggle={onToggleMenu}
                   project={project}
                   canManageTeam={canManageTeam}
                   onCopyProjectLink={onCopyProjectLink}
@@ -1120,7 +1114,6 @@ function ProductionCard({
                   onChangeStatus={onChangeStatus}
                   statusOptions={statusOptions}
                 />
-              ) : null}
             </div>
           </>
         )}
@@ -1263,17 +1256,9 @@ function QueueProjectRow({
               <CommentCountBadge count={project.unreadMessages} label={`${project.unreadMessages} unread messages`} />
             </button>
             <div className="customer-project-menu-wrap">
-              <button
-                className="customer-dashboard-icon-button customer-dashboard-menu-trigger"
-                type="button"
-                aria-label={`Open actions for ${project.name}`}
-                aria-expanded={isMenuOpen}
-                onClick={onToggleMenu}
-              >
-                <DsIcon name="dots-three" size={18} />
-              </button>
-              {isMenuOpen ? (
                 <ProjectActionsMenu
+                  isOpen={isMenuOpen}
+                  onToggle={onToggleMenu}
                   project={project}
                   canManageTeam={canManageTeam}
                   onChangeStatus={canManageStatus ? onChangeStatus : undefined}
@@ -1282,7 +1267,6 @@ function QueueProjectRow({
                   onStart={canManageStatus && interactive ? onStart : undefined}
                   statusOptions={canManageStatus ? statusOptions : undefined}
                 />
-              ) : null}
             </div>
           </>
         ) : null}
@@ -1340,6 +1324,8 @@ function ProjectStatusControl({
 
 function ProjectActionsMenu({
   project,
+  isOpen,
+  onToggle,
   onStart,
   onChangeStatus,
   statusOptions,
@@ -1348,6 +1334,8 @@ function ProjectActionsMenu({
   canManageTeam = false,
 }: {
   project: CustomerDashboardProject;
+  isOpen: boolean;
+  onToggle: () => void;
   onStart?: () => void;
   onChangeStatus?: (status: CustomerDashboardStatus) => void;
   statusOptions?: CustomerDashboardStatus[];
@@ -1355,43 +1343,32 @@ function ProjectActionsMenu({
   onCopyProjectLink?: () => void;
   canManageTeam?: boolean;
 }) {
-  return (
-    <div className="customer-dashboard-menu customer-project-actions-menu" role="menu">
-      {project.status === "Queued" && onStart ? (
-        <button className="label-s-semibold" type="button" role="menuitem" onClick={onStart}>
-          <DsIcon name="play" size={16} />
-          Start this video
-        </button>
-      ) : null}
-      {onOpenChat ? <button className="label-s-semibold" type="button" role="menuitem" onClick={onOpenChat}>
-        <DsIcon name="chats" size={16} />
-        View comments and history
-      </button> : null}
-      <Link className="label-s-semibold" href={getProjectEntryHref(project)} role="menuitem">
-        <DsIcon name="folder-open" size={16} />
-        Open project
-      </Link>
-      {onCopyProjectLink ? <button className="label-s-semibold" type="button" role="menuitem" onClick={onCopyProjectLink}>
-        <DsIcon name="link" size={16} />
-        Copy project link
-      </button> : null}
-      {canManageTeam ? <Link className="label-s-semibold" href={`/projects/${encodeURIComponent(project.id)}`} role="menuitem">
-        <DsIcon name="users-three" size={16} />
-        Manage teammates
-      </Link> : null}
-      {onChangeStatus && statusOptions ? (
-        <div className="customer-project-status-actions" role="group" aria-label={`Change status for ${project.name}`}>
-          <span className="customer-project-menu-label label-xs-semibold">Change status</span>
-          {statusOptions.filter((status) => status !== project.status).map((status) => (
-            <button className="label-s-semibold" type="button" role="menuitem" key={status} onClick={() => onChangeStatus(status)}>
-              <DsIcon name={projectStatusActions[status].icon} size={16} />
-              {projectStatusActions[status].label}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
+  const commands: Array<BriskSelectOption<string> & { run?: () => void }> = [
+    ...(project.status === "Queued" && onStart ? [{ value: "start", label: "Start this video", run: onStart }] : []),
+    ...(onOpenChat ? [{ value: "chat", label: "View comments and history", run: onOpenChat }] : []),
+    { value: "open", label: "Open project", href: getProjectEntryHref(project) },
+    ...(onCopyProjectLink ? [{ value: "copy", label: "Copy project link", run: onCopyProjectLink }] : []),
+    ...(canManageTeam ? [{ value: "team", label: "Manage teammates", href: `/projects/${encodeURIComponent(project.id)}` }] : []),
+    ...(onChangeStatus && statusOptions ? statusOptions.filter((status) => status !== project.status).map((status) => ({
+      value: `status-${status}`,
+      label: projectStatusActions[status].label,
+      group: "Change status",
+      run: () => onChangeStatus(status),
+    })) : []),
+  ];
+
+  return <BriskSelect
+    mode="action"
+    value=""
+    clearable={false}
+    ariaLabel={`Open actions for ${project.name}`}
+    placeholder="Project actions"
+    open={isOpen}
+    onOpenChange={(nextOpen) => { if (nextOpen !== isOpen) onToggle(); }}
+    options={commands}
+    onChange={(value) => commands.find((command) => command.value === value)?.run?.()}
+    actionTrigger={(props) => <IconButton {...props} className="customer-dashboard-menu-trigger" aria-label={`Open actions for ${project.name}`} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
+  />;
 }
 
 function CustomerProjectDestination({

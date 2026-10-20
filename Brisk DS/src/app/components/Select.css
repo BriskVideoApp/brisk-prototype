@@ -150,6 +150,8 @@
   text-align: left;
 }
 
+.brisk-select-option[href] { text-decoration: none; }
+
 .brisk-select-option:is(:hover, .active) {
   background: var(--brisk-item-tertiary);
   outline: 0;
@@ -181,7 +183,7 @@
   padding-top: var(--brisk-space-none);
 }
 
-.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option:disabled {
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-option:is(:disabled, [aria-disabled='true']) {
   color: var(--brisk-text-tertiary);
   background: transparent;
   outline: none;

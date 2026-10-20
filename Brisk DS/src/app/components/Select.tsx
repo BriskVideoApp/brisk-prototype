@@ -21,6 +21,11 @@ export type BriskSelectOption<T extends string = string> = {
   title?: string;
   /** Action menus only. Styling does not change confirmation or deletion behaviour. */
   tone?: "default" | "danger";
+  /** Action menus only. Real anchors retain native link and new-tab behaviour. */
+  href?: string;
+  target?: ComponentPropsWithRef<"a">["target"];
+  rel?: string;
+  download?: ComponentPropsWithRef<"a">["download"];
 };
 
 type ActionTriggerProps = Pick<ComponentPropsWithRef<"button">, "ref" | "disabled" | "onClick" | "onKeyDown" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-label">;
@@ -337,7 +342,13 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
         if (enabled[next] !== undefined) setActiveIndex(enabled[next]);
       } else if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        if (filteredOptions[activeIndex]) selectOption(filteredOptions[activeIndex].value);
+        const option = filteredOptions[activeIndex];
+        if (option && !option.disabled) {
+          const link = optionsRef.current?.querySelector<HTMLAnchorElement>(`a[id="${listboxId}-${activeIndex}"]`);
+          if (option.href && link) {
+            link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window, ctrlKey: event.ctrlKey, metaKey: event.metaKey, shiftKey: event.shiftKey, altKey: event.altKey }));
+          } else selectOption(option.value);
+        }
       } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
         event.preventDefault();
         const previous = typeaheadRef.current;
@@ -430,32 +441,50 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       <div className="brisk-select-options" ref={optionsRef} role={mode === "action" ? "menu" : "listbox"} tabIndex={mode === "action" ? -1 : undefined} aria-activedescendant={mode === "action" && filteredOptions[activeIndex] ? `${listboxId}-${activeIndex}` : undefined} id={listboxId} aria-label={ariaLabel} aria-multiselectable={props.multiple || undefined}>
         {filteredOptions.map((option, index) => {
           const isSelected = selectedValues.includes(option.value);
+          const isActionLink = mode === "action" && option.href !== undefined;
+          const rowProps = {
+            className: `brisk-select-option label-s ${isSelected && mode !== "action" ? "selected" : ""} ${index === activeIndex && showActiveFocus ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`,
+            title: option.title,
+            id: `${listboxId}-${index}`,
+            tabIndex: -1,
+            "data-active": index === activeIndex,
+            "data-action-tone": mode === "action" ? option.tone : undefined,
+            onMouseEnter: () => { if (mode === "action" && option.disabled) return; setActiveIndex(index); setShowActiveFocus(false); },
+          };
+          const rowContent = <>
+            <span className="brisk-select-option-label">
+              {option.logoSrc ? <img className="brisk-select-option-logo" src={option.logoSrc} alt="" /> : option.icon ? <DsIcon name={option.icon} size={16} /> : null}
+              <span>
+                <span className="brisk-select-option-content">{option.content ?? option.label}</span>
+                {option.description ? <small className="brisk-select-option-description label-xs">{option.description}</small> : null}
+              </span>
+            </span>
+            {isSelected && mode !== "action" ? <DsIcon name="check" size={16} /> : null}
+          </>;
           return <div key={option.value} role="presentation">
             {option.group && option.group !== filteredOptions[index - 1]?.group ? <div className="brisk-select-group label-xs-semibold" role="presentation">{option.group}</div> : null}
-            <button
-              className={`brisk-select-option label-s ${isSelected && mode !== "action" ? "selected" : ""} ${index === activeIndex && showActiveFocus ? "active" : ""} ${option.dividerAbove ? "has-divider" : ""}`}
+            {isActionLink ? <a
+              {...rowProps}
+              href={option.disabled ? undefined : option.href}
+              target={option.target}
+              rel={option.rel}
+              download={option.download}
+              role="menuitem"
+              aria-disabled={option.disabled || undefined}
+              onClick={(event) => {
+                if (option.disabled) { event.preventDefault(); return; }
+                closeMenu(true);
+              }}
+              onAuxClick={(event) => { if (!option.disabled && event.button === 1) closeMenu(); }}
+            >{rowContent}</a> : <button
+              {...rowProps}
               type="button"
               disabled={mode === "action" && option.disabled}
-              title={option.title}
               role={mode === "action" ? "menuitem" : "option"}
-              id={`${listboxId}-${index}`}
-              tabIndex={-1}
               aria-selected={mode === "action" ? undefined : isSelected}
-              data-active={index === activeIndex}
-              data-action-tone={mode === "action" ? option.tone : undefined}
-              onMouseEnter={() => { if (mode === "action" && option.disabled) return; setActiveIndex(index); setShowActiveFocus(false); }}
               onPointerDown={(event) => event.preventDefault()}
               onClick={() => selectOption(option.value)}
-            >
-              <span className="brisk-select-option-label">
-                {option.logoSrc ? <img className="brisk-select-option-logo" src={option.logoSrc} alt="" /> : option.icon ? <DsIcon name={option.icon} size={16} /> : null}
-                <span>
-                  <span className="brisk-select-option-content">{option.content ?? option.label}</span>
-                  {option.description ? <small className="brisk-select-option-description label-xs">{option.description}</small> : null}
-                </span>
-              </span>
-              {isSelected && mode !== "action" ? <DsIcon name="check" size={16} /> : null}
-            </button>
+            >{rowContent}</button>}
           </div>;
         })}
       </div>
