@@ -19,12 +19,14 @@ import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { getActiveClientPortalDestination, getAppShellPresentation } from "@/components/navigation/prototypeNavigation";
 import { DeferredChatPage as ChatPage } from "@/components/chat/DeferredChatPage";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import { HybridSidebar } from "@/components/navigation/HybridSidebar";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [hasMounted, setHasMounted] = useState(false);
   const [isGlobalChatOpen, setIsGlobalChatOpen] = useState(false);
+  const [isNavigationCollapsed, setIsNavigationCollapsed] = useState(false);
   const { activeScenario } = usePrototypeScenario();
   const { selectedRole } = usePrototypeRole();
   const { state } = usePrototypeState();
@@ -74,7 +76,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ShootGlobalActionsProvider>
       <div className="prototype-test-frame">
-        <div className="app-shell">
+        <div className={`app-shell app-shell-hybrid${isNavigationCollapsed ? " is-navigation-collapsed" : ""}`}>
+          <HybridSidebar
+            brand={<StudioHeaderBrand selectedRole={selectedRole} studioName={studio.details.name} logoPreviewUrl={studio.branding.logoPreviewUrl} compact />}
+            collapsed={isNavigationCollapsed}
+            onToggle={() => setIsNavigationCollapsed((current) => !current)}
+            videosHref={videosHref}
+          />
           <div className="app-shell-workspace">
             <header className="app-global-header">
               <div className="app-account-header">
@@ -159,17 +167,19 @@ function StudioHeaderBrand({
   selectedRole,
   studioName,
   logoPreviewUrl,
+  compact = false,
 }: {
   selectedRole: ReturnType<typeof usePrototypeRole>["selectedRole"];
   studioName: string;
   logoPreviewUrl: string | null;
+  compact?: boolean;
 }) {
   const initials = studioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
   const content = <>
     <span className="app-global-client-studio-logo" aria-label={`${studioName} logo`}>
       {logoPreviewUrl ? <img src={logoPreviewUrl} alt="" /> : <span className="label-s-semibold">{initials}</span>}
     </span>
-    <strong className="label-m-semibold">{studioName}</strong>
+    <strong className={compact ? "label-s-semibold" : "label-m-semibold"}>{studioName}</strong>
     {selectedRole !== "Customer" ? <DsIcon name="caret-down" size={14} /> : null}
   </>;
 

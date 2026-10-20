@@ -611,9 +611,9 @@ function ActiveVideosWorkspace() {
               />
             </label>
             {selectedRole === "Studio Staff" ? (
-              <div className="active-videos-utility-links">
+              <div className="active-videos-utility-links active-videos-mobile-utility-links">
                 <Link className="active-videos-utility-link label-s-semibold" href="/outstanding-invoices">Expenses</Link>
-                <Link className="active-videos-utility-link label-s-semibold" href="/media">All media</Link>
+                <Link className="active-videos-utility-link label-s-semibold" href="/media">Media Library</Link>
               </div>
             ) : null}
           </div>

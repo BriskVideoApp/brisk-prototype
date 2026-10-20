@@ -23,13 +23,13 @@ const toolbarCollapsedStorageKey = "brisk-prototype-toolbar-collapsed-v1";
 const toolbarViewportInset = 8;
 const toolbarKeyboardMoveStep = 16;
 
-export function PrototypeScenarioToolbar({ inline = false }: { inline?: boolean }) {
-  if (inline) return <InlinePrototypeScenarioToolbar />;
+export function PrototypeScenarioToolbar({ inline = false, placement = "header" }: { inline?: boolean; placement?: "header" | "sidebar" }) {
+  if (inline) return <InlinePrototypeScenarioToolbar placement={placement} />;
 
   return <FloatingPrototypeScenarioToolbar />;
 }
 
-function InlinePrototypeScenarioToolbar() {
+function InlinePrototypeScenarioToolbar({ placement }: { placement: "header" | "sidebar" }) {
   const menuRef = useRef<HTMLDetailsElement>(null);
   const {
     activeScenario,
@@ -58,9 +58,9 @@ function InlinePrototypeScenarioToolbar() {
   if (!hasLoadedScenario) return null;
 
   return (
-    <div className="prototype-scenario-toolbar-inline-group">
+    <div className={`prototype-scenario-toolbar-inline-group${placement === "sidebar" ? " is-sidebar" : ""}`}>
       <details className="prototype-scenario-toolbar-inline" aria-label="Prototype controls" ref={menuRef}>
-        <summary className="label-s-semibold">
+        <summary className={placement === "sidebar" ? "label-xs" : "label-s-semibold"}>
           Test mode
           <DsIcon name="caret-down" size={16} />
         </summary>

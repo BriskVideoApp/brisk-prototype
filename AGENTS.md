@@ -149,12 +149,14 @@ Before marking a ticket complete:
 
 ## Role-switcher requirement
 
-The prototype must include a persistent role switcher in the top bar that lets the user view any screen as:
+The prototype must include a persistent role switcher that lets the user view any screen as:
 - Studio Staff
 - Studio Freelancer
 - Customer
 
 Keep the prototype to exactly these three access roles. The former five-role split is superseded for the current prototype; do not introduce additional roles or granular permission screens unless explicitly requested.
+
+Tom approved the hybrid desktop navigation on 20 October 2026. Put the role switcher inside the quiet Test mode control at the bottom of the left sidebar, below the account menu and Studio settings where permitted. Preserve the existing top-bar control on narrow screens and clean-entry views while the mobile design pass is deferred.
 
 This is a prototype demo affordance only - in production, role is set by the user account.
 
