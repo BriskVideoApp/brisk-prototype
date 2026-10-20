@@ -2,6 +2,7 @@
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
@@ -85,19 +86,18 @@ export function ChatProjectList({
         </div>
       </div>
 
-      <div className="chat-list-tabs" role="tablist" aria-label="Project status">
-        {listFilters.map((status) => (
-          <button
-            className={`chat-list-tab label-s-semibold ${filter === status ? "active" : ""}`}
-            type="button"
-            role="tab"
-            aria-selected={filter === status}
-            key={status}
-            onClick={() => setFilter(status)}
-          >
-            {status}
-          </button>
-        ))}
+      <div className="chat-project-status-filters">
+        <FilterGroup aria-label="Project status">
+          {listFilters.map((status) => (
+            <FilterButton
+              selected={filter === status}
+              key={status}
+              onClick={() => setFilter(status)}
+            >
+              {status}
+            </FilterButton>
+          ))}
+        </FilterGroup>
       </div>
 
       <div className="chat-project-card-list">

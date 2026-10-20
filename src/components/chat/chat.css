@@ -116,7 +116,6 @@
 .chat-icon-button,
 .chat-company-card-actions,
 .chat-avatar-stack,
-.chat-list-tabs,
 .chat-project-card-title-row,
 .chat-project-preview-row,
 .chat-status-chip,
@@ -2239,32 +2238,8 @@
   color: var(--brisk-white);
 }
 
-.chat-list-tabs {
-  width: fit-content;
-  margin: var(--brisk-space-2xl) 0 var(--brisk-space-l);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-white);
-  overflow: hidden;
-}
-
-.chat-list-tab {
-  min-height: var(--brisk-space-3xl);
-  border: 0;
-  border-right: 1px solid var(--brisk-border-primary);
-  background: var(--brisk-white);
-  color: var(--brisk-text-secondary);
-  padding: 0 var(--brisk-space-xl);
-}
-
-.chat-list-tab:last-child {
-  border-right: 0;
-}
-
-.chat-list-tab:hover,
-.chat-list-tab.active {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary);
+.chat-project-status-filters {
+  margin: var(--brisk-space-2xl) var(--brisk-space-none) var(--brisk-space-l);
 }
 
 .chat-project-card-list {
