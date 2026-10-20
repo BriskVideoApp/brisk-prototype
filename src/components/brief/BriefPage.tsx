@@ -143,6 +143,7 @@ type BriefSectionIntroModel = {
   guidance?: string;
   required?: boolean;
   step: number;
+  totalSteps?: number;
   title: string;
   tone: BriefSectionTone;
 };
@@ -597,6 +598,11 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const configuredSteps = getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields);
   const activeStepIndex = configuredSteps.findIndex((step) => step.id === activeStepId);
   const activeStep = configuredSteps[activeStepIndex] ?? configuredSteps[0];
+  const activeStepIntro = {
+    ...briefSectionIntros[activeStepId],
+    step: Math.max(activeStepIndex, 0) + 1,
+    totalSteps: configuredSteps.length,
+  };
   const nextStage = projectFlow.stages[projectFlow.stages.indexOf("brief") + 1] ?? "masters";
   const nextStageLabel = nextStage === "edit" && projectFlow.postProductionTerm === "animation"
     ? "Animation"
@@ -1263,6 +1269,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             <BriefFieldOrderContext.Provider value={briefConfiguration ? getStudioBriefFieldOrder(briefConfiguration, briefFields) : null}>
             {activeStepId === "basics" ? (
               <BriefBasicsSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
@@ -1272,6 +1279,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "videoType" ? (
               <BriefVideoTypeSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
@@ -1282,6 +1290,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "purposeAudience" ? (
               <BriefPurposeAudienceSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
@@ -1292,6 +1301,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "similarVideos" ? (
               <BriefSimilarVideosSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
@@ -1301,6 +1311,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "brandKit" ? (
               <BriefBrandKitSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 excludedOptionValues={briefConfiguration?.excludedOptionValues}
                 fields={briefFields}
@@ -1311,6 +1322,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "contentProduction" ? (
               <BriefContentProductionSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 clientName={project.clientName}
                 fields={briefFields}
@@ -1322,6 +1334,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "deadline" ? (
               <BriefDeadlineSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
@@ -1331,6 +1344,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "deliverablesTiming" ? (
               <BriefDeliverablesSection
+                intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
                 onConfirmField={confirmBriefField}
@@ -1351,6 +1365,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "summary" ? (
               <BriefSummaryPage
+                intro={activeStepIntro}
                 fields={briefFields}
                 logline={logline}
                 summaryMissingCount={summaryMissingCount}
@@ -2659,6 +2674,7 @@ function BriefSectionIntro({
   intro: BriefSectionIntroModel;
   titleId?: string;
 }) {
+  const totalSteps = intro.totalSteps ?? briefSteps.length;
   return (
     <header className={`brief-section-intro tone-${intro.tone}`}>
       <span className="brief-section-intro-accent" aria-hidden="true" />
@@ -2666,7 +2682,7 @@ function BriefSectionIntro({
         <div className="brief-section-intro-copy">
           <div className="brief-section-step-row">
             <span className="brief-section-step-chip label-xs-semibold">
-              {intro.step === briefSteps.length ? "Summary" : `Step ${intro.step} of ${briefSteps.length}`}
+              {intro.step === totalSteps ? "Summary" : `Step ${intro.step} of ${totalSteps}`}
             </span>
             {intro.required === false ? <span className="brief-section-optional label-xs-semibold">Optional</span> : null}
           </div>
