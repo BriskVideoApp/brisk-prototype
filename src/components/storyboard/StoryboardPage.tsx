@@ -346,6 +346,7 @@ export function StoryboardPage({ project }: { project: Project }) {
                 <ScriptDocumentControls
                   actionsLabel="Storyboard"
                   actionMenu="quiet"
+                  commentsStyle="quiet"
                   isActionsOpen={isActionsOpen}
                   isCommentsOpen={isCommentsOverviewOpen}
                   onActionsOpenChange={(isOpen) => {

@@ -4,8 +4,10 @@ import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialo
 
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 
-import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
 import type { BrandFont } from "@/data/brand-kits";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 
@@ -23,64 +25,24 @@ export function ActionMenu({
   items: BrandMenuItem[];
   label?: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const anchorRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!anchorRef.current?.contains(event.target as Node)) setIsOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [isOpen]);
-
   return (
-    <span className="brand-action-menu-anchor" ref={anchorRef}>
-      <button
-        className="brand-compact-action"
-        type="button"
-        aria-label={label}
-        aria-expanded={isOpen}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          setIsOpen((current) => !current);
-        }}
-      >
-        <DsIcon name="dots-three" size={16} />
-      </button>
-      {isOpen ? (
-        <span className="brand-action-menu" role="menu">
-          {items.map((item, index) => (
-            <Fragment key={item.label}>
-              {item.destructive && index > 0 ? <span className="brand-action-menu-divider" role="separator" /> : null}
-              <button
-                className={`label-s ${item.destructive ? "is-destructive" : ""}`}
-                type="button"
-                role="menuitem"
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setIsOpen(false);
-                  item.onSelect();
-                }}
-              >
-                {item.icon ? <DsIcon name={item.icon} size={15} /> : null}
-                {item.label}
-              </button>
-            </Fragment>
-          ))}
-        </span>
-      ) : null}
-    </span>
+    <div className="brand-action-menu-anchor" onClick={(event) => event.stopPropagation()}>
+      <BriskSelect
+        mode="action"
+        ariaLabel={label}
+        value=""
+        clearable={false}
+        placeholder={label}
+        options={items.map((item, index) => ({
+          value: String(index),
+          label: item.label,
+          tone: item.destructive ? "danger" : "default",
+          dividerAbove: item.destructive && index > 0,
+        }))}
+        onChange={(value) => items[Number(value)]?.onSelect()}
+        actionTrigger={(props) => <IconButton {...props} aria-label={label} tooltipAlign="end"><DsIcon name="dots-three" size={16} /></IconButton>}
+      />
+    </div>
   );
 }
 
