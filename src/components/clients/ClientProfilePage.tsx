@@ -432,7 +432,7 @@ function ArchiveClientDialog({ client, onArchive, onClose, projectCount }: { cli
 function ProjectAccessDialog({ contact, onClose, onSave, projects }: { contact: ClientContact; onClose: () => void; onSave: (projectIds: string[]) => void; projects: Project[] }) {
   const [projectIds, setProjectIds] = useState(contact.projectIds);
   return (
-    <ClientModal title="Change project access" description={`Choose which ${contact.name} can open in the Client portal.`} onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={() => onSave(projectIds)}>Save access</Button></>}>
+    <ClientModal title="Change project access" description={`Choose which projects ${contact.name} can open in the Client portal.`} onClose={onClose} footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={() => onSave(projectIds)}>Save access</Button></>}>
       <div className="client-access-list">
         {projects.map((project) => (
           <Checkbox

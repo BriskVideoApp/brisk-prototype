@@ -2,7 +2,7 @@
 .client-profile-page,
 .clients-permission-state,
 .client-not-found {
-  --clients-content-max: calc(var(--brisk-space-3xl) * 30);
+  --clients-content-max: calc(var(--brisk-space-3xl) * 36);
   --client-profile-max: calc(var(--brisk-space-3xl) * 24);
   min-height: 100%;
   background: var(--brisk-bg-block-secondary);
@@ -261,9 +261,9 @@
 .clients-table th:nth-child(1) { width: 24%; }
 .clients-table th:nth-child(2) { width: 27%; }
 .clients-table th:nth-child(3) { width: 20%; }
-.clients-table th:nth-child(4) { width: 18%; }
+.clients-table th:nth-child(4) { width: 16%; }
 .clients-table th:nth-child(5) { width: 8%; }
-.clients-table th:nth-child(6) { width: 3%; }
+.clients-table th:nth-child(6) { width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs)); }
 
 .clients-table td {
   height: calc(var(--brisk-space-3xl) * 2 + var(--brisk-space-l));
@@ -275,6 +275,14 @@
 
 .clients-table tbody td {
   cursor: pointer;
+}
+
+.clients-table td:last-child {
+  padding: var(--brisk-space-none);
+}
+
+.clients-table td:last-child .client-row-open {
+  margin: var(--brisk-space-none) auto;
 }
 
 .clients-table tbody tr:hover td {
@@ -562,7 +570,7 @@
 
 .client-profile-header-inner {
   width: 100%;
-  max-width: var(--client-profile-max);
+  max-width: var(--clients-content-max);
   margin: var(--brisk-space-none) auto;
 }
 
@@ -614,7 +622,7 @@
 .client-archive-banner .client-text-button { margin-left: auto; }
 
 .client-profile-tabs {
-  --brisk-tabs-content-max: var(--client-profile-max);
+  --brisk-tabs-content-max: var(--clients-content-max);
 }
 
 .client-profile-content {
@@ -740,6 +748,10 @@
   max-width: var(--client-profile-max);
   gap: var(--brisk-space-xl);
   margin: var(--brisk-space-none) auto;
+}
+
+.client-section-stack:has(.client-contacts-table-frame) {
+  max-width: var(--clients-content-max);
 }
 
 .client-section-header {

@@ -123,39 +123,9 @@ function StudioSettingsSidebar({ activeHref }: { activeHref: string }) {
   );
 }
 
-export function StudioWorkspacePageFrame({ children, section }: { children: ReactNode; section: StudioWorkspaceSectionId }) {
-  const router = useRouter();
-  const { selectedRole } = usePrototypeRole();
-  const { people } = usePeople();
-  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canManageStudioSettings = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
-  if (!canManageStudioSettings) return <>{children}</>;
-
-  const activeHref = `/${section}`;
-  return (
-    <div className="studio-settings-shell studio-workspace-settings-shell">
-      <div className="studio-settings-mobile-navigation">
-        <span className="label-xs-semibold">Settings section</span>
-        <BriskSelect
-          ariaLabel="Choose Studio Settings section"
-          clearable={false}
-          options={[
-            { value: "/people", label: "People", icon: "users-three" as const },
-            { value: "/clients", label: "Clients", icon: "users-three" as const },
-            ...studioSettingsNavigation.map((item) => ({ value: item.href, label: item.label, icon: item.icon })),
-          ]}
-          placeholder="Choose section"
-          searchable={false}
-          value={activeHref}
-          onChange={(href) => { if (href && href !== activeHref) router.push(href); }}
-        />
-      </div>
-      <div className="studio-settings-layout">
-        <StudioSettingsSidebar activeHref={activeHref} />
-        <div className="studio-settings-main">{children}</div>
-      </div>
-    </div>
-  );
+export function StudioWorkspacePageFrame({ children }: { children: ReactNode; section: StudioWorkspaceSectionId }) {
+  // Directory pages own their access checks and use the main workspace navigation.
+  return <>{children}</>;
 }
 
 type StudioSettingsUnsavedContextValue = {

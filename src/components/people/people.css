@@ -2,7 +2,7 @@
 .person-profile-page,
 .people-permission-state,
 .person-not-found {
-  --people-content-max: calc(var(--brisk-space-3xl) * 30);
+  --people-content-max: calc(var(--brisk-space-3xl) * 36);
   --person-profile-max: calc(var(--brisk-space-3xl) * 24);
   min-height: 100%;
   background: var(--brisk-bg-block-secondary);
@@ -332,7 +332,7 @@
 .people-table th[data-column="profile"] { width: 3%; }
 
 .people-table.has-capacity {
-  min-width: calc(var(--brisk-space-3xl) * 32);
+  min-width: calc(var(--brisk-space-3xl) * 30);
 }
 
 .people-table.has-capacity th[data-column="person"] { width: 18%; }
@@ -340,9 +340,9 @@
 .people-table.has-capacity th[data-column="role"] { width: 12%; }
 .people-table.has-capacity th[data-column="work"] { width: 18%; }
 .people-table.has-capacity th[data-column="capacity"] { width: 16%; }
-.people-table.has-capacity th[data-column="invitation"] { width: 16%; }
+.people-table.has-capacity th[data-column="invitation"] { width: 14%; }
 .people-table.has-capacity th[data-column="activity"] { width: 8%; }
-.people-table.has-capacity th[data-column="profile"] { width: 2%; }
+.people-table.has-capacity th[data-column="profile"] { width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs)); }
 
 .people-table td,
 .person-work-table td {
