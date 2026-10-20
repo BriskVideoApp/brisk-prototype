@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
+
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -78,14 +80,9 @@ export function OutstandingInvoicesPage() {
 
   return (
     <main className="outstanding-invoices-page">
-      <header className="costs-page-header costs-workspace-header">
-        <div>
-          <span className="costs-kicker label-xs-semibold">WORKSPACE OWNER</span>
-          <h1 className="headings-m-bold">Invoices to pay</h1>
-          <p className="paragraph-s">Review contractor invoices across projects and record what has been paid.</p>
-        </div>
+      <WorkspacePageHeader title="Expenses" actions={
         <label className="costs-search" htmlFor="outstanding-invoice-search"><DsIcon name="search" size={16} /><span className="sr-only">Search invoices to pay</span><input id="outstanding-invoice-search" type="search" value={query} placeholder="Search invoices" onChange={(event) => setQuery(event.target.value)} /></label>
-      </header>
+      } />
 
       <section className="costs-summary-grid costs-workspace-summary" aria-label="Invoices to pay summary">
         <SummaryCard label="Outstanding" value={formatCurrencyTotals(visibleRows.map(({ invoice }) => ({ amount: invoice.amount, currency: invoice.currency })))} note={`${visibleRows.length} visible ${visibleRows.length === 1 ? "invoice" : "invoices"}`} />

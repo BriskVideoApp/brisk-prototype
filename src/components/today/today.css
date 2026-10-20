@@ -6,7 +6,7 @@
 .today-shell {
   --today-sidebar-width: calc(var(--brisk-space-3xl) * 4);
   --today-rail-width: calc(var(--brisk-space-3xl) * 8);
-  --today-header-height: 118px;
+  --today-header-height: calc(var(--brisk-space-3xl) * 3);
   display: flex;
   min-height: 100vh;
   background: var(--brisk-page-primary);

@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
+
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { BriskSelect } from "@/components/form/BriskSelect";
 
@@ -286,11 +288,7 @@ function TodayHeader({
   const lastDay = weekDays[weekDays.length - 1];
 
   return (
-    <header className="today-header">
-      <div className="today-header-title">
-        <span className="today-date label-s-semibold">{formatLongDate(todayReferenceDate)}</span>
-        <h1>To Do</h1>
-      </div>
+    <WorkspacePageHeader title="To Do" supportingText={formatLongDate(todayReferenceDate)} actions={
       <div className="today-header-actions">
         <div className="today-week-nav" aria-label="Week navigator">
           <button className="today-icon-button" type="button" aria-label="Previous week" onClick={onPreviousWeek}>
@@ -311,7 +309,7 @@ function TodayHeader({
           {formatHours(weekTotals.planned)} planned · {formatHours(weekTotals.done)} done
         </span>
       </div>
-    </header>
+    } />
   );
 }
 

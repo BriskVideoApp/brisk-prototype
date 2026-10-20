@@ -49,6 +49,10 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 - Known issue: text is not vertically centred inside small tag components. The kit applies negative spacing as a workaround. Keep this workaround in place for tags.
 - Heading and body scale: use kit text styles only.
 
+### Workspace page headers
+
+Tom approved a shared header for Videos, To Do, People, Clients, Media Library, Expenses and Brand Kits on 20 October 2026. Use the app-level `WorkspacePageHeader` composition with DS `Headings/M-bold` (32px/40px), 24px vertical and 32px horizontal desktop padding, a white surface and a primary bottom border. Page controls sit on the right and may wrap when space is constrained. Keep filters and tabs below the header. Supporting text is omitted except for To Do's date, shown below its title. Do not apply this workspace standard to project, profile, section or dialog headings.
+
 ### Terminology
 - "Stage icons" = the adaptable workflow icons (Brief, Script, Shoot, Storyboard, Edit or Animation, Masters). Media uses the same circular treatment but stays pinned outside the reorderable flow. Rendered exclusively by StageChip.
 - "DS icons" (or "General UI icons") = everything else. Imported via the DsIcon component.

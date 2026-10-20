@@ -6,6 +6,7 @@ import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, MouseEvent as 
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { InvoiceUploadModal } from "@/components/costs/CostsPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -284,14 +285,13 @@ export function FreelancerVideosPage() {
 
   return (
     <main className="freelancer-videos-page">
-      <header className="freelancer-videos-header">
-        <h1 className="headings-m-bold">My jobs</h1>
+      <WorkspacePageHeader title="My jobs" actions={
         <label className="freelancer-videos-search" htmlFor="freelancer-videos-search">
           <DsIcon name="search" size={16} />
           <span className="sr-only">Search your jobs</span>
           <input id="freelancer-videos-search" type="search" value={query} placeholder="Search your jobs" onChange={(event) => setQuery(event.target.value)} />
         </label>
-      </header>
+      } />
 
       <nav className="freelancer-primary-tabs" aria-label="Contractor job views">
         <button className={`label-s-semibold ${view === "videos" ? "is-active" : ""}`} type="button" aria-current={view === "videos" ? "page" : undefined} onClick={() => setView("videos")}>Active jobs <span className="label-xs">{acceptedEngagements.length}</span></button>

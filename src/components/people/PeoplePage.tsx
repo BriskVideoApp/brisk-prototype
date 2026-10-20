@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
+
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -104,14 +106,11 @@ export function PeoplePage() {
 
   return (
     <main className="people-page">
-      <header className="people-page-header">
-        <div className="people-page-header-inner">
-          <div><h1 className="headings-m-bold">People</h1><p className="paragraph-s">Manage Filmmakers, Client contacts and production contacts in one directory.</p></div>
-          <div className="people-page-actions">
-            <Button size="M" onClick={inviteFromPeople}><span className="people-button-content"><DsIcon name="plus" size={16} /> {getInviteButtonLabel(view)}</span></Button>
-          </div>
+      <WorkspacePageHeader title="People" actions={
+        <div className="people-page-actions">
+          <Button size="M" onClick={inviteFromPeople}><span className="people-button-content"><DsIcon name="plus" size={16} /> {getInviteButtonLabel(view)}</span></Button>
         </div>
-      </header>
+      } />
 
       <div className="people-view-tabs">
         <FilterGroup className="people-view-tabs-inner" aria-label="People views">

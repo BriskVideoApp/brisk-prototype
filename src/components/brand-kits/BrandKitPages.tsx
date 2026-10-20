@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
+
 import { BriskSelect } from "@/components/form/BriskSelect";
 
 import { EditingDialog } from "../../../Brisk DS/src/app/components/EditingDialog";
@@ -407,11 +409,7 @@ export function BrandKitsLandingPage() {
   return (
     <main className="brand-kits-shell">
       <div className="brand-kits-main">
-        <header className="brand-kits-page-header">
-          <div className="brand-kits-title">
-            <h1>Brand Kits</h1>
-            <p className="paragraph-s">One kit per customer.</p>
-          </div>
+        <WorkspacePageHeader title="Brand Kits" actions={
           <label className="brand-kits-search" htmlFor="brand-kits-search">
             <DsIcon name="search" size={16} />
             <span className="sr-only">Search Brand Kits</span>
@@ -423,7 +421,7 @@ export function BrandKitsLandingPage() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-        </header>
+        } />
         <section className="brand-kits-page-content" aria-label="Client Brand Kits">
           {filteredCustomers.length > 0 ? (
             <CustomerGrid customers={filteredCustomers} />

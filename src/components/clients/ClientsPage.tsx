@@ -1,5 +1,7 @@
 "use client";
 
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
+
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -59,18 +61,12 @@ export function ClientsPage() {
 
   return (
     <main className="clients-page">
-      <header className="clients-page-header">
-        <div className="clients-page-header-inner">
-          <div>
-            <h1 className="headings-m-bold">Clients</h1>
-            <p className="paragraph-s">Manage every Client, their projects, Brand Kit and private portal access.</p>
-            <Link className="clients-brand-kits-link label-s-semibold" href="/brand-kits">All Brand Kits</Link>
-          </div>
-          <Button size="M" onClick={() => setIsAddClientOpen(true)}>
-            <span className="client-button-content"><DsIcon name="plus" size={16} /> Add Client</span>
-          </Button>
-        </div>
-      </header>
+      <WorkspacePageHeader title="Clients" actions={<>
+        <Link className="clients-brand-kits-link label-s-semibold" href="/brand-kits">All Brand Kits</Link>
+        <Button size="M" onClick={() => setIsAddClientOpen(true)}>
+          <span className="client-button-content"><DsIcon name="plus" size={16} /> Add Client</span>
+        </Button>
+      </>} />
 
       <div className="clients-view-tabs">
         <FilterGroup className="clients-view-tabs-inner" aria-label="Client views">

@@ -40,6 +40,7 @@ import {
   toProjectTimeEntry,
 } from "@/data/timeEntries/sharedTimeEntries";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
+import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectCompletion } from "@/components/project/ProjectCompletionContext";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
@@ -597,9 +598,7 @@ function ActiveVideosWorkspace() {
   return (
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
       <div className="active-videos-main">
-        <section className="active-videos-header" aria-label="Videos header">
-          <h1 className="active-videos-title">Videos</h1>
-          <div className="active-videos-header-actions">
+        <WorkspacePageHeader title="Videos" actions={<>
             <label className="active-videos-search label-s" htmlFor="active-videos-search">
               <span className="sr-only">Search projects</span>
               <input
@@ -616,8 +615,7 @@ function ActiveVideosWorkspace() {
                 <Link className="active-videos-utility-link label-s-semibold" href="/media">Media Library</Link>
               </div>
             ) : null}
-          </div>
-        </section>
+        </>} />
 
       <div className="active-videos-tabs">
         <FilterGroup className="active-videos-status-filters" aria-label="Project status">
