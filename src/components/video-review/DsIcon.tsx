@@ -111,6 +111,7 @@ const iconPaths = {
   "coat-hanger": "/brisk-icons/coat-hanger.svg",
   "television": "/brisk-icons/television.svg",
   "paint-brush": "/brisk-icons/paint-brush.svg",
+  "palette": "/brisk-icons/palette.svg",
   "weather-sun": "/brisk-icons/weather-sun.svg",
   "weather-cloud": "/brisk-icons/weather-cloud.svg",
   "weather-rain": "/brisk-icons/weather-rain.svg",

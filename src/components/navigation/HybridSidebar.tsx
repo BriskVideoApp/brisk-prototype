@@ -48,7 +48,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     {
       label: isClient ? "Brand Kit" : "Brand Kits",
       href: isClient ? viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios" : "/brand-kits",
-      icon: "frame-corners" as const,
+      icon: "palette" as const,
     },
   ];
   const personal: SidebarLink[] = [
