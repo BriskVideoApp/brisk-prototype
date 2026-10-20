@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { ChatUnreadControl } from "@/components/chat/ChatUnreadControl";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
@@ -9,6 +9,13 @@ import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext
 
 export type ChatRailView = "projects" | "dms" | "mentions" | "groups" | "threads" | "calls";
 export type ChatCustomerFilter = ChatClientStatus | "All";
+const clientFilterOptions: BriskSelectOption<ChatCustomerFilter>[] = [
+  { value: "Active", label: "Active clients" },
+  { value: "Inactive", label: "Inactive clients" },
+  { value: "Archived", label: "Archived clients" },
+  { value: "All", label: "All clients" },
+];
+
 export type ChatRailReadTarget =
   | { type: "all" }
   | { type: "client"; clientName: string }
@@ -69,7 +76,6 @@ export function ChatRail({
   onGlobalMarkRead,
   onSearchOpen,
 }: ChatRailProps) {
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
   const showClients = role === "Studio Staff";
   const clientStatusByName = new Map(clients.map((client) => [client.name, client.status]));
   const lifecycleProjects = showClients && customerFilter !== "All"
@@ -115,7 +121,6 @@ export function ChatRail({
           0,
         )
       : 0);
-  const customerFilterLabel = customerFilter === "All" ? "All customers" : `${customerFilter} customers`;
 
   return (
     <aside className="chat-rail" aria-label="Chat navigation">
@@ -245,51 +250,18 @@ export function ChatRail({
       </div>
 
       {showClients ? (
-        <div
-          className="chat-customer-filters"
-          onBlur={(event) => {
-            const nextFocus = event.relatedTarget;
-
-            if (!(nextFocus instanceof Node) || !event.currentTarget.contains(nextFocus)) {
-              setIsFilterMenuOpen(false);
-            }
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setIsFilterMenuOpen(false);
-            }
-          }}
-        >
-          <button
-            className="chat-customer-filter-trigger label-s-semibold"
-            type="button"
-            aria-haspopup="menu"
-            aria-expanded={isFilterMenuOpen}
-            onClick={() => setIsFilterMenuOpen((current) => !current)}
-          >
-            <span>{customerFilterLabel}</span>
-            <DsIcon name="caret-down" size={14} />
-          </button>
-          {isFilterMenuOpen ? (
-            <div className="chat-customer-filter-menu" role="menu" aria-label="Filter customers">
-              {(["Active", "Inactive", "Archived", "All"] as ChatCustomerFilter[]).map((filter) => (
-                <button
-                  className={`label-s ${customerFilter === filter ? "selected" : ""}`}
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={customerFilter === filter}
-                  key={filter}
-                  onClick={() => {
-                    onCustomerFilterChange(filter);
-                    setIsFilterMenuOpen(false);
-                  }}
-                >
-                  <span>{filter === "All" ? "All customers" : `${filter} customers`}</span>
-                  {customerFilter === filter ? <DsIcon name="check" size={15} /> : null}
-                </button>
-              ))}
-            </div>
-          ) : null}
+        <div className="chat-customer-filters">
+          <BriskSelect<ChatCustomerFilter>
+            ariaLabel="Filter Clients"
+            placeholder="All clients"
+            triggerClassName="chat-client-filter-trigger"
+            options={clientFilterOptions}
+            value={customerFilter}
+            clearable={false}
+            onChange={(filter) => {
+              if (filter) onCustomerFilterChange(filter);
+            }}
+          />
           <button
             className={`chat-unread-filter label-xs-semibold ${showUnreadOnly ? "active" : ""}`}
             type="button"

@@ -65,4 +65,6 @@ Mount the portal inside the opener's nearest native dialog, otherwise in the doc
 
 ## Scope boundaries
 
+Chat's Staff-only Client lifecycle filter uses the ordinary shared field in its existing rail-footer position, with Active clients / Inactive clients / Archived clients / All clients in that order. Keep clearable=false, its original stored values and selection callback, and the separate unread-only control. The legacy Chat focus reset must not suppress this field's DS keyboard outline. Do not introduce this filter for Studio Freelancers or Clients, or migrate Chat's separate project-status tabs as part of this change.
+
 Calendar and time entry, address suggestions, mentions inside text, media browsing, colour selection and rich source-browser dialogs are separate interaction patterns. Inline choice grids such as Brief video type and call to action remain visible grids. They must not be replaced with a simple dropdown at the expense of their functions. General navigation and action menus remain separate from selection fields.

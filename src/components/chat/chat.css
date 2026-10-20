@@ -77,11 +77,12 @@
     transform 120ms ease;
 }
 
-.chat-shell button:not([data-brisk-icon-button]):not([data-brisk-tab]):focus-visible,
+/* Keep the Client filter's shared DS keyboard outline instead of the legacy Chat reset. */
+.chat-shell button:not([data-brisk-icon-button]):not([data-brisk-tab]):not(.chat-client-filter-trigger):focus-visible,
 .chat-shell a:focus-visible,
 .chat-shell input:focus-visible,
 .chat-shell textarea:focus-visible,
-.chat-shell .brisk-select-trigger:focus-visible {
+.chat-shell .brisk-select-trigger:not(.chat-client-filter-trigger):focus-visible {
   outline: none;
   box-shadow: var(--brisk-shadow-s);
 }
@@ -441,7 +442,6 @@
   padding: var(--brisk-space-m) var(--brisk-space-l) var(--brisk-space-l);
 }
 
-.chat-customer-filter-trigger,
 .chat-unread-filter {
   display: flex;
   width: 100%;
@@ -457,18 +457,12 @@
   text-align: left;
 }
 
-.chat-customer-filter-trigger:hover,
-.chat-customer-filter-trigger:focus-visible,
 .chat-unread-filter:hover,
 .chat-unread-filter:focus-visible,
 .chat-unread-filter.active {
   border-color: var(--brisk-white);
   background: var(--surface-dark-fill-subtle);
   color: var(--brisk-white);
-}
-
-.chat-customer-filter-trigger[aria-expanded="true"] > .ds-icon {
-  transform: rotate(180deg);
 }
 
 .chat-unread-filter {
@@ -485,42 +479,6 @@
   border-color: var(--brisk-border-primary);
   background: var(--brisk-white);
   color: var(--brisk-gray-90);
-}
-
-.chat-customer-filter-menu {
-  position: absolute;
-  right: var(--brisk-space-l);
-  bottom: calc(100% - var(--brisk-space-s));
-  left: var(--brisk-space-l);
-  z-index: 80;
-  display: grid;
-  gap: var(--brisk-space-xxs);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-s);
-  background: var(--surface-elevated);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-xs);
-}
-
-.chat-customer-filter-menu > button {
-  display: flex;
-  min-height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--brisk-space-s);
-  border: 0;
-  border-radius: var(--brisk-radius-xs);
-  background: transparent;
-  color: var(--brisk-text-primary);
-  padding: var(--brisk-space-s) var(--brisk-space-m);
-  text-align: left;
-}
-
-.chat-customer-filter-menu > button:hover,
-.chat-customer-filter-menu > button:focus-visible,
-.chat-customer-filter-menu > button.selected {
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary);
 }
 
 .chat-unread-badge {
