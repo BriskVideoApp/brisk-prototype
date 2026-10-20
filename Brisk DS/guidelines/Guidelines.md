@@ -2,6 +2,10 @@
 
 **Design language:** Neo-brutalism · **DS file:** `5528Fqe3Kq0aQCDpjzQ74d` · **Viewport:** 1440px desktop only
 
+## Current prototype authority
+
+Read the [approved desktop design baseline](../../Docs/desktop-design-baseline.md) alongside this guide. Original `d-` instance instructions describe the Figma kit; approved React extensions and app-level compositions have their own scoped guidance. Neither a Figma catalogue entry nor existing app markup proves that a reusable React component exists or has been approved. Latest explicit user decisions and component-specific approved variants supersede conflicting older examples within their scope. This reconciliation does not confirm changes to the Figma source.
+
 ---
 
 ## Core rule — DS-only, zero invention

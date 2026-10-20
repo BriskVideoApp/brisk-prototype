@@ -2,12 +2,14 @@
 
 This directory holds screenshots that Codex should consult when building features. Each folder follows different trust rules. **Read this file before referencing any screenshot.**
 
+**Current approval boundary:** Read the [desktop baseline](../desktop-design-baseline.md) alongside these references. Screenshots establish visual evidence only where they agree with later explicit approvals and component guidance. Older heading weights, two-row navigation and top-right role controls are superseded within the approved workspace scope. A reference does not certify an entire live page or replace fresh audit evidence. Existing additional exports may be present beyond the historical file counts below; inspect actual files rather than assuming this inventory is exhaustive.
+
 ## Trust rules
 
 ### `brisk/` — Source of visual truth (and partial design direction)
 Screens designed in the new Brisk DS. Use these as the authoritative reference for:
 - Visual styling (colours, type, spacing, borders, shadows, asymmetric corners)
-- Icon usage (Flow icons only)
+- Icon usage where consistent with the current `StageChip` / approved `DsIcon` mapping. Older Flow exports are historical, not the current asset source.
 - Component appearance and states
 - Layout patterns where Brisk versions exist
 

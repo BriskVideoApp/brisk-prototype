@@ -91,6 +91,7 @@ brisk-prototype/
 
 Before generating any screen, read the relevant project guidance:
 
+- **Current desktop approval baseline and superseded patterns** → `Docs/desktop-design-baseline.md` (read alongside, not instead of, the DS component guidance).
 - **Anything visual** (colour, type, spacing, components, states) → `brisk-design-system.md`
 - **Filmmaker language, stages, statuses, terminology** → `brisk-production-journey.md`
 - **Roles, white-label, client portal, onboarding** → `brisk-saas-patterns.md`

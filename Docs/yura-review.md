@@ -1,5 +1,17 @@
 # Yura Review Log
 
+## Current status and design-source synchronisation - 20 October 2026
+
+This is a historical review-request log, not an approval register or an assertion that every note still describes live code. The [approved desktop baseline](desktop-design-baseline.md) and current component-specific React guidance supersede conflicting older statements below, including claims that Button/Input/Modal exports are unavailable, Team/Gig or extra access roles, archived Flow asset usage, former sidebar placement and earlier role-editor action placement. Do not recreate these historical patterns or assume an outstanding request has been approved.
+
+Tom approved reconciling documentation before the desktop audit, not changing the Figma source or application UI. Please confirm design-source representation for:
+
+- The approved React control extensions and their documented variants, including quiet actions, native-link action rows, fields, dialogs and filters. Existing prototype approval does not itself establish Figma parity.
+- The app-level hybrid shell and shared workspace heading/search/action layout, including the pale-neutral sidebar and scoped Media downloads. Determine whether any corresponding kit compositions are needed; do not assume each app composition requires a new primitive.
+- The compact shared Chat/Updates unread-count adapter and specialised search implementations. Token use, readability and animation remain audit questions, not newly approved DS specifications.
+
+Missing components or assets still require the Guidelines.md missing-asset protocol and explicit confirmation before implementation. This list records follow-up questions only; no external message has been sent and no design-source synchronisation is claimed.
+
 ## Storyboard Stage prototype
 
 Added shared prototype components under `src/components/storyboard/`:

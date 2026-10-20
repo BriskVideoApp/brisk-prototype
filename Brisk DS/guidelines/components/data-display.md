@@ -28,6 +28,10 @@ Use Cards to group related content that is visually elevated above the page canv
 
 Use for labels, categories, statuses, and counts. Radius: `radius/xs`.
 
+### Scoped app unread-count approval
+
+Tom approved Chat and Updates sharing the compact `CommentCountBadge` presentation on 20 October 2026, replacing the separate large Updates badge. This is an app-level adapter, not confirmation of a new Figma Tag-Badge variant or approval of every badge consumer. Preserve independent counts, access scoping, accessible labels, zero hiding and display caps. Exact token use, readability and animation remain audit subjects. See the [desktop baseline](../../../Docs/desktop-design-baseline.md).
+
 ---
 
 ## d-Chips

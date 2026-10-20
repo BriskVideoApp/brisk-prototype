@@ -28,6 +28,8 @@
 
 ## Flow icons
 
+**Historical kit/export reference:** The Flow names, fixed lists and export paths in this section are retained for identifying older design material only. Current prototype stage UI follows AGENTS.md and the [desktop baseline](../../../Docs/desktop-design-baseline.md): `StageChip`, approved `DsIcon` assets under `/public/brisk-icons/`, adaptable stages, optional Storyboard, Animation where applicable and pinned Media. Do not import archived `Brisk Visuals/Flow icons/` assets or infer permission to use Styleframes from the catalogue below. The exported-assets section is not the current asset source.
+
 **Component:** `Flow icons` COMPONENT_SET, node `4408:103175` in DS file `5528Fqe3Kq0aQCDpjzQ74d`
 
 **Rule:** If a design must visually identify a specific Brisk production flow, use the correct `Flow icons` instance. Never substitute another icon, emoji, custom badge, or label. If flow identification is not needed, skip the component.

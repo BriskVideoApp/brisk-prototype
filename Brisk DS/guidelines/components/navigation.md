@@ -1,5 +1,11 @@
 # Brisk DS — Navigation Components
 
+## Approved React app composition - 20 October 2026
+
+The [desktop baseline](../../../Docs/desktop-design-baseline.md) records Tom's approved hybrid shell: left workspace navigation with top collapse control, account above permitted Studio settings, quiet Test mode below, history controls top-left, and Chat / Updates / Ask Brisk top-right. Use the existing `HybridSidebar`, `AppShell`, DS Buttons/IconButtons and approved icon assets. Preserve role-specific destinations and the circular project progress row.
+
+This is an approved app-level composition, not confirmation of new `d-Header` or `d-Side menu` variants in Figma. The original-kit descriptions below remain Figma guidance; their absolute custom-frame prohibitions do not revoke this scoped React composition. Do not rebuild the shell or restore the former two-row navigation solely to match an older example. Other missing navigation components still require the missing-asset protocol.
+
 ---
 
 ## d-Header

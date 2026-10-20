@@ -6,6 +6,8 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 
 Follow `AGENTS.md` for the three prototype access roles, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
 
+Read the [approved desktop design baseline](Docs/desktop-design-baseline.md) before an audit or desktop UI change. It indexes recent approvals, distinguishes DS primitives from app-level compositions, and identifies unresolved patterns. It does not certify every existing consumer or claim that the Figma source is synchronised.
+
 Tom's approved sequence is desktop first: fix and sign off the full desktop UI before the mobile design pass. Default visual reviews, implementation and verification to desktop, including Client-facing screens. Defer mobile-only work and routine mobile checks unless explicitly requested; preserve existing responsive behaviour. See Current design sequence in `AGENTS.md`.
 
 ## Visual language: Neo-brutalism
@@ -30,6 +32,7 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 	- Inner content within already-bordered containers (avoid double borders)
 	- Decorative blocks, dividers handled by spacing instead
 - Stroke weight and colour: use the kit's tokens.
+- Component-specific approved variants take precedence over these general stroke rules: quiet Buttons, IconButtons and text-first menu rows are intentionally unframed at rest. Do not add borders to make them conform to a generic rule.
 
 ## Shadows
 
@@ -52,6 +55,8 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 ### Workspace page headers
 
 Tom approved a shared header for Videos, To Do, People, Clients, Media Library, Expenses and Brand Kits on 20 October 2026. Use the app-level `WorkspacePageHeader` composition with DS `Headings/M-bold` (32px/40px), 24px vertical and 32px horizontal desktop padding, a white surface and a primary bottom border. Page controls sit on the right and may wrap when space is constrained. Keep filters and tabs below the header. Supporting text is omitted except for To Do's date, shown below its title. Do not apply this workspace standard to project, profile, section or dialog headings.
+
+The latest scoped placement puts People/Clients search in the header and Invite person/Add Client to the right of the filter row below. The global Media Library header likewise contains search, never a Studio-wide Download all. Scoped Client/project downloads stay with the location's media controls. See the baseline for preserved workflows and exclusions; these are app compositions, not a new DS Search component.
 
 ### Terminology
 - "Stage icons" = the adaptable workflow icons (Brief, Script, Shoot, Storyboard, Edit or Animation, Masters). Media uses the same circular treatment but stays pinned outside the reorderable flow. Rendered exclusively by StageChip.
@@ -158,7 +163,7 @@ For the requested feature, include the applicable interaction states below. Do n
 
 ## Reference examples
 
-These live pages in the prototype are the source of truth for visual style. When building any new surface, reuse from these first. If a design decision on a new page contradicts one of these references, the reference wins.
+These references illustrate specific patterns, not blanket approval of every element on a page. Use them only where they agree with the latest explicit approvals and component guidance. Older screenshot layout, placement and typography are superseded by the scoped desktop baseline above. The forthcoming audit must verify current live consumers rather than treating these references as a completed sign-off.
 
 ### Active Videos
 
@@ -168,10 +173,10 @@ These live pages in the prototype are the source of truth for visual style. When
 
 Use as the reference for:
 - Row rhythm and hairline weight (single hairline in `--gray-10`, no card outlines around list items).
-- Header CTA hierarchy on top-level pages (role toggle top-right, search top-right, filter tabs on a hairline below the title).
+- Header hierarchy: title and scoped search above filters. The older top-right role-toggle placement is superseded by the desktop sidebar Test mode control; see the approved hybrid baseline.
 - Status pill treatment (soft pill shape, `--brand-secondary` background, `--gray-90` text, no border).
 - Progress icon system (coloured filled circle when active, grey outline when inactive, dashed connector line between).
-- Typography ramp: h1 32px Semibold, tab labels 14px Regular, row primary 14px Semibold, row secondary 13px Regular `--gray-60`.
+- The older 32px Semibold h1 and Regular filter-label notes are superseded: workspace titles use DS `Headings/M-bold` (32px/40px), and migrated filters use the shared quiet-choice typography. Row styles remain contextual and subject to audit; do not infer a new text style from screenshot measurements.
 
 ### Video Review
 

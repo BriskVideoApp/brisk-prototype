@@ -4,6 +4,8 @@ All components use the `d-` prefix. Insert as instances. Apply variant propertie
 
 Swap slots are marked (swap) · Boolean toggles are marked (bool).
 
+The catalogue and generic decision trees describe the original Figma kit. For the prototype, read the approved React standards below and the [desktop baseline](../../../Docs/desktop-design-baseline.md) first. A catalogue entry does not establish a React export. Scoped approvals take precedence over generic choices; preserve specialised controls until reviewed.
+
 ---
 
 ## Component catalog by category
@@ -80,7 +82,8 @@ Binary on/off setting?
   → d-Toggle
 
 Filter or tab-like switching between a small fixed set?
-  → d-Segmented control
+  → For migrated React list filters and content panels, use the approved quiet FilterGroup/FilterButton or Tabs below.
+  → Original Figma / specialised segmented patterns: d-Segmented control, subject to scoped review.
 
 Numeric range or single value?
   → d-Slider or d-Slider with label
@@ -170,6 +173,8 @@ Use the approved [quiet FilterGroup/FilterButton and Tabs](quiet-choices.md) for
 ## React quiet-action-menu standard
 
 Short command lists use the approved [quiet action-menu pattern](action-menus.md), built on `BriskSelect` action mode. Keep these separate from settings checklists and ordinary selection fields. The initial pilot covers Chat call options and Videos column actions only.
+
+That initial pilot is historical, not the current rollout limit. The action-menu document records subsequent approved Script, Storyboard, Media, Transcript, native-link/history and other scoped migrations. Follow those sections without assuming every remaining specialised menu is approved for replacement.
 
 ## React anchored-settings standard
 

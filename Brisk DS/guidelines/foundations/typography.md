@@ -40,6 +40,7 @@ All Heading styles are Bold. Use for section titles, page headers, modal titles,
 
 ## Decision: which size to use
 
+- **Approved workspace exception:** Videos, To Do, People, Clients, Media Library, Expenses and Brand Kits use `Headings/M-bold` (32px/40px) through the app's `WorkspacePageHeader`. This scoped approval supersedes the generic hero-title guidance below for those pages only. Project, profile, section and dialog headings retain their own hierarchy. See the [desktop baseline](../../../Docs/desktop-design-baseline.md).
 - **Page title / hero header** → `Headings/XL-bold` or `Headings/2XL-bold`
 - **Section title** → `Headings/S-bold` or `Headings/M-bold`
 - **Card/modal title** → `Headings/XS-bold` or `Headings/S-bold`
