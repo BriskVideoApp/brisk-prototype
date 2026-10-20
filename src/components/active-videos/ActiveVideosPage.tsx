@@ -502,6 +502,7 @@ function ActiveVideosWorkspace() {
   };
 
   const saveProjectStatus = (projectId: string, status: Project["status"]) => {
+    if (selectedRole !== "Studio Staff") return;
     if (status !== "Completed" && completionRecords[projectId]) {
       undoProjectCompletion(projectId);
     }
@@ -535,6 +536,7 @@ function ActiveVideosWorkspace() {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
       if (event.key === "Escape") {
         event.preventDefault();
         closeProjectPanel();
@@ -1208,6 +1210,7 @@ export function ProjectDetailsSidebar({
       sectionRequest={null}
       onClose={onClose}
       onSaveStatus={(status) => {
+        if (selectedRole !== "Studio Staff") return;
         if (status !== "Completed" && completionRecords[project.id]) {
           undoProjectCompletion(project.id);
         }
@@ -1246,8 +1249,7 @@ function ProjectDetailPanel({
   const studioName = useStudioCompanyName();
   const projectFlowHref = getProjectFlowHref(project.id);
   const unreadMessages = project.unreadMessages ?? 0;
-  const [panelStatus, setPanelStatus] = useState<Project["status"]>(project.status);
-  const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
+  const canEditStatus = selectedRole === "Studio Staff";
   const [notes, setNotes] = useState<string[]>([]);
   const [draftNote, setDraftNote] = useState("");
   const [isTimeSpentOpen, setIsTimeSpentOpen] = useState(false);
@@ -1267,8 +1269,6 @@ function ProjectDetailPanel({
   const [draftEstimatedHours, setDraftEstimatedHours] = useState(String(estimatedHours));
 
   useEffect(() => {
-    setPanelStatus(project.status);
-    setIsStatusMenuOpen(false);
     setIsTimeSpentOpen(false);
     setNotes([]);
     setDraftNote("");
@@ -1352,6 +1352,11 @@ function ProjectDetailPanel({
     setEditingSection(null);
   };
 
+  const saveStatus = (status: Project["status"]) => {
+    if (!canEditStatus) return;
+    onSaveStatus(status);
+  };
+
   const handleInlineEditKeyDown = (event: ReactKeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, onSave: () => void) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -1392,36 +1397,19 @@ function ProjectDetailPanel({
           <h2 className="project-detail-title heading-3xs">{project.name}</h2>
           <div className="project-detail-status-row">
             <div className="project-panel-status-wrap">
-              <button
-                className={`status-pill status-${panelStatus.toLowerCase().replace(/\s+/g, "-")} project-detail-status-trigger label-s-semibold`}
-                type="button"
-                aria-expanded={isStatusMenuOpen}
-                onClick={() => setIsStatusMenuOpen((currentValue) => !currentValue)}
-              >
-                {getStatusLabel(panelStatus)}
-              </button>
-              {isStatusMenuOpen ? (
-                <div className="project-detail-status-menu" role="menu" aria-label="Change project status">
-                  {statusTabs
-                    .filter((status): status is Project["status"] => status !== "All")
-                    .map((status) => (
-                      <button
-                        className={`project-detail-status-menu-item label-s-semibold ${panelStatus === status ? "selected" : ""}`}
-                        type="button"
-                        role="menuitem"
-                        key={status}
-                        onClick={() => {
-                          setPanelStatus(status);
-                          setIsStatusMenuOpen(false);
-                        }}
-                      >
-                        <span className={`status-pill status-${status.toLowerCase().replace(/\s+/g, "-")} label-s-semibold`}>
-                          {getStatusLabel(status)}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-              ) : null}
+              {canEditStatus ? <label className="project-panel-status-label label-xs-semibold" htmlFor={`project-panel-status-${project.id}`}>Status</label> : <span className="project-panel-status-label label-xs-semibold">Status</span>}
+              {canEditStatus ? <BriskSelect
+                id={`project-panel-status-${project.id}`}
+                ariaLabel="Project status"
+                clearable={false}
+                placeholder="Choose status"
+                value={project.status}
+                options={projectStatusOptions.map((status) => ({ value: status, label: getStatusLabel(status) }))}
+                onChange={(value) => {
+                  const status = projectStatusOptions.find((option) => option === value);
+                  if (status) saveStatus(status);
+                }}
+              /> : <span className={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} label-s-semibold`}>{getStatusLabel(project.status)}</span>}
             </div>
           </div>
         </div>
@@ -1625,12 +1613,12 @@ function ProjectDetailPanel({
           showSend={false}
           showApprove={false}
         />
-        <Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => onSaveStatus("Completed")}>
+        {canEditStatus ? <><Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => saveStatus("Completed")}>
           Mark complete
         </Button>
-        <Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => onSaveStatus("Archived")}>
+        <Button size="S" variant="secondary" className="project-detail-footer-button" type="button" onClick={() => saveStatus("Archived")}>
           Archive
-        </Button>
+        </Button></> : null}
       </div>
 
       {isTimeSpentOpen ? (
@@ -2662,7 +2650,7 @@ function ProjectDataCell({
     return (
       <td className={columnClassName}>
         {canEditStatus ? (
-          <BriskSelect<string> ariaLabel={`Change status for ${project.name}`} clearable={false} placeholder={"Choose an option"} triggerClassName={`status-pill status-${project.status.toLowerCase().replace(/\s+/g, "-")} project-status-select label-s-semibold`} value={project.status} onChange={(value) => {
+          <BriskSelect<string> ariaLabel={`Change status for ${project.name}`} clearable={false} placeholder={"Choose an option"} value={project.status} onChange={(value) => {
               const nextStatus = projectStatusOptions.find((status) => status === value);
               if (nextStatus) onSaveStatus(nextStatus);
             }} options={[...projectStatusOptions.map((status) => ({ value: status, label: (getStatusLabel(status)) }))]} />
