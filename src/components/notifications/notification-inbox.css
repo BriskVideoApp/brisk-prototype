@@ -527,6 +527,21 @@
   display: none;
 }
 
+.app-notification-updates-button {
+  position: relative;
+}
+
+.app-notification-desktop-trigger {
+  display: inline-flex;
+}
+
+.app-notification-updates-link {
+  width: auto;
+  height: auto;
+  gap: var(--brisk-space-s);
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
 .app-notification-bell:hover,
 .app-notification-bell:focus-visible {
   background: var(--brisk-brand-secondary);
@@ -704,7 +719,17 @@
 }
 
 @media (max-width: 720px) {
-  .app-notification-bell-popover-trigger {
+  .app-notification-desktop-trigger {
+    display: none;
+  }
+
+  .app-notification-updates-link {
+    width: var(--brisk-space-3xl);
+    height: var(--brisk-space-3xl);
+    padding: var(--brisk-space-none);
+  }
+
+  .app-notification-updates-label {
     display: none;
   }
 

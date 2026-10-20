@@ -17,7 +17,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
   const controlRef = useRef<HTMLDivElement>(null);
   const recentItems = items.slice(0, 5);
   const isNotificationsPage = pathname === "/notifications";
-  const notificationLabel = `Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`;
+  const notificationLabel = `Updates${unreadCount ? `, ${unreadCount} unread` : ""}`;
 
   useEffect(() => {
     setIsOpen(false);
@@ -47,32 +47,36 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
     <div className="app-notification-control" ref={controlRef}>
       {isNotificationsPage ? (
         <Link
-          className="app-notification-bell is-active"
+          className="app-notification-bell app-notification-updates-link label-s-semibold is-active"
           href="/notifications"
           aria-current="page"
           aria-label={notificationLabel}
-          data-tooltip="Notifications"
         >
           <NotificationBellContents unreadCount={unreadCount} />
+          <span className="app-notification-updates-label">Updates</span>
         </Link>
       ) : (
         <>
-          <button
-            className={`app-notification-bell app-notification-bell-popover-trigger ${isOpen ? "is-active" : ""}`}
-            type="button"
-            aria-label={notificationLabel}
-            aria-controls={popoverId}
-            aria-expanded={isOpen}
-            data-tooltip={isOpen ? undefined : "Notifications"}
-            onClick={() => setIsOpen((current) => !current)}
-          >
-            <NotificationBellContents unreadCount={unreadCount} />
-          </button>
+          <span className="app-notification-desktop-trigger">
+            <Button
+              size="S"
+              variant="ghost"
+              className="app-notification-updates-button"
+              type="button"
+              aria-label={notificationLabel}
+              aria-controls={popoverId}
+              aria-expanded={isOpen}
+              onClick={() => setIsOpen((current) => !current)}
+            >
+              <NotificationBellContents unreadCount={unreadCount} />
+              Updates
+            </Button>
+          </span>
           <Link
             className="app-notification-bell app-notification-bell-mobile-link"
             href="/notifications"
             aria-label={notificationLabel}
-            data-tooltip="Notifications"
+            data-tooltip="Updates"
             onClick={onNavigate}
           >
             <NotificationBellContents unreadCount={unreadCount} />
