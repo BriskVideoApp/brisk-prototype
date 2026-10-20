@@ -37,4 +37,6 @@ Tom authorised the shared `IconButton` addition on 19 October 2026: quiet by def
 
 Only ordinary Chat back, project/client settings, member management, thread close and shortcut-sheet close actions, plus the existing recent-notification and notification-demonstration popover close controls, use this pilot. Preserve the notification close control's existing responsive visibility and the mobile bell link.
 
+Tom extended this standard to global Back, Forward and Recent pages on 20 October 2026. Use size M with the existing DS arrows and `clock-clockwise` history icon, grouped to the left of primary page links. Recent pages opens the shared text-only native-link menu by click or keyboard activation; it is no longer hidden behind a press-and-hold Back gesture. Keep its accessible name and tooltip Recent pages, the blue keyboard focus outline, and native browser Back/Forward behaviour. Other global action controls are outside this migration.
+
 Dark-rail navigation/search, message action toolbars, rich-text/composer controls, attachment/player tools, reactions, call controls, tabs, unread badges, notification navigation, grouped sharing/review controls and specialised editors remain unchanged. Do not add X buttons to editing dialogs, which retain their approved Cancel/Close/Done footers.

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import { GlobalHeaderActions, openCustomerGlobalChatEventName } from "@/components/navigation/GlobalHeaderActions";
+import { GlobalHistoryNavigation } from "@/components/navigation/GlobalHistoryNavigation";
 import { ShootGlobalActionsProvider } from "@/components/navigation/ShootGlobalActionsContext";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { DeferredBriskAiAssistant } from "@/components/ai/DeferredBriskAiAssistant";
@@ -95,6 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
               <div className="app-workspace-header">
                 <div className="app-global-header-leading">
+                  <GlobalHistoryNavigation />
                   <Link className={`app-header-navigation-link is-primary label-s-semibold ${pathname === videosHref ? "is-active" : ""}`} href={videosHref}>
                     Videos
                   </Link>

@@ -179,7 +179,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     // Rich selection rows can wrap; measure their content rather than clipping to one line per option.
     const optionsHeight = mode === "select"
       ? Math.max(options.length * rowHeight, optionsRef.current?.scrollHeight ?? 0)
-      : options.length * rowHeight;
+      : Math.max(options.length * rowHeight, filteredOptions.length === 0 && emptyLabel ? rowHeight : 0);
     const selectionBorderHeight = mode === "select" ? parseFloat(tokens.getPropertyValue("--brisk-space-xxs")) : 0;
     const preferredHeight = Math.min(520, optionsHeight + searchHeight + actionHeight + actionSpacing + selectionBorderHeight);
     const actionWidth = props.actionMenuSize === "compact" ? (rowHeight * 4) + triggerGap : rowHeight * 5;
