@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -33,16 +34,18 @@ export function GlobalHeaderActions() {
   };
 
   const chatControl = (
-    <button
-      className="app-global-action-button"
+    <Button
+      className="app-global-chat-button"
+      size="S"
+      variant="ghost"
       type="button"
       aria-label={`Open Chat${chatUnreadCount ? `, ${chatUnreadCount} unread` : ""}`}
-      data-tooltip="Chat"
       onClick={usesCustomerDashboardDrawers ? openCustomerChat : () => window.dispatchEvent(new Event(openCustomerGlobalChatEventName))}
     >
       <DsIcon name="chats" size={20} />
+      Chat
       <CommentCountBadge count={chatUnreadCount} label={`${chatUnreadCount} unread messages`} />
-    </button>
+    </Button>
   );
 
   return (

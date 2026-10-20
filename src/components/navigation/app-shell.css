@@ -296,6 +296,10 @@
   gap: var(--brisk-space-m);
 }
 
+.app-global-chat-button {
+  position: relative;
+}
+
 .app-global-brief-actions-slot {
   position: relative;
   display: flex;
