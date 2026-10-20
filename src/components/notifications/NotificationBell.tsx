@@ -5,6 +5,7 @@ import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { CommentCountBadge } from "@/components/CommentCountBadge";
 import { NotificationInboxItem } from "@/components/notifications/NotificationInboxItem";
 import { useNotificationInbox } from "@/components/notifications/NotificationInboxContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -149,13 +150,8 @@ function NotificationBellContents({ unreadCount }: { unreadCount: number }) {
     <>
       <span className="app-notification-bell-icon">
         <DsIcon name="bell" size={18} />
-        {unreadCount ? <span className="app-notification-dot"><span className="sr-only">Unread notifications</span></span> : null}
       </span>
-      {unreadCount ? <span className="app-notification-count label-xs-semibold">{formatUnreadCount(unreadCount)}</span> : null}
+      <CommentCountBadge count={unreadCount} maxCount={99} label={`${unreadCount} unread notifications`} />
     </>
   );
-}
-
-function formatUnreadCount(count: number) {
-  return count > 99 ? "99+" : String(count);
 }

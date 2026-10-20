@@ -380,15 +380,6 @@
   margin: var(--brisk-space-none);
 }
 
-.app-notification-dot {
-  display: inline-block;
-  width: var(--brisk-space-xs);
-  height: var(--brisk-space-xs);
-  flex: 0 0 var(--brisk-space-xs);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-brand-primary);
-}
-
 .notification-inbox-mark-read {
   border: var(--brisk-space-none);
   background: transparent;
@@ -563,29 +554,6 @@
 .app-notification-bell-icon {
   position: relative;
   display: inline-flex;
-}
-
-.app-notification-dot {
-  position: absolute;
-  top: calc(var(--brisk-space-xs) * -1);
-  right: calc(var(--brisk-space-xs) * -1);
-  border: 2px solid var(--brisk-white);
-}
-
-.app-notification-count {
-  position: absolute;
-  top: calc(var(--brisk-space-s) * -1);
-  right: calc(var(--brisk-space-s) * -1);
-  display: inline-flex;
-  min-width: var(--brisk-space-xl);
-  min-height: var(--brisk-space-xl);
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--brisk-white);
-  border-radius: var(--brisk-radius-full);
-  background: var(--brisk-brand-primary);
-  color: var(--brisk-white);
-  padding: var(--brisk-space-xxs) var(--brisk-space-xs);
 }
 
 .notification-popover {
