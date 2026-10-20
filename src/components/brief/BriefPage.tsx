@@ -20,6 +20,7 @@ import {
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
 import { BriskSelect } from "@/components/form/BriskSelect";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { ProjectStageHeader } from "@/components/project/ProjectStageHeader";
@@ -2047,41 +2048,13 @@ function BriefClarifyingThread({
               )}
               {message.role === "client" ? (
                 <div className="brief-message-menu-wrap">
-                  <button
-                    className="brief-message-menu-trigger"
-                    type="button"
-                    aria-label="Message options"
-                    aria-expanded={openMenuMessageId === message.id}
-                    onClick={() => setOpenMenuMessageId((currentId) => (currentId === message.id ? null : message.id))}
-                  >
-                    <DsIcon name="pencil-simple" size={16} />
-                  </button>
-                  {openMenuMessageId === message.id ? (
-                    <div className="brief-message-menu" role="menu">
-                      <button
-                        className="label-s"
-                        type="button"
-                        role="menuitem"
-                        onClick={() => {
-                          setOpenMenuMessageId(null);
-                          onEditMessage(message);
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="label-s"
-                        type="button"
-                        role="menuitem"
-                        onClick={() => {
-                          setOpenMenuMessageId(null);
-                          onDeleteMessage(message);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ) : null}
+                  <BriskSelect mode="action" value="" clearable={false} ariaLabel="Message options" placeholder="Message options" actionMenuSize="compact"
+                    open={openMenuMessageId === message.id} onOpenChange={(open) => setOpenMenuMessageId((current) => open ? message.id : current === message.id ? null : current)}
+                    options={[{value: "edit", label: "Edit"}, {value: "delete", label: "Delete", tone: "danger", dividerAbove: true}]}
+                    actionFallbackFocus={(trigger) => trigger?.closest('.brief-clarifying-thread')?.parentElement?.querySelector<HTMLTextAreaElement>('textarea') ?? null}
+                    onChange={(value) => { if (value === "edit") onEditMessage(message); else if (value === "delete") onDeleteMessage(message); }}
+                    actionTrigger={(props) => <IconButton {...props} aria-label="Message options" tooltipAlign="end"><DsIcon name="dots-three" size={16} /></IconButton>}
+                  />
                 </div>
               ) : null}
             </div>

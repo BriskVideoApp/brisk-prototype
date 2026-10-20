@@ -13,6 +13,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
 import { useBriskAi } from "@/components/ai/BriskAiContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
@@ -306,7 +307,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   }, [isHistoryOpen]);
 
   useEffect(() => {
-    if (!sourcePickerView) return;
+    if (!sourcePickerView || sourcePickerView === "menu") return;
 
     const handlePointerDown = (event: PointerEvent) => {
       if (!(event.target instanceof Node) || sourceAnchorRef.current?.contains(event.target)) return;
@@ -621,25 +622,18 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
       </label>
       <div className="brisk-ai-composer-actions">
         <div className="brisk-ai-add-source-anchor" ref={sourceAnchorRef}>
-          <button
-            className="brisk-ai-add-source label-xs-semibold"
-            type="button"
-            aria-expanded={Boolean(sourcePickerView)}
-            aria-haspopup="menu"
-            onClick={() => {
-              setSourceQuery("");
-              setSourcePickerView((current) => current ? null : "menu");
+          <BriskSelect mode="action" value="" clearable={false} ariaLabel="Add a source" placeholder="Add source"
+            open={sourcePickerView === "menu"}
+            onOpenChange={(open) => {
+              if (open) { setSourceQuery(""); setSourcePickerView("menu"); }
+              else setSourcePickerView((current) => current === "menu" ? null : current);
             }}
-          >
-            <DsIcon name="plus" size={13} />
-            Add source
-          </button>
-          {sourcePickerView === "menu" ? (
-            <AddSourceMenu
-              onChooseFiles={() => setSourcePickerView("files")}
-              onChooseMentions={() => setSourcePickerView("mentions")}
-            />
-          ) : null}
+            options={[{value: "files", label: "Add photos, video or files"}, {value: "mentions", label: "Mention pages, projects or people"}]}
+            onChange={(value) => { if (value === "files" || value === "mentions") setSourcePickerView(value); }}
+            actionTrigger={(props) => <Button {...props} size="S" variant="ghost" aria-expanded={Boolean(sourcePickerView)}
+              onClick={(event) => { if (sourcePickerView && sourcePickerView !== "menu") closeSourcePicker(); else props.onClick?.(event); }}
+            ><DsIcon name="plus" size={13} />Add source</Button>}
+          />
           {sourcePickerView === "files" ? (
             <SourcePicker
               mode="files"
@@ -1194,27 +1188,6 @@ function ConversationState({ actionLabel, body, icon, onAction, title }: { actio
       <span><DsIcon name={icon} size={20} /></span>
       <div><h2 className="headings-2xs-bold">{title}</h2><p className="paragraph-s">{body}</p></div>
       <Button size="S" variant="secondary" onClick={onAction}>{actionLabel}</Button>
-    </div>
-  );
-}
-
-function AddSourceMenu({
-  onChooseFiles,
-  onChooseMentions,
-}: {
-  onChooseFiles: () => void;
-  onChooseMentions: () => void;
-}) {
-  return (
-    <div className="brisk-ai-add-source-menu" role="menu" aria-label="Add a source">
-      <button className="label-s-semibold" type="button" role="menuitem" onClick={onChooseFiles}>
-        <span><DsIcon name="paperclip" size={18} /></span>
-        <span>Add photos, video or files</span>
-      </button>
-      <button className="label-s-semibold" type="button" role="menuitem" onClick={onChooseMentions}>
-        <span><DsIcon name="at-mail" size={18} /></span>
-        <span>Mention pages, projects or people</span>
-      </button>
     </div>
   );
 }
