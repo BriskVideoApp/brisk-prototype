@@ -614,6 +614,16 @@
   gap: var(--brisk-space-s);
 }
 
+.media-library-search {
+  width: calc(var(--brisk-space-3xl) * 7);
+  max-width: 100%;
+}
+
+.media-library-search .media-search-shell {
+  width: 100%;
+  max-width: 100%;
+}
+
 .brisk-select.media-upload-menu-wrap {
   display: inline-flex;
   width: auto;

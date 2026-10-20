@@ -11,6 +11,7 @@ type MediaFilterBarProps = {
   viewMode: MediaViewMode;
   sort: MediaSort;
   query: string;
+  showSearch?: boolean;
   onTypeFilterChange: (value: MediaTypeFilter) => void;
   onViewModeChange: (value: MediaViewMode) => void;
   onSortChange: (value: MediaSort) => void;
@@ -24,6 +25,13 @@ const typeOptions: { label: string; value: MediaTypeFilter }[] = [
   { label: "Image", value: "image" },
   { label: "Document", value: "document" },
 ];
+
+export function MediaSearch({ query, onQueryChange }: Pick<MediaFilterBarProps, "query" | "onQueryChange">) {
+  return <label className="media-search-shell">
+    <DsIcon name="search" size={16} />
+    <input className="label-s" type="search" aria-label="Search media" value={query} placeholder="Search media" onChange={(event) => onQueryChange(event.target.value)} />
+  </label>;
+}
 
 export function MediaFilterBar(props: MediaFilterBarProps) {
   return (
@@ -68,16 +76,7 @@ export function MediaFilterBar(props: MediaFilterBarProps) {
           <span className="sr-only">Sort media</span>
           <BriskSelect<string> ariaLabel={"Sort media"} clearable={false} placeholder={"Choose an option"} value={props.sort} onChange={(value) => props.onSortChange(value as MediaSort)} options={[{ value: "newest", label: "Newest first" }, { value: "oldest", label: "Oldest first" }, { value: "name-asc", label: "Name A-Z" }, { value: "largest", label: "Largest first" }]} />
         </label>
-        <label className="media-search-shell">
-          <DsIcon name="search" size={16} />
-          <input
-            className="label-s"
-            type="search"
-            value={props.query}
-            placeholder="Search media"
-            onChange={(event) => props.onQueryChange(event.target.value)}
-          />
-        </label>
+        {props.showSearch !== false ? <MediaSearch query={props.query} onQueryChange={props.onQueryChange} /> : null}
       </div>
     </div>
   );

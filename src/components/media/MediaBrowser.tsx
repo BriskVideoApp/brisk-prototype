@@ -26,7 +26,7 @@ import { MediaAssetDrawer, type MediaAssetDrawerTab, type MediaMentionOption } f
 import { MediaArchiveDialog, MediaDeleteDialog, MediaMoveDialog } from "./MediaActionDialogs";
 import { MediaAssetGrid } from "./MediaAssetGrid";
 import { MediaCloudPicker } from "./MediaCloudPicker";
-import { MediaFilterBar, type MediaSort, type MediaTypeFilter, type MediaViewMode } from "./MediaFilterBar";
+import { MediaFilterBar, MediaSearch, type MediaSort, type MediaTypeFilter, type MediaViewMode } from "./MediaFilterBar";
 import { MediaFolderTree } from "./MediaFolderTree";
 import { useMediaLibrary } from "./MediaLibraryContext";
 import { MediaUploadMenu } from "./MediaUploadMenu";
@@ -256,6 +256,8 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
   const handleDragLeave = () => { dragDepthRef.current = Math.max(0, dragDepthRef.current - 1); if (dragDepthRef.current === 0) setDragActive(false); };
   const handleDrop = (event: DragEvent<HTMLDivElement>) => { if (!browserCapabilities.canUpload) return; event.preventDefault(); dragDepthRef.current = 0; setDragActive(false); uploadFiles(Array.from(event.dataTransfer.files)); };
 
+  const downloadScopeName = activeProjectId ? mediaProject?.name : activeClientName;
+  const canDownloadScope = capabilities.canDownload && Boolean(downloadScopeName);
   const toolbarActions = <div className="media-action-buttons">
     {scope === "project" && activeProjectId ? <Button
       size="S"
@@ -269,16 +271,22 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
       onComputerUpload={() => inputRef.current?.click()}
       onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }}
     /> : null}
-    {capabilities.canDownload ? <Button size="S" variant="tertiary"
+    {canDownloadScope ? <Button size="S" variant="tertiary"
       className="media-tertiary-button"
       type="button"
-      onClick={() => notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files for download.`)}
-    ><DsIcon name="download" size={16} />Download all</Button> : null}
+      aria-label={`Download media for ${downloadScopeName}`}
+      onClick={() => {
+        if (!canDownloadScope) return;
+        notify(`Preparing ${visibleAssets.filter((asset) => asset.originalAvailable).length} files from ${downloadScopeName} for download.`);
+      }}
+    ><DsIcon name="download" size={16} />{scope === "project" ? "Download all" : activeProjectId ? "Download project media" : "Download Client media"}</Button> : null}
     <input ref={inputRef} className="sr-only" type="file" multiple onChange={(event) => { uploadFiles(Array.from(event.target.files ?? [])); event.currentTarget.value = ""; }} />
   </div>;
 
   return <div className={`media-browser ${scope === "global" ? "is-global" : "is-project"}`} onDragEnter={handleDragEnter} onDragOver={(event) => { if (browserCapabilities.canUpload) event.preventDefault(); }} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-    {scope === "global" ? <WorkspacePageHeader title="Media Library" actions={toolbarActions} /> : null}
+    {scope === "global" ? <WorkspacePageHeader title="Media Library" actions={
+      <div className="media-library-search"><MediaSearch query={query} onQueryChange={setQuery} /></div>
+    } /> : null}
     <div className={`media-mobile-location is-${scope} ${hasStudioClientRail ? "has-client-picker" : ""}`} aria-label="Media location">
       {hasStudioClientRail ? <label><span className="label-xs-semibold">Client</span><BriskSelect<string> ariaLabel={"Client"} clearable={false} placeholder={"All clients"} triggerClassName="label-s" value={activeClientName ?? ""} onChange={(value) => selectClient(value || null)} options={[{ value: "", label: "All clients" }, ...clientGroups.map((client) => ({ value: client.name, label: (client.name) }))]} /></label> : null}
       {scope === "global" ? <label><span className="label-xs-semibold">Project</span><BriskSelect<string> ariaLabel={"Project"} clearable={false} placeholder={"All projects"} triggerClassName="label-s" value={activeProjectId ?? ""} onChange={(value) => selectProject(value || null)} options={[{ value: "", label: "All projects" }, ...clientProjects.map((item) => ({ value: item.id, label: ((item.name) + " - " + (item.clientName)) }))]} /></label> : null}
@@ -296,8 +304,8 @@ export function MediaBrowser({ scope, project, initialProjectId = null, initialF
       {hasProjectFolderRail ? <MediaFolderTree folders={folders} selectedFolderId={selectedFolderId} collapsed={false} canManage={capabilities.canManageFolders} canMoveAssets={capabilities.canMoveAssets} canCopyLink={capabilities.canCopyLink} canCollapse={false} onSelect={setSelectedFolderId} onAdd={(parentId) => activeProjectId ? library.createFolder(activeProjectId, parentId) : null} onRename={library.renameFolder} onMove={library.moveFolder} onMoveAssetsToFolder={(assetIds, folderId) => { library.moveAssets(assetIds, folderId); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} onDelete={(id) => { if (!library.deleteFolder(id)) notify("Only empty folders can be deleted."); }} onCopyLink={(id) => { void copyLink(`/media?project=${activeProjectId}&folder=${id}`); }} onToggleCollapsed={() => {}} /> : null}
       <section className="media-main-area">
         {scope === "global" ? <div className="media-library-tabs" role="tablist" aria-label="Media library sections">{(["media", "masters", "archived"] as const).map((id) => <button type="button" role="tab" key={id} className={`label-s-semibold ${tab === id ? "is-active" : ""}`} aria-selected={tab === id} onClick={() => { setTab(id); setSelectedFolderId(null); setActiveAssetId(null); }}>{id === "media" ? "Media" : id === "masters" ? "Masters" : "Archived"}</button>)}</div> : null}
-        {scope === "project" ? <div className="media-main-actions">{toolbarActions}</div> : null}
-        <MediaFilterBar typeFilter={typeFilter} viewMode={viewMode} sort={sort} query={query} onTypeFilterChange={setTypeFilter} onViewModeChange={setViewMode} onSortChange={setSort} onQueryChange={setQuery} />
+        {scope === "project" || canDownloadScope ? <div className="media-main-actions">{toolbarActions}</div> : null}
+        <MediaFilterBar typeFilter={typeFilter} viewMode={viewMode} sort={sort} query={query} showSearch={scope === "project"} onTypeFilterChange={setTypeFilter} onViewModeChange={setViewMode} onSortChange={setSort} onQueryChange={setQuery} />
         <MediaAssetGrid assets={visibleAssets} folders={childFolders} folderPath={folderPath} viewMode={viewMode} selectedAssetIds={selectedAssetIds} activeAssetId={activeAssetId} capabilities={browserCapabilities} onActivate={activate} {...commonAction} onBatchDownload={() => notify(`Downloading ${visibleAssets.filter((asset) => selectedAssetIds.has(asset.id) && asset.originalAvailable).length} files.`)} onBatchMove={() => setMoveAssetIds([...selectedAssetIds])} onBatchArchive={() => setArchiveAssetIds([...selectedAssetIds])} onBatchDelete={() => setDeleteAssetIds([...selectedAssetIds])} onDeselectAll={() => { setSelectedAssetIds(new Set()); lastSelectedAssetIdRef.current = null; }} onToggleSelect={(asset) => { setSelectedAssetIds((current) => { const next = new Set(current); if (next.has(asset.id)) next.delete(asset.id); else next.add(asset.id); return next; }); lastSelectedAssetIdRef.current = asset.id; }} onMoveAssetsToFolder={(assetIds, folderId) => { library.moveAssets(assetIds, folderId); setSelectedAssetIds(new Set()); notify(`Files moved to ${folders.find((folder) => folder.id === folderId)?.name ?? "All media"}.`); }} emptyUploadAction={browserCapabilities.canUpload ? <MediaUploadMenu open={openUploadMenu === "empty"} onOpenChange={(open) => setOpenUploadMenu(open ? "empty" : null)} onComputerUpload={() => inputRef.current?.click()} onCloudImport={(providerName) => { setOpenUploadMenu(null); setCloudProvider(providerName); }} /> : null} emptyKind={(query || typeFilter !== "all") ? "filtered" : selectedFolderId ? "folder" : "project"} onClearControls={() => { setQuery(""); setTypeFilter("all"); }} onFolderOpen={setSelectedFolderId} />
         {selectedSharingAssets.length > 0 && browserCapabilities.canCopyLink ? <div className="media-stage-footer">
           <ShareActionRow
