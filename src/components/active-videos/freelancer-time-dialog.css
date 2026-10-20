@@ -61,13 +61,13 @@
   gap: var(--brisk-space-m);
 }
 
-.freelancer-time-fields label,
+.freelancer-time-fields > label,
 .freelancer-time-date {
   display: grid;
   gap: var(--brisk-space-xs);
 }
 
-.freelancer-time-fields label.is-wide {
+.freelancer-time-fields > .is-wide {
   grid-column: 1 / -1;
 }
 
@@ -106,7 +106,7 @@
     grid-template-columns: 1fr;
   }
 
-  .freelancer-time-fields label.is-wide {
+  .freelancer-time-fields > .is-wide {
     grid-column: auto;
   }
 }

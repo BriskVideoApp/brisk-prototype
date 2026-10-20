@@ -6,6 +6,7 @@ import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/Confirm
 import { useMemo, useState } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { useCostsData } from "@/components/costs/CostsDataContext";
@@ -107,7 +108,7 @@ export function CreateOfferModal({ projectId, onClose, onCreated }: { projectId:
       title="Create contractor offer"
       description="Set the commercial terms for this project. The contractor can accept or decline from My jobs."
       onClose={onClose}
-      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Send offer</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} disabled={!canSubmit}>Send offer</Button></>}
     >
       <div className="costs-form-grid">
         <label className="costs-field is-wide">
@@ -146,7 +147,7 @@ export function InvoiceUploadModal({ offer, onClose, onSubmitted }: { offer: Con
       title={`Submit invoice for ${offer.role}`}
       description={`Upload one or more PDFs against your accepted ${formatCostAmount(offer.agreedRate, offer.currency)} offer.`}
       onClose={onClose}
-      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} className={!canSubmit ? "costs-button-disabled" : ""}>Submit invoice</Button></>}
+      footer={<><Button size="S" variant="secondary" onClick={onClose}>Cancel</Button><Button size="S" onClick={submit} disabled={!canSubmit}>Submit invoice</Button></>}
     >
       <div className="costs-form-grid">
         <label className="costs-upload-field is-wide">
@@ -160,10 +161,7 @@ export function InvoiceUploadModal({ offer, onClose, onSubmitted }: { offer: Con
           <span className="label-m-semibold">Currency</span>
           <BriskSelect ariaLabel="Invoice currency" clearable={false} searchable={false} options={currencyOptions} placeholder="Choose currency" value={currency} onChange={(value) => setCurrency((value || offer.currency) as CostCurrency)} />
         </label>
-        <label className="costs-field is-wide">
-          <span className="label-m-semibold">Note <small className="label-xs">Optional</small></span>
-          <textarea value={note} placeholder="Add context for the Studio" onChange={(event) => setNote(event.target.value)} />
-        </label>
+        <Textarea wrapperClassName="costs-field is-wide" label="Note" labelSuffix="Optional" rows={2} value={note} placeholder="Add context for the Studio" onChange={(event) => setNote(event.target.value)} />
       </div>
       {(parsedAmount !== offer.agreedRate || currency !== offer.currency) ? <div className="costs-warning-block"><DsIcon name="alert-triangle" size={18} /><p className="label-s">This invoice differs from the agreed rate or currency. The Studio will see a warning during approval.</p></div> : null}
     </ClientModal>
@@ -235,7 +233,7 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
 
   if (step === "forward") {
     return (
-      <ConfirmationDialog title="Invoice approved" description="Approval is complete. Forwarding the PDFs to one or more accounts inboxes is optional." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={onClose}>Done</Button><Button size="S" onClick={forward} className={!destinationIds.length ? "costs-button-disabled" : ""}>Email invoice</Button></>}> <div className="costs-success-block"><DsIcon name="check-circle" size={20} /><p className="label-s"><strong>Approved.</strong> You can close this window without forwarding anything.</p></div>  <label className="costs-field">
+      <ConfirmationDialog title="Invoice approved" description="Approval is complete. Forwarding the PDFs to one or more accounts inboxes is optional." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={onClose}>Done</Button><Button size="S" onClick={forward} disabled={!destinationIds.length}>Email invoice</Button></>}> <div className="costs-success-block"><DsIcon name="check-circle" size={20} /><p className="label-s"><strong>Approved.</strong> You can close this window without forwarding anything.</p></div>  <label className="costs-field">
           <span className="label-m-semibold">Forward to</span>
           <BriskSelect multiple ariaLabel="Forward invoice to accounts" clearLabel="Clear destinations" searchable={false} options={invoiceForwardingDestinations.map((destination) => ({ value: destination.id, label: `${destination.label} - ${destination.email}` }))} placeholder="Choose accounts inboxes" selectionLabel={(selectedOptions) => `${selectedOptions.length} accounts selected`} value={destinationIds} onChange={setDestinationIds} />
         </label> </ConfirmationDialog>
@@ -244,10 +242,7 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
 
   if (step === "send-back") {
     return (
-      <ConfirmationDialog title="Send invoice back" description="The contractor will see this reason in My jobs and can submit another invoice." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={() => setStep("review")}>Back</Button><Button size="S" onClick={sendBack} className={!sendBackReason.trim() ? "costs-button-disabled" : ""}>Send back</Button></>}> <label className="costs-field">
-          <span className="label-m-semibold">Reason <small className="label-xs">Required</small></span>
-          <textarea autoFocus data-confirmation-autofocus value={sendBackReason} placeholder="Explain what needs to change" onChange={(event) => setSendBackReason(event.target.value)} />
-        </label> </ConfirmationDialog>
+      <ConfirmationDialog title="Send invoice back" description="The contractor will see this reason in My jobs and can submit another invoice." expanded onCancel={onClose} actions={<><Button size="S" variant="secondary" onClick={() => setStep("review")}>Back</Button><Button size="S" onClick={sendBack} disabled={!sendBackReason.trim()}>Send back</Button></>}> <Textarea wrapperClassName="costs-field" label="Reason" labelSuffix="Required" rows={2} autoFocus data-confirmation-autofocus value={sendBackReason} placeholder="Explain what needs to change" onChange={(event) => setSendBackReason(event.target.value)} /> </ConfirmationDialog>
     );
   }
 
@@ -255,7 +250,7 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
     <>
       <Button size="S" variant="secondary" onClick={() => setIsViewingPdf(true)}>View PDF</Button>
       <Button size="S" variant="secondary" onClick={() => setStep("send-back")}>Send back</Button>
-      <Button size="S" onClick={approve} className={mismatch && !approvalNote.trim() ? "costs-button-disabled" : ""}>Approve invoice</Button>
+      <Button size="S" onClick={approve} disabled={mismatch && !approvalNote.trim()}>Approve invoice</Button>
     </>
   ) : invoiceItem.state === "Approved" ? (
     <>
@@ -275,10 +270,13 @@ export function InvoiceReviewModal({ forceApproval = false, initialStep = "revie
         <div><dt className="label-xs">Agreed rate</dt><dd className="label-m-semibold">{formatCostAmount(offerItem.agreedRate, offerItem.currency)}</dd></div>
         <div><dt className="label-xs">Invoice total</dt><dd className="label-m-semibold">{formatCostAmount(invoiceItem.amount, invoiceItem.currency)}</dd></div>
         <div className="is-wide"><dt className="label-xs">Files</dt><dd className="label-s">{invoiceItem.fileNames.join(", ")}</dd></div>
-      </dl>  {mismatch ? <div className="costs-warning-block"><DsIcon name="alert-triangle" size={18} /><p className="label-s"><strong>Different from the offer.</strong> {isApprovalReview ? "Add a note before approving. Approval remains available." : "The approved invoice has a different rate or currency."}</p></div> : null}  {invoiceItem.contractorNote ? <div className="costs-info-block"><DsIcon name="info" size={18} /><p className="label-s"><strong>Contractor note:</strong> {invoiceItem.contractorNote}</p></div> : null}  {invoiceItem.approvalNote && invoiceItem.state !== "Submitted" ? <div className="costs-info-block"><DsIcon name="check-circle" size={18} /><p className="label-s"><strong>Approval note:</strong> {invoiceItem.approvalNote}</p></div> : null}  {invoiceItem.sendBackReason ? <div className="costs-info-block"><DsIcon name="arrow-counter-clockwise" size={18} /><p className="label-s"><strong>Sent back reason:</strong> {invoiceItem.sendBackReason}</p></div> : null}  {isApprovalReview ? <label className="costs-field">
-        <span className="label-m-semibold">Approval note <small className="label-xs">{mismatch ? "Required" : "Optional"}</small></span>
-        <textarea value={approvalNote} placeholder={mismatch ? "Explain why this difference is approved" : "Add an internal approval note"} onChange={(event) => setApprovalNote(event.target.value)} />
-      </label> : null} </ConfirmationDialog>
+      </dl>
+      {mismatch ? <div className="costs-warning-block"><DsIcon name="alert-triangle" size={18} /><p className="label-s"><strong>Different from the offer.</strong> {isApprovalReview ? "Add a note before approving. Approval remains available." : "The approved invoice has a different rate or currency."}</p></div> : null}
+      {invoiceItem.contractorNote ? <div className="costs-info-block"><DsIcon name="info" size={18} /><p className="label-s"><strong>Contractor note:</strong> {invoiceItem.contractorNote}</p></div> : null}
+      {invoiceItem.approvalNote && invoiceItem.state !== "Submitted" ? <div className="costs-info-block"><DsIcon name="check-circle" size={18} /><p className="label-s"><strong>Approval note:</strong> {invoiceItem.approvalNote}</p></div> : null}
+      {invoiceItem.sendBackReason ? <div className="costs-info-block"><DsIcon name="arrow-counter-clockwise" size={18} /><p className="label-s"><strong>Sent back reason:</strong> {invoiceItem.sendBackReason}</p></div> : null}
+      {isApprovalReview ? <Textarea wrapperClassName="costs-field" label="Approval note" labelSuffix={mismatch ? "Required" : "Optional"} rows={2} value={approvalNote} placeholder={mismatch ? "Explain why this difference is approved" : "Add an internal approval note"} onChange={(event) => setApprovalNote(event.target.value)} /> : null}
+    </ConfirmationDialog>
   );
 }
 

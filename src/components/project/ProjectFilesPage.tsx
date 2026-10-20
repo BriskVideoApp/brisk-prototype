@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import type { Project, ProjectFileLocation } from "@/components/active-videos/types";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useProjectFiles } from "@/components/project/ProjectFilesContext";
@@ -277,11 +278,10 @@ function FileLocationCard({
         Mark as confirmed working
       </Button>
 
-      <label className="project-file-location-notes">
-        <span className="label-xs-semibold">Notes</span>
+      <div className="project-file-location-notes">
         {canManage ? (
-          <textarea
-            className="label-s"
+          <Textarea
+            label="Notes"
             rows={3}
             value={notesDraft}
             placeholder="Editor notes on file structure - e.g. renders live in /04_Exports"
@@ -289,11 +289,11 @@ function FileLocationCard({
             onChange={(event) => setNotesDraft(event.target.value)}
           />
         ) : (
-          <span className={`project-file-location-notes-readonly label-s ${location.notes ? "" : "is-empty"}`}>
+          <><span className="label-xs-semibold">Notes</span><span className={`project-file-location-notes-readonly label-s ${location.notes ? "" : "is-empty"}`}>
             {location.notes || "No file structure notes yet."}
-          </span>
+          </span></>
         )}
-      </label>
+      </div>
     </article>
   );
 }

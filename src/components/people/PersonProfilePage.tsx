@@ -170,7 +170,7 @@ function InlineValue({ display, label, multiline = false, onSave, placeholder, t
   const [draft, setDraft] = useState(value);
   useEffect(() => { if (!editing) setDraft(value); }, [editing, value]);
   if (!editing) return <div className="person-inline-value label-s-semibold" role="button" tabIndex={0} aria-label={`Edit ${label}`} data-tooltip={`Edit ${label.toLocaleLowerCase("en-AU")}`} onClick={(event) => { if (!(event.target instanceof Element) || !event.target.closest("a, button")) setEditing(true); }} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); setEditing(true); } }}>{display ?? <span>{value || "Not added"}</span>}</div>;
-  return <div className="person-inline-editor">{multiline ? <textarea aria-label={label} value={draft} placeholder={placeholder} onChange={(event) => setDraft(event.target.value)} /> : <Input autoComplete="off" label={label} size="S" type={type} value={draft} placeholder={placeholder} onChange={(event) => setDraft(event.target.value)} />}<div><Button size="S" variant="secondary" onClick={() => { setDraft(value); setEditing(false); }}>Cancel</Button><Button size="S" onClick={() => { onSave(draft.trim()); setEditing(false); }}>Save</Button></div></div>;
+  return <div className="person-inline-editor">{multiline ? <Textarea aria-label={label} rows={2} value={draft} placeholder={placeholder} onChange={(event) => setDraft(event.target.value)} /> : <Input autoComplete="off" label={label} size="S" type={type} value={draft} placeholder={placeholder} onChange={(event) => setDraft(event.target.value)} />}<div><Button size="S" variant="secondary" onClick={() => { setDraft(value); setEditing(false); }}>Cancel</Button><Button size="S" onClick={() => { onSave(draft.trim()); setEditing(false); }}>Save</Button></div></div>;
 }
 
 function InlineChoice({ label, onSave, options, value }: { label: string; onSave: (value: string) => void; options: string[]; value: string }) {
@@ -457,7 +457,7 @@ function DeletePersonDialog({ onClose, onDelete, person }: { onClose: () => void
   const [confirmation, setConfirmation] = useState("");
   return <ConfirmationDialog title={`Delete ${person.name}'s Person record?`} description="Use this only for a duplicate or a record created by mistake." expanded tone="danger" confirmLabel="Delete incorrect record" confirmDisabled={confirmation.trim() !== person.name} onCancel={onClose} onConfirm={onDelete}>
     <p><strong>Audit history will be retained.</strong> Existing project history, comments, approvals and files remain in those projects. The incorrect directory identity and current access relationships will be removed.</p>
-    <label><span className="label-s-semibold">Type {person.name} to confirm</span><input data-confirmation-autofocus autoFocus value={confirmation} onChange={(event) => setConfirmation(event.target.value)} /></label>
+    <Input label={`Type ${person.name} to confirm`} size="S" data-confirmation-autofocus autoFocus value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
   </ConfirmationDialog>;
 }
 
