@@ -38,7 +38,7 @@
     flex-direction: column;
     gap: var(--brisk-space-xl);
     border-right: 1px solid var(--brisk-border-primary);
-    background: var(--brisk-bg-block-primary);
+    background: var(--brisk-bg-block-secondary);
     padding: var(--brisk-space-l) var(--brisk-space-m);
   }
 

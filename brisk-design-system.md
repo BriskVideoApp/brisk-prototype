@@ -18,6 +18,7 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 
 - **Page background:** primary background colour (warm off-white from the kit).
 - **All layers above the page:** white.
+- **Approved desktop navigation exception:** Tom approved a very pale neutral-grey background for the hybrid left sidebar on 20 October 2026. Use `--brisk-bg-block-secondary` in expanded and collapsed navigation, including settings and all three role views. Keep the top bar and content surfaces white, and retain existing lavender selection, hover and focus states. This is not permission to tint other panels or introduce a dark sidebar.
 - Never stack tinted layers. Use whitespace and borders for separation, not tints.
 
 ## Strokes
@@ -137,7 +138,7 @@ For the requested feature, include the applicable interaction states below. Do n
 
 - Don't introduce new colours, fonts, or shadows outside the kit.
 - Don't turn the current desktop sign-off work into a parallel mobile redesign. Preserve existing responsive code and functionality.
-- Don't tint background layers above the page background.
+- Don't tint background layers above the page background, except for the explicitly approved hybrid desktop sidebar treatment above.
 - Don't double-border (avoid borders inside already-bordered containers).
 - Don't substitute icons from other libraries.
 - Don't rebuild any component from scratch if it already exists in `Brisk DS/`.
