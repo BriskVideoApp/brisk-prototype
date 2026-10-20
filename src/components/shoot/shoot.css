@@ -1940,7 +1940,7 @@
   color: var(--brisk-text-secondary);
 }
 
-.shoot-on-set-row.is-skipped > :not(.shoot-on-set-capture-control, .shoot-on-set-row-actions) {
+.shoot-on-set-row.is-skipped > :not(.shoot-on-set-capture-control, .shoot-on-set-row-actions, .shoot-command-menu) {
   opacity: 0.68;
 }
 
@@ -2393,6 +2393,11 @@
 }
 
 .shoot-shot-table-actions > .brisk-select {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.shoot-command-menu {
   width: auto;
   flex: 0 0 auto;
 }
@@ -5204,7 +5209,7 @@ button.shoot-on-set-shot-copy:focus-visible {
 }
 
 .shoot-on-set-compact-table .shoot-on-set-row {
-  grid-template-columns: var(--brisk-space-2xl) var(--brisk-space-xl) minmax(calc(var(--brisk-space-3xl) * 4), 3fr) minmax(calc(var(--brisk-space-3xl) * 2), 1fr) var(--brisk-space-3xl) minmax(calc(var(--brisk-space-3xl) * 3), 2fr) var(--brisk-space-2xl);
+  grid-template-columns: var(--brisk-space-2xl) var(--brisk-space-xl) minmax(calc(var(--brisk-space-3xl) * 4), 3fr) minmax(calc(var(--brisk-space-3xl) * 2), 1fr) var(--brisk-space-3xl) minmax(calc(var(--brisk-space-3xl) * 3), 2fr) calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
 }
 
 .shoot-on-set-disposition-label {

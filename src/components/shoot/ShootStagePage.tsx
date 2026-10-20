@@ -28,7 +28,7 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import type { Project } from "@/components/active-videos/types";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
-import { BriskSelect } from "@/components/form/BriskSelect";
+import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useShootGlobalActions, type ShootGlobalActions } from "@/components/navigation/ShootGlobalActionsContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
@@ -2633,12 +2633,9 @@ function ShootPreProductionWorkspace({
         />
         {canEdit ? <a className="shoot-button secondary label-s-semibold" href={`/projects/${project.id}/stages/shoot?section=schedule&day=${encodeURIComponent(currentDay?.id ?? "")}`}><DsIcon name="pencil-simple-ds" size={16} />Edit</a> : null}
         <a className="shoot-button secondary shoot-call-sheet-pdf label-s-semibold" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />PDF</a>
-        <details className="shoot-call-sheet-more-menu">
-          <summary className="shoot-button secondary label-s-semibold"><DsIcon name="dots-three" size={18} />More</summary>
-          <div role="menu">
-            <a className="label-s-semibold" role="menuitem" href={`/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`} target="_blank" rel="noreferrer"><DsIcon name="download-simple" size={16} />Download PDF</a>
-          </div>
-        </details>
+        <ShootCommandMenu label="Call Sheet actions" trigger={<>More<DsIcon name="caret-down" size={14} /></>} actions={[
+          { label: "Download PDF", href: `/share/call-sheet/${project.id}?print=1&day=${encodeURIComponent(currentDay?.id ?? "")}`, target: "_blank", rel: "noreferrer" },
+        ]} />
       </header> : null}
       {setupState.approvalInvalidated ? <ShootApprovalChangedNotice /> : null}
       {existingPlan ? <ExistingPlanCallSheetAttachment plan={existingPlan} onReplace={onOpenExistingPlan} /> : null}
@@ -3400,6 +3397,22 @@ function PreProductionSectionHeading({ icon, title, description, count, action }
     <div>{icon ? <span className="shoot-preproduction-section-icon"><DsIcon name={icon} size={20} /></span> : null}<div><div className="shoot-preproduction-section-heading-title"><h2>{title}</h2>{count}</div>{description ? <p className="paragraph-s">{description}</p> : null}</div></div>
     {action ? <div>{action}</div> : null}
   </header>;
+}
+
+// Keep Shoot callbacks at their call sites while the DS owns all menu behaviour.
+function ShootCommandMenu({ label, actions, trigger, variant = "ghost" }: {
+  label: string;
+  actions: Array<Omit<BriskSelectOption<string>, "value"> & { onSelect?: () => void }>;
+  trigger?: ReactNode;
+  variant?: "primary" | "secondary" | "ghost";
+}) {
+  return <BriskSelect className="shoot-command-menu" mode="action" value="" clearable={false} ariaLabel={label} placeholder={label}
+    options={actions.map((action, index) => ({ ...action, value: String(index) }))}
+    onChange={(value) => { if (value) actions[Number(value)]?.onSelect?.(); }}
+    actionTrigger={(props) => trigger
+      ? <Button {...props} size="S" variant={variant}>{trigger}</Button>
+      : <IconButton {...props} aria-label={label} tooltipAlign="end"><DsIcon name="dots-three" size={18} /></IconButton>}
+  />;
 }
 
 function getShotListTopLevelOrder(callSheet: CallSheet) {
@@ -5234,17 +5247,13 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
         <span className="shoot-on-set-priority label-xs">{visiblePriority === "Critical" ? <DsIcon name="fire-simple" size={14} /> : null}{visiblePriority}</span>
         <span className="shoot-on-set-reference-cell">{shot.imageReferenceUrl ? <img className="shoot-on-set-reference" src={shot.imageReferenceUrl} alt={`Reference for ${shot.description}`} /> : null}</span>
         <input className="label-xs" disabled={!canEdit} aria-label={`Quick note for shot ${shotNumber}`} placeholder={status === "captured" ? "" : "Add note"} value={shot.notes ?? ""} onChange={(event) => updateShot(shot.id, { notes: event.target.value })} />
-        {canEdit && status !== "captured" ? <details className="shoot-on-set-row-actions">
-          <summary aria-label={`More actions for shot ${shotNumber}`}><DsIcon name="dots-three" size={18} /></summary>
-          <div role="menu">
-            {isSkipped ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotSkippedForToday(shot, false); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Return to today</button> : <>
-            <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotSkippedForToday(shot, true); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Skip</button>
-            {status === "not-required"
-              ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "to-capture", captured: false }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Mark as required</button>
-              : <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "not-required", captured: false }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Mark as not required</button>}
-            {isPickup ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { updateShot(shot.id, { captureStatus: "to-capture" }); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Clear pickup</button> : <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotForPickup(shot); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Pickup later</button>}
-          </>}</div>
-        </details> : <span aria-hidden="true" />}
+        {canEdit && status !== "captured" ? <ShootCommandMenu label={`More actions for shot ${shotNumber}`} actions={isSkipped ? [
+          {label: "Return to today", onSelect: () => setShotSkippedForToday(shot, false)},
+        ] : [
+          {label: "Skip", onSelect: () => setShotSkippedForToday(shot, true)},
+          {label: status === "not-required" ? "Mark as required" : "Mark as not required", onSelect: () => updateShot(shot.id, {captureStatus: status === "not-required" ? "to-capture" : "not-required", captured: false})},
+          {label: isPickup ? "Clear pickup" : "Pickup later", onSelect: () => { if (isPickup) updateShot(shot.id, {captureStatus: "to-capture"}); else setShotForPickup(shot); }},
+        ]} /> : <span aria-hidden="true" />}
       </div>;
     })}
     </div> : capturedShots.length ? null : <p className="shoot-preproduction-empty-copy">No shots have been added to this coverage yet.</p>}
@@ -5333,14 +5342,11 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
           </section>, document.body) : null}
       </div>}
       action={<div className="shoot-preproduction-heading-inline-actions">
-        {simpleMode && canEdit && isExpanded ? <details className="shoot-shot-list-add-anchor shoot-simple-add-control">
-          <summary className="shoot-button primary label-s-semibold"><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></summary>
-          <div className="shoot-shot-list-add-menu" role="menu" aria-label="Add to Shoot day">
-            <button className="label-s" type="button" role="menuitem" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); addShot(); }}>Shot</button>
-            {onAddShotGroup ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); onAddShotGroup(); }}>Shot group</button> : null}
-            {onAddScheduleItem ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { event.currentTarget.closest("details")?.removeAttribute("open"); onAddScheduleItem(); }}>Schedule item</button> : null}
-          </div>
-        </details> : null}
+        {simpleMode && canEdit && isExpanded ? <ShootCommandMenu label="Add to Shoot day" variant="primary" trigger={<><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></>} actions={[
+          {label: "Shot", onSelect: () => addShot()},
+          ...(onAddShotGroup ? [{label: "Shot group", onSelect: onAddShotGroup}] : []),
+          ...(onAddScheduleItem ? [{label: "Schedule item", onSelect: onAddScheduleItem}] : []),
+        ]} /> : null}
         {isFocused
           ? onFocusChange ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onFocusChange}><DsIcon name="x-close-cross" size={16} />Exit focus</Button> : null
           : <>
@@ -5387,18 +5393,11 @@ function OnSetRunOfDay({ callSheet, canEdit, currentDay, entries, isCollapsed = 
             <div className="shoot-on-set-run-actions">
               {linkedGroup && isExpanded && canEdit ? <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => addShot(linkedGroup.id)}><DsIcon name="plus" size={14} />Add shot</Button> : null}
               {!isComplete || disposition ? <span className={`shoot-on-set-run-status is-${status.toLowerCase()} label-xs-semibold`}>{status}</span> : null}
-              {hasRowActions ? <details className="shoot-on-set-row-actions">
-                <summary aria-label={`More actions for ${linkedGroup?.name ?? entry.description}`}><DsIcon name="dots-three" size={18} /></summary>
-                <div role="menu">
-                  {linkedGroup ? <>
-                    {deferredGroupShots.length ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotGroupDispositionForToday(linkedGroup.id, "return"); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Return to today</button> : null}
-                    <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotGroupDispositionForToday(linkedGroup.id, "skip"); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Skip</button>
-                    <button className="label-s" type="button" role="menuitem" onClick={(event) => { setShotGroupDispositionForToday(linkedGroup.id, "pickup"); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Pickup later</button>
-                  </> : entryIsSkipped
-                    ? <button className="label-s" type="button" role="menuitem" onClick={(event) => { setScheduleEntrySkippedForToday(entry.id, false); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Return to today</button>
-                    : <button className="label-s" type="button" role="menuitem" onClick={(event) => { setScheduleEntrySkippedForToday(entry.id, true); event.currentTarget.closest("details")?.removeAttribute("open"); }}>Skip</button>}
-                </div>
-              </details> : null}
+              {hasRowActions ? <ShootCommandMenu label={`More actions for ${linkedGroup?.name ?? entry.description}`} actions={linkedGroup ? [
+                ...(deferredGroupShots.length ? [{label: "Return to today", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "return")}] : []),
+                {label: "Skip", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "skip")},
+                {label: "Pickup later", onSelect: () => setShotGroupDispositionForToday(linkedGroup.id, "pickup")},
+              ] : [{label: entryIsSkipped ? "Return to today" : "Skip", onSelect: () => setScheduleEntrySkippedForToday(entry.id, !entryIsSkipped)}]} /> : null}
             </div>
           </div>
           {isExpanded ? linkedGroup ? renderCoverageDetails(linkedGroup) : renderOperationalDetails(entry) : null}
@@ -6404,31 +6403,19 @@ function PlanningReadinessFooter({ canEdit, config, hasChanges, isReady, needsSe
   onReviewReadiness: () => void;
   onSendUpdated: () => void;
 }) {
-  const menuRef = useRef<HTMLDetailsElement>(null);
-  const statusMenuRef = useRef<HTMLDetailsElement>(null);
-  const runMenuAction = (action: () => void) => {
-    menuRef.current?.removeAttribute("open");
-    statusMenuRef.current?.removeAttribute("open");
-    action();
-  };
   return <footer className="shoot-stage-share-footer is-schedule-footer" aria-label={`${config.label} readiness and actions`}>
-    {wasConfirmed && !isReady ? <details className="shoot-schedule-footer-more" ref={menuRef}>
-      <summary className="shoot-button secondary" aria-label={`More ${config.label} readiness actions`} title={`More ${config.label} readiness actions`}><DsIcon name="dots-three" size={18} /></summary>
-      <div role="menu" aria-label={`More ${config.label} readiness actions`}>
-        <button className="label-s-semibold" type="button" role="menuitem" disabled={!canEdit} onClick={() => runMenuAction(onMarkUnready)}><DsIcon name="x-close-cross" size={16} />Mark as not ready</button>
-      </div>
-    </details> : null}
+    {wasConfirmed && !isReady ? <ShootCommandMenu label={`More ${config.label} readiness actions`} actions={[{label: "Mark as not ready", disabled: !canEdit, onSelect: onMarkUnready}]} /> : null}
     <div className="shoot-schedule-footer-actions">
       {wasConfirmed && nextAction ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={nextAction.onSelect}><DsIcon name={nextAction.icon} size={16} />{nextAction.label}</Button> : null}
       {needsSending && canEdit ? <Button size="S" variant="secondary" className="shoot-button secondary" type="button" onClick={onSendUpdated}><DsIcon name="paper-plane-tilt" size={16} />Send updated schedule</Button> : null}
       {!wasConfirmed && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>{config.markLabel}</Button> : null}
       {hasChanges && canEdit ? <Button size="S" variant="primary" className="shoot-button primary" type="button" onClick={onReviewReadiness}>Confirm updates</Button> : null}
-      {isReady ? <details className="shoot-readiness-status-menu" ref={statusMenuRef}>
-        <summary className="shoot-schedule-ready-button label-s-semibold" aria-label={`${config.readyLabel}. Open readiness actions`}><DsIcon name={config.icon} size={16} />{config.readyLabel}<DsIcon name="caret-down" size={14} /></summary>
-        <div role="menu" aria-label={`${config.label} readiness actions`}>
-          <button className="label-s-semibold" type="button" role="menuitem" disabled={!canEdit} onClick={() => runMenuAction(onMarkUnready)}>Mark as not ready</button>
-        </div>
-      </details> : null}
+      {isReady ? <BriskSelect className="shoot-command-menu" mode="action" value="" clearable={false} ariaLabel={`${config.readyLabel}. Open readiness actions`} placeholder={config.readyLabel}
+        actionFallbackFocus={(trigger) => trigger?.closest('main')?.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]') ?? null}
+        options={[{value: "unready", label: "Mark as not ready", disabled: !canEdit}]}
+        onChange={(value) => { if (value === "unready") onMarkUnready(); }}
+        actionTrigger={(props) => <button {...props} type="button" className="shoot-schedule-ready-button label-s-semibold"><DsIcon name={config.icon} size={16} />{config.readyLabel}<DsIcon name="caret-down" size={14} /></button>}
+      /> : null}
     </div>
   </footer>;
 }
