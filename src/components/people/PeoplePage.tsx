@@ -117,7 +117,7 @@ export function PeoplePage() {
         <FilterGroup className="people-view-tabs-inner" aria-label="People views">
           {peopleViews.map((item) => (
             <FilterButton selected={view === item} count={countView(people, item)} type="button" key={item} onClick={() => changeView(item)}>
-              {item === "Clients" ? "Customers" : item}
+              {item === "Clients" ? "Client contacts" : item}
             </FilterButton>
           ))}
         </FilterGroup>
