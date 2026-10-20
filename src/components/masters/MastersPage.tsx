@@ -1,6 +1,7 @@
 "use client";
 
-import { BriskSelect } from "@/components/form/BriskSelect";
+import { BriskSelect, type BriskSelectOption } from "@/components/form/BriskSelect";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 
@@ -722,6 +723,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   };
 
   const deleteThumbnail = (deliverableId: string) => {
+    if (!isFilmmaker) return;
     setDeliverables((current) => current.map((deliverable) =>
       deliverable.id === deliverableId ? { ...deliverable, thumbnail: undefined } : deliverable,
     ));
@@ -730,6 +732,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   };
 
   const openThumbnailUpload = (deliverableId: string) => {
+    if (!isFilmmaker || !canUploadMasters) return;
     thumbnailUploadTargetIdRef.current = deliverableId;
     window.setTimeout(() => thumbnailUploadInputRef.current?.click(), 0);
   };
@@ -789,7 +792,7 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
   };
 
   const replaceThumbnail = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!canUploadMasters) return;
+    if (!isFilmmaker || !canUploadMasters) return;
     const file = event.target.files?.[0];
     const deliverableId = thumbnailUploadTargetIdRef.current;
     if (!file || !deliverableId) return;
@@ -1480,6 +1483,8 @@ export function MastersPage({ project, initiallyEmpty = false, isolateLegacyDeli
                               ) : assetInspector.type === "thumbnail" && deliverable.thumbnail ? (
                                 <ThumbnailInspector
                                   deliverable={deliverable}
+                                  canEdit={isFilmmaker}
+                                  canReplace={isFilmmaker && canUploadMasters}
                                   onCopy={() => void copyThumbnailImage(deliverable)}
                                   onDelete={() => deleteThumbnail(deliverable.id)}
                                   onDownload={() => downloadThumbnail(deliverable)}
@@ -1844,6 +1849,15 @@ function DeliverableRow({
   const hasCaptions = Boolean(deliverable.srt && deliverable.captions.some((caption) => caption !== "None"));
   const primaryAction = getDeliverablePrimaryAction(deliverable.status, selectedVersion, isFilmmaker, downloaded);
   const primaryActionIsDownload = primaryAction?.kind === "download";
+  const rowCommands: Array<BriskSelectOption<string> & { run: () => void }> = [
+    ...(selectedVersion && !primaryActionIsDownload ? [{value: "download", label: "Download", run: onDownload}] : []),
+    {value: "share", label: "Share item", run: onShare},
+    ...(isFilmmaker ? [
+      ...(selectedVersion ? [{value: "upload", label: "Upload new version", run: onUpload}, {value: "replace", label: "Replace file", run: onReplace}] : []),
+      {value: "rename", label: "Rename", run: onEditName},
+      {value: "delete", label: "Delete asset", tone: "danger" as const, dividerAbove: true, run: onDelete},
+    ] : []),
+  ];
 
   const runPrimaryAction = () => {
     if (!primaryAction || primaryAction.disabled) return;
@@ -1993,33 +2007,13 @@ function DeliverableRow({
       </div>
 
       <div className="masters-row-overflow" role="cell">
-        <div className="masters-row-menu-wrap">
-          <button
-            className="masters-row-menu-button"
-            type="button"
-            aria-label={`Actions for ${deliverable.name}`}
-            aria-expanded={rowMenuOpen}
-            onClick={(event) => { event.stopPropagation(); onToggleRowMenu(); }}
-          >
-            <DsIcon name="dots-three" size={15} />
-          </button>
-          {rowMenuOpen ? (
-            <div className="masters-row-menu" onClick={(event) => event.stopPropagation()}>
-              {selectedVersion && !primaryActionIsDownload ? (
-                <button className="label-xs-semibold" type="button" onClick={onDownload}><DsIcon name="download" size={14} />Download</button>
-              ) : null}
-              <button className="label-xs-semibold" type="button" onClick={onShare}><DsIcon name="link" size={14} />Share item</button>
-              {isFilmmaker ? (
-                <>
-                  {selectedVersion ? <button className="label-xs-semibold" type="button" onClick={onUpload}><DsIcon name="upload-simple" size={14} />Upload new version</button> : null}
-                  {selectedVersion ? <button className="label-xs-semibold" type="button" onClick={onReplace}><DsIcon name="arrows-clockwise" size={14} />Replace file</button> : null}
-                  <button className="label-xs-semibold" type="button" onClick={onEditName}><DsIcon name="pencil-simple" size={14} />Rename</button>
-                  <span className="masters-row-menu-divider" role="separator" />
-                  <button className="delete label-xs-semibold" type="button" onClick={onDelete}><DsIcon name="trash" size={14} />Delete asset</button>
-                </>
-              ) : null}
-            </div>
-          ) : null}
+        <div className="masters-row-menu-wrap" onClick={(event) => event.stopPropagation()}>
+          <BriskSelect mode="action" value="" clearable={false} ariaLabel={`Actions for ${deliverable.name}`} placeholder="Asset actions"
+            open={rowMenuOpen} onOpenChange={(open) => { if (open !== rowMenuOpen) onToggleRowMenu(); }}
+            actionFallbackFocus={(trigger) => trigger?.closest('main')?.querySelector<HTMLElement>('a[aria-current="step"]') ?? null}
+            options={rowCommands} onChange={(value) => rowCommands.find((command) => command.value === value)?.run()}
+            actionTrigger={(props) => <IconButton {...props} aria-label={`Actions for ${deliverable.name}`} tooltipAlign="end"><DsIcon name="dots-three" size={16} /></IconButton>}
+          />
         </div>
       </div>
     </article>
@@ -3234,12 +3228,16 @@ function SrtInspector({
 
 function ThumbnailInspector({
   deliverable,
+  canEdit,
+  canReplace,
   onCopy,
   onDelete,
   onDownload,
   onReplace,
 }: {
   deliverable: MastersDeliverable;
+  canEdit: boolean;
+  canReplace: boolean;
   onCopy: () => void;
   onDelete: () => void;
   onDownload: () => void;
@@ -3263,22 +3261,16 @@ function ThumbnailInspector({
           <DsIcon name="download" size={14} />Download thumbnail
         </Button>
         <div className="masters-row-menu-wrap masters-thumbnail-menu-wrap">
-          <button
-            className="masters-row-menu-button"
-            type="button"
-            aria-label="More thumbnail actions"
-            aria-expanded={isMenuOpen}
-            onClick={() => setIsMenuOpen((current) => !current)}
-          >
-            <DsIcon name="dots-three" size={16} />
-          </button>
-          {isMenuOpen ? (
-            <div className="masters-row-menu masters-thumbnail-menu" role="menu">
-              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onReplace)}><DsIcon name="upload-simple" size={14} />Replace with upload</button>
-              <button className="label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onCopy)}><DsIcon name="copy" size={14} />Copy image</button>
-              <button className="delete label-xs-semibold" type="button" role="menuitem" onClick={() => runMenuAction(onDelete)}><DsIcon name="trash" size={14} />Delete thumbnail</button>
-            </div>
-          ) : null}
+          <BriskSelect mode="action" value="" clearable={false} ariaLabel="More thumbnail actions" placeholder="Thumbnail actions" open={isMenuOpen} onOpenChange={setIsMenuOpen}
+            actionFallbackFocus={(trigger) => trigger?.closest('main')?.querySelector<HTMLButtonElement>('.masters-deliverable-row[aria-selected="true"] button[aria-haspopup="menu"]') ?? null}
+            options={[
+              ...(canEdit ? [{value: "replace", label: "Replace with upload", disabled: !canReplace, title: canReplace ? undefined : "You don’t have permission to upload Masters."}] : []),
+              {value: "copy", label: "Copy image"},
+              ...(canEdit ? [{value: "delete", label: "Delete thumbnail", tone: "danger" as const, dividerAbove: true}] : []),
+            ]}
+            onChange={(value) => { if (value === "replace" && canEdit && canReplace) runMenuAction(onReplace); else if (value === "copy") runMenuAction(onCopy); else if (value === "delete" && canEdit) runMenuAction(onDelete); }}
+            actionTrigger={(props) => <IconButton {...props} aria-label="More thumbnail actions" tooltipAlign="end"><DsIcon name="dots-three" size={16} /></IconButton>}
+          />
         </div>
       </div>
     </div>
