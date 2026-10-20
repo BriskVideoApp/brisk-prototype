@@ -1,4 +1,5 @@
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { Tabs } from "../../../Brisk DS/src/app/components/Tabs";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
@@ -47,12 +48,13 @@ export function MediaAssetDrawer(props: Props) {
     <div className="media-inspector-header"><input className="media-inspector-name" value={draftName} aria-label="Filename" readOnly={!props.capabilities.canMoveAssets} onChange={(event) => setDraftName(event.target.value)} onBlur={() => props.onRename(props.asset.id, draftName)} onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} /><button className="media-icon-button" type="button" aria-label="Close asset drawer" data-tooltip="Close" onClick={props.onClose}><DsIcon name="x-close-cross" size={18} /></button></div>
     <MediaAssetActions asset={props.asset} capabilities={props.capabilities} onComment={props.onComment} onTranscript={props.onTranscript} onShare={props.onShare} onDownload={props.onDownload} onDelete={props.onDelete} onArchive={props.onArchive} onRestore={props.onRestore} onRetry={props.onRetry} />
     <MediaPreview asset={props.asset} onRetry={() => props.onRetry(props.asset)} />
-    <div className="media-inspector-tabs" role="tablist" aria-label="Asset information">{tabs.map((tab) => <button className={`label-xs-semibold ${props.activeTab === tab.id ? "is-active" : ""}`} type="button" role="tab" key={tab.id} aria-selected={props.activeTab === tab.id} onClick={() => props.onTabChange(tab.id)}>{tab.label}</button>)}</div>
-    <div className="media-inspector-body" role="tabpanel">
+    <Tabs label="Asset information" value={props.activeTab} options={tabs.map((tab) => ({ value: tab.id, label: tab.label }))} onValueChange={props.onTabChange}>
+    <div className="media-inspector-body">
       {props.activeTab === "details" ? <Details asset={props.asset} projectName={props.projectName} folders={props.folders} storageLocations={props.storageLocations} globalScope={props.globalScope} showTechnicalStorage={props.capabilities.canViewStorage} /> : null}
       {props.activeTab === "comments" ? <><div className="media-comment-thread">{assetComments.length ? assetComments.map((comment) => <article className={`media-comment is-${comment.audience}`} key={comment.id}><div><strong className="label-s-semibold">{comment.authorName}</strong><span className="media-comment-tag label-xs-semibold">{comment.audience === "internal" ? "Filmmaker" : "Client"}</span></div>{comment.timecodeSeconds !== undefined ? <span className="media-timecode label-xs-semibold">{formatMediaDuration(comment.timecodeSeconds)}</span> : null}<p className="label-s">{comment.body}</p></article>) : <p className="media-tab-empty label-s">No comments on this file yet.</p>}</div>{props.capabilities.canComment ? <MediaCommentComposer assetId={props.asset.id} mentionOptions={props.mentionOptions} onSubmit={props.onAddComment} /> : null}</> : null}
       {props.activeTab === "transcript" ? props.asset.kind !== "video" && props.asset.kind !== "audio" ? <p className="media-tab-empty label-s">Transcripts are available for video and audio files only.</p> : props.asset.transcriptStatus !== "ready" ? <p className="media-tab-empty label-s">{props.asset.transcriptStatus === "processing" ? "Transcript is processing." : "No transcript is available yet."}</p> : <div className="media-transcript-lines">{notes.map((note) => <div className="media-transcript-line" key={`${note.assetId}-${note.timecode}`}><span className="media-timecode label-xs-semibold">{note.timecode}</span><span className="label-s">{note.text}</span></div>)}</div> : null}
     </div>
+    </Tabs>
   </aside>;
 }
 

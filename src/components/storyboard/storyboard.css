@@ -629,6 +629,13 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) calc(var(--brisk-space-3xl) * 10);
   background: var(--brisk-player-bg);
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: var(--brisk-space-none);
+  border: var(--brisk-space-none);
+  padding: var(--brisk-space-none);
 }
 
 .storyboard-review-main {

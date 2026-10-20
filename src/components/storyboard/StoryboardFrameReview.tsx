@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -64,6 +64,21 @@ export function StoryboardFrameReview({
   onRemoveMedia: () => void;
 }) {
   const isCustomer = role === "Customer";
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialog.showModal();
+    dialog.querySelector<HTMLButtonElement>('[aria-label="Back to Storyboard"]')?.focus();
+    return () => {
+      dialog.close();
+      const fallback = document.querySelector<HTMLButtonElement>('[aria-label="Storyboard actions"]');
+      (opener?.isConnected ? opener : fallback)?.focus({ preventScroll: true });
+    };
+  }, []);
   const [filter, setFilter] = useState<CommentFilter>("unresolved");
   const [composerBody, setComposerBody] = useState("");
   const [composerVisibility, setComposerVisibility] = useState<CommentVisibility>("external");
@@ -146,7 +161,7 @@ export function StoryboardFrameReview({
   };
 
   return (
-    <div className="storyboard-review" role="dialog" aria-modal="true" aria-labelledby="storyboard-review-title">
+    <dialog ref={dialogRef} className="storyboard-review" aria-labelledby="storyboard-review-title" onCancel={(event) => { event.preventDefault(); event.stopPropagation(); closeRef.current(); }}>
       <section className="storyboard-review-main">
         <header className="storyboard-review-header">
           <button className="storyboard-icon-button" type="button" aria-label="Back to Storyboard" onClick={onClose}>
@@ -452,7 +467,7 @@ export function StoryboardFrameReview({
           onTogglePostingMenu={() => setIsPostingMenuOpen((current) => !current)}
         />
       </aside>
-    </div>
+    </dialog>
   );
 }
 
