@@ -2747,7 +2747,7 @@ function CompactPlayer({
           </div>
           <div className="masters-player-utility-controls">
             <button type="button" aria-label={isMuted ? "Unmute" : "Mute"} onClick={onToggleMuted}><DsIcon name="speaker-high" size={16} /></button>
-            <button type="button" aria-label="Fullscreen"><DsIcon name="frame-corners" size={16} /></button>
+            <button type="button" aria-label="Fullscreen" disabled title="Fullscreen is not available in this prototype."><DsIcon name="frame-corners" size={16} /></button>
           </div>
         </div>
       </div>

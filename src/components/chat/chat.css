@@ -1561,11 +1561,26 @@
   color: var(--brisk-text-primary);
 }
 
-.chat-audio-attachment > button:hover,
+.chat-audio-attachment > button:hover:not(:disabled),
 .chat-audio-attachment > button:focus-visible {
   background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);
   outline: var(--brisk-space-none);
+}
+
+.chat-format-tools button:disabled,
+.chat-audio-attachment > button:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-tertiary);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.chat-video-attachment[aria-disabled="true"],
+.chat-file-attachment[aria-disabled="true"] {
+  color: var(--brisk-text-secondary);
+  cursor: default;
 }
 
 .chat-file-attachment > span:first-child {

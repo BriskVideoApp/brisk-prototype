@@ -605,7 +605,7 @@ function renderLinks(copy: string) {
 function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
   if (attachment.type === "image") {
     return (
-      <button className="chat-image-attachment" type="button" aria-label={`Open ${attachment.name}`}>
+      <div className="chat-image-attachment">
         {attachment.previewUrl ? (
           <img src={attachment.previewUrl} alt={attachment.name} />
         ) : (
@@ -617,7 +617,7 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
         <span className="chat-attachment-caption label-xs">
           {attachment.name} {attachment.size ? `· ${attachment.size}` : ""}
         </span>
-      </button>
+      </div>
     );
   }
 
@@ -625,17 +625,19 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
     return (
       <a
         className="chat-video-attachment"
-        href={attachment.url ?? "#"}
+        href={attachment.url}
+        aria-disabled={!attachment.url || undefined}
+        title={attachment.url ? undefined : "This video has no source file in the prototype."}
         target="_blank"
         rel="noreferrer"
       >
         <span className="chat-video-poster">
-          <span className="chat-video-play"><DsIcon name="play" size={18} /></span>
+          {attachment.url ? <span className="chat-video-play"><DsIcon name="play" size={18} /></span> : null}
           <span className="label-xs-semibold">Loom walkthrough</span>
         </span>
         <span>
           <strong className="label-s-semibold">{attachment.name}</strong>
-          <small className="label-xs">Open embedded video</small>
+          <small className="label-xs">{attachment.url ? "Open embedded video" : "Video unavailable"}</small>
         </span>
       </a>
     );
@@ -649,7 +651,7 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
           <strong className="label-s-semibold">{attachment.name}</strong>
           <small className="label-xs">Voice note{attachment.duration ? ` · ${attachment.duration}` : ""}</small>
         </span>
-        <button type="button" aria-label={`Play ${attachment.name}`}>
+        <button type="button" aria-label={`Play ${attachment.name}`} disabled title="Audio playback is not available in this prototype.">
           <DsIcon name="play" size={16} />
         </button>
       </div>
@@ -657,13 +659,13 @@ function MessageAttachment({ attachment }: { attachment: ChatAttachment }) {
   }
 
   return (
-    <a className="chat-file-attachment" href={attachment.url ?? "#"} download>
+    <a className="chat-file-attachment" href={attachment.url} aria-disabled={!attachment.url || undefined} title={attachment.url ? undefined : "This attachment has no source file in the prototype."} download>
       <span><DsIcon name="file-text" size={20} /></span>
       <span>
         <strong className="label-s-semibold">{attachment.name}</strong>
-        <small className="label-xs">{attachment.size ?? "Project file"}</small>
+        <small className="label-xs">{attachment.size ?? "Project file"}{attachment.url ? "" : " · File unavailable"}</small>
       </span>
-      <DsIcon name="download-simple" size={16} />
+      {attachment.url ? <DsIcon name="download-simple" size={16} /> : null}
     </a>
   );
 }

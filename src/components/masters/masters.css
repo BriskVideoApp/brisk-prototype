@@ -1916,6 +1916,13 @@
   justify-self: end;
 }
 
+.masters-control-row .masters-player-utility-controls button:disabled {
+  background: transparent;
+  color: var(--brisk-text-tertiary);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .masters-control-row button {
   display: inline-flex;
   width: 32px;

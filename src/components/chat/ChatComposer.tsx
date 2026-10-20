@@ -497,7 +497,7 @@ export function ChatComposer({
             >
               <em>I</em>
             </button>
-            <button type="button" aria-label="Add link">
+            <button type="button" aria-label="Add link" disabled title="Link editing is not available in this prototype. Paste a URL into your message instead.">
               <DsIcon name="link" size={16} />
             </button>
             <button type="button" aria-label="Add image" onClick={() => fileInputRef.current?.click()}>

@@ -1715,8 +1715,11 @@
   padding: var(--brisk-space-xxs) var(--brisk-space-s);
 }
 
-button.media-timecode:hover {
-  box-shadow: var(--brisk-shadow-s);
+.media-timecode {
+  border: var(--brisk-space-none);
+  background: transparent;
+  color: var(--brisk-text-secondary);
+  padding: var(--brisk-space-none);
 }
 
 .media-transcript-tools .media-search-shell {
@@ -1738,10 +1741,6 @@ button.media-timecode:hover {
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-s);
   text-align: left;
-}
-
-.media-transcript-line:hover {
-  background: var(--brisk-bg-block-secondary);
 }
 
 .media-version-row {

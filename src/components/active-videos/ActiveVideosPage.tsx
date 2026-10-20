@@ -1686,7 +1686,7 @@ function TimeSpentModal({
                 </div>
                 <div className="time-spent-entry-hours">
                   <strong className="heading-3xs">{formatHours(entry.hours)}</strong>
-                  <button className="time-spent-entry-edit" type="button" aria-label={`Edit ${entry.person} time entry`}>
+                  <button className="time-spent-entry-edit" type="button" aria-label={`Edit ${entry.person} time entry`} disabled title="Time-entry editing is not available in this prototype.">
                     <DsIcon name="pencil-simple-ds" size={18} />
                   </button>
                 </div>

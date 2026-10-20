@@ -2361,8 +2361,9 @@ function BriefRichInput({
               className="brief-composer-tool"
               type="button"
               aria-label="Record a brief"
-              data-tooltip="Record a brief"
-              onClick={() => console.log("Record a brief coming soon")}
+              data-tooltip="Recording is not available in this prototype"
+              title="Recording is not available in this prototype. Type your brief or upload a document instead."
+              disabled
             >
               <DsIcon name="video-camera" size={16} />
             </button>

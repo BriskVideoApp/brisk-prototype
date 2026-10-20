@@ -290,7 +290,7 @@
 .version-pill:hover,
 .more-button:hover,
 .speed-button:hover,
-.composer-tools button:hover,
+.composer-tools button:hover:not(:disabled),
 .drawing-toggle:hover,
 .send-button:hover,
 .filter-chip:hover {
@@ -2484,6 +2484,14 @@
   color: var(--brisk-text-tertiary);
   cursor: default;
   opacity: 0.55;
+}
+
+.composer-tools button:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-tertiary);
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .composer-tools button.active {

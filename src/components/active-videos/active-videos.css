@@ -2556,8 +2556,13 @@
   padding: 0;
 }
 
-.time-spent-entry-edit:hover {
+.time-spent-entry-edit:hover:not(:disabled) {
   color: var(--brisk-brand-primary);
+}
+
+.time-spent-entry-edit:disabled {
+  color: var(--brisk-text-tertiary);
+  cursor: not-allowed;
 }
 
 .time-spent-entry-detail {

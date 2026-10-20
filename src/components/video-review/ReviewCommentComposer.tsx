@@ -134,13 +134,15 @@ export function ReviewCommentComposer({
           <div className="composer-tools">
             <button
               type="button"
-              data-tooltip="Attach file"
+              data-tooltip={onAddAttachments ? "Attach file" : "Attachments are not available in this view"}
               aria-label="Attach file"
+              disabled={!onAddAttachments}
+              title={onAddAttachments ? undefined : "Attachments are not available in this view."}
               onClick={onAddAttachments ? () => fileInputRef.current?.click() : undefined}
             >
               <DsIcon name="paperclip" size={16} />
             </button>
-            <button type="button" data-tooltip="Record your screen and voice" aria-label="Record your screen and voice">
+            <button type="button" data-tooltip="Recording is not available in this prototype" aria-label="Record your screen and voice" disabled title="Recording is not available in this prototype.">
               <DsIcon name="video-camera" size={16} />
             </button>
             <button

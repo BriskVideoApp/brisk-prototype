@@ -794,9 +794,17 @@
   padding: var(--brisk-space-none);
 }
 
-.brief-composer-tool:hover {
+.brief-composer-tool:hover:not(:disabled) {
   background: var(--brisk-brand-secondary);
   box-shadow: var(--brisk-shadow-s);
+}
+
+.brief-composer-tool:disabled {
+  border-color: var(--brisk-border-secondary);
+  background: var(--brisk-item-tertiary);
+  color: var(--brisk-text-tertiary);
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .brief-toolbar-button,
