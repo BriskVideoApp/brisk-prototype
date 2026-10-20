@@ -344,6 +344,9 @@
 .people-table.has-capacity th[data-column="activity"] { width: 8%; }
 .people-table.has-capacity th[data-column="profile"] { width: calc(var(--brisk-space-3xl) + var(--brisk-space-xs)); }
 
+.people-table-studio-freelancers.has-capacity th[data-column="relationship"] { width: 14%; }
+.people-table-studio-freelancers.has-capacity th[data-column="capacity"] { width: 12%; }
+
 .people-table td,
 .person-work-table td {
   height: calc(var(--brisk-space-3xl) * 2 + var(--brisk-space-l));

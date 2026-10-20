@@ -198,7 +198,7 @@ function getPeopleColumns(view: PeopleView): PeopleColumn[] {
     view === "Clients" ? { id: "company", label: "Client" } : { id: "relationship", label: "Type" },
     { id: "role", label: "Role" },
     { id: "work", label: view === "Clients" ? "Projects shared" : view === "Archived" ? "Projects" : "Current work" },
-    ...(view === "Studio Staff" || view === "All" ? [{ id: "capacity" as const, label: "Capacity" }] : []),
+    ...(view === "Studio Staff" || view === "Studio Freelancers" || view === "All" ? [{ id: "capacity" as const, label: "Capacity" }] : []),
     { id: "invitation", label: view === "Clients" ? "Portal access" : "Access" },
     { id: "activity", label: "Latest activity" },
     { id: "profile", label: "Open profile" },
@@ -215,8 +215,6 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
   onResend: () => void;
   onWorkload: () => void;
 }) {
-  const projectDescriptor = view === "Clients" ? "shared" : view === "Archived" ? "" : "active ";
-  const projectCount = `${currentProjects.length} ${projectDescriptor ? `${projectDescriptor} ` : ""}${currentProjects.length === 1 ? "project" : "projects"}`;
   if (column.id === "person") return <Link className="people-name-cell" href={peopleProfileHref(person, column.id)}><PeopleAvatar person={person} /><span><strong className="label-m-semibold">{person.name}</strong><small className="label-xs">{person.email || "No email added"}</small></span></Link>;
   if (column.id === "relationship") return <div className="people-relationship-cell"><Link className="people-profile-link" href={peopleProfileHref(person, column.id)} aria-label={`Open ${person.name}'s overview`}><PersonTypeBadge type={person.type} /></Link>{person.clientId && person.clientName ? <Link className="label-xs-semibold" href={`/clients/${person.clientId}`}>{person.clientName}</Link> : <Link className="people-profile-link label-xs" href={peopleProfileHref(person, column.id)}>{person.type === "Team" ? "North Star Films" : person.location}</Link>}</div>;
   if (column.id === "company") return person.clientId && person.clientName
@@ -224,13 +222,12 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
     : <span className="label-s people-muted">Company not linked</span>;
   if (column.id === "role") return <Link className="people-role-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.jobTitles.join(", ") || "Role not added"}</strong>{person.type === "Team" ? null : <small className="label-xs">{person.skills.slice(0, 2).join(" - ") || "Skills not added"}</small>}</Link>;
   if (column.id === "capacity") return <CapacityButton person={person} onClick={onWorkload} compact />;
-  if (column.id === "work" && (view === "Studio Staff" || view === "All" || view === "Clients")) return <PeopleProjectLinks
+  if (column.id === "work") return <PeopleProjectLinks
     projects={currentProjects}
-    emptyLabel={person.type === "Client contact" ? "No projects shared" : "No active projects"}
+    emptyLabel={view === "Archived" ? "No current work" : person.type === "Client contact" ? "No projects shared" : "No active projects"}
     emptyHref={peopleProfileHref(person, column.id)}
-    moreLabel={`+${currentProjects.length - 2} more ${person.type === "Client contact" ? "shared" : "active"} projects for ${person.name} - view all ${currentProjects.length}`}
+    moreLabel={`+${currentProjects.length - 2} more ${view === "Archived" ? "" : person.type === "Client contact" ? "shared " : "active "}projects for ${person.name} - view all ${currentProjects.length}`}
   />;
-  if (column.id === "work") return <div className="people-current-work"><Link className="people-profile-link label-xs-semibold" href={peopleProfileHref(person, column.id)}>{projectCount}</Link>{currentProjects.slice(0, 2).map((project) => <Link className="label-xs" href={`/projects/${project.id}`} key={project.id}>{project.name}</Link>)}{currentProjects.length === 0 ? <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)}>{view === "Clients" ? "No projects shared" : "No current work"}</Link> : null}{view !== "Archived" && (person.type === "Team" || person.type === "Freelancer") ? <CapacityButton person={person} onClick={onWorkload} /> : null}</div>;
   if (column.id === "activity") return <Link className="people-activity-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.latestActivity.label}</strong><small className="label-xs">{formatPersonDate(person.latestActivity.occurredAt)}</small></Link>;
   if (column.id === "invitation") return <div className="people-invitation-cell"><Link className="people-invitation-link people-profile-link" href={peopleProfileHref(person, column.id)}>{person.type === "Contact" ? <><strong className="label-s-semibold">No Brisk access</strong><small className="label-xs">Production contact only.</small></> : <><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? (view === "Clients" ? "Portal invite sent." : "Invite sent - waiting for them to join.") : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : view === "Clients" ? "Portal access is active." : "They have joined Brisk."}</small></>}</Link>{person.type !== "Contact" && invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={onResend}>Resend invite</Button> : null}{view === "Studio Staff" && person.type === "Team" ? <div className="people-billing-cell"><strong className="label-xs-semibold">Billing: {studioBillingAccess ? "Admin" : "No access"}</strong><Link className="client-text-button label-xs-semibold" href={peopleProfileHref(person, "invitation")}>Manage</Link></div> : null}</div>;
   return <Link className="people-row-open" href={peopleProfileHref(person, column.id)} aria-label={`Open ${person.name}'s full profile`}><DsIcon name="caret-right" size={16} /></Link>;
