@@ -2951,7 +2951,7 @@ function BriefBrandKitSection({
 } & BriefFieldExclusionProps) {
   return (
     <section
-      className={`brief-section-panel ${summaryMode ? "summary-mode" : ""}`}
+      className={`brief-section-panel brief-brand-kit-section ${summaryMode ? "summary-mode" : ""}`}
       aria-label={summaryMode ? undefined : "Brand kit"}
       aria-labelledby={summaryMode ? "brief-brand-kit-title" : "brief-brand-kit-step-title"}
     >

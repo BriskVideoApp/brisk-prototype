@@ -5110,6 +5110,10 @@ button.brief-confidence-chip {
   max-width: calc(var(--brisk-space-3xl) * 14 + var(--brisk-space-xl));
 }
 
+.brief-brand-kit-section:not(.summary-mode) > .brief-section-intro {
+  margin-bottom: var(--brisk-space-xl);
+}
+
 .brief-brand-kit-palette > span {
   flex: 1;
   background: var(--brief-brand-kit-swatch);
@@ -5117,9 +5121,9 @@ button.brief-confidence-chip {
 
 .brief-brand-kit-choice {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--brisk-space-m);
-  padding-block: var(--brisk-space-s);
+  padding-block: var(--brisk-space-m);
 }
 
 .brief-brand-kit-option-copy {
