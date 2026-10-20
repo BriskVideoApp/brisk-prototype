@@ -2,6 +2,8 @@
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
+import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 
 
 import Link from "next/link";
@@ -228,7 +230,6 @@ export function ShareActionRow({
   const sendMessageRef = useRef<HTMLDivElement>(null);
   const savedMentionRangeRef = useRef<Range | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const overflowMenuRef = useRef<HTMLDetailsElement>(null);
   const copyToastTimeoutRef = useRef<number | null>(null);
   const reviewToastTimeoutRef = useRef<number | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -403,9 +404,13 @@ export function ShareActionRow({
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      const menuId = rootRef.current?.querySelector('[aria-haspopup="menu"]')?.getAttribute("aria-controls");
+      const portalMenu = target instanceof Element ? target.closest('.brisk-select-menu[data-brisk-select-mode="action"]')?.querySelector('[role="menu"]') : null;
+      if (menuId && portalMenu?.id === menuId) return;
       if (!rootRef.current?.contains(event.target as Node)) {
         setIsPopoverOpen(false);
-        overflowMenuRef.current?.removeAttribute("open");
+        setIsOverflowOpen(false);
       }
     };
 
@@ -435,7 +440,7 @@ export function ShareActionRow({
       if (event.key !== "Escape") return;
       setIsPopoverOpen(false);
       setIsSendConfirmationOpen(false);
-      overflowMenuRef.current?.removeAttribute("open");
+      setIsOverflowOpen(false);
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -555,7 +560,7 @@ export function ShareActionRow({
   };
 
   const closeOverflowMenu = () => {
-    overflowMenuRef.current?.removeAttribute("open");
+    setIsOverflowOpen(false);
   };
 
   const openCopyLinkSettings = () => {
@@ -728,21 +733,20 @@ export function ShareActionRow({
   return (
     <div className={`share-action-row share-density-${density} ${presentation === "overflow" ? "is-overflow" : ""} ${briefControls ? "is-brief-controls" : ""} ${presentation === "brief-summary" ? "is-brief-summary" : ""}`} ref={rootRef}>
       {presentation === "overflow" ? (
-        <details className="app-global-shoot-actions" ref={overflowMenuRef} onToggle={(event) => { setIsOverflowOpen(event.currentTarget.open); if (event.currentTarget.open) setIsPopoverOpen(false); }}>
-          <summary className="app-global-action-button" aria-label={briefControls ? "Brief actions" : `${stageLabel} actions`} aria-haspopup="menu" aria-expanded={isOverflowOpen} data-tooltip={briefControls ? "Brief actions" : `${stageLabel} actions`}>
-            <DsIcon name="share-network" size={20} />
-          </summary>
-          {briefControls && isOverflowOpen ? <button className="share-brief-actions-backdrop" type="button" aria-label="Close Brief actions" onClick={closeOverflowMenu} /> : null}
-          <div role="menu" aria-label={briefControls ? "Brief actions" : `${stageLabel} actions`}>
-            {briefControls ? <div className="share-brief-actions-heading">
-              <span className="headings-xs-bold">Brief actions</span>
-              <button type="button" aria-label="Close Brief actions" onClick={closeOverflowMenu}><DsIcon name="x-close-cross" size={18} /></button>
-            </div> : null}
-            {showCopyLink ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled} title={disabled ? disabledTooltip : undefined} onClick={openCopyLinkSettings}><DsIcon name="link" size={16} />Copy link</button> : null}
-            {showSend && userRole !== "Share Link Viewer" ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled || sendDisabled || (isWaitingOnReview && !canOpenReviewDetails)} title={disabled ? disabledTooltip : sendDisabled ? sendDisabledTooltip : sendTooltip} onClick={requestSend}><DsIcon name="paper-plane-tilt" size={16} /><span className="share-review-action-copy"><span>{displayedSendLabel}{showReminderPrompt ? <span className="share-reminder-prompt" aria-hidden="true"><DsIcon name="bell" size={15} /></span> : null}</span>{canOpenReviewDetails ? <small className="label-xs">{lastSentLabel}</small> : null}</span></button> : null}
-            {showApprove ? <button className="label-s-semibold" type="button" role="menuitem" disabled={disabled || approveDisabled} title={disabled ? disabledTooltip : approveDisabled ? approveDisabledTooltip : undefined} onClick={changeApproval}><DsIcon name="thumbs-up-like-fill" size={16} />{isApproved ? briefControls ? `Unapprove ${stageLabel}` : "Approved" : approveLabel}</button> : null}
-          </div>
-        </details>
+        <BriskSelect mode="action" value="" clearable={false} ariaLabel={briefControls ? "Brief actions" : `${stageLabel} actions`} placeholder="Actions"
+          open={isOverflowOpen} onOpenChange={(open) => { setIsOverflowOpen(open); if (open) setIsPopoverOpen(false); }}
+          options={[
+            ...(showCopyLink ? [{value: "copy", label: "Copy link", disabled, title: disabled ? disabledTooltip : undefined}] : []),
+            ...(showSend && userRole !== "Share Link Viewer" ? [{value: "send", label: displayedSendLabel,
+              disabled: disabled || sendDisabled || (isWaitingOnReview && !canOpenReviewDetails),
+              title: disabled ? disabledTooltip : sendDisabled ? sendDisabledTooltip : sendTooltip,
+              description: [canOpenReviewDetails ? lastSentLabel : "", showReminderPrompt ? "Reminder due" : ""].filter(Boolean).join(" · ") || undefined,
+            }] : []),
+            ...(showApprove ? [{value: "approve", label: isApproved ? briefControls ? `Unapprove ${stageLabel}` : "Approved" : approveLabel, disabled: disabled || approveDisabled, title: disabled ? disabledTooltip : approveDisabled ? approveDisabledTooltip : undefined}] : []),
+          ]}
+          onChange={(value) => { if (value === "copy") openCopyLinkSettings(); else if (value === "send") requestSend(); else if (value === "approve") changeApproval(); }}
+          actionTrigger={(props) => <IconButton {...props} aria-label={briefControls ? "Brief actions" : `${stageLabel} actions`}><DsIcon name="share-network" size={20} /></IconButton>}
+        />
       ) : presentation === "brief-summary" ? <div className="share-action-buttons brief-summary-action-buttons" aria-label={`${stageLabel} actions`}>
         {showCopyLink ? <button
           className={`share-button share-button-tertiary label-s-semibold ${copyLinkIconOnly ? "share-button-icon-only" : ""}`}
