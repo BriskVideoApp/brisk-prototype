@@ -1,7 +1,7 @@
 "use client";
 
-import { createPortal } from "react-dom";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useMemo } from "react";
+import { BriskSelect, type BriskActionContext } from "../../../Brisk DS/src/app/components/Select";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import type { ScriptMediaType } from "@/data/script";
 
@@ -27,7 +27,6 @@ export function ScriptMediaPicker<T extends string>({
   triggerIconSize = 14,
   triggerText,
   triggerTooltip,
-  menuClassName = "",
   anchorElement,
   hideTrigger = false,
   onOpenChange,
@@ -48,55 +47,38 @@ export function ScriptMediaPicker<T extends string>({
   onOpenChange: (isOpen: boolean) => void;
   onSelect: (value: T) => void;
 }) {
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [menuStyle, setMenuStyle] = useState<CSSProperties>({});
+  const actionContext = useMemo<BriskActionContext | undefined>(() => {
+    if (!hideTrigger || !anchorElement) return undefined;
+    return {
+      anchor: anchorElement,
+      fallbackFocus: anchorElement,
+      // Read the opener's current bounds when the shared menu repositions.
+      get x() { return anchorElement.getBoundingClientRect().left; },
+      get y() { return anchorElement.getBoundingClientRect().bottom; },
+    };
+  }, [anchorElement, hideTrigger]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const positionMenu = () => {
-      const trigger = anchorElement ?? triggerRef.current;
-      if (!trigger) return;
-      const rect = trigger.getBoundingClientRect();
-      const viewportPadding = 8;
-      const menuGap = 8;
-      const width = Math.min(248, window.innerWidth - (viewportPadding * 2));
-      const left = Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - width - viewportPadding);
-      const estimatedHeight = 192;
-      const openAbove = window.innerHeight - rect.bottom < estimatedHeight && rect.top > estimatedHeight;
-      setMenuStyle({
-        bottom: openAbove ? window.innerHeight - rect.top + menuGap : "auto",
-        left,
-        top: openAbove ? "auto" : rect.bottom + menuGap,
-        width,
-      });
-    };
-    const closeOnOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (!(anchorElement ?? triggerRef.current)?.contains(target) && !menuRef.current?.contains(target)) onOpenChange(false);
-    };
-    positionMenu();
-    window.addEventListener("resize", positionMenu);
-    window.addEventListener("scroll", positionMenu, true);
-    document.addEventListener("mousedown", closeOnOutsideClick);
-    return () => {
-      window.removeEventListener("resize", positionMenu);
-      window.removeEventListener("scroll", positionMenu, true);
-      document.removeEventListener("mousedown", closeOnOutsideClick);
-    };
-  }, [anchorElement, isOpen, onOpenChange]);
+  if (hideTrigger && !actionContext) return null;
 
   return <div className="script-media-menu-wrap">
-    {!hideTrigger ? <button className={`script-media-add ${triggerClassName}`.trim()} ref={triggerRef} type="button" aria-label={triggerLabel} aria-expanded={isOpen} data-tooltip={triggerTooltip} onClick={() => onOpenChange(!isOpen)}>
-      {triggerIcon ? <DsIcon name={triggerIcon} size={triggerIconSize} /> : null}
-      {triggerText ? <span>{triggerText}</span> : null}
-    </button> : null}
-    {isOpen ? createPortal(<div className={`script-media-menu is-portal ${menuClassName}`.trim()} ref={menuRef} style={menuStyle} role="menu">
-      {options.map((option) => (
-        <button key={option.value} className="label-s" type="button" role="menuitem" onClick={() => onSelect(option.value)}>
-          {option.label}
-        </button>
-      ))}
-    </div>, document.body) : null}
+    <BriskSelect<T>
+      mode="action"
+      ariaLabel={triggerLabel}
+      value=""
+      placeholder={triggerLabel}
+      clearable={false}
+      open={isOpen}
+      onOpenChange={onOpenChange}
+      actionContext={actionContext}
+      options={options.map((option) => ({ value: option.value, label: option.label }))}
+      onChange={(value) => {
+        const option = options.find((candidate) => candidate.value === value);
+        if (option) onSelect(option.value);
+      }}
+      actionTrigger={(props) => <button {...props} className={`script-media-add ${triggerClassName}`.trim()} type="button" aria-label={triggerLabel} data-tooltip={triggerTooltip}>
+        {triggerIcon ? <DsIcon name={triggerIcon} size={triggerIconSize} /> : null}
+        {triggerText ? <span>{triggerText}</span> : null}
+      </button>}
+    />
   </div>;
 }
