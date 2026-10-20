@@ -809,6 +809,36 @@
 .client-contact-actions { max-width: 290px; flex-wrap: wrap; justify-content: flex-end; gap: var(--brisk-space-xs); }
 .client-contact-actions .client-secondary-button { min-height: var(--brisk-space-2xl); }
 
+.people-table-frame.client-contacts-table-frame {
+  width: 100%;
+  margin: var(--brisk-space-none);
+}
+
+.people-table.client-contacts-table th[data-column="person"] { width: 25%; }
+.people-table.client-contacts-table th[data-column="invitation"] { width: 16%; }
+.people-table.client-contacts-table th[data-column="last-active"] { width: 12%; }
+.people-table.client-contacts-table th[data-column="projects"] { width: 23%; }
+.people-table.client-contacts-table th[data-column="actions"] { width: 24%; }
+
+.people-table.client-contacts-table td {
+  cursor: auto;
+}
+
+.client-contacts-table .people-name-cell > span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.client-contacts-table .people-invitation-cell {
+  min-width: var(--brisk-space-none);
+}
+
+.client-contact-table-actions {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--brisk-space-xs);
+}
+
 .client-brand-kit-card {
   align-items: center;
   gap: var(--brisk-space-xl);

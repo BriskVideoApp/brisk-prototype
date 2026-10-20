@@ -331,18 +331,18 @@
 .people-table th[data-column="activity"] { width: 13%; }
 .people-table th[data-column="profile"] { width: 3%; }
 
-.people-table-studio-staff {
+.people-table.has-capacity {
   min-width: calc(var(--brisk-space-3xl) * 32);
 }
 
-.people-table-studio-staff th[data-column="person"] { width: 18%; }
-.people-table-studio-staff th[data-column="relationship"] { width: 10%; }
-.people-table-studio-staff th[data-column="role"] { width: 12%; }
-.people-table-studio-staff th[data-column="work"] { width: 18%; }
-.people-table-studio-staff th[data-column="capacity"] { width: 16%; }
-.people-table-studio-staff th[data-column="invitation"] { width: 16%; }
-.people-table-studio-staff th[data-column="activity"] { width: 8%; }
-.people-table-studio-staff th[data-column="profile"] { width: 2%; }
+.people-table.has-capacity th[data-column="person"] { width: 18%; }
+.people-table.has-capacity th[data-column="relationship"] { width: 10%; }
+.people-table.has-capacity th[data-column="role"] { width: 12%; }
+.people-table.has-capacity th[data-column="work"] { width: 18%; }
+.people-table.has-capacity th[data-column="capacity"] { width: 16%; }
+.people-table.has-capacity th[data-column="invitation"] { width: 16%; }
+.people-table.has-capacity th[data-column="activity"] { width: 8%; }
+.people-table.has-capacity th[data-column="profile"] { width: 2%; }
 
 .people-table td,
 .person-work-table td {
@@ -354,6 +354,7 @@
 }
 
 .people-table td[data-column="profile"] { padding: var(--brisk-space-none); }
+.people-table td[data-capacity-unavailable] { cursor: default; }
 
 .people-table tbody td { cursor: pointer; }
 
@@ -442,12 +443,12 @@
   white-space: nowrap;
 }
 
-.people-table-studio-staff .people-current-work .people-muted {
+.people-current-work.is-project-list .people-muted {
   color: var(--brisk-text-secondary);
 }
 
-.people-table-studio-staff .people-current-work a:hover,
-.people-table-studio-staff .people-current-work a:focus-visible {
+.people-current-work.is-project-list a:hover,
+.people-current-work.is-project-list a:focus-visible {
   color: var(--brisk-brand-primary-click);
 }
 
@@ -544,13 +545,15 @@
   background: var(--brisk-brand-secondary);
 }
 
-.people-capacity-button.is-compact {
+.people-capacity-button.is-compact,
+.people-availability-button.is-compact {
   min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
   align-content: center;
   padding: var(--brisk-space-none);
 }
 
-.people-capacity-button.is-compact:focus-visible {
+.people-capacity-button.is-compact:focus-visible,
+.people-availability-button.is-compact:focus-visible {
   outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
   outline-offset: var(--brisk-space-xxs);
 }
@@ -1381,7 +1384,7 @@
   .people-table th[data-column="activity"],
   .people-table td[data-column="activity"] { display: none; }
   .people-table { min-width: calc(var(--brisk-space-3xl) * 23); }
-  .people-table-studio-staff { min-width: calc(var(--brisk-space-3xl) * 32); }
+  .people-table.has-capacity { min-width: calc(var(--brisk-space-3xl) * 32); }
   .person-profile-heading,
   .person-section-header { align-items: stretch; flex-direction: column; }
   .person-profile-actions { justify-content: flex-start; }

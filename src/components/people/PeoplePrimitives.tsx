@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
+import type { Project } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
 import {
@@ -27,6 +28,29 @@ export function PersonStatusBadge({ status }: { status: PersonStatus }) {
   return <span className={`people-status-badge is-${slug(status)} label-xs-semibold`}>{status}</span>;
 }
 
+/** One project-entry presentation for People and Client contact rows. */
+export function PeopleProjectLinks({ projects, emptyLabel, emptyHref, moreLabel, limit = 2 }: {
+  projects: readonly Pick<Project, "id" | "name" | "clientName">[];
+  emptyLabel: string;
+  emptyHref?: string;
+  moreLabel?: string;
+  limit?: number;
+}) {
+  return <div className="people-current-work is-project-list">
+    {projects.length === 0 ? (
+      emptyHref
+        ? <Link className="people-profile-link label-xs people-muted" href={emptyHref}>{emptyLabel}</Link>
+        : <span className="label-xs people-muted">{emptyLabel}</span>
+    ) : projects.slice(0, limit).map((project) => (
+      <Link className="people-project-entry label-xs" href={`/projects/${project.id}`} key={project.id} title={`${project.clientName} · ${project.name}`}>
+        <span className="people-project-client">{project.clientName} · </span>
+        <span className="people-project-title label-xs-semibold">{project.name}</span>
+      </Link>
+    ))}
+    {projects.length > limit && emptyHref ? <Link className="people-profile-link label-xs people-muted" href={emptyHref} aria-label={moreLabel}>+{projects.length - limit} more</Link> : null}
+  </div>;
+}
+
 export function CapacityButton({ onClick, person, compact = false }: { onClick: () => void; person: Person; compact?: boolean }) {
   const rollup = getWorkloadRollup(person);
   const headline = compact && rollup.isOverCapacity
@@ -38,7 +62,7 @@ export function CapacityButton({ onClick, person, compact = false }: { onClick: 
 
   if (person.type === "Freelancer") {
     return (
-      <button className="people-availability-button" type="button" onClick={onClick}>
+      <button className={`people-availability-button${compact ? " is-compact" : ""}`} type="button" onClick={onClick} aria-label={`View ${person.name}'s workload - ${person.availability ?? "Available"}, ${person.workloads.length} current ${person.workloads.length === 1 ? "project" : "projects"}`}>
         <strong className="label-s-semibold">{person.availability ?? "Available"}</strong>
         <small className="label-xs">{person.workloads.length} current {person.workloads.length === 1 ? "project" : "projects"}</small>
       </button>

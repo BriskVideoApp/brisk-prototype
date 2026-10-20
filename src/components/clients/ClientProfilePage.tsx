@@ -16,6 +16,7 @@ import { useClients } from "@/components/clients/ClientDataContext";
 import { formatRelativeDate, getWithinProjectStatus } from "@/components/clients/ClientsPage";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { PeopleAvatar, PeopleProjectLinks } from "@/components/people/PeoplePrimitives";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { InvitationStatusBadge, useInvitations, type InvitationStatus } from "@/components/invitations/InvitationContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -313,35 +314,56 @@ function ContactsSection({
   onRestore: (contact: ClientContact) => void;
   projects: Project[];
 }) {
+  const { people } = usePeople();
+
   return (
     <section className="client-section-stack" aria-labelledby="client-contacts-heading">
       <header className="client-section-header">
         <div><h2 className="headings-s-bold" id="client-contacts-heading">Client contacts</h2><p className="paragraph-s">Client contacts use a secure magic link. They never need a password.</p></div>
       </header>
       {client.contacts.length > 0 ? (
-        <div className="client-contact-list">
-          {client.contacts.map((contact) => {
-            const accessibleProjects = projects.filter((project) => contact.projectIds.includes(project.id));
-            const invitationStatus = getStatus(contact);
-            return (
-              <article className="client-contact-row" key={contact.id}>
-                <span className="client-person-avatar label-s-semibold">{contact.name.split(/\s+/u).map((word) => word.charAt(0)).slice(0, 2).join("")}</span>
-                <Link className="client-contact-identity" href={`/people/${contact.id}`}><strong className="label-m-semibold">{contact.name}</strong><span className="label-s">{contact.email}</span></Link>
-                <div><span className="label-xs">Invitation</span><InvitationStatusBadge status={invitationStatus} />{invitationStatus !== "Accepted" ? <small className="label-xs">{invitationStatus === "Pending" ? "Waiting for them to join." : "Invite expired. Send a new one."}</small> : null}</div>
-                <div><span className="label-xs">Last active</span><strong className="label-s-semibold">{contact.lastActive ? formatRelativeDate(contact.lastActive) : "Not yet"}</strong></div>
-                <div className="client-contact-projects"><span className="label-xs">Projects they can access</span><strong className="label-s-semibold">{accessibleProjects.length ? accessibleProjects.map((project) => project.name).join(", ") : "None selected"}</strong></div>
-                <div className="client-contact-actions">
-                  {invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onResend(contact)}>Resend invite</Button> : null}
-                  <Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => onChangeProjects(contact)}>Change project access</Button>
-                  {contact.portalAccess === "Paused" ? (
-                    <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onRestore(contact)}>Restore portal access</Button>
-                  ) : (
-                    <Button size="S" variant="danger" className="client-danger-text-button" type="button" onClick={() => onRemove(contact)}>Remove portal access</Button>
-                  )}
-                </div>
-              </article>
-            );
-          })}
+        <div className="people-table-frame client-contacts-table-frame">
+          <table className="people-table client-contacts-table" aria-label={`${client.name} Client contacts`}>
+            <thead><tr>
+              <th scope="col" data-column="person">Person</th>
+              <th scope="col" data-column="invitation">Invitation</th>
+              <th scope="col" data-column="last-active">Last active</th>
+              <th scope="col" data-column="projects">Projects they can access</th>
+              <th scope="col" data-column="actions">Actions</th>
+            </tr></thead>
+            <tbody>
+              {client.contacts.map((contact) => {
+                const accessibleProjects = projects.filter((project) => contact.projectIds.includes(project.id));
+                const invitationStatus = getStatus(contact);
+                const person = people.find((candidate) => candidate.id === contact.id || candidate.email.toLocaleLowerCase("en-AU") === contact.email.toLocaleLowerCase("en-AU"));
+                return (
+                  <tr key={contact.id}>
+                    <td data-column="person" data-label="Person">
+                      <Link className="people-name-cell" href={`/people/${contact.id}`}>
+                        <PeopleAvatar person={{ name: contact.name, type: "Client contact", avatarUrl: person?.avatarUrl ?? null }} />
+                        <span><strong className="label-m-semibold">{contact.name}</strong><small className="label-xs">{contact.email}</small></span>
+                      </Link>
+                    </td>
+                    <td data-column="invitation" data-label="Invitation"><div className="people-invitation-cell">
+                      <InvitationStatusBadge status={invitationStatus} />
+                      {invitationStatus !== "Accepted" ? <small className="label-xs">{invitationStatus === "Pending" ? "Waiting for them to join." : "Invite expired. Send a new one."}</small> : null}
+                    </div></td>
+                    <td data-column="last-active" data-label="Last active"><span className="label-xs">{contact.lastActive ? formatRelativeDate(contact.lastActive) : "Not yet"}</span></td>
+                    <td data-column="projects" data-label="Projects they can access"><PeopleProjectLinks projects={accessibleProjects} emptyLabel="None selected" limit={accessibleProjects.length} /></td>
+                    <td data-column="actions" data-label="Actions"><div className="client-contact-table-actions">
+                      {invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onResend(contact)}>Resend invite</Button> : null}
+                      <Button size="S" variant="secondary" className="client-secondary-button" type="button" onClick={() => onChangeProjects(contact)}>Change project access</Button>
+                      {contact.portalAccess === "Paused" ? (
+                        <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={() => onRestore(contact)}>Restore portal access</Button>
+                      ) : (
+                        <Button size="S" variant="danger" className="client-danger-text-button" type="button" onClick={() => onRemove(contact)}>Remove portal access</Button>
+                      )}
+                    </div></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="client-section-empty"><span><DsIcon name="envelope-simple" size={28} /></span><h3 className="headings-xs-bold">No Client contacts yet</h3><p className="paragraph-s">The Client and portal can exist without a contact. Use Invite Client above when you are ready to share work.</p></div>

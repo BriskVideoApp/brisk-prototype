@@ -13,6 +13,7 @@ import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import {
   CapacityButton,
   PeopleAvatar,
+  PeopleProjectLinks,
   PersonTypeBadge,
   WorkloadDialog,
   formatPersonDate,
@@ -132,7 +133,7 @@ export function PeoplePage() {
 
       {visiblePeople.length ? (
         <section className="people-table-frame" aria-label="People directory">
-          <table className={`people-table people-table-${view.toLocaleLowerCase("en-AU").replaceAll(" ", "-")}`}>
+          <table className={`people-table people-table-${view.toLocaleLowerCase("en-AU").replaceAll(" ", "-")}${columns.some((column) => column.id === "capacity") ? " has-capacity" : ""}`}>
             <thead><tr>{columns.map((column) => <th data-column={column.id} key={column.id}>{column.id === "profile" ? <span className="sr-only">View person details</span> : column.label}</th>)}</tr></thead>
             <tbody>
               {visiblePeople.map((person) => {
@@ -140,10 +141,10 @@ export function PeoplePage() {
                 const invitationStatus = getInvitationStatus(person);
                 return (
                   <tr key={person.id}>
-                    {columns.map((column) => <td data-column={column.id} data-label={column.label} key={column.id} onClick={(event) => {
+                    {columns.map((column) => <td data-column={column.id} data-label={column.label} data-capacity-unavailable={(column.id === "capacity" && person.type !== "Team" && person.type !== "Freelancer") || undefined} key={column.id} onClick={(event) => {
                       if (event.target instanceof Element && event.target.closest("a, button, input, select")) return;
                       if (column.id === "capacity") {
-                        setWorkloadPerson(person);
+                        if (person.type === "Team" || person.type === "Freelancer") setWorkloadPerson(person);
                         return;
                       }
                       router.push(peopleProfileHref(person, column.id));
@@ -197,7 +198,7 @@ function getPeopleColumns(view: PeopleView): PeopleColumn[] {
     view === "Clients" ? { id: "company", label: "Client" } : { id: "relationship", label: "Type" },
     { id: "role", label: "Role" },
     { id: "work", label: view === "Clients" ? "Projects shared" : view === "Archived" ? "Projects" : "Current work" },
-    ...(view === "Studio Staff" ? [{ id: "capacity" as const, label: "Capacity" }] : []),
+    ...(view === "Studio Staff" || view === "All" ? [{ id: "capacity" as const, label: "Capacity" }] : []),
     { id: "invitation", label: view === "Clients" ? "Portal access" : "Access" },
     { id: "activity", label: "Latest activity" },
     { id: "profile", label: "Open profile" },
@@ -223,19 +224,12 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
     : <span className="label-s people-muted">Company not linked</span>;
   if (column.id === "role") return <Link className="people-role-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.jobTitles.join(", ") || "Role not added"}</strong>{person.type === "Team" ? null : <small className="label-xs">{person.skills.slice(0, 2).join(" - ") || "Skills not added"}</small>}</Link>;
   if (column.id === "capacity") return <CapacityButton person={person} onClick={onWorkload} compact />;
-  if (column.id === "work" && view === "Studio Staff") return (
-    <div className="people-current-work is-project-list">
-      {currentProjects.length === 0 ? (
-        <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)}>No active projects</Link>
-      ) : currentProjects.slice(0, 2).map((project) => (
-        <Link className="people-project-entry label-xs" href={`/projects/${project.id}`} key={project.id} title={`${project.clientName} · ${project.name}`}>
-          <span className="people-project-client">{project.clientName} · </span>
-          <span className="people-project-title label-xs-semibold">{project.name}</span>
-        </Link>
-      ))}
-      {currentProjects.length > 2 ? <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)} aria-label={`+${currentProjects.length - 2} more active projects for ${person.name} - view all ${currentProjects.length}`}>+{currentProjects.length - 2} more</Link> : null}
-    </div>
-  );
+  if (column.id === "work" && (view === "Studio Staff" || view === "All" || view === "Clients")) return <PeopleProjectLinks
+    projects={currentProjects}
+    emptyLabel={person.type === "Client contact" ? "No projects shared" : "No active projects"}
+    emptyHref={peopleProfileHref(person, column.id)}
+    moreLabel={`+${currentProjects.length - 2} more ${person.type === "Client contact" ? "shared" : "active"} projects for ${person.name} - view all ${currentProjects.length}`}
+  />;
   if (column.id === "work") return <div className="people-current-work"><Link className="people-profile-link label-xs-semibold" href={peopleProfileHref(person, column.id)}>{projectCount}</Link>{currentProjects.slice(0, 2).map((project) => <Link className="label-xs" href={`/projects/${project.id}`} key={project.id}>{project.name}</Link>)}{currentProjects.length === 0 ? <Link className="people-profile-link label-xs people-muted" href={peopleProfileHref(person, column.id)}>{view === "Clients" ? "No projects shared" : "No current work"}</Link> : null}{view !== "Archived" && (person.type === "Team" || person.type === "Freelancer") ? <CapacityButton person={person} onClick={onWorkload} /> : null}</div>;
   if (column.id === "activity") return <Link className="people-activity-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.latestActivity.label}</strong><small className="label-xs">{formatPersonDate(person.latestActivity.occurredAt)}</small></Link>;
   if (column.id === "invitation") return <div className="people-invitation-cell"><Link className="people-invitation-link people-profile-link" href={peopleProfileHref(person, column.id)}>{person.type === "Contact" ? <><strong className="label-s-semibold">No Brisk access</strong><small className="label-xs">Production contact only.</small></> : <><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? (view === "Clients" ? "Portal invite sent." : "Invite sent - waiting for them to join.") : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : view === "Clients" ? "Portal access is active." : "They have joined Brisk."}</small></>}</Link>{person.type !== "Contact" && invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={onResend}>Resend invite</Button> : null}{view === "Studio Staff" && person.type === "Team" ? <div className="people-billing-cell"><strong className="label-xs-semibold">Billing: {studioBillingAccess ? "Admin" : "No access"}</strong><Link className="client-text-button label-xs-semibold" href={peopleProfileHref(person, "invitation")}>Manage</Link></div> : null}</div>;
