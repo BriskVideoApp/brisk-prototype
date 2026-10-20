@@ -1,9 +1,8 @@
 "use client";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { FilterButton, FilterGroup } from "../../../Brisk DS/src/app/components/FilterGroup";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import type { PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -46,6 +45,7 @@ export function ChatProjectList({
   onProjectMarkRead,
   role,
 }: ChatProjectListProps) {
+  const headingId = useId();
   const [filter, setFilter] = useState<ProjectListFilter>("In Production");
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
   const visibleProjects = projects.filter((project) => filter === "All" || project.status === filter);
@@ -54,15 +54,14 @@ export function ChatProjectList({
   const remainingMemberCount = Math.max(0, allMemberIds.length - memberIds.length);
 
   return (
-    <section className="chat-project-list-page" aria-labelledby="chat-project-list-title">
-      <div className="chat-company-card">
-        <div>
-          <p className="label-xs chat-eyebrow">{clientName ? "Client projects" : "Workspace chat"}</p>
-          <h1 id="chat-project-list-title">
+    <section className="chat-project-list-page" aria-labelledby={headingId}>
+      <header className="chat-main-header chat-project-list-header">
+        <div className="chat-main-header-title">
+          <h1 id={headingId}>
             {clientName ? `${clientName} projects` : "All project conversations"}
           </h1>
         </div>
-        <div className="chat-company-card-actions">
+        <div className="chat-project-list-actions">
           <div className="chat-avatar-stack" aria-label="Workspace members">
             {memberIds.map((memberId) => {
               const user = usersById.get(memberId);
@@ -74,89 +73,91 @@ export function ChatProjectList({
           </div>
           {showCompanyChat ? (
             <>
-              <Button size="S" variant="secondary" className="chat-secondary-button" type="button" onClick={onCompanyChat}>
-                <DsIcon name="chats" size={16} />
+              <Button size="S" variant="secondary" type="button" onClick={onCompanyChat}>
                 Client chat
               </Button>
-              <IconButton size="M" tooltipAlign="end" type="button" aria-label={`Open ${clientName} settings`} onClick={onCustomerSettings}>
-                <DsIcon name="settings" size={18} />
-              </IconButton>
+              <Button size="S" variant="ghost" type="button" aria-label={`Open ${clientName} settings`} onClick={onCustomerSettings}>
+                Client settings
+              </Button>
             </>
           ) : null}
         </div>
-      </div>
+      </header>
 
-      <div className="chat-project-status-filters">
-        <FilterGroup aria-label="Project status">
-          {listFilters.map((status) => (
-            <FilterButton
-              selected={filter === status}
-              key={status}
-              onClick={() => setFilter(status)}
-            >
-              {status}
-            </FilterButton>
-          ))}
-        </FilterGroup>
-      </div>
-
-      <div className="chat-project-card-list">
-        {visibleProjects.map((project) => {
-          const lastMessage = getLastProjectMessage(messages, project.id);
-          const sender = lastMessage?.senderId ? usersById.get(lastMessage.senderId) : undefined;
-          const unread = project.externalUnread + project.internalUnread;
-
-          return (
-            <div className="chat-project-card-row" key={project.id}>
-              <button className="chat-project-card" type="button" onClick={() => onProjectSelect(project.id)}>
-                <span className="chat-project-card-icon">
-                  <DsIcon name="chats" size={20} />
-                </span>
-                <span className="chat-project-card-content">
-                  <span className="chat-project-card-title-row">
-                    <span className="chat-project-card-heading">
-                      <strong className="chat-project-card-title label-s-semibold">
-                        {project.code} {project.clientName}
-                      </strong>
-                      <small className="label-xs">{project.title}</small>
-                    </span>
-                    <span className="chat-status-chip label-xs-semibold">{project.status}</span>
-                  </span>
-                  <span className="chat-project-preview-row">
-                    {sender ? <CommentAvatar user={sender} compact /> : null}
-                    <span className="chat-project-preview-copy">
-                      <strong className="label-xs-semibold">{sender?.name ?? lastMessage?.senderSystem ?? "No messages yet"}</strong>
-                      <span className="label-s">{lastMessage?.body ?? "Open this video and start the conversation."}</span>
-                    </span>
-                    {lastMessage ? <span className="chat-project-preview-time label-xs">{formatCompactDate(lastMessage.createdAt)}</span> : null}
-                  </span>
-                </span>
-              </button>
-              <ChatUnreadControl
-                className="card"
-                count={unread}
-                ariaLabel={`Mark ${unread} unread messages in ${project.code} as read`}
-                onMarkRead={() => onProjectMarkRead(project.id)}
-              />
-            </div>
-          );
-        })}
-      </div>
-
-      {visibleProjects.length === 0 ? (
-        <div className="chat-empty-state">
-          <span className="chat-empty-icon"><DsIcon name="chats" size={24} /></span>
-          <h2>{role === "Studio Freelancer" ? "No conversations yet" : role === "Customer" ? "No conversations yet" : "No video conversations yet"}</h2>
-          <p>{role === "Studio Freelancer"
-            ? "Project conversations will appear when a Studio invites you."
-            : role === "Customer"
-              ? "Messages from your Studio will appear here."
-              : "Start a video and its Client and team channels will appear here."}</p>
-          <Link className="chat-primary-button label-s-semibold" href={role === "Customer" ? "/customer-dashboard" : "/active-videos"}>
-            {role === "Customer" ? "Back to dashboard" : "Open Videos"}
-          </Link>
+      <div className="chat-project-list-content">
+        <div className="chat-project-status-filters">
+          <FilterGroup aria-label="Project status">
+            {listFilters.map((status) => (
+              <FilterButton
+                selected={filter === status}
+                key={status}
+                onClick={() => setFilter(status)}
+              >
+                {status}
+              </FilterButton>
+            ))}
+          </FilterGroup>
         </div>
-      ) : null}
+
+        <div className="chat-project-card-list">
+          {visibleProjects.map((project) => {
+            const lastMessage = getLastProjectMessage(messages, project.id);
+            const sender = lastMessage?.senderId ? usersById.get(lastMessage.senderId) : undefined;
+            const unread = project.externalUnread + project.internalUnread;
+            const senderName = sender?.name ?? lastMessage?.senderSystem ?? "No messages yet";
+            const preview = lastMessage?.body ?? "Open this video and start the conversation.";
+            const previewText = `${senderName}: ${preview}`;
+            const previewTime = lastMessage ? formatCompactDate(lastMessage.createdAt) : "";
+
+            return (
+              <div className="chat-project-card-row" key={project.id}>
+                <button
+                  className="chat-project-card"
+                  type="button"
+                  aria-label={`${project.title}, ${project.code}, ${project.clientName}, ${project.status}`}
+                  aria-description={`${previewText}${previewTime ? ` · ${previewTime}` : ""}`}
+                  data-tooltip={previewText}
+                  onClick={() => onProjectSelect(project.id)}
+                >
+                  <strong className="chat-project-card-title label-s-semibold">
+                    {project.title}
+                  </strong>
+                  <span className="chat-project-card-meta label-xs">{project.code} · {project.clientName}</span>
+                  <span className="chat-status-chip label-xs-semibold">{project.status}</span>
+                  <span className="chat-project-preview-copy label-s">
+                    <strong className="label-s-semibold">{senderName}</strong>{": "}
+                    <span>{preview}</span>
+                  </span>
+                  <span className="chat-project-preview-time label-xs">
+                    {previewTime}
+                  </span>
+                </button>
+                <ChatUnreadControl
+                  className="card"
+                  count={unread}
+                  ariaLabel={`Mark ${unread} unread messages in ${project.code} as read`}
+                  onMarkRead={() => onProjectMarkRead(project.id)}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {visibleProjects.length === 0 ? (
+          <div className="chat-empty-state">
+            <span className="chat-empty-icon"><DsIcon name="chats" size={24} /></span>
+            <h2>{role === "Studio Freelancer" ? "No conversations yet" : role === "Customer" ? "No conversations yet" : "No video conversations yet"}</h2>
+            <p>{role === "Studio Freelancer"
+              ? "Project conversations will appear when a Studio invites you."
+              : role === "Customer"
+                ? "Messages from your Studio will appear here."
+                : "Start a video and its Client and team channels will appear here."}</p>
+            <Link className="chat-primary-button label-s-semibold" href={role === "Customer" ? "/customer-dashboard" : "/active-videos"}>
+              {role === "Customer" ? "Back to dashboard" : "Open Videos"}
+            </Link>
+          </div>
+        ) : null}
+      </div>
     </section>
   );
 }

@@ -1170,6 +1170,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const activeRailClientName = isStudioStaff
     ? selectedClientName ?? activeProjectChat?.clientName ?? null
     : null;
+  // The list owns its single header, including members and the existing Client actions.
+  const isProjectListView = activeView === "projects" && !activeProjectChat;
 
   return (
     <div className={`chat-workspace-shell ${isCustomer ? "customer-view" : ""} ${embedded ? "embedded" : ""}`}>
@@ -1211,7 +1213,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         />
 
       <section className="chat-main-pane">
-        <header className="chat-main-header">
+        {!isProjectListView && <header className="chat-main-header">
           <div className="chat-main-header-title">
             {!isCustomer &&
             ((activeView === "projects" && activeProjectChat) ||
@@ -1378,7 +1380,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
               </>
             ) : null}
           </div>
-        </header>
+        </header>}
 
         {activeView === "calls" ? (
           <ChatCallsView

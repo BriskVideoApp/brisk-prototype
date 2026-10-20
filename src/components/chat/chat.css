@@ -77,8 +77,8 @@
     transform 120ms ease;
 }
 
-/* Keep the Client filter's shared DS keyboard outline instead of the legacy Chat reset. */
-.chat-shell button:not([data-brisk-icon-button]):not([data-brisk-tab]):not(.chat-client-filter-trigger):focus-visible,
+/* Preserve the Client filter and project-card keyboard outlines outside the legacy Chat reset. */
+.chat-shell button:not([data-brisk-icon-button]):not([data-brisk-tab]):not(.chat-client-filter-trigger):not(.chat-project-card):focus-visible,
 .chat-shell a:focus-visible,
 .chat-shell input:focus-visible,
 .chat-shell textarea:focus-visible,
@@ -114,10 +114,8 @@
 .chat-secondary-button,
 .chat-primary-button,
 .chat-icon-button,
-.chat-company-card-actions,
+.chat-project-list-actions,
 .chat-avatar-stack,
-.chat-project-card-title-row,
-.chat-project-preview-row,
 .chat-status-chip,
 .chat-main-header,
 .chat-main-header-title,
@@ -392,15 +390,14 @@
   min-width: 0;
 }
 
-.chat-conversation-card-row > .chat-conversation-card,
-.chat-project-card-row > .chat-project-card {
+.chat-conversation-card-row > .chat-conversation-card {
   width: 100%;
   padding-right: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
 }
 
 .chat-project-card-row > .chat-unread-control.card {
   top: auto;
-  right: var(--brisk-space-xl);
+  right: var(--brisk-space-l);
   bottom: var(--brisk-space-l);
   transform: none;
 }
@@ -2188,7 +2185,6 @@
   gap: var(--brisk-space-l);
 }
 
-.chat-project-list-page,
 .chat-global-page {
   min-height: 0;
   flex: 1 1 auto;
@@ -2197,27 +2193,32 @@
   padding: var(--brisk-space-xl);
 }
 
-.chat-company-card {
+.chat-project-list-page {
   display: flex;
-  min-height: 112px;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--brisk-space-l);
-  border: 1px solid var(--brisk-border-primary);
-  border-radius: var(--brisk-radius-xs);
-  background: var(--brisk-white);
-  box-shadow: var(--brisk-shadow-m);
-  padding: var(--brisk-space-xl);
+  min-height: var(--brisk-space-none);
+  min-width: var(--brisk-space-none);
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--brisk-page-primary);
 }
 
-.chat-eyebrow {
-  color: var(--brisk-brand-primary);
-  margin-bottom: var(--brisk-space-xs) !important;
-  text-transform: uppercase;
+.chat-project-list-header {
+  flex-basis: auto;
+  flex-wrap: wrap;
+  border-bottom-color: var(--brisk-border-primary);
 }
 
-.chat-company-card-actions {
-  gap: var(--brisk-space-l);
+.chat-project-list-actions {
+  flex-wrap: wrap;
+  gap: var(--brisk-space-m);
+}
+
+.chat-project-list-content {
+  min-height: var(--brisk-space-none);
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--brisk-space-l) var(--brisk-space-xl) var(--brisk-space-xl);
 }
 
 .chat-avatar-stack .avatar,
@@ -2239,20 +2240,21 @@
 }
 
 .chat-project-status-filters {
-  margin: var(--brisk-space-2xl) var(--brisk-space-none) var(--brisk-space-l);
+  margin: var(--brisk-space-none) var(--brisk-space-none) var(--brisk-space-s);
 }
 
 .chat-project-card-list {
   display: grid;
-  gap: var(--brisk-space-m);
+  gap: var(--brisk-space-s);
 }
 
 .chat-project-card {
   display: grid;
   width: 100%;
-  grid-template-columns: var(--brisk-space-3xl) minmax(0, 1fr);
+  grid-template-columns: minmax(var(--brisk-space-none), 1fr) max-content;
+  grid-template-areas: "title status" "meta status" "preview time";
   align-items: start;
-  gap: var(--brisk-space-m);
+  gap: var(--brisk-space-xs) var(--brisk-space-l);
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-xs);
   background: var(--brisk-white);
@@ -2263,23 +2265,18 @@
 
 .chat-project-card:hover {
   box-shadow: var(--brisk-shadow-m);
-  transform: translate(-2px, -2px);
 }
 
-.chat-project-card-icon {
-  display: inline-flex;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--brisk-radius-s);
-  background: var(--brisk-brand-secondary);
-  color: var(--brisk-brand-primary);
+.chat-project-card:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+  box-shadow: var(--brisk-shadow-s);
 }
 
-.chat-project-card-content,
-.chat-project-card-heading,
-.chat-project-preview-copy,
+.chat-project-card:active {
+  box-shadow: none;
+}
+
 .chat-search-result-project > span:last-child,
 .chat-search-result-message > span,
 .chat-connector-card-main > span:last-child,
@@ -2292,26 +2289,19 @@
   flex-direction: column;
 }
 
-.chat-project-card-heading {
-  gap: var(--brisk-space-xs);
-}
-
-.chat-project-card-heading small {
+.chat-project-card-meta {
+  grid-area: meta;
+  min-width: var(--brisk-space-none);
   overflow: hidden;
   color: var(--brisk-text-secondary);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.chat-project-card-title-row {
-  justify-content: space-between;
-  gap: var(--brisk-space-m);
-}
-
 .chat-project-card-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  grid-area: title;
+  min-width: var(--brisk-space-none);
+  overflow-wrap: anywhere;
 }
 
 .chat-status-chip {
@@ -2322,35 +2312,33 @@
   padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
-.chat-project-preview-row {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) max-content max-content;
-  gap: var(--brisk-space-s);
-  margin-top: var(--brisk-space-m);
-  padding-top: var(--brisk-space-m);
-  border-top: 1px solid var(--brisk-gray-10);
+.chat-project-card > .chat-status-chip {
+  grid-area: status;
+  align-self: start;
+  justify-self: end;
 }
 
 .chat-project-preview-copy {
-  grid-column: 2;
-  gap: var(--brisk-space-xs);
-}
-
-.chat-project-preview-copy .label-s {
+  grid-area: preview;
+  min-width: var(--brisk-space-none);
   overflow: hidden;
   color: var(--brisk-text-secondary);
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-top: var(--brisk-space-xs);
+}
+
+.chat-project-preview-copy strong {
+  color: var(--brisk-text-primary);
 }
 
 .chat-project-preview-time {
-  grid-column: 3;
-  color: var(--brisk-text-tertiary);
-}
-
-.chat-project-preview-row > .chat-count-badge {
-  grid-column: 4;
-  justify-self: end;
+  grid-area: time;
+  align-self: end;
+  padding-right: calc(var(--brisk-space-xl) + var(--brisk-space-m));
+  color: var(--brisk-text-secondary);
+  white-space: nowrap;
+  text-align: right;
 }
 
 .chat-empty-state {
