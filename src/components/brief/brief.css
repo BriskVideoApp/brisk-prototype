@@ -5096,5 +5096,37 @@ button.brief-confidence-chip {
 .brief-tone-add-picker.brisk-select { width: auto; }
 .brief-platform-clear { color: var(--brisk-brand-primary-click); margin-top: var(--brisk-space-xs); }
 .brief-purpose-picker { display: grid; gap: var(--brisk-space-s); }
-.brief-brand-kit-card .brisk-select-trigger-label { width: 100%; white-space: normal; }
-.brief-brand-kit-card .brief-brand-kit-body { white-space: normal; }
+.brief-brand-kit-palette {
+  display: flex;
+  width: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
+  height: var(--brisk-space-xl);
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-xs);
+}
+
+.brief-brand-kit-picker {
+  max-width: calc(var(--brisk-space-3xl) * 14 + var(--brisk-space-xl));
+}
+
+.brief-brand-kit-palette > span {
+  flex: 1;
+  background: var(--brief-brand-kit-swatch);
+}
+
+.brief-brand-kit-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--brisk-space-m);
+  padding-block: var(--brisk-space-s);
+}
+
+.brief-brand-kit-option-copy {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.brief-brand-kit-description {
+  color: var(--brisk-text-secondary);
+}

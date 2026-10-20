@@ -3834,58 +3834,16 @@ function BriefBrandKitPicker({ excludedOptions = [], onChange, value }: {
   const availableKits = brandKitOptions.filter((kit) => !excludedOptions.includes(kit.name));
   const activeKit = availableKits.find((kit) => kit.name === value) ?? availableKits[0] ?? brandKitOptions[0];
   return <BriskSelect ariaLabel="Brand kit" className="brief-brand-kit-picker" clearable={false} placeholder="Choose brand kit" value={activeKit.name}
-    triggerClassName="brief-brand-kit-card"
-    triggerContent={<><span className="brief-brand-kit-thumb" aria-hidden="true"><BriefBrandKitPreview kit={activeKit} /></span><span className="brief-brand-kit-body"><span className="brief-brand-kit-head"><strong className="label-s-semibold">{activeKit.name}</strong><span className="brief-brand-kit-change label-xs-semibold">Change kit</span></span><span className="label-s">{activeKit.description}</span></span></>}
-    options={availableKits.map((kit) => ({ value: kit.name, label: kit.name, description: kit.description,
-      content: <><span className="brief-brand-kit-option-thumb" aria-hidden="true"><BriefBrandKitPreview compact kit={kit} /></span><strong>{kit.name}</strong></>,
+    triggerContent={<><BriefBrandKitPreview kit={activeKit} /><span>{activeKit.name}</span></>}
+    options={availableKits.map((kit) => ({ value: kit.name, label: kit.name,
+      content: <span className="brief-brand-kit-choice"><BriefBrandKitPreview kit={kit} /><span className="brief-brand-kit-option-copy"><strong className="label-s-semibold">{kit.name}</strong><span className="brief-brand-kit-description label-xs">{kit.description}</span></span></span>,
     }))} onChange={onChange} />;
 }
 
-function BriefBrandKitPreview({
-  compact = false,
-  kit,
-}: {
-  compact?: boolean;
-  kit: BrandKitOption;
-}) {
-  return (
-    <span
-      className={`brief-brand-kit-preview ${compact ? "compact" : ""}`}
-      style={{
-        "--brief-brand-kit-font": kit.primaryFont,
-      } as CSSProperties}
-    >
-      <span className="brief-brand-kit-preview-swatches">
-        {kit.colours.slice(0, 4).map((colour, colourIndex) => (
-          <span
-            className={`brief-brand-kit-preview-swatch ${getBriefBrandKitSwatchTextTone(colour)}`}
-            key={`${colour}-${colourIndex}`}
-            style={{
-              "--brief-brand-kit-swatch": colour,
-            } as CSSProperties}
-          >
-            <span className="brief-brand-kit-preview-colour-label">{colour.toUpperCase()}</span>
-          </span>
-        ))}
-      </span>
-      <span className="brief-brand-kit-preview-name">{kit.thumbnailLabel}</span>
-    </span>
-  );
-}
-
-function getBriefBrandKitSwatchTextTone(colour: string) {
-  const hex = colour.replace("#", "");
-
-  if (hex.length !== 6) {
-    return "dark-text";
-  }
-
-  const red = Number.parseInt(hex.slice(0, 2), 16);
-  const green = Number.parseInt(hex.slice(2, 4), 16);
-  const blue = Number.parseInt(hex.slice(4, 6), 16);
-  const luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
-
-  return luminance > 0.58 ? "dark-text" : "light-text";
+function BriefBrandKitPreview({ kit }: { kit: BrandKitOption }) {
+  return <span className="brief-brand-kit-palette" aria-hidden="true">
+    {kit.colours.slice(0, 4).map((colour, colourIndex) => <span key={`${colour}-${colourIndex}`} style={{ "--brief-brand-kit-swatch": colour } as CSSProperties} />)}
+  </span>;
 }
 
 function BriefMultiSelect({ ariaLabel, onChange, options, value }: { ariaLabel: string; onChange: (value: string) => void; options: readonly string[]; value: string }) {

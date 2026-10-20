@@ -59,6 +59,8 @@ Use `description`, `content`, `icon`, `logoSrc`, `group` and `triggerLabel` for 
 
 The menu follows the field width, with a small minimum width where necessary, and shrinks to the visible viewport. Open above when there is more space there. Long lists scroll; keep the active option visible. Reposition on scrolling, resizing and visual viewport changes, including the on-screen keyboard.
 
+Selection menus measure rich row content after their anchored width and fonts settle, including the menu edges. This prevents descriptions and previews being clipped by a single-line height estimate. Observe row resizing only while a selection menu is open; action-menu sizing and command behaviour remain separate.
+
 Mount the portal inside the opener's nearest native dialog, otherwise in the document body. This avoids clipped menus in scrolling forms and drawers while respecting modal focus containment.
 
 ## Scope boundaries

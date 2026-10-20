@@ -176,7 +176,12 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const actionSpacing = mode === "action"
       ? (options.filter((option) => option.dividerAbove).length * viewportPadding) + (footerAction && options.length ? viewportPadding : 0) + parseFloat(tokens.getPropertyValue("--brisk-space-xxs"))
       : 0;
-    const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight + actionSpacing);
+    // Rich selection rows can wrap; measure their content rather than clipping to one line per option.
+    const optionsHeight = mode === "select"
+      ? Math.max(options.length * rowHeight, optionsRef.current?.scrollHeight ?? 0)
+      : options.length * rowHeight;
+    const selectionBorderHeight = mode === "select" ? parseFloat(tokens.getPropertyValue("--brisk-space-xxs")) : 0;
+    const preferredHeight = Math.min(520, optionsHeight + searchHeight + actionHeight + actionSpacing + selectionBorderHeight);
     const actionWidth = props.actionMenuSize === "compact" ? (rowHeight * 4) + triggerGap : rowHeight * 5;
     const preferredWidth = mode === "action" ? Math.max(actionWidth, rect.width) : Math.max(192, rect.width);
     const width = Math.min(preferredWidth, viewportWidth - (viewportPadding * 2));
@@ -294,6 +299,14 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   useEffect(() => {
     if (isOpen) positionMenu();
   }, [isOpen, Boolean(footer), Boolean(footerAction), filteredOptions.length]);
+
+  useEffect(() => {
+    if (!isOpen || mode !== "select") return;
+    // Anchored width and loaded fonts can change rich rows after the first measurement.
+    const observer = new ResizeObserver(() => positionMenuRef.current());
+    for (const row of Array.from(optionsRef.current?.children ?? [])) observer.observe(row);
+    return () => observer.disconnect();
+  }, [isOpen, mode, filteredOptions.length]);
 
   useEffect(() => {
     if (!isOpen) return;
