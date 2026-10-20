@@ -45,11 +45,11 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     ] : []),
     { label: "Media Library", href: "/media", icon: "image-square" },
     ...(canAdministerStudio ? [{ label: "Expenses", href: "/outstanding-invoices", icon: "money" as const }] : []),
-    ...(!isStaff ? [{
+    {
       label: isClient ? "Brand Kit" : "Brand Kits",
       href: isClient ? viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios" : "/brand-kits",
       icon: "frame-corners" as const,
-    }] : []),
+    },
   ];
   const personal: SidebarLink[] = [
     { label: "My profile", href: buildHref("/settings/personal/profile"), icon: "user-switch" },

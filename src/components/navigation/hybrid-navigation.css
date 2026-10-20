@@ -13,6 +13,7 @@
 
   .app-shell-hybrid .app-account-header,
   .app-shell-hybrid .app-workspace-header .app-header-navigation-link,
+  .app-shell-hybrid .clients-brand-kits-link,
   .app-shell-hybrid .active-videos-mobile-utility-links {
     display: none;
   }
