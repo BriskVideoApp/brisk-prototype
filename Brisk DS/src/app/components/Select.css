@@ -249,6 +249,22 @@
   text-align: left;
 }
 
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-footer-action {
+  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+  color: var(--brisk-text-primary);
+  border-radius: var(--brisk-radius-s);
+  margin-top: var(--brisk-space-none);
+  padding: var(--brisk-space-none) var(--brisk-space-s);
+}
+
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-footer-action[data-has-options='true'] {
+  margin-top: var(--brisk-space-s);
+}
+
+.brisk-select-menu[data-brisk-select-mode='action'] .brisk-select-footer-action:hover {
+  background: var(--brisk-item-tertiary);
+}
+
 .brisk-select-menu-actions {
   display: flex;
   min-height: var(--brisk-space-3xl);

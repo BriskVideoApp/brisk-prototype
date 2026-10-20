@@ -138,6 +138,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   const optionsRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const typeaheadRef = useRef({ text: "", time: 0 });
+  const positionMenuRef = useRef<() => void>(() => {});
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -173,7 +174,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
     const searchHeight = searchable ? rowHeight + viewportPadding : viewportPadding;
     const actionHeight = (props.multiple ? rowHeight + viewportPadding : clearable && selectedValues.length ? rowHeight : 0) + (footerAction ? rowHeight : 0) + (footer ? rowHeight * 4 : 0);
     const actionSpacing = mode === "action"
-      ? (options.filter((option) => option.dividerAbove).length * viewportPadding) + parseFloat(tokens.getPropertyValue("--brisk-space-xxs"))
+      ? (options.filter((option) => option.dividerAbove).length * viewportPadding) + (footerAction && options.length ? viewportPadding : 0) + parseFloat(tokens.getPropertyValue("--brisk-space-xxs"))
       : 0;
     const preferredHeight = Math.min(520, (options.length * rowHeight) + searchHeight + actionHeight + actionSpacing);
     const actionWidth = props.actionMenuSize === "compact" ? (rowHeight * 4) + triggerGap : rowHeight * 5;
@@ -195,6 +196,8 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
       "--brisk-select-footer-limit": `${Math.max(0, availableHeight - searchHeight - rowHeight - viewportPadding)}px`,
     } as CSSProperties);
   };
+
+  positionMenuRef.current = positionMenu;
 
   const openMenu = (nextActiveIndex = Math.max(0, options.findIndex((option) => selectedValues.includes(option.value))), keyboard = false) => {
     if (disabled) return;
@@ -257,7 +260,7 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   useEffect(() => {
     if (!isOpen) return;
     positionMenu();
-    const updatePosition = () => positionMenu();
+    const updatePosition = () => positionMenuRef.current();
     const closeOnOutsideClick = (event: PointerEvent) => {
       const target = event.target as Node;
       if (!(context?.anchor ?? triggerRef.current)?.contains(target) && !menuRef.current?.contains(target)) closeMenu();
@@ -287,6 +290,10 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
   useEffect(() => {
     setActiveIndex((current) => Math.min(current, Math.max(0, filteredOptions.length - 1)));
   }, [filteredOptions.length]);
+
+  useEffect(() => {
+    if (isOpen) positionMenu();
+  }, [isOpen, Boolean(footer), Boolean(footerAction), filteredOptions.length]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -488,12 +495,12 @@ export function BriskSelect<T extends string>(props: BriskSelectProps<T>) {
           </div>;
         })}
       </div>
-      {filteredOptions.length === 0 ? <span className="brisk-select-empty label-s" role="status">{emptyLabel}</span> : null}
+      {filteredOptions.length === 0 && emptyLabel ? <span className="brisk-select-empty label-s" role="status">{emptyLabel}</span> : null}
       {footer ? <div className="brisk-select-custom-footer">{footer}</div> : null}
       {props.multiple ? <div className="brisk-select-menu-actions">{clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : <span />}
         <button className="brisk-select-done label-xs-semibold" type="button" onClick={() => closeMenu(true)}>Done</button>
       </div> : clearable && selectedValues.length ? <button className="brisk-select-clear label-xs-semibold" type="button" onClick={() => selectOption("")}>{clearLabel}</button> : null}
-      {footerAction ? <button className="brisk-select-footer-action label-xs-semibold" type="button" onClick={() => {
+      {footerAction ? <button className={`brisk-select-footer-action ${mode === "action" ? "label-s" : "label-xs-semibold"}`} data-has-options={filteredOptions.length > 0} type="button" onClick={() => {
         const trigger = triggerRef.current;
         if (footerAction.keepOpen) {
           setQuery("");

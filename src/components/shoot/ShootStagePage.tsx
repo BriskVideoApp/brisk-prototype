@@ -6168,7 +6168,8 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
   const [isGroupMenuOpen, setIsGroupMenuOpen] = useState(false);
   const [isScheduleDropTarget, setIsScheduleDropTarget] = useState(false);
   const [newGroupName, setNewGroupName] = useState<string | null>(null);
-  const groupMenuRef = useRef<HTMLDivElement>(null);
+  const newGroupInputRef = useRef<HTMLInputElement>(null);
+  const backlogRef = useRef<HTMLElement>(null);
 
   const acceptsScheduledEntry = (event: DragEvent<HTMLElement>) => canEdit && event.dataTransfer.types.includes(scheduledEntryDragType);
   const handleScheduledEntryDragOver = (event: DragEvent<HTMLElement>) => {
@@ -6202,26 +6203,6 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
     setNewGroupName(null);
   }, [selectedShotIds.length]);
 
-  useEffect(() => {
-    if (!isGroupMenuOpen) return;
-    const closeMenu = (event: globalThis.MouseEvent) => {
-      if (!groupMenuRef.current?.contains(event.target as Node)) {
-        setIsGroupMenuOpen(false);
-        setNewGroupName(null);
-      }
-    };
-    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setIsGroupMenuOpen(false);
-      setNewGroupName(null);
-    };
-    document.addEventListener("mousedown", closeMenu);
-    document.addEventListener("keydown", closeMenuWithKeyboard);
-    return () => {
-      document.removeEventListener("mousedown", closeMenu);
-      document.removeEventListener("keydown", closeMenuWithKeyboard);
-    };
-  }, [isGroupMenuOpen]);
 
   const renderShotCopy = (shot: ProductionEntry) => {
     const metadata = [shot.shotCategory || "Single shot", shot.subject].filter(Boolean).join(" · ");
@@ -6306,7 +6287,7 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
     <span className="shoot-schedule-backlog-tooltip label-xs-semibold" id="shoot-unscheduled-collapsed-tooltip" role="tooltip">Open Unscheduled</span>
   </aside>;
 
-  return <aside className={`shoot-schedule-backlog ${isMobile ? "is-mobile" : ""} ${isScheduleDropTarget ? "is-drop-target" : ""}`} aria-label="Unscheduled items" role={isMobile ? "dialog" : undefined} aria-modal={isMobile ? true : undefined} onDragOver={handleScheduledEntryDragOver} onDragLeave={handleScheduledEntryDragLeave} onDrop={handleScheduledEntryDrop}>
+  return <aside ref={backlogRef} className={`shoot-schedule-backlog ${isMobile ? "is-mobile" : ""} ${isScheduleDropTarget ? "is-drop-target" : ""}`} aria-label="Unscheduled items" role={isMobile ? "dialog" : undefined} aria-modal={isMobile ? true : undefined} onDragOver={handleScheduledEntryDragOver} onDragLeave={handleScheduledEntryDragLeave} onDrop={handleScheduledEntryDrop}>
     <header>
       <h3>Unscheduled</h3>
       {isMobile ? <button className="shoot-icon-button" type="button" aria-label="Close Unscheduled" onClick={onClose}><DsIcon name="x-close-cross" size={16} /></button> : <button className="shoot-icon-button" type="button" aria-label="Collapse Unscheduled" aria-expanded="true" onClick={onToggleCollapsed}><DsIcon name="caret-right" size={16} /></button>}
@@ -6315,19 +6296,34 @@ function ScheduleShotBacklog({ canEdit, collapsed = false, entries, groupOptions
       {selectedShotIds.length ? <div className="shoot-schedule-bulk-bar">
         <strong className="label-xs-semibold">{selectedShotIds.length} selected</strong>
         <div className="shoot-schedule-bulk-actions">
-          <div className="shoot-shot-list-add-anchor" ref={groupMenuRef}>
-            <Button size="S" variant="ghost" className="shoot-text-action" type="button" aria-expanded={isGroupMenuOpen} aria-haspopup="menu" onClick={() => { setIsGroupMenuOpen((open) => !open); setNewGroupName(null); }}>Add to group</Button>
-            {isGroupMenuOpen ? <div className="shoot-shot-list-add-menu shoot-schedule-bulk-group-menu" role="menu" aria-label="Add selected shots to group">
-              {newGroupName === null ? <>
-                {groupOptions.map((group) => <button className="label-s" type="button" role="menuitem" key={group.id} onClick={() => { onAddSelectedToGroup(group.id); setIsGroupMenuOpen(false); }}>{group.name}</button>)}
-                {groupOptions.length ? <span className="shoot-schedule-bulk-menu-divider" aria-hidden="true" /> : null}
-                <button className="label-s" type="button" role="menuitem" onClick={() => setNewGroupName("")}><DsIcon name="plus" size={16} />Create new group</button>
-              </> : <form className="shoot-schedule-bulk-new-group" onSubmit={(event) => { event.preventDefault(); if (!newGroupName.trim()) return; onCreateGroupForSelected(newGroupName); setIsGroupMenuOpen(false); setNewGroupName(null); }}>
-                <label className="label-xs-semibold" htmlFor={`new-unscheduled-group-${isMobile ? "mobile" : "desktop"}`}>Group name</label>
-                <input autoFocus id={`new-unscheduled-group-${isMobile ? "mobile" : "desktop"}`} value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} placeholder="e.g. Product B-roll" />
-                <div><Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={() => setNewGroupName(null)}>Back</Button><Button size="S" variant="primary" className="shoot-button primary" type="submit" disabled={!newGroupName.trim()}>Create</Button></div>
-              </form>}
-            </div> : null}
+          <div className="shoot-shot-list-add-anchor">
+            <BriskSelect mode="action" value="" clearable={false} ariaLabel="Add selected shots to group" placeholder="Add to group" emptyLabel=""
+              open={isGroupMenuOpen} onOpenChange={(open) => { setIsGroupMenuOpen(open); if (!open) setNewGroupName(null); }}
+              options={newGroupName === null ? groupOptions.map((group) => ({value: group.id, label: group.name})) : []}
+              actionFallbackFocus={(trigger) => trigger?.closest('aside')?.querySelector<HTMLButtonElement>('[aria-label="Collapse Unscheduled"]') ?? null}
+              onChange={(value) => { if (value) onAddSelectedToGroup(value); }}
+              actionTrigger={(props) => <Button {...props} size="S" variant="ghost">Add to group</Button>}
+              footerAction={newGroupName === null ? {label: "Create new group", keepOpen: true, onSelect: () => {
+                setNewGroupName("");
+                window.requestAnimationFrame(() => newGroupInputRef.current?.focus());
+              }} : undefined}
+              footer={newGroupName !== null ? <form className="shoot-schedule-bulk-new-group" onSubmit={(event) => {
+                event.preventDefault();
+                if (!newGroupName.trim()) return;
+                const fallback = backlogRef.current?.querySelector<HTMLButtonElement>('[aria-label="Collapse Unscheduled"]');
+                onCreateGroupForSelected(newGroupName);
+                setIsGroupMenuOpen(false);
+                setNewGroupName(null);
+                window.requestAnimationFrame(() => { if (document.activeElement === document.body) fallback?.focus(); });
+              }}>
+                <Input ref={newGroupInputRef} autoFocus label="Group name" value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} placeholder="e.g. Product B-roll" />
+                <div className="shoot-schedule-bulk-new-group-actions"><Button size="S" variant="ghost" onClick={(event) => {
+                  const menu = event.currentTarget.closest('.brisk-select-menu')?.querySelector<HTMLElement>('[role="menu"]');
+                  menu?.focus();
+                  setNewGroupName(null);
+                }}>Back</Button><Button size="S" variant="primary" type="submit" disabled={!newGroupName.trim()}>Create</Button></div>
+              </form> : undefined}
+            />
           </div>
           <Button size="S" variant="ghost" className="shoot-text-action" type="button" onClick={onClearSelection}>Clear</Button>
         </div>

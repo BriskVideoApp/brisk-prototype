@@ -3457,7 +3457,7 @@
 .shoot-schedule-bulk-new-group {
   display: grid;
   gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-xs);
+  padding: var(--brisk-space-none);
 }
 
 .shoot-schedule-bulk-new-group > input {
@@ -3476,7 +3476,7 @@
   box-shadow: var(--brisk-shadow-s);
 }
 
-.shoot-schedule-bulk-new-group > div {
+.shoot-schedule-bulk-new-group-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--brisk-space-xs);
