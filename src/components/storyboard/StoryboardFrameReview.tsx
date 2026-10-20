@@ -64,6 +64,7 @@ export function StoryboardFrameReview({
   onRemoveMedia: () => void;
 }) {
   const isCustomer = role === "Customer";
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -246,12 +247,12 @@ export function StoryboardFrameReview({
             setSelectedCommentId(null);
           }}
         >
-          {imageUrl ? (
-            <img src={imageUrl} alt={frame.image?.label ?? `Storyboard frame ${frameNumber}`} />
+          {imageUrl && imageUrl !== failedImageUrl ? (
+            <img src={imageUrl} alt={frame.image?.label ?? `Storyboard frame ${frameNumber}`} onError={() => setFailedImageUrl(imageUrl)} />
           ) : (
             <div className="storyboard-review-placeholder">
               <DsIcon name="image-square" size={32} />
-              <span className="label-s-semibold">No image added</span>
+              <span className="label-s-semibold">{imageUrl ? "Image preview unavailable" : "No image added"}</span>
             </div>
           )}
           <svg
@@ -284,7 +285,7 @@ export function StoryboardFrameReview({
             ))}
           </svg>
           {!isDrawingMode && !pendingPin ? (
-            <span className="storyboard-review-pin-prompt label-s-semibold">Click the image to pin a comment</span>
+            <span className="storyboard-review-pin-prompt label-s-semibold">Click the frame to pin a comment</span>
           ) : null}
           {pinnedComments.map((comment) => {
             const framePin = comment.framePin;

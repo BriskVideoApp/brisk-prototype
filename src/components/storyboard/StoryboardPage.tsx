@@ -689,6 +689,7 @@ function StoryboardBoard({
   onToggleMedia: (frameId: string, origin: MediaPickerOrigin, isOpen: boolean) => void;
 }) {
   const frameMenuAnchors = useRef(new Map<string, HTMLButtonElement>());
+  const [failedImageUrls, setFailedImageUrls] = useState<Set<string>>(() => new Set());
   return (
     <section className="storyboard-board" aria-label="Storyboard frames">
       {frames.map((frame, index) => {
@@ -792,7 +793,12 @@ function StoryboardBoard({
                   aria-label={`Open review for frame ${index + 1}`}
                   onClick={() => onOpenFrame(frame.id)}
                 >
-                  <img draggable={false} src={imageUrl} alt={frame.image?.label ?? `Frame ${index + 1}`} />
+                  {failedImageUrls.has(imageUrl) ? <span className="storyboard-image-placeholder">
+                    <DsIcon name="image-square" size={27} />
+                    <span className="label-xs">Image preview unavailable</span>
+                  </span> : <img draggable={false} src={imageUrl} alt={frame.image?.label ?? `Frame ${index + 1}`}
+                    onError={() => setFailedImageUrls((current) => new Set(current).add(imageUrl))}
+                  />}
                 </button>
               ) : (
                 <div className="storyboard-image-placeholder">
