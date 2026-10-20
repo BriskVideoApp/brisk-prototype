@@ -61,36 +61,40 @@ export function ClientsPage() {
 
   return (
     <main className="clients-page">
-      <WorkspacePageHeader title="Clients" actions={<>
-        <Link className="clients-brand-kits-link label-s-semibold" href="/brand-kits">All Brand Kits</Link>
-        <Button size="M" onClick={() => setIsAddClientOpen(true)}>
-          <span className="client-button-content"><DsIcon name="plus" size={16} /> Add Client</span>
-        </Button>
-      </>} />
+      <WorkspacePageHeader title="Clients" actions={
+        <label className="clients-search" htmlFor="clients-search">
+          <DsIcon name="search" size={16} />
+          <span className="sr-only">Search Clients</span>
+          <input id="clients-search" type="search" value={query} placeholder="Search Clients" onChange={(event) => setQuery(event.target.value)} />
+        </label>
+      } />
 
       <div className="clients-view-tabs">
-        <FilterGroup className="clients-view-tabs-inner" aria-label="Client views">
-          {clientViews.map((item) => (
-            <FilterButton
-              type="button"
-              selected={status === item}
-              count={countClientView(clients, item)}
-              key={item}
-              onClick={() => setStatus(item)}
-            >
-              {item}
-            </FilterButton>
-          ))}
-        </FilterGroup>
+        <div className="clients-view-tabs-row">
+          <FilterGroup className="clients-view-tabs-inner" aria-label="Client views">
+            {clientViews.map((item) => (
+              <FilterButton
+                type="button"
+                selected={status === item}
+                count={countClientView(clients, item)}
+                key={item}
+                onClick={() => setStatus(item)}
+              >
+                {item}
+              </FilterButton>
+            ))}
+          </FilterGroup>
+          <div className="clients-page-actions">
+            <Link className="clients-brand-kits-link label-s-semibold" href="/brand-kits">All Brand Kits</Link>
+            <Button size="M" onClick={() => setIsAddClientOpen(true)}>
+              <span className="client-button-content"><DsIcon name="plus" size={16} /> Add Client</span>
+            </Button>
+          </div>
+        </div>
       </div>
 
       <section className="clients-controls" aria-label="Client list controls">
         <div className="clients-controls-inner">
-          <label className="clients-search" htmlFor="clients-search">
-            <DsIcon name="search" size={16} />
-            <span className="sr-only">Search Clients</span>
-            <input id="clients-search" type="search" value={query} placeholder="Search Clients" onChange={(event) => setQuery(event.target.value)} />
-          </label>
           <div className="clients-control-select">
             <span className="label-xs-semibold">Sort by</span>
             <BriskSelect

@@ -107,24 +107,26 @@ export function PeoplePage() {
   return (
     <main className="people-page">
       <WorkspacePageHeader title="People" actions={
-        <div className="people-page-actions">
-          <Button size="M" onClick={inviteFromPeople}><span className="people-button-content"><DsIcon name="plus" size={16} /> {getInviteButtonLabel(view)}</span></Button>
-        </div>
+        <label className="people-search" htmlFor="people-search"><DsIcon name="search" size={16} /><span className="sr-only">Search people</span><input id="people-search" type="search" value={query} placeholder="Search by name or email" onChange={(event) => setQuery(event.target.value)} /></label>
       } />
 
       <div className="people-view-tabs">
-        <FilterGroup className="people-view-tabs-inner" aria-label="People views">
-          {peopleViews.map((item) => (
-            <FilterButton selected={view === item} count={countView(people, item)} type="button" key={item} onClick={() => changeView(item)}>
-              {item === "Clients" ? "Client contacts" : item}
-            </FilterButton>
-          ))}
-        </FilterGroup>
+        <div className="people-view-tabs-row">
+          <FilterGroup className="people-view-tabs-inner" aria-label="People views">
+            {peopleViews.map((item) => (
+              <FilterButton selected={view === item} count={countView(people, item)} type="button" key={item} onClick={() => changeView(item)}>
+                {item === "Clients" ? "Client contacts" : item}
+              </FilterButton>
+            ))}
+          </FilterGroup>
+          <div className="people-page-actions">
+            <Button size="M" onClick={inviteFromPeople}><span className="people-button-content"><DsIcon name="plus" size={16} /> {getInviteButtonLabel(view)}</span></Button>
+          </div>
+        </div>
       </div>
 
       <section className="people-controls" aria-label="People directory controls">
         <div className="people-controls-inner">
-          <label className="people-search" htmlFor="people-search"><DsIcon name="search" size={16} /><span className="sr-only">Search people</span><input id="people-search" type="search" value={query} placeholder="Search by name or email" onChange={(event) => setQuery(event.target.value)} /></label>
           <div className="people-sort-control"><span className="label-xs-semibold">Sort by</span><BriskSelect ariaLabel="Sort people" clearable={false} searchable={false} options={visibleSortOptions} placeholder="Sort by" value={sort} onChange={(value) => setSort((value || "activity") as SortOption)} /></div>
           <span className="people-result-count label-s">{visiblePeople.length} {visiblePeople.length === 1 ? "person" : "people"}</span>
         </div>

@@ -209,9 +209,25 @@
   padding: var(--brisk-space-none) var(--brisk-space-2xl);
 }
 
-.people-view-tabs-inner {
+.people-view-tabs-row {
+  display: flex;
   width: 100%;
   max-width: var(--people-content-max);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.people-view-tabs-inner {
+  width: auto;
+  max-width: 100%;
+  flex: 1 1 auto;
+}
+
+.people-view-tabs-row > .people-page-actions {
+  margin-left: auto;
+  padding-block: var(--brisk-space-s);
 }
 
 .person-profile-tabs {
@@ -234,6 +250,7 @@
 }
 
 .people-search {
+  max-width: 100%;
   width: calc(var(--brisk-space-3xl) * 8);
   min-height: var(--brisk-space-3xl);
   align-items: center;

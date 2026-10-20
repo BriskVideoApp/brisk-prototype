@@ -156,9 +156,29 @@
   padding: var(--brisk-space-none) var(--brisk-space-2xl);
 }
 
-.clients-view-tabs-inner {
+.clients-view-tabs-row {
+  display: flex;
   width: 100%;
   max-width: var(--clients-content-max);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-s) var(--brisk-space-l);
+}
+
+.clients-view-tabs-inner {
+  width: auto;
+  max-width: 100%;
+  flex: 1 1 auto;
+}
+
+.clients-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-s);
+  margin-left: auto;
+  padding-block: var(--brisk-space-s);
 }
 
 .clients-controls {
@@ -178,6 +198,7 @@
 }
 
 .clients-search {
+  max-width: 100%;
   width: calc(var(--brisk-space-3xl) * 8);
   min-height: var(--brisk-space-3xl);
   align-items: center;
