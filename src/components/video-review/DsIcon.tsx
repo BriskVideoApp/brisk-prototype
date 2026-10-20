@@ -53,6 +53,8 @@ const iconPaths = {
   "bell": "/brisk-icons/bell.svg",
   "bezier-curve": "/brisk-icons/bezier-curve.svg",
   "book-open": "/brisk-icons/book-open.svg",
+  "buildings": "/brisk-icons/buildings.svg",
+  "money": "/brisk-icons/money.svg",
   "circles-three": "/brisk-icons/circles-three.svg",
   "square-logo": "/brisk-icons/square-logo.svg",
   "quotes": "/brisk-icons/quotes.svg",
