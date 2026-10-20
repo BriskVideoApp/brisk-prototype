@@ -3400,13 +3400,17 @@ function PreProductionSectionHeading({ icon, title, description, count, action }
 }
 
 // Keep Shoot callbacks at their call sites while the DS owns all menu behaviour.
-function ShootCommandMenu({ label, actions, trigger, variant = "ghost" }: {
+function ShootCommandMenu({ label, actions, trigger, variant = "ghost", open, onOpenChange }: {
   label: string;
   actions: Array<Omit<BriskSelectOption<string>, "value"> & { onSelect?: () => void }>;
   trigger?: ReactNode;
   variant?: "primary" | "secondary" | "ghost";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   return <BriskSelect className="shoot-command-menu" mode="action" value="" clearable={false} ariaLabel={label} placeholder={label}
+    open={open} onOpenChange={onOpenChange}
+    actionFallbackFocus={(anchor) => anchor?.closest('main')?.querySelector<HTMLButtonElement>('[role="tab"][aria-selected="true"]') ?? null}
     options={actions.map((action, index) => ({ ...action, value: String(index) }))}
     onChange={(value) => { if (value) actions[Number(value)]?.onSelect?.(); }}
     actionTrigger={(props) => trigger
@@ -4551,23 +4555,11 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
   const [linkDraft, setLinkDraft] = useState<{ url: string; replaceReferenceId?: string } | null>(null);
   const [editDraft, setEditDraft] = useState<ShootVisualReference | null>(null);
   const [openMenuReferenceId, setOpenMenuReferenceId] = useState<string | null>(null);
-  const openMenuRef = useRef<HTMLDivElement>(null);
+  const referenceActionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [replaceAnchor, setReplaceAnchor] = useState<HTMLElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const references = callSheet.visualReferences ?? [];
 
-  useEffect(() => {
-    if (!openMenuReferenceId) return;
-    const closeOnOutsideClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (target instanceof Element && target.closest(".script-media-menu")) return;
-      if (!openMenuRef.current?.contains(target)) {
-        setOpenMenuReferenceId(null);
-        setReplaceSourceReferenceId(null);
-      }
-    };
-    document.addEventListener("mousedown", closeOnOutsideClick);
-    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
-  }, [openMenuReferenceId]);
 
   const saveReference = (reference: ShootVisualReference, replaceReferenceId?: string) => onChange((current) => ({
     ...current,
@@ -4646,11 +4638,24 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
             {reference.description ? <small className="label-xs">{reference.description}</small> : <small className="label-xs">{visualReferenceSourceLabel(reference.source)}</small>}
           </span>
         </a>
-        {canEdit ? <div className="shoot-reference-card-actions" ref={menuOpen ? openMenuRef : undefined}>
-          <button className="shoot-icon-button shoot-reference-card-menu-trigger" type="button" aria-label={`More actions for ${reference.name}`} aria-expanded={menuOpen} aria-haspopup="menu" onClick={() => { setReplaceSourceReferenceId(null); setOpenMenuReferenceId((current) => current === reference.id ? null : reference.id); }}><DsIcon name="dots-three" size={18} /></button>
-          {menuOpen ? <div className="shoot-shot-table-menu shoot-reference-card-menu" role="menu" onKeyDown={(event) => { if (event.key === "Escape") setOpenMenuReferenceId(null); }}>
-            <button className="label-s" type="button" role="menuitem" onClick={() => { setEditDraft({ ...reference }); setOpenMenuReferenceId(null); }}><DsIcon name="pencil-simple-ds" size={16} />Edit details</button>
+        {canEdit ? <div className="shoot-reference-card-actions" ref={(node) => { referenceActionRefs.current[reference.id] = node; }}>
+          <ShootCommandMenu label={`More actions for ${reference.name}`} open={menuOpen}
+            onOpenChange={(open) => {
+              if (open) setReplaceSourceReferenceId(null);
+              setOpenMenuReferenceId((current) => open ? reference.id : current === reference.id ? null : current);
+            }}
+            actions={[
+              {label: "Edit details", onSelect: () => setEditDraft({...reference})},
+              {label: "Replace reference", onSelect: () => {
+                setReplaceAnchor(referenceActionRefs.current[reference.id]?.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]') ?? null);
+                setReplaceSourceReferenceId(reference.id);
+              }},
+              {label: "Remove reference", tone: "danger", dividerAbove: true, onSelect: () => removeReference(reference.id)},
+            ]}
+          />
             <ScriptMediaPicker
+              hideTrigger
+              anchorElement={replaceAnchor}
               isOpen={replaceSourceReferenceId === reference.id}
               options={shotMediaOptions}
               triggerLabel={`Replace ${reference.name}`}
@@ -4661,8 +4666,6 @@ function PreProductionVisualReferences({ callSheet, canEdit, onChange, projectId
               onOpenChange={(isOpen) => setReplaceSourceReferenceId(isOpen ? reference.id : null)}
               onSelect={(source) => chooseSource(source, reference.id)}
             />
-            <button className="danger label-s" type="button" role="menuitem" onClick={() => removeReference(reference.id)}><DsIcon name="trash-simple" size={16} />Remove reference</button>
-          </div> : null}
         </div> : null}
       </article>;
     })}</div> : <div className="shoot-reference-empty"><span><DsIcon name="image-square" size={24} /></span><div><strong className="label-s-semibold">No visual references yet</strong><p className="label-xs">Add images or videos to set the visual direction for the shoot.</p></div></div>}
@@ -5453,9 +5456,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
   const [selectedUnscheduledShotIds, setSelectedUnscheduledShotIds] = useState<string[]>([]);
   const [recentlyGroupedShotGroupId, setRecentlyGroupedShotGroupId] = useState<string | null>(null);
   const daySettingsRef = useRef<HTMLFormElement>(null);
-  const dayActionsRef = useRef<HTMLDivElement>(null);
-  const scheduleAddMenuRef = useRef<HTMLDivElement>(null);
-  const scheduleAddMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const currentDay = callSheet.days.find((day) => day.id === selectedDayId) ?? callSheet.days[0];
   const shotGroups = [...(callSheet.shotGroups ?? [])].sort((left, right) => left.order - right.order);
   const shotGroupIds = new Set(shotGroups.map((group) => group.id));
@@ -5504,39 +5504,6 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
     previousBacklogCountRef.current = backlogCount;
   }, [backlogCount]);
 
-  useEffect(() => {
-    if (!isDayActionsOpen) return;
-    const closeMenu = (event: globalThis.MouseEvent) => {
-      if (!dayActionsRef.current?.contains(event.target as Node)) setIsDayActionsOpen(false);
-    };
-    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") setIsDayActionsOpen(false);
-    };
-    document.addEventListener("mousedown", closeMenu);
-    document.addEventListener("keydown", closeMenuWithKeyboard);
-    return () => {
-      document.removeEventListener("mousedown", closeMenu);
-      document.removeEventListener("keydown", closeMenuWithKeyboard);
-    };
-  }, [isDayActionsOpen]);
-
-  useEffect(() => {
-    if (!isScheduleAddMenuOpen) return;
-    const closeMenu = (event: globalThis.MouseEvent) => {
-      if (!scheduleAddMenuRef.current?.contains(event.target as Node)) setIsScheduleAddMenuOpen(false);
-    };
-    const closeMenuWithKeyboard = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setIsScheduleAddMenuOpen(false);
-      window.requestAnimationFrame(() => scheduleAddMenuTriggerRef.current?.focus());
-    };
-    document.addEventListener("mousedown", closeMenu);
-    document.addEventListener("keydown", closeMenuWithKeyboard);
-    return () => {
-      document.removeEventListener("mousedown", closeMenu);
-      document.removeEventListener("keydown", closeMenuWithKeyboard);
-    };
-  }, [isScheduleAddMenuOpen]);
 
   const applyChange = (updater: (current: CallSheet) => CallSheet) => {
     onChange(updater);
@@ -5788,12 +5755,11 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
               <span className="shoot-schedule-day-card-location label-xs" title={locationName}>{locationName}</span>
             </> : null}
           </button>
-          {isActive && canEdit ? <div className="shoot-schedule-day-actions shoot-shot-list-add-anchor" ref={dayActionsRef}>
-            <button className="shoot-icon-button" type="button" aria-label={`Edit or delete ${day.label}`} aria-expanded={isDayActionsOpen} aria-haspopup="menu" onClick={() => setIsDayActionsOpen((open) => !open)}><DsIcon name="dots-three" size={16} /></button>
-            {isDayActionsOpen ? <div className="shoot-shot-list-add-menu shoot-schedule-day-menu" role="menu" aria-label={`${day.label} actions`}>
-              <button className="label-s" type="button" role="menuitem" onClick={openDayEditor}><DsIcon name="pencil-simple-ds" size={16} />Edit day</button>
-              {callSheet.days.length > 1 ? <button className="danger label-s" type="button" role="menuitem" onClick={() => { setIsDayActionsOpen(false); setDayEditDraft(null); onDeleteDay(day.id); }}><DsIcon name="trash-simple" size={16} />Delete day</button> : null}
-            </div> : null}
+          {isActive && canEdit ? <div className="shoot-schedule-day-actions shoot-shot-list-add-anchor">
+            <ShootCommandMenu label={`Edit or delete ${day.label}`} open={isDayActionsOpen} onOpenChange={setIsDayActionsOpen} actions={[
+              {label: "Edit day", onSelect: openDayEditor},
+              ...(callSheet.days.length > 1 ? [{label: "Delete day", tone: "danger" as const, dividerAbove: true, onSelect: () => { setDayEditDraft(null); onDeleteDay(day.id); }}] : []),
+            ]} />
           </div> : null}
         </div>;
       })}{canEdit ? <button className="shoot-schedule-add-day-card" type="button" aria-label="Add shoot day" title="Add shoot day" onClick={addDay}><DsIcon name="plus" size={16} /></button> : null}</div>
@@ -5826,23 +5792,13 @@ function PreProductionSchedule({ aiScheduleOpenRequest = 0, callSheet, canEdit, 
           <section className="shoot-run-of-day" data-shoot-guide-fallback>
             <header>
               <h3>Run of day</h3>
-              {canEdit ? <div className="shoot-shot-list-add-anchor" ref={scheduleAddMenuRef}>
-                <button
-                  className="shoot-button primary shoot-schedule-add-button label-s-semibold"
-                  type="button"
-                  aria-expanded={isScheduleAddMenuOpen}
-                  aria-haspopup="menu"
-                  ref={scheduleAddMenuTriggerRef}
-                  onClick={() => setIsScheduleAddMenuOpen((open) => !open)}
-                >
-                  <DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} />
-                </button>
-                {isScheduleAddMenuOpen ? <div className="shoot-shot-list-add-menu" role="menu" aria-label="Add to Schedule">
-                  <button className="label-s" type="button" role="menuitem" onClick={() => { setIsScheduleAddMenuOpen(false); addStandaloneShot(); }}>Shot</button>
-                  <button className="label-s" type="button" role="menuitem" onClick={() => { setIsScheduleAddMenuOpen(false); setNewShotGroupName(""); }}>Shot group</button>
-                  <button className="label-s" type="button" role="menuitem" onClick={() => { setIsScheduleAddMenuOpen(false); onNewEntry(currentDay.id); }}>Schedule item</button>
-                  <button className="label-s" type="button" role="menuitem" onClick={() => { setIsScheduleAddMenuOpen(false); addDay(); }}>Shoot day</button>
-                </div> : null}
+              {canEdit ? <div className="shoot-shot-list-add-anchor">
+                <ShootCommandMenu label="Add to Schedule" open={isScheduleAddMenuOpen} onOpenChange={setIsScheduleAddMenuOpen} variant="primary" trigger={<><DsIcon name="plus" size={16} />Add<DsIcon name="caret-down" size={14} /></>} actions={[
+                  {label: "Shot", onSelect: addStandaloneShot},
+                  {label: "Shot group", onSelect: () => setNewShotGroupName("")},
+                  {label: "Schedule item", onSelect: () => onNewEntry(currentDay.id)},
+                  {label: "Shoot day", onSelect: addDay},
+                ]} />
               </div> : null}
             </header>
             {backlogCount ? <button className="shoot-button secondary shoot-mobile-backlog-trigger label-s-semibold" type="button" onClick={() => setIsMobileBacklogOpen(true)}>Unscheduled<span>{backlogCount}<DsIcon name="caret-down" size={14} /></span></button> : null}
