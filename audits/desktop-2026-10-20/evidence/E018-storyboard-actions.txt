@@ -1,0 +1,9 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/storyboard".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~						75 pop up button (expanded) Description: Storyboard actions, Secondary Actions: Collapse
++		307 menu Storyboard actions
++			308 Undo
++			309 Redo
++			310 Download PDF
++			311 (disabled) Delete version, Help: A Storyboard needs at least one version.
+The focused UI element is 307 menu Storyboard actions

@@ -1,0 +1,115 @@
+- alert
+- complementary "Primary navigation":
+  - link "Audit Demo Studio logo Audit Demo Studio":
+    - /url: /settings/studio
+    - generic "Audit Demo Studio logo":
+      - generic: AD
+    - strong: Audit Demo Studio
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Audit Designer":
+    - generic "Audit Designer": AD
+    - strong: Audit Designer
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Brief actions": Brief actions
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "AE / Audit review film":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: AE
+      - generic: /
+      - generic: Audit review film
+    - generic "AE Audit review film":
+      - list "Sequential production stages":
+        - 'link "Brief: Not started"':
+          - /url: /projects/audit-review-film/stages/brief
+          - text: Not started
+        - generic: Brief
+        - 'link "Script: Not started"':
+          - /url: /projects/audit-review-film/script
+          - text: Not started
+        - generic: Script
+        - 'link "Shoot: Not started"':
+          - /url: /projects/audit-review-film/stages/shoot
+          - text: Not started
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/audit-review-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/audit-review-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 0 media files":
+        - /url: /projects/audit-review-film/stages/media
+        - generic: "0"
+        - text: 0 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Brief intake":
+    - heading "What video are we making?" [level=1]
+    - paragraph: Answer a few quick questions, then Brisk AI will build your brief.
+    - textbox "Describe the video brief":
+      - /placeholder: ""
+    - generic: A 2-minute investor launch film...
+    - generic "Attachment tools":
+      - button "Record a brief" [disabled]: Recording is not available in this prototype
+      - button "Paste a link": Paste a link
+      - button "Upload a doc": Upload a doc
+    - button "Fill manually"
+    - button "Continue" [disabled]
+    - button "Back"
+    - navigation "Brief steps":
+      - button "Start with AI Start with AI":
+        - generic: Start with AI
+        - text: Start with AI
+      - button "1 1. Description"
+      - button "2 2. Video type"
+      - button "3 3. Audience and action"
+      - button "4 4. Similar videos"
+      - button "5 5. Brand kit"
+      - button "6 6. Footage and filming"
+      - button "7 7. Deliverables"
+      - button "8 8. Deadline"
+      - button "Summary 9. Review your brief"

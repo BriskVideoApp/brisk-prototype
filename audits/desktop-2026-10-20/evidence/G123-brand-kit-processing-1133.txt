@@ -1,0 +1,104 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - navigation "Breadcrumb":
+    - link "Brand Kits":
+      - /url: /brand-kits
+    - generic: Hims & Hers
+  - heading "Hims & Hers Brand Kit" [level=1]
+  - paragraph: Master brand
+  - region "Hims & Hers brand assets":
+    - article:
+      - heading "Brand Kit" [level=2]
+      - status:
+        - list:
+          - listitem: Reading brand files
+          - listitem: Sorting assets
+          - listitem: Building Brand Kit
+    - generic: Prefer to add everything yourself?
+    - button "Set up manually"
+    - article:
+      - heading "Logos" [level=2]
+      - paragraph: No logos yet. Drag files here or click + to upload.
+      - button "Choose File" [disabled]
+    - article:
+      - heading "Colours" [level=2]
+      - paragraph: We couldn't find your colours. Add them here.
+    - article:
+      - heading "Fonts" [level=2]
+      - paragraph: No fonts yet. Click + to choose or upload your first font.
+    - article:
+      - heading "Visual Assets" [level=2]
+      - group "Visual asset type" [disabled]:
+        - button "Photos" [disabled]
+        - button "Footage" [disabled]
+        - button "Icons and graphics" [disabled]
+        - button "Audio" [disabled]
+      - paragraph: No photo assets yet.
+      - button "Choose File" [disabled]
+    - article:
+      - heading "Voice & Tone" [level=2]
+      - paragraph: How does this brand sound? Add a short guide for everyone creating with it.
+    - article:
+      - heading "Brand Guidelines + Documents" [level=2]
+      - paragraph: No guidelines yet. Upload PDFs or other brand documents.
+      - button "Choose File" [disabled]
+    - article:
+      - heading "Sub-brands" [level=2]
+      - paragraph: Add another identity and keep every brand together.

@@ -1,0 +1,229 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Expenses header":
+    - heading "Expenses" [level=1]
+    - generic: Search invoices to pay
+    - searchbox "Search invoices to pay"
+  - region "Invoices to pay summary":
+    - article:
+      - generic: Outstanding
+      - strong: USD 5,260 + $2,900
+      - generic: 5 visible invoices
+    - article:
+      - generic: Ready to pay
+      - strong: $1,760
+      - generic: 1 approved
+    - article:
+      - generic: Needs review
+      - strong: "2"
+      - generic: Submitted invoices
+  - region "Invoice filters":
+    - generic: Project status
+    - combobox "Filter by project status":
+      - generic: All project statuses
+    - group "Filter by tags":
+      - generic: Tags
+      - button "Urgent":
+        - generic: Urgent
+      - button "Disputed":
+        - generic: Disputed
+      - button "Follow up":
+        - generic: Follow up
+      - button "Waiting":
+        - generic: Waiting
+    - button "Include archived projects": Include archived projects
+  - region "Outstanding contractor invoices":
+    - table:
+      - rowgroup:
+        - row "Project Contractor Invoice Total Status Tags Actions":
+          - columnheader "Project"
+          - columnheader "Contractor"
+          - columnheader "Invoice"
+          - columnheader "Total"
+          - columnheader "Status"
+          - columnheader "Tags"
+          - columnheader "Actions":
+            - generic: Actions
+      - rowgroup:
+        - row "Launch Film - Sales Narrative Loom - In Production Chris Taylor Editor CT-3142-edit-services.pdf Submitted 18 Aug 2026 USD 2,140 Sent back Disputed View project costs":
+          - cell "Launch Film - Sales Narrative Loom - In Production":
+            - link "Launch Film - Sales Narrative Loom - In Production":
+              - /url: /projects/loom-launch-film/costs
+              - strong: Launch Film - Sales Narrative
+              - generic: Loom - In Production
+          - cell "Chris Taylor Editor":
+            - strong: Chris Taylor
+            - generic: Editor
+          - cell "CT-3142-edit-services.pdf Submitted 18 Aug 2026":
+            - strong: CT-3142-edit-services.pdf
+            - generic: Submitted 18 Aug 2026
+          - cell "USD 2,140":
+            - strong: USD 2,140
+          - cell "Sent back":
+            - generic: Sent back
+          - cell "Disputed":
+            - generic: Disputed
+          - cell "View project costs":
+            - link "View project costs":
+              - /url: /projects/loom-launch-film/costs
+        - row "Customer Story - APAC Hiring Deel - In Production Jordan Lee Shooter JL-1042-shoot.pdf Submitted 18 Aug 2026 $1,140 Submitted Follow up Review":
+          - cell "Customer Story - APAC Hiring Deel - In Production":
+            - link "Customer Story - APAC Hiring Deel - In Production":
+              - /url: /projects/deel-customer-story/costs
+              - strong: Customer Story - APAC Hiring
+              - generic: Deel - In Production
+          - cell "Jordan Lee Shooter":
+            - strong: Jordan Lee
+            - generic: Shooter
+          - cell "JL-1042-shoot.pdf Submitted 18 Aug 2026":
+            - strong: JL-1042-shoot.pdf
+            - generic: Submitted 18 Aug 2026
+          - cell "$1,140":
+            - strong: $1,140
+          - cell "Submitted":
+            - generic: Submitted
+          - cell "Follow up":
+            - generic: Follow up
+          - cell "Review":
+            - button "Review"
+        - row "Product Education - Sleep Series Hims - In Production Emma Davis Animator ED-508-animation.pdf Submitted 17 Aug 2026 USD 980 Submitted Disputed Review":
+          - cell "Product Education - Sleep Series Hims - In Production":
+            - link "Product Education - Sleep Series Hims - In Production":
+              - /url: /projects/hims-product-education/costs
+              - strong: Product Education - Sleep Series
+              - generic: Hims - In Production
+          - cell "Emma Davis Animator":
+            - strong: Emma Davis
+            - generic: Animator
+          - cell "ED-508-animation.pdf Submitted 17 Aug 2026":
+            - strong: ED-508-animation.pdf
+            - generic: Submitted 17 Aug 2026
+          - cell "USD 980":
+            - strong: USD 980
+          - cell "Submitted":
+            - generic: Submitted
+          - cell "Disputed":
+            - generic: Disputed
+          - cell "Review":
+            - button "Review"
+        - row "Workflow Demo - Engineering Teams Notion - Paused Chris Taylor Editor CT-208-edit.pdf Submitted 14 Aug 2026 USD 2,140 Sent back Disputed View project costs":
+          - cell "Workflow Demo - Engineering Teams Notion - Paused":
+            - link "Workflow Demo - Engineering Teams Notion - Paused":
+              - /url: /projects/notion-workflows/costs
+              - strong: Workflow Demo - Engineering Teams
+              - generic: Notion - Paused
+          - cell "Chris Taylor Editor":
+            - strong: Chris Taylor
+            - generic: Editor
+          - cell "CT-208-edit.pdf Submitted 14 Aug 2026":
+            - strong: CT-208-edit.pdf
+            - generic: Submitted 14 Aug 2026
+          - cell "USD 2,140":
+            - strong: USD 2,140
+          - cell "Sent back":
+            - generic: Sent back
+          - cell "Disputed":
+            - generic: Disputed
+          - cell "View project costs":
+            - link "View project costs":
+              - /url: /projects/notion-workflows/costs
+        - row "Partner Update - Studio Reel OpenAI - Completed Aisha Khan Colourist AK-088-colour.pdf Submitted 12 Aug 2026 $1,760 Approved Urgent Mark paid":
+          - cell "Partner Update - Studio Reel OpenAI - Completed":
+            - link "Partner Update - Studio Reel OpenAI - Completed":
+              - /url: /projects/openai-partner-update/costs
+              - strong: Partner Update - Studio Reel
+              - generic: OpenAI - Completed
+          - cell "Aisha Khan Colourist":
+            - strong: Aisha Khan
+            - generic: Colourist
+          - cell "AK-088-colour.pdf Submitted 12 Aug 2026":
+            - strong: AK-088-colour.pdf
+            - generic: Submitted 12 Aug 2026
+          - cell "$1,760":
+            - strong: $1,760
+          - cell "Approved":
+            - generic: Approved
+          - cell "Urgent":
+            - generic: Urgent
+          - cell "Mark paid":
+            - button "Mark paid"
+- dialog "JL-1042-shoot.pdf":
+  - banner:
+    - heading "JL-1042-shoot.pdf" [level=2]
+    - generic: Invoice PDF preview
+  - tablist "Invoice PDF files":
+    - tab "JL-1042-shoot.pdf" [active] [selected]
+    - tab "JL-1042-expenses.pdf"
+  - article "Preview of JL-1042-shoot.pdf":
+    - generic: CONTRACTOR INVOICE
+    - strong: Invoice
+    - generic: JL-1042-shoot.pdf
+    - term: From
+    - definition: Jordan Lee
+    - term: Role
+    - definition: Shooter
+    - term: Submitted
+    - definition: 18 Aug 2026
+    - term: Invoice total
+    - definition: $1,140
+    - paragraph: Prototype PDF preview. The production build will display the contractor's uploaded document.
+  - contentinfo:
+    - button "Cancel"
+    - button "Back to invoice"

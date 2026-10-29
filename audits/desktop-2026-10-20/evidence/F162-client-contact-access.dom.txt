@@ -1,0 +1,84 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Jess Taylor avatar": JT
+  - generic: Client
+  - heading "Jess Taylor" [level=1]
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Access" [active] [selected]
+    - tab "Notes and activity"
+  - tabpanel "Access":
+    - heading "Access" [level=2]
+    - paragraph: Manage invitations and the projects this Person can access.
+    - button "Manage access Choose which projects they can open.":
+      - generic: Manage access
+      - text: Choose which projects they can open.
+    - button "Remove portal access Stop access to the Client portal and projects."
+    - heading "Projects they can access" [level=3]
+    - generic: 1 shared
+    - article:
+      - strong: Launch Film - Sales Narrative
+      - generic: In Production - Loom
+      - link "Open project":
+        - /url: /projects/loom-launch-film
+      - button "Remove access Stop access to this project."
+    - generic: Jess Taylor cannot see internal notes, Studio rates, other Clients or unrelated projects.

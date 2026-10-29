@@ -1,0 +1,309 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/storyboard".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/storyboard
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Project stage progress
+					41 container LOOM / Launch Film - Sales Narrative
+						42 link Description: Back to dashboard, Value: localhost:3000/active-videos
+						43 text LOOM Launch Film - Sales Narrative
+					44 container LOOM Launch Film - Sales Narrative
+						45 content list Sequential production stages
+							46 container
+								47 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								48 text Brief
+							49 container
+								50 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+								51 text Script
+							52 container
+								53 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								54 text Storyboard
+							55 container
+								56 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								57 text Shoot
+							58 container
+								59 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								60 text Edit
+							61 container
+								62 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								63 text Masters
+						64 container
+							65 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+							66 text Media
+						67 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							68 text Adjust project flow
+				69 container Storyboard view
+					70 checkbox Board, Value: 1
+					71 checkbox AV, Value: 0
+				72 button (collapsed) Description: Open versions, Secondary Actions: Expand
+				73 container Storyboard controls
+					74 container Storyboard document controls
+						75 pop up button (collapsed) Description: Storyboard actions, Secondary Actions: Expand
+					76 checkbox (collapsed) Description: Show all storyboard comments, Value: 0, Secondary Actions: Expand
+				77 container Storyboard frames
+					78 container
+						79 container
+							80 text Frame  01
+						81 button Edit duration for frame 1. Current duration 6 seconds.
+							82 text 6
+							83 text s
+							84 text Edit duration
+						85 container
+							86 pop up button (collapsed) Description: Frame 1 actions, Secondary Actions: Expand
+								87 text Frame 1 actions
+						88 button Open review for frame 1
+						89 pop up button (collapsed) Description: Replace image for frame 1, Secondary Actions: Expand
+						90 text Meet Maya, a nurse helping families navigate care decisions with calm and clarity. Maya walks through a bright clinic corridor, greeting a family at reception.
+						91 container Actions for frame 1
+							92 button Comment on frame 1
+								93 text Comment
+							94 button Copy link to frame 1
+								95 text Copy link
+							96 button Download image from frame 1
+								97 text Download
+							98 button Remove image from frame 1
+								99 text Remove image
+					100 container
+						101 container
+							102 text Frame  02
+						103 button Edit duration for frame 2. Current duration 6 seconds.
+							104 text 6
+							105 text s
+							106 text Edit duration
+						107 pop up button (collapsed) Description: Frame 2 actions, Secondary Actions: Expand
+							108 text Frame 2 actions
+						109 pop up button (collapsed) Description: Add image or footage to frame 2, Secondary Actions: Expand
+						110 text When a loved one needs support, every next step can feel bigger than it should. Close-up on a phone showing unread messages, then a quiet kitchen table.
+						111 container Actions for frame 2
+							112 button Comment on frame 2
+								113 text Comment
+							114 button Copy link to frame 2
+								115 text Copy link
+							116 button (disabled) No image to download from frame 2
+								117 text No image to download
+					118 container
+						119 container
+							120 text Frame  03
+						121 button Edit duration for frame 3. Current duration 7 seconds.
+							122 text 7
+							123 text s
+							124 text Edit duration
+						125 pop up button (collapsed) Description: Frame 3 actions, Secondary Actions: Expand
+							126 text Frame 3 actions
+						127 pop up button (collapsed) Description: Add image or footage to frame 3, Secondary Actions: Expand
+						128 text Harbour Health brings the plan, the people and the paperwork into one guided path. Soft overhead shot of forms, calendar cards and a support plan coming together.
+						129 container Actions for frame 3
+							130 button Comment on frame 3
+								131 text Comment
+							132 button Copy link to frame 3
+								133 text Copy link
+							134 button (disabled) No image to download from frame 3
+								135 text No image to download
+					136 container
+						137 container
+							138 text Frame  04
+						139 button Edit duration for frame 4. Current duration 7 seconds.
+							140 text 7
+							141 text s
+							142 text Edit duration
+						143 pop up button (collapsed) Description: Frame 4 actions, Secondary Actions: Expand
+							144 text Frame 4 actions
+						145 pop up button (collapsed) Description: Add image or footage to frame 4, Secondary Actions: Expand
+						146 text Families can see what is happening now, what happens next and who is responsible. Animated interface cards slide from Brief to Script, then into Shoot and Media.
+						147 container Actions for frame 4
+							148 button Comment on frame 4
+								149 text Comment
+							150 button Copy link to frame 4
+								151 text Copy link
+							152 button (disabled) No image to download from frame 4
+								153 text No image to download
+					154 container
+						155 container
+							156 text Frame  05
+						157 button Edit duration for frame 5. Current duration 7 seconds.
+							158 text 7
+							159 text s
+							160 text Edit duration
+						161 pop up button (collapsed) Description: Frame 5 actions, Secondary Actions: Expand
+							162 text Frame 5 actions
+						163 pop up button (collapsed) Description: Add image or footage to frame 5, Secondary Actions: Expand
+						164 text The Studio team stays aligned too, with updates that are visible before bottlenecks build. Producer, editor and client avatars appear around the same production timeline.
+						165 container Actions for frame 5
+							166 button Comment on frame 5
+								167 text Comment
+							168 button Copy link to frame 5
+								169 text Copy link
+							170 button (disabled) No image to download from frame 5
+								171 text No image to download
+					172 container
+						173 container
+							174 text Frame  06
+						175 button Edit duration for frame 6. Current duration 7 seconds.
+							176 text 7
+							177 text s
+							178 text Edit duration
+						179 pop up button (collapsed) Description: Frame 6 actions, Secondary Actions: Expand
+							180 text Frame 6 actions
+						181 pop up button (collapsed) Description: Add image or footage to frame 6, Secondary Actions: Expand
+						182 text Instead of chasing answers, Maya can spend more time with the people who need her. Maya sits with an older patient and their daughter, both visibly more relaxed.
+						183 container Actions for frame 6
+							184 button Comment on frame 6
+								185 text Comment
+							186 button Copy link to frame 6
+								187 text Copy link
+							188 button (disabled) No image to download from frame 6
+								189 text No image to download
+					190 container
+						191 container
+							192 text Frame  07
+						193 button Edit duration for frame 7. Current duration 6 seconds.
+							194 text 6
+							195 text s
+							196 text Edit duration
+						197 pop up button (collapsed) Description: Frame 7 actions, Secondary Actions: Expand
+							198 text Frame 7 actions
+						199 pop up button (collapsed) Description: Add image or footage to frame 7, Secondary Actions: Expand
+						200 text For care providers, that means fewer missed details and a smoother path to approval. Tick marks move through a simple approval checklist without feeling mechanical.
+						201 container Actions for frame 7
+							202 button Comment on frame 7
+								203 text Comment
+							204 button Copy link to frame 7
+								205 text Copy link
+							206 button (disabled) No image to download from frame 7
+								207 text No image to download
+					208 container
+						209 container
+							210 text Frame  08
+						211 button Edit duration for frame 8. Current duration 7 seconds.
+							212 text 7
+							213 text s
+							214 text Edit duration
+						215 pop up button (collapsed) Description: Frame 8 actions, Secondary Actions: Expand
+							216 text Frame 8 actions
+						217 pop up button (collapsed) Description: Add image or footage to frame 8, Secondary Actions: Expand
+						218 text For families, it means a shared view of care that feels understandable from day one. Family members look at the same tablet while a care coordinator points to next steps.
+						219 container Actions for frame 8
+							220 button Comment on frame 8
+								221 text Comment
+							222 button Copy link to frame 8
+								223 text Copy link
+							224 button (disabled) No image to download from frame 8
+								225 text No image to download
+					226 container
+						227 container
+							228 text Frame  09
+						229 button Edit duration for frame 9. Current duration 6 seconds.
+							230 text 6
+							231 text s
+							232 text Edit duration
+						233 pop up button (collapsed) Description: Frame 9 actions, Secondary Actions: Expand
+							234 text Frame 9 actions
+						235 pop up button (collapsed) Description: Add image or footage to frame 9, Secondary Actions: Expand
+						236 text Harbour Health is built for the moments when trust depends on being organised. Calm brand-colour title card, then a subtle cut back to Maya in the clinic.
+						237 container Actions for frame 9
+							238 button Comment on frame 9
+								239 text Comment
+							240 button Copy link to frame 9
+								241 text Copy link
+							242 button (disabled) No image to download from frame 9
+								243 text No image to download
+					244 container
+						245 container
+							246 text Frame  10
+						247 button Edit duration for frame 10. Current duration 5 seconds.
+							248 text 5
+							249 text s
+							250 text Edit duration
+						251 pop up button (collapsed) Description: Frame 10 actions, Secondary Actions: Expand
+							252 text Frame 10 actions
+						253 pop up button (collapsed) Description: Add image or footage to frame 10, Secondary Actions: Expand
+						254 text One place for the brief, the decisions and the handover into the next stage. Circular stage markers move from Brief to Script to Media with a human pace.
+						255 container Actions for frame 10
+							256 button Comment on frame 10
+								257 text Comment
+							258 button Copy link to frame 10
+								259 text Copy link
+							260 button (disabled) No image to download from frame 10
+								261 text No image to download
+					262 container
+						263 container
+							264 text Frame  11
+						265 button Edit duration for frame 11. Current duration 6 seconds.
+							266 text 6
+							267 text s
+							268 text Edit duration
+						269 pop up button (collapsed) Description: Frame 11 actions, Secondary Actions: Expand
+							270 text Frame 11 actions
+						271 pop up button (collapsed) Description: Add image or footage to frame 11, Secondary Actions: Expand
+						272 text So everyone can keep the work moving without losing the person at the centre. Montage of staff, family and patient sharing small reassuring moments.
+						273 container Actions for frame 11
+							274 button Comment on frame 11
+								275 text Comment
+							276 button Copy link to frame 11
+								277 text Copy link
+							278 button (disabled) No image to download from frame 11
+								279 text No image to download
+					280 container
+						281 container
+							282 text Frame  12
+						283 button Edit duration for frame 12. Current duration 5 seconds.
+							284 text 5
+							285 text s
+							286 text Edit duration
+						287 pop up button (collapsed) Description: Frame 12 actions, Secondary Actions: Expand
+							288 text Frame 12 actions
+						289 pop up button (collapsed) Description: Add image or footage to frame 12, Secondary Actions: Expand
+						290 text Harbour Health. Care journeys made clearer for the people who carry them. End card with Harbour Health mark and a quiet clinic ambience bed.
+						291 container Actions for frame 12
+							292 button Comment on frame 12
+								293 text Comment
+							294 button Copy link to frame 12
+								295 text Copy link
+							296 button (disabled) No image to download from frame 12
+								297 text No image to download
+					298 button + Add frame
+				299 text 12 frames 1  illustrated
+				300 container Storyboard review actions
+					301 container Storyboard share actions
+						302 button (collapsed) Description: Copy link, Secondary Actions: Expand
+						303 button Send Storyboard Send to Loom or your team.
+							304 text Send Storyboard
+							305 text Send to Loom or your team.
+						306 button Approve V1 Storyboard
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/storyboard

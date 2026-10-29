@@ -1,0 +1,159 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Company details":
+      - /url: /settings/client/company
+      - generic: Company details
+    - link "Team access":
+      - /url: /settings/client/team
+      - generic: Team access
+    - link "Invoices":
+      - /url: /client/invoices
+      - generic: Invoices
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Team access" [level=1]
+  - region "Loom team":
+    - heading "Loom team" [level=2]
+    - paragraph: Client Admins manage access. Anyone on a project can review and approve.
+    - button "Invite colleague":
+      - generic: Invite colleague
+    - table:
+      - rowgroup:
+        - row "Person Role Status Project access Actions":
+          - columnheader "Person"
+          - columnheader "Role"
+          - columnheader "Status"
+          - columnheader "Project access"
+          - columnheader "Actions":
+            - generic: Actions
+      - rowgroup:
+        - row "Jess Taylor avatar Jess Taylor (you) jess@loom.com Client Admin Active All projects Current account":
+          - cell "Jess Taylor avatar Jess Taylor (you) jess@loom.com":
+            - generic "Jess Taylor avatar": JT
+            - strong: Jess Taylor (you)
+            - generic: jess@loom.com
+          - cell "Client Admin"
+          - cell "Active":
+            - generic: Active
+          - cell "All projects":
+            - button "All projects": All projects
+          - cell "Current account"
+        - row "Sarah Kim avatar Sarah Kim sarah@loom.com Active 1 project Actions for Sarah Kim":
+          - cell "Sarah Kim avatar Sarah Kim sarah@loom.com":
+            - generic "Sarah Kim avatar": SK
+            - strong: Sarah Kim
+            - generic: sarah@loom.com
+          - cell:
+            - combobox "Role for Sarah Kim":
+              - generic: Client Member
+          - cell "Active":
+            - generic: Active
+          - cell "1 project":
+            - button "1 project": 1 project
+          - cell "Actions for Sarah Kim":
+            - button "Actions for Sarah Kim": Actions for Sarah Kim
+        - row "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com Pending invitation 1 project Actions for Daniel Ortiz":
+          - cell "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+            - generic "Daniel Ortiz avatar": DO
+            - strong: Daniel Ortiz
+            - generic: daniel@loom.com
+          - cell:
+            - combobox "Role for Daniel Ortiz":
+              - generic: Client Member
+          - cell "Pending invitation":
+            - generic: Pending invitation
+          - cell "1 project":
+            - button "1 project": 1 project
+          - cell "Actions for Daniel Ortiz":
+            - button "Actions for Daniel Ortiz": Actions for Daniel Ortiz
+        - row "Maya Chen avatar Maya Chen maya@loom.com Active 1 project Actions for Maya Chen":
+          - cell "Maya Chen avatar Maya Chen maya@loom.com":
+            - generic "Maya Chen avatar": MC
+            - strong: Maya Chen
+            - generic: maya@loom.com
+          - cell:
+            - combobox "Role for Maya Chen":
+              - generic: Client Admin
+          - cell "Active":
+            - generic: Active
+          - cell "1 project":
+            - button "1 project": 1 project
+          - cell "Actions for Maya Chen":
+            - button "Actions for Maya Chen": Actions for Maya Chen
+        - row "Elliot Brooks avatar Elliot Brooks elliot@loom.com Active 1 project Actions for Elliot Brooks":
+          - cell "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+            - generic "Elliot Brooks avatar": EB
+            - strong: Elliot Brooks
+            - generic: elliot@loom.com
+          - cell:
+            - combobox "Role for Elliot Brooks":
+              - generic: Client Member
+          - cell "Active":
+            - generic: Active
+          - cell "1 project":
+            - button "1 project": 1 project
+          - cell "Actions for Elliot Brooks":
+            - button "Actions for Elliot Brooks": Actions for Elliot Brooks
+- dialog "Project access for Sarah Kim":
+  - banner:
+    - heading "Project access for Sarah Kim" [level=2]
+    - generic: Choose the Client projects this person can open.
+  - group "Project access":
+    - generic: Project access
+    - checkbox "All current projects Give access to every project listed below." [checked] [active]
+    - strong: All current projects
+    - generic: Give access to every project listed below.
+    - generic: Or choose individual projects
+    - checkbox "Launch Film - Sales Narrative" [checked]
+    - strong: Launch Film - Sales Narrative
+    - checkbox "WACF Customer Cutdown 01" [checked]
+    - strong: WACF Customer Cutdown 01
+    - checkbox "Product Tour - Team Workflows" [checked]
+    - strong: Product Tour - Team Workflows
+    - checkbox "Customer Story - Healthcare" [checked]
+    - strong: Customer Story - Healthcare
+    - checkbox "Q3 Product Recap" [checked]
+    - strong: Q3 Product Recap
+  - contentinfo:
+    - button "Cancel"
+    - button "Save access"

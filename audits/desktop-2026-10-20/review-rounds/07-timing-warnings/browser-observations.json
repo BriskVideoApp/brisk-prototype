@@ -1,0 +1,67 @@
+{
+  "date": "28 October 2026",
+  "demoOrigin": "http://127.0.0.1:8782",
+  "checks": [
+    {
+      "check": "Production risk stays out of External Chat before producer review",
+      "passed": true
+    },
+    {
+      "check": "Client cannot see the unreleased production risk or Internal tab",
+      "passed": true
+    },
+    {
+      "check": "Producer action releases a separate Client update without resolving timing or changing agreed dates",
+      "passed": true
+    },
+    {
+      "check": "External timing post contains only the reviewed Client reason",
+      "passed": true
+    },
+    {
+      "check": "Client Review date shows the public reason and no producer sharing controls",
+      "passed": true
+    },
+    {
+      "check": "Brief shows one-line suggested date beside the requested-date field before submission",
+      "passed": true
+    },
+    {
+      "check": "Reading and sharing leave the unresolved Deadline warning and original final date intact after reload",
+      "passed": true
+    },
+    {
+      "check": "Submitted Brief warning opens the exact External message and retains the earlier reviewed production update",
+      "passed": true
+    },
+    {
+      "check": "Escape closes date review and returns focus to Review date",
+      "passed": true
+    },
+    {
+      "check": "Unassigned Freelancer cannot open the Loom timing issue through its direct Chat link",
+      "passed": true
+    },
+    {
+      "check": "After submission the matching Brief hint is removed; the timing conversation moves to Chat",
+      "passed": true
+    },
+    {
+      "check": "Changing an unsubmitted request shows the suggestion without sending a new message",
+      "passed": true
+    },
+    {
+      "check": "A requested date after the assessment produces no early-date suggestion",
+      "passed": true
+    },
+    {
+      "check": "Draft-only date changes and reloads create no duplicate timing posts",
+      "passed": true
+    },
+    {
+      "check": "Mark all read clears timing-message unread state without resolving its issue",
+      "passed": true
+    }
+  ],
+  "status": "Historical checks from 28 October. Final current resumption checks and evidence saved on 29 October; see resume-2026-10-29/browser-observations.json and implementation-validation.json."
+}

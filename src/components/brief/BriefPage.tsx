@@ -1,8 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { useBriskAi, useBriefAiState } from "@/components/ai/BriskAiContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { canViewProject, canActOnProject } from "@/data/prototype-access";
+
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 
-import { useRouter } from "next/navigation";
+import { useSearchSource } from "@/components/search/SearchContext";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import {
   createContext,
@@ -64,6 +70,8 @@ import { productionFlowStages } from "@/data/production-flow";
 import { getStudioBriefFieldOrder, type StudioBriefConfiguration } from "@/data/studio-onboard";
 import { BriskDatePicker } from "@/components/form/BriskDatePicker";
 import { formatBriefDate, parseBriefDateValue } from "@/lib/brief-dates";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
+import { BriefTimingSuggestion } from "@/components/project-timing/ProjectTimingNotice";
 
 type BriefPageProps = {
   project: Project;
@@ -551,9 +559,13 @@ export function getBriefConfigurableOptions(
 
 export function BriefPage({ approvalDestination, briefConfiguration, initialFields, onFieldsChange, project, studioName: providedStudioName }: BriefPageProps) {
   const router = useRouter();
+  const viewer = usePrototypeViewer();
+  const { assistantName, registerBriefHandler, briefHandoff, consumeBriefHandoff } = useBriskAi();
+  const searchParams = useSearchParams();
   const currentStudioName = useStudioCompanyName();
   const studioName = providedStudioName ?? currentStudioName;
   const { selectedRole } = usePrototypeRole();
+  const { submitBriefTiming } = useProjectTiming();
   const { publishStageReviewFollowUp } = useNotificationInbox();
   const { openInvitePerson } = useInvitations();
   const { state, hasHydrated } = usePrototypeState();
@@ -577,20 +589,52 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     : activeUser?.name ?? (selectedRole === "Studio Freelancer" ? "Filmmaker" : studioName);
   const auditStorageKey = `brisk-brief-action-audit-v1:${state.session.activeWorkspaceId}:${project.id}`;
   const isBriefApproved = briefStageStatus.state === "done";
-  const [briefMode, setBriefMode] = useState<BriefMode>(() => clientHasBriefToApprove ? "steps" : "landing");
-  const [activeStepId, setActiveStepId] = useState<BriefStepId>(() => clientHasBriefToApprove
+  const [briefMode, setBriefMode] = useBriefAiState(project.id, "mode", () => clientHasBriefToApprove ? "steps" : "landing");
+  const [activeStepId, setActiveStepId] = useBriefAiState(project.id, "step", () => clientHasBriefToApprove
     ? "summary"
     : getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields)[0].id);
-  const [briefFields, setBriefFields] = useState<BriefFields>(() => cloneBriefFields(initialFields ?? initialBriefFields));
+  const [briefFields, setBriefFields] = useBriefAiState(project.id, "fields", () => cloneBriefFields(initialFields ?? initialBriefFields));
+  const [searchFieldFocus, setSearchFieldFocus] = useState<BriefFieldId | null>(null);
+  const revealSearchField = (fieldId: BriefFieldId) => {
+    const step = Object.entries(briefStepFields).find(([, fieldIds]) => fieldIds?.includes(fieldId))?.[0] as BriefStepId | undefined;
+    if (!step) return;
+    setBriefMode("steps");
+    setActiveStepId(step);
+    setSearchFieldFocus(fieldId);
+  };
+  useEffect(() => {
+    if (!searchFieldFocus || briefMode !== "steps") return;
+    const target = document.querySelector<HTMLElement>(`[data-search-brief-field="${searchFieldFocus}"]`);
+    if (!target) return;
+    target.scrollIntoView({ block: "center" });
+    target.classList.add("search-match-target");
+    const timer = window.setTimeout(() => { target.classList.remove("search-match-target"); setSearchFieldFocus(null); }, 3000);
+    return () => { window.clearTimeout(timer); target.classList.remove("search-match-target"); };
+  }, [searchFieldFocus, activeStepId, briefMode]);
+
+  const searchedField = searchParams.get("searchField");
+  useEffect(() => {
+    if (searchedField && searchedField in briefFields) revealSearchField(searchedField as BriefFieldId);
+    // Search navigation reveals content; it does not edit or save answers.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchedField, project.id]);
+  useSearchSource({ label: "This Brief", replaceSource: `brief:${project.id}`, entries: Object.values(briefFields)
+    .filter((field) => field.value.trim() && !briefConfiguration?.excludedFieldIds.includes(field.id))
+    .map((field) => ({ id: `brief:${project.id}:${field.id}`, source: `brief:${project.id}`, kind: "Briefs" as const,
+      title: field.label, text: field.value, meta: `${project.clientName} · ${project.name}`, projectId: project.id,
+      href: `/projects/${project.id}/stages/brief?searchField=${field.id}`, onSelect: () => revealSearchField(field.id) })) });
+  const mainDeliverable = parseDeliverables(briefFields.deliverables.value, briefFields.deadline.value)[0];
+  const timingRequestedDate = mainDeliverable?.deadline || briefFields.deadline.value;
+  const timingSuggestion = <BriefTimingSuggestion projectId={project.id} requestedDate={timingRequestedDate} />;
   const briefFieldsRef = useRef(briefFields);
   const summaryMissingActiveIndexRef = useRef(-1);
-  const [logline, setLogline] = useState<Logline>({ text: "", status: "not_generated" });
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [isChatCollapsed, setIsChatCollapsed] = useState(true);
-  const [hasStartedClarifying, setHasStartedClarifying] = useState(false);
-  const [clarifyingAnswerCount, setClarifyingAnswerCount] = useState(0);
-  const [hasDraftedBrief, setHasDraftedBrief] = useState(false);
-  const [sourcePrompt, setSourcePrompt] = useState("");
+  const [logline, setLogline] = useBriefAiState(project.id, "logline", { text: "", status: "not_generated" });
+  const [chatMessages, setChatMessages] = useBriefAiState(project.id, "messages", []);
+  const [hasStartedClarifying, setHasStartedClarifying] = useBriefAiState(project.id, "started", false);
+  const [clarifyingAnswerCount, setClarifyingAnswerCount] = useBriefAiState(project.id, "answerCount", 0);
+  const [isDraftingBrief, setIsDraftingBrief] = useBriefAiState(project.id, "drafting", false);
+  const [hasDraftedBrief, setHasDraftedBrief] = useBriefAiState(project.id, "drafted", false);
+  const [sourcePrompt, setSourcePrompt] = useBriefAiState(project.id, "sourcePrompt", "");
   const [briefAudit, setBriefAudit] = useState<BriefActionAuditEntry[]>([]);
   const [briefShareAccess, setBriefShareAccess] = useState<ShareAccess>("viewOnly");
   const [isApprovalConfirmationOpen, setIsApprovalConfirmationOpen] = useState(false);
@@ -736,10 +780,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     appendAiMessage("Noted. I have added that context to the working brief.");
   }
 
-  function submitChat(submission: BriefAiSubmit) {
-    submitBriefPrompt(submission, "steps");
-  }
-
   function submitLandingPrompt(submission: BriefAiSubmit) {
     submitBriefPrompt(submission, "landing");
   }
@@ -753,27 +793,15 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function rewindLandingConversation(messageId: string) {
-    setChatMessages((currentMessages) => {
-      const rewindIndex = currentMessages.findIndex((message) => message.id === messageId);
-
-      if (rewindIndex < 0) {
-        return currentMessages;
-      }
-
-      const remainingMessages = currentMessages.slice(0, rewindIndex);
-      const remainingClientMessages = remainingMessages.filter((message) => message.role === "client");
-
-      setHasStartedClarifying(remainingClientMessages.length > 0);
-      setClarifyingAnswerCount(Math.max(0, remainingClientMessages.length - 1));
-      setHasDraftedBrief(false);
-      setSourcePrompt(
-        remainingClientMessages
-          .map((message) => `${message.body} ${describeAttachmentsForPrompt(message.attachments ?? [])}`.trim())
-          .join(" "),
-      );
-
-      return remainingMessages;
-    });
+    const rewindIndex = chatMessages.findIndex((message) => message.id === messageId);
+    if (rewindIndex < 0) return;
+    const remainingMessages = chatMessages.slice(0, rewindIndex);
+    const remainingClientMessages = remainingMessages.filter((message) => message.role === "client" && message.scope !== "project");
+    setChatMessages(remainingMessages);
+    setHasStartedClarifying(remainingClientMessages.length > 0);
+    setClarifyingAnswerCount(Math.max(0, remainingClientMessages.length - 1));
+    setHasDraftedBrief(false);
+    setSourcePrompt(remainingClientMessages.map((message) => `${message.body} ${describeAttachmentsForPrompt(message.attachments ?? [])}`.trim()).join(" "));
   }
 
   function applyBriefDraft(draft: BriefDraft) {
@@ -791,8 +819,10 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   }
 
   function draftBriefFromPrompt(prompt: string, source: BriefMode, clientMessage?: ChatMessage) {
+    if (isDraftingBrief) return;
+    setIsDraftingBrief(true);
     setHasDraftedBrief(true);
-    const draftMessages = [...chatMessages, ...(clientMessage ? [clientMessage] : [])];
+    const draftMessages = [...chatMessages, ...(clientMessage ? [clientMessage] : [])].filter((message) => message.scope !== "project");
     const draftAudience = getClarifyingAudienceAnswer(draftMessages);
     const draftDescriptionNotes = getClarifyingDescriptionNotes(draftMessages);
     const draftReferenceVideos = getReferenceVideoAttachments(draftMessages);
@@ -804,6 +834,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     window.setTimeout(() => {
       applyBriefDraft(getDraftForPrompt(prompt, draftAudience, draftDescriptionNotes, draftReferenceVideos));
       enterStepFlow();
+      setIsDraftingBrief(false);
     }, 1200);
   }
 
@@ -904,6 +935,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     const company = sendsToStudio ? studioName : project.clientName;
     const recipients = [...notifiedPeople];
     const occurredAt = new Date().toISOString();
+
+    if (sendsToStudio) submitBriefTiming(project.id, timingRequestedDate, occurredAt);
 
     setProjectStageStatus(project.id, "brief", {
       state: "waiting",
@@ -1083,17 +1116,9 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
   }
 
-  function toggleChat(isCollapsed: boolean) {
-    setIsChatCollapsed(isCollapsed);
-
-    if (!isCollapsed) {
-    }
-  }
-
   function enterStepFlow() {
     setBriefMode("steps");
     setActiveStepId(configuredSteps[0].id);
-    setIsChatCollapsed(true);
   }
 
   function skipAiAndFillManually() {
@@ -1110,7 +1135,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     commitBriefFields(cloneBriefFields(initialFields ?? initialBriefFields));
     setLogline({ text: "", status: "not_generated" });
     setChatMessages([]);
-    setIsChatCollapsed(true);
     setHasStartedClarifying(false);
     setClarifyingAnswerCount(0);
     setHasDraftedBrief(false);
@@ -1124,7 +1148,6 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
 
     setBriefMode("steps");
     setActiveStepId(stepId);
-    setIsChatCollapsed(true);
   }
 
   function jumpToSummaryMissing(direction: "previous" | "next") {
@@ -1148,15 +1171,23 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     nextMissing.focus();
   }
 
-  const chatPanel = (
-    <BriefAiChatPanel
-      isCollapsed={isChatCollapsed}
-      messages={chatMessages}
-      studioName={studioName}
-      onSubmit={submitChat}
-      onToggleCollapsed={toggleChat}
-    />
-  );
+  const canUseBriefAssistant = canViewProject(viewer, project, state)
+    && (selectedRole !== "Studio Freelancer" || canActOnProject(viewer, project, state, "edit", "brief"));
+  useEffect(() => {
+    if (!canUseBriefAssistant) return;
+    return registerBriefHandler({ projectId: project.id,
+      submit: (prompt, attachments = []) => submitBriefPrompt({ prompt, attachments }, briefMode),
+      draft: draftLandingBrief,
+      reveal: () => { setBriefMode("steps"); setActiveStepId("summary"); },
+    });
+  });
+  const consumedHandoffRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!canUseBriefAssistant || briefHandoff?.projectId !== project.id || consumedHandoffRef.current === briefHandoff.id) return;
+    consumedHandoffRef.current = briefHandoff.id;
+    consumeBriefHandoff();
+    submitBriefPrompt({ prompt: briefHandoff.prompt, attachments: [] }, briefMode);
+  });
   const briefActionsRow = (
     <ShareActionRow
       context="brief"
@@ -1226,14 +1257,13 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             onSelectStep={jumpToStepFromLanding}
             onSkip={skipAiAndFillManually}
             onSubmit={submitLandingPrompt}
-            studioName={studioName}
+            studioName={assistantName}
           />
         ) : (
           <BriefStepShell
             activeStepId={activeStepId}
             activeStepIndex={activeStepIndex}
             steps={configuredSteps}
-            chatPanel={chatPanel}
             footerAction={
               isSummaryStep ? null : (
                 <Button size="S" type="button" variant="primary" onClick={() => goToRelativeStep(1)}>
@@ -1335,6 +1365,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "deadline" ? (
               <BriefDeadlineSection
+                timingSuggestion={timingSuggestion}
                 intro={activeStepIntro}
                 excludedFieldIds={briefConfiguration?.excludedFieldIds}
                 fields={briefFields}
@@ -1366,6 +1397,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             {activeStepId === "summary" ? (
               <BriefSummaryPage
+                timingSuggestion={timingSuggestion}
                 intro={activeStepIntro}
                 fields={briefFields}
                 logline={logline}
@@ -1662,7 +1694,6 @@ function BriefStepShell({
   activeStepId,
   activeStepIndex,
   steps,
-  chatPanel,
   children,
   footerAction,
   footerShare,
@@ -1674,7 +1705,6 @@ function BriefStepShell({
   activeStepId: BriefStepId;
   activeStepIndex: number;
   steps: typeof briefSteps;
-  chatPanel: ReactNode;
   children: ReactNode;
   footerAction: ReactNode;
   footerShare: ReactNode;
@@ -1687,7 +1717,6 @@ function BriefStepShell({
     <>
       <section className={`brief-stage-area brief-step-${activeStepId}`} aria-label="Brief step">
         <div className="brief-workspace">
-          {chatPanel}
           {children}
         </div>
       </section>
@@ -1934,7 +1963,7 @@ function BriefLandingScreen({
           <div className="brief-landing-intro">
             <h1 id="brief-landing-title">What video are we making?</h1>
             <p className="brief-landing-guidance paragraph-s">
-              Answer a few quick questions, then Brisk AI will build your brief.
+              {studioName} will ask a few questions, then draft your Brief for you to review.
             </p>
           </div>
         )}
@@ -2065,6 +2094,7 @@ function BriefClarifyingThread({
                 </p>
               ))}
             </div>
+            {message.sources?.map((source) => <Link className="label-xs-semibold" key={source.href} href={source.href}>{source.label}</Link>)}
             {message.attachments && message.attachments.length > 0 ? (
               <div className="brief-message-attachments" aria-label="Attached sources">
                 {message.attachments.map((attachment) => (
@@ -2076,94 +2106,6 @@ function BriefClarifyingThread({
         );
       })}
     </div>
-  );
-}
-
-function BriefAiChatPanel({
-  isCollapsed,
-  messages,
-  onSubmit,
-  onToggleCollapsed,
-  studioName,
-}: {
-  isCollapsed: boolean;
-  messages: ChatMessage[];
-  onSubmit: (submission: BriefAiSubmit) => void;
-  onToggleCollapsed: (isCollapsed: boolean) => void;
-  studioName: string;
-}) {
-  const [inputValue, setInputValue] = useState("");
-  const [attachments, setAttachments] = useState<InputAttachment[]>([]);
-  const canSubmit = inputValue.trim().length > 0 || attachments.length > 0;
-
-  function submitPrompt() {
-    if (!canSubmit) {
-      return;
-    }
-
-    onSubmit({
-      prompt: inputValue || "Attached sources for the brief.",
-      attachments,
-    });
-    setInputValue("");
-    setAttachments([]);
-  }
-
-  function addAttachment(attachment: InputAttachment) {
-    setAttachments((currentAttachments) => {
-      if (currentAttachments.some((currentAttachment) => getAttachmentKey(currentAttachment) === getAttachmentKey(attachment))) {
-        return currentAttachments;
-      }
-
-      return [...currentAttachments, attachment];
-    });
-  }
-
-  if (isCollapsed) {
-    return null;
-  }
-
-  return (
-    <aside className="brief-ai-panel chat-first" aria-label={`${studioName} assistant panel`}>
-      <header className="brief-ai-header">
-        <div className="brief-ai-title-row">
-          <DsIcon name="chopchop-ai" size={18} />
-          <h2 className="heading-3xs">{studioName}</h2>
-        </div>
-        <button
-          className="brief-quiet-icon"
-          type="button"
-          aria-label={`Collapse ${studioName} assistant`}
-          onClick={() => onToggleCollapsed(true)}
-        >
-          -
-        </button>
-      </header>
-
-      <div className="brief-ai-thread" aria-label={`${studioName} assistant chat thread`}>
-        {messages.map((message) => (
-          <article className={`brief-ai-message ${message.role}`} key={message.id}>
-            <p className="paragraph-s">{message.body}</p>
-            <span className="brief-ai-message-time label-xs">{message.createdAt}</span>
-          </article>
-        ))}
-      </div>
-
-      <BriefRichInput
-        attachments={attachments}
-        placeholder="Paste your notes, links or reference videos..."
-        value={inputValue}
-        variant="panel"
-        onAddAttachment={addAttachment}
-        onRemoveAttachment={(attachmentId) =>
-          setAttachments((currentAttachments) =>
-            currentAttachments.filter((currentAttachment) => currentAttachment.id !== attachmentId),
-          )
-        }
-        onSubmit={submitPrompt}
-        onValueChange={setInputValue}
-      />
-    </aside>
   );
 }
 
@@ -3044,6 +2986,7 @@ function BriefDeadlineSection({
   onRegenerateField,
   onToggleFieldExcluded,
   summaryMode = false,
+  timingSuggestion,
 }: {
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
@@ -3051,6 +2994,7 @@ function BriefDeadlineSection({
   onFieldChange: (fieldId: BriefFieldId, value: string) => void;
   onRegenerateField: (fieldId: BriefFieldId) => void;
   summaryMode?: boolean;
+  timingSuggestion?: ReactNode;
 } & BriefFieldExclusionProps) {
   return (
     <section
@@ -3079,6 +3023,7 @@ function BriefDeadlineSection({
             onChange={(value) => onFieldChange("deadline", value)}
           />
         </BriefFieldRow>
+        {timingSuggestion}
       </div>
     </section>
   );
@@ -4442,7 +4387,7 @@ function BriefFieldRow({
   }
 
   return (
-    <div className={`brief-field-row ${isExcluded ? "is-excluded" : ""}`} ref={rowRef} style={fieldOrder ? { order: fieldOrder.indexOf(field.id) } : undefined}>
+    <div data-search-brief-field={field.id} className={`brief-field-row ${isExcluded ? "is-excluded" : ""}`} ref={rowRef} style={fieldOrder ? { order: fieldOrder.indexOf(field.id) } : undefined}>
       <div className="brief-field-meta">
         <label className="label-s-semibold">{field.label}</label>
         <div className="brief-field-meta-side">
@@ -4555,6 +4500,7 @@ function BriefSummaryPage({
   onGoToStep,
   studioName,
   summaryMissingCount,
+  timingSuggestion,
 }: {
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
@@ -4565,6 +4511,7 @@ function BriefSummaryPage({
   onGoToStep: (stepId: BriefStepId) => void;
   studioName: string;
   summaryMissingCount?: number;
+  timingSuggestion?: ReactNode;
 }) {
   const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
   const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
@@ -4610,6 +4557,7 @@ function BriefSummaryPage({
         onStopEditing={stopEditing}
       />
       <BriefSummarySpecStrip specGroups={summaryModel.specGroups} onJump={jumpToStep} />
+      {timingSuggestion}
       <div className="brief-summary-deliverables-panel">
         <BriefSummaryCardHead
           index="03"
@@ -5765,7 +5713,7 @@ function BriefSummaryReadField({
   }
 
   return (
-    <div className="brief-summary-read-field" ref={readFieldRef}>
+    <div data-search-brief-field={field.id} className="brief-summary-read-field" ref={readFieldRef}>
       <div className="brief-summary-field-label">
         <span className="label-s-semibold">{label ?? field.label}</span>
         <BriefFieldStatusDot field={field} onEdit={focusReadFieldControl} onRegenerate={onRegenerate} />
@@ -5801,7 +5749,7 @@ function BriefSummaryPair({
   const isEditing = editingFieldId === field.id;
 
   return (
-    <div className="brief-summary-pair">
+    <div data-search-brief-field={field.id} className="brief-summary-pair">
       <div className="brief-summary-pair-label">
         <span className="label-s-semibold">{label ?? field.label}</span>
         <BriefFieldStatusDot field={field} onEdit={() => onEdit(field.id)} onRegenerate={onRegenerate} />

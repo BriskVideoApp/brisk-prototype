@@ -745,7 +745,6 @@
   background: var(--brisk-white);
 }
 
-.notification-wording-preview > header,
 .notification-wording-preview > footer {
   display: flex;
   align-items: center;
@@ -754,23 +753,8 @@
   padding: var(--brisk-space-m) var(--brisk-space-l);
 }
 
-.notification-wording-preview > header {
-  border-bottom: 1px solid var(--brisk-border-secondary);
-  background: var(--brisk-gray-5);
-}
-
-.notification-wording-preview > header time,
 .notification-wording-meta {
   color: var(--brisk-text-secondary);
-}
-
-.notification-wording-status {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  border-radius: var(--brisk-radius-full);
-  gap: var(--brisk-space-xs);
-  padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
 .notification-wording-preview-body {
@@ -779,15 +763,6 @@
   align-items: start;
   gap: var(--brisk-space-m);
   padding: var(--brisk-space-xl) var(--brisk-space-l);
-}
-
-.notification-wording-icon {
-  display: inline-flex;
-  width: var(--brisk-space-2xl);
-  height: var(--brisk-space-2xl);
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--brisk-radius-full);
 }
 
 .notification-wording-content {
@@ -814,28 +789,20 @@
   text-underline-offset: var(--brisk-space-xs);
 }
 
-.notification-wording-preview.is-success .notification-wording-status,
-.notification-wording-preview.is-success .notification-wording-icon {
-  background: var(--brisk-green-10);
-  color: var(--brisk-system-success);
+.notification-wording-preview.is-success {
+  background: color-mix(in srgb, var(--brisk-system-success) 8%, var(--brisk-white));
 }
 
-.notification-wording-preview.is-warning .notification-wording-status,
-.notification-wording-preview.is-warning .notification-wording-icon {
-  background: var(--brisk-yellow-10);
-  color: var(--brisk-yellow-60);
+.notification-wording-preview.is-warning {
+  background: color-mix(in srgb, var(--brisk-system-warning) 12%, var(--brisk-white));
 }
 
-.notification-wording-preview.is-failure .notification-wording-status,
-.notification-wording-preview.is-failure .notification-wording-icon {
-  background: var(--brisk-gray-5);
-  color: var(--brisk-system-error);
+.notification-wording-preview.is-failure {
+  background: color-mix(in srgb, var(--brisk-system-error) 8%, var(--brisk-white));
 }
 
-.notification-wording-preview.is-information .notification-wording-status,
-.notification-wording-preview.is-information .notification-wording-icon {
-  background: var(--brisk-gray-10);
-  color: var(--brisk-system-neutral);
+.notification-wording-preview.is-information {
+  background: var(--brisk-item-tertiary);
 }
 
 .notification-wording-fixed-footer {

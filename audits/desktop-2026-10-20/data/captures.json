@@ -1,0 +1,2754 @@
+[
+  {
+    "id": "E001-client-videos-1440",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "default",
+    "notes": "Initial tab role; prototype scenario persisted from existing browser context.",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T08:52:03.386Z"
+  },
+  {
+    "id": "E002-staff-videos-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "default expanded navigation",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T08:52:31.895Z"
+  },
+  {
+    "id": "E003-team-drawer-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "project drawer Team expanded",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:52:38.882Z"
+  },
+  {
+    "id": "E004-team-role-editor-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shooter editor, current invites and allocated hours",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:52:44.523Z"
+  },
+  {
+    "id": "E005-team-staff-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shooter Staff selection, unnamed checkboxes",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:52:53.637Z"
+  },
+  {
+    "id": "E006-team-staff-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shooter Staff selection narrower desktop",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:52:53.856Z"
+  },
+  {
+    "id": "E007-team-staff-expanded-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Show all Staff, available people and hours",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:53:05.476Z"
+  },
+  {
+    "id": "E008-team-freelancers-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancers selection, rates and invitation state",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T08:53:05.939Z"
+  },
+  {
+    "id": "E009-media-library-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "global library default",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T08:53:15.424Z"
+  },
+  {
+    "id": "E010-media-keyboard-before",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "before keyboard Select Office-arrivals-camera-b.mov",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T08:53:29.006Z"
+  },
+  {
+    "id": "E011-media-keyboard-after",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Space on Select file unexpectedly opens inspector",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T08:53:29.431Z"
+  },
+  {
+    "id": "E012-media-hidden-selection",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "2 files selected; search shows 1",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T08:53:42.894Z"
+  },
+  {
+    "id": "E013-client-identity-loom",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client Jess Taylor Loom portal",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T08:55:05.318Z"
+  },
+  {
+    "id": "E014-client-loom-ready",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Jess Taylor Loom portal fully rendered",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T08:55:19.383Z"
+  },
+  {
+    "id": "E015-client-direct-deel",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Direct cross-Client project URL, inspect identity and access",
+    "url": "http://localhost:3000/projects/deel-customer-story/stages/brief",
+    "captured": "2026-10-20T08:55:28.721Z"
+  },
+  {
+    "id": "D-R001-staff-1440",
+    "coverageId": "R001",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T08:56:08.328Z"
+  },
+  {
+    "id": "D-R004-staff-1440",
+    "coverageId": "R004",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits",
+    "captured": "2026-10-20T08:56:09.196Z"
+  },
+  {
+    "id": "D-R008-staff-1440",
+    "coverageId": "R008",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T08:56:12.680Z"
+  },
+  {
+    "id": "D-R017-staff-1440",
+    "coverageId": "R017",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T08:56:14.070Z"
+  },
+  {
+    "id": "D-R019-staff-1440",
+    "coverageId": "R019",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/people/sc",
+    "captured": "2026-10-20T08:56:22.652Z"
+  },
+  {
+    "id": "D-R020-staff-1440",
+    "coverageId": "R020",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/people",
+    "captured": "2026-10-20T08:56:32.026Z"
+  },
+  {
+    "id": "D-R060-staff-1440",
+    "coverageId": "R060",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/today",
+    "captured": "2026-10-20T08:56:39.614Z"
+  },
+  {
+    "id": "D-R001-staff-1133",
+    "coverageId": "R001",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T08:56:49.262Z"
+  },
+  {
+    "id": "D-R004-staff-1133",
+    "coverageId": "R004",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits",
+    "captured": "2026-10-20T08:56:50.269Z"
+  },
+  {
+    "id": "D-R008-staff-1133",
+    "coverageId": "R008",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T08:56:51.280Z"
+  },
+  {
+    "id": "D-R019-staff-1133",
+    "coverageId": "R019",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/people/sc",
+    "captured": "2026-10-20T08:56:55.499Z"
+  },
+  {
+    "id": "D-R020-staff-1133",
+    "coverageId": "R020",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/people",
+    "captured": "2026-10-20T08:56:56.700Z"
+  },
+  {
+    "id": "D-R060-staff-1133",
+    "coverageId": "R060",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/today",
+    "captured": "2026-10-20T08:56:58.006Z"
+  },
+  {
+    "id": "D-R022-staff-1440",
+    "coverageId": "R022",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/costs",
+    "captured": "2026-10-20T08:57:18.162Z"
+  },
+  {
+    "id": "D-R023-staff-1440",
+    "coverageId": "R023",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/files",
+    "captured": "2026-10-20T08:57:27.237Z"
+  },
+  {
+    "id": "D-R025-staff-1440",
+    "coverageId": "R025",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T08:57:54.737Z"
+  },
+  {
+    "id": "D-R027-staff-1440",
+    "coverageId": "R027",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T08:58:00.539Z"
+  },
+  {
+    "id": "D-R028-staff-1440",
+    "coverageId": "R028",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T08:58:04.800Z"
+  },
+  {
+    "id": "D-R029-staff-1440",
+    "coverageId": "R029",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Project Media default",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T08:58:32.196Z"
+  },
+  {
+    "id": "E016-project-media-filtered-selection",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "2 selected, search displays only Jess-interview-camera-a.mov",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T08:58:40.427Z"
+  },
+  {
+    "id": "E017-project-media-delete-scope",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Delete confirmation includes two selected files, one hidden by search; not confirmed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T08:58:40.871Z"
+  },
+  {
+    "id": "D-R030-staff-1440",
+    "coverageId": "R030",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T08:59:27.217Z"
+  },
+  {
+    "id": "D-R031-staff-1440",
+    "coverageId": "R031",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T08:59:38.305Z"
+  },
+  {
+    "id": "E018-storyboard-actions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "quiet action menu disabled safeguards",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:00:10.104Z"
+  },
+  {
+    "id": "E019-storyboard-review",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Frame review image unavailable, comment panel",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:00:10.698Z"
+  },
+  {
+    "id": "E020-storyboard-review-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 787,
+    "state": "Frame review narrower desktop",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:00:10.778Z",
+    "notes": "Actual native image dimensions verified from JPEG frame. The stable capture ID retains the originally requested width; use recorded dimensions. "
+  },
+  {
+    "id": "D-R022-staff-1133",
+    "coverageId": "R022",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/costs",
+    "captured": "2026-10-20T09:00:30.046Z"
+  },
+  {
+    "id": "D-R025-staff-1133",
+    "coverageId": "R025",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:00:33.144Z"
+  },
+  {
+    "id": "D-R026-staff-1133",
+    "coverageId": "R026",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:00:38.897Z"
+  },
+  {
+    "id": "D-R027-staff-1133",
+    "coverageId": "R027",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T09:00:46.361Z"
+  },
+  {
+    "id": "D-R028-staff-1133",
+    "coverageId": "R028",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T09:00:50.408Z"
+  },
+  {
+    "id": "D-R029-staff-1133",
+    "coverageId": "R029",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:00:54.035Z"
+  },
+  {
+    "id": "D-R030-staff-1133",
+    "coverageId": "R030",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T09:00:57.159Z"
+  },
+  {
+    "id": "D-R031-staff-1133",
+    "coverageId": "R031",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:01:00.737Z"
+  },
+  {
+    "id": "D-R038-staff-1440",
+    "coverageId": "R038",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client-billing",
+    "captured": "2026-10-20T09:01:23.658Z"
+  },
+  {
+    "id": "D-R039-staff-1440",
+    "coverageId": "R039",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T09:01:29.109Z"
+  },
+  {
+    "id": "D-R040-staff-1440",
+    "coverageId": "R040",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications",
+    "captured": "2026-10-20T09:01:34.455Z"
+  },
+  {
+    "id": "D-R041-staff-1440",
+    "coverageId": "R041",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications/templates",
+    "captured": "2026-10-20T09:01:46.368Z"
+  },
+  {
+    "id": "D-R045-staff-1440",
+    "coverageId": "R045",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:01:50.522Z"
+  },
+  {
+    "id": "D-R047-staff-1440",
+    "coverageId": "R047",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/ai-playbook",
+    "captured": "2026-10-20T09:01:56.057Z"
+  },
+  {
+    "id": "D-R050-staff-1440",
+    "coverageId": "R050",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/integrations",
+    "captured": "2026-10-20T09:02:00.404Z"
+  },
+  {
+    "id": "D-R051-staff-1440",
+    "coverageId": "R051",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:02:10.103Z"
+  },
+  {
+    "id": "D-R053-staff-1440",
+    "coverageId": "R053",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/production",
+    "captured": "2026-10-20T09:03:45.018Z"
+  },
+  {
+    "id": "D-R054-staff-1440",
+    "coverageId": "R054",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/storage",
+    "captured": "2026-10-20T09:03:50.888Z"
+  },
+  {
+    "id": "D-R038-staff-1133",
+    "coverageId": "R038",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client-billing",
+    "captured": "2026-10-20T09:04:19.450Z"
+  },
+  {
+    "id": "D-R039-staff-1133",
+    "coverageId": "R039",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T09:04:20.944Z"
+  },
+  {
+    "id": "D-R040-staff-1133",
+    "coverageId": "R040",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications",
+    "captured": "2026-10-20T09:04:22.111Z"
+  },
+  {
+    "id": "D-R041-staff-1133",
+    "coverageId": "R041",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/notifications/templates",
+    "captured": "2026-10-20T09:04:29.323Z"
+  },
+  {
+    "id": "D-R045-staff-1133",
+    "coverageId": "R045",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:04:30.643Z"
+  },
+  {
+    "id": "D-R047-staff-1133",
+    "coverageId": "R047",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/ai-playbook",
+    "captured": "2026-10-20T09:04:36.284Z"
+  },
+  {
+    "id": "D-R050-staff-1133",
+    "coverageId": "R050",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/integrations",
+    "captured": "2026-10-20T09:04:46.470Z"
+  },
+  {
+    "id": "D-R051-staff-1133",
+    "coverageId": "R051",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:04:47.373Z"
+  },
+  {
+    "id": "D-R053-staff-1133",
+    "coverageId": "R053",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/production",
+    "captured": "2026-10-20T09:04:48.205Z"
+  },
+  {
+    "id": "D-R054-staff-1133",
+    "coverageId": "R054",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/storage",
+    "captured": "2026-10-20T09:04:49.070Z"
+  },
+  {
+    "id": "D-R002-staff-1440",
+    "coverageId": "R002",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom/loom-ai",
+    "captured": "2026-10-20T09:05:04.158Z"
+  },
+  {
+    "id": "D-R003-staff-1440",
+    "coverageId": "R003",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:05:06.083Z"
+  },
+  {
+    "id": "D-R007-staff-1440",
+    "coverageId": "R007",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:05:19.293Z"
+  },
+  {
+    "id": "D-R010-staff-1440",
+    "coverageId": "R010",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard/start-video?client=loom",
+    "captured": "2026-10-20T09:05:29.839Z"
+  },
+  {
+    "id": "D-R012-client-1440",
+    "coverageId": "R012",
+    "role": "Customer",
+    "width": 1280,
+    "height": 720,
+    "state": "Client asset drawer default; recovered tab initially used default 1280x720 viewport despite capture filename.",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:07:33.654Z"
+  },
+  {
+    "id": "D-R012-staff-1440",
+    "coverageId": "R012",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:07:34.664Z"
+  },
+  {
+    "id": "D-R015-staff-1440",
+    "coverageId": "R015",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/notifications",
+    "captured": "2026-10-20T09:07:36.571Z"
+  },
+  {
+    "id": "D-R005-staff-1440",
+    "coverageId": "R005",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/chat?project=loom-launch-film",
+    "captured": "2026-10-20T09:07:47.616Z"
+  },
+  {
+    "id": "D-R011-staff-1440",
+    "coverageId": "R011",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard/start-video/script",
+    "captured": "2026-10-20T09:07:49.326Z"
+  },
+  {
+    "id": "D-R014-staff-1440",
+    "coverageId": "R014",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/notifications/delivery",
+    "captured": "2026-10-20T09:07:52.074Z"
+  },
+  {
+    "id": "D-R021-staff-1440",
+    "coverageId": "R021",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/print/script/loom-launch-film",
+    "captured": "2026-10-20T09:07:53.360Z"
+  },
+  {
+    "id": "D-R032-staff-1440",
+    "coverageId": "R032",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/prototype/journey-entry",
+    "captured": "2026-10-20T09:07:54.816Z"
+  },
+  {
+    "id": "D-R033-staff-1440",
+    "coverageId": "R033",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/prototype/production-flow",
+    "captured": "2026-10-20T09:07:56.094Z"
+  },
+  {
+    "id": "D-R034-staff-1440",
+    "coverageId": "R034",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/prototype/scenarios",
+    "captured": "2026-10-20T09:08:40.354Z"
+  },
+  {
+    "id": "D-R035-staff-1440",
+    "coverageId": "R035",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/review?project=loom-launch-film",
+    "captured": "2026-10-20T09:08:42.587Z"
+  },
+  {
+    "id": "D-R042-staff-1440",
+    "coverageId": "R042",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/notifications",
+    "captured": "2026-10-20T09:08:44.102Z"
+  },
+  {
+    "id": "D-R043-staff-1440",
+    "coverageId": "R043",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/profile",
+    "captured": "2026-10-20T09:08:47.219Z"
+  },
+  {
+    "id": "D-R044-staff-1440",
+    "coverageId": "R044",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/security",
+    "captured": "2026-10-20T09:08:48.551Z"
+  },
+  {
+    "id": "D-R046-staff-1440",
+    "coverageId": "R046",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/review-request-message",
+    "captured": "2026-10-20T09:08:49.989Z"
+  },
+  {
+    "id": "D-R052-staff-1440",
+    "coverageId": "R052",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/portal-preview",
+    "captured": "2026-10-20T09:09:00.390Z"
+  },
+  {
+    "id": "D-R056-staff-1440",
+    "coverageId": "R056",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/share/brand/loom-2026",
+    "captured": "2026-10-20T09:09:02.273Z"
+  },
+  {
+    "id": "D-R057-staff-1440",
+    "coverageId": "R057",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/share/call-sheet/loom-launch-film?preview=1",
+    "captured": "2026-10-20T09:09:03.831Z"
+  },
+  {
+    "id": "D-R058-staff-1440",
+    "coverageId": "R058",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/share",
+    "captured": "2026-10-20T09:09:05.084Z"
+  },
+  {
+    "id": "D-R059-staff-1440",
+    "coverageId": "R059",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/studio-onboard",
+    "captured": "2026-10-20T09:09:06.445Z"
+  },
+  {
+    "id": "D-R061-staff-1440",
+    "coverageId": "R061",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:09:08.224Z"
+  },
+  {
+    "id": "D-R002-staff-1133",
+    "coverageId": "R002",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom/loom-ai",
+    "captured": "2026-10-20T09:09:17.629Z"
+  },
+  {
+    "id": "D-R003-staff-1133",
+    "coverageId": "R003",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:09:19.345Z"
+  },
+  {
+    "id": "D-R005-staff-1133",
+    "coverageId": "R005",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/chat?project=loom-launch-film",
+    "captured": "2026-10-20T09:09:21.167Z"
+  },
+  {
+    "id": "D-R007-staff-1133",
+    "coverageId": "R007",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:09:25.299Z"
+  },
+  {
+    "id": "D-R010-staff-1133",
+    "coverageId": "R010",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard/start-video?client=loom",
+    "captured": "2026-10-20T09:09:26.865Z"
+  },
+  {
+    "id": "D-R042-staff-1133",
+    "coverageId": "R042",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/notifications",
+    "captured": "2026-10-20T09:09:29.418Z"
+  },
+  {
+    "id": "D-R043-staff-1133",
+    "coverageId": "R043",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/profile",
+    "captured": "2026-10-20T09:10:16.276Z"
+  },
+  {
+    "id": "D-R044-staff-1133",
+    "coverageId": "R044",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/personal/security",
+    "captured": "2026-10-20T09:10:17.035Z"
+  },
+  {
+    "id": "D-R046-staff-1133",
+    "coverageId": "R046",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/review-request-message",
+    "captured": "2026-10-20T09:10:17.794Z"
+  },
+  {
+    "id": "D-R052-staff-1133",
+    "coverageId": "R052",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio/portal-preview",
+    "captured": "2026-10-20T09:10:18.716Z"
+  },
+  {
+    "id": "D-R056-staff-1133",
+    "coverageId": "R056",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/share/brand/loom-2026",
+    "captured": "2026-10-20T09:10:19.805Z"
+  },
+  {
+    "id": "D-R057-staff-1133",
+    "coverageId": "R057",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/share/call-sheet/loom-launch-film?preview=1",
+    "captured": "2026-10-20T09:10:20.446Z"
+  },
+  {
+    "id": "D-R059-staff-1133",
+    "coverageId": "R059",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/studio-onboard",
+    "captured": "2026-10-20T09:10:21.215Z"
+  },
+  {
+    "id": "D-R061-staff-1133",
+    "coverageId": "R061",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:10:22.166Z"
+  },
+  {
+    "id": "D-R009-staff-1440",
+    "coverageId": "R009",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard",
+    "captured": "2026-10-20T09:10:43.455Z"
+  },
+  {
+    "id": "D-R018-staff-1440",
+    "coverageId": "R018",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/",
+    "captured": "2026-10-20T09:10:45.434Z"
+  },
+  {
+    "id": "D-R024-staff-1440",
+    "coverageId": "R024",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:10:48.126Z"
+  },
+  {
+    "id": "D-R048-staff-1440",
+    "coverageId": "R048",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio#branding",
+    "captured": "2026-10-20T09:10:50.406Z"
+  },
+  {
+    "id": "D-R049-staff-1440",
+    "coverageId": "R049",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/studio#profile",
+    "captured": "2026-10-20T09:10:51.583Z"
+  },
+  {
+    "id": "D-R055-staff-1440",
+    "coverageId": "R055",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:10:53.688Z"
+  },
+  {
+    "id": "E022-account-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "account menu open",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:11:10.205Z"
+  },
+  {
+    "id": "E023-recent-pages-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Recent pages native-link menu open",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:11:43.712Z"
+  },
+  {
+    "id": "E024-ask-brisk-panel",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Ask Brisk panel, no prompt submitted",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:11:50.508Z"
+  },
+  {
+    "id": "E025-ask-brisk-ready",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Ask Brisk fully rendered, empty prompt disabled Send",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:12:13.322Z"
+  },
+  {
+    "id": "E026-assistant-source-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "assistant source commands, no source selected",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:12:13.744Z"
+  },
+  {
+    "id": "E027-updates-popover",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Updates popover empty",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:12:14.433Z"
+  },
+  {
+    "id": "E028-invitation-staff",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Staff invitation initial fields and disabled Next, no submission",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:13:03.196Z"
+  },
+  {
+    "id": "E029-invitation-client-access",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client invitation access draft; no invitation sent",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:13:17.160Z"
+  },
+  {
+    "id": "E030-invitation-mixed-projects",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client access draft mixed checkbox; no invitation sent",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:13:32.163Z"
+  },
+  {
+    "id": "E031-people-capacity",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Sarah workload dialog, over-capacity with assignment breakdown",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:13:57.869Z"
+  },
+  {
+    "id": "E032-people-no-results",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "No results in People; Clear search visible",
+    "url": "http://localhost:3000/people?view=Studio%20Staff",
+    "captured": "2026-10-20T09:14:16.760Z"
+  },
+  {
+    "id": "E033-people-freelancers",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer directory selected; capacity, work and invitation columns",
+    "url": "http://localhost:3000/people?view=Studio+Freelancers",
+    "captured": "2026-10-20T09:14:17.066Z"
+  },
+  {
+    "id": "E034-people-archived",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Archived people view",
+    "url": "http://localhost:3000/people?view=Archived",
+    "captured": "2026-10-20T09:14:17.267Z"
+  },
+  {
+    "id": "E035-client-contacts-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client Contacts tab, project access actions",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:14:37.152Z"
+  },
+  {
+    "id": "E036-client-project-access-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Jess project-access editor current checked values; not saved",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:14:51.137Z"
+  },
+  {
+    "id": "E037-client-project-access-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Jess project-access editor current checked values; not saved",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:14:51.260Z"
+  },
+  {
+    "id": "E038-start-project-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Start project initial draft, Create disabled",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:15:02.777Z"
+  },
+  {
+    "id": "E039-start-project-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Start project initial draft, Create disabled",
+    "url": "http://localhost:3000/clients/loom",
+    "captured": "2026-10-20T09:15:02.862Z"
+  },
+  {
+    "id": "E040-add-client-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Add Client form initial, Save disabled",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T09:15:05.119Z"
+  },
+  {
+    "id": "E041-add-client-duplicate-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing Client name entered as draft; duplicate check is only on submission and was not invoked.",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T09:15:14.191Z"
+  },
+  {
+    "id": "E042-add-client-duplicate-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing Client name entered as draft; duplicate check is only on submission and was not invoked.",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T09:15:14.408Z"
+  },
+  {
+    "id": "E043-clients-no-results",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Clients no-results search, clear control visible",
+    "url": "http://localhost:3000/clients",
+    "captured": "2026-10-20T09:15:36.167Z"
+  },
+  {
+    "id": "D-R012-staff-1133",
+    "coverageId": "R012",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:16:07.125Z"
+  },
+  {
+    "id": "E044-media-inspector-hidden-close",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Asset drawer close and filename hidden behind global header",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:16:07.303Z"
+  },
+  {
+    "id": "E045-media-close-click-result",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Attempting drawer close from its DOM target leaves drawer; top Ask Brisk overlaps location",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:16:19.046Z"
+  },
+  {
+    "id": "E046-media-escape-result",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Escape from Filename after closing accidental AI panel",
+    "url": "http://localhost:3000/media/media-01",
+    "captured": "2026-10-20T09:16:33.661Z"
+  },
+  {
+    "id": "E047-media-scoped-client",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Loom selected; scoped Download media action",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T09:16:45.719Z"
+  },
+  {
+    "id": "E048-media-sort-keyboard-focus",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Sort media keyboard focus from List view",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T09:17:02.153Z"
+  },
+  {
+    "id": "E049-people-sort-keyboard-focus",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "DS Sort people focus after menu Escape",
+    "url": "http://localhost:3000/people",
+    "captured": "2026-10-20T09:17:33.050Z"
+  },
+  {
+    "id": "D-R026-staff-1440",
+    "coverageId": "R026",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:06.683Z"
+  },
+  {
+    "id": "E050-brief-description",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief Description step, existing missing fields, no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:07.148Z"
+  },
+  {
+    "id": "BRIEF-video-type-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief video-type, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:18.469Z"
+  },
+  {
+    "id": "BRIEF-video-type-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief video-type, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:18.675Z"
+  },
+  {
+    "id": "BRIEF-audience-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief audience, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:19.183Z"
+  },
+  {
+    "id": "BRIEF-audience-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief audience, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:19.284Z"
+  },
+  {
+    "id": "BRIEF-references-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief references, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:19.735Z"
+  },
+  {
+    "id": "BRIEF-references-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief references, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:19.808Z"
+  },
+  {
+    "id": "BRIEF-brand-kit-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief brand-kit, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:20.239Z"
+  },
+  {
+    "id": "BRIEF-brand-kit-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief brand-kit, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:20.399Z"
+  },
+  {
+    "id": "BRIEF-footage-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief footage, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:20.768Z"
+  },
+  {
+    "id": "BRIEF-footage-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief footage, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:20.854Z"
+  },
+  {
+    "id": "BRIEF-deliverables-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief deliverables, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:21.308Z"
+  },
+  {
+    "id": "BRIEF-deliverables-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief deliverables, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:21.439Z"
+  },
+  {
+    "id": "BRIEF-deadline-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief deadline, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:21.899Z"
+  },
+  {
+    "id": "BRIEF-deadline-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief deadline, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:22.018Z"
+  },
+  {
+    "id": "BRIEF-summary-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief summary, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:22.506Z"
+  },
+  {
+    "id": "BRIEF-summary-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief summary, existing values/missing state; no field edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:22.734Z"
+  },
+  {
+    "id": "E051-brief-send-confirmation-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Send Brief confirmation recipient/message; no send",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:51.628Z"
+  },
+  {
+    "id": "E052-brief-send-confirmation-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Send Brief confirmation recipient/message; no send",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:19:51.688Z"
+  },
+  {
+    "id": "E053-brief-link-access-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Share Brief panel current scope/access, no copy/change",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:20:02.931Z"
+  },
+  {
+    "id": "E054-brief-link-access-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Share Brief panel current scope/access, no copy/change",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:20:03.128Z"
+  },
+  {
+    "id": "E055-project-flow-panel-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Adjust project flow open; focus remains opener",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:20:28.707Z"
+  },
+  {
+    "id": "E056-project-flow-escape",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Escape on opener leaves flow dialog open",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:20:28.892Z"
+  },
+  {
+    "id": "E057-project-flow-panel-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Flow panel current stages including pinned Media, no changes",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:20:29.010Z"
+  },
+  {
+    "id": "E058-script-versions-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Script saved versions and commands, no creation",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:20:54.574Z"
+  },
+  {
+    "id": "E059-script-versions-escape",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Escape on version opener leaves Versions panel open",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:20:54.770Z"
+  },
+  {
+    "id": "E060-script-versions-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Versions panel narrower desktop",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:20:54.945Z"
+  },
+  {
+    "id": "E061-script-versions-outside",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Clicking editor heading outside leaves Versions panel open",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:21:26.642Z"
+  },
+  {
+    "id": "E062-script-actions-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Script quiet actions with approval/last-version guards",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:21:27.389Z"
+  },
+  {
+    "id": "E063-script-comments",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Script comments panel existing empty state, no comment added",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:21:27.824Z"
+  },
+  {
+    "id": "E064-script-historical-read-only",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Historical V1 read-only preview, no restoration/edit",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:21:41.008Z"
+  },
+  {
+    "id": "E065-script-row-actions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Current Script row overflow; no edit action invoked",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:21:50.782Z"
+  },
+  {
+    "id": "E066-script-visual-column",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Visual column expanded, current approved Script; no edits",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:22:03.242Z"
+  },
+  {
+    "id": "E067-approved-script-edit-guard",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Approved Script edit confirmation, cancelled without unapproving",
+    "url": "http://localhost:3000/projects/loom-launch-film/script",
+    "captured": "2026-10-20T09:22:53.532Z"
+  },
+  {
+    "id": "E068-shared-media-source-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Four approved Add/Replace media sources, none selected",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:23:08.645Z"
+  },
+  {
+    "id": "E069-media-add-link-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Storyboard Add link command attempted; no in-page link form or native prompt was observable. No URL added.",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:23:20.527Z"
+  },
+  {
+    "id": "E070-media-add-link-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Storyboard after Add link attempt; no verified link form. No URL added.",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T09:23:20.693Z"
+  },
+  {
+    "id": "E071-transcripts-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Project Media transcript collection, existing populated clips",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:24:39.410Z"
+  },
+  {
+    "id": "E072-transcripts-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Transcript collection narrower desktop",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:24:39.601Z"
+  },
+  {
+    "id": "E073-transcript-keyboard-comment",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Space on Add comment pin; observed playback rather than comment composer; muted for inspection",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:24:53.764Z"
+  },
+  {
+    "id": "E074-transcript-collection-actions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Collection Copy all/Download scope, no command invoked",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:25:04.420Z"
+  },
+  {
+    "id": "E075-transcript-clip-actions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Per-clip compact commands and danger action, not invoked",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:25:05.028Z"
+  },
+  {
+    "id": "E076-transcript-highlights-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Highlights only with existing no highlights; no content changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:25:05.363Z"
+  },
+  {
+    "id": "E077-transcript-empty-actions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Transcripts Highlights empty filter. Header exports remain enabled for the collection; export scope is independent of Highlights.",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:25:19.342Z"
+  },
+  {
+    "id": "E078-transcript-selection-toolbar",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Transcript text selection toolbar, destination names Script V3; no send/highlight",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T09:25:58.156Z"
+  },
+  {
+    "id": "D-R006-client-1440",
+    "coverageId": "R006",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/client/invoices",
+    "captured": "2026-10-20T09:26:18.004Z"
+  },
+  {
+    "id": "D-R010-client-1440",
+    "coverageId": "R010",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard/start-video?client=loom",
+    "captured": "2026-10-20T09:26:19.221Z"
+  },
+  {
+    "id": "D-R013-client-1440",
+    "coverageId": "R013",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T09:26:20.185Z"
+  },
+  {
+    "id": "D-R036-client-1440",
+    "coverageId": "R036",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client/company",
+    "captured": "2026-10-20T09:26:21.717Z"
+  },
+  {
+    "id": "D-R037-client-1440",
+    "coverageId": "R037",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client/team",
+    "captured": "2026-10-20T09:26:23.445Z"
+  },
+  {
+    "id": "D-R061-client-1440",
+    "coverageId": "R061",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:26:25.473Z"
+  },
+  {
+    "id": "E079-client-portal-grouping",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Video grouping field/menu, all options visible",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:27:06.815Z"
+  },
+  {
+    "id": "E080-client-portal-no-completed",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Completed filter with no matching videos",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:27:07.320Z"
+  },
+  {
+    "id": "E081-client-series-expanded",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Customer Stories series expanded in full video list",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:27:08.004Z"
+  },
+  {
+    "id": "E082-client-project-actions",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client portal project actions menu; no command invoked",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:30:09.233Z"
+  },
+  {
+    "id": "E083-client-project-actions-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client portal project actions menu at narrower desktop; no command invoked",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:30:09.394Z"
+  },
+  {
+    "id": "E084-client-history-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Loaded project history and external collaboration chat; composer empty, no message sent",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:30:21.978Z"
+  },
+  {
+    "id": "D-R001-freelancer-1440",
+    "coverageId": "R001",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T09:30:43.997Z"
+  },
+  {
+    "id": "D-R001-freelancer-1133",
+    "coverageId": "R001",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T09:30:44.067Z"
+  },
+  {
+    "id": "E085-freelancer-offers-empty",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Offers zero-state; payment filter applies only Active jobs",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T09:30:57.167Z"
+  },
+  {
+    "id": "E086-freelancer-offer-history",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Offer history zero-state",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T09:31:01.655Z"
+  },
+  {
+    "id": "D-R016-freelancer-1440",
+    "coverageId": "R016",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T09:31:03.884Z"
+  },
+  {
+    "id": "D-R016-freelancer-1133",
+    "coverageId": "R016",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T09:31:03.986Z"
+  },
+  {
+    "id": "D-R013-freelancer-1440",
+    "coverageId": "R013",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T09:31:10.422Z"
+  },
+  {
+    "id": "D-R013-freelancer-1133",
+    "coverageId": "R013",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/media",
+    "captured": "2026-10-20T09:31:10.509Z"
+  },
+  {
+    "id": "D-R004-freelancer-1440",
+    "coverageId": "R004",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits",
+    "captured": "2026-10-20T09:31:11.944Z"
+  },
+  {
+    "id": "D-R004-freelancer-1133",
+    "coverageId": "R004",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits",
+    "captured": "2026-10-20T09:31:11.992Z"
+  },
+  {
+    "id": "D-R003-freelancer-1440",
+    "coverageId": "R003",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:12.856Z"
+  },
+  {
+    "id": "D-R003-freelancer-1133",
+    "coverageId": "R003",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:12.901Z"
+  },
+  {
+    "id": "D-R006-client-1133",
+    "coverageId": "R006",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/client/invoices",
+    "captured": "2026-10-20T09:31:19.806Z"
+  },
+  {
+    "id": "D-R010-client-1133",
+    "coverageId": "R010",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/customer-dashboard/start-video?client=loom",
+    "captured": "2026-10-20T09:31:21.038Z"
+  },
+  {
+    "id": "D-R036-client-1133",
+    "coverageId": "R036",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client/company",
+    "captured": "2026-10-20T09:31:22.249Z"
+  },
+  {
+    "id": "D-R037-client-1133",
+    "coverageId": "R037",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/settings/client/team",
+    "captured": "2026-10-20T09:31:23.759Z"
+  },
+  {
+    "id": "D-R061-client-1133",
+    "coverageId": "R061",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T09:31:24.791Z"
+  },
+  {
+    "id": "D-R003-client-1133",
+    "coverageId": "R003",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:25.813Z"
+  },
+  {
+    "id": "E087-brand-logo-download",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Download logo dialog showing format and source; no download/replacement",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:45.053Z"
+  },
+  {
+    "id": "E088-brand-font-roles",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Font roles local editor, existing values, no edit/save",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:54.974Z"
+  },
+  {
+    "id": "E089-brand-font-roles-1440",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Font roles existing values, no edit/save",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:31:59.596Z"
+  },
+  {
+    "id": "E090-brand-voice-tone",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Voice and tone local editor; existing summary/tags; no save",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:32:05.794Z"
+  },
+  {
+    "id": "E091-brand-voice-tone-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Voice and tone editor narrower desktop; no save",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:32:05.896Z"
+  },
+  {
+    "id": "E092-brand-asset-preview",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing visual asset preview; no download/delete",
+    "url": "http://localhost:3000/brand-kits/loom",
+    "captured": "2026-10-20T09:32:06.533Z"
+  },
+  {
+    "id": "E093-cost-invoice-review",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing Sent back invoice, mismatch and reason visible; no status changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/costs",
+    "captured": "2026-10-20T09:32:27.891Z"
+  },
+  {
+    "id": "E094-invoice-pdf",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing invoice PDF preview, no status change",
+    "url": "http://localhost:3000/projects/loom-launch-film/costs",
+    "captured": "2026-10-20T09:32:32.775Z"
+  },
+  {
+    "id": "D-R017-staff-1133",
+    "coverageId": "R017",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T09:32:39.192Z"
+  },
+  {
+    "id": "E095-expenses-submitted-review",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Submitted matching invoice, two PDFs, optional Approval note; no approval",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T09:32:49.832Z"
+  },
+  {
+    "id": "E096-invoice-send-back-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Send back local form, required reason blank; no submission",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T09:32:50.201Z"
+  },
+  {
+    "id": "E097-invoice-send-back-draft",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Reason draft enables Send back; Back then Cancel discards, no submission",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T09:32:56.439Z"
+  },
+  {
+    "id": "E098-invoice-currency-mismatch",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Submitted invoice with currency mismatch; approval note required; no approval",
+    "url": "http://localhost:3000/outstanding-invoices",
+    "captured": "2026-10-20T09:32:57.428Z"
+  },
+  {
+    "id": "E099-invoice-forward",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing Approved invoice forwarding draft; no email sent",
+    "url": "http://localhost:3000/projects/openai-partner-update/costs",
+    "captured": "2026-10-20T09:33:09.102Z"
+  },
+  {
+    "id": "E100-invoice-forward-picker",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Accounts inbox multi-selector for approved invoice; no send",
+    "url": "http://localhost:3000/projects/openai-partner-update/costs",
+    "captured": "2026-10-20T09:33:13.656Z"
+  },
+  {
+    "id": "E101-invoice-no-destinations",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "No forwarding destinations selected; Email invoice disabled, no send",
+    "url": "http://localhost:3000/projects/openai-partner-update/costs",
+    "captured": "2026-10-20T09:33:18.926Z"
+  },
+  {
+    "id": "E102-studio-edit-name",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Edit name focused editor; existing values, no save",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:33:28.751Z"
+  },
+  {
+    "id": "E102-studio-add-logo",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Add logo focused editor; existing values, no save",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:33:29.395Z"
+  },
+  {
+    "id": "E102-studio-edit-video-types",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Edit video types focused editor; existing values, no save",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:33:30.107Z"
+  },
+  {
+    "id": "E102-studio-edit-questions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Edit questions focused editor; existing values, no save",
+    "url": "http://localhost:3000/settings/studio",
+    "captured": "2026-10-20T09:33:30.816Z"
+  },
+  {
+    "id": "E103-notifications-root-navigation",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Notifications root reached through Studio settings sidebar",
+    "url": "http://localhost:3000/settings/notifications",
+    "captured": "2026-10-20T09:33:48.365Z"
+  },
+  {
+    "id": "E104-notifications-category-navigation",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Work to review category reached from notification root; sidebar changes to workspace",
+    "url": "http://localhost:3000/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T09:33:55.537Z"
+  },
+  {
+    "id": "E105-notification-edit-message",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Notification message local editor with Title and Message; no edit/save",
+    "url": "http://localhost:3000/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T09:34:06.238Z"
+  },
+  {
+    "id": "E106-notification-fixed-message",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Approval recorded notification preview with Edit message available; fixed-wording branch remains unchecked.",
+    "url": "http://localhost:3000/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T09:34:06.850Z"
+  },
+  {
+    "id": "E107-plan-comparison-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Plan comparison dialog with current plan and change options; no purchase",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:34:15.222Z"
+  },
+  {
+    "id": "E108-plan-comparison-1440",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 787,
+    "state": "Plan comparison current plan and options; no selection committed",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:34:20.646Z",
+    "notes": "Actual native image dimensions verified from JPEG frame. The stable capture ID retains the originally requested width; use recorded dimensions. "
+  },
+  {
+    "id": "E109-plan-confirmation",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Plan change confirmation; cancelled before Confirm change",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:34:21.055Z"
+  },
+  {
+    "id": "E110-addon-confirmation",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Additional storage confirmation; no add-on applied",
+    "url": "http://localhost:3000/settings/plan-billing",
+    "captured": "2026-10-20T09:34:32.530Z"
+  },
+  {
+    "id": "E111-password-dialog",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Change password dialog opened only; no credentials entered",
+    "url": "http://localhost:3000/settings/personal/security",
+    "captured": "2026-10-20T09:34:46.216Z"
+  },
+  {
+    "id": "E112-brief-video-type-scroll-before",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Video type step after keyboard navigation toward footer, no choice changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:35:16.124Z"
+  },
+  {
+    "id": "E113-brief-audience-scroll-after",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Audience step selected from Video type footer; current scroll position, no content changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:35:16.531Z"
+  },
+  {
+    "id": "E114-brief-audience-scroll-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Audience heading partly behind fixed app header after step transition; no answer changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:35:22.175Z"
+  },
+  {
+    "id": "E115-brief-duration-menu-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Duration menu reveals full existing 3 mins while resting table label is truncated; no option selected",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:35:35.088Z"
+  },
+  {
+    "id": "E116-brief-deliverables-collapsed-nav",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Brief Deliverables with collapsed navigation; no content changed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T09:35:35.566Z"
+  },
+  {
+    "id": "E117-video-unread-badges",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Videos unread badge computed styles measured: 10px white on #FD68B5, continuous pulse declared",
+    "url": "http://localhost:3000/active-videos",
+    "captured": "2026-10-20T09:36:07.632Z"
+  },
+  {
+    "id": "E118-project-hours",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project details Expand Hours existing content; no edits",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T09:36:27.185Z"
+  },
+  {
+    "id": "E118-project-deadline",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project details Expand Deadline existing content; no edits",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T09:36:27.693Z"
+  },
+  {
+    "id": "E118-project-latest-actions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project details Expand Latest actions existing content; no edits",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T09:36:28.099Z"
+  },
+  {
+    "id": "E118-project-notes",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project details Expand Notes existing content; no edits",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T09:36:28.524Z"
+  },
+  {
+    "id": "E119-project-notes-editor",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project notes local empty editor; no save",
+    "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T09:36:35.137Z"
+  },
+  {
+    "id": "D-R023-staff-1133",
+    "coverageId": "R023",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/projects/loom-launch-film/files",
+    "captured": "2026-10-20T09:36:42.888Z"
+  },
+  {
+    "id": "E120-files-add-location",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Empty Add location form; no URL entered or saved",
+    "url": "http://localhost:3000/projects/loom-launch-film/files",
+    "captured": "2026-10-20T09:36:47.098Z"
+  },
+  {
+    "id": "E121-files-edit-location",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing Working files local location editor; no edit/save",
+    "url": "http://localhost:3000/projects/loom-launch-film/files",
+    "captured": "2026-10-20T09:36:52.370Z"
+  },
+  {
+    "id": "E122-files-remove-confirmation",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Remove file location confirmation, scope says files remain; cancelled",
+    "url": "http://localhost:3000/projects/loom-launch-film/files",
+    "captured": "2026-10-20T09:37:04.727Z"
+  },
+  {
+    "id": "D-R015-staff-1133",
+    "coverageId": "R015",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "route default; nested states require individual verification",
+    "url": "http://localhost:3000/notifications",
+    "captured": "2026-10-20T09:37:06.134Z"
+  },
+  {
+    "id": "E123-updates-unread-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Unread notification empty filter; no mark read invoked",
+    "url": "http://localhost:3000/notifications",
+    "captured": "2026-10-20T09:37:11.526Z"
+  },
+  {
+    "id": "E124-chat-date-overlap",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Keyboard navigation to historical message region scrolls message under sticky date; no message/reaction sent",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:37:40.894Z"
+  },
+  {
+    "id": "E125-chat-date-scroll",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Historical message area after ArrowDown scrolling; no message sent",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:37:56.997Z"
+  },
+  {
+    "id": "E126-chat-page-scroll",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Chat after PageDown from historical message link; no content altered",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:38:59.367Z"
+  },
+  {
+    "id": "E127-chat-search-default",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Message search with suggested filters and permitted results; no send",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:18.703Z"
+  },
+  {
+    "id": "E128-chat-search-no-results",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Message search no-results; local query only",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:18.803Z"
+  },
+  {
+    "id": "E129-chat-settings",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "External Chat settings connections and routing, no toggle or configuration changed",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:27.073Z"
+  },
+  {
+    "id": "E130-chat-project-members",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing project members panel; no access changed/invites sent",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:27.703Z"
+  },
+  {
+    "id": "E131-chat-dms",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "DMs view existing content only; no messages, calls or group created",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:34.936Z"
+  },
+  {
+    "id": "E131-chat-mentions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Mentions view existing content only; no messages, calls or group created",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:35.283Z"
+  },
+  {
+    "id": "E131-chat-groups",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Groups view existing content only; no messages, calls or group created",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:35.622Z"
+  },
+  {
+    "id": "E131-chat-threads",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Threads view existing content only; no messages, calls or group created",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:35.944Z"
+  },
+  {
+    "id": "E131-chat-calls",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Calls view existing content only; no messages, calls or group created",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:36.330Z"
+  },
+  {
+    "id": "E132-chat-call-notes",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing call notes; no call started or notes edited",
+    "url": "http://localhost:3000/chat",
+    "captured": "2026-10-20T09:39:41.698Z"
+  },
+  {
+    "id": "E133-media-upload-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project Media upload source menu; no computer file selected",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:40:26.769Z"
+  },
+  {
+    "id": "E134-media-cloud-picker",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Mock Google Drive file picker; none selected, no import",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:40:32.328Z"
+  },
+  {
+    "id": "E135-media-cloud-no-results",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Cloud picker no-results query; none selected, Import files remains disabled",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:40:40.452Z"
+  },
+  {
+    "id": "E136-media-folder-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Folder menu; no add/rename/move/delete command invoked",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:40:41.205Z"
+  },
+  {
+    "id": "E137-media-move-dialog",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Move one selected file destination picker; no move confirmed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:41:12.634Z"
+  },
+  {
+    "id": "E138-media-move-folder-options",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Destination folder hierarchy expanded; no option/move confirmed",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:41:21.162Z"
+  },
+  {
+    "id": "E139-test-mode-three-roles",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Test mode expanded with three permitted access role choices; no scenario reset",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:41:22.133Z"
+  },
+  {
+    "id": "E140-global-chat-drawer",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Global Chat drawer opened from project Media, no message sent",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:41:28.810Z"
+  },
+  {
+    "id": "E141-staff-account-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Account menu role-appropriate routes; no sign out/account change",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:41:49.542Z"
+  },
+  {
+    "id": "E142-ai-source-menu",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Ask Brisk Add source menu; no prompt or source submitted",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:42:33.809Z"
+  },
+  {
+    "id": "E143-ai-source-picker",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "AI context picker opened without selecting a source or sending prompt",
+    "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T09:42:40.949Z"
+  },
+  {
+    "id": "E144-client-access-editor",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing Jess Client project access local editor; no access saved",
+    "url": "http://localhost:3000/clients/loom?section=contacts",
+    "captured": "2026-10-20T09:43:07.932Z"
+  },
+  {
+    "id": "E145-client-access-local-draft",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "One project unchecked in local access draft; Cancel discards, no save",
+    "url": "http://localhost:3000/clients/loom?section=contacts",
+    "captured": "2026-10-20T09:43:26.713Z"
+  },
+  {
+    "id": "E146-client-access-cancel-preserved",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Reopened after Cancel; all five project checks preserved, no saved access change",
+    "url": "http://localhost:3000/clients/loom?section=contacts",
+    "captured": "2026-10-20T09:43:27.396Z"
+  }
+]

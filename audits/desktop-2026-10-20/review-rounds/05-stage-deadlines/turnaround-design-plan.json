@@ -1,0 +1,82 @@
+{
+  "date": "28 October 2026",
+  "status": "Proposed next design scope; no application implementation approved or performed",
+  "authority": "Tom confirmed working days excluding weekends, and starting the stage clock when it becomes Waiting on Studio. Team assignment approval does not approve timing UI or policy additions.",
+  "nextDeliverable": "A visual proposal for Studio timing defaults, the project deadline panel, and compact Videos/progress countdown states, before application changes.",
+  "proposedUI": [
+    {
+      "surface": "Studio settings - production defaults",
+      "content": "Automatic turnaround or Fixed dates as the Studio default. Configurable timing presets; project exceptions available."
+    },
+    {
+      "surface": "Project deadline panel",
+      "content": "Name the stage and WIP, for example Edit - WIP1. Distinguish Internal review and Client delivery. Show actual due dates and remaining working days. Preserve a separate final-delivery date."
+    },
+    {
+      "surface": "Videos/progress",
+      "content": "The compact Videos deadline column shows a named active Waiting on Studio stage deadline and a separate final-delivery date. Stages Waiting on Client or complete do not show an active Studio turnaround countdown. For multiple active stages, earliest +N stages disclosure is a proposal to review; all active stage deadlines remain available in details."
+    }
+  ],
+  "timingSchedule": [
+    {
+      "case": "Standard WIP1, up to 1 minute",
+      "internalWorkingDays": 2,
+      "clientWorkingDays": 3,
+      "source": "Supplied timing durations. Anchoring both targets to the stage start is a recommendation for review, not a claim that assignment-based internal timing was separately approved."
+    },
+    {
+      "case": "Revision round",
+      "internalWorkingDays": null,
+      "clientWorkingDays": 2,
+      "internalProposal": "1 working day, subject to Tom agreement; this is not stated in the supplied guidance."
+    },
+    {
+      "case": "Simple template WIP1",
+      "internalWorkingDays": 1,
+      "clientWorkingDays": 2,
+      "source": "Supplied shorter-turnaround example."
+    },
+    {
+      "case": "Each extra minute of screen time",
+      "additionalWorkingDays": 1,
+      "source": "Supplied duration rule; fractional-minute rounding still needs agreement."
+    }
+  ],
+  "proposedBehaviour": [
+    "Start an applicable turnaround cycle on the real Waiting on Studio transition, not on render or reassignment.",
+    "Close the current delivery cycle when the WIP is released to the Client; Client waiting time does not consume the Studio's next turnaround allowance.",
+    "Start the next revision cycle on the relevant feedback handoff back to Waiting on Studio.",
+    "Keep internal WIP delivery distinct from Client release and stage approval.",
+    "Reassigning a person does not reset the stage timer.",
+    "Separate estimated effort hours used for Freelancer pricing from working-day turnaround.",
+    "Clients see their delivery promise; internal review targets remain Studio/assigned-Filmmaker information under existing visibility rules."
+  ],
+  "preservation": [
+    "No automatic migration, clearing or shifting of existing manually promised dates.",
+    "Studio default changes should apply to future cycles; changes to an active cycle require an explicit project-level action.",
+    "Final delivery remains a separate fixed commitment.",
+    "Use the current adaptable production flow; do not apply a three-day Edit preset indiscriminately to shoots, pinned Media or complex animation.",
+    "Application code, stored records, assets and dependencies stay unchanged during this proposal step."
+  ],
+  "beforeImplementation": [
+    "Agree the visual proposal and mode/override behaviour.",
+    "Resolve the internal WIP anchor relative to the stage clock and any late assignment.",
+    "Agree an internal review target for revision rounds if one is needed.",
+    "Agree fractional-minute rounding and relevant animation exceptions.",
+    "Define how legacy stages without a recorded entry timestamp appear, preserving existing dates and avoiding invented start times.",
+    "Define the prototype's demo-time reference without changing records merely to make deadlines look current."
+  ],
+  "confirmedPointOfUseRequirement": "The producer chooses Automatic or Specific date in the project stage deadline controls, with the Studio default preselected. This confirms the interaction requirement, not a completed UI or implementation approval.",
+  "confirmedActiveStageRequirement": "The compact Videos deadline column shows a named active Waiting on Studio stage deadline and a separate final-delivery date. Stages Waiting on Client or complete do not show an active Studio turnaround countdown. For multiple active stages, earliest +N stages disclosure is a proposal to review; all active stage deadlines remain available in details.",
+  "latestVisualReview": {
+    "date": "28 October 2026",
+    "review": "timing-review.html",
+    "interactive": "timing-preview.html",
+    "status": "Concrete visual proposal ready for Tom review; application unchanged"
+  },
+  "sharedDefaultsRefinement": {
+    "requirement": "shared-defaults-requirement.json",
+    "preview": "timing-preview.html",
+    "rule": "One shared Studio default with populated stage overrides; supersedes separate blank per-stage entry."
+  }
+}

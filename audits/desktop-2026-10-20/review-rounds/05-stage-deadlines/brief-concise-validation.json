@@ -1,0 +1,23 @@
+{
+  "date": "28 October 2026",
+  "type": "Design-preview refinement only",
+  "protectedFilesCompared": 1705,
+  "changedProtectedFiles": [],
+  "browserChecks": [
+    "Default concise warning",
+    "Why disclosure reveals stage allowances and assumptions",
+    "Use date changes request and returns focus without submitting",
+    "Later date gives neutral estimate message",
+    "Empty date has no false timing conflict",
+    "Earlier date restores warning"
+  ],
+  "observations": "brief-concise-browser-observations.json",
+  "desktopWidths": [
+    1440,
+    1133
+  ],
+  "viewportRestored": true,
+  "keyboardGap": "Native summary Enter action timed out in CUA. Click disclosure verified; keyboard compliance is not claimed.",
+  "notificationsOrRecordsSubmitted": false,
+  "scenario": "brief-concise-requirement.json"
+}

@@ -1,0 +1,98 @@
+{
+  "id": "DEADLINE-02",
+  "date": "2026-10-29",
+  "title": "Labelled delivery dates in Project Chat timing cards",
+  "approval": "Tom approved Requested delivery and Suggested delivery as separate labelled values, followed by a short reason and the existing Review date action.",
+  "implementation": [
+    "Added an optional rich body slot to the existing actionable ProjectSystemPost composition. All other consumers retain the existing paragraph body.",
+    "Pending ProjectTimingPost renders a two-column semantic definition list using DS type and spacing, followed by the audience-appropriate reason.",
+    "Removed the repeated date prefix from the visible reason by rendering the existing reason field directly. Existing reason text and reviewed Client copy are preserved rather than rewriting stored messages.",
+    "Keep title, colour, audience, timestamp, footer action, date values, review dialog and agreement behaviour.",
+    "Resolved historical timing summaries retain their original presentation."
+  ],
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed, exit 0",
+    "runtime": {
+      "url": "http://127.0.0.1:8783/chat?project=loom-launch-film&message=timing-risk-loom-launch-film-2026-08-13-internal&review=timing-card-layout",
+      "status": 200
+    },
+    "desktop": [
+      "Staff Internal card checked in a 1440 x 1000 CSS layout with expanded navigation.",
+      "Narrower collapsed-navigation layout checked at measured 1133 x 1000 CSS dimensions, including card bounds and both values.",
+      "Staff External and Customer External display the reviewed Client reason and labelled dates. Customer has no Internal timing card.",
+      "Enter on Review date opens the existing Review delivery date dialog. Enter on Close closes it and returns focus to Review date.",
+      "Customer review is read-only: no Share with Client or agreement action was introduced.",
+      "Existing ordinary actionable and passive system posts retain their prior layout.",
+      "No inspected browser warnings or errors."
+    ],
+    "captureNote": "Full browser captures were retained and the final card crop was extracted faithfully from internal-1440.png. Direct element capture was discarded after it produced a blank frame. Narrow capture files are 1133 x 1000; the browser normalised zoom during capture, leaving a 1020 x 900 rendered area. They demonstrate a constrained desktop state rather than an exact 1133 CSS screenshot.",
+    "temporaryInspection": "Used isolated origin 8783 only. Returned to Studio Staff, expanded navigation, closed Test mode and review dialog, reset temporary viewport and closed the two temporary tabs.",
+    "sourceComparison": {
+      "comparedFiles": 1785,
+      "changed": [
+        "src/components/project-timing/project-timing.css",
+        "src/components/project-timing/ProjectTimingPost.tsx",
+        "src/components/notifications/ProjectSystemPost.tsx",
+        "Docs/desktop-design-baseline.md"
+      ]
+    }
+  },
+  "evidence": {
+    "implemented-card.png": {
+      "source": "internal-1440.png",
+      "cropBounds": [
+        652,
+        267,
+        1292,
+        501
+      ],
+      "state": "Studio Staff, Internal pending production warning"
+    },
+    "internal-1440.png": {
+      "role": "Studio Staff",
+      "state": "Internal, expanded sidebar",
+      "cssViewport": [
+        1440,
+        1000
+      ]
+    },
+    "internal-1133.png": {
+      "role": "Studio Staff",
+      "state": "Internal, collapsed sidebar",
+      "captureFrame": [
+        1133,
+        1000
+      ],
+      "note": "Zoom-normalised narrow desktop capture; see captureNote."
+    },
+    "client-desktop.png": {
+      "role": "Customer",
+      "state": "External with reviewed Client copy; Test mode open to show role",
+      "observedCssViewport": [
+        1020,
+        900
+      ],
+      "captureFrame": [
+        1133,
+        1000
+      ]
+    },
+    "before-user-screenshot.png": "Original supplied screenshot retained.",
+    "before-card.png": "Faithful crop of the original supplied screenshot, copied from the proposal folder."
+  },
+  "preserved": [
+    "Original mock data and dates",
+    "Stored working records on origins 8773, 8777 and 8778",
+    "Internal/External permissions and sharing rules",
+    "Agreed delivery until Client agreement",
+    "Existing full message text for search/history",
+    "All other application changes, assets and dependencies"
+  ],
+  "limits": [
+    "Resolved timing summaries and Studio Freelancer display were source-reviewed, not separately recreated in the browser.",
+    "No dates proposed or agreed, messages sent, invites sent or stored working data changed. Isolated demo navigation may update normal read/history state.",
+    "Mobile verification remains deferred.",
+    "The app retains existing reason text, including any dates deliberately included in producer-reviewed Client copy."
+  ],
+  "status": "Implemented and desktop-verified; awaiting Tom visual sign-off"
+}

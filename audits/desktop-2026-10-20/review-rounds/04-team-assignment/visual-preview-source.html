@@ -1,0 +1,216 @@
+<style>
+@font-face { font-family: BriskPreview; src: url(data:font/woff2;base64,__BRISK_FONT__) format('woff2'); font-weight: 200 800; font-display: swap; }
+#brisk-team-preview { /*__BRISK_TOKENS__*/ --font-brisk: BriskPreview, 'Plus Jakarta Sans', Arial, sans-serif; color-scheme: light; font: 14px/20px var(--font-brisk); color: var(--brisk-text-primary); }
+#brisk-team-preview * { box-sizing: border-box; }
+#brisk-team-preview [hidden] { display: none !important; }
+#brisk-team-preview button, #brisk-team-preview input { font: inherit; font-family: var(--font-brisk); }
+#brisk-team-preview h2, #brisk-team-preview h3, #brisk-team-preview p { margin: var(--brisk-space-none); }
+#brisk-team-preview .ds-icon { display: inline-block; width: var(--icon-size); height: var(--icon-size); flex-shrink: 0; background: currentColor; mask: var(--icon-url) center/contain no-repeat; -webkit-mask: var(--icon-url) center/contain no-repeat; }
+/*__DS_STYLES__*/
+#brisk-team-preview .preview-bar { display: flex; align-items: center; flex-wrap: wrap; gap: var(--brisk-space-s); padding: var(--brisk-space-s) var(--brisk-space-none) var(--brisk-space-l); }
+#brisk-team-preview .preview-label { color: var(--brisk-text-secondary); margin-inline-end: auto; font-size: 12px; }
+#brisk-team-preview .preview-bar button[aria-pressed='true'] { color: var(--brisk-brand-primary-click); text-decoration: underline; text-underline-offset: var(--brisk-space-xs); }
+#brisk-team-preview .preview-stage { padding: var(--brisk-space-xl) var(--brisk-space-l) var(--brisk-space-2xl); }
+#brisk-team-preview .product-surface { width: 100%; border: 1px solid var(--brisk-border-primary); border-radius: var(--brisk-radius-m); box-shadow: var(--brisk-shadow-m); background: var(--brisk-white); overflow: visible; }
+#brisk-team-preview .overview { max-width: 560px; margin-inline: auto; }
+#brisk-team-preview .chooser { max-width: 800px; margin-inline: auto; }
+#brisk-team-preview .surface-head { padding: var(--brisk-space-xl); border-bottom: 1px solid var(--brisk-border-secondary); }
+#brisk-team-preview .eyebrow { color: var(--brisk-text-secondary); font-size: 12px; line-height: 16px; margin-bottom: var(--brisk-space-xs); }
+#brisk-team-preview .title { font-size: 20px; line-height: 28px; font-weight: 700; }
+#brisk-team-preview .project-context { color: var(--brisk-text-secondary); margin-top: var(--brisk-space-xs); }
+#brisk-team-preview .overview-body, #brisk-team-preview .chooser-body { padding: var(--brisk-space-l) var(--brisk-space-xl); }
+#brisk-team-preview .section-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--brisk-space-s); margin-bottom: var(--brisk-space-xs); }
+#brisk-team-preview .section-heading h3 { font-size: 16px; line-height: 24px; font-weight: 700; }
+#brisk-team-preview .team-member { display: flex; align-items: center; gap: var(--brisk-space-m); padding: var(--brisk-space-m) var(--brisk-space-none); }
+#brisk-team-preview .avatar { width: var(--brisk-space-2xl); height: var(--brisk-space-2xl); flex: 0 0 var(--brisk-space-2xl); border: 1px solid var(--brisk-border-primary); border-radius: var(--brisk-radius-full); background: var(--brisk-extra-cyanic-secondary); color: var(--brisk-text-primary); display: inline-flex; align-items: center; justify-content: center; font-weight: 500; }
+#brisk-team-preview .avatar.invited { border-style: dashed; border-color: var(--brisk-text-secondary); color: var(--brisk-text-secondary); background: var(--brisk-white); }
+#brisk-team-preview .identity { flex: 1; min-width: 0; }
+#brisk-team-preview .name { display: block; color: var(--brisk-text-primary); font-weight: 600; }
+#brisk-team-preview .secondary { display: block; color: var(--brisk-text-secondary); font-size: 12px; line-height: 16px; margin-top: var(--brisk-space-xs); }
+#brisk-team-preview .profile-link { color: var(--brisk-text-primary); font-weight: 600; text-decoration: none; }
+#brisk-team-preview .profile-link:hover { text-decoration: underline; color: var(--brisk-brand-primary-click); }
+#brisk-team-preview .open-role { border-top: 1px solid var(--brisk-border-secondary); margin-top: var(--brisk-space-s); padding-top: var(--brisk-space-l); }
+#brisk-team-preview .role-row { display: flex; align-items: center; justify-content: space-between; gap: var(--brisk-space-m); }
+#brisk-team-preview .invitations { margin-top: var(--brisk-space-s); }
+#brisk-team-preview .invitation-body { padding: var(--brisk-space-s) var(--brisk-space-m); background: var(--brisk-bg-block-secondary); border-radius: var(--brisk-radius-s); }
+#brisk-team-preview .invitation-row { display: flex; align-items: center; justify-content: space-between; gap: var(--brisk-space-l); padding: var(--brisk-space-s) var(--brisk-space-none); }
+#brisk-team-preview .invitation-status { text-align: right; }
+#brisk-team-preview .footnote { color: var(--brisk-text-secondary); font-size: 12px; line-height: 16px; padding: var(--brisk-space-l) var(--brisk-space-xl); border-top: 1px solid var(--brisk-border-secondary); }
+#brisk-team-preview .role-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(128px, .48fr); gap: var(--brisk-space-l); margin-bottom: var(--brisk-space-l); align-items: start; }
+#brisk-team-preview .field-label { display: block; font-weight: 600; margin-bottom: var(--brisk-space-xs); }
+#brisk-team-preview .role-field { position: relative; }
+#brisk-team-preview .role-menu { position: absolute; z-index: 2; inset-inline: 0; top: 100%; margin-top: var(--brisk-space-xs); background: var(--brisk-white); border: 1px solid var(--brisk-border-primary); border-radius: var(--brisk-radius-s); padding: var(--brisk-space-xs); box-shadow: var(--brisk-shadow-m); display: grid; }
+#brisk-team-preview .role-menu button { justify-content: start; }
+#brisk-team-preview .ds-QuietChoices-panel { padding: var(--brisk-space-none); }
+#brisk-team-preview .search-wrap { margin: var(--brisk-space-l) var(--brisk-space-none); }
+#brisk-team-preview .list-head { display: grid; grid-template-columns: minmax(0, 1fr) 132px; gap: var(--brisk-space-l); color: var(--brisk-text-secondary); font-size: 12px; line-height: 16px; padding: var(--brisk-space-none) var(--brisk-space-none) var(--brisk-space-xs); }
+#brisk-team-preview .list-head span:last-child { text-align: right; }
+#brisk-team-preview .candidate { display: grid; grid-template-columns: minmax(0, 1fr) 132px; gap: var(--brisk-space-l); align-items: center; padding: var(--brisk-space-s); margin-inline: calc(var(--brisk-space-s) * -1); border-radius: var(--brisk-radius-s); }
+#brisk-team-preview .candidate:has(input[type='checkbox']:checked) { background: var(--brisk-brand-secondary); }
+#brisk-team-preview .candidate-choice { width: 100%; }
+#brisk-team-preview .candidate-choice .ds-Checkbox-label { flex: 1; }
+#brisk-team-preview .candidate-content { display: flex; align-items: center; gap: var(--brisk-space-m); width: 100%; }
+#brisk-team-preview .candidate .ds-Checkbox-input:not(:checked) + .ds-Checkbox-control .ds-icon { visibility: hidden; }
+#brisk-team-preview .project-cost { text-align: right; font-variant-numeric: tabular-nums; }
+#brisk-team-preview .project-cost .ds-Input-input { text-align: right; }
+#brisk-team-preview .rate-mode { color: var(--brisk-text-secondary); font-size: 12px; line-height: 16px; display: block; margin-top: var(--brisk-space-xs); }
+#brisk-team-preview .muted-row .avatar { background: var(--brisk-white); }
+#brisk-team-preview .chooser-footer { display: flex; align-items: center; flex-wrap: wrap; gap: var(--brisk-space-s); padding: var(--brisk-space-l) var(--brisk-space-xl); border-top: 1px solid var(--brisk-border-primary); }
+#brisk-team-preview .selection-summary { margin-right: auto; color: var(--brisk-text-secondary); font-size: 12px; }
+#brisk-team-preview .availability { color: var(--brisk-green-60); }
+#brisk-team-preview .staff-list .candidate, #brisk-team-preview .staff-list .list-head { grid-template-columns: minmax(0, 1fr); }
+#brisk-team-preview .scope-note { color: var(--brisk-text-secondary); font-size: 12px; margin-bottom: var(--brisk-space-s); }
+#brisk-team-preview .preview-feedback { color: var(--brisk-text-secondary); min-height: var(--brisk-space-l); font-size: 12px; line-height: 16px; padding-top: var(--brisk-space-m); }
+#brisk-team-preview .video-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(150px, 1fr); gap: var(--brisk-space-xl); padding: var(--brisk-space-xl); }
+#brisk-team-preview .video-actions { display: flex; flex-wrap: wrap; gap: var(--brisk-space-s); margin-top: var(--brisk-space-l); }
+#brisk-team-preview .summary-row { display: flex; align-items: center; gap: var(--brisk-space-s); margin-bottom: var(--brisk-space-xs); }
+#brisk-team-preview .team-summary-trigger { display: block; width: 100%; border: none; padding: var(--brisk-space-none); background: transparent; color: var(--brisk-text-secondary); text-align: left; }
+#brisk-team-preview .summary-row .avatar { font-weight: 400; }
+#brisk-team-preview .more { color: var(--brisk-brand-primary-click); margin-left: var(--brisk-space-3xl); font-size: 12px; }
+#brisk-team-preview .small-heading { color: var(--brisk-text-secondary); font-weight: 600; margin-bottom: var(--brisk-space-m); }
+@media (max-width: 500px) { #brisk-team-preview .preview-stage { padding: var(--brisk-space-l) var(--brisk-space-xs) var(--brisk-space-xl); } #brisk-team-preview .surface-head, #brisk-team-preview .overview-body, #brisk-team-preview .chooser-body, #brisk-team-preview .chooser-footer, #brisk-team-preview .video-row { padding: var(--brisk-space-l); } #brisk-team-preview .role-fields, #brisk-team-preview .video-row { grid-template-columns: minmax(0, 1fr); } #brisk-team-preview .candidate, #brisk-team-preview .list-head { grid-template-columns: minmax(0, 1fr) 100px; gap: var(--brisk-space-s); } #brisk-team-preview .candidate-content { gap: var(--brisk-space-s); } #brisk-team-preview .candidate-content .avatar { display: none; } #brisk-team-preview .preview-label { flex-basis: 100%; } #brisk-team-preview .selection-summary { flex-basis: 100%; } }
+</style>
+<div id="brisk-team-preview">
+  <div class="preview-bar" aria-label="Proposal views">
+    <span class="preview-label">Design proposal · no changes saved</span>
+    <ds-button variant="ghost" data-view="videos" aria-pressed="false">Videos entry</ds-button>
+    <ds-button variant="ghost" data-view="overview" aria-pressed="true">Team panel</ds-button>
+    <ds-button variant="ghost" data-view="chooser" aria-pressed="false">Assign a person</ds-button>
+  </div>
+  <div class="preview-stage viz-dotted-background">
+    <section class="product-surface overview" data-screen="overview" aria-label="Proposed Team panel">
+      <header class="surface-head"><p class="eyebrow">LOOM</p><h2 class="title">Launch Film - Sales Narrative</h2></header>
+      <div class="overview-body">
+        <div class="section-heading"><h3>Team</h3><ds-button variant="ghost" data-action="add-role"><ds-icon name="plus" />Add role</ds-button></div>
+        <div class="team-member"><span class="avatar">TM</span><div class="identity"><a class="profile-link" href="#profile-tom" data-profile="Tom Mitchell">Tom Mitchell</a><span class="secondary">Producer · Studio Staff</span></div><ds-button variant="ghost" data-role="Producer" data-action="change">Change</ds-button></div>
+        <div class="team-member"><span class="avatar">SC</span><div class="identity"><a class="profile-link" href="#profile-sarah" data-profile="Sarah Chen">Sarah Chen</a><span class="secondary">Editor · Studio Staff</span></div><ds-button variant="ghost" data-role="Editor" data-action="change">Change</ds-button></div>
+        <div class="open-role">
+          <div class="role-row"><div><span class="name">Shooter</span><span class="secondary">Unassigned · <span data-hours-label>8</span>h required</span></div><ds-button data-action="open-assign">Assign</ds-button></div>
+          <div class="invitations"><ds-button variant="ghost" data-toggle="overview-invites" aria-expanded="false"><ds-icon name="caret-down" />2 invited</ds-button><div class="invitation-body" id="overview-invites" hidden><div class="invitation-row"><div><span class="name">Jordan Lee</span><span class="secondary">Studio Freelancer · $980 project rate</span></div><span class="invitation-status secondary">Seen<br />Sent 8d ago</span></div><div class="invitation-row"><div><span class="name">Aisha Khan</span><span class="secondary">Studio Freelancer · $880 project rate</span></div><span class="invitation-status secondary">Invited<br />Sent 9d ago</span></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="product-surface chooser" data-screen="chooser" aria-label="Proposed assignment chooser" hidden>
+      <header class="surface-head"><p class="eyebrow">LOOM · Launch Film - Sales Narrative</p><h2 class="title">Assign team member</h2></header>
+      <div class="chooser-body">
+        <div class="role-fields"><div class="role-field"><label class="field-label label-m-semibold" for="preview-role">Role</label><ds-role-select /><div class="role-menu" id="preview-role-menu" hidden><ds-button variant="ghost" data-role-option="Producer">Producer</ds-button><ds-button variant="ghost" data-role-option="Editor">Editor</ds-button><ds-button variant="ghost" data-role-option="Shooter">Shooter</ds-button></div></div><ds-input label="Required hours" id="preview-hours" type="number" min="0" step="0.25" value="8" /></div>
+        <ds-people-tabs>
+        <div class="search-wrap"><ds-input id="preview-search" type="search" aria-label="Search people" placeholder="Search people (optional)" /></div>
+        <div class="freelancer-list" data-people="freelancers">
+          <div class="list-head"><span>Freelancer</span><span>Project rate ($)</span></div>
+          <div class="candidate" data-person="Hugo Bennett" data-person-id="hb" data-rate="156.25"><ds-checkbox id="preview-hb" aria-label="Select Hugo Bennett" data-person-choice="hb"><span class="avatar">HB</span><span class="identity"><span class="name">Hugo Bennett</span><span class="secondary">$156.25/hr · <span class="availability">Available</span></span></span></ds-checkbox><div class="project-cost"><ds-input id="preview-rate-hb" aria-label="Project rate for Hugo Bennett" type="number" min="1" step="1" value="1250" /><span class="rate-mode" data-mode="hb">Calculated · 8h</span></div></div>
+          <div class="candidate muted-row" data-person="Jordan Lee"><ds-checkbox id="preview-jl" aria-label="Jordan Lee, already invited" disabled="true"><span class="avatar invited">JL</span><span class="identity"><span class="name">Jordan Lee</span><span class="secondary">Already invited</span><span class="secondary">$122.50/hr</span></span></ds-checkbox><div class="project-cost"><strong>$980</strong><span class="rate-mode">Invited project rate</span></div></div>
+        </div>
+        <div class="staff-list" data-people="staff" hidden>
+          <p class="scope-note">All Staff shown.<span data-empty-suggestions> No suggested Staff for Shooter.</span></p>
+          <div class="candidate" data-person="Maddie Diaz" data-person-id="md" data-booked="24"><ds-checkbox id="preview-md" aria-label="Select Maddie Diaz" data-person-choice="md"><span class="avatar">MD</span><span class="identity"><span class="name">Maddie Diaz</span><span class="secondary">Motion Designer · Studio Staff</span><span class="secondary" data-capacity="md">32 of 40h after assignment · 8h free</span></span></ds-checkbox></div>
+          <div class="candidate" data-person="Riley Brooks" data-person-id="rb" data-booked="22"><ds-checkbox id="preview-rb" aria-label="Select Riley Brooks" data-person-choice="rb"><span class="avatar">RB</span><span class="identity"><span class="name">Riley Brooks</span><span class="secondary">Producer · Studio Staff</span><span class="secondary" data-capacity="rb">30 of 40h after assignment · 10h free</span></span></ds-checkbox></div>
+          <div class="candidate muted-row" data-person="Tom Mitchell"><ds-checkbox id="preview-te" aria-label="Tom Mitchell, already on this project" disabled="true"><span class="avatar">TM</span><span class="identity"><span class="name">Tom Mitchell</span><span class="secondary">Producer · Already on this project</span></span></ds-checkbox></div>
+        </div>
+        <p class="scope-note" id="preview-no-results" hidden>No matching people.</p>
+        </ds-people-tabs>
+        <div class="invitations" data-role-invitations><ds-button variant="ghost" data-toggle="chooser-invites" aria-expanded="false"><ds-icon name="caret-down" />2 existing invitations</ds-button><div class="invitation-body" id="chooser-invites" hidden><div class="invitation-row"><span>Jordan Lee <span class="secondary">Seen · Sent 8d ago</span></span><span>$980</span></div><div class="invitation-row"><span>Aisha Khan <span class="secondary">Invited · Sent 9d ago</span></span><span>$880</span></div></div></div>
+      </div>
+      <footer class="chooser-footer"><span class="selection-summary" id="preview-selection" aria-live="polite">Select a person</span><ds-button variant="ghost" data-action="cancel">Cancel</ds-button><ds-button variant="secondary" id="preview-invite" data-action="invite" disabled="true">Invite</ds-button><ds-button id="preview-assign" data-action="assign" disabled="true">Assign</ds-button></footer>
+    </section>
+    <section class="product-surface" data-screen="videos" aria-label="Proposed Videos entry" hidden>
+      <header class="surface-head"><h2 class="title">Videos</h2></header>
+      <div class="video-row"><div><p class="small-heading">Project</p><p class="eyebrow">LOOM</p><h3 class="title">Launch Film - Sales Narrative</h3><div class="video-actions"><ds-button variant="secondary" data-action="open-assign"><ds-icon name="user-plus" />Assign team</ds-button></div></div><div><p class="small-heading">Team</p><button class="team-summary-trigger" type="button" data-view="overview" aria-label="Open project Team"><span class="summary-row"><span class="avatar">TM</span><span>Producer</span></span><span class="summary-row"><span class="avatar">SC</span><span>Editor</span></span><span class="summary-row"><span class="avatar invited">JL</span><span>Shooter · Invited</span></span><span class="more">+1 more</span></button></div></div>
+    </section>
+  </div>
+  <p class="preview-feedback" id="preview-feedback" role="status">Proposal only. People, rates and capacity use sample project context. Nothing is assigned or sent.</p>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('brisk-team-preview');
+  const state = { view: 'overview', source: 'freelancers', role: 'Shooter', hours: 8, chosen: new Set(), customRate: false };
+  const $ = selector => root.querySelector(selector);
+  const $$ = selector => [...root.querySelectorAll(selector)];
+  const money = amount => '$' + amount.toLocaleString('en-AU', { minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 });
+  const feedback = message => { $('#preview-feedback').textContent = message; };
+  const showView = view => {
+    state.view = view;
+    $$('[data-screen]').forEach(screen => { screen.hidden = screen.dataset.screen !== view; });
+    $$('.preview-bar [data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
+    if (view === 'chooser') { state.chosen.clear(); $$('[data-person-choice]').forEach(input => { input.checked = false; input.setAttribute('aria-checked', 'false'); }); updateSummary(); }
+  };
+  const updateSummary = () => {
+    const selected = [...state.chosen].map(id => $(`[data-person-id="${id}"]`));
+    let text = 'Select a person';
+    if (selected.length) text = selected.map(person => person.dataset.person).join(', ') + (state.source === 'freelancers' ? ' · ' + money(Number($('#preview-rate-hb').value)) : ' · ' + state.hours + 'h');
+    $('#preview-selection').textContent = text;
+    const valid = selected.length > 0 && Number.isFinite(state.hours) && state.hours >= 0 && (state.source === 'staff' || Number($('#preview-rate-hb').value) > 0);
+    $('#preview-assign').disabled = !valid || selected.length !== 1;
+    $('#preview-invite').disabled = !valid || state.source !== 'freelancers';
+    $('#preview-invite').hidden = state.source !== 'freelancers';
+  };
+  const updateHours = () => {
+    state.hours = Number($('#preview-hours').value);
+    $$('[data-hours-label]').forEach(label => { label.textContent = Number.isFinite(state.hours) ? state.hours : '0'; });
+    if (!state.customRate) { $('#preview-rate-hb').value = Math.round(156.25 * state.hours * 100) / 100; $('[data-mode="hb"]').textContent = 'Calculated · ' + state.hours + 'h'; }
+    $$('[data-booked]').forEach(row => { const total = Number(row.dataset.booked) + state.hours; row.querySelector('[data-capacity]').textContent = total + ' of 40h after assignment · ' + (total <= 40 ? (40 - total) + 'h free' : (total - 40) + 'h over capacity'); });
+    updateSummary();
+  };
+  const filterPeople = () => {
+    const query = $('#preview-search').value.trim().toLowerCase();
+    const list = $(`[data-people="${state.source}"]`);
+    const rows = [...list.querySelectorAll('[data-person]')];
+    rows.forEach(row => { row.hidden = !row.textContent.toLowerCase().includes(query); });
+    $('#preview-no-results').hidden = rows.some(row => !row.hidden);
+  };
+  const chooseSource = source => {
+    state.source = source;
+    state.chosen.clear();
+    $$('[data-person-choice]').forEach(input => { input.checked = false; input.setAttribute('aria-checked', 'false'); });
+    $$('[data-people]').forEach(list => { list.hidden = list.dataset.people !== source; });
+    $$('[role="tab"]').forEach((tab, index) => { const selected = (index === 0 ? 'staff' : 'freelancers') === source; tab.setAttribute('aria-selected', String(selected)); tab.tabIndex = selected ? 0 : -1; });
+    $('[role="tabpanel"]').setAttribute('aria-labelledby', $$('[role="tab"]').find(tab => tab.getAttribute('aria-selected') === 'true').id);
+    $('#preview-search').value = '';
+    updateSummary(); filterPeople();
+  };
+  const setRole = role => {
+    state.role = role;
+    $('#preview-role .brisk-select-trigger-label > span').textContent = role;
+    $('[data-empty-suggestions]').hidden = role !== 'Shooter';
+    $('[data-role-invitations]').hidden = role !== 'Shooter';
+    $('#preview-role-menu').hidden = true;
+    $('#preview-role').setAttribute('aria-expanded', 'false');
+  };
+  root.addEventListener('click', event => {
+    const viewButton = event.target.closest('[data-view]');
+    if (viewButton) { showView(viewButton.dataset.view); return; }
+    const disclosure = event.target.closest('[data-toggle]');
+    if (disclosure) { const content = root.querySelector('#' + disclosure.dataset.toggle); content.hidden = !content.hidden; disclosure.setAttribute('aria-expanded', String(!content.hidden)); return; }
+    const profile = event.target.closest('[data-profile]');
+    if (profile) { event.preventDefault(); feedback('Profile link retained: ' + profile.dataset.profile + '. Navigation is paused in this preview.'); return; }
+    const roleOption = event.target.closest('[data-role-option]');
+    if (roleOption) { setRole(roleOption.dataset.roleOption); return; }
+    if (event.target.closest('#preview-role')) { const menu = $('#preview-role-menu'); menu.hidden = !menu.hidden; $('#preview-role').setAttribute('aria-expanded', String(!menu.hidden)); return; }
+    const tab = event.target.closest('[role="tab"]');
+    if (tab) { chooseSource(tab.textContent.trim() === 'Staff' ? 'staff' : 'freelancers'); return; }
+    const action = event.target.closest('[data-action]');
+    if (!action) return;
+    if (action.dataset.action === 'open-assign') { setRole('Shooter'); chooseSource('freelancers'); showView('chooser'); }
+    if (action.dataset.action === 'change') { setRole(action.dataset.role); chooseSource('staff'); showView('chooser'); }
+    if (action.dataset.action === 'cancel') { showView('overview'); feedback('Assignment cancelled in the preview. No records changed.'); }
+    if (action.dataset.action === 'assign' || action.dataset.action === 'invite') { const name = [...state.chosen].map(id => $(`[data-person-id="${id}"]`).dataset.person).join(', '); feedback('Preview only: ' + (action.dataset.action === 'assign' ? 'assign ' : 'invite ') + name + ' as ' + state.role + ' for ' + state.hours + 'h' + (state.source === 'freelancers' ? ' at ' + money(Number($('#preview-rate-hb').value)) : '') + '. Nothing saved or sent.'); }
+    if (action.dataset.action === 'add-role') feedback('Add role remains a separate action. This preview focuses on the Team overview and assigning an existing role.');
+  });
+  root.addEventListener('change', event => {
+    const input = event.target;
+    if (!input.matches('[data-person-choice]')) return;
+    if (state.source === 'staff' && input.checked) $$('[data-person-choice]').filter(other => other !== input).forEach(other => { other.checked = false; other.setAttribute('aria-checked', 'false'); });
+    state.chosen = new Set($$('[data-person-choice]').filter(choice => choice.checked).map(choice => choice.dataset.personChoice));
+    $$('[data-person-choice]').forEach(choice => choice.setAttribute('aria-checked', String(choice.checked)));
+    updateSummary();
+  });
+  $('#preview-hours').addEventListener('input', updateHours);
+  $('#preview-search').addEventListener('input', filterPeople);
+  $('#preview-rate-hb').addEventListener('input', () => { state.customRate = true; $('[data-mode="hb"]').textContent = 'Custom project rate'; updateSummary(); });
+  root.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !$('#preview-role-menu').hidden) { $('#preview-role-menu').hidden = true; $('#preview-role').setAttribute('aria-expanded', 'false'); $('#preview-role').focus(); return; }
+    if (event.target.matches('[role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) { event.preventDefault(); chooseSource(event.key === 'Home' ? 'staff' : event.key === 'End' ? 'freelancers' : state.source === 'staff' ? 'freelancers' : 'staff'); $$('.ds-QuietChoices-tab').find(tab => tab.getAttribute('aria-selected') === 'true').focus(); }
+  });
+  chooseSource('freelancers');
+})();
+</script>

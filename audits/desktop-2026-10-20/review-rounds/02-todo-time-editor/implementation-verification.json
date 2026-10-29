@@ -1,0 +1,107 @@
+{
+  "date": "28 October 2026",
+  "provenance": "Concise observations transcribed from actual CUA browser tool results during final-code checks. Full screenshots retained separately.",
+  "states": [
+    {
+      "id": "TV01",
+      "state": "1440 x 1000, expanded",
+      "observed": "Editor y190.4375-630.4375; footer y575.4375-613.4375; Stage focused, blue2px outline; no field scrolling.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV02",
+      "state": "1133 x 1000, expanded",
+      "observed": "Editor x797-1117, y190.4375-630.4375; footer below613.4375; fully within workspace.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV03",
+      "state": "1133 x 1000, collapsed",
+      "observed": "Editor x772-1092, y205.4375-645.4375; tracked sidebar resize.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV04",
+      "state": "1133 x 500, collapsed",
+      "observed": "Editor y81-484; footer y429-467; body client279/scroll316; actions visible.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV05",
+      "state": "Note native resize at1133 x 700",
+      "observed": "Textarea resized88px to403px using native pointer interaction. Editor y81-684; footer y629-667; body client479/scroll631.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV06",
+      "state": "Keyboard Enter / Space",
+      "observed": "Both open editor and focus Stage.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV07",
+      "state": "Nested Escape",
+      "observed": "First Escape closes Stage list only; second closes editor and returns focus to time block.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV08",
+      "state": "Hours blank /0 /-1 /0.3 /25",
+      "observed": "All disable Save; after blur aria-invalid true and associated inline hint explains valid range/step. Native validity also false after required was added.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV09",
+      "state": "Hours0.25 /24 /1.25",
+      "observed": "All valid; Save enabled; values unchanged.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV10",
+      "state": "Tab order",
+      "observed": "Stage to Hours to Note to Delete to Cancel to Save. Tab after Save leaves non-modal panel; no focus trap.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV11",
+      "state": "Close / Cancel",
+      "observed": "Close and Cancel restore focus to original block. No click-away dismissal.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV12",
+      "state": "Explicit Save, isolated demo",
+      "observed": "Stage Script, Hours1.5, demo note saved and reopened. Hours remained exactly1.5. Original stage, hours1.25 and note restored afterwards.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV13",
+      "state": "Note persistence, isolated demo",
+      "observed": "Demo note persistence check saved, reopened and read from textarea.value. Original note restored afterwards.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV14",
+      "state": "Other existing block",
+      "observed": "Monday Done Media1.5h Customer Story opened at x572-892, y329.4375-769.4375; correct project/fields.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV15",
+      "state": "Below-anchor branch",
+      "observed": "At1440 x1100 after temporarily resizing To do/Done split: anchor bottom628; editor top636, bottom1076. Opens below when room permits.",
+      "result": "Passed"
+    },
+    {
+      "id": "TV16",
+      "state": "Workspace scroll / outside pointer",
+      "observed": "Clicking To Do heading scrolls workspace; panel follows anchor and remains open. Editor y116-556 afterwards, below global header.",
+      "result": "Passed"
+    }
+  ],
+  "limitations": [
+    "Delete callback is unchanged and was not executed.",
+    "Restricted roles were not browser-retested in this batch; role/permission sources unchanged.",
+    "Earlier preliminary checks used the initial implementation before final DS label/focus adjustments; only final-code checks above support the result."
+  ]
+}

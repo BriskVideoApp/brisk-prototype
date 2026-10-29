@@ -1,0 +1,35 @@
+--- Before this round
++++ hybrid-navigation.css
+@@ -4,6 +4,7 @@
+ @media (min-width: 901px) {
+   .app-shell.app-shell-hybrid {
+     --app-shell-navigation-width: calc(var(--brisk-space-3xl) * 6);
++    --app-shell-header-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
+     grid-template-columns: var(--app-shell-navigation-width) minmax(var(--brisk-space-none), 1fr);
+   }
+ 
+@@ -19,7 +20,7 @@
+   }
+ 
+   .app-shell-hybrid .app-workspace-header {
+-    min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xl));
++    min-height: var(--app-shell-header-height);
+     padding: var(--brisk-space-s) var(--brisk-space-l);
+   }
+ 
+@@ -47,6 +48,15 @@
+     min-width: var(--brisk-space-none);
+     align-items: center;
+     gap: var(--brisk-space-s);
++  }
++
++  /* Centre the expanded Studio row within the same height as the top bar. */
++  .app-shell-hybrid:not(.is-navigation-collapsed) .hybrid-sidebar {
++    padding-top: var(--brisk-space-s);
++  }
++
++  .app-shell-hybrid:not(.is-navigation-collapsed) .hybrid-sidebar-heading {
++    min-height: calc(var(--app-shell-header-height) - var(--brisk-space-s) * 2);
+   }
+ 
+   .hybrid-sidebar-brand {

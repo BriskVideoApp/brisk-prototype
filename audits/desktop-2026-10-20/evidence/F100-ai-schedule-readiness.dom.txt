@@ -1,0 +1,187 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 15 shots":
+      - strong: Shot List
+      - generic: 15 shots
+    - button "Interview Questions, 2 questions":
+      - strong: Interview Questions
+      - generic: 2 questions
+    - button "Visual References, 0 references":
+      - strong: Visual References
+      - generic: 0 references
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 3 shoot days":
+      - strong: Schedule
+      - generic: 3 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people":
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Schedule" [level=2]
+  - tablist "Shoot days":
+    - tab "Day 1 13 August, 2026":
+      - strong: Day 1
+      - generic: 13 August, 2026
+    - tab "Day 2 14 August, 2026":
+      - strong: Day 2
+      - generic: 14 August, 2026
+    - tab "Day 3 15 August, 2026 7:00 am - 7:00 pm Location not confirmed" [selected]:
+      - strong: Day 3
+      - generic: 15 August, 2026
+      - generic: 7:00 am - 7:00 pm
+      - generic "Location not confirmed"
+    - button "Edit or delete Day 3": Edit or delete Day 3
+    - button "Add shoot day"
+  - heading "Run of day" [level=3]
+  - button "Add to Schedule": Add
+  - generic "Day 3 schedule timeline":
+    - paragraph: Drag entries to change their start time. Resize an entry from its bottom edge to change its duration.
+    - generic: 7:00 am
+    - generic: 8:00 am
+    - generic: 9:00 am
+    - generic: 10:00 am
+    - generic: 11:00 am
+    - generic: 12:00 pm
+    - generic: 1:00 pm
+    - generic: 2:00 pm
+    - generic: 3:00 pm
+    - generic: 4:00 pm
+    - generic: 5:00 pm
+    - generic: 6:00 pm
+    - generic: 7:00 pm
+    - strong: No run of day yet
+    - button "Create with Brisk"
+    - button "Add manually"
+  - complementary "Unscheduled items":
+    - heading "Unscheduled" [level=3]
+    - button "Collapse Unscheduled" [expanded]
+    - list:
+      - article:
+        - button "Additional coverage 2 shots · Amelia Chen":
+          - strong: Additional coverage
+          - generic "2 shots · Amelia Chen"
+  - generic "Schedule readiness and actions":
+    - button "Mark schedule ready"
+- dialog "Create schedule with Brisk":
+  - banner:
+    - heading "Create schedule with Brisk" [level=2]
+    - generic: Brisk will arrange 2 shots into the run of day.
+  - strong: 2 shots are ready
+  - generic: Brisk will estimate 2 missing details. You can edit the schedule afterwards.
+  - button "Add missing details"
+  - contentinfo:
+    - button "Cancel" [active]
+    - button "Create schedule"

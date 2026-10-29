@@ -1,0 +1,90 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Storage" [level=1]
+  - paragraph: Choose where files uploaded to Brisk are saved.
+  - generic: No matter which option you choose, your team will upload, watch and share files in Brisk the same way.
+- main:
+  - region "Where files are saved":
+    - heading "Where files are saved" [level=2]
+    - paragraph: Choose where Brisk should keep new uploads. This will not move files you have already added.
+    - generic: Storage option
+    - combobox "Choose storage option" [active]:
+      - generic: Remote Studio
+    - strong: Remote Studio
+    - paragraph: Files are saved in a shared online workspace for editors. They can access and edit the same files from anywhere without downloading everything first.
+  - region "Your projects":
+    - heading "Your projects" [level=2]
+    - paragraph: Brisk creates a protected folder for each project. Editors can organise files inside it, while Brisk keeps the main project folder safe.
+    - article:
+      - strong: Launch Film - Sales Narrative
+      - generic: "Project status: Ready for editing"
+    - article:
+      - strong: Customer Story - APAC Hiring
+      - generic: "Project status: Ready for editing"
+    - article:
+      - strong: Product Education - Sleep Series
+      - generic: "Project status: Ready for editing"

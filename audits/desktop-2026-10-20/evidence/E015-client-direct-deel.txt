@@ -1,0 +1,110 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/deel-customer-story/stages/brief".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/deel-customer-story/stages/brief
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 container North Star Films logo
+				7 text NS
+			8 text North Star Films
+			9 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				10 text Collapse navigation
+			11 container Workspace
+				12 link Description: Videos, Value: localhost:3000/workspaces/northstar-films/clients/deel/portal
+				13 link Description: Media Library, Value: localhost:3000/media
+				14 link Description: Brand Kit, Value: localhost:3000/brand-kits/deel
+			15 pop up button (collapsed) Description: Open your menu, signed in as Priya Nair, Help: Priya Nair, Secondary Actions: Expand
+				16 container Priya Nair
+					17 text PN
+				18 text Priya Nair
+				19 text Loom
+			20 container Prototype controls
+				21 button (collapsed) Test mode, Secondary Actions: Expand
+					22 text Test mode
+		23 container
+			24 container Navigation history
+				25 button Go back
+					26 text Back
+				27 button Go forward
+					28 text Forward
+				29 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					30 text Recent pages
+			31 container Global actions
+				32 pop up button (collapsed) Description: Brief actions, Secondary Actions: Expand
+					33 text Brief actions
+				34 button Open Chat
+				35 button (collapsed) Description: Updates, Secondary Actions: Expand
+			36 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			37 container Project stage progress
+				38 container DEEL / Customer Story - APAC Hiring
+					39 link Description: Back to dashboard, Value: localhost:3000/workspaces/northstar-films/clients/deel/portal
+					40 text Deel Customer Story - APAC Hiring
+				41 container DEEL Customer Story - APAC Hiring
+					42 content list Sequential production stages
+						43 container
+							44 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/deel-customer-story/stages/brief
+							45 text Brief
+						46 container
+							47 link Description: Script: Approved, Value: localhost:3000/projects/deel-customer-story/script
+							48 text Script
+						49 container
+							50 link Description: Shoot: Approved, Value: localhost:3000/projects/deel-customer-story/stages/shoot
+							51 text Shoot
+						52 container
+							53 link Description: Video Review: Not started, Value: localhost:3000/projects/deel-customer-story/stages/edit
+							54 text Edit
+						55 container
+							56 link Description: Masters: Not started, Value: localhost:3000/projects/deel-customer-story/stages/masters
+							57 text Masters
+					58 container
+						59 link Description: Media. 3 media files, Value: localhost:3000/projects/deel-customer-story/stages/media
+						60 text Media
+			61 container Brief intake
+				62 heading What video are we making?, Value: 1, ID: brief-landing-title
+					63 text What video are we making?
+				64 text Answer a few quick questions, then Brisk AI will build your brief.
+				65 text entry area (settable) Describe the video brief
+				66 container Attachment tools
+					67 button (disabled) Description: Record a brief, Help: Recording is not available in this prototype. Type your brief or upload a document instead.
+						68 text Recording is not available in this prototype
+					69 button Paste a link
+						70 text Paste a link
+					71 button Upload a doc
+						72 text Upload a doc
+				73 button Fill manually
+				74 button (disabled) Continue
+				75 container
+					76 button Back
+					77 container Brief steps
+						78 button Start with AI Start with AI
+							79 text Start with AI
+							80 text Start with AI
+						81 button 1 1. Description
+							82 text 1
+							83 text 1. Description
+						84 button 2 2. Video type
+							85 text 2
+							86 text 2. Video type
+						87 button 3 3. Audience and action
+							88 text 3
+							89 text 3. Audience and action
+						90 button 4 4. Similar videos
+							91 text 4
+							92 text 4. Similar videos
+						93 button 5 5. Brand kit
+							94 text 5
+							95 text 5. Brand kit
+						96 button 6 6. Footage and filming
+							97 text 6
+							98 text 6. Footage and filming
+						99 button 7 7. Deliverables
+							100 text 7
+							101 text 7. Deliverables
+						102 button 8 8. Deadline
+							103 text 8
+							104 text 8. Deadline
+						105 button Summary 9. Review your brief
+							106 text Summary
+							107 text 9. Review your brief
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/deel-customer-story/stages/brief

@@ -1,0 +1,131 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages" [expanded]: Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - region "To Do workspace":
+    - generic "To Do header":
+      - heading "To Do" [level=1]
+      - paragraph: Tuesday 23 June 2026
+      - generic "Week navigator":
+        - button "Previous week"
+        - button "22 June - 26 June"
+        - button "Next week"
+      - generic: Viewing
+      - combobox "Choose whose work to view":
+        - generic: Me
+      - generic: 0h planned · 0h done
+    - complementary "To do projects":
+      - heading "2 active projects Videos assigned to you that are In Production" [level=2]
+      - strong:
+        - link "Product Education - Sleep Series":
+          - /url: /projects/hims-product-education/stages/brief
+      - generic: HIMS
+      - generic: 43 days left
+      - generic: 7h / 8h
+      - strong:
+        - link "Launch Film - Sales Narrative":
+          - /url: /projects/loom-launch-film/stages/brief
+      - generic: LOOM
+      - generic: 48 days left
+      - generic: 5h / 10h
+    - region "Working week":
+      - generic: Mon
+      - generic: 22 June
+      - strong:
+        - generic: 0h planned
+        - generic: 0h done
+      - generic: Tue
+      - generic: 23 June
+      - strong:
+        - generic: 0h planned
+        - generic: 0h done
+      - generic: Wed
+      - generic: 24 June
+      - strong:
+        - generic: 0h planned
+        - generic: 0h done
+      - generic: Thu
+      - generic: 25 June
+      - strong:
+        - generic: 0h planned
+        - generic: 0h done
+      - generic: Fri
+      - generic: 26 June
+      - strong:
+        - generic: 0h planned
+        - generic: 0h done
+      - button "Resize To do and Done split"
+      - region "To do":
+        - strong: To do
+      - region "Done":
+        - strong: Done
+      - region "To do":
+        - strong: To do
+      - region "Done":
+        - strong: Done
+      - region "To do":
+        - strong: To do
+      - region "Done":
+        - strong: Done
+      - region "To do":
+        - strong: To do
+      - region "Done":
+        - strong: Done
+      - region "To do":
+        - strong: To do
+      - region "Done":
+        - strong: Done
+- menu "Recent pages" [active]
+- status: No recent pages yet.

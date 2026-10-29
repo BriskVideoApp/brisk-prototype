@@ -1,11 +1,14 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { formatCostDate, getInvoiceTagClass, InvoiceReviewModal, InvoiceStateBadge, InvoiceTagBadge } from "@/components/costs/CostsPrimitives";
@@ -32,6 +35,7 @@ const invoiceTags: InvoiceTag[] = ["Urgent", "Disputed", "Follow up", "Waiting"]
 
 export function OutstandingInvoicesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
   const { people } = usePeople();
   const { invoices, markInvoicePaid, offers } = useCostsData();
@@ -40,7 +44,13 @@ export function OutstandingInvoicesPage() {
   const [projectStatus, setProjectStatus] = useState<ProjectStatusFilter>("all");
   const [selectedTags, setSelectedTags] = useState<InvoiceTag[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("Expenses", () => canViewContractorInvoices ? outstandingInvoices
+    .filter(({ invoice, project }) => (includeArchived || project.status !== "Archived") && (projectStatus === "all" || project.status === projectStatus)
+      && (!selectedTags.length || selectedTags.some((tag) => invoice.tags.includes(tag))))
+    .map(({ invoice, offer, project }) => ({ id: `invoice:${invoice.id}`, source: "expenses", kind: "Expenses" as const,
+      title: invoice.contractorName, text: `${project.name} ${project.clientName} ${invoice.contractorName} ${invoice.fileNames.join(" ")}`,
+      meta: `${project.name} · ${invoice.state}`, href: `/outstanding-invoices?searchInvoice=${encodeURIComponent(invoice.id)}`, onSelect: () => setReviewState({ invoice, offer }),
+    })) : []);
   const [reviewState, setReviewState] = useState<ReviewState>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -59,12 +69,18 @@ export function OutstandingInvoicesPage() {
     offer: offers.find((offerItem) => offerItem.id === invoiceItem.offerId) ?? null,
     project: activeVideoProjects.find((projectItem) => projectItem.id === invoiceItem.projectId) ?? null,
   })).filter((row): row is { invoice: ContractorInvoice; offer: ContractorOffer; project: Project } => Boolean(row.offer && row.project)), [invoices, offers]);
+  const searchedInvoice = searchParams.get("searchInvoice");
+  useEffect(() => {
+    if (!canViewContractorInvoices || !searchedInvoice) return;
+    const row = outstandingInvoices.find(({ invoice }) => invoice.id === searchedInvoice);
+    if (row) setReviewState({ invoice: row.invoice, offer: row.offer });
+  }, [canViewContractorInvoices, outstandingInvoices, searchedInvoice]);
   const normalisedQuery = query.trim().toLocaleLowerCase("en-AU");
   const visibleRows = outstandingInvoices.filter(({ invoice, project }) => {
     if (!includeArchived && project.status === "Archived") return false;
     if (projectStatus !== "all" && project.status !== projectStatus) return false;
     if (selectedTags.length && !selectedTags.some((tag) => invoice.tags.includes(tag))) return false;
-    return !normalisedQuery || `${project.name} ${project.clientName} ${invoice.contractorName} ${invoice.fileNames.join(" ")}`.toLocaleLowerCase("en-AU").includes(normalisedQuery);
+    return !normalisedQuery || matchesSearchText(`${project.name} ${project.clientName} ${invoice.contractorName} ${invoice.fileNames.join(" ")}`, normalisedQuery);
   });
   const approvedRows = visibleRows.filter(({ invoice }) => invoice.state === "Approved");
 
@@ -80,9 +96,7 @@ export function OutstandingInvoicesPage() {
 
   return (
     <main className="outstanding-invoices-page">
-      <WorkspacePageHeader title="Expenses" actions={
-        <label className="costs-search" htmlFor="outstanding-invoice-search"><DsIcon name="search" size={16} /><span className="sr-only">Search invoices to pay</span><input id="outstanding-invoice-search" type="search" value={query} placeholder="Search invoices" onChange={(event) => setQuery(event.target.value)} /></label>
-      } />
+      <WorkspacePageHeader title="Expenses" />
 
       <section className="costs-summary-grid costs-workspace-summary" aria-label="Invoices to pay summary">
         <SummaryCard label="Outstanding" value={formatCurrencyTotals(visibleRows.map(({ invoice }) => ({ amount: invoice.amount, currency: invoice.currency })))} note={`${visibleRows.length} visible ${visibleRows.length === 1 ? "invoice" : "invoices"}`} />

@@ -1,0 +1,1343 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "People header":
+    - heading "People" [level=1]
+    - generic: Search people
+    - searchbox "Search people"
+  - group "People views":
+    - button "All 32" [pressed]:
+      - text: All
+      - generic: "32"
+    - button "Studio Staff 10":
+      - text: Studio Staff
+      - generic: "10"
+    - button "Studio Freelancers 7":
+      - text: Studio Freelancers
+      - generic: "7"
+    - button "Client contacts 15":
+      - text: Client contacts
+      - generic: "15"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Invite person":
+    - generic: Invite person
+  - region "People directory controls":
+    - generic: Sort by
+    - combobox "Sort people":
+      - generic: Latest activity
+    - generic: 32 people
+  - region "People directory":
+    - table:
+      - rowgroup:
+        - row "Person Type Role Current work Capacity Access Latest activity View person details":
+          - columnheader "Person"
+          - columnheader "Type"
+          - columnheader "Role"
+          - columnheader "Current work"
+          - columnheader "Capacity"
+          - columnheader "Access"
+          - columnheader "Latest activity"
+          - columnheader "View person details":
+            - generic: View person details
+      - rowgroup:
+        - row "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film Open Tom Maclachlan's overview North Star Films Studio Director No active projects View Tom Maclachlan's workload - 40h available, 0/40h booked Accepted They have joined Brisk. Reviewed Studio access Just now Open Tom Maclachlan's full profile":
+          - cell "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film":
+            - link "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film":
+              - /url: /people/tom-maclachlan
+              - generic "Tom Maclachlan avatar": TM
+              - strong: Tom Maclachlan
+              - generic: tom@chopchop.film
+          - cell "Open Tom Maclachlan's overview North Star Films":
+            - link "Open Tom Maclachlan's overview":
+              - /url: /people/tom-maclachlan
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/tom-maclachlan
+          - cell "Studio Director":
+            - link "Studio Director":
+              - /url: /people/tom-maclachlan
+              - strong: Studio Director
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/tom-maclachlan?section=Work
+          - cell "View Tom Maclachlan's workload - 40h available, 0/40h booked":
+            - button "View Tom Maclachlan's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/tom-maclachlan
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Reviewed Studio access Just now":
+            - link "Reviewed Studio access Just now":
+              - /url: /people/tom-maclachlan?section=Notes%20and%20activity
+              - strong: Reviewed Studio access
+              - generic: Just now
+          - cell "Open Tom Maclachlan's full profile":
+            - link "Open Tom Maclachlan's full profile":
+              - /url: /people/tom-maclachlan
+        - row "Editor avatar Editor editor@chopchop.film Open Editor's overview North Star Films Editor No active projects View Editor's workload - 40h available, 0/40h booked Pending Invite sent - waiting for them to join. Resend invite Studio invitation sent Just now Open Editor's full profile":
+          - cell "Editor avatar Editor editor@chopchop.film":
+            - link "Editor avatar Editor editor@chopchop.film":
+              - /url: /people/editor
+              - generic "Editor avatar": E
+              - strong: Editor
+              - generic: editor@chopchop.film
+          - cell "Open Editor's overview North Star Films":
+            - link "Open Editor's overview":
+              - /url: /people/editor
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/editor
+          - cell "Editor":
+            - link "Editor":
+              - /url: /people/editor
+              - strong: Editor
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/editor?section=Work
+          - cell "View Editor's workload - 40h available, 0/40h booked":
+            - button "View Editor's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - cell "Pending Invite sent - waiting for them to join. Resend invite":
+            - link "Pending Invite sent - waiting for them to join.":
+              - /url: /people/editor
+              - generic: Pending
+              - generic: Invite sent - waiting for them to join.
+            - button "Resend invite"
+          - cell "Studio invitation sent Just now":
+            - link "Studio invitation sent Just now":
+              - /url: /people/editor?section=Notes%20and%20activity
+              - strong: Studio invitation sent
+              - generic: Just now
+          - cell "Open Editor's full profile":
+            - link "Open Editor's full profile":
+              - /url: /people/editor
+        - row "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au Open Tom Mitchell's overview North Star Films Producer, Studio Director Loom · Launch Film - Sales Narrative Hims · Product Education - Sleep Series View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client Accepted They have joined Brisk. Approved the Loom production schedule 1h ago Open Tom Mitchell's full profile":
+          - cell "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au":
+            - link "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au":
+              - /url: /people/te
+              - generic "Tom Mitchell avatar": TM
+              - strong: Tom Mitchell
+              - generic: tom@northstarfilms.com.au
+          - cell "Open Tom Mitchell's overview North Star Films":
+            - link "Open Tom Mitchell's overview":
+              - /url: /people/te
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/te
+          - cell "Producer, Studio Director":
+            - link "Producer, Studio Director":
+              - /url: /people/te
+              - strong: Producer, Studio Director
+          - cell "Loom · Launch Film - Sales Narrative Hims · Product Education - Sleep Series":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Hims · Product Education - Sleep Series":
+              - /url: /projects/hims-product-education
+              - generic: Hims ·
+              - text: Product Education - Sleep Series
+          - cell "View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client":
+            - button "View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client":
+              - strong: 26h available
+              - generic: 14/40h booked
+              - generic: 12h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/te
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Approved the Loom production schedule 1h ago":
+            - link "Approved the Loom production schedule 1h ago":
+              - /url: /people/te?section=Notes%20and%20activity
+              - strong: Approved the Loom production schedule
+              - generic: 1h ago
+          - cell "Open Tom Mitchell's full profile":
+            - link "Open Tom Mitchell's full profile":
+              - /url: /people/te
+        - row "Producer avatar Producer producer@chopchop.film Open Producer's overview North Star Films Producer No active projects View Producer's workload - 40h available, 0/40h booked Accepted They have joined Brisk. Updated a production schedule 1h ago Open Producer's full profile":
+          - cell "Producer avatar Producer producer@chopchop.film":
+            - link "Producer avatar Producer producer@chopchop.film":
+              - /url: /people/producer
+              - generic "Producer avatar": P
+              - strong: Producer
+              - generic: producer@chopchop.film
+          - cell "Open Producer's overview North Star Films":
+            - link "Open Producer's overview":
+              - /url: /people/producer
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/producer
+          - cell "Producer":
+            - link "Producer":
+              - /url: /people/producer
+              - strong: Producer
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/producer?section=Work
+          - cell "View Producer's workload - 40h available, 0/40h booked":
+            - button "View Producer's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/producer
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Updated a production schedule 1h ago":
+            - link "Updated a production schedule 1h ago":
+              - /url: /people/producer?section=Notes%20and%20activity
+              - strong: Updated a production schedule
+              - generic: 1h ago
+          - cell "Open Producer's full profile":
+            - link "Open Producer's full profile":
+              - /url: /people/producer
+        - row "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au Open Sarah Chen's overview North Star Films Editor Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +2 more active projects for Sarah Chen - view all 4 View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client Accepted They have joined Brisk. Shared the Hims media handover 2h ago Open Sarah Chen's full profile":
+          - cell "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au":
+            - link "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au":
+              - /url: /people/sc
+              - generic "Sarah Chen avatar": SC
+              - strong: Sarah Chen
+              - generic: sarah@northstarfilms.com.au
+          - cell "Open Sarah Chen's overview North Star Films":
+            - link "Open Sarah Chen's overview":
+              - /url: /people/sc
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/sc
+          - cell "Editor":
+            - link "Editor":
+              - /url: /people/sc
+              - strong: Editor
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +2 more active projects for Sarah Chen - view all 4":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "+2 more active projects for Sarah Chen - view all 4":
+              - /url: /people/sc?section=Work
+              - text: +2 more
+          - cell "View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client":
+            - button "View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client":
+              - strong: 8h over capacity
+              - generic: 48/40h booked
+              - generic: 9h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/sc
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Shared the Hims media handover 2h ago":
+            - link "Shared the Hims media handover 2h ago":
+              - /url: /people/sc?section=Notes%20and%20activity
+              - strong: Shared the Hims media handover
+              - generic: 2h ago
+          - cell "Open Sarah Chen's full profile":
+            - link "Open Sarah Chen's full profile":
+              - /url: /people/sc
+        - row "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au Open Maddie Diaz's overview North Star Films Motion Designer Hims · Product Education - Sleep Series Notion · Workflow Demo - Engineering Teams +1 more active projects for Maddie Diaz - view all 3 View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client Accepted They have joined Brisk. Added direction to the Canva Script 3h ago Open Maddie Diaz's full profile":
+          - cell "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au":
+            - link "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au":
+              - /url: /people/md
+              - generic "Maddie Diaz avatar": MD
+              - strong: Maddie Diaz
+              - generic: maddie@northstarfilms.com.au
+          - cell "Open Maddie Diaz's overview North Star Films":
+            - link "Open Maddie Diaz's overview":
+              - /url: /people/md
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/md
+          - cell "Motion Designer":
+            - link "Motion Designer":
+              - /url: /people/md
+              - strong: Motion Designer
+          - cell "Hims · Product Education - Sleep Series Notion · Workflow Demo - Engineering Teams +1 more active projects for Maddie Diaz - view all 3":
+            - link "Hims · Product Education - Sleep Series":
+              - /url: /projects/hims-product-education
+              - generic: Hims ·
+              - text: Product Education - Sleep Series
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "+1 more active projects for Maddie Diaz - view all 3":
+              - /url: /people/md?section=Work
+              - text: +1 more
+          - cell "View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client":
+            - button "View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client":
+              - strong: 28h available
+              - generic: 12/40h booked
+              - generic: 24h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/md
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Added direction to the Canva Script 3h ago":
+            - link "Added direction to the Canva Script 3h ago":
+              - /url: /people/md?section=Notes%20and%20activity
+              - strong: Added direction to the Canva Script
+              - generic: 3h ago
+          - cell "Open Maddie Diaz's full profile":
+            - link "Open Maddie Diaz's full profile":
+              - /url: /people/md
+        - row "Talia Green avatar Talia Green talia@canva.com Open Talia Green's overview Canva Creative Operations Lead Creative operations Canva · Brand Refresh - Creator Templates Not applicable Accepted They have joined Brisk. Opened the Client portal 3h ago Open Talia Green's full profile":
+          - cell "Talia Green avatar Talia Green talia@canva.com":
+            - link "Talia Green avatar Talia Green talia@canva.com":
+              - /url: /people/canva-contact-1
+              - generic "Talia Green avatar": TG
+              - strong: Talia Green
+              - generic: talia@canva.com
+          - cell "Open Talia Green's overview Canva":
+            - link "Open Talia Green's overview":
+              - /url: /people/canva-contact-1
+              - generic: Client
+            - link "Canva":
+              - /url: /clients/canva
+          - cell "Creative Operations Lead Creative operations":
+            - link "Creative Operations Lead Creative operations":
+              - /url: /people/canva-contact-1
+              - strong: Creative Operations Lead
+              - generic: Creative operations
+          - cell "Canva · Brand Refresh - Creator Templates":
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/canva-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 3h ago":
+            - link "Opened the Client portal 3h ago":
+              - /url: /people/canva-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 3h ago
+          - cell "Open Talia Green's full profile":
+            - link "Open Talia Green's full profile":
+              - /url: /people/canva-contact-1
+        - row "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au Open Riley Brooks's overview North Star Films Producer Deel · Customer Story - APAC Hiring Notion · Workflow Demo - Engineering Teams +1 more active projects for Riley Brooks - view all 3 View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client Accepted They have joined Brisk. Moved Deel into Media 4h ago Open Riley Brooks's full profile":
+          - cell "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au":
+            - link "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au":
+              - /url: /people/rb
+              - generic "Riley Brooks avatar": RB
+              - strong: Riley Brooks
+              - generic: riley@northstarfilms.com.au
+          - cell "Open Riley Brooks's overview North Star Films":
+            - link "Open Riley Brooks's overview":
+              - /url: /people/rb
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/rb
+          - cell "Producer":
+            - link "Producer":
+              - /url: /people/rb
+              - strong: Producer
+          - cell "Deel · Customer Story - APAC Hiring Notion · Workflow Demo - Engineering Teams +1 more active projects for Riley Brooks - view all 3":
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "+1 more active projects for Riley Brooks - view all 3":
+              - /url: /people/rb?section=Work
+              - text: +1 more
+          - cell "View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client":
+            - button "View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client":
+              - strong: 26h available
+              - generic: 14/40h booked
+              - generic: 8h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/rb
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Moved Deel into Media 4h ago":
+            - link "Moved Deel into Media 4h ago":
+              - /url: /people/rb?section=Notes%20and%20activity
+              - strong: Moved Deel into Media
+              - generic: 4h ago
+          - cell "Open Riley Brooks's full profile":
+            - link "Open Riley Brooks's full profile":
+              - /url: /people/rb
+        - row "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au Open Marcus Johnson's overview North Star Films Sound Designer No active projects View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client Accepted They have joined Brisk. Uploaded the OpenAI mix 18h ago Open Marcus Johnson's full profile":
+          - cell "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au":
+            - link "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au":
+              - /url: /people/jm
+              - generic "Marcus Johnson avatar": MJ
+              - strong: Marcus Johnson
+              - generic: marcus@northstarfilms.com.au
+          - cell "Open Marcus Johnson's overview North Star Films":
+            - link "Open Marcus Johnson's overview":
+              - /url: /people/jm
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/jm
+          - cell "Sound Designer":
+            - link "Sound Designer":
+              - /url: /people/jm
+              - strong: Sound Designer
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/jm?section=Work
+          - cell "View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client":
+            - button "View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client":
+              - strong: 30h available
+              - generic: 10/40h booked
+              - generic: 8h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/jm
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Uploaded the OpenAI mix 18h ago":
+            - link "Uploaded the OpenAI mix 18h ago":
+              - /url: /people/jm?section=Notes%20and%20activity
+              - strong: Uploaded the OpenAI mix
+              - generic: 18h ago
+          - cell "Open Marcus Johnson's full profile":
+            - link "Open Marcus Johnson's full profile":
+              - /url: /people/jm
+        - row "Jordan Lee avatar Jordan Lee jordan@leevisuals.com Open Jordan Lee's overview Sydney, NSW Shooter, Director of Photography Cinematography - Lighting Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +1 more active projects for Jordan Lee - view all 3 View Jordan Lee's workload - Available, 3 current projects Accepted They have joined Brisk. Accepted the Deel shoot offer 19h ago Open Jordan Lee's full profile":
+          - cell "Jordan Lee avatar Jordan Lee jordan@leevisuals.com":
+            - link "Jordan Lee avatar Jordan Lee jordan@leevisuals.com":
+              - /url: /people/jl
+              - generic "Jordan Lee avatar": JL
+              - strong: Jordan Lee
+              - generic: jordan@leevisuals.com
+          - cell "Open Jordan Lee's overview Sydney, NSW":
+            - link "Open Jordan Lee's overview":
+              - /url: /people/jl
+              - generic: Studio Freelancer
+            - link "Sydney, NSW":
+              - /url: /people/jl
+          - cell "Shooter, Director of Photography Cinematography - Lighting":
+            - link "Shooter, Director of Photography Cinematography - Lighting":
+              - /url: /people/jl
+              - strong: Shooter, Director of Photography
+              - generic: Cinematography - Lighting
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +1 more active projects for Jordan Lee - view all 3":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "+1 more active projects for Jordan Lee - view all 3":
+              - /url: /people/jl?section=Work
+              - text: +1 more
+          - cell "View Jordan Lee's workload - Available, 3 current projects":
+            - button "View Jordan Lee's workload - Available, 3 current projects":
+              - strong: Available
+              - generic: 3 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/jl?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Accepted the Deel shoot offer 19h ago":
+            - link "Accepted the Deel shoot offer 19h ago":
+              - /url: /people/jl?section=Notes%20and%20activity
+              - strong: Accepted the Deel shoot offer
+              - generic: 19h ago
+          - cell "Open Jordan Lee's full profile":
+            - link "Open Jordan Lee's full profile":
+              - /url: /people/jl
+        - row "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au Open Chris Taylor's overview Brisbane, QLD Editor Editing - Motion graphics Notion · Workflow Demo - Engineering Teams Canva · Brand Refresh - Creator Templates View Chris Taylor's workload - Busy, 2 current projects Accepted They have joined Brisk. Uploaded a Notion rough cut 21h ago Open Chris Taylor's full profile":
+          - cell "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au":
+            - link "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au":
+              - /url: /people/ct
+              - generic "Chris Taylor avatar": CT
+              - strong: Chris Taylor
+              - generic: chris@tayloredits.com.au
+          - cell "Open Chris Taylor's overview Brisbane, QLD":
+            - link "Open Chris Taylor's overview":
+              - /url: /people/ct
+              - generic: Studio Freelancer
+            - link "Brisbane, QLD":
+              - /url: /people/ct
+          - cell "Editor Editing - Motion graphics":
+            - link "Editor Editing - Motion graphics":
+              - /url: /people/ct
+              - strong: Editor
+              - generic: Editing - Motion graphics
+          - cell "Notion · Workflow Demo - Engineering Teams Canva · Brand Refresh - Creator Templates":
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Chris Taylor's workload - Busy, 2 current projects":
+            - button "View Chris Taylor's workload - Busy, 2 current projects":
+              - strong: Busy
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ct?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Uploaded a Notion rough cut 21h ago":
+            - link "Uploaded a Notion rough cut 21h ago":
+              - /url: /people/ct?section=Notes%20and%20activity
+              - strong: Uploaded a Notion rough cut
+              - generic: 21h ago
+          - cell "Open Chris Taylor's full profile":
+            - link "Open Chris Taylor's full profile":
+              - /url: /people/ct
+        - row "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au Open Olivia Singh's overview North Star Films Executive Producer Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client Accepted They have joined Brisk. Reviewed the Loom client plan 22h ago Open Olivia Singh's full profile":
+          - cell "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au":
+            - link "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au":
+              - /url: /people/os
+              - generic "Olivia Singh avatar": OS
+              - strong: Olivia Singh
+              - generic: olivia@northstarfilms.com.au
+          - cell "Open Olivia Singh's overview North Star Films":
+            - link "Open Olivia Singh's overview":
+              - /url: /people/os
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/os
+          - cell "Executive Producer":
+            - link "Executive Producer":
+              - /url: /people/os
+              - strong: Executive Producer
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+          - cell "View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client":
+            - button "View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client":
+              - strong: 24h available
+              - generic: 8/32h booked
+              - generic: 6h awaiting Client
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/os
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Reviewed the Loom client plan 22h ago":
+            - link "Reviewed the Loom client plan 22h ago":
+              - /url: /people/os?section=Notes%20and%20activity
+              - strong: Reviewed the Loom client plan
+              - generic: 22h ago
+          - cell "Open Olivia Singh's full profile":
+            - link "Open Olivia Singh's full profile":
+              - /url: /people/os
+        - row "Aisha Khan avatar Aisha Khan aisha@khancolour.com Open Aisha Khan's overview Adelaide, SA Colourist Colour grading - Conform No active projects View Aisha Khan's workload - Available, 2 current projects Accepted They have joined Brisk. Delivered the OpenAI grade 1d ago Open Aisha Khan's full profile":
+          - cell "Aisha Khan avatar Aisha Khan aisha@khancolour.com":
+            - link "Aisha Khan avatar Aisha Khan aisha@khancolour.com":
+              - /url: /people/ak
+              - generic "Aisha Khan avatar": AK
+              - strong: Aisha Khan
+              - generic: aisha@khancolour.com
+          - cell "Open Aisha Khan's overview Adelaide, SA":
+            - link "Open Aisha Khan's overview":
+              - /url: /people/ak
+              - generic: Studio Freelancer
+            - link "Adelaide, SA":
+              - /url: /people/ak
+          - cell "Colourist Colour grading - Conform":
+            - link "Colourist Colour grading - Conform":
+              - /url: /people/ak
+              - strong: Colourist
+              - generic: Colour grading - Conform
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/ak?section=Work
+          - cell "View Aisha Khan's workload - Available, 2 current projects":
+            - button "View Aisha Khan's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ak?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Delivered the OpenAI grade 1d ago":
+            - link "Delivered the OpenAI grade 1d ago":
+              - /url: /people/ak?section=Notes%20and%20activity
+              - strong: Delivered the OpenAI grade
+              - generic: 1d ago
+          - cell "Open Aisha Khan's full profile":
+            - link "Open Aisha Khan's full profile":
+              - /url: /people/ak
+        - row "Noah Williams avatar Noah Williams noah@hims.com Open Noah Williams's overview Hims & Hers Content Producer Content review Hims · Product Education - Sleep Series Not applicable Accepted They have joined Brisk. Opened the Client portal 1d ago Open Noah Williams's full profile":
+          - cell "Noah Williams avatar Noah Williams noah@hims.com":
+            - link "Noah Williams avatar Noah Williams noah@hims.com":
+              - /url: /people/hims-contact-1
+              - generic "Noah Williams avatar": NW
+              - strong: Noah Williams
+              - generic: noah@hims.com
+          - cell "Open Noah Williams's overview Hims & Hers":
+            - link "Open Noah Williams's overview":
+              - /url: /people/hims-contact-1
+              - generic: Client
+            - link "Hims & Hers":
+              - /url: /clients/hims
+          - cell "Content Producer Content review":
+            - link "Content Producer Content review":
+              - /url: /people/hims-contact-1
+              - strong: Content Producer
+              - generic: Content review
+          - cell "Hims · Product Education - Sleep Series":
+            - link "Hims · Product Education - Sleep Series":
+              - /url: /projects/hims-product-education
+              - generic: Hims ·
+              - text: Product Education - Sleep Series
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/hims-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 1d ago":
+            - link "Opened the Client portal 1d ago":
+              - /url: /people/hims-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 1d ago
+          - cell "Open Noah Williams's full profile":
+            - link "Open Noah Williams's full profile":
+              - /url: /people/hims-contact-1
+        - row "Emma Davis avatar Emma Davis emma@davisanimation.com Open Emma Davis's overview Hobart, TAS Animator 2D animation - Character animation Canva · Brand Refresh - Creator Templates View Emma Davis's workload - Available, 2 current projects Accepted They have joined Brisk. Accepted the Canva animation offer 1d ago Open Emma Davis's full profile":
+          - cell "Emma Davis avatar Emma Davis emma@davisanimation.com":
+            - link "Emma Davis avatar Emma Davis emma@davisanimation.com":
+              - /url: /people/ed
+              - generic "Emma Davis avatar": ED
+              - strong: Emma Davis
+              - generic: emma@davisanimation.com
+          - cell "Open Emma Davis's overview Hobart, TAS":
+            - link "Open Emma Davis's overview":
+              - /url: /people/ed
+              - generic: Studio Freelancer
+            - link "Hobart, TAS":
+              - /url: /people/ed
+          - cell "Animator 2D animation - Character animation":
+            - link "Animator 2D animation - Character animation":
+              - /url: /people/ed
+              - strong: Animator
+              - generic: 2D animation - Character animation
+          - cell "Canva · Brand Refresh - Creator Templates":
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Emma Davis's workload - Available, 2 current projects":
+            - button "View Emma Davis's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ed?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Accepted the Canva animation offer 1d ago":
+            - link "Accepted the Canva animation offer 1d ago":
+              - /url: /people/ed?section=Notes%20and%20activity
+              - strong: Accepted the Canva animation offer
+              - generic: 1d ago
+          - cell "Open Emma Davis's full profile":
+            - link "Open Emma Davis's full profile":
+              - /url: /people/ed
+        - row "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com Open Hugo Bennett's overview Newcastle, NSW Director of Photography Cinematography - Lighting Ramp · Finance Recap - June Product Drop View Hugo Bennett's workload - Available, 1 current project Accepted They have joined Brisk. Sent availability for the Ramp shoot 2d ago Open Hugo Bennett's full profile":
+          - cell "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com":
+            - link "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com":
+              - /url: /people/hb
+              - generic "Hugo Bennett avatar": HB
+              - strong: Hugo Bennett
+              - generic: hugo@bennettcamera.com
+          - cell "Open Hugo Bennett's overview Newcastle, NSW":
+            - link "Open Hugo Bennett's overview":
+              - /url: /people/hb
+              - generic: Studio Freelancer
+            - link "Newcastle, NSW":
+              - /url: /people/hb
+          - cell "Director of Photography Cinematography - Lighting":
+            - link "Director of Photography Cinematography - Lighting":
+              - /url: /people/hb
+              - strong: Director of Photography
+              - generic: Cinematography - Lighting
+          - cell "Ramp · Finance Recap - June Product Drop":
+            - link "Ramp · Finance Recap - June Product Drop":
+              - /url: /projects/ramp-finance-recap
+              - generic: Ramp ·
+              - text: Finance Recap - June Product Drop
+          - cell "View Hugo Bennett's workload - Available, 1 current project":
+            - button "View Hugo Bennett's workload - Available, 1 current project":
+              - strong: Available
+              - generic: 1 current project
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/hb?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Sent availability for the Ramp shoot 2d ago":
+            - link "Sent availability for the Ramp shoot 2d ago":
+              - /url: /people/hb?section=Notes%20and%20activity
+              - strong: Sent availability for the Ramp shoot
+              - generic: 2d ago
+          - cell "Open Hugo Bennett's full profile":
+            - link "Open Hugo Bennett's full profile":
+              - /url: /people/hb
+        - row "Jess Taylor avatar Jess Taylor jess@loom.com Open Jess Taylor's overview Loom Marketing Director Brand approvals - Campaign strategy Loom · Launch Film - Sales Narrative Not applicable Accepted They have joined Brisk. Opened the Client portal 2d ago Open Jess Taylor's full profile":
+          - cell "Jess Taylor avatar Jess Taylor jess@loom.com":
+            - link "Jess Taylor avatar Jess Taylor jess@loom.com":
+              - /url: /people/client-jess
+              - generic "Jess Taylor avatar": JT
+              - strong: Jess Taylor
+              - generic: jess@loom.com
+          - cell "Open Jess Taylor's overview Loom":
+            - link "Open Jess Taylor's overview":
+              - /url: /people/client-jess
+              - generic: Client
+            - link "Loom":
+              - /url: /clients/loom
+          - cell "Marketing Director Brand approvals - Campaign strategy":
+            - link "Marketing Director Brand approvals - Campaign strategy":
+              - /url: /people/client-jess
+              - strong: Marketing Director
+              - generic: Brand approvals - Campaign strategy
+          - cell "Loom · Launch Film - Sales Narrative":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/client-jess?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 2d ago":
+            - link "Opened the Client portal 2d ago":
+              - /url: /people/client-jess?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 2d ago
+          - cell "Open Jess Taylor's full profile":
+            - link "Open Jess Taylor's full profile":
+              - /url: /people/client-jess
+        - row "Sarah Kim avatar Sarah Kim sarah@loom.com Open Sarah Kim's overview Loom Brand Manager Brand approvals - Campaign delivery Loom · Launch Film - Sales Narrative Not applicable Accepted They have joined Brisk. Opened the Client portal 2d ago Open Sarah Kim's full profile":
+          - cell "Sarah Kim avatar Sarah Kim sarah@loom.com":
+            - link "Sarah Kim avatar Sarah Kim sarah@loom.com":
+              - /url: /people/client-sarah
+              - generic "Sarah Kim avatar": SK
+              - strong: Sarah Kim
+              - generic: sarah@loom.com
+          - cell "Open Sarah Kim's overview Loom":
+            - link "Open Sarah Kim's overview":
+              - /url: /people/client-sarah
+              - generic: Client
+            - link "Loom":
+              - /url: /clients/loom
+          - cell "Brand Manager Brand approvals - Campaign delivery":
+            - link "Brand Manager Brand approvals - Campaign delivery":
+              - /url: /people/client-sarah
+              - strong: Brand Manager
+              - generic: Brand approvals - Campaign delivery
+          - cell "Loom · Launch Film - Sales Narrative":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/client-sarah?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 2d ago":
+            - link "Opened the Client portal 2d ago":
+              - /url: /people/client-sarah?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 2d ago
+          - cell "Open Sarah Kim's full profile":
+            - link "Open Sarah Kim's full profile":
+              - /url: /people/client-sarah
+        - row "Maya Chen avatar Maya Chen maya@loom.com Open Maya Chen's overview Loom Marketing Director Brand approvals - Campaign strategy Loom · Launch Film - Sales Narrative Not applicable Accepted They have joined Brisk. Opened the Client portal 2d ago Open Maya Chen's full profile":
+          - cell "Maya Chen avatar Maya Chen maya@loom.com":
+            - link "Maya Chen avatar Maya Chen maya@loom.com":
+              - /url: /people/loom-contact-1
+              - generic "Maya Chen avatar": MC
+              - strong: Maya Chen
+              - generic: maya@loom.com
+          - cell "Open Maya Chen's overview Loom":
+            - link "Open Maya Chen's overview":
+              - /url: /people/loom-contact-1
+              - generic: Client
+            - link "Loom":
+              - /url: /clients/loom
+          - cell "Marketing Director Brand approvals - Campaign strategy":
+            - link "Marketing Director Brand approvals - Campaign strategy":
+              - /url: /people/loom-contact-1
+              - strong: Marketing Director
+              - generic: Brand approvals - Campaign strategy
+          - cell "Loom · Launch Film - Sales Narrative":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/loom-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 2d ago":
+            - link "Opened the Client portal 2d ago":
+              - /url: /people/loom-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 2d ago
+          - cell "Open Maya Chen's full profile":
+            - link "Open Maya Chen's full profile":
+              - /url: /people/loom-contact-1
+        - row "Alex Morgan avatar Alex Morgan alex.morgan@example.com Open Alex Morgan's overview Alex Morgan Founder Approvals No projects shared Not applicable Accepted They have joined Brisk. Opened the Client portal 2d ago Open Alex Morgan's full profile":
+          - cell "Alex Morgan avatar Alex Morgan alex.morgan@example.com":
+            - link "Alex Morgan avatar Alex Morgan alex.morgan@example.com":
+              - /url: /people/alex-contact-1
+              - generic "Alex Morgan avatar": AM
+              - strong: Alex Morgan
+              - generic: alex.morgan@example.com
+          - cell "Open Alex Morgan's overview Alex Morgan":
+            - link "Open Alex Morgan's overview":
+              - /url: /people/alex-contact-1
+              - generic: Client
+            - link "Alex Morgan":
+              - /url: /clients/alex-morgan
+          - cell "Founder Approvals":
+            - link "Founder Approvals":
+              - /url: /people/alex-contact-1
+              - strong: Founder
+              - generic: Approvals
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/alex-contact-1?section=Work
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/alex-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 2d ago":
+            - link "Opened the Client portal 2d ago":
+              - /url: /people/alex-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 2d ago
+          - cell "Open Alex Morgan's full profile":
+            - link "Open Alex Morgan's full profile":
+              - /url: /people/alex-contact-1
+        - row "Nina Patel avatar Nina Patel nina@patelvfx.com Open Nina Patel's overview Perth, WA VFX Artist Compositing - Rotoscoping Canva · Brand Refresh - Creator Templates View Nina Patel's workload - Available, 2 current projects Accepted They have joined Brisk. Reviewed the Figma cleanup notes 2d ago Open Nina Patel's full profile":
+          - cell "Nina Patel avatar Nina Patel nina@patelvfx.com":
+            - link "Nina Patel avatar Nina Patel nina@patelvfx.com":
+              - /url: /people/np
+              - generic "Nina Patel avatar": NP
+              - strong: Nina Patel
+              - generic: nina@patelvfx.com
+          - cell "Open Nina Patel's overview Perth, WA":
+            - link "Open Nina Patel's overview":
+              - /url: /people/np
+              - generic: Studio Freelancer
+            - link "Perth, WA":
+              - /url: /people/np
+          - cell "VFX Artist Compositing - Rotoscoping":
+            - link "VFX Artist Compositing - Rotoscoping":
+              - /url: /people/np
+              - strong: VFX Artist
+              - generic: Compositing - Rotoscoping
+          - cell "Canva · Brand Refresh - Creator Templates":
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Nina Patel's workload - Available, 2 current projects":
+            - button "View Nina Patel's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/np?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Reviewed the Figma cleanup notes 2d ago":
+            - link "Reviewed the Figma cleanup notes 2d ago":
+              - /url: /people/np?section=Notes%20and%20activity
+              - strong: Reviewed the Figma cleanup notes
+              - generic: 2d ago
+          - cell "Open Nina Patel's full profile":
+            - link "Open Nina Patel's full profile":
+              - /url: /people/np
+        - row "Darcy Cole avatar Darcy Cole darcy@colepost.com Open Darcy Cole's overview Melbourne, VIC Editor Editing - Premiere Pro No active projects View Darcy Cole's workload - Available, 0 current projects Expired This invite has expired. Send a new one to continue. Resend invite Invitation sent 3d ago Open Darcy Cole's full profile":
+          - cell "Darcy Cole avatar Darcy Cole darcy@colepost.com":
+            - link "Darcy Cole avatar Darcy Cole darcy@colepost.com":
+              - /url: /people/dc
+              - generic "Darcy Cole avatar": DC
+              - strong: Darcy Cole
+              - generic: darcy@colepost.com
+          - cell "Open Darcy Cole's overview Melbourne, VIC":
+            - link "Open Darcy Cole's overview":
+              - /url: /people/dc
+              - generic: Studio Freelancer
+            - link "Melbourne, VIC":
+              - /url: /people/dc
+          - cell "Editor Editing - Premiere Pro":
+            - link "Editor Editing - Premiere Pro":
+              - /url: /people/dc
+              - strong: Editor
+              - generic: Editing - Premiere Pro
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/dc?section=Work
+          - cell "View Darcy Cole's workload - Available, 0 current projects":
+            - button "View Darcy Cole's workload - Available, 0 current projects":
+              - strong: Available
+              - generic: 0 current projects
+          - cell "Expired This invite has expired. Send a new one to continue. Resend invite":
+            - link "Expired This invite has expired. Send a new one to continue.":
+              - /url: /people/dc?section=Access
+              - generic: Expired
+              - generic: This invite has expired. Send a new one to continue.
+            - button "Resend invite"
+          - cell "Invitation sent 3d ago":
+            - link "Invitation sent 3d ago":
+              - /url: /people/dc?section=Notes%20and%20activity
+              - strong: Invitation sent
+              - generic: 3d ago
+          - cell "Open Darcy Cole's full profile":
+            - link "Open Darcy Cole's full profile":
+              - /url: /people/dc
+        - row "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com Open Daniel Ortiz's overview Loom Product Marketing Manager Product messaging No projects shared Not applicable Pending Invite sent - waiting for them to join. Resend invite Portal invitation sent 3d ago Open Daniel Ortiz's full profile":
+          - cell "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+            - link "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+              - /url: /people/client-daniel
+              - generic "Daniel Ortiz avatar": DO
+              - strong: Daniel Ortiz
+              - generic: daniel@loom.com
+          - cell "Open Daniel Ortiz's overview Loom":
+            - link "Open Daniel Ortiz's overview":
+              - /url: /people/client-daniel
+              - generic: Client
+            - link "Loom":
+              - /url: /clients/loom
+          - cell "Product Marketing Manager Product messaging":
+            - link "Product Marketing Manager Product messaging":
+              - /url: /people/client-daniel
+              - strong: Product Marketing Manager
+              - generic: Product messaging
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/client-daniel?section=Work
+          - cell "Not applicable"
+          - cell "Pending Invite sent - waiting for them to join. Resend invite":
+            - link "Pending Invite sent - waiting for them to join.":
+              - /url: /people/client-daniel?section=Access
+              - generic: Pending
+              - generic: Invite sent - waiting for them to join.
+            - button "Resend invite"
+          - cell "Portal invitation sent 3d ago":
+            - link "Portal invitation sent 3d ago":
+              - /url: /people/client-daniel?section=Notes%20and%20activity
+              - strong: Portal invitation sent
+              - generic: 3d ago
+          - cell "Open Daniel Ortiz's full profile":
+            - link "Open Daniel Ortiz's full profile":
+              - /url: /people/client-daniel
+        - row "Mia Chen avatar Mia Chen mia@harbourhealth.com.au Open Mia Chen's overview Harbour Health Client collaborator Skills not added No projects shared Not applicable Pending Invite sent - waiting for them to join. Resend invite Portal invitation sent 3d ago Open Mia Chen's full profile":
+          - cell "Mia Chen avatar Mia Chen mia@harbourhealth.com.au":
+            - link "Mia Chen avatar Mia Chen mia@harbourhealth.com.au":
+              - /url: /people/harbour-health-contact-1
+              - generic "Mia Chen avatar": MC
+              - strong: Mia Chen
+              - generic: mia@harbourhealth.com.au
+          - cell "Open Mia Chen's overview Harbour Health":
+            - link "Open Mia Chen's overview":
+              - /url: /people/harbour-health-contact-1
+              - generic: Client
+            - link "Harbour Health":
+              - /url: /clients/harbour-health
+          - cell "Client collaborator Skills not added":
+            - link "Client collaborator Skills not added":
+              - /url: /people/harbour-health-contact-1
+              - strong: Client collaborator
+              - generic: Skills not added
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/harbour-health-contact-1?section=Work
+          - cell "Not applicable"
+          - cell "Pending Invite sent - waiting for them to join. Resend invite":
+            - link "Pending Invite sent - waiting for them to join.":
+              - /url: /people/harbour-health-contact-1?section=Access
+              - generic: Pending
+              - generic: Invite sent - waiting for them to join.
+            - button "Resend invite"
+          - cell "Portal invitation sent 3d ago":
+            - link "Portal invitation sent 3d ago":
+              - /url: /people/harbour-health-contact-1?section=Notes%20and%20activity
+              - strong: Portal invitation sent
+              - generic: 3d ago
+          - cell "Open Mia Chen's full profile":
+            - link "Open Mia Chen's full profile":
+              - /url: /people/harbour-health-contact-1
+        - row "Sofia Patel avatar Sofia Patel sofia@openai.com Open Sofia Patel's overview OpenAI Partner Marketing Lead Partner communications No projects shared Not applicable Accepted They have joined Brisk. Opened the Client portal 4d ago Open Sofia Patel's full profile":
+          - cell "Sofia Patel avatar Sofia Patel sofia@openai.com":
+            - link "Sofia Patel avatar Sofia Patel sofia@openai.com":
+              - /url: /people/openai-contact-1
+              - generic "Sofia Patel avatar": SP
+              - strong: Sofia Patel
+              - generic: sofia@openai.com
+          - cell "Open Sofia Patel's overview OpenAI":
+            - link "Open Sofia Patel's overview":
+              - /url: /people/openai-contact-1
+              - generic: Client
+            - link "OpenAI":
+              - /url: /clients/openai
+          - cell "Partner Marketing Lead Partner communications":
+            - link "Partner Marketing Lead Partner communications":
+              - /url: /people/openai-contact-1
+              - strong: Partner Marketing Lead
+              - generic: Partner communications
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/openai-contact-1?section=Work
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/openai-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 4d ago":
+            - link "Opened the Client portal 4d ago":
+              - /url: /people/openai-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 4d ago
+          - cell "Open Sofia Patel's full profile":
+            - link "Open Sofia Patel's full profile":
+              - /url: /people/openai-contact-1
+        - row "Elliot Brooks avatar Elliot Brooks elliot@loom.com Open Elliot Brooks's overview Loom Product Marketing Manager Product messaging Loom · Launch Film - Sales Narrative Not applicable Accepted They have joined Brisk. Opened the Client portal 5d ago Open Elliot Brooks's full profile":
+          - cell "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+            - link "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+              - /url: /people/loom-contact-2
+              - generic "Elliot Brooks avatar": EB
+              - strong: Elliot Brooks
+              - generic: elliot@loom.com
+          - cell "Open Elliot Brooks's overview Loom":
+            - link "Open Elliot Brooks's overview":
+              - /url: /people/loom-contact-2
+              - generic: Client
+            - link "Loom":
+              - /url: /clients/loom
+          - cell "Product Marketing Manager Product messaging":
+            - link "Product Marketing Manager Product messaging":
+              - /url: /people/loom-contact-2
+              - strong: Product Marketing Manager
+              - generic: Product messaging
+          - cell "Loom · Launch Film - Sales Narrative":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/loom-contact-2?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 5d ago":
+            - link "Opened the Client portal 5d ago":
+              - /url: /people/loom-contact-2?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 5d ago
+          - cell "Open Elliot Brooks's full profile":
+            - link "Open Elliot Brooks's full profile":
+              - /url: /people/loom-contact-2
+        - row "Priya Nair avatar Priya Nair priya@deel.com Open Priya Nair's overview Deel Regional Marketing Lead Campaign strategy Deel · Customer Story - APAC Hiring Not applicable Accepted They have joined Brisk. Opened the Client portal 6d ago Open Priya Nair's full profile":
+          - cell "Priya Nair avatar Priya Nair priya@deel.com":
+            - link "Priya Nair avatar Priya Nair priya@deel.com":
+              - /url: /people/deel-contact-1
+              - generic "Priya Nair avatar": PN
+              - strong: Priya Nair
+              - generic: priya@deel.com
+          - cell "Open Priya Nair's overview Deel":
+            - link "Open Priya Nair's overview":
+              - /url: /people/deel-contact-1
+              - generic: Client
+            - link "Deel":
+              - /url: /clients/deel
+          - cell "Regional Marketing Lead Campaign strategy":
+            - link "Regional Marketing Lead Campaign strategy":
+              - /url: /people/deel-contact-1
+              - strong: Regional Marketing Lead
+              - generic: Campaign strategy
+          - cell "Deel · Customer Story - APAC Hiring":
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/deel-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 6d ago":
+            - link "Opened the Client portal 6d ago":
+              - /url: /people/deel-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 6d ago
+          - cell "Open Priya Nair's full profile":
+            - link "Open Priya Nair's full profile":
+              - /url: /people/deel-contact-1
+        - row "Jon Bell avatar Jon Bell jon@linear.app Open Jon Bell's overview Linear Head of Content Content strategy No projects shared Not applicable Accepted They have joined Brisk. Opened the Client portal 7d ago Open Jon Bell's full profile":
+          - cell "Jon Bell avatar Jon Bell jon@linear.app":
+            - link "Jon Bell avatar Jon Bell jon@linear.app":
+              - /url: /people/linear-contact-1
+              - generic "Jon Bell avatar": JB
+              - strong: Jon Bell
+              - generic: jon@linear.app
+          - cell "Open Jon Bell's overview Linear":
+            - link "Open Jon Bell's overview":
+              - /url: /people/linear-contact-1
+              - generic: Client
+            - link "Linear":
+              - /url: /clients/linear
+          - cell "Head of Content Content strategy":
+            - link "Head of Content Content strategy":
+              - /url: /people/linear-contact-1
+              - strong: Head of Content
+              - generic: Content strategy
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/linear-contact-1?section=Work
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/linear-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 7d ago":
+            - link "Opened the Client portal 7d ago":
+              - /url: /people/linear-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 7d ago
+          - cell "Open Jon Bell's full profile":
+            - link "Open Jon Bell's full profile":
+              - /url: /people/linear-contact-1
+        - row "Ben Foster avatar Ben Foster ben@ramp.com Open Ben Foster's overview Ramp Brand Manager Brand approvals Ramp · Finance Recap - June Product Drop Not applicable Accepted They have joined Brisk. Opened the Client portal 9d ago Open Ben Foster's full profile":
+          - cell "Ben Foster avatar Ben Foster ben@ramp.com":
+            - link "Ben Foster avatar Ben Foster ben@ramp.com":
+              - /url: /people/ramp-contact-1
+              - generic "Ben Foster avatar": BF
+              - strong: Ben Foster
+              - generic: ben@ramp.com
+          - cell "Open Ben Foster's overview Ramp":
+            - link "Open Ben Foster's overview":
+              - /url: /people/ramp-contact-1
+              - generic: Client
+            - link "Ramp":
+              - /url: /clients/ramp
+          - cell "Brand Manager Brand approvals":
+            - link "Brand Manager Brand approvals":
+              - /url: /people/ramp-contact-1
+              - strong: Brand Manager
+              - generic: Brand approvals
+          - cell "Ramp · Finance Recap - June Product Drop":
+            - link "Ramp · Finance Recap - June Product Drop":
+              - /url: /projects/ramp-finance-recap
+              - generic: Ramp ·
+              - text: Finance Recap - June Product Drop
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ramp-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 9d ago":
+            - link "Opened the Client portal 9d ago":
+              - /url: /people/ramp-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 9d ago
+          - cell "Open Ben Foster's full profile":
+            - link "Open Ben Foster's full profile":
+              - /url: /people/ramp-contact-1
+        - row "Max Evans avatar Max Evans max@northstarfilms.com.au Open Max Evans's overview North Star Films Production Coordinator No active projects View Max Evans's workload - 40h available, 0/40h booked Accepted They have joined Brisk. Access paused by Olivia 10d ago Open Max Evans's full profile":
+          - cell "Max Evans avatar Max Evans max@northstarfilms.com.au":
+            - link "Max Evans avatar Max Evans max@northstarfilms.com.au":
+              - /url: /people/me
+              - generic "Max Evans avatar": ME
+              - strong: Max Evans
+              - generic: max@northstarfilms.com.au
+          - cell "Open Max Evans's overview North Star Films":
+            - link "Open Max Evans's overview":
+              - /url: /people/me
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/me
+          - cell "Production Coordinator":
+            - link "Production Coordinator":
+              - /url: /people/me
+              - strong: Production Coordinator
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/me?section=Work
+          - cell "View Max Evans's workload - 40h available, 0/40h booked":
+            - button "View Max Evans's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/me
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Access paused by Olivia 10d ago":
+            - link "Access paused by Olivia 10d ago":
+              - /url: /people/me?section=Notes%20and%20activity
+              - strong: Access paused by Olivia
+              - generic: 10d ago
+          - cell "Open Max Evans's full profile":
+            - link "Open Max Evans's full profile":
+              - /url: /people/me
+        - row "Clara Wu avatar Clara Wu clara@notion.so Open Clara Wu's overview Notion Developer Marketing Manager Product messaging Notion · Workflow Demo - Engineering Teams Not applicable Accepted They have joined Brisk. Opened the Client portal 30 July 2026 Open Clara Wu's full profile":
+          - cell "Clara Wu avatar Clara Wu clara@notion.so":
+            - link "Clara Wu avatar Clara Wu clara@notion.so":
+              - /url: /people/notion-contact-1
+              - generic "Clara Wu avatar": CW
+              - strong: Clara Wu
+              - generic: clara@notion.so
+          - cell "Open Clara Wu's overview Notion":
+            - link "Open Clara Wu's overview":
+              - /url: /people/notion-contact-1
+              - generic: Client
+            - link "Notion":
+              - /url: /clients/notion
+          - cell "Developer Marketing Manager Product messaging":
+            - link "Developer Marketing Manager Product messaging":
+              - /url: /people/notion-contact-1
+              - strong: Developer Marketing Manager
+              - generic: Product messaging
+          - cell "Notion · Workflow Demo - Engineering Teams":
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/notion-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 30 July 2026":
+            - link "Opened the Client portal 30 July 2026":
+              - /url: /people/notion-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 30 July 2026
+          - cell "Open Clara Wu's full profile":
+            - link "Open Clara Wu's full profile":
+              - /url: /people/notion-contact-1
+        - row "Amira James avatar Amira James amira@posthog.com Open Amira James's overview PostHog Product Marketing Manager Product messaging No projects shared Not applicable Accepted They have joined Brisk. Opened the Client portal 6 June 2026 Open Amira James's full profile":
+          - cell "Amira James avatar Amira James amira@posthog.com":
+            - link "Amira James avatar Amira James amira@posthog.com":
+              - /url: /people/posthog-contact-1
+              - generic "Amira James avatar": AJ
+              - strong: Amira James
+              - generic: amira@posthog.com
+          - cell "Open Amira James's overview PostHog":
+            - link "Open Amira James's overview":
+              - /url: /people/posthog-contact-1
+              - generic: Client
+            - link "PostHog":
+              - /url: /clients/posthog
+          - cell "Product Marketing Manager Product messaging":
+            - link "Product Marketing Manager Product messaging":
+              - /url: /people/posthog-contact-1
+              - strong: Product Marketing Manager
+              - generic: Product messaging
+          - cell "No projects shared":
+            - link "No projects shared":
+              - /url: /people/posthog-contact-1?section=Work
+          - cell "Not applicable"
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/posthog-contact-1?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Opened the Client portal 6 June 2026":
+            - link "Opened the Client portal 6 June 2026":
+              - /url: /people/posthog-contact-1?section=Notes%20and%20activity
+              - strong: Opened the Client portal
+              - generic: 6 June 2026
+          - cell "Open Amira James's full profile":
+            - link "Open Amira James's full profile":
+              - /url: /people/posthog-contact-1

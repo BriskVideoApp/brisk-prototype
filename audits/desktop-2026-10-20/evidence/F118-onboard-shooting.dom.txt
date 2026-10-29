@@ -1,0 +1,21 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - generic: "1"
+    - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- main:
+  - region "Who develops concepts and scripts?":
+    - generic: Question 1 of 3
+    - heading "Who develops concepts and scripts?" [level=1]
+    - group "Suggested answers":
+      - button "We develop them with clients" [disabled] [pressed]
+      - button "Clients create them" [disabled]
+      - button "It varies by project" [disabled]
+    - button "Back" [disabled]

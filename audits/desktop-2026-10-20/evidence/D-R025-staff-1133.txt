@@ -1,0 +1,121 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/script".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/script
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Project stage progress
+					41 container LOOM / Launch Film - Sales Narrative
+						42 link Description: Back to dashboard, Value: localhost:3000/active-videos
+						43 text LOOM Launch Film - Sales Narrative
+					44 container LOOM Launch Film - Sales Narrative
+						45 content list Sequential production stages
+							46 container
+								47 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								48 text Brief
+							49 container
+								50 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+								51 text Script
+							52 container
+								53 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								54 text Storyboard
+							55 container
+								56 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								57 text Shoot
+							58 container
+								59 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								60 text Edit
+							61 container
+								62 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								63 text Masters
+						64 container
+							65 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+							66 text Media
+						67 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							68 text Adjust project flow
+				69 heading Launch Film - Sales Narrative script, Value: 1
+					70 button Launch Film - Sales Narrative script, Help: Rename version
+				71 button (collapsed) Description: Open versions, Secondary Actions: Expand
+				72 container Script controls
+					73 container Script document controls
+						74 pop up button (collapsed) Description: Script actions, Secondary Actions: Expand
+					75 checkbox (collapsed) Description: Show all script comments, Value: 0, Secondary Actions: Expand
+				76 container AV script editor
+					77 container Script column guidance
+						78 container
+							79 heading Value: 2, Words Write the words of your script in this column - could be titles on screen, dialogue, voiceover etc. 150 words = 1 minute.
+								80 text Words
+								81 text Write the words of your script in this column - could be titles on screen, dialogue, voiceover etc. 150 words = 1 minute.
+							82 heading Show Visuals Describe the visuals for each line. Add media, links or references., Value: 2
+								83 button Show Visuals
+								84 text Describe the visuals for each line. Add media, links or references.
+					85 container
+						86 button 01
+						87 button Drag Row 01
+						88 text entry area
+						89 button Add comment for Row 01
+							90 text Add comment for Row 01
+						91 button (collapsed) Description: More row actions for Row 01, Secondary Actions: Expand
+							92 text More row actions
+					93 container
+						94 button 02
+						95 button Drag Row 02
+						96 text entry area product
+						97 button Add comment for Row 02
+							98 text Add comment for Row 02
+						99 button (collapsed) Description: More row actions for Row 02, Secondary Actions: Expand
+							100 text More row actions
+					101 container
+						102 button 03
+						103 button Drag Row 03
+						104 text entry area oduct update reaches t
+						105 button Add comment for Row 03
+							106 text Add comment for Row 03
+						107 button (collapsed) Description: More row actions for Row 03, Secondary Actions: Expand
+							108 text More row actions
+				109 text 5  words 0:02 /  1:00
+				110 text Based on 150 words per minute.
+				111 text 145 words under
+				112 container Script review actions
+					113 container Script share actions
+						114 button (collapsed) Description: Copy link, Secondary Actions: Expand
+						115 button Send Script Send to Loom or your team.
+							116 text Send Script
+							117 text Send to Loom or your team.
+						118 pop up button (collapsed) Script approved, Secondary Actions: Expand
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/script

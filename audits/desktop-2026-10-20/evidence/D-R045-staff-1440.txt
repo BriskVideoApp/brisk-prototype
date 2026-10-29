@@ -1,0 +1,93 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/plan-billing".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/plan-billing
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container
+				10 link Description: Back to workspace, Value: localhost:3000/active-videos
+				11 text Studio settings
+				12 container Studio settings
+					13 link Description: Studio setup, Value: localhost:3000/settings/studio
+					14 link Description: Production defaults, Value: localhost:3000/settings/studio/production
+					15 link Description: AI Playbook, Value: localhost:3000/settings/studio/ai-playbook
+					16 link Description: Messaging connections, Value: localhost:3000/settings/studio/integrations
+					17 link Description: Storage, Value: localhost:3000/settings/studio/storage
+					18 link Description: Notifications, Value: localhost:3000/settings/notifications
+					19 link Description: Brisk plan & billing, Value: localhost:3000/settings/plan-billing
+					20 link Description: Client billing, Value: localhost:3000/settings/client-billing
+			21 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				22 container Tom Mitchell
+					23 text TM
+				24 text Tom Mitchell
+				25 text North Star Films
+			26 container Studio administration
+				27 link Description: Studio settings, Value: localhost:3000/settings/studio
+			28 container Prototype controls
+				29 button (collapsed) Test mode, Secondary Actions: Expand
+					30 text Test mode
+		31 container
+			32 container Navigation history
+				33 button Go back
+					34 text Back
+				35 button Go forward
+					36 text Forward
+				37 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					38 text Recent pages
+			39 container Global actions
+				40 button Open Chat
+				41 button (collapsed) Description: Updates, Secondary Actions: Expand
+			42 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			43 container
+				44 heading Brisk plan & billing, Value: 1
+					45 text Brisk plan & billing
+				46 text Manage your Brisk plan, usage and billing details.
+			47 container
+				48 container Professional
+					49 text CURRENT PLAN
+					50 heading Professional, Value: 2, ID: current-plan-heading
+						51 text Professional
+					52 text Active
+					53 text Small production companies and boutique agencies
+					54 text $249 USD/month
+					55 text Monthly  billing
+					56 definition list
+						57 container Next renewal
+							58 text Next renewal
+						59 text 12 October 2026
+					60 button Change plan
+				61 container Usage
+					62 heading Usage, Value: 2, ID: billing-usage-heading
+						63 text Usage
+					64 text Your current Studio allowance.
+					65 text Studio Staff 6  of  10
+					66 progress indicator Description: Studio Staff: 6 of 10, Value: 6
+					67 text Active projects 14  of  15
+					68 progress indicator Description: Active projects: 14 of 15, Value: 14
+					69 text Storage 86 GB  of  100 GB
+					70 progress indicator Description: Storage: 86 GB of 100 GB, Value: 86
+					71 text You’re approaching your active project limit.
+				72 container Billing account
+					73 heading Billing account, Value: 2, ID: billing-account-heading
+						74 text Billing account
+					75 text Payment methods, invoices and subscription settings are managed securely through Stripe.
+					76 button Manage billing
+				77 container Add-ons
+					78 heading Add-ons, Value: 2, ID: billing-add-ons-heading
+						79 text Add-ons
+					80 text Optional additions for your Brisk subscription.
+					81 container
+						82 heading Additional storage, Value: 3
+							83 text Additional storage
+						84 text $25 USD/month per 100 GB Add storage to the Studio's shared allowance.
+						85 button Add
+					86 container
+						87 heading Additional Studio Staff user, Value: 3
+							88 text Additional Studio Staff user
+						89 text $20 USD/month Add one Studio Staff user to your Professional or Business plan.
+						90 button Add
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/plan-billing

@@ -49,6 +49,8 @@ import { ProjectCompletionProvider } from "@/components/project/ProjectCompletio
 import { ProjectFilesProvider } from "@/components/project/ProjectFilesContext";
 import { ProjectStageStatusProvider } from "@/components/project/ProjectStageStatusContext";
 import { ProjectFlowProvider } from "@/components/project/ProjectFlowContext";
+import { SearchProvider } from "@/components/search/SearchContext";
+import "@/components/search/global-search.css";
 import { AppShell } from "@/components/navigation/AppShell";
 import { NotificationInboxProvider } from "@/components/notifications/NotificationInboxContext";
 import { ClientDataProvider } from "@/components/clients/ClientDataContext";
@@ -62,6 +64,8 @@ import { CostsDataProvider } from "@/components/costs/CostsDataContext";
 import { MediaLibraryProvider } from "@/components/media/MediaLibraryContext";
 import { BriskAiProvider } from "@/components/ai/BriskAiContext";
 import { StoryboardProvider } from "@/components/storyboard/StoryboardContext";
+import { ProjectTimingProvider } from "@/components/project-timing/ProjectTimingContext";
+import "@/components/project-timing/project-timing.css";
 
 export const metadata: Metadata = {
   title: "Brisk Prototype",
@@ -102,9 +106,11 @@ export default function RootLayout({
                                 <CostsDataProvider>
                                   <InvitationProvider>
                                     <BriskAiProvider>
-                                      <Suspense fallback={null}>
-                                        <AppShell>{children}</AppShell>
-                                      </Suspense>
+                                      <ProjectTimingProvider>
+                                        <Suspense fallback={null}>
+                                          <SearchProvider><AppShell>{children}</AppShell></SearchProvider>
+                                        </Suspense>
+                                      </ProjectTimingProvider>
                                     </BriskAiProvider>
                                   </InvitationProvider>
                                 </CostsDataProvider>

@@ -1,0 +1,10 @@
+{
+  "comparedFiles": 1787,
+  "changed": [
+    "src/components/navigation/HybridSidebar.tsx",
+    "src/components/navigation/AppShell.tsx",
+    "src/components/navigation/hybrid-navigation.css",
+    "src/components/navigation/UserAvatarMenu.tsx",
+    "Docs/desktop-design-baseline.md"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "status": "User preference and proposed panel refinement recorded; no implementation approval",
+  "preferred": "Preserve the first screenshot\u2019s compact Videos Team summary and current function: avatars, role labels, invited treatment and +more count. Do not replace it with an assignment-only control.",
+  "problem": "The second screenshot is the Team overview in project details, not the person-selection modal. Earlier chooser/editor recommendations did not fully redesign this intermediate panel.",
+  "observedVisualIssues": [
+    "Role and person names run together with weak alignment/hierarchy.",
+    "Each role is framed like a separate input/card, while role editing and profile navigation are separate inner actions.",
+    "Repeated small Staff badges and nested invitation disclosure compete with the important person/role/status information."
+  ],
+  "sourceClarification": "RoleRow.tsx shows role label opens editing; person name is a People profile link; purple icon identifies Studio Staff; Invited count separately expands invitation detail. Preserve those distinct meanings.",
+  "proposal": [
+    "Use a compact aligned people list in the panel, reusing the existing avatar treatment where applicable.",
+    "Make person identity primary and role secondary, with required hours and assignment/invitation status aligned consistently.",
+    "Use clearly identified role-specific Assign/Change controls while retaining the person\u2019s separate profile link.",
+    "Keep pending invitations evident and details available; show Staff/Freelancer distinctions where access or costs require them without repetitive decoration."
+  ],
+  "quickAssignment": "Direct, discoverable assignment from Videos remains required. Preserve the preferred Team summary and its current click-through function; any direct assignment affordance is additional, not a replacement. Role, editable required hours, Freelancer rate/cost and explicit Assign/Invite remain part of the chooser.",
+  "scope": "Add Team overview/RoleRow composition to the proposal. No application implementation authorised yet.",
+  "userReferences": [
+    {
+      "file": "user-preferred-team-cell.png",
+      "sha256": "44581e748b9bd2b4a125bdc6ae160502d610c1405456f32154723b3ed10b75dd",
+      "kind": "User-supplied current screenshot, retained unedited"
+    },
+    {
+      "file": "user-team-panel-to-refine.png",
+      "sha256": "1da17ac88baed74251dd0f3109bb7c63da3a453288df4dd68ef172a0a44c2ff7",
+      "kind": "User-supplied current screenshot, retained unedited"
+    }
+  ]
+}

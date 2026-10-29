@@ -1,5 +1,8 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 
 import Link from "next/link";
@@ -47,7 +50,11 @@ export function PeoplePage() {
   const { studio, updateStaffAccess } = useStudioSettings();
   const { selectedRole } = usePrototypeRole();
   const [view, setView] = useState<PeopleView>(() => getPeopleView(searchParams.get("view")));
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("People", () => canBrowsePeople ? people.filter((person) => matchesView(person, view)).map((person) => ({
+    id: `person:${person.id}`, source: "people", kind: "People" as const, title: person.name,
+    text: `${person.name} ${person.email} ${person.jobTitles.join(" ")} ${person.skills.join(" ")} ${person.clientName ?? ""}`,
+    meta: person.email, href: `/people/${person.id}`,
+  })) : []);
   const [sort, setSort] = useState<SortOption>("activity");
   const [openedInviteFromQuery, setOpenedInviteFromQuery] = useState(false);
   const [workloadPerson, setWorkloadPerson] = useState<Person | null>(null);
@@ -98,7 +105,7 @@ export function PeoplePage() {
     const normalisedQuery = query.trim().toLocaleLowerCase("en-AU");
     return people
       .filter((person) => matchesView(person, view))
-      .filter((person) => !normalisedQuery || `${person.name} ${person.email} ${person.jobTitles.join(" ")} ${person.skills.join(" ")} ${person.clientName ?? ""}`.toLocaleLowerCase("en-AU").includes(normalisedQuery))
+      .filter((person) => !normalisedQuery || matchesSearchText(`${person.name} ${person.email} ${person.jobTitles.join(" ")} ${person.skills.join(" ")} ${person.clientName ?? ""}`, normalisedQuery))
       .sort((left, right) => comparePeople(left, right, sort));
   }, [people, previewState, query, sort, view]);
 
@@ -106,9 +113,7 @@ export function PeoplePage() {
 
   return (
     <main className="people-page">
-      <WorkspacePageHeader title="People" actions={
-        <label className="people-search" htmlFor="people-search"><DsIcon name="search" size={16} /><span className="sr-only">Search people</span><input id="people-search" type="search" value={query} placeholder="Search by name or email" onChange={(event) => setQuery(event.target.value)} /></label>
-      } />
+      <WorkspacePageHeader title="People" />
 
       <div className="people-view-tabs">
         <div className="people-view-tabs-row">

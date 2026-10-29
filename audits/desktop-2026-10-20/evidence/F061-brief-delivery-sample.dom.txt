@@ -1,0 +1,174 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Brief actions": Brief actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "HIMS / Product Education - Sleep Series":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: HIMS
+      - generic: /
+      - generic: Product Education - Sleep Series
+    - generic "HIMS Product Education - Sleep Series":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/hims-product-education/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Waiting on Hims"':
+          - /url: /projects/hims-product-education/script
+          - text: Waiting on Hims
+        - generic: Script
+        - 'link "Storyboard: Not started"':
+          - /url: /projects/hims-product-education/stages/storyboard
+          - text: Not started
+        - generic: Storyboard
+        - 'link "Video Review: Not started"':
+          - /url: /projects/hims-product-education/stages/edit
+          - text: Not started
+        - generic: Animation
+        - 'link "Masters: Not started"':
+          - /url: /projects/hims-product-education/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 2 media files":
+        - /url: /projects/hims-product-education/stages/media
+        - generic: "2"
+        - text: 2 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Brief step":
+    - region "Deliverables":
+      - generic: Step 7 of 9
+      - heading "Deliverables" [level=2]
+      - generic: What versions do you need?
+      - button "Open AI suggestion actions for What versions do you need?. Currently Confident."
+      - tooltip "AI suggestion"
+      - table:
+        - rowgroup:
+          - row "Deliverable Duration Deadline Platform Format Captions Version actions":
+            - columnheader "Deliverable":
+              - generic: Deliverable
+            - columnheader "Duration":
+              - generic: Duration
+            - columnheader "Deadline":
+              - generic: Deadline
+            - columnheader "Platform":
+              - generic: Platform
+            - columnheader "Format":
+              - generic: Format
+            - columnheader "Captions":
+              - generic: Captions
+            - columnheader "Version actions"
+        - rowgroup:
+          - row "Main Video Choose date Open menu for Main Video":
+            - cell "Main Video":
+              - generic: Main Video
+            - cell:
+              - combobox "Duration":
+                - generic: 2 mins
+            - cell "Choose date":
+              - button "Choose date":
+                - generic: Choose date
+            - cell:
+              - combobox "Platform":
+                - generic: YouTube (Main)
+            - cell:
+              - combobox "Format":
+                - generic: Landscape
+            - cell:
+              - combobox "Caption options":
+                - generic: Baked in captions
+            - cell "Open menu for Main Video":
+              - button "Open menu for Main Video"
+          - row "Platform cutdown Choose date Open menu for Platform cutdown":
+            - cell "Platform cutdown":
+              - textbox "Deliverable name": Platform cutdown
+            - cell:
+              - combobox "Duration":
+                - generic: 30 secs
+            - cell "Choose date":
+              - button "Choose date":
+                - generic: Choose date
+            - cell:
+              - combobox "Platform":
+                - generic: Choose platform
+            - cell:
+              - combobox "Format":
+                - generic: Landscape
+            - cell:
+              - combobox "Caption options":
+                - generic: Baked in captions
+            - cell "Open menu for Platform cutdown":
+              - button "Open menu for Platform cutdown"
+      - button "Add version" [active]:
+        - generic: Add version
+  - button "Back"
+  - navigation "Brief steps":
+    - button "Start with AI Start with AI":
+      - generic: Start with AI
+      - text: Start with AI
+    - button "1 1. Description"
+    - button "2 2. Video type"
+    - button "3 3. Audience and action"
+    - button "4 4. Similar videos"
+    - button "5 5. Brand kit"
+    - button "6 6. Footage and filming"
+    - button "7 7. Deliverables"
+    - button "8 8. Deadline"
+    - button "Summary 9. Review your brief"
+  - button "Next"

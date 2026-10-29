@@ -1,0 +1,27 @@
+{
+  "date": "28 October 2026",
+  "type": "Current UI/code inspection and placement recommendation only",
+  "protectedFilesCompared": 1705,
+  "changedProtectedFiles": [],
+  "currentBrowserVerification": [
+    "Studio Staff External and Internal project Chat",
+    "Current actionable/passive system posts",
+    "Existing message-specific URL selects External channel and places target message onscreen",
+    "Current Videos deadline controls have no timing-message link"
+  ],
+  "limits": [
+    "Customer/Freelancer view source reviewed, not browser rechecked",
+    "Global Chat drawer exact-message target not verified",
+    "One asset chunk timeout on first direct-link load recovered after reload",
+    "No proposed timing message was inserted or sent"
+  ],
+  "workingData": "Working browser origins not operated. Auto-read updates occurred only in fresh disposable origin 8781.",
+  "evidence": [
+    "current-chat-external-1440.png",
+    "current-chat-internal-1440.png",
+    "current-chat-message-link-1440.png",
+    "current-videos-deadline-1440.png",
+    "chat-placement-browser-observations.json"
+  ],
+  "restoration": "Temporary viewport reset; inspection tab closed."
+}

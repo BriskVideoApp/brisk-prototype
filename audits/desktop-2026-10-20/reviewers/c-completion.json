@@ -1,0 +1,130 @@
+{
+  "status": "Reviewer C audit pass and semantic coverage reconciliation complete; lead integrates final report. Recommendations remain unfixed and need Tom review.",
+  "date": "21 October 2026",
+  "scope": "UI-focused desktop audit. Source and91 current C captures/actions; rootF171, A129 and B105 current capture sets reconciled. No prototype-auth/identity findings.",
+  "coverageProposal": "reviewers/c-final-coverage-proposal.json",
+  "sourceUpdater": "reviewers/c-reconcile-coverage.py",
+  "counts": {
+    "routeEntries": {
+      "Inspected": 56,
+      "Not applicable": 5
+    },
+    "finiteStates": {
+      "Inspected": 297,
+      "Not applicable": 67
+    },
+    "nestedWorkflowRollups": {
+      "Inspected": 53,
+      "Not applicable": 3
+    }
+  },
+  "remainingMeaningfulUiChecks": [],
+  "method": [
+    "Finite semantic workflows, not exhaustive cross-product permutations.",
+    "At 1440 inspect content and interaction; at 1133 inspect the same page composition and densest/reflowing overlay. Repeat a behavioural path at both widths only when layout or layering changes the behaviour.",
+    "For roles, inspect genuinely different visible/capability branches. Shared controls are not repeated for every role when content and interaction are identical; record the consumer and variant actually observed.",
+    "A source-only existence/guard review is not browser verification. Safety constraints are recorded as boundaries, not UI states.",
+    "Lead decides and applies all master status changes after explicit action evidence."
+  ],
+  "findingFile": "reviewers/c-completion-findings.json",
+  "findings": [
+    "C02 shared-logo read-only action consistency, S3, no write/security claim. Existing C01 remains owned by consolidated original register."
+  ],
+  "optionalRefinements": [
+    {
+      "id": "C-R01",
+      "title": "Let the read-only offer Brief look like reference material",
+      "area": "Brief and Freelancer offer",
+      "family": "Read-only fields and actions",
+      "category": "Optional UI refinement",
+      "severity": "Optional, not added to formal defect totals",
+      "impact": "A Freelancer evaluating an offer may interpret normal purple Add/Edit labels and Add cutdown as usable controls. Task impact is a design judgement; no failed user task or permission bypass was established.",
+      "classification": "Heuristic judgement supported by current screenshots and source guard",
+      "confidence": "High on rendered affordances/inert source; medium on practical task impact",
+      "roles": [
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "R016"
+      ],
+      "states": [
+        "Pending offer Brief summary at1440px and1133px; current empty Brief"
+      ],
+      "screenshots": [
+        "F078-offer-brief-1133",
+        "F080-offer-brief-top",
+        "F081-offer-brief-top-1133"
+      ],
+      "currentScreenshot": "F080-offer-brief-top",
+      "approvedReferenceScreenshot": null,
+      "referenceNote": "No approved read-only Brief reference screenshot exists. The normal editable Brisk Brief is not an approved read-only reference.",
+      "observed": "Normal Add/Edit styling and ordinary secondary Add cutdown button remain inside inert read-only summary content. Source/DOM contains an Offer preview - read only header; direct current screenshot F080 shows only the Loom subtitle/no-details sentence below the fixed header, so label visibility is not assumed. The content is inert and updateField returns when readOnly; no active edit/bypass claim.",
+      "expected": "The visible reference should explain what can be read and what can be acted on. Approved DS disabled state is muted, but the appropriate read-only summary treatment is a product/presentation decision for Tom.",
+      "authority": [
+        "Latest UI-focused user scope",
+        "Brisk DS/guidelines/components/buttons.md:43",
+        "src/components/active-videos/FreelancerOfferBrief.tsx:35",
+        "src/components/brief/BriefPage.tsx:1437",
+        "src/components/brief/BriefPage.tsx:1477"
+      ],
+      "smallestCoherentChange": "In this read-only consumer, omit Add actions and show existing values as non-interactive reference values while preserving summary hierarchy and Back to offers. Retain editable Brief behaviours in their actual editing consumer.",
+      "recommendation": "Consider the small read-only presentation treatment after the shared header-clipping issue is reviewed.",
+      "rationale": "The structure and information density are useful; removing unusable creation cues can make the offer preview calmer without merging distinct version/approval actions.",
+      "alternatives": [
+        "Keep the present summary after ensuring its read-only header remains visible, then assess whether that is sufficient.",
+        "Keep disabled action shapes with a clear explanation; this can preserve feature familiarity but adds controls that cannot help the current task."
+      ],
+      "tradeoffs": [
+        "Static reference values must remain readable and selectable; do not dim important content or remove its semantic structure merely to disable editing.",
+        "Removing action shapes reduces continuity with the later editable Brief, so preserve labels, order and grouping."
+      ],
+      "preserve": [
+        "Existing summary sections and readable hierarchy",
+        "Read-only safety/source boundary",
+        "Back to offers and step navigation",
+        "Distinct Main Video/additional-version concepts"
+      ],
+      "rootCause": "Editable summary markup is reused under an inert wrapper without a dedicated presentation variant.",
+      "occurrences": [
+        "Pending-offer read-only Brief via FreelancerOfferBrief; other read-only consumers require separate current evidence."
+      ],
+      "sources": [
+        "src/components/active-videos/FreelancerOfferBrief.tsx:35",
+        "src/components/active-videos/FreelancerOfferBrief.tsx:47",
+        "src/components/brief/BriefPage.tsx:1437",
+        "src/components/brief/BriefPage.tsx:1473",
+        "src/components/brief/BriefPage.tsx:6014",
+        "src/components/brief/brief.css:4664"
+      ],
+      "verificationRemaining": [
+        "Lead to reconcile actual header geometry; source/DOM label presence is not visible screenshot proof.",
+        "If promoted, compare the full read-only and editable consumer and check readability, selection, keyboard navigation and Back to offers.",
+        "Optional short task check with a Freelancer can establish whether visible inactive affordances create hesitation; no research result is claimed."
+      ],
+      "reviewStatus": "Needs decision",
+      "implementationStatus": "Unfixed; audit recommendation only"
+    }
+  ],
+  "evidence": {
+    "captures": "data/c-completion-captures.json",
+    "actions": "data/c-completion-actions.json",
+    "ownCaptureCount": 91,
+    "nativePrompt": "J082/J083 genuinely reached and cancelled; no URL typed; correct origin verified; original active user tab restored.",
+    "actualApprovedGuard": "J076-J078 existing Notion approved-board edit guard cancelled; approval preserved.",
+    "initialMislabelCorrections": [
+      "J039 actual placeholder, no link editor",
+      "J045 creation confirmation before creation",
+      "J063/J064 actual project unavailable, not Files content",
+      "J087 accidental Chat overlay excluded from positive evidence"
+    ],
+    "layout": "Reference1440 and narrower1133 on owned audit context. J011/J012 truncated historical captures remain labelled; full recapture J013. Native prompt is separately labelled browser-chrome capture."
+  },
+  "boundaries": {
+    "appChanges": "None. Tracked diff empty at final check.",
+    "workingRecords": "Never changed localhost3000; only authorised disposable8769 mock samples and local drafts. Lead verified working storage independently.",
+    "communication": "No human messages/invitations/payment/destructive confirmation. One labelled local Brief AI simulation explicitly authorised by lead.",
+    "browserCleanup": "data/c-browser-cleanup.json; Staff restored, original1512x767 viewport restored, only C audit tab closed, original active Inbox retained. No Gmail screenshot/content interaction.",
+    "prototypeLimits": "No backend/auth/security compliance claim; dead/legacy/source-only branches explicitly N/A, no unsupported browser checks claimed."
+  },
+  "supersededCheckpoint": "reviewers/c-completion-pre-final.json"
+}

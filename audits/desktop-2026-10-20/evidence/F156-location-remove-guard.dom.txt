@@ -1,0 +1,168 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 7 shots":
+      - strong: Shot List
+      - generic: 7 shots
+    - button "Visual References, 0 references":
+      - strong: Visual References
+      - generic: 0 references
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 2 shoot days":
+      - strong: Schedule
+      - generic: 2 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people":
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Where are you shooting?" [level=2]
+  - paragraph: Add locations and choose which shoot days use them.
+  - button "Add location": Add location
+  - article:
+    - strong: Precinct Studio 2
+    - paragraph:
+      - link "21 James Street, Thirroul NSW 2515":
+        - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+    - generic: Day 1
+    - button "Edit Precinct Studio 2"
+  - article:
+    - strong: Loom Sydney Office
+    - paragraph:
+      - link "44 Market Street, Sydney NSW 2000":
+        - /url: https://www.google.com/maps/search/?api=1&query=44%20Market%20Street%2C%20Sydney%20NSW%202000
+    - generic: All shoot days
+    - button "Edit Loom Sydney Office"
+  - generic "Locations readiness and actions":
+    - button "Mark locations ready"
+- dialog "Edit location":
+  - banner:
+    - heading "Edit location" [level=2]
+  - combobox "Search Google Maps or paste a link": 21 James Street, Thirroul NSW 2515
+  - list "Selected location":
+    - strong: Precinct Studio 2
+    - link "21 James Street, Thirroul NSW 2515":
+      - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+  - generic: Shoot days
+  - combobox "Shoot days":
+    - generic: Day 1
+  - contentinfo:
+    - button "Cancel"
+    - button "Save location"
+- dialog "Remove Precinct Studio 2?":
+  - banner:
+    - heading "Remove Precinct Studio 2?" [level=2]
+  - contentinfo:
+    - button "Keep location" [active]
+    - button "Yes, remove"

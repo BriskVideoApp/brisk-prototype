@@ -1,0 +1,16 @@
+{
+  "capturesRegistered": 292,
+  "capturesMapped": 292,
+  "masterEntries": 117,
+  "routes": 61,
+  "workflowGroups": 56,
+  "fullyInspectedEntries": 0,
+  "groupsWithoutBrowserEvidence": [
+    "N113",
+    "N114"
+  ],
+  "fixtureBlockedFiniteStates": 20,
+  "errors": [],
+  "scope": "Registered E001-E146 captures, BRIEF question/summary captures and current registered D-R defaults. Later E-series captures are excluded until the next checkpoint.",
+  "unregisteredDiagnosticExcluded": "E021-recovered-asset.jpg"
+}

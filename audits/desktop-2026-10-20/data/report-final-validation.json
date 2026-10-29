@@ -1,0 +1,14 @@
+{
+  "captures": 788,
+  "routePatterns": 61,
+  "coverageEntries": 117,
+  "findings": 34,
+  "patternFamilies": 26,
+  "strengths": 14,
+  "optionalRefinements": 8,
+  "renderedImageReferencesChecked": 810,
+  "referenceAndSchemaErrors": [],
+  "originalScreenshotBytesPreserved": true,
+  "applicationProtectedFilesChanged": [],
+  "browserStorageRestored": true
+}

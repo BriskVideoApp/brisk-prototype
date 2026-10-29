@@ -1,0 +1,218 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "Clients":
+    - /url: /clients
+    - text: Clients
+  - generic "Loom logo"
+  - generic: Client
+  - heading "Loom" [level=1]
+  - generic: loom.com
+  - button "Invite teammate"
+  - link "Go to Loom's dashboard":
+    - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+  - button "Start project":
+    - generic: Start project
+  - tablist "Client profile sections":
+    - tab "Overview"
+    - tab "Contacts" [selected]
+    - tab "Brand Kit"
+  - tabpanel "Contacts":
+    - region "Client contacts":
+      - heading "Client contacts" [level=2]
+      - paragraph: Client contacts use a secure magic link. They never need a password.
+      - table "Loom Client contacts":
+        - rowgroup:
+          - row "Person Invitation Last active Projects they can access Actions":
+            - columnheader "Person"
+            - columnheader "Invitation"
+            - columnheader "Last active"
+            - columnheader "Projects they can access"
+            - columnheader "Actions"
+        - rowgroup:
+          - row "Jess Taylor avatar Jess Taylor jess@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Loom · WACF Customer Cutdown 01 Loom · Product Tour - Team Workflows Loom · Customer Story - Healthcare Loom · Q3 Product Recap Change project access Remove portal access":
+            - cell "Jess Taylor avatar Jess Taylor jess@loom.com":
+              - link "Jess Taylor avatar Jess Taylor jess@loom.com":
+                - /url: /people/client-jess
+                - generic "Jess Taylor avatar": JT
+                - strong: Jess Taylor
+                - generic: jess@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative Loom · WACF Customer Cutdown 01 Loom · Product Tour - Team Workflows Loom · Customer Story - Healthcare Loom · Q3 Product Recap":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+              - link "Loom · WACF Customer Cutdown 01":
+                - /url: /projects/loom-wacf-01
+                - generic: Loom ·
+                - text: WACF Customer Cutdown 01
+              - link "Loom · Product Tour - Team Workflows":
+                - /url: /projects/loom-product-tour
+                - generic: Loom ·
+                - text: Product Tour - Team Workflows
+              - link "Loom · Customer Story - Healthcare":
+                - /url: /projects/loom-customer-stories
+                - generic: Loom ·
+                - text: Customer Story - Healthcare
+              - link "Loom · Q3 Product Recap":
+                - /url: /projects/loom-q3-recap
+                - generic: Loom ·
+                - text: Q3 Product Recap
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Sarah Kim avatar Sarah Kim sarah@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Sarah Kim avatar Sarah Kim sarah@loom.com":
+              - link "Sarah Kim avatar Sarah Kim sarah@loom.com":
+                - /url: /people/client-sarah
+                - generic "Sarah Kim avatar": SK
+                - strong: Sarah Kim
+                - generic: sarah@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com Pending Waiting for them to join. Not yet Loom · Customer Story - Healthcare Resend invite Change project access Remove portal access":
+            - cell "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+              - link "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+                - /url: /people/client-daniel
+                - generic "Daniel Ortiz avatar": DO
+                - strong: Daniel Ortiz
+                - generic: daniel@loom.com
+            - cell "Pending Waiting for them to join.":
+              - generic: Pending
+              - generic: Waiting for them to join.
+            - cell "Not yet"
+            - cell "Loom · Customer Story - Healthcare":
+              - link "Loom · Customer Story - Healthcare":
+                - /url: /projects/loom-customer-stories
+                - generic: Loom ·
+                - text: Customer Story - Healthcare
+            - cell "Resend invite Change project access Remove portal access":
+              - button "Resend invite"
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Maya Chen avatar Maya Chen maya@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Maya Chen avatar Maya Chen maya@loom.com":
+              - link "Maya Chen avatar Maya Chen maya@loom.com":
+                - /url: /people/loom-contact-1
+                - generic "Maya Chen avatar": MC
+                - strong: Maya Chen
+                - generic: maya@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Elliot Brooks avatar Elliot Brooks elliot@loom.com Accepted 6 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+              - link "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+                - /url: /people/loom-contact-2
+                - generic "Elliot Brooks avatar": EB
+                - strong: Elliot Brooks
+                - generic: elliot@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "6 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+- region "Notifications (F8)":
+  - list
+- dialog "Change project access":
+  - banner:
+    - heading "Change project access" [level=2]
+    - generic: Choose which projects Sarah Kim can open in the Client portal.
+  - checkbox "Launch Film - Sales Narrative In Production - Waiting on client" [checked] [active]
+  - strong: Launch Film - Sales Narrative
+  - generic: In Production - Waiting on client
+  - checkbox "WACF Customer Cutdown 01 In Production - Waiting on Studio"
+  - strong: WACF Customer Cutdown 01
+  - generic: In Production - Waiting on Studio
+  - checkbox "Product Tour - Team Workflows In Production - Waiting on Studio"
+  - strong: Product Tour - Team Workflows
+  - generic: In Production - Waiting on Studio
+  - checkbox "Customer Story - Healthcare In Production - Waiting on Studio"
+  - strong: Customer Story - Healthcare
+  - generic: In Production - Waiting on Studio
+  - checkbox "Q3 Product Recap In Production - Waiting on Studio"
+  - strong: Q3 Product Recap
+  - generic: In Production - Waiting on Studio
+  - contentinfo:
+    - button "Cancel"
+    - button "Save access"

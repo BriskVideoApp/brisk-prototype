@@ -1,0 +1,172 @@
+Browser tab: 1716948387, Title: "Brisk Prototype", URL: "http://127.0.0.1:8769/media".
+1 AXWebArea Brisk Prototype, URL: 127.0.0.1:8769/media
+	2 container
+		3 container root-scribe-elem
+			4 container Notifications (F8)
+				5 content list
+		6 container Primary navigation
+			7 link Description: North Star Films logo North Star Films, Value: 127.0.0.1:8769/settings/studio
+			8 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				9 text Collapse navigation
+			10 container Workspace
+				11 link Description: Videos, Value: 127.0.0.1:8769/active-videos
+				12 link Description: To Do, Value: 127.0.0.1:8769/today
+				13 link Description: People, Value: 127.0.0.1:8769/people
+				14 link Description: Clients, Value: 127.0.0.1:8769/clients
+				15 link Description: Media Library, Value: 127.0.0.1:8769/media
+				16 link Description: Expenses, Value: 127.0.0.1:8769/outstanding-invoices
+				17 link Description: Brand Kits, Value: 127.0.0.1:8769/brand-kits
+			18 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				19 container Tom Mitchell
+					20 text TM
+				21 text Tom Mitchell
+				22 text North Star Films
+			23 container Studio administration
+				24 link Description: Studio settings, Value: 127.0.0.1:8769/settings/studio
+			25 container Prototype controls
+				26 button (collapsed) Test mode, Secondary Actions: Expand
+					27 text Test mode
+		28 container
+			29 container Navigation history
+				30 button Go back
+					31 text Back
+				32 button Go forward
+					33 text Forward
+				34 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					35 text Recent pages
+			36 container Global actions
+				37 button Open Chat, 22 unread
+					38 text Chat
+					39 container 22 unread messages
+						40 text 22
+				41 button (collapsed) Description: Updates, 5 unread, Secondary Actions: Expand
+					42 container 5 unread notifications
+						43 text 5
+					44 text Updates
+			45 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			46 container
+				47 container Media Library header
+					48 heading Media Library, Value: 1
+						49 text Media Library
+					50 search text field (settable) Description: Search media, Value: no-match-audit-zzq
+				51 container Client media libraries
+					52 text Clients
+					53 checkbox All clients, Value: 1
+					54 checkbox Canva 1 project, Value: 0
+						55 text Canva
+						56 container
+							57 text 1 project
+					58 checkbox Deel 1 project, Value: 0
+						59 text Deel
+						60 container
+							61 text 1 project
+					62 checkbox Figma 1 project, Value: 0
+						63 text Figma
+						64 container
+							65 text 1 project
+					66 checkbox Harbour Health 1 project, Value: 0
+						67 text Harbour Health
+						68 container
+							69 text 1 project
+					70 checkbox Hims 1 project, Value: 0
+						71 text Hims
+						72 container
+							73 text 1 project
+					74 checkbox Linear 1 project, Value: 0
+						75 text Linear
+						76 container
+							77 text 1 project
+					78 checkbox Loom 5 projects, Value: 0
+						79 text Loom
+						80 container
+							81 text 5 projects
+					82 checkbox Notion 1 project, Value: 0
+						83 text Notion
+						84 container
+							85 text 1 project
+					86 checkbox OpenAI 1 project, Value: 0
+						87 text OpenAI
+						88 container
+							89 text 1 project
+					90 checkbox PostHog 1 project, Value: 0
+						91 text PostHog
+						92 container
+							93 text 1 project
+					94 checkbox Ramp 1 project, Value: 0
+						95 text Ramp
+						96 container
+							97 text 1 project
+				98 container Project media libraries
+					99 text Projects
+					100 checkbox All projects, Value: 1
+					101 checkbox Launch Film - Sales Narrative Loom, Value: 0
+						102 text Launch Film - Sales Narrative
+						103 text Loom
+					104 checkbox Customer Story - APAC Hiring Deel, Value: 0
+						105 text Customer Story - APAC Hiring
+						106 text Deel
+					107 checkbox Product Education - Sleep Series Hims, Value: 0
+						108 text Product Education - Sleep Series
+						109 text Hims
+					110 checkbox Workflow Demo - Engineering Teams Notion, Value: 0
+						111 text Workflow Demo - Engineering Teams
+						112 text Notion
+					113 checkbox Partner Update - Studio Reel OpenAI, Value: 0
+						114 text Partner Update - Studio Reel
+						115 text OpenAI
+					116 checkbox Onboarding Film - Product Analytics PostHog, Value: 0
+						117 text Onboarding Film - Product Analytics
+						118 text PostHog
+					119 checkbox Finance Recap - June Product Drop Ramp, Value: 0
+						120 text Finance Recap - June Product Drop
+						121 text Ramp
+					122 checkbox Brand Refresh - Creator Templates Canva, Value: 0
+						123 text Brand Refresh - Creator Templates
+						124 text Canva
+					125 checkbox Roadmap Film - Planning Week Linear, Value: 0
+						126 text Roadmap Film - Planning Week
+						127 text Linear
+					128 checkbox Config Highlights - Community Keynote Figma, Value: 0
+						129 text Config Highlights - Community Keynote
+						130 text Figma
+					131 checkbox WACF Customer Cutdown 01 Loom, Value: 0
+						132 text WACF Customer Cutdown 01
+						133 text Loom
+					134 checkbox Product Tour - Team Workflows Loom, Value: 0
+						135 text Product Tour - Team Workflows
+						136 text Loom
+					137 checkbox Customer Story - Healthcare Loom, Value: 0
+						138 text Customer Story - Healthcare
+						139 text Loom
+					140 checkbox Q3 Product Recap Loom, Value: 0
+						141 text Q3 Product Recap
+						142 text Loom
+					143 checkbox Care Journey Harbour Health, Value: 0
+						144 text Care Journey
+						145 text Harbour Health
+				146 tab group Media library sections
+					147 tab (selected, settable, boolean) Media, Value: 1
+					148 tab (selectable, settable, boolean) Masters, Value: 0
+					149 tab (selectable, settable, boolean) Archived, Value: 0
+				150 container Filter media by type
+					151 checkbox All, Value: 1
+					152 checkbox Video, Value: 0
+					153 checkbox Audio, Value: 0
+					154 checkbox Image, Value: 0
+					155 checkbox Document, Value: 0
+				156 container Media view
+					157 checkbox Description: Card view, Value: 1
+						158 text Card view
+					159 checkbox Description: List view, Value: 0
+						160 text List view
+				161 container
+					162 text Sort media
+					163 combo box (collapsed) Description: Sort media, Value: Newest first, Secondary Actions: Expand
+						164 text Newest first
+				165 container Project media
+					166 heading No media matches these controls, Value: 2
+						167 text No media matches these controls
+					168 text Try another filename or clear the media filters.
+					169 button Clear controls
+
+The focused UI element is 50 search text field (settable) Description: Search media, Value: no-match-audit-zzq

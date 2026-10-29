@@ -1,0 +1,19 @@
+{
+  "browserId": "1",
+  "profile": "Tom Producer",
+  "tabId": "1716948402",
+  "url": "http://127.0.0.1:8768/assets/logos/brisk.svg",
+  "beforeApp": {
+    "origin": "http://127.0.0.1:8768",
+    "localKeys": [],
+    "sessionKeys": [],
+    "initialWidth": 1512,
+    "initialHeight": 767
+  },
+  "verifiedVia": "Read-only CDP Runtime.evaluate on static SVG before loading app",
+  "requestedViewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "scope": "Only this reviewer-created named audit session; no working-origin or other-profile interaction"
+}

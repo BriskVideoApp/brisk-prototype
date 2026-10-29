@@ -1,0 +1,87 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "AI Playbook" [level=1]
+  - paragraph: Add Studio instructions and references for Brisk AI.
+- region "Instructions":
+  - heading "Instructions" [level=2]
+  - paragraph: Tell Brisk AI how your Studio works. Client brand guidance stays in each Client Brand Kit.
+  - generic: Studio instructions
+  - textbox "Studio instructions":
+    - /placeholder: What should Brisk AI know about your Studio's work?
+    - text: Use the approved Brief and Client AI Brand Profile. Keep feedback direct and constructive. Do not invent claims or promises.
+  - heading "References" [level=2]
+  - paragraph: Add approved files and links that should guide Brisk AI.
+  - link "https://example.com/brisk-audit":
+    - /url: https://example.com/brisk-audit
+  - button "Remove https://example.com/brisk-audit"
+  - button "Choose File"
+  - button "Upload files": Upload files
+  - generic: Reference link
+  - textbox "Reference link"
+  - button "Add link" [active]
+  - button "Discard changes"
+  - button "Save AI Playbook"

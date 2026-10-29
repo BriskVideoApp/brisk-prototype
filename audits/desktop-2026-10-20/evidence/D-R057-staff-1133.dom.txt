@@ -1,0 +1,138 @@
+- button "Open Next.js Dev Tools":
+- alert
+- main:
+  - link "Back to Shoot":
+    - /url: /projects/loom-launch-film/stages/shoot
+    - text: Back to Shoot
+  - strong: Previewing Call Sheet
+  - button "About Call Sheet preview"
+  - navigation "Preview actions":
+    - button "Full screen": Full screen
+    - link "Edit":
+      - /url: /projects/loom-launch-film/stages/shoot
+      - text: Edit
+    - generic "Share": Share
+  - generic: NS
+  - strong: North Star Films
+  - generic: Call Sheet
+  - paragraph: Loom
+  - heading "Launch Film - Sales Narrative" [level=1]
+  - article:
+    - region "Day 1 essentials":
+      - navigation "Shoot days":
+        - button "Day 1 13 Aug":
+          - generic: Day 1
+          - generic: 13 Aug
+        - button "Day 2 14 Aug":
+          - generic: Day 2
+          - generic: 14 Aug
+      - generic: Shoot date
+      - heading "Thursday 13 August 2026" [level=2]
+      - generic: General call time
+      - strong: 7:30 am
+      - generic: Expected wrap 5:00 pm
+      - generic: Primary location
+      - strong: Precinct Studio 2
+      - link "21 James Street, Thirroul NSW 2515":
+        - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+      - strong: 18°C
+      - paragraph: Partly cloudy · 20% rain
+      - generic: Key contacts
+      - strong: Tom Maclachlan · Producer / Director
+    - region "At a glance":
+      - article:
+        - generic: Shots remaining
+        - strong: "3"
+        - generic: Track detailed coverage in Shoot day
+    - heading "Run of day" [level=2]
+    - generic: "6"
+    - article:
+      - strong: 7:30 am
+      - generic: to 8:00 am
+      - strong: Crew call and gear unload
+      - generic: Setup · Precinct Studio 2
+    - article:
+      - strong: 8:00 am
+      - generic: to 8:45 am
+      - strong: Lighting and camera setup
+      - generic: Setup · Precinct Studio 2
+    - article:
+      - strong: 8:45 am
+      - generic: to 9:45 am
+      - strong: Founder interview
+      - generic: 1 shots · Precinct Studio 2
+    - article:
+      - strong: 10:15 am
+      - generic: to 10:35 am
+      - strong: Travel to Loom office
+      - generic: Travel · Loom Sydney Office
+    - article:
+      - strong: 10:35 am
+      - generic: to 12:00 pm
+      - strong: Team and workplace B-roll
+      - generic: 1 shots · Loom Sydney Office
+    - article:
+      - strong: 12:00 pm
+      - generic: to 12:45 pm
+      - strong: Lunch
+      - generic: Lunch · Loom Sydney Office
+    - heading "Locations" [level=2]
+    - generic: "2"
+    - article:
+      - strong: Precinct Studio 2
+      - generic: Primary
+      - link "21 James Street, Thirroul NSW 2515":
+        - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+    - article:
+      - strong: Loom Sydney Office
+      - link "44 Market Street, Sydney NSW 2000":
+        - /url: https://www.google.com/maps/search/?api=1&query=44%20Market%20Street%2C%20Sydney%20NSW%202000
+    - heading "People" [level=2]
+    - generic: "6"
+    - article:
+      - generic: TM
+      - strong: Tom Maclachlan
+      - generic: Producer / Director · Call 7:15 am
+    - article:
+      - generic: JL
+      - strong: Jordan Lee
+      - generic: Camera Operator · Call 7:30 am
+    - article:
+      - generic: MS
+      - strong: Maya Singh
+      - generic: Sound Recordist · Call 7:30 am
+    - article:
+      - generic: AC
+      - strong: Amelia Chen
+      - generic: Founder / Interviewee · Call 8:30 am
+    - article:
+      - generic: LO
+      - strong: Liam O'Connor
+      - generic: Communications Manager · Call 8:15 am
+    - article:
+      - generic: RW
+      - strong: Ruth Williams
+      - generic: Venue Contact · Call 7:00 am
+    - heading "Notes for the day" [level=2]
+    - paragraph: "Parking: Two crew parks in the rear loading dock. Street parking on James Street for clients and talent. Access: Enter via the loading dock off King Lane. Call Ruth on arrival. Keep the equipment holding area clear and follow the producer's direction when moving between locations. Accessibility: Both locations have lift access. Please tell Tom in advance if you need step-free assistance. Wi-Fi: Network: Precinct-Guest · Password: create-together Emergency contact: 000 - Tom Maclachlan · 0412 555 018 Safety: Keep one clear path to every fire exit. Report cables crossing walkways to the producer immediately. Other practical details: Quiet set during interviews. Avoid showing unreleased product screens and keep the eastern collaboration area available for staff. Studio is on level one. Freight lift is available for equipment."
+    - heading "Documents" [level=2]
+    - generic: "2"
+    - link "Talent release - Amelia Chen.pdf":
+      - /url: "#release-amelia"
+      - generic: Talent release - Amelia Chen.pdf
+    - link "Studio safety information":
+      - /url: "#studio-safety"
+      - generic: Studio safety information
+    - heading "Nearest emergency hospital" [level=2]
+    - strong: Wollongong Hospital Emergency Department
+    - link "348-352 Crown Street, Wollongong NSW 2500":
+      - /url: https://www.google.com/maps/search/?api=1&query=348-352%20Crown%20Street%2C%20Wollongong%20NSW%202500
+    - generic: Calculated from Precinct Studio 2
+    - link "Directions":
+      - /url: https://www.google.com/maps/search/?api=1&query=348-352%20Crown%20Street%2C%20Wollongong%20NSW%202500
+      - text: Directions
+    - generic: Emergency
+    - link "000":
+      - /url: tel:000
+  - generic: North Star Films
+  - generic: Updated 4 Aug, 10:30 am

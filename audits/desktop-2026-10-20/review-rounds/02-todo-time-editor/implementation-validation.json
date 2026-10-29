@@ -1,0 +1,113 @@
+{
+  "date": "28 October 2026",
+  "status": "Implemented, browser-verified and visually signed off by Tom on28 October2026",
+  "approval": "Tom explicitly approved TDP01-TDP04 in chat on28 October2026.",
+  "typeCheck": "npx tsc --noEmit passed",
+  "httpCheck": {
+    "/today": 200
+  },
+  "diffCheck": "git diff --check passed",
+  "sourceHashes": {
+    "src/components/today/TodayPage.tsx": "c81a19ba57b184b592b616f69afbc91d4c08a7e5657a5f0b5c299a9c15526e0f",
+    "src/components/today/today.css": "7e2b54d2c9be5bc06294575ebefba115907ac81a4a9731acfbed027632b5d194",
+    "src/components/today/useTimeEntryEditorLayout.ts": "0c364e1e9aa320ed1b86f66cf08e05426d70a2bd8046f0ad6aed29909ef9e4a2"
+  },
+  "baselineFilesChecked": 1702,
+  "changedExistingFiles": [
+    "src/components/today/today.css",
+    "src/components/today/TodayPage.tsx"
+  ],
+  "newSourceFiles": [
+    "src/components/today/useTimeEntryEditorLayout.ts"
+  ],
+  "unexpectedChanges": [],
+  "mediaImplementationUnchanged": true,
+  "workingData": "Only isolated origin8773 was opened; initial local/session keys0/0. Working-origin app pages and existing Media demo were not opened or operated. Save verification changed only temporary demo state; the original entry values were restored and a normal reload reset local component state.",
+  "unchanged": [
+    "Mock data files",
+    "Role and permission sources",
+    "DS source",
+    "Assets",
+    "Dependencies",
+    "Other production stages"
+  ],
+  "verificationRecord": "implementation-verification.json",
+  "screenshots": [
+    {
+      "file": "after-final-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "8e009f351b66c75de7d4e564e6b036e35b84e3d6cae3668f851e11f25a2b2cd9",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "7de28374ce694325572e0ede5a00db8f5807f3889b5a61bdbee8dcabcda500e8",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "956865c346eb8695f4920dc874d139e07a792074644697af5ce67c264c36d6cf",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-1133-collapsed.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "ade48f846bcec3fbaa1388e7d88c718c8acafeaa8a55a9b5ae85f19f7d6f3df3",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-invalid-hours.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "c9240e81152511d31d2995ca1abe24a4605aa8cbc67c589e6e9481bdaa5935e6",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-short-desktop.jpg",
+      "width": 1133,
+      "height": 500,
+      "sha256": "64fa92824cd2abd7d5e79c397a21ad33992fa482e702a4b4e5970612a3aa209e",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-note-resize.jpg",
+      "width": 1133,
+      "height": 700,
+      "sha256": "d6b1cafd476e858e7bc86a8705ab359bd869c42d0d91b2f83306782d0fa0f758",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-below-anchor.jpg",
+      "width": 1440,
+      "height": 1100,
+      "sha256": "e17d9fa07076a65f9e12c54d7e3520791dd351c6317c6354ec65bd2de03f1d9b",
+      "kind": "Genuine current browser capture"
+    },
+    {
+      "file": "after-editor-detail.jpg",
+      "width": 344,
+      "height": 466,
+      "sha256": "0b5efac5eddbea8e859fc64d5c0b93c1a65660d37483592e4f34251f95733369",
+      "kind": "Pixel crop of genuine retained full screenshot; see crop-provenance.json"
+    }
+  ],
+  "limitations": [
+    "Delete callback unchanged; Delete was not executed.",
+    "Restricted roles were not browser-retested in this batch; their access rules are unchanged.",
+    "Desktop only; mobile deferred.",
+    "No formal accessibility compliance claim."
+  ],
+  "noBuildTestsInstallCommitPush": true,
+  "visualSignOff": "Tom confirmed in chat on28 October2026: The To Do time editor looks good.",
+  "liveDemo": "Isolated8773 demo retained for Tom review; cache normal and viewport override reset.",
+  "viewportReset": true,
+  "cacheSettings": "Normal caching restored before final successful reload",
+  "resultMissingReferences": [],
+  "renderedImages": "All7 result-page images loaded in browser"
+}

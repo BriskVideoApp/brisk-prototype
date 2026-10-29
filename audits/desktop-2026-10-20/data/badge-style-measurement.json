@@ -1,0 +1,47 @@
+[
+  {
+    "animation": "unread-badge-pulse",
+    "background": "rgb(253, 104, 181)",
+    "color": "rgb(255, 255, 255)",
+    "duration": "1.8s",
+    "fontSize": "10px",
+    "label": "2 unread messages",
+    "text": "2"
+  },
+  {
+    "animation": "unread-badge-pulse",
+    "background": "rgb(253, 104, 181)",
+    "color": "rgb(255, 255, 255)",
+    "duration": "1.8s",
+    "fontSize": "10px",
+    "label": "1 unread messages",
+    "text": "1"
+  },
+  {
+    "animation": "unread-badge-pulse",
+    "background": "rgb(253, 104, 181)",
+    "color": "rgb(255, 255, 255)",
+    "duration": "1.8s",
+    "fontSize": "10px",
+    "label": "4 unread messages",
+    "text": "4"
+  },
+  {
+    "animation": "unread-badge-pulse",
+    "background": "rgb(253, 104, 181)",
+    "color": "rgb(255, 255, 255)",
+    "duration": "1.8s",
+    "fontSize": "10px",
+    "label": "1 unread messages",
+    "text": "1"
+  },
+  {
+    "animation": "unread-badge-pulse",
+    "background": "rgb(253, 104, 181)",
+    "color": "rgb(255, 255, 255)",
+    "duration": "1.8s",
+    "fontSize": "10px",
+    "label": "3 unread messages",
+    "text": "3"
+  }
+]

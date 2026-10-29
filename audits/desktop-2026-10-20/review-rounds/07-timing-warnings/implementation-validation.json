@@ -1,0 +1,67 @@
+{
+  "date": "29 October 2026",
+  "status": "Approved timing-warning scope implemented and verification finished; awaiting Tom visual sign-off",
+  "scope": [
+    "Brief one-line suggestion before submission",
+    "Project Chat date review and Staff-reviewed External copy",
+    "Deadline exact-message warning independent of read state",
+    "Current Final delivery hand-off and Global Chat navigation",
+    "Assigned Freelancer read-only review"
+  ],
+  "typeCheck": "npx tsc --noEmit passed",
+  "http": {
+    "/active-videos": 200,
+    "/chat?project=loom-launch-film": 200,
+    "/projects/loom-launch-film/stages/brief": 200,
+    "/projects/loom-launch-film/delivery": 200
+  },
+  "desktopViewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      1133,
+      1000
+    ]
+  ],
+  "freshChecks": "resume-2026-10-29/browser-observations.json",
+  "freshCheckCount": 7,
+  "sourceComparison": {
+    "protectedFilesCompared": 1783,
+    "changed": [],
+    "applicationCodeChanged": false,
+    "assetsOrDependenciesChanged": false,
+    "note": "Current before-resume checkpoint includes all earlier approved app changes."
+  },
+  "screenshots": "screenshot-provenance.json",
+  "workingData": "No browser operations on user working origins 8773, 8777 or 8778. Verification only on fresh loopback origins 8783/8784. Demo-only Brief submission and review/share/read actions on 8783; existing Freelancer scenario and existing mock offer acceptance on 8784. No original mock arrays, permissions, app settings, dependencies or assets edited.",
+  "applicationChangesThisResume": [],
+  "laterApproval": "The later Final delivery proposal/agreement rollout supersedes the old Open project deadline link and the original warning-only resolution boundary. Current View final delivery navigation was verified in full Chat and Global Chat.",
+  "currentWarningScopeGaps": [],
+  "remainingProductScope": [
+    "Automatic stage deadline calculations and live AI forecasts",
+    "Studio turnaround settings and holiday calendar",
+    "Revision-round policy",
+    "Backend and actual notification/email delivery"
+  ],
+  "laterDeliveryLimits": "../08-delivery-agreement/implementation-validation.json",
+  "mobile": "Deferred by approved desktop-first sequence",
+  "browserDiagnostics": "No warnings/errors in the inspected fresh Staff/Client and Freelancer tabs",
+  "notRun": [
+    "tests",
+    "production build",
+    "dependency installation",
+    "commit",
+    "push",
+    "external publication"
+  ],
+  "reviewStatus": "Implemented and verified, awaiting Tom visual review",
+  "reportLinks": {
+    "checked": 36,
+    "missing": []
+  },
+  "historicalReport": "Old unfinished snapshot retained and labelled historical; its superseded missing links are not part of the current result pack.",
+  "reportImageLoading": "Fresh Client post crop and producer dialog visibly loaded in the current local HTTP report.",
+  "restored": "Viewport reset; temporary inspection tabs closed; final report left open. Working browser tabs untouched. Origin 8783 remains available for the demo; temporary Freelancer proxy 8784 stopped."
+}

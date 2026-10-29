@@ -1,0 +1,82 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications" [active]:
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "Back to notification centre":
+    - /url: /notifications
+    - text: Back to notification centre
+  - heading "Notification preferences" [level=1]
+  - heading "Personal notifications" [level=2]
+  - paragraph: These settings affect only the updates sent to you.
+  - checkbox "Direct messages, mentions and replies" [checked]
+  - generic: Direct messages, mentions and replies
+  - paragraph: Notify you when someone contacts you directly or replies to you.
+  - checkbox "Assignments and assignment changes" [checked]
+  - generic: Assignments and assignment changes
+  - paragraph: Notify you when assigned work, dates or responsibilities change.
+  - checkbox "Updates from assigned projects" [checked]
+  - generic: Updates from assigned projects
+  - paragraph: Project updates stop when your assignment ends. Direct messages and permitted mentions can still reach you.
+  - checkbox "Stage assignments and due dates" [checked]
+  - generic: Stage assignments and due dates
+  - paragraph: Notify you when assigned Stage work needs attention or reaches its due date.
+  - checkbox "Important email notifications" [checked]
+  - generic: Important email notifications
+  - paragraph: Email you when an important work update needs your attention.
+  - checkbox "Daily digest"
+  - generic: Daily digest
+  - paragraph: Combine routine Studio updates into one daily email.
+  - checkbox "Important account, access and security emails" [checked] [disabled]
+  - generic: Important account, access and security emails
+  - paragraph: These emails are always sent to help protect your account.
+  - generic: Always on
+  - button "Discard changes"
+  - button "Save preferences"
+  - generic: All personal notification changes are saved.

@@ -1,0 +1,41 @@
+{
+  "date": "28 October 2026",
+  "status": "Revised visual proposal; requires Tom review before application implementation",
+  "userRequests": [
+    "Client-facing copy should be a little friendlier and understandable without production knowledge",
+    "The expanded production settings still feel complex"
+  ],
+  "recommendedPattern": {
+    "page": "Read-only shared timings, genuine saved stage exceptions only, and separate revision-round allowance",
+    "editing": "Existing Brisk DS EditingDialog, one Save or Cancel per edit. No page-level second Save and no nested inline exception form.",
+    "inheritance": "Shared timing changes affect linked stages. Opening or cancelling an exception creates nothing. New exception Save stays disabled until its rule differs from the shared default.",
+    "rounds": "Separate from durations and initially unset. No default number of rounds or limit enforcement is assumed.",
+    "tradeoff": "One additional click for occasional configuration, with a simpler summary and one clear save boundary.",
+    "alternative": "Keep shared fields directly editable and use a dialog only for exceptions. Faster initial setup, but retains mixed page-level and dialog save boundaries."
+  },
+  "clientCopy": {
+    "headline": "We\u2019ll need a little more time",
+    "suggestionLabel": "Suggested delivery date",
+    "action": "Use this date",
+    "explanationLabel": "Why this date?",
+    "stages": [
+      "Editing your video",
+      "Final checks and delivery"
+    ],
+    "assumptions": "Based on your approved script and files being ready by 28 October. Weekends aren\u2019t counted.",
+    "confirmation": "We\u2019ll confirm the date with you, allowing time for your feedback.",
+    "boundary": "This selects a date request, not an agreed commitment. No timing calculations or fixture dates changed."
+  },
+  "implementationRisks": [
+    "The proposed atomic settings saves need approval and integration with existing Production/default-team save behaviour. Preserve pending team edits when merging timing changes.",
+    "Keep active/manual project deadlines unchanged; apply agreed defaults only at the appropriate future cycle.",
+    "Included-round value, scope and extra-round policy remain unresolved; no commercial enforcement added."
+  ],
+  "sources": [
+    "Brisk DS/src/app/components/EditingDialog.tsx",
+    "Brisk DS/src/app/components/DialogSurface.tsx",
+    "Brisk DS/guidelines/components/editing-dialog.md"
+  ],
+  "preview": "timing-preview.html",
+  "review": "timing-review.html"
+}

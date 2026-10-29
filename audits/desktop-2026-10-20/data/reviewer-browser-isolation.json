@@ -1,0 +1,20 @@
+[
+  {
+    "tabId": "7",
+    "origin": "http://127.0.0.1:8767",
+    "localKeys": 0,
+    "sessionKeys": 0
+  },
+  {
+    "tabId": "8",
+    "origin": "http://127.0.0.1:8768",
+    "localKeys": 0,
+    "sessionKeys": 0
+  },
+  {
+    "tabId": "9",
+    "origin": "http://127.0.0.1:8769",
+    "localKeys": 0,
+    "sessionKeys": 0
+  }
+]

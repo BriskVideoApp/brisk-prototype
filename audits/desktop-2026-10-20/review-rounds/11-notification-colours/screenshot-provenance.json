@@ -1,0 +1,167 @@
+[
+  {
+    "file": "notifications-reference-1440.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Notifications open, current reference",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "6e5b5d8b93dac26075c40cdf1c78be1317e2897b61ffb501538c3451994bb5c2"
+  },
+  {
+    "file": "chat-internal-1440.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Current attention and success posts",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "ce59d9d4d4875ef545149f4a8624379ef303c275099b89b2ff32d85a771f6b22"
+  },
+  {
+    "file": "chat-internal-1133.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Current attention post, narrow desktop",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "da4e148505a9ef6435bcfaf296d6408d02ea1ec1dada473c5d6f41e544565143"
+  },
+  {
+    "file": "chat-client-1133.png",
+    "role": "Customer",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Client-safe External updates",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "d25fa490a3b2e7b596bc10e8f3824f58a3f819ac21820652b3f1a9503bfa10ee"
+  },
+  {
+    "file": "chat-information-1133.png",
+    "role": "Customer",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Information update with thumbnail",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "9d3b078213e3e3a36455ddb87c15f3b995b9fe638300f3be26995950f7ab6899"
+  },
+  {
+    "file": "deadline-1133.png",
+    "role": "Studio Staff",
+    "route": "/active-videos",
+    "state": "Timing needs review text with matched background",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "c0e1d6154f004a9d5bfe18a97348d86b06888577b668c525c40a65e3882be26f"
+  },
+  {
+    "file": "final-delivery-1133.png",
+    "role": "Studio Staff",
+    "route": "/projects/loom-launch-film/delivery",
+    "state": "Overdue notice without information icon",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "40441c16c67e22036d490562d17cbb7791eb8b8c82d73d6beffeea1a7443b30d"
+  },
+  {
+    "file": "shared-status-labels-1133.png",
+    "role": "Studio Staff",
+    "route": "/notifications/delivery",
+    "state": "Existing QA-only consumer of shared text status labels",
+    "viewport": [
+      1280,
+      720
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine current app screenshot",
+    "sha256": "4690bde0636689ffa13e8904926ddf2b26db2552a9eaa5328e198594bd52282d"
+  },
+  {
+    "file": "chat-update-focus.png",
+    "source": "chat-client-1133.png",
+    "crop": [
+      475,
+      216,
+      1120,
+      430
+    ],
+    "kind": "Faithful crop, no generated UI or annotations"
+  },
+  {
+    "file": "deadline-focus.png",
+    "source": "deadline-1133.png",
+    "crop": [
+      790,
+      260,
+      952,
+      789
+    ],
+    "kind": "Faithful crop, no generated UI or annotations"
+  },
+  {
+    "file": "notification-preview-warning-1133.png",
+    "role": "Studio Staff",
+    "route": "/settings/notifications/customer-reviews",
+    "state": "Existing review-request preview, attention",
+    "viewport": [
+      1280,
+      720
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine existing app preview, local selection only; no settings saved",
+    "sha256": "2267634586ab0b7612b8edbc1d4cd1bfad4432edee66dc5e30f494bd716425fa"
+  },
+  {
+    "file": "notification-preview-success-1133.png",
+    "role": "Studio Staff",
+    "route": "/settings/notifications/customer-reviews",
+    "state": "Existing approval preview, success",
+    "viewport": [
+      1280,
+      720
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine existing app preview, local selection only; no settings saved",
+    "sha256": "e3a9951d817de2aeab9424b10ac782b4b907543991bf6f24f19b7ddd2a3910c5"
+  },
+  {
+    "file": "notification-preview-failure-1133.png",
+    "role": "Studio Staff",
+    "route": "/settings/notifications/media-requests",
+    "state": "Existing file-processing-failed preview, failure",
+    "viewport": [
+      1280,
+      720
+    ],
+    "origin": "http://127.0.0.1:8783",
+    "kind": "Genuine existing app preview, local selection only; no settings saved",
+    "sha256": "49c653e330d41828ccc1cee7eb267c29f28e0ae3db04d423614b258ed7c1a529"
+  }
+]

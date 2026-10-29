@@ -1,0 +1,26 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/studio/ai-playbook".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 45-90
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/studio/ai-playbook
+~			43 heading AI Playbook, Value: 1
+~				44 text AI Playbook
++			45 text Add Studio instructions and references for Brisk AI.
++			46 container Instructions
++				47 container
++					48 heading Instructions, Value: 2, ID: studio-ai-playbook-heading
++						49 text Instructions
++					50 text Tell Brisk AI how your Studio works. Client brand guidance stays in each Client Brand Kit.
++					51 text Studio instructions
++					52 text entry area (settable) Studio instructions, Value: Use the approved Brief and Client AI Brand Profile. Keep feedback direct and constructive. Do not invent claims or promises.
++					53 heading References, Value: 2
++						54 text References
++					55 text Add approved files and links that should guide Brisk AI.
++					56 text No references added yet.
++					57 button Choose files
++					58 button Upload files
++					59 text Reference link
++					60 text field (settable) Reference link
++					61 button Add link
++					62 button Discard changes
++					63 button Save AI Playbook
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/studio/ai-playbook

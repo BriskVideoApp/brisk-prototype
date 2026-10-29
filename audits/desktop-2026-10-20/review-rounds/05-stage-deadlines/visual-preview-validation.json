@@ -1,0 +1,46 @@
+{
+  "date": "28 October 2026",
+  "type": "Design preview verification; no application implementation",
+  "branch": "codex/unified-brisk-prototype",
+  "protectedSourceFilesCompared": 1705,
+  "changedProtectedFiles": [],
+  "browserChecks": "visual-preview-browser-observations.json",
+  "desktopWidths": [
+    1440,
+    1133
+  ],
+  "conversationPreviewWidth": 736,
+  "browserChecksCount": 13,
+  "layoutChecks": {
+    "1440": [
+      "Project read view",
+      "Studio settings",
+      "Brief warning",
+      "Studio risk/draft",
+      "Client proposed date",
+      "Client overdue"
+    ],
+    "1133": [
+      "Specific date editor",
+      "Studio settings"
+    ],
+    "736": [
+      "Contained conversation project layout"
+    ]
+  },
+  "applicationRecordActions": "No app editing controls or final submissions were used. Working project tabs were not operated. No fresh application-storage equality claim is made for this design-only turn.",
+  "limits": [
+    "No application implementation or complete shell verification",
+    "No mobile application pass",
+    "No screen-reader session or formal compliance claim",
+    "Independent illustrative scenarios, not a connected scheduler"
+  ],
+  "localReportLinksChecked": 27,
+  "missingLinksBeforeValidationFileSaved": [],
+  "restoration": "Temporary viewport reset; current-settings inspection tab closed. Proposal tab retained for review.",
+  "reviewPageBrowserCheck": {
+    "title": "Turnaround times and delivery warnings - design review",
+    "visibleProposalImagesLoaded": 6,
+    "failedImages": 0
+  }
+}

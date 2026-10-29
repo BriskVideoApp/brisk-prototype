@@ -1,0 +1,9 @@
+{
+  "comparedFiles": 1785,
+  "changed": [
+    "src/components/project-timing/project-timing.css",
+    "src/components/project-timing/ProjectTimingPost.tsx",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "Docs/desktop-design-baseline.md"
+  ]
+}

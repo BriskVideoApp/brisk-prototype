@@ -1,0 +1,92 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - generic: "1"
+    - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- main:
+  - region "What kinds of videos do you make?":
+    - generic: Question 3 of 3
+    - heading "What kinds of videos do you make?" [level=1]
+    - group "Video types offered":
+      - checkbox "Animations"
+      - generic: Animations
+      - checkbox "Brand films"
+      - generic: Brand films
+      - checkbox "Case studies"
+      - generic: Case studies
+      - checkbox "Documentaries"
+      - generic: Documentaries
+      - checkbox "Event videos"
+      - generic: Event videos
+      - checkbox "Explainers"
+      - generic: Explainers
+      - checkbox "Internal communications"
+      - generic: Internal communications
+      - checkbox "Music videos"
+      - generic: Music videos
+      - checkbox "Product demos"
+      - generic: Product demos
+      - checkbox "Social videos"
+      - generic: Social videos
+      - checkbox "Training videos"
+      - generic: Training videos
+      - checkbox "TV Ads"
+      - generic: TV Ads
+    - button "Show fewer options" [expanded]: Show fewer options
+    - group "Additional video types":
+      - checkbox "AI video"
+      - generic: AI video
+      - checkbox "Fashion films"
+      - generic: Fashion films
+      - checkbox "Podcasts"
+      - generic: Podcasts
+      - checkbox "Property videos"
+      - generic: Property videos
+      - checkbox "Wedding films"
+      - generic: Wedding films
+    - generic: Video type
+    - textbox "Video type":
+      - /placeholder: e.g. Recruitment films
+    - group "Choose an icon":
+      - generic: Choose an icon
+      - generic "Shapes":
+        - radio "Shapes" [checked]
+        - generic: Shapes
+      - generic "Motion":
+        - radio "Motion"
+        - generic: Motion
+      - generic "Video file":
+        - radio "Video file"
+        - generic: Video file
+      - generic "Energy":
+        - radio "Energy"
+        - generic: Energy
+      - generic "Folder":
+        - radio "Folder"
+        - generic: Folder
+      - generic "People":
+        - radio "People"
+        - generic: People
+      - generic "Image":
+        - radio "Image"
+        - generic: Image
+      - generic "Globe":
+        - radio "Globe"
+        - generic: Globe
+      - generic "Pen":
+        - radio "Pen"
+        - generic: Pen
+      - generic "Smile":
+        - radio "Smile"
+        - generic: Smile
+    - button "Cancel"
+    - button "Add" [disabled]
+    - button "Back"
+    - button "Continue" [disabled]

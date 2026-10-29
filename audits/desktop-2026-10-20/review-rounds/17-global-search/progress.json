@@ -1,0 +1,24 @@
+{
+  "approval": "One search in the top bar, defaulting to the current page with an Everywhere option. Remove duplicate search bars; preserve working data.",
+  "state": "Implemented and verified on desktop; awaiting Tom visual review.",
+  "scope": [
+    "Current-page list filtering and document matches",
+    "Everywhere project, Chat, Brief, Script and Media content, subject to current permissions",
+    "Single keyboard shortcut owner and native result links",
+    "No backend, dependencies, mock-record migration or production build"
+  ],
+  "verificationPending": [],
+  "verified": [
+    "Current-page multi-word Videos filtering; query remains visible after Escape",
+    "Single Cmd+K owner, autofocus, arrow/Enter selection, Escape close",
+    "Saved Brief cross-app match reveals Description step; live Brief answer retained",
+    "Script current-page row highlight; cross-app Row 7/version destination",
+    "Current Media result opens correct inspector",
+    "Private Chat result opens David Ryan DM",
+    "Customer: Internal phrase and other Client project excluded; permitted External match included",
+    "Freelancer: scoped My jobs; no People/Clients/Expenses results or categories",
+    "Source hashes: no src/data or assets changed in this round"
+  ],
+  "validation": "implementation-validation.json",
+  "result": "result.html"
+}

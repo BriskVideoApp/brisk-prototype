@@ -1,0 +1,49 @@
+{
+  "action": {
+    "bottom": 317,
+    "height": 48,
+    "left": 45,
+    "right": 683,
+    "top": 269,
+    "width": 638,
+    "x": 45,
+    "y": 269
+  },
+  "background": "color(srgb 0.974118 0.950588 0.88)",
+  "card": {
+    "bottom": 318,
+    "height": 234,
+    "left": 44,
+    "right": 684,
+    "top": 84,
+    "width": 640,
+    "x": 44,
+    "y": 84
+  },
+  "dates": {
+    "bottom": 181,
+    "height": 44,
+    "left": 61,
+    "right": 667,
+    "top": 137,
+    "width": 606,
+    "x": 61,
+    "y": 137
+  },
+  "dpr": 1,
+  "fontReady": "loaded",
+  "reason": {
+    "bottom": 233,
+    "height": 40,
+    "left": 61,
+    "right": 667,
+    "top": 193,
+    "width": 606,
+    "x": 61,
+    "y": 193
+  },
+  "viewport": [
+    1280,
+    720
+  ]
+}

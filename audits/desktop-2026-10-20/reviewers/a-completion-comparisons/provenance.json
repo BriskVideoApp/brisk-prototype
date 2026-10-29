@@ -1,0 +1,229 @@
+[
+  {
+    "panel": "AC06-billing-frequency.png",
+    "source": "evidence/G052-plan-comparison-monthly.jpg",
+    "sha256": "5145d3d538380d250526518ef66ebddcc5027cc7dceb3f9c7cb2badaa7851cfa",
+    "originalSize": [
+      1440,
+      1000
+    ],
+    "cropBoxXYXY": [
+      160,
+      16,
+      770,
+      270
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        180,
+        115,
+        358,
+        130
+      ]
+    ],
+    "label": "1440px | Studio Staff | Monthly default",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC06-billing-frequency.png",
+    "source": "evidence/G117-plan-comparison-1133.jpg",
+    "sha256": "57db111e9ec8ea118495926149a3cc6ec30f5bb59d700908051dd6c7b4f961ee",
+    "originalSize": [
+      1133,
+      1000
+    ],
+    "cropBoxXYXY": [
+      19,
+      16,
+      629,
+      270
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        39,
+        115,
+        216,
+        130
+      ]
+    ],
+    "label": "1133px | Studio Staff | Monthly default",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC01-todo-footer.png",
+    "source": "evidence/F087-todo-editor-footer-1440.jpg",
+    "sha256": "54d33fdd8720b2d96de9c88f34c4483e16fa54e53e7011e40b2cb17d75f35b9d",
+    "originalSize": [
+      1440,
+      1000
+    ],
+    "cropBoxXYXY": [
+      915,
+      600,
+      1300,
+      1000
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        935,
+        634,
+        1267,
+        999
+      ]
+    ],
+    "label": "1440px | Studio Staff | Editor open",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC02-question-readability.png",
+    "source": "evidence/F055-question-focus-readability.jpg",
+    "sha256": "e9d5af8d112c0fac07d606ef87c1f603d04c1ffaad51714bc494a57a1229c6b7",
+    "originalSize": [
+      1133,
+      1000
+    ],
+    "cropBoxXYXY": [
+      490,
+      306,
+      1107,
+      735
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        540,
+        499,
+        737,
+        568
+      ]
+    ],
+    "label": "1133px | Studio Staff | Question field focused",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC03-schedule-overlap.png",
+    "source": "evidence/F056-schedule-picker-escape.jpg",
+    "sha256": "22a2cb845a8bfa4b49e540a7c9a6d1ed3a9ffe1bb19c58ab374399161a0a6e0e",
+    "originalSize": [
+      1133,
+      1000
+    ],
+    "cropBoxXYXY": [
+      496,
+      590,
+      890,
+      870
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        578,
+        622,
+        869,
+        683
+      ]
+    ],
+    "label": "1133px | Studio Staff | Schedule",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC05-caption-readability.png",
+    "source": "evidence/F070-caption-text-fit.jpg",
+    "sha256": "a28942536172be3a7c761dad29382c8ee702553e65c23e9ddf86dae9057f5de8",
+    "originalSize": [
+      1440,
+      1000
+    ],
+    "cropBoxXYXY": [
+      1095,
+      359,
+      1440,
+      801
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        1108,
+        573,
+        1434,
+        602
+      ]
+    ],
+    "label": "1440px | Studio Staff | Captions",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC04-progress-occlusion.png",
+    "source": "evidence/F057-progress-sidebar-collision.jpg",
+    "sha256": "2d531676b443ac11af1ccf5d00f540bb287bcf4ae3355feb5c803bf13902bb7c",
+    "originalSize": [
+      1133,
+      1000
+    ],
+    "cropBoxXYXY": [
+      0,
+      500,
+      600,
+      950
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        235,
+        548,
+        462,
+        948
+      ]
+    ],
+    "label": "1133px | Studio Staff | Progress open",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC08-brand-move-feedback.png",
+    "source": "evidence/G127-brand-selected-move-menu.jpg",
+    "sha256": "97bd1d994b3512c66e1f67219e4df9cded718b2bfdf291e5f91a79ec7264b909",
+    "originalSize": [
+      1440,
+      1000
+    ],
+    "cropBoxXYXY": [
+      1008,
+      350,
+      1440,
+      1000
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [],
+    "label": "1440px | Studio Staff | Selected menu",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  },
+  {
+    "panel": "AC08-brand-move-feedback.png",
+    "source": "evidence/G128-brand-move-toast-only.jpg",
+    "sha256": "79f9946b31570e85bdb54b202187363bf560bfc4a4437121cf0cf1853d23a578",
+    "originalSize": [
+      1440,
+      1000
+    ],
+    "cropBoxXYXY": [
+      1008,
+      350,
+      1440,
+      1000
+    ],
+    "scale": 1,
+    "highlightBoxesInOriginalXYXY": [
+      [
+        1126,
+        925,
+        1425,
+        983
+      ]
+    ],
+    "label": "1440px | Studio Staff | Result toast",
+    "editing": "Genuine pixel crop; orange outlines outside affected text/control; no UI reconstructed."
+  }
+]

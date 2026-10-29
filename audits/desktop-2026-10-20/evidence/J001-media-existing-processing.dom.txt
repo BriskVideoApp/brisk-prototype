@@ -1,0 +1,494 @@
+Browser tab: 1716948387, Title: "Brisk Prototype", URL: "http://127.0.0.1:8769/media".
+1 AXWebArea Brisk Prototype, URL: 127.0.0.1:8769/media
+	2 container
+		3 container root-scribe-elem
+			4 container Notifications (F8)
+				5 content list
+		6 container Primary navigation
+			7 link Description: North Star Films logo North Star Films, Value: 127.0.0.1:8769/settings/studio
+			8 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				9 text Collapse navigation
+			10 container Workspace
+				11 link Description: Videos, Value: 127.0.0.1:8769/active-videos
+				12 link Description: To Do, Value: 127.0.0.1:8769/today
+				13 link Description: People, Value: 127.0.0.1:8769/people
+				14 link Description: Clients, Value: 127.0.0.1:8769/clients
+				15 link Description: Media Library, Value: 127.0.0.1:8769/media
+				16 link Description: Expenses, Value: 127.0.0.1:8769/outstanding-invoices
+				17 link Description: Brand Kits, Value: 127.0.0.1:8769/brand-kits
+			18 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				19 container Tom Mitchell
+					20 text TM
+				21 text Tom Mitchell
+				22 text North Star Films
+			23 container Studio administration
+				24 link Description: Studio settings, Value: 127.0.0.1:8769/settings/studio
+			25 container Prototype controls
+				26 button (collapsed) Test mode, Secondary Actions: Expand
+					27 text Test mode
+		28 container
+			29 container Navigation history
+				30 button Go back
+					31 text Back
+				32 button Go forward
+					33 text Forward
+				34 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					35 text Recent pages
+			36 container Global actions
+				37 button Open Chat, 22 unread
+					38 text Chat
+					39 container 22 unread messages
+						40 text 22
+				41 button (collapsed) Description: Updates, 5 unread, Secondary Actions: Expand
+					42 container 5 unread notifications
+						43 text 5
+					44 text Updates
+			45 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			46 container
+				47 container Media Library header
+					48 heading Media Library, Value: 1
+						49 text Media Library
+					50 search text field (settable) Search media
+				51 container Client media libraries
+					52 text Clients
+					53 checkbox All clients, Value: 1
+					54 checkbox Canva 1 project, Value: 0
+						55 text Canva
+						56 container
+							57 text 1 project
+					58 checkbox Deel 1 project, Value: 0
+						59 text Deel
+						60 container
+							61 text 1 project
+					62 checkbox Figma 1 project, Value: 0
+						63 text Figma
+						64 container
+							65 text 1 project
+					66 checkbox Harbour Health 1 project, Value: 0
+						67 text Harbour Health
+						68 container
+							69 text 1 project
+					70 checkbox Hims 1 project, Value: 0
+						71 text Hims
+						72 container
+							73 text 1 project
+					74 checkbox Linear 1 project, Value: 0
+						75 text Linear
+						76 container
+							77 text 1 project
+					78 checkbox Loom 5 projects, Value: 0
+						79 text Loom
+						80 container
+							81 text 5 projects
+					82 checkbox Notion 1 project, Value: 0
+						83 text Notion
+						84 container
+							85 text 1 project
+					86 checkbox OpenAI 1 project, Value: 0
+						87 text OpenAI
+						88 container
+							89 text 1 project
+					90 checkbox PostHog 1 project, Value: 0
+						91 text PostHog
+						92 container
+							93 text 1 project
+					94 checkbox Ramp 1 project, Value: 0
+						95 text Ramp
+						96 container
+							97 text 1 project
+				98 container Project media libraries
+					99 text Projects
+					100 checkbox All projects, Value: 1
+					101 checkbox Launch Film - Sales Narrative Loom, Value: 0
+						102 text Launch Film - Sales Narrative
+						103 text Loom
+					104 checkbox Customer Story - APAC Hiring Deel, Value: 0
+						105 text Customer Story - APAC Hiring
+						106 text Deel
+					107 checkbox Product Education - Sleep Series Hims, Value: 0
+						108 text Product Education - Sleep Series
+						109 text Hims
+					110 checkbox Workflow Demo - Engineering Teams Notion, Value: 0
+						111 text Workflow Demo - Engineering Teams
+						112 text Notion
+					113 checkbox Partner Update - Studio Reel OpenAI, Value: 0
+						114 text Partner Update - Studio Reel
+						115 text OpenAI
+					116 checkbox Onboarding Film - Product Analytics PostHog, Value: 0
+						117 text Onboarding Film - Product Analytics
+						118 text PostHog
+					119 checkbox Finance Recap - June Product Drop Ramp, Value: 0
+						120 text Finance Recap - June Product Drop
+						121 text Ramp
+					122 checkbox Brand Refresh - Creator Templates Canva, Value: 0
+						123 text Brand Refresh - Creator Templates
+						124 text Canva
+					125 checkbox Roadmap Film - Planning Week Linear, Value: 0
+						126 text Roadmap Film - Planning Week
+						127 text Linear
+					128 checkbox Config Highlights - Community Keynote Figma, Value: 0
+						129 text Config Highlights - Community Keynote
+						130 text Figma
+					131 checkbox WACF Customer Cutdown 01 Loom, Value: 0
+						132 text WACF Customer Cutdown 01
+						133 text Loom
+					134 checkbox Product Tour - Team Workflows Loom, Value: 0
+						135 text Product Tour - Team Workflows
+						136 text Loom
+					137 checkbox Customer Story - Healthcare Loom, Value: 0
+						138 text Customer Story - Healthcare
+						139 text Loom
+					140 checkbox Q3 Product Recap Loom, Value: 0
+						141 text Q3 Product Recap
+						142 text Loom
+					143 checkbox Care Journey Harbour Health, Value: 0
+						144 text Care Journey
+						145 text Harbour Health
+				146 tab group Media library sections
+					147 tab (selected, settable, boolean) Media, Value: 1
+					148 tab (selectable, settable, boolean) Masters, Value: 0
+					149 tab (selectable, settable, boolean) Archived, Value: 0
+				150 container Filter media by type
+					151 checkbox All, Value: 1
+					152 checkbox Video, Value: 0
+					153 checkbox Audio, Value: 0
+					154 checkbox Image, Value: 0
+					155 checkbox Document, Value: 0
+				156 container Media view
+					157 checkbox Description: Card view, Value: 1
+						158 text Card view
+					159 checkbox Description: List view, Value: 0
+						160 text List view
+				161 container
+					162 text Sort media
+					163 combo box (collapsed) Description: Sort media, Value: Newest first, Secondary Actions: Expand
+						164 text Newest first
+				165 container Project media
+					166 container Product-demo-playback-test.mov, video
+						167 text Failed - retry
+						168 checkbox Description: Select Product-demo-playback-test.mov, Value: 0
+						169 text 19 Aug 2026 · 1.2 GB · 02:58
+						170 text Product-demo-playback-test.mov
+						171 container Actions for Product-demo-playback-test.mov
+							172 button Retry Product-demo-playback-test.mov
+								173 text Retry
+							174 button Transcript Product-demo-playback-test.mov
+								175 text Transcript
+							176 button Copy link Product-demo-playback-test.mov
+								177 text Copy link
+							178 button Download Product-demo-playback-test.mov
+								179 text Download
+					180 container Office-arrivals-camera-b.mov, video
+						181 text Stored
+						182 checkbox Description: Select Office-arrivals-camera-b.mov, Value: 0
+						183 text 19 Aug 2026 · 2.3 GB · 05:12
+						184 text Office-arrivals-camera-b.mov
+						185 container Actions for Office-arrivals-camera-b.mov
+							186 button Transcript Office-arrivals-camera-b.mov
+								187 text Transcript
+							188 button Copy link Office-arrivals-camera-b.mov
+								189 text Copy link
+							190 button Download Office-arrivals-camera-b.mov
+								191 text Download
+					192 container Config-keynote-selects.mov, video
+						193 text Original unavailable
+						194 checkbox Description: Select Config-keynote-selects.mov, Value: 0
+						195 text 18 Aug 2026 · 3.5 GB · 11:28
+						196 text Config-keynote-selects.mov
+						197 container Actions for Config-keynote-selects.mov
+							198 button Transcript Config-keynote-selects.mov
+								199 text Transcript
+							200 button Copy link Config-keynote-selects.mov
+								201 text Copy link
+							202 button (disabled) Original unavailable Config-keynote-selects.mov
+								203 text Original unavailable
+					204 container Finance-team-roundtable.mov, video
+						205 checkbox Description: Select Finance-team-roundtable.mov, Value: 0
+						206 text 17 Aug 2026 · 3.8 GB · 17:22
+						207 text Finance-team-roundtable.mov
+						208 container Actions for Finance-team-roundtable.mov
+							209 button Transcript Finance-team-roundtable.mov
+								210 text Transcript
+							211 button Copy link Finance-team-roundtable.mov
+								212 text Copy link
+							213 button Download Finance-team-roundtable.mov
+								214 text Download
+					215 container Q2-finance-summary.pdf, document
+						216 checkbox Description: Select Q2-finance-summary.pdf, Value: 0
+						217 text 17 Aug 2026 · 16.8 MB
+						218 text Q2-finance-summary.pdf
+						219 container Actions for Q2-finance-summary.pdf
+							220 button (disabled) Transcript Q2-finance-summary.pdf
+								221 text Transcript
+							222 button Copy link Q2-finance-summary.pdf
+								223 text Copy link
+							224 button Download Q2-finance-summary.pdf
+								225 text Download
+					226 container Canva-brand-colour-study.png, image
+						227 checkbox Description: Select Canva-brand-colour-study.png, Value: 0
+						228 text 16 Aug 2026 · 9.8 MB
+						229 text Canva-brand-colour-study.png
+						230 container Actions for Canva-brand-colour-study.png
+							231 button (disabled) Transcript Canva-brand-colour-study.png
+								232 text Transcript
+							233 button Copy link Canva-brand-colour-study.png
+								234 text Copy link
+							235 button Download Canva-brand-colour-study.png
+								236 text Download
+					237 container Designer-profile-b-roll.mov, video
+						238 checkbox Description: Select Designer-profile-b-roll.mov, Value: 0
+						239 text 16 Aug 2026 · 2.2 GB · 04:04
+						240 text Designer-profile-b-roll.mov
+						241 container Actions for Designer-profile-b-roll.mov
+							242 button Transcript Designer-profile-b-roll.mov
+								243 text Transcript
+							244 button Copy link Designer-profile-b-roll.mov
+								245 text Copy link
+							246 button Download Designer-profile-b-roll.mov
+								247 text Download
+					248 container Roadmap-product-capture.mp4, video
+						249 checkbox Description: Select Roadmap-product-capture.mp4, Value: 0
+						250 text 15 Aug 2026 · 980.0 MB · 03:26
+						251 text Roadmap-product-capture.mp4
+						252 container Actions for Roadmap-product-capture.mp4
+							253 button Transcript Roadmap-product-capture.mp4
+								254 text Transcript
+							255 button Copy link Roadmap-product-capture.mp4
+								256 text Copy link
+							257 button Download Roadmap-product-capture.mp4
+								258 text Download
+					259 container Config-stage-reference.jpg, image
+						260 checkbox Description: Select Config-stage-reference.jpg, Value: 0
+						261 text 15 Aug 2026 · 12.4 MB
+						262 text Config-stage-reference.jpg
+						263 container Actions for Config-stage-reference.jpg
+							264 button (disabled) Transcript Config-stage-reference.jpg
+								265 text Transcript
+							266 button Copy link Config-stage-reference.jpg
+								267 text Copy link
+							268 button Download Config-stage-reference.jpg
+								269 text Download
+					270 container Deel-founder-interview.mov, video
+						271 checkbox Description: Select Deel-founder-interview.mov, Value: 0
+						272 text 28 July 2026 · 3.2 GB · 15:48
+						273 text Deel-founder-interview.mov
+						274 container Actions for Deel-founder-interview.mov
+							275 button Transcript Deel-founder-interview.mov
+								276 text Transcript
+							277 button Copy link Deel-founder-interview.mov
+								278 text Copy link
+							279 button Download Deel-founder-interview.mov
+								280 text Download
+					281 container Sydney-office-b-roll.mov, video
+						282 checkbox Description: Select Sydney-office-b-roll.mov, Value: 0
+						283 text 27 July 2026 · 2.7 GB · 06:26
+						284 text Sydney-office-b-roll.mov
+						285 container Actions for Sydney-office-b-roll.mov
+							286 button Transcript Sydney-office-b-roll.mov
+								287 text Transcript
+							288 button Copy link Sydney-office-b-roll.mov
+								289 text Copy link
+							290 button Download Sydney-office-b-roll.mov
+								291 text Download
+					292 container Product-application-close-up.mov, video
+						293 checkbox Description: Select Product-application-close-up.mov, Value: 0
+						294 text 24 July 2026 · 2.1 GB · 05:04
+						295 text Product-application-close-up.mov
+						296 container Actions for Product-application-close-up.mov
+							297 button Transcript Product-application-close-up.mov
+								298 text Transcript
+							299 button Copy link Product-application-close-up.mov
+								300 text Copy link
+							301 button Download Product-application-close-up.mov
+								302 text Download
+					303 container Approved-voiceover-v2.wav, audio
+						304 checkbox Description: Select Approved-voiceover-v2.wav, Value: 0
+						305 text 23 July 2026 · 128.0 MB · 03:08
+						306 text Approved-voiceover-v2.wav
+						307 container Actions for Approved-voiceover-v2.wav
+							308 button Transcript Approved-voiceover-v2.wav
+								309 text Transcript
+							310 button Copy link Approved-voiceover-v2.wav
+								311 text Copy link
+							312 button Download Approved-voiceover-v2.wav
+								313 text Download
+					314 container Workflow-builder-capture.mp4, video
+						315 checkbox Description: Select Workflow-builder-capture.mp4, Value: 0
+						316 text 20 July 2026 · 890.0 MB · 02:34
+						317 text Workflow-builder-capture.mp4
+						318 container Actions for Workflow-builder-capture.mp4
+							319 button Transcript Workflow-builder-capture.mp4
+								320 text Transcript
+							321 button Copy link Workflow-builder-capture.mp4
+								322 text Copy link
+							323 button Download Workflow-builder-capture.mp4
+								324 text Download
+					325 container Title-animation-test.mov, video
+						326 checkbox Description: Select Title-animation-test.mov, Value: 0
+						327 text 19 July 2026 · 640.0 MB · 00:38
+						328 text Title-animation-test.mov
+						329 container Actions for Title-animation-test.mov
+							330 button Transcript Title-animation-test.mov
+								331 text Transcript
+							332 button Copy link Title-animation-test.mov
+								333 text Copy link
+							334 button Download Title-animation-test.mov
+								335 text Download
+					336 container Partner-interview-camera-a.mov, video
+						337 checkbox Description: Select Partner-interview-camera-a.mov, Value: 0
+						338 text 18 July 2026 · 4.1 GB · 20:18
+						339 text Partner-interview-camera-a.mov
+						340 container Actions for Partner-interview-camera-a.mov
+							341 button Transcript Partner-interview-camera-a.mov
+								342 text Transcript
+							343 button Copy link Partner-interview-camera-a.mov
+								344 text Copy link
+							345 button Download Partner-interview-camera-a.mov
+								346 text Download
+					347 container Onboarding-flow-capture.mp4, video
+						348 checkbox Description: Select Onboarding-flow-capture.mp4, Value: 0
+						349 text 16 July 2026 · 720.0 MB · 03:16
+						350 text Onboarding-flow-capture.mp4
+						351 container Actions for Onboarding-flow-capture.mp4
+							352 button Transcript Onboarding-flow-capture.mp4
+								353 text Transcript
+							354 button Copy link Onboarding-flow-capture.mp4
+								355 text Copy link
+							356 button Download Onboarding-flow-capture.mp4
+								357 text Download
+					358 container Jess-interview-camera-a.mov, video
+						359 checkbox Description: Select Jess-interview-camera-a.mov, Value: 0
+						360 text 08 July 2026 · 4.8 GB · 18:42
+						361 text Jess-interview-camera-a.mov
+						362 container Actions for Jess-interview-camera-a.mov
+							363 button Transcript Jess-interview-camera-a.mov
+								364 text Transcript
+							365 button Copy link Jess-interview-camera-a.mov
+								366 text Copy link
+							367 button Download Jess-interview-camera-a.mov
+								368 text Download
+					369 container Jess-interview-camera-b.mov, video
+						370 text Preparing 72%
+						371 checkbox Description: Select Jess-interview-camera-b.mov, Value: 0
+						372 text 08 July 2026 · 3.9 GB · 18:39
+						373 text Jess-interview-camera-b.mov
+						374 container Actions for Jess-interview-camera-b.mov
+							375 button Transcript Jess-interview-camera-b.mov
+								376 text Transcript
+							377 button Copy link Jess-interview-camera-b.mov
+								378 text Copy link
+							379 button Download Jess-interview-camera-b.mov
+								380 text Download
+					381 container Jess-lapel-audio.wav, audio
+						382 checkbox Description: Select Jess-lapel-audio.wav, Value: 0
+						383 text 08 July 2026 · 862.4 MB · 19:04
+						384 text Jess-lapel-audio.wav
+						385 container Actions for Jess-lapel-audio.wav
+							386 button Transcript Jess-lapel-audio.wav
+								387 text Transcript
+							388 button Copy link Jess-lapel-audio.wav
+								389 text Copy link
+							390 button Download Jess-lapel-audio.wav
+								391 text Download
+					392 container Avery-customer-interview.mov, video
+						393 checkbox Description: Select Avery-customer-interview.mov, Value: 0
+						394 text 08 July 2026 · 2.8 GB · 12:16
+						395 text Avery-customer-interview.mov
+						396 container Actions for Avery-customer-interview.mov
+							397 button Transcript Avery-customer-interview.mov
+								398 text Transcript
+							399 button Copy link Avery-customer-interview.mov
+								400 text Copy link
+							401 button Download Avery-customer-interview.mov
+								402 text Download
+					403 container Care-team-roundtable.wav, audio
+						404 checkbox Description: Select Care-team-roundtable.wav, Value: 0
+						405 text 08 July 2026 · 624.7 MB · 08:42
+						406 text Care-team-roundtable.wav
+						407 container Actions for Care-team-roundtable.wav
+							408 button Transcript Care-team-roundtable.wav
+								409 text Transcript
+							410 button Copy link Care-team-roundtable.wav
+								411 text Copy link
+							412 button Download Care-team-roundtable.wav
+								413 text Download
+					414 container Dashboard-wide-take-03.mov, video
+						415 checkbox Description: Select Dashboard-wide-take-03.mov, Value: 0
+						416 text 08 July 2026 · 2.2 GB · 04:18
+						417 text Dashboard-wide-take-03.mov
+						418 container Actions for Dashboard-wide-take-03.mov
+							419 button Transcript Dashboard-wide-take-03.mov
+								420 text Transcript
+							421 button Copy link Dashboard-wide-take-03.mov
+								422 text Copy link
+							423 button Download Dashboard-wide-take-03.mov
+								424 text Download
+					425 container Sales-team-collaboration-01.mov, video
+						426 checkbox Description: Select Sales-team-collaboration-01.mov, Value: 0
+						427 text 08 July 2026 · 1.7 GB · 03:06
+						428 text Sales-team-collaboration-01.mov
+						429 container Actions for Sales-team-collaboration-01.mov
+							430 button Transcript Sales-team-collaboration-01.mov
+								431 text Transcript
+							432 button Copy link Sales-team-collaboration-01.mov
+								433 text Copy link
+							434 button Download Sales-team-collaboration-01.mov
+								435 text Download
+					436 container Pipeline-screen-recording.mp4, video
+						437 text Uploading 28%
+						438 checkbox Description: Select Pipeline-screen-recording.mp4, Value: 0
+						439 text 08 July 2026 · 306.6 KB · 00:42
+						440 text Pipeline-screen-recording.mp4
+						441 container Actions for Pipeline-screen-recording.mp4
+							442 button Transcript Pipeline-screen-recording.mp4
+								443 text Transcript
+							444 button Copy link Pipeline-screen-recording.mp4
+								445 text Copy link
+							446 button Download Pipeline-screen-recording.mp4
+								447 text Download
+					448 container Loom-wordmark-black.png, image
+						449 checkbox Description: Select Loom-wordmark-black.png, Value: 0
+						450 text 07 July 2026 · 184.2 KB
+						451 text Loom-wordmark-black.png
+						452 container Actions for Loom-wordmark-black.png
+							453 button (disabled) Transcript Loom-wordmark-black.png
+								454 text Transcript
+							455 button Copy link Loom-wordmark-black.png
+								456 text Copy link
+							457 button Download Loom-wordmark-black.png
+								458 text Download
+					459 container Launch-campaign-key-art.jpg, image
+						460 checkbox Description: Select Launch-campaign-key-art.jpg, Value: 0
+						461 text 07 July 2026 · 8.4 MB
+						462 text Launch-campaign-key-art.jpg
+						463 container Actions for Launch-campaign-key-art.jpg
+							464 button (disabled) Transcript Launch-campaign-key-art.jpg
+								465 text Transcript
+							466 button Copy link Launch-campaign-key-art.jpg
+								467 text Copy link
+							468 button Download Launch-campaign-key-art.jpg
+								469 text Download
+					470 container Brand-guidelines-2026.pdf, document
+						471 checkbox Description: Select Brand-guidelines-2026.pdf, Value: 0
+						472 text 07 July 2026 · 12.7 MB
+						473 text Brand-guidelines-2026.pdf
+						474 container Actions for Brand-guidelines-2026.pdf
+							475 button (disabled) Transcript Brand-guidelines-2026.pdf
+								476 text Transcript
+							477 button Copy link Brand-guidelines-2026.pdf
+								478 text Copy link
+							479 button Download Brand-guidelines-2026.pdf
+								480 text Download
+					481 container Room-tone-studio.wav, audio
+						482 checkbox Description: Select Room-tone-studio.wav, Value: 0
+						483 text 06 July 2026 · 48.6 MB · 02:10
+						484 text Room-tone-studio.wav
+						485 container Actions for Room-tone-studio.wav
+							486 button Transcript Room-tone-studio.wav
+								487 text Transcript
+							488 button Copy link Room-tone-studio.wav
+								489 text Copy link
+							490 button Download Room-tone-studio.wav
+								491 text Download
+
+The focused UI element is 26 button (collapsed) Test mode, Secondary Actions: Expand

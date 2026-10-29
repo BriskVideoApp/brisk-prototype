@@ -12,6 +12,8 @@
 
 You are designing for Brisk, a SaaS platform used by many production companies. Every screen must respect the rules below. They override generic SaaS templates.
 
+This is reusable project guidance, not an installed skill. Latest explicit decisions and the [desktop baseline](Docs/desktop-design-baseline.md) take precedence over historical product suggestions. Reuse the current approved UI and component contracts; this document does not authorise new visual patterns or production services.
+
 ## How Brisk is shaped
 
 - Many production companies share one Brisk platform.
@@ -46,7 +48,7 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 
 - A new Studio must be useful within 10 minutes of signup.
 - Onboarding ends with a **real project**, not just a configured account.
-- Suggested flow:
+- Historical suggested flow, not an instruction to replace the approved current V1 onboarding:
 	1. Name the Studio + upload logo (white-label from day one)
 	2. Invite first team member (skippable)
 	3. Create first project (template-seeded)
@@ -55,11 +57,10 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 
 ## White-label
 
-- Clients see the production company's brand, not Brisk's.
-- Studio Staff can demonstrate logo and primary-colour settings using mock data and the approved kit; do not introduce a separate Studio Owner access role.
-- Brisk branding is hidden in client-facing views by default.
-- Lower-tier plans may include a small "Powered by Brisk" footer.
-- Internal team views may show Brisk branding lightly; client views never.
+- Follow the recorded 30 September 2026 V1 Studio branding decision in `Docs/ux-decision-log.md`: retain Studio logo upload and Client portal preview; Client portals use Brisk's standard purple accent.
+- Studio colour customisation and paid white-label branding controls were removed from the V1 appearance scope. Do not reintroduce them from older screenshots or plan-benefit copy. Preserve existing saved colour data.
+- The longer-term white-label ambition and plan catalogue do not authorise changing current portal appearance, footers, prices or entitlements. Resolve a material conflict with Tom when a ticket depends on it.
+- Studio identity does not create an additional Studio Owner access role. Preserve the three access roles and the approved Staff preview behaviour.
 
 ## Client experience
 
@@ -110,7 +111,7 @@ Show a unique project code before the editable project name when a Client starts
 - Show locked features with a clear path to upgrade.
 - Use magic links for clients.
 - Make every empty state lead to action.
-- Apply white-label by default.
+- Preserve the approved V1 Studio logo and standard-purple portal treatment; do not restore older custom-branding controls.
 - Follow Tom's desktop-first design sequence in `AGENTS.md`, including Client-facing flows. Fix and sign off the full desktop UI before the mobile pass; defer mobile-only work and routine mobile verification unless explicitly requested. Preserve existing responsive behaviour.
 
 ## Don't
@@ -118,7 +119,7 @@ Show a unique project code before the editable project name when a Client starts
 - Don't hide unavailable features.
 - Don't require clients to create accounts.
 - Don't gate onboarding behind billing.
-- Don't leak Brisk branding into client views (above free tier).
+- Don't change Client portal branding or plan-related appearance based on superseded white-label suggestions.
 - Don't mix personal, Studio, and project settings.
 - Don't write "insufficient permissions" as user-facing copy.
 

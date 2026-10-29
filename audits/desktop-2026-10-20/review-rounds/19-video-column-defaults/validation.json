@@ -1,0 +1,46 @@
+{
+  "approved": "All permitted Videos columns visible by default, Team immediately after Deadline in checklist and table.",
+  "status": "Implemented and desktop-verified",
+  "defaultOrder": [
+    "Project",
+    "Progress",
+    "Latest action",
+    "Status",
+    "Deadline",
+    "Team",
+    "Hours",
+    "Project costs",
+    "Actions"
+  ],
+  "defaultHidden": [],
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed",
+    "route": "Videos HTTP 200",
+    "diff": "git diff --check passed",
+    "desktop": "1280 \u00d7 720 CSS pixels; screenshots include native 1x and 2x device scale",
+    "freshView": "Nine headers rendered and all nine Columns choices checked. Team follows Deadline.",
+    "hideAndPersist": "Unchecked Hours, closed picker, confirmed Hours omitted; reloaded isolated preview and Hours remained omitted.",
+    "reset": "Reset columns restored all nine in the new order.",
+    "existingControls": "Project stays locked, Actions stays fixed. Existing hiding, dragging, role filtering and preference persistence implementation unchanged.",
+    "origin": "Isolated http://127.0.0.1:8787; working localhost tab not operated."
+  },
+  "preservation": {
+    "viewPreference": "New v4 namespace applies the approved defaults once. Prior v3 preference is retained, not deleted. New personal choices persist under v4.",
+    "projectRecords": "Unchanged",
+    "mockDataAssetsDependencies": "Unchanged",
+    "testsBuildCommitPush": "Not performed"
+  },
+  "evidence": {
+    "full": [
+      "columns-default.png",
+      "columns-team-order.png"
+    ],
+    "crop": "column-order-detail.png",
+    "cropBoundsInSourcePixels": [
+      1844,
+      680,
+      2510,
+      1440
+    ]
+  }
+}

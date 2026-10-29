@@ -1,0 +1,968 @@
+{
+  "reviewer": "A",
+  "checkpoint": "Current source and genuine desktop captures reconciled, including full Brief step compositions. Browser interactions remain with the lead; unverified focus risks remain explicitly source-supported.",
+  "findings": [
+    {
+      "id": "A01",
+      "title": "Page CSS suppresses the approved selection-field focus outline",
+      "area": "Cross-app",
+      "family": "Selection fields",
+      "category": "Design-system compliance and keyboard focus",
+      "severity": "S3",
+      "impact": "The same shared selection control changes its keyboard locator between pages; a small hard shadow substitutes for the documented blue outline, making focused fields harder to distinguish from hover/elevation.",
+      "classification": "Source-supported risk",
+      "confidence": "High for CSS conflict, pending computed live styles per consumer",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer where selector is available"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/shoot",
+        "/projects/[projectId]/stages/masters",
+        "/chat",
+        "/today",
+        "/projects/[projectId]/costs",
+        "/people/[personId]",
+        "/prototypes/journeys"
+      ],
+      "states": [
+        "Keyboard focus on ordinary BriskSelect trigger",
+        "Closed field before opening menu"
+      ],
+      "observed": "The DS field defines a blue2px outline plus2px offset at Select.css58-61. Several page-level selectors explicitly set outline:none; Chat only excludes its recently migrated Client lifecycle field. People inline selection substitutes a purple outline. Source alone does not establish whether every declaration wins in every rendered branch.",
+      "expected": "Approved shared BriskSelect owns keyboard focus independently of open-menu decoration, preserving contextual trigger content and existing callbacks.",
+      "authority": [
+        "Brisk DS/guidelines/components/dropdown.md - Appearance, Keyboard and accessibility",
+        "Docs/desktop-design-baseline.md - Approved reusable React controls"
+      ],
+      "recommendation": "Remove or narrowly exclude ordinary DS selection triggers from legacy page focus resets. Retain specialised editor layout/trigger content and the actual menu behaviour. Verify each live consumer after cascade changes.",
+      "rationale": "This repairs an approved interaction standard without forcing all selectors to have identical widths or removing useful rich/status presentations.",
+      "alternatives": [
+        "A documented specialised trigger could retain contextual geometry while preserving an equally clear blue focus treatment; this requires scoped approval."
+      ],
+      "tradeoffs": [
+        "Broad reset removal can affect specialised calendar, rich-table and editor controls; scope changes to the relevant DS triggers.",
+        "Do not apply Input's typing ring or content-tab semantics to a selection field."
+      ],
+      "rootCause": "Local page CSS continues to restyle the shared selection primitive after migration",
+      "occurrences": [
+        "Shoot ordinary fields and quick entry",
+        "Masters shell selectors",
+        "Chat settings/call fields other than Client lifecycle exception",
+        "Today stage picker",
+        "Costs inline status",
+        "People inline editor",
+        "Prototype scenario picker, lower priority demo surface"
+      ],
+      "sources": [
+        "Brisk DS/src/app/components/Select.css:58",
+        "src/components/shoot/shoot.css:5558",
+        "src/components/shoot/shoot.css:11272",
+        "src/components/shoot/shoot.css:11284",
+        "src/components/shoot/shoot.css:13967",
+        "src/components/masters/masters.css:1351",
+        "src/components/chat/chat.css:80",
+        "src/components/today/today.css:740",
+        "src/components/costs/costs.css:249",
+        "src/components/people/people.css:885",
+        "src/components/prototype-scenarios/prototype-scenarios.css:124"
+      ],
+      "evidence": {
+        "currentScreenshot": null,
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No matched approved focus screenshot captured yet. DS Select CSS/guidance supplies the approved standard.",
+        "requestedCapture": "Keyboard-focus a Shoot ordinary BriskSelect, a Chat settings select, and an ordinary People sort field at1440; record computed outline/shadow and capture comparison at same scale."
+      },
+      "verificationRemaining": [
+        "Lead browser computed-style confirmation and screenshots",
+        "Keyboard transitions closed/open/Escape on affected live consumers",
+        "Determine demo-only scenario priority separately"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A02",
+      "title": "Team selection recreates a small checkbox without DS focus states",
+      "area": "Videos / Team assignment",
+      "family": "Checkbox and selection rows",
+      "category": "Design-system compliance and accessibility",
+      "severity": "S3",
+      "impact": "Staff choosing a person must hit a24px wrapper, and keyboard focus is not drawn on the visible square. The local control also duplicates the check asset and states already available in the DS. Reviewer B separately records the missing accessible names and higher practical barrier.",
+      "classification": "Approved-standard violation",
+      "confidence": "High source and current screenshot evidence; focused-state capture pending",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/active-videos?project=loom-launch-film",
+        "Project Team role editors reached from shared TeamPanel"
+      ],
+      "states": [
+        "Staff tab expanded",
+        "Freelancers tab",
+        "Unchecked",
+        "Disabled already-invited",
+        "Checked source path",
+        "Keyboard focus source path"
+      ],
+      "observed": "Both live StaffOption and FreelancerOption use a local label/input/span control. CSS sets24x24 wrapper,20x20 square, native input opacity0 and a Unicode check. No matching focus-visible rule decorates its square. Current captures show small isolated check targets beside names; person text is outside their label.",
+      "expected": "Approved DS Checkbox has20px square, minimum44px clickable row, approved DsIcon tick/mixed states and blue keyboard focus. Team assignment is explicitly unresolved rather than blanket-approved by its EditingDialog shell.",
+      "authority": [
+        "Brisk DS/guidelines/components/forms.md - d-Checkbox",
+        "AGENTS.md - always use existing DS components and approved icon assets",
+        "Docs/desktop-design-baseline.md - unresolved Team-assignment controls"
+      ],
+      "recommendation": "Use the existing DS Checkbox with a clearly named person label and preserve the current selection callbacks. Lay out the label and capacity information within an adequate non-overlapping target; keep the Freelancer project-rate input outside that label.",
+      "rationale": "The existing component can supply approved assets, states and target size without inventing a new selector or changing selection, invitation or direct-assignment meaning.",
+      "alternatives": [
+        "If Staff single-selection semantics are reconsidered, a radio group may be appropriate, but that is a product decision because the current checkbox permits deselection and Unassign behaviour. Preserve it for the small fix."
+      ],
+      "tradeoffs": [
+        "A larger row label must not overlap or activate the project-rate field",
+        "Do not combine Staff assignment with Freelancer invitation or direct assignment",
+        "Keep current disabled rules and save boundaries"
+      ],
+      "rootCause": "Parallel local Team checkbox implementation predates approved shared foundation",
+      "occurrences": [
+        "RoleEditorModal StaffOption",
+        "RoleEditorModal FreelancerOption"
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:456",
+        "src/components/project/team/RoleEditorModal.tsx:503",
+        "src/components/project/team/team-panel.css:1217",
+        "src/components/project/team/team-panel.css:1248",
+        "Brisk DS/src/app/components/Checkbox.module.css:1"
+      ],
+      "evidence": {
+        "currentScreenshot": "E007-team-staff-expanded-1133.jpg",
+        "additionalScreenshots": [
+          "E008-team-freelancers-1133.jpg"
+        ],
+        "referenceScreenshot": "D-R040-staff-1133.jpg",
+        "approvedReferenceStatement": "The current Studio Notifications page composes the existing DS Checkbox through NotificationSettingsCheckbox. Both reference and Team current screenshot use1133px desktop width. Reference demonstrates approved tick/label row composition; target/focus rules are defined by DS source.",
+        "requestedCapture": "Focused Team person selection, including accessible name and native target measurement; lead owns browser.",
+        "currentCrop": "reviewers/a-comparisons/A02-current-team-selection.png",
+        "referenceCrop": "reviewers/a-comparisons/A02-reference-notification-checkbox.png",
+        "annotatedPanels": [
+          "reviewers/a-comparisons/B01-A02-team-checkbox-comparison.png"
+        ]
+      },
+      "verificationRemaining": [
+        "Live keyboard focus and target measurement",
+        "Merge with B's unnamed checkbox finding under same root cause",
+        "Inspect selection without assigning/inviting/saving"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A03",
+      "title": "Unread count styling uses tiny low-contrast text and perpetual pulsing",
+      "area": "Global actions and project comments",
+      "family": "Badges and counts",
+      "category": "Readability and motion",
+      "severity": "S3",
+      "impact": "Small numeric counts are harder to read and repeatedly draw attention even when the user is working elsewhere. The shared adapter now carries this treatment to both global actions when their counts are non-zero.",
+      "classification": "Source-supported risk",
+      "confidence": "High for declared styles and calculated colour ratio; live global non-zero and motion preference confirmation pending",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer subject to permitted counts"
+      ],
+      "routes": [
+        "Global Chat/Updates across workspace routes",
+        "/active-videos",
+        "Other CommentCountBadge consumers"
+      ],
+      "states": [
+        "Non-zero count",
+        "Count caps",
+        "Zero hidden",
+        "Reduced-motion preference"
+      ],
+      "observed": "CommentCountBadge supplies label-xs-semibold, but quick-action-badge overrides it to10px/line-height1 inside16px. White text on declared Pink40 #fd68b5 mathematically yields2.68:1 contrast. An infinite1800ms scale pulse is declared with no reduced-motion exception for this selector. E002 shows the small pink row-comment counts; global counts are zero in that capture.",
+      "expected": "The explicit global approval standardises a compact shared presentation and preserves independent count sources, scoping, labels, zero hiding and caps; it explicitly leaves exact tokens, readability and animation for audit. The smallest DS Label style is12px/16px. This is a focused contrast/style check, not an app-wide accessibility compliance claim.",
+      "authority": [
+        "Docs/desktop-design-baseline.md - Global unread counts",
+        "Brisk DS/guidelines/foundations/typography.md",
+        "Brisk DS/guidelines/components/data-display.md - Scoped app unread-count approval"
+      ],
+      "recommendation": "Retain the shared compact adapter, use an existing readable DS text/background pairing and Label/XS, then measure spacing at capped counts. Make the badge steady at rest and respect reduced-motion if any attention animation is retained.",
+      "rationale": "This improves legibility and calm without changing numerical values, permissions or the approved shared Chat/Updates composition.",
+      "alternatives": [
+        "Dark text on the existing pink background preserves hue and improves contrast",
+        "A darker semantic background with white text can preserve the visual hierarchy if approved",
+        "A finite pulse only on a newly arriving item may be tested if attention needs evidence"
+      ],
+      "tradeoffs": [
+        "A12px token label may need a slightly larger container and clearance from adjoining icons",
+        "Do not hide counts or combine independent sources",
+        "Colour and motion choices need Tom's review; no exact new Badge primitive is approved"
+      ],
+      "rootCause": "Shared app adapter still inherits legacy quick-action badge styling",
+      "occurrences": [
+        "GlobalHeaderActions Chat",
+        "NotificationBell Updates",
+        "Videos row comments",
+        "ProjectStageHeader and Masters comment/media contexts where inherited or overridden"
+      ],
+      "sources": [
+        "src/components/CommentCountBadge.tsx:8",
+        "src/components/active-videos/active-videos.css:785",
+        "src/components/active-videos/active-videos.css:804",
+        "src/components/navigation/GlobalHeaderActions.tsx:48",
+        "src/components/notifications/NotificationBell.tsx:156",
+        "src/app/globals.css:41"
+      ],
+      "evidence": {
+        "currentScreenshot": "E002-staff-videos-1440.jpg",
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved exact badge reference exists. The approved adapter decision expressly excludes incidental CSS values from new DS authority.",
+        "requestedCapture": "Capture a permitted existing non-zero global badge if available, inspect computed text/background/size and reduced-motion rule; retain current row screenshot for source trace.",
+        "currentCrop": "reviewers/a-comparisons/A03-current-row-badge.png"
+      },
+      "verificationRemaining": [
+        "Check computed styles for each active consumer because some have contextual overrides",
+        "Reduced-motion runtime preference",
+        "Verify counts/caps/accessible names remain after any future change"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A04",
+      "title": "Media sort removes the ordinary selection field's approved border",
+      "area": "Media Library and project Media",
+      "family": "Selection fields",
+      "category": "Design-system compliance",
+      "severity": "S3",
+      "impact": "The sort value reads as loose toolbar text with a chevron while equivalent ordinary selection fields elsewhere read as fields. It has no visible label explaining that it controls order.",
+      "classification": "Approved-standard violation",
+      "confidence": "High for current screenshot and source; task-discoverability impact is a heuristic judgement",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer where Media is available"
+      ],
+      "routes": [
+        "/media",
+        "/projects/[projectId]/stages/media"
+      ],
+      "states": [
+        "Default Newest first",
+        "Ordinary sort menu",
+        "Keyboard focus"
+      ],
+      "observed": "MediaFilterBar uses an ordinary BriskSelect for Sort media. The consumer stylesheet removes its border and background and replaces padding, and the wrapper's own border is also removed. E010 shows Newest first as unframed text beside framed view controls. Lead E048/E049 live keyboard checks confirm both Media and People sort retain a blue2px outline with2px hard shadow; Media remains border0 and People1px border. This finding concerns resting field affordance, not lost keyboard focus.",
+      "expected": "The approved shared selection field owns white resting surface, dark border, radius, typography and focus. Contextual triggerContent exceptions retain meaningful status/source/Brand Kit content, but ordinary sort is not a separately approved unframed variant.",
+      "authority": [
+        "Brisk DS/guidelines/components/dropdown.md - Appearance",
+        "Docs/desktop-design-baseline.md - Approved reusable React controls"
+      ],
+      "recommendation": "Use the unmodified ordinary DS selection field for Media sort, retaining its contextual width, current four choices, default, callbacks and menu. A concise visible Sort label can be considered if needed without changing query scope.",
+      "rationale": "Removing leftover native-select presentation rules restores a known field affordance with small scope and no workflow redesign.",
+      "alternatives": [
+        "If an unframed toolbar selection variant is preferred, ask Tom to approve and document it in the DS rather than retaining a one-off CSS override."
+      ],
+      "tradeoffs": [
+        "Framing the trigger adds visual weight to an already dense toolbar; compare at1133 before approval",
+        "Do not migrate specialised type chips/view buttons in the same batch solely to make shapes uniform"
+      ],
+      "rootCause": "Media native-select wrapper styles still override migrated DS selection trigger",
+      "occurrences": [
+        "Shared MediaFilterBar used by global and project Media",
+        "MediaCloudPicker folder select has related border/outline overrides and needs its own live review"
+      ],
+      "sources": [
+        "src/components/media/MediaFilterBar.tsx:75",
+        "src/components/media/media.css:808",
+        "src/components/media/media.css:824",
+        "src/components/media/media.css:1960"
+      ],
+      "evidence": {
+        "currentScreenshot": "E010-media-keyboard-before.jpg",
+        "referenceScreenshot": "D-R020-staff-1440.jpg",
+        "approvedReferenceStatement": "Current People Sort by uses ordinary DS BriskSelect at the same1440 viewport. Compare its field border with Media sort; widths and task-specific labels need not match.",
+        "requestedCapture": "People Sort by field and Media sort at same1440 viewport; open both to confirm same menu/keyboard behaviour without changing saved data.",
+        "currentCrop": "reviewers/a-comparisons/A04-current-media-sort.png",
+        "referenceCrop": "reviewers/a-comparisons/A04-reference-people-sort.png",
+        "additionalScreenshots": [
+          "E048-media-sort-keyboard-focus.jpg",
+          "E049-people-sort-keyboard-focus.jpg"
+        ]
+      },
+      "verificationRemaining": [
+        "1440/1133 toolbar fit",
+        "Confirm no approved unframed Media-sort variant exists beyond inspected baseline",
+        "Cloud folder picker live consumer review"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A05",
+      "title": "Notification detail pages lose their Studio settings navigation",
+      "area": "Studio settings / Notifications",
+      "family": "Navigation and settings context",
+      "category": "Usability and UI consistency",
+      "severity": "S3",
+      "impact": "Staff opening a message category or Client message template lose the settings section links and selected Notifications location. Moving to another settings section then requires returning through the root or browser history.",
+      "classification": "Observed defect",
+      "confidence": "High: current root/detail screenshots at both desktop widths and matching route condition in source",
+      "roles": [
+        "Studio Staff with existing Studio administration access"
+      ],
+      "routes": [
+        "/settings/notifications",
+        "/settings/notifications/customer-reviews",
+        "/settings/notifications/[categoryId]",
+        "/settings/notifications/templates"
+      ],
+      "states": [
+        "Notifications root",
+        "Work to review detail",
+        "Client messages detail",
+        "Expanded navigation at1440 and1133"
+      ],
+      "observed": "The root page shows Studio settings navigation with Notifications selected. Descendant pages instead show Videos/To Do/People/Clients/Media Library/Expenses/Brand Kits, despite retaining Notifications page headings and Back to notification settings. HybridSidebar recognises /settings/notifications only by exact equality, while its own link-active logic already supports descendants. E103/E104 subsequently record the direct root-to-category navigation transition with the same context loss.",
+      "expected": "The approved hybrid shell keeps contextual Studio settings navigation while within that scope, under the same access guard; Notifications remains selected on its detail pages. The existing Back to notification settings link can remain a useful one-level return.",
+      "authority": [
+        "Docs/desktop-design-baseline.md - Hybrid workspace navigation including settings views",
+        "Brisk DS/guidelines/components/navigation.md - approved React app composition",
+        "brisk-saas-patterns.md - distinct personal, Studio and project settings scopes"
+      ],
+      "recommendation": "Recognise the existing notification descendants as Studio settings routes and retain the current Notifications active link. Keep the existing permission guard, destinations, root-return link and unsaved-work safeguards.",
+      "rationale": "This corrects the route classification with small scope and preserves a stable sense of place; it does not redesign the sidebar or merge settings scopes.",
+      "alternatives": [
+        "If detail pages are deliberately detached from settings, provide an explicit scoped breadcrumb and a route back to the full settings set. This adds navigation work and has no supporting approval in the inspected baseline."
+      ],
+      "tradeoffs": [
+        "Use a route-boundary-aware descendant match so unrelated paths do not acquire Studio settings context",
+        "Do not broaden Staff/Freelancer/Client access or bypass unsaved-work guards",
+        "Keep the Back to notification settings link because it has a different destination from Back to workspace"
+      ],
+      "rootCause": "Exact route membership check omits nested Studio notification settings paths",
+      "occurrences": [
+        "Studio notification category message pages",
+        "Client message templates page"
+      ],
+      "sources": [
+        "src/components/navigation/HybridSidebar.tsx:35",
+        "src/components/navigation/HybridSidebar.tsx:76",
+        "src/components/navigation/HybridSidebar.tsx:99"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R039-staff-1133.jpg",
+        "additionalScreenshots": [
+          "D-R041-staff-1133.jpg",
+          "D-R039-staff-1440.jpg",
+          "D-R041-staff-1440.jpg",
+          "E103-notifications-root-navigation.jpg",
+          "E104-notifications-category-navigation.jpg"
+        ],
+        "referenceScreenshot": "D-R040-staff-1133.jpg",
+        "currentCrop": "reviewers/a-comparisons/A05-current-notification-detail-sidebar.png",
+        "referenceCrop": "reviewers/a-comparisons/A05-reference-notification-root-sidebar.png",
+        "approvedReferenceStatement": "Current approved hybrid settings context on Notifications root. Matching1133px captures, original pixel scale. This verifies sidebar context only, not all form fields or notification behaviour.",
+        "requestedCapture": "Lead confirm root to category to root navigation in browser without changing any field."
+      },
+      "verificationRemaining": [
+        "Collapsed navigation context and focus after navigating",
+        "Retain settings guard and existing unsaved-work lifecycle"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A06",
+      "title": "Brand Kit category panels tint enclosing layers with Client colours",
+      "area": "Brand Kits",
+      "family": "Surfaces and hierarchy",
+      "category": "Approved design-standard violation",
+      "severity": "S3",
+      "impact": "Fonts, Voice and Documents acquire competing coloured panel weight rather than reserving brand colour for the assets being inspected. The appearance changes with arbitrary Client palette values.",
+      "classification": "Approved-standard violation",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff",
+        "Customer where permitted Brand Kit view",
+        "Shared brand viewer"
+      ],
+      "routes": [
+        "/brand-kits/[customerSlug]",
+        "/brand-kits/[customerSlug]/[subBrandSlug]",
+        "/share/brand/[token]"
+      ],
+      "states": [
+        "Populated Fonts panel",
+        "Guidelines/Documents panel",
+        "Voice panel source path"
+      ],
+      "observed": "Current Loom master/sub-brand and shared viewer show a lavender enclosing Fonts card above the warm page; Documents is pink at1133. CSS mixes Client primary8% into Fonts,22% into Voice and Client accent8% into Guidelines. No scoped panel-tint approval was found in inspected decision log or Yura review.",
+      "expected": "Guidance requires white layers above page and forbids stacked tinted layers except the specifically approved hybrid sidebar. Brand assets themselves retain actual colours, preview backgrounds and type samples.",
+      "authority": [
+        "brisk-design-system.md - Layering rules",
+        "Brisk DS/guidelines/components/data-display.md - Card fill",
+        "Docs/desktop-design-baseline.md - sidebar exception and approval scopes"
+      ],
+      "recommendation": "Use the existing white elevated surface for these enclosing category panels. Retain actual swatches, logo backgrounds, font specimens, status colour and every asset/action.",
+      "rationale": "This restores the documented hierarchy with a small CSS scope; it does not erase the Client identity users need to inspect.",
+      "alternatives": [
+        "If category-wide tint serves an intentional brand-preview purpose, Tom can approve/document that exception with Yura; present it as a decision rather than infer approval from current code."
+      ],
+      "tradeoffs": [
+        "Do not recolour supplied logos, swatches, previews or Client font samples.",
+        "Do not apply this blanketly to meaningful approved comment/status tints or call-time emphasis."
+      ],
+      "rootCause": "Dynamic brand colour variables used on enclosing app panel backgrounds",
+      "occurrences": [
+        "Fonts, Voice and Guidelines tiles shared by master, sub-brand and shared viewers"
+      ],
+      "sources": [
+        "src/components/brand-kits/brand-kits.css:609",
+        "src/components/brand-kits/brand-kits.css:617",
+        "src/components/brand-kits/brand-kits.css:625",
+        "src/components/brand-kits/BrandKitPages.tsx:350"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R003-staff-1440.jpg",
+        "additionalScreenshots": [
+          "D-R002-staff-1440.jpg",
+          "D-R003-staff-1133.jpg",
+          "D-R056-staff-1440.jpg"
+        ],
+        "referenceScreenshot": "D-R003-staff-1440.jpg",
+        "approvedReferenceStatement": "Same screenshot white Logos/Colours enclosures illustrate the foundation-aligned layer beside tinted Fonts. White-only standard is documented; no whole-page Brand Kit sign-off or approved replacement mockup is implied.",
+        "currentCrop": "reviewers/a-comparisons/A06-current-fonts-panel.png",
+        "referenceCrop": "reviewers/a-comparisons/A06-reference-white-logos-panel.png"
+      },
+      "verificationRemaining": [
+        "Confirm any explicit approval outside inspected repository log before implementation",
+        "Inspect Voice panel live and all palette values for future contrast verification"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A07",
+      "title": "Sticky Chat date pill obscures message text",
+      "area": "Chat",
+      "family": "Date context and message readability",
+      "category": "Layout and misleading affordance",
+      "severity": "S3",
+      "impact": "The date context covers a message precisely while it is being read; the down-chevron also implies a date action that the static label does not offer.",
+      "classification": "Observed defect",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer where conversation available"
+      ],
+      "routes": [
+        "/chat"
+      ],
+      "states": [
+        "Loom External conversation",
+        "Scrolled message day",
+        "1133 desktop"
+      ],
+      "observed": "D-R0051133 shows Wednesday22July centred over the text of Tom Mitchell’s message. ChatDateDivider is display:contents, leaving a sticky pill above message content with z-index4. It is a static span containing a down-chevron, without button semantics or callback.",
+      "expected": "Date context should remain readable without hiding conversation content. A non-interactive contextual label should not signal a dropdown action.",
+      "authority": [
+        "Usability heuristic: preserve content visibility and truthful affordance",
+        "src/components/chat/ChatMessageList.tsx:195 establishes current semantic intent"
+      ],
+      "recommendation": "Keep dates in normal flow, or reserve a dedicated sticky strip that cannot overlap messages. Remove the chevron while the date remains a plain label.",
+      "rationale": "The smallest fix protects reading and removes an unsupported cue without adding a calendar/date-jump workflow.",
+      "alternatives": [
+        "A persistent date strip may be useful in long histories, but requires dedicated space and scrolling checks."
+      ],
+      "tradeoffs": [
+        "Simply raising/lowering z-index moves the obstruction rather than solves layout.",
+        "Preserve day grouping, timestamps, source metadata and automatic scroll behaviour."
+      ],
+      "rootCause": "Sticky date chip floats independently inside the message-day flex stack",
+      "occurrences": [
+        "ChatDateDivider shared across message-day rendering"
+      ],
+      "sources": [
+        "src/components/chat/ChatMessageList.tsx:160",
+        "src/components/chat/ChatMessageList.tsx:195",
+        "src/components/chat/chat.css:851",
+        "src/components/chat/chat.css:865"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R005-staff-1133.jpg",
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved unobstructed sticky-date reference exists. D-R0051440 shows dates in clear inter-message gaps but does not certify every scroll position.",
+        "additionalScreenshots": [
+          "D-R005-staff-1440.jpg"
+        ],
+        "currentCrop": "reviewers/a-comparisons/A07-current-chat-date-overlap.png",
+        "annotatedPanels": [
+          "reviewers/a-comparisons/A07-chat-date-annotation.png"
+        ]
+      },
+      "verificationRemaining": [
+        "Lead reproduce scroll at1133 and1440",
+        "Check date placement across consecutive short/long days and thread view",
+        "No messages need sending or editing"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A08",
+      "title": "Folders and files share grid rows that leave large blank slots",
+      "area": "Project Media",
+      "family": "Grid density and grouping",
+      "category": "Layout and information hierarchy",
+      "severity": "S3",
+      "impact": "Mixed folder/file row heights push subsequent files down and make scan order less clear, especially when the folder count does not fill a row.",
+      "classification": "Observed defect",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer where project media available"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/media",
+        "/media with selected project/root folders"
+      ],
+      "states": [
+        "All media card view",
+        "Three folders plus files",
+        "1440 and1133 desktop"
+      ],
+      "observed": "One media-card-grid receives96px folder buttons followed by tall16:9 file cards. At1440 three short folders share the first row with a file, leaving a broad blank band below all folders. At1133 the third folder shares a row with the first tall file, leaving a large empty slot under it. Source align-items:start cannot shorten the row determined by its tallest child.",
+      "expected": "Preserve the difference between folders and files while making their scan groups clear and using vertical space efficiently. This is a task/layout judgement, not an approved exact replacement composition.",
+      "authority": [
+        "Usability heuristic: meaningful grouping and efficient scan density",
+        "Existing MediaAssetGrid source establishes folders-first ordering"
+      ],
+      "recommendation": "Give folders their own compact row/grid before the file grid. Retain folder-first order, native folder buttons, drop targets and all file selection controls.",
+      "rationale": "Separate groups keep the intentionally compact folder treatment without forcing folder tiles to become tall media cards or leaving empty grid slots.",
+      "alternatives": [
+        "A masonry grid reduces holes but complicates reading/keyboard order; not recommended for this browser.",
+        "Making folders as tall as files would preserve one grid but adds more unused space."
+      ],
+      "tradeoffs": [
+        "Preserve folder drag/drop hit areas and file sort order.",
+        "Do not merge asset selection with folder navigation or introduce a new DS primitive."
+      ],
+      "rootCause": "Different content families placed as siblings in one uniform CSS grid row system",
+      "occurrences": [
+        "MediaAssetGrid card mode when both folders and files exist"
+      ],
+      "sources": [
+        "src/components/media/MediaAssetGrid.tsx:145",
+        "src/components/media/media.css:887",
+        "src/components/media/media.css:894",
+        "src/components/media/media.css:1036"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R029-staff-1133.jpg",
+        "additionalScreenshots": [
+          "D-R029-staff-1440.jpg"
+        ],
+        "referenceScreenshot": "E010-media-keyboard-before.jpg",
+        "approvedReferenceStatement": "Existing file-only Media grid illustrates compact file rhythm; no approved separate-folder replacement screenshot exists. Recommendation needs Tom’s layout review.",
+        "currentCrop": "reviewers/a-comparisons/A08-current-mixed-folder-file-grid.png"
+      },
+      "verificationRemaining": [
+        "Lead confirm default card/list views and folder navigation",
+        "Verify proposed future grouping with0/1/multiple folders and files, preserving sort/drop selection",
+        "No files moved or records changed for audit"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A09",
+      "title": "Client metrics stretch into mostly empty full-form-height columns",
+      "area": "Client profile Overview",
+      "family": "Forms and summary cards",
+      "category": "Density and layout hierarchy",
+      "severity": "S3",
+      "impact": "Two small summary values occupy nearly half the narrow desktop width and stretch to the height of a long form, while ordinary form fields become narrow.",
+      "classification": "Heuristic judgement",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/clients/[clientId]"
+      ],
+      "states": [
+        "Loom Overview",
+        "1133 desktop"
+      ],
+      "observed": "D-R0071133 shows the Active projects and Latest activity cards stretching from y315 to941 alongside Client details. Most of both cards is empty. The three-column grid reserves two minimum200px metric tracks beside the1.7fr form, leaving the form about395px wide; source supplies no align-items:start.",
+      "expected": "Information should keep space proportional to its use. Maintain useful summaries and separate form/save boundaries while favouring the detail task at narrower desktop widths. No approved exact replacement layout exists.",
+      "authority": [
+        "Usability heuristic: proportionate density and task hierarchy",
+        "Approved workspace title rule does not prescribe this profile composition"
+      ],
+      "recommendation": "Use a compact secondary summary column or row so the form receives more width, and avoid stretching the two metrics to the entire form height.",
+      "rationale": "This addresses actual empty space and constrained fields without deleting useful summaries or making all cards the same height.",
+      "alternatives": [
+        "A small align-self:start change removes tall empty enclosures but does not return width to the form.",
+        "A summary row above the form preserves prominence but adds vertical travel; compare against a stacked side column."
+      ],
+      "tradeoffs": [
+        "Preserve the Active projects dashboard link, latest activity text and current form save boundary.",
+        "Keep form labels/readability; do not shrink text to fit three columns."
+      ],
+      "rootCause": "Three-column grid default stretch couples short metric cards to a long editable form",
+      "occurrences": [
+        "Client profile Overview with details and two metrics"
+      ],
+      "sources": [
+        "src/components/clients/clients.css:653",
+        "src/components/clients/clients.css:706",
+        "src/components/clients/ClientProfilePage.tsx:280"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R007-staff-1133.jpg",
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved compact Client-profile metric layout exists. This is a proposed task-priority improvement, not a demand to copy workspace tables.",
+        "currentCrop": "reviewers/a-comparisons/A09-current-client-metric-stretch.png"
+      },
+      "verificationRemaining": [
+        "Loaded1440 Client profile screenshot required; current D-R0071440 is blank/loading",
+        "Review other Client names/activity lengths and empty contact state without fabricating records"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A10",
+      "title": "Narrow desktop Media inspector hides its filename and Close control",
+      "area": "Media Library inspector",
+      "family": "Drawers and desktop layering",
+      "category": "UI obstruction and exit visibility",
+      "severity": "S2",
+      "impact": "At1133 the global header covers the inspector filename and explicit Close control. Trying to click Close opens Ask Brisk instead. Escape does not recover from this state, although keyboard Enter on the hidden Close button works. At1440 the docked layout also leaves a cramped browsing column.",
+      "classification": "Observed defect",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer where permitted asset available"
+      ],
+      "routes": [
+        "/media/[assetId]",
+        "/media with asset inspector open"
+      ],
+      "states": [
+        "1133 fixed inspector",
+        "1440 docked global multi-rail layout"
+      ],
+      "observed": "The1133 capture starts the inspector’s visible content at its action row; Filename/Close are covered by the global header. CSS fixes the inspector top:0,z70 below the global headerz100. The1440 capture keeps three location rails and360px inspector, leaving220px browser; a minimum210px file card plus browser padding crosses the inspector edge and filters/tabs are squeezed. Lead1133 verification measured Close atx1089,y14,32x32, behind the header. Pointer activation at that named control opens Ask Brisk and leaves the inspector(E045). After closing Ask Brisk, Escape while Filename is focused leaves the inspector(E046). Keyboard Enter on the named Close control successfully closes it. The pointer barrier is verified for Staff; shared role geometry is source-supported, not separately browser-proven.",
+      "expected": "A contextual panel must retain a visible stable exit and identity at all supported desktop widths. Its surrounding browser should keep a usable minimum width or deliberately switch composition.",
+      "authority": [
+        "brisk-design-system.md - clear desktop interaction states",
+        "General usability: visible exit and no obscured controls",
+        "Current shared drawer includes an explicit Close asset drawer button"
+      ],
+      "recommendation": "Position the fixed inspector below the actual global header or use the app’s supported overlay layer so its complete header remains visible. Set a desktop layout boundary that collapses/de-emphasises unused location rails or overlays the inspector before the browsing column becomes unusable.",
+      "rationale": "This repairs visible controls and panel fit rather than changing asset operations or permissions.",
+      "alternatives": [
+        "A full-width content inspector under the global header could be used at narrow desktop if an explicit return remains.",
+        "Simply raising z-index can cover global actions and menus; prefer a coordinated layer/header boundary."
+      ],
+      "tradeoffs": [
+        "Do not make the global header/menus inaccessible.",
+        "Preserve selected asset, filters, folder context and return focus.",
+        "Grid-card minimum width and inspector docking need separate checks; avoid squeezing thumbnails or text below readable sizes."
+      ],
+      "rootCause": "Viewport-only inspector breakpoint and stacking values do not account for hybrid global header and accumulated rails",
+      "occurrences": [
+        "Global Media inspector with Client/project/folder rails",
+        "Fixed inspector at<=1180px"
+      ],
+      "sources": [
+        "src/components/media/media.css:2273",
+        "src/components/media/media.css:2298",
+        "src/components/navigation/app-shell.css:49",
+        "src/components/media/MediaAssetDrawer.tsx:47",
+        "src/components/media/media.css:887"
+      ],
+      "evidence": {
+        "currentScreenshot": "E044-media-inspector-hidden-close.jpg",
+        "additionalScreenshots": [
+          "E045-media-close-click-result.jpg",
+          "E046-media-escape-result.jpg",
+          "D-R012-staff-1440.jpg",
+          "D-R012-staff-1133.jpg"
+        ],
+        "referenceScreenshot": "E011-media-keyboard-after.jpg",
+        "approvedReferenceStatement": "1440 inspector capture E011 retains the visible Filename/Close header. No approved narrow overlay reference exists; source and current screenshots establish the obstruction.",
+        "currentCrop": "reviewers/a-comparisons/A10-current-hidden-inspector-header.png",
+        "referenceCrop": "reviewers/a-comparisons/A10-reference-visible-inspector-header.png",
+        "annotatedPanels": [
+          "reviewers/a-comparisons/A10-inspector-header-comparison.png"
+        ]
+      },
+      "verificationRemaining": [
+        "Same geometry/interaction across authorised roles, actual media types and collapsed sidebar",
+        "Future fix must verify pointer Close, Escape decision, keyboard focus return and global-header menu interaction",
+        "1440 docked layout needs a separate readable-minimum-column review; do not imply narrow Close repair also fixes that density"
+      ],
+      "reviewStatus": "Needs decision",
+      "reproductionSteps": [
+        "At1133 desktop, open the existing Jess interview asset in global Media Library.",
+        "Inspect filename/Close geometry relative to global header.",
+        "Activate the named Close control by pointer: Ask Brisk opens and inspector remains.",
+        "Close Ask Brisk; focus Filename and press Escape: inspector remains.",
+        "Keyboard-focus Close and press Enter: inspector closes, demonstrating the callback works and the visible layer is the defect."
+      ]
+    },
+    {
+      "id": "A11",
+      "title": "Brand Kit asset priority reverses between desktop widths",
+      "area": "Brand Kits",
+      "family": "Desktop hierarchy and asset discovery",
+      "category": "Layout decision",
+      "severity": "S3",
+      "impact": "Logos, Colours and Fonts are immediately visible at1440 but move after the video/editor files and Documents at1133, changing where the same routine assets are found.",
+      "classification": "Heuristic judgement",
+      "confidence": "High source and screenshot evidence; stated interaction checks remain",
+      "roles": [
+        "Studio Staff",
+        "Customer where Brand Kit available",
+        "Shared brand viewer"
+      ],
+      "routes": [
+        "/brand-kits/[customerSlug]",
+        "/brand-kits/[customerSlug]/[subBrandSlug]"
+      ],
+      "states": [
+        "1440 three-column prioritised assets",
+        "1133 two-column layout"
+      ],
+      "observed": "Current paired captures show top-level Logos/Colours/Fonts at1440, while1133 starts with the full-width Brand Kit video/editor files then Documents. CSS explicitly prioritises assets only above1200 and assigns hero/docs first below1200.",
+      "expected": "The layout may reflow for available desktop width, but a change in task priority should be intentional and justified. No explicit approval for this desktop priority reversal was found in inspected guidance.",
+      "authority": [
+        "Heuristic: stable spatial/semantic hierarchy for the same task",
+        "Current desktop-first audit includes1133; this is not a mobile redesign request"
+      ],
+      "recommendation": "Choose one desktop priority with Tom. Recommendation: keep the routine brand assets before the larger video/editor-files panel at both desktop widths, reflowing their columns while retaining every section.",
+      "rationale": "This preserves the apparent wide-desktop priority without shrinking content or creating a new navigation system.",
+      "alternatives": [
+        "If editor-file download is the primary narrow-desktop task, keep hero first and document that priority; consider a visible existing native-link route to routine assets if available."
+      ],
+      "tradeoffs": [
+        "Order must remain logical in the DOM/keyboard sequence, not merely visual CSS.",
+        "Do not remove responsive behaviour below desktop or alter shared-view permissions."
+      ],
+      "rootCause": "Two separate breakpoint-specific ordering schemes encode different asset priority",
+      "occurrences": [
+        "Master Brand Kit and sub-brand desktop views"
+      ],
+      "sources": [
+        "src/components/brand-kits/brand-kits.css:471",
+        "src/components/brand-kits/brand-kits.css:2992",
+        "src/components/brand-kits/brand-kits.css:3023"
+      ],
+      "evidence": {
+        "currentScreenshot": "D-R003-staff-1133.jpg",
+        "referenceScreenshot": "D-R003-staff-1440.jpg",
+        "additionalScreenshots": [
+          "D-R002-staff-1440.jpg",
+          "D-R002-staff-1133.jpg"
+        ],
+        "approvedReferenceStatement": "Paired current desktop compositions illustrate the priority conflict, not approval of one entire page. No separately approved stable-priority reference exists."
+      },
+      "verificationRemaining": [
+        "Tom confirm most frequent Brand Kit task before hierarchy change",
+        "Lead inspect actual scroll distance to Logos/Colours/Fonts at1133",
+        "Verify focus/reading order after any future layout change"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A12",
+      "title": "Brief production fields lose readable values at narrow desktop width",
+      "area": "Brief",
+      "family": "Production specification tables",
+      "category": "Readability and desktop layout",
+      "severity": "S3",
+      "impact": "At 1133px the owner cannot scan even short existing production values in the deliverables editor without opening the fields. The summary also breaks a familiar format word across lines, slowing comparison before sending or approving the Brief.",
+      "classification": "Observed defect",
+      "confidence": "High for the captured Staff layouts; full-value recovery and other permitted role views remain to be checked",
+      "roles": [
+        "Studio Staff observed",
+        "Customer where the shared Brief layout is available, source only"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/brief"
+      ],
+      "states": [
+        "Deliverables editor, existing Main Video row, 1440 and 1133",
+        "Summary Main Video Details, existing missing-field state, 1440 and 1133"
+      ],
+      "observed": "At 1133px, the Main Video name receives 27% of the fixed table while the Duration field receives 10% before cell padding. Existing values appear as `3 ...`, `YouTube ...`, `Lands...` and `Baked i...`; even the empty date prompt is truncated. At 1440px, 3 mins and Landscape are readable. In the summary at 1133px the Format value Landscape breaks inside the word as `Landsca` / `pe`, while the same value fits at 1440px. No changed field or new record was needed to expose these states. Lead E115 confirms opening Duration reveals the full 3 mins option without changing it; the issue is closed-field scanability, not an unavailable value. E116 shows collapsed navigation returns width and makes Landscape readable, but Duration still truncates; collapsing navigation is only a partial accommodation.",
+      "expected": "The approved editor column order and summary table hierarchy should preserve readable production values at the desktop reference widths. Ellipsis is useful for genuinely long values but should not routinely hide short known formats or durations.",
+      "authority": [
+        "Docs/ux-decision-log.md:149 - Main Video Details remain one table-like row with matching Additional Versions headings",
+        "Docs/ux-decision-log.md:155 - preserve Deliverable, Duration, Deadline, Platform, Format and Captions order; shared summary column positions",
+        "Heuristic: production values should be scannable before review/send; no separate approved 1133px table screenshot exists"
+      ],
+      "recommendation": "Rebalance the editor name and field allocations around readable minimum control content. If the full specification cannot fit, retain a meaningful table minimum width and a discoverable horizontal scroll rather than shrinking every field. Apply the same readable-width constraint to the summary while keeping Details and Additional Versions tracks aligned. Avoid breaking ordinary short words in Format.",
+      "rationale": "This repairs the current desktop reading problem within the approved table structure, without replacing specialised selectors or changing values, field order or approval behaviour.",
+      "alternatives": [
+        "Reducing the oversized identifying track may recover enough space for short fields; verify longer deliverable names before choosing widths.",
+        "A larger minimum table width keeps values intact but requires a visible horizontal-scroll cue and access to identity/actions.",
+        "A new stacked or card-based specification layout would change the approved summary model and should be separately reviewed with Tom."
+      ],
+      "tradeoffs": [
+        "Keep custom duration/format fields, row menus, calendar overlays and long selected values usable.",
+        "Do not reduce interface type size to force all fields into one viewport.",
+        "Keep Main Video Details and Additional Versions column alignment where both apply; preserve logical reading and keyboard order."
+      ],
+      "rootCause": "Percentage-based fixed tables are allowed to become narrower than useful control/text content; summary cells also allow overflow-wrap:anywhere",
+      "occurrences": [
+        "Brief Deliverables editor Main Video row",
+        "Brief summary Main Video Details; shared widths also govern Additional Versions but a populated extra-version row was not inspected"
+      ],
+      "sources": [
+        "src/components/brief/brief.css:2047",
+        "src/components/brief/brief.css:2055",
+        "src/components/brief/brief.css:2078",
+        "src/components/brief/brief.css:2106",
+        "src/components/brief/brief.css:3643",
+        "src/components/brief/brief.css:3654",
+        "src/components/brief/brief.css:4280",
+        "src/components/brief/BriefPage.tsx:3195",
+        "src/components/brief/BriefPage.tsx:4774"
+      ],
+      "evidence": {
+        "currentScreenshot": "BRIEF-deliverables-1133.jpg",
+        "referenceScreenshot": "BRIEF-deliverables-1440.jpg",
+        "additionalScreenshots": [
+          "BRIEF-summary-1133.jpg",
+          "BRIEF-summary-1440.jpg",
+          "E115-brief-duration-menu-1133.jpg",
+          "E116-brief-deliverables-collapsed-nav.jpg"
+        ],
+        "approvedReferenceStatement": "The 1440px current capture demonstrates readable short values at the same pixel scale; it is a responsive comparison, not a separately approved full-page design. The 30 September approved decisions establish table structure and order, not these percentage widths.",
+        "focusedCrops": [
+          "reviewers/a-comparisons/A12-current-deliverables-1133.png",
+          "reviewers/a-comparisons/A12-reference-deliverables-1440.png",
+          "reviewers/a-comparisons/A12-current-summary-1133.png",
+          "reviewers/a-comparisons/A12-reference-summary-1440.png"
+        ],
+        "annotatedPanels": [
+          "reviewers/a-comparisons/A12-brief-editor-comparison.png",
+          "reviewers/a-comparisons/A12-brief-summary-comparison.png"
+        ]
+      },
+      "verificationRemaining": [
+        "Duration full-value recovery is verified by opening only; other truncated fields and live width measurements remain separate checks.",
+        "Inspect the permitted Client and read-only layouts separately.",
+        "A populated Additional Versions row and custom duration/format branches were not manufactured; verify these before any future layout change."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A13",
+      "title": "Brief step changes retain scroll that hides the new heading",
+      "area": "Brief",
+      "family": "Guided workflow navigation and focus",
+      "category": "Behaviour and orientation",
+      "severity": "S3",
+      "impact": "Moving from a scrolled question to another step can start the next question with its title behind the fixed header. The user loses the new step introduction even though the footer shows a different selected step.",
+      "classification": "Observed defect",
+      "confidence": "High: lead reproduced and measured the current content scroll at both desktop widths; source matches the transition path",
+      "roles": [
+        "Studio Staff observed",
+        "Other permitted Brief roles use shared layout, not separately verified"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief"
+      ],
+      "states": [
+        "Video type scrolled toward Platform/footer",
+        "Footer step 3 Audience and action selected",
+        "1440px and 1133px expanded navigation"
+      ],
+      "observed": "Lead focused Platform in Video type and used Tab toward the footer, then clicked footer step 3 Audience and action. The app-shell-content retained scrollTop 260 while window scroll stayed 0. The new Audience heading measured top 34 / bottom 74 underneath the fixed global header covering y0-64. E113 and E114 visibly clip the heading at 1440 and 1133 respectively. No answer changed. The footer callback sets activeStepId without a corresponding reveal/focus transition.",
+      "reproduction": [
+        "Open the existing Brief in guided steps and choose Video type.",
+        "Focus the Platform field below the long choice grid, then Tab toward the fixed footer so the content container scrolls. E112 records the resulting state.",
+        "Click footer step 3, Audience and action.",
+        "Observe the selected footer step changes while the new heading remains at the previous content scroll position behind the fixed header. E113 at 1440 and E114 at 1133 record the result."
+      ],
+      "expected": "An explicit guided-step change should orient the user at the newly selected question with its heading visible in the work area. Scroll/focus should belong to the actual content container and account for the fixed header.",
+      "authority": [
+        "User audit objective: task clarity, hierarchy, keyboard interaction and feedback during nested workflows",
+        "Heuristic: explicit step navigation should expose the new step introduction",
+        "No exact approved Brief step-scroll reference or new DS pattern exists"
+      ],
+      "recommendation": "Centralise explicit guided-step navigation so that changing a step reveals the new step introduction within the Brief/content scroll container and moves focus deliberately to its heading. Account for the fixed global header and prevent the subsequent focus action from restoring the old scroll. Apply the same contract to footer dots and relative Back/Next paths after checking their behaviour. Preserve all answers and current step order.",
+      "rationale": "This corrects the observed transition without changing question types, data, selected answers or global navigation. It targets step navigation rather than globally resetting every page or field interaction.",
+      "alternatives": [
+        "Reveal the new step heading with a header-aware local scroll rather than resetting the entire content container to its absolute top.",
+        "If remembering per-step reading position is intentional, retain a visible heading and deliberately restore a recorded per-step position; this adds complexity and requires Tom decision."
+      ],
+      "tradeoffs": [
+        "Do not call window.scrollTo for the whole application or scroll on ordinary answer changes.",
+        "Keep keyboard focus meaningful when the previous step subtree unmounts; the footer should remain available and not force a long repeated Tab path.",
+        "Preserve summary missing-field navigation that intentionally targets a particular field, any open-menu dismissal, and the optional chat panel scroll.",
+        "Avoid animated scrolling if it conflicts with motion preferences."
+      ],
+      "rootCause": "The guided workflow swaps step content without managing retained parent-scroll position or new-step focus",
+      "occurrences": [
+        "Footer step navigation directly passes setActiveStepId",
+        "Back/Next use the same state-only relative setter; related source path not separately runtime reproduced",
+        "Embedded BriefGuidedExperience uses its own step setter; not included as a verified occurrence"
+      ],
+      "sources": [
+        "src/components/brief/BriefPage.tsx:581",
+        "src/components/brief/BriefPage.tsx:1079",
+        "src/components/brief/BriefPage.tsx:1268",
+        "src/components/brief/BriefPage.tsx:1688",
+        "src/components/brief/BriefPage.tsx:1768",
+        "src/components/brief/BriefPage.tsx:2663",
+        "src/components/brief/BriefPage.tsx:2706",
+        "src/components/navigation/app-shell.css:449"
+      ],
+      "evidence": {
+        "currentScreenshot": "E113-brief-audience-scroll-after.jpg",
+        "referenceScreenshot": null,
+        "additionalScreenshots": [
+          "E112-brief-video-type-scroll-before.jpg",
+          "E114-brief-audience-scroll-1133.jpg"
+        ],
+        "approvedReferenceStatement": "No exact approved step-scroll screenshot exists. These genuine before/after and two-width captures demonstrate the retained-scroll problem. BRIEF-audience default captures show the same clipped state and are not a canonical replacement.",
+        "currentCrop": "reviewers/a-comparisons/A13-current-audience-heading-1440.png"
+      },
+      "verificationRemaining": [
+        "Only the scrolled Video type to Audience footer-step transition was directly verified. Check Back/Next, jumping from Summary to a specific field, and embedded/read-only views separately.",
+        "Verify heading focus and announcement after the future change without adding focusable stops to normal reading order.",
+        "No answer was edited, Brief sent or approval submitted."
+      ],
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "notPromoted": [
+    {
+      "topic": "Workspace search heights and widths",
+      "reason": "Differences38/40/44px and220/260/280/320px do not themselves prove a usability problem; approved baseline explicitly retains specialised search scope. Preserve useful contextual width. All suppress native outline and should be reviewed for focused-state clarity with B/A01, not demand a universal Search primitive."
+    },
+    {
+      "topic": "Media type pills / view controls versus quiet filters",
+      "reason": "Specialised media controls explicitly excluded from quiet-choice migration; differing shapes alone are not a violation."
+    },
+    {
+      "topic": "Raw native tables",
+      "reason": "Figma d-Table is not a React export. Working native semantics should not be replaced with an invented missing component. Record source-sync decision in baseline."
+    },
+    {
+      "topic": "Shoot soft surfaces and blurred shadow declarations",
+      "reason": "shoot.css11183-11320 uses secondary border tokens for active controls and blurred float-shadow declared at11188; live use and approval need comparison. Avoid promoting an invisible or overridden CSS declaration into a proven visual defect."
+    },
+    {
+      "topic": "Historical screenshots with attached tabs/top-right roles",
+      "reason": "Scoped newer approvals supersede them. Do not recommend restoring old navigation/role schemes or Media inside stage sequence."
+    }
+  ],
+  "applicationMutation": "None. Only audit reviewer files created. No browser manipulation by Reviewer A."
+}

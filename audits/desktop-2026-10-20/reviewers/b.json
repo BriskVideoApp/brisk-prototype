@@ -1,0 +1,636 @@
+{
+  "reviewer": "B",
+  "status": "UI-focused reviewer checkpoint with 10 recommendations. All remain Needs decision. Current evidence includes directly observed transcript keyboard interception, Script outside dismissal, Brief approval-copy conflict and Adjust flow focus/Escape.",
+  "constraints": "Audit only. No application edits or browser manipulation performed by reviewer. No data submitted.",
+  "findings": [
+    {
+      "id": "B01",
+      "title": "Team person checkboxes have no accessible person name",
+      "area": "Project Team",
+      "family": "Checkboxes and selection rows",
+      "category": "Accessibility",
+      "severity": "S2",
+      "impact": "A screen-reader user cannot identify which person a checkbox will select before assigning or inviting them.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/active-videos?project=loom-launch-film",
+        "/projects/[projectId]/stages/brief"
+      ],
+      "states": [
+        "Team > Shooter > Staff > Show all",
+        "Team > Shooter > Freelancers",
+        "keyboard focus"
+      ],
+      "observed": "Lead verified the person checkbox DOM has no accessible name. The wrapping label contains only the input and an aria-hidden visual square; the person name and availability are sibling elements. This affects both Staff and Freelancer rows.",
+      "expected": "Each selection control has a person-specific accessible name and preserves its disabled/selected meaning.",
+      "authority": [
+        "AGENTS.md: use approved DS controls",
+        "Brisk DS/guidelines/components/forms.md: native Checkbox supports label or ARIA label"
+      ],
+      "recommendation": "Associate each checkbox with the visible person name, preferably through the approved DS Checkbox or a stable aria-labelledby link. Keep capacity/rate metadata as an accessible description where useful.",
+      "rationale": "This repairs identification while preserving the separate select, assign and invite steps.",
+      "alternatives": [
+        "A concise aria-label such as Select Maddie Diaz is the smallest repair; linking visible text avoids future divergence."
+      ],
+      "tradeoffs": "Do not make the entire Freelancer row a label because it contains a separate project-rate input. Preserve one-person Staff selection and multi-person invitation selection.",
+      "rootCause": "Custom Team checkbox markup bypasses the approved labelled checkbox contract.",
+      "occurrences": [
+        "StaffOption",
+        "FreelancerOption"
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:456",
+        "src/components/project/team/RoleEditorModal.tsx:503"
+      ],
+      "evidence": [
+        "E007-team-staff-expanded-1133",
+        "E008-team-freelancers-1133"
+      ],
+      "approvedReference": "No approved screenshot for this exact Team composition. Approved DS Checkbox semantics are the reference.",
+      "verificationRemaining": "A screen-reader announcement check is still required; lead verified accessible-name inputs and keyboard focus, not formal accessibility compliance.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open project Team > Shooter > Staff > Show all or Freelancers. Inspect the accessible name of a person checkbox: it is empty although the person name is visible beside it. No assignment or invitation is submitted."
+      ]
+    },
+    {
+      "id": "B02",
+      "title": "Container shortcuts intercept nested file and comment buttons",
+      "area": [
+        "Media",
+        "Transcripts"
+      ],
+      "family": "Cards and list rows",
+      "category": "Accessibility / Behaviour",
+      "severity": "S2",
+      "impact": "Keyboard activation of a focused selection or comment button can open a file or play a clip instead of performing the named action.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "routes": [
+        "/media",
+        "/projects/[projectId]/stages/media",
+        "/projects/[projectId]/stages/media?view=transcripts"
+      ],
+      "states": [
+        "Grid > focused Select button",
+        "Transcript paragraph > focused Add comment pin",
+        "List > nested actions (source-supported)"
+      ],
+      "observed": "On the current Staff Media Library grid, the lead focused Select Office-arrivals-camera-b.mov and pressed Space. The inspector opened and no selected-files toolbar appeared. In the project transcript collection, Space on Add comment for Interviewer 00:08 started playback at 00:08 and no comment composer opened. Both parent containers handle bubbling Enter/Space and prevent default without checking the event target; their nested native actions stop only click propagation. Playback was paused and the temporary mute restored.",
+      "expected": "The focused native button receives its normal Enter/Space activation; parent open-file shortcuts run only when the parent itself is focused.",
+      "authority": [
+        "Brisk DS/guidelines/components/icon-buttons.md: named native actions and keyboard focus",
+        "Verified native-button behaviour is the intended action contract"
+      ],
+      "recommendation": "Restrict parent activation to event.target === event.currentTarget, or give the open-file action its own native control and leave other controls as siblings.",
+      "rationale": "This makes keyboard and pointer actions agree without changing file capabilities or selection scope.",
+      "alternatives": [
+        "Separate open-file button/link gives clearer semantics; a target guard is a smaller correction."
+      ],
+      "tradeoffs": "Retain modifier selection, drag behaviour, row/card focus styling and actual nested actions.",
+      "rootCause": "Clickable container handles key events from nested controls.",
+      "occurrences": [
+        "MediaAssetCard",
+        "MediaAssetRow",
+        "TranscriptParagraphRow with nested ScriptAnnotationPin"
+      ],
+      "sources": [
+        "src/components/media/MediaAssetCard.tsx:53",
+        "src/components/media/MediaAssetCard.tsx:61",
+        "src/components/media/MediaAssetCard.tsx:128",
+        "src/components/media/MediaAssetRow.tsx:39",
+        "src/components/script-transcripts/TranscriptClipBlock.tsx:185",
+        "src/components/script-transcripts/TranscriptClipBlock.tsx:210",
+        "src/components/script/ScriptAnnotationPin.tsx:25"
+      ],
+      "evidence": [
+        "E010-media-keyboard-before",
+        "E011-media-keyboard-after",
+        "E073-transcript-keyboard-comment"
+      ],
+      "approvedReference": "No approved screenshot exists for this behaviour. Compare pointer selection of the same native action.",
+      "verificationRemaining": "Grid Select and transcript Add comment with Space were directly checked in Staff view. List, Enter, other nested commands and restricted-role consumers remain source-supported occurrences requiring direct checking. No download, delete, archive, send or comment submission was invoked.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "In Staff Media Library, focus Select Office-arrivals-camera-b.mov and press Space. Observe the inspector opens and the selected-files toolbar does not appear.",
+        "In Loom project Media > Transcripts, focus the Add comment pin for Interviewer 00:08 and press Space. Observe playback starts at 00:08 while no comment composer opens. Pause playback and restore the previous mute state."
+      ]
+    },
+    {
+      "id": "B03",
+      "title": "Filtered Media selections give commands different scopes",
+      "area": "Media",
+      "family": "Bulk actions",
+      "category": "Behaviour / Error prevention",
+      "severity": "S3",
+      "impact": "The same selected-files toolbar can download/share only visible files while Move/Archive/Delete retain all selections. Delete confirms the full count, so an unintended deletion is a risk hypothesis rather than a verified outcome.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/media",
+        "/projects/[projectId]/stages/media"
+      ],
+      "states": [
+        "Select two files, filter/search to one",
+        "folder/tab changes with selection",
+        "Archive/Delete confirmation - cancel only"
+      ],
+      "observed": "Lead selected two files then filtered/search to one in both global and project Media. The toolbar retained 2 selected while the page offered Send selected file (singular). In project Media, Delete opened Delete 2 files?, including the hidden selection; the confirmation was cancelled and selection cleared. Source confirms Download/Share derive visibleAssets while Move/Archive/Delete consume the complete selectedAssetIds Set. The same selection count therefore labels commands with different scopes.",
+      "expected": "The same selection has an explicit and consistent action scope, with hidden selected files disclosed before a consequential action.",
+      "authority": [
+        "Docs/desktop-design-baseline.md: preserve per-file and explicitly selected-file scope",
+        "User audit requirement: unclear bulk-action scope and error prevention"
+      ],
+      "recommendation": "Choose one explicit selection policy. Prefer applying all selected-file actions to the complete selection and showing hidden selections plus a reviewable file list before consequential actions. Alternatively clear selection when changing a scope/filter.",
+      "rationale": "The user needs to know what a selected-file action includes; superficial toolbar uniformity does not resolve this behavioural mismatch.",
+      "alternatives": [
+        "Limit every action to visible selected files and update the count accordingly.",
+        "Retain cross-folder selection but show N selected, including M hidden, and offer clear selection."
+      ],
+      "tradeoffs": "Clearing selection is simpler but removes useful cross-folder work. Full-selection actions need to preserve existing permissions, original-availability rules and same-Client send limits.",
+      "rootCause": "Bulk callbacks use different selection derivations.",
+      "occurrences": [
+        "MediaAssetGrid selection toolbar",
+        "MediaBrowser selectedSharingAssets",
+        "MediaBrowser batch callback definitions"
+      ],
+      "sources": [
+        "src/components/media/MediaAssetGrid.tsx:43",
+        "src/components/media/MediaAssetGrid.tsx:108",
+        "src/components/media/MediaBrowser.tsx:166",
+        "src/components/media/MediaBrowser.tsx:306",
+        "src/components/media/MediaBrowser.tsx:309",
+        "src/components/media/MediaBrowser.tsx:362"
+      ],
+      "evidence": [
+        "E012-media-hidden-selection",
+        "E016-project-media-filtered-selection",
+        "E017-project-media-delete-scope"
+      ],
+      "approvedReference": "No approved screenshot establishes a cross-filter selection policy. The approved scoped-download rule remains binding.",
+      "verificationRemaining": "Global and project filtered-selection mismatch plus project Delete confirmation verified without submission. Download, Send, Move, Archive and Delete outcomes were not invoked. Tom must decide cross-folder/filter selection policy.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Select two files in global or project Media, then search/filter so only one selected file is visible. Observe 2 selected beside Send selected file in the singular.",
+        "In project Media, open Delete without confirming it. Observe Delete 2 files? includes the hidden selection; cancel and clear the temporary selection."
+      ]
+    },
+    {
+      "id": "B06",
+      "title": "Version panels lack predictable dismissal and focus return",
+      "area": [
+        "Script",
+        "Storyboard"
+      ],
+      "family": "Version picker / secondary panel",
+      "category": "Accessibility / Behaviour",
+      "severity": "S3",
+      "impact": "The version overlay can remain open after Escape or outside interaction, adding friction and obscuring document tools.",
+      "classification": "Heuristic design judgement supported by observed behaviour",
+      "confidence": "High for observed Script behaviour; medium for preferred lifecycle",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "routes": [
+        "/projects/[projectId]/script",
+        "/projects/[projectId]/stages/storyboard"
+      ],
+      "states": [
+        "Open versions",
+        "Escape",
+        "outside click",
+        "select historical version"
+      ],
+      "observed": "Lead opened Script Versions at 1440px, pressed Escape on the opener, and clicked the noninteractive Words heading outside the list; the panel remained open in both cases. It also remains usable at 1133px. By comparison, the adjacent quiet Script actions menu closes on Escape and returns focus to its opener. The lead safely previewed historical V1, saw Read only, then returned to current V3 without restoring or editing. Storyboard shares ScriptVersionControl, but its dismissal behaviour was not separately tested.",
+      "expected": "A named secondary panel has an explicit dismissal route, stable keyboard focus and consistent Escape behaviour appropriate to the panel pattern.",
+      "authority": [
+        "Brisk DS/guidelines/components/dropdown.md: selection picker dismissal/focus standard as supporting analogy",
+        "User audit scope: predictable keyboard interaction and nested workflows"
+      ],
+      "recommendation": "Add Escape and appropriate outside dismissal with focus returned to the Versions opener. Retain version identity, historical read-only previews and separate create/duplicate commands.",
+      "rationale": "Escape/outside persistence is directly observed, but no approved version-panel lifecycle was found. Tom should choose a dismissible overlay or an explicit persistent panel; retain the richer version task either way.",
+      "alternatives": [
+        "Keep the panel persistently open as a deliberate side panel with a visible Close control, if the desktop layout can support that."
+      ],
+      "tradeoffs": "Do not convert historic unapproved snapshots into editable destinations or change current-version rules. A destructive command must not run merely to test dismissal.",
+      "rootCause": "Custom version panel has incomplete lifecycle handling.",
+      "occurrences": [
+        "ScriptVersionControl used by Script and Storyboard"
+      ],
+      "sources": [
+        "src/components/script/ScriptVersionControl.tsx:37",
+        "src/components/script/ScriptPage.tsx:502",
+        "src/components/script/ScriptPage.tsx:1908",
+        "src/components/storyboard/StoryboardPage.tsx:310"
+      ],
+      "evidence": [
+        "E058-script-versions-1440",
+        "E059-script-versions-escape",
+        "E060-script-versions-1133",
+        "E061-script-versions-outside",
+        "E062-script-actions-menu",
+        "E064-script-historical-read-only"
+      ],
+      "approvedReference": "No approved screenshot establishes this rich version-panel lifecycle. The adjacent quiet action menu provides verified supporting behaviour for Escape/focus return, not authority to turn Versions into a generic menu.",
+      "verificationRemaining": "Script Escape and outside-click persistence directly checked. Historical V1 read-only preview and Return latest V3 were inspected without mutation. Tab order, focus return after selection and Storyboard lifecycle remain unverified. No version was created, duplicated, renamed, restored or deleted.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open Loom project Script > Versions. With the opener still focused, press Escape; observe the list remains open.",
+        "Click the noninteractive Words heading outside Versions; observe the list remains open.",
+        "For comparison, open the adjacent Script quiet actions menu and press Escape; lead observed dismissal and focus return to that opener."
+      ]
+    },
+    {
+      "id": "B07",
+      "title": "Local tab widgets advertise incomplete keyboard semantics",
+      "area": [
+        "Project Team",
+        "Media",
+        "Chat",
+        "Masters"
+      ],
+      "family": "Content tabs",
+      "category": "Accessibility",
+      "severity": "S3",
+      "impact": "Users encounter controls announced as tabs without consistent tab-to-panel relationships or expected arrow navigation. They remain reachable through repeated Tab presses.",
+      "classification": "Observed defect",
+      "confidence": "High for Team; source-supported elsewhere",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "routes": [
+        "/active-videos?project=loom-launch-film",
+        "/media",
+        "/chat",
+        "/projects/[projectId]/stages/masters"
+      ],
+      "states": [
+        "Team Staff/Freelancers",
+        "Media/Masters/Archived",
+        "Chat External/Internal",
+        "Masters request Cut-Downs/Reformats/Script optional"
+      ],
+      "observed": "Lead verified ArrowRight on Team Staff does not switch/focus Freelancers. Both Team tabs are ordinary tab stops with aria-selected, without aria-controls or a linked tabpanel. The same partial local tab markup occurs in Media sections, Chat channels and Masters request tabs.",
+      "expected": "Where role=tab is used, provide a coherent keyboard and panel contract. Distinct grouped filters or commands may use their correct simpler semantics instead.",
+      "authority": [
+        "Brisk DS/guidelines/components/quiet-choices.md: approved Tabs semantics; specialised controls are outside the initial migration and need review"
+      ],
+      "recommendation": "Repair each live local widget’s semantics while retaining its contextual composition. Use the approved Tabs component when it fits; preserve Chat’s separate unread action and any specialised layout rather than forcing a visual migration.",
+      "rationale": "The issue is functional semantics, not that all tabs should look alike.",
+      "alternatives": [
+        "Use named ordinary pressed buttons where the control is truly a filter rather than a content-tab switch."
+      ],
+      "tradeoffs": "Chat has nested unread actions, and Masters request options affect the form. Preserve their original callbacks, accessible descriptions and save boundaries.",
+      "rootCause": "Several local tab implementations add roles without the associated panel and keyboard behaviour.",
+      "occurrences": [
+        "RoleEditorModal Fill type",
+        "MediaBrowser library sections",
+        "ChatPage channels",
+        "Masters RequestModal"
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:280",
+        "src/components/media/MediaBrowser.tsx:306",
+        "src/components/chat/ChatPage.tsx:1506",
+        "src/components/masters/MastersPage.tsx:3370"
+      ],
+      "evidence": [
+        "E007-team-staff-expanded-1133",
+        "E008-team-freelancers-1133",
+        "E009-media-library-1440"
+      ],
+      "approvedReference": "No approved screenshot exists for every contextual widget. DS Tabs provides an approved interaction reference, not permission for blanket restyling.",
+      "verificationRemaining": "Team keyboard checked. Media, Chat and Masters keyboard/panel states require browser verification. No formal compliance claim.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open Team > Shooter and focus Staff. Press ArrowRight; the lead observed Staff remains focused and selected. Inspect tab markup: both choices lack a tab-to-panel relationship. Do not submit an assignment or invitation."
+      ]
+    },
+    {
+      "id": "B09",
+      "title": "Adjust project flow declares a modal without managing modal focus",
+      "area": "Project flow",
+      "family": "Dialogs and specialised settings",
+      "category": "Accessibility",
+      "severity": "S2",
+      "impact": "Opening the declared modal leaves keyboard focus on its background opener, and Escape there does not dismiss the visible panel. Users must find and activate its Close control instead.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/brief",
+        "/projects/[projectId]/script",
+        "/prototype/production-flow"
+      ],
+      "states": [
+        "Adjust project flow open",
+        "Tab/Shift+Tab",
+        "Escape",
+        "reorder stages"
+      ],
+      "observed": "Lead opened Adjust project flow at 1133px and confirmed focus remained on the Adjust project flow opener outside the section declared aria-modal=true. Pressing Escape there left the panel open. E055/E056 record those states; E057 shows the panel at 1440px. Source provides no focus lifecycle, Escape handler or native modal mechanism. No reorder, hide, reset or Edit/Animation change was made.",
+      "expected": "A modal moves focus inside, keeps background interaction unavailable, closes predictably with Escape and returns focus. A non-modal contextual panel must instead advertise and behave as non-modal.",
+      "authority": [
+        "Brisk DS/guidelines/components/editing-dialog.md: native dialog focus/dismissal contract",
+        "Brisk DS/guidelines/components/popover.md: approved non-modal boundary and Escape as a supporting pattern, pilot scope acknowledged",
+        "AGENTS.md: preserve adaptable flow, hidden work and pinned Media"
+      ],
+      "recommendation": "Apply the existing shared overlay focus and dismissal contract to this specialised panel: choose true modal or non-modal behaviour, move focus appropriately, support Escape and return focus to the opener. Preserve the current flow controls, specialised layout and production rules.",
+      "rationale": "The panel’s modal promise should match its behaviour; the flow itself and stage rules remain unchanged.",
+      "alternatives": [
+        "A properly managed modal fits an intentionally blocking backdrop.",
+        "A non-modal anchored panel can use a deliberate boundary/dismissal model if background interaction is intended; review that choice before changing semantics."
+      ],
+      "tradeoffs": "Do not force the specialised editor into the Columns checklist pilot or silently invent a new DS primitive. Keep Brief first, Masters last, Storyboard constraints, hidden-stage preservation and separate Media.",
+      "rootCause": "Specialised panel supplies ARIA modality without focus lifecycle or a keyboard reorder path.",
+      "occurrences": [
+        "ProjectStageHeader ProjectFlowAdjuster",
+        "Prototype ProductionFlowRail adjuster"
+      ],
+      "sources": [
+        "src/components/project/ProjectStageHeader.tsx:226",
+        "src/components/production-flow/ProductionFlowRail.tsx:150",
+        "src/components/production-flow/ProductionFlowRail.tsx:217",
+        "src/components/production-flow/ProductionFlowRail.tsx:240"
+      ],
+      "evidence": [
+        "E055-project-flow-panel-1133",
+        "E056-project-flow-escape",
+        "E057-project-flow-panel-1440"
+      ],
+      "approvedReference": "No approved screenshot establishes this specialised modal’s keyboard behaviour. DS modal/popover guidance is an interaction reference, not approval to flatten this editor.",
+      "verificationRemaining": "Only initial focus and Escape on the opener were directly verified. Full Tab/Shift+Tab containment, background inertness, screen-reader output and nested term/hide-confirmation handling remain unchecked. Drag-only reordering and absence of an equivalent keyboard command are source-supported UI risks, not a tested failure. Do not claim keyboard trapping was fully tested.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open Adjust project flow at 1133px. Inspect active focus: it remains on the Adjust project flow opener outside the declared modal.",
+        "Press Escape while the opener remains focused; observe the panel stays open. Close through the visible Close control without hiding, reordering or resetting stages."
+      ]
+    },
+    {
+      "id": "B10",
+      "title": "An empty suggested Staff list gives no reason for the blank space",
+      "area": "Project Team",
+      "family": "Empty states and selection lists",
+      "category": "Usability / Task clarity",
+      "severity": "S3",
+      "impact": "When no Staff match the role, the dialog does not explain why it shows no people; the user must infer what Show all means. No user failure was observed.",
+      "classification": "Heuristic judgement",
+      "confidence": "High about current empty presentation; medium about practical impact",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/active-videos?project=loom-launch-film"
+      ],
+      "states": [
+        "Team > Shooter > Staff, suggested list collapsed"
+      ],
+      "observed": "The current Shooter Staff tab contains no suggested people and immediately offers Show all 10, without a zero-results explanation. Expanded view does show Staff, including people available for manual assignment.",
+      "expected": "A finite empty selection state makes its scope clear and retains the next useful action.",
+      "authority": [
+        "brisk-design-system.md: empty states explain the absence and show the primary next action",
+        "Docs/desktop-design-baseline.md: Team contents require audit rather than automatic flattening"
+      ],
+      "recommendation": "Add one concise scoped line such as No suggested Staff for Shooter above the existing Show all 10 action. Keep manual selection available.",
+      "rationale": "This explains the blank result with minimal extra UI and avoids implying the Studio has no Staff.",
+      "alternatives": [
+        "Show all Staff by default when the suggested subset is empty, but that changes filtering behaviour and should be approved separately."
+      ],
+      "tradeoffs": "Do not add a large generic empty-state illustration or an invitation action that distracts from existing Staff assignment. Do not suggest people are unavailable when the filter merely has no matching default role.",
+      "rootCause": "Suggested-person filtering has no explicit empty-result copy.",
+      "occurrences": [
+        "RoleEditorModal Staff suggested list"
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:290",
+        "src/components/project/team/RoleEditorModal.tsx:300",
+        "src/components/project/team/RoleEditorModal.tsx:578"
+      ],
+      "evidence": [
+        "E005-team-staff-1440",
+        "E006-team-staff-1133",
+        "E007-team-staff-expanded-1133"
+      ],
+      "approvedReference": "No approved screenshot for an empty suggested-person list. Existing Show all action and approved empty-state guidance provide the context.",
+      "verificationRemaining": "Tom to decide whether a concise explanation is useful; no user research or demonstrated selection failure is claimed.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open Team > Shooter > Staff using existing project data. Observe no suggested people and only Show all 10, without an explanation of why the shortlist is empty. Expand Show all to inspect available people; do not assign."
+      ]
+    },
+    {
+      "id": "B11",
+      "title": "The workload detail drops the explicit over-capacity signal",
+      "area": "People",
+      "family": "Capacity summaries and detail dialogs",
+      "category": "Usability / Information hierarchy",
+      "severity": "S3",
+      "impact": "A Staff member opening an overbooked person’s workload must subtract Booked from Weekly capacity to recover the excess already shown in the directory. No incorrect calculation or user failure was observed.",
+      "classification": "Heuristic judgement",
+      "confidence": "High about presentation difference; medium about task impact",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/people?view=Studio%20Staff",
+        "/people/[personId]?section=Work"
+      ],
+      "states": [
+        "Sarah Chen compact Capacity headline",
+        "Sarah Chen workload dialog at 1133px",
+        "Staff profile Work summary - source-supported related occurrence"
+      ],
+      "observed": "E031 shows the directory headline 8h over capacity behind Sarah’s open workload dialog. The dialog gives a red 0h Available hours, 48h Booked hours, 9h Potential hours and 40h Weekly capacity, but no explicit 8h over signal. The values agree; the detail view makes the user derive the excess. The profile Work summary uses the same clamped 0h Available pattern in source.",
+      "expected": "The detailed workload view should retain a clear, textual indication that capacity is exceeded while preserving its useful breakdown. It need not repeat the directory layout.",
+      "authority": [
+        "Docs/ux-decision-log.md:441-446: scoped approval for explicit excess-hours compact headline; the workload dialog was intentionally outside that prior change",
+        "src/data/people.ts:300: existing capacity calculation supplies overbookedHours",
+        "User audit objective: information visible when needed, coherent contextual differences rather than superficial uniformity"
+      ],
+      "recommendation": "When overbooked, add one concise 8h over capacity summary near the workload heading or summary row, using the existing overbookedHours value. Keep Booked, Potential and Weekly capacity intact; retain the existing normal and exact-capacity presentation.",
+      "rationale": "A detail view should help explain and act on a warning, without requiring arithmetic to rediscover it. This extends a useful signal rather than forcing all summaries to look alike.",
+      "alternatives": [
+        "Make the first statistic conditional: 8h Over capacity instead of 0h Available, retaining available-hours meaning in supporting copy if needed.",
+        "Keep all four statistics and add a short warning line; clearer but slightly more content."
+      ],
+      "tradeoffs": "The prior approval deliberately left this dialog unchanged, so this is a new recommendation requiring Tom’s decision, not a regression or an existing-standard violation. Avoid adding extra normal-capacity reassurance or merging Client-potential hours into booked hours.",
+      "rootCause": "Detailed Staff summaries show clamped availableHours while the approved compact summary switches to overbookedHours.",
+      "occurrences": [
+        "PeoplePrimitives WorkloadDialog - browser verified",
+        "PersonProfilePage Work capacity summary - source-supported, not separately browser checked"
+      ],
+      "sources": [
+        "src/components/people/PeoplePrimitives.tsx:54",
+        "src/components/people/PeoplePrimitives.tsx:105",
+        "src/components/people/PersonProfilePage.tsx:340",
+        "src/data/people.ts:300",
+        "Docs/ux-decision-log.md:441"
+      ],
+      "evidence": [
+        "E031-people-capacity"
+      ],
+      "approvedReference": "E031 retains the approved compact 8h over capacity headline in the background for a same-person comparison. No approved over-capacity WorkloadDialog variant exists.",
+      "verificationRemaining": "Tom’s decision on whether the detail needs an explicit excess summary. Verify normal/exact/near/over cases if implemented; only the existing overbooked dialog was captured, and profile Work remains source-only.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "In People, identify Sarah with 8h over capacity and 48 of 40 booked. Open her workload breakdown. Observe the dialog shows 0h Available, 48h Booked and 40h Capacity but no explicit 8h over-capacity signal. Close without changing assignments."
+      ]
+    },
+    {
+      "id": "B12",
+      "title": "Custom dialog footers omit a visible way to finish or cancel",
+      "area": [
+        "People",
+        "Clients",
+        "Brand Kits",
+        "Expenses"
+      ],
+      "family": "Dialog footers and navigation",
+      "category": "Usability / Cancellation",
+      "severity": "S3",
+      "impact": "People cannot directly cancel an invitation, abandon an invoice-send-back substep or close the logo download dialog through a visible exit. They must know Escape/backdrop or use an extra Back step.",
+      "classification": "Approved-standard violation",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff",
+        "Customer"
+      ],
+      "routes": [
+        "/people",
+        "/clients/[clientId]",
+        "/brand-kits/[clientId]",
+        "/outstanding-invoices"
+      ],
+      "states": [
+        "Invite Person Access step",
+        "Brand Kit > Download logo",
+        "Invoice review > Send back reason"
+      ],
+      "observed": "The invitation first step shows Cancel and Next. Its Access step replaces the footer with Back and Send invite, leaving no direct visible whole-dialog Cancel. The logo download dialog supplies only Replace and an overflow menu in its footer, with no visible Done/Close. The shared EditingDialog supports Escape/backdrop cancellation, but these custom actions remove the standard visible exit. The invoice Send back reason step likewise shows Back and Send back only. Back returns to invoice review rather than closing the workflow; the lead backed out and cancelled without submitting.",
+      "expected": "The approved editing and confirmation dialog contracts retain an explicit whole-dialog exit alongside any separate Back navigation.",
+      "authority": [
+        "Brisk DS/guidelines/components/editing-dialog.md: supply custom actions and retain an explicit exit; keep Back separate from the action that closes the whole dialog",
+        "ClientModal is a compatibility wrapper over EditingDialog",
+        "Brisk DS/guidelines/components/confirmation-dialog.md: custom actions must include an explicit way to cancel"
+      ],
+      "recommendation": "Retain explicit Cancel in the invitation Access and invoice Send back steps while keeping Back and the consequential action distinct. Add Done or Close to the logo download footer while retaining formats, Replace and the separate destructive menu.",
+      "rationale": "A visible exit supports deliberate cancellation/finishing without implying that download and replacement are one operation.",
+      "alternatives": [
+        "Keep the approved shared footer layout and supply an explicit quiet exit beside the existing contextual actions."
+      ],
+      "tradeoffs": "Do not remove Back or merge it with whole-dialog cancellation. Use Close/Done for a view/download dialog; do not imply Cancel reverses a completed download or immediate save.",
+      "rootCause": "Consumers override approved dialog actions but omit the required explicit whole-dialog exit.",
+      "occurrences": [
+        "InvitePersonModal Access-step footer",
+        "LogoDownloadModal footer",
+        "InvoiceReviewModal Send back custom footer"
+      ],
+      "sources": [
+        "src/components/invitations/InvitePersonModal.tsx:171",
+        "src/components/invitations/InvitePersonModal.tsx:178",
+        "src/components/brand-kits/BrandKitPages.tsx:2529",
+        "src/components/costs/CostsPrimitives.tsx:245"
+      ],
+      "evidence": [
+        "E028-invitation-staff",
+        "E029-invitation-client-access",
+        "E030-invitation-mixed-projects",
+        "E087-brand-logo-download",
+        "E096-invoice-send-back-empty",
+        "E097-invoice-send-back-draft"
+      ],
+      "approvedReference": "No approved screenshot establishes an exception for these custom footers. E028 is a verified current first-step cancellation comparison, while the approved DS EditingDialog and ConfirmationDialog guidance supplies the authority.",
+      "verificationRemaining": "Visible footer omission checked in invitation, logo download and invoice Send back captures. The lead verified invoice Back then Cancel discards the local draft. Per-consumer Escape/backdrop/focus return are not fully verified; no invitation, download, replacement, delete, invoice status change or email was submitted.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open Invite Person and inspect the initial step with Cancel and Next. Move to Access using a local draft without sending. Observe only Back and Send invite, with no direct visible Cancel. Exit without sending.",
+        "Open an existing Brand Kit logo download dialog. Observe the format choices and a footer containing Replace plus overflow, without visible Close/Done. Exit without invoking a download or asset command.",
+        "Open an existing Submitted invoice > Send back. Observe Back plus Send back and no visible whole-dialog Cancel. Return Back, then Cancel review; do not submit the reason."
+      ]
+    },
+    {
+      "id": "B13",
+      "title": "Brief summary promises approval while Approve Brief is disabled",
+      "area": "Brief",
+      "family": "Approval availability and helper copy",
+      "category": "Usability / Feedback",
+      "severity": "S3",
+      "impact": "The same summary tells users they can approve and prevents that action, leaving them uncertain whether unconfirmed details are optional or must be completed. The guard itself is not shown to be wrong.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief"
+      ],
+      "states": [
+        "Summary with 11 unconfirmed details and no actual Brief content",
+        "disabled Approve Brief",
+        "summary at 1440px/1133px"
+      ],
+      "observed": "The current summary says 11 details have not been confirmed and You can still approve this brief. In the same state, Approve Brief is disabled with the accessible explanation Add Brief details before approving. Source renders the reassurance unconditionally whenever the missing-detail note appears, while approval separately checks selectedRole and hasBriefContent. E053 shows the visible helper and disabled action together; the summary DOM records their full text.",
+      "expected": "Helper copy and action availability should express the same existing approval rule. Optional unconfirmed details must remain distinct from a minimum-content or role restriction.",
+      "authority": [
+        "Current Brief minimum-content guard at BriefPage.tsx:613 and :1195-1196",
+        "AGENTS.md: preserve approval safeguards and resolve material product ambiguity before changing behaviour",
+        "User audit objective: clear feedback and understandable disabled controls"
+      ],
+      "recommendation": "Condition the helper on the existing approval-availability checks. When the minimum-content guard blocks approval, explain that Brief details are needed; show the current reassurance only when approval is actually available. Use the existing role explanation when role prevents approval.",
+      "rationale": "This aligns the promise with the control without changing which fields are required or whether optional unconfirmed details can be approved.",
+      "alternatives": [
+        "Remove the unconditional reassurance altogether, but that loses useful guidance for valid partially confirmed Briefs."
+      ],
+      "tradeoffs": "Do not enable the disabled action merely to match the copy, require all details to be confirmed, add new mandatory fields, or remove the existing Approve anyway confirmation for eligible Briefs. Preserve the distinction between empty and partially confirmed content.",
+      "rootCause": "Missing-detail reassurance receives only missingCount and does not share the approval-availability condition.",
+      "occurrences": [
+        "BriefSummaryConfirmationNote and Brief approval footer share one screen but derive their states independently"
+      ],
+      "sources": [
+        "src/components/brief/BriefPage.tsx:613",
+        "src/components/brief/BriefPage.tsx:1195",
+        "src/components/brief/BriefPage.tsx:1367",
+        "src/components/brief/BriefPage.tsx:4627",
+        "src/components/brief/BriefPage.tsx:4637"
+      ],
+      "evidence": [
+        "E053-brief-link-access-1440",
+        "E054-brief-link-access-1133",
+        "BRIEF-summary-1440",
+        "BRIEF-summary-1133"
+      ],
+      "approvedReference": "No approved screenshot resolves this copy/availability combination. The current guard and its disabled explanation provide the behavioural reference; changing approval rules is outside this recommendation.",
+      "verificationRemaining": "The captured empty-content contradiction is verified without editing or approving. If implemented, verify empty content, eligible partially confirmed content, confirmed content and role-restricted states using safe existing scenarios; do not approve stored work merely to test the message.",
+      "reviewStatus": "Needs decision",
+      "reproSteps": [
+        "Open the existing incomplete Brief summary without entering content. Read the message that the Brief can still be approved. Inspect the disabled Approve Brief action and its explanation Add Brief details before approving. Do not approve, add fields or change required rules."
+      ]
+    }
+  ],
+  "nonFindings": [
+    "Different Assign, Invite, Save changes, Withdraw and Remove role actions serve distinct tasks and should not be merged for visual simplicity.",
+    "The unused InvitePersonPicker is excluded from live findings; TeamPanel uses RoleEditorModal and shared InvitePersonModal.",
+    "Historical completion claims were used only to locate authority, then checked against current source.",
+    "E018-E020 Storyboard board actions and frame-review layouts were visually inspected at 1440/1133. The unavailable-preview display retains useful frame words/visual direction and a readable Comments rail. No additional layout redesign is justified from these screenshots alone.",
+    "Invitation V1 wording is a prototype-specific copy note, excluded under latest UI-focused steering. Role/access distinctions remain useful and should not be flattened."
+  ],
+  "scopeUpdate": "Reconciled with latest user steering: prioritise current desktop UI and substantive UX. Ignore prototype viewer identity, persistence and unverified mock update logic. B04/B05/B08 excluded from active findings and retained only in b-excluded-source-candidates.json for traceability."
+}

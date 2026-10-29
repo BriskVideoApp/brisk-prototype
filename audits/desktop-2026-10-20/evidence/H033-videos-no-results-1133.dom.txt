@@ -1,0 +1,114 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Videos header":
+    - heading "Videos" [level=1]
+    - generic: Search projects
+    - searchbox "Search projects" [active]: no-such-audit-project
+  - group "Project status":
+    - button "All 15" [pressed]:
+      - text: All
+      - generic: "15"
+    - button "Queued 1":
+      - text: Queued
+      - generic: "1"
+    - button "In production 8":
+      - text: In production
+      - generic: "8"
+    - button "Completed 2":
+      - text: Completed
+      - generic: "2"
+    - button "Paused 2":
+      - text: Paused
+      - generic: "2"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Filters" [expanded]: Filters
+  - region "Filters":
+    - combobox "Client":
+      - generic: LOOM
+    - combobox "Teammate":
+      - generic: Teammate
+    - combobox "Tags":
+      - generic: Tags
+    - combobox "Status":
+      - generic: Status
+    - combobox "Deadline":
+      - generic: Deadline
+    - button "Columns":
+      - generic: Columns
+  - region "Videos table":
+    - table:
+      - rowgroup:
+        - row "Project Progress Latest action Status Deadline Project costs Actions":
+          - columnheader "Project":
+            - generic: Project
+          - columnheader "Progress"
+          - columnheader "Latest action"
+          - columnheader "Status":
+            - generic: Status
+          - columnheader "Deadline"
+          - columnheader "Project costs"
+          - columnheader "Actions":
+            - generic: Actions
+      - rowgroup
+    - heading "No videos match these controls" [level=2]
+    - paragraph: Try another search, status or production-stage filter.
+    - button "Clear controls"
+- region "Notifications (F8)":
+  - list

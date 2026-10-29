@@ -1,0 +1,179 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - link "Updates, 5 unread":
+      - /url: /notifications
+      - generic "5 unread notifications": "5"
+      - generic: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Notifications" [level=1]
+  - paragraph: Updates that need your attention.
+  - link "Notification settings":
+    - /url: /settings/personal/notifications
+    - text: Notification settings
+  - group "Notification filters":
+    - button "All 8" [pressed]:
+      - text: All
+      - generic: "8"
+    - button "Unread 5":
+      - text: Unread
+      - generic: "5"
+    - button "Mentions 1":
+      - text: Mentions
+      - generic: "1"
+    - button "Action required 4":
+      - text: Action required
+      - generic: "4"
+  - button "Mark all as read":
+    - generic: Mark all as read
+  - generic "8 notifications":
+    - region "Needs action":
+      - heading "Needs action" [level=2]
+      - generic: "4"
+      - article:
+        - link "Unread. Needs attention. Published call time changed. The crew call is now 6:30 am. Review the updated call sheet.. 20 Aug 2026, 4:15 pm":
+          - /url: /share/call-sheet/loom-launch-film?preview=1
+          - generic: Unread. Needs attention.
+          - strong: Published call time changed
+          - generic: The crew call is now 6:30 am. Review the updated call sheet.
+          - text: David Ryan · LOOM-24 · Shoot ·
+          - time: 61 days ago
+        - 'link "View call sheet: Published call time changed"':
+          - /url: /share/call-sheet/loom-launch-film?preview=1
+          - text: View call sheet
+      - article:
+        - link "Unread. Needs attention. Contractor invoice needs approval. Chris Taylor submitted CT-3142-edit-services.pdf for A$1,950.. 20 Aug 2026, 2:48 pm":
+          - /url: /outstanding-invoices?invoice=invoice-loom-ct
+          - generic: Unread. Needs attention.
+          - strong: Contractor invoice needs approval
+          - generic: Chris Taylor submitted CT-3142-edit-services.pdf for A$1,950.
+          - text: Chris Taylor · LOOM-24 ·
+          - time: 61 days ago
+        - 'link "Review invoice: Contractor invoice needs approval"':
+          - /url: /outstanding-invoices?invoice=invoice-loom-ct
+          - text: Review invoice
+      - article:
+        - generic: Unread. Failure.
+        - strong: Review email couldn’t be sent
+        - generic: Email to Alex Morgan could not be sent.
+        - text: DEEL-18 · Masters ·
+        - time: 61 days ago
+        - button "Retry"
+      - article:
+        - link "Read. Failure. Stripe connection needs attention. Reconnect Stripe to keep subscription and invoice payments working.. 20 Aug 2026, 12:05 pm":
+          - /url: /settings/client-billing
+          - generic: Read. Failure.
+          - strong: Stripe connection needs attention
+          - generic: Reconnect Stripe to keep subscription and invoice payments working.
+          - time: 61 days ago
+        - 'link "Reconnect: Stripe connection needs attention"':
+          - /url: /settings/client-billing
+          - text: Reconnect
+    - region "Earlier updates":
+      - heading "Earlier updates" [level=2]
+      - generic: "4"
+      - article:
+        - link "Unread. Update. Three new mentions in Edit. Priya Nair and two others mentioned you in rapid feedback comments.. 20 Aug 2026, 3:42 pm":
+          - /url: /chat?project=hims-product-education&message=message-hims-001
+          - generic: Unread. Update.
+          - strong: Three new mentions in Edit
+          - generic: Priya Nair and two others mentioned you in rapid feedback comments.
+          - text: Priya Nair · HIMS-18 · Edit ·
+          - time: 61 days ago
+      - article:
+        - link "Unread. Completed. Interview transcript is ready. The transcript for Jess-interview-camera-b.mov finished processing.. 20 Aug 2026, 2:25 pm":
+          - /url: /projects/loom-launch-film/stages/media?asset=media-02
+          - generic: Unread. Completed.
+          - strong: Interview transcript is ready
+          - generic: The transcript for Jess-interview-camera-b.mov finished processing.
+          - text: LOOM-24 · Media ·
+          - time: 61 days ago
+      - article:
+        - link "Read. Completed. Video is ready to edit. Brief, Script, Shoot and Media were completed together.. 20 Aug 2026, 11:05 am":
+          - /url: /projects/loom-launch-film/stages/edit
+          - generic: Read. Completed.
+          - strong: Video is ready to edit
+          - generic: Brief, Script, Shoot and Media were completed together.
+          - text: David Ryan · LOOM-24 · Edit ·
+          - time: 61 days ago
+      - article:
+        - link "Read. Update. Edit review requested. Edit v3 is with Jess Taylor for review.. 20 Aug 2026, 11:00 am":
+          - /url: /projects/loom-launch-film/stages/edit
+          - generic: Read. Update.
+          - strong: Edit review requested
+          - generic: Edit v3 is with Jess Taylor for review.
+          - text: David Ryan · LOOM-24 · Edit ·
+          - time: 61 days ago
+        - button "Preview reminder"
+- region "Notifications (F8)":
+  - list
+- dialog "Scheduled reminder":
+  - banner:
+    - heading "Scheduled reminder" [level=2]
+    - generic: Read-only Client email preview
+  - generic: To
+  - strong: Jess Taylor · jess@loom.com
+  - generic: Scheduled
+  - time: Fri, 21 Aug 2026, 11:00 am
+  - article "Reminder email text":
+    - generic: SUBJECT
+    - strong: "Reminder: LOOM-24 Edit v3 is ready for review"
+    - paragraph: Hi Jess,
+    - paragraph: A quick reminder that LOOM-24 Edit v3 is ready for your review.
+    - paragraph: Please review the latest version and add any feedback in Brisk.
+    - paragraph: Thanks, North Star Films
+    - link "Review Edit":
+      - /url: /projects/loom-launch-film/stages/edit
+      - text: Review Edit
+  - paragraph: Client-safe preview. Internal notes and commercial details are excluded.
+  - contentinfo:
+    - button "Close" [active]

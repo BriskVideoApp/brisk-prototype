@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Timing warnings - implemented result</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8f9fa;color:#0e1114;font:15px/1.6 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:32px}h1{font-size:30px;line-height:1.25;margin:12px 0}h2{font-size:21px;margin:0 0 12px}p{margin:0 0 16px}section{background:white;border:1px solid #cdd5de;border-radius:8px;padding:24px;margin:24px 0}a{color:#6625cd;text-underline-offset:3px}nav{display:flex;gap:16px;flex-wrap:wrap}img{max-width:100%;height:auto;display:block}figure{margin:16px 0 0}figcaption,.small{color:#616c76;font-size:13px}.status{font-weight:600}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}li{margin:8px 0}a:focus-visible,summary:focus-visible{outline:3px solid #91baff;outline-offset:4px}@media(max-width:760px){main{padding:16px}.grid{grid-template-columns:1fr}}
+</style>
+<main>
+<nav><a href="../05-stage-deadlines/chat-placement-review.html">Approved placement</a><a href="#brief">Brief</a><a href="#chat">Project Chat</a><a href="#deadline">Deadline column</a><a href="#verification">Verification</a></nav>
+<h1>Timing warnings</h1>
+<p class="status">Implementation saved · Final verification and evidence pack unfinished</p>
+<p><strong>Draft checkpoint:</strong> Tom is closing the computer. Final navigation checks and screenshot links still need finishing before this pack is presented for sign-off.</p>
+<p>A short date suggestion before Brief submission, a proper timing conversation in Project Chat, and a persistent warning beside the deadline.</p>
+<p><a href="http://127.0.0.1:8782/active-videos" target="_blank" rel="noopener">Open the isolated live demo</a> · <a href="implementation-validation.json">Verification register</a></p>
+<p class="small">28 October 2026. Screenshots are genuine captures of the running prototype on the separate local demo address. Sample project dates are retained. Your working browser data was not used for verification.</p>
+
+<section id="brief"><h2>Brief: one line before submission</h2>
+<p>When a requested date is earlier than the sample assessment, the Brief shows a suggested delivery date and a short confirmation note. Draft edits do not post to Chat. After submission, the matching timing conversation lives in Project Chat.</p>
+<figure><a href="brief-suggestion-1133.png" target="_blank" rel="noopener"><img src="brief-suggestion-1133.png" alt="The running Brief Deadline step shows a one-line suggested delivery date above the existing calendar."></a><figcaption>1133px desktop, Studio Staff, changed date draft. <a href="brief-suggestion-1440.png">Client view at 1440px before submission</a>. Open either screenshot to enlarge.</figcaption></figure>
+</section>
+
+<section id="chat"><h2>Project Chat: dates, reason and Review date</h2>
+<p>Timing messages use the existing system-post pattern. Review date opens the date comparison and explanation. Producers can open the existing project deadline controls; Clients get a safe read-only review.</p>
+<div class="grid"><figure><a href="client-warning-1440.png" target="_blank" rel="noopener"><img src="client-warning-focus.png" alt="Client-safe External Chat timing post with requested and suggested dates, a plain-language reason and Review date."></a><figcaption>Client, External Chat, after producer review. The full capture includes a later Brief handoff as a separate event.</figcaption></figure>
+<figure><a href="producer-date-review-1440.png" target="_blank" rel="noopener"><img src="producer-date-review-1440.png" alt="Producer review dialog shows requested and suggested dates, Internal context, a separate Client message and an explicit Share with Client action."></a><figcaption>Studio Staff, unreleased production risk. Existing DS EditingDialog. <a href="producer-date-review-1133.png">1133px capture</a>.</figcaption></figure></div>
+<p style="margin-top:20px">Production risks appear in Internal Chat first. Only Studio Staff can deliberately share the reviewed Client message to External Chat. Internal context is not copied into the Client message. Sharing does not change an agreed date or resolve the warning.</p>
+</section>
+
+<section id="deadline"><h2>Deadline column: a small, persistent link</h2>
+<p>Timing needs review appears beneath the existing stage countdown and final date. It opens the corresponding project, channel and message. It is separate from the deadline-edit control. Reading Chat or marking messages read does not clear it.</p>
+<figure><a href="videos-warning-1440.png" target="_blank" rel="noopener"><img src="videos-warning-focus.png" alt="Videos rows retain the stage countdown and final date, with a compact Timing needs review link underneath."></a><figcaption>Studio Staff, Videos. Full context opens on click. <a href="videos-warning-1133.png">1133px capture</a>.</figcaption></figure>
+</section>
+
+<section id="verification"><h2>Verification and boundaries</h2>
+<p>Checked at 1440px and 1133px with expanded and collapsed navigation. Verified Brief submission, exact-message navigation, producer review, Client-safe visibility, an unassigned Freelancer restriction, Escape/focus return, read-state independence and no extra posts from draft edits or reloads.</p>
+<p>Verification used the isolated local origin on port 8782. Demo Brief submission and Chat read/share actions affected that origin only. Existing project records, assets, dependencies, working-origin storage, permissions and earlier UI changes were preserved.</p>
+<p>This batch uses explicit typed mock timing assessments for Loom and Hims. It does not implement a live AI forecast, the automatic stage timer, the separate Studio defaults design, deadline agreement/resolution or revision-round policy. Projects without an assessment do not receive invented delivery estimates. The dedicated Chat route is verified; the global drawer and an assigned Freelancer timing-warning case were not separately exercised.</p>
+<details><summary>Supporting evidence and source locations</summary><ul>
+<li><a href="implementation-validation.json">Implementation validation and remaining checks</a></li>
+<li><a href="browser-observations.json">Recorded browser observations</a></li>
+<li><a href="screenshot-provenance.json">Screenshot contexts and crops</a></li>
+<li><a href="../../../../src/data/project-timing.ts">Typed timing assessments and message adapter</a></li>
+<li><a href="../../../../src/components/project-timing/ProjectTimingContext.tsx">Shared warning and read-state handling</a></li>
+<li><a href="../../../../src/components/project-timing/ProjectTimingPost.tsx">Date review and producer gate</a></li>
+</ul></details>
+</section>
+</main></html>

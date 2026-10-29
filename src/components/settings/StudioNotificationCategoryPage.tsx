@@ -7,7 +7,7 @@ import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { Textarea } from "../../../Brisk DS/src/app/components/Textarea";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
-import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
+import { DsIcon } from "@/components/video-review/DsIcon";
 import type {
   StudioNotificationCategoryCopy,
   StudioNotificationCopy,
@@ -274,13 +274,9 @@ function StudioNotificationPreviewCard({
   copy: StudioNotificationCopy;
   notification: StudioNotificationPreview;
 }) {
-  const icon = getStatusIcon(notification.status);
-
   return (
     <article className={`notification-wording-preview is-${notification.status}`} aria-label={`${notification.label} example`}>
-      <header>
-        <span className="notification-wording-status label-xs-semibold"><DsIcon name={icon} size={14} />{notification.statusLabel}</span>
-      </header>
+      <span className="sr-only">{notification.statusLabel}. </span>
       <div className="notification-wording-preview-body">
         <div className="notification-wording-content">
           <h4 className="label-l-semibold">{copy.title}</h4>
@@ -355,12 +351,6 @@ function NotificationEditorModal({
       </div>
     </ClientModal>
   );
-}
-
-function getStatusIcon(status: StudioNotificationPreview["status"]): DsIconName {
-  if (status === "success") return "check-circle";
-  if (status === "warning" || status === "failure") return "alert-triangle";
-  return "info";
 }
 
 function notificationCopyMatches(left: StudioNotificationCopy, right: StudioNotificationCopy) {

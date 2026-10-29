@@ -1,0 +1,52 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile?client-role=member
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications?client-role=member
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security?client-role=member
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Invoices":
+      - /url: /client/invoices?client-role=member
+      - generic: Invoices
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Access restricted
+  - heading "Company & team is restricted" [level=1]
+  - paragraph: Only Client Admins can update company details and manage the Client team. Ask a Client Admin at Loom for access.
+  - link "Open my profile":
+    - /url: /settings/personal/profile?client-role=member

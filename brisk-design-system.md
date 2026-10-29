@@ -1,4 +1,4 @@
-# Brisk Design System Skill
+# Brisk Design System Guidance
 
 You are designing screens for **Brisk**, a multi-tenant SaaS platform for video production teams. Apply the rules below to every component, layout, and screen you generate. These rules override generic design defaults.
 
@@ -7,6 +7,16 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 Follow `AGENTS.md` for the three prototype access roles, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
 
 Read the [approved desktop design baseline](Docs/desktop-design-baseline.md) before an audit or desktop UI change. It indexes recent approvals, distinguishes DS primitives from app-level compositions, and identifies unresolved patterns. It does not certify every existing consumer or claim that the Figma source is synchronised.
+
+This file is project guidance, not an installed skill or a second component library. The baseline owns scoped approvals; each component guide owns its reusable contract; React components and runtime styles supply the actual UI. Original Figma descriptions apply where they agree with those approvals. Read the [future-feature design contract](AGENTS.md#design-contract-for-future-features) before implementation.
+
+## Reuse before styling
+
+- Import available primitives from `Brisk DS/src/app/components/`, using their documented variants. Reuse approved app compositions for headers, navigation, stages and specialised workflows.
+- Inspect a matching current consumer and the relevant component guide. Keep its appearance, states and action boundaries; do not copy and fork its implementation or restyle a primitive with consumer CSS.
+- Use the existing `--brisk-*` runtime variables and text-style classes identified in the [DS runtime map](Brisk%20DS/guidelines/Guidelines.md#react-runtime-map). Slash-separated Figma names are design vocabulary, not CSS variable names to paste into React styles.
+- If an export, token, text style or approved pattern is missing, identify the gap and follow the DS missing-asset protocol before implementing that part. Do not guess, create a visual fallback or use another library.
+- New features must fit the approved system. Existing mismatches are not a reason to redesign adjacent screens, consolidate tokens or reopen settled decisions.
 
 Tom's approved sequence is desktop first: fix and sign off the full desktop UI before the mobile design pass. Default visual reviews, implementation and verification to desktop, including Client-facing screens. Defer mobile-only work and routine mobile checks unless explicitly requested; preserve existing responsive behaviour. See Current design sequence in `AGENTS.md`.
 
@@ -19,9 +29,10 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 ## Layering rules
 
 - **Page background:** primary background colour (warm off-white from the kit).
-- **All layers above the page:** white.
+- **Ordinary panels above the page:** white, subject to the scoped exceptions below and existing approved media-first/comment/semantic-state patterns.
 - **Approved desktop navigation exception:** Tom approved a very pale neutral-grey background for the hybrid left sidebar on 20 October 2026. Use `--brisk-bg-block-secondary` in expanded and collapsed navigation, including settings and all three role views. Keep the top bar and content surfaces white, and retain existing lavender selection, hover and focus states. This is not permission to tint other panels or introduce a dark sidebar.
-- Never stack tinted layers. Use whitespace and borders for separation, not tints.
+- **Approved Brand Kit exception:** Tom confirmed keeping the existing Client-derived tinted Fonts, Voice and Guidelines category cards on 29 October 2026. Preserve this scoped treatment; do not apply it to unrelated panels or remove it under the general white-layer rule. See the [visual style confirmations](Docs/desktop-design-baseline.md#visual-style-confirmations---29-october-2026).
+- Outside approved contextual treatments, use whitespace and borders for separation rather than stacking tinted panels. Client artwork, actual colour swatches and player canvases are content, not ordinary white panels.
 
 ## Strokes
 
@@ -33,17 +44,21 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 	- Decorative blocks, dividers handled by spacing instead
 - Stroke weight and colour: use the kit's tokens.
 - Component-specific approved variants take precedence over these general stroke rules: quiet Buttons, IconButtons and text-first menu rows are intentionally unframed at rest. Do not add borders to make them conform to a generic rule.
+- The existing borderless Media toolbar sort dropdown is also approved, confirmed on 29 October 2026. Preserve its value, chevron and keyboard focus. Ordinary form selection fields retain their DS border; this approval does not create a universal borderless field variant.
+
+## Unread badges
+
+Tom confirmed keeping the existing compact pink unread badges and their current pulse on 29 October 2026. Reuse `CommentCountBadge` and its existing presentation, preserving accessible labels, independent count sources, zero hiding and display caps. This is a scoped app pattern, not permission to use its compact text or animation for unrelated controls. See the [desktop baseline](Docs/desktop-design-baseline.md#global-unread-counts).
 
 ## Shadows
 
 - Use the kit's shadow tokens for elevation. Do not invent shadow values.
-- Hover state: shadow appears.
-- Focus state: focus ring + shadow.
-- Pressed state: shadow flattens.
+- Follow the component-specific hover, focus and pressed contract. Quiet actions may deliberately avoid a raised hover shadow; do not override them using these general rules.
+- Keep focus rings, selected outlines, stage-state shadows and media-overlay legibility effects distinct from ordinary surface elevation. Preserve existing approved treatments within their scope; do not automatically replace them with a generic panel shadow or exempt every media control from review.
 
 ## Spacing
 
-- Use only the kit's spacing tokens. No magic numbers.
+- Use the kit's existing runtime spacing tokens. Preserve exact dimensions specified by an approved component or composition, including documented non-token geometry; do not round to the nearest token or invent new spacing.
 - One exception: the tag component uses **negative spacing** to compensate for Plus Jakarta Sans alignment. Preserve this. Do not "fix" it.
 
 ## Typography
@@ -56,7 +71,7 @@ Tom's approved sequence is desktop first: fix and sign off the full desktop UI b
 
 Tom approved a shared header for Videos, To Do, People, Clients, Media Library, Expenses and Brand Kits on 20 October 2026. Use the app-level `WorkspacePageHeader` composition with DS `Headings/M-bold` (32px/40px), 24px vertical and 32px horizontal desktop padding, a white surface and a primary bottom border. Page controls sit on the right and may wrap when space is constrained. Keep filters and tabs below the header. Supporting text is omitted except for To Do's date, shown below its title. Do not apply this workspace standard to project, profile, section or dialog headings.
 
-The latest scoped placement puts People/Clients search in the header and Invite person/Add Client to the right of the filter row below. The global Media Library header likewise contains search, never a Studio-wide Download all. Scoped Client/project downloads stay with the location's media controls. See the baseline for preserved workflows and exclusions; these are app compositions, not a new DS Search component.
+Tom's 29 October 2026 approval supersedes the earlier separate workspace search fields: use the single contextual top-bar Search. People/Clients retain Invite person/Add Client to the right of the filter row below their workspace heading. The global Media Library has no Studio-wide Download all. Scoped Client/project downloads stay with the location's media controls. See the baseline for preserved workflows and exclusions; Search is an app composition of existing DS controls, not a new DS primitive.
 
 ### Terminology
 - "Stage icons" = the adaptable workflow icons (Brief, Script, Shoot, Storyboard, Edit or Animation, Masters). Media uses the same circular treatment but stays pinned outside the reorderable flow. Rendered exclusively by StageChip.
@@ -102,13 +117,13 @@ All non-stage UI icons (arrows, plus, close, chat, comment, search, etc.):
 - Use the approved icon assets exposed by `<DsIcon />` in `src/components/video-review/DsIcon.tsx`, which maps names to SVGs under `/public/brisk-icons/`.
 - Import via `<DsIcon />` by name. Never inline SVG paths or reference asset paths directly when constructing general UI.
 - Default size: 16px in dense surfaces, 20px in headers, 24px only for hero moments.
-- Default colour: `--gray-60` for passive, `--gray-90` for active, `--brand-primary` only inside primary buttons.
+- Inherit the approved control's text colour. For standalone passive/active UI icons, use existing `--brisk-text-secondary` / `--brisk-text-primary` semantics where appropriate. Do not paste obsolete unprefixed token names or override the white icon treatment inside filled buttons.
 - Banned: Lucide, Heroicons, Feather, Font Awesome, Material Icons, Unicode glyphs, emoji-as-icon. Emoji are allowed in user-generated content only.
 - If the DS doesn't have the icon you need, raise a request in `Docs/yura-review.md` and use text until it exists.
 
 ## Components
 
-- Always import from the `Brisk DS/` folder. Do not rebuild Button, Input, Card, Modal, Table, etc.
+- Use actual exports from `Brisk DS/src/app/components/`. Available primitives include Button, IconButton, Input, Textarea, Checkbox, Radio, Toggle, Select/BriskSelect, FilterGroup/FilterButton, Tabs, EditingDialog, ConfirmationDialog and Popover. Verify the export and read its guide before use. The Figma catalogue's Card, Table, Drawer and other names are not evidence that a corresponding React export exists.
 - **Desktop components** are marked `D` in the kit. Use these for Studio surfaces.
 - Mobile component selection and layout work are deferred to the later mobile pass. Do not assume that a separate mobile component exists; follow the missing-asset protocol when one is needed.
 - If a component is missing from the kit, ask before creating a local one. Don't silently invent.
@@ -147,7 +162,7 @@ For the requested feature, include the applicable interaction states below. Do n
 
 - Don't introduce new colours, fonts, or shadows outside the kit.
 - Don't turn the current desktop sign-off work into a parallel mobile redesign. Preserve existing responsive code and functionality.
-- Don't tint background layers above the page background, except for the explicitly approved hybrid desktop sidebar treatment above.
+- Don't add tinted panels outside the approved contextual treatments, including the sidebar and Brand Kit exceptions above.
 - Don't double-border (avoid borders inside already-bordered containers).
 - Don't substitute icons from other libraries.
 - Don't rebuild any component from scratch if it already exists in `Brisk DS/`.
@@ -163,7 +178,7 @@ For the requested feature, include the applicable interaction states below. Do n
 
 ## Reference examples
 
-These references illustrate specific patterns, not blanket approval of every element on a page. Use them only where they agree with the latest explicit approvals and component guidance. Older screenshot layout, placement and typography are superseded by the scoped desktop baseline above. The forthcoming audit must verify current live consumers rather than treating these references as a completed sign-off.
+These references illustrate specific patterns, not blanket approval of every element on a page. Use them only where they agree with the latest explicit approvals and component guidance. Older screenshot layout, placement and typography are superseded by the scoped desktop baseline above. The original audit is historical evidence; its later implementation register and subsequent approvals must be checked before treating an issue as open.
 
 ### Active Videos
 
@@ -172,9 +187,9 @@ These references illustrate specific patterns, not blanket approval of every ele
 ![Active Videos status pills](Docs/References/brisk/Brisk%20-%20active-videos-status-pills.png)
 
 Use as the reference for:
-- Row rhythm and hairline weight (single hairline in `--gray-10`, no card outlines around list items).
-- Header hierarchy: title and scoped search above filters. The older top-right role-toggle placement is superseded by the desktop sidebar Test mode control; see the approved hybrid baseline.
-- Status pill treatment (soft pill shape, `--brand-secondary` background, `--gray-90` text, no border).
+- Row rhythm and hairline weight (single hairline in `--brisk-gray-10`, no card outlines around list items).
+- Header hierarchy: workspace title above filters, with the later contextual Search in the global bar. The older top-right role-toggle placement is superseded by the desktop sidebar Test mode control; see the approved hybrid baseline.
+- Status pill treatment within its approved context; reuse the current status presentation rather than applying one screenshot's colours to every status.
 - Progress icon system (coloured filled circle when active, grey outline when inactive, dashed connector line between).
 - The older 32px Semibold h1 and Regular filter-label notes are superseded: workspace titles use DS `Headings/M-bold` (32px/40px), and migrated filters use the shared quiet-choice typography. Row styles remain contextual and subject to audit; do not infer a new text style from screenshot measurements.
 
@@ -206,6 +221,6 @@ Before building a new surface:
 1. Open the reference page in the running prototype.
 2. Screenshot the relevant pattern.
 3. Describe the styling rules back to yourself (or Codex) in one paragraph.
-4. Match those rules first. Only invent new patterns if none of the references apply.
+4. Match the approved rules first. If no existing pattern applies, report the gap and seek approval before creating a new one.
 
 If a reference component isn't cleanly extractable from its source page, raise a ticket to isolate it before starting a new surface. Do not copy-paste and fork.

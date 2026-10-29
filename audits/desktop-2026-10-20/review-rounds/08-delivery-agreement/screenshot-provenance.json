@@ -1,0 +1,82 @@
+[
+  {
+    "file": "client-proposal-final-1440.png",
+    "title": "Final app: Client proposal",
+    "role": "Customer",
+    "viewport": "1440 \u00d7 1000",
+    "route": "/projects/hims-product-education/delivery?review=final",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "6fe39b16cde798e24c5cbb31794160e86a59bd9075f4aa2de6bc3b852fcadf3a"
+  },
+  {
+    "file": "client-proposal-final-1133.png",
+    "title": "Final app: narrower desktop",
+    "role": "Customer",
+    "viewport": "1133 \u00d7 1000",
+    "route": "/projects/hims-product-education/delivery?review=client",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "e0f80cc47b4719316bc7d59c37cde701119fd6c472ad79efe83693ea9e20edbb"
+  },
+  {
+    "file": "client-proposal-collapsed-1133.png",
+    "title": "Final app: collapsed navigation",
+    "role": "Customer",
+    "viewport": "1133 \u00d7 1000",
+    "route": "/projects/hims-product-education/delivery?review=client",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "367f36e7d1fa2c8d619361bada12fd914e3640ee08e2fa66fd3416468537f641"
+  },
+  {
+    "file": "producer-proposal-form-final-1440.png",
+    "title": "Producer: propose a date",
+    "role": "Studio Staff",
+    "viewport": "1440 \u00d7 1000",
+    "route": "/projects/hims-product-education/delivery",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "046d8e63731737285b7cab0e8576a8a489aaf2362e0b3da67fad53b4881ea028"
+  },
+  {
+    "file": "client-agreed-history-1133.png",
+    "title": "Client agreement and retained history",
+    "role": "Customer",
+    "viewport": "1133 \u00d7 1000",
+    "route": "/projects/loom-launch-film/delivery",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "a6a075692596a1c691a879cf86c5ed9b729756d42d07bd34053d49ea6074f0cb"
+  },
+  {
+    "file": "deadline-pending-1133.png",
+    "title": "Deadline drawer: old date stays while pending",
+    "role": "Studio Staff",
+    "viewport": "1133 \u00d7 1000",
+    "route": "/active-videos?project=loom-launch-film&section=deadline",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "4b88630e818fff0e4753b353ef2835e8e469ca4efd6005fd78aeffddff44e689"
+  },
+  {
+    "file": "internal-risk-1440.png",
+    "title": "Production risk reviewed internally first",
+    "role": "Studio Staff",
+    "viewport": "1440 \u00d7 1000",
+    "route": "/chat?project=hims-product-education",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "000320ded6eb88d3ada870ca739bfd4938f0bbd24a70618a677ba969331dc4c0"
+  },
+  {
+    "file": "freelancer-read-only-1133.png",
+    "title": "Accepted Freelancer: read only",
+    "role": "Studio Freelancer",
+    "viewport": "1133 \u00d7 1000",
+    "route": "/projects/figma-config-highlights/delivery",
+    "origin": "http://127.0.0.1:8782",
+    "type": "Genuine current application screenshot, isolated demo",
+    "sha256": "701e8ee386cedb3a290df5941b41f47bc901f0fe08258bc3edb725ce05295503"
+  }
+]

@@ -1,0 +1,654 @@
+[
+  {
+    "label": "1440 expanded, keyboard opening",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Stage",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Close returns focus to block",
+    "body": null,
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "focus": "Unspecified1.25hProduct Education - Sleep SeriesSet stage",
+    "height": 1000,
+    "hint": null,
+    "width": 1440
+  },
+  {
+    "label": "Space opens and focuses Stage",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Stage",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "First Escape closes Stage list only",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Stage",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Second Escape closes editor and restores block",
+    "body": null,
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "focus": "Unspecified1.25hProduct Education - Sleep SeriesSet stage",
+    "height": 1000,
+    "hint": null,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: empty",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "Enter 0.25-24 hours in 0.25-hour steps.",
+    "hours": "",
+    "invalid": "true",
+    "saveDisabled": true,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 0",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "Enter 0.25-24 hours in 0.25-hour steps.",
+    "hours": "0",
+    "invalid": "true",
+    "saveDisabled": true,
+    "valid": false,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: -1",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "Enter 0.25-24 hours in 0.25-hour steps.",
+    "hours": "-1",
+    "invalid": "true",
+    "saveDisabled": true,
+    "valid": false,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 0.3",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "Enter 0.25-24 hours in 0.25-hour steps.",
+    "hours": "0.3",
+    "invalid": "true",
+    "saveDisabled": true,
+    "valid": false,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 25",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "Enter 0.25-24 hours in 0.25-hour steps.",
+    "hours": "25",
+    "invalid": "true",
+    "saveDisabled": true,
+    "valid": false,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 0.25",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "0.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 24",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "24",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Hours validity: 1.25",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 940,
+      "right": 1260,
+      "top": 186.4375,
+      "width": 320,
+      "x": 940,
+      "y": 186.4375
+    },
+    "focus": "Needs stage set after review.",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 957,
+      "right": 1243,
+      "top": 575.4375,
+      "width": 286,
+      "x": 957,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1440
+  },
+  {
+    "label": "Cancel preserves entry and restores focus",
+    "body": null,
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1440,
+      "top": 65,
+      "width": 1200,
+      "x": 240,
+      "y": 65
+    },
+    "focus": "Unspecified1.25hProduct Education - Sleep SeriesSet stage",
+    "height": 1000,
+    "hint": null,
+    "width": 1440
+  },
+  {
+    "label": "1133 expanded",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 240,
+      "right": 1133,
+      "top": 65,
+      "width": 893,
+      "x": 240,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 630.4375,
+      "height": 444,
+      "left": 797,
+      "right": 1117,
+      "top": 186.4375,
+      "width": 320,
+      "x": 797,
+      "y": 186.4375
+    },
+    "focus": "Stage",
+    "footer": {
+      "bottom": 613.4375,
+      "height": 38,
+      "left": 814,
+      "right": 1100,
+      "top": 575.4375,
+      "width": 286,
+      "x": 814,
+      "y": 575.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1133
+  },
+  {
+    "label": "1133 collapsed; editor follows workspace resize",
+    "body": {
+      "clientHeight": 320,
+      "scrollHeight": 320,
+      "scrollTop": 0
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 72,
+      "right": 1133,
+      "top": 65,
+      "width": 1061,
+      "x": 72,
+      "y": 65
+    },
+    "editor": {
+      "bottom": 645.4375,
+      "height": 444,
+      "left": 772,
+      "right": 1092,
+      "top": 201.4375,
+      "width": 320,
+      "x": 772,
+      "y": 201.4375
+    },
+    "focus": "Expand navigation",
+    "footer": {
+      "bottom": 628.4375,
+      "height": 38,
+      "left": 789,
+      "right": 1075,
+      "top": 590.4375,
+      "width": 286,
+      "x": 789,
+      "y": 590.4375
+    },
+    "height": 1000,
+    "hint": "0.25-24 hours, in 0.25-hour steps.",
+    "hours": "1.25",
+    "invalid": null,
+    "saveDisabled": false,
+    "valid": true,
+    "width": 1133
+  }
+]

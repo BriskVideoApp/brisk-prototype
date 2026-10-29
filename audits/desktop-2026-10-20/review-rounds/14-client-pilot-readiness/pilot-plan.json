@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-29",
+  "status": "Pilot direction confirmed; architecture, new dependencies and production test changes need approval before implementation.",
+  "explicitUserDecisions": [
+    "Focus remaining review on meaningful UX rather than minor UI fixes.",
+    "Build the live version here rather than prepare a developer handoff.",
+    "First release: the user's Studio and invited Clients. No open multi-Studio signup in the first pilot."
+  ],
+  "releaseGoal": "An invited Client and Studio Staff can complete a real project journey with shared, durable data and enforced access, using the approved Brisk interface.",
+  "uxPriorities": [
+    {
+      "findingId": "B03",
+      "problem": "Media actions derive different scopes from the same retained selection.",
+      "evidence": "Original audit browser evidence; current source still uses visibleAssets for sharing/download and the full selectedAssetIds for Move/Archive/Delete. No new browser reproduction in this planning turn.",
+      "recommendation": "Use one explicit selection scope and disclose hidden selected files before consequential actions. Confirm the chosen policy before implementation."
+    },
+    {
+      "findingId": "C02",
+      "problem": "Shared read-only Brand Kit logo dialog exposes Replace and Delete.",
+      "evidence": "Original audit browser evidence; current LogoDownloadModal still lacks the parent canEdit capability and renders these commands unconditionally. No write bypass claimed or tested.",
+      "recommendation": "Make the nested dialog inherit the existing read-only capability, retaining genuine preview/download actions."
+    },
+    {
+      "findingId": "B18",
+      "problem": "Review-version deletion has no confirmation or recovery step.",
+      "evidence": "Original audit evidence; current version control calls deleteReviewVersion directly, which filters out the version. No deletion was performed.",
+      "recommendation": "Use the approved ConfirmationDialog with the actual version identity and consequence; retain the last-version safeguard."
+    }
+  ],
+  "finalJourneyReview": {
+    "scope": [
+      "Client invitation and return sign-in",
+      "Brief submission and Studio acknowledgement",
+      "Current version, comments and approval",
+      "Studio versus Client waiting states and timing updates",
+      "Final delivery and original-file download"
+    ],
+    "questions": [
+      "Is the next action and responsible party clear?",
+      "Does the Client know which version and approval they are acting on?",
+      "Are Internal and External audiences clear?",
+      "Are saved drafts, submitted work and agreed dates distinguished?",
+      "Can the user leave or recover without losing work?"
+    ],
+    "boundary": "Inspect current UI and existing product decisions first. Do not reopen approved workflows or introduce unapproved redesigns."
+  },
+  "currentProductionGaps": [
+    "Viewer identity and role are simulated in browser state, rather than derived from an authenticated account.",
+    "Project and timing updates are stored in browser localStorage; they are not shared durable records across Client and Studio accounts.",
+    "File operations, invitations and delivery feedback include prototype-only behaviours. Each pilot-critical consumer needs a real implementation and verified outcome.",
+    "Timing warnings use scoped sample assessments; automatic Studio turnaround rules and deadline calculations remain separate unfinished work."
+  ],
+  "proposedBuildSequence": [
+    {
+      "batch": 1,
+      "scope": "Sign-in, Studio/Client memberships, project access, shared Client/project records",
+      "acceptance": "Invited Client signs in and sees only permitted projects; Staff sees their Studio. Permissions are enforced beyond interface visibility."
+    },
+    {
+      "batch": 2,
+      "scope": "Brief, optional stage flow, team assignment and status handoffs",
+      "acceptance": "A real project and submitted Brief remain available across sessions and authorised accounts. Preserve existing assignment/invitation distinctions."
+    },
+    {
+      "batch": 3,
+      "scope": "Private media uploads, versions, comments, review and approval",
+      "acceptance": "Real files can be uploaded and accessed by permitted project members, with exact-version approval and protected Internal content. Confirm upload sizes and playback/processing needs before selecting final media infrastructure."
+    },
+    {
+      "batch": 4,
+      "scope": "Project Chat, Updates, timing calculations and final delivery agreement",
+      "acceptance": "Actual events and messages are shared in the right audience; deadlines follow approved working-day rules; proposals do not replace agreed dates without Client agreement."
+    },
+    {
+      "batch": 5,
+      "scope": "Private staging rehearsal and invited pilot launch",
+      "acceptance": "Complete the journey using separate accounts, verify denied access, durable records, real downloads and backup/recovery procedures. Review the concrete staging result before external rollout."
+    }
+  ],
+  "proposedServices": {
+    "status": "Recommendation only. No services, accounts, subscriptions or dependencies added.",
+    "databaseAuthAndPrivateFiles": "Supabase candidate: Postgres, passwordless authentication, row-level access policies and private object storage.",
+    "hosting": "Vercel candidate for the existing Next.js application.",
+    "email": "Production invitation and sign-in delivery needs a configured transactional email sender; Supabase default SMTP is not sufficient for invited external Clients.",
+    "video": "Private object storage is not a transcoding decision. Confirm video sizes, formats and review playback requirements before choosing whether a separate video service is needed.",
+    "verification": "Request approval to add focused automated access-control and data-integrity checks; current repository guidance prohibits tests unless requested.",
+    "sources": [
+      "https://supabase.com/docs/guides/auth/auth-email-passwordless",
+      "https://supabase.com/docs/guides/database/postgres/row-level-security",
+      "https://supabase.com/docs/guides/storage/buckets/fundamentals",
+      "https://supabase.com/docs/guides/auth/auth-smtp",
+      "https://vercel.com/docs/frameworks/full-stack/nextjs"
+    ]
+  },
+  "preservation": [
+    "No application source, assets, dependencies, mock records or browser state changed in this planning turn.",
+    "No production services created, real emails sent, external invitations sent, deployments made, commits or pushes performed.",
+    "The existing prototype and approved Brisk UI remain the reference. No branch change or new checkout without Tom's instruction."
+  ],
+  "sourceHashes": {
+    "src/components/media/MediaBrowser.tsx": "e8231743b593779bc6a648c176709a1d273c671c204cb170cb1c83a7dbfa97b8",
+    "src/components/media/MediaAssetGrid.tsx": "ff6ccefeee7ca998a69096a8540f0bb814c78a40b79d409a4943596eea2a83f3",
+    "src/components/brand-kits/BrandKitPages.tsx": "f495ae546c5d489615327fb2272addda8c53dcb7fe85f26806f6aef564e75d67",
+    "src/components/video-review/VideoReviewScreen.tsx": "9fb5532b468e7e078ef03da9214841505ad37e50e59ec1d73c73a37463c42cc4",
+    "src/components/navigation/PrototypeRoleContext.tsx": "c6265b7c869b5ab40c4fadfcdc99d02c20357121c1392c3c29734bb8f452bfa1",
+    "src/components/prototype-state/PrototypeStateContext.tsx": "54a4a414feb692986b1a8f1d544db54106f74934a21fb2bf4e5234b594bd237f",
+    "src/components/prototype-state/usePrototypeViewer.ts": "3527e2a0230a068ea04eaa5758e2008c9ecc75474d026ddd1f7df7d9264ed2cb",
+    "src/components/project-timing/ProjectTimingContext.tsx": "4ec389406a273195447ffd3c0c888adc6476f6bf53c4f22d5a1ea7d1282713aa"
+  }
+}

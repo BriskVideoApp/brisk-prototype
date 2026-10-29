@@ -1,5 +1,6 @@
 "use client";
 
+import { useGlobalSearch } from "@/components/search/SearchContext";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -22,6 +23,7 @@ import { DsIcon } from "@/components/video-review/DsIcon";
 import { HybridSidebar } from "@/components/navigation/HybridSidebar";
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { isOpen: isSearchOpen } = useGlobalSearch();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [hasMounted, setHasMounted] = useState(false);
@@ -52,11 +54,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isGlobalChatOpen) return;
     const closeWithEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsGlobalChatOpen(false);
+      if (event.key === "Escape" && !isSearchOpen && !event.defaultPrevented) setIsGlobalChatOpen(false);
     };
     window.addEventListener("keydown", closeWithEscape);
     return () => window.removeEventListener("keydown", closeWithEscape);
-  }, [isGlobalChatOpen]);
+  }, [isGlobalChatOpen, isSearchOpen]);
 
   if (!hasMounted && presentation !== "standalone") return null;
 
@@ -78,7 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="prototype-test-frame">
         <div className={`app-shell app-shell-hybrid${isNavigationCollapsed ? " is-navigation-collapsed" : ""}`}>
           <HybridSidebar
-            brand={<StudioHeaderBrand selectedRole={selectedRole} studioName={studio.details.name} logoPreviewUrl={studio.branding.logoPreviewUrl} compact />}
+            brand={<StudioHeaderBrand selectedRole={selectedRole} studioName={studio.details.name} logoPreviewUrl={studio.branding.logoPreviewUrl} compact collapsed={isNavigationCollapsed} />}
             collapsed={isNavigationCollapsed}
             onToggle={() => setIsNavigationCollapsed((current) => !current)}
             videosHref={videosHref}
@@ -168,11 +170,13 @@ function StudioHeaderBrand({
   studioName,
   logoPreviewUrl,
   compact = false,
+  collapsed = false,
 }: {
   selectedRole: ReturnType<typeof usePrototypeRole>["selectedRole"];
   studioName: string;
   logoPreviewUrl: string | null;
   compact?: boolean;
+  collapsed?: boolean;
 }) {
   const initials = studioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
   const content = <>
@@ -185,7 +189,9 @@ function StudioHeaderBrand({
 
   if (selectedRole === "Studio Staff") {
     return (
-      <Link className="app-global-client-studio-brand is-link" href="/settings/studio">
+      <Link className="app-global-client-studio-brand is-link" href="/settings/studio"
+        aria-label={compact && collapsed ? `${studioName} - Studio settings` : undefined}
+        data-tooltip={compact && collapsed ? "Studio settings" : undefined}>
         {content}
       </Link>
     );

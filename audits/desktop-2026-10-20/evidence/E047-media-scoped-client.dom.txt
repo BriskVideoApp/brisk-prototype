@@ -1,0 +1,269 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Media Library header":
+    - heading "Media Library" [level=1]
+    - searchbox "Search media"
+  - complementary "Client media libraries":
+    - generic: Clients
+    - button "All clients":
+      - generic: All clients
+    - button "Canva 1 project":
+      - generic: C
+      - strong: Canva
+      - generic: 1 project
+    - button "Deel 1 project":
+      - generic: D
+      - strong: Deel
+      - generic: 1 project
+    - button "Figma 1 project":
+      - generic: F
+      - strong: Figma
+      - generic: 1 project
+    - button "Harbour Health 1 project":
+      - generic: H
+      - strong: Harbour Health
+      - generic: 1 project
+    - button "Hims 1 project":
+      - generic: H
+      - strong: Hims
+      - generic: 1 project
+    - button "Linear 1 project":
+      - generic: L
+      - strong: Linear
+      - generic: 1 project
+    - button "Loom 5 projects" [active] [pressed]:
+      - generic: L
+      - strong: Loom
+      - generic: 5 projects
+    - button "Notion 1 project":
+      - generic: "N"
+      - strong: Notion
+      - generic: 1 project
+    - button "OpenAI 1 project":
+      - generic: O
+      - strong: OpenAI
+      - generic: 1 project
+    - button "PostHog 1 project":
+      - generic: P
+      - strong: PostHog
+      - generic: 1 project
+    - button "Ramp 1 project":
+      - generic: R
+      - strong: Ramp
+      - generic: 1 project
+  - complementary "Project media libraries":
+    - generic: Projects
+    - button "All projects" [pressed]:
+      - generic: All projects
+    - button "Launch Film - Sales Narrative Loom":
+      - generic: L
+      - strong: Launch Film - Sales Narrative
+      - generic: Loom
+    - button "WACF Customer Cutdown 01 Loom":
+      - generic: W
+      - strong: WACF Customer Cutdown 01
+      - generic: Loom
+    - button "Product Tour - Team Workflows Loom":
+      - generic: P
+      - strong: Product Tour - Team Workflows
+      - generic: Loom
+    - button "Customer Story - Healthcare Loom":
+      - generic: C
+      - strong: Customer Story - Healthcare
+      - generic: Loom
+    - button "Q3 Product Recap Loom":
+      - generic: Q
+      - strong: Q3 Product Recap
+      - generic: Loom
+  - tablist "Media library sections":
+    - tab "Media" [selected]
+    - tab "Masters"
+    - tab "Archived"
+  - button "Download media for Loom": Download Client media
+  - button "Choose File"
+  - generic "Filter media by type":
+    - button "All" [pressed]
+    - button "Video"
+    - button "Audio"
+    - button "Image"
+    - button "Document"
+  - generic "Media view":
+    - button "Card view" [pressed]: Card view
+    - button "List view": List view
+  - generic: Sort media
+  - combobox "Sort media":
+    - generic: Newest first
+  - region "Project media":
+    - article "WhatsApp Image 2026-10-19 at 15.38.27.jpeg, image":
+      - button "Select WhatsApp Image 2026-10-19 at 15.38.27.jpeg"
+      - paragraph: 20 Oct 2026 · 172.8 KB
+      - paragraph: WhatsApp Image 2026-10-19 at 15.38.27.jpeg
+      - generic "Actions for WhatsApp Image 2026-10-19 at 15.38.27.jpeg":
+        - button "Transcript WhatsApp Image 2026-10-19 at 15.38.27.jpeg" [disabled]: Transcript
+        - button "Copy link WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Copy link
+        - button "Download WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Download
+    - article "WhatsApp Image 2026-10-18 at 20.04.44.jpeg, image":
+      - button "Select WhatsApp Image 2026-10-18 at 20.04.44.jpeg"
+      - paragraph: 20 Oct 2026 · 81.6 KB
+      - paragraph: WhatsApp Image 2026-10-18 at 20.04.44.jpeg
+      - generic "Actions for WhatsApp Image 2026-10-18 at 20.04.44.jpeg":
+        - button "Transcript WhatsApp Image 2026-10-18 at 20.04.44.jpeg" [disabled]: Transcript
+        - button "Copy link WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Copy link
+        - button "Download WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Download
+    - article "Product-demo-playback-test.mov, video":
+      - generic: Failed - retry
+      - button "Select Product-demo-playback-test.mov"
+      - paragraph: 19 Aug 2026 · 1.2 GB · 02:58
+      - paragraph: Product-demo-playback-test.mov
+      - generic "Actions for Product-demo-playback-test.mov":
+        - button "Retry Product-demo-playback-test.mov": Retry
+        - button "Transcript Product-demo-playback-test.mov": Transcript
+        - button "Copy link Product-demo-playback-test.mov": Copy link
+        - button "Download Product-demo-playback-test.mov": Download
+    - article "Jess-interview-camera-a.mov, video":
+      - button "Select Jess-interview-camera-a.mov"
+      - paragraph: 08 July 2026 · 4.8 GB · 18:42
+      - paragraph: Jess-interview-camera-a.mov
+      - generic "Actions for Jess-interview-camera-a.mov":
+        - button "Transcript Jess-interview-camera-a.mov": Transcript
+        - button "Copy link Jess-interview-camera-a.mov": Copy link
+        - button "Download Jess-interview-camera-a.mov": Download
+    - article "Jess-interview-camera-b.mov, video":
+      - button "Select Jess-interview-camera-b.mov"
+      - paragraph: 08 July 2026 · 3.9 GB · 18:39
+      - paragraph: Jess-interview-camera-b.mov
+      - generic "Actions for Jess-interview-camera-b.mov":
+        - button "Transcript Jess-interview-camera-b.mov": Transcript
+        - button "Copy link Jess-interview-camera-b.mov": Copy link
+        - button "Download Jess-interview-camera-b.mov": Download
+    - article "Jess-lapel-audio.wav, audio":
+      - button "Select Jess-lapel-audio.wav"
+      - paragraph: 08 July 2026 · 862.4 MB · 19:04
+      - paragraph: Jess-lapel-audio.wav
+      - generic "Actions for Jess-lapel-audio.wav":
+        - button "Transcript Jess-lapel-audio.wav": Transcript
+        - button "Copy link Jess-lapel-audio.wav": Copy link
+        - button "Download Jess-lapel-audio.wav": Download
+    - article "Avery-customer-interview.mov, video":
+      - button "Select Avery-customer-interview.mov"
+      - paragraph: 08 July 2026 · 2.8 GB · 12:16
+      - paragraph: Avery-customer-interview.mov
+      - generic "Actions for Avery-customer-interview.mov":
+        - button "Transcript Avery-customer-interview.mov": Transcript
+        - button "Copy link Avery-customer-interview.mov": Copy link
+        - button "Download Avery-customer-interview.mov": Download
+    - article "Care-team-roundtable.wav, audio":
+      - button "Select Care-team-roundtable.wav"
+      - paragraph: 08 July 2026 · 624.7 MB · 08:42
+      - paragraph: Care-team-roundtable.wav
+      - generic "Actions for Care-team-roundtable.wav":
+        - button "Transcript Care-team-roundtable.wav": Transcript
+        - button "Copy link Care-team-roundtable.wav": Copy link
+        - button "Download Care-team-roundtable.wav": Download
+    - article "Dashboard-wide-take-03.mov, video":
+      - button "Select Dashboard-wide-take-03.mov"
+      - paragraph: 08 July 2026 · 2.2 GB · 04:18
+      - paragraph: Dashboard-wide-take-03.mov
+      - generic "Actions for Dashboard-wide-take-03.mov":
+        - button "Transcript Dashboard-wide-take-03.mov": Transcript
+        - button "Copy link Dashboard-wide-take-03.mov": Copy link
+        - button "Download Dashboard-wide-take-03.mov": Download
+    - article "Sales-team-collaboration-01.mov, video":
+      - button "Select Sales-team-collaboration-01.mov"
+      - paragraph: 08 July 2026 · 1.7 GB · 03:06
+      - paragraph: Sales-team-collaboration-01.mov
+      - generic "Actions for Sales-team-collaboration-01.mov":
+        - button "Transcript Sales-team-collaboration-01.mov": Transcript
+        - button "Copy link Sales-team-collaboration-01.mov": Copy link
+        - button "Download Sales-team-collaboration-01.mov": Download
+    - article "Pipeline-screen-recording.mp4, video":
+      - button "Select Pipeline-screen-recording.mp4"
+      - paragraph: 08 July 2026 · 306.6 KB · 00:42
+      - paragraph: Pipeline-screen-recording.mp4
+      - generic "Actions for Pipeline-screen-recording.mp4":
+        - button "Transcript Pipeline-screen-recording.mp4": Transcript
+        - button "Copy link Pipeline-screen-recording.mp4": Copy link
+        - button "Download Pipeline-screen-recording.mp4": Download
+    - article "Loom-wordmark-black.png, image":
+      - button "Select Loom-wordmark-black.png"
+      - paragraph: 07 July 2026 · 184.2 KB
+      - paragraph: Loom-wordmark-black.png
+      - generic "Actions for Loom-wordmark-black.png":
+        - button "Transcript Loom-wordmark-black.png" [disabled]: Transcript
+        - button "Copy link Loom-wordmark-black.png": Copy link
+        - button "Download Loom-wordmark-black.png": Download
+    - article "Launch-campaign-key-art.jpg, image":
+      - button "Select Launch-campaign-key-art.jpg"
+      - paragraph: 07 July 2026 · 8.4 MB
+      - paragraph: Launch-campaign-key-art.jpg
+      - generic "Actions for Launch-campaign-key-art.jpg":
+        - button "Transcript Launch-campaign-key-art.jpg" [disabled]: Transcript
+        - button "Copy link Launch-campaign-key-art.jpg": Copy link
+        - button "Download Launch-campaign-key-art.jpg": Download
+    - article "Brand-guidelines-2026.pdf, document":
+      - button "Select Brand-guidelines-2026.pdf"
+      - paragraph: 07 July 2026 · 12.7 MB
+      - paragraph: Brand-guidelines-2026.pdf
+      - generic "Actions for Brand-guidelines-2026.pdf":
+        - button "Transcript Brand-guidelines-2026.pdf" [disabled]: Transcript
+        - button "Copy link Brand-guidelines-2026.pdf": Copy link
+        - button "Download Brand-guidelines-2026.pdf": Download
+    - article "Room-tone-studio.wav, audio":
+      - button "Select Room-tone-studio.wav"
+      - paragraph: 06 July 2026 · 48.6 MB · 02:10
+      - paragraph: Room-tone-studio.wav
+      - generic "Actions for Room-tone-studio.wav":
+        - button "Transcript Room-tone-studio.wav": Transcript
+        - button "Copy link Room-tone-studio.wav": Copy link
+        - button "Download Room-tone-studio.wav": Download

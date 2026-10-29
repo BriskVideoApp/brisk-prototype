@@ -1,0 +1,7 @@
+{
+  "browserStorageRestoredToBaseline": true,
+  "inspectionEffects": "Only automatic stage initialisation, recent-page history, a legacy Script draft initialisation and temporary role key changed. These four keys were restored to the captured baseline. No invitation, message, approval, payment or explicit stored-record form was submitted.",
+  "roleAndViewport": "Returned to the original Client view, reset the temporary viewport, then left the prototype for this separate audit preview. Existing user browser tabs were not used.",
+  "application": "Protected-file hashes and final Git status are checked separately in data/preservation-verification.json.",
+  "verification": "Report text, JSON, screenshot/source paths and local browser rendering checked. No tests, dependency installation, commit, push or production build."
+}

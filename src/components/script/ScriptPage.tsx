@@ -3,7 +3,8 @@
 import { ConfirmationDialog } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 
 
-import { useRouter } from "next/navigation";
+import { currentPageText, useSearchSource } from "@/components/search/SearchContext";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   useEffect,
   useMemo,
@@ -200,6 +201,7 @@ export function ScriptPage({
   initialVersions = scriptVersions,
 }: ScriptPageProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [transcriptReturnToScript, setTranscriptReturnToScript] = useState(returnToScript);
   const { openAssistant, registerResponseDraftHandler } = useBriskAi();
   const { selectedRole } = usePrototypeRole();
@@ -339,6 +341,32 @@ export function ScriptPage({
   const shouldShowAi = activeSubtabId === "transcripts" || !isCustomer || showAiToCustomer;
   const selectedVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[versions.length - 1] ?? latestVersion;
   const previewVersion = previewVersionId ? versions.find((version) => version.id === previewVersionId) ?? null : null;
+  const revealSearchRow = (rowId: string) => {
+    setActiveSubtabId("script");
+    setHighlightedRowId(rowId);
+
+    window.setTimeout(() => setHighlightedRowId(null), 3000);
+  };
+  useEffect(() => {
+    if (highlightedRowId && activeSubtabId === "script") rowRefs.current.get(highlightedRowId)?.scrollIntoView({ block: "center" });
+  }, [highlightedRowId, activeSubtabId]);
+  const searchedRow = searchParams.get("searchRow");
+  const searchedVersion = searchParams.get("version");
+  useEffect(() => {
+    if (!searchedRow || loadedDraftKey !== draftStorageKey) return;
+    if (searchedVersion && searchedVersion !== selectedVersion.id && versions.some((version) => version.id === searchedVersion)) previewVersionForReadOnly(searchedVersion);
+    revealSearchRow(searchedRow);
+    // A search link opens an existing version as a read-only preview, without restoring it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchedRow, searchedVersion, loadedDraftKey, draftStorageKey]);
+  const scriptSearchEntries = visibleRows.map((row, index) => ({
+    id: `script:${project.id}:${row.id}`, source: `script:${project.id}`, kind: "Scripts" as const,
+    title: `Row ${index + 1}`, text: `${row.words} ${row.visuals}`, meta: `${project.clientName} · ${project.name} · ${(previewVersion ?? selectedVersion).label}`,
+    projectId: project.id, href: `/projects/${project.id}/script?searchRow=${encodeURIComponent(row.id)}&version=${encodeURIComponent((previewVersion ?? selectedVersion).id)}`,
+    onSelect: () => revealSearchRow(row.id),
+  })).filter((entry) => entry.text.trim());
+  useSearchSource({ label: activeSubtabId === "script" ? "This Script" : "This transcript", replaceSource: `script:${project.id}`,
+    allEntries: scriptSearchEntries, get entries() { return activeSubtabId === "script" ? scriptSearchEntries : currentPageText(window.location.pathname); } });
   const restoreCandidate = restoreCandidateId ? versions.find((version) => version.id === restoreCandidateId) ?? null : null;
   const deleteCandidate = deleteCandidateVersionId
     ? versions.find((version) => version.id === deleteCandidateVersionId) ?? null

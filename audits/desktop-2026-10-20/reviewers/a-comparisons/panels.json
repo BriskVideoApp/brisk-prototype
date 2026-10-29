@@ -1,0 +1,330 @@
+{
+  "method": "Local Pillow composition of genuine screenshot crops with outline annotations. No generated/recreated UI, no screenshot resizing and no application changes.",
+  "panels": [
+    {
+      "file": "A10-inspector-header-comparison.png",
+      "title": "A10 Media inspector header",
+      "kind": "Annotated genuine current evidence, not a proposal or verified fix",
+      "pixelPolicy": "Every screenshot crop is pasted at original pixel scale (1 image pixel = 1 panel pixel); no resizing, reconstruction or generative image tool. Orange outlines identify regions with no fill. Full original screenshots retained.",
+      "fullOriginals": [
+        {
+          "file": "../../evidence/E044-media-inspector-hidden-close.jpg",
+          "sha256": "5a249b037310be358003965cf6f799d6c0ffa573c7b036110daf8b86008e2f41",
+          "cropXYWH": [
+            760,
+            0,
+            373,
+            380
+          ]
+        },
+        {
+          "file": "../../evidence/E011-media-keyboard-after.jpg",
+          "sha256": "a56d474bbf6056bad4240e627f230b9f7015db8cbd12f19df439aac10eeacc3b",
+          "cropXYWH": [
+            1067,
+            0,
+            373,
+            380
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "cropFile": "A10-current-hidden-inspector-header.png",
+          "nativePixels": [
+            373,
+            380
+          ],
+          "placedAt": [
+            28,
+            118
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              13,
+              0,
+              360,
+              64
+            ]
+          ]
+        },
+        {
+          "cropFile": "A10-reference-visible-inspector-header.png",
+          "nativePixels": [
+            373,
+            380
+          ],
+          "placedAt": [
+            445,
+            118
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              13,
+              119,
+              360,
+              62
+            ]
+          ]
+        }
+      ],
+      "notes": "Different viewport widths are labelled. The reference demonstrates visible identity/Close, not approval of the entire 1440 layout. E045/E046 provide behavioural results separately."
+    },
+    {
+      "file": "A12-brief-editor-comparison.png",
+      "title": "A12 Brief closed-field scanability",
+      "kind": "Annotated genuine current evidence, not a proposal or verified fix",
+      "pixelPolicy": "Every screenshot crop is pasted at original pixel scale (1 image pixel = 1 panel pixel); no resizing, reconstruction or generative image tool. Orange outlines identify regions with no fill. Full original screenshots retained.",
+      "fullOriginals": [
+        {
+          "file": "../../evidence/BRIEF-deliverables-1133.jpg",
+          "sha256": "593d6416ef798035a41af0c5209edf49e5280139aabd8e6ed9134f57c0362547",
+          "cropXYWH": [
+            272,
+            364,
+            829,
+            183
+          ]
+        },
+        {
+          "file": "../../evidence/BRIEF-deliverables-1440.jpg",
+          "sha256": "556e869f463809b2e39d590d7b839f3931087876c06011c30f349728342564be",
+          "cropXYWH": [
+            272,
+            364,
+            1136,
+            183
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "cropFile": "A12-current-deliverables-1133.png",
+          "nativePixels": [
+            829,
+            183
+          ],
+          "placedAt": [
+            28,
+            120
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              236,
+              80,
+              548,
+              40
+            ]
+          ]
+        },
+        {
+          "cropFile": "A12-reference-deliverables-1440.png",
+          "nativePixels": [
+            1136,
+            183
+          ],
+          "placedAt": [
+            28,
+            399
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              319,
+              80,
+              760,
+              40
+            ]
+          ]
+        }
+      ],
+      "notes": "Same pixel scale and existing data. Wider viewport is a responsive comparison, not approval. Scope is closed-field readability; value recovery is available."
+    },
+    {
+      "file": "A12-brief-summary-comparison.png",
+      "title": "A12 Brief summary word wrapping",
+      "kind": "Annotated genuine current evidence, not a proposal or verified fix",
+      "pixelPolicy": "Every screenshot crop is pasted at original pixel scale (1 image pixel = 1 panel pixel); no resizing, reconstruction or generative image tool. Orange outlines identify regions with no fill. Full original screenshots retained.",
+      "fullOriginals": [
+        {
+          "file": "../../evidence/BRIEF-summary-1133.jpg",
+          "sha256": "45b05eccc2cb36a04b2d94ea0710802fcaf415006ffa4be1349687bc2464e346",
+          "cropXYWH": [
+            272,
+            472,
+            829,
+            215
+          ]
+        },
+        {
+          "file": "../../evidence/BRIEF-summary-1440.jpg",
+          "sha256": "d11cbf15e61d372d937c6228545d3a5a0afaefacf619cdaff4b0b06ada4fe763",
+          "cropXYWH": [
+            272,
+            472,
+            1136,
+            178
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "cropFile": "A12-current-summary-1133.png",
+          "nativePixels": [
+            829,
+            215
+          ],
+          "placedAt": [
+            28,
+            120
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              486,
+              129,
+              60,
+              49
+            ]
+          ]
+        },
+        {
+          "cropFile": "A12-reference-summary-1440.png",
+          "nativePixels": [
+            1136,
+            178
+          ],
+          "placedAt": [
+            28,
+            431
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              660,
+              109,
+              108,
+              43
+            ]
+          ]
+        }
+      ],
+      "notes": "The current wider value is readable; the reference does not reopen approved table hierarchy or establish every field fits."
+    },
+    {
+      "file": "A07-chat-date-annotation.png",
+      "title": "A07 Chat date overlap",
+      "kind": "Annotated genuine current evidence, not a proposal or verified fix",
+      "pixelPolicy": "Every screenshot crop is pasted at original pixel scale (1 image pixel = 1 panel pixel); no resizing, reconstruction or generative image tool. Orange outlines identify regions with no fill. Full original screenshots retained.",
+      "fullOriginals": [
+        {
+          "file": "../../evidence/D-R005-staff-1133.jpg",
+          "sha256": "82830cb1422be38b8d8c150ecd6449f802c83e47d7ed673d07c32a3317f3ff1d",
+          "cropXYWH": [
+            489,
+            196,
+            620,
+            155
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "cropFile": "A07-current-chat-date-overlap.png",
+          "nativePixels": [
+            620,
+            155
+          ],
+          "placedAt": [
+            28,
+            100
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              42,
+              27,
+              568,
+              42
+            ]
+          ]
+        }
+      ],
+      "notes": "Single annotated current crop, not a before/after proposal. Current wider clear-gap screenshot is not an approved sticky-date replacement."
+    },
+    {
+      "file": "B01-A02-team-checkbox-comparison.png",
+      "title": "B01/A02 Team Checkbox",
+      "kind": "Annotated genuine current evidence, not a proposal or verified fix",
+      "pixelPolicy": "Every screenshot crop is pasted at original pixel scale (1 image pixel = 1 panel pixel); no resizing, reconstruction or generative image tool. Orange outlines identify regions with no fill. Full original screenshots retained.",
+      "fullOriginals": [
+        {
+          "file": "../../evidence/E008-team-freelancers-1133.jpg",
+          "sha256": "f84bcb38feae2c1711e113d0d5dc4014317f90fe7125bf682b4b2e8a2df84abb",
+          "cropXYWH": [
+            175,
+            489,
+            790,
+            156
+          ]
+        },
+        {
+          "file": "../../evidence/D-R040-staff-1133.jpg",
+          "sha256": "e1865906e3165fd51e451f7f01331927f8bb9634d71c994515de4f11f5f158cc",
+          "cropXYWH": [
+            280,
+            612,
+            790,
+            156
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "cropFile": "A02-current-team-selection.png",
+          "nativePixels": [
+            790,
+            156
+          ],
+          "placedAt": [
+            28,
+            119
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              17,
+              44,
+              205,
+              60
+            ]
+          ]
+        },
+        {
+          "cropFile": "A02-reference-notification-checkbox.png",
+          "nativePixels": [
+            790,
+            156
+          ],
+          "placedAt": [
+            28,
+            369
+          ],
+          "scale": 1,
+          "outlineRegionsInCropXYWH": [
+            [
+              17,
+              27,
+              210,
+              34
+            ]
+          ]
+        }
+      ],
+      "notes": "Team accessible-name defect is verified through DOM/source, not visible pixels alone. DS target/focus rules are textual/source authority; do not infer target size from this crop alone."
+    }
+  ]
+}

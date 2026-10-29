@@ -1,0 +1,637 @@
+{
+  "reviewer": "B",
+  "version": 2,
+  "date": "2026-10-20T21:38:54.558111+00:00",
+  "baseline": "Latest user authorisation permits isolated disposable scenario/sample progression; B did no progression. Current seed at origin8768, three-role UI Staff current.",
+  "isolationProof": "data/b-browser-isolation.json",
+  "captures": "data/b-completion-captures.json",
+  "actions": "data/b-completion-actions.json",
+  "captureCount": 105,
+  "scope": "Bounded CB05/CB06 completion pass. Partial labels are deliberate, not every data/consumer combination. No master/report writes.",
+  "groups": [
+    {
+      "id": "N084",
+      "name": "Global history",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440
+      ],
+      "inspectedFiniteStates": [
+        "native-link rows",
+        "Home/ArrowDown/End active descendant",
+        "Escape return to opener"
+      ],
+      "evidence": [
+        "H010-history-keyboard",
+        "H011-history-escape",
+        "H041-history-keyboard-sequence"
+      ],
+      "remainingUiStates": [
+        "Empty-history state not captured by B. Other roles use shared implementation, no direct B role variation."
+      ],
+      "sourceExcludedOrMutationOutcomes": [],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N085",
+      "name": "Account menu",
+      "status": "Inspected",
+      "browserRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "viewports": [
+        1440
+      ],
+      "inspectedFiniteStates": [
+        "Staff personal/company links",
+        "initial profile-link focus",
+        "Escape returns opener"
+      ],
+      "evidence": [
+        "H012-account-escape",
+        "H052-account-freelancer-links",
+        "H053-account-freelancer-outside",
+        "H054-account-customer-links",
+        "H055-account-customer-outside",
+        "H056-account-staff-outside"
+      ],
+      "remainingUiStates": [],
+      "sourceExcludedOrMutationOutcomes": [
+        "Sign out is an action outcome, not a required inspection state."
+      ],
+      "scope": "Finite current fixture account menus in all3 access roles. Customer membership/billing states explicitly bounded in b-closure-addendum.json. Not all company permission permutations."
+    },
+    {
+      "id": "N086",
+      "name": "Test mode",
+      "status": "Inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "exactly three role choices; Staff selected",
+        "Reset disabled in current default seed"
+      ],
+      "evidence": [
+        "H031-test-mode-1133"
+      ],
+      "remainingUiStates": [],
+      "sourceExcludedOrMutationOutcomes": [
+        "Scenario catalogue is a demo entry point; reset outcome excluded. No B scenario loaded."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N087",
+      "name": "Updates popover",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440
+      ],
+      "inspectedFiniteStates": [
+        "existing populated unread summaries",
+        "Escape closes popover returns opener"
+      ],
+      "evidence": [
+        "H013-updates-escape"
+      ],
+      "remainingUiStates": [
+        "Normal zero-notification fixture unavailable without changing inbox."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Manual mark-read and Retry are mutation outcomes not invoked. No item action menu in current popover."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N088",
+      "name": "Global Chat drawer",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "all-project conversation picker",
+        "nested search no-results",
+        "nested search Escape boundary",
+        "External/Internal channels",
+        "External settings existing enabled/reconnect-disabled states",
+        "nested settings Escape consumes event returns opener",
+        "visible Close and outer Escape exit",
+        "Actual Message thread parent/replies and empty composer",
+        "Thread visible Close retains parent",
+        "Thread Escape also closes Global Chat"
+      ],
+      "evidence": [
+        "H014-chat-search-no-results",
+        "H015-chat-search-escape",
+        "H028-chat-settings-1133",
+        "H029-chat-settings-escape",
+        "H030-chat-internal-1133",
+        "H050-chat-settings-1440",
+        "H051-chat-settings-child-escape-1440",
+        "H101-chat-actual-thread-pane",
+        "H102-chat-actual-thread-pane-1133",
+        "H103-chat-thread-close",
+        "H104-chat-thread-escape"
+      ],
+      "remainingUiStates": [
+        "Other-role channel availability and focus containment not tested by B; use C/lead evidence."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Sending, call start, connector Configure, settings toggles and manual mark-read excluded. Opening existing channels automatically marked their local unread items read only in disposable origin."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N089",
+      "name": "Ask Brisk",
+      "status": "Inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "automatic source chip preview",
+        "Add source menu",
+        "history populated then unmatched search",
+        "history/source Escape closes inner layer but focus body",
+        "empty composer Send disabled",
+        "visible Close exits drawer",
+        "Files source picker populated",
+        "Files source no-results",
+        "Files source picker1133"
+      ],
+      "evidence": [
+        "H016-ai-source-escape",
+        "H017-ai-history-no-results",
+        "H018-ai-history-escape",
+        "H074-ai-files-picker",
+        "H075-ai-files-no-results",
+        "H099-ai-files-picker-1133"
+      ],
+      "remainingUiStates": [],
+      "sourceExcludedOrMutationOutcomes": [
+        "No Minimise control exists in current panel header. Do not require historical compact launcher branch as present desktop control. Prompt sending/Use response are mutation outcomes, not required merely to inspect current input."
+      ],
+      "scope": "Finite current Staff input/history/source UI. Prior E142/E143 cover Mention. Responses and post-send outcomes intentionally excluded, not implied inspected."
+    },
+    {
+      "id": "N090",
+      "name": "Videos controls",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "Client filter listbox",
+        "combined filter+search no-results",
+        "Clear controls restores15",
+        "saved status options opened without selection",
+        "Teammate options",
+        "Tags options and transient selected filter restored",
+        "Deadline options",
+        "Status filter options",
+        "Columns locked/current visibility and immediate-change helper",
+        "Actual project-row Add tag menu",
+        "Create tag blank/draft/Cancel/reopen blank"
+      ],
+      "evidence": [
+        "H032-videos-client-filter-1133",
+        "H033-videos-no-results-1133",
+        "H034-videos-clear-recovery",
+        "H038-project-status-menu-1133",
+        "H064-videos-teammate-filter",
+        "H065-videos-tags-filter",
+        "H066-videos-tag-filter-selected",
+        "H067-videos-deadline-filter",
+        "H068-videos-status-filter",
+        "H069-videos-columns",
+        "H070-videos-row-add-tag",
+        "H071-videos-tag-draft",
+        "H072-videos-tag-cancel-reset",
+        "H097-videos-columns-1133"
+      ],
+      "remainingUiStates": [
+        "Client read-only route not tested by B; integrate lead/C evidence."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "No production-stage filter is present in current Filters region; current no-results helper still mentions it. No saved status selected."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N091",
+      "name": "Project details drawer",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "drawer open/close",
+        "exclusive expanded Team/Hours/Deadline",
+        "deadline calendar current date and Escape retains editor",
+        "deadline Cancel",
+        "current status listbox",
+        "Whole project scope",
+        "View only current access; Can comment/Can edit choices visible",
+        "Current teammates",
+        "Visible Close returns to drawer"
+      ],
+      "evidence": [
+        "H035-team-editor-1133",
+        "H036-project-hours-1133",
+        "H037-project-deadline-calendar-1133",
+        "H038-project-status-menu-1133",
+        "H073-project-copy-link-panel",
+        "H098-project-copy-link-panel-1133"
+      ],
+      "remainingUiStates": [
+        "Latest actions, Notes and hours Edit/details not repeated by B; use their exact prior E/lead evidence."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "No next/previous or separate progress controls in current drawer UI inspected. Do not assume old inventory entries exist without source/entry verification."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N092",
+      "name": "Team assignment",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "Freelancers current suggested and already-invited disabled",
+        "local hours dirty Save changes appears",
+        "Remove role confirm then Cancel preserves draft/focus",
+        "parent Cancel/reopen discards draft",
+        "candidate local selection",
+        "zero project-rate disables Invite/Assign",
+        "Invite review blank Message disables Send",
+        "inner Cancel retains selected candidate/focus",
+        "narrow desktop editor"
+      ],
+      "evidence": [
+        "H001-team-remove-role-confirm",
+        "H002-team-remove-cancel-draft",
+        "H003-team-draft-discarded",
+        "H004-team-zero-rate",
+        "H005-team-invite-empty-message",
+        "H006-team-invite-cancel-selection",
+        "H035-team-editor-1133"
+      ],
+      "remainingUiStates": [
+        "Staff selected/all-expanded/tab keyboard names remain prior E007/E008/B01 evidence, not repeated. Additional people/rates permutations unnecessary; no actual assignment/send/remove outcome."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Team search N/A source: no current search. Editor Staff only; other roles get read-only team view. Do not click Withdraw/Withdraw all or Assign merely to inspect."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N095",
+      "name": "People directory",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "unmatched search and clearing",
+        "invite entry from All view",
+        "All32 Invite person defaults Staff",
+        "Staff10 Invite Studio Staff defaults Staff",
+        "Freelancers7 Invite Studio Freelancer defaults Freelancer",
+        "Client contacts15 Invite Client defaults Customer",
+        "Sort options with Latest activity current",
+        "Archived2 existing records"
+      ],
+      "evidence": [
+        "H019-people-no-results",
+        "H020-invite-invalid-email",
+        "H076-people-all-invite-default",
+        "H078-people-staff-invite-default",
+        "H079-people-freelancer-invite-default",
+        "H086-people-client-invite-default-1133",
+        "H095-people-sort-menu-1133",
+        "H096-people-archived-view-1133"
+      ],
+      "remainingUiStates": [
+        "Workload prior E031, and role restrictions/profile tabs belong to lead/C evidence. No blanket closure of those states from the invitation captures."
+      ],
+      "sourceExcludedOrMutationOutcomes": [],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N096",
+      "name": "People profile",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440
+      ],
+      "inspectedFiniteStates": [
+        "Staff overview",
+        "inline Name local draft Cancel restores original",
+        "Archive confirmation scope",
+        "Delete exact-name guard blank disabled",
+        "Assign project chooser describes subsequent Team handoff",
+        "Escape closes chooser"
+      ],
+      "evidence": [
+        "H021-person-inline-cancel",
+        "H022-person-archive-confirm",
+        "H023-person-delete-guard",
+        "H024-person-assign-project-picker"
+      ],
+      "remainingUiStates": [
+        "Freelancer Commercial/Client Access/profile tabs remain earlier-source/capture coverage; not repeated by B. No numeric capacity/rate or project-access save."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Pause access immediately changes status at PersonProfilePage:66-74; not a confirmation opener. Archive/Delete confirmations opened only, never confirmed."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N097",
+      "name": "Invitation wizard",
+      "status": "Inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "three invite role radios",
+        "invalid email keeps Next disabled",
+        "Cancel exits without invitation",
+        "Step1 defaults from each People view",
+        "Staff access automatic Studio scope and optional Job title",
+        "Freelancer zero Client/project disabled",
+        "Freelancer All Clients then one Client",
+        "Freelancer all/mixed/none projects and Send guard",
+        "Customer company required",
+        "Existing Client company searchable picker and no-results",
+        "Customer projects explicitly optional: zero/all/mixed/none",
+        "Back then Cancel; reopen original blank company/projects"
+      ],
+      "evidence": [
+        "H020-invite-invalid-email",
+        "H076-people-all-invite-default",
+        "H077-invite-staff-access",
+        "H078-people-staff-invite-default",
+        "H079-people-freelancer-invite-default",
+        "H080-invite-freelancer-no-access",
+        "H081-invite-freelancer-all-clients",
+        "H082-invite-freelancer-one-client",
+        "H083-invite-freelancer-all-projects-1133",
+        "H084-invite-freelancer-mixed-projects-1133",
+        "H085-invite-freelancer-none-projects-1133",
+        "H086-people-client-invite-default-1133",
+        "H087-invite-client-no-company-1133",
+        "H088-invite-client-company-picker-1133",
+        "H089-invite-client-picker-no-results-1133",
+        "H090-invite-client-zero-projects-1133",
+        "H091-invite-client-all-projects-1133",
+        "H092-invite-client-mixed-projects-1133",
+        "H093-invite-client-none-after-all-1133",
+        "H094-invite-client-draft-discarded"
+      ],
+      "remainingUiStates": [],
+      "sourceExcludedOrMutationOutcomes": [
+        "Send/Resend outcomes excluded. Customer inline Client creation is absent in this consumer, not an uninspected form."
+      ],
+      "scope": "Staff-inviter three role-specific invitation drafts. All Send invite actions intentionally uninvoked. Reserved audit-review@example.invalid typed only into local disposable front-end draft. No real invitation or stored record created. This is Staff acting as inviter, not an assertion that non-Staff can invite."
+    },
+    {
+      "id": "N098",
+      "name": "Client profile",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "existing Overview and Contacts",
+        "Start project name required, selected Client",
+        "Archive confirmation then Keep active",
+        "Sarah project-access names/current selection",
+        "narrow dialog and Escape"
+      ],
+      "evidence": [
+        "H025-client-start-project",
+        "H026-client-archive-confirm",
+        "H027-client-access-1133"
+      ],
+      "remainingUiStates": [
+        "B did not repeat all/mixed/none local access toggles; earlier E144-E146 cover Cancel/reopen original. Client portal preview/Brand Kit carried by other lead/A captures."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Remove portal access immediately invokes updateContactAccess at ClientProfilePage:155; do not treat as safe confirmation opener. No portal permission changed."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N130",
+      "name": "Full Updates inbox",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "All current inbox",
+        "Unread view",
+        "Mentions category view",
+        "existing scheduled reminder read-only preview",
+        "preview1440/1133 and Escape close"
+      ],
+      "evidence": [
+        "H042-notifications-unread",
+        "H043-notifications-mentions",
+        "H044-notification-reminder-preview",
+        "H045-notification-preview-1133"
+      ],
+      "remainingUiStates": [
+        "Normal empty/no-results unavailable in populated default without changing read state. Current source supports explicit preview=empty/error demonstration overrides; label demo if later used, not genuine natural failure."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "No item context menu in current NotificationInboxItem; links and Retry/Preview actions instead. No retry, mark-read, reminder send or reconnection used."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N138",
+      "name": "Adjust project flow",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "current stages and hidden Storyboard option",
+        "Hide Script confirmation",
+        "Keep visible returns Hide Script focus retains stage",
+        "term chooser Edit/Animation open only",
+        "1133 confirmation",
+        "Close exit"
+      ],
+      "evidence": [
+        "H007-flow-hide-confirm",
+        "H008-flow-keep-visible",
+        "H009-flow-term-menu",
+        "H039-flow-hide-confirm-1133",
+        "H040-inspection-restored"
+      ],
+      "remainingUiStates": [
+        "Initial focus/Escape issue stays prior E055/E056/B09. Keyboard reorder remains source-supported risk; no pointer reorder outcome required."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Hide stage/Reset/Reveal Storyboard/change Animation mutate flow and not invoked. Distinct action scopes preserved."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N139",
+      "name": "Main Chat consumer",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "Shared ChatPage rendered embedded in Global Chat: search, channels, settings, composer disabled",
+        "Actual Message thread parent/replies and empty composer",
+        "Thread visible Close retains parent",
+        "Thread Escape also closes Global Chat"
+      ],
+      "evidence": [
+        "H014-chat-search-no-results",
+        "H015-chat-search-escape",
+        "H028-chat-settings-1133",
+        "H029-chat-settings-escape",
+        "H030-chat-internal-1133",
+        "H050-chat-settings-1440",
+        "H051-chat-settings-child-escape-1440",
+        "H101-chat-actual-thread-pane",
+        "H102-chat-actual-thread-pane-1133",
+        "H103-chat-thread-close",
+        "H104-chat-thread-escape"
+      ],
+      "remainingUiStates": [
+        "Direct /chat page fit, DMs/groups and Calls use exact lead/C E/D captures. Actual thread pane now directly verified in embedded consumer; Threads overview alone was insufficient."
+      ],
+      "sourceExcludedOrMutationOutcomes": [],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    },
+    {
+      "id": "N140",
+      "name": "Clients directory and Add Client",
+      "status": "Partially inspected",
+      "browserRoles": [
+        "Studio Staff"
+      ],
+      "viewports": [
+        1440,
+        1133
+      ],
+      "inspectedFiniteStates": [
+        "current seeded table",
+        "required/optional Add Client form",
+        "blank name Create disabled",
+        "local draft Cancel/reopen reset",
+        "search no-results and clear"
+      ],
+      "evidence": [
+        "H046-add-client-empty-1133",
+        "H047-add-client-cancel-reset",
+        "H048-clients-no-results-1133",
+        "H049-audit-session-final"
+      ],
+      "remainingUiStates": [
+        "B Add Client form only1133; 1440 source/current default not equivalent dialog proof. Sort and Active/Inactive/Archived views not repeated by B."
+      ],
+      "sourceExcludedOrMutationOutcomes": [
+        "Create Client and logo upload not invoked; no added company/contact records."
+      ],
+      "scope": "B completion pass only. Integrate prior E/D/F evidence and C role/source checks before deciding whole-group status."
+    }
+  ],
+  "restoration": {
+    "completedAt": "2026-10-20T21:37:03.222Z",
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "ownedTabId": "1716948424",
+    "origin": "http://127.0.0.1:8768",
+    "ownedTabsAfter": [],
+    "viewportOverride": "Documented viewport.reset() completed; read-only DOM confirmed normal 1512 × 767 viewport before closing.",
+    "tabClosure": "Explicitly closed only bound B audit tab1716948424; owned-tab inventory then empty.",
+    "restoredState": "Studio Staff; Videos All15; filters and search clear; expanded navigation; overlays closed; no local draft retained.",
+    "evidence": "H105-remaining-branches-final-restored",
+    "otherWork": "No other profile, user tab, reviewer tab or window selected, reset or closed."
+  },
+  "priorFindingQualifications": [
+    "B17 only absence of equivalent day/completion planning controls in populated ToDo, source-supported risk; native brief links and hour editor do not choose day/status.",
+    "B19 native5secondseek alternatives are acknowledged; review ScrubBar semantic/focus defect does not imply all seeking inaccessible.",
+    "B21 numeric Start/End exist after committed local mark; initial draft creation has pointer-only entry, source-supported risk; no complete recut keyboard audit claim."
+  ],
+  "stateContractCorrections": [
+    "N092 search N/A; Staff-only editor with separate other-role readonly display.",
+    "N090 current Filters has Client/Teammate/Tags/Status/Deadline/Columns, no stage filter.",
+    "N087/N130 action menus not present; inspect actual link/retry/preview controls instead.",
+    "N089 no visible minimise button in current desktop panel.",
+    "N091 no current next/previous or separate progress control observed; source reconcile before assigning required states."
+  ],
+  "closureAddendum": "reviewers/b-closure-addendum.json",
+  "finalClosure": "reviewers/b-final-closure.json"
+}

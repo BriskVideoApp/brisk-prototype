@@ -1,0 +1,77 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+  - button "Expand navigation" [active]: Expand navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+    - link "Production defaults":
+      - /url: /settings/studio/production
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+    - link "Storage":
+      - /url: /settings/studio/storage
+    - link "Notifications":
+      - /url: /settings/notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+  - group "Prototype controls":
+    - generic "Test mode"
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Studio setup" [level=1]
+  - link "Preview sample Client portal":
+    - /url: /settings/studio/portal-preview
+    - text: Preview sample Client portal
+- region "Studio setup":
+  - region "Studio identity":
+    - heading "Studio identity" [level=2]
+    - heading "Studio name" [level=3]
+    - strong: North Star Films
+    - button "Edit name"
+    - heading "Studio logo" [level=3]
+    - generic "North Star Films logo":
+      - generic: NS
+    - button "Add logo"
+  - region "Video setup":
+    - heading "Video setup" [level=2]
+    - heading "Video types" [level=3]
+    - generic: Brand films
+    - generic: Case studies
+    - generic: Documentaries
+    - generic: Live action
+    - button "Edit video types"
+    - heading "Default Client Brief" [level=3]
+    - strong: 14 questions in new Briefs
+    - button "Edit questions"

@@ -1,0 +1,1484 @@
+{
+  "reviewer": "B",
+  "pass": "21 October 2026 desktop completion",
+  "status": "Completion review saved with bounded independent inspection and explicit remaining limits",
+  "boundaries": [
+    "Lead owns browser and all F captures.",
+    "Only after lead verifies disposable-session isolation may scenarios/sample progression be used.",
+    "No app, master register, report, normal-session data or existing B finding changes by this reviewer.",
+    "No real invitation/message/payment/destructive confirmation.",
+    "Independent B browser authorised by lead: Tom Producer profile, own tab 1716948402, origin http://127.0.0.1:8768. Storage empty before app entry. 1440 x 1000 and 1133 x 1000 inspected; own audit viewport restored to 1440. No working-origin actions.",
+    "Opening existing Chat channels automatically reduced their local unread counts in this disposable origin. No manual mark-read, messages or outbound integrations used. H001-H051 remained Studio Staff; H052-H063 temporarily inspected Freelancer/Customer and restored Staff. No scenario load/reset or saved form mutation performed."
+  ],
+  "readBaseline": [
+    "AGENTS.md full",
+    "REVIEWER-BRIEF.md completion addendum",
+    "Brisk DS/guidelines/Guidelines.md",
+    "Previously read approved desktop/component/project guidance retained"
+  ],
+  "finiteContract": [
+    "Inspect one meaningful populated and applicable empty/restricted composition per distinct workflow, not every mock record or data combination.",
+    "For each distinct menu/dialog implementation inspect its opener, keyboard focus, one keyboard navigation/activation, safe exit and focus return. A shared DS implementation supports the general interaction contract but does not prove consumer names/callbacks or clipped placement.",
+    "At 1440px and 1133px inspect page composition and layout-sensitive expanded states. Record the actual width of each interaction; do not imply both widths were tested from one capture.",
+    "Blank/invalid draft checks stop at disabled controls and safe cancellation. Submitted mutation outcomes remain excluded unless explicitly authorised sample progression is required to reach another state in the isolated session.",
+    "Process safeguards such as no send/no commit/avoid reset are boundaries, not additional screens awaiting screenshots."
+  ],
+  "requests": [
+    {
+      "id": "BC01",
+      "priority": 1,
+      "workflowIds": [
+        "N094"
+      ],
+      "name": "Populated To Do keyboard and task boundary",
+      "route": "/today",
+      "role": "Studio Staff",
+      "precondition": "Existing populated scenario or permitted isolated sample entry; no working-session edits.",
+      "minimalStates": [
+        "populated rail and week",
+        "existing Log time editor",
+        "keyboard planning/completion route or its absence",
+        "current-user versus other-person context and actual edit access"
+      ],
+      "actions": [
+        "Capture a populated project rail and an existing time block. Inspect whether the draggable project card has a plan/add command reachable by keyboard rather than only its Brief link.",
+        "Focus an existing time block and activate with Enter or Space. Record editor visibility, activeElement and whether Space also scrolls.",
+        "Inspect Stage, Hours, Note and footer actions without Delete. Change one local draft value only if useful; Cancel and reopen to check it was discarded.",
+        "Press Escape with focus in the editor; record whether it closes and where focus returns. If not, close via Cancel or Close editor.",
+        "Inspect whether any keyboard action moves planned work to Done or chooses a day. Do not perform a completion/move merely to prove the absence of a control.",
+        "If Viewing permits another person, inspect the displayed person context and actual controls, then return to the prior view. Do not assume another person must be read-only: no approved restriction was identified."
+      ],
+      "source": [
+        "src/components/today/TodayPage.tsx:335",
+        "src/components/today/TodayPage.tsx:535",
+        "src/components/today/TodayPage.tsx:626",
+        "src/components/today/TodayPage.tsx:698"
+      ],
+      "excluded": [
+        "Delete",
+        "repeated save/drag/date combinations",
+        "persistence implementation defects"
+      ],
+      "hypothesis": "Project cards and day sections expose only pointer drag planning/completion; editor provides numerical hour alternative but no day/status action. Source-supported, not yet an observed user failure.",
+      "evidence": [
+        "F001-todo-populated-1440",
+        "F002-todo-entry-editor",
+        "F003-todo-invalid-hours",
+        "F004-todo-populated-1133",
+        "F005-todo-collapsed-1133"
+      ],
+      "status": "Partially inspected",
+      "remaining": "Keyboard-only project planning/completion route remains pending. Sarah viewing is captured; do not assume or invent a read-only rule for other-person editing."
+    },
+    {
+      "id": "BC02",
+      "priority": 1,
+      "workflowIds": [
+        "N116"
+      ],
+      "name": "Populated Edit/Animation review navigation",
+      "route": "/projects/[projectId]/stages/edit",
+      "role": "Studio Staff then Customer where permitted",
+      "precondition": "Ready populated version scenario, using sample progression only if needed in isolated session.",
+      "minimalStates": [
+        "current review player/comments",
+        "version library with current/historical distinction",
+        "one comparison selection if available",
+        "comment filter empty result",
+        "composer empty and safe exit"
+      ],
+      "actions": [
+        "Open the visible version library/Versions surface. Focus and activate a version choice; inspect current versus historical label and the separate file actions.",
+        "If more than two versions, toggle Add Vn to comparison using Space and undo that local selection. Do not use Download/Delete/Replace as keyboard probes.",
+        "Open Comments, choose one existing filter giving a meaningful selected/empty result, and restore it. Inspect empty composer disabled/available send without sending.",
+        "Activate an existing comment marker by keyboard and inspect whether the comment/time changes coherently; restore paused playback/mute.",
+        "Close secondary tools with visible controls and Escape, recording actual focus return. Drawing Escape may exit drawing mode by design; do not infer full overlay dismissal."
+      ],
+      "source": [
+        "src/components/video-review/VideoReviewScreen.tsx:1520",
+        "src/components/video-review/VideoReviewScreen.tsx:1580",
+        "src/components/video-review/VideoReviewScreen.tsx:1780",
+        "src/components/video-review/VideoReviewScreen.tsx:1908"
+      ],
+      "excluded": [
+        "version deletion/replacement",
+        "comment/reaction submission",
+        "formal accessibility compliance",
+        "every file/version permutation"
+      ],
+      "evidence": [
+        "F033-edit-readiness-confirm",
+        "F034-edit-ready-empty",
+        "F035-review-populated-1440",
+        "F036-review-compare",
+        "F037-review-comment-menu",
+        "F038-review-team-filter",
+        "F039-review-drawing-tools",
+        "F040-review-1133-overall",
+        "F053-canonical-edit-upload",
+        "F054-canonical-edit-two-versions"
+      ],
+      "status": "Canonical populated UI inspected; media playback remains unverified",
+      "remaining": "Canonical version and composer UI now directly captured. Actual generated MOV playback/seek not certified; destructive outcomes excluded. Current Edit has no transcript panel, so that apparent state is Not applicable rather than an unmet UI requirement."
+    },
+    {
+      "id": "BC03",
+      "priority": 1,
+      "workflowIds": [
+        "N117"
+      ],
+      "name": "Masters row, asset panels and draft scope",
+      "route": "/projects/[projectId]/stages/masters",
+      "role": "Studio Staff then Customer where permitted",
+      "minimalStates": [
+        "populated parent/child delivery rows",
+        "one expanded player/version",
+        "captions and comments secondary panels",
+        "download selector none selected",
+        "live recut zero-mark/source/range/cancel states"
+      ],
+      "actions": [
+        "Focus a delivery row; Enter expands, Space toggles and Escape collapses only when the row itself is focused. Check one ArrowDown/ArrowUp movement. Avoid the A shortcut because it can upload/download.",
+        "Focus Open captions for [name] or Open comments for [name] and press Space. Record the named panel opens without unintended row activation. This is a positive comparison to B02: source already guards bubbled keys.",
+        "Open Download assets selection dialog, clear its local checks, inspect disabled Download; Cancel. Do not download.",
+        "Inspect one nested discard/delete confirmation only where safe, cancel it; do not confirm deletion or discard committed content."
+      ],
+      "source": [
+        "src/components/masters/MastersPage.tsx:1877",
+        "src/components/masters/MastersPage.tsx:1932",
+        "src/components/masters/MastersPage.tsx:1970",
+        "src/components/masters/MastersPage.tsx:3296",
+        "src/components/masters/MastersPage.tsx:3370"
+      ],
+      "excluded": [
+        "A primary shortcut",
+        "downloads/uploads",
+        "request submission",
+        "every deliverable/type/version combination"
+      ],
+      "evidence": [
+        "F042-masters-sample-1133",
+        "F043-masters-sample-1440",
+        "F044-masters-thumbnail-actions",
+        "F045-masters-comments",
+        "F046-masters-download-zero",
+        "F047-masters-delete-confirm",
+        "F062-main-video-delivery",
+        "F063-masters-caption-editor",
+        "F064-masters-recut-entry",
+        "F065-recut-source-picker",
+        "F066-recut-range-draft",
+        "F067-recut-cancel-result",
+        "F068-masters-comments-1133",
+        "F069-masters-composer-reachable"
+      ],
+      "status": "Partially inspected",
+      "remaining": "Exact row traversal/Escape and later numeric mark editors are not recorded. Live recut zero-mark/source/range/cancel states are inspected; old request-dialog tabs are Not applicable. No send/delete/download outcome is required to inspect these UI states."
+    },
+    {
+      "id": "BC04",
+      "priority": 2,
+      "workflowIds": [
+        "N092"
+      ],
+      "name": "Team nested confirmation and rate validation",
+      "route": "Videos > project drawer > Team > Edit role",
+      "role": "Studio Staff",
+      "minimalStates": [
+        "one selected Staff and Freelancer option",
+        "invalid local project-rate draft",
+        "invitation message confirmation empty",
+        "Remove role confirmation cancellation"
+      ],
+      "actions": [
+        "Use an existing role editor. Open Remove role; inspect impact copy and initial focus, then Cancel or Escape. Confirm the underlying editor and any local draft remain.",
+        "Select one eligible Freelancer locally, enter an invalid zero/non-numeric project rate if field permits, inspect Assign now and Invite validation without invoking either. Restore via Cancel.",
+        "With one eligible selection and valid existing rate, Invite opens a Send invite? confirmation. Clear Message locally to inspect Send invite disabled, then Cancel confirmation and Cancel editor. Never send."
+      ],
+      "source": [
+        "src/components/project/team/RoleEditorModal.tsx:351",
+        "src/components/project/team/RoleEditorModal.tsx:372",
+        "src/components/project/team/RoleEditorModal.tsx:377"
+      ],
+      "excluded": [
+        "assign/unassign",
+        "new freelancer invitation",
+        "hours implicitly saved on assignment, a prior excluded prototype-only candidate",
+        "search: no live search input in this editor"
+      ],
+      "relatedExistingFindings": [
+        "B01",
+        "B07",
+        "B10"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "BC05",
+      "priority": 2,
+      "workflowIds": [
+        "N084",
+        "N085",
+        "N086",
+        "N088",
+        "N089"
+      ],
+      "name": "Bounded global menu and drawer lifecycle",
+      "route": "Any populated workspace page",
+      "roles": [
+        "Studio Staff",
+        "Customer where links differ"
+      ],
+      "minimalStates": [
+        "Recent pages empty or populated by current session",
+        "Account menu role-specific links",
+        "Test mode menu three choices",
+        "Chat project picker and settings",
+        "Ask Brisk history/minimise without send"
+      ],
+      "actions": [
+        "Open Recent pages with keyboard, check Arrow/Home/End on existing rows, then Escape and focus return. Native link destinations remain links; no need activate every history item.",
+        "Open Account menu, inspect one visible role-specific route/focus and outside dismissal. Open Test mode only to inspect current selected role and close; reset is not a state to exercise.",
+        "In Global Chat open project picker and settings, then close via Escape/Close; do not send. Existing auto-read side effects are prototype plumbing, not a product finding.",
+        "In Ask Brisk inspect history and minimise/restore if available; no prompt/source submission."
+      ],
+      "source": [
+        "src/components/navigation/GlobalHistoryNavigation.tsx:70"
+      ],
+      "excluded": [
+        "every recent route",
+        "sign out/account mutation",
+        "scenario reset in normal session",
+        "automatic read plumbing findings"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "BC06",
+      "priority": 2,
+      "workflowIds": [
+        "N108",
+        "N111",
+        "N138"
+      ],
+      "name": "Custom panels versus declared modals",
+      "route": "Script / Storyboard / project header",
+      "role": "Studio Staff",
+      "minimalStates": [
+        "Storyboard Versions and historical preview",
+        "Adjust flow Close and focus return",
+        "term subpanel",
+        "hide confirmation cancel"
+      ],
+      "actions": [
+        "Storyboard Versions: inspect Escape/outside/visible close behaviour and one historical read-only preview; return latest without restoring. Extend B06 only if same current behaviour, no duplicate finding.",
+        "Adjust project flow: activate visible Close and record focus return; open Edit/Animation term subpanel without selecting a term.",
+        "Open Hide [stage] in Adjust project flow. Source confirms it opens Hide [stage]? without hiding. Choose Keep visible, then Close adjuster; do not choose Hide stage, reorder or reset."
+      ],
+      "source": [
+        "src/components/script/ScriptVersionControl.tsx:37",
+        "src/components/production-flow/ProductionFlowRail.tsx:150",
+        "src/components/production-flow/ProductionFlowRail.tsx:326"
+      ],
+      "excluded": [
+        "version create/restore/delete outcomes",
+        "flow reorder/hide/reset outcomes"
+      ],
+      "relatedExistingFindings": [
+        "B06",
+        "B09"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "BC07",
+      "priority": 1,
+      "workflowIds": [
+        "N113",
+        "N114",
+        "N115"
+      ],
+      "name": "Shoot focused view and nested editor exit",
+      "route": "Shoot > populated On Set",
+      "role": "Studio Staff",
+      "minimalStates": [
+        "focused Shoot day/Interview",
+        "one question/shot editor blank required field",
+        "local contact/location picker",
+        "safe parent/child Escape ordering"
+      ],
+      "actions": [
+        "Open Focus on [Shoot day/Interview]. Record activeElement and whether it belongs to the declared aria-modal section. Check one boundary Tab/Shift+Tab and then Escape. Source supports Escape; do not presume failure.",
+        "Open an existing shot/question editor, inspect labelled required controls and disabled Save/Add on an empty local required field; Cancel and reopen without saving.",
+        "Open one inner picker, Escape should close the picker before abandoning a parent draft; inspect focus return. Do not select stock/library images or existing contacts because selection can write immediately.",
+        "Where an existing nested confirmation can be opened safely, cancel it and verify the underlying local form remains."
+      ],
+      "source": [
+        "src/components/shoot/ShootStagePage.tsx:2090",
+        "src/components/shoot/ShootStagePage.tsx:4366",
+        "src/components/shoot/ShootStagePage.tsx:5282",
+        "src/components/shoot/ShootStagePage.tsx:8276",
+        "src/components/shoot/ShootStagePage.tsx:8370",
+        "src/components/shoot/ShootStagePage.tsx:8574"
+      ],
+      "excluded": [
+        "capture/asked/completion toggles",
+        "delete confirmations completed",
+        "library/stock attachment",
+        "every taxonomy/day/shot permutation"
+      ],
+      "hypothesis": "Focus mode may be a focused page rather than a modal; verify interaction before recommending semantics or focus containment.",
+      "evidence": [
+        "F008-shot-type-picker",
+        "F009-shot-list-1133",
+        "F011-interview-editor-validation",
+        "F012-visual-references-empty",
+        "F015-location-editor",
+        "F016-shoot-people-1133"
+      ],
+      "status": "Partially inspected",
+      "remaining": "On Set focused section initial/boundary focus and nested confirmation ordering still pending. Existing question/location editor and shot-selector Escape outcomes are directly recorded."
+    },
+    {
+      "id": "BC08",
+      "priority": 2,
+      "workflowIds": [
+        "N122",
+        "N123",
+        "N124",
+        "N126",
+        "N128"
+      ],
+      "name": "Settings and onboarding save boundary",
+      "route": "Studio focused editors / onboarding",
+      "role": "Studio Staff",
+      "minimalStates": [
+        "one dirty focused editor exit warning",
+        "Discard/Stay distinction without committed change",
+        "onboarding AI questions and review",
+        "one blank required Continue state"
+      ],
+      "actions": [
+        "In the verified disposable session, change one harmless local draft field in a focused editor; navigate away to inspect the unsaved warning, choose Stay, then use visible Cancel/Discard only for the isolated draft.",
+        "For onboarding, progress sample content only as needed to inspect AI questions and generated review. At each materially distinct footer distinguish Back/Skip/Continue/Finish; inspect one blank required-field disable state.",
+        "Do not submit a real integration, invitation, message or payment. Do not repeat the same shared confirmation contract in every settings page."
+      ],
+      "source": [
+        "Brisk DS/guidelines/components/editing-dialog.md:39",
+        "Brisk DS/guidelines/components/confirmation-dialog.md:35"
+      ],
+      "excluded": [
+        "real setup integrations",
+        "every settings toggle value",
+        "production persistence validation"
+      ],
+      "evidence": []
+    }
+  ],
+  "coverageCorrections": [
+    {
+      "workflowId": "N092",
+      "stateId": "N092-S02",
+      "proposedDisposition": "Not applicable",
+      "reason": "No search control or search branch in current RoleEditorModal; do not invent a requirement."
+    },
+    {
+      "workflowId": "N092",
+      "proposedApplicableRoles": [
+        "Studio Staff"
+      ],
+      "reason": "Role editor consumers are Staff-gated; restricted Team view is separate from assignment-editor coverage."
+    },
+    {
+      "workflowId": "N094",
+      "stateId": "N094-S06",
+      "proposedLabel": "current-user versus other-person context and actual edit access",
+      "reason": "Source permits Studio Staff editing the viewed person; no approved rule found that another-person viewing must be read-only. Inspect actual task/permission without inventing a defect."
+    },
+    {
+      "workflowId": "N116",
+      "stateId": "N116-S07",
+      "proposedDisposition": "Not applicable",
+      "reason": "Current Edit/Animation VideoReviewScreen does not expose a transcript panel. Project Media Transcripts is a separate workflow; do not manufacture an Edit panel requirement."
+    },
+    {
+      "workflowId": "N117",
+      "stateId": "N117-S10",
+      "proposedDisposition": "Not applicable",
+      "reason": "Reviewer C source review confirms RequestDialog/openRequest has no live caller. Do not require an unreachable request form or its tabs; retain source exclusion/provenance."
+    }
+  ],
+  "processBoundariesNotUiStates": [
+    "avoid activating scenario reset",
+    "do not mark read manually",
+    "automatic read side-effect source review",
+    "no submit / no comment send / no send-change",
+    "do not type auto-saving values",
+    "no version-changing command",
+    "avoid auto-save fields",
+    "no readiness/publish submission",
+    "do not invite/remove/save",
+    "no commit / no save / no connect",
+    "no completion or stored-field changes"
+  ],
+  "newFindings": [
+    {
+      "id": "B14",
+      "title": "Log time opens and closes without keeping keyboard context",
+      "area": "To Do",
+      "family": "Non-modal editors and focus",
+      "category": "Usability / Accessibility",
+      "severity": "S3",
+      "impact": "Opening the editor leaves keyboard users on the time block; cancelling loses their place in the week because focus moves to body. They must find the editor or originating block again.",
+      "classification": "Heuristic judgement",
+      "confidence": "High for observed focus states; medium for preferred non-modal lifecycle",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Populated week > existing time block > Enter",
+        "Log time > Escape",
+        "Log time > Cancel Enter"
+      ],
+      "observed": "Lead activated an existing block with Enter. Log time appeared while active focus remained the original block. Escape from the editor left it open. Cancel activated with Enter closed it and active focus became body. The inner Stage picker did close on Escape. This panel is an aside/complementary editor, not a declared modal.",
+      "expected": "A contextual non-modal editor should provide an efficient route into its fields and return focus to the originating time block after cancellation. A consistent Escape cancellation route is recommended.",
+      "authority": [
+        "User audit requirement: keyboard efficiency, feedback and recovery",
+        "Current source: TimeEntryEditor is an aside; no approved bespoke focus contract or reference screenshot found"
+      ],
+      "recommendation": "Keep the editor non-modal. Move focus to its first relevant field when opened from the block, make Escape cancel after nested controls have handled it, and return focus to the original block on Cancel/Close.",
+      "rationale": "This preserves quick calendar editing while reducing repeated keyboard navigation. It does not require a modal, background inertness or a focus trap.",
+      "alternatives": [
+        "Keep a deliberately persistent side editor, but provide an explicit keyboard route and return focus on close."
+      ],
+      "tradeoffs": "Nested Stage picker Escape must close only that picker first. Keep local drafts and existing Cancel/Save boundaries; do not auto-save simply to simplify dismissal.",
+      "rootCause": "Custom contextual editor lacks a focus and outer Escape lifecycle.",
+      "occurrences": [
+        "Today TimeEntryEditor"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:626",
+        "src/components/today/TodayPage.tsx:698",
+        "src/components/today/TodayPage.tsx:725"
+      ],
+      "evidence": [
+        "F002-todo-entry-editor",
+        "F003-todo-invalid-hours"
+      ],
+      "approvedReference": "No approved screenshot or bespoke lifecycle decision exists for this non-modal editor. The recommendation is a scoped usability judgement.",
+      "reproSteps": [
+        "In a populated To Do week, focus an existing time block and press Enter. Observe Log time opens while focus stays on the block.",
+        "Focus an editor field and press Escape; observe it remains open. Stage picker Escape is a separate working inner-control state.",
+        "Focus Cancel and press Enter. Observe the panel closes and focus becomes body rather than the originating block."
+      ],
+      "verificationRemaining": "Tab sequence through the entire week and screen-reader announcements were not tested. Keep the recommendation non-modal and verify nested Escape ordering and retained focus after any approved change.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Heuristic judgement supported by observed keyboard behaviour"
+    },
+    {
+      "id": "B15",
+      "title": "Save remains enabled for out-of-range logged hours",
+      "area": "To Do",
+      "family": "Fields and validation",
+      "category": "Usability / Error prevention",
+      "severity": "S3",
+      "impact": "The Hours field can show an invalid value while Save appears ready. A user can expect one value while the source normalises it to another without advance explanation. The resulting save was not invoked.",
+      "classification": "Observed defect",
+      "confidence": "High for enabled Save/native invalid state; source-supported for normalisation",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Log time > Hours 0 draft"
+      ],
+      "observed": "In the isolated session the lead entered 0 in Hours. The input property was 0 and native validity was false under its existing minimum 0.25, while Save remained enabled and no inline error explained the minimum. Source saveEntry converts the number, clamps it to the existing 0.25-24 range and snaps it to a quarter hour. Save is a button callback outside a validating form. No save was performed.",
+      "expected": "The field and Save affordance should communicate the same existing hours rules before the action is taken. Any rounding/normalisation should be understandable.",
+      "authority": [
+        "Current Hours input min=0.25 and step=0.25, plus maxEntryHours=24 in source",
+        "Brisk DS/guidelines/components/inputs.md: accessible field hints/errors; preserve existing form behaviour, do not invent new validation"
+      ],
+      "recommendation": "Reflect the existing hours constraints in local validation and a concise field hint/error, keeping Save unavailable while the draft is invalid. If automatic rounding is intentional, show the adjusted value or an explicit explanation before Save instead.",
+      "rationale": "This aligns the displayed draft with the proposed save without changing the allowed range, quarter-hour policy or persistence model.",
+      "alternatives": [
+        "Normalise visibly on blur and explain the adjustment, preserving quarter-hour entry."
+      ],
+      "tradeoffs": "Allow temporary invalid text while editing; do not silently reset the field as the user types. Preserve the existing minimum, maximum and quarter-hour rules unless Tom approves a product change.",
+      "rootCause": "Native input constraints and saveEntry normalisation are not connected to visible field feedback or Save availability.",
+      "occurrences": [
+        "Today TimeEntryEditor Hours"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:31",
+        "src/components/today/TodayPage.tsx:684",
+        "src/components/today/TodayPage.tsx:713",
+        "src/components/today/TodayPage.tsx:728"
+      ],
+      "evidence": [
+        "F003-todo-invalid-hours"
+      ],
+      "approvedReference": "No approved screenshot exists for invalid time-entry hours. The existing source constraints establish the rule; DS field guidance supplies the feedback mechanism. F075 is a verified current comparison: the distinct Freelancer Log hours form disables Save time for a zero-hours draft. It is not permission to merge the workflows or call the screenshot independently approved.",
+      "reproSteps": [
+        "Open an existing To Do time block. Replace Hours with 0.",
+        "Inspect native validity and the visible editor: minimum validation fails, but Save remains enabled and no inline error explains it.",
+        "Cancel without saving. Source predicts 0 would be clamped to 0.25; that outcome is not browser-verified."
+      ],
+      "verificationRemaining": "No invalid value was saved. Other bounds and quarter-hour adjustments were not exhaustively checked. Confirm the intended visible rounding policy before implementation.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Observed defect with source-supported outcome risk",
+      "supportingComparisonEvidence": [
+        "F075-freelancer-time-invalid"
+      ]
+    },
+    {
+      "id": "B16",
+      "title": "Schedule item Start time has no accessible name",
+      "area": "Shoot",
+      "family": "Time inputs and accessible field labels",
+      "category": "Accessibility",
+      "severity": "S2",
+      "impact": "A screen-reader user reaches a time combobox without hearing what it changes, while adjacent Shoot day, Duration and Location override fields are named.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/shoot?section=schedule"
+      ],
+      "states": [
+        "Edit schedule item > Start time suggestions"
+      ],
+      "observed": "F023 accessibility snapshot shows generic Start time followed by an unnamed combobox, unlike named Shoot day, Duration min and Location override. Source renders a sibling span and TimeSelect inside a div, without a label association or aria-label. The TimeSelect implementation passes native naming props through; other consumers already supply a label or aria-label. Staff current browser evidence is direct; Freelancer occurrence is source-supported.",
+      "expected": "The visible Start time label is associated with the time input so it has a stable purpose-specific accessible name.",
+      "authority": [
+        "Brisk DS/guidelines/components/inputs.md: native attributes and accessible field naming",
+        "Current TimeSelect supports native input props; named day-editor time inputs demonstrate the existing capability"
+      ],
+      "recommendation": "Associate the existing Start time text with the input using a label/id or aria-labelledby, or supply the existing label through aria-label. Retain typed-time entry, suggestions and the current schedule save boundary.",
+      "rationale": "A small naming correction supports the current specialised time interaction without replacing it with an ordinary selector.",
+      "alternatives": [
+        "Use the existing Field label wrapper where there is only one labelable time control, ensuring the label remains specific to Start time."
+      ],
+      "tradeoffs": "Keep the input value and keyboard suggestions separate from its name. Do not concatenate every schedule field into one label or alter time rounding rules.",
+      "rootCause": "This custom time-field consumer presents a visible span but does not associate it with its input.",
+      "occurrences": [
+        "EntryModal scheduled Start time"
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:8412",
+        "src/components/shoot/ShootStagePage.tsx:8812",
+        "src/components/shoot/ShootStagePage.tsx:5781"
+      ],
+      "evidence": [
+        "F023-schedule-item-editor"
+      ],
+      "approvedReference": "No approved screenshot exists for this exact scheduling field. The DS field-naming contract is the authority; source day-editor named time fields are supporting current examples.",
+      "reproSteps": [
+        "Open Planning > Schedule and activate an existing scheduled item such as Founder interview with Enter.",
+        "Inspect the Start time combobox in the accessibility snapshot: its value is exposed but it has no accessible name. Adjacent Shoot day and Duration are named.",
+        "Cancel without saving the schedule."
+      ],
+      "verificationRemaining": "No screen-reader session or formal compliance test performed. Verify every other TimeSelect consumer by actual label association before extending the occurrence list; do not assume all are unnamed.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Observed defect"
+    },
+    {
+      "id": "B17",
+      "title": "Populated To Do has no keyboard route to plan or complete work",
+      "area": "To Do",
+      "family": "Planning interactions and keyboard alternatives",
+      "category": "Accessibility / Task completion",
+      "severity": "S2",
+      "impact": "Keyboard-only users appear unable to add planned work from the populated project rail or move it from To do to Done. Editing existing hours is keyboard-reachable but does not provide those distinct actions.",
+      "classification": "Source-supported risk",
+      "confidence": "High for the absence of an exposed alternative in the inspected populated workflow; no end-to-end keyboard task study",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Populated project rail and Working week",
+        "Existing Log time editor"
+      ],
+      "observed": "F001 current accessibility snapshot exposes only Brief links for project cards and no Plan/Add time action in the normal populated week. F002 Log time exposes Stage, Hours, Note, Delete, Cancel and Save, with no day/status completion action. Source ProjectCard is draggable with no keyboard planning handler; DaySection creates/moves work only in onDrop. The Add time button at TodayPage220 belongs to special no-results/complete previews rather than the populated week. This pass did not record a user failing the task.",
+      "expected": "Planning and marking time Done should each have a keyboard-operable route while retaining the efficient drag interaction.",
+      "authority": [
+        "User audit requirement: keyboard efficiency, discoverability and task completion",
+        "Current To Do task model and exposed entry/editor controls; no approved exception allowing drag-only planning/completion identified"
+      ],
+      "recommendation": "Add a clear keyboard-operable Plan time action and a day/status completion route through the existing entry editor or an entry action menu. Retain drag planning, project title navigation and direct numerical Hours editing.",
+      "rationale": "This provides the same daily task capability without conflating opening a project, planning time, editing hours and completing work.",
+      "alternatives": [
+        "Offer an explicit action on a project card to choose a day, and an explicit Mark done action on a time block.",
+        "Extend the contextual entry editor with day and To do/Done controls if that remains the clearest task boundary."
+      ],
+      "tradeoffs": "Do not overload the existing project title link or require simulated drag keystrokes. Preserve the distinction between To Do completion and production-stage approval, and keep the current time accounting rules.",
+      "rootCause": "Primary planning/completion callbacks are reachable only through drag drop in the normal populated workspace.",
+      "occurrences": [
+        "ProjectCard",
+        "DaySection",
+        "TimeEntryEditor"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:220",
+        "src/components/today/TodayPage.tsx:335",
+        "src/components/today/TodayPage.tsx:535",
+        "src/components/today/TodayPage.tsx:698"
+      ],
+      "evidence": [
+        "F001-todo-populated-1440",
+        "F002-todo-entry-editor",
+        "F004-todo-populated-1133"
+      ],
+      "approvedReference": "No approved screenshot establishes a keyboard planning/completion alternative. This is a task-accessibility recommendation supported by the live exposed controls and source.",
+      "reproSteps": [
+        "Inspect the populated To Do project rail with keyboard/accessibility snapshot: project titles navigate to Brief; no Plan time/Add time action is exposed.",
+        "Open an existing time block with Enter and inspect Log time: day and To do/Done status controls are absent.",
+        "Trace planning/completion callbacks: createEntry and moveEntry are passed to DaySection drop handlers; no equivalent keyboard action is rendered in normal populated state. Do not drag, save or complete work merely to inspect."
+      ],
+      "verificationRemaining": "A final keyboard-only walkthrough should confirm no alternative through another currently reachable menu before implementation. No user research, formal compliance or failed-user-task result claimed.",
+      "reviewStatus": "Needs decision",
+      "provenance": "Original B04 candidate was excluded when the working fixture was empty. F-series populated evidence now supports this bounded completion-pass finding; excluded B08 persistence logic remains excluded.",
+      "classificationDetail": "Source-supported risk with current UI evidence"
+    },
+    {
+      "id": "B18",
+      "title": "Delete version has no review or recovery step",
+      "area": [
+        "Edit",
+        "Animation"
+      ],
+      "family": "Destructive actions and confirmation",
+      "category": "Usability / Error prevention",
+      "severity": "S2",
+      "impact": "An accidental activation can remove a review version immediately. The user has no pre-action review or visible Undo in the current flow; no deletion or user loss was tested.",
+      "classification": "Source-supported risk",
+      "confidence": "High for direct handler and lack of local recovery; no destructive action invoked",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/edit",
+        "/review"
+      ],
+      "states": [
+        "Multiple versions > enabled Delete V2",
+        "Single version > disabled Delete guard"
+      ],
+      "observed": "Canonical F053 has one uploaded audit version and Delete disabled. Canonical F054 has two audit versions and Delete V2 enabled. The button directly calls deleteReviewVersion. That handler removes the version and status, revokes a local blob URL when applicable, chooses a remaining version and displays only Vn deleted. No confirmation or deletion Undo is supplied. The lead did not activate Delete. Masters F047, by comparison, offers an explicit item-specific delete confirmation.",
+      "expected": "A consequential version removal should be deliberate, with item/version scope reviewed before execution or a clear approved recovery route.",
+      "authority": [
+        "User audit requirement: misleading/unsafe actions, error prevention and recovery",
+        "Brisk DS/guidelines/components/confirmation-dialog.md: approved shared confirmation pattern when confirmation is used",
+        "Verified current Masters deletion confirmation is supporting evidence, not proof of an approved Edit-specific decision"
+      ],
+      "recommendation": "Before removing the version, use the shared ConfirmationDialog naming its version/file and the actual impact. Keep Cancel first and preserve the last-version guard. Do not promise Trash/Undo unless such recovery is deliberately specified.",
+      "rationale": "The smallest improvement protects an occasional consequential action without changing version selection, upload or comparison work.",
+      "alternatives": [
+        "If Tom chooses a reversible removal policy, supply a dependable visible Undo with a clearly defined recovery period. That is a separate product decision, not an existing capability."
+      ],
+      "tradeoffs": "A confirmation adds a step to deletion; keep ordinary version selection and comparison immediate. Do not claim related comments are deleted without checking their actual handling, and do not invent production retention rules.",
+      "rootCause": "The version action invokes its removal callback directly and provides only a post-action toast.",
+      "occurrences": [
+        "VideoReviewScreen VersionLibrary delete buttons"
+      ],
+      "sources": [
+        "src/components/video-review/VideoReviewScreen.tsx:810",
+        "src/components/video-review/VideoReviewScreen.tsx:1176",
+        "src/components/video-review/VideoReviewScreen.tsx:1653"
+      ],
+      "evidence": [
+        "F053-canonical-edit-upload",
+        "F054-canonical-edit-two-versions",
+        "F047-masters-delete-confirm"
+      ],
+      "approvedReference": "No approved screenshot establishes Edit-version deletion behaviour. F047 is a verified current Masters comparison; the DS ConfirmationDialog is approved as a pattern. EditingDialog guidance says retain existing confirmations, but full-screen review is outside that migration scope, so this is not labelled an explicit Edit-specific approved-standard violation.",
+      "reproSteps": [
+        "Inspect a canonical Edit project with two permitted audit-only versions; observe Delete V2 enabled. Do not activate it.",
+        "Trace the button callback to deleteReviewVersion: removal occurs directly, with only Vn deleted feedback and no confirmation/Undo branch.",
+        "Compare Masters Delete asset: opening it shows an explicit item-specific confirmation, which is cancelled."
+      ],
+      "verificationRemaining": "No deletion performed and no user loss claimed. Confirm the intended version retention/recovery policy with Tom. Staff browser state is verified; other eligible role consumers remain source-supported.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Source-supported risk with observed enabled control"
+    },
+    {
+      "id": "B19",
+      "title": "Review timeline is advertised as a slider but cannot receive keyboard focus",
+      "area": [
+        "Edit",
+        "Animation"
+      ],
+      "family": "Video player controls",
+      "category": "Accessibility",
+      "severity": "S2",
+      "impact": "Keyboard users have coarse step buttons but cannot operate the advertised timeline directly for precise review. The slider markup does not expose the video's actual current time or duration; screen-reader announcements were not tested.",
+      "classification": "Observed defect",
+      "confidence": "High for DOM and source; actual seek/playback not certified",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/edit",
+        "/review"
+      ],
+      "states": [
+        "Single-version main player timeline"
+      ],
+      "observed": "In canonical F054 the timeline div advertises role=slider but its tabIndex property is -1, no aria-valuemin/max/now values are present, and the attempted ArrowRight tool action could not focus it. No arrow keystroke was successfully processed. Source ScrubBar renders only a pointer handler, with no tab stop or key handler. Named Step back five seconds and Step forward five seconds buttons exist, and no global arrow-key seeking handler was found. The comparison player separately uses a native range input.",
+      "expected": "An advertised timeline slider should expose its name/current range and a keyboard-operable precise seeking interaction. Keep the coarse step controls as distinct useful actions.",
+      "authority": [
+        "User audit requirement: keyboard interaction, accessible names/state and video-production task efficiency",
+        "Current main ScrubBar role and existing comparison-player native range show intended interactive timeline purpose; no formal compliance certification claimed"
+      ],
+      "recommendation": "Give the main timeline a coherent accessible range/keyboard contract using the approved appropriate control/pattern. Expose time values and an intentional keyboard step, with focus visible and distinct from comment/recut markers. Retain the five-second buttons and pointer scrubbing.",
+      "rationale": "This repairs the timeline task without removing efficient transport controls or flattening markers into an unrelated selector.",
+      "alternatives": [
+        "Use a properly labelled native range input with a visible time value if it can preserve existing marker, drawing and recut interactions."
+      ],
+      "tradeoffs": "Do not swallow arrow keys while a text/comment field is focused. Preserve comment marker navigation, recut selection and pointer placement; define fine/coarse steps with Tom rather than assuming a frame rate.",
+      "rootCause": "Custom pointer scrub surface adds slider semantics without the associated focus, values and keyboard behaviour.",
+      "occurrences": [
+        "InlinePlayer ScrubBar in main review view"
+      ],
+      "sources": [
+        "src/components/video-review/InlinePlayer.tsx:427",
+        "src/components/video-review/InlinePlayer.tsx:595",
+        "src/components/video-review/InlinePlayer.tsx:660",
+        "src/components/video-review/InlinePlayer.tsx:669"
+      ],
+      "evidence": [
+        "F054-canonical-edit-two-versions"
+      ],
+      "approvedReference": "No approved screenshot specifies the custom main timeline interaction. The existing comparison-player native range is a supporting current implementation, not automatic authority to restyle the player.",
+      "reproSteps": [
+        "Inspect the main timeline in canonical populated Edit: role is slider, but it is not a keyboard tab stop and lacks current/range values.",
+        "The lead attempted ArrowRight on that slider; focus could not be established, so no processed keystroke or successful seek is claimed.",
+        "Inspect existing native five-second transport buttons separately; they are a keyboard alternative for coarse steps, not the same direct timeline interaction."
+      ],
+      "verificationRemaining": "Generated audit MOV decoding/actual playback was not certified. No precise seek outcome is claimed. Verify keyboard steps and screen-reader time announcements after an approved change; check timeline comment/recut marker keyboard activation separately before expanding the finding.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Observed semantic/focus defect with source-supported keyboard limit"
+    },
+    {
+      "id": "B20",
+      "title": "Nested Escape dismisses the surrounding task as well as its inner layer",
+      "area": "Shoot and Global Chat",
+      "family": "Nested overlays and keyboard dismissal",
+      "category": "Usability / Accessibility",
+      "severity": "S3",
+      "impact": "Dismissing time suggestions leaves the schedule editor; dismissing message search or a message thread leaves the whole Global Chat drawer. This removes the surrounding task unexpectedly. No dirty-draft loss was tested.",
+      "classification": "Approved-standard violation",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/shoot?section=schedule",
+        "Global Chat opened from app header"
+      ],
+      "states": [
+        "Edit schedule item > Start time suggestions open > Escape",
+        "Global Chat > Search all messages > unmatched query > Escape",
+        "Global Chat > existing message thread > Escape"
+      ],
+      "observed": "F023/F056: one Escape closed Start time suggestions and its parent schedule EditingDialog, returning focus to the scheduled entry. No draft values were edited. H014/H015: one Escape from nested message search closed both search and Global Chat, leaving focus on body. H102/H104: Escape from the actual existing Message thread pane also closed thread and Global Chat; visible Close thread in H103 retained the project conversation. H050/H051 provide a working comparison: nested External Chat settings Escape closed settings only and restored its opener inside Global Chat.",
+      "expected": "The active inner layer handles Escape first, preserving its surrounding editing task or conversation. Once that layer is closed, a later Escape may dismiss the parent.",
+      "authority": [
+        "Brisk DS/guidelines/components/editing-dialog.md: menus/pickers must consume Escape when closing themselves so they do not also close the form",
+        "Brisk DS/guidelines/components/confirmation-dialog.md: nested controls prevent default Escape when consuming it"
+      ],
+      "recommendation": "Consume Escape in the active inner layer before parent handlers run. For TimeSelect, close/reset suggestions and retain Start time focus; for Chat search or thread, close that inner layer and restore the relevant opener while keeping Global Chat open. A later Escape can use the existing parent exit path.",
+      "rationale": "This repairs nested task boundaries while preserving the quick keyboard route to cancel the whole editor intentionally.",
+      "alternatives": [
+        "Keep suggestions closed until explicitly requested, but this changes discoverability and does not replace the need for correct nested Escape behaviour."
+      ],
+      "tradeoffs": "Handle Escape exclusively only when an inner layer is actually open. Preserve typed-time reset/commit rules, parent Cancel, visible thread Close, focus return and other keyboard callbacks.",
+      "rootCause": "TimeSelect and embedded Chat child dismissal handlers do not exclusively consume Escape; the same event reaches the outer dialog or Global Chat window listener. Search and thread are related consumers of the same Chat boundary, requiring one scoped event policy.",
+      "occurrences": [
+        "Shoot Schedule EntryModal Start time, directly verified F023/F056",
+        "Global Chat nested Search all messages, directly verified H014/H015",
+        "Global Chat actual Message thread pane, directly verified H102/H104; visible Close preserves parent in H103",
+        "External Chat settings is a verified working comparison, not an affected occurrence"
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:8412",
+        "src/components/shoot/ShootStagePage.tsx:8899",
+        "src/components/shoot/ShootStagePage.tsx:8276",
+        "src/components/navigation/AppShell.tsx:54",
+        "src/components/chat/ChatPage.tsx:688",
+        "src/components/chat/ChatOverlays.tsx:99"
+      ],
+      "evidence": [
+        "F023-schedule-item-editor",
+        "F056-schedule-picker-escape",
+        "H014-chat-search-no-results",
+        "H015-chat-search-escape",
+        "H102-chat-actual-thread-pane-1133",
+        "H103-chat-thread-close",
+        "H104-chat-thread-escape"
+      ],
+      "approvedReference": "No approved screenshot exists for this nested Escape state. The written DS interaction contract is explicit; earlier working Stage/Shot pickers provide supporting current examples rather than an independently approved screenshot.",
+      "reproSteps": [
+        "Open Planning > Schedule. Focus Founder interview and press Enter; the editor opens and Start time suggestions are visible.",
+        "Press Escape once. Observe both suggestions and the schedule editor close, with focus back on the timeline entry.",
+        "Do not edit or save a draft merely to demonstrate potential loss. Source confirms the missing Escape consumption.",
+        "Open Global Chat, activate Search messages, enter an unmatched query, and press Escape once. Observe both search and the drawer close, with focus on body.",
+        "Compare External Chat settings: Escape closes only that settings dialog and returns its opener. Do not submit or alter channel settings.",
+        "In Global Chat open the existing Launch Film conversation and its 2 replies. Press Escape once from Close thread: both thread and drawer close. Compare the visible Close thread control, which closes only the thread. Leave the reply composer empty."
+      ],
+      "verificationRemaining": "Dirty-draft loss was not tested. Staff direct evidence; other roles and TimeSelect consumers need focused checks after an approved change. Test child-first Escape, later parent Escape and opener focus. Visible Close controls exist; no complete keyboard trap or inaccessible-conversation claim.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Shoot is a directly observed violation of the explicit DS nested-picker contract. Global Chat is an observed related nested-boundary defect; the DS centred-form migration does not establish that this drawer must become EditingDialog.",
+      "supportingComparisonEvidence": [
+        "H050-chat-settings-1440",
+        "H051-chat-settings-child-escape-1440"
+      ],
+      "evidencePanel": "reviewers/b20-comparison.html"
+    },
+    {
+      "id": "B21",
+      "title": "Starting the first recut instruction requires a pointer",
+      "area": "Masters",
+      "family": "Recut markup and keyboard alternatives",
+      "category": "Accessibility / Task initiation",
+      "severity": "S2",
+      "impact": "A keyboard-only reviewer can seek the Masters timeline but has no exposed route to start the first recut instruction. Later numeric Start/End editors do not solve that initial dependency.",
+      "classification": "Source-supported risk",
+      "confidence": "High for exposed controls and initiation callbacks; no user task study",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/masters"
+      ],
+      "states": [
+        "Mark up for re-cut > 0 marks",
+        "Pointer-created draft range before choosing an instruction"
+      ],
+      "observed": "F064 shows 0 marks, instructions to click/drag the timeline and disabled Send to editor. F066 pointer activation reveals Start/End handles and Keep/Remove/Describe actions, while marks remain zero. Source creates draftRecutRange only through timeline pointer events; K/X/T shortcuts require an existing draft range. Numeric Start/End inputs are rendered only after a committed local mark exists. F067 Cancel exits without sending or committing marks. ArrowRight on a Start handle produced no visible change, but that alone does not prove an exact numeric range failure because displayed time is coarse.",
+      "expected": "Provide a keyboard route to initiate a timed instruction, with precise range editing available without first requiring a pointer. Preserve the efficient pointer workflow.",
+      "authority": [
+        "User audit requirement: keyboard task efficiency in video-production workflows",
+        "Current initial recut UI and source initiation/shortcut conditions; no approved pointer-only exception identified"
+      ],
+      "recommendation": "Add a keyboard-operable Add instruction action at the playhead that exposes start/end entry and the existing instruction choices. Keep pointer range selection, working transport shortcuts and later numerical range editing.",
+      "rationale": "This closes the first-step dependency without replacing the specialised video markup surface or pretending all existing markup controls are inaccessible.",
+      "alternatives": [
+        "Offer explicit keyboard Set start/Set end actions followed by the existing Keep/Remove/Describe choices."
+      ],
+      "tradeoffs": "Define default range and fine/coarse increments with the existing time model; do not invent a frame rate. Preserve draft cancellation, instruction-note requirements and the separate Send to editor action.",
+      "rootCause": "The workflow exposes keyboard editing/verbs only after pointer-only draft-range creation.",
+      "occurrences": [
+        "Masters ExpandedDeliverable recut initiation",
+        "MastersPlayer timeline selection",
+        "RecutMarkupPanel zero-mark state"
+      ],
+      "sources": [
+        "src/components/masters/MastersPage.tsx:1262",
+        "src/components/masters/MastersPage.tsx:2465",
+        "src/components/masters/MastersPage.tsx:2547",
+        "src/components/masters/MastersPage.tsx:3074"
+      ],
+      "evidence": [
+        "F064-masters-recut-entry",
+        "F066-recut-range-draft",
+        "F067-recut-cancel-result"
+      ],
+      "approvedReference": "No approved screenshot establishes a keyboard initiation alternative for recut markup. This is a task-accessibility recommendation based on the current initial controls and source.",
+      "reproSteps": [
+        "Open Main Video > Mark up for re-cut. Inspect the initial 0-marks controls and instruction to click/drag the timeline; no Add instruction or Set start/end action is exposed.",
+        "Source timeline pointer events create draftRecutRange; keyboard K/X/T only act after that range exists. Numeric range fields are later mark-edit controls.",
+        "For contrast, the permitted unsent pointer draft reveals Start/End handles and instruction actions. Cancel without choosing an instruction or sending."
+      ],
+      "verificationRemaining": "Later numerical range fields were source-inspected but not browser-inspected. No instruction/message was sent, no user failure claimed, and no blanket statement that all markup or Masters seeking is inaccessible. Verify a complete keyboard-only initiation path after any approved change.",
+      "reviewStatus": "Needs decision",
+      "classificationDetail": "Source-supported risk with observed initial UI"
+    },
+    {
+      "id": "B22",
+      "title": "Invoice submission does not identify its project",
+      "area": "My jobs",
+      "family": "Dialog context and financial scope",
+      "category": "Usability / Scope clarity",
+      "severity": "S3",
+      "impact": "A Filmmaker must remember which job opened the invoice form before attaching a PDF and confirming its amount. The current jobs share the Shooter role; no wrong invoice was submitted or observed.",
+      "classification": "Heuristic judgement",
+      "confidence": "High for missing project context; medium for practical error risk",
+      "roles": [
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "states": [
+        "Accepted job > Submit invoice"
+      ],
+      "observed": "F076 dialog is titled Submit invoice for Shooter and describes the accepted $2,280 offer, but does not name the Client or project. The current accepted jobs share the Shooter role. Their differing amounts and the originating row provide some context, but the modal covers the identifying project text. Source InvoiceUploadModal receives offer.projectId but renders only its role and agreed amount as context.",
+      "expected": "Before a consequential invoice submission, the form should make the specific job/engagement identifiable without relying on memory of the row.",
+      "authority": [
+        "User audit requirement: financial information, action scope and error prevention",
+        "Heuristic judgement; no approved requirement for an exact invoice header composition was found"
+      ],
+      "recommendation": "Add the Client/project identity to the existing dialog header or concise summary, keeping the role and accepted amount. Preserve the mismatch warning and separate PDF/submission requirements.",
+      "rationale": "This is a small context addition at the decision point, not a redesign of the financial workflow.",
+      "alternatives": [
+        "Use a short Project summary row beneath the generic Submit invoice heading so long project names can wrap without inflating the heading."
+      ],
+      "tradeoffs": "Do not label the Client as the payer: the Filmmaker submits to the Studio. Keep the role because commercial terms are role-specific, and retain the amount/currency comparison.",
+      "rootCause": "Invoice dialog context is derived only from the role and rate, while job identity remains in the covered list row.",
+      "occurrences": [
+        "InvoiceUploadModal opened from My jobs"
+      ],
+      "sources": [
+        "src/components/costs/CostsPrimitives.tsx:130",
+        "src/components/costs/CostsPrimitives.tsx:148",
+        "src/components/active-videos/FreelancerVideosPage.tsx:334"
+      ],
+      "evidence": [
+        "F072-freelancer-active-1440",
+        "F076-freelancer-invoice-draft"
+      ],
+      "approvedReference": "No approved reference screenshot specifies the invoice project context. This is a scoped clarity recommendation, not an approved-standard violation.",
+      "reproSteps": [
+        "In the populated Freelancer My jobs view, identify the accepted jobs and their shared Shooter role.",
+        "Open Submit invoice for the existing $2,280 job. Read the modal header and helper: role and accepted amount are present, Client/project identity is absent.",
+        "Cancel without selecting a PDF or submitting an invoice."
+      ],
+      "verificationRemaining": "No wrong-project selection or user error was observed. Review the preferred concise project context with Tom and check long project names at 1133px.",
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "extensionsToExistingFindings": [
+    {
+      "id": "B09",
+      "proposedExtension": "Read-only Brand Kit imagery/guidelines previews also fail Escape dismissal",
+      "evidence": [
+        "G008-brand-imagery-preview",
+        "G009-brand-guidelines-preview"
+      ],
+      "observed": "Reviewer A pressed Escape from visible Close in each preview; dialog count remained one. Clicking visible Close dismissed each preview. No full focus containment or background inertness test was performed.",
+      "sources": [
+        "src/components/brand-kits/BrandKitPages.tsx:2555",
+        "src/components/brand-kits/BrandKitPages.tsx:2586"
+      ],
+      "recommendation": "Apply a reliable Escape dismissal and opener-focus lifecycle to these existing read-only preview overlays. Keep their contextual preview layout. Do not require EditingDialog solely because they declare aria-modal.",
+      "classification": "Observed defect",
+      "confidence": "High",
+      "reviewStatus": "Needs decision",
+      "reconciliation": "Related overlay contract occurrence for lead reconciliation. B09 initial-focus failure remains proved for flow only; do not generalise that claim to these previews."
+    },
+    {
+      "id": "B07",
+      "recommendation": "Replace source-dead Masters RequestDialog tabs occurrence with live Invoice PDF files occurrence. Keep one finding, not a new total.",
+      "observation": "H058 ArrowRight on first PDF tab leaves first selected/focused. H059 Enter on second named tab switches title/content successfully. Source ordinary button role=tab markup has no panel relationship or arrow handler.",
+      "severity": "S3",
+      "classification": "Observed defect",
+      "sources": [
+        "src/components/costs/CostsPrimitives.tsx:219"
+      ],
+      "evidence": [
+        "H058-invoice-pdf-arrow",
+        "H059-invoice-multiple-pdf-second"
+      ],
+      "qualification": "Files remain reachable via ordinary Tab/Enter; no inability to view attachment claim."
+    }
+  ],
+  "verifiedStrengths": [
+    {
+      "id": "BC-S01",
+      "title": "Shoot question editing has a clear local draft boundary",
+      "evidence": [
+        "F011-interview-editor-validation",
+        "F012-visual-references-empty"
+      ],
+      "observed": "Opening Edit question focuses Question. A blank local Question draft disables Save question. Escape cancels and returns focus to its Edit question opener.",
+      "whyKeep": "This supports focused editing and recovery without saving a partial draft or forcing the user to rediscover the row.",
+      "limit": "One current question editor at 1133px, no claim all editors match it.",
+      "referenceStatus": "Verified current supporting example; not an independent approved DS screenshot."
+    },
+    {
+      "id": "BC-S02",
+      "title": "On Set selection states its scope before consequential actions",
+      "evidence": [
+        "F031-onset-progress-selection"
+      ],
+      "observed": "Space activates named Select shot 3.1. Footer states 1 selected beside Move to day and Mark as not required. No command executed.",
+      "whyKeep": "Selection remains distinct from applying a scheduling/status action, and the footer communicates the current selection scope.",
+      "limit": "One local selection; mixed/multiple outcomes not submitted."
+    },
+    {
+      "id": "BC-S03",
+      "title": "Masters nested action honours its own keyboard intent",
+      "evidence": [
+        "F045-masters-comments"
+      ],
+      "observed": "Space on Open comments opens the correct comments panel without toggling the containing delivery row.",
+      "whyKeep": "This is a working current example of the guarded container behaviour recommended in B02. Preserve named nested controls and the parent target guard.",
+      "limit": "One comments action; does not certify every nested command."
+    },
+    {
+      "id": "BC-S04",
+      "title": "Download selection has an explicit zero boundary",
+      "evidence": [
+        "F046-masters-download-zero"
+      ],
+      "observed": "Scoped dialog names Prototype download sample, Clear all yields 0 of 2 selected, and Download selected 0 is disabled.",
+      "whyKeep": "It separates selecting assets from executing a scoped download and makes an empty selection understandable.",
+      "limit": "No download executed; real sample/video file outcome remains unverified."
+    },
+    {
+      "id": "BC-S05",
+      "title": "Client feedback navigation stays focused on collaboration",
+      "evidence": [
+        "F050-review-client-1133",
+        "F051-review-client-feedback"
+      ],
+      "observed": "Customer view exposes external feedback and a working keyboard Next visible comment action, without the filmmaker upload/replace/delete or Team-filter controls in the inspected view.",
+      "whyKeep": "The role-specific composition removes operational commands from the collaboration task while retaining navigation through existing feedback.",
+      "limit": "Legacy shared VideoReviewScreen, one current role fixture; not an authorisation/security guarantee."
+    },
+    {
+      "id": "BC-S06",
+      "title": "Caption edits give explicit save feedback",
+      "evidence": [
+        "F063-masters-caption-editor",
+        "F067-recut-cancel-result"
+      ],
+      "observed": "After one permitted sample caption edit lost focus, the UI announced Captions saved and re-attached.",
+      "whyKeep": "Inline caption correction can remain efficient; visible post-save feedback supports that distinct persistence boundary without adding a universal modal Save step.",
+      "limit": "Only one sample cue; not proof of every autosave, file reattachment or production integration."
+    },
+    {
+      "id": "BC-S07",
+      "title": "Freelancer draft guards explain consequential submission",
+      "evidence": [
+        "F075-freelancer-time-invalid",
+        "F076-freelancer-invoice-draft"
+      ],
+      "observed": "Zero Hours disables Save time. Changing invoice amount exposes a warning that the Studio will see the mismatch, and no PDFs keeps Submit invoice disabled.",
+      "whyKeep": "Draft editing remains separate from saving hours, submitting an invoice and recording a payment. These are useful context-specific safeguards.",
+      "limit": "Local drafts only; no submission, approval or payment outcome tested."
+    },
+    {
+      "workflowIds": [
+        "N092"
+      ],
+      "evidence": [
+        "H001-team-remove-role-confirm",
+        "H002-team-remove-cancel-draft",
+        "H003-team-draft-discarded"
+      ],
+      "observation": "Team nested Remove role Cancel preserves dirty draft and existing invitations, restores Remove role focus; parent Cancel/reopen discards draft and restores original hours. Preserve these separate boundaries."
+    },
+    {
+      "workflowIds": [
+        "N092"
+      ],
+      "evidence": [
+        "H004-team-zero-rate",
+        "H005-team-invite-empty-message",
+        "H006-team-invite-cancel-selection"
+      ],
+      "observation": "Zero project rate disables Invite and Assign now; empty invite message disables Send invite. Invite Cancel retains selection and returns Invite focus. Selection, invitation and direct assignment remain distinct."
+    },
+    {
+      "workflowIds": [
+        "N138"
+      ],
+      "evidence": [
+        "H007-flow-hide-confirm",
+        "H008-flow-keep-visible",
+        "H039-flow-hide-confirm-1133"
+      ],
+      "observation": "Hide stage requires confirmation explaining preserved work; Keep visible cancels without changing flow and returns Hide Script focus. Verified at both desktop widths without hiding/reordering/resetting."
+    },
+    {
+      "workflowIds": [
+        "N084",
+        "N085",
+        "N087"
+      ],
+      "evidence": [
+        "H010-history-keyboard",
+        "H011-history-escape",
+        "H012-account-escape",
+        "H013-updates-escape",
+        "H041-history-keyboard-sequence"
+      ],
+      "observation": "History Home/ArrowDown/End change active descendant; Escape restores opener. Account and Updates Escape also close their local surfaces and restore openers."
+    },
+    {
+      "workflowIds": [
+        "N090"
+      ],
+      "evidence": [
+        "H033-videos-no-results-1133",
+        "H034-videos-clear-recovery"
+      ],
+      "observation": "Combined Client filter and unmatched project search offer Clear controls; it restores all 15 Videos."
+    },
+    {
+      "workflowIds": [
+        "N096",
+        "N098"
+      ],
+      "evidence": [
+        "H021-person-inline-cancel",
+        "H022-person-archive-confirm",
+        "H023-person-delete-guard",
+        "H025-client-start-project",
+        "H026-client-archive-confirm"
+      ],
+      "observation": "Profile inline Cancel restores original value. Archive/record-delete safeguards explain history and scope. Deletion requires exact typed identity; Start project requires a project name. No destructive or create action invoked."
+    },
+    {
+      "workflowIds": [
+        "N088",
+        "N139"
+      ],
+      "evidence": [
+        "H028-chat-settings-1133",
+        "H029-chat-settings-escape",
+        "H030-chat-internal-1133"
+      ],
+      "observation": "External settings explain which content stays inside Brisk and retain connection states. Nested settings Escape returns focus while keeping Chat open. Internal channel has clear Studio-only label and its own composer. No sends or setting changes."
+    },
+    {
+      "workflowIds": [
+        "N130"
+      ],
+      "evidence": [
+        "H042-notifications-unread",
+        "H043-notifications-mentions",
+        "H044-notification-reminder-preview",
+        "H045-notification-preview-1133"
+      ],
+      "observation": "Inbox offers all/unread/category views and a read-only, Client-safe reminder preview with recipient, schedule and subject. No send, retry or manual mark-read used."
+    },
+    {
+      "workflowIds": [
+        "N140"
+      ],
+      "evidence": [
+        "H046-add-client-empty-1133",
+        "H047-add-client-cancel-reset",
+        "H048-clients-no-results-1133"
+      ],
+      "observation": "Add Client required name disables creation when blank, and Cancel/reopen clears unsaved draft. Unmatched directory search has a distinct empty result state."
+    },
+    {
+      "workflowIds": [
+        "N097"
+      ],
+      "evidence": [
+        "H083-invite-freelancer-all-projects-1133",
+        "H085-invite-freelancer-none-projects-1133",
+        "H090-invite-client-zero-projects-1133",
+        "H094-invite-client-draft-discarded"
+      ],
+      "observation": "Role-specific access guards preserve the task distinction: Freelancer needs project access; Client can join a company with no projects yet. Back/Cancel/reopen discarded the unsaved Client access draft."
+    },
+    {
+      "workflowIds": [
+        "N090"
+      ],
+      "evidence": [
+        "H069-videos-columns",
+        "H097-videos-columns-1133"
+      ],
+      "observation": "Columns explicitly says changes apply immediately and distinguishes locked Project/Actions from optional fields. Done closes a preference panel with understandable save boundaries."
+    },
+    {
+      "workflowIds": [
+        "N091"
+      ],
+      "evidence": [
+        "H073-project-copy-link-panel",
+        "H098-project-copy-link-panel-1133"
+      ],
+      "observation": "Whole-project link scope and current View only access are adjacent to Copy project link, with readable surrounding context at both desktop widths."
+    },
+    {
+      "workflowIds": [
+        "N139"
+      ],
+      "evidence": [
+        "H101-chat-actual-thread-pane",
+        "H103-chat-thread-close"
+      ],
+      "observation": "Actual thread preserves parent context, existing replies and empty composer with disabled Send. Visible Close retains the surrounding project conversation."
+    }
+  ],
+  "verificationRemaining": "See reviewers/b-completion-coverage.json for B-owned finite closures and remaining UI states. Destructive/send/pay outcomes were not invoked. No formal accessibility or user-research claim. To Do completion/planning alternatives, actual media playback and later recut numeric editing remain qualified source-supported checks as described in individual findings.",
+  "sourceOnlyCandidates": [
+    {
+      "id": "BC-R01",
+      "title": "To Do planning and completion appear to require dragging",
+      "classification": "Source-supported risk",
+      "relatedPreviousExclusion": "B04 was excluded only because original fixture was empty; this pass may now obtain populated evidence. B08 persistence bug remains excluded.",
+      "sources": [
+        "src/components/today/TodayPage.tsx:335",
+        "src/components/today/TodayPage.tsx:535",
+        "src/components/today/TodayPage.tsx:698"
+      ],
+      "verificationNeeded": "Populated rail and keyboard reachable controls; inspect whether a user can plan a project/day or mark Done without drag. Do not claim failure from source alone."
+    },
+    {
+      "id": "BC-R02",
+      "title": "Shoot focus view declares modal semantics without an obvious focus lifecycle",
+      "classification": "Source-supported risk",
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:2090",
+        "src/components/shoot/ShootStagePage.tsx:4366",
+        "src/components/shoot/ShootStagePage.tsx:5282"
+      ],
+      "verificationNeeded": "Active focus, one boundary Tab and Escape in focused On Set section. Source does have Escape exit; no missing-Escape claim."
+    },
+    {
+      "id": "BC-R03",
+      "title": "Progress cannot reveal a shot inside a collapsed unscheduled group",
+      "classification": "Source-supported risk; parent has observed progress closes without visible detail",
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:5142",
+        "src/components/shoot/ShootStagePage.tsx:5417"
+      ],
+      "expectedPurpose": "Reveal and scroll the existing row, not open a modal.",
+      "verificationNeeded": "After selecting Team collaboration coverage3.1 in progress, inspect the corresponding Unscheduled coverage group. If it remains collapsed and the row appears only after manual expansion, the missing expansion is confirmed. No state/status mutation required."
+    }
+  ],
+  "evidenceLedger": [
+    {
+      "evidence": [
+        "F001-todo-populated-1440",
+        "F004-todo-populated-1133",
+        "F005-todo-collapsed-1133"
+      ],
+      "workflow": "N094",
+      "observed": "Existing populated week for Sarah at both desktop widths and collapsed navigation, in isolated studio-owner-active scenario.",
+      "limits": "Viewing another person is present; not proof of read-only permission boundary. No entries changed."
+    },
+    {
+      "evidence": [
+        "F002-todo-entry-editor",
+        "F003-todo-invalid-hours"
+      ],
+      "workflow": "N094",
+      "observed": "Enter on existing block opens Log time with focus remaining card. Stage picker Escape works. Local Hours 0 is natively invalid while Save remains enabled. Outer Escape does not close; Cancel Enter closes and focus becomes body.",
+      "limits": "No Save/Delete; no stored-value claim. Focus facts come from lead action log/message, not screenshot alone."
+    },
+    {
+      "evidence": [
+        "F008-shot-type-picker",
+        "F009-shot-list-1133",
+        "F011-interview-editor-validation",
+        "F012-visual-references-empty",
+        "F015-location-editor",
+        "F016-shoot-people-1133"
+      ],
+      "workflow": "N113",
+      "observed": "Shot selector Escape closes and returns trigger focus. Interview question editor focuses Question; clearing the local draft disables Save question; Escape cancels and returns focus to Edit question 1. Existing location editor Escape closes without saving.",
+      "limits": "Facts from explicit lead action log. No claim every modal/picker or all Tab boundaries were exercised."
+    },
+    {
+      "evidence": [
+        "F023-schedule-item-editor"
+      ],
+      "workflow": "N114",
+      "observed": "Enter opens an existing schedule item editor. Start time combobox has no name in the saved accessibility snapshot; no Save or Unschedule invoked.",
+      "limits": "Other time fields have different consumer markup and must not be automatically included."
+    },
+    {
+      "evidence": [
+        "F027-onset-focus-schedule",
+        "F028-onset-focus-exit"
+      ],
+      "workflow": "N115",
+      "observed": "Focused Schedule opens with body active. Shift+Tab reaches progress count inside the focused region; Tab reaches Exit focus; Escape exits and body is active.",
+      "limits": "No trap escape was demonstrated. This does not prove a complete focus containment assessment."
+    },
+    {
+      "evidence": [
+        "F030-onset-progress",
+        "F031-onset-progress-selection"
+      ],
+      "workflow": "N115",
+      "observed": "Named Select shot 3.1 works with Space; footer states 1 selected and exposes scoped consequential commands without executing them.",
+      "limits": "Progress-row navigation target is under source investigation; not a missing-dialog claim."
+    },
+    {
+      "evidence": [
+        "F033-edit-readiness-confirm",
+        "F034-edit-ready-empty"
+      ],
+      "workflow": "N116",
+      "observed": "Canonical Edit readiness confirmation discloses outstanding work approval; after permitted sample progression its first-version state remains empty.",
+      "limits": "Canonical populated video/version interaction is not proved from readiness progression alone."
+    },
+    {
+      "evidence": [
+        "F035-review-populated-1440",
+        "F036-review-compare",
+        "F037-review-comment-menu",
+        "F038-review-team-filter",
+        "F039-review-drawing-tools",
+        "F040-review-1133-overall"
+      ],
+      "workflow": "N116 shared VideoReviewScreen",
+      "observed": "Legacy /review demonstration supplies populated V2, explicit V1/V2 comparison and Exit, comment actions, Team filter, disabled empty Send and drawing/overall-feedback states at both widths.",
+      "limits": "Shared-component evidence in legacy /review; do not imply a populated canonical Edit consumer was verified. Comment-menu Escape was attempted, not logged as a confirmed outcome."
+    },
+    {
+      "evidence": [
+        "F045-masters-comments",
+        "F046-masters-download-zero",
+        "F047-masters-delete-confirm"
+      ],
+      "workflow": "N117",
+      "observed": "Nested Open comments with Space opens the correct panel without row toggle. Clear all in scoped Download dialog shows 0 of 2 and disabled Download selected 0. Delete asset confirmation opened only.",
+      "limits": "No comment/download/delete submitted. Masters sample is a built-in prototype file, not evidence real video playback/export works."
+    },
+    {
+      "evidence": [
+        "F049-masters-client-1133",
+        "F050-review-client-1133",
+        "F051-review-client-feedback",
+        "F052-review-playback-options"
+      ],
+      "workflow": "N116/N117 role-specific shared UI",
+      "observed": "Customer review at both widths exposes external feedback and comment navigation; Space on Next visible comment navigates feedback. Playback speed 1x cycles immediately to 1.5x and shows the updated value.",
+      "limits": "F050/F051 remain legacy shared-component evidence, not canonical populated review. Direct speed cycling is not evidence a menu is missing. No send or video/file mutation."
+    },
+    {
+      "evidence": [
+        "F053-canonical-edit-upload",
+        "F054-canonical-edit-two-versions"
+      ],
+      "workflow": "N116",
+      "observed": "Canonical Edit now has actual isolated audit-only versions at both desktop widths. Single-version Delete is disabled; two-version Delete is enabled but not activated. Main slider DOM has no keyboard focus/value contract.",
+      "limits": "MOV decoder ready state 0 means actual video playback/seek outcome remains unverified. Tool failure to focus is not a processed ArrowRight event. No transcript panel is present in current Edit; do not require an absent feature."
+    },
+    {
+      "evidence": [
+        "F056-schedule-picker-escape"
+      ],
+      "workflow": "N114",
+      "observed": "One Escape from visible Start time suggestions closed both child list and parent editing dialog; dialog/list counts 0/0, focus returned to scheduled entry.",
+      "limits": "No edit/save; no unsaved draft loss observed. Geometry measurements are owned by reviewer A."
+    },
+    {
+      "evidence": [
+        "F063-masters-caption-editor",
+        "F067-recut-cancel-result"
+      ],
+      "workflow": "N117",
+      "observed": "Caption Space opens the correct inspector. An authorised isolated sample caption edit on blur shows Captions saved and re-attached feedback.",
+      "limits": "This is an intentional inline save boundary with post-save feedback; do not force a modal Save button solely for uniformity. Only one sample cue was edited."
+    },
+    {
+      "evidence": [
+        "F064-masters-recut-entry",
+        "F065-recut-source-picker",
+        "F066-recut-range-draft",
+        "F067-recut-cancel-result"
+      ],
+      "workflow": "N117",
+      "observed": "Live recut zero-mark state, source chooser, pointer-created unsent range and Cancel back to delivery inspected. No instruction chosen or sent.",
+      "limits": "Initial keyboard route is source-supported finding B21; later numeric mark editors not browser-inspected. Old RequestDialog tabs are unused code, distinct from this live flow."
+    },
+    {
+      "evidence": [
+        "F068-masters-comments-1133",
+        "F069-masters-composer-reachable"
+      ],
+      "workflow": "N117",
+      "observed": "Actual Main Video comment rail inspected at 1133. At 1440 Tab from Draw moved to the next composer control and browser scrolled it above the global footer.",
+      "limits": "No comment sent. A screenshot crop alone should not be labelled a permanently unreachable composer."
+    },
+    {
+      "evidence": [
+        "F072-freelancer-active-1440",
+        "F073-freelancer-active-1133",
+        "F074-freelancer-commercial-pan",
+        "F075-freelancer-time-invalid",
+        "F076-freelancer-invoice-draft"
+      ],
+      "workflow": "N132",
+      "observed": "Existing Freelancer scenario exposes accepted jobs and terms at both widths, with sticky project identity after horizontal pan. Log hours has Date/assigned Stage/Hours/Note; zero disables Save time. Invoice local amount mismatch shows a warning while absent PDFs keep Submit disabled.",
+      "limits": "No time save, invoice submission or payment. Visible guard checks do not certify every commercial or payment outcome."
+    },
+    {
+      "id": "B-H-pass",
+      "evidence": "data/b-completion-captures.json and data/b-completion-actions.json",
+      "scope": "H001-H051 genuine current screenshots and DOM at own disposable origin, explicit route/role/scenario/viewport/outcome; Feedly toolkit DOM node is extension UI, not Brisk.",
+      "limitations": "Default seed only, Studio Staff only; targeted widths and representative keyboard paths, not every consumer or data combination."
+    },
+    {
+      "id": "B-H-addendum",
+      "evidence": "reviewers/b-closure-addendum.json",
+      "scope": "H052-H063 current three-role account menus/outside dismissal and existing multiple-PDF invoice preview; settled restricted-role Expenses redirects; all roles restored.",
+      "limits": "No actual invoice approval/forward/send-back/payment; prior E093-E101 supply existing safe dialog states. No new standalone finding."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "BC-D01",
+      "title": "Give focused Shoot view the semantics that match its intended pattern",
+      "evidence": [
+        "F027-onset-focus-schedule",
+        "F028-onset-focus-exit"
+      ],
+      "observed": "The section declares aria-modal, opens/returns with body focus, has reachable internal controls and working Escape.",
+      "recommendation": "Decide whether this is a focused page region or a modal. For a region, use a meaningful focus landing/return without modal semantics; for a modal, define its intended focus lifecycle. Do not claim a failed trap from the checks performed.",
+      "classification": "Heuristic refinement supported by observed behaviour",
+      "relatedFinding": "B09",
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "validation": {
+    "findings": 9,
+    "errors": [],
+    "method": "Mandatory schema, current evidence and source paths checked. All findings Needs decision. Independent B desktop browser checks on verified disposable origin only; audit files only, no application edits/tests/build/dependencies/commits/push."
+  },
+  "rejectedOrQualifiedCandidates": [
+    {
+      "id": "BC-Q01",
+      "title": "Playback speed is a direct cycle, not a missing menu",
+      "evidence": [
+        "F052-review-playback-options"
+      ],
+      "reason": "The click changes 1x to 1.5x immediately. No approved requirement for a selector menu was found; no redesign recommended from unfamiliar behaviour alone.",
+      "remaining": "If discoverability is questioned later, compare the intended speed choices and usage with Tom/user research; no research result is claimed."
+    }
+  ],
+  "metadataCorrections": [
+    {
+      "captureIds": [
+        "F048-masters-client",
+        "F049-masters-client-1133",
+        "F050-review-client-1133",
+        "F051-review-client-feedback"
+      ],
+      "status": "Reconciled by lead/C",
+      "role": "Customer",
+      "reason": "Earlier stale Staff metadata corrected; current action/capture records now agree with Jess/Client navigation."
+    }
+  ],
+  "closureAddendum": "reviewers/b-closure-addendum.json",
+  "finalClosure": "reviewers/b-final-closure.json"
+}

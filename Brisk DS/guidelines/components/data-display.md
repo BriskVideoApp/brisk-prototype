@@ -1,5 +1,11 @@
 # Brisk DS — Data Display Components
 
+## React scope and later approvals
+
+The `d-` entries below describe Figma instances. They do not establish React Card, Table, Badge, Avatar or other exports. Reuse existing approved app compositions and actual DS controls, following the [desktop baseline](../../../Docs/desktop-design-baseline.md); ask before creating a missing primitive. Do not replace native tables or specialised rows with an invented DS import.
+
+Tom confirmed the existing tinted Brand Kit Fonts, Voice and Guidelines cards and compact pink pulsing unread badges on 29 October 2026. Those scoped approvals supersede the generic white-card rule and earlier badge audit questions within their scope. They do not approve tinting every card or applying badge typography/animation to other controls. Preserve contextual hairlines, swatches and artwork rather than enclosing every inner block in a bordered Card.
+
 ---
 
 ## d-Table · d-Table menu
@@ -30,7 +36,7 @@ Use for labels, categories, statuses, and counts. Radius: `radius/xs`.
 
 ### Scoped app unread-count approval
 
-Tom approved Chat and Updates sharing the compact `CommentCountBadge` presentation on 20 October 2026, replacing the separate large Updates badge. This is an app-level adapter, not confirmation of a new Figma Tag-Badge variant or approval of every badge consumer. Preserve independent counts, access scoping, accessible labels, zero hiding and display caps. Exact token use, readability and animation remain audit subjects. See the [desktop baseline](../../../Docs/desktop-design-baseline.md).
+Tom approved Chat and Updates sharing the compact `CommentCountBadge` presentation on 20 October 2026, replacing the separate large Updates badge, and confirmed keeping the existing pink appearance and pulse on 29 October. This is an app-level adapter, not confirmation of a new Figma Tag-Badge variant or formal accessibility sign-off. Preserve independent counts, access scoping, accessible labels, zero hiding and display caps. See the [desktop baseline](../../../Docs/desktop-design-baseline.md#global-unread-counts); the original A03 recommendation is historical, not authority to restyle it.
 
 ---
 

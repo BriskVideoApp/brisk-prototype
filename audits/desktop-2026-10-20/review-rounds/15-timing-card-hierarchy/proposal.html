@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8">
+<title>Timing card - proposed hierarchy</title>
+<link rel="stylesheet" href="../../../../styles/brisk-tokens.css">
+<style>
+@font-face{font-family:Brisk;src:url(plus-jakarta-sans.woff2) format('woff2');font-style:normal;font-weight:400 700;font-display:swap}
+*{box-sizing:border-box}body{margin:var(--brisk-space-none);font-family:Brisk,Arial,sans-serif;background:var(--brisk-page-primary);color:var(--brisk-text-primary)}
+main{padding:var(--brisk-space-2xl);max-width:calc(var(--brisk-space-3xl)*22)}
+.review-note{font-size:12px;line-height:16px;color:var(--brisk-text-secondary);margin:var(--brisk-space-none) var(--brisk-space-none) var(--brisk-space-xl)}
+.canvas{display:block;width:max-content;background:var(--brisk-page-primary);padding:var(--brisk-space-m)}
+.card{width:calc(var(--brisk-space-3xl)*16);background:color-mix(in srgb,var(--brisk-system-warning) 12%,var(--brisk-white));border:1px solid var(--brisk-border-primary);border-radius:var(--brisk-radius-m);overflow:hidden}
+.content{padding:var(--brisk-space-l);display:grid;gap:var(--brisk-space-m)}
+.title-row{display:flex;gap:var(--brisk-space-s);align-items:center;justify-content:space-between}.title{font-size:14px;line-height:20px;font-weight:600}
+.audience{font-size:12px;line-height:16px;color:var(--brisk-purple-70);background:var(--brisk-purple-10);padding:var(--brisk-space-xs) var(--brisk-space-s);border-radius:var(--brisk-radius-full)}
+.dates{margin:var(--brisk-space-none);display:grid;grid-template-columns:1fr 1fr;gap:var(--brisk-space-xl)}.dates dt{font-size:12px;line-height:16px;color:var(--brisk-text-secondary)}.dates dd{font-size:16px;line-height:24px;font-weight:600;margin:var(--brisk-space-xs) var(--brisk-space-none) var(--brisk-space-none)}
+.reason{font-size:14px;line-height:20px;color:var(--brisk-text-secondary);margin:var(--brisk-space-none)}
+.time{font-size:12px;line-height:16px;color:var(--brisk-text-tertiary);margin-top:calc(var(--brisk-space-s)*-1)}
+.action{min-height:calc(var(--brisk-space-3xl) + var(--brisk-space-s));border-top:1px solid var(--brisk-border-secondary);display:flex;align-items:center;justify-content:space-between;padding:var(--brisk-space-none) var(--brisk-space-l);color:var(--brisk-brand-primary-click);font-size:14px;line-height:20px;font-weight:600;text-decoration:none}.action:hover{background:var(--brisk-brand-secondary)}.action:focus-visible{outline:var(--brisk-space-xxs) solid var(--brisk-border-focus);outline-offset:calc(var(--brisk-space-xxs)*-1)}
+.action-icon{width:var(--brisk-space-l);height:var(--brisk-space-l);background:currentColor;mask:url('../../../../public/brisk-icons/caret-right.svg') center/contain no-repeat}
+.review-example{margin-top:var(--brisk-space-2xl);padding:var(--brisk-space-l);background:var(--brisk-white);border:1px solid var(--brisk-border-primary);font-size:14px;line-height:20px;max-width:calc(var(--brisk-space-3xl)*16)}h1{font-size:20px;line-height:28px;margin:var(--brisk-space-none) var(--brisk-space-none) var(--brisk-space-m)}
+</style>
+<main>
+<p class="review-note">Design proposal only. Original dates and audience retained. No app records changed.</p>
+<div class="canvas"><article class="card" aria-label="Proposed timing update">
+<div class="content">
+<div class="title-row"><strong class="title">Delivery date needs review</strong><span class="audience">Internal</span></div>
+<dl class="dates"><div><dt>Requested delivery</dt><dd>Sat 29 Aug</dd></div><div><dt>Suggested delivery</dt><dd>Wed 2 Sept</dd></div></dl>
+<p class="reason">Shoot and footage handover are still outstanding. Allow time for Edit and Masters before confirming delivery.</p>
+<time class="time">77 days ago</time>
+</div>
+<a class="action" href="#review-example">Review date<span class="action-icon" aria-hidden="true"></span></a>
+</article></div>
+<section class="review-example" id="review-example"><h1>Review date</h1><p>This proposal keeps the existing Review date action. In the app, it opens Review delivery date; the agreed date changes only after the Client agrees.</p><p>This local example is read-only. Nothing is saved or shared.</p></section>
+</main>
+</html>

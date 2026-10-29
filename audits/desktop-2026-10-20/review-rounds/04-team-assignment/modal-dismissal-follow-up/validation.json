@@ -1,0 +1,95 @@
+{
+  "date": "28 October 2026",
+  "status": "Fixed; reproduced before and desktop-verified after",
+  "cause": "Videos drawer global pointerdown and keydown handlers acted on events inside native dialogs mounted through a portal. Internal heading/label/blank-area clicks closed the drawer and unmounted its Team modal. Number-field ArrowDown selected the next background project and also unmounted the modal.",
+  "beforeReproduction": [
+    {
+      "steps": [
+        "Open LOOM project details > Team > Assign Shooter",
+        "Change Required hours from 8 to 10",
+        "Click the Assign team member heading"
+      ],
+      "observed": "Both the assignment dialog and underlying project drawer disappear."
+    },
+    {
+      "steps": [
+        "Reopen the LOOM Team assignment dialog",
+        "Press ArrowDown in Required hours"
+      ],
+      "observed": "Assignment dialog disappears and background drawer switches to Customer Story - APAC Hiring."
+    }
+  ],
+  "fix": "Ignore Videos drawer dismissal/navigation handlers while a native dialog is open. Native dialog controls retain ownership of their own dismissal and keyboard behaviour. No DS changes.",
+  "sourceFiles": [
+    "src/components/active-videos/ActiveVideosPage.tsx"
+  ],
+  "sourceHashes": {
+    "src/components/active-videos/ActiveVideosPage.tsx": "a8f55b55c239f0adec27bf4dda5ea0a2f72cdc206530210d28dc7d67a6a894cf"
+  },
+  "checks": [
+    "At 1440 and 1133, changing hours then clicking the heading, labels or other non-control content keeps the dialog and correct background project open",
+    "Role options disclosure opens without dismissing its parent",
+    "Hours ArrowUp changes 10 to 10.25 and calculated rate to $1,601.56; ArrowDown returns to 10, without changing the project",
+    "Project-rate ArrowUp changes only the draft rate, from $1,400 to $1,401",
+    "Tab arrow navigation stays within the dialog",
+    "Nested invitation confirmation heading clicks leave both dialogs open; cancelling leaves outer draft intact",
+    "Cancel closes the editor, preserves the project drawer and restores focus to Assign Shooter",
+    "A genuine outside click closes the drawer normally when no dialog is open",
+    "Direct Videos entry remains open after internal heading click and number-field ArrowDown; Escape closes it normally"
+  ],
+  "notPerformed": [
+    "No final assignment, invitation send, withdrawal, removal or Save hours action",
+    "Native backdrop dismissal policy left unchanged; its separate outside-boundary pointer path was source reviewed rather than directly exercised",
+    "No tests, build, dependency install, commit or push"
+  ],
+  "dataPreservation": {
+    "workingOriginsUntouched": [
+      "http://127.0.0.1:8773",
+      "http://127.0.0.1:8777"
+    ],
+    "isolatedOrigin": "http://127.0.0.1:8778",
+    "assignmentAndCommercialRecordsUnchangedThroughout": true,
+    "allProtectedSnapshotsUnchangedAfterStartupSettled": true,
+    "initialisationNote": "Existing mock media preparation advanced automatically and onboarding.reviewDraft populated during initial startup. Exact changes are retained in setup-record-differences.json; they were not caused by assignment actions. Business state excluding that onboarding draft, offers and Studio settings were unchanged throughout."
+  },
+  "typeCheck": {
+    "command": "npx tsc --noEmit",
+    "exitCode": 0
+  },
+  "diffCheck": {
+    "command": "git diff --check",
+    "exitCode": 0
+  },
+  "freshAppConsoleErrorsOrWarnings": [],
+  "crop": {
+    "source": "fixed-internal-click-1133.png",
+    "box": [
+      165,
+      144,
+      973,
+      860
+    ],
+    "file": "fixed-modal-crop.png",
+    "classification": "Pixel crop of a genuine current-application screenshot after the fix. Full source retained."
+  },
+  "screenshots": [
+    {
+      "file": "fixed-internal-click-1133.png",
+      "sha256": "e2154b35226b78de94b77db8f301d6a8a62c6a7345a1861c5c61dc2e77b068a2"
+    },
+    {
+      "file": "fixed-internal-click-1440.png",
+      "sha256": "1c33e8b19e86d91329824668ffdc50031bee40dc4767598025f5dbe99ebc0e5e"
+    },
+    {
+      "file": "fixed-modal-crop.png",
+      "sha256": "ee0a106a55db79627ce09d6c3e6ef31a2b0932483ed826e73a21304e804b94be"
+    }
+  ],
+  "httpCheck": {
+    "route": "http://127.0.0.1:3000/active-videos",
+    "status": 200
+  },
+  "otherApprovedSourceSignatureMismatches": [],
+  "retainedFixedDemo": "http://127.0.0.1:8778/active-videos?project=loom-launch-film&section=team"
+}

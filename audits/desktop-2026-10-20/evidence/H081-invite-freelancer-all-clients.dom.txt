@@ -1,0 +1,495 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "People header":
+    - heading "People" [level=1]
+    - generic: Search people
+    - searchbox "Search people"
+  - group "People views":
+    - button "All 32":
+      - text: All
+      - generic: "32"
+    - button "Studio Staff 10":
+      - text: Studio Staff
+      - generic: "10"
+    - button "Studio Freelancers 7" [pressed]:
+      - text: Studio Freelancers
+      - generic: "7"
+    - button "Client contacts 15":
+      - text: Client contacts
+      - generic: "15"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Invite Studio Freelancer":
+    - generic: Invite Studio Freelancer
+  - region "People directory controls":
+    - generic: Sort by
+    - combobox "Sort people":
+      - generic: Latest activity
+    - generic: 7 people
+  - region "People directory":
+    - table:
+      - rowgroup:
+        - row "Person Type Role Current work Capacity Access Latest activity View person details":
+          - columnheader "Person"
+          - columnheader "Type"
+          - columnheader "Role"
+          - columnheader "Current work"
+          - columnheader "Capacity"
+          - columnheader "Access"
+          - columnheader "Latest activity"
+          - columnheader "View person details":
+            - generic: View person details
+      - rowgroup:
+        - row "Jordan Lee avatar Jordan Lee jordan@leevisuals.com Open Jordan Lee's overview Sydney, NSW Shooter, Director of Photography Cinematography - Lighting Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +1 more active projects for Jordan Lee - view all 3 View Jordan Lee's workload - Available, 3 current projects Accepted They have joined Brisk. Accepted the Deel shoot offer 19h ago Open Jordan Lee's full profile":
+          - cell "Jordan Lee avatar Jordan Lee jordan@leevisuals.com":
+            - link "Jordan Lee avatar Jordan Lee jordan@leevisuals.com":
+              - /url: /people/jl
+              - generic "Jordan Lee avatar": JL
+              - strong: Jordan Lee
+              - generic: jordan@leevisuals.com
+          - cell "Open Jordan Lee's overview Sydney, NSW":
+            - link "Open Jordan Lee's overview":
+              - /url: /people/jl
+              - generic: Studio Freelancer
+            - link "Sydney, NSW":
+              - /url: /people/jl
+          - cell "Shooter, Director of Photography Cinematography - Lighting":
+            - link "Shooter, Director of Photography Cinematography - Lighting":
+              - /url: /people/jl
+              - strong: Shooter, Director of Photography
+              - generic: Cinematography - Lighting
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +1 more active projects for Jordan Lee - view all 3":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "+1 more active projects for Jordan Lee - view all 3":
+              - /url: /people/jl?section=Work
+              - text: +1 more
+          - cell "View Jordan Lee's workload - Available, 3 current projects":
+            - button "View Jordan Lee's workload - Available, 3 current projects":
+              - strong: Available
+              - generic: 3 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/jl?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Accepted the Deel shoot offer 19h ago":
+            - link "Accepted the Deel shoot offer 19h ago":
+              - /url: /people/jl?section=Notes%20and%20activity
+              - strong: Accepted the Deel shoot offer
+              - generic: 19h ago
+          - cell "Open Jordan Lee's full profile":
+            - link "Open Jordan Lee's full profile":
+              - /url: /people/jl
+        - row "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au Open Chris Taylor's overview Brisbane, QLD Editor Editing - Motion graphics Notion · Workflow Demo - Engineering Teams Canva · Brand Refresh - Creator Templates View Chris Taylor's workload - Busy, 2 current projects Accepted They have joined Brisk. Uploaded a Notion rough cut 21h ago Open Chris Taylor's full profile":
+          - cell "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au":
+            - link "Chris Taylor avatar Chris Taylor chris@tayloredits.com.au":
+              - /url: /people/ct
+              - generic "Chris Taylor avatar": CT
+              - strong: Chris Taylor
+              - generic: chris@tayloredits.com.au
+          - cell "Open Chris Taylor's overview Brisbane, QLD":
+            - link "Open Chris Taylor's overview":
+              - /url: /people/ct
+              - generic: Studio Freelancer
+            - link "Brisbane, QLD":
+              - /url: /people/ct
+          - cell "Editor Editing - Motion graphics":
+            - link "Editor Editing - Motion graphics":
+              - /url: /people/ct
+              - strong: Editor
+              - generic: Editing - Motion graphics
+          - cell "Notion · Workflow Demo - Engineering Teams Canva · Brand Refresh - Creator Templates":
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Chris Taylor's workload - Busy, 2 current projects":
+            - button "View Chris Taylor's workload - Busy, 2 current projects":
+              - strong: Busy
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ct?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Uploaded a Notion rough cut 21h ago":
+            - link "Uploaded a Notion rough cut 21h ago":
+              - /url: /people/ct?section=Notes%20and%20activity
+              - strong: Uploaded a Notion rough cut
+              - generic: 21h ago
+          - cell "Open Chris Taylor's full profile":
+            - link "Open Chris Taylor's full profile":
+              - /url: /people/ct
+        - row "Aisha Khan avatar Aisha Khan aisha@khancolour.com Open Aisha Khan's overview Adelaide, SA Colourist Colour grading - Conform No active projects View Aisha Khan's workload - Available, 2 current projects Accepted They have joined Brisk. Delivered the OpenAI grade 1d ago Open Aisha Khan's full profile":
+          - cell "Aisha Khan avatar Aisha Khan aisha@khancolour.com":
+            - link "Aisha Khan avatar Aisha Khan aisha@khancolour.com":
+              - /url: /people/ak
+              - generic "Aisha Khan avatar": AK
+              - strong: Aisha Khan
+              - generic: aisha@khancolour.com
+          - cell "Open Aisha Khan's overview Adelaide, SA":
+            - link "Open Aisha Khan's overview":
+              - /url: /people/ak
+              - generic: Studio Freelancer
+            - link "Adelaide, SA":
+              - /url: /people/ak
+          - cell "Colourist Colour grading - Conform":
+            - link "Colourist Colour grading - Conform":
+              - /url: /people/ak
+              - strong: Colourist
+              - generic: Colour grading - Conform
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/ak?section=Work
+          - cell "View Aisha Khan's workload - Available, 2 current projects":
+            - button "View Aisha Khan's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ak?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Delivered the OpenAI grade 1d ago":
+            - link "Delivered the OpenAI grade 1d ago":
+              - /url: /people/ak?section=Notes%20and%20activity
+              - strong: Delivered the OpenAI grade
+              - generic: 1d ago
+          - cell "Open Aisha Khan's full profile":
+            - link "Open Aisha Khan's full profile":
+              - /url: /people/ak
+        - row "Emma Davis avatar Emma Davis emma@davisanimation.com Open Emma Davis's overview Hobart, TAS Animator 2D animation - Character animation Canva · Brand Refresh - Creator Templates View Emma Davis's workload - Available, 2 current projects Accepted They have joined Brisk. Accepted the Canva animation offer 1d ago Open Emma Davis's full profile":
+          - cell "Emma Davis avatar Emma Davis emma@davisanimation.com":
+            - link "Emma Davis avatar Emma Davis emma@davisanimation.com":
+              - /url: /people/ed
+              - generic "Emma Davis avatar": ED
+              - strong: Emma Davis
+              - generic: emma@davisanimation.com
+          - cell "Open Emma Davis's overview Hobart, TAS":
+            - link "Open Emma Davis's overview":
+              - /url: /people/ed
+              - generic: Studio Freelancer
+            - link "Hobart, TAS":
+              - /url: /people/ed
+          - cell "Animator 2D animation - Character animation":
+            - link "Animator 2D animation - Character animation":
+              - /url: /people/ed
+              - strong: Animator
+              - generic: 2D animation - Character animation
+          - cell "Canva · Brand Refresh - Creator Templates":
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Emma Davis's workload - Available, 2 current projects":
+            - button "View Emma Davis's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/ed?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Accepted the Canva animation offer 1d ago":
+            - link "Accepted the Canva animation offer 1d ago":
+              - /url: /people/ed?section=Notes%20and%20activity
+              - strong: Accepted the Canva animation offer
+              - generic: 1d ago
+          - cell "Open Emma Davis's full profile":
+            - link "Open Emma Davis's full profile":
+              - /url: /people/ed
+        - row "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com Open Hugo Bennett's overview Newcastle, NSW Director of Photography Cinematography - Lighting Ramp · Finance Recap - June Product Drop View Hugo Bennett's workload - Available, 1 current project Accepted They have joined Brisk. Sent availability for the Ramp shoot 2d ago Open Hugo Bennett's full profile":
+          - cell "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com":
+            - link "Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com":
+              - /url: /people/hb
+              - generic "Hugo Bennett avatar": HB
+              - strong: Hugo Bennett
+              - generic: hugo@bennettcamera.com
+          - cell "Open Hugo Bennett's overview Newcastle, NSW":
+            - link "Open Hugo Bennett's overview":
+              - /url: /people/hb
+              - generic: Studio Freelancer
+            - link "Newcastle, NSW":
+              - /url: /people/hb
+          - cell "Director of Photography Cinematography - Lighting":
+            - link "Director of Photography Cinematography - Lighting":
+              - /url: /people/hb
+              - strong: Director of Photography
+              - generic: Cinematography - Lighting
+          - cell "Ramp · Finance Recap - June Product Drop":
+            - link "Ramp · Finance Recap - June Product Drop":
+              - /url: /projects/ramp-finance-recap
+              - generic: Ramp ·
+              - text: Finance Recap - June Product Drop
+          - cell "View Hugo Bennett's workload - Available, 1 current project":
+            - button "View Hugo Bennett's workload - Available, 1 current project":
+              - strong: Available
+              - generic: 1 current project
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/hb?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Sent availability for the Ramp shoot 2d ago":
+            - link "Sent availability for the Ramp shoot 2d ago":
+              - /url: /people/hb?section=Notes%20and%20activity
+              - strong: Sent availability for the Ramp shoot
+              - generic: 2d ago
+          - cell "Open Hugo Bennett's full profile":
+            - link "Open Hugo Bennett's full profile":
+              - /url: /people/hb
+        - row "Nina Patel avatar Nina Patel nina@patelvfx.com Open Nina Patel's overview Perth, WA VFX Artist Compositing - Rotoscoping Canva · Brand Refresh - Creator Templates View Nina Patel's workload - Available, 2 current projects Accepted They have joined Brisk. Reviewed the Figma cleanup notes 2d ago Open Nina Patel's full profile":
+          - cell "Nina Patel avatar Nina Patel nina@patelvfx.com":
+            - link "Nina Patel avatar Nina Patel nina@patelvfx.com":
+              - /url: /people/np
+              - generic "Nina Patel avatar": NP
+              - strong: Nina Patel
+              - generic: nina@patelvfx.com
+          - cell "Open Nina Patel's overview Perth, WA":
+            - link "Open Nina Patel's overview":
+              - /url: /people/np
+              - generic: Studio Freelancer
+            - link "Perth, WA":
+              - /url: /people/np
+          - cell "VFX Artist Compositing - Rotoscoping":
+            - link "VFX Artist Compositing - Rotoscoping":
+              - /url: /people/np
+              - strong: VFX Artist
+              - generic: Compositing - Rotoscoping
+          - cell "Canva · Brand Refresh - Creator Templates":
+            - link "Canva · Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh
+              - generic: Canva ·
+              - text: Brand Refresh - Creator Templates
+          - cell "View Nina Patel's workload - Available, 2 current projects":
+            - button "View Nina Patel's workload - Available, 2 current projects":
+              - strong: Available
+              - generic: 2 current projects
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/np?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Reviewed the Figma cleanup notes 2d ago":
+            - link "Reviewed the Figma cleanup notes 2d ago":
+              - /url: /people/np?section=Notes%20and%20activity
+              - strong: Reviewed the Figma cleanup notes
+              - generic: 2d ago
+          - cell "Open Nina Patel's full profile":
+            - link "Open Nina Patel's full profile":
+              - /url: /people/np
+        - row "Darcy Cole avatar Darcy Cole darcy@colepost.com Open Darcy Cole's overview Melbourne, VIC Editor Editing - Premiere Pro No active projects View Darcy Cole's workload - Available, 0 current projects Expired This invite has expired. Send a new one to continue. Resend invite Invitation sent 3d ago Open Darcy Cole's full profile":
+          - cell "Darcy Cole avatar Darcy Cole darcy@colepost.com":
+            - link "Darcy Cole avatar Darcy Cole darcy@colepost.com":
+              - /url: /people/dc
+              - generic "Darcy Cole avatar": DC
+              - strong: Darcy Cole
+              - generic: darcy@colepost.com
+          - cell "Open Darcy Cole's overview Melbourne, VIC":
+            - link "Open Darcy Cole's overview":
+              - /url: /people/dc
+              - generic: Studio Freelancer
+            - link "Melbourne, VIC":
+              - /url: /people/dc
+          - cell "Editor Editing - Premiere Pro":
+            - link "Editor Editing - Premiere Pro":
+              - /url: /people/dc
+              - strong: Editor
+              - generic: Editing - Premiere Pro
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/dc?section=Work
+          - cell "View Darcy Cole's workload - Available, 0 current projects":
+            - button "View Darcy Cole's workload - Available, 0 current projects":
+              - strong: Available
+              - generic: 0 current projects
+          - cell "Expired This invite has expired. Send a new one to continue. Resend invite":
+            - link "Expired This invite has expired. Send a new one to continue.":
+              - /url: /people/dc?section=Access
+              - generic: Expired
+              - generic: This invite has expired. Send a new one to continue.
+            - button "Resend invite"
+          - cell "Invitation sent 3d ago":
+            - link "Invitation sent 3d ago":
+              - /url: /people/dc?section=Notes%20and%20activity
+              - strong: Invitation sent
+              - generic: 3d ago
+          - cell "Open Darcy Cole's full profile":
+            - link "Open Darcy Cole's full profile":
+              - /url: /people/dc
+- dialog "Invite person":
+  - banner:
+    - heading "Invite person" [level=2]
+    - generic: Step 2 of 2 - Add the relevant details
+  - list "Invitation progress":
+    - generic: "1"
+    - text: Person
+    - generic: "2"
+    - text: Access
+  - region "Person being invited":
+    - strong: audit-review@example.invalid
+    - generic: audit-review@example.invalid
+    - button "Change"
+  - generic: Job title or project role
+  - combobox "Choose job title or project role":
+    - generic: Choose a role
+  - generic: Optional - job titles and project roles never change permissions.
+  - group "Clients 10 selected Search Clients All Clients":
+    - text: Clients
+    - generic: 10 selected
+    - generic: Search Clients
+    - searchbox "Search Clients"
+    - checkbox "All Clients" [checked] [active]
+    - generic: All Clients
+    - checkbox "Loom loom.com" [checked]
+    - strong: Loom
+    - generic: loom.com
+    - checkbox "Deel deel.com" [checked]
+    - strong: Deel
+    - generic: deel.com
+    - checkbox "Hims & Hers hims.com" [checked]
+    - strong: Hims & Hers
+    - generic: hims.com
+    - checkbox "Notion notion.so" [checked]
+    - strong: Notion
+    - generic: notion.so
+    - checkbox "OpenAI openai.com" [checked]
+    - strong: OpenAI
+    - generic: openai.com
+    - checkbox "Ramp ramp.com" [checked]
+    - strong: Ramp
+    - generic: ramp.com
+    - checkbox "Canva canva.com" [checked]
+    - strong: Canva
+    - generic: canva.com
+    - checkbox "Linear linear.app" [checked]
+    - strong: Linear
+    - generic: linear.app
+    - checkbox "Alex Morgan" [checked]
+    - strong: Alex Morgan
+    - checkbox "Harbour Health harbourhealth.com.au" [checked]
+    - strong: Harbour Health
+    - generic: harbourhealth.com.au
+  - group "Projects 0 selected Search Projects All projects":
+    - text: Projects
+    - generic: 0 selected
+    - generic: Search Projects
+    - searchbox "Search Projects"
+    - checkbox "All projects"
+    - generic: All projects
+    - checkbox "Launch Film - Sales Narrative Loom"
+    - strong: Launch Film - Sales Narrative
+    - generic: Loom
+    - checkbox "Customer Story - APAC Hiring Deel"
+    - strong: Customer Story - APAC Hiring
+    - generic: Deel
+    - checkbox "Product Education - Sleep Series Hims"
+    - strong: Product Education - Sleep Series
+    - generic: Hims
+    - checkbox "Workflow Demo - Engineering Teams Notion"
+    - strong: Workflow Demo - Engineering Teams
+    - generic: Notion
+    - checkbox "Partner Update - Studio Reel OpenAI"
+    - strong: Partner Update - Studio Reel
+    - generic: OpenAI
+    - checkbox "Finance Recap - June Product Drop Ramp"
+    - strong: Finance Recap - June Product Drop
+    - generic: Ramp
+    - checkbox "Brand Refresh - Creator Templates Canva"
+    - strong: Brand Refresh - Creator Templates
+    - generic: Canva
+    - checkbox "Roadmap Film - Planning Week Linear"
+    - strong: Roadmap Film - Planning Week
+    - generic: Linear
+    - checkbox "WACF Customer Cutdown 01 Loom"
+    - strong: WACF Customer Cutdown 01
+    - generic: Loom
+    - checkbox "Product Tour - Team Workflows Loom"
+    - strong: Product Tour - Team Workflows
+    - generic: Loom
+    - checkbox "Customer Story - Healthcare Loom"
+    - strong: Customer Story - Healthcare
+    - generic: Loom
+    - checkbox "Q3 Product Recap Loom"
+    - strong: Q3 Product Recap
+    - generic: Loom
+    - checkbox "Care Journey Harbour Health"
+    - strong: Care Journey
+    - generic: Harbour Health
+  - region "Access summary":
+    - strong: What they can access
+    - paragraph: They can only see the Clients and projects you choose.
+    - paragraph: The invitation opens their selected project access.
+    - paragraph: Job titles and project roles never change permissions.
+  - contentinfo:
+    - button "Back"
+    - button "Send invite" [disabled]

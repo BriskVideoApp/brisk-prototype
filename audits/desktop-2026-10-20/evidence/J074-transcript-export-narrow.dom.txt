@@ -1,0 +1,70 @@
+- alert
+- main:
+  - link "Back to Transcripts":
+    - /url: /projects/loom-launch-film/stages/media?view=transcripts
+    - text: Back to Transcripts
+  - generic: PDF preview
+  - strong: Launch Film - Sales Narrative - Jess-interview-camera-a.mov Transcript
+  - region "Launch Film - Sales Narrative - Jess-interview-camera-a.mov Transcript page preview":
+    - article:
+      - generic: NS
+      - strong: North Star Films
+      - generic: Production document
+      - generic: Loom · Transcript
+      - heading "Launch Film - Sales Narrative" [level=2]
+      - paragraph: Jess-interview-camera-a.mov
+      - term: Created
+      - definition: 8 July 2026
+      - article:
+        - strong: Interviewer
+        - generic: 00:08 - 00:15
+        - paragraph: What changes when a product update reaches the sales team?
+      - article:
+        - strong: Jess Taylor
+        - generic: 00:16 - 00:25
+        - paragraph: The team needs a clear way to explain the change before the next customer conversation.
+      - article:
+        - strong: Interviewer
+        - generic: 00:27 - 00:34
+        - paragraph: Where does Loom help most?
+      - article:
+        - strong: Jess Taylor
+        - generic: 00:35 - 00:45
+        - paragraph: We can show the update in context and share the same story with everyone, wherever they work.
+      - article:
+        - strong: Jess Taylor
+        - generic: 00:47 - 00:58
+        - paragraph: A short recording lets people see the product and hear why it matters, without another meeting.
+      - article:
+        - strong: Interviewer
+        - generic: 01:00 - 01:07
+        - paragraph: What should customers take away from this film?
+      - article:
+        - strong: Jess Taylor
+        - generic: 01:08 - 01:18
+        - paragraph: That the team understands their needs and can explain each new capability with confidence.
+      - generic: en-AU · 7 transcript lines
+      - generic: 1 of 1
+  - complementary "PDF details":
+    - generic: Ready to save
+    - heading "Launch Film - Sales Narrative - Jess-interview-camera-a.mov Transcript" [level=1]
+    - term: Studio
+    - definition: North Star Films
+    - term: Project
+    - definition: Launch Film - Sales Narrative
+    - term: Format
+    - definition: A4 portrait
+    - region "Included in this PDF":
+      - heading "Included in this PDF" [level=2]
+      - list:
+        - listitem: 1 transcript
+        - listitem: Speaker names and timecodes
+        - listitem: Highlighted transcript lines
+        - listitem: Created date and language
+    - paragraph:
+      - text: Choose
+      - strong: Save as PDF
+      - text: in the browser print window.
+    - button "Download PDF": Download PDF
+    - link "Cancel":
+      - /url: /projects/loom-launch-film/stages/media?view=transcripts

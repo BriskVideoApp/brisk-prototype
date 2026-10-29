@@ -1,0 +1,89 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Account and access":
+  - link "Back to notification settings":
+    - /url: /settings/notifications
+    - text: Back to notification settings
+  - heading "Account and access" [level=2]
+  - paragraph: Choose an item to see or change its message.
+  - navigation "Account and access messages":
+    - generic: Messages
+    - generic: "2"
+    - button "New login":
+      - strong: New login
+    - button "Access changed":
+      - strong: Access changed
+  - article:
+    - heading "New login" [level=3]
+    - term: When it sends
+    - definition: When Brisk detects a new login.
+    - term: Who receives it
+    - definition: The account holder.
+    - article "New login example":
+      - generic: Security
+      - heading "New login to your account" [level=4]
+      - paragraph: Check this activity if you do not recognise it.
+      - paragraph: Studio account · Account
+      - link "Review activity":
+        - /url: /settings/personal/notifications
+        - text: Review activity
+    - generic: Wording fixed

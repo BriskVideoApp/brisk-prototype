@@ -1,0 +1,115 @@
+{
+  "children": [
+    {
+      "class": "media-project-rail",
+      "label": "Client media libraries",
+      "rect": {
+        "bottom": 1849,
+        "height": 1664,
+        "left": 240,
+        "right": 420,
+        "top": 185,
+        "width": 180,
+        "x": 240,
+        "y": 185
+      },
+      "role": null
+    },
+    {
+      "class": "media-project-rail",
+      "label": "Project media libraries",
+      "rect": {
+        "bottom": 1849,
+        "height": 1664,
+        "left": 420,
+        "right": 640,
+        "top": 185,
+        "width": 220,
+        "x": 420,
+        "y": 185
+      },
+      "role": null
+    },
+    {
+      "class": "media-folder-rail",
+      "label": "Media folders",
+      "rect": {
+        "bottom": 1849,
+        "height": 1664,
+        "left": 640,
+        "right": 860,
+        "top": 185,
+        "width": 220,
+        "x": 640,
+        "y": 185
+      },
+      "role": null
+    },
+    {
+      "class": "media-main-area",
+      "label": null,
+      "rect": {
+        "bottom": 1849,
+        "height": 1664,
+        "left": 860,
+        "right": 1080,
+        "top": 185,
+        "width": 220,
+        "x": 860,
+        "y": 185
+      },
+      "role": null
+    },
+    {
+      "class": "media-inspector",
+      "label": "Inspect Jess-interview-camera-a.mov",
+      "rect": {
+        "bottom": 1849,
+        "height": 1664,
+        "left": 1080,
+        "right": 1440,
+        "top": 185,
+        "width": 360,
+        "x": 1080,
+        "y": 185
+      },
+      "role": null
+    }
+  ],
+  "close": {
+    "bottom": 231,
+    "height": 32,
+    "left": 1396,
+    "right": 1428,
+    "top": 199,
+    "width": 32,
+    "x": 1396,
+    "y": 199
+  },
+  "grid": "180px 220px 220px 220px 360px",
+  "header": {
+    "bottom": 65,
+    "height": 65,
+    "left": 240,
+    "right": 1440,
+    "top": 0,
+    "width": 1200,
+    "x": 240,
+    "y": 0
+  },
+  "url": "http://127.0.0.1:8770/media/media-01",
+  "viewport": {
+    "height": 1000,
+    "width": 1440
+  },
+  "workspace": {
+    "bottom": 1849,
+    "height": 1664,
+    "left": 240,
+    "right": 1440,
+    "top": 185,
+    "width": 1200,
+    "x": 240,
+    "y": 185
+  }
+}

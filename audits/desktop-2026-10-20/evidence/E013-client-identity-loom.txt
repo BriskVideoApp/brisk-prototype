@@ -1,0 +1,4 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/workspaces/northstar-films/clients/loom/portal".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/workspaces/northstar-films/clients/loom/portal
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/workspaces/northstar-films/clients/loom/portal

@@ -1,0 +1,4052 @@
+{
+  "checkedAt": "2026-10-20T21:45:53.462530+00:00",
+  "imageURLsChecked": 809,
+  "failures": [],
+  "results": [
+    {
+      "url": "http://127.0.0.1:8765/Docs/References/brisk/Brisk%20-%20video-review-overview.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-audience-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-audience-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-brand-kit-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-brand-kit-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-deadline-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-deadline-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-deliverables-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-deliverables-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-footage-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-footage-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-references-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-references-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-summary-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-summary-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-video-type-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/BRIEF-video-type-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R001-freelancer-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R001-freelancer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R001-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R001-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R002-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R002-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R003-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R003-freelancer-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R003-freelancer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R003-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R003-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R004-freelancer-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R004-freelancer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R004-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R004-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R005-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R005-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R006-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R006-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R007-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R007-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R008-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R008-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R009-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R010-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R010-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R010-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R010-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R011-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R012-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R012-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R012-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R013-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R013-freelancer-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R013-freelancer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R014-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R015-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R015-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R016-freelancer-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R016-freelancer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R017-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R017-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R018-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R019-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R019-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R020-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R020-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R021-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R022-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R022-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R023-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R023-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R024-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R025-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R025-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R026-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R026-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R027-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R027-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R028-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R028-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R029-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R029-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R030-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R030-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R031-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R031-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R032-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R033-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R034-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R035-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R036-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R036-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R037-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R037-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R038-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R038-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R039-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R039-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R040-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R040-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R041-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R041-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R042-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R042-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R043-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R043-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R044-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R044-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R045-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R045-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R046-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R046-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R047-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R047-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R048-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R049-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R050-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R050-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R051-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R051-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R052-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R052-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R053-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R053-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R054-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R054-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R055-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R056-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R056-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R057-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R057-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R058-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R059-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R059-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R060-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R060-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R061-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R061-client-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R061-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/D-R061-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E001-client-videos-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E002-staff-videos-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E003-team-drawer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E004-team-role-editor-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E005-team-staff-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E006-team-staff-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E007-team-staff-expanded-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E008-team-freelancers-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E009-media-library-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E010-media-keyboard-before.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E011-media-keyboard-after.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E012-media-hidden-selection.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E013-client-identity-loom.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E014-client-loom-ready.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E016-project-media-filtered-selection.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E017-project-media-delete-scope.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E018-storyboard-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E019-storyboard-review.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E020-storyboard-review-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E022-account-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E023-recent-pages-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E024-ask-brisk-panel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E025-ask-brisk-ready.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E026-assistant-source-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E027-updates-popover.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E028-invitation-staff.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E029-invitation-client-access.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E030-invitation-mixed-projects.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E031-people-capacity.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E032-people-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E033-people-freelancers.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E034-people-archived.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E035-client-contacts-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E036-client-project-access-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E037-client-project-access-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E038-start-project-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E039-start-project-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E040-add-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E041-add-client-duplicate-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E042-add-client-duplicate-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E043-clients-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E044-media-inspector-hidden-close.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E045-media-close-click-result.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E046-media-escape-result.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E047-media-scoped-client.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E048-media-sort-keyboard-focus.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E049-people-sort-keyboard-focus.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E050-brief-description.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E051-brief-send-confirmation-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E052-brief-send-confirmation-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E053-brief-link-access-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E054-brief-link-access-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E055-project-flow-panel-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E056-project-flow-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E057-project-flow-panel-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E058-script-versions-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E059-script-versions-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E060-script-versions-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E061-script-versions-outside.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E062-script-actions-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E063-script-comments.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E064-script-historical-read-only.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E065-script-row-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E066-script-visual-column.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E067-approved-script-edit-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E068-shared-media-source-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E069-media-add-link-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E070-media-add-link-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E071-transcripts-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E072-transcripts-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E073-transcript-keyboard-comment.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E074-transcript-collection-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E075-transcript-clip-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E076-transcript-highlights-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E077-transcript-empty-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E078-transcript-selection-toolbar.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E079-client-portal-grouping.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E080-client-portal-no-completed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E081-client-series-expanded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E082-client-project-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E083-client-project-actions-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E084-client-history-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E085-freelancer-offers-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E086-freelancer-offer-history.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E087-brand-logo-download.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E088-brand-font-roles.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E089-brand-font-roles-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E090-brand-voice-tone.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E091-brand-voice-tone-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E092-brand-asset-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E093-cost-invoice-review.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E094-invoice-pdf.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E095-expenses-submitted-review.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E096-invoice-send-back-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E097-invoice-send-back-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E098-invoice-currency-mismatch.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E099-invoice-forward.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E100-invoice-forward-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E101-invoice-no-destinations.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E102-studio-add-logo.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E102-studio-edit-name.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E102-studio-edit-questions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E102-studio-edit-video-types.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E103-notifications-root-navigation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E104-notifications-category-navigation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E105-notification-edit-message.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E106-notification-fixed-message.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E107-plan-comparison-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E108-plan-comparison-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E109-plan-confirmation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E110-addon-confirmation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E111-password-dialog.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E112-brief-video-type-scroll-before.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E113-brief-audience-scroll-after.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E114-brief-audience-scroll-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E115-brief-duration-menu-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E116-brief-deliverables-collapsed-nav.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E117-video-unread-badges.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E118-project-deadline.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E118-project-hours.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E118-project-latest-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E118-project-notes.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E119-project-notes-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E120-files-add-location.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E121-files-edit-location.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E122-files-remove-confirmation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E123-updates-unread-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E124-chat-date-overlap.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E125-chat-date-scroll.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E126-chat-page-scroll.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E127-chat-search-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E128-chat-search-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E129-chat-settings.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E130-chat-project-members.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E131-chat-calls.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E131-chat-dms.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E131-chat-groups.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E131-chat-mentions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E131-chat-threads.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E132-chat-call-notes.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E133-media-upload-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E134-media-cloud-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E135-media-cloud-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E136-media-folder-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E137-media-move-dialog.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E138-media-move-folder-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E139-test-mode-three-roles.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E140-global-chat-drawer.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E141-staff-account-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E142-ai-source-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E143-ai-source-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E144-client-access-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E145-client-access-local-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/E146-client-access-cancel-preserved.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F001-todo-populated-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F002-todo-entry-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F003-todo-invalid-hours.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F004-todo-populated-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F005-todo-collapsed-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F006-shoot-shot-list-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F007-shot-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F008-shot-type-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F009-shot-list-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F010-shoot-interview-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F011-interview-editor-validation.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F012-visual-references-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F013-shoot-media-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F014-shoot-reference-populated.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F015-location-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F016-shoot-people-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F017-shoot-person-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F018-shoot-role-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F019-shoot-documents.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F020-shoot-document-link.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F021-shoot-schedule-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F022-shoot-schedule-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F023-schedule-item-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F024-shoot-day-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F025-shoot-day2.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F026-on-set-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F027-onset-focus-schedule.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F028-onset-focus-exit.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F029-onset-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F030-onset-progress.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F031-onset-progress-selection.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F032-shoot-approval-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F033-edit-readiness-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F034-edit-ready-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F035-review-populated-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F036-review-compare.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F037-review-comment-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F038-review-team-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F039-review-drawing-tools.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F040-review-1133-overall.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F041-review-approved-sample.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F042-masters-sample-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F043-masters-sample-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F044-masters-thumbnail-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F045-masters-comments.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F046-masters-download-zero.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F047-masters-delete-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F048-masters-client.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F049-masters-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F050-review-client-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F051-review-client-feedback.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F052-review-playback-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F053-canonical-edit-upload.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F054-canonical-edit-two-versions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F055-question-focus-readability.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F056-schedule-picker-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F057-progress-sidebar-collision.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F058-shoot-send-panel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F059-shoot-client-onset.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F060-shoot-client-planning.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F061-brief-delivery-sample.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F062-main-video-delivery.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F063-masters-caption-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F064-masters-recut-entry.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F065-recut-source-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F066-recut-range-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F067-recut-cancel-result.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F068-masters-comments-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F069-masters-composer-reachable.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F070-caption-text-fit.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F071-client-caption-reading.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F072-freelancer-active-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F073-freelancer-active-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F074-freelancer-commercial-pan.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F075-freelancer-time-invalid.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F076-freelancer-invoice-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F077-freelancer-open-offer.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F078-offer-brief-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F079-offer-brief-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F080-offer-brief-top.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F081-offer-brief-top-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F082-freelancer-history.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F083-freelancer-offer-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F084-offer-header-geometry.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F085-todo-top-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F086-todo-this-week-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F087-todo-editor-footer-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F088-todo-default-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F089-todo-collapsed-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F090-todo-collapsed-actual-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F091-todo-expanded-actual-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F092-todo-editor-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F093-shoot-setup-question1.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F094-shoot-setup-people.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F095-shoot-setup-location.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F096-shoot-setup-date.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F097-shoot-must-have.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F098-shoot-workflow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F099-shoot-ai-suggestions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F100-ai-schedule-readiness.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F101-schedule-ready-warning.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F102-schedule-missing-guide.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F103-schedule-guide-duration.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F104-new-standalone-shot.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F105-backlog-group-selection.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F106-backlog-new-group-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F107-shoot-contact-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F108-shoot-day-delete-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F109-onset-day2.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F110-call-sheet-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F111-masters-two-versions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F112-recut-unsent-draft-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F113-recut-undo-recovery.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F114-canonical-edit-sample-play.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F115-edit-keyboard-seek.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F116-onboard-name-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F117-onboard-concepts.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F118-onboard-shooting.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F119-onboard-shooting-settled.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F120-onboard-video-types-expanded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F121-onboard-custom-type.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F122-onboard-video-types-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F123-onboard-skip-client-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F124-first-client-added.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F125-first-video-name-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F126-first-video-name-ready.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F127-first-video-brief-handoff.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F128-freelancer-invitation-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F129-freelancer-invitation-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F130-staff-invitation-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F131-staff-invitation-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F132-client-entry-required.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F133-client-entry-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F134-portal-series-only-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F135-portal-series-expanded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F136-portal-project-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F137-portal-project-history.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F138-portal-project-chat-loaded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F139-portal-queued-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F140-client-portal-staff-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F141-plan-frequency-lead-verification.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F142-clean-history.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F143-todo-planned-sample.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F144-todo-done-sample.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F145-todo-sample-saved.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F146-todo-full-height-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F147-simple-shoot-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F148-onset-completion.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F149-simple-shoot-day-selector.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F150-onset-shot-captured.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F151-schedule-drag-add-dialog.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F152-schedule-resize-feedback.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F153-schedule-drag-after-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F154-schedule-delete-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F155-shoot-person-remove-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F156-location-remove-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F157-shot-delete-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F158-todo-horizontal-pan.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F159-todo-horizontal-pan-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F160-freelancer-commercial-profile.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F161-freelancer-profile-access.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F162-client-contact-access.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F163-existing-client-access-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F164-client-contact-access-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F165-freelancer-commercial-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F166-freelancer-profile-work.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F167-freelancer-profile-hours.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F168-freelancer-profile-skills.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F169-freelancer-profile-activity.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F170-person-invitation-history-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/F171-staff-invitation-history-populated.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G001-brand-kit-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G002-brand-motion-version-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G003-brand-motion-history.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G004-brand-add-colour.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G005-brand-font-matrix.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G006-brand-voice-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G007-brand-footage-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G008-brand-imagery-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G009-brand-guidelines-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G010-brand-selected-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G011-brand-selected-delete-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G012-brand-guest-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G013-brand-guest-logo-dialog.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G014-brand-guest-logo-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G015-studio-setup.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G016-studio-name-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G017-studio-logo-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G018-studio-video-types.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G019-studio-default-brief.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G020-studio-sample-portal.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G021-production-defaults.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G022-production-role-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G023-production-staff-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G024-production-unsaved-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G025-ai-playbook.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G026-ai-playbook-link-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G027-messaging-connections.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G028-storage-current.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G029-storage-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G030-storage-google-drive.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G031-storage-dropbox.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G032-storage-remote.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G033-storage-restored.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G034-notifications-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G035-reminder-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G036-reminders-disabled-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G037-review-notification-copy.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G038-review-trigger-demo.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G039-notification-message-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G040-notification-empty-title.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G041-notification-approval.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G042-notification-category.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G043-notification-alternate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G044-notification-category.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G045-notification-alternate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G046-notification-category.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G047-notification-alternate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G048-fixed-notification-copy.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G049-client-message-template.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G050-client-template-editor.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G051-plan-current.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G052-plan-comparison-monthly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G053-plan-comparison-annual.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G054-plan-change-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G055-storage-addon-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G056-staff-addon-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G057-plan-frequency-keyboard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G058-plan-annual-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G059-plan-trial.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G060-plan-overdue.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G061-plan-restricted.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G062-plan-cancelling.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G063-client-billing-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G064-stripe-disconnect-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G065-client-billing-unselected.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G066-stripe-connect-entry.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G067-client-independent.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G068-client-stripe-action.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G069-client-stripe-disconnected.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G070-client-billing-restricted.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G071-staff-personal-profile.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G072-timezone-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G073-personal-notifications.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G074-staff-security.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G075-password-dialog.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G076-freelancer-profile.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G077-freelancer-notifications.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G078-freelancer-security.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G079-security-google.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G080-security-microsoft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G081-security-magic-link.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G082-client-company.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G083-client-team-admin.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G084-client-invite-entry.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G085-client-project-mixed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G086-client-project-all.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G087-client-project-none.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G088-client-member-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G089-client-pending-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G090-client-membership-role-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G091-client-member-team-restricted.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G092-client-member-company-restricted.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G093-client-invoices.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G094-client-invoices-restricted.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G095-client-personal-profile.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G096-client-personal-notifications.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G097-client-security.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G098-client-security-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G099-client-profile-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G100-client-team-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G101-client-access-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G102-client-invite-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G103-client-invoices-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G104-freelancer-profile-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G105-freelancer-work-details-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G106-studio-setup-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G107-studio-video-types-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G108-default-brief-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G109-production-defaults-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G110-default-staff-menu-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G111-ai-playbook-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G112-messaging-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G113-storage-remote-studio-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G114-notifications-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G115-notification-descendant-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G116-client-message-template-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G117-plan-comparison-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G118-plan-frequency-keyboard-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G119-studio-setup-collapsed-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G120-brand-kit-empty-intake-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G121-brand-kit-website-draft-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G122-brand-kit-source-ready-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G123-brand-kit-processing-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G124-brand-kit-build-result-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G125-brand-kit-manual-empty-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G126-brand-kit-manual-empty-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G127-brand-selected-move-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G128-brand-move-toast-only.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/G129-isolated-session-reset.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H001-team-remove-role-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H002-team-remove-cancel-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H003-team-draft-discarded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H004-team-zero-rate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H005-team-invite-empty-message.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H006-team-invite-cancel-selection.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H007-flow-hide-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H008-flow-keep-visible.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H009-flow-term-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H010-history-keyboard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H011-history-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H012-account-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H013-updates-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H014-chat-search-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H015-chat-search-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H016-ai-source-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H017-ai-history-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H018-ai-history-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H019-people-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H020-invite-invalid-email.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H021-person-inline-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H022-person-archive-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H023-person-delete-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H024-person-assign-project-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H025-client-start-project.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H026-client-archive-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H027-client-access-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H028-chat-settings-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H029-chat-settings-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H030-chat-internal-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H031-test-mode-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H032-videos-client-filter-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H033-videos-no-results-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H034-videos-clear-recovery.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H035-team-editor-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H036-project-hours-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H037-project-deadline-calendar-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H038-project-status-menu-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H039-flow-hide-confirm-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H040-inspection-restored.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H041-history-keyboard-sequence.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H042-notifications-unread.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H043-notifications-mentions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H044-notification-reminder-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H045-notification-preview-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H046-add-client-empty-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H047-add-client-cancel-reset.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H048-clients-no-results-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H049-audit-session-final.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H050-chat-settings-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H051-chat-settings-child-escape-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H052-account-freelancer-links.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H053-account-freelancer-outside.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H054-account-customer-links.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H055-account-customer-outside.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H056-account-staff-outside.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H057-invoice-multiple-pdf-first.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H058-invoice-pdf-arrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H059-invoice-multiple-pdf-second.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H060-invoice-review-cancelled.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H061-invoice-area-freelancer-redirect.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H062-invoice-area-customer-redirect.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H063-account-invoice-addendum-restored.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H064-videos-teammate-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H065-videos-tags-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H066-videos-tag-filter-selected.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H067-videos-deadline-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H068-videos-status-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H069-videos-columns.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H070-videos-row-add-tag.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H071-videos-tag-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H072-videos-tag-cancel-reset.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H073-project-copy-link-panel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H074-ai-files-picker.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H075-ai-files-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H076-people-all-invite-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H077-invite-staff-access.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H078-people-staff-invite-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H079-people-freelancer-invite-default.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H080-invite-freelancer-no-access.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H081-invite-freelancer-all-clients.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H082-invite-freelancer-one-client.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H083-invite-freelancer-all-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H084-invite-freelancer-mixed-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H085-invite-freelancer-none-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H086-people-client-invite-default-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H087-invite-client-no-company-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H088-invite-client-company-picker-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H089-invite-client-picker-no-results-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H090-invite-client-zero-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H091-invite-client-all-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H092-invite-client-mixed-projects-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H093-invite-client-none-after-all-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H094-invite-client-draft-discarded.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H095-people-sort-menu-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H096-people-archived-view-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H097-videos-columns-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H098-project-copy-link-panel-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H099-ai-files-picker-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H100-remaining-branches-restored.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H101-chat-actual-thread-pane.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H102-chat-actual-thread-pane-1133.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H103-chat-thread-close.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H104-chat-thread-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/H105-remaining-branches-final-restored.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J001-media-existing-processing.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J002-media-no-results.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J003-library-masters.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J004-library-archived.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J005-media-kind-filter.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J006-unavailable-original-inspector.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J007-asset-comments.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J008-asset-escape-outcome.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J009-failed-asset-inspector.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J010-processing-asset.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J011-folder-rail-collapsed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J012-nested-folder-actions.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J013-nested-folder-actions-full.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J014-folder-rename-field.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J015-folder-rename-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J016-new-folder-inline.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J017-folder-draft-escape.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J018-folder-name-committed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J019-cloud-picker-current.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J020-cloud-picker-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J021-project-media-comments.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J022-client-media-comments.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J023-move-file-target.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J024-move-cancel-selection-clear.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J025-transcript-clip-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J026-transcript-rename-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J027-transcript-rename-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J028-transcript-highlights-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J029-transcript-export-clip.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J030-transcript-export-return.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J031-script-empty-version.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J032-script-rename-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J033-script-rename-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J034-script-sample-duplicate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J035-script-restore-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J036-script-delete-confirm.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J037-script-sample-visuals.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J038-script-four-media-sources.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J039-script-link-dismissed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J040-script-export-current.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J041-script-export-return.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J042-storyboard-script-gate.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J043-script-sample-approved.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J044-storyboard-create-ready.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J045-storyboard-created-sample.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J046-storyboard-current-fixture.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J047-storyboard-version-consumer.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J048-storyboard-frame-commands.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J049-storyboard-media-sources.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J050-storyboard-session-return.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J051-storyboard-av.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J052-storyboard-comments-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J053-storyboard-client-filter-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J054-storyboard-export-current.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J055-storyboard-export-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J056-storyboard-export-back.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J057-storyboard-av-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J058-storyboard-board-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J059-storyboard-approve-outcome.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J060-storyboard-send-form-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J061-storyboard-send-studio.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J062-files-staff-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J063-files-freelancer-readonly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J064-files-empty-readonly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J065-files-empty-staff.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J066-media-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J067-transcript-processing.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J068-transcript-workspace-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J069-files-assigned-freelancer-empty.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J070-files-labelled-sample-before-save.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J071-files-labelled-sample-saved.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J072-files-assigned-readonly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J073-script-export-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J074-transcript-export-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J075-transcripts-empty-project.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J076-storyboard-approved-seed.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J077-storyboard-approved-edit-guard.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J078-storyboard-approved-edit-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J079-storyboard-populated-review-narrow.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J080-storyboard-populated-review-1440.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J081-storyboard-review-return.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J082-storyboard-native-link-prompt.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J083-storyboard-link-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J084-media-image-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J085-media-document-preview.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J086-brief-brand-kit-options.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J087-brief-ai-local-prompt-draft.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J088-brief-ai-message-menu.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J089-brief-ai-message-menu-cancel.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J090-client-project-drawer-readonly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/evidence/J091-client-project-team-readonly.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/references/mobbin-asana-members.webp",
+      "status": 200,
+      "type": "image/webp"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/references/mobbin-toggl-members.webp",
+      "status": 200,
+      "type": "image/webp"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A03-current-row-badge.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A05-current-notification-detail-sidebar.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A06-current-fonts-panel.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A07-chat-date-annotation.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A07-current-chat-date-overlap.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A08-current-mixed-folder-file-grid.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A10-current-hidden-inspector-header.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A10-inspector-header-comparison.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A12-brief-editor-comparison.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A12-brief-summary-comparison.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/A13-current-audience-heading-1440.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-comparisons/B01-A02-team-checkbox-comparison.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC01-todo-footer.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC02-question-readability.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC03-schedule-overlap.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC04-progress-occlusion.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC05-caption-readability.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC06-billing-frequency.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/reviewers/a-completion-comparisons/AC08-brand-move-feedback.png",
+      "status": 200,
+      "type": "image/png"
+    }
+  ]
+}

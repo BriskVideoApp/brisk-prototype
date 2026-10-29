@@ -1,0 +1,191 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Media Library header":
+    - heading "Media Library" [level=1]
+    - searchbox "Search media"
+  - complementary "Project media libraries":
+    - generic: Projects
+    - button "All projects":
+      - generic: All projects
+    - button "Launch Film - Sales Narrative Loom" [pressed]:
+      - generic: L
+      - strong: Launch Film - Sales Narrative
+      - generic: Loom
+    - button "WACF Customer Cutdown 01 Loom":
+      - generic: W
+      - strong: WACF Customer Cutdown 01
+      - generic: Loom
+    - button "Product Tour - Team Workflows Loom":
+      - generic: P
+      - strong: Product Tour - Team Workflows
+      - generic: Loom
+    - button "Customer Story - Healthcare Loom":
+      - generic: C
+      - strong: Customer Story - Healthcare
+      - generic: Loom
+    - button "Q3 Product Recap Loom":
+      - generic: Q
+      - strong: Q3 Product Recap
+      - generic: Loom
+  - complementary "Media folders":
+    - generic: Folders
+    - button "Add folder": Add folder
+    - button "All media":
+      - generic: All media
+    - button "Customer interviews":
+      - generic: Customer interviews
+    - button "More options for Customer interviews": Folder options
+    - button "Product captures":
+      - generic: Product captures
+    - button "More options for Product captures": Folder options
+    - button "Day one":
+      - generic: Day one
+    - button "More options for Day one": Folder options
+    - button "Client supplied":
+      - generic: Client supplied
+    - button "More options for Client supplied": Folder options
+  - tablist "Media library sections":
+    - tab "Media" [selected]
+    - tab "Masters"
+    - tab "Archived"
+  - button "Download media for Launch Film - Sales Narrative": Download project media
+  - button "Choose File"
+  - generic "Filter media by type":
+    - button "All" [pressed]
+    - button "Video"
+    - button "Audio"
+    - button "Image"
+    - button "Document"
+  - generic "Media view":
+    - button "Card view" [pressed]: Card view
+    - button "List view": List view
+  - generic: Sort media
+  - combobox "Sort media":
+    - generic: Newest first
+  - region "Project media":
+    - navigation "Current media folder":
+      - button "All media"
+      - strong: Customer interviews
+    - article "Jess-interview-camera-a.mov, video":
+      - button "Select Jess-interview-camera-a.mov"
+      - paragraph: 08 July 2026 · 4.8 GB · 18:42
+      - paragraph: Jess-interview-camera-a.mov
+      - generic "Actions for Jess-interview-camera-a.mov":
+        - button "2 comments for Jess-interview-camera-a.mov":
+          - generic: "2"
+          - text: Comment
+        - button "Transcript Jess-interview-camera-a.mov": Transcript
+        - button "Copy link Jess-interview-camera-a.mov": Copy link
+        - button "Download Jess-interview-camera-a.mov": Download
+    - article "Jess-interview-camera-b.mov, video":
+      - button "Select Jess-interview-camera-b.mov"
+      - paragraph: 08 July 2026 · 3.9 GB · 18:39
+      - paragraph: Jess-interview-camera-b.mov
+      - generic "Actions for Jess-interview-camera-b.mov":
+        - button "Comment Jess-interview-camera-b.mov": Comment
+        - button "Transcript Jess-interview-camera-b.mov": Transcript
+        - button "Copy link Jess-interview-camera-b.mov": Copy link
+        - button "Download Jess-interview-camera-b.mov": Download
+    - article "Jess-lapel-audio.wav, audio":
+      - button "Select Jess-lapel-audio.wav"
+      - paragraph: 08 July 2026 · 862.4 MB · 19:04
+      - paragraph: Jess-lapel-audio.wav
+      - generic "Actions for Jess-lapel-audio.wav":
+        - button "1 comment for Jess-lapel-audio.wav":
+          - generic: "1"
+          - text: Comment
+        - button "Transcript Jess-lapel-audio.wav": Transcript
+        - button "Copy link Jess-lapel-audio.wav": Copy link
+        - button "Download Jess-lapel-audio.wav": Download
+    - article "Avery-customer-interview.mov, video":
+      - button "Select Avery-customer-interview.mov"
+      - paragraph: 08 July 2026 · 2.8 GB · 12:16
+      - paragraph: Avery-customer-interview.mov
+      - generic "Actions for Avery-customer-interview.mov":
+        - button "Comment Avery-customer-interview.mov": Comment
+        - button "Transcript Avery-customer-interview.mov": Transcript
+        - button "Copy link Avery-customer-interview.mov": Copy link
+        - button "Download Avery-customer-interview.mov": Download
+    - article "Care-team-roundtable.wav, audio":
+      - button "Select Care-team-roundtable.wav"
+      - paragraph: 08 July 2026 · 624.7 MB · 08:42
+      - paragraph: Care-team-roundtable.wav
+      - generic "Actions for Care-team-roundtable.wav":
+        - button "Comment Care-team-roundtable.wav": Comment
+        - button "Transcript Care-team-roundtable.wav": Transcript
+        - button "Copy link Care-team-roundtable.wav": Copy link
+        - button "Download Care-team-roundtable.wav": Download
+  - complementary "Inspect Jess-interview-camera-a.mov":
+    - textbox "Filename": Jess-interview-camera-a.mov
+    - button "Close asset drawer": Close
+    - generic "Actions for Jess-interview-camera-a.mov":
+      - button "2 comments for Jess-interview-camera-a.mov": Comment
+      - button "Transcript Jess-interview-camera-a.mov": Transcript
+      - button "Copy link Jess-interview-camera-a.mov": Copy link
+      - button "Download Jess-interview-camera-a.mov": Download
+    - generic "Video preview for Jess-interview-camera-a.mov"
+    - tablist "Asset information":
+      - tab "Details" [selected]
+      - tab "Comments"
+      - tab "Transcript"
+    - tabpanel "Details":
+      - term: Kind
+      - definition: video
+      - term: Size
+      - definition: 4.8 GB
+      - term: Duration
+      - definition: 18:42
+      - term: Uploaded
+      - definition: 08 July 2026
+      - term: Uploaded by
+      - definition: Maddie Lee
+      - term: Project
+      - definition: Launch Film - Sales Narrative
+      - term: Folder
+      - definition: Customer interviews
+      - term: Storage location
+      - definition: Brisk Storage
+      - term: Original
+      - definition: Available
+      - term: Playback
+      - definition: Ready
+      - term: Linked script row
+      - definition:
+        - link "script-03":
+          - /url: /projects/loom-launch-film/script#script-03
+      - term: Project link
+      - definition:
+        - link "Open project media":
+          - /url: /projects/loom-launch-film/stages/media

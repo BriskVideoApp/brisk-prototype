@@ -1,0 +1,65 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/masters".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 42-82
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/masters
+~			39 container
+~				40 container Project stage progress
+~					41 container LOOM / Launch Film - Sales Narrative
++						42 link Description: Back to dashboard, Value: localhost:3000/active-videos
++						43 text LOOM Launch Film - Sales Narrative
++					44 container LOOM Launch Film - Sales Narrative
++						45 content list Sequential production stages
++							46 container
++								47 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
++								48 text Brief
++							49 container
++								50 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
++								51 text Script
++							52 container
++								53 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
++								54 text Storyboard
++							55 container
++								56 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
++								57 text Shoot
++							58 container
++								59 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
++								60 text Edit
++							61 container
++								62 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
++								63 text Masters
++						64 container
++							65 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
++							66 text Media
++						67 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
++							68 text Adjust project flow
++				69 table Deliverables register
++					70 row
++						71 cell
++							72 text Video
++						73 cell
++							74 text Assets
++						75 cell
++							76 text Comments
++						77 cell
++							78 text Action
++						79 cell More actions
++					80 heading No deliverables yet, Value: 2
++						81 text No deliverables yet
++					82 text Add the first output for this video.
++					83 button Add deliverable
++					84 button Add downloadable prototype sample
++					85 text The sample downloads as a JSON data file, not a rendered video.
++				86 container Masters actions
++					87 container Masters share actions
++						88 button (collapsed) Description: Copy link, Secondary Actions: Expand
++						89 button (disabled) Send Masters Add a Master before sending it for review
++							90 text Send Masters
++							91 text Add a Master before sending it for review
++					92 button (disabled) Download All
++					93 text Available when every Masters slot has a file.
++					94 button (disabled) Complete video, Help: Add a file to every Masters slot before completing the video
++				95 button Choose file
++				96 button Choose file
++				97 button Choose file
++				98 button Choose file
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/masters

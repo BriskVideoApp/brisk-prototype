@@ -1,0 +1,173 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Brief actions": Brief actions
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/storyboard
+          - text: Waiting on North Star Films
+        - generic: Storyboard
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 15 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "15"
+        - text: 15 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Brief step":
+    - region "Deadline":
+      - generic: Step 8 of 9
+      - heading "Deadline" [level=2]
+      - generic: When do you need it by?
+      - button "Open AI suggestion actions for When do you need it by?. Currently Missing."
+      - tooltip "AI suggestion"
+      - group "Deadline":
+        - strong: October 2026
+        - generic "Change month":
+          - button "Previous month"
+          - button "Next month"
+        - generic: Mon
+        - generic: Tue
+        - generic: Wed
+        - generic: Thu
+        - generic: Fri
+        - generic: Sat
+        - generic: Sun
+        - button "Monday, 28 September 2026": "28"
+        - button "Tuesday, 29 September 2026": "29"
+        - button "Wednesday, 30 September 2026": "30"
+        - button "Thursday, 1 October 2026": "1"
+        - button "Friday, 2 October 2026": "2"
+        - button "Saturday, 3 October 2026": "3"
+        - button "Sunday, 4 October 2026": "4"
+        - button "Monday, 5 October 2026": "5"
+        - button "Tuesday, 6 October 2026": "6"
+        - button "Wednesday, 7 October 2026": "7"
+        - button "Thursday, 8 October 2026": "8"
+        - button "Friday, 9 October 2026": "9"
+        - button "Saturday, 10 October 2026": "10"
+        - button "Sunday, 11 October 2026": "11"
+        - button "Monday, 12 October 2026": "12"
+        - button "Tuesday, 13 October 2026": "13"
+        - button "Wednesday, 14 October 2026": "14"
+        - button "Thursday, 15 October 2026": "15"
+        - button "Friday, 16 October 2026": "16"
+        - button "Saturday, 17 October 2026": "17"
+        - button "Sunday, 18 October 2026": "18"
+        - button "Monday, 19 October 2026": "19"
+        - button "Tuesday, 20 October 2026": "20"
+        - button "Wednesday, 21 October 2026": "21"
+        - button "Thursday, 22 October 2026": "22"
+        - button "Friday, 23 October 2026": "23"
+        - button "Saturday, 24 October 2026": "24"
+        - button "Sunday, 25 October 2026": "25"
+        - button "Monday, 26 October 2026": "26"
+        - button "Tuesday, 27 October 2026": "27"
+        - button "Wednesday, 28 October 2026": "28"
+        - button "Thursday, 29 October 2026": "29"
+        - button "Friday, 30 October 2026": "30"
+        - button "Saturday, 31 October 2026": "31"
+        - button "Sunday, 1 November 2026": "1"
+        - button "Monday, 2 November 2026": "2"
+        - button "Tuesday, 3 November 2026": "3"
+        - button "Wednesday, 4 November 2026": "4"
+        - button "Thursday, 5 November 2026": "5"
+        - button "Friday, 6 November 2026": "6"
+        - button "Saturday, 7 November 2026": "7"
+        - button "Sunday, 8 November 2026": "8"
+        - button "Clear"
+        - button "Today"
+  - button "Back"
+  - navigation "Brief steps":
+    - button "Start with AI Start with AI":
+      - generic: Start with AI
+      - text: Start with AI
+    - button "1 1. Description"
+    - button "2 2. Video type"
+    - button "3 3. Audience and action"
+    - button "4 4. Similar videos"
+    - button "5 5. Brand kit"
+    - button "6 6. Footage and filming"
+    - button "7 7. Deliverables"
+    - button "8 8. Deadline" [active]
+    - button "Summary 9. Review your brief"
+  - button "Next"
+  - 'status "Jess Taylor reminded Loom to review the Brief at 1 Oct, 10:31 am. Message: Just a reminder to review the Brief for Launch Film - Sales Narrative and share any feedback."': Jess Taylor reminded Loom to review the Brief · 1 Oct, 10:31 am

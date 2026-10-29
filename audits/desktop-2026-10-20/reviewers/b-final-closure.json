@@ -1,0 +1,233 @@
+{
+  "reviewer": "B",
+  "updatedAt": "2026-10-20T21:38:54.558111+00:00",
+  "scope": "Lead-requested final reachable desktop branches. Audit-only artefacts; no master/report or app edits.",
+  "browser": {
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "tabId": "1716948424",
+    "origin": "http://127.0.0.1:8768",
+    "isolation": "Reused verified disposable B origin; no storage reset/injection or scenario progression. UI draft actions only."
+  },
+  "captureRange": "H064-H105",
+  "captureRegistry": "data/b-completion-captures.json",
+  "actionRegistry": "data/b-completion-actions.json",
+  "closures": [
+    {
+      "id": "N090",
+      "scope": "Current Studio Staff Videos controls and row tag consumer",
+      "status": "Inspected for finite Staff UI",
+      "states": [
+        "Teammate options",
+        "Tags options and transient selected filter restored",
+        "Deadline options",
+        "Status filter options",
+        "Columns locked/current visibility and immediate-change helper",
+        "Actual project-row Add tag menu",
+        "Create tag blank/draft/Cancel/reopen blank"
+      ],
+      "evidence": [
+        "H064-videos-teammate-filter",
+        "H065-videos-tags-filter",
+        "H066-videos-tag-filter-selected",
+        "H067-videos-deadline-filter",
+        "H068-videos-status-filter",
+        "H069-videos-columns",
+        "H070-videos-row-add-tag",
+        "H071-videos-tag-draft",
+        "H072-videos-tag-cancel-reset",
+        "H097-videos-columns-1133"
+      ],
+      "limits": "No saved project status, tag, deadline or column change. Client read-only route is covered by lead/C, not these captures. Row tag evidence belongs to N090, not drawer N091. No exhaustive label or data-count combinations."
+    },
+    {
+      "id": "N091",
+      "scope": "Project drawer Copy link scope panel",
+      "status": "Inspected finite branch",
+      "states": [
+        "Whole project scope",
+        "View only current access; Can comment/Can edit choices visible",
+        "Current teammates",
+        "Visible Close returns to drawer"
+      ],
+      "evidence": [
+        "H073-project-copy-link-panel",
+        "H098-project-copy-link-panel-1133"
+      ],
+      "limits": "No Copy project link or access radio selected. This closes the Copy link branch only; earlier E/H captures remain necessary for other drawer panels."
+    },
+    {
+      "id": "N089",
+      "scope": "Ask Brisk Files source picker",
+      "status": "Inspected finite branch",
+      "states": [
+        "Add source > Add photos, video or files",
+        "Suggested existing source rows",
+        "Search no-results",
+        "1440 and1133 fit",
+        "Close picker then drawer"
+      ],
+      "evidence": [
+        "H074-ai-files-picker",
+        "H075-ai-files-no-results",
+        "H099-ai-files-picker-1133"
+      ],
+      "limits": "No upload, source selection, prompt or response generated. Prior E/H evidence covers Mention, history and source chip. Existing selected source state is shown, not changed."
+    },
+    {
+      "id": "N095",
+      "scope": "People entry defaults, sort and Archived finite views",
+      "status": "Inspected finite branches",
+      "states": [
+        "All32 Invite person defaults Staff",
+        "Staff10 Invite Studio Staff defaults Staff",
+        "Freelancers7 Invite Studio Freelancer defaults Freelancer",
+        "Client contacts15 Invite Client defaults Customer",
+        "Sort options with Latest activity current",
+        "Archived2 existing records"
+      ],
+      "evidence": [
+        "H076-people-all-invite-default",
+        "H078-people-staff-invite-default",
+        "H079-people-freelancer-invite-default",
+        "H086-people-client-invite-default-1133",
+        "H095-people-sort-menu-1133",
+        "H096-people-archived-view-1133"
+      ],
+      "limits": "Root owns profile Commercial/rate-history and Client Access closures. Workload prior E031. Non-Staff settled restriction H052/H054 and root/C evidence. No sort choice, profile edit or invitation sent."
+    },
+    {
+      "id": "N097",
+      "scope": "Staff-inviter three role-specific invitation drafts",
+      "status": "Inspected",
+      "states": [
+        "Step1 defaults from each People view",
+        "Staff access automatic Studio scope and optional Job title",
+        "Freelancer zero Client/project disabled",
+        "Freelancer All Clients then one Client",
+        "Freelancer all/mixed/none projects and Send guard",
+        "Customer company required",
+        "Existing Client company searchable picker and no-results",
+        "Customer projects explicitly optional: zero/all/mixed/none",
+        "Back then Cancel; reopen original blank company/projects"
+      ],
+      "evidence": [
+        "H076-people-all-invite-default",
+        "H077-invite-staff-access",
+        "H078-people-staff-invite-default",
+        "H079-people-freelancer-invite-default",
+        "H080-invite-freelancer-no-access",
+        "H081-invite-freelancer-all-clients",
+        "H082-invite-freelancer-one-client",
+        "H083-invite-freelancer-all-projects-1133",
+        "H084-invite-freelancer-mixed-projects-1133",
+        "H085-invite-freelancer-none-projects-1133",
+        "H086-people-client-invite-default-1133",
+        "H087-invite-client-no-company-1133",
+        "H088-invite-client-company-picker-1133",
+        "H089-invite-client-picker-no-results-1133",
+        "H090-invite-client-zero-projects-1133",
+        "H091-invite-client-all-projects-1133",
+        "H092-invite-client-mixed-projects-1133",
+        "H093-invite-client-none-after-all-1133",
+        "H094-invite-client-draft-discarded"
+      ],
+      "widths": "Staff/Freelancer initial1440; Freelancer and Customer access1133. Finite current layouts, not every role/state at both widths.",
+      "source": "src/components/people/PeoplePage.tsx:62; src/components/invitations/InvitePersonModal.tsx:84,259",
+      "limits": "All Send invite actions intentionally uninvoked. Reserved audit-review@example.invalid typed only into local disposable front-end draft. No real invitation or stored record created. This is Staff acting as inviter, not an assertion that non-Staff can invite.",
+      "notApplicable": "N097-S03 inline Client creation does not exist in this consumer: Customer BriskSelect maps existing activeClients only. Do not count unrelated Add Client or Start project forms as this picker."
+    },
+    {
+      "id": "N139",
+      "scope": "Actual existing Chat message thread pane, distinct from Threads overview",
+      "status": "Inspected finite branch",
+      "states": [
+        "Existing parent with two replies",
+        "Empty Reply in thread composer, Send disabled",
+        "1440 and1133 fit",
+        "Close thread retains Global Chat/project",
+        "Escape closes thread and whole Global Chat"
+      ],
+      "evidence": [
+        "H101-chat-actual-thread-pane",
+        "H102-chat-actual-thread-pane-1133",
+        "H103-chat-thread-close",
+        "H104-chat-thread-escape"
+      ],
+      "source": "src/components/chat/ChatPage.tsx:688,1590; src/components/navigation/AppShell.tsx:54",
+      "limits": "No message or reply sent. No dirty-draft loss tested. H103 Close and H104 Escape give directly observed differing task boundaries; this extends B20, not a new finding. Direct /chat layout still uses its own E/D evidence."
+    }
+  ],
+  "remainingAssignedUiGaps": [],
+  "separateLeadWork": "People Freelancer Commercial/rate history and Client Access profile tabs assigned to lead. Whole-app role/route roll-ups remain C/lead responsibility.",
+  "processBoundariesExcluded": [
+    "Send invite",
+    "Create tag",
+    "Copy project link",
+    "Access-radio changes",
+    "Column visibility/reset changes",
+    "Message or reply Send",
+    "AI Upload/source selection/prompt Send"
+  ],
+  "relatedFindings": [
+    {
+      "id": "B20",
+      "change": "Add actual thread Escape occurrence H102/H104 and working Close H103. Same event-boundary root cause, no new finding."
+    },
+    {
+      "id": "A07",
+      "change": "H102 also shows known date-pill overlap. Related evidence only, no new duplicate."
+    }
+  ],
+  "positiveCraft": [
+    {
+      "evidence": [
+        "H083-invite-freelancer-all-projects-1133",
+        "H084-invite-freelancer-mixed-projects-1133",
+        "H085-invite-freelancer-none-projects-1133",
+        "H090-invite-client-zero-projects-1133",
+        "H091-invite-client-all-projects-1133",
+        "H092-invite-client-mixed-projects-1133",
+        "H093-invite-client-none-after-all-1133",
+        "H094-invite-client-draft-discarded"
+      ],
+      "observation": "Invitation guard preserves a useful role difference: Freelancer needs selected project access; Client can join a company with no projects yet. Local drafts are discarded on Cancel."
+    },
+    {
+      "evidence": [
+        "H069-videos-columns",
+        "H097-videos-columns-1133"
+      ],
+      "observation": "Columns explains immediate persistence and distinguishes locked Project/Actions fields from optional columns. Done is a clear close action for these immediate preferences."
+    },
+    {
+      "evidence": [
+        "H073-project-copy-link-panel",
+        "H098-project-copy-link-panel-1133"
+      ],
+      "observation": "Project link panel names Whole project and current View only scope adjacent to the final Copy action. The reference remains readable at both desktop widths."
+    },
+    {
+      "evidence": [
+        "H101-chat-actual-thread-pane",
+        "H102-chat-actual-thread-pane-1133",
+        "H103-chat-thread-close"
+      ],
+      "observation": "Thread has contextual parent/replies and an empty composer with disabled Send. Visible Close preserves the surrounding project conversation."
+    }
+  ],
+  "cleanup": {
+    "completedAt": "2026-10-20T21:37:03.222Z",
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "ownedTabId": "1716948424",
+    "origin": "http://127.0.0.1:8768",
+    "ownedTabsAfter": [],
+    "viewportOverride": "Documented viewport.reset() completed; read-only DOM confirmed normal 1512 × 767 viewport before closing.",
+    "tabClosure": "Explicitly closed only bound B audit tab1716948424; owned-tab inventory then empty.",
+    "restoredState": "Studio Staff; Videos All15; filters and search clear; expanded navigation; overlays closed; no local draft retained.",
+    "evidence": "H105-remaining-branches-final-restored",
+    "otherWork": "No other profile, user tab, reviewer tab or window selected, reset or closed."
+  },
+  "completionQualification": "Assigned finite precommit UI states inspected; no claim of every data/role/viewport permutation, production accessibility compliance, decoded media playback or committed-action outcome."
+}

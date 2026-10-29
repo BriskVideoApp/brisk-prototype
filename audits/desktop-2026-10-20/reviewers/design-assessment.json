@@ -1,0 +1,711 @@
+{
+  "title": "Design assessment: what to preserve and where to refine",
+  "purpose": "A UI-first assessment of genuine current desktop compositions. Strengths identify specific successful decisions; optional refinements are separate from confirmed defects and remain unapproved.",
+  "overallAssessment": "Brisk already has a recognisable, calm product language: clear workspace framing, labelled production stages, focused editors and task-specific forms. The strongest next step is to protect that hierarchy while repairing the specific collisions, unreadable field values and contradictory states already documented. Sophistication comes from deliberate priority and dependable behaviour, not removing useful distinctions.",
+  "strengths": [
+    {
+      "id": "DES-S01",
+      "title": "A calm frame separates navigation from the work",
+      "area": "Global navigation",
+      "screenshots": [
+        "E002-staff-videos-1440.jpg",
+        "E103-notifications-root-navigation.jpg",
+        "E116-brief-deliverables-collapsed-nav.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "The pale neutral sidebar, white global bar and lavender current location give the frequent workspace a stable frame. History and Chat/Updates/Ask Brisk stay in the global band, while the page title and project work sit below. Collapsing navigation returns useful desktop space without changing the task vocabulary.",
+      "taskBenefit": "Staff can distinguish changing workspace, returning through history and acting on the current project.",
+      "preservePrinciples": [
+        "Keep quiet default surfaces and a single clear selected location.",
+        "Preserve the scoped expanded/collapsed/sidebar background and separate global/project action scopes.",
+        "Keep Studio settings navigation contextual and correct its descendant gap under A05."
+      ],
+      "sources": [
+        "src/components/navigation/HybridSidebar.tsx:19",
+        "src/components/navigation/HybridSidebar.tsx:89",
+        "src/components/navigation/HybridSidebar.tsx:96",
+        "Docs/desktop-design-baseline.md:47"
+      ],
+      "authority": "Approved hybrid desktop navigation and scoped workspace-header baseline",
+      "limits": "This is an assessment of inspected compositions. It does not certify every route, role, focus state or narrow-browser tooltip.",
+      "captureContexts": [
+        {
+          "id": "E002-staff-videos-1440",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "default expanded navigation",
+          "url": "http://localhost:3000/active-videos",
+          "captured": "2026-10-20T08:52:31.895Z"
+        },
+        {
+          "id": "E103-notifications-root-navigation",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Notifications root reached through Studio settings sidebar",
+          "url": "http://localhost:3000/settings/notifications",
+          "captured": "2026-10-20T09:33:48.365Z"
+        },
+        {
+          "id": "E116-brief-deliverables-collapsed-nav",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief Deliverables with collapsed navigation; no content changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:35.566Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S02",
+      "title": "The production journey reads as stages, with Media always available",
+      "area": "Project flow",
+      "screenshots": [
+        "E002-staff-videos-1440.jpg",
+        "BRIEF-footage-1133.jpg",
+        "E116-brief-deliverables-collapsed-nav.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "Circular stage icons are accompanied by names and distinguishable progress states. A divider separates Media from the ordered production stages, expressing that source material is available throughout the project. Different rows show optional Storyboard and Animation rather than forcing every video through one fixed chain.",
+      "taskBenefit": "Filmmakers can orient themselves in the production journey and find Media without treating it as the next stage to complete.",
+      "preservePrinciples": [
+        "Retain labelled circular StageChip presentation and pinned Media.",
+        "Keep optional Storyboard, one Shoot stage with substages, and Animation replacing Edit for the relevant project.",
+        "Preserve project-specific stage variation instead of forcing every row to use the same count."
+      ],
+      "sources": [
+        "src/components/project/ProjectStageHeader.tsx:48",
+        "src/components/project/ProjectStageHeader.tsx:62",
+        "src/components/project/ProjectStageHeader.tsx:201",
+        "AGENTS.md"
+      ],
+      "authority": "Explicit current production-flow decisions in AGENTS and desktop baseline",
+      "limits": "Strength concerns visible flow structure; B09 still identifies the separate Adjust project flow overlay interaction defect.",
+      "captureContexts": [
+        {
+          "id": "E002-staff-videos-1440",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "default expanded navigation",
+          "url": "http://localhost:3000/active-videos",
+          "captured": "2026-10-20T08:52:31.895Z"
+        },
+        {
+          "id": "BRIEF-footage-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief footage, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:20.854Z"
+        },
+        {
+          "id": "E116-brief-deliverables-collapsed-nav",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief Deliverables with collapsed navigation; no content changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:35.566Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S03",
+      "title": "The Clients directory supports useful relationship triage",
+      "area": "Clients",
+      "screenshots": [
+        "D-R008-staff-1133.jpg",
+        "D-R008-staff-1440.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "A row brings the Client identity, active project count and stage/waiting party beside the primary contact, latest activity and portal status. The title/search band, count filters, Add Client and secondary sort form a clear hierarchy. All principal columns remain visible at 1133px in the captured state.",
+      "taskBenefit": "Staff can see who needs attention and who to contact before opening a profile.",
+      "preservePrinciples": [
+        "Keep contact and project context alongside activity rather than reducing the table to Client names.",
+        "Keep creation separate from filtering and sort secondary to the main task.",
+        "Retain purposeful text labels and counts; do not replace them with colour-only icons."
+      ],
+      "sources": [
+        "src/components/clients/ClientsPage.tsx:64",
+        "src/components/clients/ClientsPage.tsx:99",
+        "src/components/clients/ClientsPage.tsx:120",
+        "src/components/clients/ClientsPage.tsx:147"
+      ],
+      "authority": "Approved workspace header/filter direction plus current verified Client composition",
+      "limits": "Long project titles truncate in context. Tooltip/full-title recovery and every row destination were not established by these screenshots.",
+      "captureContexts": [
+        {
+          "id": "D-R008-staff-1133",
+          "coverageId": "R008",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/clients",
+          "captured": "2026-10-20T08:56:51.280Z"
+        },
+        {
+          "id": "D-R008-staff-1440",
+          "coverageId": "R008",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/clients",
+          "captured": "2026-10-20T08:56:12.680Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S04",
+      "title": "Focused settings dialogs have clear save boundaries",
+      "area": "Studio and personal settings",
+      "screenshots": [
+        "E102-studio-edit-name.jpg",
+        "E102-studio-add-logo.jpg",
+        "E088-brand-font-roles.jpg",
+        "E111-password-dialog.jpg"
+      ],
+      "roles": [
+        "Studio Staff for Studio/personal settings",
+        "Customer for captured Brand Kit Font roles editor"
+      ],
+      "whyItWorks": "The inspected editors use a specific title, visible labels, focused content and a separate Cancel/Save footer. Name and logo editing remain small; the wide Font roles editor uses aligned rows for many related values. Different sizes serve different jobs while preserving the same action hierarchy.",
+      "taskBenefit": "The user can understand what the editor changes and how to leave or save the draft without scanning unrelated settings.",
+      "preservePrinciples": [
+        "Keep named Save actions and an explicit cancellation route.",
+        "Use content-appropriate width and density, rather than giving every dialog identical dimensions.",
+        "Keep useful consequence copy such as the logo being shown in every Client portal."
+      ],
+      "sources": [
+        "src/components/settings/StudioSetupOverviewPage.tsx:222",
+        "src/components/settings/StudioSetupOverviewPage.tsx:257",
+        "src/components/brand-kits/AssetManagement.tsx:236",
+        "Brisk DS/guidelines/components/editing-dialog.md"
+      ],
+      "authority": "Approved DS EditingDialog/Button/Input contracts and current composed editors",
+      "limits": "This is not a blanket endorsement of all dialog footers. B12 records missing explicit exits in specific custom footers; password submission and saved settings were not performed.",
+      "captureContexts": [
+        {
+          "id": "E102-studio-edit-name",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Edit name focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:28.751Z"
+        },
+        {
+          "id": "E102-studio-add-logo",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Add logo focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:29.395Z"
+        },
+        {
+          "id": "E088-brand-font-roles",
+          "role": "Customer",
+          "width": 1133,
+          "height": 1000,
+          "state": "Font roles local editor, existing values, no edit/save",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:31:54.974Z"
+        },
+        {
+          "id": "E111-password-dialog",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Change password dialog opened only; no credentials entered",
+          "url": "http://localhost:3000/settings/personal/security",
+          "captured": "2026-10-20T09:34:46.216Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S05",
+      "title": "Brief uses the right shape for different question types",
+      "area": "Brief",
+      "screenshots": [
+        "BRIEF-video-type-1133.jpg",
+        "BRIEF-footage-1133.jpg",
+        "BRIEF-references-1133.jpg",
+        "BRIEF-brand-kit-1133.jpg",
+        "BRIEF-deadline-1133.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "Visible two-column choices make named production options comparable. A long URL field supports pasted references; the approved compact Brand Kit selector keeps palette context without consuming the full width; the deadline uses a bounded calendar. The guided footer keeps Back, step position and Next available.",
+      "taskBenefit": "Each question exposes information in a form suited to its answer, without requiring a generic field pattern for every task.",
+      "preservePrinciples": [
+        "Keep specialised choice grids when their options and labels fit, as they do in the inspected states.",
+        "Retain the approved compact 584px Brand Kit field and its rich option content.",
+        "Keep one clear next step, while repairing the independent retained-scroll issue A13 and production-table readability A12."
+      ],
+      "sources": [
+        "src/components/brief/BriefPage.tsx:2581",
+        "src/components/brief/BriefPage.tsx:2962",
+        "src/components/brief/BriefPage.tsx:3015",
+        "src/components/brief/BriefPage.tsx:3065",
+        "src/components/brief/BriefPage.tsx:1688",
+        "Docs/ux-decision-log.md:597"
+      ],
+      "authority": "Current approved specialised Brief patterns and scoped compact Brand Kit decision",
+      "limits": "Default choice compositions fit at both inspected desktop widths. This does not prove every selected/custom option, keyboard path or saved answer flow.",
+      "captureContexts": [
+        {
+          "id": "BRIEF-video-type-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief video-type, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:18.675Z"
+        },
+        {
+          "id": "BRIEF-footage-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief footage, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:20.854Z"
+        },
+        {
+          "id": "BRIEF-references-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief references, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:19.808Z"
+        },
+        {
+          "id": "BRIEF-brand-kit-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief brand-kit, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:20.399Z"
+        },
+        {
+          "id": "BRIEF-deadline-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief deadline, existing values/missing state; no field edits",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:19:22.018Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S06",
+      "title": "Team editing preserves important assignment and invitation distinctions",
+      "area": "Project Team",
+      "screenshots": [
+        "E007-team-staff-expanded-1133.jpg",
+        "E008-team-freelancers-1133.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "The editor distinguishes Staff and Freelancers, existing invitations and new selection. The visible invited list includes rate, seen/invited state and sent timing; an already-invited person is explained rather than appearing silently unavailable. The source retains distinct Assign, Invite, Assign now and Save changes actions.",
+      "taskBenefit": "Studio operations can distinguish a commitment or direct assignment from asking a freelancer to accept work.",
+      "preservePrinciples": [
+        "Retain rates, invitation status and role-specific selection context.",
+        "Do not merge Save, Assign and Invite merely to shorten the footer.",
+        "Repair named checkbox controls and tab semantics under B01/A02/B07 without flattening the workflow."
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:269",
+        "src/components/project/team/RoleEditorModal.tsx:280",
+        "src/components/project/team/RoleEditorModal.tsx:309",
+        "src/components/project/team/RoleEditorModal.tsx:348"
+      ],
+      "authority": "Explicit user audit boundary distinguishing selection, assignment, invitation and saving; verified visible state plus current source",
+      "limits": "The captured unselected Freelancer state does not display all conditional action buttons. Assignment/invitation outcomes were not submitted, and this strength does not approve the current checkbox accessibility or all save boundaries.",
+      "captureContexts": [
+        {
+          "id": "E007-team-staff-expanded-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Show all Staff, available people and hours",
+          "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+          "captured": "2026-10-20T08:53:05.476Z"
+        },
+        {
+          "id": "E008-team-freelancers-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Freelancers selection, rates and invitation state",
+          "url": "http://localhost:3000/active-videos?project=loom-launch-film",
+          "captured": "2026-10-20T08:53:05.939Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S07",
+      "title": "Semantic colour helps explain financial exceptions",
+      "area": "Invoice review",
+      "screenshots": [
+        "E098-invoice-currency-mismatch.jpg",
+        "E095-expenses-submitted-review.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "Invoice amounts and file identity remain on white. A bounded yellow warning identifies a difference from the agreed offer, and a separately labelled information block shows the contractor explanation. Required versus optional approval-note wording changes with that exception. The colour reinforces text and icons.",
+      "taskBenefit": "The reviewer can understand why more explanation is needed before approving rather than discovering a silent block at the footer.",
+      "preservePrinciples": [
+        "Reserve accents for a named state or consequence.",
+        "Keep agreed rate and invoice total visible together.",
+        "Retain the exception note guard and explanation; do not remove meaningful alert colour through a blanket white-only restyling rule."
+      ],
+      "sources": [
+        "src/components/costs/CostsPrimitives.tsx:253",
+        "src/components/costs/CostsPrimitives.tsx:270",
+        "src/components/costs/CostsPrimitives.tsx:275",
+        "src/components/costs/CostsPrimitives.tsx:279"
+      ],
+      "authority": "Existing financial review rules and supported semantic-state composition",
+      "limits": "The comparison is coherent in the supplied states; no payment, approval or send-back was completed. Contrast and screen-reader output were not formally certified.",
+      "captureContexts": [
+        {
+          "id": "E098-invoice-currency-mismatch",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Submitted invoice with currency mismatch; approval note required; no approval",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:57.428Z"
+        },
+        {
+          "id": "E095-expenses-submitted-review",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Submitted matching invoice, two PDFs, optional Approval note; no approval",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:49.832Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-S08",
+      "title": "Approval and optional forwarding remain separate decisions",
+      "area": "Approved invoice forwarding",
+      "screenshots": [
+        "E099-invoice-forward.jpg",
+        "E100-invoice-forward-picker.jpg",
+        "E101-invoice-no-destinations.jpg"
+      ],
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "whyItWorks": "The existing approved-invoice dialog states that forwarding is optional, provides a direct Done route and labels the destination as accounts inboxes. Clearing destinations leaves Done available while Email invoice is disabled. This avoids implying that an approved invoice must also be emailed.",
+      "taskBenefit": "The user can finish review without taking an unrelated communication action, or choose explicit recipients when forwarding is needed.",
+      "preservePrinciples": [
+        "Keep approval, forwarding and marking paid distinct.",
+        "Retain a dependable exit when an optional action has no destination.",
+        "Preserve the visible recipient scope and shared multi-selector behaviour."
+      ],
+      "sources": [
+        "src/components/costs/CostsPrimitives.tsx:236",
+        "src/components/costs/CostsPrimitives.tsx:238",
+        "src/components/costs/CostsPrimitives.tsx:258"
+      ],
+      "authority": "Current financial workflow and approved shared selection/dialog ingredients",
+      "limits": "The view was opened for an existing approved invoice. It is not evidence that approval or email delivery was executed, and production integrations remain outside this front-end prototype.",
+      "captureContexts": [
+        {
+          "id": "E099-invoice-forward",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Existing Approved invoice forwarding draft; no email sent",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:09.102Z"
+        },
+        {
+          "id": "E100-invoice-forward-picker",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Accounts inbox multi-selector for approved invoice; no send",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:13.656Z"
+        },
+        {
+          "id": "E101-invoice-no-destinations",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "No forwarding destinations selected; Email invoice disabled, no send",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:18.926Z"
+        }
+      ]
+    }
+  ],
+  "optionalRefinements": [
+    {
+      "id": "DES-R01",
+      "relatedFinding": "A08",
+      "title": "Let folders form a compact group before preview files",
+      "classification": "Optional layout refinement from an observed density issue",
+      "screenshots": [
+        "D-R029-staff-1133.jpg",
+        "D-R029-staff-1440.jpg"
+      ],
+      "smallestCoherentImprovement": "Separate the existing compact folder items from the tall file-card grid while retaining folder-first order. Use current controls and token spacing.",
+      "whyConsider": "Short folder cards currently share tall file rows, leaving visible blank slots that push files down.",
+      "tradeoffs": [
+        "A new grouping should not add a large repeated heading or increase vertical space when there are no folders.",
+        "Preserve sorting, drop targets, selection, keyboard order and folder navigation. Do not make folder cards as tall as videos for uniformity."
+      ],
+      "decisionNeeded": "Tom reviews the grouping option; improved scan efficiency is a hypothesis, not a measured result. No exact approved replacement exists.",
+      "sources": [
+        "src/components/media/MediaAssetGrid.tsx:145",
+        "src/components/media/media.css:887",
+        "src/components/media/media.css:894",
+        "src/components/media/media.css:1036"
+      ],
+      "captureContexts": [
+        {
+          "id": "D-R029-staff-1133",
+          "coverageId": "R029",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+          "captured": "2026-10-20T09:00:54.035Z"
+        },
+        {
+          "id": "D-R029-staff-1440",
+          "coverageId": "R029",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Project Media default",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/media",
+          "captured": "2026-10-20T08:58:32.196Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-R02",
+      "relatedFinding": "A11",
+      "title": "Choose a deliberate Brand Kit asset priority across desktop widths",
+      "classification": "Product hierarchy decision, not a verified task failure",
+      "screenshots": [
+        "D-R003-staff-1440.jpg",
+        "D-R003-staff-1133.jpg",
+        "D-R002-staff-1133.jpg"
+      ],
+      "smallestCoherentImprovement": "If routine brand-asset retrieval is the main task, keep Logos/Colours/Fonts before the larger video/editor-files area at both desktop widths while reflowing columns.",
+      "whyConsider": "The current breakpoint changes what appears first, not merely the number of columns. Stable priority may make repeated retrieval more predictable.",
+      "tradeoffs": [
+        "A narrower workstation may legitimately prioritise editor-file downloads. Confirm that before reordering.",
+        "Retain every section and logical DOM/focus order; do not make visual CSS order conflict with reading order."
+      ],
+      "decisionNeeded": "Tom confirms the primary Brand Kit task. The current wider page is evidence of one priority, not automatic approval.",
+      "sources": [
+        "src/components/brand-kits/brand-kits.css:471",
+        "src/components/brand-kits/brand-kits.css:2992",
+        "src/components/brand-kits/brand-kits.css:3023"
+      ],
+      "captureContexts": [
+        {
+          "id": "D-R003-staff-1440",
+          "coverageId": "R003",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:05:06.083Z"
+        },
+        {
+          "id": "D-R003-staff-1133",
+          "coverageId": "R003",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:09:19.345Z"
+        },
+        {
+          "id": "D-R002-staff-1133",
+          "coverageId": "R002",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/brand-kits/loom/loom-ai",
+          "captured": "2026-10-20T09:09:17.629Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-R03",
+      "relatedFinding": "A09",
+      "title": "Make short Client metrics feel secondary to the editable details",
+      "classification": "Deferred visual polish, not an established usability defect",
+      "screenshots": [
+        "D-R007-staff-1133.jpg"
+      ],
+      "smallestCoherentImprovement": "If the empty tall enclosures feel too heavy, align the existing short metric cards to the start of their grid tracks. Compare that small change before redesigning columns or moving information.",
+      "whyConsider": "The two metric cards stretch to the long details form despite containing very little content. A lighter enclosure may make the page feel more composed.",
+      "tradeoffs": [
+        "Empty space is not itself a defect. The captured fields remain operable/readable.",
+        "A compact card does not automatically recover form width. Reallocating columns is a separate hierarchy decision.",
+        "The supplied 1440 profile capture is blank, so a valid wide comparison is still needed."
+      ],
+      "decisionNeeded": "Tom preference after a loaded 1440 comparison; no approved alternate Client profile layout exists.",
+      "sources": [
+        "src/components/clients/clients.css:653",
+        "src/components/clients/clients.css:706",
+        "src/components/clients/ClientProfilePage.tsx:280"
+      ],
+      "captureContexts": [
+        {
+          "id": "D-R007-staff-1133",
+          "coverageId": "R007",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/clients/loom",
+          "captured": "2026-10-20T09:09:25.299Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-R04",
+      "relatedFinding": "A04",
+      "title": "Document whether ordinary toolbar sorting may use a quiet field variant",
+      "classification": "Design-system variant decision, not a proven discoverability failure",
+      "screenshots": [
+        "E010-media-keyboard-before.jpg",
+        "D-R020-staff-1440.jpg",
+        "E048-media-sort-keyboard-focus.jpg",
+        "E049-people-sort-keyboard-focus.jpg"
+      ],
+      "smallestCoherentImprovement": "Choose and document the intended ordinary toolbar selector treatment, then remove accidental consumer overrides only where they conflict with that choice.",
+      "whyConsider": "Media sort is unframed while the ordinary DS field is framed. Its chevron/order text and blue keyboard focus remain available, so a quieter treatment may be purposeful in the dense toolbar.",
+      "tradeoffs": [
+        "Adding a border gives a stronger field cue but also more visual weight.",
+        "Do not copy People dimensions, add a label by default or restyle Media type/view controls merely for uniformity."
+      ],
+      "decisionNeeded": "Tom/Yura decide whether to recognise a scoped quiet toolbar selection variant or restore the ordinary DS field. No functional failure is claimed.",
+      "sources": [
+        "src/components/media/MediaFilterBar.tsx:75",
+        "src/components/media/media.css:808",
+        "src/components/media/media.css:824",
+        "Brisk DS/guidelines/components/dropdown.md"
+      ],
+      "captureContexts": [
+        {
+          "id": "E010-media-keyboard-before",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "before keyboard Select Office-arrivals-camera-b.mov",
+          "url": "http://localhost:3000/media",
+          "captured": "2026-10-20T08:53:29.006Z"
+        },
+        {
+          "id": "D-R020-staff-1440",
+          "coverageId": "R020",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "route default; nested states require individual verification",
+          "url": "http://localhost:3000/people",
+          "captured": "2026-10-20T08:56:32.026Z"
+        },
+        {
+          "id": "E048-media-sort-keyboard-focus",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Sort media keyboard focus from List view",
+          "url": "http://localhost:3000/media",
+          "captured": "2026-10-20T09:17:02.153Z"
+        },
+        {
+          "id": "E049-people-sort-keyboard-focus",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "DS Sort people focus after menu Escape",
+          "url": "http://localhost:3000/people",
+          "captured": "2026-10-20T09:17:33.050Z"
+        }
+      ]
+    },
+    {
+      "id": "DES-R05",
+      "relatedFinding": "B11",
+      "title": "Carry the excess-hours cue into the workload explanation",
+      "classification": "Optional information-hierarchy improvement",
+      "screenshots": [
+        "E031-people-capacity.jpg"
+      ],
+      "smallestCoherentImprovement": "When overbooked, add one concise excess-hours cue using the existing overbookedHours value near the detail summary.",
+      "whyConsider": "The directory says 8h over capacity while the dialog shows correct Booked/Weekly capacity values but a clamped 0h Available; a concise cue avoids rediscovering the warning through subtraction.",
+      "tradeoffs": [
+        "The detailed breakdown remains useful and need not copy the directory layout.",
+        "Keep Potential separate from Booked and preserve normal/exact-capacity cases.",
+        "The prior compact-headline approval explicitly left this dialog unchanged, so this is a new recommendation rather than a regression."
+      ],
+      "decisionNeeded": "Tom chooses whether the extra cue is worthwhile; no incorrect calculation or observed user failure is claimed.",
+      "sources": [
+        "src/components/people/PeoplePrimitives.tsx:54",
+        "src/components/people/PeoplePrimitives.tsx:105",
+        "src/data/people.ts:300",
+        "Docs/ux-decision-log.md:441"
+      ],
+      "captureContexts": [
+        {
+          "id": "E031-people-capacity",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Sarah workload dialog, over-capacity with assignment breakdown",
+          "url": "http://localhost:3000/people?view=Studio%20Staff",
+          "captured": "2026-10-20T09:13:57.869Z"
+        }
+      ]
+    }
+  ],
+  "crossAppPreservePrinciples": [
+    "Repeat action meaning and interaction rules; allow context-appropriate geometry.",
+    "Keep labels and useful metadata where people make consequential production, access or financial decisions.",
+    "Use white content layers and bounded semantic accents; actual brand assets remain colourful content.",
+    "Reduce competing emphasis through hierarchy before deleting information.",
+    "Preserve assignment, invitation, saving, sending and approval as distinct operations."
+  ],
+  "limits": "Reviewer A inspected supplied current screenshots and source, not independent browser state. Each strength is scoped to listed captures. No saved record was changed, formal accessibility certification made or recommendation approved.",
+  "reviewStatus": "Needs decision",
+  "applicationChanges": false
+}

@@ -1,0 +1,99 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/masters".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/masters
+	2 container
+		3 container Primary navigation
+			4 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			5 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				6 text Collapse navigation
+			7 container Workspace
+				8 link Description: Videos, Value: localhost:3000/active-videos
+				9 link Description: To Do, Value: localhost:3000/today
+				10 link Description: People, Value: localhost:3000/people
+				11 link Description: Clients, Value: localhost:3000/clients
+				12 link Description: Media Library, Value: localhost:3000/media
+				13 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				14 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			15 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				16 container Tom Mitchell
+					17 text TM
+				18 text Tom Mitchell
+				19 text North Star Films
+			20 container Studio administration
+				21 link Description: Studio settings, Value: localhost:3000/settings/studio
+			22 container Prototype controls
+				23 button (collapsed) Test mode, Secondary Actions: Expand
+					24 text Test mode
+		25 container
+			26 container Navigation history
+				27 button Go back
+					28 text Back
+				29 button Go forward
+					30 text Forward
+				31 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					32 text Recent pages
+			33 container Global actions
+				34 button Open Chat
+				35 button (collapsed) Description: Updates, Secondary Actions: Expand
+			36 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			37 container
+				38 container Project stage progress
+					39 container LOOM / Launch Film - Sales Narrative
+						40 link Description: Back to dashboard, Value: localhost:3000/active-videos
+						41 text LOOM Launch Film - Sales Narrative
+					42 container LOOM Launch Film - Sales Narrative
+						43 content list Sequential production stages
+							44 container
+								45 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								46 text Brief
+							47 container
+								48 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+								49 text Script
+							50 container
+								51 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								52 text Storyboard
+							53 container
+								54 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								55 text Shoot
+							56 container
+								57 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								58 text Edit
+							59 container
+								60 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								61 text Masters
+						62 container
+							63 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+							64 text Media
+						65 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							66 text Adjust project flow
+				67 table Deliverables register
+					68 row
+						69 cell
+							70 text Video
+						71 cell
+							72 text Assets
+						73 cell
+							74 text Comments
+						75 cell
+							76 text Action
+						77 cell More actions
+					78 heading No deliverables yet, Value: 2
+						79 text No deliverables yet
+					80 text Add the first output for this video.
+					81 button Add deliverable
+					82 button Add downloadable prototype sample
+					83 text The sample downloads as a JSON data file, not a rendered video.
+				84 container Masters actions
+					85 container Masters share actions
+						86 button (collapsed) Description: Copy link, Secondary Actions: Expand
+						87 button (disabled) Send Masters Add a Master before sending it for review
+							88 text Send Masters
+							89 text Add a Master before sending it for review
+					90 button (disabled) Download All
+					91 text Available when every Masters slot has a file.
+					92 button (disabled) Complete video, Help: Add a file to every Masters slot before completing the video
+				93 button Choose file
+				94 button Choose file
+				95 button Choose file
+				96 button Choose file
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/masters

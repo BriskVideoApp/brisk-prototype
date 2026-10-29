@@ -1,0 +1,42 @@
+{
+  "approval": "Vertically align the Studio logo, sidebar toggle and top-bar navigation controls.",
+  "status": "Implemented and desktop-verified",
+  "change": "Expanded Studio row and top bar derive their vertical centre from a shared 64px desktop header-height token. DS spacing insets the 48px Studio row by 8px. Collapsed stacked rail remains unchanged.",
+  "verification": {
+    "types": "npx tsc --noEmit passed",
+    "runtime": "/today HTTP 200",
+    "diff": "git diff --check passed",
+    "desktop": [
+      {
+        "width": 1280,
+        "height": 720,
+        "centreY": 32
+      },
+      {
+        "width": 1133,
+        "height": 720,
+        "centreY": 32
+      }
+    ],
+    "measuredElements": [
+      "Studio logo",
+      "Studio name",
+      "Collapse sidebar control",
+      "Back",
+      "Forward",
+      "Recent pages",
+      "Search",
+      "Chat"
+    ],
+    "interaction": "Enter collapse/expand verified; collapsed name Expand sidebar and aria-expanded=false. Restored expanded state and normal viewport.",
+    "scope": "Shared expanded desktop shell; no component shapes, routes, roles, records, assets or dependencies changed. No tests/build/commit/push.",
+    "inspection": "Isolated 127.0.0.1:8789/today; user working tab not operated.",
+    "evidence": "aligned-1280.png full screenshot; aligned-header.png faithful crop.",
+    "cropBoundsInSourcePixels": [
+      0,
+      0,
+      440,
+      80
+    ]
+  }
+}

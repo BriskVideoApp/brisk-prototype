@@ -1,0 +1,2435 @@
+[
+  {
+    "id": "F001-todo-populated-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing populated week viewed as Sarah Chen",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:17:31.063Z",
+    "file": "evidence/F001-todo-populated-1440.jpg",
+    "coverageIds": [
+      "N094",
+      "R018",
+      "R060"
+    ]
+  },
+  {
+    "id": "F002-todo-entry-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing entry opened with Enter",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:17:45.231Z",
+    "file": "evidence/F002-todo-entry-editor.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F003-todo-invalid-hours",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Zero hours draft validation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:17:51.949Z",
+    "file": "evidence/F003-todo-invalid-hours.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F004-todo-populated-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Populated week at narrower desktop",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:18:16.355Z",
+    "file": "evidence/F004-todo-populated-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F005-todo-collapsed-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Populated week with collapsed navigation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:18:16.759Z",
+    "file": "evidence/F005-todo-collapsed-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F006-shoot-shot-list-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated Shot List default",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T20:18:48.489Z",
+    "file": "evidence/F006-shoot-shot-list-1440.jpg",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ]
+  },
+  {
+    "id": "F007-shot-actions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shot contextual action menu",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T20:18:57.532Z",
+    "file": "evidence/F007-shot-actions.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F008-shot-type-picker",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shot type field options",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T20:19:08.685Z",
+    "file": "evidence/F008-shot-type-picker.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F009-shot-list-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shot List at1133 desktop",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "captured": "2026-10-20T20:19:08.887Z",
+    "file": "evidence/F009-shot-list-1133.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F010-shoot-interview-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing interview questions",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "captured": "2026-10-20T20:19:13.118Z",
+    "file": "evidence/F010-shoot-interview-1133.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F011-interview-editor-validation",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Question editor empty draft",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "captured": "2026-10-20T20:19:22.248Z",
+    "file": "evidence/F011-interview-editor-validation.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F012-visual-references-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Visual References empty state",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "captured": "2026-10-20T20:19:26.816Z",
+    "file": "evidence/F012-visual-references-empty.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F013-shoot-media-picker",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Project Media reference picker",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "captured": "2026-10-20T20:19:39.267Z",
+    "file": "evidence/F013-shoot-media-picker.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F014-shoot-reference-populated",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Sample visual reference attached in disposable session",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "captured": "2026-10-20T20:19:39.649Z",
+    "file": "evidence/F014-shoot-reference-populated.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F015-location-editor",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing Shoot location editor",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=locations",
+    "captured": "2026-10-20T20:19:45.749Z",
+    "file": "evidence/F015-location-editor.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F016-shoot-people-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot people table",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "captured": "2026-10-20T20:19:58.304Z",
+    "file": "evidence/F016-shoot-people-1133.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F017-shoot-person-editor",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot contact and call details dialog",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "captured": "2026-10-20T20:19:58.779Z",
+    "file": "evidence/F017-shoot-person-editor.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F018-shoot-role-options",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Person editor switched from custom role to closed standard role field",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "captured": "2026-10-20T20:20:04.636Z",
+    "file": "evidence/F018-shoot-role-options.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F019-shoot-documents",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Supporting Shoot documents",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=documents",
+    "captured": "2026-10-20T20:20:27.169Z",
+    "file": "evidence/F019-shoot-documents.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F020-shoot-document-link",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Supporting document link form",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=documents",
+    "captured": "2026-10-20T20:20:31.859Z",
+    "file": "evidence/F020-shoot-document-link.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F021-shoot-schedule-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Populated Schedule and Unscheduled items",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:20:43.793Z",
+    "file": "evidence/F021-shoot-schedule-1133.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F022-shoot-schedule-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Schedule with expanded Unscheduled at1440",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:20:43.995Z",
+    "file": "evidence/F022-shoot-schedule-1440.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F023-schedule-item-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Schedule item editor and time suggestions",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:20:53.532Z",
+    "file": "evidence/F023-schedule-item-editor.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F024-shoot-day-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot day details editor",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:21:00.350Z",
+    "file": "evidence/F024-shoot-day-editor.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F025-shoot-day2",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Second shoot day schedule state",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:21:01.057Z",
+    "file": "evidence/F025-shoot-day2.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F026-on-set-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated On Set overview",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:21:20.701Z",
+    "file": "evidence/F026-on-set-1440.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F027-onset-focus-schedule",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Focused On Set Schedule",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2&focus=run-of-day",
+    "captured": "2026-10-20T20:21:29.581Z",
+    "file": "evidence/F027-onset-focus-schedule.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F028-onset-focus-exit",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Focused Schedule keyboard exit",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:21:36.955Z",
+    "file": "evidence/F028-onset-focus-exit.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F029-onset-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "On Set at narrower desktop",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:21:42.638Z",
+    "file": "evidence/F029-onset-1133.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F030-onset-progress",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot day progress panel",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:22:07.848Z",
+    "file": "evidence/F030-onset-progress.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F031-onset-progress-selection",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Single selected shot and scoped bulk actions",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:22:19.584Z",
+    "file": "evidence/F031-onset-progress-selection.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F032-shoot-approval-confirm",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot approved state in disposable demo",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T20:22:46.860Z",
+    "file": "evidence/F032-shoot-approval-confirm.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F033-edit-readiness-confirm",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Explicit readiness confirmation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T20:23:22.371Z",
+    "file": "evidence/F033-edit-readiness-confirm.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F034-edit-ready-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Edit ready with explicit first-version empty state",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T20:23:42.661Z",
+    "file": "evidence/F034-edit-ready-empty.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F035-review-populated-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing populated review demonstration V2",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:23:54.909Z",
+    "file": "evidence/F035-review-populated-1440.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F036-review-compare",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Two-version comparison mode",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:24:06.333Z",
+    "file": "evidence/F036-review-compare.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F037-review-comment-menu",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Feedback comment actions",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:24:20.771Z",
+    "file": "evidence/F037-review-comment-menu.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F038-review-team-filter",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Team-only feedback filter",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:24:28.266Z",
+    "file": "evidence/F038-review-team-filter.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F039-review-drawing-tools",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Drawing feedback mode and unsent composer",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:24:34.747Z",
+    "file": "evidence/F039-review-drawing-tools.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F040-review-1133-overall",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Review at1133 with Team overall composer",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:24:54.710Z",
+    "file": "evidence/F040-review-1133-overall.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F041-review-approved-sample",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Edit approved state in disposable demo",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:26:15.429Z",
+    "file": "evidence/F041-review-approved-sample.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F042-masters-sample-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Masters built-in sample deliverable",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:26:25.883Z",
+    "file": "evidence/F042-masters-sample-1133.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F043-masters-sample-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Expanded Masters deliverable at1440",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:26:34.144Z",
+    "file": "evidence/F043-masters-sample-1440.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F044-masters-thumbnail-actions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Masters thumbnail inspector actions",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:27:17.724Z",
+    "file": "evidence/F044-masters-thumbnail-actions.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F045-masters-comments",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Masters comment panel via nested keyboard action",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:27:26.304Z",
+    "file": "evidence/F045-masters-comments.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F046-masters-download-zero",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Download dialog with zero selected assets",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:27:39.918Z",
+    "file": "evidence/F046-masters-download-zero.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F047-masters-delete-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Deliverable delete confirmation, unsubmitted",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:27:45.766Z",
+    "file": "evidence/F047-masters-delete-confirm.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F048-masters-client",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client Masters delivery view",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:28:32.072Z",
+    "file": "evidence/F048-masters-client.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F049-masters-client-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client Masters narrower desktop",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "captured": "2026-10-20T20:29:12.623Z",
+    "file": "evidence/F049-masters-client-1133.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F050-review-client-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client populated review",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:29:17.277Z",
+    "file": "evidence/F050-review-client-1133.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F051-review-client-feedback",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client external feedback and comment navigation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:29:49.500Z",
+    "file": "evidence/F051-review-client-feedback.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F052-review-playback-options",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Playback speed cycles directly on click",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "captured": "2026-10-20T20:30:17.264Z",
+    "file": "evidence/F052-review-playback-options.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F053-canonical-edit-upload",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Canonical Edit with audit-only version",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T20:31:19.317Z",
+    "file": "evidence/F053-canonical-edit-upload.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F054-canonical-edit-two-versions",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Canonical Edit two-version state at1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T20:32:26.200Z",
+    "file": "evidence/F054-canonical-edit-two-versions.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F055-question-focus-readability",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Interview question readability on focus",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "captured": "2026-10-20T20:33:14.524Z",
+    "file": "evidence/F055-question-focus-readability.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F056-schedule-picker-escape",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Schedule time picker Escape result",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:34:22.070Z",
+    "file": "evidence/F056-schedule-picker-escape.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F057-progress-sidebar-collision",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot progress placement relative to desktop sidebar",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "captured": "2026-10-20T20:34:58.808Z",
+    "file": "evidence/F057-progress-sidebar-collision.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F058-shoot-send-panel",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shoot sending scope and recipient panel",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "captured": "2026-10-20T20:35:22.322Z",
+    "file": "evidence/F058-shoot-send-panel.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F059-shoot-client-onset",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client On Set presentation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "captured": "2026-10-20T20:35:32.864Z",
+    "file": "evidence/F059-shoot-client-onset.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F060-shoot-client-planning",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client planning composition",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots&day=day-1",
+    "captured": "2026-10-20T20:36:40.083Z",
+    "file": "evidence/F060-shoot-client-planning.jpg",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ]
+  },
+  {
+    "id": "F061-brief-delivery-sample",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief-linked delivery requirements in disposable demo",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/brief",
+    "captured": "2026-10-20T20:37:30.468Z",
+    "file": "evidence/F061-brief-delivery-sample.jpg",
+    "coverageIds": [
+      "N104",
+      "N117"
+    ]
+  },
+  {
+    "id": "F062-main-video-delivery",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brief-linked Main Video with an uploaded sample",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:38:05.597Z",
+    "file": "evidence/F062-main-video-delivery.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F063-masters-caption-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Captions inspector and sample inline edit",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:38:29.933Z",
+    "file": "evidence/F063-masters-caption-editor.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F064-masters-recut-entry",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Current recut mark-up workspace",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:38:49.728Z",
+    "file": "evidence/F064-masters-recut-entry.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F065-recut-source-picker",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Recut source chooser, no alternative uploaded",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:39:01.344Z",
+    "file": "evidence/F065-recut-source-picker.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F066-recut-range-draft",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Recut range selection before instruction",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:39:09.442Z",
+    "file": "evidence/F066-recut-range-draft.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F067-recut-cancel-result",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Unsent recut range cancelled",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:39:33.842Z",
+    "file": "evidence/F067-recut-cancel-result.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F068-masters-comments-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Main Video comment rail at1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:39:34.261Z",
+    "file": "evidence/F068-masters-comments-1133.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F069-masters-composer-reachable",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Masters composer keyboard visibility at1440",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:40:03.825Z",
+    "file": "evidence/F069-masters-composer-reachable.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F070-caption-text-fit",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Editable caption cue readability",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:40:48.326Z",
+    "file": "evidence/F070-caption-text-fit.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F071-client-caption-reading",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client read-only caption presentation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T20:40:49.338Z",
+    "file": "evidence/F071-client-caption-reading.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F072-freelancer-active-1440",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated Freelancer My jobs",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos",
+    "captured": "2026-10-20T20:42:10.127Z",
+    "file": "evidence/F072-freelancer-active-1440.jpg",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ]
+  },
+  {
+    "id": "F073-freelancer-active-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer accepted jobs at narrower desktop",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos",
+    "captured": "2026-10-20T20:42:10.318Z",
+    "file": "evidence/F073-freelancer-active-1133.jpg",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ]
+  },
+  {
+    "id": "F074-freelancer-commercial-pan",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer commercial columns after horizontal pan",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos",
+    "captured": "2026-10-20T20:42:19.823Z",
+    "file": "evidence/F074-freelancer-commercial-pan.jpg",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ]
+  },
+  {
+    "id": "F075-freelancer-time-invalid",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer Log hours invalid draft",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos?log=1&project=deel-customer-story&stage=shoot",
+    "captured": "2026-10-20T20:43:07.957Z",
+    "file": "evidence/F075-freelancer-time-invalid.jpg",
+    "coverageIds": [
+      "N132"
+    ]
+  },
+  {
+    "id": "F076-freelancer-invoice-draft",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Invoice upload form with rate mismatch warning",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos",
+    "captured": "2026-10-20T20:44:13.698Z",
+    "file": "evidence/F076-freelancer-invoice-draft.jpg",
+    "coverageIds": [
+      "N132"
+    ]
+  },
+  {
+    "id": "F077-freelancer-open-offer",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Pending Freelancer offer terms",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos",
+    "captured": "2026-10-20T20:44:28.639Z",
+    "file": "evidence/F077-freelancer-open-offer.jpg",
+    "coverageIds": [
+      "N132"
+    ]
+  },
+  {
+    "id": "F078-offer-brief-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Pending-offer read-only Brief preview",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T20:44:53.436Z",
+    "file": "evidence/F078-offer-brief-1133.jpg",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ]
+  },
+  {
+    "id": "F079-offer-brief-1440",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Pending-offer Brief at1440",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T20:44:53.753Z",
+    "file": "evidence/F079-offer-brief-1440.jpg",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ]
+  },
+  {
+    "id": "F080-offer-brief-top",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Offer Brief after document-top shortcut; inner scroll context unverified",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T20:45:23.047Z",
+    "file": "evidence/F080-offer-brief-top.jpg",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ]
+  },
+  {
+    "id": "F081-offer-brief-top-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Offer Brief after document-top shortcut; inner scroll context unverified",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T20:45:38.798Z",
+    "file": "evidence/F081-offer-brief-top-1133.jpg",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ]
+  },
+  {
+    "id": "F082-freelancer-history",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Revoked offer history",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos?view=offers",
+    "captured": "2026-10-20T20:50:53.028Z",
+    "file": "evidence/F082-freelancer-history.jpg",
+    "coverageIds": [
+      "N132"
+    ]
+  },
+  {
+    "id": "F083-freelancer-offer-no-results",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Offer history no-results feedback",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/active-videos?view=offers",
+    "captured": "2026-10-20T20:50:53.758Z",
+    "file": "evidence/F083-freelancer-offer-no-results.jpg",
+    "coverageIds": [
+      "N132"
+    ]
+  },
+  {
+    "id": "F084-offer-header-geometry",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Direct-entry offer Brief header geometry",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "captured": "2026-10-20T20:51:04.813Z",
+    "file": "evidence/F084-offer-header-geometry.jpg",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ]
+  },
+  {
+    "id": "F085-todo-top-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated To Do entry layout at1440",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:53:00.898Z",
+    "file": "evidence/F085-todo-top-1440.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F086-todo-this-week-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Week range control returns to the reference week, Viewing Sarah Chen",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:11.912Z",
+    "file": "evidence/F086-todo-this-week-1440.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F087-todo-editor-footer-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Time editor exceeds viewport: footer starts at1001px in1000px viewport",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:19.767Z",
+    "file": "evidence/F087-todo-editor-footer-1440.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F088-todo-default-1133",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated To Do at1440 (viewport override had not changed), expanded navigation",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:26.004Z",
+    "file": "evidence/F088-todo-default-1133.jpg",
+    "coverageIds": [
+      "N094",
+      "R018"
+    ],
+    "corrections": [
+      "Actual1440; narrow comparison replaced byF090/F091."
+    ]
+  },
+  {
+    "id": "F089-todo-collapsed-1133",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated To Do at1440 (viewport override had not changed), collapsed navigation",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:26.576Z",
+    "file": "evidence/F089-todo-collapsed-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ],
+    "corrections": [
+      "Actual1440; narrow comparison replaced byF090/F091."
+    ]
+  },
+  {
+    "id": "F090-todo-collapsed-actual-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Populated To Do at verified1133, collapsed navigation",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:43.156Z",
+    "file": "evidence/F090-todo-collapsed-actual-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F091-todo-expanded-actual-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Populated To Do at verified1133, expanded navigation",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:43.780Z",
+    "file": "evidence/F091-todo-expanded-actual-1133.jpg",
+    "coverageIds": [
+      "N094",
+      "R018"
+    ]
+  },
+  {
+    "id": "F092-todo-editor-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Time editor at verified1133 with footer position measured",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T20:57:57.148Z",
+    "file": "evidence/F092-todo-editor-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F093-shoot-setup-question1",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Current Shoot setup question1 andsix-questionnavigator",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:14.047Z",
+    "file": "evidence/F093-shoot-setup-question1.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F094-shoot-setup-people",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot setup People question",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:14.417Z",
+    "file": "evidence/F094-shoot-setup-people.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F095-shoot-setup-location",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot setup Location question",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:14.777Z",
+    "file": "evidence/F095-shoot-setup-location.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F096-shoot-setup-date",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot setup date picker with existing shoot days",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:21.036Z",
+    "file": "evidence/F096-shoot-setup-date.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F097-shoot-must-have",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot setup must-have shots question",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:21.427Z",
+    "file": "evidence/F097-shoot-must-have.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F098-shoot-workflow",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shoot setup workflow and contextual tool selection",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "captured": "2026-10-20T20:58:21.853Z",
+    "file": "evidence/F098-shoot-workflow.jpg",
+    "coverageIds": [
+      "N112"
+    ]
+  },
+  {
+    "id": "F099-shoot-ai-suggestions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "AI-created suggested shots awaiting explicit acceptance",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "captured": "2026-10-20T20:58:33.622Z",
+    "file": "evidence/F099-shoot-ai-suggestions.jpg",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ]
+  },
+  {
+    "id": "F100-ai-schedule-readiness",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "AI schedule check for new disposableDay3 with missingdetails",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:58:59.080Z",
+    "file": "evidence/F100-ai-schedule-readiness.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F101-schedule-ready-warning",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Schedule readiness lists concrete unscheduled/location/break issues",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:59:05.075Z",
+    "file": "evidence/F101-schedule-ready-warning.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F102-schedule-missing-guide",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Guided missing-details step linked to the schedule",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:59:06.139Z",
+    "file": "evidence/F102-schedule-missing-guide.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F103-schedule-guide-duration",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Missing-details duration guidance, step2",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "captured": "2026-10-20T20:59:10.720Z",
+    "file": "evidence/F103-schedule-guide-duration.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F104-new-standalone-shot",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "New standalone shot ready for inline description",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "captured": "2026-10-20T20:59:24.577Z",
+    "file": "evidence/F104-new-standalone-shot.jpg",
+    "coverageIds": [
+      "N113",
+      "N114"
+    ]
+  },
+  {
+    "id": "F105-backlog-group-selection",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Selected standalone shot and group destination menu",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:59:34.996Z",
+    "file": "evidence/F105-backlog-group-selection.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F106-backlog-new-group-draft",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "New shot group name draft and disabled creation boundary",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T20:59:39.032Z",
+    "file": "evidence/F106-backlog-new-group-draft.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F107-shoot-contact-no-results",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing contact search no-results with create path",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "captured": "2026-10-20T20:59:58.371Z",
+    "file": "evidence/F107-shoot-contact-no-results.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F108-shoot-day-delete-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Delete day confirmation reached without confirming",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "captured": "2026-10-20T21:00:06.961Z",
+    "file": "evidence/F108-shoot-day-delete-guard.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F109-onset-day2",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "OnSet Day2 schedule and essentials update together",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T21:00:18.591Z",
+    "file": "evidence/F109-onset-day2.jpg",
+    "coverageIds": [
+      "N115",
+      "R057"
+    ]
+  },
+  {
+    "id": "F110-call-sheet-actions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Call Sheet action menu",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "captured": "2026-10-20T21:00:18.996Z",
+    "file": "evidence/F110-call-sheet-actions.jpg",
+    "coverageIds": [
+      "N115",
+      "N106"
+    ]
+  },
+  {
+    "id": "F111-masters-two-versions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Masters currentV2 aftertwo actualsampleuploads; priorversionlibraryhasnoliveopener",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T21:01:24.949Z",
+    "file": "evidence/F111-masters-two-versions.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F112-recut-unsent-draft-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Cancel warnsbeforeleavinganunsentone-mark re-cut draft",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T21:01:33.466Z",
+    "file": "evidence/F112-recut-unsent-draft-guard.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F113-recut-undo-recovery",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Cancellingdiscardpreservesmark;Undo returnstozeromarks",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "captured": "2026-10-20T21:01:39.639Z",
+    "file": "evidence/F113-recut-undo-recovery.jpg",
+    "coverageIds": [
+      "N117"
+    ]
+  },
+  {
+    "id": "F114-canonical-edit-sample-play",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "CanonicalEdit uploadedofficialsample andPlaystate",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T21:02:07.649Z",
+    "file": "evidence/F114-canonical-edit-sample-play.jpg",
+    "coverageIds": [
+      "N116",
+      "R027"
+    ]
+  },
+  {
+    "id": "F115-edit-keyboard-seek",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Keyboard five-secondstepcontrol feedback",
+    "notes": "Isolated completion pass; freelancer-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "captured": "2026-10-20T21:02:07.851Z",
+    "file": "evidence/F115-edit-keyboard-seek.jpg",
+    "coverageIds": [
+      "N116"
+    ]
+  },
+  {
+    "id": "F116-onboard-name-empty",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Owner name field with disabled Continue",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=your-name",
+    "captured": "2026-10-20T21:02:46.788Z",
+    "file": "evidence/F116-onboard-name-empty.jpg",
+    "coverageIds": [
+      "N128",
+      "R059"
+    ]
+  },
+  {
+    "id": "F117-onboard-concepts",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "First production question with useful contextual choices",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=contextual",
+    "captured": "2026-10-20T21:02:50.762Z",
+    "file": "evidence/F117-onboard-concepts.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F118-onboard-shooting",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Question1 selected answer briefly disables choices while advancing",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=contextual",
+    "captured": "2026-10-20T21:02:55.549Z",
+    "file": "evidence/F118-onboard-shooting.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F119-onboard-shooting-settled",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Question2 shooting versuspost-productionmodel",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=production-model",
+    "captured": "2026-10-20T21:03:02.626Z",
+    "file": "evidence/F119-onboard-shooting-settled.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F120-onboard-video-types-expanded",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Video types expanded with no selection anddisabledContinue",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "captured": "2026-10-20T21:03:13.166Z",
+    "file": "evidence/F120-onboard-video-types-expanded.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F121-onboard-custom-type",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Customvideotype draft validation",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "captured": "2026-10-20T21:03:16.930Z",
+    "file": "evidence/F121-onboard-custom-type.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F122-onboard-video-types-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Video types selected at1133,Continueenabled",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "captured": "2026-10-20T21:03:22.229Z",
+    "file": "evidence/F122-onboard-video-types-1133.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F123-onboard-skip-client-guard",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "SkipfirstClient confirmation at1133",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=first-client",
+    "captured": "2026-10-20T21:03:28.943Z",
+    "file": "evidence/F123-onboard-skip-client-guard.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F124-first-client-added",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Clientaddedconfirmation offersStartavideo andDothislater",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=first-client",
+    "captured": "2026-10-20T21:03:32.502Z",
+    "file": "evidence/F124-first-client-added.jpg",
+    "coverageIds": [
+      "N128"
+    ]
+  },
+  {
+    "id": "F125-first-video-name-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Firstvideoemptyname keepsContinuetoBriefdisabledat1133",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/customer-dashboard/start-video?client=audit-example-client",
+    "captured": "2026-10-20T21:03:41.363Z",
+    "file": "evidence/F125-first-video-name-empty.jpg",
+    "coverageIds": [
+      "N128",
+      "N133",
+      "R010"
+    ]
+  },
+  {
+    "id": "F126-first-video-name-ready",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Firstvideoname1440 enabledContinuetoBrief",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/customer-dashboard/start-video?client=audit-example-client",
+    "captured": "2026-10-20T21:03:41.566Z",
+    "file": "evidence/F126-first-video-name-ready.jpg",
+    "coverageIds": [
+      "N133"
+    ]
+  },
+  {
+    "id": "F127-first-video-brief-handoff",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "NamedfirstvideocontinuesintoBrief",
+    "notes": "Isolated completion pass; studio-owner-new",
+    "url": "http://127.0.0.1:8766/projects/audit-review-film/stages/brief",
+    "captured": "2026-10-20T21:03:53.659Z",
+    "file": "evidence/F127-first-video-brief-handoff.jpg",
+    "coverageIds": [
+      "N128",
+      "N133",
+      "N104"
+    ]
+  },
+  {
+    "id": "F128-freelancer-invitation-1440",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Freelancerinvitation explainsassignedworkscope",
+    "notes": "Isolated completion pass; freelancer-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:22.348Z",
+    "file": "evidence/F128-freelancer-invitation-1440.jpg",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ]
+  },
+  {
+    "id": "F129-freelancer-invitation-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancerinvitation at1133",
+    "notes": "Isolated completion pass; freelancer-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:22.488Z",
+    "file": "evidence/F129-freelancer-invitation-1133.jpg",
+    "coverageIds": [
+      "N134"
+    ]
+  },
+  {
+    "id": "F130-staff-invitation-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Staffinvitation namesworkspaceandaccessrole",
+    "notes": "Isolated completion pass; producer-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:33.147Z",
+    "file": "evidence/F130-staff-invitation-1133.jpg",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ]
+  },
+  {
+    "id": "F131-staff-invitation-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Staffinvitationat1440",
+    "notes": "Isolated completion pass; producer-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:33.306Z",
+    "file": "evidence/F131-staff-invitation-1440.jpg",
+    "coverageIds": [
+      "N134"
+    ]
+  },
+  {
+    "id": "F132-client-entry-required",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Cliententry emptyName disablesOpenClientportal",
+    "notes": "Isolated completion pass; client-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:43.931Z",
+    "file": "evidence/F132-client-entry-required.jpg",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ]
+  },
+  {
+    "id": "F133-client-entry-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Cliententryat1133 withnativeemailtypemismatchnot submitted",
+    "notes": "Isolated completion pass; client-new",
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "captured": "2026-10-20T21:04:44.125Z",
+    "file": "evidence/F133-client-entry-1133.jpg",
+    "coverageIds": [
+      "N134"
+    ]
+  },
+  {
+    "id": "F134-portal-series-only-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "ClientportalSeriesonly retainsseries hierarchy at1133",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:30.193Z",
+    "file": "evidence/F134-portal-series-only-1133.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F135-portal-series-expanded",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "KeyboardexpandCustomerStoriesseries",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:30.385Z",
+    "file": "evidence/F135-portal-series-expanded.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F136-portal-project-menu",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "StandaloneClientprojectactionmenu",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:35.102Z",
+    "file": "evidence/F136-portal-project-menu.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F137-portal-project-history",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Clientprojectcomments/historysecondarypanel",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:39.282Z",
+    "file": "evidence/F137-portal-project-history.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F138-portal-project-chat-loaded",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "LoadedClientprojectexternalhistory andemptycomposer",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:48.544Z",
+    "file": "evidence/F138-portal-project-chat-loaded.jpg",
+    "coverageIds": [
+      "N099",
+      "N139"
+    ]
+  },
+  {
+    "id": "F139-portal-queued-empty",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "ClientportalQueuedemptyfilter at1133",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:05:49.175Z",
+    "file": "evidence/F139-portal-queued-empty.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F140-client-portal-staff-preview",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Staffpreviewportalbannerandcontext",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "captured": "2026-10-20T21:06:28.576Z",
+    "file": "evidence/F140-client-portal-staff-preview.jpg",
+    "coverageIds": [
+      "N099"
+    ]
+  },
+  {
+    "id": "F141-plan-frequency-lead-verification",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Leadverificationbillingfrequencygroupclips40pxbuttonsinto2pxheight",
+    "notes": "Isolated completion pass; client-active",
+    "url": "http://127.0.0.1:8766/settings/plan-billing",
+    "captured": "2026-10-20T21:06:52.129Z",
+    "file": "evidence/F141-plan-frequency-lead-verification.jpg",
+    "coverageIds": [
+      "N127"
+    ]
+  },
+  {
+    "id": "F142-clean-history",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Cleanisolatedfixturehistorymenu",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:08:35.340Z",
+    "file": "evidence/F142-clean-history.jpg",
+    "coverageIds": [
+      "N084"
+    ]
+  },
+  {
+    "id": "F143-todo-planned-sample",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Draggingprojectintodaycreates2hUnspecifiedplannedblock",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:08:59.753Z",
+    "file": "evidence/F143-todo-planned-sample.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F144-todo-done-sample",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "DragplannedblockintoDoneupdatesdailyandweektotals",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:09:05.955Z",
+    "file": "evidence/F144-todo-done-sample.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F145-todo-sample-saved",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Stageandhourssavedtodoneblock",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:09:20.586Z",
+    "file": "evidence/F145-todo-sample-saved.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F146-todo-full-height-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "PopulatedToDo1133 full-heightretainedcapture",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:09:20.664Z",
+    "file": "evidence/F146-todo-full-height-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F147-simple-shoot-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Simple shoot opens consolidated Shoot day at1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "captured": "2026-10-20T21:13:08.123Z",
+    "file": "evidence/F147-simple-shoot-1133.jpg",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ]
+  },
+  {
+    "id": "F148-onset-completion",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "CompletingCrewcalladvancesNow/Next",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "captured": "2026-10-20T21:13:17.065Z",
+    "file": "evidence/F148-onset-completion.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F149-simple-shoot-day-selector",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "SimpleShootdayselector withtwoexistingdays",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "captured": "2026-10-20T21:13:28.997Z",
+    "file": "evidence/F149-simple-shoot-day-selector.jpg",
+    "coverageIds": [
+      "N112",
+      "N115"
+    ]
+  },
+  {
+    "id": "F150-onset-shot-captured",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Shotcapturecheckboxupdatesprogress",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "captured": "2026-10-20T21:13:44.151Z",
+    "file": "evidence/F150-onset-shot-captured.jpg",
+    "coverageIds": [
+      "N115"
+    ]
+  },
+  {
+    "id": "F151-schedule-drag-add-dialog",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "MovingexistingentryalsoopensblankAddtoscheduledialog",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "captured": "2026-10-20T21:14:33.746Z",
+    "file": "evidence/F151-schedule-drag-add-dialog.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F152-schedule-resize-feedback",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Resizechangesdurationinthedaytimeline",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "captured": "2026-10-20T21:14:39.783Z",
+    "file": "evidence/F152-schedule-resize-feedback.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F153-schedule-drag-after-cancel",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "CancellingblankAdddialogkeepsmoved/resizedexistingentry",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "captured": "2026-10-20T21:14:58.477Z",
+    "file": "evidence/F153-schedule-drag-after-cancel.jpg",
+    "coverageIds": [
+      "N114"
+    ]
+  },
+  {
+    "id": "F154-schedule-delete-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Scheduleitemdeleteconfirmationwithoutconfirming",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "captured": "2026-10-20T21:20:49.331Z",
+    "file": "evidence/F154-schedule-delete-guard.jpg",
+    "coverageIds": [
+      "N113",
+      "N114"
+    ]
+  },
+  {
+    "id": "F155-shoot-person-remove-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "PersonremovalconfirmationnamesJordanandkeepsparentdraft",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people&day=day-1",
+    "captured": "2026-10-20T21:20:57.099Z",
+    "file": "evidence/F155-shoot-person-remove-guard.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F156-location-remove-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Locationremovalconfirmationnamestheexistinglocation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=locations&day=day-1",
+    "captured": "2026-10-20T21:21:09.479Z",
+    "file": "evidence/F156-location-remove-guard.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F157-shot-delete-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "ShotdeleteconfirmationnamesFounderinterview",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots&day=day-1",
+    "captured": "2026-10-20T21:21:10.869Z",
+    "file": "evidence/F157-shot-delete-guard.jpg",
+    "coverageIds": [
+      "N113"
+    ]
+  },
+  {
+    "id": "F158-todo-horizontal-pan",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "HorizontalpanreachesFridaywithoutshrinkingdaygrid",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:23:21.550Z",
+    "file": "evidence/F158-todo-horizontal-pan.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F159-todo-horizontal-pan-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Narrowdesktopweekpanandnestedscrollboundaries",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/today",
+    "captured": "2026-10-20T21:23:27.907Z",
+    "file": "evidence/F159-todo-horizontal-pan-1133.jpg",
+    "coverageIds": [
+      "N094"
+    ]
+  },
+  {
+    "id": "F160-freelancer-commercial-profile",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "StaffviewofFreelancercommercialratesandinvoicehistory",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl",
+    "captured": "2026-10-20T21:26:03.666Z",
+    "file": "evidence/F160-freelancer-commercial-profile.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F161-freelancer-profile-access",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "StaffviewofFreelancerassignedprojectaccess",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl",
+    "captured": "2026-10-20T21:26:09.195Z",
+    "file": "evidence/F161-freelancer-profile-access.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F162-client-contact-access",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "StaffviewofClientcontactaccessandvisibilityexplanation",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "captured": "2026-10-20T21:26:25.625Z",
+    "file": "evidence/F162-client-contact-access.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F163-existing-client-access-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "ExistingClientcontactaccessstep andexplicitno-duplicatecopy",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "captured": "2026-10-20T21:26:38.531Z",
+    "file": "evidence/F163-existing-client-access-editor.jpg",
+    "coverageIds": [
+      "N096",
+      "N097"
+    ]
+  },
+  {
+    "id": "F164-client-contact-access-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "ClientcontactAccessat1133aftercancellingdraft",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "captured": "2026-10-20T21:27:04.050Z",
+    "file": "evidence/F164-client-contact-access-1133.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F165-freelancer-commercial-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "FreelancerCommercialratehistoryat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:27:07.597Z",
+    "file": "evidence/F165-freelancer-commercial-1133.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F166-freelancer-profile-work",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancerprofilecurrentworklistat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:27:58.840Z",
+    "file": "evidence/F166-freelancer-profile-work.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F167-freelancer-profile-hours",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancerprofilehourssummaryat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:27:59.148Z",
+    "file": "evidence/F167-freelancer-profile-hours.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F168-freelancer-profile-skills",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancerprofileskillsandportfolioat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:27:59.883Z",
+    "file": "evidence/F168-freelancer-profile-skills.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F169-freelancer-profile-activity",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "FreelancerprofileNotesandactivityat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:28:00.290Z",
+    "file": "evidence/F169-freelancer-profile-activity.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F170-person-invitation-history-empty",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancerinvitationhistoryfilteremptywithrecovery",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "captured": "2026-10-20T21:28:13.866Z",
+    "file": "evidence/F170-person-invitation-history-empty.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  },
+  {
+    "id": "F171-staff-invitation-history-populated",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "PendingStaffinvitationhistoryeventat1133",
+    "notes": "Isolated completion pass; studio-owner-active",
+    "url": "http://127.0.0.1:8766/people/editor?section=Notes%20and%20activity",
+    "captured": "2026-10-20T21:28:20.966Z",
+    "file": "evidence/F171-staff-invitation-history-populated.jpg",
+    "coverageIds": [
+      "N096"
+    ]
+  }
+]

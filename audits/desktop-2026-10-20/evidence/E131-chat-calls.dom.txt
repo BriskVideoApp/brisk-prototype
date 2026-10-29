@@ -1,0 +1,140 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - complementary "Chat navigation":
+    - generic: North Star Films
+    - button "Search messages - Command K"
+    - navigation "Global conversations":
+      - button "DMs":
+        - generic: DMs
+      - button "Mark 1 unread dms as read": "1"
+      - button "Mentions":
+        - generic: Mentions
+      - button "Mark 2 unread mentions as read": "2"
+      - button "Groups":
+        - generic: Groups
+      - button "Mark 1 unread groups as read": "1"
+      - button "Threads":
+        - generic: Threads
+      - button "Calls" [active] [pressed]:
+        - generic: Calls
+    - generic "Client conversations":
+      - button "All projects":
+        - generic: All projects
+      - button "Mark all 4 unread messages as read": "4"
+      - button "Loom":
+        - generic: Loom
+      - button "Mark 2 unread messages from Loom as read": "2"
+      - button "Deel":
+        - generic: Deel
+      - button "Mark 1 unread messages from Deel as read": "1"
+      - button "Hims":
+        - generic: Hims
+      - button "Mark 1 unread messages from Hims as read": "1"
+      - button "OpenAI":
+        - generic: OpenAI
+      - button "Canva":
+        - generic: Canva
+      - button "Linear":
+        - generic: Linear
+      - button "Harbour Health":
+        - generic: Harbour Health
+    - combobox "Filter Clients":
+      - generic: Active clients
+    - button "Unread only":
+      - generic: Unread only
+  - heading "Calls" [level=1]
+  - group "Call options for North Star Films":
+    - button "Start a call in North Star Films":
+      - generic: Start a call
+    - button "Open call options"
+  - region "Calls":
+    - region "Recent calls":
+      - heading "Recent calls" [level=2]
+      - generic: Calls you joined across projects and studio groups.
+      - generic "Filter recent calls":
+        - generic: Call type
+        - combobox "Call type":
+          - generic: All calls
+        - generic: Participant
+        - combobox "Participant":
+          - generic: With anyone
+        - generic: Project
+        - button "Project":
+          - generic: In any project
+      - article:
+        - strong: Loom edit review
+        - generic: 24 July, 10:05 am · 23 minutes · LOOM-24
+        - generic "Participants":
+          - generic "Tom Mitchell": TM
+          - generic "David Ryan": DR
+          - generic "Marcus Lee": ML
+        - button "View notes": View notes
+        - button "More options for Loom edit review"
+      - article:
+        - strong: Post team check-in
+        - generic: 23 July, 4:30 pm · 14 minutes · North Star Films
+        - generic "Participants":
+          - generic "Tom Mitchell": TM
+          - generic "Marcus Lee": ML
+          - generic "Nina Patel": NP
+        - generic: No notes
+        - button "More options for Post team check-in"
+      - article:
+        - strong: Deel script alignment
+        - generic: 22 July, 11:15 am · 31 minutes · DEEL-18
+        - generic "Participants":
+          - generic "Tom Mitchell": TM
+          - generic "Priya Nair": PN
+        - button "View notes": View notes
+        - button "More options for Deel script alignment"

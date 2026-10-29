@@ -1,0 +1,59 @@
+{
+  "date": "28 October 2026",
+  "type": "Proposal interaction checks only; no application implementation",
+  "checks": [
+    {
+      "check": "Initial project composition",
+      "snapshot": "Videos · LOOM\n\nLaunch Film - Sales Narrative\nEdit review · 1 working day left\nFinal due · Fri 6 Nov\n\nProject details · Studio view\n\nDeadlines\nEdit · WIP1\nWaiting on Studio\nChange\nAutomatic · Standard edit\n1 minute\nInternal review\nFor the producer · Studio only\nFri 30 Oct · 10:00\n\n1 working day left\n\nClient WIP1\nIncludes time for Studio review\nMon 2 Nov · 10:00\n\n2 working days left\n\nStarted Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n\nFinal delivery\nAgreed\nFri 6 Nov · 17:00\nClient commitment · Sydney time\nPropose new date\nOther stages"
+    },
+    {
+      "check": "Three-minute automatic sample",
+      "snapshot": "Videos · LOOM\n\nLaunch Film - Sales Narrative\nEdit review · 3 working days left\nFinal due · Fri 6 Nov\n\nProject details · Studio view\n\nDeadlines\nEdit · WIP1\nWaiting on Studio\nChange\nAutomatic · Standard edit\n3 minutes\nInternal review\nFor the producer · Studio only\nTue 3 Nov · 10:00\n\n3 working days left\n\nClient WIP1\nIncludes time for Studio review\nWed 4 Nov · 10:00\n\n4 working days left\n\nStarted Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n\nFinal delivery\nAgreed\nFri 6 Nov · 17:00\nClient commitment · Sydney time\nPropose new date\nOther stages"
+    },
+    {
+      "check": "Fixed override later than final",
+      "snapshot": "Videos · LOOM\n\nLaunch Film - Sales Narrative\nEdit review · 3 working days left\nFinal due · Fri 6 Nov\n\nProject details · Studio view\n\nDeadlines\nEdit · WIP1\nWaiting on Studio\nChange\nSpecific dates · Project override\nInternal review\nFor the producer · Studio only\nTue 3 Nov · 10:00\n\n3 working days left\n\nClient WIP1\nIncludes time for Studio review\nMon 9 Nov · 10:00\n\n7 working days left\n\nStarted Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n\nStage delivery is after final delivery\n\nReview the final date with the producer. Saving this stage deadline does not change the Client commitment.\n\nFinal delivery\nAgreed\nFri 6 Nov · 17:00\nClient commitment · Sydney time\nPropose new date\nOther stages"
+    },
+    {
+      "check": "Fixed dates survive sample duration change",
+      "snapshot": "Videos · LOOM\n\nLaunch Film - Sales Narrative\nEdit review · 3 working days left\nFinal due · Fri 6 Nov\n\nProject details · Studio view\n\nDeadlines\nEdit · WIP1\nWaiting on Studio\nChange\nSpecific dates · Project override\nInternal review\nFor the producer · Studio only\nTue 3 Nov · 10:00\n\n3 working days left\n\nClient WIP1\nIncludes time for Studio review\nMon 9 Nov · 10:00\n\n7 working days left\n\nStarted Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n\nStage delivery is after final delivery\n\nReview the final date with the producer. Saving this stage deadline does not change the Client commitment.\n\nFinal delivery\nAgreed\nFri 6 Nov · 17:00\nClient commitment · Sydney time\nPropose new date\nOther stages"
+    },
+    {
+      "check": "Animation specific-date default",
+      "snapshot": "Studio settings / Production defaults\n\nTurnaround times\n\nSet once for your Studio. New stage cycles use these defaults.\n\nWorking week\nMonday to Friday\nScript\nStoryboard\nEdit\nAnimation\nMasters\nAnimation deadlines\nAutomatic\nSpecific dates\n\nThe producer sets dates for each cycle when this stage becomes Waiting on Studio. Useful for animation and custom work.\n\nThe clock starts on Waiting on Studio. Releasing a WIP to the Client ends that cycle. Client feedback starts the next cycle when it returns to the Studio.\n\nExisting and active deadlines stay as agreed.\nDiscard changes\nSave defaults"
+    },
+    {
+      "check": "Future-cycle defaults leave active dates unchanged",
+      "snapshot": "Videos · LOOM\n\nLaunch Film - Sales Narrative\nEdit review · 1 working day left\nFinal due · Fri 6 Nov\n\nProject details · Studio view\n\nDeadlines\nEdit · WIP1\nWaiting on Studio\nChange\nAutomatic · Standard edit\n1 minute\nInternal review\nFor the producer · Studio only\nFri 30 Oct · 10:00\n\n1 working day left\n\nClient WIP1\nIncludes time for Studio review\nMon 2 Nov · 10:00\n\n2 working days left\n\nStarted Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n\nFinal delivery\nAgreed\nFri 6 Nov · 17:00\nClient commitment · Sydney time\nPropose new date\nOther stages"
+    },
+    {
+      "check": "Escape cancels stage draft and returns focus",
+      "snapshot": "- iframe [active] [id=\"codex-visualization\"]:\n  - navigation \"Timing proposal views\":\n    - generic: Interactive design proposal · sample dates · no app records changed\n    - button \"Project deadlines\" [pressed]\n    - button \"Studio defaults\"\n    - button \"Brief warning\"\n    - button \"Delivery risk\"\n    - button \"Client view\"\n  - generic: Sample Brief length\n  - button \"1 minute\" [pressed]\n  - button \"3 minutes\"\n  - region \"Proposed project deadlines\":\n    - paragraph: Videos · LOOM\n    - strong: Launch Film - Sales Narrative\n    - button \"Edit internal review, 1 working day left. Open deadlines\":\n      - generic: Edit review · 1 working day left\n      - generic: Final due · Fri 6 Nov\n    - paragraph: Project details · Studio view\n    - heading \"Deadlines\" [level=2]\n    - heading \"Edit · WIP1\" [level=3]\n    - generic: Waiting on Studio\n    - button \"Change\" [active]\n    - generic: Automatic · Standard edit\n    - generic: 1 minute\n    - strong: Internal review\n    - text: For the producer · Studio only\n    - strong: Fri 30 Oct · 10:00\n    - paragraph: 1 working day left\n    - strong: Client WIP1\n    - text: Includes time for Studio review\n    - strong: Mon 2 Nov · 10:00\n    - paragraph: 2 working days left\n    - paragraph: Started Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.\n    - heading \"Final delivery\" [level=3]\n    - generic: Agreed\n    - strong: Fri 6 Nov · 17:00\n    - text: Client commitment · Sydney time\n    - button \"Propose new date\"\n    - generic \"Other stages\"\n  - status: Deadline draft cancelled."
+    },
+    {
+      "check": "Achievable Brief request still needs confirmation",
+      "snapshot": "North Star Films\n\nLOOM · Launch Film - Sales Narrative / Brief\n\nWhen do you need it?\nRequested final delivery\nYour producer will confirm this date\n\nThis date is within the illustrative estimate. Scope and review time still need producer confirmation.\n\nProvisional earliest delivery\nFrom Mon 2 Nov\n\nIllustrative estimate: 1-minute edit, approved Script and Media ready, 3 working days from Wed 28 Oct. Extra revisions and Client review time may extend delivery.\n\nYour producer will confirm the delivery date after reviewing your Brief.\n\nBack\nSubmit Brief"
+    },
+    {
+      "check": "Producer-reviewed Client risk view",
+      "snapshot": "North Star Films\n\nLOOM · Launch Film - Sales Narrative\n\nFinal delivery\nDelivery at risk\nAgreed date\nSydney time\nFri 6 Nov · 17:00\nAn update from your producer\n\nThe Edit is taking longer than planned. We are reviewing the remaining work and will confirm a revised date with you.\n\nDelivery history\nPreview scenario\nAt risk\nDate missed\nNew date proposed"
+    },
+    {
+      "check": "Missed delivery preserves original commitment",
+      "snapshot": "North Star Films\n\nLOOM · Launch Film - Sales Narrative\n\nFinal delivery\nOverdue\nAgreed date\nSydney time\nFri 6 Nov · 17:00\nYour agreed delivery date has passed\n\nYour final video is still outstanding. The original agreed date remains visible while your producer arranges the next step.\n\nDelivery history\nPreview scenario\nAt risk\nDate missed\nNew date proposed"
+    },
+    {
+      "check": "Proposal keeps agreed and proposed dates distinct",
+      "snapshot": "North Star Films\n\nLOOM · Launch Film - Sales Narrative\n\nFinal delivery\nNew date proposed\nAgreed date\nSydney time\nFri 6 Nov · 17:00\nAn update from your producer\n\nThe Edit needs more time. We propose delivering your final video on Monday 9 November, allowing time for final checks.\n\nProposed new delivery\nWaiting for your agreement\nMon 9 Nov · 17:00\nDiscuss date\nAgree new date\nDelivery history\nPreview scenario\nAt risk\nDate missed\nNew date proposed"
+    },
+    {
+      "check": "Client agreement retains delivery history",
+      "snapshot": "North Star Films\n\nLOOM · Launch Film - Sales Narrative\n\nFinal delivery\nAgreed\nAgreed date\nSydney time\nMon 9 Nov · 17:00\nNew delivery date agreed\n\nYour producer and Studio team can now plan to this new date. Your previous agreed date remains in delivery history.\n\nDelivery history\n\nOriginal agreed date: Fri 6 Nov · 17:00\n\nNew date agreed in this preview: Mon 9 Nov · 17:00\n\nPreview scenario\nAt risk\nDate missed\nNew date proposed"
+    },
+    {
+      "check": "Fixed date fields at narrower desktop",
+      "snapshot": "- iframe [active] [id=\"codex-visualization\"]:\n  - navigation \"Timing proposal views\":\n    - generic: Interactive design proposal · sample dates · no app records changed\n    - button \"Project deadlines\" [pressed]\n    - button \"Studio defaults\"\n    - button \"Brief warning\"\n    - button \"Delivery risk\"\n    - button \"Client view\"\n  - generic: Sample Brief length\n  - button \"1 minute\" [pressed]\n  - button \"3 minutes\"\n  - region \"Proposed project deadlines\":\n    - paragraph: Videos · LOOM\n    - strong: Launch Film - Sales Narrative\n    - button \"Edit internal review, 1 working day left. Open deadlines\":\n      - generic: Edit review · 1 working day left\n      - generic: Final due · Fri 6 Nov\n    - paragraph: Project details · Studio view\n    - heading \"Deadlines\" [level=2]\n    - heading \"Edit · WIP1\" [level=3]\n    - generic: Waiting on Studio\n    - button \"Change\"\n    - group \"Set this deadline\":\n      - generic: Set this deadline\n      - radio \"Automatic\"\n      - generic: Automatic\n      - radio \"Specific date\" [checked] [active]\n      - generic: Specific date\n    - paragraph: Set dates for this Edit cycle. Studio default changes will not move them.\n    - generic: Internal review date\n    - textbox \"Internal review date\": 2026-10-30\n    - generic: Time (Sydney)\n    - textbox \"Time (Sydney)\": 10:00\n    - generic: Client WIP1 date\n    - textbox \"Client WIP1 date\": 2026-11-02\n    - generic: Time (Sydney)\n    - textbox \"Time (Sydney)\": 10:00\n    - generic: Applies to this stage cycle only.\n    - button \"Cancel\"\n    - button \"Save deadline\"\n    - heading \"Final delivery\" [level=3]\n    - generic: Agreed\n    - strong: Fri 6 Nov · 17:00\n    - text: Client commitment · Sydney time\n    - button \"Propose new date\"\n    - generic \"Other stages\"\n  - status: Client agreement simulated. Previous agreed date retained in history. Nothing recorded in the app."
+    }
+  ],
+  "logs": []
+}

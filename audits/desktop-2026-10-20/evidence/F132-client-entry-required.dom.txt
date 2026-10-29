@@ -1,0 +1,17 @@
+- alert
+- main:
+  - generic "North Star Films Client portal":
+    - generic: NS
+    - strong: North Star Films
+  - region "Welcome to North Star Films - Loom portal":
+    - generic: Prototype journey entry
+    - heading "Welcome to North Star Films - Loom portal" [level=1]
+    - paragraph: Confirm your details to open the Client portal. You do not need a password.
+    - generic: Name
+    - textbox "Name" [active]
+    - generic: Email
+    - textbox "Email": <redacted>
+    - generic: Client workspace
+    - strong: Loom
+    - button "Open Client portal" [disabled]
+  - generic: Powered by Brisk

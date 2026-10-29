@@ -1,0 +1,120 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Company details":
+      - /url: /settings/client/company
+      - generic: Company details
+    - link "Team access":
+      - /url: /settings/client/team
+      - generic: Team access
+    - link "Invoices" [active]:
+      - /url: /client/invoices
+      - generic: Invoices
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Invoices" [level=1]
+  - region "Invoice history":
+    - paragraph: See what is due and paid. Contact your Studio about a payment.
+    - table:
+      - rowgroup:
+        - row "Invoice Project Issued Due Amount Status":
+          - columnheader "Invoice"
+          - columnheader "Project"
+          - columnheader "Issued"
+          - columnheader "Due"
+          - columnheader "Amount"
+          - columnheader "Status"
+      - rowgroup:
+        - row "INV-1048 Loom AI Product Launch 15 Aug 2026 29 Aug 2026 $12,650 Unpaid":
+          - cell "INV-1048":
+            - strong: INV-1048
+          - cell "Loom AI Product Launch"
+          - cell "15 Aug 2026"
+          - cell "29 Aug 2026"
+          - cell "$12,650"
+          - cell "Unpaid":
+            - generic: Unpaid
+        - row "INV-1045 Customer Stories Series 7 Aug 2026 21 Aug 2026 $4,800 Unpaid":
+          - cell "INV-1045":
+            - strong: INV-1045
+          - cell "Customer Stories Series"
+          - cell "7 Aug 2026"
+          - cell "21 Aug 2026"
+          - cell "$4,800"
+          - cell "Unpaid":
+            - generic: Unpaid
+        - row "INV-1041 Launch Film - Sales Narrative 24 Jul 2026 7 Aug 2026 $8,450 Paid":
+          - cell "INV-1041":
+            - strong: INV-1041
+          - cell "Launch Film - Sales Narrative"
+          - cell "24 Jul 2026"
+          - cell "7 Aug 2026"
+          - cell "$8,450"
+          - cell "Paid":
+            - generic: Paid
+        - row "INV-1037 Brand Refresh Film 3 Jul 2026 17 Jul 2026 $6,200 Paid":
+          - cell "INV-1037":
+            - strong: INV-1037
+          - cell "Brand Refresh Film"
+          - cell "3 Jul 2026"
+          - cell "17 Jul 2026"
+          - cell "$6,200"
+          - cell "Paid":
+            - generic: Paid
+        - row "INV-1032 Product Demo Series 12 Jun 2026 26 Jun 2026 $3,920 Paid":
+          - cell "INV-1032":
+            - strong: INV-1032
+          - cell "Product Demo Series"
+          - cell "12 Jun 2026"
+          - cell "26 Jun 2026"
+          - cell "$3,920"
+          - cell "Paid":
+            - generic: Paid
+        - row "INV-1028 Loom HQ Culture Film 15 May 2026 29 May 2026 $7,100 Paid":
+          - cell "INV-1028":
+            - strong: INV-1028
+          - cell "Loom HQ Culture Film"
+          - cell "15 May 2026"
+          - cell "29 May 2026"
+          - cell "$7,100"
+          - cell "Paid":
+            - generic: Paid

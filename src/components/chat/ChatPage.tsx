@@ -1,5 +1,7 @@
 "use client";
 
+import { useGlobalSearch, useSearchSource } from "@/components/search/SearchContext";
+
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import Link from "next/link";
@@ -12,7 +14,6 @@ import { ChatCallsView } from "@/components/chat/ChatCallsView";
 import { ChatGlobalView } from "@/components/chat/ChatGlobalView";
 import {
   CustomerSettings,
-  ChatSearchOverlay,
   ProjectMemberSettings,
   ShortcutSheet,
 } from "@/components/chat/ChatOverlays";
@@ -57,8 +58,9 @@ import {
   recentCalls,
 } from "@/data/chat";
 import { appendMessageOnce, resolveOutboundSource } from "@/components/chat/chat-utils";
-import { isStoredChatState, mergeChatState, type StoredChatState } from "@/components/chat/chat-persistence";
+import { isStoredChatState, mergeChatState, storedProjectChatMessageEvent, type StoredChatState } from "@/components/chat/chat-persistence";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
 
 type ChatPageProps = {
   initialProjectId?: string | null;
@@ -77,10 +79,24 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const { studio } = useStudioSettings();
   const { activeScenario } = usePrototypeScenario();
   const searchParams = useSearchParams();
+  const { messages: timingMessages, markChannelRead: markTimingChannelRead, hasHydrated: hasHydratedTiming } = useProjectTiming();
   const isEmptyPreview = searchParams.get("preview") === "empty" || (activeScenario?.state === "new" && prototypeState.projects.length === 0);
   const [clients, setClients] = useState(chatClients);
   const [projects, setProjects] = useState(initialProjects);
-  const [messages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
+  const [storedMessages, setMessages] = useState([...initialMessages, ...initialDirectMessages, ...groupMessages]);
+  useEffect(() => {
+    const receive = (event: Event) => {
+      const detail = (event as CustomEvent<{ workspaceId: string; message: ChatMessage }>).detail;
+      if (detail?.workspaceId !== prototypeState.session.activeWorkspaceId) return;
+      setMessages((current) => appendMessageOnce(current, detail.message));
+    };
+    window.addEventListener(storedProjectChatMessageEvent, receive);
+    return () => window.removeEventListener(storedProjectChatMessageEvent, receive);
+  }, [prototypeState.session.activeWorkspaceId]);
+  const messages = useMemo(() => {
+    const storedIds = new Set(storedMessages.map((message) => message.id));
+    return [...storedMessages, ...timingMessages.filter((message) => !storedIds.has(message.id))];
+  }, [storedMessages, timingMessages]);
   const [dmConversations, setDmConversations] = useState(directConversations);
   const [groupConversationList, setGroupConversationList] = useState(initialGroupConversations);
   const [loadedChatKey, setLoadedChatKey] = useState<string | null>(null);
@@ -107,7 +123,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [activeChannel, setActiveChannel] = useState<ChatChannel>("external");
   const [threadParentId, setThreadParentId] = useState<string | null>(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { isOpen: isSearchOpen } = useGlobalSearch();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConnectorSettingsOpen, setIsConnectorSettingsOpen] = useState(false);
   const [isCustomerSettingsOpen, setIsCustomerSettingsOpen] = useState(false);
@@ -119,7 +135,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
   const [customerFilter, setCustomerFilter] = useState<ChatCustomerFilter>("Active");
   const [isNewMessagePickerOpen, setIsNewMessagePickerOpen] = useState(false);
-  const openedInitialMessageRef = useRef(false);
+  const openedInitialMessageRef = useRef<string | null>(null);
 
   useEffect(() => {
     let restored: StoredChatState | null = null;
@@ -161,7 +177,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
   useEffect(() => {
     if (loadedChatKey !== chatStorageKey || isEmptyPreview) return;
-    const current: StoredChatState = { projects, messages, dmConversations, groupConversations: groupConversationList };
+    const current: StoredChatState = { projects, messages: storedMessages, dmConversations, groupConversations: groupConversationList };
     const base = savedChatRef.current;
     if (!base || JSON.stringify(current) === JSON.stringify(base)) return;
     try {
@@ -180,7 +196,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     } catch {
       setToast("This browser could not save Chat changes.");
     }
-  }, [chatStorageKey, dmConversations, groupConversationList, isEmptyPreview, loadedChatKey, messages, projects]);
+  }, [chatStorageKey, dmConversations, groupConversationList, isEmptyPreview, loadedChatKey, storedMessages, projects]);
 
   const effectiveCurrentUserId = viewer?.chatUserId ?? chatWorkspace.currentUserId;
   const isCustomer = selectedRole === "Customer";
@@ -204,21 +220,27 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   }, [clientName, effectiveCurrentUserId, isEmptyPreview, messages, projects, prototypeState, viewer]);
 
   useEffect(() => {
-    if (!initialMessageId || openedInitialMessageRef.current) return;
+    const targetKey = `${effectiveCurrentUserId}:${initialMessageId}`;
+    if (!initialMessageId || openedInitialMessageRef.current === targetKey
+      || !hasHydratedTiming || !hasHydratedPrototypeState || loadedChatKey !== chatStorageKey) return;
 
     const targetMessage = messages.find((message) => message.id === initialMessageId);
+    const targetDm = targetMessage ? dmConversations.find((conversation) => conversation.id === targetMessage.projectId && conversation.memberIds.includes(effectiveCurrentUserId)) : null;
+    const targetGroup = targetMessage ? groupConversationList.find((conversation) => conversation.id === targetMessage.projectId && conversation.memberIds.includes(effectiveCurrentUserId)) : null;
     const canOpenProject = targetMessage
-      ? accessibleProjects.some((project) => project.id === targetMessage.projectId)
+      ? accessibleProjects.some((project) => project.id === targetMessage.projectId) || Boolean(targetDm || targetGroup)
       : false;
     const canOpenChannel = targetMessage
-      ? selectedRole !== "Customer" || targetMessage.channel === "external"
+      ? Boolean(targetDm || targetGroup) || selectedRole !== "Customer" || targetMessage.channel === "external"
       : false;
 
-    openedInitialMessageRef.current = true;
+    openedInitialMessageRef.current = targetKey;
     if (!targetMessage || !canOpenProject || !canOpenChannel) return;
 
-    setActiveView("projects");
-    setSelectedProjectId(targetMessage.projectId);
+    setActiveView(targetDm ? "dms" : targetGroup ? "groups" : "projects");
+    if (targetDm) setSelectedDmId(targetDm.id);
+    if (targetGroup) setSelectedGroupId(targetGroup.id);
+    setSelectedProjectId(targetDm || targetGroup ? null : targetMessage.projectId);
     setSelectedClientName(null);
     setSelectedCompanyChatClientName(null);
     setActiveChannel(targetMessage.channel);
@@ -227,7 +249,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
     const highlightTimeout = window.setTimeout(() => setHighlightedMessageId(null), 2000);
     return () => window.clearTimeout(highlightTimeout);
-  }, [accessibleProjects, initialMessageId, messages, selectedRole]);
+  }, [accessibleProjects, chatStorageKey, effectiveCurrentUserId, hasHydratedPrototypeState,
+    hasHydratedTiming, initialMessageId, loadedChatKey, messages, selectedRole, dmConversations, groupConversationList]);
   const accessibleClients = clients.map((client) => getScopedChatClient(client, prototypeState)).filter((client) =>
     (!clientName || client.name === clientName)
     && (isStudioStaff || accessibleProjects.some((project) => project.clientName === client.name)));
@@ -313,6 +336,9 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   }, [accessibleProjects, effectiveCurrentUserId, messages, selectedCompanyChatClientName]);
   const activeProjectChat = selectedProject ?? selectedCompanyChatProject;
   const activeProjectChatId = activeProjectChat?.id ?? null;
+  useEffect(() => {
+    if (activeView === "projects" && activeProjectChatId) markTimingChannelRead(activeProjectChatId, activeChannel);
+  }, [activeChannel, activeProjectChatId, activeView, markTimingChannelRead]);
   const visibleMessages = activeProjectChat
     ? messages
         .filter(
@@ -438,6 +464,10 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       );
 
       const matchingProjects = accessibleProjects.filter(matchesProject);
+      matchingProjects.forEach((project) => {
+        markTimingChannelRead(project.id, "external");
+        if (!isCustomer) markTimingChannelRead(project.id, "internal");
+      });
       const matchingIds = new Set(matchingProjects.map((project) => project.id));
       if (target.type !== "project") matchingProjects.forEach((project) => matchingIds.add(getCompanyChatId(project.clientName)));
       setMessages((current) => current.map((message) => matchingIds.has(message.projectId)
@@ -446,11 +476,12 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
       notify(target.type === "all" ? "All messages marked as read" : "Messages marked as read");
     },
-    [accessibleProjects, effectiveCurrentUserId, notify],
+    [accessibleProjects, effectiveCurrentUserId, isCustomer, markTimingChannelRead, notify],
   );
 
   const markProjectChannelRead = useCallback(
     (project: ChatProject, channel: ChatChannel) => {
+      markTimingChannelRead(project.id, channel);
       setProjects((current) => current.map((candidate) => candidate.id === project.id
         ? { ...candidate,
           externalUnread: channel === "external" ? 0 : candidate.externalUnread,
@@ -462,7 +493,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
 
       notify(`${channel === "external" ? "External" : "Internal"} messages marked as read`);
     },
-    [effectiveCurrentUserId, notify],
+    [effectiveCurrentUserId, markTimingChannelRead, notify],
   );
 
   useEffect(() => {
@@ -663,12 +694,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
     const handleShortcut = (event: globalThis.KeyboardEvent) => {
       const commandKey = event.metaKey || event.ctrlKey;
 
-      if (commandKey && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        setIsSearchOpen(true);
-        return;
-      }
-
       if (commandKey && event.shiftKey && event.key.toLowerCase() === "a") {
         event.preventDefault();
         setActiveView("projects");
@@ -686,9 +711,8 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
       }
 
       if (event.key === "Escape") {
-        if (isSearchOpen) {
-          setIsSearchOpen(false);
-        } else if (isNewMessagePickerOpen) {
+        if (isSearchOpen) return;
+        if (isNewMessagePickerOpen) {
           setIsNewMessagePickerOpen(false);
         } else if (isCustomerSettingsOpen) {
           setIsCustomerSettingsOpen(false);
@@ -1060,17 +1084,39 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
   };
 
   const selectSearchResult = (message: ChatMessage, openThread = false) => {
-    setActiveView("projects");
-    setSelectedProjectId(message.projectId);
+    const dm = visibleDmConversations.find((conversation) => conversation.id === message.projectId);
+    const group = visibleGroupConversations.find((conversation) => conversation.id === message.projectId);
+    setActiveView(dm ? "dms" : group ? "groups" : "projects");
+    if (dm) setSelectedDmId(dm.id);
+    if (group) setSelectedGroupId(group.id);
+    setSelectedProjectId(dm || group ? null : message.projectId);
     setSelectedClientName(null);
     setSelectedCompanyChatClientName(null);
     setActiveChannel(message.channel);
-    setIsSearchOpen(false);
     setHighlightedMessageId(message.id);
-    setThreadParentId(openThread ? message.id : null);
+    setThreadParentId(message.threadId ?? (openThread ? message.id : null));
     window.setTimeout(() => setHighlightedMessageId(null), 2000);
   };
 
+  const searchConversationId = activeView === "dms" ? selectedDmId : activeView === "groups" ? selectedGroupId : activeProjectChatId;
+  const searchableMessages = messages.filter((message) => !message.deletedAt && (
+    accessibleProjects.some((project) => project.id === message.projectId) && (!isCustomer || message.channel === "external")
+    || visibleDmConversations.some((conversation) => conversation.id === message.projectId)
+    || visibleGroupConversations.some((conversation) => conversation.id === message.projectId)
+    || Boolean(activeProjectChatId && message.projectId === activeProjectChatId && (!isCustomer || message.channel === "external"))
+  ));
+  const liveSearchEntries = searchableMessages.map((message) => ({
+    id: `chat:${message.id}`, source: `chat:${message.projectId}`, kind: "Chat" as const,
+    title: accessibleProjects.find((project) => project.id === message.projectId)?.title ?? "Conversation",
+    text: message.body, meta: `${message.channel === "internal" ? "Internal" : "External"} Chat`,
+    projectId: message.projectId, conversationId: message.projectId,
+    href: `/chat?message=${encodeURIComponent(message.id)}`,
+    onSelect: () => selectSearchResult(message),
+  }));
+  useSearchSource({ label: searchConversationId ? "This conversation" : "Chat", replaceSource: searchConversationId ? `chat:${searchConversationId}` : undefined,
+    allEntries: liveSearchEntries,
+    entries: liveSearchEntries.filter((entry) => !searchConversationId || entry.conversationId === searchConversationId
+      && (activeView !== "projects" || messages.find((message) => entry.id === `chat:${message.id}`)?.channel === activeChannel)) });
   const getLastEditableMessage = () => {
     if (!activeProjectChat) {
       return null;
@@ -1209,7 +1255,6 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
           }}
           onMarkRead={markRailTargetRead}
           onGlobalMarkRead={markGlobalViewRead}
-          onSearchOpen={() => setIsSearchOpen(true)}
         />
 
       <section className="chat-main-pane">
@@ -1562,6 +1607,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
                   project={activeProjectChat}
                   channel={activeChannel}
                   currentUserId={effectiveCurrentUserId}
+                  onNavigate={onNavigate}
                   highlightedMessageId={highlightedMessageId}
                   onOpenThread={setThreadParentId}
                   onToggleReaction={toggleReaction}
@@ -1644,17 +1690,7 @@ export function ChatPage({ initialProjectId, initialMessageId, embedded = false,
         )}
       </section>
 
-      {isSearchOpen ? (
-        <ChatSearchOverlay
-          messages={messages}
-          projects={accessibleProjects}
-          users={chatUsers}
-          role={selectedRole}
-          currentUserId={effectiveCurrentUserId}
-          onClose={() => setIsSearchOpen(false)}
-          onSelectMessage={selectSearchResult}
-        />
-      ) : null}
+
 
       {isSettingsOpen && selectedProject ? (
         <ProjectMemberSettings

@@ -1,0 +1,151 @@
+- alert
+- main:
+  - link "Back to Storyboard":
+    - /url: /projects/loom-launch-film/stages/storyboard
+    - text: Back to Storyboard
+  - generic: PDF preview
+  - strong: Launch Film - Sales Narrative - Storyboard v1 - Current
+  - region "Launch Film - Sales Narrative - Storyboard v1 - Current page preview":
+    - article:
+      - generic: NS
+      - strong: North Star Films
+      - generic: Production document
+      - generic: Loom · Storyboard · v1
+      - heading "Launch Film - Sales Narrative" [level=2]
+      - paragraph: Storyboard v1 - Current
+      - term: Created
+      - definition: Just now
+      - table "AV script":
+        - row "Row Words Visuals Media Duration":
+          - columnheader "Row"
+          - columnheader "Words"
+          - columnheader "Visuals"
+          - columnheader "Media"
+          - columnheader "Duration"
+        - row "01 Meet Maya, a nurse helping families navigate care decisions with calm and clarity. Maya walks through a bright clinic corridor, greeting a family at reception. - 00:06":
+          - cell "01"
+          - cell "Meet Maya, a nurse helping families navigate care decisions with calm and clarity."
+          - cell "Maya walks through a bright clinic corridor, greeting a family at reception."
+          - cell "-":
+            - generic: "-"
+          - cell "00:06"
+        - row "02 When a loved one needs support, every next step can feel bigger than it should. Close-up on a phone showing unread messages, then a quiet kitchen table. - 00:06":
+          - cell "02"
+          - cell "When a loved one needs support, every next step can feel bigger than it should."
+          - cell "Close-up on a phone showing unread messages, then a quiet kitchen table."
+          - cell "-":
+            - generic: "-"
+          - cell "00:06"
+        - row "03 Harbour Health brings the plan, the people and the paperwork into one guided path. Soft overhead shot of forms, calendar cards and a support plan coming together. - 00:07":
+          - cell "03"
+          - cell "Harbour Health brings the plan, the people and the paperwork into one guided path."
+          - cell "Soft overhead shot of forms, calendar cards and a support plan coming together."
+          - cell "-":
+            - generic: "-"
+          - cell "00:07"
+        - row "04 Families can see what is happening now, what happens next and who is responsible. Animated interface cards slide from Brief to Script, then into Shoot and Media. - 00:07":
+          - cell "04"
+          - cell "Families can see what is happening now, what happens next and who is responsible."
+          - cell "Animated interface cards slide from Brief to Script, then into Shoot and Media."
+          - cell "-":
+            - generic: "-"
+          - cell "00:07"
+        - row "05 The Studio team stays aligned too, with updates that are visible before bottlenecks build. Producer, editor and client avatars appear around the same production timeline. - 00:07":
+          - cell "05"
+          - cell "The Studio team stays aligned too, with updates that are visible before bottlenecks build."
+          - cell "Producer, editor and client avatars appear around the same production timeline."
+          - cell "-":
+            - generic: "-"
+          - cell "00:07"
+        - row "06 Instead of chasing answers, Maya can spend more time with the people who need her. Maya sits with an older patient and their daughter, both visibly more relaxed. - 00:07":
+          - cell "06"
+          - cell "Instead of chasing answers, Maya can spend more time with the people who need her."
+          - cell "Maya sits with an older patient and their daughter, both visibly more relaxed."
+          - cell "-":
+            - generic: "-"
+          - cell "00:07"
+      - generic: 167 words · 01:15
+      - generic: 1 of 2
+    - article:
+      - generic: NS
+      - strong: North Star Films
+      - generic: Production document
+      - generic: Loom · Storyboard · v1
+      - heading "Launch Film - Sales Narrative" [level=2]
+      - paragraph: Storyboard v1 - Current
+      - term: Created
+      - definition: Just now
+      - table "AV script":
+        - row "Row Words Visuals Media Duration":
+          - columnheader "Row"
+          - columnheader "Words"
+          - columnheader "Visuals"
+          - columnheader "Media"
+          - columnheader "Duration"
+        - row "07 For care providers, that means fewer missed details and a smoother path to approval. Tick marks move through a simple approval checklist without feeling mechanical. - 00:06":
+          - cell "07"
+          - cell "For care providers, that means fewer missed details and a smoother path to approval."
+          - cell "Tick marks move through a simple approval checklist without feeling mechanical."
+          - cell "-":
+            - generic: "-"
+          - cell "00:06"
+        - row "08 For families, it means a shared view of care that feels understandable from day one. Family members look at the same tablet while a care coordinator points to next steps. - 00:07":
+          - cell "08"
+          - cell "For families, it means a shared view of care that feels understandable from day one."
+          - cell "Family members look at the same tablet while a care coordinator points to next steps."
+          - cell "-":
+            - generic: "-"
+          - cell "00:07"
+        - row "09 Harbour Health is built for the moments when trust depends on being organised. Calm brand-colour title card, then a subtle cut back to Maya in the clinic. - 00:06":
+          - cell "09"
+          - cell "Harbour Health is built for the moments when trust depends on being organised."
+          - cell "Calm brand-colour title card, then a subtle cut back to Maya in the clinic."
+          - cell "-":
+            - generic: "-"
+          - cell "00:06"
+        - row "10 One place for the brief, the decisions and the handover into the next stage. Circular stage markers move from Brief to Script to Media with a human pace. - 00:05":
+          - cell "10"
+          - cell "One place for the brief, the decisions and the handover into the next stage."
+          - cell "Circular stage markers move from Brief to Script to Media with a human pace."
+          - cell "-":
+            - generic: "-"
+          - cell "00:05"
+        - row "11 So everyone can keep the work moving without losing the person at the centre. Montage of staff, family and patient sharing small reassuring moments. - 00:06":
+          - cell "11"
+          - cell "So everyone can keep the work moving without losing the person at the centre."
+          - cell "Montage of staff, family and patient sharing small reassuring moments."
+          - cell "-":
+            - generic: "-"
+          - cell "00:06"
+        - row "12 Harbour Health. Care journeys made clearer for the people who carry them. End card with Harbour Health mark and a quiet clinic ambience bed. - 00:05":
+          - cell "12"
+          - cell "Harbour Health. Care journeys made clearer for the people who carry them."
+          - cell "End card with Harbour Health mark and a quiet clinic ambience bed."
+          - cell "-":
+            - generic: "-"
+          - cell "00:05"
+      - generic: 167 words · 01:15
+      - generic: 2 of 2
+  - complementary "PDF details":
+    - generic: Ready to save
+    - heading "Launch Film - Sales Narrative - Storyboard v1 - Current" [level=1]
+    - term: Studio
+    - definition: North Star Films
+    - term: Project
+    - definition: Launch Film - Sales Narrative
+    - term: Format
+    - definition: A4 portrait
+    - region "Included in this PDF":
+      - heading "Included in this PDF" [level=2]
+      - list:
+        - listitem: Words and visual direction
+        - listitem: Storyboard images
+        - listitem: Frame duration and totals
+        - listitem: Created date and version
+    - paragraph:
+      - text: Choose
+      - strong: Save as PDF
+      - text: in the browser print window.
+    - button "Download PDF": Download PDF
+    - link "Cancel":
+      - /url: /projects/loom-launch-film/stages/storyboard

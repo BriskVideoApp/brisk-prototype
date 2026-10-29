@@ -1,0 +1,70 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/active-videos?project=loom-launch-film".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 281-284, 334, 385
++				1091 text Collapse navigation
++					1092 text Back
++					1093 text Forward
++					1094 text Recent pages
++											1095 text Open project files (2 locations)
++									1096 text Open details
++				1097 container Launch Film - Sales Narrative project details
++					1098 container
++						1099 text LOOM
++						1100 heading Launch Film - Sales Narrative, Value: 2
++							1101 text Launch Film - Sales Narrative
++						1102 text Status
++						1103 combo box (collapsed) Description: Project status, Value: Paused, ID: project-panel-status-loom-launch-film, Secondary Actions: Expand
++							1104 text Paused
++						1105 button Close project details
++					1106 container
++						1107 link Description: Open full project, Value: …
++						1108 link Description: 2 unread messages Open chat, Value: …
++						1109 button (collapsed) Hours, Secondary Actions: Expand
++						1110 button (collapsed) Description: Expand Hours, Secondary Actions: Expand
++						1111 container
++							1112 button (expanded) Team, Secondary Actions: Collapse
++							1113 button (expanded) Description: Collapse Team, Secondary Actions: Collapse
++						1114 container Launch Film - Sales Narrative team
++							1115 table Project roles
++								1116 row
++									1117 pop up button Edit Producer role
++									1118 link Description: Open Tom Mitchell's People profile, Value: …
++									1119 container Studio Staff
++										1120 text Studio Staff
++								1121 row
++									1122 pop up button Edit Editor role
++									1123 link Description: Open Sarah Chen's People profile, Value: …
++									1124 container Studio Staff
++										1125 text Studio Staff
++								1126 row
++									1127 pop up button Edit Shooter role
++									1128 button (collapsed) Invited (2), Secondary Actions: Expand
++										1129 text Invited (
++										1130 text 2
++										1131 text )
++								1132 row
++									1133 pop up button Edit Animator role
++									1134 link Description: Open Marcus Johnson's People profile, Value: …
++									1135 container Studio Staff
++										1136 text Studio Staff
++								1137 row
++									1138 pop up button Edit Sound Designer role
++									1139 text No-one assigned.
++									1140 button Fill role
++							1141 pop up button (collapsed) Description: Add role, Secondary Actions: Expand
++						1142 button (collapsed) Project costs, Secondary Actions: Expand
++						1143 button (collapsed) Description: Expand Project costs, Secondary Actions: Expand
++						1144 button (collapsed) Deadline, Secondary Actions: Expand
++						1145 button (collapsed) Description: Expand Deadline, Secondary Actions: Expand
++						1146 button (collapsed) Latest actions, Secondary Actions: Expand
++						1147 button (collapsed) Description: Expand Latest actions, Secondary Actions: Expand
++						1148 button (collapsed) Notes, Secondary Actions: Expand
++						1149 button (collapsed) Description: Expand Notes, Secondary Actions: Expand
++					1150 container
++						1151 container Project actions
++							1152 button (collapsed) Description: Copy link, Secondary Actions: Expand
++								1153 text Copy link
++								1154 text Copy link
++						1155 button Mark complete
++						1156 button Archive
+The focused UI element is 1113 button (expanded) Description: Collapse Team, Secondary Actions: Collapse

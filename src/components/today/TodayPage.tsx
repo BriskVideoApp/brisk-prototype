@@ -3,6 +3,9 @@
 import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 
 import { Button } from "../../../Brisk DS/src/app/components/Button";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
+import { useTimeEntryEditorLayout } from "./useTimeEntryEditorLayout";
 import { BriskSelect } from "@/components/form/BriskSelect";
 
 import type {
@@ -10,7 +13,7 @@ import type {
   DragEvent as ReactDragEvent,
   PointerEvent as ReactPointerEvent,
 } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
@@ -18,6 +21,9 @@ import { formatHours, getAcceptedPerson, mockTeamPeople, snapToQuarter, stageLab
 import { todayCurrentUserId, todayReferenceDate, todayTimeEntries } from "@/data/today/mockData";
 import { readSharedTimeEntries, sharedTimeEntriesEventName, toTodayTimeEntry } from "@/data/timeEntries/sharedTimeEntries";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
+import { deliveryDateParts } from "@/data/project-delivery";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project, StageKey, TeamPerson } from "@/components/active-videos/types";
 import type { DsIconName } from "@/components/video-review/DsIcon";
@@ -50,8 +56,8 @@ const stageIconByStage: Record<StageKey, DsIconName> = {
 
 type EntryEditorState = {
   entryId: string;
-  x: number;
-  y: number;
+  opener: HTMLElement;
+  keyboard: boolean;
 };
 
 type EntryTotals = {
@@ -92,7 +98,13 @@ function StudioTodayPage() {
   const previewState = searchParams.get("preview");
   const showOnboardingClientPrompt = searchParams.get("onboarding") === "add-client";
   const effectivePreviewState = activeScenario?.state === "new" ? "empty" : previewState;
-  const scenarioProjects = activeScenario?.state === "new" ? [] : activeVideoProjects;
+  const { state } = usePrototypeState();
+  const { getDeliveryAgreement } = useProjectTiming();
+  const scenarioProjects = useMemo(() => activeScenario?.state === "new" ? [] : activeVideoProjects.map((project) => {
+    const scoped = state.projects.find((entry) => entry.id === project.id && entry.workspaceId === state.session.activeWorkspaceId);
+    const agreed = scoped ? getDeliveryAgreement(scoped).agreedDate : null;
+    return agreed ? { ...project, deadlineAt: deliveryDateParts(agreed).date } : project;
+  }), [activeScenario?.state, getDeliveryAgreement, state.projects, state.session.activeWorkspaceId]);
   const [weekOffset, setWeekOffset] = useState(0);
   const [viewerSelection, setViewerSelection] = useState("me");
   const viewedPersonId = viewerSelection === "me" ? currentPersonId : viewerSelection;
@@ -144,8 +156,13 @@ function StudioTodayPage() {
     );
   };
 
-  const openEditorForEntry = (entryId: string, x: number, y: number) => {
-    setEditorState({ entryId, x, y });
+  const openEditorForEntry = (entry: TodayTimeEntry, opener: HTMLElement, keyboard: boolean) => {
+    setEditorState({ entryId: entry.id, opener, keyboard });
+  };
+
+  const closeEditor = () => {
+    setEditorState(null);
+    editorState?.opener.focus({ preventScroll: true });
   };
 
   const createEntry = (projectCard: TodayProjectCard, date: string) => {
@@ -234,7 +251,7 @@ function StudioTodayPage() {
                 onDropProjectCard={createEntry}
                 onMoveEntry={moveEntry}
                 onResizeEntry={resizeEntry}
-                onOpenEditor={(entry, rect) => openEditorForEntry(entry.id, rect.left, rect.bottom)}
+                onOpenEditor={openEditorForEntry}
               />
             )}
           </div>
@@ -244,17 +261,18 @@ function StudioTodayPage() {
 
         {editorState && editorEntry ? (
           <TimeEntryEditor
+            key={editorEntry.id}
             entry={editorEntry}
             position={editorState}
             projectCards={projectCards}
-            onClose={() => setEditorState(null)}
+            onClose={closeEditor}
             onDelete={() => {
               setEntries((currentEntries) => currentEntries.filter((entry) => entry.id !== editorEntry.id));
               setEditorState(null);
             }}
             onSave={(nextEntry) => {
               updateEntry(editorEntry.id, () => nextEntry);
-              setEditorState(null);
+              closeEditor();
             }}
           />
         ) : null}
@@ -375,7 +393,7 @@ function WeekGrid({
   onDropProjectCard: (projectCard: TodayProjectCard, date: string) => void;
   onMoveEntry: (entryId: string, date: string, status: TodayEntryStatus) => void;
   onResizeEntry: (entryId: string, nextHours: number) => void;
-  onOpenEditor: (entry: TodayTimeEntry, rect: DOMRect) => void;
+  onOpenEditor: (entry: TodayTimeEntry, opener: HTMLElement, keyboard: boolean) => void;
   onTodoLanePercentChange: (percent: number) => void;
 }) {
   const gridBodyRef = useRef<HTMLDivElement>(null);
@@ -473,7 +491,7 @@ function DayColumn({
   onDropProjectCard: (projectCard: TodayProjectCard, date: string) => void;
   onMoveEntry: (entryId: string, date: string, status: TodayEntryStatus) => void;
   onResizeEntry: (entryId: string, nextHours: number) => void;
-  onOpenEditor: (entry: TodayTimeEntry, rect: DOMRect) => void;
+  onOpenEditor: (entry: TodayTimeEntry, opener: HTMLElement, keyboard: boolean) => void;
 }) {
   const todoEntries = entries.filter((entry) => getEntryStatus(entry) === "todo");
   const doneEntries = entries.filter((entry) => getEntryStatus(entry) === "done");
@@ -525,7 +543,7 @@ function DaySection({
   onDropProjectCard: (projectCard: TodayProjectCard, date: string) => void;
   onMoveEntry: (entryId: string, date: string, status: TodayEntryStatus) => void;
   onResizeEntry: (entryId: string, nextHours: number) => void;
-  onOpenEditor: (entry: TodayTimeEntry, rect: DOMRect) => void;
+  onOpenEditor: (entry: TodayTimeEntry, opener: HTMLElement, keyboard: boolean) => void;
 }) {
   const handleDragOver = (event: ReactDragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -582,7 +600,7 @@ function TimeBlock({
 }: {
   entry: TodayTimeEntry;
   projectCard?: TodayProjectCard;
-  onOpenEditor: (entry: TodayTimeEntry, rect: DOMRect) => void;
+  onOpenEditor: (entry: TodayTimeEntry, opener: HTMLElement, keyboard: boolean) => void;
   onResizeEntry: (entryId: string, nextHours: number) => void;
 }) {
   const stageLabel = entry.stage ? stageLabels[entry.stage] : "Unspecified";
@@ -626,11 +644,12 @@ function TimeBlock({
       role="button"
       tabIndex={0}
       style={blockStyle}
-      onClick={(event) => onOpenEditor(entry, event.currentTarget.getBoundingClientRect())}
+      onClick={(event) => onOpenEditor(entry, event.currentTarget, event.detail === 0)}
       onDragStart={handleDragStart}
       onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          onOpenEditor(entry, event.currentTarget.getBoundingClientRect());
+        if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          onOpenEditor(entry, event.currentTarget, true);
         }
       }}
     >
@@ -675,48 +694,85 @@ function TimeEntryEditor({
   const [draftStage, setDraftStage] = useState<StageKey | "">(entry.stage ?? "");
   const [draftHours, setDraftHours] = useState(String(entry.hours));
   const [draftNote, setDraftNote] = useState(entry.note ?? "");
-  const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
-  const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
-  const editorStyle = {
-    "--editor-left": `${Math.min(position.x, viewportWidth - 340)}px`,
-    "--editor-top": `${Math.min(position.y + 8, viewportHeight - 360)}px`,
-  } as CSSProperties;
+  const [hoursTouched, setHoursTouched] = useState(false);
+  const hoursId = useId();
+  const panelRef = useRef<HTMLElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const fieldsRef = useRef<HTMLDivElement>(null);
+  const editorStyle = useTimeEntryEditorLayout(position.opener, panelRef, bodyRef, fieldsRef);
+  const parsedHours = Number(draftHours);
+  const validHours = draftHours.trim() !== "" && Number.isFinite(parsedHours)
+    && parsedHours >= minEntryHours && parsedHours <= maxEntryHours
+    && Number.isInteger(parsedHours / minEntryHours);
+  const showHoursError = hoursTouched && !validHours;
+
+  useEffect(() => {
+    const frame = position.keyboard ? requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus({ preventScroll: true });
+    }) : null;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented || event.isComposing) return;
+      event.preventDefault();
+      onClose();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [position, onClose]);
 
   const saveEntry = () => {
-    const parsedHours = Number(draftHours);
-    const hours = Number.isFinite(parsedHours) ? snapToQuarter(clamp(parsedHours, 0.25, maxEntryHours)) : entry.hours;
+    if (!validHours) { setHoursTouched(true); return; }
 
     onSave({
       ...entry,
       stage: draftStage || undefined,
-      hours,
+      hours: parsedHours,
       note: draftNote.trim(),
     });
   };
 
   return (
-    <aside className="today-entry-editor" style={editorStyle} aria-label="Log time">
+    <aside className="today-entry-editor" ref={panelRef} style={editorStyle} aria-label="Log time">
       <header className="today-entry-editor-header">
         <strong className="heading-3xs">{projectCard?.projectName ?? "Project time"}</strong>
-        <button className="today-icon-button" type="button" aria-label="Close editor" onClick={onClose}>
+        <IconButton size="S" aria-label="Close editor" tooltipPlacement="bottom" tooltipAlign="end" onClick={onClose}>
           <DsIcon name="x-close-cross" size={16} />
-        </button>
+        </IconButton>
       </header>
-      <label className="today-field label-s-semibold">
-        Stage
-        <span className="today-stage-select-wrap">
-          {draftStage ? <StageFlowIcon stage={draftStage} /> : null}
-          <BriskSelect<string> ariaLabel={"Stage"} clearable={false} placeholder={"Select stage"} value={draftStage} onChange={(value) => setDraftStage(value as StageKey | "")} options={[{ value: "", label: "Select stage" }, ...stageOptions.map((stage) => ({ value: stage, label: (stageLabels[stage]) }))]} />
-        </span>
-      </label>
-      <label className="today-field label-s-semibold">
-        Hours
-        <input min="0.25" step="0.25" type="number" value={draftHours} onChange={(event) => setDraftHours(event.target.value)} />
-      </label>
-      <label className="today-field label-s-semibold">
-        Note
-        <textarea value={draftNote} onChange={(event) => setDraftNote(event.target.value)} />
-      </label>
+      <div className="today-entry-editor-body" ref={bodyRef}>
+        <div className="today-entry-editor-fields" ref={fieldsRef}>
+          <label className="today-field label-s-semibold">
+            Stage
+            <span className="today-stage-select-wrap">
+              {draftStage ? <StageFlowIcon stage={draftStage} /> : null}
+              <BriskSelect<string> ariaLabel={"Stage"} clearable={false} placeholder={"Select stage"} value={draftStage} onChange={(value) => setDraftStage(value as StageKey | "")} options={[{ value: "", label: "Select stage" }, ...stageOptions.map((stage) => ({ value: stage, label: (stageLabels[stage]) }))]} />
+            </span>
+          </label>
+          <div className="today-field">
+            <label className="label-s-semibold" htmlFor={hoursId}>Hours</label>
+            <Input
+              id={hoursId}
+              size="S"
+              min={minEntryHours}
+              max={maxEntryHours}
+              step={minEntryHours}
+              required
+              type="number"
+              value={draftHours}
+              error={showHoursError}
+              hint={showHoursError ? <span role="status">Enter 0.25-24 hours in 0.25-hour steps.</span> : "0.25-24 hours, in 0.25-hour steps."}
+              onChange={(event) => setDraftHours(event.target.value)}
+              onBlur={() => setHoursTouched(true)}
+            />
+          </div>
+          <label className="today-field label-s-semibold">
+            Note
+            <textarea value={draftNote} onChange={(event) => setDraftNote(event.target.value)} />
+          </label>
+        </div>
+      </div>
       <div className="today-entry-editor-actions">
         <Button size="S" variant="danger" className="today-delete-time" type="button" onClick={onDelete}>
           Delete
@@ -725,7 +781,7 @@ function TimeEntryEditor({
           <Button size="S" variant="secondary" className="today-cancel-time" type="button" onClick={onClose}>
             Cancel
           </Button>
-          <Button size="S" variant="primary" className="today-save-time" type="button" onClick={saveEntry}>
+          <Button size="S" variant="primary" className="today-save-time" type="button" disabled={!validHours} onClick={saveEntry}>
             Save
           </Button>
         </span>

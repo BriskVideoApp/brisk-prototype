@@ -1,0 +1,120 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/brief".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/brief
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 pop up button (collapsed) Description: Brief actions, Secondary Actions: Expand
+					37 text Brief actions
+				38 button Open Chat
+				39 button (collapsed) Description: Updates, Secondary Actions: Expand
+			40 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			41 container
+				42 container Project stage progress
+					43 container LOOM / Launch Film - Sales Narrative
+						44 link Description: Back to dashboard, Value: localhost:3000/active-videos
+						45 text LOOM Launch Film - Sales Narrative
+					46 container LOOM Launch Film - Sales Narrative
+						47 content list Sequential production stages
+							48 container
+								49 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								50 text Brief
+							51 container
+								52 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+								53 text Script
+							54 container
+								55 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								56 text Storyboard
+							57 container
+								58 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								59 text Shoot
+							60 container
+								61 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								62 text Edit
+							63 container
+								64 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								65 text Masters
+						66 container
+							67 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+							68 text Media
+						69 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							70 text Adjust project flow
+				71 container Brief intake
+					72 heading What video are we making?, Value: 1, ID: brief-landing-title
+						73 text What video are we making?
+					74 text Answer a few quick questions, then Brisk AI will build your brief.
+					75 text entry area (settable) Describe the video brief
+					76 container Attachment tools
+						77 button (disabled) Description: Record a brief, Help: Recording is not available in this prototype. Type your brief or upload a document instead.
+							78 text Recording is not available in this prototype
+						79 button Paste a link
+							80 text Paste a link
+						81 button Upload a doc
+							82 text Upload a doc
+					83 button Fill manually
+					84 button (disabled) Continue
+					85 container
+						86 button Back
+						87 container Brief steps
+							88 button Start with AI Start with AI
+								89 text Start with AI
+								90 text Start with AI
+							91 button 1 1. Description
+								92 text 1
+								93 text 1. Description
+							94 button 2 2. Video type
+								95 text 2
+								96 text 2. Video type
+							97 button 3 3. Audience and action
+								98 text 3
+								99 text 3. Audience and action
+							100 button 4 4. Similar videos
+								101 text 4
+								102 text 4. Similar videos
+							103 button 5 5. Brand kit
+								104 text 5
+								105 text 5. Brand kit
+							106 button 6 6. Footage and filming
+								107 text 6
+								108 text 6. Footage and filming
+							109 button 7 7. Deliverables
+								110 text 7
+								111 text 7. Deliverables
+							112 button 8 8. Deadline
+								113 text 8
+								114 text 8. Deadline
+							115 button Summary 9. Review your brief
+								116 text Summary
+								117 text 9. Review your brief
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/brief

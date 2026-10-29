@@ -1,0 +1,16 @@
+{
+  "request": "Replace the desktop sidebar chevron with a rectangle/divider sidebar icon and state-specific Collapse sidebar / Expand sidebar tooltips.",
+  "status": "Implemented and desktop-verified",
+  "asset": "Unmodified Brisk DS SidebarSimple export, exposed as sidebar-simple through DsIcon. Byte identity recorded in asset-source.json.",
+  "control": "Existing shared HybridSidebar toggle, DS M IconButton (20px icon, 44px native target), existing app tooltip treatment.",
+  "verified": {
+    "typeCheck": "npx tsc --noEmit passed",
+    "runtime": "People and public icon routes returned HTTP 200",
+    "interaction": "Enter collapses and expands; the existing sidebar remains in place and its content reflows.",
+    "accessibility": "Accessible name, data-tooltip and aria-expanded match both states; aria-controls retained. Keyboard focus and visible tooltip captured in both states.",
+    "screenshots": "expanded.png and collapsed.png, 1280 \u00d7 720 desktop; sidebar-states.png joins unaltered top-left crops [0,0,290,125] and [0,0,240,125].",
+    "scope": "Shared desktop sidebar including its settings navigation; role/route logic and mobile fallback unchanged.",
+    "preservation": "No working records, mock data, permissions, dependency changes, tests, production build, commit or push. Inspected isolated origin 8788.",
+    "cleanup": "Final verification used a fresh background tab and restored expanded state. Earlier preview tab, which had been navigated to Videos during work, was left in place."
+  }
+}

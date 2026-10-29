@@ -1,0 +1,35 @@
+{
+  "status": "Desktop completion in progress - 21 October 2026",
+  "userRequest": "Finish the unfinished desktop audit; identify useful help from Tom.",
+  "leadOwnedRemaining": [
+    "Per-consumer menus, hover, keyboard focus, dismissal and safe validation states",
+    "Applicable role views and 1440px / 1133px desktop comparisons",
+    "Evidence reconciliation, finding deduplication and consolidated visual assessment"
+  ],
+  "existingScenarios": [
+    "producer-active",
+    "freelancer-active",
+    "studio-owner-active",
+    "client-active"
+  ],
+  "scenarioWarning": "Load, Reset and End Test mode clear Brisk-prefixed local and session storage for the current browser origin. Do not use on the working session.",
+  "proposedAuthorisation": {
+    "status": "Authorised by Tom on 21 October 2026",
+    "scope": "Use a separate disposable audit session with verified storage isolation. Load existing scenarios; where existing populated examples are insufficient, create and progress sample project/onboarding content using existing UI solely in that session.",
+    "targetGaps": [
+      "Shoot planning, schedule and On Set",
+      "Edit/Animation review versions, comments, player and transcript tools",
+      "Masters populated deliverable, version and asset panels",
+      "To Do time entries and Freelancer offer/job/invoice interfaces",
+      "Later onboarding screens"
+    ],
+    "reason": "The original audit boundary prohibits changing stored data merely to inspect forms and states.",
+    "preservedBoundaries": [
+      "No application source, dependency, asset or seeded data file changes",
+      "Preserve the working browser session and its records",
+      "No invitations, messages, payments or destructive confirmations",
+      "No implementation of audit recommendations"
+    ]
+  },
+  "completionRule": "Inspect the defined finite desktop states and reconcile evidence. Do not claim completion if required reachable states remain uninspected; report any genuinely unavailable state precisely."
+}

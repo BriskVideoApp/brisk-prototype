@@ -1,0 +1,104 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Jordan Lee avatar": JL
+  - generic: Studio Freelancer
+  - heading "Jordan Lee" [level=1]
+  - button "Assign project Choose a project, role and hours.":
+    - generic: Assign project
+    - text: Choose a project, role and hours.
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Hours"
+    - tab "Skills"
+    - tab "Access"
+    - tab "Commercial" [selected]
+    - tab "Notes and activity"
+  - tabpanel "Commercial":
+    - heading "Commercial details" [level=2]
+    - paragraph: Studio-only rates, offers, contractor details and invoice history for this freelancer.
+    - article:
+      - generic: Default day rate
+      - strong: $980
+      - generic: AUD - used as the starting point for project offers
+    - article:
+      - generic: Current project offers
+      - strong: "2"
+      - generic: Project-specific rates can differ from the default
+    - article:
+      - heading "Contractor details" [level=3]
+      - term: Business or trading name
+      - definition: Not added
+      - term: ABN or tax number
+      - definition: Not added
+      - generic: Supplied by Jordan Lee and visible only to authorised Studio Staff.
+    - heading "Invoice history" [level=3]
+    - article:
+      - strong: August project invoice
+      - generic: jl-inv-aug
+      - strong: $1,960
+      - generic: Pending
+    - article:
+      - strong: July project invoice
+      - generic: jl-inv-jul
+      - strong: $2,940
+      - generic: Paid
+    - generic: Commercial details are hidden from Client contacts and people without permission to see Studio costs.

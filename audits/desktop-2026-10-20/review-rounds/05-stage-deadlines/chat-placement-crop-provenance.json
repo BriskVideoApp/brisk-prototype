@@ -1,0 +1,16 @@
+{
+  "source": "current-chat-external-1440.png",
+  "sourceSize": [
+    1440,
+    1000
+  ],
+  "crop": [
+    636,
+    626,
+    1308,
+    840
+  ],
+  "result": "current-chat-system-post-crop.png",
+  "method": "Pixel crop only; no UI recreated or altered",
+  "context": "Current Studio Staff External project Chat. Published call-time system post is an existing pattern reference, not a deadline post."
+}

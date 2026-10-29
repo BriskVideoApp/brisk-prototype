@@ -1,0 +1,170 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Brand Kits header":
+    - heading "Brand Kits" [level=1]
+    - generic: Search Brand Kits
+    - searchbox "Search Brand Kits"
+  - region "Client Brand Kits":
+    - link "Loom loom.com Brand Kit ready Last updated Just now":
+      - /url: /brand-kits/loom
+      - strong: Aa
+      - generic: Inter
+      - strong: Loom
+      - generic: loom.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: Just now
+    - link "Deel deel.com Brand Kit ready Last updated 22 Jul 2026":
+      - /url: /brand-kits/deel
+      - generic: DEEL
+      - strong: Aa
+      - generic: Roobert
+      - strong: Deel
+      - generic: deel.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 22 Jul 2026
+    - link "Hims & Hers hims.com Set up needed Last updated Not set up":
+      - /url: /brand-kits/hims
+      - generic: HIMS
+      - strong: +
+      - generic: Set up
+      - strong: Hims & Hers
+      - generic: hims.com
+      - generic: Set up needed
+      - generic: Last updated
+      - strong: Not set up
+    - link "Notion notion.so Brand Kit ready Last updated 19 Jul 2026":
+      - /url: /brand-kits/notion
+      - strong: Aa
+      - generic: Inter
+      - strong: Notion
+      - generic: notion.so
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 19 Jul 2026
+    - link "OpenAI openai.com Brand Kit ready Last updated 16 Jul 2026":
+      - /url: /brand-kits/openai
+      - strong: Aa
+      - generic: Inter
+      - strong: OpenAI
+      - generic: openai.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 16 Jul 2026
+    - link "PostHog posthog.com Brand Kit ready Last updated 11 Jul 2026":
+      - /url: /brand-kits/posthog
+      - strong: Aa
+      - generic: Inter
+      - strong: PostHog
+      - generic: posthog.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 11 Jul 2026
+    - link "Ramp ramp.com Brand Kit ready Last updated 4 Jul 2026":
+      - /url: /brand-kits/ramp
+      - generic: RAMP
+      - strong: Aa
+      - generic: Inter
+      - strong: Ramp
+      - generic: ramp.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 4 Jul 2026
+    - link "Canva canva.com Brand Kit ready Last updated 28 Jun 2026":
+      - /url: /brand-kits/canva
+      - strong: Aa
+      - generic: Inter
+      - strong: Canva
+      - generic: canva.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 28 Jun 2026
+    - link "Linear linear.app Brand Kit ready Last updated 21 Jun 2026":
+      - /url: /brand-kits/linear
+      - strong: Aa
+      - generic: Inter
+      - strong: Linear
+      - generic: linear.app
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 21 Jun 2026
+    - link "Figma figma.com Brand Kit ready Last updated 15 Jun 2026":
+      - /url: /brand-kits/figma
+      - strong: Aa
+      - generic: Inter
+      - strong: Figma
+      - generic: figma.com
+      - generic: Brand Kit ready
+      - generic: Last updated
+      - strong: 15 Jun 2026
+    - link "Alex Morgan Set up needed Last updated Not set up":
+      - /url: /brand-kits/alex-morgan
+      - generic: AM
+      - strong: +
+      - generic: Set up
+      - strong: Alex Morgan
+      - generic: Set up needed
+      - generic: Last updated
+      - strong: Not set up
+    - link "Harbour Health harbourhealth.com.au Set up needed Last updated Just now":
+      - /url: /brand-kits/harbour-health
+      - generic: HH
+      - strong: +
+      - generic: Set up
+      - strong: Harbour Health
+      - generic: harbourhealth.com.au
+      - generic: Set up needed
+      - generic: Last updated
+      - strong: Just now

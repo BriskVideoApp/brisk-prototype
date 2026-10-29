@@ -1,0 +1,57 @@
+[
+  {
+    "id": "DEL-01",
+    "result": "pass",
+    "observation": "Cancelling the proposal form leaves the existing agreed date and no pending proposal."
+  },
+  {
+    "id": "DEL-02",
+    "result": "pass",
+    "observation": "Staff proposal for 9 November leaves agreed 29 August in place; supersedes earlier proposal without deleting it. Staff has no Agree new date control."
+  },
+  {
+    "id": "DEL-03",
+    "result": "pass",
+    "observation": "Deadline drawer retains 29 August while pending, with final date read-only; warning and Discuss date target exact External proposal message. Reading does not accept the proposal."
+  },
+  {
+    "id": "DEL-04",
+    "result": "pass",
+    "observation": "Client agreement changes agreed date to 9 November, removes pending action, retains original 29 August and superseded proposal with Client actor and time in expandable keyboard-operated history."
+  },
+  {
+    "id": "DEL-05",
+    "result": "pass",
+    "observation": "Fresh isolated tab independently loads saved 9 November agreement. Staff Videos shows 9 November and no unresolved Loom warning. A cache-specific blank reload in IAB recovered with a fresh review URL; no data reset."
+  },
+  {
+    "id": "DEL-06",
+    "result": "pass",
+    "observation": "Unassigned Freelancer cannot open Loom delivery. Accepted Figma Freelancer can read delivery, with no proposal or agreement actions."
+  },
+  {
+    "id": "DEL-07",
+    "result": "pass",
+    "observation": "Client project actions menu includes Final delivery and navigates to the agreed-date screen."
+  },
+  {
+    "id": "DEL-08",
+    "result": "pass",
+    "observation": "Internal Hims risk remains on Internal Chat. Review date opens the reviewed date summary and its View final delivery link enters the new flow. Explicit Staff proposal creates separate Client-safe External copy."
+  },
+  {
+    "id": "DEL-09",
+    "result": "pass",
+    "observation": "Final Client proposal composition inspected at 1440 and 1133 desktop widths with expanded and collapsed navigation; date, reason and actions remain visible."
+  },
+  {
+    "id": "DEL-10",
+    "result": "pass",
+    "observation": "Review date from Global Chat’s External proposal closes the drawer and returns to Final delivery. It does not accept or clear the pending proposal."
+  },
+  {
+    "id": "DEL-11",
+    "result": "pass",
+    "observation": "To Do retains its existing layout and work-week controls. Loom uses accepted 9 November final date (99 working days from the existing 23 June demo reference); Hims still uses its old agreed date while pending."
+  }
+]

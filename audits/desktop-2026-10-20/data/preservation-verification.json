@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-20T21:46:20.644376+00:00",
+  "protectedFilesChecked": 1701,
+  "protectedFilesChanged": [],
+  "trackedDiff": [],
+  "gitStatus": [
+    "?? audits/"
+  ],
+  "branch": "codex/unified-brisk-prototype",
+  "head": "3188bc4ca88d6ed2689c9b5bf8c47a7bfdd56e63",
+  "browserStorageEqual": true,
+  "workingStorageProof": "Completion-pass baseline and after snapshot: localhost static SVG inspection only;43 local keys,0 session keys.",
+  "noTestsBuildInstallCommitPush": true
+}

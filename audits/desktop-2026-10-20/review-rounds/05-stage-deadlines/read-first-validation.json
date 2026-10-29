@@ -1,0 +1,36 @@
+{
+  "date": "28 October 2026",
+  "type": "Rendered proposal, not application implementation",
+  "protectedFilesCompared": 1705,
+  "changedProtectedFiles": [],
+  "browserChecksCount": 12,
+  "warningsOrErrors": [],
+  "desktopWidths": [
+    1440,
+    1133
+  ],
+  "verified": [
+    "Cancel does not save shared edits",
+    "Opening/cancelling Add exception creates no rule",
+    "One Save creates only a changed stage exception",
+    "Shared edits preserve custom exception rules",
+    "Custom rule save and Use Studio defaults reset are independent actions",
+    "Round allowance saves independently and Escape cancels further edits",
+    "Friendlier copy retains assumptions and confirmation",
+    "Use this date fills a request without submitting it",
+    "Final generated preview opens focused editors, saves length-only Edit exceptions, restores shared defaults and independently saves revision rounds"
+  ],
+  "observations": "read-first-browser-observations.json",
+  "DSRendering": "Existing EditingDialog/DialogSurface markup and CSS are imported. React server rendering uses an inline portal adapter; preview-only native interaction wiring is not app integration verification.",
+  "limits": [
+    "New save flow is a recommendation, not approved implementation",
+    "Existing Default project team integration remains to verify after approval",
+    "No role-permission or full application-shell revalidation performed for the static proposal",
+    "No mobile pass or formal accessibility-compliance claim"
+  ],
+  "restoration": "Viewport reset. User app origins and working preview drafts not operated. New proposal tab retained.",
+  "allBrowserObservationsPassed": true,
+  "missingReportLinks": [],
+  "generatedScriptSyntaxValid": true,
+  "resolvedPreviewIssue": "Replacement-string expansion changed $$ into $. Renderer now uses callbacks and final generated interactions were rechecked."
+}

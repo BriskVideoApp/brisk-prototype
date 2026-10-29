@@ -1,0 +1,27 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/today".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 44-730
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/today
+~			39 container To Do workspace
+~				40 container To Do header
+~					41 heading To Do, Value: 1
+~						42 text To Do
+~					43 text Tuesday 23 June 2026
++					44 container Week navigator
++						45 button Previous week
++						46 button 22 June - 26 June
++							47 text 22 June
++							48 text  - 
++							49 text 26 June
++						50 button Next week
++					51 container
++						52 text Viewing
++						53 combo box (collapsed) Description: Choose whose work to view, Value: Me, Secondary Actions: Expand
++							54 text Me
++					55 text 0h  planned ·  0h  done
++				56 container
++					57 heading No active videos assigned to you, Value: 2
++						58 text No active videos assigned to you
++					59 text Videos you own or are assigned to will appear here.
++					60 link Description: Open Videos, Value: localhost:3000/active-videos
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/today

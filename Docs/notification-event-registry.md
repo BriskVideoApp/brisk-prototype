@@ -201,6 +201,16 @@ These fixtures reuse the Loom project, people, Client contacts and Media assets 
 
 ## Boundaries for later tickets
 
+### Timing-warning prototype adapter - 28 October 2026
+
+Tom approved a one-line Brief suggestion, a Project Chat timing post with Review date, and a persistent Deadline-to-message warning. The front-end adapter uses typed assessments and a separate workspace/scenario-scoped timing store. It does not migrate existing Chat or project records.
+
+- `project.timing.review_required` follows explicit Brief submission. Draft date edits create no post.
+- `project.timing.production_risk` is Internal only.
+- `project.timing.client_update` requires a deliberate Studio Staff review/share action. It contains a separate Client-safe message, never the Internal context.
+- These events add no inbox or email delivery. Timing-message read state never resolves the underlying issue.
+- The initial adapter demonstrates warning surfaces. The later scoped delivery adapter below adds proposal/agreement resolution; neither is a live forecast, scheduler or complete canonical activity resolver.
+
 This contract does not implement:
 
 - Notification centre UI or read state
@@ -212,3 +222,9 @@ This contract does not implement:
 - Connector authentication or inbound messaging
 
 Those features consume this registry rather than creating their own event names, routing rules or privacy policy.
+
+### Delivery agreement prototype adapter - 29 October 2026
+
+Tom approved the Final delivery proposal/agreement composition. `project.delivery.date_proposed` follows explicit Staff submission of a date and Client-safe reason. `project.delivery.date_agreed` follows explicit scoped Customer acceptance of the current pending proposal. Both generate External Project Chat posts from a separate workspace/scenario-scoped browser store, with no legacy Chat migration, inbox or email delivery. The producer action is the review/publication boundary; Internal risk text is never copied automatically.
+
+A proposal leaves the agreed date unchanged. Acceptance retains the original date, proposal actors and history, updates the effective final date, and resolves existing timing reviews independently of read state. Earlier proposals remain accessible and clearly marked; stale proposal IDs are checked again before agreement. The prototype does not provide production concurrency, server-side permissions or a scheduling engine.

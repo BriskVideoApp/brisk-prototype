@@ -1,0 +1,23 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/media".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 123-176, 184, 186, 188, 190, 192, 194-382
+~				112 search text field (settable) Description: Search media, Value: Jess-interview-camera-a
++					194 container 2 files selected
++						195 text 2  selected
++						196 button Clear selection
++							197 text Clear selection
++						198 button Move to folder
++						199 button Download
++						200 button Archive
++						201 button Delete
+~						178 checkbox Description: Deselect Jess-interview-camera-a.mov, Value: 1
++								202 text Comment
++								203 text Transcript
++								204 text Copy link
++								205 text Download
++								206 text Archive
++								207 text Delete
++				208 container Jess-interview-camera-a.mov share actions
++					209 button (collapsed) Description: Copy link, Secondary Actions: Expand
++					210 button Send selected file to Loom
+The focused UI element is 112 search text field (settable) Description: Search media, Value: Jess-interview-camera-a

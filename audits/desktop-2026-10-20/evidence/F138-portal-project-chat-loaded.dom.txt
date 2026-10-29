@@ -1,0 +1,542 @@
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Your videos" [level=1]
+  - button "Start Video": Start Video
+  - region "To review (1) Waiting for your review.":
+    - heading "To review (1) Waiting for your review." [level=2]
+    - article:
+      - link "Open Launch Film - Sales Narrative":
+        - /url: /projects/loom-launch-film/stages/shoot
+      - generic: LOOM-24
+      - generic: Launch Film - Sales Narrative
+      - generic: Shoot details shared by Maddie · 1 day ago
+      - link "Confirm shoot details":
+        - /url: /projects/loom-launch-film/stages/shoot
+        - text: Confirm shoot details
+      - button "Open chat for Launch Film - Sales Narrative":
+        - generic "3 unread messages": "3"
+      - button "Open actions for Launch Film - Sales Narrative": Open actions for Launch Film - Sales Narrative
+      - generic "Launch Film - Sales Narrative stage progress":
+        - link "Open Brief":
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/loom-launch-film/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Shoot - Waiting on Loom
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Edit - Not started
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (13). 13 media files":
+          - /url: /projects/loom-launch-film/stages/media
+          - text: 13 media files
+        - generic: Media (13)
+  - region "In progress (4) Your Studio is working on these videos.":
+    - heading "In progress (4) Your Studio is working on these videos." [level=2]
+    - article:
+      - link "Open WACF Customer Cutdown 01":
+        - /url: /projects/loom-wacf-01/stages/edit
+      - generic: LOOM-31
+      - generic: WACF Customer Cutdown 01
+      - generic: Waiting on North Star Films to edit the video
+      - generic: Rough cut uploaded · 1d ago
+      - generic: "Series: WACF CC"
+      - button "Open chat for WACF Customer Cutdown 01":
+        - generic "1 unread messages": "1"
+      - button "Open actions for WACF Customer Cutdown 01": Open actions for WACF Customer Cutdown 01
+      - generic "WACF Customer Cutdown 01 stage progress":
+        - link "Open Brief":
+          - /url: /projects/loom-wacf-01/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/loom-wacf-01/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/loom-wacf-01/stages/shoot
+          - text: Shoot - Complete
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/loom-wacf-01/stages/edit
+          - text: Edit - Waiting on North Star Films
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/loom-wacf-01/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (0). 0 media files":
+          - /url: /projects/loom-wacf-01/stages/media
+          - text: 0 media files
+        - generic: Media (0)
+    - article:
+      - link "Open Product Tour - Team Workflows":
+        - /url: /projects/loom-product-tour/stages/shoot
+      - generic: LOOM-34
+      - generic: Product Tour - Team Workflows
+      - generic: Waiting on North Star Films to prepare the shoot
+      - generic: Script approved by Emma · 2d ago
+      - button "Open chat for Product Tour - Team Workflows"
+      - button "Open actions for Product Tour - Team Workflows": Open actions for Product Tour - Team Workflows
+      - generic "Product Tour - Team Workflows stage progress":
+        - link "Open Brief":
+          - /url: /projects/loom-product-tour/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/loom-product-tour/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/loom-product-tour/stages/shoot
+          - text: Shoot - Waiting on North Star Films
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/loom-product-tour/stages/edit
+          - text: Edit - Not started
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/loom-product-tour/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (0). 0 media files":
+          - /url: /projects/loom-product-tour/stages/media
+          - text: 0 media files
+        - generic: Media (0)
+    - article:
+      - link "Open Customer Story - Healthcare":
+        - /url: /projects/loom-customer-stories/stages/edit
+      - generic: LOOM-27
+      - generic: Customer Story - Healthcare
+      - generic: Waiting on North Star Films to edit the video
+      - generic: Edit preparation started by Maddie · 3d ago
+      - generic: "Series: Customer Stories"
+      - button "Open chat for Customer Story - Healthcare":
+        - generic "4 unread messages": "4"
+      - button "Open actions for Customer Story - Healthcare": Open actions for Customer Story - Healthcare
+      - generic "Customer Story - Healthcare stage progress":
+        - link "Open Brief":
+          - /url: /projects/loom-customer-stories/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/loom-customer-stories/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/loom-customer-stories/stages/shoot
+          - text: Shoot - Complete
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/loom-customer-stories/stages/edit
+          - text: Edit - Waiting on North Star Films
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/loom-customer-stories/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (0). 0 media files":
+          - /url: /projects/loom-customer-stories/stages/media
+          - text: 0 media files
+        - generic: Media (0)
+    - article:
+      - link "Open Q3 Product Recap":
+        - /url: /projects/loom-q3-recap/stages/edit
+      - generic: LOOM-36
+      - generic: Q3 Product Recap
+      - generic: Waiting on North Star Films to edit the video
+      - generic: Media organised for edit · 4d ago
+      - button "Open chat for Q3 Product Recap":
+        - generic "2 unread messages": "2"
+      - button "Open actions for Q3 Product Recap": Open actions for Q3 Product Recap
+      - generic "Q3 Product Recap stage progress":
+        - link "Open Brief":
+          - /url: /projects/loom-q3-recap/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/loom-q3-recap/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/loom-q3-recap/stages/shoot
+          - text: Shoot - Complete
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/loom-q3-recap/stages/edit
+          - text: Edit - Waiting on North Star Films
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/loom-q3-recap/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (0). 0 media files":
+          - /url: /projects/loom-q3-recap/stages/media
+          - text: 0 media files
+        - generic: Media (0)
+  - region "All videos (5)":
+    - heading "All videos (5)" [level=2]
+    - generic: Video grouping
+    - combobox "Video grouping":
+      - generic: Standalone only
+    - group "Video status":
+      - button "All. Every video shared with you." [pressed]:
+        - text: All
+        - generic: "5"
+        - text: Every video shared with you.
+      - button "Active. Videos currently in production.":
+        - text: Active
+        - generic: "5"
+        - text: Videos currently in production.
+      - button "Queued. Planned next. Your Studio has not started work yet.":
+        - text: Queued
+        - generic: "0"
+        - text: Planned next. Your Studio has not started work yet.
+      - button "Completed. Finished videos that have been approved.":
+        - text: Completed
+        - generic: "0"
+        - text: Finished videos that have been approved.
+      - button "Paused. Work is temporarily on hold.":
+        - text: Paused
+        - generic: "0"
+        - text: Work is temporarily on hold.
+      - button "Archived. Kept for reference and no longer active.":
+        - text: Archived
+        - generic: "0"
+        - text: Kept for reference and no longer active.
+    - table "All videos":
+      - row "Video Progress Status Created Actions":
+        - columnheader "Video"
+        - columnheader "Progress"
+        - columnheader "Status"
+        - columnheader "Created"
+        - columnheader "Actions"
+      - row "Open Q3 Product Recap LOOM-36 Q3 Product Recap Media organised for edit · 4d ago Q3 Product Recap stage progress In Production 19 June 2026 Open chat for Q3 Product Recap Open actions for Q3 Product Recap":
+        - link "Open Q3 Product Recap":
+          - /url: /projects/loom-q3-recap/stages/edit
+        - cell "LOOM-36 Q3 Product Recap Media organised for edit · 4d ago":
+          - generic: LOOM-36
+          - generic: Q3 Product Recap
+          - generic: Media organised for edit · 4d ago
+        - cell "Q3 Product Recap stage progress":
+          - generic "Q3 Product Recap stage progress":
+            - link "Open Brief":
+              - /url: /projects/loom-q3-recap/stages/brief
+              - text: Brief - Complete
+            - generic: Brief
+            - link "Open Script":
+              - /url: /projects/loom-q3-recap/script
+              - text: Script - Complete
+            - generic: Script
+            - link "Open Shoot":
+              - /url: /projects/loom-q3-recap/stages/shoot
+              - text: Shoot - Complete
+            - generic: Shoot
+            - link "Open Video Review":
+              - /url: /projects/loom-q3-recap/stages/edit
+              - text: Edit - Waiting on North Star Films
+            - generic: Edit
+            - link "Open Masters":
+              - /url: /projects/loom-q3-recap/stages/masters
+              - text: Masters - Not started
+            - generic: Masters
+            - link "Open Media (0). 0 media files":
+              - /url: /projects/loom-q3-recap/stages/media
+              - text: 0 media files
+            - generic: Media (0)
+        - cell "In Production":
+          - generic: In Production
+        - cell "19 June 2026"
+        - cell "Open chat for Q3 Product Recap Open actions for Q3 Product Recap":
+          - button "Open chat for Q3 Product Recap":
+            - generic "2 unread messages": "2"
+          - button "Open actions for Q3 Product Recap": Open actions for Q3 Product Recap
+      - row "Open Product Tour - Team Workflows LOOM-34 Product Tour - Team Workflows Script approved by Emma · 2d ago Product Tour - Team Workflows stage progress In Production 8 June 2026 Open chat for Product Tour - Team Workflows Open actions for Product Tour - Team Workflows":
+        - link "Open Product Tour - Team Workflows":
+          - /url: /projects/loom-product-tour/stages/shoot
+        - cell "LOOM-34 Product Tour - Team Workflows Script approved by Emma · 2d ago":
+          - generic: LOOM-34
+          - generic: Product Tour - Team Workflows
+          - generic: Script approved by Emma · 2d ago
+        - cell "Product Tour - Team Workflows stage progress":
+          - generic "Product Tour - Team Workflows stage progress":
+            - link "Open Brief":
+              - /url: /projects/loom-product-tour/stages/brief
+              - text: Brief - Complete
+            - generic: Brief
+            - link "Open Script":
+              - /url: /projects/loom-product-tour/script
+              - text: Script - Complete
+            - generic: Script
+            - link "Open Shoot":
+              - /url: /projects/loom-product-tour/stages/shoot
+              - text: Shoot - Waiting on North Star Films
+            - generic: Shoot
+            - link "Open Video Review":
+              - /url: /projects/loom-product-tour/stages/edit
+              - text: Edit - Not started
+            - generic: Edit
+            - link "Open Masters":
+              - /url: /projects/loom-product-tour/stages/masters
+              - text: Masters - Not started
+            - generic: Masters
+            - link "Open Media (0). 0 media files":
+              - /url: /projects/loom-product-tour/stages/media
+              - text: 0 media files
+            - generic: Media (0)
+        - cell "In Production":
+          - generic: In Production
+        - cell "8 June 2026"
+        - cell "Open chat for Product Tour - Team Workflows Open actions for Product Tour - Team Workflows":
+          - button "Open chat for Product Tour - Team Workflows"
+          - button "Open actions for Product Tour - Team Workflows": Open actions for Product Tour - Team Workflows
+      - row "Open Launch Film - Sales Narrative LOOM-24 Launch Film - Sales Narrative Shoot details shared by Maddie · 23h ago Launch Film - Sales Narrative stage progress In Production 18 May 2026 Open chat for Launch Film - Sales Narrative Open actions for Launch Film - Sales Narrative":
+        - link "Open Launch Film - Sales Narrative":
+          - /url: /projects/loom-launch-film/stages/shoot
+        - cell "LOOM-24 Launch Film - Sales Narrative Shoot details shared by Maddie · 23h ago":
+          - generic: LOOM-24
+          - generic: Launch Film - Sales Narrative
+          - generic: Shoot details shared by Maddie · 23h ago
+        - cell "Launch Film - Sales Narrative stage progress":
+          - generic "Launch Film - Sales Narrative stage progress":
+            - link "Open Brief":
+              - /url: /projects/loom-launch-film/stages/brief
+              - text: Brief - Complete
+            - generic: Brief
+            - link "Open Script":
+              - /url: /projects/loom-launch-film/script
+              - text: Script - Complete
+            - generic: Script
+            - link "Open Shoot":
+              - /url: /projects/loom-launch-film/stages/shoot
+              - text: Shoot - Waiting on Loom
+            - generic: Shoot
+            - link "Open Video Review":
+              - /url: /projects/loom-launch-film/stages/edit
+              - text: Edit - Not started
+            - generic: Edit
+            - link "Open Masters":
+              - /url: /projects/loom-launch-film/stages/masters
+              - text: Masters - Not started
+            - generic: Masters
+            - link "Open Media (13). 13 media files":
+              - /url: /projects/loom-launch-film/stages/media
+              - text: 13 media files
+            - generic: Media (13)
+        - cell "In Production":
+          - generic: In Production
+        - cell "18 May 2026"
+        - cell "Open chat for Launch Film - Sales Narrative Open actions for Launch Film - Sales Narrative":
+          - button "Open chat for Launch Film - Sales Narrative":
+            - generic "3 unread messages": "3"
+          - button "Open actions for Launch Film - Sales Narrative" [active]: Open actions for Launch Film - Sales Narrative
+  - generic: Powered by Brisk
+  - dialog "Project chat":
+    - button "Close chat"
+    - main:
+      - complementary "Chat navigation":
+        - generic: North Star Films
+        - button "Search messages - Command K"
+        - navigation "Global conversations":
+          - button "DMs":
+            - generic: DMs
+          - button "Mentions":
+            - generic: Mentions
+          - button "Groups":
+            - generic: Groups
+          - button "Threads":
+            - generic: Threads
+        - generic "Project conversations":
+          - button "All projects":
+            - generic: All projects
+          - button "Mark all 6 unread messages as read": "6"
+          - button "LOOM-24 Launch Film - Sales Narrative" [pressed]:
+            - generic: LOOM-24
+            - generic: Launch Film - Sales Narrative
+          - button "Mark 6 unread messages in LOOM-24 as read": "6"
+          - button "LOOM-27 Customer Stories - Enterprise Series":
+            - generic: LOOM-27
+            - generic: Customer Stories - Enterprise Series
+          - button "LOOM-31 WACF Customer Cutdown 01":
+            - generic: LOOM-31
+            - generic: WACF Customer Cutdown 01
+          - button "LOOM-34 Product Tour - Team Workflows":
+            - generic: LOOM-34
+            - generic: Product Tour - Team Workflows
+          - button "LOOM-36 Q3 Product Recap":
+            - generic: LOOM-36
+            - generic: Q3 Product Recap
+      - heading "LOOM-24 Launch Film - Sales Narrative" [level=1]
+      - text: Loom
+      - group "Call options for LOOM-24 Launch Film - Sales Narrative":
+        - button "Start a call in LOOM-24 Launch Film - Sales Narrative"
+        - button "Open call options"
+      - separator "Tuesday 21 July":
+        - generic: Tuesday 21 July
+      - article:
+        - 'link "Script approved: The Script has been approved."':
+          - /url: /projects/loom-launch-film/script
+          - generic: Approved
+          - strong: Script approved
+          - generic: The Script has been approved.
+          - time: 91 days ago
+          - generic: External
+      - separator "Wednesday 22 July":
+        - generic: Wednesday 22 July
+      - article:
+        - generic "Jess Taylor": JT
+        - generic: Jess Taylor
+        - time: 9:12 am
+        - paragraph: The script is looking great. Could we keep the final customer quote on screen for another beat?
+        - link "Open comment in Script":
+          - /url: /projects/loom-launch-film/script
+        - button "Love":
+          - generic: ❤️
+          - generic: "2"
+      - article:
+        - generic "Tom Mitchell": TM
+        - generic: Tom Mitchell
+        - time: 9:18 am
+        - paragraph:
+          - text: Absolutely.
+          - generic: "@Marcus Lee"
+          - text: can you add eight frames to that final quote before today’s client cut?
+        - button "Approved":
+          - generic: ✅
+          - generic: "1"
+        - button "Marcus Lee Tom Mitchell 2 replies Last reply 90 days ago":
+          - generic "Marcus Lee": ML
+          - generic "Tom Mitchell": TM
+          - generic: 2 replies
+          - generic: Last reply 90 days ago
+      - separator "Thursday 23 July":
+        - generic: Thursday 23 July
+      - article:
+        - generic: Update
+        - generic: External
+        - strong: Edit review requested
+        - paragraph: LOOM-24 Edit v3 is ready for review.
+        - time: 89 days ago
+        - link "Review Edit":
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Review Edit
+      - article:
+        - generic "Sarah Kim": SK
+        - generic: Sarah Kim
+        - time: 4:42 pm
+        - paragraph: Thanks team. The new pace feels much stronger. I’ve marked one small colour note in Edit.
+        - generic: Edit frame 184
+        - generic: Colour note - frame 184.png · 1.8 MB
+        - generic "This video has no source file in the prototype.":
+          - generic: Loom walkthrough
+          - strong: Product screen reference.mp4
+          - generic: Video unavailable
+        - strong: Sarah's colour note
+        - generic: Voice note · 0:24
+        - button "Play Sarah's colour note" [disabled]
+        - generic "This attachment has no source file in the prototype.":
+          - strong: Loom-approved-product-copy.pdf
+          - generic: 640 KB · File unavailable
+        - link "Open comment in Edit":
+          - /url: /projects/loom-launch-film/stages/edit
+      - separator "Friday 24 July":
+        - generic: Friday 24 July
+      - article:
+        - generic "Sarah Kim": SK
+        - generic: Sarah Kim
+        - time: 8:52 am
+        - paragraph:
+          - text: I’ve shared the updated product wording with the wider Loom team.
+          - generic: "@Marcus Lee"
+          - text: this version is ready for the final sound pass.
+        - generic "This attachment has no source file in the prototype.":
+          - strong: Loom-final-product-wording.docx
+          - generic: 86 KB · File unavailable
+        - button "Like reaction from Slack - display only" [disabled]:
+          - generic: 👍
+          - generic: "2"
+        - button "Jess Taylor 1 reply Last reply 88 days ago":
+          - generic "Jess Taylor": JT
+          - generic: 1 reply
+          - generic: Last reply 88 days ago
+      - separator "Thursday 20 August":
+        - generic: Thursday 20 August
+      - article:
+        - 'link "Script approved: The Script has been approved."':
+          - /url: /projects/loom-launch-film/script
+          - generic: Approved
+          - strong: Script approved
+          - generic: The Script has been approved.
+          - time: 61 days ago
+          - generic: External
+      - article:
+        - generic: Changed
+        - generic: External
+        - strong: Published call time changed
+        - paragraph: A published call time has changed. Review the latest call sheet.
+        - time: 61 days ago
+        - link "Review changes":
+          - /url: /share/call-sheet/loom-launch-film
+          - text: Review changes
+      - region "Write a message":
+        - textbox "Message LOOM-24 external channel":
+          - /placeholder: Message your production team
+        - generic "Formatting tools":
+          - button "Bold - Command B":
+            - strong: B
+          - button "Italic - Command I":
+            - emphasis: I
+          - button "Add link" [disabled]
+          - button "Add image"
+          - button "Choose emoji"
+        - button "Attach file"
+        - button "Record video - coming in V2" [disabled]
+        - generic "Replies use Brisk":
+          - generic: Brisk
+        - button "Send message" [disabled]
+        - button "Schedule message for later" [disabled]
+        - text: Schedule for later
+        - button "Choose File"

@@ -1,0 +1,451 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Clients header":
+    - heading "Clients" [level=1]
+    - generic: Search Clients
+    - searchbox "Search Clients"
+  - group "Client views":
+    - button "All 12" [pressed]:
+      - text: All
+      - generic: "12"
+    - button "Active 8":
+      - text: Active
+      - generic: "8"
+    - button "Inactive 2":
+      - text: Inactive
+      - generic: "2"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Add Client":
+    - generic: Add Client
+  - region "Client list controls":
+    - generic: Sort by
+    - combobox "Sort Clients":
+      - generic: Latest activity
+    - generic: 12 Clients
+  - region "Clients list":
+    - table:
+      - rowgroup:
+        - row "Client Current projects Primary Client contact Latest activity Portal Open Client":
+          - columnheader "Client"
+          - columnheader "Current projects"
+          - columnheader "Primary Client contact"
+          - columnheader "Latest activity"
+          - columnheader "Portal"
+          - columnheader "Open Client":
+            - generic: Open Client
+      - rowgroup:
+        - row "Harbour Health logo Harbour Health harbourhealth.com.au 1 active Care Journey Brief - Waiting on client Mia Chen mia@harbourhealth.com.au Client added Today Active Open Harbour Health":
+          - cell "Harbour Health logo Harbour Health harbourhealth.com.au":
+            - link "Harbour Health logo Harbour Health harbourhealth.com.au":
+              - /url: /clients/harbour-health
+              - generic "Harbour Health logo":
+                - generic: HH
+              - strong: Harbour Health
+              - generic: harbourhealth.com.au
+          - cell "1 active Care Journey Brief - Waiting on client":
+            - link "1 active":
+              - /url: /workspaces/northstar-films/clients/harbour-health/portal?studio-preview=1
+            - link "Care Journey Brief - Waiting on client":
+              - /url: /projects/harbour-health-care-journey
+              - strong: Care Journey
+              - generic: Brief - Waiting on client
+          - cell "Mia Chen mia@harbourhealth.com.au":
+            - link "Mia Chen mia@harbourhealth.com.au":
+              - /url: /clients/harbour-health?section=Contacts
+              - strong: Mia Chen
+              - generic: mia@harbourhealth.com.au
+          - cell "Client added Today":
+            - link "Client added Today":
+              - /url: /clients/harbour-health
+              - strong: Client added
+              - generic: Today
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/harbour-health?section=Contacts
+              - generic: Active
+          - cell "Open Harbour Health":
+            - link "Open Harbour Health":
+              - /url: /clients/harbour-health
+        - row "Canva logo Canva canva.com 0 active No active projects Talia Green talia@canva.com Creative direction added Today Active Open Canva":
+          - cell "Canva logo Canva canva.com":
+            - link "Canva logo Canva canva.com":
+              - /url: /clients/canva
+              - generic "Canva logo"
+              - strong: Canva
+              - generic: canva.com
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/canva/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/canva/portal?studio-preview=1
+          - cell "Talia Green talia@canva.com":
+            - link "Talia Green talia@canva.com":
+              - /url: /clients/canva?section=Contacts
+              - strong: Talia Green
+              - generic: talia@canva.com
+          - cell "Creative direction added Today":
+            - link "Creative direction added Today":
+              - /url: /clients/canva
+              - strong: Creative direction added
+              - generic: Today
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/canva?section=Contacts
+              - generic: Active
+          - cell "Open Canva":
+            - link "Open Canva":
+              - /url: /clients/canva
+        - row "Hims & Hers logo Hims & Hers hims.com 1 active Product Education - Sleep Series Script - Waiting on client Noah Williams noah@hims.com Noah shared new product assets Yesterday Active Open Hims & Hers":
+          - cell "Hims & Hers logo Hims & Hers hims.com":
+            - link "Hims & Hers logo Hims & Hers hims.com":
+              - /url: /clients/hims
+              - generic "Hims & Hers logo":
+                - generic: H&
+              - strong: Hims & Hers
+              - generic: hims.com
+          - cell "1 active Product Education - Sleep Series Script - Waiting on client":
+            - link "1 active":
+              - /url: /workspaces/northstar-films/clients/hims/portal?studio-preview=1
+            - link "Product Education - Sleep Series Script - Waiting on client":
+              - /url: /projects/hims-product-education
+              - strong: Product Education - Sleep Series
+              - generic: Script - Waiting on client
+          - cell "Noah Williams noah@hims.com":
+            - link "Noah Williams noah@hims.com":
+              - /url: /clients/hims?section=Contacts
+              - strong: Noah Williams
+              - generic: noah@hims.com
+          - cell "Noah shared new product assets Yesterday":
+            - link "Noah shared new product assets Yesterday":
+              - /url: /clients/hims
+              - strong: Noah shared new product assets
+              - generic: Yesterday
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/hims?section=Contacts
+              - generic: Active
+          - cell "Open Hims & Hers":
+            - link "Open Hims & Hers":
+              - /url: /clients/hims
+        - row "Loom logo Loom loom.com 4 active WACF Customer Cutdown 01 Edit - Waiting on Studio Product Tour - Team Workflows Shoot - Waiting on Studio Maya Chen maya@loom.com Maya approved the Brief 2 days ago Active Open Loom":
+          - cell "Loom logo Loom loom.com":
+            - link "Loom logo Loom loom.com":
+              - /url: /clients/loom
+              - generic "Loom logo"
+              - strong: Loom
+              - generic: loom.com
+          - cell "4 active WACF Customer Cutdown 01 Edit - Waiting on Studio Product Tour - Team Workflows Shoot - Waiting on Studio":
+            - link "4 active":
+              - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+            - link "WACF Customer Cutdown 01 Edit - Waiting on Studio":
+              - /url: /projects/loom-wacf-01
+              - strong: WACF Customer Cutdown 01
+              - generic: Edit - Waiting on Studio
+            - link "Product Tour - Team Workflows Shoot - Waiting on Studio":
+              - /url: /projects/loom-product-tour
+              - strong: Product Tour - Team Workflows
+              - generic: Shoot - Waiting on Studio
+          - cell "Maya Chen maya@loom.com":
+            - link "Maya Chen maya@loom.com":
+              - /url: /clients/loom?section=Contacts
+              - strong: Maya Chen
+              - generic: maya@loom.com
+          - cell "Maya approved the Brief 2 days ago":
+            - link "Maya approved the Brief 2 days ago":
+              - /url: /clients/loom
+              - strong: Maya approved the Brief
+              - generic: 2 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/loom?section=Contacts
+              - generic: Active
+          - cell "Open Loom":
+            - link "Open Loom":
+              - /url: /clients/loom
+        - row "Notion logo Notion notion.so 0 active No active projects Clara Wu clara@notion.so Project paused by Studio 3 days ago Active Open Notion":
+          - cell "Notion logo Notion notion.so":
+            - link "Notion logo Notion notion.so":
+              - /url: /clients/notion
+              - generic "Notion logo"
+              - strong: Notion
+              - generic: notion.so
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/notion/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/notion/portal?studio-preview=1
+          - cell "Clara Wu clara@notion.so":
+            - link "Clara Wu clara@notion.so":
+              - /url: /clients/notion?section=Contacts
+              - strong: Clara Wu
+              - generic: clara@notion.so
+          - cell "Project paused by Studio 3 days ago":
+            - link "Project paused by Studio 3 days ago":
+              - /url: /clients/notion
+              - strong: Project paused by Studio
+              - generic: 3 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/notion?section=Contacts
+              - generic: Active
+          - cell "Open Notion":
+            - link "Open Notion":
+              - /url: /clients/notion
+        - row "Ramp logo Ramp ramp.com 0 active No active projects Ben Foster ben@ramp.com Ben requested a pause 4 days ago Active Open Ramp":
+          - cell "Ramp logo Ramp ramp.com":
+            - link "Ramp logo Ramp ramp.com":
+              - /url: /clients/ramp
+              - generic "Ramp logo":
+                - generic: R
+              - strong: Ramp
+              - generic: ramp.com
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/ramp/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/ramp/portal?studio-preview=1
+          - cell "Ben Foster ben@ramp.com":
+            - link "Ben Foster ben@ramp.com":
+              - /url: /clients/ramp?section=Contacts
+              - strong: Ben Foster
+              - generic: ben@ramp.com
+          - cell "Ben requested a pause 4 days ago":
+            - link "Ben requested a pause 4 days ago":
+              - /url: /clients/ramp
+              - strong: Ben requested a pause
+              - generic: 4 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/ramp?section=Contacts
+              - generic: Active
+          - cell "Open Ramp":
+            - link "Open Ramp":
+              - /url: /clients/ramp
+        - row "Alex Morgan logo Alex Morgan 0 active No active projects Alex Morgan alex.morgan@example.com Client added 4 days ago Active Open Alex Morgan":
+          - cell "Alex Morgan logo Alex Morgan":
+            - link "Alex Morgan logo Alex Morgan":
+              - /url: /clients/alex-morgan
+              - generic "Alex Morgan logo":
+                - generic: AM
+              - strong: Alex Morgan
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/alex-morgan/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/alex-morgan/portal?studio-preview=1
+          - cell "Alex Morgan alex.morgan@example.com":
+            - link "Alex Morgan alex.morgan@example.com":
+              - /url: /clients/alex-morgan?section=Contacts
+              - strong: Alex Morgan
+              - generic: alex.morgan@example.com
+          - cell "Client added 4 days ago":
+            - link "Client added 4 days ago":
+              - /url: /clients/alex-morgan
+              - strong: Client added
+              - generic: 4 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/alex-morgan?section=Contacts
+              - generic: Active
+          - cell "Open Alex Morgan":
+            - link "Open Alex Morgan":
+              - /url: /clients/alex-morgan
+        - row "OpenAI logo OpenAI openai.com 0 active No active projects Sofia Patel sofia@openai.com Masters delivered 5 days ago Active Open OpenAI":
+          - cell "OpenAI logo OpenAI openai.com":
+            - link "OpenAI logo OpenAI openai.com":
+              - /url: /clients/openai
+              - generic "OpenAI logo"
+              - strong: OpenAI
+              - generic: openai.com
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/openai/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/openai/portal?studio-preview=1
+          - cell "Sofia Patel sofia@openai.com":
+            - link "Sofia Patel sofia@openai.com":
+              - /url: /clients/openai?section=Contacts
+              - strong: Sofia Patel
+              - generic: sofia@openai.com
+          - cell "Masters delivered 5 days ago":
+            - link "Masters delivered 5 days ago":
+              - /url: /clients/openai
+              - strong: Masters delivered
+              - generic: 5 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/openai?section=Contacts
+              - generic: Active
+          - cell "Open OpenAI":
+            - link "Open OpenAI":
+              - /url: /clients/openai
+        - row "Linear logo Linear linear.app 0 active No active projects Jon Bell jon@linear.app Project completed 6 days ago Active Open Linear":
+          - cell "Linear logo Linear linear.app":
+            - link "Linear logo Linear linear.app":
+              - /url: /clients/linear
+              - generic "Linear logo"
+              - strong: Linear
+              - generic: linear.app
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/linear/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/linear/portal?studio-preview=1
+          - cell "Jon Bell jon@linear.app":
+            - link "Jon Bell jon@linear.app":
+              - /url: /clients/linear?section=Contacts
+              - strong: Jon Bell
+              - generic: jon@linear.app
+          - cell "Project completed 6 days ago":
+            - link "Project completed 6 days ago":
+              - /url: /clients/linear
+              - strong: Project completed
+              - generic: 6 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/linear?section=Contacts
+              - generic: Active
+          - cell "Open Linear":
+            - link "Open Linear":
+              - /url: /clients/linear
+        - row "Deel logo Deel deel.com 1 active Customer Story - APAC Hiring Media - Waiting on client Priya Nair priya@deel.com Script approved by Priya 7 days ago Active Open Deel":
+          - cell "Deel logo Deel deel.com":
+            - link "Deel logo Deel deel.com":
+              - /url: /clients/deel
+              - generic "Deel logo":
+                - generic: D
+              - strong: Deel
+              - generic: deel.com
+          - cell "1 active Customer Story - APAC Hiring Media - Waiting on client":
+            - link "1 active":
+              - /url: /workspaces/northstar-films/clients/deel/portal?studio-preview=1
+            - link "Customer Story - APAC Hiring Media - Waiting on client":
+              - /url: /projects/deel-customer-story
+              - strong: Customer Story - APAC Hiring
+              - generic: Media - Waiting on client
+          - cell "Priya Nair priya@deel.com":
+            - link "Priya Nair priya@deel.com":
+              - /url: /clients/deel?section=Contacts
+              - strong: Priya Nair
+              - generic: priya@deel.com
+          - cell "Script approved by Priya 7 days ago":
+            - link "Script approved by Priya 7 days ago":
+              - /url: /clients/deel
+              - strong: Script approved by Priya
+              - generic: 7 days ago
+          - cell "Active":
+            - link "Active":
+              - /url: /clients/deel?section=Contacts
+              - generic: Active
+          - cell "Open Deel":
+            - link "Open Deel":
+              - /url: /clients/deel
+        - row "PostHog logo PostHog posthog.com 0 active No active projects Amira James amira@posthog.com Client archived 12 days ago Paused Open PostHog":
+          - cell "PostHog logo PostHog posthog.com":
+            - link "PostHog logo PostHog posthog.com":
+              - /url: /clients/posthog
+              - generic "PostHog logo"
+              - strong: PostHog
+              - generic: posthog.com
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/posthog/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/posthog/portal?studio-preview=1
+          - cell "Amira James amira@posthog.com":
+            - link "Amira James amira@posthog.com":
+              - /url: /clients/posthog?section=Contacts
+              - strong: Amira James
+              - generic: amira@posthog.com
+          - cell "Client archived 12 days ago":
+            - link "Client archived 12 days ago":
+              - /url: /clients/posthog
+              - strong: Client archived
+              - generic: 12 days ago
+          - cell "Paused":
+            - link "Paused":
+              - /url: /clients/posthog?section=Contacts
+              - generic: Paused
+          - cell "Open PostHog":
+            - link "Open PostHog":
+              - /url: /clients/posthog
+        - row "Figma logo Figma figma.com 0 active No active projects No primary contact Project archived 26 July 2026 Paused Open Figma":
+          - cell "Figma logo Figma figma.com":
+            - link "Figma logo Figma figma.com":
+              - /url: /clients/figma
+              - generic "Figma logo"
+              - strong: Figma
+              - generic: figma.com
+          - cell "0 active No active projects":
+            - link "0 active":
+              - /url: /workspaces/northstar-films/clients/figma/portal?studio-preview=1
+            - link "No active projects":
+              - /url: /workspaces/northstar-films/clients/figma/portal?studio-preview=1
+          - cell "No primary contact":
+            - link "No primary contact":
+              - /url: /clients/figma?section=Contacts
+          - cell "Project archived 26 July 2026":
+            - link "Project archived 26 July 2026":
+              - /url: /clients/figma
+              - strong: Project archived
+              - generic: 26 July 2026
+          - cell "Paused":
+            - link "Paused":
+              - /url: /clients/figma?section=Contacts
+              - generic: Paused
+          - cell "Open Figma":
+            - link "Open Figma":
+              - /url: /clients/figma

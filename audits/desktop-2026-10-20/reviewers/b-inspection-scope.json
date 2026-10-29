@@ -1,0 +1,213 @@
+{
+  "reviewer": "B",
+  "sourceInspected": [
+    {
+      "area": "Project Team",
+      "files": [
+        "TeamPanel.tsx",
+        "RoleEditorModal.tsx",
+        "RoleRow.tsx",
+        "ProjectTeamDataContext.tsx"
+      ],
+      "nested": [
+        "Role editing hours dirty/saved",
+        "Staff suggested/all/disabled/selected",
+        "Freelancer rates/selection",
+        "Pending invite history/withdrawal",
+        "Invite message confirmation",
+        "Remove role confirmation",
+        "Hours implicitly saved during assignment"
+      ],
+      "browser": "Lead E003-E008 current drawer/role editor, empty suggestions/expanded Staff/Freelancer rates; ArrowRight and empty accessible checkbox name observed. No assignment/invitation/hours/rate submission.",
+      "excluded": "InvitePersonPicker has no live consumer."
+    },
+    {
+      "area": "To Do",
+      "files": [
+        "TodayPage.tsx"
+      ],
+      "nested": [
+        "Viewing picker",
+        "Week navigation",
+        "Planned/Done drop zones",
+        "Entry contextual editor Stage/Hours/Note",
+        "Resize handles",
+        "Empty/complete preview CTAs"
+      ],
+      "browser": "Current lead defaults at both widths show empty assigned work. Populated entry editor and drag/keyboard branches unavailable in that fixture; no records manufactured."
+    },
+    {
+      "area": "Media",
+      "files": [
+        "MediaBrowser.tsx",
+        "MediaAssetCard.tsx",
+        "MediaAssetRow.tsx",
+        "MediaAssetGrid.tsx",
+        "MediaAssetDrawer.tsx",
+        "MediaActionDialogs.tsx"
+      ],
+      "nested": [
+        "Global/project location",
+        "Library tabs",
+        "Grid/list/selection",
+        "Filters and hidden selections",
+        "Filename on-blur edit",
+        "Details/Comments/Transcript inspector",
+        "Bulk Move/Archive/Delete confirmations",
+        "Per-file action keyboard propagation"
+      ],
+      "browser": "Lead E009-E012 and E016/E017 verifies nested Select Space interception, hidden selections and Delete confirmation count; no consequential action submitted. E044-E049 inspect current drawer/sort state; visual stacking owned by A."
+    },
+    {
+      "area": "Script/Storyboard",
+      "files": [
+        "ScriptVersionControl.tsx",
+        "ScriptDocumentControls.tsx",
+        "ScriptPage.tsx",
+        "StoryboardPage.tsx"
+      ],
+      "nested": [
+        "Versions current/historical/read-only",
+        "Document action menu",
+        "Version create/duplicate/rename",
+        "Approval/edit safeguards",
+        "Floating selection/comment tools"
+      ],
+      "browser": "Lead E058-E067 verifies Versions Escape/outside persistence, quiet-menu Escape comparison, historical V1 read-only/Return latest V3, row/Visuals/Comments and approved-edit guard. No version/content mutation. E068 source menu only; E069/E070 not a verified link form."
+    },
+    {
+      "area": "Transcripts",
+      "files": [
+        "TranscriptClipBlock.tsx",
+        "ScriptAnnotationPin.tsx"
+      ],
+      "nested": [
+        "Rename inline",
+        "Paragraph selection/play",
+        "Comment pin",
+        "Clip menu callbacks"
+      ],
+      "browser": "Lead E071-E078 current populated collection at both widths, nested comment Space starts playback, collection/clip actions, empty Highlights and selected-text destination. No export/send/highlight. Collection actions remain enabled under empty Highlights intentionally."
+    },
+    {
+      "area": "Project flow",
+      "files": [
+        "ProductionFlowRail.tsx",
+        "ProjectStageHeader.tsx"
+      ],
+      "nested": [
+        "Adjust flow dialog",
+        "Post-production term subpanel",
+        "Hide confirmation",
+        "Supported stage restore",
+        "Reset",
+        "Drag reorder"
+      ],
+      "browser": "Lead E055-E057 safe-open confirms focus remains background opener and Escape there does not dismiss. No reorder/hide/reset/term changes; full Tab trapping not assessed."
+    },
+    {
+      "area": "Costs and invitations",
+      "files": [
+        "ProjectCostsPage.tsx",
+        "OutstandingInvoicesPage.tsx",
+        "InvitePersonModal.tsx",
+        "RequestReviewModal.tsx",
+        "ShareActionRow.tsx"
+      ],
+      "nested": [
+        "Invoice review rows/actions",
+        "Invoice state selector",
+        "Invitation role/identity/access steps",
+        "Review recipient/template/message",
+        "Selection/send/copy scopes"
+      ],
+      "browser": "Lead E028-E030 invitation initial/access mixed selection. E093-E101 invoice states, PDF, blank/reason draft, mismatch note and existing-approved forward draft. No send, approval, payment or stored mutation. B inspected visible exit omissions with source and current screenshots."
+    },
+    {
+      "area": "Chat",
+      "files": [
+        "ChatPage.tsx"
+      ],
+      "nested": [
+        "External/Internal tabs and adjacent unread actions"
+      ],
+      "browser": "Source excerpt only; wider Chat not claimed inspected by B."
+    }
+  ],
+  "limitations": [
+    "B did not operate browser. All browser facts credited to lead and screenshots.",
+    "Source inspection is bounded and does not certify all 61 routes or every consumer.",
+    "No formal accessibility compliance, user research or contrast testing claimed.",
+    "No application code, assets, dependencies, permissions or data edited by B."
+  ],
+  "additionalSourceReview": [
+    {
+      "area": "People workload",
+      "files": [
+        "src/components/people/PeoplePrimitives.tsx",
+        "src/components/people/PersonProfilePage.tsx"
+      ],
+      "evidence": "E031; existing workload values correct, heuristic excess-signal recommendation only."
+    },
+    {
+      "area": "Brief approval copy",
+      "files": [
+        "src/components/brief/BriefPage.tsx"
+      ],
+      "evidence": "BRIEF-summary, E053/E054; observed promise/disabled-guard contradiction."
+    },
+    {
+      "area": "Logo download exit",
+      "files": [
+        "src/components/brand-kits/BrandKitPages.tsx"
+      ],
+      "evidence": "E087; custom EditingDialog footer omits visible Close/Done."
+    },
+    {
+      "area": "Report scaffold",
+      "files": [
+        "audits/desktop-2026-10-20/index.html",
+        "audits/desktop-2026-10-20/report.js",
+        "audits/desktop-2026-10-20/report.css"
+      ],
+      "evidence": "Read-only source schema review; final dataset/render QA remains lead-owned."
+    }
+  ],
+  "evidenceMappingCheckpoint": "All 292 current registered captures through E146, BRIEF and D-R defaults have a saved screenshot/DOM association. This mapping is captured-state presence, not individual full visual or keyboard testing by B.",
+  "verifiedStrengths": [
+    {
+      "title": "History remains a preview task",
+      "evidence": [
+        "E064-script-historical-read-only"
+      ],
+      "reason": "Historical V1 explicitly says Read only and offers Return latest separately from Restore as new version. Lead returned V3 without editing or restoration; preserve this distinction."
+    },
+    {
+      "title": "Invoice review exposes consequential differences",
+      "evidence": [
+        "E095-expenses-submitted-review",
+        "E098-invoice-currency-mismatch",
+        "E099-invoice-forward",
+        "E101-invoice-no-destinations"
+      ],
+      "reason": "Matching and mismatched invoices show different note requirements, while forwarding is explicitly optional after approval. No approval or email was sent. Preserve review, approval, forwarding and payment as distinct actions."
+    },
+    {
+      "title": "Access edits have a dependable cancel boundary",
+      "evidence": [
+        "E144-client-access-editor",
+        "E145-client-access-local-draft",
+        "E146-client-access-cancel-preserved"
+      ],
+      "reason": "Unchecking one project stayed in the local draft. Cancel and reopen restored all five existing checks. This is directly observed cancellation rather than an inferred save contract."
+    },
+    {
+      "title": "Transcript collection actions retain intentional scope",
+      "evidence": [
+        "E074-transcript-collection-actions",
+        "E077-transcript-empty-actions"
+      ],
+      "reason": "Collection Copy all/Download remain enabled in an empty Highlights-only view, as approved collection-wide scope requires. Do not mislabel this as a disabled-state defect or force it into selected-text scope."
+    }
+  ]
+}

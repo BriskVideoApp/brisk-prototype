@@ -1,0 +1,107 @@
+{
+  "status": "Layout approved by Tom and implemented in round 16. Proposal images remain proposals, not implementation evidence.",
+  "scope": "The pending Internal delivery-timing card in Project Chat, as supplied by Tom. Other system posts and the surrounding Chat UI are outside this proposal.",
+  "job": "Studio Staff compare the requested date with the suggested date, understand the production reason, then review delivery.",
+  "preserve": [
+    "Original requested Sat 29 Aug and suggested Wed 2 Sept",
+    "Internal audience",
+    "Existing yellow attention fill and omission of warning icons",
+    "Review date action and Client agreement requirement",
+    "Quiet timestamp",
+    "Brisk font, tokens and app control patterns",
+    "Working data and all app source"
+  ],
+  "problems": [
+    "Dates are embedded in a sentence alongside the production reason.",
+    "The reason and instruction have no separate place beneath the date comparison."
+  ],
+  "proposedMoves": [
+    {
+      "n": 1,
+      "lead": "Dates sit above the explanation.",
+      "line": "New Requested delivery and Suggested delivery labels separate the date values from the shorter production reason.",
+      "refs": [
+        {
+          "app": "Programa",
+          "url": "https://mobbin.com/screens/ed87fae4-5b87-4fcb-baef-b23ed6fe3b91"
+        },
+        {
+          "app": "Qatalog",
+          "url": "https://mobbin.com/screens/6cbe3dc0-79ef-4598-baca-7094e761086b"
+        }
+      ],
+      "after": {
+        "x": 9.490836466165414,
+        "y": 31.289576480263158,
+        "w": 81.01832706766918,
+        "h": 12.868009868421051
+      }
+    }
+  ],
+  "newCopy": [
+    "Requested delivery",
+    "Suggested delivery",
+    "Shoot and footage handover are still outstanding. Allow time for Edit and Masters before confirming delivery."
+  ],
+  "referenceDecision": "Programa and Qatalog show labelled date/property values separately from task descriptions. Their screens support separating facts from prose; neither shows this exact requested/suggested timing-card composition. Two-column placement and wording are local design judgements. Brisk already uses a two-date definition list in Review delivery date.",
+  "references": [
+    {
+      "app": "Programa",
+      "id": "ed87fae4-5b87-4fcb-baef-b23ed6fe3b91",
+      "mobbin_url": "https://mobbin.com/screens/ed87fae4-5b87-4fcb-baef-b23ed6fe3b91",
+      "image_url": "https://mobbin.com/api/mcp/short/PxHlutMh",
+      "observed": "Target Date is a labelled property in a distinct task-details area, separate from the task description."
+    },
+    {
+      "app": "Qatalog",
+      "id": "6cbe3dc0-79ef-4598-baca-7094e761086b",
+      "mobbin_url": "https://mobbin.com/screens/6cbe3dc0-79ef-4598-baca-7094e761086b",
+      "image_url": "https://mobbin.com/api/mcp/short/W2jQY3Nx",
+      "observed": "Due date appears in a label/value task-details column; prose appears beneath the task title."
+    }
+  ],
+  "otherReferencesInspected": {
+    "Todoist": "Activity log separates dates/times but no requested/suggested estimate card.",
+    "Wrike": "Report table and notification subscription popover, not a relevant timing message.",
+    "HoneyBook": "Activity dates separated from events but no matching estimate comparison.",
+    "Lightfield": "Label/value task metadata; Programa and Qatalog were the closer references.",
+    "Height": "Due date appears as an attribute, not a comparable summary.",
+    "Bonsai": "Single date without a comparable labelled comparison."
+  },
+  "provenance": {
+    "beforeFull": "source-full.png",
+    "sourceAttachment": "codex-clipboard-08d8627a-90c9-4af8-96b6-9b330cd16865.png",
+    "beforeCrop": [
+      9,
+      17,
+      578,
+      170
+    ],
+    "after": "after.png",
+    "afterCapture": "Rendered proposal.html card, not current UI or verified app implementation. CSS card width 640px captured at 569/640 scale to match the supplied screenshot.",
+    "afterFull": "proposal-full.png",
+    "beforeRectangles": "Omitted because the image-only source does not supply measured DOM bounds. After rectangles come from measured DOM boxes.",
+    "existingFontCopy": "Existing Next.js-generated Plus Jakarta Sans Latin font copied to the audit folder; no font installed or app asset modified.",
+    "annotationPadding": "before-pane.png and after-pane.png add equal 48px transparent annotation margins to the unchanged captures. This margin is not application UI."
+  },
+  "limits": [
+    "Only the pending Internal state is proposed. External and resolved states require scoped design/verification if rollout is approved.",
+    "Proposal is taller to display two labelled date values.",
+    "No change to date calculations, events, read-state, producer review, Client agreement or persistence is proposed.",
+    "The local Review date anchor opens explanatory sample text only. It neither navigates the working app nor saves/shares data."
+  ],
+  "futureImplementationScope": [
+    "Use a timing-specific rendering variant rather than changing all Chat system posts.",
+    "Retain Internal/External copy selection and producer-review safeguards.",
+    "Keep requested and suggested distinct; do not strike through or replace the requested/agreed date before Client agreement."
+  ],
+  "sourceLocations": [
+    "src/data/project-timing.ts:70",
+    "src/components/project-timing/ProjectTimingPost.tsx:45",
+    "src/components/project-timing/ProjectTimingPost.tsx:61",
+    "src/components/notifications/ProjectSystemPost.tsx:107"
+  ],
+  "verification": "Rendered proposal inspected. Dates and complete Review date action visible. One board correction adds annotation space and retains one combined move so labels do not collide with the timestamp.",
+  "implementedResult": "../16-timing-card-layout/result.html",
+  "comparisonBoardStatus": "Draft reference comparison retained; current app evidence is in round 16."
+}

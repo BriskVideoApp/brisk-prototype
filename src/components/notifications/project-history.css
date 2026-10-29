@@ -40,29 +40,26 @@
   width: min(100%, calc(var(--brisk-space-3xl) * 16));
   align-self: center;
   color: var(--brisk-text-primary);
+  background: var(--brisk-item-tertiary);
+}
+
+/* Match the existing Notifications row colours without severity icons or badges. */
+.project-system-post.warning {
+  background: color-mix(in srgb, var(--brisk-system-warning) 12%, var(--brisk-white));
+}
+
+.project-system-post.failure {
+  background: color-mix(in srgb, var(--brisk-system-error) 8%, var(--brisk-white));
+}
+
+.project-system-post.success {
+  background: color-mix(in srgb, var(--brisk-system-success) 8%, var(--brisk-white));
 }
 
 .project-system-post.actionable {
   overflow: hidden;
   border: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-m);
-  background: var(--surface-elevated);
-}
-
-.project-system-post.actionable.warning {
-  border-color: var(--brisk-system-warning);
-}
-
-.project-system-post.actionable.failure {
-  border-color: var(--brisk-system-error);
-}
-
-.project-system-post-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--brisk-space-m);
-  padding: var(--brisk-space-m) var(--brisk-space-l) 0;
 }
 
 .project-system-post-audience,
@@ -152,20 +149,11 @@
 .project-system-post.passive {
   width: min(100%, calc(var(--brisk-space-3xl) * 20));
   border-radius: var(--brisk-radius-m);
-  background: var(--brisk-gray-5);
-}
-
-.project-system-post.passive.success {
-  background: color-mix(in srgb, var(--brisk-green-10) 45%, var(--brisk-white));
-}
-
-.project-system-post.passive.warning {
-  background: color-mix(in srgb, var(--brisk-yellow-10) 55%, var(--brisk-white));
 }
 
 .project-system-post-passive-link {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
   align-items: center;
   border-radius: inherit;
   color: var(--brisk-text-primary);
@@ -195,13 +183,13 @@
 
 @media (max-width: 720px) {
   .project-system-post-passive-link {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .project-system-post-passive-link > time,
   .project-system-post-passive-link > .project-system-post-audience,
   .project-system-post-passive-link > .project-system-post-grouped {
-    grid-column: 2;
+    grid-column: 1;
   }
 
   .project-system-post-title-row {

@@ -1,0 +1,324 @@
+{
+  "purpose": "Short safe finite paths for broad desktop inspection, reconciled against C nested inventory. These are source-backed entry instructions, not completed verification.",
+  "globalRules": [
+    "Use existing records and both 1440/1133 widths where meaningful.",
+    "Open/read/local draft/cancel only; no Send, Approve, Save, Invite, Pay, destructive confirm, upload or sample creation.",
+    "Some apparently editing openers mutate immediately: Shoot Add shot, Accept suggestion, Add manually, captured/asked toggles; People Remove access/Resend/Restore; do not invoke.",
+    "Invoice Approve invoice immediately saves approval before showing optional forwarding. Reach Forward through an already Approved invoice only.",
+    "Team Staff Assign with dirty hours saves before confirmation; do not invoke that branch.",
+    "N073/N074 older Shoot access/existing-plan branches may lack openers; classify conditional/unreachable from actual live entry rather than forcing state.",
+    "No-result search and local selection are reversible; restore original queries, filters, role/navigation and storage where practical.",
+    "Correction from lead source review: Storyboard selectImageSource library and stock commands immediately mutate a frame. They are not safe picker-form openers. Native Add link prompt was not exposed by the inspection; no URL was added. Source-menu command labels only are verified."
+  ],
+  "paths": [
+    {
+      "id": "P01",
+      "priority": 1,
+      "nestedIds": [
+        "N108",
+        "N111"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/script",
+      "entry": "Open versions",
+      "actions": "Open; inspect V labels and current/read-only metadata; press Escape, then reopen and outside-click. Do not choose New blank version, Duplicate current version or Rename.",
+      "expected": "Panel dismisses appropriately and focus returns to opener. Source predicts Escape gap; capture before/after.",
+      "source": "src/components/script/ScriptVersionControl.tsx:37",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P02",
+      "priority": 1,
+      "nestedIds": [],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/stages/brief",
+      "entry": "Adjust project flow",
+      "actions": "Open named icon; inspect document.activeElement; Tab/Shift+Tab; press Escape. Reopen only if needed, then Close. Do not drag, Hide, Reset or change Edit/Animation.",
+      "expected": "Focus enters visible panel, background respects chosen modality, Escape closes and focus returns. Source predicts gap.",
+      "source": "src/components/production-flow/ProductionFlowRail.tsx:194",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P03",
+      "priority": 1,
+      "nestedIds": [
+        "N094"
+      ],
+      "role": "Studio Staff",
+      "route": "/today",
+      "entry": "existing time block",
+      "actions": "Tab through project rail and a time block; Enter existing block; inspect Stage/Hours/Note editor and absence/presence of Add/date/Done alternatives; Cancel. Do not Save/Delete/drag/resize.",
+      "expected": "Finite keyboard route supports creation and completion; editor dismissal/focus is visible. Record untested mutations and source-only cross-day risk.",
+      "source": "src/components/today/TodayPage.tsx:335",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P04",
+      "priority": 1,
+      "nestedIds": [
+        "N023",
+        "N024",
+        "N119"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/costs",
+      "entry": "Review invoice / invoice row",
+      "actions": "Open a Submitted invoice, preferably with rate/currency mismatch; inspect agreed versus invoice amounts and required Approval note. Open View PDF then Back to invoice. Open Send back; observe blank reason disables Send back; enter a temporary reason, then Back/Cancel.",
+      "expected": "Mismatch clearly disclosed; required note/reason validation works; PDF context and modal focus survive nested paths.",
+      "source": "src/components/costs/CostsPrimitives.tsx:243",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P05",
+      "priority": 1,
+      "nestedIds": [
+        "N119"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/costs",
+      "entry": "Manage invoice > Forward invoice on an ALREADY Approved invoice",
+      "actions": "Use only an existing Approved invoice; open Forward invoice and its multi-selector; inspect destinations/Clear; Done. Never click Approve invoice merely to reach Forward.",
+      "expected": "No destinations means Email invoice disabled; chosen draft destinations are explicit; Done closes without emailing.",
+      "source": "src/components/costs/CostsPrimitives.tsx:234",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P06",
+      "priority": 1,
+      "nestedIds": [
+        "N027",
+        "N097"
+      ],
+      "role": "Studio Staff",
+      "route": "/people",
+      "entry": "Invite person / Invite freelancer / Invite Client",
+      "actions": "Open with current view defaults; inspect roles and blank-email Next disabled. Enter a valid existing mock address only as a draft; Next; inspect access summary, selected Client/projects and project search/no results; Back/Cancel or Escape. Never Send invite.",
+      "expected": "Role preselection matches directory view; invitation/access scope legible, required selections explain disabled Send; keyboard focus and cancellation retain no record.",
+      "source": "src/components/invitations/InvitePersonModal.tsx:162",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P07",
+      "priority": 1,
+      "nestedIds": [
+        "N044",
+        "N095"
+      ],
+      "role": "Studio Staff",
+      "route": "/people?view=Studio%20Staff",
+      "entry": "Sarah Chen Capacity / workload button",
+      "actions": "Open workload details; inspect totals, four project/role/stage entries and excess-hours summary; Escape; verify focus returns. Use existing search Maddie then impossible search and Clear search, restoring initial query/view.",
+      "expected": "Capacity meaning and route links readable; empty/no-results recovery; no mutation.",
+      "source": "src/components/people/PeoplePage.tsx",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P08",
+      "priority": 1,
+      "nestedIds": [
+        "N021",
+        "N098"
+      ],
+      "role": "Studio Staff",
+      "route": "/clients/loom?section=contacts",
+      "entry": "Change project access",
+      "actions": "Open Jess contact access editor; inspect existing checked projects; optionally uncheck/recheck one draft only; Cancel; reopen to verify original selections. Never Save access, Resend invite, Remove/Restore portal access.",
+      "expected": "Selection scope names the contact and projects; Cancel discards local draft; modal and picker keyboard handling work.",
+      "source": "src/components/clients/ClientProfilePage.tsx:432",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P09",
+      "priority": 1,
+      "nestedIds": [
+        "N105",
+        "N106",
+        "N107"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/stages/brief",
+      "entry": "Brief actions > Copy link / Send Brief",
+      "actions": "Open Copy link settings but do not invoke final Copy; inspect current versus whole-project scope and access explanations; close. Open Send Brief confirmation, inspect destination/message/recipients; Cancel. If approval action disabled, inspect its explanation only.",
+      "expected": "Copy differs from sending; scope and recipient are explicit; blank required message disables Send; no access/status/message mutation.",
+      "source": "src/components/share/ShareActionRow.tsx:898",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P10",
+      "priority": 1,
+      "nestedIds": [
+        "N109"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/script",
+      "entry": "Add/Replace media on an existing row",
+      "actions": "Open the four-command source submenu and inspect labels, order, keyboard and Escape only. Do not activate Upload file, Add from your Media, Stock footage search or Add link until that exact consumer callback has been verified to open a draft-only form. Current Storyboard library/stock callbacks immediately attach an image; native Add link prompt was not verified. No file/source/URL selection is authorised merely for inspection.",
+      "expected": "Four approved commands retained in order; submenu positioning and dismissal. Library/stock workflow outcomes and Add link prompt remain unverified, not inspected forms.",
+      "source": "src/components/script/ScriptMediaPicker.tsx",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P11",
+      "priority": 1,
+      "nestedIds": [
+        "N111"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/stages/storyboard",
+      "entry": "Open review for frame 1",
+      "actions": "Open existing frame review; inspect unavailable-image treatment, Comments, drawing affordances and disabled unsupported attachment/recording controls. Open frame actions then Escape; Back. Do not Duplicate/Remove/Delete/Draw/Post.",
+      "expected": "Frame identity and existing media retained, unavailable image honest, actions readable/focus restored.",
+      "source": "src/components/storyboard/StoryboardPage.tsx:793",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P12",
+      "priority": 1,
+      "nestedIds": [
+        "N110",
+        "N051"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/stages/media?view=transcripts",
+      "entry": "Transcript actions / per-clip actions / paragraph comment pin",
+      "actions": "Inspect collection filters; open header and clip actions then Escape. Tab to a paragraph comment pin and Enter/Space, observe whether comment or playback opens; do not post. Select text if needed only to inspect destination label Send to Script Vn; never send/highlight/hide/delete/rename.",
+      "expected": "Selection destination version explicit; header exports distinguish collection scope; nested keyboard pin works.",
+      "source": "src/components/script-transcripts/TranscriptClipBlock.tsx:185",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P13",
+      "priority": 2,
+      "nestedIds": [
+        "N112",
+        "N113",
+        "N114",
+        "N115"
+      ],
+      "role": "Studio Staff",
+      "route": "/projects/loom-launch-film/stages/shoot",
+      "entry": "Pre-production > Interview Questions > Add question / People > Add person / Locations > Add location",
+      "actions": "Use section navigation without Setup answers. Add question opens local draft, inspect blank Save disabled then Cancel. Add person picker may be opened and Add new contact form inspected, never choose existing person. Add location modal inspect and Cancel. Schedule existing shot Edit opens draft; Cancel. Do not Add shot, edit inline fields, captured/asked toggles, confirm readiness or Send.",
+      "expected": "Rich selectors and dialog layering fit 1440/1133; draft validation, Escape and focus return; read-only Client view remains distinct.",
+      "source": "src/components/shoot/ShootStagePage.tsx:4295",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P14",
+      "priority": 2,
+      "nestedIds": [
+        "N014",
+        "N011",
+        "N012",
+        "N015",
+        "N016",
+        "N118"
+      ],
+      "role": "Studio Staff",
+      "route": "/brand-kits/loom",
+      "entry": "existing Logo tile / Fonts / Voice & Tone / Visual Assets / Guidelines",
+      "actions": "Open existing logo Download logo selector then Cancel/Close without Download/Replace/Delete. Open Fonts matrix and Voice & Tone editors, inspect then Cancel; preview existing visual asset and guideline, close. Keep all colours/asset/version selections unchanged.",
+      "expected": "Asset scope and preview identity clear; forms and nested menus dismiss predictably; safe cancel path evident. Some editors show immediate changes, so do not change selections without source guard.",
+      "source": "src/components/brand-kits/BrandKitPages.tsx:2188",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P15",
+      "priority": 2,
+      "nestedIds": [
+        "N122"
+      ],
+      "role": "Studio Staff",
+      "route": "/settings/studio",
+      "entry": "Edit name / Change logo / Edit video types / Edit questions",
+      "actions": "Open each focused editor, inspect default and disabled/required states then Cancel. Temporary text draft may be used only if parent does not autosave; do not Save. Preview Client portal via existing navigation, keep Staff identity.",
+      "expected": "Shared dialog footer always visible; scope says future videos, cancellation preserves Studio; no unintended role switch.",
+      "source": "src/components/settings/StudioSetupOverviewPage.tsx:104",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P16",
+      "priority": 2,
+      "nestedIds": [
+        "N062",
+        "N057",
+        "N126"
+      ],
+      "role": "Studio Staff",
+      "route": "/settings/notifications/customer-reviews",
+      "entry": "Edit message",
+      "actions": "Open editable template; inspect fields, token guidance and preview; Cancel. Inspect a fixed template without invoking restore/save. Do not toggle enabled/channel settings because they may update immediately.",
+      "expected": "Editable versus fixed is clear, preview and message scope legible, Cancel discards draft.",
+      "source": "src/components/settings/StudioNotificationCategoryPage.tsx:343",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P17",
+      "priority": 2,
+      "nestedIds": [
+        "N059",
+        "N060",
+        "N061",
+        "N127"
+      ],
+      "role": "Studio Staff",
+      "route": "/settings/plan-billing",
+      "entry": "Change plan / Compare plans",
+      "actions": "Open comparison; inspect current, locked and contact-sales paths. Choose a different plan only to open Confirm plan change; inspect then Cancel/Back. Add-on Add may open confirm, Cancel. Never Confirm change/Add to plan/Contact sales/Manage billing.",
+      "expected": "Current plan and consequences clear; locked feature explanation; no billing mutation/external handoff.",
+      "source": "src/components/settings/PlanBillingModals.tsx:194",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P18",
+      "priority": 2,
+      "nestedIds": [
+        "N058",
+        "N120"
+      ],
+      "role": "Studio Staff",
+      "route": "/settings/personal/security",
+      "entry": "Change password, if present for current sign-in method",
+      "actions": "Open, inspect named password fields, Cancel/Escape. Do not enter real credentials or Save password. If method lacks password, inspect its explanation instead.",
+      "expected": "Authentication-specific availability accurate; named fields, no app data changed. Validation remains source-only under no-submission boundary.",
+      "source": "src/components/settings/PersonalSecurityPage.tsx:108",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P19",
+      "priority": 2,
+      "nestedIds": [
+        "N116",
+        "N030",
+        "N031",
+        "N033",
+        "N117"
+      ],
+      "role": "Studio Staff and Customer",
+      "route": "/projects/loom-launch-film/stages/edit and /projects/loom-launch-film/stages/masters",
+      "entry": "Versions / existing deliverable expand",
+      "actions": "If actual populated records exist, open Versions, Comments/filter, select comparison drafts only, and expand deliverable. Open Download assets selection then Clear all (local) to check disabled Download, Cancel; open Request a cut-down or reformat, inspect blank-name Submit disabled, Cancel. Do not add sample/upload/approve/delete/request/download to create coverage.",
+      "expected": "Record unavailable populated branches as Blocked by fixture; current empty state screenshot does not cover player, comments, request or delivery tree.",
+      "source": "src/components/masters/MastersPage.tsx:3280",
+      "status": "Unverified action map; lead updates master coverage"
+    },
+    {
+      "id": "P20",
+      "priority": 2,
+      "nestedIds": [
+        "N084",
+        "N085",
+        "N087",
+        "N088",
+        "N089"
+      ],
+      "role": "all roles as permitted",
+      "route": "global shell",
+      "entry": "Recent pages / account menu / Updates / Chat / Ask Brisk",
+      "actions": "Open each global entry; inspect links, empty/unread state and keyboard focus/dismissal. Account menu: inspect routes only. Ask Brisk: inspect Add source menu and picker without source selection/prompt send. Chat can automatically mark read on opening; compare original browser storage and restore inspection effects.",
+      "expected": "Persistent role control remains quiet in sidebar; native links preserved; counts scoped; drawers close and return focus; no messages/mark-read commands sent.",
+      "source": "src/components/navigation/GlobalHeaderActions.tsx",
+      "status": "Unverified action map; lead updates master coverage"
+    }
+  ]
+}

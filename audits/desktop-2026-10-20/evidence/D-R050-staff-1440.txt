@@ -1,0 +1,23 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/studio/integrations".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 49-63
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/studio/integrations
+~			43 heading Messaging connections, Value: 1
+~				44 text Messaging connections
+~			45 text Manage the shared accounts that connect your Studio to external messaging apps.
+~			46 container Studio messaging connections
+~				47 heading Studio messaging connections, Value: 2, ID: studio-integrations-title
+~					48 text Studio messaging connections
++				49 text Reconnect shared accounts here. Project-specific channels and conversations stay in each project’s External Chat settings.
++				50 container
++					51 heading WhatsApp, Value: 2
++						52 text WhatsApp
++					53 text Send and receive Client messages through your Studio’s WhatsApp Business account. Connected Connected account ChopChop Film Business Choose the WhatsApp conversation for each project in its External Chat settings.
++				54 container
++					55 heading Slack, Value: 2
++						56 text Slack
++					57 text Keep Client conversations in sync through Slack Connect or the Brisk Slack app. Reconnect required Connected account ChopChop Film Slack Choose the Slack channel for each project in its External Chat settings.
++					58 button Reconnect Slack
++						59 text Reconnect 
++						60 text Slack
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/studio/integrations

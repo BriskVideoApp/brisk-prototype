@@ -1,0 +1,1552 @@
+{
+  "reviewer": "A",
+  "pass": "Completion - 21 October 2026",
+  "status": "Reviewer A finite source and browser completion finished; lead consolidates master coverage and report",
+  "ownership": "Only reviewers/a-completion.json may be written by Reviewer A during this pass. Lead owns browser, screenshots, master coverage and report.",
+  "sessionBoundary": "Tom authorised a separate disposable demo session after verified browser-storage isolation. Existing scenarios and sample project/onboarding progression may be used there. Reviewer A performs no browser actions. No real invitations/messages/payments/destructive actions, application edits or changes to normal working records.",
+  "authority": [
+    "Current AGENTS.md read fully",
+    "Current Brisk DS/guidelines/Guidelines.md and Docs/desktop-design-baseline.md",
+    "Current Brisk design, production and SaaS guidance plus current scoped UX decisions",
+    "Current source and genuine F-series browser evidence",
+    "Historical references and heuristics as qualified support"
+  ],
+  "preservePrinciples": [
+    "Desktop only at 1440 and 1133; retain expanded and collapsed navigation where useful.",
+    "Keep intentional dense production views and task-specific controls; do not force Shoot, My jobs or onboarding into ordinary workspace table/header patterns.",
+    "Retain optional Storyboard, Animation, one Shoot stage, pinned Media and approved stage/status terminology.",
+    "Keep assignment, invitation, time logging, invoice submission, sending and approval distinct.",
+    "Judge visible layout and meaningful state feedback. Prototype identity/storage plumbing is excluded as a product finding.",
+    "Prior A01-A13 remain separate. New candidates must have a different root or extend their evidence rather than duplicate totals."
+  ],
+  "baselineConflicts": [
+    {
+      "id": "AC-BASE01",
+      "topic": "Shoot Setup question count and old dashboard",
+      "evidence": [
+        "Docs/shoot-pre-production-ticket.md",
+        "Docs/shoot-stage-handover.md",
+        "src/components/shoot/ShootStagePage.tsx:2497",
+        "src/components/shoot/ShootStagePage.tsx:6543"
+      ],
+      "assessment": "The older Pre-production ticket describes a maximum-two-question Quick Start; the later handover describes five concise Setup questions and current source contains the live ShootQuickStart workspace alongside legacy dashboard functions. Do not treat the older question count or unused dashboard as current authority. Verify live entry/rendering and preserve current choices unless an explicit later decision conflicts."
+    },
+    {
+      "id": "AC-BASE02",
+      "topic": "V1 onboarding scope",
+      "evidence": [
+        "Docs/ux-decision-log.md:53",
+        "Docs/ux-decision-log.md:59"
+      ],
+      "assessment": "The explicit V1 completion decision removes separate Studio branding/review and continues from three production questions to first Client. Do not restore generic logo-upload/review steps from earlier SaaS suggestions."
+    },
+    {
+      "id": "AC-BASE03",
+      "topic": "Today summary reference versus generic summary-strip guidance",
+      "evidence": [
+        "brisk-design-system.md - Today references",
+        "Docs/References/brisk/Brisk - today-summary-strip.png",
+        "F001-todo-populated-1440"
+      ],
+      "assessment": "The inspected visual reference is a full Today board and itself shows a yellow framed header total, although general text describes a muted strip/footer. Do not call the present yellow total a clear violation or remove it merely for uniformity. Its exact emphasis is a scoped design question if revisited."
+    }
+  ],
+  "captureRequests": [
+    {
+      "id": "AC-R01",
+      "priority": 1,
+      "area": "Shoot Pre-production",
+      "route": "/projects/[projectId]/stages/shoot",
+      "role": "Studio Staff",
+      "finiteViews": [
+        "Populated full-mode Shot List at 1440 and 1133",
+        "One expanded shot More details panel or row command menu",
+        "Schedule with current day and expanded Unscheduled panel at 1440 and 1133"
+      ],
+      "purpose": "Compare real content widths, local navigation, day/time/location hierarchy and available editing space; check panels do not obscure controls.",
+      "source": [
+        "src/components/shoot/ShootStagePage.tsx:3455",
+        "src/components/shoot/ShootStagePage.tsx:5433",
+        "src/components/shoot/shoot.css:3271"
+      ],
+      "safeBoundary": "No deletion/reordering needed for visual inspection. Any sample progression only in the verified disposable session."
+    },
+    {
+      "id": "AC-R02",
+      "priority": 1,
+      "area": "Shoot On Set",
+      "route": "/projects/[projectId]/stages/shoot",
+      "role": "Studio Staff plus permitted read-only role if available",
+      "finiteViews": [
+        "Same populated plan On Set Run of day / Call Sheet at 1440 and 1133",
+        "Now/Next and day selector when present",
+        "Focused Run of day or Questions view with its close control visible"
+      ],
+      "purpose": "Assess on-the-day emphasis, read-versus-edit presentation, compact status controls and layout fit independently of planning density.",
+      "source": [
+        "src/components/shoot/ShootStagePage.tsx:2517",
+        "src/components/shoot/ShootStagePage.tsx:4860",
+        "src/components/shoot/ShootStagePage.tsx:5282"
+      ],
+      "safeBoundary": "No real Start/Complete action. No completion check-offs are required merely to inspect a populated default."
+    },
+    {
+      "id": "AC-R03",
+      "priority": 1,
+      "area": "Populated Edit / Animation",
+      "route": "/projects/[projectId]/stages/edit",
+      "role": "Studio Staff plus Customer review if available",
+      "finiteViews": [
+        "Player with Comments rail at 1440 and 1133",
+        "Version selector and historical read-only context",
+        "One existing comment thread expanded and one player/settings menu"
+      ],
+      "purpose": "Compare media prominence, review hierarchy, version identity, comment readability, clipping and desktop fitting against current Brisk review references.",
+      "source": [
+        "src/components/video-review/VideoReviewScreen.tsx",
+        "src/components/video-review/video-review.css",
+        "src/components/project/CanonicalEditRoute.tsx"
+      ],
+      "safeBoundary": "Use existing/sample content in disposable session; no message or approval submission required."
+    },
+    {
+      "id": "AC-R04",
+      "priority": 1,
+      "area": "Populated Masters",
+      "route": "/projects/[projectId]/stages/masters",
+      "role": "Studio Staff plus Customer/read-only where available",
+      "finiteViews": [
+        "Populated deliverable list at 1440 and 1133",
+        "Expanded Main Video with Comments panel",
+        "Versions/Captions inspector and Download selection dialog opened then cancelled"
+      ],
+      "purpose": "Check row identity versus file metadata, expanded player space, nested panel fit and clarity of download scope.",
+      "source": [
+        "src/components/masters/MastersPage.tsx:534",
+        "src/components/masters/MastersPage.tsx:595",
+        "src/components/masters/masters.css:1440",
+        "src/components/masters/masters.css:2897"
+      ],
+      "safeBoundary": "Do not download or complete the video just to inspect. Sample creation only under the disposable-session exception."
+    },
+    {
+      "id": "AC-R05",
+      "priority": 2,
+      "area": "To Do",
+      "route": "/today",
+      "role": "Studio Staff",
+      "finiteViews": [
+        "Populated week with assigned project rail at 1440 and 1133",
+        "One time block/editor with Stage picker open",
+        "Collapsed navigation once if initial week fit is constrained"
+      ],
+      "purpose": "Read the planning versus done hierarchy, daily totals and stage/project identity; inspect anchored editor positioning and local action hierarchy.",
+      "source": [
+        "src/components/today/TodayPage.tsx:86",
+        "src/components/today/TodayPage.tsx:360",
+        "src/components/today/TodayPage.tsx:659"
+      ],
+      "safeBoundary": "Use an existing person/week or authorised disposable sample. Open/cancel editor; no normal time records edited."
+    },
+    {
+      "id": "AC-R06",
+      "priority": 2,
+      "area": "Freelancer My jobs",
+      "route": "/active-videos",
+      "role": "Studio Freelancer",
+      "finiteViews": [
+        "Populated Active jobs at 1440 and 1133",
+        "Pending offer and its Brief view",
+        "Log hours/time dialog without saving",
+        "Invoice submission entry state only if applicable"
+      ],
+      "purpose": "Check progress/time/commercial reading, offer-versus-assigned hierarchy and distinction between reviewing an offer, logging work and invoicing.",
+      "source": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:297",
+        "src/components/active-videos/FreelancerVideosPage.tsx:318",
+        "src/components/active-videos/FreelancerVideosPage.tsx:524",
+        "src/components/active-videos/FreelancerTimeDialog.tsx"
+      ],
+      "safeBoundary": "Do not accept/decline real offers, send invoices or save time to normal records. Disposable scenario progression remains centrally controlled."
+    },
+    {
+      "id": "AC-R07",
+      "priority": 2,
+      "area": "Onboarding",
+      "route": "/studio-onboard",
+      "role": "Clean-entry Studio onboarding",
+      "finiteViews": [
+        "Your name and Studio name entry",
+        "Three production questions including selected choices at 1440/1133",
+        "First Client before submit and completed handoff",
+        "First video naming / Client portal handoff if reached safely"
+      ],
+      "purpose": "Assess progressive disclosure, primary action clarity, history/step orientation and actual safe Client-preview messaging without inventing extra setup.",
+      "source": [
+        "src/components/studio-onboard/StudioOnboardScreen.tsx:42",
+        "src/components/studio-onboard/StudioOnboardScreen.tsx:270",
+        "src/components/studio-onboard/StudioOnboardScreen.tsx:500",
+        "Docs/ux-decision-log.md:59"
+      ],
+      "safeBoundary": "Only authorised disposable sample onboarding. No real sign-in delivery, invitation, payment or external communication."
+    }
+  ],
+  "sourceHypotheses": [
+    {
+      "id": "AC-H01",
+      "area": "Shoot Schedule",
+      "classification": "Source-supported risk, not a finding",
+      "question": "Do hybrid navigation, local Shoot navigation and the expanded Unscheduled rail leave readable production content at 1133?",
+      "source": [
+        "src/components/shoot/shoot.css:3271",
+        "src/components/shoot/shoot.css:3314"
+      ],
+      "counterpoint": "Collapsible rails and current breakpoint rules may already handle this well; preserve useful density and compare expanded/collapsed states before recommending changes.",
+      "resolution": "Checked supplied F021/F022: local navigation, Schedule and Unscheduled remain useful together at both widths. Broad density concern rejected. AC03 is a separate verified short-event overlap.",
+      "status": "Resolved as no broad finding"
+    },
+    {
+      "id": "AC-H02",
+      "area": "Masters",
+      "classification": "Source-supported risk, not a finding",
+      "question": "Do fixed row tracks and the expanded Comments column retain readable file/version controls at narrow desktop?",
+      "source": [
+        "src/components/masters/masters.css:1440",
+        "src/components/masters/masters.css:2485",
+        "src/components/masters/masters.css:2897",
+        "src/components/masters/masters.css:3638"
+      ],
+      "counterpoint": "Later CSS contains several scoped grid overrides. A minimum width declaration alone does not prove clipping or inaccessible controls.",
+      "resolution": "Checked single expanded sample at 1440/1133 and nested inspector/comments. Core row, player and footer remain readable. More assets/versions remain a coverage limit; F045 composer scroll recovery pending. F068/F069 and lead geometry confirm complete composer recovery; clipping suspicion rejected.",
+      "status": "Checked supplied states; no broad density finding"
+    },
+    {
+      "id": "AC-H03",
+      "area": "To Do",
+      "classification": "Source-supported risk, not a finding",
+      "question": "Does the anchored time editor remain inside the content viewport with readable labels, stage selector and Cancel/Save?",
+      "source": [
+        "src/components/today/TodayPage.tsx:659",
+        "src/components/today/TodayPage.tsx:698"
+      ],
+      "counterpoint": "An anchored editor may intentionally support efficient frequent logging and should not be turned into a large modal purely for uniformity.",
+      "resolution": "F002/F003 show footer initially below viewport. Promoted only the measured/content-height placement issue to AC01; recovery pending.",
+      "status": "Promoted narrowly to AC01"
+    },
+    {
+      "id": "AC-H04",
+      "area": "Freelancer My jobs",
+      "classification": "Source-supported question, not a finding",
+      "question": "Are project progress, time and commercial statuses legible together, and do conditional offer/invoice actions preserve clear consequences?",
+      "source": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:297",
+        "src/components/active-videos/FreelancerVideosPage.tsx:524",
+        "src/components/active-videos/FreelancerVideosPage.tsx:528"
+      ],
+      "counterpoint": "This specialised workspace is explicitly excluded from the Staff quiet-filter migration. Do not flatten useful role-specific information.",
+      "resolution": "F072-F076 confirm readable role-specific production structure, reachable commercial columns, bounded time editor and invoice warning. No broad table-density finding; AC-RF02 is optional job-name refinement.",
+      "status": "Partially inspected; accepted jobs/time/invoice entry checked, Offers still pending"
+    }
+  ],
+  "findings": [
+    {
+      "id": "AC01",
+      "title": "To Do time editor places its action footer below the viewport",
+      "area": "To Do",
+      "family": "Anchored editors and viewport fit",
+      "category": "Visual placement and task access",
+      "severity": "S2",
+      "impact": "Footer Save/Cancel/Delete is initially below the viewport and pointer Cancel cannot be activated there. Keyboard focus plus Enter on Cancel can recover, so this is a substantial pointer-access/placement defect, not proof of a keyboard trap or impossible save.",
+      "classification": "Observed defect",
+      "confidence": "High: lead measured actual editor416px at top640/bottom1056, footer at1001, in1000px-high viewport at1440 and1133; keyboard Cancel recovery observed.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Existing Sarah Chen populated week, 1440x1000",
+        "Existing Wednesday time block opened with Enter",
+        "Local zero-hours draft, no save"
+      ],
+      "observed": "The anchored Log time panel begins near y640 in the supplied 1000px-high desktop frame. Its Note field continues to the lower edge and the complete action footer is below that edge. Source clamps top to viewportHeight minus 360px although the rendered editor includes a header, three fields, textarea, gaps, padding and footer, with no maximum-height/scroll treatment. Lead F087/F092 follow-up measured editor height416px, top640/bottom1056 and footer top1001 in1000px-high desktop at both widths. Pointer Cancel offscreen failed; focusing Cancel and pressing Enter safely recovered.",
+      "reproduction": [
+        "Open the existing populated To Do week as Sarah Chen.",
+        "Open the Wednesday Unspecified block with Enter.",
+        "Observe fields and the visible header Close while the footer is below the viewport in F002.",
+        "Do not save or delete the time entry; close/cancel safely after inspection."
+      ],
+      "expected": "An anchored editing surface should keep its primary save/cancel boundary visible or directly reachable within a deliberate bounded scroll area. Positioning should account for actual content height and the fixed app header.",
+      "authority": [
+        "General desktop usability: controls needed to finish or abandon an edit should be visible/reachable",
+        "Current DS and app overlay guidance supports viewport containment, but no exact approved To Do anchored-editor reference exists"
+      ],
+      "recommendation": "Measure the rendered editor and flip or clamp it within the available content viewport using its actual height. Provide bounded internal scrolling if content or textarea resizing exceeds that space, while retaining a reachable action boundary. Preserve the efficient anchored interaction rather than replacing it with a large modal solely for consistency.",
+      "rationale": "This addresses the actual placement error caused by a fixed height assumption without changing time values, stage choices, validation or the planning model.",
+      "alternatives": [
+        "A bottom-aligned anchored panel can keep the footer inside the viewport, provided it does not cover the global header or lose its connection to the selected entry.",
+        "A different shared overlay may be appropriate only after reviewing workflow/context; it is not required by the current observation."
+      ],
+      "tradeoffs": [
+        "Retain visible Close, Escape behaviour and focus return; keyboard recovery has not yet been fully checked.",
+        "Re-measure after content/viewport changes and textarea resizing.",
+        "Do not change B-owned numeric validation or save/delete semantics while fixing geometry."
+      ],
+      "rootCause": "Anchored editor placement assumes a 360px height while its actual content can exceed that height",
+      "occurrences": [
+        "TimeEntryEditor, populated To Do time blocks"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:682",
+        "src/components/today/TodayPage.tsx:698",
+        "src/components/today/TodayPage.tsx:720",
+        "src/components/today/today.css:691",
+        "src/components/today/today.css:760"
+      ],
+      "evidence": {
+        "currentScreenshot": "F002-todo-entry-editor.jpg",
+        "additionalScreenshots": [
+          "F003-todo-invalid-hours.jpg",
+          "F087-todo-editor-footer-1440.jpg",
+          "F092-todo-editor-1133.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved time-editor placement screenshot exists. Current before/open states and source establish the clipped footer; a proposed alternate layout is not supplied.",
+        "captureContextNote": "F087 is1440x1000 original. F092 image is1133x787 and contains differently scaled UI; lead DOM measurements establish1133 viewport behaviour. It is supplementary, not a matched-scale visual comparison.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC01-todo-footer.png"
+      },
+      "relatedExistingFindings": [
+        "A10 shares overlay-fit concerns but has a different header/stacking cause; do not merge the two defects."
+      ],
+      "verificationRemaining": [
+        "Verify actual-height positioning at both widths after any future change, including textarea resizing and fixed header bounds.",
+        "Preserve keyboard Cancel/Close/focus recovery and B-owned validation/save semantics."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC02",
+      "title": "Interview question tails disappear in the planning list",
+      "area": "Shoot / Planning",
+      "family": "Inline text and production tables",
+      "category": "Readability",
+      "severity": "S3",
+      "impact": "The planning list omits the end of short interview questions at rest, so a producer cannot read the exact wording without interacting with each field or opening the editor.",
+      "classification": "Observed defect",
+      "confidence": "High: F010/F055 show hidden tails and lead measured 56px client height against 80px content height at 186.281px width.",
+      "roles": [
+        "Studio Staff observed",
+        "Shared permitted Shoot views source-only"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "Planning Interview Questions, 1133px",
+        "Two existing questions, no stored edit"
+      ],
+      "observed": "F010 shows only \u201cWhat problem were / your customers facing\u201d, omitting \u201cbefore this launch?\u201d from the current source question. The second question similarly loses its tail. Both are two-row textareas. CSS hides overflow at rest and only permits scrolling on hover/focus. Rows have substantial height for vertically stacked actions while the question field remains short. Lead follow-up measured clientHeight 56px and scrollHeight 80px at 186.281px width. Resting overflow is hidden. Focus changes overflow to hidden auto, allowing internal vertical scrolling, but does not reveal the full question in the ordinary scan state.",
+      "expected": "The question list is a planning/review surface and should expose the full wording of ordinary short questions without requiring a separate read action.",
+      "authority": [
+        "Docs/shoot-pre-production-ticket.md - Interview Questions as the direct working list, subject to later scoped decisions",
+        "General readability and task-content hierarchy; no exact approved full-question row screenshot exists"
+      ],
+      "recommendation": "Let the question text/textarea grow to its actual content height for normal questions, preserving inline editing and interviewee/day assignment. Keep an intentional read/expand treatment for genuinely long content only if needed. Consider action-column refinement separately rather than requiring a new row design to fix text visibility.",
+      "rationale": "The main content should receive the height it needs; this avoids changing the question wording, field order or production model.",
+      "alternatives": [
+        "A static auto-height text display can switch into the existing editor, but loses immediate inline editing and is a separate interaction choice.",
+        "A narrower quiet action area could return question width, but moving Edit/Duplicate/Delete to a menu changes discoverability and needs review."
+      ],
+      "tradeoffs": [
+        "Do not reduce type size or truncate full questions with unexplained ellipsis.",
+        "Keep drag/reorder controls, selected interviewee, suggestion state and keyboard editing.",
+        "Read-only recipients must also be able to read full wording; those views have not been directly captured."
+      ],
+      "rootCause": "Fixed two-row inline textarea hides overflow despite variable question length",
+      "occurrences": [
+        "PreProductionInterviewQuestions planning list"
+      ],
+      "sources": [
+        "src/data/shoot.ts:494",
+        "src/data/shoot.ts:500",
+        "src/components/shoot/ShootStagePage.tsx:4481",
+        "src/components/shoot/shoot.css:1455",
+        "src/components/shoot/shoot.css:2231"
+      ],
+      "evidence": {
+        "currentScreenshot": "F010-shoot-interview-1133.jpg",
+        "additionalScreenshots": [
+          "F055-question-focus-readability.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved full-question planning row reference exists. F011 shows the separate current editor, not a replacement proposal; its question draft is blank for validation and does not prove the original wording.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC02-question-readability.png"
+      },
+      "verificationRemaining": [
+        "Confirm preferred full-text row layout with Tom and verify editing/reorder/filters after any future change.",
+        "Read-only question presentation has not been captured in this pass."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC03",
+      "title": "Short Schedule blocks visually cover consecutive entries",
+      "area": "Shoot / Schedule",
+      "family": "Timeline layout",
+      "category": "Visual placement and readability",
+      "severity": "S3",
+      "impact": "Part of the Travel entry and its metadata is hidden by the following block even when the underlying times do not overlap, making the schedule harder to read accurately.",
+      "classification": "Observed defect",
+      "confidence": "High: current screenshot and source agree; lead measured a 16px visual overlap between consecutive actual entries.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "Planning Schedule Day 1, expanded Unscheduled, 1440px and 1133px"
+      ],
+      "observed": "F021/F022 show Travel to Loom office underneath the top edge of the following B-roll group. The source Travel starts at10:15 for20minutes and the next entry at10:35. The timeline gives20minutes about32px at its current scale while a minimum48px block height extends its visual footprint. The collision routine uses actual durations, so consecutive entries remain in one lane while their rendered boxes intersect. Lead measured Travel height 48px at y891-939 and B-roll top y923: a 16px visual overlap, although the stored 20-minute Travel ends exactly when B-roll begins.",
+      "expected": "Consecutive schedule items should not obscure one another or appear to clash purely because of a display minimum. Real timing and intentional overlaps must remain accurate.",
+      "authority": [
+        "Existing timed Schedule model and actual entry times",
+        "General desktop readability; no exact approved compact short-event variant exists"
+      ],
+      "recommendation": "Choose a compact short-event content treatment or collision-aware display strategy that keeps adjacent titles and essential time information visible at the true schedule times. Expose secondary metadata through existing details/tooltip paths when a short footprint cannot hold it. Preserve actual start times, durations and real clash detection.",
+      "rationale": "This addresses rendered geometry rather than \u201crepairing\u201d correct production data or falsely marking consecutive items as overlapping.",
+      "alternatives": [
+        "Increase the timeline scale or provide an approved scale option; this makes short items readable but increases vertical scrolling.",
+        "Place visual conflicts in separate display lanes only with a treatment that does not imply a real scheduling clash."
+      ],
+      "tradeoffs": [
+        "Do not change stored times to make the screenshot fit.",
+        "Do not shrink type below approved readable styles or hide all event identity.",
+        "Keep move/resize hit areas and context menus usable; a new compact variant needs Tom review."
+      ],
+      "rootCause": "Minimum visual block height exceeds time-proportional footprint while lane layout considers only real temporal overlap",
+      "occurrences": [
+        "ScheduleTimeline short entries adjacent to the next item"
+      ],
+      "sources": [
+        "src/data/shoot.ts:298",
+        "src/data/shoot.ts:308",
+        "src/components/shoot/ShootStagePage.tsx:7234",
+        "src/components/shoot/ShootStagePage.tsx:7296",
+        "src/components/shoot/shoot.css:12249",
+        "src/components/shoot/shoot.css:12324"
+      ],
+      "evidence": {
+        "currentScreenshot": "F022-shoot-schedule-1440.jpg",
+        "additionalScreenshots": [
+          "F056-schedule-picker-escape.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved short-event replacement screenshot exists. On Set list rows show an alternative current reading context but do not replace the planning timeline.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC03-schedule-overlap.png"
+      },
+      "verificationRemaining": [
+        "Review a compact short-event treatment with Tom and verify genuine simultaneous/clashing events retain distinct meaning.",
+        "Source times remain the authority; do not infer a real scheduling clash from this visual overlap."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC04",
+      "title": "Shoot progress opens behind the desktop sidebar",
+      "area": "Shoot / On Set",
+      "family": "Anchored overlays and hybrid-shell bounds",
+      "category": "Visual placement and task access",
+      "severity": "S2",
+      "impact": "The visible progress panel loses its title, much of each shot label and selection area behind navigation. Managing scoped shot progress is harder because the contents are only partly visible.",
+      "classification": "Observed defect",
+      "confidence": "High: current F030/F031/F057 screenshots and measured panel/sidebar geometry and stacking agree.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "On Set Schedule progress popover at1133px",
+        "One selected shot and scoped bulk actions"
+      ],
+      "observed": "F030/F031 show only the right portion of the progress popover to the right of the sidebar. Its header title and left-hand list controls are occluded. Positioning clamps left against the browser gutter, using trigger.right minus a roughly440px width; the resulting left can be about16px while the hybrid sidebar occupies240px. The custom fixed popover uses z-index100. Lead measured the progress panel at left 16px, right 456px, width 440px and z-index 100; the persistent sidebar spans 0-240px and z-index 110. Thus 224px of its 440px width lies beneath the sidebar. The visible Close remains usable, but the title and leading row/selection content are hidden.",
+      "expected": "An anchored progress panel should be fully readable within the actual available work area or use the approved overlay layer intentionally; it must not sit behind navigation.",
+      "authority": [
+        "Approved hybrid desktop shell and general visible overlay bounds",
+        "Existing progress popover is specialised; no exact approved replacement exists"
+      ],
+      "recommendation": "Use the actual content boundary and supported overlay layer when positioning this specialised progress panel. Align or flip it where the entire label/selection area fits, keep its bounded scroll and Close action, and preserve current scoped progress controls.",
+      "rationale": "This corrects geometry and stacking without changing capture statuses, selected-shot scope or the purpose of progress navigation.",
+      "alternatives": [
+        "Overlaying the sidebar can be intentional if the correct layer and dismissal model are approved, but merely raising z-index may obscure essential navigation.",
+        "Clamp within the Shoot content area instead when enough width exists; preserve the link to its opener."
+      ],
+      "tradeoffs": [
+        "Reposition after scroll/resize and in Focus mode.",
+        "Do not infer a separate wrong-click/reveal defect from this visible occlusion; B is verifying any such behaviour independently.",
+        "Keep the selected-shot count and command scope visible before any mutation."
+      ],
+      "rootCause": "Custom popover uses window bounds and layering that do not account for the persistent hybrid sidebar",
+      "occurrences": [
+        "OnSetRunOfDay progress popover"
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:4981",
+        "src/components/shoot/ShootStagePage.tsx:5301",
+        "src/components/shoot/shoot.css:110"
+      ],
+      "evidence": {
+        "currentScreenshot": "F030-onset-progress.jpg",
+        "additionalScreenshots": [
+          "F031-onset-progress-selection.jpg",
+          "F057-progress-sidebar-collision.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved Shoot progress overlay reference exists. These current captures prove occlusion; a generic DS popup screenshot is not approval to replace the specialised interaction.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC04-progress-occlusion.png"
+      },
+      "relatedExistingFindings": [
+        "A10: same broad hybrid-shell overlay boundary concern, different consumer and left-positioning path. Lead should decide whether to add this occurrence to a precisely scoped overlay-boundary finding or retain separately; do not count both a generic umbrella and its occurrences."
+      ],
+      "verificationRemaining": [
+        "Review whether this panel should sit inside content bounds or deliberately overlay navigation; Tom must approve the overlay contract before implementation.",
+        "Verify all progress rows/selection controls at 1440 and 1133 with expanded/collapsed navigation after any future fix.",
+        "Do not claim a separate progress row reveal/navigation defect; B is investigating that independently."
+      ],
+      "reviewStatus": "Needs decision",
+      "mergeInto": "A10",
+      "integrationNote": "Add precise Shoot progress occurrence to A10 hybrid-shell overlay positioning/layering finding. Do not add an independent duplicate count; retain per-consumer geometry and dismissal distinctions."
+    },
+    {
+      "id": "AC05",
+      "title": "Caption cues are constrained to a single unreadable line",
+      "area": "Masters",
+      "family": "Inline production text and inspectors",
+      "category": "Readability and review efficiency",
+      "severity": "S3",
+      "impact": "Longer ordinary caption sentences cannot be proofread as a whole in the inspector beside the video. Readers must move the caret/scroll inside an input to recover the hidden tail. This does not imply text is lost.",
+      "classification": "Heuristic judgement",
+      "confidence": "High for the observed readability limitation in editable and Client read-only views; lead measured the normal 66-character cue at 310px clientWidth and 386px scrollWidth.",
+      "roles": [
+        "Studio Staff observed",
+        "Customer observed"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/masters"
+      ],
+      "states": [
+        "Brief-linked Main Video with generated sample SRT attached",
+        "Caption inspector at 1440",
+        "Sample first cue edit saved on blur in authorised disposable session"
+      ],
+      "observed": "F063 shows the longer second cue ending mid-sentence at the edge of the narrow inspector, while shorter cues fit. Every cue is rendered as an HTML input, so there is no line wrapping. The source also reuses the input read-only for Clients. Current blur-save feedback is explicit and was observed as Captions saved and re-attached. F070/F071 confirm the same cue is clipped in editable and Client read-only views at 1440. Lead measured clientWidth 310px, scrollWidth 386px for the unchanged second cue: The middle develops the central idea through the approved footage. The source text is retained; 76px extends beyond the visible field.",
+      "reproduction": [
+        "Open Captions on a populated Main Video.",
+        "Read a normal longer cue in the inspector beside the player.",
+        "Observe that the single line cuts off before the sentence ends.",
+        "Do not edit or download merely to inspect; use supplied authorised sample evidence for the edited cue state."
+      ],
+      "expected": "Caption text should be readable for proofreading against the video, with timecode navigation and any editing boundary still clear. No exact approved compact caption-inspector reference exists.",
+      "authority": [
+        "Current source and screenshot establish the one-line limitation.",
+        "General production-review heuristic: show enough of the content being approved/proofread to understand it without serial caret navigation.",
+        "Use approved Brisk text/textarea patterns for any future multiline editor; do not invent a new DS component."
+      ],
+      "recommendation": "Allow cue text to wrap in a compact approved multiline or read-and-edit treatment. Preserve each cue timecode and its seek action. Keep the existing blur-save contract and confirmation visible unless Tom separately approves changing that boundary.",
+      "rationale": "This improves the content needed for caption proofreading without expanding the delivery register or changing SRT timing/data.",
+      "alternatives": [
+        "Wrapping read-only text with an explicit Edit action makes reading clear, but adds an edit step and changes the interaction contract.",
+        "A compact autosizing textarea can preserve direct editing, but must avoid unbounded growth and must keep the next cue accessible."
+      ],
+      "tradeoffs": [
+        "Verify multiline content, long unbroken words, existing line breaks and keyboard order.",
+        "Keep captions attached to the correct deliverable/version and retain authorised Client read-only treatment.",
+        "Do not change save timing or convert caret scrolling into data truncation."
+      ],
+      "rootCause": "Caption cue content uses a single-line input regardless of sentence length in a narrow inspector",
+      "occurrences": [
+        "SrtInspector cue text, editable Staff branch observed",
+        "SrtInspector read-only Customer branch observed"
+      ],
+      "sources": [
+        "src/components/masters/MastersPage.tsx:3207",
+        "src/components/masters/MastersPage.tsx:3215",
+        "src/components/masters/masters.css:3388"
+      ],
+      "evidence": {
+        "currentScreenshot": "F070-caption-text-fit.jpg",
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved caption-inspector wrapping reference exists. This is a local readability recommendation, not a claim of deviation from a supplied full-page mockup.",
+        "additionalScreenshots": [
+          "F071-client-caption-reading.jpg",
+          "F063-masters-caption-editor.jpg"
+        ],
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC05-caption-readability.png"
+      },
+      "relatedExistingFindings": [
+        "AC02 also constrains production copy while reading, but has a separate two-line textarea, row allocation and editing behaviour; group in a text-readability implementation batch without hiding these differences."
+      ],
+      "verificationRemaining": [
+        "Review a compact wrapping treatment with Tom and verify long/multiline captions plus timecode seeking after any future change.",
+        "No claim that hidden input text is lost or wholly inaccessible; caret scrolling can recover portions but not display the sentence together.",
+        "Preserve the explicit saved/re-attached feedback and current save semantics unless separately approved."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC06",
+      "title": "Billing frequency is clipped to a two-pixel line in plan comparison",
+      "area": "Studio settings / Brisk plan & billing",
+      "family": "Dialog content and segmented choices",
+      "category": "Visual fit and task access",
+      "severity": "S2",
+      "impact": "The Monthly/Annual choice is visually unavailable in a financial comparison even though the cards depend on it. The default frequency can persist after an attempted pointer choice. Keyboard activation still works.",
+      "classification": "Observed defect",
+      "confidence": "High: genuine1440 and1133 captures, DOM geometry, keyboard state and downstream confirmation agree; lead F141 corroborates.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/settings/plan-billing"
+      ],
+      "states": [
+        "Change plan comparison at1440x1000 and1133x1000",
+        "Monthly default",
+        "Pointer Annual attempted without changing value",
+        "Annual activated by Enter; confirmation inspected and cancelled"
+      ],
+      "observed": "The Billing frequency group has computed height2px and overflow:hidden while its two buttons are40px high, y122-162. At1440 groupx185/y121; at1133 x44/y121. Only a horizontal border remains visible. Pointer Annual attempt left aria-pressed=false and the following Business confirmation remained Monthly. Focusing Annual and pressing Enter sets aria-pressed=true and the Annual confirmation displays the correct annual amount. No plan was confirmed.",
+      "reproduction": [
+        "Open Studio settings > Brisk plan & billing > Change plan at1440 or1133 desktop.",
+        "Observe missing Monthly/Annual labels at the top of comparison.",
+        "Inspect controls by keyboard: Annual Enter changes pressed state and pricing.",
+        "Close or cancel; do not confirm a plan change."
+      ],
+      "expected": "Billing frequency must remain visible and directly operable above the plan cards, with the chosen state clear. The long comparison may scroll within a deliberate content boundary while preserving its controls and exit.",
+      "authority": [
+        "Approved Brisk DS EditingDialog/DialogSurface viewport-bounded content and visible focus contracts",
+        "General task clarity: a price-affecting choice must be visible and its selection understandable",
+        "No exact approved full plan-comparison screenshot exists"
+      ],
+      "recommendation": "Give this consumer a non-collapsing minimum block size for the frequency choice and a coherent scrolling layout for the tall comparison. Correct its integration with EditingDialog rather than changing all DS dialog content globally. Keep frequency state, price calculations, confirmation and Cancel behaviour.",
+      "rationale": "The rendering defect is local to the tall plan comparison; the choice itself and its annual logic already work by keyboard. Fixing fit preserves the existing commercial workflow.",
+      "alternatives": [
+        "Keep frequency in a non-scrolling comparison header and scroll only the cards, provided keyboard order and selected price context remain clear.",
+        "A vertically shorter summary plus expandable plan features may fit better, but changes comparison density and requires a separate design decision."
+      ],
+      "tradeoffs": [
+        "Do not change prices, entitlements or frequency persistence while repairing geometry.",
+        "Do not add a global minimum to every child of DS dialog content.",
+        "Verify all four cards, sticky/scroll boundaries,1133 width, focus visibility and keyboard/pointer confirmation paths."
+      ],
+      "rootCause": "Tall grid content permits the overflow-hidden frequency group to shrink; legacy billing-modal selectors target wrapper classes ClientModal no longer forwards after adopting EditingDialog.",
+      "occurrences": [
+        "PlanComparisonModal Billing frequency for plan change group"
+      ],
+      "sources": [
+        "src/components/settings/PlanBillingModals.tsx:46",
+        "src/components/settings/plan-billing.css:540",
+        "src/components/settings/plan-billing.css:548",
+        "src/components/settings/plan-billing.css:556",
+        "src/components/clients/ClientPrimitives.tsx:27",
+        "Brisk DS/src/app/components/DialogSurface.module.css:25"
+      ],
+      "evidence": {
+        "currentScreenshot": "G052-plan-comparison-monthly.jpg",
+        "additionalScreenshots": [
+          "G053-plan-comparison-annual.jpg",
+          "G054-plan-change-confirm.jpg",
+          "G057-plan-frequency-keyboard.jpg",
+          "G058-plan-annual-confirm.jpg",
+          "G117-plan-comparison-1133.jpg",
+          "G118-plan-frequency-keyboard-1133.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved full plan comparison reference exists. The annotated evidence compares genuine current1440/1133 crops and current confirmation states; none is a proposed fix.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC06-billing-frequency.png"
+      },
+      "verificationRemaining": [
+        "Review the local comparison scroll/layout treatment with Tom.",
+        "After implementation verify both pointer and keyboard frequency controls, all card lengths and confirmation values."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC08",
+      "title": "Move to sub-brand ends before choosing a destination",
+      "area": "Brand Kits",
+      "family": "Selection menus and feedback",
+      "category": "Misleading action and recovery",
+      "severity": "S3",
+      "impact": "A selected asset appears ready for a move, then selection is cleared without any destination picker or result. The user must reselect the asset to try again. No asset actually moves.",
+      "classification": "Observed defect",
+      "confidence": "High for current selected editor-asset path; source confirms notification-only handler.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/brand-kits/loom"
+      ],
+      "states": [
+        "One editor file selected",
+        "More actions menu",
+        "Move to sub-brand result"
+      ],
+      "observed": "The selected asset menu offers Move to sub-brand. Invoking it shows \u201c1 assets ready to move to a sub-brand\u201d, closes the menu and clears selection. There is no target picker/dialog or next step, and source only notifies and clears selectedAssets. The asset remains in place.",
+      "reproduction": [
+        "Open populated Loom Brand Kit, select the first Editor files item.",
+        "Open its More actions > Move to sub-brand.",
+        "Observe ready-to-move toast, zero selected items and no destination step."
+      ],
+      "expected": "The command should enter a clear destination-selection step or explain its unavailability before discarding selection. Readiness feedback must lead to an actionable next step.",
+      "authority": [
+        "General task feedback and action-label semantics",
+        "Current menu wording establishes a move intent; no exact approved move-flow reference exists"
+      ],
+      "recommendation": "Until a destination workflow is approved, make the unavailable action explicit and preserve selection. If Tom approves the existing feature, connect the command to its scoped destination choice and cancel/recovery boundary. Do not silently invent the full move product model as an audit fix.",
+      "rationale": "The smallest coherent improvement aligns the visible promise with actual capability and retains the user\u2019s selected scope.",
+      "alternatives": [
+        "Hide the unavailable command in this prototype until its workflow exists; simpler but less informative for future capability review.",
+        "Keep a disabled labelled command with a brief reason; requires an accessible explanation."
+      ],
+      "tradeoffs": [
+        "Keep genuine Download and Delete actions distinct from Move.",
+        "Any future move must define master/sub-brand destination eligibility, inheritance and undo before implementation.",
+        "Do not treat this as backend, security or data-loss evidence."
+      ],
+      "rootCause": "Selected menu exposes a notification-only placeholder as a complete action and clears its scope.",
+      "occurrences": [
+        "selectedAssetMenuItems Move to sub-brand handler"
+      ],
+      "sources": [
+        "src/components/brand-kits/BrandKitPages.tsx:1017",
+        "src/components/brand-kits/BrandKitPages.tsx:1020"
+      ],
+      "evidence": {
+        "currentScreenshot": "G127-brand-selected-move-menu.jpg",
+        "additionalScreenshots": [
+          "G128-brand-move-toast-only.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved destination picker/move workflow reference exists. These genuine before/result states establish the missing next step.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC08-brand-move-feedback.png"
+      },
+      "verificationRemaining": [
+        "Tom decide whether this capability is in current scope or should be unavailable.",
+        "If implemented later, verify target scope, cancellation preserving selection and actual asset placement; no such implementation was attempted."
+      ],
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "strengths": [
+    {
+      "id": "AC-S01",
+      "title": "The populated To Do board preserves useful planning context",
+      "area": "To Do",
+      "screenshots": [
+        "F001-todo-populated-1440.jpg",
+        "F004-todo-populated-1133.jpg"
+      ],
+      "observed": "Project cards keep a Client code, remaining-day context and logged/assigned hours beside the weekly work area. Each day has explicit planned/done totals; To Do and Done are labelled lanes, and an unspecified entry says Set stage rather than relying only on colour. Completed cards are visually quieter.",
+      "whyItWorks": "Staff can compare project context with the selected person and distinguish planned work, completed work and missing stage detail within one dense production view.",
+      "preserve": [
+        "Retain project/Client identity and local daily totals.",
+        "Keep text labels and Set stage feedback rather than substituting icons alone.",
+        "Repair viewport fit without turning the board into an ordinary task table."
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:335",
+        "src/components/today/TodayPage.tsx:416",
+        "src/components/today/TodayPage.tsx:624"
+      ],
+      "limits": "Friday visibility and scroll affordance remain a separate gap. Header clipping in the scrolled narrow captures is not proof of top-of-page default fit. No drag or save outcome is endorsed."
+    },
+    {
+      "id": "AC-S02",
+      "title": "Shoot keeps planning choices connected without forcing a linear wizard",
+      "area": "Shoot Planning",
+      "screenshots": [
+        "F006-shoot-shot-list-1440.jpg",
+        "F016-shoot-people-1133.jpg",
+        "F019-shoot-documents.jpg"
+      ],
+      "observed": "Persistent grouped local navigation shows current section and useful counts. People brings contact identity, shoot role and call time into one readable table. Supporting-document copy explicitly separates reference material from native planning coverage.",
+      "whyItWorks": "The producer can jump between interdependent production details while retaining context and understanding what an attachment changes.",
+      "preserve": [
+        "Keep local section navigation, counts and role/call-time context.",
+        "Retain supporting-document wording rather than shortening it into a misleading existing-plan action.",
+        "Do not turn planning into a generic task dashboard or restore the superseded multi-step Creative Plan wizard."
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:2733",
+        "src/components/shoot/ShootStagePage.tsx:4722",
+        "src/components/shoot/ShootStagePage.tsx:6375"
+      ],
+      "limits": "This does not endorse the clipped question fields, all technical table columns or every scroll/focus path."
+    },
+    {
+      "id": "AC-S03",
+      "title": "On Set gives priority to the information needed on the day",
+      "area": "Shoot On Set",
+      "screenshots": [
+        "F026-on-set-1440.jpg",
+        "F027-onset-focus-schedule.jpg",
+        "F029-onset-1133.jpg"
+      ],
+      "observed": "The Call Sheet gives the general call time strong emphasis beside date, location, weather and key contact. The run-of-day list uses explicit Now/Next/Upcoming labels and quieter completed coverage. Focus mode removes surrounding navigation and keeps a visible Exit focus control.",
+      "whyItWorks": "This serves a different task from planning: quickly locating time, place, contact and current capture work while on set.",
+      "preserve": [
+        "Keep strong call-time hierarchy and meaningful status text.",
+        "Keep unscheduled coverage available rather than blocking the shoot workflow.",
+        "Retain Focus as a deliberate reading mode; B is separately assessing its focus semantics."
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:4860",
+        "src/components/shoot/ShootStagePage.tsx:5282",
+        "src/components/shoot/SharedCallSheetPage.tsx"
+      ],
+      "limits": "Only listed desktop compositions are assessed. Progress popover occlusion is a separate defect; no claim that all On Set interactions or completion outcomes work."
+    },
+    {
+      "id": "AC-S04",
+      "title": "Shoot editors keep local save boundaries readable",
+      "area": "Shoot editors",
+      "screenshots": [
+        "F011-interview-editor-validation.jpg",
+        "F015-location-editor.jpg",
+        "F017-shoot-person-editor.jpg",
+        "F020-shoot-document-link.jpg",
+        "F024-shoot-day-editor.jpg"
+      ],
+      "observed": "Current editors use specific titles, labelled fields and visible Cancel/Save actions. Empty question/link drafts keep their primary save action disabled. Day editing stays local to the chosen day and shows a distinct Save boundary. The document dialog distinguishes cancelling the link draft from closing the whole document view.",
+      "whyItWorks": "The user can tell which production detail is being edited and how to abandon it without submitting.",
+      "preserve": [
+        "Keep the labelled purpose and separate local/whole-dialog actions.",
+        "Keep standard-role choice separate from a custom crew role.",
+        "Do not add identical shells or dimensions to every editing context."
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:4515",
+        "src/components/shoot/ShootStagePage.tsx:4799",
+        "src/components/shoot/ShootStagePage.tsx:5769"
+      ],
+      "limits": "No saved question, contact, location, date or supporting document is claimed from opening these views. Time-suggestion menu clipping in F023 remains a separate verification question."
+    },
+    {
+      "id": "AC-S05",
+      "title": "Review keeps picture, time and feedback connected",
+      "area": "Edit and Animation review",
+      "evidence": [
+        "F035-review-populated-1440.jpg",
+        "F038-review-team-filter.jpg",
+        "F040-review-1133-overall.jpg",
+        "F051-review-client-feedback.jpg"
+      ],
+      "approvedReference": [
+        "Docs/References/brisk/Brisk - video-review-overview.png",
+        "Docs/References/brisk/Brisk - video-review-comment-panel.png"
+      ],
+      "whyItWorks": "A dark picture area sits beside readable light feedback, with a separately scrollable version library and persistent composer. Overall notes are distinguishable from timecoded notes; Client cream and Team lavender communicate scope in addition to explicit text labels. At 1133 the main player, comments and action boundary remain visible in the supplied captures.",
+      "preserve": [
+        "Keep the dark specialist player and light comment rail rather than forcing every surface to white.",
+        "Retain explicit Posting to Team/Client, Overall and timestamp labels; colour alone should not carry meaning.",
+        "Keep upload, sending and approval distinct because they perform different work."
+      ],
+      "limits": [
+        "F035-F040 are a populated review demonstration, not proof of all canonical project histories. F053 separately confirms canonical first-version presentation.",
+        "Selected or resolved feedback states and keyboard behaviour belong to lead/B verification.",
+        "F036 comparison is captured in a scrolled player state; its upper version labels are outside the visible player portion, so no absent-label finding is asserted."
+      ],
+      "sources": [
+        "src/components/video-review/VideoReviewScreen.tsx:1100",
+        "src/components/video-review/video-review.css:428",
+        "src/components/video-review/video-review.css:1403",
+        "src/components/video-review/InlinePlayer.tsx:571"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC-S06",
+      "title": "Masters makes a download selection explicit before acting",
+      "area": "Masters",
+      "evidence": [
+        "F043-masters-sample-1440.jpg",
+        "F046-masters-download-zero.jpg",
+        "F047-masters-delete-confirm.jpg",
+        "F049-masters-client-1133.jpg"
+      ],
+      "approvedReferenceStatement": "No exact approved expanded Masters composition screenshot is available. Current shared selector/dialog standards and source are the relevant baseline.",
+      "whyItWorks": "The expanded delivery stays attached to its register row and keeps version identity visible. The download dialog names the deliverable, lists each asset, shows 0 of 2 selected and disables Download selected (0). A separate delete confirmation names the asset and describes removal of versions and comments. The Client view preserves download access while omitting Staff Add asset and Complete video controls in the supplied views.",
+      "preserve": [
+        "Retain per-asset selection, selected count and zero-selection guard.",
+        "Keep row/video download scope distinct from Download All.",
+        "Preserve selected-row lavender as a purposeful state rather than treating it as an arbitrary enclosing tint."
+      ],
+      "limits": [
+        "Only one sample deliverable with a thumbnail was inspected in these captures. Multi-deliverable, captions and version selection require their own checks.",
+        "No download, deletion or message was submitted.",
+        "F068/F069 and live geometry confirm Masters composer remains reachable; no inaccessible-toolbar finding."
+      ],
+      "sources": [
+        "src/components/masters/MastersPage.tsx:1403",
+        "src/components/masters/MastersPage.tsx:1466",
+        "src/components/masters/MastersPage.tsx:1661",
+        "src/components/masters/masters.css:3100",
+        "src/components/masters/masters.css:3580"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC-S07",
+      "title": "Recut mark-up keeps instructions attached to a named source",
+      "area": "Masters recuts",
+      "evidence": [
+        "F064-masters-recut-entry.jpg",
+        "F065-recut-source-picker.jpg",
+        "F066-recut-range-draft.jpg",
+        "F067-recut-cancel-result.jpg"
+      ],
+      "approvedReferenceStatement": "No separate approved recut composition screenshot is available; current specialised workflow/source and explicit labels are the inspected evidence.",
+      "whyItWorks": "The source identity Main Video V1 remains above the picture, Change source is distinct from the target deliverable name, and a selected range exposes explicit Keep this, Remove this and Describe a change commands. Zero marks and disabled Send to editor give a clear unsent state. Cancel returns to delivery details.",
+      "preserve": [
+        "Retain named source versus target and separate instruction types; a single generic action would erase useful intent.",
+        "Keep the picture, range and instruction panel visible together at 1133 where shown.",
+        "Keep 0 marks, target duration and disabled sending feedback while no instruction exists."
+      ],
+      "limits": [
+        "Keyboard adjustment of range handles has a separate B-owned verification concern; the visible affordance does not prove keyboard completeness.",
+        "No instruction was sent; follow-on editor response/completed recut not verified.",
+        "Colourful instruction buttons are readable with explicit words; any palette change needs a scoped review, not blanket Button uniformity."
+      ],
+      "sources": [
+        "src/components/masters/MastersPage.tsx:1428",
+        "src/components/masters/MastersPage.tsx:2124",
+        "src/components/masters/masters.css:4518"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC-S08",
+      "title": "My jobs separates work, time and commercial status without losing project identity",
+      "area": "Freelancer My jobs",
+      "evidence": [
+        "F072-freelancer-active-1440.jpg",
+        "F073-freelancer-active-1133.jpg",
+        "F074-freelancer-commercial-pan.jpg",
+        "F075-freelancer-time-invalid.jpg",
+        "F076-freelancer-invoice-draft.jpg"
+      ],
+      "approvedReferenceStatement": "WorkspacePageHeader uses the current approved shared header. The Freelancer workspace is explicitly outside the Staff quiet-filter migration; there is no separately approved full My jobs replacement screenshot.",
+      "whyItWorks": "The table distinguishes assigned work from overall production progress, keeps identity sticky while panning, and makes logged versus estimated time and payment state available alongside actions. Payment has an explicit field label. Log hours opens a bounded editor with clear Cancel/Save. The invoice draft names the accepted amount and warns when amount/currency differ before submission.",
+      "preserve": [
+        "Retain contextual assigned Stage, progress and commercial information rather than collapsing distinct concepts into one status.",
+        "Keep horizontal pan and sticky identity; do not squeeze all production and finance tracks into 1133.",
+        "Keep invoice mismatch as an explained warning, since a difference can be legitimate; do not silently block it."
+      ],
+      "limits": [
+        "Job names are truncated and could use a small optional refinement, AC-RF02.",
+        "Invoice project identity is a separate B-owned context candidate; this strength does not endorse the complete invoice dialog.",
+        "Zero-hours numeric feedback is B-owned; the screenshot only confirms layout and disabled Save.",
+        "No time or invoice was submitted."
+      ],
+      "sources": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:288",
+        "src/components/active-videos/FreelancerVideosPage.tsx:513",
+        "src/components/active-videos/FreelancerVideosPage.tsx:667",
+        "src/components/active-videos/freelancer-videos.css:146",
+        "src/components/costs/CostsPrimitives.tsx:130"
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC-S09",
+      "title": "A pending offer exposes the decision terms before acceptance",
+      "area": "Freelancer offers",
+      "evidence": [
+        "F077-freelancer-open-offer.jpg"
+      ],
+      "approvedReferenceStatement": "No separate approved populated offer screenshot exists. This strength is a heuristic assessment of the current scoped composition, not approval of all terms or permission branches.",
+      "whyItWorks": "The card keeps Client and full project name visible, then presents role, assigned Stage, estimated work, estimated total and final delivery before the decision footer. View brief, Decline and Accept offer remain distinct with a clear acceptance emphasis.",
+      "preserve": [
+        "Keep reviewing the Brief separate from accepting an offer.",
+        "Keep estimated work and total distinct from assigned Stage and overall deadline.",
+        "Retain full project identity on the offer card rather than applying the truncated table-title treatment."
+      ],
+      "limits": [
+        "No offer was accepted or declined.",
+        "Read-only Brief summary has separate A12 text-wrap evidence and C-owned apparent-edit-affordance checks.",
+        "One pending card was inspected; populated History still awaits evidence."
+      ],
+      "sources": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:680",
+        "src/components/active-videos/FreelancerOfferBrief.tsx:30"
+      ],
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "optionalRefinements": [
+    {
+      "id": "AC-RF01",
+      "title": "Give the weekly board one clear horizontal scroll boundary",
+      "area": "To Do",
+      "classification": "Optional layout refinement pending live scroll verification",
+      "screenshots": [
+        "F001-todo-populated-1440.jpg",
+        "F004-todo-populated-1133.jpg",
+        "F005-todo-collapsed-1133.jpg"
+      ],
+      "observed": "Friday is partly outside the initial 1440 view; only the start of Thursday is visible at 1133 expanded. Collapsed navigation returns space but still does not show the full week. Source combines an outer 720px minimum week track with an inner 920px day grid.",
+      "smallestCoherentImprovement": "Allow the outer week track to shrink within its real host, retaining the readable inner day-grid minimum and one reachable horizontal pan. If a full five-day overview at 1440 is desirable, compare a modest reduction in project-rail width rather than shrinking all day text.",
+      "tradeoffs": [
+        "Horizontal scrolling can be intentional and usable; clipping alone is not proof that Friday is inaccessible.",
+        "A narrower project rail hides more long project names, so preserve Client codes and full-title recovery.",
+        "Do not force five cramped days to fit at 1133.",
+        "Keep headers and time blocks horizontally aligned when scrolling."
+      ],
+      "decisionNeeded": "Lead verify actual local versus outer scrolling and visible scroll affordance; Tom review any rail-width change.",
+      "sources": [
+        "src/components/today/today.css:190",
+        "src/components/today/today.css:412",
+        "src/components/today/today.css:422",
+        "src/components/today/today.css:469"
+      ]
+    },
+    {
+      "id": "AC-RF02",
+      "title": "Give ordinary job names more room inside the existing sticky identity cell",
+      "area": "Freelancer My jobs",
+      "classification": "Optional heuristic refinement, not a defect",
+      "severity": "S4",
+      "evidence": [
+        "F072-freelancer-active-1440.jpg",
+        "F073-freelancer-active-1133.jpg",
+        "F074-freelancer-commercial-pan.jpg"
+      ],
+      "observed": "The 290px sticky identity cell shares one name line with up to three quiet tools, truncating the ordinary current job names at both widths. Client badges and distinct prefixes mitigate confusion, and selecting a project can reveal full context. No observed wrong-project action is claimed.",
+      "smallestCoherentImprovement": "Review a two-line title or a second quiet-tools line within the existing row/cell before widening the whole sticky column. Retain badges, tags and quick access.",
+      "rationale": "Uses some of the current 132px row height to improve identification while preserving useful production columns and pan.",
+      "alternatives": [
+        "A full-name tooltip is smaller visually but requires hover/focus and does not help ordinary scanning.",
+        "A wider identity column helps names but worsens the remaining desktop viewport and panning distance."
+      ],
+      "tradeoffs": [
+        "Check long names, all tags/tool combinations and many populated rows.",
+        "Do not apply to Staff/Client tables without inspecting their own current widths and approved scope.",
+        "Do not make truncation alone a mandatory redesign; Tom can retain current density if the trade-off is acceptable."
+      ],
+      "sources": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:64",
+        "src/components/active-videos/FreelancerVideosPage.tsx:676",
+        "src/components/active-videos/freelancer-videos.css:232",
+        "src/components/active-videos/freelancer-videos.css:260"
+      ],
+      "decisionNeeded": "Tom review of name visibility versus row density; not approved",
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "compositionCheckpoints": [
+    {
+      "id": "AC-CP01",
+      "area": "To Do",
+      "images": [
+        "F001-todo-populated-1440.jpg",
+        "F002-todo-entry-editor.jpg",
+        "F003-todo-invalid-hours.jpg",
+        "F004-todo-populated-1133.jpg",
+        "F005-todo-collapsed-1133.jpg"
+      ],
+      "status": "Inspected supplied genuine current isolated-session evidence",
+      "observations": [
+        "Populated planning composition and labelled lanes are useful; preserve density and project context.",
+        "Initial time-editor footer is clipped below the 1000px viewport; AC01.",
+        "Week horizontal overflow is observed; accessibility of Friday is not yet established.",
+        "F004/F005 are vertically scrolled and must not be captioned as top-of-page default composition."
+      ],
+      "sourceContext": "Isolated completion session, studio-owner-active, Sarah Chen viewed. Local invalid-hours draft was not saved; B owns validation interpretation."
+    },
+    {
+      "id": "AC-CP02",
+      "area": "Shoot Shot List / Interview Questions",
+      "images": [
+        "F006-shoot-shot-list-1440.jpg",
+        "F007-shot-actions.jpg",
+        "F008-shot-type-picker.jpg",
+        "F009-shot-list-1133.jpg",
+        "F010-shoot-interview-1133.jpg",
+        "F011-interview-editor-validation.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence",
+      "observations": [
+        "Shot groups and counts remain useful context; technical fields are narrow but no selected technical value was changed to manufacture a failure.",
+        "Shot action and type menus fit their captured viewport; preserve current text-first menu hierarchy.",
+        "Question tails are hidden at rest; AC02.",
+        "Question editor empty draft has disabled Save and visible Cancel."
+      ]
+    },
+    {
+      "id": "AC-CP03",
+      "area": "Shoot References / Locations / People / Documents",
+      "images": [
+        "F012-visual-references-empty.jpg",
+        "F013-shoot-media-picker.jpg",
+        "F014-shoot-reference-populated.jpg",
+        "F015-location-editor.jpg",
+        "F016-shoot-people-1133.jpg",
+        "F017-shoot-person-editor.jpg",
+        "F018-shoot-role-options.jpg",
+        "F019-shoot-documents.jpg",
+        "F020-shoot-document-link.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence",
+      "observations": [
+        "Empty and sample-populated reference gallery are clear; one sparse card is not a density defect.",
+        "Project Media picker has visible Cancel and scrollable content; not every item is simultaneously visible.",
+        "People table fits the captured1133 state, including call times and role distinctions.",
+        "F018 is a closed Role field, not an open options list.",
+        "Multiline Add supporting document is readable and preserves meaningful scope; not promoted merely for differing size."
+      ]
+    },
+    {
+      "id": "AC-CP04",
+      "area": "Shoot Schedule",
+      "images": [
+        "F021-shoot-schedule-1133.jpg",
+        "F022-shoot-schedule-1440.jpg",
+        "F023-schedule-item-editor.jpg",
+        "F024-shoot-day-editor.jpg",
+        "F025-shoot-day2.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence",
+      "observations": [
+        "Schedule/Unscheduled separation remains useful at both widths; no blanket rail compression advised.",
+        "Travel and following timed group visually overlap despite consecutive source times; AC03.",
+        "F023 time suggestions appear clipped by the editing body/footer; keyboard/scroll reach needs confirmation before a distinct finding.",
+        "Day2 and inline day editor remain legible in the supplied state."
+      ]
+    },
+    {
+      "id": "AC-CP05",
+      "area": "Shoot On Set / Readiness",
+      "images": [
+        "F026-on-set-1440.jpg",
+        "F027-onset-focus-schedule.jpg",
+        "F028-onset-focus-exit.jpg",
+        "F029-onset-1133.jpg",
+        "F030-onset-progress.jpg",
+        "F031-onset-progress-selection.jpg",
+        "F032-shoot-approval-confirm.jpg",
+        "F033-edit-readiness-confirm.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence",
+      "observations": [
+        "Call-time/location/contact hierarchy and Now/Next/Upcoming are useful current design strengths.",
+        "Focus mode has a visible Exit focus; F028 is after return and B owns focus semantics.",
+        "Progress popover is mostly behind sidebar; AC04 and potential A10 related occurrence.",
+        "F032 shows an approved-state toast, not a confirmation dialog; action occurred only in authorised disposable demo.",
+        "F033 explicitly describes readiness consequences and shows Cancel plus a named combined action."
+      ]
+    },
+    {
+      "id": "AC-CP06",
+      "area": "Edit/Animation review",
+      "images": [
+        "F034-edit-ready-empty.jpg",
+        "F035-review-populated-1440.jpg",
+        "F036-review-compare.jpg",
+        "F037-review-comment-menu.jpg",
+        "F038-review-team-filter.jpg",
+        "F039-review-drawing-tools.jpg",
+        "F040-review-1133-overall.jpg",
+        "F041-review-approved-sample.jpg",
+        "F050-review-client-1133.jpg",
+        "F051-review-client-feedback.jpg",
+        "F052-review-playback-options.jpg",
+        "F053-canonical-edit-upload.jpg"
+      ],
+      "status": "Inspected supplied isolated-session evidence and approved review references",
+      "observations": [
+        "First-version empty state uses one clear Upload V1 action and explains its purpose.",
+        "Dark player, light feedback, explicit Team/Client and Overall/timecode distinctions match scoped reference intent.",
+        "At 1133, secondary version filename metadata ellipses while version number/status and primary actions remain visible; no blanket metadata-widening finding.",
+        "F036 version labels are above the visible scrolled player portion; source renders each V number. Check top before asserting absent labels.",
+        "F039 shows active drawing mode feedback and an unsent composer; no submitted drawing inferred.",
+        "F052 is a direct speed-cycle button, not an open option menu.",
+        "Approved-state changes occurred only in the authorised disposable session; these captures do not establish every permission branch."
+      ]
+    },
+    {
+      "id": "AC-CP07",
+      "area": "Masters",
+      "images": [
+        "F042-masters-sample-1133.jpg",
+        "F043-masters-sample-1440.jpg",
+        "F044-masters-thumbnail-actions.jpg",
+        "F045-masters-comments.jpg",
+        "F046-masters-download-zero.jpg",
+        "F047-masters-delete-confirm.jpg",
+        "F048-masters-client.jpg",
+        "F049-masters-client-1133.jpg"
+      ],
+      "status": "Inspected supplied isolated-session evidence",
+      "observations": [
+        "Expanded row/player and stage action footer fit the supplied single-deliverable 1440/1133 views.",
+        "Selected expanded lavender region has a current state purpose; do not apply the Brand Kit enclosing-tint recommendation here without a scoped baseline conflict.",
+        "Thumbnail inspector maintains context and a readable text-only action menu, with destructive Delete last.",
+        "F045 comments toolbar extends below the visible register boundary; source register is scrollable, so lead must check recovery rather than asserting an inaccessible composer.",
+        "Download selector provides explicit scope and zero-selection guard; destructive confirmation clearly explains the affected data.",
+        "Client capture omits Add asset and Complete video while retaining allowed delivery actions; wider permission review belongs to C."
+      ]
+    },
+    {
+      "id": "AC-CP08",
+      "area": "Shoot and canonical Edit follow-up",
+      "images": [
+        "F054-canonical-edit-two-versions.jpg",
+        "F055-question-focus-readability.jpg",
+        "F056-schedule-picker-escape.jpg"
+      ],
+      "status": "Inspected supplied current evidence and lead measurements",
+      "observations": [
+        "F054 extends populated review evidence to canonical two-version Edit at 1133.",
+        "F055 confirms two-line focus state; lead measured 56px clientHeight vs 80px content, with vertical internal scrolling on focus.",
+        "F056 is after dismissal of Schedule picker. It also visibly records Travel/B-roll overlap; lead confirmed 16px overlap without a real time clash."
+      ]
+    },
+    {
+      "id": "AC-CP09",
+      "area": "Shoot progress, sending and Client On Set",
+      "images": [
+        "F057-progress-sidebar-collision.jpg",
+        "F058-shoot-send-panel.jpg",
+        "F059-shoot-client-onset.jpg"
+      ],
+      "status": "Inspected supplied current evidence and lead geometry",
+      "observations": [
+        "F057 confirms AC04: 224px of 440px progress width is underneath higher sidebar.",
+        "F058 is a compact sending confirmation with named scope, explicit status consequence, destination choice, message, Cancel and Send Shoot. It does not imply that approval and sending are the same task.",
+        "F059 keeps Client call time/date/location/weather/key contact and Schedule visible at 1133. Client action permissions are C-owned and were not inferred from appearance.",
+        "Timestamp AM/PM wraps in narrow table cells but remains readable; no new defect from this alone."
+      ]
+    },
+    {
+      "id": "AC-CP10",
+      "area": "Client Shoot planning and populated Brief delivery row",
+      "images": [
+        "F060-shoot-client-planning.jpg",
+        "F061-brief-delivery-sample.jpg"
+      ],
+      "status": "Inspected supplied isolated-session evidence",
+      "observations": [
+        "F060 confirms Client planning composition at 1440 with persistent local navigation, shot group counts and compact technical fields. Appearance alone does not establish permission correctness; C owns that review.",
+        "F061 adds a populated additional delivery editor row and confirms A12 short-duration truncation can occur at 1440 as well. Preserve the settled field order and shared table hierarchy.",
+        "Animation project flow keeps Animation, optional Storyboard and pinned Media distinct; do not normalise it to the Shoot/Edit project in the preceding screenshots."
+      ]
+    },
+    {
+      "id": "AC-CP11",
+      "area": "Masters real Main Video, captions, recuts and comment recovery",
+      "images": [
+        "F062-main-video-delivery.jpg",
+        "F063-masters-caption-editor.jpg",
+        "F064-masters-recut-entry.jpg",
+        "F065-recut-source-picker.jpg",
+        "F066-recut-range-draft.jpg",
+        "F067-recut-cancel-result.jpg",
+        "F068-masters-comments-1133.jpg",
+        "F069-masters-composer-reachable.jpg"
+      ],
+      "status": "Inspected current isolated-session evidence and source",
+      "observations": [
+        "Main Video and incomplete Platform cutdown provide actual Brief-linked delivery context; disabled Download All/Complete reflect an incomplete delivery rather than a generic inactive control.",
+        "Caption save on blur has explicit saved/re-attached toast; AC05 only concerns readable cue text.",
+        "Recut source, target, range and instruction distinctions are worth preserving; B owns range keyboard checks.",
+        "F068 composer fully visible at 1133. Lead measured top710.5/bottom895.5 before footer932.",
+        "F069 keyboard navigation reveals the full 1440 composer before its footer; reject the earlier fold-based clipping suspicion.",
+        "The source picker has no eligible alternatives in this sample; its empty space is not by itself a design defect."
+      ]
+    },
+    {
+      "id": "AC-CP12",
+      "area": "Caption cue follow-up",
+      "images": [
+        "F070-caption-text-fit.jpg",
+        "F071-client-caption-reading.jpg"
+      ],
+      "status": "Inspected supplied editable and Client read-only current evidence plus measured geometry",
+      "observations": [
+        "The normal unchanged second cue requires 386px of content in a 310px single-line input. It clips in both Staff and Customer views.",
+        "AC05 is a scoped reading-flow refinement with observed geometry, not a missing-data or auth finding.",
+        "First cue save on blur remains explicit through feedback; no new mutation was needed for this follow-up."
+      ]
+    },
+    {
+      "id": "AC-CP13",
+      "area": "Freelancer My jobs, time and invoice entry",
+      "images": [
+        "F072-freelancer-active-1440.jpg",
+        "F073-freelancer-active-1133.jpg",
+        "F074-freelancer-commercial-pan.jpg",
+        "F075-freelancer-time-invalid.jpg",
+        "F076-freelancer-invoice-draft.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence and source",
+      "observations": [
+        "Shared header title/search composition fits both widths.",
+        "F074 proves Time and Commercial columns can be reached by horizontal pan while identity stays visible; no inaccessible-column finding.",
+        "132px rows are readable and purposeful for production flow, role and tags; sparse records do not prove excessive page whitespace.",
+        "Time editor at 1133 and invoice draft fit with visible cancel/save boundary.",
+        "Invoice mismatch warning explains that the Studio will review the difference rather than silently hiding it.",
+        "B owns numeric validation and possible missing project identity in the invoice dialog."
+      ]
+    },
+    {
+      "id": "AC-CP14",
+      "area": "Freelancer pending offer and read-only Brief",
+      "images": [
+        "F077-freelancer-open-offer.jpg",
+        "F078-offer-brief-1133.jpg",
+        "F079-offer-brief-1440.jpg"
+      ],
+      "status": "Inspected supplied current isolated-session evidence",
+      "observations": [
+        "Pending offer terms and distinct review/decline/accept actions fit the 1133 card.",
+        "Shared Brief summary at 1133 repeats A12 mid-word Landscape wrap; 1440 comparison fits.",
+        "Captured top shows the lower part of Offer preview header; initial scroll/entry context needs lead confirmation before extending A13.",
+        "Source readOnly wrapper is present, but apparent Add affordances remain visible; C owns behaviour/permission assessment."
+      ]
+    },
+    {
+      "id": "AC-CP15",
+      "area": "Offer Brief top-context follow-up",
+      "images": [
+        "F080-offer-brief-top.jpg",
+        "F081-offer-brief-top-1133.jpg"
+      ],
+      "status": "Visually inspected; caption/geometry context unresolved",
+      "observations": [
+        "Despite capture names and window scrollY0 report, neither image visibly contains Offer preview - read only, the project title or header Back to offers. Only lower header text appears below the fixed 64px global bar.",
+        "Lead asked to inspect header child rectangles and actual content scroller before claiming the heading was restored.",
+        "Do not extend A13 without entry/scroll mechanism evidence.",
+        "Read-only summary contains inert normal Add/edit affordances. C owns this as an optional scoped visual presentation refinement pending lead reconciliation, not an active permission bypass."
+      ]
+    },
+    {
+      "id": "AC-CP16",
+      "scope": "G001-G129 contact sheets plus focused current originals",
+      "observed": "All G frames visually reviewed at overview scale; billing, To Do, Shoot questions/schedule/progress, caption inspector and selected Move path also reviewed at full/native crop scale. Contact sheets are navigation aids, not a substitute for detailed finding evidence.",
+      "evidence": [
+        "reviewers/a-completion-comparisons/contact-01.jpg",
+        "reviewers/a-completion-comparisons/contact-11.jpg"
+      ]
+    },
+    {
+      "id": "AC-CP17",
+      "scope": "Focused Studio settings dialogs",
+      "observed": "Name/logo/video-type/default-Brief editors keep a local title, one task and Cancel/Save boundary. The long question chooser scrolls while retaining its footer;1440 and1133 support the same composition. Retain these focused scopes rather than combine settings into a long universal form.",
+      "evidence": [
+        "G016-studio-name-empty.jpg",
+        "G018-studio-video-types.jpg",
+        "G019-studio-default-brief.jpg",
+        "G107-studio-video-types-1133.jpg",
+        "G108-default-brief-1133.jpg"
+      ]
+    },
+    {
+      "id": "AC-CP18",
+      "scope": "Notification content and restrictions",
+      "observed": "Message detail pairs when/recipient context with an example card; trigger demo explains causality without sending. Fixed AccountAccess wording is marked. Personal security and mandatory notification settings use an explicit account reason. The A05 descendant navigation context issue remains separate.",
+      "evidence": [
+        "G038-review-trigger-demo.jpg",
+        "G048-fixed-notification-copy.jpg",
+        "G073-personal-notifications.jpg",
+        "G079-security-google.jpg",
+        "G091-client-member-team-restricted.jpg"
+      ]
+    },
+    {
+      "id": "AC-CP19",
+      "scope": "Client team assignment versus invitation",
+      "observed": "Existing project-access editor identifies the specific colleague and has Save access; the invitation dialog requires identity plus chosen access and has Send invitation disabled while blank. Retain the distinction between selecting scope, saving existing access and sending a new invitation.",
+      "evidence": [
+        "G084-client-invite-entry.jpg",
+        "G085-client-project-mixed.jpg",
+        "G101-client-access-1133.jpg",
+        "G102-client-invite-1133.jpg"
+      ]
+    },
+    {
+      "id": "AC-CP20",
+      "scope": "Brand Kit setup alternatives",
+      "observed": "Empty Kit explains the asset outcome and offers source build versus manual entry. Local staged website visibly enables Build Brand Kit; processing uses labelled stages; manual state enables section-specific controls. Preserve the alternate methods and actual brand content. Existing A06 enclosing surface and A11 layout-priority recommendations remain decisions, not a reason to make these states identical.",
+      "evidence": [
+        "G120-brand-kit-empty-intake-1133.jpg",
+        "G121-brand-kit-website-draft-1133.jpg",
+        "G122-brand-kit-source-ready-1133.jpg",
+        "G123-brand-kit-processing-1133.jpg",
+        "G125-brand-kit-manual-empty-1133.jpg",
+        "G126-brand-kit-manual-empty-1440.jpg"
+      ]
+    }
+  ],
+  "verificationRemaining": [
+    "No claim of every possible record, asset format, hover or keyboard combination. Explicit safety/native/external exclusions recorded per surface.",
+    "Application unchanged verification belongs to lead final diff; Reviewer A performed no source changes.",
+    "Lead must merge AC04 into A10 and reconcile C02/B09 related evidence rather than count duplicates."
+  ],
+  "reviewStatus": "Needs decision",
+  "applicationChanges": false,
+  "priorFindingEvidenceExtensions": [
+    {
+      "id": "A03",
+      "evidence": [
+        "F001-todo-populated-1440.jpg",
+        "F006-shoot-shot-list-1440.jpg"
+      ],
+      "extension": "Existing non-zero global Chat22/Updates5 badges now appear in genuine isolated-session captures. This closes the earlier absence of a non-zero global static image, not runtime animation/reduced-motion verification. Do not create a duplicate finding."
+    },
+    {
+      "id": "A12",
+      "evidence": [
+        "F061-brief-delivery-sample.jpg",
+        "F078-offer-brief-1133.jpg",
+        "F079-offer-brief-1440.jpg"
+      ],
+      "extension": "A populated Additional Versions editor row is now inspected in the authorised disposable demo. At 1440 the Platform cutdown short duration is rendered as 30 se... while Main Video 2 mins fits. This extends the same fixed-column closed-field readability issue to this 1440 populated case, without implying all 1440 values fail. F078/F079 also verify a shared Freelancer read-only consumer: Landscape splits inside the word at 1133 and fits at 1440. Studio Freelancer can now be listed as an observed affected role for this summary state.",
+      "recommendedReconciliation": "Keep one A12 root-cause finding. Update title/scope to desktop production-field readability and remove the stale gap that no populated extra-version editor row has been inspected. Summary extra-version alignment and custom duration/format branches still need their own evidence. Preserve the separate read-only affordance review owned by C; do not merge permissions/misleading controls into the width finding.",
+      "classification": "Observed extension of retained finding, not a duplicate",
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "independentBrowserAssignment": {
+    "scope": [
+      "CB08 / N118 Brand Kit",
+      "CB09 / N120-N127 settings"
+    ],
+    "authorisedOrigin": "http://127.0.0.1:8767",
+    "assignedBrowser": "Chrome2 Tom Producer",
+    "assignedTab": "1716948401 (created for audit and now closed)",
+    "isolationEvidence": "data/a-browser-isolation.json",
+    "status": "Completed G001-G129",
+    "viewport": "Own audit window1440x1000 and1133x1000; restored original1512x767",
+    "changesMade": "Only authorised isolated mock scenario progression and reversible local inspection. Working localhost origin never manipulated. No application source/assets changed.",
+    "cleanup": "Scenario reset Studio Owner/Admin Active, Hims empty restored G129; Brisk Storage provider restored; expanded sidebar restored; own audit tab closed."
+  },
+  "finiteCoverageClosure": [
+    {
+      "id": "N118",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Populated Kit and motion versions v3/v2/restored; colour picker, font matrix, inline Voice/Tone draft Cancel, Footage populated filter, imagery and PDF previews, selected menu/delete confirmation Cancel, guest nested logo actions; existing empty Hims intake, website staging, local mock build processing/result, scenario reset, manual empty states; Move command toast observed.",
+      "remainingExcluded": "Native file upload/replacement chooser, actual deletion not invoked. New sub-brand opener immediately creates a stored sample and was not invoked; existing sub-brand route has separate lead captures. Legacy SetupModal has no set-open path and is excluded. Every asset/format permutation and full keyboard traversal not claimed.",
+      "evidence": [
+        "G001-G014",
+        "G120-G129"
+      ]
+    },
+    {
+      "id": "N120",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Studio Staff, Studio Freelancer and Customer profile/notifications/security. Freelancer professional/business fields; Client company context separately. Timezone no-results, password dialog Cancel; Google/Microsoft/magic-link preview variants; 1133 Client/Freelancer and existing lead Staff profiles.",
+      "remainingExcluded": "No credentials entered or saved; no auth-provider connect. Freelancer personal profile has no rates field: exclude that mistaken inventory branch; rates live elsewhere in People/assignment. No saved toggles.",
+      "evidence": [
+        "G071-G082",
+        "G095-G105"
+      ]
+    },
+    {
+      "id": "N121",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Client Admin/Member Team and Company; blank invite Cancel, active/pending menus, project access mixed/all/none local drafts Cancel; Client invoices and hidden billing preview; 1133 Team/project-access/invite/invoices.",
+      "remainingExcluded": "No invitation/resend/remove/access-role mutation. Remove user/cancel invitation source commands mutate immediately and have no confirmation state to inspect. Invoice payment not attempted.",
+      "evidence": [
+        "G082-G094",
+        "G100-G103"
+      ]
+    },
+    {
+      "id": "N122",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Studio setup overview and four focused editors; empty-name disabled Save; logo editor Cancel; video types/default Brief Cancel; sample portal preview and back. 1440,1133 and collapsed1133.",
+      "remainingExcluded": "No native logo upload or saved settings. No Studio colour/paid white-label controls exist in this approved V1 setup.",
+      "evidence": [
+        "G015-G020",
+        "G106-G108",
+        "G119"
+      ]
+    },
+    {
+      "id": "N123",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Production defaults role selector, Staff options and current defaults; local Add role draft then navigation discard guard; discard confirmed without save. Narrow composition and Staff menu.",
+      "remainingExcluded": "Current source has no required/optional stages controls in this section: exclude inventory overreach. No saved default role/assignee changes.",
+      "evidence": [
+        "G021-G024",
+        "G109-G110"
+      ]
+    },
+    {
+      "id": "N124",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "AI Playbook instructions/references; local public example link staged then discard guard/restoration; narrow composition.",
+      "remainingExcluded": "Native upload not invoked and external links not opened. Current references do not have an internal preview panel: source exclusion. No saved instructions.",
+      "evidence": [
+        "G025-G026",
+        "G111"
+      ]
+    },
+    {
+      "id": "N125",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "WhatsApp connected and Slack reconnect-required cards; current Brisk Storage, provider menu, Google Drive, Dropbox and Remote Studio conditional branches; Brisk Storage restored. 1133 messaging and Remote Studio.",
+      "remainingExcluded": "No actual external connect/reconnect/OAuth. These connection actions are beyond allowed inspection; no proof of real integration.",
+      "evidence": [
+        "G027-G033",
+        "G112-G113"
+      ]
+    },
+    {
+      "id": "N126",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Notification delivery/groups/reminder selector; No reminders dependent disabled states in unsaved draft, Cancel; all four normally linked message categories with alternate records; local editable copy/empty-title Cancel; trigger demo; direct fixed AccountAccess content; direct legacy Client template editor Cancel; 1133 root/descendant/template.",
+      "remainingExcluded": "Restore defaults absent on unmodified baseline, not manufactured; it writes immediately. Data has8 categories but current navigation links4, other direct-only categories not blanket treated as normal live entry. No messages sent or copy saved. Full every-token/body-error combination not claimed.",
+      "evidence": [
+        "G034-G050",
+        "G114-G116"
+      ]
+    },
+    {
+      "id": "N127",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Plan summary/comparison, Monthly and Annual by keyboard, both plan-change confirmation frequencies Cancel, storage/Staff add-on confirmation Cancel; trial/overdue/restricted/cancelling previews. Client billing connected/disconnect Cancel, unselected/connect entry Cancel, independent/action-required/disconnected/restricted previews. 1133 comparison and keyboard frequency.",
+      "remainingExcluded": "No purchase/plan confirmation/Stripe continuation/payment; no real external account connection. Contact sales/Manage billing external destination not invoked. Frequency visibility defect observed.",
+      "evidence": [
+        "G051-G070",
+        "G117-G118"
+      ]
+    }
+  ],
+  "decisionNotes": [
+    {
+      "id": "AC-D01",
+      "title": "Plan benefits advertise branding options removed from V1 appearance",
+      "reviewStatus": "Needs decision",
+      "classification": "Approved-decision conflict requiring scope clarification",
+      "severity": "S3 decision note, not counted as a new observed UI defect",
+      "observed": "Current comparison lists Studio primary colour/Custom branding, fully white-labelled Client portal/No Brisk branding or footer and Business white-label/Custom domain. The30September V1 decision removed Studio colour customisation and paid white-label controls, with standard purple portals. That decision is scoped to settings and portal appearance; no separate later commercial catalogue approval was found.",
+      "recommendation": "Confirm whether current V1 plan benefits should reflect the approved appearance scope, or whether these are separately approved future offerings. Align copy after that decision; do not change entitlements/prices or reintroduce controls without approval.",
+      "sources": [
+        "Docs/ux-decision-log.md:179",
+        "src/data/billing.ts:107",
+        "src/data/billing.ts:143",
+        "src/data/billing.ts:182"
+      ],
+      "evidence": [
+        "G052-plan-comparison-monthly.jpg",
+        "G117-plan-comparison-1133.jpg"
+      ],
+      "reference": "No approved plan-benefit comparison screenshot found; explicit scoped user decision is the authority."
+    }
+  ]
+}

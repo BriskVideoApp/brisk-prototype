@@ -1,0 +1,24 @@
+Window: "127.0.0.1:8769 says", App: Google Chrome.
+0 window 127.0.0.1:8769 says, Description: 127.0.0.1:8769 says, Paste an image link, Secondary Actions: Raise
+	1 container 127.0.0.1:8769 says
+		2 container
+			3 heading 127.0.0.1:8769 says
+			4 container
+				5 scroll area
+				6 text field (settable) Paste an image link
+			7 container
+				8 button Cancel
+				9 button OK
+10 menu bar
+	11 Chrome
+	12 File
+	13 Edit
+	14 View
+	15 History
+	16 Bookmarks
+	17 Profiles
+	18 Tab
+	19 Window
+	20 Help
+
+The focused UI element is 6 text field (settable) Paste an image link

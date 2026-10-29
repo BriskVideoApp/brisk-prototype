@@ -1,0 +1,124 @@
+{
+  "id": "NAV-04",
+  "date": "2026-10-29",
+  "title": "Collapsed sidebar tooltips",
+  "approval": "Tom requested tooltips for the collapsed sidebar controls.",
+  "implementation": [
+    "Use the existing app data-tooltip presentation for collapsed workspace and settings links, replacing native title labels.",
+    "Keep native links, destinations, aria-labels and active-page states.",
+    "Position tooltips outside the scrolling rail using measured layout coordinates and DS spacing. Reposition on focus, pointer entry, navigation changes, collapse, resize and rail scroll.",
+    "Include expand navigation, clickable Staff Studio brand, account menu and Studio settings. Suppress the account tooltip while its menu is open.",
+    "Expanded links retain visible labels without redundant tooltips."
+  ],
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed, exit 0",
+    "runtime": [
+      {
+        "url": "http://127.0.0.1:8783/active-videos?review=collapsed-tooltips",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:8783/settings/studio",
+        "status": 200
+      }
+    ],
+    "browser": [
+      "Actual pointer hover: People, opacity 1, positioned at rail right plus DS 8px spacing.",
+      "Keyboard traversal covered all seven workspace destinations, the expand control, account and Studio settings. Labels and focus were observed; immediate transition samples were not treated as settled visibility assertions.",
+      "Settled keyboard tooltip visibility confirmed on Videos, Media Library, Your menu, Production defaults and Client billing.",
+      "All collapsed Studio settings links and Back to workspace have labels; expanded links restore visible copy and remove their data-tooltip.",
+      "Account menu opens with Enter and closes with Escape.",
+      "Scrolled settings rail at 1133 x 700: Client billing focus tooltip remains aligned (rail scrollTop 32.22px, tooltip centre 491.68px).",
+      "No inspected browser warnings or errors."
+    ],
+    "observedCssViewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        1133,
+        1000
+      ],
+      [
+        1133,
+        700
+      ]
+    ],
+    "browserZoom": "Existing 90% browser zoom preserved. Temporary viewport overrides were adjusted to achieve the listed measured CSS dimensions, then reset.",
+    "sourceComparison": {
+      "comparedFiles": 1787,
+      "changed": [
+        "src/components/navigation/HybridSidebar.tsx",
+        "src/components/navigation/AppShell.tsx",
+        "src/components/navigation/hybrid-navigation.css",
+        "src/components/navigation/UserAvatarMenu.tsx",
+        "Docs/desktop-design-baseline.md"
+      ]
+    },
+    "roles": "Staff workspace and Studio settings browser-verified. Role filtering, Client company/personal settings and shared role branches source-reviewed; Customer and Freelancer browser sessions were not repeated for this label change."
+  },
+  "evidence": {
+    "pointer-people-1440.png": {
+      "route": "/people",
+      "role": "Studio Staff",
+      "state": "Collapsed, pointer hover People",
+      "cssViewport": [
+        1440,
+        1000
+      ]
+    },
+    "keyboard-media-1133.png": {
+      "route": "/people",
+      "role": "Studio Staff",
+      "state": "Collapsed, keyboard focus Media Library; previous People hover is fading",
+      "cssViewport": [
+        1133,
+        1000
+      ]
+    },
+    "keyboard-account-1133.png": {
+      "route": "/people",
+      "role": "Studio Staff",
+      "state": "Collapsed, keyboard focus account menu",
+      "cssViewport": [
+        1133,
+        1000
+      ]
+    },
+    "keyboard-settings-1133.png": {
+      "route": "/settings/studio",
+      "role": "Studio Staff",
+      "state": "Collapsed, keyboard focus Production defaults",
+      "cssViewport": [
+        1133,
+        1000
+      ]
+    },
+    "keyboard-settings-scroll-1133.png": {
+      "route": "/settings/studio",
+      "role": "Studio Staff",
+      "state": "Collapsed, scrolled settings rail, keyboard focus Client billing",
+      "cssViewport": [
+        1133,
+        700
+      ]
+    },
+    "collapsed-tooltip-focus.png": {
+      "source": "pointer-people-1440.png",
+      "cropBounds": [
+        0,
+        65,
+        265,
+        455
+      ],
+      "alterations": "Faithful crop only. Full capture retained."
+    }
+  },
+  "preservation": "Working browser origins 8773, 8777 and 8778 were not navigated or reloaded. No records, permissions, mock data, assets or dependencies changed. Browser work used isolated 8783. Role unchanged, account menu closed, temporary viewport reset, inspection tab closed.",
+  "limits": [
+    "Mobile verification remains deferred.",
+    "Other access roles and personal/company settings branches were source-reviewed rather than separately browser-verified."
+  ],
+  "status": "Implemented and desktop-verified"
+}

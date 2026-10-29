@@ -1,0 +1,37 @@
+[
+  [
+    "brisk-prototype-state-v1.onboarding.reviewDraft",
+    "None",
+    "{'view': 'studio-setup', 'studioName': 'North Star Films', 'studioWebs"
+  ],
+  [
+    "brisk-media-library-v1.assets[1].status",
+    "preparing",
+    "ready"
+  ],
+  [
+    "brisk-media-library-v1.assets[1].processingProgress",
+    "72",
+    "100"
+  ],
+  [
+    "brisk-media-library-v1.assets[5].status",
+    "uploading",
+    "ready"
+  ],
+  [
+    "brisk-media-library-v1.assets[5].processingProgress",
+    "28",
+    "100"
+  ],
+  [
+    "brisk-media-library-v1.assets[24].status",
+    "stored",
+    "ready"
+  ],
+  [
+    "brisk-media-library-v1.assets[24].processingProgress",
+    "48",
+    "100"
+  ]
+]

@@ -1,0 +1,10 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/storyboard".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 11, 13, 15, 37, 39, 41
++					44 text Copy link
++					45 text Download
++					46 text More actions
++					47 text Attachments are not available in this view
++					48 text Recording is not available in this prototype
++					49 text Draw on screen
+The focused UI element is 4 button Back to Storyboard

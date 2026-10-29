@@ -1,0 +1,3038 @@
+[
+  {
+    "id": "H001-team-remove-role-confirm",
+    "caption": "Remove role opens a scoped destructive confirmation while Shooter draft hours remain 9; Remove not invoked.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H001-team-remove-role-confirm.jpg",
+    "dom": "evidence/H001-team-remove-role-confirm.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:54:49.196Z",
+    "seriesId": "H001"
+  },
+  {
+    "id": "H002-team-remove-cancel-draft",
+    "caption": "Cancelling Remove leaves Shooter editor open, retains unsaved 9 hours and existing two invitations; focus returns Remove role.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H002-team-remove-cancel-draft.jpg",
+    "dom": "evidence/H002-team-remove-cancel-draft.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"danger\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Remove role</button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:54:55.715Z",
+    "seriesId": "H002"
+  },
+  {
+    "id": "H003-team-draft-discarded",
+    "caption": "Cancelling parent role editor then reopening restores original 8 hours; no Save changes, assignment or invitation sent.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H003-team-draft-discarded.jpg",
+    "dom": "evidence/H003-team-draft-discarded.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input class=\"team-inline-input team-hours-needed-input label-s\" id=\"role-hours-loom-launch-film-shooter\" aria-label=\"Total hours needed for Shooter\" inputmode=\"decimal\" min=\"0\" step=\"0.25\" type=\"number\" value=\"8\">",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:54:56.542Z",
+    "seriesId": "H003"
+  },
+  {
+    "id": "H004-team-zero-rate",
+    "caption": "Selecting Hugo and entering zero project rate disables both Invite and Assign now; existing Already invited option remains disabled.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H004-team-zero-rate.jpg",
+    "dom": "evidence/H004-team-zero-rate.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input class=\"team-inline-input label-s\" min=\"1\" inputmode=\"decimal\" step=\"1\" type=\"number\" value=\"1250\">",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:03.394Z",
+    "seriesId": "H004"
+  },
+  {
+    "id": "H005-team-invite-empty-message",
+    "caption": "Invitation review names Hugo; empty Message disables Send invite. No invitation sent.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H005-team-invite-empty-message.jpg",
+    "dom": "evidence/H005-team-invite-empty-message.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<textarea class=\"label-s\" id=\"freelancer-invite-message\" rows=\"4\" maxlength=\"240\"></textarea>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:10.603Z",
+    "seriesId": "H005"
+  },
+  {
+    "id": "H006-team-invite-cancel-selection",
+    "caption": "Cancelling Send invite returns to role editor with Hugo still selected and Invite / Assign now distinct; no invitation or assignment committed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N092"
+    ],
+    "screenshot": "evidence/H006-team-invite-cancel-selection.jpg",
+    "dom": "evidence/H006-team-invite-cancel-selection.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold team-secondary-button team-send-invites-button\">Invite</button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:10.824Z",
+    "seriesId": "H006"
+  },
+  {
+    "id": "H007-flow-hide-confirm",
+    "caption": "Hide Script opens confirmation explaining preserved work and Keep visible; no Hide stage invoked.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N138"
+    ],
+    "screenshot": "evidence/H007-flow-hide-confirm.jpg",
+    "dom": "evidence/H007-flow-hide-confirm.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Project settingsAdjust project flowDrag stages to reorder them. Media stays pinned outside the production flow.BriefScriptShootEditMastersAdd a suppor"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep visible</button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:29.777Z",
+    "seriesId": "H007"
+  },
+  {
+    "id": "H008-flow-keep-visible",
+    "caption": "Keep visible closes confirmation, retains Script in production flow and returns Hide Script focus.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N138"
+    ],
+    "screenshot": "evidence/H008-flow-keep-visible.jpg",
+    "dom": "evidence/H008-flow-keep-visible.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Project settingsAdjust project flowDrag stages to reorder them. Media stays pinned outside the production flow.BriefScriptShootEditMastersAdd a suppor"
+        }
+      ],
+      "focus": "<button type=\"button\" aria-label=\"Hide Script\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/eye-slash.svg&quot;); --icon-size: 14px;\"></span></button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:29.912Z",
+    "seriesId": "H008"
+  },
+  {
+    "id": "H009-flow-term-menu",
+    "caption": "Post-production term popup offers Edit and Animation and explains linked copy; no term or stage changed.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N138"
+    ],
+    "screenshot": "evidence/H009-flow-term-menu.jpg",
+    "dom": "evidence/H009-flow-term-menu.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Project settingsAdjust project flowDrag stages to reorder them. Media stays pinned outside the production flow.BriefScriptShootEditPost-production ter"
+        },
+        {
+          "label": null,
+          "text": "Post-production termThe label, icon and action copy change together. Existing work is unchanged.EditAnimation"
+        }
+      ],
+      "focus": "<button class=\"production-flow-stage-term-trigger\" type=\"button\" aria-controls=\"_r_7_-term-popover\" aria-expanded=\"true\"><span class=\"production-flow-adjuster-stage-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/scissors.svg&quot;); --icon-size: 18px;\"></span></span><span class=\"label-s-semibold\">Edit</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:30.310Z",
+    "seriesId": "H009"
+  },
+  {
+    "id": "H010-history-keyboard",
+    "caption": "Recent pages opens a two-entry menu; End sets current project entry as active descendant while focus stays on the menu.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N084"
+    ],
+    "screenshot": "evidence/H010-history-keyboard.jpg",
+    "dom": "evidence/H010-history-keyboard.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_3_-1\" id=\"_r_3_\" aria-label=\"Recent pages\"><div role=\"presentation\"><a class=\"brisk-select-option label-s   \" id=\"_r_3_-0\" tabindex=\"-1\" data-active=\"false\" href=\"/active-videos\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Videos</span></span></span></a></div><div role=\"presentation\"><a class=\"brisk-select-option label-s  active \" id=\"_r_3_-1\" tabindex=\"-1\" data-active=\"true\" href=\"/active-videos?project=loom-launch-film\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Videos - Loom - Launch Film - Sales Narrative</span></span></span></a></div></div>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:38.115Z",
+    "seriesId": "H010"
+  },
+  {
+    "id": "H011-history-escape",
+    "caption": "Escape closes Recent pages and returns focus to its opener.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N084"
+    ],
+    "screenshot": "evidence/H011-history-escape.jpg",
+    "dom": "evidence/H011-history-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button aria-label=\"Recent pages\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"M\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Recent pages\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"centre\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/clock-clockwise.svg&quot;); --icon-size: 16px;\"></span></span></button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:38.273Z",
+    "seriesId": "H011"
+  },
+  {
+    "id": "H012-account-escape",
+    "caption": "Account panel Escape closes Your menu and returns account opener focus; Sign out not invoked.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H012-account-escape.jpg",
+    "dom": "evidence/H012-account-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"app-user-menu-trigger\" type=\"button\" aria-label=\"Open your menu, signed in as Tom Mitchell\" aria-controls=\"_r_1_\" aria-expanded=\"false\" aria-haspopup=\"dialog\" title=\"Tom Mitchell\"><span class=\"app-user-menu-trigger-avatar\"><span class=\"avatar sand \" aria-label=\"Tom Mitchell\" title=\"Tom Mitchell\">TM</span></span><span class=\"app-user-menu-trigger-copy app-sidebar-copy\"><strong class=\"label-s-semibold\">Tom Mitchell</strong><span class=\"label-xs\">North Star Films</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:45.429Z",
+    "seriesId": "H012"
+  },
+  {
+    "id": "H013-updates-escape",
+    "caption": "Escape from Updates opener closes Recent notifications; unread count stays 5. Mark all as read and Retry not invoked.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N087"
+    ],
+    "screenshot": "evidence/H013-updates-escape.jpg",
+    "dom": "evidence/H013-updates-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button aria-label=\"Updates, 5 unread\" aria-controls=\"_r_4_\" aria-expanded=\"false\" type=\"button\" data-brisk-button=\"\" data-variant=\"ghost\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold app-notification-updates-button\"><span class=\"app-notification-bell-icon\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 18px;\"></span></span><span class=\"quick-action-badge label-xs-semibold\" aria-label=\"5 unread notifications\">5</span>Updates</button>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:55:50.669Z",
+    "seriesId": "H013"
+  },
+  {
+    "id": "H014-chat-search-no-results",
+    "caption": "Global Chat nested search shows no messages match the unmatched term; no message submitted or changed.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H014-chat-search-no-results.jpg",
+    "dom": "evidence/H014-chat-search-no-results.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreads1Mark as readCallsAll projects7Mark as readLoom5Mark as readDeel1Mark a"
+        },
+        {
+          "label": "Search all messages",
+          "text": "EscIn:LOOM-24From:JessHas:fileAfter:2026-07-20No messages match “no-such-audit-message”Try a different search or clear filters."
+        }
+      ],
+      "focus": "<input placeholder=\"Search messages or use in:, from:, has:, before:, after:\" aria-label=\"Search messages\" value=\"no-such-audit-message\">",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:56:06.721Z",
+    "seriesId": "H014"
+  },
+  {
+    "id": "H015-chat-search-escape",
+    "caption": "One Escape from nested Search all messages dismisses both the search and Global Chat; focus falls to body. No send or stored record changed.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H015-chat-search-escape.jpg",
+    "dom": "evidence/H015-chat-search-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:56:06.908Z",
+    "seriesId": "H015"
+  },
+  {
+    "id": "H016-ai-source-escape",
+    "caption": "Escape closes Current Brief source preview while AI conversation remains open; focus falls to body.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H016-ai-source-escape.jpg",
+    "dom": "evidence/H016-ai-source-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:56:34.741Z",
+    "seriesId": "H016"
+  },
+  {
+    "id": "H017-ai-history-no-results",
+    "caption": "AI chat history shows No chats found for unmatched search; no rename, deletion or prompt submitted.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H017-ai-history-no-results.jpg",
+    "dom": "evidence/H017-ai-history-no-results.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Brisk AI chat history",
+          "text": "Start new chatNo chats foundTry another title, Client or project."
+        }
+      ],
+      "focus": "<input class=\"label-s\" aria-label=\"Search chats\" placeholder=\"Search chats\" type=\"search\" value=\"no-such-audit-chat\">",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:56:47.566Z",
+    "seriesId": "H017"
+  },
+  {
+    "id": "H018-ai-history-escape",
+    "caption": "Escape dismisses AI history while conversation remains; focus falls to body.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H018-ai-history-escape.jpg",
+    "dom": "evidence/H018-ai-history-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:56:53.206Z",
+    "seriesId": "H018"
+  },
+  {
+    "id": "H019-people-no-results",
+    "caption": "People unmatched search shows zero matching records and an empty result state; source records unchanged.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095"
+    ],
+    "screenshot": "evidence/H019-people-no-results.jpg",
+    "dom": "evidence/H019-people-no-results.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input id=\"people-search\" placeholder=\"Search by name or email\" type=\"search\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:21.187Z",
+    "seriesId": "H019"
+  },
+  {
+    "id": "H020-invite-invalid-email",
+    "caption": "Invitation Person step keeps Next disabled for invalid email; no invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H020-invite-invalid-email.jpg",
+    "dom": "evidence/H020-invite-invalid-email.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 1 of 2 - Who are you inviting?1 Person2 AccessWho are you inviting?Studio StaffFull Studio workspace access is automatic in V1.Studi"
+        }
+      ],
+      "focus": "<input id=\"_r_13_\" aria-describedby=\"_r_13_-hint\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:29.157Z",
+    "seriesId": "H020"
+  },
+  {
+    "id": "H021-person-inline-cancel",
+    "caption": "Inline Name Cancel restores Sarah Chen display; no profile saved.",
+    "route": "/people/sc",
+    "url": "http://127.0.0.1:8768/people/sc",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N096"
+    ],
+    "screenshot": "evidence/H021-person-inline-cancel.jpg",
+    "dom": "evidence/H021-person-inline-cancel.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:52.471Z",
+    "seriesId": "H021"
+  },
+  {
+    "id": "H022-person-archive-confirm",
+    "caption": "Archive Sarah Chen confirmation distinguishes active-list removal and preserved history; destructive action not invoked.",
+    "route": "/people/sc",
+    "url": "http://127.0.0.1:8768/people/sc",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N096"
+    ],
+    "screenshot": "evidence/H022-person-archive-confirm.jpg",
+    "dom": "evidence/H022-person-archive-confirm.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Archive Sarah Chen?This removes the person from active lists and assignment pickers.Project history will not be deleted. Projects, comments, approvals"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep person active</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:52.929Z",
+    "seriesId": "H022"
+  },
+  {
+    "id": "H023-person-delete-guard",
+    "caption": "Delete Person record requires exact Sarah Chen typed confirmation; blank input keeps Delete incorrect record disabled. No deletion invoked.",
+    "route": "/people/sc",
+    "url": "http://127.0.0.1:8768/people/sc",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N096"
+    ],
+    "screenshot": "evidence/H023-person-delete-guard.jpg",
+    "dom": "evidence/H023-person-delete-guard.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Delete Sarah Chen's Person record?Use this only for a duplicate or a record created by mistake.Audit history will be retained. Existing project histor"
+        }
+      ],
+      "focus": "<input data-confirmation-autofocus=\"true\" id=\"_r_1b_\" data-brisk-input=\"\" data-size=\"S\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-s \" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:53.365Z",
+    "seriesId": "H023"
+  },
+  {
+    "id": "H024-person-assign-project-picker",
+    "caption": "Assign Sarah Chen explicitly describes choosing project before role and hours in Team; project choice is a handoff, not committed assignment.",
+    "route": "/people/sc",
+    "url": "http://127.0.0.1:8768/people/sc",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N096"
+    ],
+    "screenshot": "evidence/H024-person-assign-project-picker.jpg",
+    "dom": "evidence/H024-person-assign-project-picker.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Assign Sarah ChenChoose a project, then select their role and hours in the project Team panel.Launch Film - Sales NarrativeLoom - In ProductionCustome"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:57:59.592Z",
+    "seriesId": "H024"
+  },
+  {
+    "id": "H025-client-start-project",
+    "caption": "Client Start project explicitly selects one primary Client and keeps Create project disabled without a name; no project created.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N098"
+    ],
+    "screenshot": "evidence/H025-client-start-project.jpg",
+    "dom": "evidence/H025-client-start-project.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Start projectEvery project has one primary Client. You can select an existing Client or add one without leaving this flow.Project nameWho is this proj"
+        }
+      ],
+      "focus": "<input id=\"_r_1k_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:58:26.822Z",
+    "seriesId": "H025"
+  },
+  {
+    "id": "H026-client-archive-confirm",
+    "caption": "Archive Loom confirmation explains active-list and portal impact while preserving project history; Archive Client not invoked.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N098"
+    ],
+    "screenshot": "evidence/H026-client-archive-confirm.jpg",
+    "dom": "evidence/H026-client-archive-confirm.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Archive Loom?This removes the Client from the active list and pauses portal access.Projects and files will not be deleted. All 5 connected projects, f"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep Client active</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T20:58:27.258Z",
+    "seriesId": "H026"
+  },
+  {
+    "id": "H027-client-access-1133",
+    "caption": "Narrow desktop project access dialog retains named checkbox rows, explicit contact scope and Cancel / Save access footer. No permission saved.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N098"
+    ],
+    "screenshot": "evidence/H027-client-access-1133.jpg",
+    "dom": "evidence/H027-client-access-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Change project accessChoose which projects Sarah Kim can open in the Client portal.Launch Film - Sales NarrativeIn Production - Waiting on clientWACF "
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\" checked=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:58:51.182Z",
+    "seriesId": "H027"
+  },
+  {
+    "id": "H028-chat-settings-1133",
+    "caption": "External Chat settings show project-specific WhatsApp/Slack connection states and default outbound route, with explicit internal-information exclusion; no setting changed or message sent.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H028-chat-settings-1133.jpg",
+    "dom": "evidence/H028-chat-settings-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects5Mark as readLoom3Mark as readDeel1Mark as readHims1Ma"
+        },
+        {
+          "label": null,
+          "text": "External Chat settings  LOOM-24 · Launch Film - Sales Narrative      External messages onlyBrisk keeps the complete conversation here. Internal Chat, "
+        }
+      ],
+      "focus": "<input aria-label=\"Use WhatsApp for LOOM-24\" role=\"switch\" class=\"Toggle_input__MK49S \" type=\"checkbox\" checked=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:04.894Z",
+    "seriesId": "H028"
+  },
+  {
+    "id": "H029-chat-settings-escape",
+    "caption": "Escape closes only External Chat settings, leaves Global Chat open and returns focus to Open External Chat settings.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H029-chat-settings-escape.jpg",
+    "dom": "evidence/H029-chat-settings-escape.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects5Mark as readLoom3Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<button aria-label=\"Open External Chat settings\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"M\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Open External Chat settings\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/settings.svg&quot;); --icon-size: 19px;\"></span></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:11.878Z",
+    "seriesId": "H029"
+  },
+  {
+    "id": "H030-chat-internal-1133",
+    "caption": "Internal project channel exposes Studio-only label and own composer at narrow desktop; no message sent.",
+    "route": "/clients/loom",
+    "url": "http://127.0.0.1:8768/clients/loom",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H030-chat-internal-1133.jpg",
+    "dom": "evidence/H030-chat-internal-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<button class=\"chat-channel-tab internal active\" type=\"button\" role=\"tab\" aria-selected=\"true\"><span class=\"chat-channel-tab-copy\"><strong class=\"label-s-semibold\">Internal</strong><small class=\"label-xs\">North Star Films only</small></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:18.251Z",
+    "seriesId": "H030"
+  },
+  {
+    "id": "H031-test-mode-1133",
+    "caption": "Test mode at narrow desktop shows exactly Studio Staff, Studio Freelancer and Client choices with Studio Staff current; Reset disabled and no scenario loaded.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N086"
+    ],
+    "screenshot": "evidence/H031-test-mode-1133.jpg",
+    "dom": "evidence/H031-test-mode-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+      "focusTag": "SUMMARY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:31.103Z",
+    "seriesId": "H031"
+  },
+  {
+    "id": "H032-videos-client-filter-1133",
+    "caption": "Videos Client filter lists Client codes in a listbox; control remains separate from saved project status. No filter chosen in this capture.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H032-videos-client-filter-1133.jpg",
+    "dom": "evidence/H032-videos-client-filter-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s is-placeholder active-filter-button label-s-semibold \" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Client\" aria-controls=\"_r_2o_\" aria-activedescendant=\"_r_2o_-0\"><span class=\"brisk-select-trigger-label\"><span>Client</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:42.417Z",
+    "seriesId": "H032"
+  },
+  {
+    "id": "H033-videos-no-results-1133",
+    "caption": "Client-filtered Videos search produces no matching projects with recovery control; records unchanged.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H033-videos-no-results-1133.jpg",
+    "dom": "evidence/H033-videos-no-results-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input id=\"active-videos-search\" placeholder=\"Search projects...\" type=\"search\" value=\"no-such-audit-project\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:49.285Z",
+    "seriesId": "H033"
+  },
+  {
+    "id": "H034-videos-clear-recovery",
+    "caption": "Clear controls removes unmatched search and Client filter, restoring all 15 videos.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H034-videos-clear-recovery.jpg",
+    "dom": "evidence/H034-videos-clear-recovery.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:56.451Z",
+    "seriesId": "H034"
+  },
+  {
+    "id": "H035-team-editor-1133",
+    "caption": "Shooter role editor at narrow desktop shows invitations, freelancer rate controls and Cancel / Remove role footer. No action committed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N091",
+      "N092"
+    ],
+    "screenshot": "evidence/H035-team-editor-1133.jpg",
+    "dom": "evidence/H035-team-editor-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Shooter  Total hours needed  Invited (2):Jordan Lee$980SeenSent 8d agoWithdrawAisha Khan$880InvitedSent 9d agoWithdrawWithdraw all  Assign a personSta"
+        }
+      ],
+      "focus": "<input class=\"team-inline-input team-hours-needed-input label-s\" id=\"role-hours-loom-launch-film-shooter\" aria-label=\"Total hours needed for Shooter\" inputmode=\"decimal\" min=\"0\" step=\"0.25\" type=\"number\" value=\"8\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T20:59:57.691Z",
+    "seriesId": "H035"
+  },
+  {
+    "id": "H036-project-hours-1133",
+    "caption": "Expanded Hours shows 14h logged of 36h estimated and Log hours link; other drawer sections collapse.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N091"
+    ],
+    "screenshot": "evidence/H036-project-hours-1133.jpg",
+    "dom": "evidence/H036-project-hours-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"project-detail-collapsible-disclosure\" type=\"button\" aria-label=\"Collapse Hours\" aria-expanded=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:00:11.562Z",
+    "seriesId": "H036"
+  },
+  {
+    "id": "H037-project-deadline-calendar-1133",
+    "caption": "Deadline editing date picker open at narrow desktop; no date chosen or deadline saved.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N091"
+    ],
+    "screenshot": "evidence/H037-project-deadline-calendar-1133.jpg",
+    "dom": "evidence/H037-project-deadline-calendar-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Stage deadline",
+          "text": "August 2026MonTueWedThuFriSatSun272829303112345678910111213141516171819202122232425262728293031123456ClearToday"
+        }
+      ],
+      "focus": "<button class=\"brief-date-display label-s\" type=\"button\" aria-expanded=\"true\" aria-haspopup=\"dialog\"><span class=\"brief-deliverable-trigger-label\">19 August, 2026</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:00:18.880Z",
+    "seriesId": "H037"
+  },
+  {
+    "id": "H038-project-status-menu-1133",
+    "caption": "Project status selector exposes current In production selection and status options; no saved status changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090",
+      "N091"
+    ],
+    "screenshot": "evidence/H038-project-status-menu-1133.jpg",
+    "dom": "evidence/H038-project-status-menu-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" id=\"project-panel-status-loom-launch-film\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Project status\" aria-controls=\"_r_3i_\" aria-activedescendant=\"_r_3i_-1\"><span class=\"brisk-select-trigger-label\"><span>In production</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:00:28.598Z",
+    "seriesId": "H038"
+  },
+  {
+    "id": "H039-flow-hide-confirm-1133",
+    "caption": "Hide Script confirmation at narrow desktop explains preserved work and offers Keep visible; stage unchanged.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N138"
+    ],
+    "screenshot": "evidence/H039-flow-hide-confirm-1133.jpg",
+    "dom": "evidence/H039-flow-hide-confirm-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Project settingsAdjust project flowDrag stages to reorder them. Media stays pinned outside the production flow.BriefScriptShootEditMastersAdd a suppor"
+        },
+        {
+          "label": null,
+          "text": "Hide Script?This stage will be hidden from the project flow. Its work will be preserved and restored if the stage is revealed again.Keep visibleHide s"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep visible</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:00:55.341Z",
+    "seriesId": "H039"
+  },
+  {
+    "id": "H040-inspection-restored",
+    "caption": "Isolated session returned to closed overlays, expanded navigation and 1440 desktop; original working session was never touched.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N138"
+    ],
+    "screenshot": "evidence/H040-inspection-restored.jpg",
+    "dom": "evidence/H040-inspection-restored.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:01:00.455Z",
+    "seriesId": "H040"
+  },
+  {
+    "id": "H041-history-keyboard-sequence",
+    "caption": "Recent pages Home selects first active descendant, ArrowDown advances it and End selects last; no navigation activated.",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "url": "http://127.0.0.1:8768/projects/loom-launch-film/stages/brief",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N084"
+    ],
+    "screenshot": "evidence/H041-history-keyboard-sequence.jpg",
+    "dom": "evidence/H041-history-keyboard-sequence.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_3_-3\" id=\"_r_3_\" aria-label=\"Recent pages\"><div role=\"presentation\"><a class=\"brisk-select-option label-s   \" id=\"_r_3_-0\" tabindex=\"-1\" data-active=\"false\" href=\"/active-videos\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Videos</span></span></span></a></div><div role=\"presentation\"><a class=\"brisk-select-option label-s   \" id=\"_r_3_-1\" tabindex=\"-1\" data-active=\"false\" href=\"/active-videos?project=loom-launch-film\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Videos - Loom - Launch Film - Sales Narrative</span></span></span></a></div><div role=\"presentation\"><a class=\"brisk-select-option label-s   \" id=\"_r_3_-2\" tabindex=\"-1\" data-active=\"false\" href=\"/clients\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Clients</span></span></span></a></div><div role=\"presentation\"><a class=\"brisk-select-option label-s  active \" id=\"_r_3_-3\" tabindex=\"-1\" data-active=\"true\" href=\"/people\" role=\"menuitem\"><span class=\"brisk-select-optio",
+      "focusTag": "DIV",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:01:51.126Z",
+    "seriesId": "H041"
+  },
+  {
+    "id": "H042-notifications-unread",
+    "caption": "Full Notifications Unread filter shows existing unread items; Mark all as read and Retry untouched.",
+    "route": "/notifications",
+    "url": "http://127.0.0.1:8768/notifications",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N130"
+    ],
+    "screenshot": "evidence/H042-notifications-unread.jpg",
+    "dom": "evidence/H042-notifications-unread.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" aria-pressed=\"true\" data-brisk-filter=\"\" class=\"QuietChoices_choice__V72PB label-s-semibold \">Unread<span class=\"QuietChoices_count__Up8L9 label-xs\">5</span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:03:33.382Z",
+    "seriesId": "H042"
+  },
+  {
+    "id": "H043-notifications-mentions",
+    "caption": "Full Notifications Mentions view isolates the existing mention notification.",
+    "route": "/notifications",
+    "url": "http://127.0.0.1:8768/notifications",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N130"
+    ],
+    "screenshot": "evidence/H043-notifications-mentions.jpg",
+    "dom": "evidence/H043-notifications-mentions.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" aria-pressed=\"true\" data-brisk-filter=\"\" class=\"QuietChoices_choice__V72PB label-s-semibold \">Mentions<span class=\"QuietChoices_count__Up8L9 label-xs\">1</span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:03:33.800Z",
+    "seriesId": "H043"
+  },
+  {
+    "id": "H044-notification-reminder-preview",
+    "caption": "Scheduled reminder is a read-only Client-safe email preview with recipient, schedule, subject and Close; nothing sent.",
+    "route": "/notifications",
+    "url": "http://127.0.0.1:8768/notifications",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N130"
+    ],
+    "screenshot": "evidence/H044-notification-reminder-preview.jpg",
+    "dom": "evidence/H044-notification-reminder-preview.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Scheduled reminderRead-only Client email previewToJess Taylor · jess@loom.comScheduledFri, 21 Aug 2026, 11:00 amSUBJECTReminder: LOOM-24 Edit v3 is re"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Close</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:03:39.729Z",
+    "seriesId": "H044"
+  },
+  {
+    "id": "H045-notification-preview-1133",
+    "caption": "Scheduled reminder preview at narrow desktop; no notification retry, mark-read or send invoked.",
+    "route": "/notifications",
+    "url": "http://127.0.0.1:8768/notifications",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N130"
+    ],
+    "screenshot": "evidence/H045-notification-preview-1133.jpg",
+    "dom": "evidence/H045-notification-preview-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Scheduled reminderRead-only Client email previewToJess Taylor · jess@loom.comScheduledFri, 21 Aug 2026, 11:00 amSUBJECTReminder: LOOM-24 Edit v3 is re"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Close</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:03:40.091Z",
+    "seriesId": "H045"
+  },
+  {
+    "id": "H046-add-client-empty-1133",
+    "caption": "Add Client at narrow desktop labels required name and optional details; blank name disables Create Client. No record created.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N140"
+    ],
+    "screenshot": "evidence/H046-add-client-empty-1133.jpg",
+    "dom": "evidence/H046-add-client-empty-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Add ClientStart with a name. Brisk creates the private Client portal automatically.Client name RequiredWebsite OptionalLogo OptionalPrimary contact na"
+        }
+      ],
+      "focus": "<input id=\"_r_f_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:03:58.253Z",
+    "seriesId": "H046"
+  },
+  {
+    "id": "H047-add-client-cancel-reset",
+    "caption": "Cancel and reopen clears unsaved Client name draft; Create Client remains disabled. No Client record created.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N140"
+    ],
+    "screenshot": "evidence/H047-add-client-cancel-reset.jpg",
+    "dom": "evidence/H047-add-client-cancel-reset.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Add ClientStart with a name. Brisk creates the private Client portal automatically.Client name RequiredWebsite OptionalLogo OptionalPrimary contact na"
+        }
+      ],
+      "focus": "<input id=\"_r_k_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:03:58.669Z",
+    "seriesId": "H047"
+  },
+  {
+    "id": "H048-clients-no-results-1133",
+    "caption": "Client directory unmatched search displays empty result state; records remain unchanged.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N140"
+    ],
+    "screenshot": "evidence/H048-clients-no-results-1133.jpg",
+    "dom": "evidence/H048-clients-no-results-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input id=\"clients-search\" placeholder=\"Search Clients\" type=\"search\" value=\"no-such-audit-client\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:03:59.024Z",
+    "seriesId": "H048"
+  },
+  {
+    "id": "H049-audit-session-final",
+    "caption": "Inspection finished with overlays closed, search cleared, Studio Staff unchanged and 1440 desktop restored in disposable origin 8768.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N140"
+    ],
+    "screenshot": "evidence/H049-audit-session-final.jpg",
+    "dom": "evidence/H049-audit-session-final.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input id=\"clients-search\" placeholder=\"Search Clients\" type=\"search\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:04:04.923Z",
+    "seriesId": "H049"
+  },
+  {
+    "id": "H050-chat-settings-1440",
+    "caption": "Matching-width working reference: External Chat settings open inside Global Chat at 1440 desktop; no settings edited.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H050-chat-settings-1440.jpg",
+    "dom": "evidence/H050-chat-settings-1440.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        },
+        {
+          "label": null,
+          "text": "External Chat settings  LOOM-24 · Launch Film - Sales Narrative      External messages onlyBrisk keeps the complete conversation here. Internal Chat, "
+        }
+      ],
+      "focus": "<input aria-label=\"Use WhatsApp for LOOM-24\" role=\"switch\" class=\"Toggle_input__MK49S \" type=\"checkbox\" checked=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:05:02.468Z",
+    "seriesId": "H050"
+  },
+  {
+    "id": "H051-chat-settings-child-escape-1440",
+    "caption": "Matching-width reference: one Escape closes settings only, retains Global Chat and restores Open External Chat settings focus.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N088",
+      "N139"
+    ],
+    "screenshot": "evidence/H051-chat-settings-child-escape-1440.jpg",
+    "dom": "evidence/H051-chat-settings-child-escape-1440.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<button aria-label=\"Open External Chat settings\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"M\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Open External Chat settings\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/settings.svg&quot;); --icon-size: 19px;\"></span></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:05:02.660Z",
+    "seriesId": "H051"
+  },
+  {
+    "id": "H052-account-freelancer-links",
+    "seriesId": "H052",
+    "caption": "Freelancer account menu offers My profile, My notifications and Security; no Studio settings or Client company administration links. Sign out untouched.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H052-account-freelancer-links.jpg",
+    "dom": "evidence/H052-account-freelancer-links.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Your menu",
+          "text": "NPNina Patelnina@patelvfx.comStudio Freelancer · North Star FilmsMy notificationsSecuritySign out"
+        }
+      ],
+      "focus": "<a class=\"app-user-menu-identity-link\" aria-label=\"Open My profile\" href=\"/settings/personal/profile\"><span class=\"app-user-menu-identity-avatar\"><span class=\"avatar lime \" aria-label=\"Nina Patel\" title=\"Nina Patel\">NP</span></span><span class=\"app-user-menu-identity-copy\"><strong class=\"label-m-semibold\">Nina Patel</strong><span class=\"label-xs\">nina@patelvfx.com</span><span class=\"label-xs\">Studio Freelancer · North Star Films</span></span></a>",
+      "focusTag": "A",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:13:28.447Z"
+  },
+  {
+    "id": "H053-account-freelancer-outside",
+    "seriesId": "H053",
+    "caption": "Pointer click on noninteractive restricted-page heading dismisses Freelancer account menu.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H053-account-freelancer-outside.jpg",
+    "dom": "evidence/H053-account-freelancer-outside.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:13:28.841Z"
+  },
+  {
+    "id": "H054-account-customer-links",
+    "seriesId": "H054",
+    "caption": "Customer Jess (current Client Admin with billing access) account menu has My profile, My notifications, Security, Company & team and Invoices. No Studio settings. Sign out untouched.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H054-account-customer-links.jpg",
+    "dom": "evidence/H054-account-customer-links.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Your menu",
+          "text": "JTJess Taylorjess@loom.comClient Admin · LoomPersonalMy profileMy notificationsSecurityCompanyCompany & teamInvoicesSign out"
+        }
+      ],
+      "focus": "<a href=\"/settings/personal/profile\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/user-switch.svg&quot;); --icon-size: 18px;\"></span><span class=\"label-s-semibold\">My profile</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></a>",
+      "focusTag": "A",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:13:40.187Z"
+  },
+  {
+    "id": "H055-account-customer-outside",
+    "seriesId": "H055",
+    "caption": "Clicking noninteractive Client-portal guidance heading dismisses Customer account menu.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H055-account-customer-outside.jpg",
+    "dom": "evidence/H055-account-customer-outside.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:13:40.666Z"
+  },
+  {
+    "id": "H056-account-staff-outside",
+    "seriesId": "H056",
+    "caption": "Pointer click on Clients heading closes Studio Staff account menu; all three role menus now have observed outside dismissal.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085"
+    ],
+    "screenshot": "evidence/H056-account-staff-outside.jpg",
+    "dom": "evidence/H056-account-staff-outside.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:13:58.906Z"
+  },
+  {
+    "id": "H057-invoice-multiple-pdf-first",
+    "seriesId": "H057",
+    "caption": "Submitted Deel invoice has two named file tabs; initial preview is JL-1042-shoot.pdf. Review and PDF viewing do not approve or pay.",
+    "route": "/outstanding-invoices",
+    "url": "http://127.0.0.1:8768/outstanding-invoices",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N119"
+    ],
+    "screenshot": "evidence/H057-invoice-multiple-pdf-first.jpg",
+    "dom": "evidence/H057-invoice-multiple-pdf-first.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "JL-1042-shoot.pdfInvoice PDF previewJL-1042-shoot.pdfJL-1042-expenses.pdfCONTRACTOR INVOICEInvoiceJL-1042-shoot.pdfFromJordan LeeRoleShooterSubmitted1"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:14:16.486Z"
+  },
+  {
+    "id": "H058-invoice-pdf-arrow",
+    "seriesId": "H058",
+    "caption": "ArrowRight on selected first invoice file tab leaves first file selected/focused; tabs remain ordinary separate tab stops.",
+    "route": "/outstanding-invoices",
+    "url": "http://127.0.0.1:8768/outstanding-invoices",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N119"
+    ],
+    "screenshot": "evidence/H058-invoice-pdf-arrow.jpg",
+    "dom": "evidence/H058-invoice-pdf-arrow.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "JL-1042-shoot.pdfInvoice PDF previewJL-1042-shoot.pdfJL-1042-expenses.pdfCONTRACTOR INVOICEInvoiceJL-1042-shoot.pdfFromJordan LeeRoleShooterSubmitted1"
+        }
+      ],
+      "focus": "<button class=\"label-s-semibold is-active\" type=\"button\" role=\"tab\" aria-selected=\"true\">JL-1042-shoot.pdf</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:14:28.200Z"
+  },
+  {
+    "id": "H059-invoice-multiple-pdf-second",
+    "seriesId": "H059",
+    "caption": "Enter on second named PDF tab selects JL-1042-expenses.pdf and updates preview title/content; no financial action.",
+    "route": "/outstanding-invoices",
+    "url": "http://127.0.0.1:8768/outstanding-invoices",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N119"
+    ],
+    "screenshot": "evidence/H059-invoice-multiple-pdf-second.jpg",
+    "dom": "evidence/H059-invoice-multiple-pdf-second.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "JL-1042-expenses.pdfInvoice PDF previewJL-1042-shoot.pdfJL-1042-expenses.pdfCONTRACTOR INVOICEInvoiceJL-1042-expenses.pdfFromJordan LeeRoleShooterSubm"
+        }
+      ],
+      "focus": "<button class=\"label-s-semibold is-active\" type=\"button\" role=\"tab\" aria-selected=\"true\">JL-1042-expenses.pdf</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:14:28.557Z"
+  },
+  {
+    "id": "H060-invoice-review-cancelled",
+    "seriesId": "H060",
+    "caption": "Invoice review cancelled; submitted Deel row remains Submitted, OpenAI remains Approved. Studio Staff restored, overlays closed, 1440 desktop. No approval, forward, send back or payment action invoked.",
+    "route": "/outstanding-invoices",
+    "url": "http://127.0.0.1:8768/outstanding-invoices",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085",
+      "N119"
+    ],
+    "screenshot": "evidence/H060-invoice-review-cancelled.jpg",
+    "dom": "evidence/H060-invoice-review-cancelled.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold costs-row-action\">Review</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:14:46.176Z"
+  },
+  {
+    "id": "H061-invoice-area-freelancer-redirect",
+    "seriesId": "H061",
+    "caption": "Switching from Expenses to Studio Freelancer redirects to invited My jobs view with no contractor invoice review data.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N119"
+    ],
+    "screenshot": "evidence/H061-invoice-area-freelancer-redirect.jpg",
+    "dom": "evidence/H061-invoice-area-freelancer-redirect.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"label-xs-semibold is-active\" type=\"button\" aria-pressed=\"true\">Studio Freelancer</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:15:49.796Z"
+  },
+  {
+    "id": "H062-invoice-area-customer-redirect",
+    "seriesId": "H062",
+    "caption": "Customer direct visit to Expenses redirects to permitted Videos view; no contractor invoice review data shown in settled state.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N119"
+    ],
+    "screenshot": "evidence/H062-invoice-area-customer-redirect.jpg",
+    "dom": "evidence/H062-invoice-area-customer-redirect.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:16:04.094Z"
+  },
+  {
+    "id": "H063-account-invoice-addendum-restored",
+    "seriesId": "H063",
+    "caption": "Closure addendum finished on Clients with Studio Staff restored, Test mode collapsed, no dialog and 1440 desktop. No financial operation performed.",
+    "route": "/clients",
+    "url": "http://127.0.0.1:8768/clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N085",
+      "N119"
+    ],
+    "screenshot": "evidence/H063-account-invoice-addendum-restored.jpg",
+    "dom": "evidence/H063-account-invoice-addendum-restored.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Clients\" href=\"/clients\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/buildings.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Clients</span></a>",
+      "focusTag": "A",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:16:15.576Z"
+  },
+  {
+    "id": "H064-videos-teammate-filter",
+    "seriesId": "H064",
+    "caption": "Videos Teammate filter open; no teammate selected or record changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H064-videos-teammate-filter.jpg",
+    "dom": "evidence/H064-videos-teammate-filter.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s is-placeholder active-filter-button label-s-semibold \" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Teammate\" aria-controls=\"_r_2h_\" aria-activedescendant=\"_r_2h_-0\"><span class=\"brisk-select-trigger-label\"><span>Teammate</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:05.231Z"
+  },
+  {
+    "id": "H065-videos-tags-filter",
+    "seriesId": "H065",
+    "caption": "Videos Tags filter open; no filter chosen or tag changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H065-videos-tags-filter.jpg",
+    "dom": "evidence/H065-videos-tags-filter.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s is-placeholder active-filter-button label-s-semibold \" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Tags\" aria-controls=\"_r_2i_\" aria-activedescendant=\"_r_2i_-0\"><span class=\"brisk-select-trigger-label\"><span>Tags</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:05.898Z"
+  },
+  {
+    "id": "H066-videos-tag-filter-selected",
+    "seriesId": "H066",
+    "caption": "Critical is selected in the local Tags filter; project tag records unchanged.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H066-videos-tag-filter-selected.jpg",
+    "dom": "evidence/H066-videos-tag-filter-selected.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s  active-filter-button label-s-semibold has-value\" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Tags\" aria-controls=\"_r_2i_\" aria-activedescendant=\"_r_2i_-0\"><span class=\"brisk-select-trigger-label\"><span>Critical</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:31.711Z"
+  },
+  {
+    "id": "H067-videos-deadline-filter",
+    "seriesId": "H067",
+    "caption": "Videos Deadline filter shows Overdue, Due soon and On track options at 1440. No deadline filter option selected.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H067-videos-deadline-filter.jpg",
+    "dom": "evidence/H067-videos-deadline-filter.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s is-placeholder active-filter-button label-s-semibold \" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Deadline\" aria-controls=\"_r_2k_\" aria-activedescendant=\"_r_2k_-0\"><span class=\"brisk-select-trigger-label\"><span>Deadline</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:32.622Z"
+  },
+  {
+    "id": "H068-videos-status-filter",
+    "seriesId": "H068",
+    "caption": "Filter Status menu is distinct from saved Project status; no option selected or project status changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H068-videos-status-filter.jpg",
+    "dom": "evidence/H068-videos-status-filter.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s is-placeholder active-filter-button label-s-semibold \" data-brisk-select-placeholder-tone=\"label\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Status\" aria-controls=\"_r_2j_\" aria-activedescendant=\"_r_2j_-0\"><span class=\"brisk-select-trigger-label\"><span>Status</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:33.153Z"
+  },
+  {
+    "id": "H069-videos-columns",
+    "seriesId": "H069",
+    "caption": "Columns popover shows immediate-apply explanation, current selected/hidden and locked/fixed controls, Reset columns and Done. No column changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H069-videos-columns.jpg",
+    "dom": "evidence/H069-videos-columns.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "ColumnsChanges apply immediatelyProjectLockedProgressLatest actionStatusDeadlineHoursProject costsTeamActionsFixedReset columnsDone"
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\" checked=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:44.514Z"
+  },
+  {
+    "id": "H070-videos-row-add-tag",
+    "seriesId": "H070",
+    "caption": "Project-row Add tag menu is open for Launch Film; no existing tag option selected.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H070-videos-row-add-tag.jpg",
+    "dom": "evidence/H070-videos-row-add-tag.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"project-plus-action label-s\" type=\"button\" aria-label=\"Add tag to Launch Film - Sales Narrative\" aria-expanded=\"true\">+</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:45.091Z"
+  },
+  {
+    "id": "H071-videos-tag-draft",
+    "seriesId": "H071",
+    "caption": "Inline Create tag draft shows name, colour choices and disabled Create while blank; no tag created.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H071-videos-tag-draft.jpg",
+    "dom": "evidence/H071-videos-tag-draft.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input class=\"project-tag-input label-s\" placeholder=\"Tag name...\" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:45.511Z"
+  },
+  {
+    "id": "H072-videos-tag-cancel-reset",
+    "seriesId": "H072",
+    "caption": "Cancelling an inline tag-name draft and reopening Create new tag restores a blank disabled-Create form; no tag added.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H072-videos-tag-cancel-reset.jpg",
+    "dom": "evidence/H072-videos-tag-cancel-reset.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<input class=\"project-tag-input label-s\" placeholder=\"Tag name...\" type=\"text\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:27:58.427Z"
+  },
+  {
+    "id": "H073-project-copy-link-panel",
+    "seriesId": "H073",
+    "caption": "Project drawer Copy link opens scope/access settings for Launch Film; clipboard copy and access changes not invoked.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N091"
+    ],
+    "screenshot": "evidence/H073-project-copy-link-panel.jpg",
+    "dom": "evidence/H073-project-copy-link-panel.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"share-button share-button-tertiary label-s-semibold \" type=\"button\" aria-label=\"Copy link\" aria-expanded=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/link.svg&quot;); --icon-size: 18px;\"></span>Copy link</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:28:00.499Z"
+  },
+  {
+    "id": "H074-ai-files-picker",
+    "seriesId": "H074",
+    "caption": "Ask Brisk Files source picker open; no upload or source selection performed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H074-ai-files-picker.jpg",
+    "dom": "evidence/H074-ai-files-picker.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Add photos, video or filesSearch photos, video or filesUpload fileSuggestedBrand guidelines.pdfLaunch key art.jpgEdit v3Loom-launch-film-v3.mp4 - 02:0"
+        }
+      ],
+      "focus": "<input class=\"label-s\" placeholder=\"Search photos, video or files\" type=\"search\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:28:25.964Z"
+  },
+  {
+    "id": "H075-ai-files-no-results",
+    "seriesId": "H075",
+    "caption": "Files picker unmatched search shows an empty result state; Upload file and all source mutations untouched.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H075-ai-files-no-results.jpg",
+    "dom": "evidence/H075-ai-files-no-results.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Add photos, video or filesSearch photos, video or filesUpload fileNo sources foundClear search"
+        }
+      ],
+      "focus": "<input class=\"label-s\" placeholder=\"Search photos, video or files\" type=\"search\" value=\"no-such-audit-file\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:28:34.863Z"
+  },
+  {
+    "id": "H076-people-all-invite-default",
+    "seriesId": "H076",
+    "caption": "People All view Invite person defaults to Studio Staff and blank identity fields.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095",
+      "N097"
+    ],
+    "screenshot": "evidence/H076-people-all-invite-default.jpg",
+    "dom": "evidence/H076-people-all-invite-default.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 1 of 2 - Who are you inviting?1 Person2 AccessWho are you inviting?Studio StaffFull Studio workspace access is automatic in V1.Studi"
+        }
+      ],
+      "focus": "<input class=\"Radio_input__oGvfW \" type=\"radio\" value=\"Studio Staff\" checked=\"\" name=\"invitation-role\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:29:20.227Z"
+  },
+  {
+    "id": "H077-invite-staff-access",
+    "seriesId": "H077",
+    "caption": "Staff invitation Access step shows optional Job title and automatic full Studio scope; no project checklist or Send action invoked.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H077-invite-staff-access.jpg",
+    "dom": "evidence/H077-invite-staff-access.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob titleChoose a rol"
+        }
+      ],
+      "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Send invite</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:29:20.753Z"
+  },
+  {
+    "id": "H078-people-staff-invite-default",
+    "seriesId": "H078",
+    "caption": "People Studio Staff view Invite Studio Staff prefills Studio Staff role. No invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Staff",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095",
+      "N097"
+    ],
+    "screenshot": "evidence/H078-people-staff-invite-default.jpg",
+    "dom": "evidence/H078-people-staff-invite-default.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 1 of 2 - Who are you inviting?1 Person2 AccessWho are you inviting?Studio StaffFull Studio workspace access is automatic in V1.Studi"
+        }
+      ],
+      "focus": "<input class=\"Radio_input__oGvfW \" type=\"radio\" value=\"Studio Staff\" checked=\"\" name=\"invitation-role\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:29:27.826Z"
+  },
+  {
+    "id": "H079-people-freelancer-invite-default",
+    "seriesId": "H079",
+    "caption": "People Studio Freelancers view Invite Studio Freelancer prefills Freelancer role; no invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Staff",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095",
+      "N097"
+    ],
+    "screenshot": "evidence/H079-people-freelancer-invite-default.jpg",
+    "dom": "evidence/H079-people-freelancer-invite-default.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 1 of 2 - Who are you inviting?1 Person2 AccessWho are you inviting?Studio StaffFull Studio workspace access is automatic in V1.Studi"
+        }
+      ],
+      "focus": "<input class=\"Radio_input__oGvfW \" type=\"radio\" value=\"Studio Staff\" name=\"invitation-role\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:29:50.207Z"
+  },
+  {
+    "id": "H080-invite-freelancer-no-access",
+    "seriesId": "H080",
+    "caption": "Freelancer Access starts with no Client/project selection and disabled Send invite; Projects explains choose a Client first.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H080-invite-freelancer-no-access.jpg",
+    "dom": "evidence/H080-invite-freelancer-no-access.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:29:50.946Z"
+  },
+  {
+    "id": "H081-invite-freelancer-all-clients",
+    "seriesId": "H081",
+    "caption": "Freelancer draft has all 10 active Clients selected but zero projects, so Send invite remains disabled. No invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H081-invite-freelancer-all-clients.jpg",
+    "dom": "evidence/H081-invite-freelancer-all-clients.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:30:08.575Z"
+  },
+  {
+    "id": "H082-invite-freelancer-one-client",
+    "seriesId": "H082",
+    "caption": "Freelancer draft has Loom selected and its project checklist available; none selected, Send invite disabled.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H082-invite-freelancer-one-client.jpg",
+    "dom": "evidence/H082-invite-freelancer-one-client.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:30:09.258Z"
+  },
+  {
+    "id": "H083-invite-freelancer-all-projects-1133",
+    "seriesId": "H083",
+    "caption": "Freelancer Loom draft has all five projects selected at narrow desktop; Send invite enabled but untouched.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H083-invite-freelancer-all-projects-1133.jpg",
+    "dom": "evidence/H083-invite-freelancer-all-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:30:09.792Z"
+  },
+  {
+    "id": "H084-invite-freelancer-mixed-projects-1133",
+    "seriesId": "H084",
+    "caption": "Freelancer draft shows four of five Loom projects selected and mixed All projects state; no Send action.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H084-invite-freelancer-mixed-projects-1133.jpg",
+    "dom": "evidence/H084-invite-freelancer-mixed-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<input aria-checked=\"false\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:30:29.532Z"
+  },
+  {
+    "id": "H085-invite-freelancer-none-projects-1133",
+    "seriesId": "H085",
+    "caption": "Clearing local All projects returns zero project access and disables Freelancer Send invite.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Studio+Freelancers",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H085-invite-freelancer-none-projects-1133.jpg",
+    "dom": "evidence/H085-invite-freelancer-none-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeJob title or project "
+        }
+      ],
+      "focus": "<input aria-checked=\"false\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:30:30.184Z"
+  },
+  {
+    "id": "H086-people-client-invite-default-1133",
+    "seriesId": "H086",
+    "caption": "People Client contacts view Invite Client prefills Client radio at narrow desktop; no invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095",
+      "N097"
+    ],
+    "screenshot": "evidence/H086-people-client-invite-default-1133.jpg",
+    "dom": "evidence/H086-people-client-invite-default-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 1 of 2 - Who are you inviting?1 Person2 AccessWho are you inviting?Studio StaffFull Studio workspace access is automatic in V1.Studi"
+        }
+      ],
+      "focus": "<input class=\"Radio_input__oGvfW \" type=\"radio\" value=\"Studio Staff\" name=\"invitation-role\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:30:52.818Z"
+  },
+  {
+    "id": "H087-invite-client-no-company-1133",
+    "seriesId": "H087",
+    "caption": "Client Access step before choosing a company; no permission or invitation committed.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H087-invite-client-no-company-1133.jpg",
+    "dom": "evidence/H087-invite-client-no-company-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companySelect "
+        }
+      ],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:30:53.319Z"
+  },
+  {
+    "id": "H088-invite-client-company-picker-1133",
+    "seriesId": "H088",
+    "caption": "Client company picker offers existing active Clients; no inline Create Client action is present in this consumer.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H088-invite-client-company-picker-1133.jpg",
+    "dom": "evidence/H088-invite-client-company-picker-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companySelect "
+        }
+      ],
+      "focus": "<input class=\"label-s\" role=\"combobox\" aria-label=\"Search select client company\" aria-expanded=\"true\" aria-controls=\"_r_3r_\" aria-autocomplete=\"list\" aria-activedescendant=\"_r_3r_-0\" placeholder=\"Search\" type=\"search\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:31:06.809Z"
+  },
+  {
+    "id": "H089-invite-client-picker-no-results-1133",
+    "seriesId": "H089",
+    "caption": "Unmatched Client company picker search shows no existing result; no inline Client creation offered.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H089-invite-client-picker-no-results-1133.jpg",
+    "dom": "evidence/H089-invite-client-picker-no-results-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companySelect "
+        }
+      ],
+      "focus": "<input class=\"label-s\" role=\"combobox\" aria-label=\"Search select client company\" aria-expanded=\"true\" aria-controls=\"_r_3r_\" aria-autocomplete=\"list\" placeholder=\"Search\" type=\"search\" value=\"no-such-audit-client\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:31:40.054Z"
+  },
+  {
+    "id": "H090-invite-client-zero-projects-1133",
+    "seriesId": "H090",
+    "caption": "Choosing Loom enables Client invitation with zero optional projects; summary explicitly says no project access added yet. Send untouched.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H090-invite-client-zero-projects-1133.jpg",
+    "dom": "evidence/H090-invite-client-zero-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companyLoomPro"
+        }
+      ],
+      "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Select Client company\"><span class=\"brisk-select-trigger-label\"><span>Loom</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:31:40.503Z"
+  },
+  {
+    "id": "H091-invite-client-all-projects-1133",
+    "seriesId": "H091",
+    "caption": "Client Loom draft has all five optional projects selected, with current Client-only scope explanation. No invitation sent.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H091-invite-client-all-projects-1133.jpg",
+    "dom": "evidence/H091-invite-client-all-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companyLoomPro"
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:31:40.870Z"
+  },
+  {
+    "id": "H092-invite-client-mixed-projects-1133",
+    "seriesId": "H092",
+    "caption": "Client draft shows four selected projects and mixed All projects state; Send remains available but untouched.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H092-invite-client-mixed-projects-1133.jpg",
+    "dom": "evidence/H092-invite-client-mixed-projects-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companyLoomPro"
+        }
+      ],
+      "focus": "<input aria-checked=\"false\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:32:00.797Z"
+  },
+  {
+    "id": "H093-invite-client-none-after-all-1133",
+    "seriesId": "H093",
+    "caption": "Clearing Client projects returns zero optional access with explicit summary; unlike Freelancer, company-only invite remains available. No send.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H093-invite-client-none-after-all-1133.jpg",
+    "dom": "evidence/H093-invite-client-none-after-all-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companyLoomPro"
+        }
+      ],
+      "focus": "<input aria-checked=\"false\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:32:01.443Z"
+  },
+  {
+    "id": "H094-invite-client-draft-discarded",
+    "seriesId": "H094",
+    "caption": "After Back then Cancel and reopening invitation, Client Access again has no company/projects and Send disabled; previous draft discarded.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Clients",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N097"
+    ],
+    "screenshot": "evidence/H094-invite-client-draft-discarded.jpg",
+    "dom": "evidence/H094-invite-client-draft-discarded.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Invite personStep 2 of 2 - Add the relevant details1 Person2 Accessaudit-review@example.invalidaudit-review@example.invalidChangeClient companySelect "
+        }
+      ],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:32:08.553Z"
+  },
+  {
+    "id": "H095-people-sort-menu-1133",
+    "seriesId": "H095",
+    "caption": "People All Sort menu open at narrow desktop; no sort option or record changed.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095"
+    ],
+    "screenshot": "evidence/H095-people-sort-menu-1133.jpg",
+    "dom": "evidence/H095-people-sort-menu-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Sort people\" aria-controls=\"_r_36_\" aria-activedescendant=\"_r_36_-0\"><span class=\"brisk-select-trigger-label\"><span>Latest activity</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:32:41.040Z"
+  },
+  {
+    "id": "H096-people-archived-view-1133",
+    "seriesId": "H096",
+    "caption": "Existing Archived people view displays two preserved records; no restore, delete, resend or invitation action invoked.",
+    "route": "/people",
+    "url": "http://127.0.0.1:8768/people?view=Archived",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N095"
+    ],
+    "screenshot": "evidence/H096-people-archived-view-1133.jpg",
+    "dom": "evidence/H096-people-archived-view-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button type=\"button\" aria-pressed=\"true\" data-brisk-filter=\"\" class=\"QuietChoices_choice__V72PB label-s-semibold \">Archived<span class=\"QuietChoices_count__Up8L9 label-xs\">2</span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:32:44.342Z"
+  },
+  {
+    "id": "H097-videos-columns-1133",
+    "seriesId": "H097",
+    "caption": "Columns popover at narrow desktop retains named selected/hidden and locked/fixed controls with Done; no column settings changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090"
+    ],
+    "screenshot": "evidence/H097-videos-columns-1133.jpg",
+    "dom": "evidence/H097-videos-columns-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "ColumnsChanges apply immediatelyProjectLockedProgressLatest actionStatusDeadlineHoursProject costsTeamActionsFixedReset columnsDone"
+        }
+      ],
+      "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\" checked=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:33:05.098Z"
+  },
+  {
+    "id": "H098-project-copy-link-panel-1133",
+    "seriesId": "H098",
+    "caption": "Whole-project Copy link/access panel at narrow desktop; no copy or access change.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos?project=loom-launch-film",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N091"
+    ],
+    "screenshot": "evidence/H098-project-copy-link-panel-1133.jpg",
+    "dom": "evidence/H098-project-copy-link-panel-1133.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"share-button share-button-tertiary label-s-semibold \" type=\"button\" aria-label=\"Copy link\" aria-expanded=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/link.svg&quot;); --icon-size: 18px;\"></span>Copy link</button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:33:08.814Z"
+  },
+  {
+    "id": "H099-ai-files-picker-1133",
+    "seriesId": "H099",
+    "caption": "Ask Brisk Files picker at narrow desktop retains searchable file choices and explicit exit; no upload or source selection.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089"
+    ],
+    "screenshot": "evidence/H099-ai-files-picker-1133.jpg",
+    "dom": "evidence/H099-ai-files-picker-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": null,
+          "text": "Add photos, video or filesSearch photos, video or filesUpload fileSuggestedBrand guidelines.pdfLaunch key art.jpgEdit v3Loom-launch-film-v3.mp4 - 02:0"
+        }
+      ],
+      "focus": "<input class=\"label-s\" placeholder=\"Search photos, video or files\" type=\"search\" value=\"\">",
+      "focusTag": "INPUT",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:33:19.880Z"
+  },
+  {
+    "id": "H100-remaining-branches-restored",
+    "seriesId": "H100",
+    "caption": "Bounded remaining checks finished on Videos with original15 projects, no active filters, overlays closed, Studio Staff and1440 desktop. No records sent or saved.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N089",
+      "N090",
+      "N091",
+      "N095",
+      "N097"
+    ],
+    "screenshot": "evidence/H100-remaining-branches-restored.jpg",
+    "dom": "evidence/H100-remaining-branches-restored.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<button class=\"active-filters-toggle label-s-semibold \" type=\"button\" aria-expanded=\"false\" aria-controls=\"active-videos-filters\">Filters<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:33:21.011Z"
+  },
+  {
+    "id": "H101-chat-actual-thread-pane",
+    "seriesId": "H101",
+    "caption": "Actual Message thread pane, with existing parent message and two replies, Reply in thread region containing an empty composer and disabled Send. Studio Staff, 1440 × 1000. No reply entered or sent.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N139"
+    ],
+    "screenshot": "evidence/H101-chat-actual-thread-pane.jpg",
+    "dom": "evidence/H101-chat-actual-thread-pane.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<button class=\"chat-thread-indicator\" type=\"button\"><span class=\"chat-thread-avatars\"><span class=\"avatar cyan compact\" aria-label=\"Marcus Lee\" title=\"Marcus Lee\">ML</span><span class=\"avatar sand compact\" aria-label=\"Tom Mitchell\" title=\"Tom Mitchell\">TM</span></span><span class=\"label-xs-semibold\">2 replies</span><span class=\"label-xs\">Last reply 90 days ago</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:33:55.135Z"
+  },
+  {
+    "id": "H102-chat-actual-thread-pane-1133",
+    "seriesId": "H102",
+    "caption": "Actual Message thread at narrow desktop with parent, two replies and empty Reply in thread composer; no Send.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N139"
+    ],
+    "screenshot": "evidence/H102-chat-actual-thread-pane-1133.jpg",
+    "dom": "evidence/H102-chat-actual-thread-pane-1133.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<button class=\"chat-thread-indicator\" type=\"button\"><span class=\"chat-thread-avatars\"><span class=\"avatar cyan compact\" aria-label=\"Marcus Lee\" title=\"Marcus Lee\">ML</span><span class=\"avatar sand compact\" aria-label=\"Tom Mitchell\" title=\"Tom Mitchell\">TM</span></span><span class=\"label-xs-semibold\">2 replies</span><span class=\"label-xs\">Last reply 90 days ago</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 12px;\"></span></button>",
+      "focusTag": "BUTTON",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:34:28.107Z"
+  },
+  {
+    "id": "H103-chat-thread-close",
+    "seriesId": "H103",
+    "caption": "Enter on Close thread dismisses only Message thread; Global Chat and project conversation remain. No message changed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N139"
+    ],
+    "screenshot": "evidence/H103-chat-thread-close.jpg",
+    "dom": "evidence/H103-chat-thread-close.dom.txt",
+    "context": {
+      "dialogs": [
+        {
+          "label": "Global Chat",
+          "text": "North Star FilmsDMs1Mark as readMentions2Mark as readGroups1Mark as readThreadsCallsAll projects4Mark as readLoom2Mark as readDeel1Mark as readHims1Ma"
+        }
+      ],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:34:28.409Z"
+  },
+  {
+    "id": "H104-chat-thread-escape",
+    "seriesId": "H104",
+    "caption": "One Escape from Close thread dismisses both Message thread and Global Chat; no draft entered or sent.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1133,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N139",
+      "N088"
+    ],
+    "screenshot": "evidence/H104-chat-thread-escape.jpg",
+    "dom": "evidence/H104-chat-thread-escape.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1133
+    },
+    "capturedAt": "2026-10-20T21:34:28.875Z"
+  },
+  {
+    "id": "H105-remaining-branches-final-restored",
+    "seriesId": "H105",
+    "caption": "Studio Staff Videos reference view after bounded menu, invitation, source-picker and actual message-thread checks. All local drafts cancelled; search and filters cleared; overlays closed.",
+    "route": "/active-videos",
+    "url": "http://127.0.0.1:8768/active-videos",
+    "role": "Studio Staff",
+    "scenario": "Default seeded state; no scenario load",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "coverageIds": [
+      "N090",
+      "N095",
+      "N097",
+      "N089",
+      "N139"
+    ],
+    "screenshot": "evidence/H105-remaining-branches-final-restored.jpg",
+    "dom": "evidence/H105-remaining-branches-final-restored.dom.txt",
+    "context": {
+      "dialogs": [],
+      "focus": "<body>",
+      "focusTag": "BODY",
+      "height": 1000,
+      "width": 1440
+    },
+    "capturedAt": "2026-10-20T21:36:59.599Z"
+  }
+]

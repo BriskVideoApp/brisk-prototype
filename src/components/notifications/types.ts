@@ -27,4 +27,5 @@ export type ProjectSystemPostData = {
   ctaLabel?: string;
   groupedCount?: number;
   thumbnailUrl?: string;
+  timingIssueId?: string;
 };

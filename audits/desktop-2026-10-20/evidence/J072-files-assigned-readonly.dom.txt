@@ -1,0 +1,90 @@
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Nina Patel":
+    - generic "Nina Patel": NP
+    - strong: Nina Patel
+    - generic: North Star Films
+  - group "Prototype controls":
+    - generic "Test mode" [active]: Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates, 2 unread":
+      - generic "2 unread notifications": "2"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "FIGM / Config Highlights - Community Keynote":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: FIGM
+      - generic: /
+      - generic: Config Highlights - Community Keynote
+      - generic "Project share actions":
+        - button "Share project": Share project
+    - generic "FIGM Config Highlights - Community Keynote":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/figma-config-highlights/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/figma-config-highlights/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Not started"':
+          - /url: /projects/figma-config-highlights/stages/storyboard
+          - text: Not started
+        - generic: Storyboard
+        - 'link "Video Review: Approved"':
+          - /url: /projects/figma-config-highlights/stages/edit
+          - text: Approved
+        - generic: Animation
+        - 'link "Masters: Approved"':
+          - /url: /projects/figma-config-highlights/stages/masters
+          - text: Approved
+        - generic: Masters
+      - link "Media. 2 media files":
+        - /url: /projects/figma-config-highlights/stages/media
+        - generic: "2"
+        - text: 2 media files
+      - generic: Media
+  - region "Project Files":
+    - text: PROJECT UTILITY
+    - heading "Project Files" [level=1]
+    - paragraph: Links to the external storage your team already uses.
+    - generic: 1 location
+    - article:
+      - generic: "1"
+      - heading "AUDIT SAMPLE - read-only Files inspection" [level=2]
+      - generic: https://example.com/audit-reference
+      - link "Open Project Files":
+        - /url: https://example.com/audit-reference
+        - text: Open Project Files
+      - button "Copy link": Copy link
+      - paragraph: "Added by Tom Editor · today · Last confirmed working: never"
+      - button "Mark as confirmed working": Mark as confirmed working
+      - generic: Notes
+      - generic: No file structure notes yet.

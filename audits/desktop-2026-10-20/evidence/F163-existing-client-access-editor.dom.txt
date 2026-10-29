@@ -1,0 +1,130 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Jess Taylor avatar": JT
+  - generic: Client
+  - heading "Jess Taylor" [level=1]
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Access" [selected]
+    - tab "Notes and activity"
+  - tabpanel "Access":
+    - heading "Access" [level=2]
+    - paragraph: Manage invitations and the projects this Person can access.
+    - button "Manage access Choose which projects they can open.":
+      - generic: Manage access
+      - text: Choose which projects they can open.
+    - button "Remove portal access Stop access to the Client portal and projects."
+    - heading "Projects they can access" [level=3]
+    - generic: 1 shared
+    - article:
+      - strong: Launch Film - Sales Narrative
+      - generic: In Production - Loom
+      - link "Open project":
+        - /url: /projects/loom-launch-film
+      - button "Remove access Stop access to this project."
+    - generic: Jess Taylor cannot see internal notes, Studio rates, other Clients or unrelated projects.
+- dialog "Invite person":
+  - banner:
+    - heading "Invite person" [level=2]
+    - generic: Step 2 of 2 - Add the relevant details
+  - list "Invitation progress":
+    - generic: "1"
+    - text: Person
+    - generic: "2"
+    - text: Access
+  - region "Person being invited":
+    - strong: Jess Taylor
+    - generic: jess@loom.com
+    - button "Change"
+  - generic: Client company
+  - button "Select Client company":
+    - generic: Loom
+  - group "Projects (optional) 5 selected All projects":
+    - text: Projects (optional)
+    - generic: 5 selected
+    - checkbox "All projects" [checked]
+    - generic: All projects
+    - checkbox "Launch Film - Sales Narrative In Production" [checked]
+    - strong: Launch Film - Sales Narrative
+    - generic: In Production
+    - checkbox "WACF Customer Cutdown 01 In Production" [checked]
+    - strong: WACF Customer Cutdown 01
+    - generic: In Production
+    - checkbox "Product Tour - Team Workflows In Production" [checked]
+    - strong: Product Tour - Team Workflows
+    - generic: In Production
+    - checkbox "Customer Story - Healthcare In Production" [checked]
+    - strong: Customer Story - Healthcare
+    - generic: In Production
+    - checkbox "Q3 Product Recap In Production" [checked]
+    - strong: Q3 Product Recap
+    - generic: In Production
+  - paragraph:
+    - strong: Jess Taylor already has a Person record.
+    - text: Brisk will update the same person's project access instead of creating a duplicate.
+  - region "Access summary":
+    - strong: What they can access
+    - paragraph: Jess Taylor belongs to Loom and can only see the projects you choose.
+    - paragraph: They can comment, approve and invite other Client contacts from the same Client. Studio notes, rates, freelancer costs, other Clients and internal comments stay private.
+  - contentinfo:
+    - button "Back"
+    - button "Send invite" [active]

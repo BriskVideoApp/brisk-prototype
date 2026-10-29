@@ -1,0 +1,36 @@
+{
+  "scope": "Roll out the attached Final delivery proposal: producer date proposal, Client agreement, discussion and history",
+  "state": "Implemented, desktop-verified and review pack opened for Tom",
+  "boundaries": [
+    "Keep existing agreed date until explicit authorised Client agreement",
+    "Preserve original date and all proposals in history",
+    "No Studio preview or Freelancer can agree on the Client\u2019s behalf",
+    "Use existing project dates, not the sample November dates",
+    "No turnaround-settings or automatic scheduling engine changes",
+    "No working-origin verification, record migrations, dependencies, tests, build, commit or push"
+  ],
+  "approvalSource": "Latest direct user instruction and attached Final delivery proposal",
+  "checksSoFar": [
+    "Type-check passed after core integration",
+    "New delivery route HTTP 200",
+    "Cancel preserves agreed date",
+    "Producer creates pending proposal; old date retained",
+    "Superseding proposal retained as history"
+  ],
+  "currentDemo": "Isolated origin 8782, Loom pending proposal for 9 November 2026; no working-origin interactions",
+  "result": "result.html",
+  "verification": "implementation-validation.json",
+  "remainingScope": [
+    "Studio turnaround settings",
+    "Automatic stage timer calculations or live AI forecasting",
+    "Revision-round allowance policy",
+    "Backend, real messages, inbox/email delivery"
+  ],
+  "remainingChecks": [
+    "Adversarial simultaneous cross-tab action was not performed; guards source-reviewed",
+    "Completed/Archived branches source-reviewed, not separately browser-exercised",
+    "Existing unreleased risk privacy and Brief submission were exercised in preceding warning batch; latest Hims Internal review link was rechecked here",
+    "Mobile deferred by approved sequencing"
+  ],
+  "browserChecks": 11
+}

@@ -1,0 +1,122 @@
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Jordan Lee":
+    - generic "Jordan Lee": JL
+    - strong: Jordan Lee
+    - generic: North Star Films
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 1 unread":
+      - text: Chat
+      - generic "1 unread messages": "1"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Offer preview - read only
+  - heading "Launch Film - Sales Narrative" [level=1]
+  - paragraph: Loom · Full project Brief
+  - paragraph: No Brief details have been entered yet.
+  - link "Back to offers":
+    - /url: /active-videos?view=offers
+  - region "Client Brief":
+    - region "Review your brief":
+      - generic: Summary
+      - heading "Review your brief" [level=2]
+      - region "Logline":
+        - generic: "01"
+        - generic: Logline
+        - paragraph:
+          - text: A
+          - button "Edit Duration": 3-minute
+          - button "Video type":
+            - generic: Video type
+          - text: for
+          - button "Audience":
+            - generic: Audience
+          - text: ", designed to"
+          - button "Goal":
+            - generic: Goal
+          - text: . Styled after
+          - button "Reference":
+            - generic: Reference
+          - text: .
+      - region "Main Video Details":
+        - generic: "02"
+        - generic: Main Video Details
+        - table:
+          - rowgroup:
+            - row "Video type Duration Deadline Platform Format Captions Shoot mode Brand kit":
+              - columnheader "Video type":
+                - generic: Video type
+              - columnheader "Duration":
+                - generic: Duration
+              - columnheader "Deadline":
+                - generic: Deadline
+              - columnheader "Platform":
+                - generic: Platform
+              - columnheader "Format":
+                - generic: Format
+              - columnheader "Captions":
+                - generic: Captions
+              - columnheader "Shoot mode":
+                - generic: Shoot mode
+              - columnheader "Brand kit":
+                - generic: Brand kit
+          - rowgroup:
+            - row "Add video type Edit Duration Add deadline Edit Platform Edit Format Edit Captions Add shoot mode Add brand kit":
+              - cell "Add video type":
+                - button "Add video type": + Add video type
+              - cell "Edit Duration":
+                - button "Edit Duration": 3 mins
+              - cell "Add deadline":
+                - button "Add deadline": + Add deadline
+              - cell "Edit Platform":
+                - button "Edit Platform": YouTube
+              - cell "Edit Format":
+                - button "Edit Format": Landscape
+              - cell "Edit Captions":
+                - button "Edit Captions": Baked in captions
+              - cell "Add shoot mode":
+                - button "Add shoot mode": + Add shoot mode
+              - cell "Add brand kit":
+                - button "Add brand kit": + Add brand kit
+      - generic: "03"
+      - generic: Additional versions
+      - generic: No extra versions yet.
+      - button "Add cutdown":
+        - generic: Add cutdown
+      - generic: Reels, square cut, or social ad?
+    - button "Back"
+    - navigation "Brief steps":
+      - button "1 1. Description"
+      - button "2 2. Video type"
+      - button "3 3. Audience and action"
+      - button "4 4. Similar videos"
+      - button "5 5. Brand kit"
+      - button "6 6. Footage and filming"
+      - button "7 7. Deadline"
+      - button "8 8. Deliverables"
+      - button "Summary 9. Review your brief"
+    - button "Back to offers"

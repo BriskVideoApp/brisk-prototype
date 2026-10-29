@@ -1,0 +1,24 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - button "Go to Set up Studio":
+      - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- region "Add your first Client":
+  - heading "Add your first Client" [level=1]
+  - paragraph: Add their company name to start a video together. They won't be notified until you invite them.
+  - generic: Client name
+  - textbox "Client name"
+- dialog "Skip adding a Client?":
+  - banner:
+    - heading "Skip adding a Client?" [level=2]
+    - generic: You can add your first Client from the Studio dashboard whenever you are ready.
+  - contentinfo:
+    - button "Back" [active]
+    - button "Skip for now"

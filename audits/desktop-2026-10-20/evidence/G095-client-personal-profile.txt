@@ -1,0 +1,85 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Company details":
+      - /url: /settings/client/company
+      - generic: Company details
+    - link "Team access":
+      - /url: /settings/client/team
+      - generic: Team access
+    - link "Invoices":
+      - /url: /client/invoices
+      - generic: Invoices
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "My profile" [level=1]
+  - region "Personal profile":
+    - region "Profile photo":
+      - generic "Jess Taylor avatar": JT
+      - heading "Profile photo" [level=2]
+      - button "Choose File"
+      - button "Upload photo":
+        - generic: Upload photo
+    - region "Contact details":
+      - heading "Contact details" [level=2]
+      - generic: Full name
+      - textbox "Full name": Jess Taylor
+      - generic: Phone number
+      - textbox "Phone number": <redacted>
+      - generic: Job title
+      - textbox "Job title": Marketing Director
+      - generic: Location
+      - textbox "Location": Sydney, NSW
+      - generic: Personal timezone
+      - button "Personal timezone":
+        - generic: Australia/Sydney
+      - term: Sign-in email
+      - definition: jess@loom.com
+      - term: Current role
+      - definition: Client Admin
+      - term: Client company
+      - definition: Loom
+      - term: Studio
+      - definition: North Star Films
+    - button "Discard changes"
+    - button "Save changes"
+    - generic: All profile changes are saved.

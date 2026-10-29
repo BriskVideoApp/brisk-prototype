@@ -1,0 +1,504 @@
+{
+  "reviewer": "A",
+  "status": "Source baseline established; current screenshot references being reconciled by lead",
+  "authorityOrder": [
+    "Latest explicit approval within scope",
+    "Approved DS React components and tokens",
+    "Consistent project guidance",
+    "Verified current implementation",
+    "External examples and heuristics"
+  ],
+  "families": [
+    {
+      "id": "BASE01",
+      "family": "Workspace titles and headers",
+      "approvedPattern": "WorkspacePageHeader app composition using Headings/M-bold, 32px/40px, white background, primary lower border and 24px vertical / 32px horizontal padding",
+      "canonicalExample": "Videos workspace",
+      "canonicalSource": "src/components/layout/WorkspacePageHeader.tsx:11",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "To Do retains its date below title",
+        "Actions may wrap",
+        "Freelancer Videos retains My jobs and its workflow",
+        "Project, profile, dialog and Client portal headings retain contextual hierarchies"
+      ],
+      "rules": "Scope is Videos, To Do, People, Clients, Media Library, Expenses and Brand Kits only. No supporting description except To Do date. Filters below header. People/Clients header search and filter-row invitation/create actions are settled.",
+      "authority": "Docs/desktop-design-baseline.md - Workspace titles, search and page actions",
+      "conflicts": "Older 32px Semibold and screenshot top-right roles are superseded; do not infer one universal heading size for all screens."
+    },
+    {
+      "id": "BASE02",
+      "family": "Section, profile and dialog headings",
+      "approvedPattern": "DS Headings bold scale, contextual hierarchy",
+      "canonicalExample": "Shared EditingDialog title",
+      "canonicalSource": "Brisk DS/src/app/components/DialogSurface.module.css",
+      "screenshot": "E004-team-role-editor-1440.jpg",
+      "variants": [
+        "Headings/XS-bold 20/28 for common card/modal titles",
+        "S-bold 24/32 and M-bold 32/40 for sections",
+        "Project/profile headings retain existing purpose"
+      ],
+      "rules": "Plus Jakarta Sans only; no custom font smoothing. Paragraph and Label XS 12/16, S 14/20, M16/24, L20/32, XL24/36, regular or semibold. Use paragraph for prose and label for UI text.",
+      "authority": "Brisk DS/guidelines/foundations/typography.md; brisk-design-system.md",
+      "conflicts": "Actual 10px/11px consumer styles are not new approved text styles merely because repeated. Audit their live use and task impact."
+    },
+    {
+      "id": "BASE03",
+      "family": "Labelled actions",
+      "approvedPattern": "DS Button, primary / secondary / tertiary / ghost / danger",
+      "canonicalExample": "Role editor Remove role and Cancel",
+      "canonicalSource": "Brisk DS/src/app/components/Button.tsx",
+      "screenshot": "E008-team-freelancers-1133.jpg",
+      "variants": [
+        "S for dialog footers and compact toolbars",
+        "M for established page/form actions",
+        "L for existing large entry actions",
+        "Ghost quiet actions intentionally have no frame at rest"
+      ],
+      "rules": "One main action per visible section; preserve meaning and callback. White secondary, purple primary, red danger. Native button, default type button. Rest no shadow; hover hard shadow; visible blue keyboard focus; pressed flattens. Consumer class controls layout only.",
+      "authority": "Brisk DS/guidelines/components/buttons.md; Tom approval 17 October 2026",
+      "conflicts": "Do not convert links, player controls, calendars, chips, grouped share actions or selection rows just because they contain words."
+    },
+    {
+      "id": "BASE04",
+      "family": "Icon-only actions",
+      "approvedPattern": "DS IconButton quiet by default",
+      "canonicalExample": "Global Back / Forward / Recent pages",
+      "canonicalSource": "src/components/navigation/GlobalHistoryNavigation.tsx:66",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "S 32px visual /16px icon",
+        "M40px visual /20px icon",
+        "Both have 44px native target",
+        "Secondary for stronger emphasis",
+        "Circle only avatar-like context"
+      ],
+      "rules": "Required non-empty aria-label, DsIcon asset, no native title duplication. Blue focus on inner control. Quiet transparent at rest; lavender hover. Context-sized rather than globally enlarged.",
+      "authority": "Brisk DS/guidelines/components/icon-buttons.md",
+      "conflicts": "Pilot scope expanded through logged approvals, not all rich/composer/player controls. No X should be added to shared editing dialogs."
+    },
+    {
+      "id": "BASE05",
+      "family": "Single-line inputs",
+      "approvedPattern": "DS Input with S/M/L variants and native attributes",
+      "canonicalExample": "Add Client form ordinary fields",
+      "canonicalSource": "Brisk DS/src/app/components/Input.tsx",
+      "screenshot": "E102-studio-edit-name.jpg",
+      "variants": [
+        "M default",
+        "S compact forms",
+        "L established large fields",
+        "Decorative leading/trailing icons",
+        "Read-only retains focusability and value"
+      ],
+      "rules": "Associated label or accessible name; stable hint ids; invalid border and aria-invalid; blue focus, purple typing, lavender hover, disabled semantic tokens. Preserve validation and submission. Layout-only consumer classes.",
+      "authority": "Brisk DS/guidelines/components/inputs.md",
+      "conflicts": "Search, inline editors, calendars/time, suggestion fields and rich composers are specialised. Team hours and currency fields remain unresolved audit scope, not automatically certified by EditingDialog. Current canonical capture requested.",
+      "inspectionNote": "Current Studio name editor demonstrates labelled DS Input with initial keyboard focus; supplied frame is 1133px. Password fields and required-note error branches need separate checks."
+    },
+    {
+      "id": "BASE06",
+      "family": "Multi-line form inputs",
+      "approvedPattern": "DS Textarea, Paragraph/S, token padding and small radius",
+      "canonicalExample": "People Internal notes / Studio instructions",
+      "canonicalSource": "Brisk DS/src/app/components/Textarea.tsx",
+      "screenshot": "D-R047-staff-1133.jpg",
+      "variants": [
+        "Rows preserve content need",
+        "People notes 200px minimum",
+        "AI Playbook 120px minimum",
+        "Messages five rows"
+      ],
+      "rules": "Vertical resize and native line breaks; no automatic growth. Native names/hints/errors/attributes and save boundaries retained. Read-only and disabled appearance follow Input.",
+      "authority": "Brisk DS/guidelines/components/textareas.md",
+      "conflicts": "Chat, AI, Script, Brief, review and specialised Shoot composers/editors remain contextual. Different field heights are intentional. Current canonical capture requested.",
+      "captureLimit": "Studio instructions DS Textarea default state only; focus, dirty and save/discard require interaction."
+    },
+    {
+      "id": "BASE07",
+      "family": "Search",
+      "approvedPattern": "Specialised current search compositions; no universal React Search primitive approved",
+      "canonicalExample": "People/Clients search placement in workspace header",
+      "canonicalSource": "src/components/people/PeoplePage.tsx:109",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "Workspace list search",
+        "Dark Chat rail search launcher",
+        "Integrated borderless picker search",
+        "Media/project-scoped search",
+        "People/address/source suggestion search"
+      ],
+      "rules": "Preserve actual query scope, callbacks, accessible name and result clearing. Shared header placement is approved; dimensions and all interaction styling are explicitly not blanket approved.",
+      "authority": "Docs/desktop-design-baseline.md - unresolved specialised searches; dropdown.md",
+      "conflicts": "Comparable workspace fields are 38/40/44px and vary in focus treatment. Need decision on a reusable interaction treatment without flattening specialised contexts or inventing an unapproved primitive."
+    },
+    {
+      "id": "BASE08",
+      "family": "Selection fields and multi-selectors",
+      "approvedPattern": "DS BriskSelect via compatibility re-export",
+      "canonicalExample": "Videos Staff status field / People sort",
+      "canonicalSource": "Brisk DS/src/app/components/Select.tsx; src/components/form/BriskSelect.tsx",
+      "screenshot": "D-R020-staff-1440.jpg",
+      "variants": [
+        "Single commits and closes",
+        "Multiple changes immediately; Done closes",
+        "Search auto >15 or explicit for findable names",
+        "Contextual status/Brand Kit triggerContent",
+        "Inline creation footer"
+      ],
+      "rules": "White dark-bordered menu, 12px radius and hard shadow, 4px inset. Field/row radius8. Options minimum40px and wrap. Selected tick and lavender; separate blue active outline. Escape cancels uncommitted choice and restores focus. Preserve native semantics and portal/dismissal handling.",
+      "authority": "Brisk DS/guidelines/components/dropdown.md; approval17 October 2026",
+      "conflicts": "Local CSS still overrides certain triggers and focus. Do not remove blue focus as an open-state decoration. Specialised calendar/time/address/mentions and visible Brief grids are excluded.",
+      "additionalScreenshots": [
+        "E002-staff-videos-1440.jpg",
+        "E010-media-keyboard-before.jpg"
+      ],
+      "currentContextExamples": [
+        "BRIEF-brand-kit-1133.jpg",
+        "BRIEF-deliverables-1133.jpg"
+      ],
+      "inspectionNote": "The approved compact 584px Brand Kit field retains rich 72px options and useful palette content. Specialised two-column video/CTA/footage choice grids are not ordinary fields and fit both desktop widths. Brief table controls retain their approved component behaviour, but consumer widths hide short values at 1133 (A12).",
+      "currentNestedExamples": [
+        "E100-invoice-forward-picker.jpg",
+        "E115-brief-duration-menu-1133.jpg"
+      ]
+    },
+    {
+      "id": "BASE09",
+      "family": "Command menus and links",
+      "approvedPattern": "BriskSelect action mode, text-first quiet commands",
+      "canonicalExample": "Recent pages / Script actions / Transcript actions",
+      "canonicalSource": "Brisk DS/src/app/components/Select.tsx; src/components/script/ScriptDocumentControls.tsx",
+      "screenshot": "D-R025-staff-1440.jpg",
+      "variants": [
+        "Default menu width for long labels",
+        "Compact180px for short Transcript commands",
+        "Native href rows",
+        "Context position",
+        "Inline creation footer",
+        "Danger last with8px whitespace break"
+      ],
+      "rules": "44px minimum borderless rows, small DS text, no selected ticks or Done. Preserve disabled explanations, command order and callbacks. Arrow/Home/End/typeahead, Escape/focus return and Tab exit. Native anchors retain browser context/modifier clicks.",
+      "authority": "Brisk DS/guidelines/components/action-menus.md",
+      "conflicts": "Original Chat/Videos pilot and Script-only limits superseded by later scoped migrations. Specialised media source picker keeps four workflows; current canonical capture requested.",
+      "captureLimit": "Closed Script actions trigger only, not menu-row verification."
+    },
+    {
+      "id": "BASE10",
+      "family": "List filters",
+      "approvedPattern": "DS FilterGroup / FilterButton",
+      "canonicalExample": "Videos All/Queued/In production/Completed/Paused/Archived",
+      "canonicalSource": "Brisk DS/src/app/components/FilterGroup.tsx",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "People view filters",
+        "Clients and notifications",
+        "Chat project-status filters",
+        "Client portal six-status row",
+        "Transcript All/Highlights"
+      ],
+      "rules": "Native aria-pressed buttons in named group, no tab semantics or custom arrow selection. Minimum44px,14px semibold, counts12px including0. Lavender selected, blue focus, wrap rather than clip.",
+      "authority": "Brisk DS/guidelines/components/quiet-choices.md",
+      "conflicts": "Videos detailed Filters, Freelancer job/payment views, Chat Internal/External, Shoot modes/day and media/player tools remain specialised. Their differences are not automatically defects."
+    },
+    {
+      "id": "BASE11",
+      "family": "Content tabs",
+      "approvedPattern": "DS Tabs, underlined quiet choice",
+      "canonicalExample": "People/Client profile sections",
+      "canonicalSource": "Brisk DS/src/app/components/Tabs.tsx",
+      "screenshot": "D-R019-staff-1133.jpg",
+      "variants": [
+        "Inline dialogs",
+        "Page profile tab strip",
+        "Disabled tabs skipped"
+      ],
+      "rules": "Named tablist, native buttons, one tab stop, stable ids, labelled active panel. Left/Right/Home/End focus and activate instant panels. Preserve consumer state and existing URL/refresh rules. No attached frame inferred from older Figma tabs.",
+      "authority": "Brisk DS/guidelines/components/quiet-choices.md",
+      "conflicts": "Team Staff/Freelancers custom selector remains explicitly unresolved; migrating must preserve different selection/assign/invite behaviours. Current canonical capture requested.",
+      "captureLimit": "Profile Overview tab strip default state only; keyboard behaviour not proven by screenshot."
+    },
+    {
+      "id": "BASE12",
+      "family": "Checkboxes",
+      "approvedPattern": "DS Checkbox,20px square and44px minimum clickable row",
+      "canonicalExample": "Studio Notifications checkboxes through NotificationSettingsCheckbox",
+      "canonicalSource": "src/components/settings/NotificationSettingsCheckbox.tsx:17",
+      "screenshot": "D-R040-staff-1133.jpg",
+      "variants": [
+        "Checked, unchecked, mixed",
+        "Disabled selections remain legible",
+        "Label-free requires accessible name",
+        "Rich non-interactive row label content"
+      ],
+      "rules": "Approved check SVG through DsIcon, mixed bar, native Space and DS Enter shortcut, blue visible focus. Preserve boolean onChange, scope, persistence and save/cancel semantics. Consumer controls layout only.",
+      "authority": "Brisk DS/guidelines/components/forms.md",
+      "conflicts": "Team selector duplicates a24px target with Unicode tick, outside approved states. Current canonical capture requested; see A02/B accessible-name finding.",
+      "captureLimit": "Current checked/disabled default states; keyboard focus and actual target measurement require browser."
+    },
+    {
+      "id": "BASE13",
+      "family": "Radios",
+      "approvedPattern": "DS Radio single-size20px circle and44px target",
+      "canonicalExample": "Chat preferred route radios",
+      "canonicalSource": "Brisk DS/src/app/components/Radio.tsx",
+      "screenshot": null,
+      "variants": [
+        "Rich descriptive non-interactive label",
+        "Disabled selected retains dot"
+      ],
+      "rules": "Preserve fieldset/legend, shared native name per exclusive group, distinct names across groups. Browser owns arrows, Space and reset. No mixed or Enter shortcut. Blue focus and shared semantic tokens.",
+      "authority": "Brisk DS/guidelines/components/forms.md; approval19 October2026",
+      "conflicts": "Specialised Brief choice grids, filters and voice/icon/sharing choices are outside initial migration. Current canonical capture requested."
+    },
+    {
+      "id": "BASE14",
+      "family": "Toggles",
+      "approvedPattern": "DS Toggle immediate on/off",
+      "canonicalExample": "Chat connector Use for this project",
+      "canonicalSource": "Brisk DS/src/app/components/Toggle.tsx",
+      "screenshot": null,
+      "variants": [
+        "42x22 track,16px thumb",
+        "44px row",
+        "Label before track",
+        "Label-free44px width"
+      ],
+      "rules": "Native checkbox role switch, native Space. Disabled semantic tokens not whole-control opacity. Visible blue focus. Save-based forms use Checkbox; preserve immediate-update callbacks and close behaviour.",
+      "authority": "Brisk DS/guidelines/components/toggles.md",
+      "conflicts": "Chat approved immediate setting remains saved when closed with Cancel; do not silently add rollback through a visual migration. Current canonical capture requested."
+    },
+    {
+      "id": "BASE15",
+      "family": "Editing dialogs",
+      "approvedPattern": "DS EditingDialog / DialogSurface",
+      "canonicalExample": "Team Role editor",
+      "canonicalSource": "Brisk DS/src/app/components/EditingDialog.tsx",
+      "screenshot": "E008-team-freelancers-1133.jpg",
+      "variants": [
+        "Compact480",
+        "Standard560",
+        "Expanded680",
+        "Wide800",
+        "Full1120",
+        "Immediate controls retain Done/Close"
+      ],
+      "rules": "White primary-bordered12px surface, hard shadow,24px padding/gaps,20px bold title,14px prose. No top-rightX/decorative icon/divider. Visible S actions right; Cancel before Save. Scroll body with stable title/footer. Native modal focus containment; Escape/backdrop original guard; restore opener.",
+      "authority": "Brisk DS/guidelines/components/editing-dialog.md",
+      "conflicts": "Approval of shell does not certify Team contents or combine distinct save, invite, assign and remove actions. Drawers, read-only previews and contextual inline editors remain separate."
+    },
+    {
+      "id": "BASE16",
+      "family": "Confirmations",
+      "approvedPattern": "DS ConfirmationDialog",
+      "canonicalExample": "Remove role confirmation",
+      "canonicalSource": "Brisk DS/src/app/components/ConfirmationDialog.tsx",
+      "screenshot": "E098-invoice-currency-mismatch.jpg",
+      "variants": [
+        "Compact480",
+        "Expanded680 for recipients, typed confirmation and message",
+        "Custom actions only when >2 needed"
+      ],
+      "rules": "Same shell as editor, Cancel first and default focus, red destructive versus purple positive. Accurate consequences and recovery. Disabled cannot be bypassed by Enter. Nested cancellation preserves draft. Never submit merely to inspect.",
+      "authority": "Brisk DS/guidelines/components/confirmation-dialog.md",
+      "conflicts": "Studio Settings browser history/reload warnings retain documented native synchronous exception. Older generic Popconfirm placement does not revoke newer React confirmation standard. Current canonical capture requested.",
+      "inspectionNote": "Current expanded ConfirmationDialog has explicit comparison facts, named warning, note requirement and visible Cancel. This does not approve every custom footer: Send back and other consumers need explicit-exit review."
+    },
+    {
+      "id": "BASE17",
+      "family": "Anchored settings",
+      "approvedPattern": "DS Popover composed with Checkbox and Button",
+      "canonicalExample": "Videos Columns",
+      "canonicalSource": "Brisk DS/src/app/components/Popover.tsx",
+      "screenshot": null,
+      "variants": [
+        "Short contextual checklist",
+        "Scrollable body; fixed footer",
+        "Done for immediate changes and existing Reset"
+      ],
+      "rules": "White primary border12px radius hard shadow. Non-modal labelled dialog, not menu/listbox. Focus first enabled field, normal Tab exit, Escape/Done focus return, viewport fitting. Preserve fixed columns and last optional-column guard.",
+      "authority": "Brisk DS/guidelines/components/popover.md",
+      "conflicts": "Pilot only Videos Columns; not general permission to migrate all specialised pickers. Current canonical capture requested."
+    },
+    {
+      "id": "BASE18",
+      "family": "Drawers and secondary panels",
+      "approvedPattern": "Contextual app drawers informed by d-Drawer; no generic React Drawer export in kit",
+      "canonicalExample": "Videos project details",
+      "canonicalSource": "src/components/active-videos/ActiveVideosPage.tsx; Brisk DS/guidelines/components/overlays.md",
+      "screenshot": "E003-team-drawer-1440.jpg",
+      "variants": [
+        "Read-only role variants",
+        "Media inspector",
+        "Chat drawer",
+        "Ask Brisk panel"
+      ],
+      "rules": "Retain contextual workflow; white surface, primary border and appropriate elevation. Original kit drawer top-left16px corner with other corners sharp. Preserve nested menus, sections and interaction guards.",
+      "authority": "overlays.md plus latest contextual approvals",
+      "conflicts": "Existing code is evidence, not blanket approval of every drawer shape. No DS Drawer React implementation available, so do not recommend a nonexistent import or silently invent one."
+    },
+    {
+      "id": "BASE19",
+      "family": "Tables and data rows",
+      "approvedPattern": "Structured native tables/app compositions using DS foundations; d-Table catalogue is Figma guidance",
+      "canonicalExample": "Videos progress table; People directory",
+      "canonicalSource": "src/components/active-videos/ActiveVideosPage.tsx; src/components/people/PeoplePage.tsx:135",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "Videos sticky Project/Actions and reorderable optional columns",
+        "People current-work/capacity summaries",
+        "Financial tables retain restricted details",
+        "Client contacts shared-project summaries"
+      ],
+      "rules": "Use meaningful headings and native destinations. Row typography and density contextual. Keep hairlines without nested card frames around each Videos item. Do not remove financial or capacity distinctions for uniformity.",
+      "authority": "data-display.md; desktop baseline; scoped decision log",
+      "conflicts": "No React Table export exists. Treat shared table architecture as an unresolved DS/source-sync question, not a demand to replace working native tables with nonexistent code. Horizontal scrolling can be intentional; verify discoverability and fixed-column fit at1133.",
+      "currentContextExamples": [
+        "BRIEF-summary-1440.jpg",
+        "BRIEF-summary-1133.jpg",
+        "BRIEF-deliverables-1133.jpg"
+      ],
+      "inspectionNote": "30 September decisions explicitly retain one Main Video Details row, shared headings/column positions with Additional Versions, and the editor field order. Retain these while repairing short-value truncation and mid-word wrapping at narrow desktop (A12); no new card/table primitive is implied."
+    },
+    {
+      "id": "BASE20",
+      "family": "Surfaces, borders and shadows",
+      "approvedPattern": "Semantic DS colours, primary enclosing edges, hard elevated shadows",
+      "canonicalExample": "Shared EditingDialog",
+      "canonicalSource": "Brisk DS/src/app/components/DialogSurface.module.css",
+      "screenshot": "E008-team-freelancers-1133.jpg",
+      "variants": [
+        "Warm page canvas only",
+        "White elevated layers",
+        "Pale-neutral hybrid sidebar approved exception",
+        "Quiet controls unframed at rest",
+        "Specialised status/comment tints per scoped references"
+      ],
+      "rules": "No blurred or multistack shadow. Hard M4/4 elevation, S2/2. Controls rest no shadow; elevated surfaces rest M. Primary border on active enclosing edge; secondary border disabled-only per DS. Radius and spacing tokens, distinguish enclosing edges from content hairlines.",
+      "authority": "Guidelines.md; foundations/effects.md; tokens-color.md; brisk-design-system.md",
+      "conflicts": "Shoot softer-surface overrides include disabled border tokens and blurred shadow declarations; live use and any scoped approval need verification. Do not apply generic enclosure border rules to approved quiet menus/buttons or add double borders.",
+      "currentContextExamples": [
+        "D-R003-staff-1440.jpg",
+        "D-R056-staff-1440.jpg",
+        "D-R057-staff-1440.jpg"
+      ],
+      "inspectionNote": "A06 concerns decorative enclosing Brand Kit layers. Actual colour swatches, logo preview backgrounds, font specimens, status colours and the shared call-sheet call-time emphasis serve content semantics and are not blanket white-only targets."
+    },
+    {
+      "id": "BASE21",
+      "family": "Badges, status and counts",
+      "approvedPattern": "Contextual app badges; global Chat/Updates share CommentCountBadge",
+      "canonicalExample": "Videos row comment badge",
+      "canonicalSource": "src/components/CommentCountBadge.tsx; src/components/active-videos/active-videos.css:785",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "Read-only status pill",
+        "Staff editable shared status field",
+        "Unread global counts with separate sources",
+        "Media count",
+        "Role/access badges when access distinction matters"
+      ],
+      "rules": "Preserve zero hiding, caps, aria labels and independent counts. Existing globals sharing adapter is approved; specific10px white/Pink40 and animation remain audit subjects. Status selection and read-only pills serve distinct jobs.",
+      "authority": "desktop baseline - Global unread counts; data-display.md; shared Videos status approval",
+      "conflicts": "No reusable React Badge exported; current adapter is not a new DS variant. Original screenshot cannot itself authorise low contrast or perpetual motion."
+    },
+    {
+      "id": "BASE22",
+      "family": "Project stages and navigation",
+      "approvedPattern": "Circular StageChip and native ProjectStageHeader links",
+      "canonicalExample": "Videos progress row",
+      "canonicalSource": "src/components/active-videos/StageProgress.tsx; src/components/project/ProjectStageHeader.tsx",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "Optional Storyboard after Script",
+        "Animation replaces Edit label",
+        "Single Shoot with internal substages",
+        "Pinned Media outside sequence",
+        "Project header selected label underline"
+      ],
+      "rules": "Status colour independent of viewed page. Equal circle/icon size; selected page primary text+purple underline, no lifting/enlarging. Native links and aria-current, not content Tabs. Status treatment remains purpose-specific in list versus header.",
+      "authority": "AGENTS.md; production journey; quiet-choices.md",
+      "conflicts": "Archived Flow icons, square/letter tiles, Style Frames and separate Shoot Plan/On Set project stages are superseded. Historical screenshot Media in sequence is not current authority.",
+      "additionalScreenshots": [
+        "D-R025-staff-1440.jpg",
+        "D-R026-staff-1440.jpg"
+      ],
+      "captureLimit": "Project stage label selection and pinned Media shown; does not prove all supported flows."
+    },
+    {
+      "id": "BASE23",
+      "family": "Hybrid navigation and global actions",
+      "approvedPattern": "HybridSidebar plus AppShell app composition",
+      "canonicalExample": "Staff Videos expanded sidebar",
+      "canonicalSource": "src/components/navigation/HybridSidebar.tsx; src/components/navigation/AppShell.tsx",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "Collapsed sidebar",
+        "Role-specific destinations",
+        "Studio settings permitted only",
+        "Narrow/clean-entry top role fallback retained"
+      ],
+      "rules": "Staff order Videos,To Do,People,Clients,Media Library,Expenses,Brand Kits. Back/Forward/Recent top-left. Chat and Updates visible labels and icons top-right, quiet Ask Brisk. Account above Studio settings and quiet Test mode below. Sidebar secondary neutral; top/content white.",
+      "authority": "desktop baseline; navigation.md",
+      "conflicts": "Do not homogenise destinations by granting inaccessible content. Older AppSidebar/WorkspaceSidebar need live/unused classification; not automatic migration target. Current notification descendants lose settings context because of an exact route match; see A05.",
+      "additionalScreenshots": [
+        "D-R040-staff-1133.jpg",
+        "D-R039-staff-1133.jpg"
+      ]
+    },
+    {
+      "id": "BASE24",
+      "family": "Icons and assets",
+      "approvedPattern": "DsIcon mapped approved assets in public/brisk-icons; StageChip owns stages",
+      "canonicalExample": "Hybrid sidebar Clients buildings / Expenses money / Brand Kits palette",
+      "canonicalSource": "src/components/video-review/DsIcon.tsx",
+      "screenshot": "E002-staff-videos-1440.jpg",
+      "variants": [
+        "16px dense",
+        "20px header",
+        "24px hero only",
+        "User-generated emoji allowed"
+      ],
+      "rules": "No third-party/Unicode/emoji UI substitutes or inline paths. Missing asset protocol requires reporting missing need and Yura confirmation before implementation; audit may document recommendation only. Logos and supplied pictograms keep identity.",
+      "authority": "AGENTS.md; brisk-design-system.md; icon-discovery.md",
+      "conflicts": "Team checkbox uses Unicode check despite approved DS asset; do not substitute custom new tick."
+    },
+    {
+      "id": "BASE25",
+      "family": "Empty states, validation and feedback",
+      "approvedPattern": "Contextual DS-informed empty states and field feedback; no generic React EmptyState/Toast exports",
+      "canonicalExample": "To Do existing unassigned-person empty state",
+      "canonicalSource": "src/components/today/TodayPage.tsx",
+      "screenshot": "D-R060-staff-1440.jpg",
+      "variants": [
+        "First-use actionable empty",
+        "No search results clear/revise",
+        "Restricted scope with reason and safe destination",
+        "Unavailable preview retains source attachment",
+        "Disabled explanation"
+      ],
+      "rules": "Short headline, one-line useful explanation and appropriate next action. Do not force a create CTA into read-only/restricted context. Important actionable information persists; ordinary transient success can dismiss. Preserve accurate saves and recovery, never imply nonexistent Undo.",
+      "authority": "brisk-design-system.md; saas-patterns; overlays.md; scoped availability decisions",
+      "conflicts": "Figma Toast/Alert catalogue does not prove reusable React exports. Blank suggested Staff branch is a candidate; do not manufacture failures or records for evidence. Current canonical capture requested."
+    },
+    {
+      "id": "BASE26",
+      "family": "Media-first, comments and rich editors",
+      "approvedPattern": "Specialised approved Brisk visual references plus contextual source",
+      "canonicalExample": "Video Review dark player/light comment rail",
+      "canonicalSource": "src/components/video-review/VideoReviewScreen.tsx; Docs/References/brisk/Brisk - video-review-overview.png",
+      "screenshot": "Docs/References/brisk/Brisk - video-review-overview.png",
+      "variants": [
+        "Client cream versus team lavender comments",
+        "Overall/timestamp comments",
+        "Script/Storyboard versions and approval guards",
+        "Transcript source metadata and Send to Script working version",
+        "Player/drawing/selection controls"
+      ],
+      "rules": "Preserve differentiated message visibility and approval/review function. Detail actions retain hierarchy, with at most one primary in current action section. Media/transcripts retain source scope; historical Script versions are read-only. Specialised editor controls are not ordinary button/field migrations.",
+      "authority": "brisk-design-system.md - Video Review; action-menus.md; production journey",
+      "conflicts": "Historical screenshot supports dark/light contrast and comment family, not current nav/heading/role controls. Current capture needed for live comparison."
+    }
+  ],
+  "reviewBoundaries": "Source review and genuine historical/current screenshots only. Browser lead must bind requested canonical captures and verify focus/cascade. No app edits, stored-data changes, commits, installs, tests or production build. No proposed pattern is approved on Tom's behalf."
+}

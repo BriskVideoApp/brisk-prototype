@@ -1,0 +1,22 @@
+{
+  "date": "28 October 2026",
+  "type": "Design proposal verification only",
+  "sourceFilesCompared": 1705,
+  "changedProtectedFiles": [],
+  "desktopWidths": [
+    1440,
+    1133
+  ],
+  "defaultState": "Customise rules closed, days visible, revision rounds separate and unset",
+  "browserChecksCount": 6,
+  "browserWarningsOrErrors": 0,
+  "observations": "days-rounds-browser-observations.json",
+  "roundsSemantics": "Number of included revision rounds, confirmed by Tom. The allowance value and its scope are not chosen or enforced.",
+  "durationSemantics": "The existing two-day Studio revision turnaround remains separate.",
+  "preservation": "No application records submitted. Existing app work and preview drafts left intact. Viewport restored.",
+  "limits": [
+    "Contained prototype design, not application implementation",
+    "Full application shell/role verification and keyboard interaction required in implementation",
+    "No mobile application pass or formal accessibility-compliance claim"
+  ]
+}

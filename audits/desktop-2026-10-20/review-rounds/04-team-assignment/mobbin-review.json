@@ -1,0 +1,109 @@
+{
+  "status": "Reassessment for Tom; no implementation approved",
+  "date": "28 October2026",
+  "answer": "Previous recommendation addressed the editor, not the full frequent-task entry path. Revise around direct, always-visible Videos-row assignment with the full editor retained for detailed management.",
+  "references": [
+    {
+      "app": "Xero",
+      "url": "https://mobbin.com/flows/8c035c81-8eb6-4251-a1de-a8009150f697",
+      "screen": "1fdec1c7-8f2b-440c-9f17-3a0cc3e147e6",
+      "file": "mobbin-references/xero-assign.jpg",
+      "observed": "A focused Assign staff to project dialog separates Add staff from an Assigned list.",
+      "relevance": "Separate choosing someone from reviewing existing assignments.",
+      "limit": "This screen does not show production-role capacity, Freelancer project fees or pending invitations. Its Done label does not establish Brisk save semantics.",
+      "sha256": "b9a64366f35e449a8b6f9a1a07059ecf6fa29b12910f9e9004e7f286b199f10f"
+    },
+    {
+      "app": "Motion",
+      "url": "https://mobbin.com/flows/439ba71b-0d5f-4101-8812-e6fa36b43e16",
+      "screen": "c618b2a1-f16f-497f-9d18-6f6c574756b1",
+      "file": "mobbin-references/motion-assignee.jpg",
+      "observed": "The task editor has a compact assignee picker with Unassigned, existing people, Invite new team member and Add assignee to workspace entries.",
+      "relevance": "Keep existing-person selection distinct from bringing someone new into the team.",
+      "limit": "Simple task assignment; it does not show Brisk\u2019s richer rate/capacity decision. It is not evidence to replace the whole role editor with a dropdown.",
+      "sha256": "7fc0309ec54b3ec672fb405d8996bf6900779862089514c734c87b7a2c9f2d59"
+    },
+    {
+      "app": "Toggl Track",
+      "url": "https://mobbin.com/screens/605de95e-0dfd-45c6-8fbf-7ac55f3190b3",
+      "screen": "605de95e-0dfd-45c6-8fbf-7ac55f3190b3",
+      "file": "mobbin-references/toggl-members.jpg",
+      "observed": "Add Project Members puts member selection and member role first, with a collapsed Set billable rates section above Add members.",
+      "relevance": "Reduce the visual competition between the main selection task and secondary detail.",
+      "limit": "Billable rates are a different financial concept from Brisk Freelancer project fees. Keep Brisk rates visible when they inform the choice; do not copy the collapse mechanically.",
+      "sha256": "3a7110e1ebf55bd5588c78a48d31ca0f18d5d1a21b79787052bc2ec5fe506b32"
+    },
+    {
+      "app": "Calendly",
+      "url": "https://mobbin.com/screens/b0b575c1-9c99-4435-ad27-0f5d377abdbb",
+      "screen": "b0b575c1-9c99-4435-ad27-0f5d377abdbb",
+      "file": "mobbin-references/calendly-assign.jpg",
+      "observed": "A focused assignment dialog has a name/email search field, selected people and an explicit Assign button.",
+      "relevance": "Search, a visible choice and an explicit action can sit together in a compact editor.",
+      "limit": "Managed event assignment, not production staffing. Brisk\u2019s multi-person invitations and single-person direct assignment still need their own rules.",
+      "sha256": "205d8f8d3bc9487b53dfdf66c888415d5eeeff69160a435ce05ed9a2076b5d18"
+    }
+  ],
+  "revisedDirection": [
+    {
+      "id": "TR01",
+      "proposal": "Keep a focused role editor. Make role hours compact, then show Staff/Freelancers and the person-selection area before the full invitation-management list.",
+      "basis": "Reference-informed composition judgement; current Brisk invitations occupy substantial space before the people chooser.",
+      "tradeoff": "Existing invitation count and status summary must remain visible, because assignment can affect outstanding invitations."
+    },
+    {
+      "id": "TR02",
+      "proposal": "Provide search within the person chooser. Keep useful suggestions, but fall back to the full current-role group when the suggested set is empty, with a visible All Staff or All Freelancers scope label.",
+      "basis": "Search is directly visible in the inspected Calendly reference. Empty-shortlist fallback is a Brisk product judgement, replacing TP03\u2019s copy-only repair if approved.",
+      "tradeoff": "This changes initial filtering. Preserve disabled people/reasons, selections and a visible selected count when search hides selected people. Search wording and the fallback require explicit agreement."
+    },
+    {
+      "id": "TR03",
+      "proposal": "Show existing invitations as a compact, separate section with a count and status summary. Expand it to inspect existing details and withdrawal controls.",
+      "basis": "Reference-informed separation of current state from new selection; this exact invitation disclosure is a Brisk judgement.",
+      "tradeoff": "Adds a step to inspect full invitation details. Preserve the warning/confirmation boundaries when assignment affects active invitations; do not hide the existence of pending invitations."
+    },
+    {
+      "id": "TR04",
+      "proposal": "Retain the original DS Checkbox repair and visible Project rate heading. Keep Staff capacity, Freelancer rates, independent inputs, deselection, multi-selection and separate Assign / Assign now / Invite meanings.",
+      "basis": "Brisk\u2019s approved component standard and current workflow requirements remain authoritative.",
+      "tradeoff": "The richer rows need more space than a simple task dropdown; that space supports the staffing decision."
+    }
+  ],
+  "originalProposal": "TP01 and TP02 still recommended. TP03 is the smaller fallback; proposed TR02 changes the default list and needs agreement.",
+  "limits": [
+    "Inspected examples support patterns, not proof of one best design or measured usability outcomes.",
+    "No inspected example covers Brisk\u2019s full combination of capacity, role hours, project fees and pending Freelancer invitations.",
+    "Other searches returned access administration, calendar availability or assignee filters. Those were inspected but not used as assignment references.",
+    "Mobbin references support structural decisions only and do not replace approved Brisk DS styling or permission rules."
+  ],
+  "scope": "Audit artefacts only. No application code, records, settings or permissions changed.",
+  "latestRequirement": {
+    "status": "User requirement recorded; revised proposal, no implementation approval",
+    "requirement": "Frequent assignment must be directly discoverable from each Videos project row, with the minimum meaningful steps and no need to hunt through details or enable columns.",
+    "sourceEvidence": {
+      "file": "src/components/active-videos/ActiveVideosPage.tsx",
+      "defaultTeamColumn": "Hidden by default; optional Team cell opens the Team panel rather than a role picker.",
+      "projectQuickActions": "Current project-name quick actions include Chat, Files where available, and Client portal; no direct labelled assignment action."
+    },
+    "assessment": "The previous editor-focused proposal did not fully address the entry path.",
+    "proposedEntry": "Always-visible Assign team action in the leading project identity area. Available in normal desktop row layout, without hover, overflow menu, horizontal scrolling or column configuration. Preserve Staff-only management rights.",
+    "proposedQuickFlow": "Open assignment directly from Videos. Show role and required hours at the top; show person choices with Staff capacity or Freelancer hourly rate/project cost. Review hours/cost and choose person before the distinct Assign or Invite action. Search is optional.",
+    "clickTarget": {
+      "knownRole": "Open chooser > choose person > Assign:3 clicks.",
+      "roleNeeded": "Open chooser > choose role > choose person > Assign:4 clicks.",
+      "limit": "3/4-click targets apply only when role and prefilled required hours are already correct. Editing required hours is a necessary additional interaction, and must not be removed to meet a click count. Preserve Freelancer rate/terms and pending-invitation safeguards."
+    },
+    "detailedManagement": "Retain full Team management for invitation history, withdrawal and broader role settings. Required hours is part of quick assignment, not confined to detailed management.",
+    "preserve": "Person selection is still distinct from assignment; invitations remain distinct from direct assignment. No new Undo or autosave behaviour is implied.",
+    "notApproved": "Control placement, compact chooser composition and role-selection defaults remain proposals requiring agreement.",
+    "requiredHours": {
+      "priority": "Essential part of quick assignment, explicitly requested by Tom.",
+      "placement": "Visible and editable alongside the role at the top of the quick chooser, before Assign or Invite. Do not move it behind detailed management.",
+      "initialValue": "Prefill existing role hours when available; allow review/edit without unnecessary retyping. Preserve current hours rules.",
+      "cost": "Show the Freelancer hourly rate and calculated project cost together. Hours changes update the calculated estimate. Preserve and clearly identify existing custom/agreed project-rate overrides; never silently replace them.",
+      "source": "RoleEditorModal.tsx:getProjectRateValue uses hourly rate times role hours unless a project-rate override exists."
+    }
+  },
+  "hoursClarification": "Required hours must be visible/editable in quick assignment and explain Freelancer cost. Earlier wording placing role hours only in detailed management is superseded."
+}

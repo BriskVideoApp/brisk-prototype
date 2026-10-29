@@ -1,0 +1,14 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/media".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/media
+	2 container Delete 2 files?
+		3 container
+			4 heading Delete 2 files?, Value: 2
+				5 text Delete 2 files?
+			6 text This permanently deletes these files from Brisk.
+		7 container
+			8 text Brisk Storage:  the original is also deleted.
+		9 container
+			10 button Cancel
+			11 button Delete files
+
+The focused UI element is 10 button Cancel

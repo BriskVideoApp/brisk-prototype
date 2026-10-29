@@ -260,6 +260,8 @@
 }
 
 .media-workspace {
+  --media-inspector-width: 360px;
+  --media-card-min-width: 210px;
   display: grid;
   min-height: 620px;
   flex: 1 1 auto;
@@ -271,7 +273,7 @@
   grid-template-columns: 56px minmax(0, 1fr);
 }
 
-.media-workspace.inspector-open {
+.media-workspace.inspector-docked {
   grid-template-columns: 240px minmax(0, 1fr) 360px;
 }
 
@@ -279,7 +281,7 @@
   grid-template-columns: 240px 240px minmax(0, 1fr);
 }
 
-.media-workspace.has-project-folder-rail.inspector-open {
+.media-workspace.has-project-folder-rail.inspector-docked {
   grid-template-columns: 240px 240px minmax(0, 1fr) 360px;
 }
 
@@ -291,11 +293,11 @@
   grid-template-columns: 180px 220px 220px minmax(0, 1fr);
 }
 
-.media-workspace.has-client-rail.inspector-open {
+.media-workspace.has-client-rail.inspector-docked {
   grid-template-columns: 180px 220px minmax(0, 1fr) 360px;
 }
 
-.media-workspace.has-client-rail.has-project-folder-rail.inspector-open {
+.media-workspace.has-client-rail.has-project-folder-rail.inspector-docked {
   grid-template-columns: 180px 220px 220px minmax(0, 1fr) 360px;
 }
 
@@ -303,11 +305,11 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-.media-workspace.is-client-scoped.inspector-open {
+.media-workspace.is-client-scoped.inspector-docked {
   grid-template-columns: minmax(0, 1fr) 360px;
 }
 
-.media-workspace.rail-collapsed.inspector-open {
+.media-workspace.rail-collapsed.inspector-docked {
   grid-template-columns: 56px minmax(0, 1fr) 360px;
 }
 
@@ -886,7 +888,7 @@
 
 .media-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--media-card-min-width), 1fr));
   align-items: start;
   gap: var(--brisk-space-l);
 }
@@ -1513,19 +1515,19 @@
   border-color: var(--brisk-border-primary);
 }
 
-.media-inspector > .media-asset-actions {
+.media-inspector-content > .media-asset-actions {
   justify-content: space-between;
   border-top: 1px solid var(--brisk-border-secondary);
   padding: var(--brisk-space-s) var(--brisk-space-m);
 }
 
-.media-inspector > .media-asset-actions [data-tooltip]:first-child::after {
+.media-inspector-content > .media-asset-actions [data-tooltip]:first-child::after {
   right: auto;
   left: var(--brisk-space-none);
   --tooltip-x: 0;
 }
 
-.media-inspector > .media-asset-actions [data-tooltip]:last-child::after {
+.media-inspector-content > .media-asset-actions [data-tooltip]:last-child::after {
   right: var(--brisk-space-none);
   left: auto;
   --tooltip-x: 0;
@@ -2270,7 +2272,7 @@
   padding: var(--brisk-space-m);
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 860px) {
   .media-workspace.inspector-open {
     grid-template-columns: 240px minmax(0, 1fr);
   }
@@ -2510,3 +2512,50 @@
 .media-import-context .label-xs { color: var(--brisk-text-secondary); }
 .media-import-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--brisk-space-l); }
 .media-import-tools .media-search-shell { flex: 1 1 auto; min-width: 0; }
+
+/* The shared desktop inspector adapts to its remaining file area, not a window breakpoint. */
+@media (min-width: 861px) {
+  .media-inspector-slot {
+    position: sticky;
+    top: var(--brisk-space-none);
+    align-self: start;
+    width: var(--media-inspector-width);
+    height: var(--media-inspector-height);
+    min-height: var(--brisk-space-none);
+    z-index: 70;
+  }
+
+  .media-workspace.inspector-overlay > .media-inspector-slot {
+    position: fixed;
+    top: var(--media-inspector-top);
+    right: var(--media-inspector-right);
+    box-shadow: var(--brisk-shadow-m);
+  }
+
+  .media-inspector-slot > .media-inspector {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: var(--brisk-space-none);
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .media-inspector-header {
+    flex: 0 0 auto;
+    border-bottom: 1px solid var(--brisk-border-primary);
+    background: var(--brisk-white);
+  }
+
+  .media-inspector-content {
+    min-height: var(--brisk-space-none);
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .media-inspector-content > .media-asset-actions {
+    border-top: var(--brisk-space-none);
+  }
+}

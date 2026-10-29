@@ -1,0 +1,54 @@
+{
+  "close": {
+    "bottom": 46,
+    "height": 32,
+    "left": 1089,
+    "right": 1121,
+    "top": 14,
+    "width": 32,
+    "x": 1089,
+    "y": 14
+  },
+  "filename": {
+    "bottom": 48,
+    "height": 36,
+    "left": 786,
+    "right": 1081,
+    "top": 12,
+    "width": 295,
+    "x": 786,
+    "y": 12
+  },
+  "grid": "180px 220px 220px 273px",
+  "header": {
+    "bottom": 65,
+    "height": 65,
+    "left": 240,
+    "right": 1133,
+    "top": 0,
+    "width": 893,
+    "x": 240,
+    "y": 0
+  },
+  "hitAtCloseCentre": {
+    "buttonLabel": "Ask Brisk",
+    "label": "Ask Brisk",
+    "tag": "BUTTON",
+    "text": "Ask Brisk"
+  },
+  "inspector": {
+    "bottom": 1000,
+    "height": 1000,
+    "left": 773,
+    "right": 1133,
+    "top": 0,
+    "width": 360,
+    "x": 773,
+    "y": 0
+  },
+  "url": "http://127.0.0.1:8770/media/media-01",
+  "viewport": {
+    "height": 1000,
+    "width": 1133
+  }
+}

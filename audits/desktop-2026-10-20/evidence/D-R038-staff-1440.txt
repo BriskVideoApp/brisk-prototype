@@ -1,0 +1,62 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/client-billing".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/client-billing
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container
+				10 link Description: Back to workspace, Value: localhost:3000/active-videos
+				11 text Studio settings
+				12 container Studio settings
+					13 link Description: Studio setup, Value: localhost:3000/settings/studio
+					14 link Description: Production defaults, Value: localhost:3000/settings/studio/production
+					15 link Description: AI Playbook, Value: localhost:3000/settings/studio/ai-playbook
+					16 link Description: Messaging connections, Value: localhost:3000/settings/studio/integrations
+					17 link Description: Storage, Value: localhost:3000/settings/studio/storage
+					18 link Description: Notifications, Value: localhost:3000/settings/notifications
+					19 link Description: Brisk plan & billing, Value: localhost:3000/settings/plan-billing
+					20 link Description: Client billing, Value: localhost:3000/settings/client-billing
+			21 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				22 container Tom Mitchell
+					23 text TM
+				24 text Tom Mitchell
+				25 text North Star Films
+			26 container Studio administration
+				27 link Description: Studio settings, Value: localhost:3000/settings/studio
+			28 container Prototype controls
+				29 button (collapsed) Test mode, Secondary Actions: Expand
+					30 text Test mode
+		31 container
+			32 container Navigation history
+				33 button Go back
+					34 text Back
+				35 button Go forward
+					36 text Forward
+				37 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					38 text Recent pages
+			39 container Global actions
+				40 button Open Chat
+				41 button (collapsed) Description: Updates, Secondary Actions: Expand
+			42 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			43 heading Client billing, Value: 1
+				44 text Client billing
+			45 text Choose how your Studio invoices and collects payments from Clients.
+			46 container Stripe connected
+				47 heading Stripe connected, Value: 2, ID: stripe-connected-heading
+					48 text Stripe connected
+				49 text Client billing is managed in your Studio’s Stripe account.
+				50 definition list
+					51 container Connected business
+						52 text Connected business
+					53 text ChopChop Film Pty Ltd
+					54 container Account email
+						55 text Account email
+					56 text finance@chopchop.film
+				57 button Open Stripe dashboard
+				58 pop up button (collapsed) Description: More Stripe actions, Secondary Actions: Expand
+					59 text More Stripe actions
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/client-billing

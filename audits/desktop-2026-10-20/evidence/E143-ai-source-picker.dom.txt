@@ -1,0 +1,357 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk" [expanded]: Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+      - generic "Project share actions":
+        - button "Share project": Share project
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/storyboard
+          - text: Waiting on North Star Films
+        - generic: Storyboard
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 15 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "15"
+        - text: 15 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - complementary "Media folders":
+    - generic: Folders
+    - button "Add folder": Add folder
+    - button "Collapse folders": Collapse folders
+    - button "All media":
+      - generic: All media
+    - button "Customer interviews":
+      - generic: Customer interviews
+    - button "More options for Customer interviews": Folder options
+    - button "Product captures":
+      - generic: Product captures
+    - button "More options for Product captures": Folder options
+    - button "Day one":
+      - generic: Day one
+    - button "More options for Day one": Folder options
+    - button "Client supplied":
+      - generic: Client supplied
+    - button "More options for Client supplied": Folder options
+    - generic: Remote Studio
+    - generic: Original stored in Remote Studio. Editors mount the managed Shade project root while Brisk playback stays consistent.
+  - button "Open transcripts, 4 available":
+    - text: Transcripts
+    - generic: "4"
+  - button "Upload": Upload
+  - button "Download media for Launch Film - Sales Narrative": Download all
+  - button "Choose File"
+  - generic "Filter media by type":
+    - button "All" [pressed]
+    - button "Video"
+    - button "Audio"
+    - button "Image"
+    - button "Document"
+  - generic "Media view":
+    - button "Card view" [pressed]: Card view
+    - button "List view": List view
+  - generic: Sort media
+  - combobox "Sort media":
+    - generic: Newest first
+  - searchbox "Search media"
+  - region "Project media":
+    - button "Customer interviews Folder":
+      - strong: Customer interviews
+      - generic: Folder
+    - button "Product captures Folder":
+      - strong: Product captures
+      - generic: Folder
+    - button "Client supplied Folder":
+      - strong: Client supplied
+      - generic: Folder
+    - article "WhatsApp Image 2026-10-19 at 15.38.27.jpeg, image":
+      - button "Select WhatsApp Image 2026-10-19 at 15.38.27.jpeg"
+      - paragraph: 20 Oct 2026 · 172.8 KB
+      - paragraph: WhatsApp Image 2026-10-19 at 15.38.27.jpeg
+      - generic "Actions for WhatsApp Image 2026-10-19 at 15.38.27.jpeg":
+        - button "Comment WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Comment
+        - button "Transcript WhatsApp Image 2026-10-19 at 15.38.27.jpeg" [disabled]: Transcript
+        - button "Copy link WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Copy link
+        - button "Download WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Download
+        - button "Archive WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Archive
+        - button "Delete WhatsApp Image 2026-10-19 at 15.38.27.jpeg": Delete
+    - article "WhatsApp Image 2026-10-18 at 20.04.44.jpeg, image":
+      - button "Select WhatsApp Image 2026-10-18 at 20.04.44.jpeg"
+      - paragraph: 20 Oct 2026 · 81.6 KB
+      - paragraph: WhatsApp Image 2026-10-18 at 20.04.44.jpeg
+      - generic "Actions for WhatsApp Image 2026-10-18 at 20.04.44.jpeg":
+        - button "Comment WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Comment
+        - button "Transcript WhatsApp Image 2026-10-18 at 20.04.44.jpeg" [disabled]: Transcript
+        - button "Copy link WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Copy link
+        - button "Download WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Download
+        - button "Archive WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Archive
+        - button "Delete WhatsApp Image 2026-10-18 at 20.04.44.jpeg": Delete
+    - article "Product-demo-playback-test.mov, video":
+      - generic: Failed - retry
+      - button "Select Product-demo-playback-test.mov"
+      - paragraph: 19 Aug 2026 · 1.2 GB · 02:58
+      - paragraph: Product-demo-playback-test.mov
+      - generic "Actions for Product-demo-playback-test.mov":
+        - button "Retry Product-demo-playback-test.mov": Retry
+        - button "Comment Product-demo-playback-test.mov": Comment
+        - button "Transcript Product-demo-playback-test.mov": Transcript
+        - button "Copy link Product-demo-playback-test.mov": Copy link
+        - button "Download Product-demo-playback-test.mov": Download
+        - button "Archive Product-demo-playback-test.mov": Archive
+        - button "Delete Product-demo-playback-test.mov": Delete
+    - article "Jess-interview-camera-a.mov, video":
+      - button "Select Jess-interview-camera-a.mov"
+      - paragraph: 08 July 2026 · 4.8 GB · 18:42
+      - paragraph: Jess-interview-camera-a.mov
+      - generic "Actions for Jess-interview-camera-a.mov":
+        - button "2 comments for Jess-interview-camera-a.mov":
+          - generic: "2"
+          - text: Comment
+        - button "Transcript Jess-interview-camera-a.mov": Transcript
+        - button "Copy link Jess-interview-camera-a.mov": Copy link
+        - button "Download Jess-interview-camera-a.mov": Download
+        - button "Archive Jess-interview-camera-a.mov": Archive
+        - button "Delete Jess-interview-camera-a.mov": Delete
+    - article "Jess-interview-camera-b.mov, video":
+      - button "Select Jess-interview-camera-b.mov"
+      - paragraph: 08 July 2026 · 3.9 GB · 18:39
+      - paragraph: Jess-interview-camera-b.mov
+      - generic "Actions for Jess-interview-camera-b.mov":
+        - button "Comment Jess-interview-camera-b.mov": Comment
+        - button "Transcript Jess-interview-camera-b.mov": Transcript
+        - button "Copy link Jess-interview-camera-b.mov": Copy link
+        - button "Download Jess-interview-camera-b.mov": Download
+        - button "Archive Jess-interview-camera-b.mov": Archive
+        - button "Delete Jess-interview-camera-b.mov": Delete
+    - article "Jess-lapel-audio.wav, audio":
+      - button "Select Jess-lapel-audio.wav"
+      - paragraph: 08 July 2026 · 862.4 MB · 19:04
+      - paragraph: Jess-lapel-audio.wav
+      - generic "Actions for Jess-lapel-audio.wav":
+        - button "1 comment for Jess-lapel-audio.wav":
+          - generic: "1"
+          - text: Comment
+        - button "Transcript Jess-lapel-audio.wav": Transcript
+        - button "Copy link Jess-lapel-audio.wav": Copy link
+        - button "Download Jess-lapel-audio.wav": Download
+        - button "Archive Jess-lapel-audio.wav": Archive
+        - button "Delete Jess-lapel-audio.wav": Delete
+    - article "Avery-customer-interview.mov, video":
+      - button "Select Avery-customer-interview.mov"
+      - paragraph: 08 July 2026 · 2.8 GB · 12:16
+      - paragraph: Avery-customer-interview.mov
+      - generic "Actions for Avery-customer-interview.mov":
+        - button "Comment Avery-customer-interview.mov": Comment
+        - button "Transcript Avery-customer-interview.mov": Transcript
+        - button "Copy link Avery-customer-interview.mov": Copy link
+        - button "Download Avery-customer-interview.mov": Download
+        - button "Archive Avery-customer-interview.mov": Archive
+        - button "Delete Avery-customer-interview.mov": Delete
+    - article "Care-team-roundtable.wav, audio":
+      - button "Select Care-team-roundtable.wav"
+      - paragraph: 08 July 2026 · 624.7 MB · 08:42
+      - paragraph: Care-team-roundtable.wav
+      - generic "Actions for Care-team-roundtable.wav":
+        - button "Comment Care-team-roundtable.wav": Comment
+        - button "Transcript Care-team-roundtable.wav": Transcript
+        - button "Copy link Care-team-roundtable.wav": Copy link
+        - button "Download Care-team-roundtable.wav": Download
+        - button "Archive Care-team-roundtable.wav": Archive
+        - button "Delete Care-team-roundtable.wav": Delete
+    - article "Dashboard-wide-take-03.mov, video":
+      - button "Select Dashboard-wide-take-03.mov"
+      - paragraph: 08 July 2026 · 2.2 GB · 04:18
+      - paragraph: Dashboard-wide-take-03.mov
+      - generic "Actions for Dashboard-wide-take-03.mov":
+        - button "Comment Dashboard-wide-take-03.mov": Comment
+        - button "Transcript Dashboard-wide-take-03.mov": Transcript
+        - button "Copy link Dashboard-wide-take-03.mov": Copy link
+        - button "Download Dashboard-wide-take-03.mov": Download
+        - button "Archive Dashboard-wide-take-03.mov": Archive
+        - button "Delete Dashboard-wide-take-03.mov": Delete
+    - article "Sales-team-collaboration-01.mov, video":
+      - button "Select Sales-team-collaboration-01.mov"
+      - paragraph: 08 July 2026 · 1.7 GB · 03:06
+      - paragraph: Sales-team-collaboration-01.mov
+      - generic "Actions for Sales-team-collaboration-01.mov":
+        - button "Comment Sales-team-collaboration-01.mov": Comment
+        - button "Transcript Sales-team-collaboration-01.mov": Transcript
+        - button "Copy link Sales-team-collaboration-01.mov": Copy link
+        - button "Download Sales-team-collaboration-01.mov": Download
+        - button "Archive Sales-team-collaboration-01.mov": Archive
+        - button "Delete Sales-team-collaboration-01.mov": Delete
+    - article "Pipeline-screen-recording.mp4, video":
+      - button "Select Pipeline-screen-recording.mp4"
+      - paragraph: 08 July 2026 · 306.6 KB · 00:42
+      - paragraph: Pipeline-screen-recording.mp4
+      - generic "Actions for Pipeline-screen-recording.mp4":
+        - button "Comment Pipeline-screen-recording.mp4": Comment
+        - button "Transcript Pipeline-screen-recording.mp4": Transcript
+        - button "Copy link Pipeline-screen-recording.mp4": Copy link
+        - button "Download Pipeline-screen-recording.mp4": Download
+        - button "Archive Pipeline-screen-recording.mp4": Archive
+        - button "Delete Pipeline-screen-recording.mp4": Delete
+    - article "Loom-wordmark-black.png, image":
+      - button "Select Loom-wordmark-black.png"
+      - paragraph: 07 July 2026 · 184.2 KB
+      - paragraph: Loom-wordmark-black.png
+      - generic "Actions for Loom-wordmark-black.png":
+        - button "Comment Loom-wordmark-black.png": Comment
+        - button "Transcript Loom-wordmark-black.png" [disabled]: Transcript
+        - button "Copy link Loom-wordmark-black.png": Copy link
+        - button "Download Loom-wordmark-black.png": Download
+        - button "Archive Loom-wordmark-black.png": Archive
+        - button "Delete Loom-wordmark-black.png": Delete
+    - article "Launch-campaign-key-art.jpg, image":
+      - button "Select Launch-campaign-key-art.jpg"
+      - paragraph: 07 July 2026 · 8.4 MB
+      - paragraph: Launch-campaign-key-art.jpg
+      - generic "Actions for Launch-campaign-key-art.jpg":
+        - button "Comment Launch-campaign-key-art.jpg": Comment
+        - button "Transcript Launch-campaign-key-art.jpg" [disabled]: Transcript
+        - button "Copy link Launch-campaign-key-art.jpg": Copy link
+        - button "Download Launch-campaign-key-art.jpg": Download
+        - button "Archive Launch-campaign-key-art.jpg": Archive
+        - button "Delete Launch-campaign-key-art.jpg": Delete
+    - article "Brand-guidelines-2026.pdf, document":
+      - button "Select Brand-guidelines-2026.pdf"
+      - paragraph: 07 July 2026 · 12.7 MB
+      - paragraph: Brand-guidelines-2026.pdf
+      - generic "Actions for Brand-guidelines-2026.pdf":
+        - button "Comment Brand-guidelines-2026.pdf": Comment
+        - button "Transcript Brand-guidelines-2026.pdf" [disabled]: Transcript
+        - button "Copy link Brand-guidelines-2026.pdf": Copy link
+        - button "Download Brand-guidelines-2026.pdf": Download
+        - button "Archive Brand-guidelines-2026.pdf": Archive
+        - button "Delete Brand-guidelines-2026.pdf": Delete
+    - article "Room-tone-studio.wav, audio":
+      - button "Select Room-tone-studio.wav"
+      - paragraph: 06 July 2026 · 48.6 MB · 02:10
+      - paragraph: Room-tone-studio.wav
+      - generic "Actions for Room-tone-studio.wav":
+        - button "Comment Room-tone-studio.wav": Comment
+        - button "Transcript Room-tone-studio.wav": Transcript
+        - button "Copy link Room-tone-studio.wav": Copy link
+        - button "Download Room-tone-studio.wav": Download
+        - button "Archive Room-tone-studio.wav": Archive
+        - button "Delete Room-tone-studio.wav": Delete
+- complementary "Brisk AI conversation":
+  - button "New chat":
+    - strong: New chat
+  - button "Start new chat": Start new chat
+  - button "Close Brisk AI": Close
+  - generic "Current context":
+    - button "Preview Loom":
+      - generic: Loom
+    - button "Remove Loom chip"
+    - text: Loom
+    - button "Preview AI Brand Profile":
+      - generic: AI Brand Profile
+    - button "Remove AI Brand Profile chip"
+    - text: AI Brand Profile
+    - button "Preview Client comments":
+      - generic: Client comments
+    - button "Remove Client comments chip"
+    - text: Client comments
+    - button "Show 3 more sources": "+3"
+  - generic: Ask Brisk AI
+  - textbox "Ask Brisk AI":
+    - /placeholder: Ask Brisk AI about this project…
+  - button "Add a source" [expanded]: Add source
+  - dialog "Mention a source":
+    - button "Back to source options"
+    - heading "Mention a source" [level=2]
+    - button "Close source picker"
+    - generic: Search pages, projects or people
+    - searchbox "Search pages, projects or people" [active]
+    - heading "Suggested" [level=3]
+    - button "Launch Film - Sales Narrative" [pressed]:
+      - strong: Launch Film - Sales Narrative
+    - button "Loom" [pressed]:
+      - strong: Loom
+    - button "Maddie Lee Producer on this project":
+      - strong: Maddie Lee
+      - generic: Producer on this project
+    - button "Launch campaign page":
+      - strong: Launch campaign page
+    - button "Loom onboarding film":
+      - strong: Loom onboarding film
+  - button "Send" [disabled]: Send

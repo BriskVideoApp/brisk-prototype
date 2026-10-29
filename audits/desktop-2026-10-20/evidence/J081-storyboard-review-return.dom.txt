@@ -1,0 +1,281 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "NOTN / Workflow Demo - Engineering Teams":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: NOTN
+      - generic: /
+      - generic: Workflow Demo - Engineering Teams
+    - generic "NOTN Workflow Demo - Engineering Teams":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/notion-workflows/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/notion-workflows/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Approved"':
+          - /url: /projects/notion-workflows/stages/storyboard
+          - text: Approved
+        - generic: Storyboard
+        - 'link "Video Review: Waiting on Notion"':
+          - /url: /projects/notion-workflows/stages/edit
+          - text: Waiting on Notion
+        - generic: Animation
+        - 'link "Masters: Not started"':
+          - /url: /projects/notion-workflows/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 2 media files":
+        - /url: /projects/notion-workflows/stages/media
+        - generic: "2"
+        - text: 2 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - group "Storyboard view":
+    - button "Board" [pressed]: Board
+    - button "AV": AV
+  - button "Open versions":
+    - generic: V1
+  - generic "Storyboard controls":
+    - generic "Storyboard document controls":
+      - button "Storyboard actions": Storyboard actions
+    - button "Show all storyboard comments": Comments
+  - region "Storyboard frames":
+    - article:
+      - strong: Frame 01
+      - button "Edit duration for frame 1. Current duration 6 seconds.": 6s Edit duration
+      - button "Frame 1 actions": Frame 1 actions
+      - button "Open review for frame 1" [active]:
+        - img "Workflow builder capture"
+      - button "Replace image for frame 1":
+        - generic: Replace
+      - paragraph: Meet Maya, a nurse helping families navigate care decisions with calm and clarity.
+      - paragraph: Maya walks through a bright clinic corridor, greeting a family at reception.
+      - generic "Actions for frame 1":
+        - button "Comment on frame 1": Comment
+        - button "Copy link to frame 1": Copy link
+        - button "Download image from frame 1": Download
+        - button "Remove image from frame 1": Remove image
+    - article:
+      - strong: Frame 02
+      - button "Edit duration for frame 2. Current duration 6 seconds.": 6s Edit duration
+      - button "Frame 2 actions": Frame 2 actions
+      - button "Open review for frame 2":
+        - img "Title animation test"
+      - button "Replace image for frame 2":
+        - generic: Replace
+      - paragraph: When a loved one needs support, every next step can feel bigger than it should.
+      - paragraph: Close-up on a phone showing unread messages, then a quiet kitchen table.
+      - generic "Actions for frame 2":
+        - button "Comment on frame 2":
+          - generic: "1"
+          - text: Comment
+        - button "Copy link to frame 2": Copy link
+        - button "Download image from frame 2": Download
+        - button "Remove image from frame 2": Remove image
+    - article:
+      - strong: Frame 03
+      - button "Edit duration for frame 3. Current duration 7 seconds.": 7s Edit duration
+      - button "Frame 3 actions": Frame 3 actions
+      - button "Open review for frame 3":
+        - img "Workflow builder capture"
+      - button "Replace image for frame 3":
+        - generic: Replace
+      - paragraph: Harbour Health brings the plan, the people and the paperwork into one guided path.
+      - paragraph: Soft overhead shot of forms, calendar cards and a support plan coming together.
+      - generic "Actions for frame 3":
+        - button "Comment on frame 3": Comment
+        - button "Copy link to frame 3": Copy link
+        - button "Download image from frame 3": Download
+        - button "Remove image from frame 3": Remove image
+    - article:
+      - strong: Frame 04
+      - button "Edit duration for frame 4. Current duration 7 seconds.": 7s Edit duration
+      - button "Frame 4 actions": Frame 4 actions
+      - button "Open review for frame 4":
+        - img "Title animation test"
+      - button "Replace image for frame 4":
+        - generic: Replace
+      - paragraph: Families can see what is happening now, what happens next and who is responsible.
+      - paragraph: Animated interface cards slide from Brief to Script, then into Shoot and Media.
+      - generic "Actions for frame 4":
+        - button "Comment on frame 4": Comment
+        - button "Copy link to frame 4": Copy link
+        - button "Download image from frame 4": Download
+        - button "Remove image from frame 4": Remove image
+    - article:
+      - strong: Frame 05
+      - button "Edit duration for frame 5. Current duration 7 seconds.": 7s Edit duration
+      - button "Frame 5 actions": Frame 5 actions
+      - button "Open review for frame 5":
+        - img "Workflow builder capture"
+      - button "Replace image for frame 5":
+        - generic: Replace
+      - paragraph: The Studio team stays aligned too, with updates that are visible before bottlenecks build.
+      - paragraph: Producer, editor and client avatars appear around the same production timeline.
+      - generic "Actions for frame 5":
+        - button "Comment on frame 5": Comment
+        - button "Copy link to frame 5": Copy link
+        - button "Download image from frame 5": Download
+        - button "Remove image from frame 5": Remove image
+    - article:
+      - strong: Frame 06
+      - button "Edit duration for frame 6. Current duration 7 seconds.": 7s Edit duration
+      - button "Frame 6 actions": Frame 6 actions
+      - button "Open review for frame 6":
+        - img "Title animation test"
+      - button "Replace image for frame 6":
+        - generic: Replace
+      - paragraph: Instead of chasing answers, Maya can spend more time with the people who need her.
+      - paragraph: Maya sits with an older patient and their daughter, both visibly more relaxed.
+      - generic "Actions for frame 6":
+        - button "Comment on frame 6": Comment
+        - button "Copy link to frame 6": Copy link
+        - button "Download image from frame 6": Download
+        - button "Remove image from frame 6": Remove image
+    - article:
+      - strong: Frame 07
+      - button "Edit duration for frame 7. Current duration 6 seconds.": 6s Edit duration
+      - button "Frame 7 actions": Frame 7 actions
+      - button "Open review for frame 7":
+        - img "Workflow builder capture"
+      - button "Replace image for frame 7":
+        - generic: Replace
+      - paragraph: For care providers, that means fewer missed details and a smoother path to approval.
+      - paragraph: Tick marks move through a simple approval checklist without feeling mechanical.
+      - generic "Actions for frame 7":
+        - button "Comment on frame 7": Comment
+        - button "Copy link to frame 7": Copy link
+        - button "Download image from frame 7": Download
+        - button "Remove image from frame 7": Remove image
+    - article:
+      - strong: Frame 08
+      - button "Edit duration for frame 8. Current duration 7 seconds.": 7s Edit duration
+      - button "Frame 8 actions": Frame 8 actions
+      - button "Open review for frame 8":
+        - img "Title animation test"
+      - button "Replace image for frame 8":
+        - generic: Replace
+      - paragraph: For families, it means a shared view of care that feels understandable from day one.
+      - paragraph: Family members look at the same tablet while a care coordinator points to next steps.
+      - generic "Actions for frame 8":
+        - button "Comment on frame 8": Comment
+        - button "Copy link to frame 8": Copy link
+        - button "Download image from frame 8": Download
+        - button "Remove image from frame 8": Remove image
+    - article:
+      - strong: Frame 09
+      - button "Edit duration for frame 9. Current duration 6 seconds.": 6s Edit duration
+      - button "Frame 9 actions": Frame 9 actions
+      - button "Add image or footage to frame 9":
+        - generic: Add Image
+      - paragraph: Harbour Health is built for the moments when trust depends on being organised.
+      - paragraph: Calm brand-colour title card, then a subtle cut back to Maya in the clinic.
+      - generic "Actions for frame 9":
+        - button "Comment on frame 9": Comment
+        - button "Copy link to frame 9": Copy link
+        - button "No image to download from frame 9" [disabled]: No image to download
+    - article:
+      - strong: Frame 10
+      - button "Edit duration for frame 10. Current duration 5 seconds.": 5s Edit duration
+      - button "Frame 10 actions": Frame 10 actions
+      - button "Add image or footage to frame 10":
+        - generic: Add Image
+      - paragraph: One place for the brief, the decisions and the handover into the next stage.
+      - paragraph: Circular stage markers move from Brief to Script to Media with a human pace.
+      - generic "Actions for frame 10":
+        - button "Comment on frame 10": Comment
+        - button "Copy link to frame 10": Copy link
+        - button "No image to download from frame 10" [disabled]: No image to download
+    - article:
+      - strong: Frame 11
+      - button "Edit duration for frame 11. Current duration 6 seconds.": 6s Edit duration
+      - button "Frame 11 actions": Frame 11 actions
+      - button "Add image or footage to frame 11":
+        - generic: Add Image
+      - paragraph: So everyone can keep the work moving without losing the person at the centre.
+      - paragraph: Montage of staff, family and patient sharing small reassuring moments.
+      - generic "Actions for frame 11":
+        - button "Comment on frame 11": Comment
+        - button "Copy link to frame 11": Copy link
+        - button "No image to download from frame 11" [disabled]: No image to download
+    - article:
+      - strong: Frame 12
+      - button "Edit duration for frame 12. Current duration 5 seconds.": 5s Edit duration
+      - button "Frame 12 actions": Frame 12 actions
+      - button "Add image or footage to frame 12":
+        - generic: Add Image
+      - paragraph: Harbour Health. Care journeys made clearer for the people who carry them.
+      - paragraph: End card with Harbour Health mark and a quiet clinic ambience bed.
+      - generic "Actions for frame 12":
+        - button "Comment on frame 12": Comment
+        - button "Copy link to frame 12": Copy link
+        - button "No image to download from frame 12" [disabled]: No image to download
+    - button "+ Add frame"
+  - text: 12 frames
+  - generic: ·
+  - text: 8 illustrated
+  - generic "Storyboard review actions":
+    - generic "Storyboard share actions":
+      - button "Copy link"
+      - button "Send Storyboard Send to Notion or your team."
+      - button "Storyboard approved": Storyboard approved

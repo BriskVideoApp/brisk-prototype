@@ -1,0 +1,26 @@
+{
+  "changed": [
+    "src/components/project-timing/ProjectTimingNotice.tsx",
+    "src/components/project-timing/project-timing.css",
+    "src/components/project-timing/ProjectTimingContext.tsx",
+    "src/components/project-timing/ProjectTimingPost.tsx",
+    "src/components/chat/ChatMessageList.tsx",
+    "src/components/today/TodayPage.tsx",
+    "src/components/active-videos/FreelancerVideosPage.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/customer-dashboard/CustomerDashboard.tsx",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "src/data/project-timing.ts",
+    "src/data/notification-registry.ts"
+  ],
+  "new": [
+    "src/app/projects/[projectId]/delivery/page.tsx",
+    "src/components/project-timing/FinalDeliveryPage.tsx",
+    "src/data/project-delivery.ts"
+  ],
+  "protectedFilesCompared": 1710,
+  "unexpectedChanges": [],
+  "assetsChanged": [],
+  "dependencyFilesChanged": [],
+  "existingMockRecordFilesChanged": []
+}

@@ -1,0 +1,1910 @@
+[
+  {
+    "id": "J001-media-existing-processing",
+    "actionId": "J001-media-existing-processing",
+    "coverageIds": [
+      "N100",
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Media existing failed, preparing, uploading and unavailable fixtures",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": null,
+    "afterCaptureId": "J001-media-existing-processing",
+    "actions": [
+      "Verified Staff pressed in Test mode; no scenario reset or record change.",
+      "Closed Test mode; inspected current Media fixtures and available source states."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J002-media-no-results",
+    "actionId": "J002-media-no-results",
+    "coverageIds": [
+      "N100"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Media no-results query",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J001-media-existing-processing",
+    "afterCaptureId": "J002-media-no-results",
+    "actions": [
+      "Entered reversible search query no-match-audit-zzq.",
+      "Observed no matching media; no selection or records changed."
+    ],
+    "focus": "<input class=\"label-s\" aria-label=\"Search media\" placeholder=\"Search media\" type=\"search\" value=\"no-match-audit-zzq\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J003-library-masters",
+    "actionId": "J003-library-masters",
+    "coverageIds": [
+      "N100"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Masters filter after Clear controls",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J002-media-no-results",
+    "afterCaptureId": "J003-library-masters",
+    "actions": [
+      "Clear controls restored Media results and empty search.",
+      "Selected Masters tab; inspected current zero/populated result and available filters without download."
+    ],
+    "focus": "<button type=\"button\" role=\"tab\" class=\"label-s-semibold is-active\" aria-selected=\"true\">Masters</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J004-library-archived",
+    "actionId": "J004-library-archived",
+    "coverageIds": [
+      "N100"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Archived Media current branch",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J003-library-masters",
+    "afterCaptureId": "J004-library-archived",
+    "actions": [
+      "Selected Archived tab; read current archived list/actions only.",
+      "No Restore/Delete action invoked."
+    ],
+    "focus": "<button type=\"button\" role=\"tab\" class=\"label-s-semibold is-active\" aria-selected=\"true\">Archived</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J005-media-kind-filter",
+    "actionId": "J005-media-kind-filter",
+    "coverageIds": [
+      "N100"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Image kind selected",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J004-library-archived",
+    "afterCaptureId": "J005-media-kind-filter",
+    "actions": [
+      "Returned Media and chose Image kind filter.",
+      "Result list restricted to image assets; local filter only."
+    ],
+    "focus": "<button class=\"media-type-chip label-xs-semibold is-active\" type=\"button\" aria-pressed=\"true\">Image</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J006-unavailable-original-inspector",
+    "actionId": "J006-unavailable-original-inspector",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing unavailable-original asset inspector",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J005-media-kind-filter",
+    "afterCaptureId": "J006-unavailable-original-inspector",
+    "actions": [
+      "Opened existing Config-keynote-selects.mov from global Media.",
+      "Inspected original-unavailable explanation/disabled download and technical metadata; no retry/download."
+    ],
+    "focus": "<article class=\"media-asset-card  is-active\" tabindex=\"0\" aria-label=\"Config-keynote-selects.mov, video\" draggable=\"false\"><div class=\"media-thumbnail media-thumbnail-video  \" style=\"background-image: url(&quot;https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=900&amp;q=80&quot;);\"><video class=\"media-thumbnail-scrub-video\" src=\"https://videos.pexels.com/video-files/853800/853800-hd_1920_1080_30fps.mp4\" poster=\"https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=900&amp;q=80\" playsinline=\"\" preload=\"metadata\" aria-hidden=\"true\"></video><span class=\"media-thumbnail-play\" aria-hidden=\"true\"><span aria-hidden=\"true\" cla",
+    "sampleMutation": false
+  },
+  {
+    "id": "J007-asset-comments",
+    "actionId": "J007-asset-comments",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Asset comment panel empty/current audience",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J006-unavailable-original-inspector",
+    "afterCaptureId": "J007-asset-comments",
+    "actions": [
+      "Selected asset Comments tab.",
+      "Observed No comments on this file yet, Add comment composer and disabled Comment button. No audience selector is present in this consumer; no comment sent."
+    ],
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_18_-tab-1\" aria-selected=\"true\" aria-controls=\"_r_18_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Comments</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J008-asset-escape-outcome",
+    "actionId": "J008-asset-escape-outcome",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape from asset comment composer",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J007-asset-comments",
+    "afterCaptureId": "J008-asset-escape-outcome",
+    "actions": [
+      "Pressed Escape with focus in empty Add comment.",
+      "Recorded actual drawer presence and focus after Escape; no comment typed."
+    ],
+    "focus": "<textarea id=\"media-comment-draft\" class=\"label-s\" placeholder=\"Write a comment\" aria-expanded=\"false\"></textarea>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J009-failed-asset-inspector",
+    "actionId": "J009-failed-asset-inspector",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing failed asset inspector",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J008-asset-escape-outcome",
+    "afterCaptureId": "J009-failed-asset-inspector",
+    "actions": [
+      "Closed prior drawer using visible Close.",
+      "Opened existing failed media; inspected Failed retry state, source details and disabled/available actions without Retry."
+    ],
+    "focus": "<article class=\"media-asset-card  is-active\" tabindex=\"0\" aria-label=\"Product-demo-playback-test.mov, video\" draggable=\"false\"><div class=\"media-thumbnail media-thumbnail-video  \" style=\"background-image: url(&quot;https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&amp;fit=crop&amp;w=900&amp;q=80&quot;);\"><span class=\"media-thumbnail-play\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/play.svg&quot;); --icon-size: 18px;\"></span></span><span class=\"media-processing-chip is-failed label-xs-semibold\">Failed - retry</span><span class=\"media-thumbnail-progress\"><span style=\"width: 68%;\"></span></span></div><button class=\"m",
+    "sampleMutation": false
+  },
+  {
+    "id": "J010-processing-asset",
+    "actionId": "J010-processing-asset",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Preparing72percent asset inspector",
+    "url": "http://127.0.0.1:8769/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J009-failed-asset-inspector",
+    "afterCaptureId": "J010-processing-asset",
+    "actions": [
+      "Searched existing Jess-interview-camera-b and opened its inspector.",
+      "Observed current preparing progress without changing or retrying it."
+    ],
+    "focus": "<article class=\"media-asset-card  is-active\" tabindex=\"0\" aria-label=\"Jess-interview-camera-b.mov, video\" draggable=\"false\"><div class=\"media-thumbnail media-thumbnail-video  \" style=\"background-image: url(&quot;https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&amp;fit=crop&amp;w=900&amp;q=80&quot;);\"><span class=\"media-thumbnail-play\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/play.svg&quot;); --icon-size: 18px;\"></span></span><span class=\"media-processing-chip is-preparing label-xs-semibold\">Preparing 72%</span><span class=\"media-thumbnail-progress\"><span style=\"width: 72%;\"></span></span></div><button class=",
+    "sampleMutation": false
+  },
+  {
+    "id": "J011-folder-rail-collapsed",
+    "actionId": "J011-folder-rail-collapsed",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Project folder rail collapsed",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J010-processing-asset",
+    "afterCaptureId": "J011-folder-rail-collapsed",
+    "actions": [
+      "Collapsed folder rail; All media and Expand folders remain available."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529657196\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J012-nested-folder-actions",
+    "actionId": "J012-nested-folder-actions",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Nested folder action menu",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J011-folder-rail-collapsed",
+    "afterCaptureId": "J012-nested-folder-actions",
+    "actions": [
+      "Expanded folder rail, opened Day one folder menu.",
+      "Read Rename,Move to top level,Copy link,Delete commands without invoking a saved/destructive command."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_n_-0\" id=\"_r_n_\" aria-label=\"Folder actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_n_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Rename</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_n_-1\" tabindex=\"-1\" data-active=\"false\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Move to top level</span></span></span></button></div><",
+    "sampleMutation": false
+  },
+  {
+    "id": "J013-nested-folder-actions-full",
+    "actionId": "J013-nested-folder-actions-full",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Nested folder action menu, full approved viewport",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J012-nested-folder-actions",
+    "afterCaptureId": "J013-nested-folder-actions-full",
+    "actions": [
+      "Recaptured same open Day one menu through genuine CDP screenshot API after detecting wrapper crop.",
+      "No page state, viewport or record changed; dimensions1440x1000 asserted."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_n_-0\" id=\"_r_n_\" aria-label=\"Folder actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_n_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Rename</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_n_-1\" tabindex=\"-1\" data-active=\"false\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Move to top level</span></span></span></button></div><",
+    "sampleMutation": false
+  },
+  {
+    "id": "J014-folder-rename-field",
+    "actionId": "J014-folder-rename-field",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Day one inline rename editor",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J013-nested-folder-actions-full",
+    "afterCaptureId": "J014-folder-rename-field",
+    "actions": [
+      "Rename opened an autofocus inline textbox with existing Day one value.",
+      "No value changed; no Cancel/Save control displayed."
+    ],
+    "focus": "<input class=\"media-folder-rename label-s\" value=\"Day one\" style=\"margin-left: calc(var(--brisk-space-l) * 1);\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J015-folder-rename-escape",
+    "actionId": "J015-folder-rename-escape",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape leaves inline rename editor active",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J014-folder-rename-field",
+    "afterCaptureId": "J015-folder-rename-escape",
+    "actions": [
+      "Pressed Escape in untouched existing folder name.",
+      "Observed rename textbox still active and Day one unchanged; no cancel action occurred."
+    ],
+    "focus": "<input class=\"media-folder-rename label-s\" value=\"Day one\" style=\"margin-left: calc(var(--brisk-space-l) * 1);\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J016-new-folder-inline",
+    "actionId": "J016-new-folder-inline",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Immediate disposable New folder creation and inline name",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J015-folder-rename-escape",
+    "afterCaptureId": "J016-new-folder-inline",
+    "actions": [
+      "Blurred existing untouched name by choosing All media.",
+      "SAMPLE MUTATION: clicked Add folder, which immediately creates New folder and focuses its inline name; no separate creation form or Cancel exists."
+    ],
+    "focus": "<input class=\"media-folder-rename label-s\" value=\"New folder\" style=\"margin-left: calc(var(--brisk-space-l) * 0);\">",
+    "sampleMutation": true
+  },
+  {
+    "id": "J017-folder-draft-escape",
+    "actionId": "J017-folder-draft-escape",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable folder name draft after Escape",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J016-new-folder-inline",
+    "afterCaptureId": "J017-folder-draft-escape",
+    "actions": [
+      "Typed labelled audit-only folder name in newly created inline editor.",
+      "Escape left typed draft in editor; it did not restore New folder."
+    ],
+    "focus": "<input class=\"media-folder-rename label-s\" value=\"New folder\" style=\"margin-left: calc(var(--brisk-space-l) * 0);\">",
+    "sampleMutation": true
+  },
+  {
+    "id": "J018-folder-name-committed",
+    "actionId": "J018-folder-name-committed",
+    "coverageIds": [
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Enter commits labelled disposable folder",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J017-folder-draft-escape",
+    "afterCaptureId": "J018-folder-name-committed",
+    "actions": [
+      "SAMPLE MUTATION: Enter blurred and committed AUDIT SAMPLE - folder inspection in origin8769.",
+      "No Save/Cancel footer; new folder remains only in disposable audit data. No deletion cleanup performed."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529657196\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": true
+  },
+  {
+    "id": "J019-cloud-picker-current",
+    "actionId": "J019-cloud-picker-current",
+    "coverageIds": [
+      "N103"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Google Drive picker current files and disabled import",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J018-folder-name-committed",
+    "afterCaptureId": "J019-cloud-picker-current",
+    "actions": [
+      "Opened Google Drive from current project Upload menu.",
+      "No file selected or imported; inspected existing mock file list and disabled Import."
+    ],
+    "focus": "<input placeholder=\"Search Google Drive\" type=\"search\" value=\"\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J020-cloud-picker-cancel",
+    "actionId": "J020-cloud-picker-cancel",
+    "coverageIds": [
+      "N103"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Cloud picker Cancel outcome",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J019-cloud-picker-current",
+    "afterCaptureId": "J020-cloud-picker-cancel",
+    "actions": [
+      "Clicked Cancel before selecting/importing.",
+      "Picker closed; actual focus recorded; no file imported."
+    ],
+    "focus": "<button aria-label=\"Upload\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold media-primary-button\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/plus.svg&quot;); --icon-size: 16px;\"></span>Upload<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J021-project-media-comments",
+    "actionId": "J021-project-media-comments",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Media comments from Filmmaker and Client",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J020-cloud-picker-cancel",
+    "afterCaptureId": "J021-project-media-comments",
+    "actions": [
+      "Opened existing two-comment asset through its comment action.",
+      "Observed distinct Filmmaker/Client author tags and timecodes; no audience selector or Send action used."
+    ],
+    "focus": "<button class=\"media-icon-button is-persistent\" type=\"button\" aria-label=\"2 comments for Jess-interview-camera-a.mov\" data-tooltip=\"Comment\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/chat-circle.svg&quot;); --icon-size: 16px;\"></span><span class=\"media-comment-count label-xs-semibold\">2</span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J022-client-media-comments",
+    "actionId": "J022-client-media-comments",
+    "coverageIds": [
+      "N101",
+      "N102"
+    ],
+    "role": "Customer",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Client Media asset comments and available actions",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J021-project-media-comments",
+    "afterCaptureId": "J022-client-media-comments",
+    "actions": [
+      "Changed only own isolated Test mode role to Client/Customer.",
+      "Inspected same existing file comments/actions and folder-management availability; no message/access/data change."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J023-move-file-target",
+    "actionId": "J023-move-file-target",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "One selected-file Move target picker",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J022-client-media-comments",
+    "afterCaptureId": "J023-move-file-target",
+    "actions": [
+      "Selected one actual file by its Select button; scoped1selected toolbar appeared.",
+      "Opened Move to folder destination chooser; no destination or Move confirmed."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J024-move-cancel-selection-clear",
+    "actionId": "J024-move-cancel-selection-clear",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Move cancelled and selection cleared",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J023-move-file-target",
+    "afterCaptureId": "J024-move-cancel-selection-clear",
+    "actions": [
+      "Cancelled move before confirmation, then Clear selection.",
+      "Original media/folder data retained; no move executed."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529657196\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J025-transcript-clip-menu",
+    "actionId": "J025-transcript-clip-menu",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual transcript clip command menu",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J024-move-cancel-selection-clear",
+    "afterCaptureId": "J025-transcript-clip-menu",
+    "actions": [
+      "Opened first clip More transcript actions.",
+      "Read Copy text,Rename,Download PDF,Hide transcript and Delete without invoking a destructive or clipboard action. No search field is present in this collection."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_12_-0\" id=\"_r_12_\" aria-label=\"Transcript actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_12_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Copy text</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_12_-1\" tabindex=\"-1\" data-active=\"false\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Rename</span></span></span></button></div><",
+    "sampleMutation": false
+  },
+  {
+    "id": "J026-transcript-rename-draft",
+    "actionId": "J026-transcript-rename-draft",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Uncommitted transcript rename draft",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J025-transcript-clip-menu",
+    "afterCaptureId": "J026-transcript-rename-draft",
+    "actions": [
+      "Opened Rename and typed an unsaved local draft only.",
+      "No blur/Enter/save invoked."
+    ],
+    "focus": "<input class=\"transcript-clip-rename-input label-s-semibold\" id=\"transcript-media-01-title\" aria-label=\"Rename transcript\" value=\"AUDIT UNSAVED TRANSCRIPT DRAFT\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J027-transcript-rename-cancel",
+    "actionId": "J027-transcript-rename-cancel",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape cancels transcript rename",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J026-transcript-rename-draft",
+    "afterCaptureId": "J027-transcript-rename-cancel",
+    "actions": [
+      "Escape closed rename input and restored Jess-interview-camera-a.mov heading.",
+      "Local draft discarded; no asset name changed."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529657196\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte",
+    "sampleMutation": false
+  },
+  {
+    "id": "J028-transcript-highlights-empty",
+    "actionId": "J028-transcript-highlights-empty",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing no-highlights state",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J027-transcript-rename-cancel",
+    "afterCaptureId": "J028-transcript-highlights-empty",
+    "actions": [
+      "Selected Highlights only with no highlighted lines.",
+      "Observed No highlighted lines yet and View all transcripts; no highlight created."
+    ],
+    "focus": "<button type=\"button\" aria-pressed=\"true\" data-brisk-filter=\"\" class=\"QuietChoices_choice__V72PB label-s-semibold \">Highlights only</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J029-transcript-export-clip",
+    "actionId": "J029-transcript-export-clip",
+    "coverageIds": [
+      "R021",
+      "N110",
+      "N131"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual per-clip transcript PDF preview",
+    "url": "http://127.0.0.1:8769/print/transcript/loom-launch-film?clip=transcript-media-01",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J028-transcript-highlights-empty",
+    "afterCaptureId": "J029-transcript-export-clip",
+    "actions": [
+      "Download PDF on existing clip opened this local preview in an own-origin generated tab.",
+      "Inspected clip-specific title/content and Back to Transcripts. No actual download or print invoked."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792530034819\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks",
+    "sampleMutation": false
+  },
+  {
+    "id": "J030-transcript-export-return",
+    "actionId": "J030-transcript-export-return",
+    "coverageIds": [
+      "N131"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "PDF Back to Transcripts actual return",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J029-transcript-export-clip",
+    "afterCaptureId": "J030-transcript-export-return",
+    "actions": [
+      "Activated Back to Transcripts native link.",
+      "Verified current Transcripts heading and matching project route; no print/download."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530154758\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J031-script-empty-version",
+    "actionId": "J031-script-empty-version",
+    "coverageIds": [
+      "N108",
+      "N107"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Fresh Script sole-version and disabled approval state",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J030-transcript-export-return",
+    "afterCaptureId": "J031-script-empty-version",
+    "actions": [
+      "Opened actual V1 versions panel on empty canonical Script.",
+      "Observed current version and Create/Duplicate/Rename controls plus disabled approval explanation; no version command invoked."
+    ],
+    "focus": "<button class=\"script-current-version-button label-xs-semibold \" type=\"button\" aria-label=\"Open versions\" aria-expanded=\"true\"><span>V1</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J032-script-rename-draft",
+    "actionId": "J032-script-rename-draft",
+    "coverageIds": [
+      "N108"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Uncommitted Script version title draft",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J031-script-empty-version",
+    "afterCaptureId": "J032-script-rename-draft",
+    "actions": [
+      "Rename version opens inline title input; typed unsaved local title draft.",
+      "No blur/Enter/save."
+    ],
+    "focus": "<input aria-label=\"Rename version name\" class=\"script-document-title-input label-l-semibold\" value=\"AUDIT UNSAVED VERSION NAME\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J033-script-rename-cancel",
+    "actionId": "J033-script-rename-cancel",
+    "coverageIds": [
+      "N108"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape restores current Script version name",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J032-script-rename-draft",
+    "afterCaptureId": "J033-script-rename-cancel",
+    "actions": [
+      "Escape cancelled title draft and restored original current name.",
+      "No Script content/name saved."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530159404\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J034-script-sample-duplicate",
+    "actionId": "J034-script-sample-duplicate",
+    "coverageIds": [
+      "N108"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable duplicate V2 current",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J033-script-rename-cancel",
+    "afterCaptureId": "J034-script-sample-duplicate",
+    "actions": [
+      "SAMPLE MUTATION: duplicated empty V1 via its explicit Duplicate current version action in8769.",
+      "Current V2 now exists for safe historical/restore/delete guard inspection. No working-origin version changed."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530159404\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": true
+  },
+  {
+    "id": "J035-script-restore-confirm",
+    "actionId": "J035-script-restore-confirm",
+    "coverageIds": [
+      "N108"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Historical V1 restore-as-new confirmation",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J034-script-sample-duplicate",
+    "afterCaptureId": "J035-script-restore-confirm",
+    "actions": [
+      "Selected existing historical V1 preview, then Restore as new version.",
+      "Inspected confirmation preserving currentV2 and naming nextV3; no Restore confirmed."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J036-script-delete-confirm",
+    "actionId": "J036-script-delete-confirm",
+    "coverageIds": [
+      "N108"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Unapproved V2 deletion confirmation",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J035-script-restore-confirm",
+    "afterCaptureId": "J036-script-delete-confirm",
+    "actions": [
+      "Cancelled restore without creatingV3 and returned to actual currentV2.",
+      "Opened Delete version confirmation; no delete confirmed."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J037-script-sample-visuals",
+    "actionId": "J037-script-sample-visuals",
+    "coverageIds": [
+      "N109"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Sample Script words with Visuals expanded",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J036-script-delete-confirm",
+    "afterCaptureId": "J037-script-sample-visuals",
+    "actions": [
+      "Cancelled Delete confirmation;V2 preserved.",
+      "SAMPLE MUTATION: entered one clearly labelled sample sentence only in disposableV2, then expandedVisuals.",
+      "No approval, comment or message sent."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530159404\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": true
+  },
+  {
+    "id": "J038-script-four-media-sources",
+    "actionId": "J038-script-four-media-sources",
+    "coverageIds": [
+      "N109"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Script four approved media sources",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J037-script-sample-visuals",
+    "afterCaptureId": "J038-script-four-media-sources",
+    "actions": [
+      "Opened Add visual for actual Row01.",
+      "Inspected source order/labels without choosing a media asset."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_m_-0\" id=\"_r_m_\" aria-label=\"Add visual to Row 01\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_m_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Upload file</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_m_-1\" tabindex=\"-1\" data-active=\"false\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Add from your Media</span></span></span></b",
+    "sampleMutation": false
+  },
+  {
+    "id": "J039-script-link-dismissed",
+    "actionId": "J039-script-link-dismissed",
+    "coverageIds": [
+      "N109"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Script Add link inserts a placeholder immediately",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J038-script-four-media-sources",
+    "afterCaptureId": "J039-script-link-dismissed",
+    "actions": [
+      "Invoked Add link from Row01 source menu.",
+      "Supported getJsDialog returned undefined and CDP javascriptDialogOpening events were empty; no native prompt was dismissed.",
+      "Actual DOM now contains Link1: this command inserted a prototype placeholder without a URL form or URL entry.",
+      "SAMPLE MUTATION: placeholder was added only in disposable8769; no sourceURL or working record changed."
+    ],
+    "focus": "<button aria-label=\"Add visual to Row 01\" aria-expanded=\"false\" aria-haspopup=\"menu\" class=\"script-media-add script-visual-empty\" type=\"button\" data-tooltip=\"Add image or footage\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/plus.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": true,
+    "nativeDialogEvents": [],
+    "nativeDialogScreenshotLimit": "No native dialog observed; no dialog verification claim."
+  },
+  {
+    "id": "J040-script-export-current",
+    "actionId": "J040-script-export-current",
+    "coverageIds": [
+      "R021",
+      "N131"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Current V2 Script PDF with labelled sample content",
+    "url": "http://127.0.0.1:8769/print/script/loom-launch-film",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J039-script-link-dismissed",
+    "afterCaptureId": "J040-script-export-current",
+    "actions": [
+      "Download PDF opened own local preview tab.",
+      "Inspected actual currentV2/sample sentence and reference entry in AV table; no PDF print/download."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792530289841\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks",
+    "sampleMutation": false
+  },
+  {
+    "id": "J041-script-export-return",
+    "actionId": "J041-script-export-return",
+    "coverageIds": [
+      "N131"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "PDF Back to Script actual return",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J040-script-export-current",
+    "afterCaptureId": "J041-script-export-return",
+    "actions": [
+      "Back to Script returns canonical Script route with currentV2 controls.",
+      "No print/download."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530340445\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J042-storyboard-script-gate",
+    "actionId": "J042-storyboard-script-gate",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual Storyboard approved-Script prerequisite",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J041-script-export-return",
+    "afterCaptureId": "J042-storyboard-script-gate",
+    "actions": [
+      "Entered canonical Storyboard on sample project with unapprovedScript.",
+      "Observed prerequisite explanation and Open Script; no existing board is manufactured."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530343428\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J043-script-sample-approved",
+    "actionId": "J043-script-sample-approved",
+    "coverageIds": [
+      "N107",
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable sample Script approved for Storyboard inspection",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J042-storyboard-script-gate",
+    "afterCaptureId": "J043-script-sample-approved",
+    "actions": [
+      "SAMPLE MUTATION: approved clearly labelled sampleV2 solely to inspect dependent Storyboard flow.",
+      "No real review/send or working origin touched."
+    ],
+    "focus": "<button class=\"script-approved-pill share-approved-status-trigger label-s-semibold\" type=\"button\" aria-controls=\"_r_i_\" aria-expanded=\"false\" aria-haspopup=\"dialog\">Script approved<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": true
+  },
+  {
+    "id": "J044-storyboard-create-ready",
+    "actionId": "J044-storyboard-create-ready",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Approved Script ready to create Storyboard",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J043-script-sample-approved",
+    "afterCaptureId": "J044-storyboard-create-ready",
+    "actions": [
+      "Observed one-frame-per-approved-row creation explanation before sample creation."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530381637\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": false
+  },
+  {
+    "id": "J045-storyboard-created-sample",
+    "actionId": "J045-storyboard-created-sample",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Create Storyboard confirmation before creation",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J044-storyboard-create-ready",
+    "afterCaptureId": "J045-storyboard-created-sample",
+    "actions": [
+      "Clicked Create Storyboard entry and observed explicit confirmation explaining one editable frame per approved Script row and unchanged approved Script.",
+      "No frame had yet been created at this capture."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J046-storyboard-current-fixture",
+    "actionId": "J046-storyboard-current-fixture",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual created Storyboard uses12-frame prototype fixture",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J045-storyboard-created-sample",
+    "afterCaptureId": "J046-storyboard-current-fixture",
+    "actions": [
+      "SAMPLE MUTATION: explicitly confirmed permitted Storyboard creation.",
+      "Observed12Harbour Health fixture frames, not the single sample Script row; recorded as fixture-seeding limitation, no auth/cross-project leak claim.",
+      "No review or message sent."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530381637\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen",
+    "sampleMutation": true
+  },
+  {
+    "id": "J047-storyboard-version-consumer",
+    "actionId": "J047-storyboard-version-consumer",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Storyboard saved-version consumer",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J046-storyboard-current-fixture",
+    "afterCaptureId": "J047-storyboard-version-consumer",
+    "actions": [
+      "Opened StoryboardV1versions surface; current version and shared Create/Duplicate/Rename pattern inspected.",
+      "No version mutation."
+    ],
+    "focus": "<button class=\"script-current-version-button label-xs-semibold \" type=\"button\" aria-label=\"Open versions\" aria-expanded=\"true\"><span>V1</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J048-storyboard-frame-commands",
+    "actionId": "J048-storyboard-frame-commands",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual Storyboard frame context commands",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J047-storyboard-version-consumer",
+    "afterCaptureId": "J048-storyboard-frame-commands",
+    "actions": [
+      "Closed versions with its opener; opened Frame1 actions.",
+      "Read current contextual commands without deletion or reorder."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_g_-0\" id=\"_r_g_\" aria-label=\"Frame 1 actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_g_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Duplicate frame</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   has-divider\" id=\"_r_g_-1\" tabindex=\"-1\" data-active=\"false\" data-action-tone=\"danger\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Delete ",
+    "sampleMutation": false
+  },
+  {
+    "id": "J049-storyboard-media-sources",
+    "actionId": "J049-storyboard-media-sources",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Storyboard Add image source consumer",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J048-storyboard-frame-commands",
+    "afterCaptureId": "J049-storyboard-media-sources",
+    "actions": [
+      "Escape closed Frame1 command menu; actual source menu opened.",
+      "Four approved source choices inspected; no destructive command."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_h_-0\" id=\"_r_h_\" aria-label=\"Add image or footage to frame 1\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_h_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Upload file</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_h_-1\" tabindex=\"-1\" data-active=\"false\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Add from your Media</span></span",
+    "sampleMutation": false
+  },
+  {
+    "id": "J050-storyboard-session-return",
+    "actionId": "J050-storyboard-session-return",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Return after browser session interruption - approved Script entry",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J049-storyboard-media-sources",
+    "afterCaptureId": "J050-storyboard-session-return",
+    "actions": [
+      "Opened new owned audit tab on same isolated origin after blocking native prompt session ended; created board not retained across this session, Script remains approved."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530608152\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false
+  },
+  {
+    "id": "J051-storyboard-av",
+    "actionId": "J051-storyboard-av",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV view with current seeded frames",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J050-storyboard-session-return",
+    "afterCaptureId": "J051-storyboard-av",
+    "actions": [
+      "Confirmed sample-only creation; switched Board to AV."
+    ],
+    "focus": "<button class=\"label-s-semibold active\" type=\"button\" aria-pressed=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/columns.svg&quot;); --icon-size: 16px;\"></span> AV</button>",
+    "sampleMutation": true
+  },
+  {
+    "id": "J052-storyboard-comments-empty",
+    "actionId": "J052-storyboard-comments-empty",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV comments rail - empty and audience filters",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J051-storyboard-av",
+    "afterCaptureId": "J052-storyboard-comments-empty",
+    "actions": [
+      "Opened all Storyboard comments; All/Unresolved/Team/Client filters visible; no comment submitted."
+    ],
+    "focus": "<button aria-label=\"Show all storyboard comments\" aria-expanded=\"true\" aria-pressed=\"true\" type=\"button\" data-brisk-button=\"\" data-variant=\"ghost\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Comments</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J053-storyboard-client-filter-empty",
+    "actionId": "J053-storyboard-client-filter-empty",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client comment filter empty",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J052-storyboard-comments-empty",
+    "afterCaptureId": "J053-storyboard-client-filter-empty",
+    "actions": [
+      "Selected existing Client filter in empty comments rail; no message sent."
+    ],
+    "focus": "<button class=\"filter-chip label-xs-semibold active\" type=\"button\">Client</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J054-storyboard-export-current",
+    "actionId": "J054-storyboard-export-current",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Storyboard export preview - populated current fixture",
+    "url": "http://127.0.0.1:8769/print/storyboard/loom-launch-film",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J053-storyboard-client-filter-empty",
+    "afterCaptureId": "J054-storyboard-export-current",
+    "actions": [
+      "Opened Storyboard actions > Download PDF, reached current local two-page AV preview. No browser print/save invoked."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792530855732\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"Pro",
+    "sampleMutation": false
+  },
+  {
+    "id": "J055-storyboard-export-narrow",
+    "actionId": "J055-storyboard-export-narrow",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Storyboard export preview at 1133 desktop",
+    "url": "http://127.0.0.1:8769/print/storyboard/loom-launch-film",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J054-storyboard-export-current",
+    "afterCaptureId": "J055-storyboard-export-narrow",
+    "actions": [
+      "Changed only owned audit window to 1133 CSS px; reviewed A4 preview and PDF details."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792530855732\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"Pro",
+    "sampleMutation": false
+  },
+  {
+    "id": "J056-storyboard-export-back",
+    "actionId": "J056-storyboard-export-back",
+    "coverageIds": [
+      "N131"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Export Back to Storyboard destination",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J055-storyboard-export-narrow",
+    "afterCaptureId": "J056-storyboard-export-back",
+    "actions": [
+      "Clicked Back to Storyboard in generated export preview; correct canonical route returned."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530864835\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script></body>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J057-storyboard-av-narrow",
+    "actionId": "J057-storyboard-av-narrow",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV view narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J056-storyboard-export-back",
+    "afterCaptureId": "J057-storyboard-av-narrow",
+    "actions": [
+      "Reviewed active AV consumer at 1133 CSS px."
+    ],
+    "focus": "<button aria-label=\"Storyboard actions\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-button=\"\" data-variant=\"ghost\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Storyboard actions<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J058-storyboard-board-narrow",
+    "actionId": "J058-storyboard-board-narrow",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Board view narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J057-storyboard-av-narrow",
+    "afterCaptureId": "J058-storyboard-board-narrow",
+    "actions": [
+      "Switched AV to Board at 1133 CSS px."
+    ],
+    "focus": "<button class=\"label-s-semibold active\" type=\"button\" aria-pressed=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/grid-four.svg&quot;); --icon-size: 16px;\"></span> Board</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J059-storyboard-approve-outcome",
+    "actionId": "J059-storyboard-approve-outcome",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approve control outcome in disposable fixture",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J058-storyboard-board-narrow",
+    "afterCaptureId": "J059-storyboard-approve-outcome",
+    "actions": [
+      "Clicked Approve V1 Storyboard once; settled DOM still displays Approve V1 and no approved status/guard. No second approval attempt."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530608152\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false,
+    "verificationGap": "Approved-edit confirmation not reached through this fixture outcome; no claim it was verified."
+  },
+  {
+    "id": "J060-storyboard-send-form-narrow",
+    "actionId": "J060-storyboard-send-form-narrow",
+    "coverageIds": [
+      "N106",
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Send Storyboard form narrower desktop - Client selected",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J059-storyboard-approve-outcome",
+    "afterCaptureId": "J060-storyboard-send-form-narrow",
+    "actions": [
+      "Opened Send Storyboard only; inspected destination radio/message/footer; no Send."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J061-storyboard-send-studio",
+    "actionId": "J061-storyboard-send-studio",
+    "coverageIds": [
+      "N106"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Send Storyboard Studio destination draft",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J060-storyboard-send-form-narrow",
+    "afterCaptureId": "J061-storyboard-send-studio",
+    "actions": [
+      "Changed unsent destination to Studio, inspected form; no message submitted."
+    ],
+    "focus": "<button class=\"share-submit-destination is-selected\" type=\"button\" role=\"radio\" aria-label=\"Studio: North Star Films\" aria-checked=\"true\"><span class=\"label-s-semibold\">Studio</span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J062-files-staff-narrow",
+    "actionId": "J062-files-staff-narrow",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Files utility Staff narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J061-storyboard-send-studio",
+    "afterCaptureId": "J062-files-staff-narrow",
+    "actions": [
+      "Opened existing Project Files without editing Notes or confirmed status."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530903458\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false
+  },
+  {
+    "id": "J063-files-freelancer-readonly",
+    "actionId": "J063-files-freelancer-readonly",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Freelancer project-restricted Files route",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J062-files-staff-narrow",
+    "afterCaptureId": "J063-files-freelancer-readonly",
+    "actions": [
+      "Switched isolated role to Studio Freelancer; actual settled page shows Project unavailable. No Files content or read-only Notes verified."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false,
+    "steps": [
+      "Switched isolated role to Studio Freelancer; actual settled page shows Project unavailable. No Files content or read-only Notes verified."
+    ],
+    "verificationGap": "This capture verifies restriction only. Assigned Freelancer Files consumer subsequently verified with existing Figma empty J069 and authorised populated sample J072."
+  },
+  {
+    "id": "J064-files-empty-readonly",
+    "actionId": "J064-files-empty-readonly",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Freelancer project restriction persists with empty-preview query",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files?preview=empty",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J063-files-freelancer-readonly",
+    "afterCaptureId": "J064-files-empty-readonly",
+    "actions": [
+      "Switched isolated role to Studio Freelancer; actual settled page shows Project unavailable. No Files content or read-only Notes verified."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530917652\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false,
+    "steps": [
+      "Switched isolated role to Studio Freelancer; actual settled page shows Project unavailable. No Files content or read-only Notes verified."
+    ],
+    "verificationGap": "This capture verifies restriction only. Assigned Freelancer Files consumer subsequently verified with existing Figma empty J069 and authorised populated sample J072."
+  },
+  {
+    "id": "J065-files-empty-staff",
+    "actionId": "J065-files-empty-staff",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Supported empty Files preview - Staff",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files?preview=empty",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J064-files-empty-readonly",
+    "afterCaptureId": "J065-files-empty-staff",
+    "actions": [
+      "Settled page shows Tom Mitchell/Staff navigation and no locations form. No save submitted."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J066-media-narrow",
+    "actionId": "J066-media-narrow",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Project Media narrower desktop composition",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J065-files-empty-staff",
+    "afterCaptureId": "J066-media-narrow",
+    "actions": [
+      "Reviewed existing Media grid/folder rail at 1133 with Staff role."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530947102\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false
+  },
+  {
+    "id": "J067-transcript-processing",
+    "actionId": "J067-transcript-processing",
+    "coverageIds": [
+      "N102",
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing asset transcript processing at narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J066-media-narrow",
+    "afterCaptureId": "J067-transcript-processing",
+    "actions": [
+      "Opened Transcript for existing Jess camera B; drawer explicitly says Transcript is processing. No processing retried."
+    ],
+    "focus": "<button class=\"media-icon-button \" type=\"button\" aria-label=\"Transcript Jess-interview-camera-b.mov\" data-tooltip=\"Transcript\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/file-text.svg&quot;); --icon-size: 16px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J068-transcript-workspace-narrow",
+    "actionId": "J068-transcript-workspace-narrow",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Current transcript collection narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J067-transcript-processing",
+    "afterCaptureId": "J068-transcript-workspace-narrow",
+    "actions": [
+      "Opened existing transcript collection; reviewed clips, paragraph controls and sticky transcript navigation at 1133."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530947102\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false
+  },
+  {
+    "id": "J069-files-assigned-freelancer-empty",
+    "actionId": "J069-files-assigned-freelancer-empty",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Assigned Freelancer empty Files - true current role",
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J068-transcript-workspace-narrow",
+    "afterCaptureId": "J069-files-assigned-freelancer-empty",
+    "actions": [
+      "Figma is an existing accepted Nina project. Switched to Freelancer, settled empty File utility has no editing form. No project or file data changed."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J070-files-labelled-sample-before-save",
+    "actionId": "J070-files-labelled-sample-before-save",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Disposable sample Files draft - before Save",
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J069-files-assigned-freelancer-empty",
+    "afterCaptureId": "J070-files-labelled-sample-before-save",
+    "actions": [
+      "Typed explicitly authorised non-sensitive example.com audit URL and clear audit label, only isolated8769. No external link opened."
+    ],
+    "focus": "<input placeholder=\"e.g. Working files\" id=\"_r_j_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"AUDIT SAMPLE - read-only Files inspection\">",
+    "sampleMutation": false
+  },
+  {
+    "id": "J071-files-labelled-sample-saved",
+    "actionId": "J071-files-labelled-sample-saved",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Disposable sample saved - Staff metadata",
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J070-files-labelled-sample-before-save",
+    "afterCaptureId": "J071-files-labelled-sample-saved",
+    "actions": [
+      "Saved explicitly authorised clearly labelled audit URL in disposable8769 only; no external network navigation."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531021912\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": true
+  },
+  {
+    "id": "J072-files-assigned-readonly",
+    "actionId": "J072-files-assigned-readonly",
+    "coverageIds": [
+      "N129"
+    ],
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Assigned Freelancer populated read-only Files",
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J071-files-labelled-sample-saved",
+    "afterCaptureId": "J072-files-assigned-readonly",
+    "actions": [
+      "Actual Nina/Figma consumer shows no Edit/Remove/Add or Notes textbox; Mark as confirmed working remains available. Did not activate or follow external URL."
+    ],
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J073-script-export-narrow",
+    "actionId": "J073-script-export-narrow",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Current Script PDF preview narrower desktop",
+    "url": "http://127.0.0.1:8769/print/script/loom-launch-film",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J072-files-assigned-readonly",
+    "afterCaptureId": "J073-script-export-narrow",
+    "actions": [
+      "Reopened exact previously inspected generated Script preview route at 1133. No Print or Download action executed."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792531063609\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"Pro",
+    "sampleMutation": false
+  },
+  {
+    "id": "J074-transcript-export-narrow",
+    "actionId": "J074-transcript-export-narrow",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Clip-scoped Transcript PDF preview narrower desktop",
+    "url": "http://127.0.0.1:8769/print/transcript/loom-launch-film?clip=transcript-media-01",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J073-script-export-narrow",
+    "afterCaptureId": "J074-transcript-export-narrow",
+    "actions": [
+      "Reopened exact previously inspected generated transcript preview route with same clip context at 1133. No Print or Download invoked."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--$--><!--/$--><!--/$--><script>requestAnimationFrame(function(){$RT=performance.now()});</script><script src=\"/_next/static/chunks/webpack.js?v=1792531068194\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"Pro",
+    "sampleMutation": false
+  },
+  {
+    "id": "J075-transcripts-empty-project",
+    "actionId": "J075-transcripts-empty-project",
+    "coverageIds": [
+      "N110"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing Figma project without clips",
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/stages/media?view=transcripts",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J074-transcript-export-narrow",
+    "afterCaptureId": "J075-transcripts-empty-project",
+    "actions": [
+      "Opened visible Transcripts0 from Figma Media. Actual empty collection displayed; no mock data changed."
+    ],
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531126786\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateContext.tsx\\\",[\\\"app/layout\\",
+    "sampleMutation": false
+  },
+  {
+    "id": "J076-storyboard-approved-seed",
+    "actionId": "J076-storyboard-approved-seed",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing approved Notion Storyboard",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J075-transcripts-empty-project",
+    "afterCaptureId": "J076-storyboard-approved-seed",
+    "actions": [
+      "Opened source-discovered approved Notion seed as Staff; current approved status and illustrated frames visible. No approval performed."
+    ],
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531208692\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/Prot",
+    "sampleMutation": false
+  },
+  {
+    "id": "J077-storyboard-approved-edit-guard",
+    "actionId": "J077-storyboard-approved-edit-guard",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approved-edit guard at narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J076-storyboard-approved-seed",
+    "afterCaptureId": "J077-storyboard-approved-edit-guard",
+    "actions": [
+      "Clicked + Add frame on existing approved Notion board; actual confirmation names new editable version and loss of Storyboard approval while Script stays approved. No confirm."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J078-storyboard-approved-edit-cancel",
+    "actionId": "J078-storyboard-approved-edit-cancel",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approved-edit Cancel preserves board",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J077-storyboard-approved-edit-guard",
+    "afterCaptureId": "J078-storyboard-approved-edit-cancel",
+    "actions": [
+      "Cancelled confirmation; existing approved board remains12frames8illustrated."
+    ],
+    "focus": "<button data-storyboard-add-frame=\"true\" type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">+ Add frame</button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J079-storyboard-populated-review-narrow",
+    "actionId": "J079-storyboard-populated-review-narrow",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Populated frame review canvas at narrower desktop",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1133,
+    "height": 1000,
+    "beforeCaptureId": "J078-storyboard-approved-edit-cancel",
+    "afterCaptureId": "J079-storyboard-populated-review-narrow",
+    "actions": [
+      "Opened existing Notion frame1 review: image, Word/Visual context, Comments0, empty disabled Send, unavailable Attach/Record explanation. No comment/drawing sent."
+    ],
+    "focus": "<button class=\"storyboard-icon-button\" type=\"button\" aria-label=\"Back to Storyboard\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/arrow-left.svg&quot;); --icon-size: 18px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J080-storyboard-populated-review-1440",
+    "actionId": "J080-storyboard-populated-review-1440",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Populated frame review canvas desktop reference",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J079-storyboard-populated-review-narrow",
+    "afterCaptureId": "J080-storyboard-populated-review-1440",
+    "actions": [
+      "Reviewed same actual frame review at1440. No content changed."
+    ],
+    "focus": "<button class=\"storyboard-icon-button\" type=\"button\" aria-label=\"Back to Storyboard\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/arrow-left.svg&quot;); --icon-size: 18px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J081-storyboard-review-return",
+    "actionId": "J081-storyboard-review-return",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Frame review Back returns approved board",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J080-storyboard-populated-review-1440",
+    "afterCaptureId": "J081-storyboard-review-return",
+    "actions": [
+      "Used visible Back to Storyboard; existing approval retained."
+    ],
+    "focus": "<button class=\"storyboard-image-review\" type=\"button\" aria-label=\"Open review for frame 1\"><img draggable=\"false\" alt=\"Workflow builder capture\" src=\"https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&amp;fit=crop&amp;w=900&amp;q=80\"></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J082-storyboard-native-link-prompt",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "steps": [
+      "Mac unlocked by user. Selected exact Brisk audit C tab in native Chrome and verified8769.",
+      "Opened existing Notion frame9 Add image menu via DOM, read fresh nativeAX and clicked actual Add link native item283.",
+      "Native prompt heading127.0.0.1:8769 says and Paste an image link empty field/Cancel/OK observed. No input or acceptance.",
+      "Clicked actual native Cancel8; prompt closed back to8769 unchanged. Selected original Inbox tab289 using fresh inventory, verified original active title restored. No Gmail content captured or interacted with."
+    ],
+    "outcome": "Prompt reached and genuinely captured. Cancel and return recorded next.",
+    "sampleMutation": false,
+    "state": "Native Storyboard Add link prompt - empty, Cancel inspected",
+    "actions": [
+      "Mac unlocked by user. Selected exact Brisk audit C tab in native Chrome and verified8769.",
+      "Opened existing Notion frame9 Add image menu via DOM, read fresh nativeAX and clicked actual Add link native item283.",
+      "Native prompt heading127.0.0.1:8769 says and Paste an image link empty field/Cancel/OK observed. No input or acceptance.",
+      "Clicked actual native Cancel8; prompt closed back to8769 unchanged. Selected original Inbox tab289 using fresh inventory, verified original active title restored. No Gmail content captured or interacted with."
+    ]
+  },
+  {
+    "id": "J083-storyboard-link-cancel",
+    "actionId": "J083-storyboard-link-cancel",
+    "coverageIds": [
+      "N111"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Native link Cancel preserves approved Storyboard",
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J082-storyboard-native-link-prompt",
+    "afterCaptureId": "J083-storyboard-link-cancel",
+    "actions": [
+      "Cancelled actual native prompt with no URL; returned to existing approved board without creating editable version or changing image."
+    ],
+    "focus": "<button aria-label=\"Add image or footage to frame 9\" aria-expanded=\"false\" aria-haspopup=\"menu\" class=\"script-media-add storyboard-image-empty-picker label-xs\" type=\"button\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/image-square.svg&quot;); --icon-size: 27px;\"></span><span>Add Image</span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J084-media-image-preview",
+    "actionId": "J084-media-image-preview",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Media image preview consumer",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J083-storyboard-link-cancel",
+    "afterCaptureId": "J084-media-image-preview",
+    "actions": [
+      "Opened existing Loom wordmark by filename in project Media; no image replaced/downloaded."
+    ],
+    "focus": "<article class=\"media-asset-card  is-active\" tabindex=\"0\" aria-label=\"Loom-wordmark-black.png, image\" draggable=\"true\"><div class=\"media-thumbnail media-thumbnail-image  \" style=\"background-image: url(&quot;https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&amp;fit=crop&amp;w=900&amp;q=80&quot;);\"></div><button class=\"media-asset-select \" type=\"button\" aria-label=\"Select Loom-wordmark-black.png\" aria-pressed=\"false\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/check.svg&quot;); --icon-size: 14px;\"></span></button><div class=\"media-card-copy\"><p class=\"media-card-meta label-xs\">07 July 2026 \u00b7 184.2 KB</p><p class=\"media-card-name lab",
+    "sampleMutation": false
+  },
+  {
+    "id": "J085-media-document-preview",
+    "actionId": "J085-media-document-preview",
+    "coverageIds": [
+      "N102"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Media document preview consumer",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J084-media-image-preview",
+    "afterCaptureId": "J085-media-document-preview",
+    "actions": [
+      "Opened existing Brand guidelines PDF asset by filename; no external link/download/save."
+    ],
+    "focus": "<article class=\"media-asset-card  is-active\" tabindex=\"0\" aria-label=\"Brand-guidelines-2026.pdf, document\" draggable=\"true\"><div class=\"media-thumbnail media-thumbnail-document  \"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/file-text.svg&quot;); --icon-size: 32px;\"></span></div><button class=\"media-asset-select \" type=\"button\" aria-label=\"Select Brand-guidelines-2026.pdf\" aria-pressed=\"false\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/check.svg&quot;); --icon-size: 14px;\"></span></button><div class=\"media-card-copy\"><p class=\"media-card-meta label-xs\">07 July 2026 \u00b7 12.7 MB</p><p class=\"media-card-name label-s-sem",
+    "sampleMutation": false
+  },
+  {
+    "id": "J086-brief-brand-kit-options",
+    "actionId": "J086-brief-brand-kit-options",
+    "coverageIds": [
+      "N104"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Brief Brand Kit options - no selection",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J085-media-document-preview",
+    "afterCaptureId": "J086-brief-brand-kit-options",
+    "actions": [
+      "Navigated existing Brief to Brand kit, opened actual picker with preview/option details; no choice changed."
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Brand kit\" aria-controls=\"_r_b_\" aria-activedescendant=\"_r_b_-0\"><span class=\"brisk-select-trigger-label\"><span class=\"brief-brand-kit-palette\" aria-hidden=\"true\"><span style=\"--brief-brand-kit-swatch: #625DF5;\"></span><span style=\"--brief-brand-kit-swatch: #F4F3FF;\"></span><span style=\"--brief-brand-kit-swatch: #FF6BCE;\"></span><span style=\"--brief-brand-kit-swatch: #1B1B1F;\"></span></span><span>House kit</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quo",
+    "sampleMutation": false
+  },
+  {
+    "id": "J087-brief-ai-local-prompt-draft",
+    "actionId": "J087-brief-ai-local-prompt-draft",
+    "coverageIds": [
+      "N104"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local AI prompt draft with accidental Global Chat overlay",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J086-brief-brand-kit-options",
+    "afterCaptureId": "J087-brief-ai-local-prompt-draft",
+    "actions": [
+      "Typed explicitly authorised audit-only prompt in isolated8769 local Brief simulation. No human recipient or external service.",
+      "After capture, pointer Continue did not reach intended local thread; accidental Global Chat shown, subsequently closed. Corrected with exact keyboard Continue in J088 sequence."
+    ],
+    "focus": "<textarea class=\"brief-rich-textarea landing label-s\" aria-label=\"Describe the video brief\" placeholder=\"\" style=\"height: 50px;\">AUDIT SAMPLE ONLY - a short internal product demonstration for the disposable review.</textarea>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J088-brief-ai-message-menu",
+    "actionId": "J088-brief-ai-message-menu",
+    "coverageIds": [
+      "N104"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local simulated Client clarification message menu",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J087-brief-ai-local-prompt-draft",
+    "afterCaptureId": "J088-brief-ai-message-menu",
+    "actions": [
+      "Entered labelled sample prompt through Continue using keyboard after correcting accidental open Chat; actual local AI thread rendered. Opened Message options: Edit/Delete only; no Delete or human message."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_h_-0\" id=\"_r_h_\" aria-label=\"Message options\"><div role=\"presentation\"><button class=\"brisk-select-option label-s  active \" id=\"_r_h_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Edit</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   has-divider\" id=\"_r_h_-1\" tabindex=\"-1\" data-active=\"false\" data-action-tone=\"danger\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Delete</span",
+    "sampleMutation": true
+  },
+  {
+    "id": "J089-brief-ai-message-menu-cancel",
+    "actionId": "J089-brief-ai-message-menu-cancel",
+    "coverageIds": [
+      "N104"
+    ],
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local message menu dismissed without Edit/Delete",
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J088-brief-ai-message-menu",
+    "afterCaptureId": "J089-brief-ai-message-menu-cancel",
+    "actions": [
+      "Pressed Escape in menu. Labelled local prompt and AI question remain; no Delete, no additional prompt, no human recipient."
+    ],
+    "focus": "<button aria-label=\"Message options\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Message options\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/dots-three.svg&quot;); --icon-size: 16px;\"></span></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J090-client-project-drawer-readonly",
+    "actionId": "J090-client-project-drawer-readonly",
+    "coverageIds": [
+      "N091"
+    ],
+    "role": "Customer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client project details read-only status/footer",
+    "url": "http://127.0.0.1:8769/active-videos?project=loom-launch-film",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J089-brief-ai-message-menu-cancel",
+    "afterCaptureId": "J090-client-project-drawer-readonly",
+    "actions": [
+      "Current Customer workspace details opened with keyboard. Status is static; footer has Copy link and no Mark complete/Archive. No data changed."
+    ],
+    "focus": "<button class=\"row-open-chevron\" type=\"button\" aria-label=\"Open details for Launch Film - Sales Narrative\" data-tooltip=\"Open details\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "sampleMutation": false
+  },
+  {
+    "id": "J091-client-project-team-readonly",
+    "actionId": "J091-client-project-team-readonly",
+    "coverageIds": [
+      "N091",
+      "N092"
+    ],
+    "role": "Customer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client project details Team current read-only presentation",
+    "url": "http://127.0.0.1:8769/active-videos?project=loom-launch-film",
+    "width": 1440,
+    "height": 1000,
+    "beforeCaptureId": "J090-client-project-drawer-readonly",
+    "afterCaptureId": "J091-client-project-team-readonly",
+    "actions": [
+      "Expanded actual Client Team section; current people/roles visible without Staff assignment editor. No edit/assign/invite invoked."
+    ],
+    "focus": "<button class=\"project-detail-collapsible-disclosure\" type=\"button\" aria-label=\"Collapse Team\" aria-expanded=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></button>",
+    "sampleMutation": false
+  }
+]

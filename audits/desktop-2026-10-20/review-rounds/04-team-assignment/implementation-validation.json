@@ -1,0 +1,165 @@
+{
+  "date": "28 October 2026",
+  "status": "Implemented and desktop-checked; awaiting Tom visual sign-off",
+  "approval": "approval-and-timing-decisions.json",
+  "typeCheck": {
+    "command": "npx tsc --noEmit",
+    "exitCode": 0
+  },
+  "diffCheck": {
+    "command": "git diff --check",
+    "exitCode": 0
+  },
+  "httpCheck": {
+    "route": "http://127.0.0.1:3000/active-videos",
+    "status": 200
+  },
+  "sourceHashes": {
+    "src/components/active-videos/ActiveVideosPage.tsx": "a8f55b55c239f0adec27bf4dda5ea0a2f72cdc206530210d28dc7d67a6a894cf",
+    "src/components/project/team/AddRoleButton.tsx": "962ae85387089b72eb2f1c6797448d2218bd03852cce68a2ed77873cc2973d68",
+    "src/components/project/team/RoleEditorModal.tsx": "6cf49017f85a1dd74cc087652105fd7b26d2b1a888340dd47e9aeec617492b0a",
+    "src/components/project/team/RoleRow.tsx": "28f297ac8656139af12d8da476c6a8260b0a70799ecbf6f9409f52763b567191",
+    "src/components/project/team/TeamPanel.tsx": "13cb6f5d35396e616f2d520dcfd9ca5508064291842c9fb17f63257a612bae0e",
+    "src/components/project/team/team-panel.css": "c86c47fb4b31f1ce8bf6b9f7d2099c561fa3cf7ecaf907bd05e4db8c4897a023"
+  },
+  "protectedBaselineFilesChecked": 1701,
+  "changedExistingFiles": [
+    "src/components/today/today.css",
+    "src/components/today/TodayPage.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/project/team/RoleEditorModal.tsx",
+    "src/components/project/team/TeamPanel.tsx",
+    "src/components/project/team/AddRoleButton.tsx",
+    "src/components/project/team/team-panel.css",
+    "src/components/project/team/RoleRow.tsx",
+    "src/components/media/MediaAssetGrid.tsx",
+    "src/components/media/MediaBrowser.tsx",
+    "src/components/media/MediaAssetCard.tsx",
+    "src/components/media/MediaAssetDrawer.tsx",
+    "src/components/media/media.css",
+    "src/components/media/MediaAssetRow.tsx"
+  ],
+  "unexpectedProtectedChanges": [],
+  "previousMediaAndTodoSignatureMismatches": [],
+  "branch": "codex/unified-brisk-prototype",
+  "browser": {
+    "isolatedOrigin": "http://127.0.0.1:8777",
+    "initialLocalStorageKeys": 0,
+    "initialSessionStorageKeys": 0,
+    "desktopWidths": [
+      1440,
+      1133
+    ],
+    "roles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "liveConsumers": [
+      "Videos project-details Team drawer",
+      "Direct Videos assignment chooser"
+    ],
+    "keyboard": [
+      "Native Space checkbox selection and visible focus",
+      "DS tab arrow navigation",
+      "Nested role-picker Escape leaves editor open",
+      "Editor Escape closes and returns focus",
+      "Cancel returns focus to direct Videos opener"
+    ],
+    "states": [
+      "Default/selected/disabled Staff and Freelancer rows",
+      "Suggested/all people and empty Staff shortlist fallback",
+      "Optional search/no-results/recovery",
+      "Role switch resets correct role context and hours",
+      "8h=$1,250 to 10h=$1,562.50 calculated rate",
+      "Custom $1,400 retained at 12h",
+      "Existing invitation displays remain $980/$880 while editing a new draft",
+      "Staff capacity projected from required hours",
+      "Pending-invitation assignment confirmation opened and cancelled",
+      "Two-person invitation/message confirmation opened and cancelled",
+      "Preferred Team summary opens refined drawer",
+      "Expanded/collapsed navigation and viewport restored",
+      "Internal dialog clicks no longer dismiss parent drawer",
+      "Hours/rate arrows no longer navigate background projects"
+    ],
+    "finalMutationActionsPerformed": false,
+    "storedRecordsUnchanged": true,
+    "protectedSnapshotKeys": [
+      "brisk-prototype-state-v1",
+      "brisk-contractor-offers-v1",
+      "brisk-studio-settings-v2",
+      "brisk-media-library-v1"
+    ],
+    "protectedSnapshotSha256": "3505c452f59ef8519e9b48dd242f651d0da4a164ea9276b201b159cdc2174f4f",
+    "freshFinalAppConsoleWarningsAndErrors": [],
+    "initialInspectionNote": "One animation promise error appeared during initial SVG/boot inspection. It did not recur after app reload or in a fresh final app tab. Origin not established; no unrelated changes made.",
+    "screenshotRegister": "implementation-browser-observations.ndjson"
+  },
+  "sourceReviewedMutationFunctions": "mutation-function-review.json",
+  "preserved": [
+    "Working app tabs/origins not opened, reloaded or edited",
+    "Existing assignment, invitation, offer, notification and role-hour mutation callbacks",
+    "Mock data, permissions, DS source, assets and dependencies",
+    "Previously approved Media inspector and To Do time editor changes",
+    "Distinct selecting, assigning, inviting, saving and profile navigation",
+    "Current adaptable production flow, optional Storyboard, Animation and pinned Media"
+  ],
+  "limitations": [
+    "No final Assign, Send, Withdraw, Remove, Unassign or Save hours action executed merely for inspection",
+    "Final stored effects source reviewed, not exercised with disposable records",
+    "No existing truly empty-team fixture was exercised; empty-role entry was source reviewed",
+    "No separate live consumer of exported ProjectDetailsSidebar discovered; no separate project-page verification claimed",
+    "No screen-reader session or formal accessibility compliance claim",
+    "Mobile, tests and production build deferred under current rules",
+    "Team visual sign-off still required; turnaround timer/date implementation not part of this batch"
+  ],
+  "screenshots": [
+    {
+      "file": "result-invite-confirmation-1133.png",
+      "sha256": "bcfe05db35ea34f31997c3cdb729003e277678af65ab10b4c63e04b08fd0e497"
+    },
+    {
+      "file": "result-quick-assignment-1133-collapsed.png",
+      "sha256": "8dbb3d3afd6df1af81ca430e67364ad1588620fd5faba55bcbe3b5eca274b4dd"
+    },
+    {
+      "file": "result-quick-assignment-1133.png",
+      "sha256": "2aaa2da49e3fbd59bbe71cdfffe4b60a8fe619360f39525e7f3c5d35a54b1e9a"
+    },
+    {
+      "file": "result-quick-assignment-1440.png",
+      "sha256": "9789011faa77ae021fc2b2187a47880a6858c8ec72cc9951d988d8b57ce00781"
+    },
+    {
+      "file": "result-staff-selection-1440.png",
+      "sha256": "da44f9c564dcf672edb163731e0c20304a8716bc9d9b3baa2ba2834afb30c356"
+    },
+    {
+      "file": "result-team-drawer-1133.png",
+      "sha256": "819894c1a5508846448f8d3b66522cca4c1cd55f994375f70e75dd71b22f72b3"
+    },
+    {
+      "file": "result-team-drawer-1440.png",
+      "sha256": "59ef5fc30ef7867565eca972a2381291fa053137520a6681751683a97e7bec22"
+    },
+    {
+      "file": "result-team-panel-crop.png",
+      "sha256": "a9c67d8e344a14e45a417ebdd68aba97e240d73bc26342bfe2e3efdeeeae6fd2"
+    },
+    {
+      "file": "result-videos-entry-1440.png",
+      "sha256": "e16f15f9856d91782660de8aa6b93a1b1836d65a021b891809ab612baaf766ed"
+    }
+  ],
+  "resultLinksVerified": 25,
+  "missingLinks": [],
+  "forbiddenOperationsPerformed": [],
+  "resultPackBrowserCheck": {
+    "url": "http://127.0.0.1:8765/audits/desktop-2026-10-20/review-rounds/04-team-assignment/result.html",
+    "imagesLoaded": 5,
+    "brokenImages": 0,
+    "allNaturalWidthsPositive": true
+  },
+  "retainedDemo": "http://127.0.0.1:8777/active-videos?project=loom-launch-film&section=team",
+  "modalDismissalFollowUp": "modal-dismissal-follow-up/validation.json"
+}

@@ -1,14 +1,17 @@
 # Yura Review Log
 
-## Current status and design-source synchronisation - 20 October 2026
+## Current status and design-source synchronisation - 29 October 2026
 
 This is a historical review-request log, not an approval register or an assertion that every note still describes live code. The [approved desktop baseline](desktop-design-baseline.md) and current component-specific React guidance supersede conflicting older statements below, including claims that Button/Input/Modal exports are unavailable, Team/Gig or extra access roles, archived Flow asset usage, former sidebar placement and earlier role-editor action placement. Do not recreate these historical patterns or assume an outstanding request has been approved.
 
-Tom approved reconciling documentation before the desktop audit, not changing the Figma source or application UI. Please confirm design-source representation for:
+Tom approved strengthening the existing guidance for future features while preserving the current app appearance. Figma synchronisation is unverified; the items below concern design-source representation, not permission to redesign the approved React implementations:
 
 - The approved React control extensions and their documented variants, including quiet actions, native-link action rows, fields, dialogs and filters. Existing prototype approval does not itself establish Figma parity.
 - The app-level hybrid shell and shared workspace heading/search/action layout, including the pale-neutral sidebar and scoped Media downloads. Determine whether any corresponding kit compositions are needed; do not assume each app composition requires a new primitive.
-- The compact shared Chat/Updates unread-count adapter and specialised search implementations. Token use, readability and animation remain audit questions, not newly approved DS specifications.
+- The single contextual top-bar Search composition approved on 29 October, built from existing DS controls. It replaces the earlier separate workspace search fields; picker-specific searches retain their own scope.
+- The three Keep confirmations on 29 October: borderless Media toolbar sorting, the existing Client-derived tinted Brand Kit category cards and compact pink unread badges with their existing pulse. These are approved scoped app patterns; determine how Figma should represent them without extending them to unrelated controls. Appearance approval is not formal accessibility certification.
+
+Runtime gaps found during the guidance review remain separate from this documentation work: duplicate global token declarations, unresolved token references and the missing `label-l-semibold` runtime class. Do not silently define, alias or consolidate them during feature work, since that can change appearance. If a feature needs one, report the exact consumer and proposed definition for agreement. The approved React component guides remain the implementation reference while Figma representation is pending.
 
 Missing components or assets still require the Guidelines.md missing-asset protocol and explicit confirmation before implementation. This list records follow-up questions only; no external message has been sent and no design-source synchronisation is claimed.
 

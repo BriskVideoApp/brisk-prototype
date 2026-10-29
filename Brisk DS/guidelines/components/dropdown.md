@@ -14,6 +14,7 @@ Approved by Tom on 17 October 2026. Use the shared `BriskSelect` for dropdown fi
 - Selected options use the secondary brand fill, primary brand text and a checkmark. The active keyboard option has a separate focus outline; browsing does not commit a single selection.
 - Fields have no shadow at rest. Hover adds the hard shadow, focus adds the focus ring, and pressed flattens the shadow. Retain disabled and invalid states.
 - A contextual trigger can retain an existing status, source, chip or Brand Kit presentation. It must use this component's menu, positioning and keyboard handling.
+- Tom confirmed keeping the current borderless Media toolbar sort trigger on 29 October 2026. Preserve its visible value, chevron and existing DS keyboard focus as a scoped toolbar variant. Reuse that implementation; do not apply its consumer override to ordinary form fields or invent a new universal borderless selector. See the [visual style confirmations](../../../Docs/desktop-design-baseline.md#visual-style-confirmations---29-october-2026).
 - Use `placeholderTone="label"` when the empty trigger names a filter category, rather than suggesting form input. Enabled empty labels use `--brisk-text-secondary`; the default `"hint"` retains ordinary form-placeholder styling. Selected values, disabled styling, menus and behaviour are unchanged. The Videos Client/Teammate/Tags/Status/Deadline filters use this option. Do not darken all form placeholders or override this state in local CSS.
 
 ## Choosing the variant

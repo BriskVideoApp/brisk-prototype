@@ -1,0 +1,77 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - link "Updates":
+      - /url: /notifications
+      - generic: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Notifications" [level=1]
+  - paragraph: Updates that need your attention.
+  - link "Notification settings":
+    - /url: /settings/personal/notifications
+    - text: Notification settings
+  - group "Notification filters":
+    - button "All 0":
+      - text: All
+      - generic: "0"
+    - button "Unread 0" [active] [pressed]:
+      - text: Unread
+      - generic: "0"
+    - button "Mentions 0":
+      - text: Mentions
+      - generic: "0"
+    - button "Action required 0":
+      - text: Action required
+      - generic: "0"
+  - button "Mark all as read":
+    - generic: Mark all as read
+  - heading "Nothing in this filter" [level=2]
+  - paragraph: There are no unread notifications for you.
+  - button "Show all notifications"

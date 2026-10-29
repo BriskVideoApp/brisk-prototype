@@ -1,0 +1,88 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections" [active]:
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Messaging connections" [level=1]
+  - paragraph: Manage the shared accounts that connect your Studio to external messaging apps.
+- region "Studio messaging connections":
+  - heading "Studio messaging connections" [level=2]
+  - paragraph: Reconnect shared accounts here. Project-specific channels and conversations stay in each project’s External Chat settings.
+  - article:
+    - generic "WhatsApp"
+    - heading "WhatsApp" [level=2]
+    - paragraph: Send and receive Client messages through your Studio’s WhatsApp Business account.
+    - generic: Connected
+    - generic: Connected account
+    - strong: ChopChop Film Business
+    - paragraph: Choose the WhatsApp conversation for each project in its External Chat settings.
+  - article:
+    - generic "Slack"
+    - heading "Slack" [level=2]
+    - paragraph: Keep Client conversations in sync through Slack Connect or the Brisk Slack app.
+    - generic: Reconnect required
+    - generic: Connected account
+    - strong: ChopChop Film Slack
+    - paragraph: Choose the Slack channel for each project in its External Chat settings.
+    - button "Reconnect Slack"

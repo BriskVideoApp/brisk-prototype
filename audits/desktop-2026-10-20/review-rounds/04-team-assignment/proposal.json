@@ -1,0 +1,183 @@
+{
+  "id": "TEAM-01",
+  "status": "Approved expanded design, implemented and awaiting visual sign-off",
+  "date": "28 October2026",
+  "priority": "Next first-batch audit item after Tom deferred plan comparison; B01 is an unresolved S2 shared selection-control issue.",
+  "role": "Studio Staff",
+  "route": "/active-videos?project=loom-launch-film",
+  "entry": "Videos > Launch Film project details > Team > Shooter > Staff / Freelancers",
+  "recommendations": [
+    {
+      "id": "TP01",
+      "title": "Make person selection clear and dependable",
+      "current": "Staff and Freelancer checkboxes have empty accessible names and24 x24px click targets. Their custom checked mark and focus handling bypass the approved DS control.",
+      "proposal": "Use the existing DS Checkbox, associate it with the visible person name and keep the approved44px target and focus treatment. Make the name/selection area clickable; keep capacity metadata and the project-rate input independently operable.",
+      "classification": "Observed defect and DS-standard violation",
+      "finding": "B01",
+      "severity": "S2",
+      "rationale": "A small shared-control repair improves pointer selection, keyboard orientation and person identification without changing who can be selected.",
+      "tradeoff": "Do not make the entire Freelancer row a label: it contains a separate rate input. Keep Staff single-selection with deselection and Freelancer multi-selection; no radio conversion."
+    },
+    {
+      "id": "TP02",
+      "title": "Name the project-rate column",
+      "current": "The row shows a person\u2019s hourly reference under their name and a dollar input on the right. \u201cProject rate for Hugo Bennett\u201d exists for assistive technology, but the visible column has no Project rate heading.",
+      "proposal": "Add a small visible \u201cProject rate\u201d heading above the Freelancer amount column. Keep person identity and hourly reference on the left, existing total project-rate input on the right, and align the rows consistently.",
+      "classification": "Heuristic UI-clarity judgement; not a demonstrated user failure",
+      "finding": "New scoped refinement, no defect-total inflation",
+      "severity": "Refinement",
+      "rationale": "This distinguishes the hourly reference from the project amount without adding fields or explanatory clutter.",
+      "tradeoff": "Use one column heading rather than repeat the label on every row. Do not change rates, rounding, calculations, defaults or save boundaries; preserve person-specific accessible input names."
+    },
+    {
+      "id": "TP03",
+      "title": "Explain an empty Staff shortlist",
+      "current": "Shooter > Staff has no suggested people and shows only Show all10. It does not explain that the shortlist, rather than the Studio team, is empty.",
+      "proposal": "Add one quiet line: \u201cNo suggested Staff for Shooter.\u201d Keep the existing Show all10 action and current filtering. Use the role\u2019s existing label for other roles.",
+      "classification": "Observed empty presentation; heuristic recommendation",
+      "finding": "B10",
+      "severity": "S4",
+      "rationale": "Clarifies the scope of the empty result with a single line and keeps the next action obvious.",
+      "tradeoff": "No illustration, new invitation action or automatic expansion to all Staff. Those would add noise or change behaviour."
+    }
+  ],
+  "preserve": [
+    "Staff versus Freelancer workflows",
+    "Staff capacity and availability",
+    "Independent Freelancer hourly reference and project-rate input",
+    "Role hours, calculations, default rates and selected-state rules",
+    "Selecting versus Assign / Assign now versus Invite",
+    "Disabled Already on project / Already invited reasons",
+    "Existing invitations and their management actions",
+    "DS dialog, Cancel and explicit save boundaries"
+  ],
+  "deferred": [
+    "Plan comparison: explicitly deferred by Tom",
+    "Team tab keyboard semantics B07",
+    "Broader Team modal/footers, removal, withdrawal and invitation-flow redesign",
+    "Rates, hours validation policy and calculations",
+    "Mobile"
+  ],
+  "authority": [
+    "Latest explicit user decisions",
+    "Docs/desktop-design-baseline.md",
+    "Brisk DS/guidelines/components/forms.md:20px Checkbox,44px target, native names and DS states",
+    "Existing shared DS Checkbox implementation",
+    "Brisk design guidance: explain empty results without adding unnecessary UI"
+  ],
+  "sourceHashes": {
+    "src/components/project/team/RoleEditorModal.tsx": "616130e82072ec662e6e5574c1ff2d7ba3c0b292b1f82fa8b8e6f8139d70c4e2",
+    "src/components/project/team/team-panel.css": "af099a0e8d79ccbf6ef4e1f7d4f3ea18a0ac1ce61ad2f91c1c0f9e2884f32e68",
+    "Brisk DS/src/app/components/Checkbox.tsx": "2d73c112fb5a5b7840125d616c35a24c55193f89f73c5def16433682176adec3",
+    "Brisk DS/src/app/components/Checkbox.module.css": "5192b4c7e5f97fe7a2c57e55af03944cfe14810fb6afa4b5b3f111e56f3ca4ff"
+  },
+  "approvedReference": "Fresh Notifications screenshot shows the approved shared Checkbox in current use. It is a component reference only; no approved full Team-row replacement exists. Visible Project rate heading and empty copy require Tom agreement.",
+  "inspection": {
+    "origin": "http://127.0.0.1:8775",
+    "initialStorage": {
+      "localKeys": 0,
+      "sessionKeys": 0
+    },
+    "widths": [
+      1440,
+      1133
+    ],
+    "height": 1000,
+    "states": [
+      "Freelancers default and existing disabled invited person",
+      "Space selects/unselects Hugo in local draft; Invite and Assign now become distinct visible actions",
+      "Staff empty shortlist",
+      "Staff expanded list with existing disabled and enabled entries",
+      "Approved DS Checkbox reference on Notifications, no setting changed"
+    ],
+    "cleanup": "Draft deselected; Cancel used; no assignment/invitation/withdrawal/removal/settings save executed. Viewport reset; temporary tab closed.",
+    "limits": [
+      "DOM/accessibility-tree names and keyboard selection checked; no screen-reader session or formal compliance claim.",
+      "No assignment or invitation was submitted, including confirmation outcomes.",
+      "Restricted roles and project-page consumer were source reviewed, not rechecked in browser in this focused proposal.",
+      "Default mock initialisation was confined to the fresh demo origin; working-origin app pages were not opened."
+    ]
+  },
+  "verificationAfterApproval": [
+    "1440 and1133, Staff / Freelancers, short and expanded lists",
+    "Named enabled/disabled/selected controls, Space/Enter, visible focus and44px DS target",
+    "Person-name click selects; rate edit and capacity control do not select",
+    "Staff deselection and single-selection; Freelancer multi-selection and existing action eligibility",
+    "Clear project-rate heading, aligned amounts, no calculation/value changes",
+    "Empty shortlist copy reflects role while Show all retains existing filtering",
+    "Shared project-page consumer, applicable role restrictions and unchanged actions",
+    "Type check, route HTTP check, source/data preservation and scoped diff review"
+  ],
+  "noApplicationChanges": true,
+  "evidence": [
+    {
+      "file": "current-freelancers-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "6ecc64a9c760c0f56e48bc11c58c637d0c5f6fcc5249fd69a97e1043ca47ec56"
+    },
+    {
+      "file": "current-freelancers-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "ce3047d84576261049337240be6cb6f9a4044a90171ceaaac639aa3974af5108"
+    },
+    {
+      "file": "current-freelancer-selected-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "310adcc1baf25c6e4e8738286010df726c3e5013ce0338dc369404c3cf382ed7"
+    },
+    {
+      "file": "current-staff-expanded-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "0fd9253ab2a2b29782dd0b84cd5fe24c660220b1bb8bac319b01ae57fd7b29ec"
+    },
+    {
+      "file": "current-staff-expanded-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "80d960bed5d1227d1c289978d143b801a949e2908f9e655c3802957e2462db85"
+    },
+    {
+      "file": "current-team-detail.jpg",
+      "width": 776,
+      "height": 277,
+      "sha256": "b56e84c20de75f73fdf94c2ae03dcadaab379cf859401801bb9f5173ee6d1d0f"
+    },
+    {
+      "file": "current-empty-detail.jpg",
+      "width": 776,
+      "height": 295,
+      "sha256": "34cf59c3d2957509bd18918caee8eb23275817ea1df78ab41f4e2d00f3fae741"
+    },
+    {
+      "file": "reference-ds-checkboxes-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "420cecd771ecb09afd5b67fc822f6731090f9b023b7ef86c76d2c991c2d15e2f"
+    },
+    {
+      "file": "current-staff-empty-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "7f645a2ac01133800b5f2d1abfdeaa8935c2680bc138890fb629d4c476a29e5a"
+    },
+    {
+      "file": "reference-checkbox-detail.jpg",
+      "width": 364,
+      "height": 130,
+      "sha256": "123c5ee668f1968afbc4df9a87e340d8b2a227f231e9f6b19d27a5f965477a33"
+    }
+  ],
+  "mobbinReassessment": "mobbin-review.html",
+  "reassessmentNote": "Preserve user-preferred Videos Team summary and function. Scope must explicitly include the poorly designed Team overview panel, in addition to direct quick assignment and its hours/cost chooser. No implementation approval.",
+  "latestRequirement": "videos-entry-requirement.json",
+  "requiredHoursClarification": "Tom requires role hours during quick assignment because they inform Freelancer cost. Keep hours and rate/cost visible before assigning; no implementation approval yet.",
+  "panelRefinement": "panel-refinement-requirement.json",
+  "originalRecommendationsHistorical": true,
+  "supersededBy": "visual-preview.html",
+  "result": "result.html",
+  "verification": "implementation-validation.json"
+}

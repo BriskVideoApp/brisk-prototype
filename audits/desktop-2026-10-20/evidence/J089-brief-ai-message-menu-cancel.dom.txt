@@ -1,0 +1,125 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Brief actions": Brief actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/script
+          - text: Waiting on North Star Films
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Brief intake":
+    - heading "What video are we making?" [level=1]
+    - generic "Brief chat thread":
+      - article:
+        - generic: You
+        - button "Message options" [active]: Message options
+        - paragraph: AUDIT SAMPLE ONLY - a short internal product demonstration for the disposable review.
+      - article:
+        - generic: North Star Films
+        - paragraph: Nice - a few quick questions before I draft this.
+        - paragraph: Who is the main audience for this video?
+    - textbox "Describe the video brief":
+      - /placeholder: Type your answer here...
+    - generic "Attachment tools":
+      - button "Record a brief" [disabled]: Recording is not available in this prototype
+      - button "Paste a link": Paste a link
+      - button "Upload a doc": Upload a doc
+    - button "Continue" [disabled]
+    - button "Back"
+    - navigation "Brief steps":
+      - button "Start with AI Start with AI":
+        - generic: Start with AI
+        - text: Start with AI
+      - button "1 1. Description"
+      - button "2 2. Video type"
+      - button "3 3. Audience and action"
+      - button "4 4. Similar videos"
+      - button "5 5. Brand kit"
+      - button "6 6. Footage and filming"
+      - button "7 7. Deliverables"
+      - button "8 8. Deadline"
+      - button "Summary 9. Review your brief"

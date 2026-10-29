@@ -1,0 +1,157 @@
+{
+  "id": "PLAN-01",
+  "status": "Deferred",
+  "reviewedOn": "28 October 2026",
+  "route": "/settings/plan-billing",
+  "entry": "Studio settings > Brisk plan & billing > Change plan",
+  "role": "Studio Staff",
+  "priorityReason": "Next executive-summary S2 UI blocker after the signed-off Media inspector and To Do editor; AC06 remains in the first implementation batch.",
+  "recommendations": [
+    {
+      "id": "PCP01",
+      "title": "Restore the visible Monthly / Annual choice",
+      "current": "At both1440 x1000 and1133 x1000, the frequency group is2px high while its buttons are40px high. A pointer click at Annual\u2019s expected centre hits the Starter card; Monthly remains selected.",
+      "proposal": "Give the existing billing-frequency choice a stable, non-collapsing row above the cards. Keep both labels, clear selected state, native pressed semantics and visible keyboard focus. Retain its existing visual treatment rather than invent a new universal segmented component.",
+      "classification": "Observed defect",
+      "finding": "AC06",
+      "severity": "S2",
+      "confidence": "High; fresh screenshots, geometry, hit testing and confirmation agree.",
+      "tradeoff": "The restored row uses a little more vertical space. Preserve readable text and full controls rather than compressing the plans to recover it."
+    },
+    {
+      "id": "PCP02",
+      "title": "Keep the billing choice available while comparing",
+      "current": "Long cards already need body scrolling. At1133px, the plan-action buttons become fully visible after scrolling83px. Close stays visible and should remain so. This is a composition refinement, not a claim that those buttons are unreachable.",
+      "proposal": "Keep the title, frequency choice and Close visible; scroll the four-card comparison in one deliberate region. Preserve card order, both Monthly and Annual figures, current-plan identity, readable type and existing plan actions. Make this a local comparison layout change within the existing DS dialog.",
+      "classification": "Design judgement requiring agreement",
+      "finding": "Supports AC06; not a separate defect total",
+      "severity": "Refinement",
+      "confidence": "High on observed scrolling; proposed arrangement needs Tom agreement.",
+      "tradeoff": "Pinning the choice leaves slightly less height for cards, but keeps billing context visible at the point of choosing. Alternative: let the full body scroll; simpler, but the choice disappears while comparing lower features."
+    },
+    {
+      "id": "PCP03",
+      "title": "Keep the unconfirmed frequency when going Back",
+      "current": "Annual selected by keyboard reaches Business confirmation with the correct annual amount. Back reopens the comparison with Monthly selected. The comparison component remounts from the committed subscription frequency.",
+      "proposal": "Back returns to the same unconfirmed Monthly / Annual choice within the current comparison session. Close or Cancel ends that session; reopening starts from the current subscription as it does today. Keep the separate confirmation before any plan change.",
+      "classification": "Directly observed interaction; proposed draft-lifecycle refinement",
+      "finding": "PC02, new scoped observation related to the comparison flow",
+      "severity": "S3",
+      "confidence": "High; reproduction and current state ownership agree.",
+      "tradeoff": "Retain only the temporary comparison choice, not a new preference or subscription change. Do not change pricing, commitment, entitlements or cancellation meaning."
+    }
+  ],
+  "sourceHashes": {
+    "src/components/settings/PlanBillingModals.tsx": "58e06607f90729749ca2cae984c60aa6e9cc0c221774130dbafc4a1a0956ea57",
+    "src/components/settings/PlanBillingPage.tsx": "6e1f0aac57b05c8885332361bfc01e88de68a548bbc43c92beec2ae748864cec",
+    "src/components/settings/plan-billing.css": "f78afa3d7f538dbc2d2dc7bae19fa0927c17ecea9ee37555fcbeeb586b62f7c0",
+    "src/components/clients/ClientPrimitives.tsx": "5cb1a081054d183fdee7c421682a9ed1b527dbe3cb073500a8ebaf90a62d8d76",
+    "Brisk DS/src/app/components/DialogSurface.module.css": "9473985d58f29b51c8c3b2ebe7ae23dced42fdc12ec35667f1f1d583987ce6b7",
+    "src/data/billing.ts": "1939b16619295344805c69ad2ab80b6bdda8ec0a2a783aca75646246779f0a17"
+  },
+  "browser": {
+    "origin": "http://127.0.0.1:8774",
+    "initialStorage": {
+      "localKeys": 0,
+      "sessionKeys": 0
+    },
+    "widths": [
+      1440,
+      1133
+    ],
+    "height": 1000,
+    "confirmations": "Monthly and Annual Business confirmation inspected; no Confirm change submitted.",
+    "back": "Annual returns to Monthly; pending selection lost.",
+    "scroll": "At1133 plan actions reachable after83px body scroll; Close remains visible.",
+    "finalState": "Comparison closed; current Professional subscription still Monthly at$249 USD/month. Viewport reset and temporary tab closed."
+  },
+  "approvedReference": "No exact approved plan-comparison screenshot exists. DS EditingDialog/DialogSurface written guidance governs title/footer visibility, body scrolling, focus and modal behaviour. Current screenshots are evidence, not an approved new commercial design.",
+  "authority": [
+    "Latest explicit approvals",
+    "Docs/desktop-design-baseline.md",
+    "Brisk DS/guidelines/components/editing-dialog.md",
+    "Brisk DS/guidelines/components/confirmation-dialog.md",
+    "Brisk DS/guidelines/components/quiet-choices.md: segmented inline controls are outside the generic quiet-choice migration"
+  ],
+  "preserve": [
+    "Four plans, their order and current-plan identity",
+    "Both monthly and annual price figures",
+    "Existing comparison/confirmation boundary",
+    "Current subscription until explicit confirmation",
+    "Plan data, prices, limits, trials, sales actions and permissions",
+    "Existing DS modal styling, focus containment, Escape and Close"
+  ],
+  "deferred": [
+    "DEC08: V1 branding benefits versus current plan copy needs a separate product decision",
+    "Pricing or entitlement changes",
+    "Shortening/collapsing plan feature lists or changing four-card comparison into a new pricing page",
+    "New billing integrations or payment actions",
+    "Mobile"
+  ],
+  "verificationAfterApproval": [
+    "1440 and1133, full-height and shorter desktop; expanded/collapsed navigation",
+    "Visible pointer/Enter/Space Monthly and Annual controls; selected and focus states",
+    "All four plan cards and action rows reachable in a single intended scrolling region; header/frequency/Close stay visible",
+    "Monthly and Annual confirmation amounts, Back restores the draft frequency, Close/Cancel preserve current subscription",
+    "Current-plan versus chosen-frequency distinction; Enterprise sales action preserved without sending contact",
+    "Type check, affected route HTTP200, scoped diff and protected-file review"
+  ],
+  "noApplicationChanges": true,
+  "evidence": [
+    {
+      "file": "current-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "aed0bead5b1d252100b3b98d2667e1ca3738a3300db6592d07f31ee7bc5e05f5"
+    },
+    {
+      "file": "current-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "8063fbe44242c07460f3b74db8e7b00121e25359e16e2229c44e0db3fabdd6b2"
+    },
+    {
+      "file": "current-after-back.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "a25c499bda8cd9366f9201706d09274e65f8c5eae9e62c8ae3a7bef6a26579bc"
+    },
+    {
+      "file": "current-annual-confirmation-detail.jpg",
+      "width": 708,
+      "height": 496,
+      "sha256": "c8640b6b42ec879e242efb36a2e265eaadfccf00af84c0b7e69bc7d2796f0cf7"
+    },
+    {
+      "file": "current-annual-confirmation.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "0842bd6accae4af232187b2bbee74f56e5a092bfa85de781d5e962d124d19527"
+    },
+    {
+      "file": "current-annual-keyboard.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "61f77981d4c94bcbcd45f4aee6a9e8333b0b45354da9231f65f492b1af1ad952"
+    },
+    {
+      "file": "current-frequency-detail.jpg",
+      "width": 604,
+      "height": 145,
+      "sha256": "def1a93005fb9095ac6c91a973febe32f15ce1d0fa169758c3679576865de4fe"
+    },
+    {
+      "file": "current-monthly-confirmation.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "7dbfb940bbc3362cb8db12f7fc58d1ddba321b39747e2244aed7cc88ee3a3799"
+    },
+    {
+      "file": "current-scrolled-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "c61c3d0ef1b9737d213bc70950f45286b328baa0a6843266cc332300a737a79f"
+    }
+  ],
+  "decision": "Tom deferred plan comparison in chat: not important for the current pass; fix another time."
+}

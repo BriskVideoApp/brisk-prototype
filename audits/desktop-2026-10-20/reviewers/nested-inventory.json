@@ -1,0 +1,4291 @@
+{
+  "scope": "Source-discovered nested surfaces, not browser verification. Named component occurrences plus workflow groups, to reconcile with lead coverage. Generic wrappers excluded from counts because their consumers are inventoried.",
+  "surfaces": [
+    {
+      "name": "ColumnVisibilityMenu",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx:677"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ColumnVisibilityMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N001"
+    },
+    {
+      "name": "ColumnHeaderMenu",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx:827"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ColumnHeaderMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N002"
+    },
+    {
+      "name": "ProjectDetailPanel",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx:841",
+        "src/components/active-videos/ActiveVideosPage.tsx:1201"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ProjectDetailPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N003"
+    },
+    {
+      "name": "TeamPanel",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx:1490"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders TeamPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N004"
+    },
+    {
+      "name": "TimeSpentModal",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx:1623"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders TimeSpentModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N005"
+    },
+    {
+      "name": "FreelancerTimeDialog",
+      "source": "src/components/active-videos/FreelancerVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:333"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders FreelancerTimeDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N006"
+    },
+    {
+      "name": "InvoiceUploadModal",
+      "source": "src/components/active-videos/FreelancerVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:334"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders InvoiceUploadModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N007"
+    },
+    {
+      "name": "FreelancerColumnHeaderMenu",
+      "source": "src/components/active-videos/FreelancerVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/FreelancerVideosPage.tsx:433"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders FreelancerColumnHeaderMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N008"
+    },
+    {
+      "name": "ChatHistoryPopover",
+      "source": "src/components/ai/BriskAiAssistant.tsx",
+      "sourceLocations": [
+        "src/components/ai/BriskAiAssistant.tsx:914"
+      ],
+      "routeIds": [],
+      "routes": [],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Parent page action renders ChatHistoryPopover; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N009"
+    },
+    {
+      "name": "RenameAssetDialog",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2188"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RenameAssetDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N010"
+    },
+    {
+      "name": "FontRoleMatrixDialog",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2200"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders FontRoleMatrixDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N011"
+    },
+    {
+      "name": "VoiceToneDialog",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2212"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders VoiceToneDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N012"
+    },
+    {
+      "name": "SetupModal",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2230"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders SetupModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N013"
+    },
+    {
+      "name": "LogoDownloadModal",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2245"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders LogoDownloadModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N014"
+    },
+    {
+      "name": "ImageryPreviewModal",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2271"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ImageryPreviewModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N015"
+    },
+    {
+      "name": "GuidelinesPreviewModal",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx:2274"
+      ],
+      "routeIds": [
+        "R002",
+        "R003",
+        "R004",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom/loom-ai",
+        "/brand-kits/loom",
+        "/brand-kits",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders GuidelinesPreviewModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N016"
+    },
+    {
+      "name": "BriefAiChatPanel",
+      "source": "src/components/brief/BriefPage.tsx",
+      "sourceLocations": [
+        "src/components/brief/BriefPage.tsx:1152"
+      ],
+      "routeIds": [
+        "R016",
+        "R022",
+        "R026"
+      ],
+      "routes": [
+        "/offers/loom-launch-film/brief",
+        "/projects/loom-launch-film/costs",
+        "/projects/loom-launch-film/stages/brief"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders BriefAiChatPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N017"
+    },
+    {
+      "name": "ProfileModal",
+      "source": "src/components/clients/ClientProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientProfilePage.tsx:50"
+      ],
+      "routeIds": [
+        "R007"
+      ],
+      "routes": [
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ProfileModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N018"
+    },
+    {
+      "name": "StartProjectDialog",
+      "source": "src/components/clients/ClientProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientProfilePage.tsx:163"
+      ],
+      "routeIds": [
+        "R007"
+      ],
+      "routes": [
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders StartProjectDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N019"
+    },
+    {
+      "name": "ArchiveClientDialog",
+      "source": "src/components/clients/ClientProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientProfilePage.tsx:174"
+      ],
+      "routeIds": [
+        "R007"
+      ],
+      "routes": [
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ArchiveClientDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N020"
+    },
+    {
+      "name": "ProjectAccessDialog",
+      "source": "src/components/clients/ClientProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientProfilePage.tsx:186"
+      ],
+      "routeIds": [
+        "R007"
+      ],
+      "routes": [
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ProjectAccessDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N021"
+    },
+    {
+      "name": "AddClientDialog",
+      "source": "src/components/clients/ClientsPage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientsPage.tsx:206"
+      ],
+      "routeIds": [
+        "R007",
+        "R008"
+      ],
+      "routes": [
+        "/clients/loom",
+        "/clients"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders AddClientDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N022"
+    },
+    {
+      "name": "InvoiceReviewModal",
+      "source": "src/components/costs/OutstandingInvoicesPage.tsx",
+      "sourceLocations": [
+        "src/components/costs/OutstandingInvoicesPage.tsx:128"
+      ],
+      "routeIds": [
+        "R017"
+      ],
+      "routes": [
+        "/outstanding-invoices"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders InvoiceReviewModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N023"
+    },
+    {
+      "name": "InvoiceReviewModal",
+      "source": "src/components/costs/ProjectCostsPage.tsx",
+      "sourceLocations": [
+        "src/components/costs/ProjectCostsPage.tsx:172"
+      ],
+      "routeIds": [
+        "R022",
+        "R026"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/costs",
+        "/projects/loom-launch-film/stages/brief"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders InvoiceReviewModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N024"
+    },
+    {
+      "name": "ActivityPanel",
+      "source": "src/components/customer-dashboard/CustomerDashboard.tsx",
+      "sourceLocations": [
+        "src/components/customer-dashboard/CustomerDashboard.tsx:911"
+      ],
+      "routeIds": [
+        "R009",
+        "R052",
+        "R061"
+      ],
+      "routes": [
+        "/customer-dashboard",
+        "/settings/studio/portal-preview",
+        "/workspaces/northstar-films/clients/loom/portal"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ActivityPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N025"
+    },
+    {
+      "name": "ProjectActionsMenu",
+      "source": "src/components/customer-dashboard/CustomerDashboard.tsx",
+      "sourceLocations": [
+        "src/components/customer-dashboard/CustomerDashboard.tsx:1095",
+        "src/components/customer-dashboard/CustomerDashboard.tsx:1247"
+      ],
+      "routeIds": [
+        "R009",
+        "R052",
+        "R061"
+      ],
+      "routes": [
+        "/customer-dashboard",
+        "/settings/studio/portal-preview",
+        "/workspaces/northstar-films/clients/loom/portal"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ProjectActionsMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N026"
+    },
+    {
+      "name": "InvitePersonModal",
+      "source": "src/components/invitations/InvitationContext.tsx",
+      "sourceLocations": [
+        "src/components/invitations/InvitationContext.tsx:220"
+      ],
+      "routeIds": [
+        "R001",
+        "R007",
+        "R016",
+        "R019",
+        "R020",
+        "R022",
+        "R026",
+        "R037"
+      ],
+      "routes": [
+        "/active-videos",
+        "/clients/loom",
+        "/offers/loom-launch-film/brief",
+        "/people/sc",
+        "/people",
+        "/projects/loom-launch-film/costs",
+        "/projects/loom-launch-film/stages/brief",
+        "/settings/client/team"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders InvitePersonModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N027"
+    },
+    {
+      "name": "RecutMarkupPanel",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1429"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RecutMarkupPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N028"
+    },
+    {
+      "name": "RecutBriefPanel",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1454"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RecutBriefPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N029"
+    },
+    {
+      "name": "VersionsPanel",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1494"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders VersionsPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N030"
+    },
+    {
+      "name": "DownloadAssetsDialog",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1729"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DownloadAssetsDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N031"
+    },
+    {
+      "name": "RecutSourceDialog",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1737"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RecutSourceDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N032"
+    },
+    {
+      "name": "RequestDialog",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1752"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RequestDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N033"
+    },
+    {
+      "name": "DeleteDeliverableDialog",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx:1769"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DeleteDeliverableDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N034"
+    },
+    {
+      "name": "MediaUploadMenu",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx:268",
+        "src/components/media/MediaBrowser.tsx:309"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MediaUploadMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N035"
+    },
+    {
+      "name": "MediaAssetDrawer",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx:357"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MediaAssetDrawer; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N036"
+    },
+    {
+      "name": "MediaMoveDialog",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx:362"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MediaMoveDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N037"
+    },
+    {
+      "name": "MediaArchiveDialog",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx:363"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MediaArchiveDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N038"
+    },
+    {
+      "name": "MediaDeleteDialog",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx:364"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MediaDeleteDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N039"
+    },
+    {
+      "name": "FolderMenu",
+      "source": "src/components/media/MediaFolderTree.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaFolderTree.tsx:33"
+      ],
+      "routeIds": [
+        "R012",
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders FolderMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N040"
+    },
+    {
+      "name": "UserAvatarMenu",
+      "source": "src/components/navigation/AppShell.tsx",
+      "sourceLocations": [
+        "src/components/navigation/AppShell.tsx:102"
+      ],
+      "routeIds": [],
+      "routes": [],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Parent page action renders UserAvatarMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N041"
+    },
+    {
+      "name": "ShootActionsMenu",
+      "source": "src/components/navigation/GlobalHeaderActions.tsx",
+      "sourceLocations": [
+        "src/components/navigation/GlobalHeaderActions.tsx:53"
+      ],
+      "routeIds": [
+        "R009",
+        "R052",
+        "R061"
+      ],
+      "routes": [
+        "/customer-dashboard",
+        "/settings/studio/portal-preview",
+        "/workspaces/northstar-films/clients/loom/portal"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ShootActionsMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N042"
+    },
+    {
+      "name": "UserAvatarMenu",
+      "source": "src/components/navigation/HybridSidebar.tsx",
+      "sourceLocations": [
+        "src/components/navigation/HybridSidebar.tsx:113"
+      ],
+      "routeIds": [],
+      "routes": [],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Parent page action renders UserAvatarMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N043"
+    },
+    {
+      "name": "WorkloadDialog",
+      "source": "src/components/people/PeoplePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PeoplePage.tsx:161"
+      ],
+      "routeIds": [
+        "R020"
+      ],
+      "routes": [
+        "/people"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders WorkloadDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N044"
+    },
+    {
+      "name": "ProfileDialog",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx:45"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ProfileDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N045"
+    },
+    {
+      "name": "ArchivePersonDialog",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx:122"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ArchivePersonDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N046"
+    },
+    {
+      "name": "AssignPersonDialog",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx:123"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders AssignPersonDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N047"
+    },
+    {
+      "name": "RemovePortalAccessDialog",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx:124"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RemovePortalAccessDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N048"
+    },
+    {
+      "name": "DeletePersonDialog",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx:125"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DeletePersonDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N049"
+    },
+    {
+      "name": "RoleEditorModal",
+      "source": "src/components/project/team/TeamPanel.tsx",
+      "sourceLocations": [
+        "src/components/project/team/TeamPanel.tsx:554"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders RoleEditorModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N050"
+    },
+    {
+      "name": "TranscriptClipMenu",
+      "source": "src/components/script-transcripts/TranscriptClipBlock.tsx",
+      "sourceLocations": [
+        "src/components/script-transcripts/TranscriptClipBlock.tsx:131"
+      ],
+      "routeIds": [
+        "R011",
+        "R025",
+        "R029"
+      ],
+      "routes": [
+        "/customer-dashboard/start-video/script",
+        "/projects/loom-launch-film/script",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders TranscriptClipMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N051"
+    },
+    {
+      "name": "TranscriptsPanel",
+      "source": "src/components/script/ScriptPage.tsx",
+      "sourceLocations": [
+        "src/components/script/ScriptPage.tsx:2190"
+      ],
+      "routeIds": [
+        "R011",
+        "R025",
+        "R029"
+      ],
+      "routes": [
+        "/customer-dashboard/start-video/script",
+        "/projects/loom-launch-film/script",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders TranscriptsPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N052"
+    },
+    {
+      "name": "ConnectStripeModal",
+      "source": "src/components/settings/ClientBillingPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/ClientBillingPage.tsx:249"
+      ],
+      "routeIds": [
+        "R038"
+      ],
+      "routes": [
+        "/settings/client-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ConnectStripeModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N053"
+    },
+    {
+      "name": "DisconnectStripeModal",
+      "source": "src/components/settings/ClientBillingPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/ClientBillingPage.tsx:257"
+      ],
+      "routeIds": [
+        "R038"
+      ],
+      "routes": [
+        "/settings/client-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DisconnectStripeModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N054"
+    },
+    {
+      "name": "InviteClientColleagueModal",
+      "source": "src/components/settings/ClientTeamPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/ClientTeamPage.tsx:189"
+      ],
+      "routeIds": [
+        "R037"
+      ],
+      "routes": [
+        "/settings/client/team"
+      ],
+      "applicableRoles": [
+        "Customer"
+      ],
+      "entryPath": "Parent page action renders InviteClientColleagueModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N055"
+    },
+    {
+      "name": "ProjectAccessModal",
+      "source": "src/components/settings/ClientTeamPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/ClientTeamPage.tsx:209"
+      ],
+      "routeIds": [
+        "R037"
+      ],
+      "routes": [
+        "/settings/client/team"
+      ],
+      "applicableRoles": [
+        "Customer"
+      ],
+      "entryPath": "Parent page action renders ProjectAccessModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N056"
+    },
+    {
+      "name": "MessageEditorModal",
+      "source": "src/components/settings/CustomerMessageTemplatesPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/CustomerMessageTemplatesPage.tsx:135"
+      ],
+      "routeIds": [
+        "R041"
+      ],
+      "routes": [
+        "/settings/notifications/templates"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders MessageEditorModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N057"
+    },
+    {
+      "name": "ChangePasswordModal",
+      "source": "src/components/settings/PersonalSecurityPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/PersonalSecurityPage.tsx:88"
+      ],
+      "routeIds": [
+        "R044"
+      ],
+      "routes": [
+        "/settings/personal/security"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ChangePasswordModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N058"
+    },
+    {
+      "name": "PlanComparisonModal",
+      "source": "src/components/settings/PlanBillingPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/PlanBillingPage.tsx:178"
+      ],
+      "routeIds": [
+        "R045"
+      ],
+      "routes": [
+        "/settings/plan-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders PlanComparisonModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N059"
+    },
+    {
+      "name": "PlanChangeConfirmationModal",
+      "source": "src/components/settings/PlanBillingPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/PlanBillingPage.tsx:191"
+      ],
+      "routeIds": [
+        "R045"
+      ],
+      "routes": [
+        "/settings/plan-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders PlanChangeConfirmationModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N060"
+    },
+    {
+      "name": "AddOnConfirmationModal",
+      "source": "src/components/settings/PlanBillingPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/PlanBillingPage.tsx:205"
+      ],
+      "routeIds": [
+        "R045"
+      ],
+      "routes": [
+        "/settings/plan-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders AddOnConfirmationModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N061"
+    },
+    {
+      "name": "NotificationEditorModal",
+      "source": "src/components/settings/StudioNotificationCategoryPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioNotificationCategoryPage.tsx:256"
+      ],
+      "routeIds": [
+        "R039"
+      ],
+      "routes": [
+        "/settings/notifications/customer-reviews"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders NotificationEditorModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N062"
+    },
+    {
+      "name": "StudioReviewDialog",
+      "source": "src/components/settings/StudioSetupOverviewPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioSetupOverviewPage.tsx:222",
+        "src/components/settings/StudioSetupOverviewPage.tsx:257",
+        "src/components/settings/StudioSetupOverviewPage.tsx:317"
+      ],
+      "routeIds": [
+        "R051"
+      ],
+      "routes": [
+        "/settings/studio"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders StudioReviewDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N063"
+    },
+    {
+      "name": "UnscheduledShotsPanel",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1809"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders UnscheduledShotsPanel; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N064"
+    },
+    {
+      "name": "EntryModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1822"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders EntryModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N065"
+    },
+    {
+      "name": "PersonModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1859"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders PersonModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N066"
+    },
+    {
+      "name": "ExistingPersonPopover",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1869"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ExistingPersonPopover; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N067"
+    },
+    {
+      "name": "LocationModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1882"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders LocationModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N068"
+    },
+    {
+      "name": "DocumentsModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1883"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DocumentsModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N069"
+    },
+    {
+      "name": "DeleteShootDayModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1896"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DeleteShootDayModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N070"
+    },
+    {
+      "name": "DeleteShootShotModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1902"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DeleteShootShotModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N071"
+    },
+    {
+      "name": "SkipShootModuleModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1908"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders SkipShootModuleModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N072"
+    },
+    {
+      "name": "ExistingShootPlanModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1909"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ExistingShootPlanModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N073"
+    },
+    {
+      "name": "ShootAccessModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:1910"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ShootAccessModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N074"
+    },
+    {
+      "name": "ShootCommandMenu",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:2636",
+        "src/components/shoot/ShootStagePage.tsx:4642",
+        "src/components/shoot/ShootStagePage.tsx:5253",
+        "src/components/shoot/ShootStagePage.tsx:5348",
+        "src/components/shoot/ShootStagePage.tsx:5399",
+        "src/components/shoot/ShootStagePage.tsx:5759",
+        "src/components/shoot/ShootStagePage.tsx:5796",
+        "src/components/shoot/ShootStagePage.tsx:6359"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ShootCommandMenu; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N075"
+    },
+    {
+      "name": "ScheduleReadinessModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:2834"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ScheduleReadinessModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N076"
+    },
+    {
+      "name": "PlanningReadinessModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:2841"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders PlanningReadinessModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N077"
+    },
+    {
+      "name": "ShootReadinessModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:2849"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ShootReadinessModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N078"
+    },
+    {
+      "name": "InterviewQuestionEditorModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:4345"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders InterviewQuestionEditorModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N079"
+    },
+    {
+      "name": "ShotMediaLibraryModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:4672",
+        "src/components/shoot/ShootStagePage.tsx:7755"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders ShotMediaLibraryModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N080"
+    },
+    {
+      "name": "AiScheduleCheckModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:5869"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders AiScheduleCheckModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N081"
+    },
+    {
+      "name": "DeleteShootItemModal",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx:8319",
+        "src/components/shoot/ShootStagePage.tsx:8334"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders DeleteShootItemModal; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N082"
+    },
+    {
+      "name": "StudioReviewDialog",
+      "source": "src/components/studio-onboard/StudioReviewEditors.tsx",
+      "sourceLocations": [
+        "src/components/studio-onboard/StudioReviewEditors.tsx:65",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:120",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:184",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:242",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:306"
+      ],
+      "routeIds": [
+        "R051"
+      ],
+      "routes": [
+        "/settings/studio"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Parent page action renders StudioReviewDialog; exact opener requires browser inspection.",
+      "states": [
+        "open/default",
+        "keyboard focus and Escape",
+        "cancel/close",
+        "conditional content and disabled state where present"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Source-discovered nested surface; a default parent screenshot does not cover this. Lead browser verification required.",
+      "safetyBoundary": "Do not confirm a stored-data mutation, send, payment, upload, invite, approval or destructive action.",
+      "id": "N083"
+    },
+    {
+      "name": "Global history menu",
+      "source": "src/components/navigation/GlobalHistoryNavigation.tsx",
+      "sourceLocations": [
+        "src/components/navigation/GlobalHistoryNavigation.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Recent pages, Back and Forward",
+      "states": [
+        "empty history",
+        "native-link rows",
+        "Home/End/Arrow keys",
+        "Escape returns opener"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N084"
+    },
+    {
+      "name": "Account menu",
+      "source": "src/components/navigation/UserAvatarMenu.tsx",
+      "sourceLocations": [
+        "src/components/navigation/UserAvatarMenu.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Sidebar avatar",
+      "states": [
+        "role-appropriate personal/company links",
+        "outside dismissal",
+        "keyboard focus"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N085"
+    },
+    {
+      "name": "Test mode role/scenario controls",
+      "source": "src/components/prototype-scenarios/PrototypeScenarioToolbar.tsx",
+      "sourceLocations": [
+        "src/components/prototype-scenarios/PrototypeScenarioToolbar.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Sidebar footer Test mode",
+      "states": [
+        "three role choices",
+        "current scenario",
+        "avoid activating scenario reset"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N086"
+    },
+    {
+      "name": "Global Updates popover",
+      "source": "src/components/navigation/GlobalHeaderActions.tsx",
+      "sourceLocations": [
+        "src/components/navigation/GlobalHeaderActions.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Top-right Updates",
+      "states": [
+        "unread/all",
+        "empty",
+        "notification action menu",
+        "do not mark read manually"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N087"
+    },
+    {
+      "name": "Global Chat drawer",
+      "source": "src/components/navigation/AppShell.tsx",
+      "sourceLocations": [
+        "src/components/navigation/AppShell.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Top-right Chat",
+      "states": [
+        "project picker",
+        "Internal/External content",
+        "settings",
+        "close/Escape",
+        "automatic read side effect source-review"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N088"
+    },
+    {
+      "name": "Ask Brisk drawer",
+      "source": "src/components/ai/BriskAiAssistant.tsx",
+      "sourceLocations": [
+        "src/components/ai/BriskAiAssistant.tsx"
+      ],
+      "routeIds": [
+        "R001",
+        "R060"
+      ],
+      "routes": [
+        "/active-videos",
+        "/today"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Top-right Ask Brisk",
+      "states": [
+        "history",
+        "Add source menu",
+        "Media/source picker",
+        "prompt chips",
+        "minimise",
+        "no submit"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N089"
+    },
+    {
+      "name": "Videos filters and status fields",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Filter row and table status",
+      "states": [
+        "status/client/stage/assignee filters",
+        "no results",
+        "clear",
+        "Staff status picker; do not select saved status",
+        "Client read-only status"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N090"
+    },
+    {
+      "name": "Project details drawer",
+      "source": "src/components/active-videos/ActiveVideosPage.tsx",
+      "sourceLocations": [
+        "src/components/active-videos/ActiveVideosPage.tsx"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Click project row or ?project=loom-launch-film",
+      "states": [
+        "Overview/Team",
+        "deadline popover",
+        "status",
+        "tags",
+        "hours breakdown",
+        "progress",
+        "Copy link settings",
+        "next/previous",
+        "read-only footer"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N091"
+    },
+    {
+      "name": "Team role assignment editor",
+      "source": "src/components/project/team/RoleEditorModal.tsx",
+      "sourceLocations": [
+        "src/components/project/team/RoleEditorModal.tsx"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Project drawer Team > Edit role/Add role",
+      "states": [
+        "Staff vs Freelancers",
+        "search",
+        "selected/disabled person",
+        "Staff hours",
+        "Freelancer project rate",
+        "invitation history",
+        "Save role separate from Assign/Send",
+        "remove-role confirmation; cancel only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N092"
+    },
+    {
+      "name": "Team capacity and stage editing",
+      "source": "src/components/project/team/TeamPanel.tsx",
+      "sourceLocations": [
+        "src/components/project/team/TeamPanel.tsx"
+      ],
+      "routeIds": [
+        "R001"
+      ],
+      "routes": [
+        "/active-videos"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Project drawer Team > role details",
+      "states": [
+        "role/stage selection",
+        "accepted/pending/declined/revoked invitations",
+        "restricted Client view",
+        "Freelancer self-only rates",
+        "totals and availability"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N093"
+    },
+    {
+      "name": "Today week/time entry",
+      "source": "src/components/today/TodayPage.tsx",
+      "sourceLocations": [
+        "src/components/today/TodayPage.tsx"
+      ],
+      "routeIds": [
+        "R060",
+        "R018"
+      ],
+      "routes": [
+        "/today",
+        "/"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "To Do week controls, empty calendar slot/entry",
+      "states": [
+        "viewing selector",
+        "week/date navigation",
+        "project/stage/hour selection",
+        "existing entry editor",
+        "completion/uncompletion; source only",
+        "current-user vs other-person read-only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N094"
+    },
+    {
+      "name": "People directory views",
+      "source": "src/components/people/PeoplePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PeoplePage.tsx"
+      ],
+      "routeIds": [
+        "R020"
+      ],
+      "routes": [
+        "/people"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "All/Staff/Freelancers/Client contacts/Archived",
+      "states": [
+        "search/sort",
+        "no results",
+        "capacity workload dialog",
+        "project + more links",
+        "view-specific invitation defaults",
+        "non-Staff private directory"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N095"
+    },
+    {
+      "name": "People profile sections",
+      "source": "src/components/people/PersonProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/people/PersonProfilePage.tsx"
+      ],
+      "routeIds": [
+        "R019"
+      ],
+      "routes": [
+        "/people/sc"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "People row > Details/Work/Access",
+      "states": [
+        "type-specific details",
+        "inline editors",
+        "current work",
+        "rate/history",
+        "project access",
+        "invitation history",
+        "archive/delete/remove-access confirmations; cancel only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N096"
+    },
+    {
+      "name": "Invitation wizard",
+      "source": "src/components/invitations/InvitePersonModal.tsx",
+      "sourceLocations": [
+        "src/components/invitations/InvitePersonModal.tsx"
+      ],
+      "routeIds": [
+        "R020",
+        "R008",
+        "R007"
+      ],
+      "routes": [
+        "/people",
+        "/clients",
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Invite person / Invite colleague",
+      "states": [
+        "three access roles",
+        "name/email validation",
+        "Client selection and inline creation",
+        "project checklists all/mixed/none",
+        "back/cancel",
+        "Send not activated"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N097"
+    },
+    {
+      "name": "Client profile contacts/work",
+      "source": "src/components/clients/ClientProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/clients/ClientProfilePage.tsx"
+      ],
+      "routeIds": [
+        "R007"
+      ],
+      "routes": [
+        "/clients/loom"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Clients > Loom > Contacts/Work",
+      "states": [
+        "company/details",
+        "contacts",
+        "project access dialog",
+        "Start project",
+        "archive/delete confirmation",
+        "Staff portal preview"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N098"
+    },
+    {
+      "name": "Client portal queue",
+      "source": "src/components/customer-dashboard/CustomerDashboard.tsx",
+      "sourceLocations": [
+        "src/components/customer-dashboard/CustomerDashboard.tsx"
+      ],
+      "routeIds": [
+        "R061"
+      ],
+      "routes": [
+        "/workspaces/northstar-films/clients/loom/portal"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "entryPath": "Customer Videos or Staff Open Client portal",
+      "states": [
+        "grouping All/Series/Standalone",
+        "status filters",
+        "series expansion",
+        "project actions",
+        "activity secondary panel",
+        "Client vs preview banner",
+        "Start Video not submitted"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N099"
+    },
+    {
+      "name": "Media filter and selection toolbar",
+      "source": "src/components/media/MediaBrowser.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaBrowser.tsx"
+      ],
+      "routeIds": [
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Media Library or project Media",
+      "states": [
+        "client/project scope",
+        "Media/Masters/Archived",
+        "kind/transcript/people filters",
+        "sort",
+        "selected-file menu",
+        "scoped bulk download",
+        "no global Download all",
+        "no-results"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N100"
+    },
+    {
+      "name": "Media folder tree menus",
+      "source": "src/components/media/MediaFolderTree.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaFolderTree.tsx"
+      ],
+      "routeIds": [
+        "R013",
+        "R029"
+      ],
+      "routes": [
+        "/media",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Folder menu/row",
+      "states": [
+        "expand/collapse",
+        "new folder",
+        "rename",
+        "delete confirmation",
+        "move target",
+        "read-only capability branches"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N101"
+    },
+    {
+      "name": "Media asset details/comments",
+      "source": "src/components/media/MediaAssetDrawer.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaAssetDrawer.tsx"
+      ],
+      "routeIds": [
+        "R012",
+        "R029"
+      ],
+      "routes": [
+        "/media/media-01",
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Click asset",
+      "states": [
+        "Details/Comments",
+        "player/image/document preview",
+        "technical source information",
+        "unavailable original",
+        "failed/processing",
+        "internal vs external comments",
+        "no comment send"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N102"
+    },
+    {
+      "name": "Media upload source menu",
+      "source": "src/components/media/MediaUploadMenu.tsx",
+      "sourceLocations": [
+        "src/components/media/MediaUploadMenu.tsx"
+      ],
+      "routeIds": [
+        "R029"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Project Media Upload",
+      "states": [
+        "Upload file",
+        "cloud-source selection",
+        "cloud picker search/list",
+        "disabled import",
+        "cancel without selecting/importing file"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N103"
+    },
+    {
+      "name": "Brief field and summary panels",
+      "source": "src/components/brief/BriefPage.tsx",
+      "sourceLocations": [
+        "src/components/brief/BriefPage.tsx"
+      ],
+      "routeIds": [
+        "R026"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Brief Summary/Questions",
+      "states": [
+        "question navigation",
+        "confidence/missing field",
+        "specialised choice fields",
+        "Brand Kit picker",
+        "AI clarification Edit/Delete menu",
+        "approval/readiness warning",
+        "do not type auto-saving values"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N104"
+    },
+    {
+      "name": "Share link access panel",
+      "source": "src/components/share/ShareActionRow.tsx",
+      "sourceLocations": [
+        "src/components/share/ShareActionRow.tsx"
+      ],
+      "routeIds": [
+        "R026",
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief",
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage menu Copy link; open panel only",
+      "states": [
+        "scope choices",
+        "view/comment/download access",
+        "link audience",
+        "copy disabled conditions",
+        "do not copy or save access"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N105"
+    },
+    {
+      "name": "Stage Send confirmation",
+      "source": "src/components/share/ShareActionRow.tsx",
+      "sourceLocations": [
+        "src/components/share/ShareActionRow.tsx"
+      ],
+      "routeIds": [
+        "R026",
+        "R030",
+        "R025",
+        "R031"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief",
+        "/projects/loom-launch-film/stages/shoot",
+        "/projects/loom-launch-film/script",
+        "/projects/loom-launch-film/stages/storyboard"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage action menu Send",
+      "states": [
+        "recipient",
+        "message",
+        "stage-specific request details",
+        "default message setting link",
+        "cancel; do not submit"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N106"
+    },
+    {
+      "name": "Stage approve/unapprove confirmations",
+      "source": "src/components/share/ShareActionRow.tsx",
+      "sourceLocations": [
+        "src/components/share/ShareActionRow.tsx"
+      ],
+      "routeIds": [
+        "R026",
+        "R030",
+        "R025",
+        "R031",
+        "R027",
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/brief",
+        "/projects/loom-launch-film/stages/shoot",
+        "/projects/loom-launch-film/script",
+        "/projects/loom-launch-film/stages/storyboard",
+        "/projects/loom-launch-film/stages/edit",
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage approval command",
+      "states": [
+        "disabled reason",
+        "approval snapshot",
+        "unapproval consequences",
+        "confirmation only; do not complete"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N107"
+    },
+    {
+      "name": "Script version menu",
+      "source": "src/components/script/ScriptVersionControl.tsx",
+      "sourceLocations": [
+        "src/components/script/ScriptVersionControl.tsx"
+      ],
+      "routeIds": [
+        "R025"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/script"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Version control",
+      "states": [
+        "list versions",
+        "current/selected",
+        "Create/Duplicate/Rename",
+        "historical preview",
+        "restore/delete confirmations",
+        "no version-changing command"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N108"
+    },
+    {
+      "name": "Script row/context/media tools",
+      "source": "src/components/script/ScriptPage.tsx",
+      "sourceLocations": [
+        "src/components/script/ScriptPage.tsx"
+      ],
+      "routeIds": [
+        "R025"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/script"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Row overflow, media cell, selection",
+      "states": [
+        "row selection",
+        "insert/duplicate/delete",
+        "approved edit guard",
+        "media source menu four options",
+        "link editor",
+        "comments/reactions",
+        "document menu Export/Print",
+        "do not save content"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N109"
+    },
+    {
+      "name": "Project transcript workspace",
+      "source": "src/components/script-transcripts/TranscriptsPanel.tsx",
+      "sourceLocations": [
+        "src/components/script-transcripts/TranscriptsPanel.tsx"
+      ],
+      "routeIds": [
+        "R029"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/media"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Pinned Media > Transcripts",
+      "states": [
+        "clip list/search",
+        "paragraph selection",
+        "search highlights",
+        "clip menu",
+        "download/export",
+        "Send to Script selection boundary",
+        "empty/processing clips",
+        "no send/change"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N110"
+    },
+    {
+      "name": "Storyboard board/AV/review",
+      "source": "src/components/storyboard/StoryboardPage.tsx",
+      "sourceLocations": [
+        "src/components/storyboard/StoryboardPage.tsx"
+      ],
+      "routeIds": [
+        "R031"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/storyboard"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Storyboard Board/AV, frame Review",
+      "states": [
+        "frame image menu",
+        "four Add/Replace sources",
+        "frame context commands",
+        "review canvas and comment rail",
+        "unavailable image",
+        "versions",
+        "approved-edit confirmation",
+        "no create/update"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N111"
+    },
+    {
+      "name": "Shoot entry and module setup",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Shoot dashboard > choose plan/create path",
+      "states": [
+        "Quick start questions",
+        "attach existing plan",
+        "Creative Plan",
+        "Plan the Day",
+        "On Set",
+        "skip/restore module",
+        "new vs populated state",
+        "avoid auto-save fields"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N112"
+    },
+    {
+      "name": "Shoot planning editors",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Creative Plan > shot/person/location/reference",
+      "states": [
+        "shot taxonomy selectors",
+        "interview questions",
+        "image/source picker",
+        "Existing person picker",
+        "person/location dialogs",
+        "documents",
+        "delete confirmations",
+        "access settings view/edit/manage",
+        "cancel without saving"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N113"
+    },
+    {
+      "name": "Shoot schedule and grouping",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx"
+      ],
+      "routeIds": [
+        "R030"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Plan the Day > Schedule / Unscheduled",
+      "states": [
+        "day selector",
+        "filters",
+        "shot/group selection",
+        "Add to group menu",
+        "Create new group inline editor",
+        "AI schedule check",
+        "readiness and guided missing details",
+        "timeline drag/resize source only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N114"
+    },
+    {
+      "name": "Shoot On Set and Call Sheet",
+      "source": "src/components/shoot/ShootStagePage.tsx",
+      "sourceLocations": [
+        "src/components/shoot/ShootStagePage.tsx"
+      ],
+      "routeIds": [
+        "R030",
+        "R057"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot",
+        "/share/call-sheet/loom-launch-film?preview=1"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "On Set substage / Open Call Sheet",
+      "states": [
+        "Now/Next",
+        "shoot-day selector",
+        "capture status",
+        "completion",
+        "Call Sheet shared/print/preview",
+        "Crew contact exposure",
+        "no readiness/publish submission"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N115"
+    },
+    {
+      "name": "Edit/Animation review",
+      "source": "src/components/video-review/VideoReviewScreen.tsx",
+      "sourceLocations": [
+        "src/components/video-review/VideoReviewScreen.tsx"
+      ],
+      "routeIds": [
+        "R027",
+        "R035"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/edit",
+        "/review?project=loom-launch-film"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Edit stage / legacy populated /review",
+      "states": [
+        "empty/upload",
+        "version picker",
+        "comments filters",
+        "timeline markers",
+        "drawing tools",
+        "comment composer",
+        "transcript panel",
+        "share/review/approve",
+        "readiness",
+        "do not mutate or send"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N116"
+    },
+    {
+      "name": "Masters delivery tree",
+      "source": "src/components/masters/MastersPage.tsx",
+      "sourceLocations": [
+        "src/components/masters/MastersPage.tsx"
+      ],
+      "routeIds": [
+        "R028"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/masters"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Masters deliverable row/expand",
+      "states": [
+        "empty vs populated",
+        "parent/child recuts",
+        "asset checklist",
+        "version panel",
+        "player",
+        "SRT inspector",
+        "thumbnail menu",
+        "comment panel",
+        "download selector",
+        "request dialog",
+        "recut brief/markup",
+        "draft discard/delete confirmations"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N117"
+    },
+    {
+      "name": "Brand Kit asset management",
+      "source": "src/components/brand-kits/BrandKitPages.tsx",
+      "sourceLocations": [
+        "src/components/brand-kits/BrandKitPages.tsx"
+      ],
+      "routeIds": [
+        "R003",
+        "R002",
+        "R056"
+      ],
+      "routes": [
+        "/brand-kits/loom",
+        "/brand-kits/loom/loom-ai",
+        "/share/brand/loom-2026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Brand Kit tiles and asset overflow",
+      "states": [
+        "setup modal/manual/AI phases",
+        "motion version picker",
+        "logo download dialog",
+        "colour editor",
+        "font matrix",
+        "Voice and Tone dialog",
+        "imagery filters/preview",
+        "guidelines preview",
+        "sub-brand create",
+        "selection menu",
+        "delete confirmation",
+        "guest read-only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N118"
+    },
+    {
+      "name": "Expenses review",
+      "source": "src/components/costs/CostsPrimitives.tsx",
+      "sourceLocations": [
+        "src/components/costs/CostsPrimitives.tsx"
+      ],
+      "routeIds": [
+        "R017",
+        "R022"
+      ],
+      "routes": [
+        "/outstanding-invoices",
+        "/projects/loom-launch-film/costs"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Invoice row > review",
+      "states": [
+        "invoice file list/preview",
+        "offer comparison mismatch",
+        "Approve",
+        "Forward",
+        "Send back reason",
+        "mark Paid control; no activation",
+        "multiple PDF attachments",
+        "restricted roles"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N119"
+    },
+    {
+      "name": "Personal settings",
+      "source": "src/components/settings/PersonalProfilePage.tsx",
+      "sourceLocations": [
+        "src/components/settings/PersonalProfilePage.tsx"
+      ],
+      "routeIds": [
+        "R043",
+        "R042",
+        "R044"
+      ],
+      "routes": [
+        "/settings/personal/profile",
+        "/settings/personal/notifications",
+        "/settings/personal/security"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Account menu",
+      "states": [
+        "profile details and freelancer rates",
+        "notification channel/group toggles; no saved changes",
+        "Security authentication variants",
+        "change password dialog",
+        "read-only Studio details"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N120"
+    },
+    {
+      "name": "Client account/team settings",
+      "source": "src/components/settings/ClientTeamPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/ClientTeamPage.tsx"
+      ],
+      "routeIds": [
+        "R036",
+        "R037",
+        "R006"
+      ],
+      "routes": [
+        "/settings/client/company",
+        "/settings/client/team",
+        "/client/invoices"
+      ],
+      "applicableRoles": [
+        "Customer"
+      ],
+      "entryPath": "Account > Company",
+      "states": [
+        "Client Admin/Member preview",
+        "billing unavailable/restricted",
+        "Invite colleague",
+        "project-access all/mixed/none",
+        "member actions",
+        "do not invite/remove/save"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N121"
+    },
+    {
+      "name": "Studio setup focused editors",
+      "source": "src/components/settings/StudioSetupOverviewPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioSetupOverviewPage.tsx"
+      ],
+      "routeIds": [
+        "R051"
+      ],
+      "routes": [
+        "/settings/studio"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings four setup cards",
+      "states": [
+        "Studio profile",
+        "branding",
+        "video types",
+        "default Brief",
+        "sample portal preview",
+        "unsaved discard navigation",
+        "cancel all edits"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N122"
+    },
+    {
+      "name": "Studio production defaults",
+      "source": "src/components/settings/StudioProductionDefaultsPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioProductionDefaultsPage.tsx"
+      ],
+      "routeIds": [
+        "R053"
+      ],
+      "routes": [
+        "/settings/studio/production"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > Production defaults",
+      "states": [
+        "default roles/stages",
+        "default Staff",
+        "required/optional",
+        "add role",
+        "save/discard",
+        "do not commit"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N123"
+    },
+    {
+      "name": "Studio AI Playbook",
+      "source": "src/components/settings/StudioAiPlaybookPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioAiPlaybookPage.tsx"
+      ],
+      "routeIds": [
+        "R047"
+      ],
+      "routes": [
+        "/settings/studio/ai-playbook"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > AI Playbook",
+      "states": [
+        "instructions",
+        "references",
+        "upload/link source",
+        "preview",
+        "save/discard; no mutations"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N124"
+    },
+    {
+      "name": "Studio integrations/storage",
+      "source": "src/components/settings/StudioIntegrationsPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioIntegrationsPage.tsx"
+      ],
+      "routeIds": [
+        "R050",
+        "R054"
+      ],
+      "routes": [
+        "/settings/studio/integrations",
+        "/settings/studio/storage"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings sections",
+      "states": [
+        "connect/disconnect preview",
+        "messaging providers",
+        "storage provider choices",
+        "connection status",
+        "do not connect/save"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N125"
+    },
+    {
+      "name": "Studio notification content",
+      "source": "src/components/settings/StudioNotificationCategoryPage.tsx",
+      "sourceLocations": [
+        "src/components/settings/StudioNotificationCategoryPage.tsx"
+      ],
+      "routeIds": [
+        "R040",
+        "R039",
+        "R041"
+      ],
+      "routes": [
+        "/settings/notifications",
+        "/settings/notifications/customer-reviews",
+        "/settings/notifications/templates"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Notifications > category/template",
+      "states": [
+        "category enabled/timing",
+        "fixed vs editable messages",
+        "message editor and preview",
+        "restore defaults",
+        "unsaved safeguards",
+        "no save"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N126"
+    },
+    {
+      "name": "Plan/client billing confirmations",
+      "source": "src/components/settings/PlanBillingModals.tsx",
+      "sourceLocations": [
+        "src/components/settings/PlanBillingModals.tsx"
+      ],
+      "routeIds": [
+        "R045",
+        "R038"
+      ],
+      "routes": [
+        "/settings/plan-billing",
+        "/settings/client-billing"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > billing",
+      "states": [
+        "plan comparison",
+        "plan-change confirmation",
+        "add-on confirmation",
+        "Stripe connect/disconnect",
+        "payment/setup unavailable variants",
+        "cancel only"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N127"
+    },
+    {
+      "name": "Onboarding focused forms",
+      "source": "src/components/studio-onboard/StudioOnboardScreen.tsx",
+      "sourceLocations": [
+        "src/components/studio-onboard/StudioOnboardScreen.tsx"
+      ],
+      "routeIds": [
+        "R059"
+      ],
+      "routes": [
+        "/studio-onboard"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio sign-up",
+      "states": [
+        "initial name/brand",
+        "AI questions",
+        "review generated setup",
+        "skip/back",
+        "discard/restart confirmation",
+        "no completion or stored-field changes"
+      ],
+      "browserVerification": [],
+      "screenshotEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "Finite source-discovered branch inventory; lead must record browser states separately. Not every data combination is claimed.",
+      "safetyBoundary": "Open, read and cancel. Do not confirm stored changes, send, invite, pay, upload, approve, delete or alter persistent access.",
+      "id": "N128"
+    }
+  ],
+  "excludedUnreachableComponents": [
+    {
+      "source": "src/components/settings/StudioDetailsPage.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/settings/StudioBrandingPage.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/settings/StudioTeamAccessPage.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/settings/ProjectNotificationSettings.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/studio-onboard/GeneratedStudioSetup.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/studio-onboard/StudioAiFollowUp.test.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/studio-onboard/StudioClientPortalPreview.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/studio-onboard/StudioAiQuestion.test.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/script-transcripts/ScriptSubtabBar.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/navigation/AppSidebar.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/navigation/WorkspaceSidebar.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/project/team/InvitePersonPicker.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/project/team/EditStagesModal.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/media/MediaInspector.tsx",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/studio-onboard/studioBrandTheme.ts",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/chat/chat-unread.test.ts",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/chat/chat-persistence.test.ts",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    },
+    {
+      "source": "src/components/navigation/prototypeNavigation.test.ts",
+      "classification": "Unused by discovered app route/layout import graph",
+      "reason": "No reachable import from src/app TSX roots found. This is static evidence, not a reason to delete; dynamic registration may require independent confirmation."
+    }
+  ],
+  "method": "Read route roots and recursively follow local/@ imports, then identify named Dialog/Modal/Menu/Drawer/Popover/Panel consumers and manual workflow branches. Import reachability does not prove active conditional rendering.",
+  "limitations": [
+    "Named component and workflow-group entries intentionally overlap to preserve nested traceability; do not sum them as independent tested workflows.",
+    "Generic DS wrappers and ordinary selection fields are covered through parent states, not counted as unique nested business surfaces.",
+    "Conditional fixture branches need existing data; no records manufactured."
+  ]
+}

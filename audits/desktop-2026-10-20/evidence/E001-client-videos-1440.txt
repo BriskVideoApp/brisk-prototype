@@ -1,0 +1,15 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/active-videos".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 9, 25, 27, 29, 115, 156, 191, 198, 233, 240, 281
++				281 text Collapse navigation
++					282 text Back
++					283 text Forward
++					284 text Recent pages
++									285 text Open details
++									286 text Open details
++									287 text Script approved by Emma
++									288 text Open details
++									289 text Edit preparation started by Maddie
++									290 text Open details
++									291 text Open details
+The focused UI element is 0 AXWebArea Brisk Prototype, URL: localhost:3000/active-videos

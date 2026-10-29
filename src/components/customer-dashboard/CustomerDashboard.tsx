@@ -1335,6 +1335,7 @@ function ProjectActionsMenu({
     ...(project.status === "Queued" && onStart ? [{ value: "start", label: "Start this video", run: onStart }] : []),
     ...(onOpenChat ? [{ value: "chat", label: "View comments and history", run: onOpenChat }] : []),
     { value: "open", label: "Open project", href: getProjectEntryHref(project) },
+    { value: "delivery", label: "Final delivery", href: `/projects/${encodeURIComponent(project.id)}/delivery` },
     ...(onCopyProjectLink ? [{ value: "copy", label: "Copy project link", run: onCopyProjectLink }] : []),
     ...(canManageTeam ? [{ value: "team", label: "Manage teammates", href: `/projects/${encodeURIComponent(project.id)}` }] : []),
     ...(onChangeStatus && statusOptions ? statusOptions.filter((status) => status !== project.status).map((status) => ({

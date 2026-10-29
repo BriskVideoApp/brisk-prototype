@@ -1,0 +1,20 @@
+{
+  "date": "28 October 2026",
+  "status": "User requirement reflected in revised visual proposal; app unchanged",
+  "userRequirement": "Set timing once and populate other stages, then adjust individual stages. Do not require filling every box again.",
+  "pattern": "One shared Studio default, inherited by Script, Storyboard, Edit, Animation and Masters.",
+  "behaviour": [
+    "Editing the shared allowance updates linked stage summaries immediately in the draft",
+    "Customise starts from populated effective values",
+    "A customised stage keeps its own mode and values",
+    "Shared edits do not overwrite a customised stage",
+    "Use Studio default removes the custom rule and restores inheritance",
+    "Save defaults commits the settings draft within the preview; Discard restores the last explicit save",
+    "Changes apply to future cycles, preserving active/manual project commitments",
+    "The existing extra-minute allowance remains specifically labelled for longer edits, rather than silently applying it to every stage"
+  ],
+  "supersedes": "Earlier proposal required independent stage entry and preselected animation-specific dates. All five stage rules now begin linked; animation can still be customised.",
+  "boundary": "Only the audit/preview was revised. No application source, assets, dependencies or stored project records were edited.",
+  "review": "timing-review.html",
+  "preview": "timing-preview.html"
+}

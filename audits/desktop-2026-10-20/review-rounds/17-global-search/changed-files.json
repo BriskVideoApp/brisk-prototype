@@ -1,0 +1,28 @@
+{
+  "changedExistingFiles": [
+    "src/app/layout.tsx",
+    "src/components/clients/ClientsPage.tsx",
+    "src/components/costs/OutstandingInvoicesPage.tsx",
+    "src/components/chat/ChatRail.tsx",
+    "src/components/chat/ChatPage.tsx",
+    "src/components/navigation/AppShell.tsx",
+    "src/components/navigation/GlobalHeaderActions.tsx",
+    "src/components/active-videos/FreelancerVideosPage.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/script/ScriptPage.tsx",
+    "src/components/brand-kits/BrandKitPages.tsx",
+    "src/components/people/PeoplePage.tsx",
+    "src/components/brief/BriefPage.tsx",
+    "src/components/media/MediaBrowser.tsx",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "newSearchFiles": [
+    "src/components/search/SearchContext.tsx",
+    "src/components/search/global-search.css",
+    "src/components/search/SearchDialog.tsx",
+    "src/components/search/search-data.ts",
+    "src/components/search/GlobalSearch.tsx"
+  ],
+  "unchangedMockRecords": true,
+  "unchangedAssets": true
+}

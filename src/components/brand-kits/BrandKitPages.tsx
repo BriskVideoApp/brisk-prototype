@@ -1,5 +1,8 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 
 import { BriskSelect } from "@/components/form/BriskSelect";
@@ -360,7 +363,10 @@ export function BrandKitsLandingPage() {
   const { allPages, hasLoadedRole, selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { state, hasHydrated } = usePrototypeState();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("Brand Kits", () => customers.map((customer) => ({
+    id: `brand:${customer.slug}`, source: "brand-kits", kind: "Brand Kits" as const, title: customer.name,
+    text: `${customer.name} ${customer.website}`, meta: "Brand Kit", href: `/brand-kits/${customer.slug}`,
+  })));
   const [savedKits, setSavedKits] = useState<Record<string, StoredBrandKit>>({});
   const isStudioView = hasLoadedRole && (allPages || selectedRole !== "Customer");
   const previewState = searchParams.get("preview");
@@ -376,7 +382,7 @@ export function BrandKitsLandingPage() {
   const filteredCustomers = previewState === "no-results"
     ? []
     : customers.filter((customer) =>
-        `${customer.name} ${customer.website}`.toLowerCase().includes(query.trim().toLowerCase()),
+        matchesSearchText(`${customer.name} ${customer.website}`, query),
       );
 
   useEffect(() => {
@@ -409,19 +415,7 @@ export function BrandKitsLandingPage() {
   return (
     <main className="brand-kits-shell">
       <div className="brand-kits-main">
-        <WorkspacePageHeader title="Brand Kits" actions={
-          <label className="brand-kits-search" htmlFor="brand-kits-search">
-            <DsIcon name="search" size={16} />
-            <span className="sr-only">Search Brand Kits</span>
-            <input
-              id="brand-kits-search"
-              type="search"
-              value={query}
-              placeholder="Search Clients..."
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </label>
-        } />
+        <WorkspacePageHeader title="Brand Kits" />
         <section className="brand-kits-page-content" aria-label="Client Brand Kits">
           {filteredCustomers.length > 0 ? (
             <CustomerGrid customers={filteredCustomers} />

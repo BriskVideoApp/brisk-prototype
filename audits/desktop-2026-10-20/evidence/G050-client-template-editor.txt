@@ -1,0 +1,133 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Client messages":
+  - link "Back to notification settings":
+    - /url: /settings/notifications
+    - text: Back to notification settings
+  - heading "Client messages" [level=2]
+  - paragraph: Choose a message to see or edit.
+  - navigation "Client messages":
+    - generic: Messages
+    - generic: "14"
+    - button "Invitation":
+      - strong: Invitation
+    - button "Brief review":
+      - strong: Brief review
+    - button "Brief reminder":
+      - strong: Brief reminder
+    - button "Script review":
+      - strong: Script review
+    - button "Call sheet":
+      - strong: Call sheet
+    - button "Shoot change":
+      - strong: Shoot change
+    - button "File request":
+      - strong: File request
+    - button "Edit review":
+      - strong: Edit review
+    - button "Changes requested":
+      - strong: Changes requested
+    - button "New version":
+      - strong: New version
+    - button "Approval":
+      - strong: Approval
+    - button "Masters ready":
+      - strong: Masters ready
+    - button "Freelancer offer":
+      - strong: Freelancer offer
+    - button "Invoice correction":
+      - strong: Invoice correction
+  - article:
+    - heading "Edit review" [level=3]
+    - paragraph: Sent when an Edit is ready for Client review.
+    - article "Edit review email example":
+      - strong: From
+      - text: North Star Films <updates@northstarfilms.com>
+      - strong: To
+      - text: Jess Taylor <jess@loom.com>
+      - strong: Subject
+      - text: "LOOM-24 - Launch Film - Sales Narrative: Edit ready for review"
+      - paragraph: Hi Jess,
+      - paragraph: Please watch the latest version and add any feedback in Brisk.
+      - paragraph:
+        - strong: Launch Film - Sales Narrative Edit v3 is ready for your review.
+      - generic: Review Edit
+      - paragraph: Thanks,
+      - paragraph: North Star Films
+    - button "Edit message"
+- dialog "Edit Edit review":
+  - banner:
+    - heading "Edit Edit review" [level=2]
+  - generic: Subject
+  - textbox "Subject" [active]: Edit ready for review
+  - generic: Message
+  - textbox "Message": Please watch the latest version and add any feedback in Brisk.
+  - generic: Sign-off
+  - textbox "Sign-off": Thanks,
+  - generic "Information Brisk adds automatically":
+    - generic: Brisk adds these automatically
+    - generic: First name
+    - generic: Project name
+    - generic: Studio name
+  - contentinfo:
+    - button "Cancel"
+    - button "Save"

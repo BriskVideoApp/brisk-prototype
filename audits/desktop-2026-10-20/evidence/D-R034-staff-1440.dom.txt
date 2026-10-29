@@ -1,0 +1,92 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Prototype-only control
+  - heading "User journey scenarios" [level=1]
+  - paragraph: Load a consistent role and starting state, run the journey, then reset and repeat it.
+  - region "Currently active scenario":
+    - generic: Currently active
+    - strong: Client - New
+    - generic: North Star Films - Loom portal
+  - region "Choose a journey":
+    - generic: Scenario setup
+    - heading "Choose a journey" [level=2]
+    - generic: Separate from product navigation
+    - generic: Role
+    - combobox "Preview person":
+      - generic: Client
+    - generic: Starting state
+    - combobox "Preview scenario":
+      - generic: New
+    - article:
+      - generic: Customer access
+      - heading "Client - New" [level=3]
+      - paragraph: A first-time Client opening a Studio magic link with no videos or activity.
+      - term: Participant
+      - definition: Jess Taylor
+      - term: Workspace
+      - definition: North Star Films - Loom portal
+      - term: Starts at
+      - definition: Client magic link
+      - generic: Supported state coverage
+      - list:
+        - listitem: Magic-link access
+        - listitem: Name and email confirmation
+        - listitem: First-video empty state
+        - listitem: Client Brief creation
+        - listitem: First Shoot setup
+    - button "Load scenario"
+    - button "Reset current scenario"
+    - button "Return to starting point"
+    - button "End test mode"
+  - paragraph: Loading or resetting removes Brisk prototype changes stored in this browser, then restores the selected fixture. It does not affect files, accounts or external services.

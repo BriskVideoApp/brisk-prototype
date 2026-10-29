@@ -1,0 +1,20 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - generic: "1"
+    - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- main:
+  - region "Do you shoot footage, or do you only do post-production?":
+    - generic: Question 2 of 3
+    - heading "Do you shoot footage, or do you only do post-production?" [level=1]
+    - group "Production model":
+      - button "Shoot + post-production"
+      - button "Post-production only"
+    - button "Back"

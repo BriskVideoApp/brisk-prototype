@@ -1,0 +1,149 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/people/sc".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/people/sc
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 link Description: People, Value: localhost:3000/people
+				41 container Sarah Chen avatar
+					42 text SC
+				43 text STUDIO STAFF
+				44 heading Sarah Chen, Value: 1
+					45 text Sarah Chen
+				46 button Assign project Choose a project, role and hours.
+					47 text Assign project
+					48 text Choose a project, role and hours.
+				49 button Pause access Stop access for now. You can restore it.
+					50 text Pause access
+					51 text Stop access for now. You can restore it.
+				52 tab group Person profile sections
+					53 tab (selected, settable, boolean) Overview, Value: 1
+					54 tab (selectable, settable, boolean) Work, Value: 0
+					55 tab (selectable, settable, boolean) Hours, Value: 0
+					56 tab (selectable, settable, boolean) Skills, Value: 0
+					57 tab (selectable, settable, boolean) Notes and activity, Value: 0
+				58 container Overview
+					59 container
+						60 heading Access, Value: 2
+							61 text Access
+						62 container Invitation status: Accepted
+							63 text Accepted
+						64 text Role
+						65 combo box (collapsed) Description: Studio permission, Value: Team Member Change what this person can access., Secondary Actions: Expand
+							66 text Team Member
+							67 text Change what this person can access.
+						68 text Billing access Off
+						69 button Turn on Let this person manage Studio billing.
+							70 text Turn on
+							71 text Let this person manage Studio billing.
+					72 container
+						73 heading Overview, Value: 2
+							74 text Overview
+						75 text Active
+						76 definition list
+							77 container Name
+								78 text Name
+							79 button Edit Name
+								80 text Sarah Chen
+								81 text Edit name
+							82 container Job titles
+								83 text Job titles
+							84 button Edit Job titles
+								85 text Editor
+								86 text Edit job titles
+							87 container Email
+								88 text Email
+							89 button Edit Email
+								90 text sarah@northstarfilms.com.au
+								91 text Edit email
+							92 container Phone
+								93 text Phone
+							94 button Edit Phone
+								95 text +61 403 555 205
+								96 text Edit phone
+							97 container Location
+								98 text Location
+							99 button Edit Location
+								100 text Melbourne, VIC
+								101 text Edit location
+							102 container Timezone
+								103 text Timezone
+							104 button Edit Timezone
+								105 text Australia/Melbourne
+								106 text Edit timezone
+							107 container Availability
+								108 text Availability
+							109 button Edit Availability
+								110 text Available
+								111 text Edit availability
+							112 container Portfolio or reel
+								113 text Portfolio or reel
+							114 button Edit Portfolio or reel
+								115 text Not added
+								116 text Edit portfolio or reel
+					117 container studio-record
+						118 heading Studio details, Value: 2
+							119 text Studio details
+						120 definition list
+							121 container Seniority
+								122 text Seniority
+							123 combo box (collapsed) Description: Seniority, Value: Senior, Secondary Actions: Expand
+								124 text Senior
+							125 container Onboarding
+								126 text Onboarding
+							127 combo box (collapsed) Description: Onboarding, Value: Complete Track whether they have finished joining., Secondary Actions: Expand
+								128 text Complete
+								129 text Track whether they have finished joining.
+							130 container Agreement
+								131 text Agreement
+							132 container
+								133 button Edit Agreement status
+									134 text Not required
+									135 text Edit agreement status
+								136 button Choose file
+								137 button Attach PDF
+					138 container Record actions
+						139 heading Record actions, Value: 2
+							140 text Record actions
+						141 button Archive person Hide from active lists. Keep their history.
+							142 text Archive person
+							143 text Hide from active lists. Keep their history.
+						144 button Delete incorrect record Use only for duplicates or mistakes.
+							145 text Delete incorrect record
+							146 text Use only for duplicates or mistakes.
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/people/sc

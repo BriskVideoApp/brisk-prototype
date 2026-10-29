@@ -1,0 +1,1264 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Videos header":
+    - heading "Videos" [level=1]
+    - generic: Search projects
+    - searchbox "Search projects"
+  - group "Project status":
+    - button "All 15" [pressed]:
+      - text: All
+      - generic: "15"
+    - button "Queued 1":
+      - text: Queued
+      - generic: "1"
+    - button "In production 8":
+      - text: In production
+      - generic: "8"
+    - button "Completed 2":
+      - text: Completed
+      - generic: "2"
+    - button "Paused 2":
+      - text: Paused
+      - generic: "2"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Filters": Filters
+  - region "Videos table":
+    - table:
+      - rowgroup:
+        - row "Project Progress Latest action Status Deadline Project costs Actions":
+          - columnheader "Project":
+            - generic: Project
+          - columnheader "Progress"
+          - columnheader "Latest action"
+          - columnheader "Status":
+            - generic: Status
+          - columnheader "Deadline"
+          - columnheader "Project costs"
+          - columnheader "Actions":
+            - generic: Actions
+      - rowgroup:
+        - row "Open Loom Client record Launch Film - Sales Narrative Quick actions for Launch Film - Sales Narrative Critical Remove Critical tag from Launch Film - Sales Narrative Add tag to Launch Film - Sales Narrative Launch Film - Sales Narrative stage progress Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions. Edit deadline for Launch Film - Sales Narrative Open Project costs for Launch Film - Sales Narrative. USD 2,040, 1 unpaid invoice. Open details for Launch Film - Sales Narrative":
+          - cell "Open Loom Client record Launch Film - Sales Narrative Quick actions for Launch Film - Sales Narrative Critical Remove Critical tag from Launch Film - Sales Narrative Add tag to Launch Film - Sales Narrative":
+            - link "Open Loom Client record":
+              - /url: /clients/loom
+              - generic: LOOM
+            - link "Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film/stages/brief
+            - generic "Quick actions for Launch Film - Sales Narrative":
+              - link "Open chat (2 unread)":
+                - /url: /chat?project=loom-launch-film
+                - generic "2 unread messages": "2"
+                - text: Open chat (2 unread)
+              - generic "Open project files (2 locations)": Open project files (2 locations)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: Critical
+            - button "Remove Critical tag from Launch Film - Sales Narrative": ×
+            - button "Add tag to Launch Film - Sales Narrative": +
+          - cell "Launch Film - Sales Narrative stage progress":
+            - generic "Launch Film - Sales Narrative stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-launch-film/stages/brief
+                - text: Brief - Waiting on North Star Films
+              - generic: Brief
+              - generic: 0d ago
+              - link "Open Script":
+                - /url: /projects/loom-launch-film/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 1d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-launch-film/stages/shoot
+                - text: Shoot - Waiting on Loom
+              - generic: Shoot
+              - generic: 1d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-launch-film/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/loom-launch-film/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (13). 13 media files":
+                - /url: /projects/loom-launch-film/stages/media
+                - text: 13 media files
+              - generic: Media (13)
+          - cell "Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions.":
+            - button "Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions.":
+              - strong: Brief approved
+              - text: by client
+              - time: Today Aug 11, 2026 at 10:24 AM
+          - cell:
+            - combobox "Change status for Launch Film - Sales Narrative":
+              - generic: In production
+          - cell "Edit deadline for Launch Film - Sales Narrative":
+            - button "Edit deadline for Launch Film - Sales Narrative":
+              - generic: Shoot - 41d left
+              - generic: Final due - Sat, Aug 29
+          - cell "Open Project costs for Launch Film - Sales Narrative. USD 2,040, 1 unpaid invoice.":
+            - button "Open Project costs for Launch Film - Sales Narrative. USD 2,040, 1 unpaid invoice.":
+              - strong: USD 2,040
+              - generic: 1 unpaid invoice
+          - cell "Open details for Launch Film - Sales Narrative":
+            - button "Open details for Launch Film - Sales Narrative": Open details
+        - row "Open Deel Client record Customer Story - APAC Hiring Quick actions for Customer Story - APAC Hiring High Priority Remove High Priority tag from Customer Story - APAC Hiring In Review Remove In Review tag from Customer Story - APAC Hiring Add tag to Customer Story - APAC Hiring Customer Story - APAC Hiring stage progress Script approved by client · Aug 6, 2026 at 3:15 PM. Open Latest actions. Edit deadline for Customer Story - APAC Hiring Open Project costs for Customer Story - APAC Hiring. $1,140, 1 unpaid invoice. Open details for Customer Story - APAC Hiring":
+          - cell "Open Deel Client record Customer Story - APAC Hiring Quick actions for Customer Story - APAC Hiring High Priority Remove High Priority tag from Customer Story - APAC Hiring In Review Remove In Review tag from Customer Story - APAC Hiring Add tag to Customer Story - APAC Hiring":
+            - link "Open Deel Client record":
+              - /url: /clients/deel
+              - generic: DEEL
+            - link "Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story/stages/brief
+            - generic "Quick actions for Customer Story - APAC Hiring":
+              - link "Open chat (1 unread)":
+                - /url: /chat?project=deel-customer-story
+                - generic "1 unread messages": "1"
+                - text: Open chat (1 unread)
+              - link "Open project files in Dropbox":
+                - /url: https://www.dropbox.com/home/Deel/APAC-Customer-Story
+                - text: Open project files in Dropbox
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/deel/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: High Priority
+            - button "Remove High Priority tag from Customer Story - APAC Hiring": ×
+            - text: In Review
+            - button "Remove In Review tag from Customer Story - APAC Hiring": ×
+            - button "Add tag to Customer Story - APAC Hiring": +
+          - cell "Customer Story - APAC Hiring stage progress":
+            - generic "Customer Story - APAC Hiring stage progress":
+              - link "Open Brief":
+                - /url: /projects/deel-customer-story/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 12d ago
+              - link "Open Script":
+                - /url: /projects/deel-customer-story/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 7d ago
+              - link "Open Shoot":
+                - /url: /projects/deel-customer-story/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 4d ago
+              - link "Open Video Review":
+                - /url: /projects/deel-customer-story/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/deel-customer-story/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (3). 3 media files":
+                - /url: /projects/deel-customer-story/stages/media
+                - text: 3 media files
+              - generic: Media (3)
+          - cell "Script approved by client · Aug 6, 2026 at 3:15 PM. Open Latest actions.":
+            - button "Script approved by client · Aug 6, 2026 at 3:15 PM. Open Latest actions.":
+              - strong: Script approved
+              - text: by client
+              - time: Today Aug 6, 2026 at 3:15 PM
+          - cell:
+            - combobox "Change status for Customer Story - APAC Hiring":
+              - generic: In production
+          - cell "Edit deadline for Customer Story - APAC Hiring":
+            - button "Edit deadline for Customer Story - APAC Hiring":
+              - generic: Media - 39d left
+              - generic: Final due - Sun, Sep 6
+          - cell "Open Project costs for Customer Story - APAC Hiring. $1,140, 1 unpaid invoice.":
+            - button "Open Project costs for Customer Story - APAC Hiring. $1,140, 1 unpaid invoice.":
+              - strong: $1,140
+              - generic: 1 unpaid invoice
+          - cell "Open details for Customer Story - APAC Hiring":
+            - button "Open details for Customer Story - APAC Hiring": Open details
+        - row "Open Hims Client record Product Education - Sleep Series Quick actions for Product Education - Sleep Series Critical Remove Critical tag from Product Education - Sleep Series High Priority Remove High Priority tag from Product Education - Sleep Series Add tag to Product Education - Sleep Series Product Education - Sleep Series stage progress Maddie shared the shoot internally · Aug 12, 2026 at 9:05 AM. Open Latest actions. Edit deadline for Product Education - Sleep Series Open Project costs for Product Education - Sleep Series. $920, 1 unpaid invoice. Open details for Product Education - Sleep Series":
+          - cell "Open Hims Client record Product Education - Sleep Series Quick actions for Product Education - Sleep Series Critical Remove Critical tag from Product Education - Sleep Series High Priority Remove High Priority tag from Product Education - Sleep Series Add tag to Product Education - Sleep Series":
+            - link "Open Hims Client record":
+              - /url: /clients/hims
+              - generic: HIMS
+            - link "Product Education - Sleep Series":
+              - /url: /projects/hims-product-education/stages/brief
+            - generic "Quick actions for Product Education - Sleep Series":
+              - link "Open chat (4 unread)":
+                - /url: /chat?project=hims-product-education
+                - generic "4 unread messages": "4"
+                - text: Open chat (4 unread)
+              - link "Open project files in Google Drive":
+                - /url: https://drive.google.com/drive/folders/hims-sleep-series
+                - text: Open project files in Google Drive
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/hims/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: Critical
+            - button "Remove Critical tag from Product Education - Sleep Series": ×
+            - text: High Priority
+            - button "Remove High Priority tag from Product Education - Sleep Series": ×
+            - button "Add tag to Product Education - Sleep Series": +
+          - cell "Product Education - Sleep Series stage progress":
+            - generic "Product Education - Sleep Series stage progress":
+              - link "Open Brief":
+                - /url: /projects/hims-product-education/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 10d ago
+              - link "Open Script":
+                - /url: /projects/hims-product-education/script
+                - text: Script - Waiting on Hims
+              - generic: Script
+              - generic: 1d ago
+              - link "Open Storyboard":
+                - /url: /projects/hims-product-education/stages/storyboard
+                - text: Storyboard - Not started
+              - generic: Storyboard
+              - link "Open Video Review":
+                - /url: /projects/hims-product-education/stages/edit
+                - text: Animation - Not started
+              - generic: Animation
+              - link "Open Masters":
+                - /url: /projects/hims-product-education/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/hims-product-education/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Maddie shared the shoot internally · Aug 12, 2026 at 9:05 AM. Open Latest actions.":
+            - button "Maddie shared the shoot internally · Aug 12, 2026 at 9:05 AM. Open Latest actions.":
+              - strong: Maddie shared
+              - text: the shoot internally
+              - time: Today Aug 12, 2026 at 9:05 AM
+              - text: Maddie shared the shoot internally
+          - cell:
+            - combobox "Change status for Product Education - Sleep Series":
+              - generic: In production
+          - cell "Edit deadline for Product Education - Sleep Series":
+            - button "Edit deadline for Product Education - Sleep Series":
+              - generic: Script - 38d left
+              - generic: Final due - Sat, Aug 22
+          - cell "Open Project costs for Product Education - Sleep Series. $920, 1 unpaid invoice.":
+            - button "Open Project costs for Product Education - Sleep Series. $920, 1 unpaid invoice.":
+              - strong: $920
+              - generic: 1 unpaid invoice
+          - cell "Open details for Product Education - Sleep Series":
+            - button "Open details for Product Education - Sleep Series": Open details
+        - row "Open Notion Client record Workflow Demo - Engineering Teams Quick actions for Workflow Demo - Engineering Teams In Review Remove In Review tag from Workflow Demo - Engineering Teams Add tag to Workflow Demo - Engineering Teams Workflow Demo - Engineering Teams stage progress Media organised for edit · Aug 10, 2026 at 11:40 AM. Open Latest actions. Edit deadline for Workflow Demo - Engineering Teams Open Project costs for Workflow Demo - Engineering Teams. USD 2,040, 1 unpaid invoice. Open details for Workflow Demo - Engineering Teams":
+          - cell "Open Notion Client record Workflow Demo - Engineering Teams Quick actions for Workflow Demo - Engineering Teams In Review Remove In Review tag from Workflow Demo - Engineering Teams Add tag to Workflow Demo - Engineering Teams":
+            - link "Open Notion Client record":
+              - /url: /clients/notion
+              - generic: NOTN
+            - link "Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows/stages/brief
+            - generic "Quick actions for Workflow Demo - Engineering Teams":
+              - link "Open chat":
+                - /url: /chat?project=notion-workflows
+                - text: Open chat
+              - link "Open project files in Shade":
+                - /url: https://app.shade.inc/project/notion-workflows
+                - text: Open project files in Shade
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/notion/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: In Review
+            - button "Remove In Review tag from Workflow Demo - Engineering Teams": ×
+            - button "Add tag to Workflow Demo - Engineering Teams": +
+          - cell "Workflow Demo - Engineering Teams stage progress":
+            - generic "Workflow Demo - Engineering Teams stage progress":
+              - link "Open Brief":
+                - /url: /projects/notion-workflows/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 18d ago
+              - link "Open Script":
+                - /url: /projects/notion-workflows/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 15d ago
+              - link "Open Storyboard":
+                - /url: /projects/notion-workflows/stages/storyboard
+                - text: Storyboard - Complete
+              - generic: Storyboard
+              - generic: 8d ago
+              - link "Open Video Review":
+                - /url: /projects/notion-workflows/stages/edit
+                - text: Animation - Waiting on Notion
+              - generic: Animation
+              - generic: 3d ago
+              - link "Open Masters":
+                - /url: /projects/notion-workflows/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/notion-workflows/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Media organised for edit · Aug 10, 2026 at 11:40 AM. Open Latest actions.":
+            - button "Media organised for edit · Aug 10, 2026 at 11:40 AM. Open Latest actions.":
+              - strong: Media organised
+              - text: for edit
+              - time: Today Aug 10, 2026 at 11:40 AM
+          - cell:
+            - combobox "Change status for Workflow Demo - Engineering Teams":
+              - generic: Paused
+          - cell "Edit deadline for Workflow Demo - Engineering Teams":
+            - button "Edit deadline for Workflow Demo - Engineering Teams":
+              - generic: Final due - Wed, Sep 16
+          - cell "Open Project costs for Workflow Demo - Engineering Teams. USD 2,040, 1 unpaid invoice.":
+            - button "Open Project costs for Workflow Demo - Engineering Teams. USD 2,040, 1 unpaid invoice.":
+              - strong: USD 2,040
+              - generic: 1 unpaid invoice
+          - cell "Open details for Workflow Demo - Engineering Teams":
+            - button "Open details for Workflow Demo - Engineering Teams": Open details
+        - row "Open OpenAI Client record Partner Update - Studio Reel Quick actions for Partner Update - Studio Reel Critical Remove Critical tag from Partner Update - Studio Reel Add tag to Partner Update - Studio Reel Partner Update - Studio Reel stage progress Delivered 8 Aug 2026 Masters delivered · Aug 8, 2026 at 4:20 PM. Open Latest actions. Edit deadline for Partner Update - Studio Reel Open Project costs for Partner Update - Studio Reel. $1,760, 1 unpaid invoice. Open details for Partner Update - Studio Reel":
+          - cell "Open OpenAI Client record Partner Update - Studio Reel Quick actions for Partner Update - Studio Reel Critical Remove Critical tag from Partner Update - Studio Reel Add tag to Partner Update - Studio Reel":
+            - link "Open OpenAI Client record":
+              - /url: /clients/openai
+              - generic: OPEN
+            - link "Partner Update - Studio Reel":
+              - /url: /projects/openai-partner-update/stages/brief
+            - generic "Quick actions for Partner Update - Studio Reel":
+              - link "Open chat (1 unread)":
+                - /url: /chat?project=openai-partner-update
+                - generic "1 unread messages": "1"
+                - text: Open chat (1 unread)
+              - link "Open project files in Frame.io":
+                - /url: https://app.frame.io/projects/openai-partner-update
+                - text: Open project files in Frame.io
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/openai/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: Critical
+            - button "Remove Critical tag from Partner Update - Studio Reel": ×
+            - button "Add tag to Partner Update - Studio Reel": +
+          - cell "Partner Update - Studio Reel stage progress Delivered 8 Aug 2026":
+            - generic "Partner Update - Studio Reel stage progress":
+              - link "Open Brief":
+                - /url: /projects/openai-partner-update/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 25d ago
+              - link "Open Script":
+                - /url: /projects/openai-partner-update/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 22d ago
+              - link "Open Shoot":
+                - /url: /projects/openai-partner-update/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 17d ago
+              - link "Open Video Review":
+                - /url: /projects/openai-partner-update/stages/edit
+                - text: Edit - Complete
+              - generic: Edit
+              - generic: 5d ago
+              - link "Open Masters":
+                - /url: /projects/openai-partner-update/stages/masters
+                - text: Masters - Complete
+              - generic: Masters
+              - generic: 4d ago
+              - link "Open Media (1). 1 media file":
+                - /url: /projects/openai-partner-update/stages/media
+                - text: 1 media file
+              - generic: Media (1)
+            - generic: Delivered 8 Aug 2026
+          - cell "Masters delivered · Aug 8, 2026 at 4:20 PM. Open Latest actions.":
+            - button "Masters delivered · Aug 8, 2026 at 4:20 PM. Open Latest actions.":
+              - strong: Masters delivered
+              - time: Today Aug 8, 2026 at 4:20 PM
+          - cell:
+            - combobox "Change status for Partner Update - Studio Reel":
+              - generic: Completed
+          - cell "Edit deadline for Partner Update - Studio Reel":
+            - button "Edit deadline for Partner Update - Studio Reel":
+              - generic: Masters - 43d left
+              - generic: Final due - Sun, Aug 23
+          - cell "Open Project costs for Partner Update - Studio Reel. $1,760, 1 unpaid invoice.":
+            - button "Open Project costs for Partner Update - Studio Reel. $1,760, 1 unpaid invoice.":
+              - strong: $1,760
+              - generic: 1 unpaid invoice
+          - cell "Open details for Partner Update - Studio Reel":
+            - button "Open details for Partner Update - Studio Reel": Open details
+        - row "Open PostHog Client record Onboarding Film - Product Analytics Quick actions for Onboarding Film - Product Analytics Add tag to Onboarding Film - Product Analytics Onboarding Film - Product Analytics stage progress Master ready for download · Aug 1, 2026 at 12:05 PM. Open Latest actions. Edit deadline for Onboarding Film - Product Analytics Open Project costs for Onboarding Film - Product Analytics. $1,320, 1 unpaid invoice. Open details for Onboarding Film - Product Analytics":
+          - cell "Open PostHog Client record Onboarding Film - Product Analytics Quick actions for Onboarding Film - Product Analytics Add tag to Onboarding Film - Product Analytics":
+            - link "Open PostHog Client record":
+              - /url: /clients/posthog
+              - generic: PHOG
+            - link "Onboarding Film - Product Analytics":
+              - /url: /projects/posthog-onboarding/stages/brief
+            - generic "Quick actions for Onboarding Film - Product Analytics":
+              - link "Open chat":
+                - /url: /chat?project=posthog-onboarding
+                - text: Open chat
+              - link "Open project files in OneDrive":
+                - /url: https://northstarfilms.sharepoint.com/sites/posthog-onboarding
+                - text: Open project files in OneDrive
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/posthog/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Onboarding Film - Product Analytics": +
+          - cell "Onboarding Film - Product Analytics stage progress":
+            - generic "Onboarding Film - Product Analytics stage progress":
+              - link "Open Brief":
+                - /url: /projects/posthog-onboarding/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 34d ago
+              - link "Open Script":
+                - /url: /projects/posthog-onboarding/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 31d ago
+              - link "Open Storyboard":
+                - /url: /projects/posthog-onboarding/stages/storyboard
+                - text: Storyboard - Not started
+              - generic: Storyboard
+              - link "Open Video Review":
+                - /url: /projects/posthog-onboarding/stages/edit
+                - text: Animation - Complete
+              - generic: Animation
+              - generic: 13d ago
+              - link "Open Masters":
+                - /url: /projects/posthog-onboarding/stages/masters
+                - text: Masters - Complete
+              - generic: Masters
+              - generic: 12d ago
+              - link "Open Media (1). 1 media file":
+                - /url: /projects/posthog-onboarding/stages/media
+                - text: 1 media file
+              - generic: Media (1)
+          - cell "Master ready for download · Aug 1, 2026 at 12:05 PM. Open Latest actions.":
+            - button "Master ready for download · Aug 1, 2026 at 12:05 PM. Open Latest actions.":
+              - strong: Master ready
+              - text: for download
+              - time: Today Aug 1, 2026 at 12:05 PM
+              - text: Master ready for download
+          - cell:
+            - combobox "Change status for Onboarding Film - Product Analytics":
+              - generic: Archived
+          - cell "Edit deadline for Onboarding Film - Product Analytics":
+            - button "Edit deadline for Onboarding Film - Product Analytics":
+              - generic: Final due - Thu, Aug 13
+          - cell "Open Project costs for Onboarding Film - Product Analytics. $1,320, 1 unpaid invoice.":
+            - button "Open Project costs for Onboarding Film - Product Analytics. $1,320, 1 unpaid invoice.":
+              - strong: $1,320
+              - generic: 1 unpaid invoice
+          - cell "Open details for Onboarding Film - Product Analytics":
+            - button "Open details for Onboarding Film - Product Analytics": Open details
+        - row "Open Ramp Client record Finance Recap - June Product Drop Quick actions for Finance Recap - June Product Drop In Review Remove In Review tag from Finance Recap - June Product Drop Add tag to Finance Recap - June Product Drop Finance Recap - June Product Drop stage progress Client requested a pause · Aug 9, 2026 at 1:30 PM. Open Latest actions. Edit deadline for Finance Recap - June Product Drop Open Project costs for Finance Recap - June Product Drop. $0, 0 unpaid invoices. Open details for Finance Recap - June Product Drop":
+          - cell "Open Ramp Client record Finance Recap - June Product Drop Quick actions for Finance Recap - June Product Drop In Review Remove In Review tag from Finance Recap - June Product Drop Add tag to Finance Recap - June Product Drop":
+            - link "Open Ramp Client record":
+              - /url: /clients/ramp
+              - generic: RAMP
+            - link "Finance Recap - June Product Drop":
+              - /url: /projects/ramp-finance-recap/stages/brief
+            - generic "Quick actions for Finance Recap - June Product Drop":
+              - link "Open chat (3 unread)":
+                - /url: /chat?project=ramp-finance-recap
+                - generic "3 unread messages": "3"
+                - text: Open chat (3 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/ramp/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: In Review
+            - button "Remove In Review tag from Finance Recap - June Product Drop": ×
+            - button "Add tag to Finance Recap - June Product Drop": +
+          - cell "Finance Recap - June Product Drop stage progress":
+            - generic "Finance Recap - June Product Drop stage progress":
+              - link "Open Brief":
+                - /url: /projects/ramp-finance-recap/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 14d ago
+              - link "Open Script":
+                - /url: /projects/ramp-finance-recap/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 11d ago
+              - link "Open Shoot":
+                - /url: /projects/ramp-finance-recap/stages/shoot
+                - text: Shoot - Waiting on Ramp
+              - generic: Shoot
+              - generic: 4d ago
+              - link "Open Video Review":
+                - /url: /projects/ramp-finance-recap/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/ramp-finance-recap/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/ramp-finance-recap/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Client requested a pause · Aug 9, 2026 at 1:30 PM. Open Latest actions.":
+            - button "Client requested a pause · Aug 9, 2026 at 1:30 PM. Open Latest actions.":
+              - strong: Client requested
+              - text: a pause
+              - time: Today Aug 9, 2026 at 1:30 PM
+          - cell:
+            - combobox "Change status for Finance Recap - June Product Drop":
+              - generic: Paused
+          - cell "Edit deadline for Finance Recap - June Product Drop":
+            - button "Edit deadline for Finance Recap - June Product Drop":
+              - generic: Shoot - 39d left
+              - generic: Final due - Fri, Aug 28
+          - cell "Open Project costs for Finance Recap - June Product Drop. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Finance Recap - June Product Drop. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Finance Recap - June Product Drop":
+            - button "Open details for Finance Recap - June Product Drop": Open details
+        - row "Open Canva Client record Brand Refresh - Creator Templates Quick actions for Brand Refresh - Creator Templates High Priority Remove High Priority tag from Brand Refresh - Creator Templates Add tag to Brand Refresh - Creator Templates Brand Refresh - Creator Templates stage progress Creative direction ready · Aug 13, 2026 at 8:45 AM. Open Latest actions. Edit deadline for Brand Refresh - Creator Templates Open Project costs for Brand Refresh - Creator Templates. $0, 0 unpaid invoices. Open details for Brand Refresh - Creator Templates":
+          - cell "Open Canva Client record Brand Refresh - Creator Templates Quick actions for Brand Refresh - Creator Templates High Priority Remove High Priority tag from Brand Refresh - Creator Templates Add tag to Brand Refresh - Creator Templates":
+            - link "Open Canva Client record":
+              - /url: /clients/canva
+              - generic: CNVA
+            - link "Brand Refresh - Creator Templates":
+              - /url: /projects/canva-brand-refresh/stages/brief
+            - generic "Quick actions for Brand Refresh - Creator Templates":
+              - link "Open chat (1 unread)":
+                - /url: /chat?project=canva-brand-refresh
+                - generic "1 unread messages": "1"
+                - text: Open chat (1 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/canva/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: High Priority
+            - button "Remove High Priority tag from Brand Refresh - Creator Templates": ×
+            - button "Add tag to Brand Refresh - Creator Templates": +
+          - cell "Brand Refresh - Creator Templates stage progress":
+            - generic "Brand Refresh - Creator Templates stage progress":
+              - link "Open Brief":
+                - /url: /projects/canva-brand-refresh/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 3d ago
+              - link "Open Script":
+                - /url: /projects/canva-brand-refresh/script
+                - text: Script - Waiting on Canva
+              - generic: Script
+              - generic: 1d ago
+              - link "Open Storyboard":
+                - /url: /projects/canva-brand-refresh/stages/storyboard
+                - text: Storyboard - Not started
+              - generic: Storyboard
+              - link "Open Video Review":
+                - /url: /projects/canva-brand-refresh/stages/edit
+                - text: Animation - Not started
+              - generic: Animation
+              - link "Open Masters":
+                - /url: /projects/canva-brand-refresh/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/canva-brand-refresh/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Creative direction ready · Aug 13, 2026 at 8:45 AM. Open Latest actions.":
+            - button "Creative direction ready · Aug 13, 2026 at 8:45 AM. Open Latest actions.":
+              - strong: Creative direction
+              - text: ready
+              - time: Today Aug 13, 2026 at 8:45 AM
+          - cell:
+            - combobox "Change status for Brand Refresh - Creator Templates":
+              - generic: Queued
+          - cell "Edit deadline for Brand Refresh - Creator Templates":
+            - button "Edit deadline for Brand Refresh - Creator Templates":
+              - generic: Script - 40d left
+              - generic: Final due - Thu, Sep 3
+          - cell "Open Project costs for Brand Refresh - Creator Templates. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Brand Refresh - Creator Templates. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Brand Refresh - Creator Templates":
+            - button "Open details for Brand Refresh - Creator Templates": Open details
+        - row "Open Linear Client record Roadmap Film - Planning Week Quick actions for Roadmap Film - Planning Week Add tag to Roadmap Film - Planning Week Roadmap Film - Planning Week stage progress Jordan resolved edit review comments · Aug 7, 2026 at 2:10 PM. Open Latest actions. Edit deadline for Roadmap Film - Planning Week Open Project costs for Roadmap Film - Planning Week. $2,280, 0 unpaid invoices. Open details for Roadmap Film - Planning Week":
+          - cell "Open Linear Client record Roadmap Film - Planning Week Quick actions for Roadmap Film - Planning Week Add tag to Roadmap Film - Planning Week":
+            - link "Open Linear Client record":
+              - /url: /clients/linear
+              - generic: LINR
+            - link "Roadmap Film - Planning Week":
+              - /url: /projects/linear-roadmap-film/stages/brief
+            - generic "Quick actions for Roadmap Film - Planning Week":
+              - link "Open chat":
+                - /url: /chat?project=linear-roadmap-film
+                - text: Open chat
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/linear/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Roadmap Film - Planning Week": +
+          - cell "Roadmap Film - Planning Week stage progress":
+            - generic "Roadmap Film - Planning Week stage progress":
+              - link "Open Brief":
+                - /url: /projects/linear-roadmap-film/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 28d ago
+              - link "Open Script":
+                - /url: /projects/linear-roadmap-film/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 26d ago
+              - link "Open Shoot":
+                - /url: /projects/linear-roadmap-film/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 20d ago
+              - link "Open Video Review":
+                - /url: /projects/linear-roadmap-film/stages/edit
+                - text: Edit - Complete
+              - generic: Edit
+              - generic: 6d ago
+              - link "Open Masters":
+                - /url: /projects/linear-roadmap-film/stages/masters
+                - text: Masters - Complete
+              - generic: Masters
+              - generic: 5d ago
+              - link "Open Media (1). 1 media file":
+                - /url: /projects/linear-roadmap-film/stages/media
+                - text: 1 media file
+              - generic: Media (1)
+          - cell "Jordan resolved edit review comments · Aug 7, 2026 at 2:10 PM. Open Latest actions.":
+            - button "Jordan resolved edit review comments · Aug 7, 2026 at 2:10 PM. Open Latest actions.":
+              - strong: Jordan resolved
+              - text: edit review comments
+              - time: Today Aug 7, 2026 at 2:10 PM
+              - text: Jordan resolved edit review comments
+          - cell:
+            - combobox "Change status for Roadmap Film - Planning Week":
+              - generic: Completed
+          - cell "Edit deadline for Roadmap Film - Planning Week":
+            - button "Edit deadline for Roadmap Film - Planning Week":
+              - generic: Masters - 41d left
+              - generic: Final due - Fri, Aug 21
+          - cell "Open Project costs for Roadmap Film - Planning Week. $2,280, 0 unpaid invoices.":
+            - button "Open Project costs for Roadmap Film - Planning Week. $2,280, 0 unpaid invoices.":
+              - strong: $2,280
+              - generic: 0 unpaid invoices
+          - cell "Open details for Roadmap Film - Planning Week":
+            - button "Open details for Roadmap Film - Planning Week": Open details
+        - row "Open Figma Client record Config Highlights - Community Keynote Quick actions for Config Highlights - Community Keynote Add tag to Config Highlights - Community Keynote Config Highlights - Community Keynote stage progress Project archived · Jul 26, 2026 at 5:50 PM. Open Latest actions. Set deadline for Config Highlights - Community Keynote Open Project costs for Config Highlights - Community Keynote. NZD 1,800, 0 unpaid invoices. Open details for Config Highlights - Community Keynote":
+          - cell "Open Figma Client record Config Highlights - Community Keynote Quick actions for Config Highlights - Community Keynote Add tag to Config Highlights - Community Keynote":
+            - link "Open Figma Client record":
+              - /url: /clients/figma
+              - generic: FIGM
+            - link "Config Highlights - Community Keynote":
+              - /url: /projects/figma-config-highlights/stages/brief
+            - generic "Quick actions for Config Highlights - Community Keynote":
+              - link "Open chat":
+                - /url: /chat?project=figma-config-highlights
+                - text: Open chat
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/figma/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Config Highlights - Community Keynote": +
+          - cell "Config Highlights - Community Keynote stage progress":
+            - generic "Config Highlights - Community Keynote stage progress":
+              - link "Open Brief":
+                - /url: /projects/figma-config-highlights/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 45d ago
+              - link "Open Script":
+                - /url: /projects/figma-config-highlights/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 41d ago
+              - link "Open Storyboard":
+                - /url: /projects/figma-config-highlights/stages/storyboard
+                - text: Storyboard - Not started
+              - generic: Storyboard
+              - link "Open Video Review":
+                - /url: /projects/figma-config-highlights/stages/edit
+                - text: Animation - Complete
+              - generic: Animation
+              - generic: 20d ago
+              - link "Open Masters":
+                - /url: /projects/figma-config-highlights/stages/masters
+                - text: Masters - Complete
+              - generic: Masters
+              - generic: 18d ago
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/figma-config-highlights/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Project archived · Jul 26, 2026 at 5:50 PM. Open Latest actions.":
+            - button "Project archived · Jul 26, 2026 at 5:50 PM. Open Latest actions.":
+              - strong: Project archived
+              - time: Today Jul 26, 2026 at 5:50 PM
+          - cell:
+            - combobox "Change status for Config Highlights - Community Keynote":
+              - generic: Archived
+          - cell "Set deadline for Config Highlights - Community Keynote":
+            - button "Set deadline for Config Highlights - Community Keynote": To be set
+          - cell "Open Project costs for Config Highlights - Community Keynote. NZD 1,800, 0 unpaid invoices.":
+            - button "Open Project costs for Config Highlights - Community Keynote. NZD 1,800, 0 unpaid invoices.":
+              - strong: NZD 1,800
+              - generic: 0 unpaid invoices
+          - cell "Open details for Config Highlights - Community Keynote":
+            - button "Open details for Config Highlights - Community Keynote": Open details
+        - row "Open Loom Client record WACF Customer Cutdown 01 Quick actions for WACF Customer Cutdown 01 Add tag to WACF Customer Cutdown 01 WACF Customer Cutdown 01 stage progress Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions. Set deadline for WACF Customer Cutdown 01 Open Project costs for WACF Customer Cutdown 01. $0, 0 unpaid invoices. Open details for WACF Customer Cutdown 01":
+          - cell "Open Loom Client record WACF Customer Cutdown 01 Quick actions for WACF Customer Cutdown 01 Add tag to WACF Customer Cutdown 01":
+            - link "Open Loom Client record":
+              - /url: /clients/loom
+              - generic: LOOM
+            - link "WACF Customer Cutdown 01":
+              - /url: /projects/loom-wacf-01/stages/brief
+            - generic "Quick actions for WACF Customer Cutdown 01":
+              - link "Open chat (1 unread)":
+                - /url: /chat?project=loom-wacf-01
+                - generic "1 unread messages": "1"
+                - text: Open chat (1 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to WACF Customer Cutdown 01": +
+          - cell "WACF Customer Cutdown 01 stage progress":
+            - generic "WACF Customer Cutdown 01 stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-wacf-01/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-wacf-01/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-wacf-01/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-wacf-01/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-wacf-01/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-wacf-01/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions.":
+            - button "Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions.":
+              - strong: Rough cut
+              - text: uploaded
+              - time: Today Jul 25, 2026 at 4:40 PM
+          - cell:
+            - combobox "Change status for WACF Customer Cutdown 01":
+              - generic: In production
+          - cell "Set deadline for WACF Customer Cutdown 01":
+            - button "Set deadline for WACF Customer Cutdown 01": To be set
+          - cell "Open Project costs for WACF Customer Cutdown 01. $0, 0 unpaid invoices.":
+            - button "Open Project costs for WACF Customer Cutdown 01. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for WACF Customer Cutdown 01":
+            - button "Open details for WACF Customer Cutdown 01": Open details
+        - row "Open Loom Client record Product Tour - Team Workflows Quick actions for Product Tour - Team Workflows Add tag to Product Tour - Team Workflows Product Tour - Team Workflows stage progress Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions. Set deadline for Product Tour - Team Workflows Open Project costs for Product Tour - Team Workflows. $0, 0 unpaid invoices. Open details for Product Tour - Team Workflows":
+          - cell "Open Loom Client record Product Tour - Team Workflows Quick actions for Product Tour - Team Workflows Add tag to Product Tour - Team Workflows":
+            - link "Open Loom Client record":
+              - /url: /clients/loom
+              - generic: LOOM
+            - link "Product Tour - Team Workflows":
+              - /url: /projects/loom-product-tour/stages/brief
+            - generic "Quick actions for Product Tour - Team Workflows":
+              - link "Open chat":
+                - /url: /chat?project=loom-product-tour
+                - text: Open chat
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Product Tour - Team Workflows": +
+          - cell "Product Tour - Team Workflows stage progress":
+            - generic "Product Tour - Team Workflows stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-product-tour/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 3d ago
+              - link "Open Script":
+                - /url: /projects/loom-product-tour/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 2d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-product-tour/stages/shoot
+                - text: Shoot - Waiting on North Star Films
+              - generic: Shoot
+              - generic: 1d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-product-tour/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/loom-product-tour/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-product-tour/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions.":
+            - button "Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions.":
+              - strong: Script approved
+              - text: by Emma
+              - time: Today Jul 24, 2026 at 12:18 PM
+              - text: Script approved by Emma
+          - cell:
+            - combobox "Change status for Product Tour - Team Workflows":
+              - generic: In production
+          - cell "Set deadline for Product Tour - Team Workflows":
+            - button "Set deadline for Product Tour - Team Workflows": To be set
+          - cell "Open Project costs for Product Tour - Team Workflows. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Product Tour - Team Workflows. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Product Tour - Team Workflows":
+            - button "Open details for Product Tour - Team Workflows": Open details
+        - row "Open Loom Client record Customer Story - Healthcare Quick actions for Customer Story - Healthcare Add tag to Customer Story - Healthcare Customer Story - Healthcare stage progress Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions. Set deadline for Customer Story - Healthcare Open Project costs for Customer Story - Healthcare. $0, 0 unpaid invoices. Open details for Customer Story - Healthcare":
+          - cell "Open Loom Client record Customer Story - Healthcare Quick actions for Customer Story - Healthcare Add tag to Customer Story - Healthcare":
+            - link "Open Loom Client record":
+              - /url: /clients/loom
+              - generic: LOOM
+            - link "Customer Story - Healthcare":
+              - /url: /projects/loom-customer-stories/stages/brief
+            - generic "Quick actions for Customer Story - Healthcare":
+              - link "Open chat (4 unread)":
+                - /url: /chat?project=loom-customer-stories
+                - generic "4 unread messages": "4"
+                - text: Open chat (4 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Customer Story - Healthcare": +
+          - cell "Customer Story - Healthcare stage progress":
+            - generic "Customer Story - Healthcare stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-customer-stories/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-customer-stories/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-customer-stories/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-customer-stories/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-customer-stories/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-customer-stories/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions.":
+            - button "Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions.":
+              - strong: Edit preparation
+              - text: started by Maddie
+              - time: Today Jul 23, 2026 at 10:05 AM
+              - text: Edit preparation started by Maddie
+          - cell:
+            - combobox "Change status for Customer Story - Healthcare":
+              - generic: In production
+          - cell "Set deadline for Customer Story - Healthcare":
+            - button "Set deadline for Customer Story - Healthcare": To be set
+          - cell "Open Project costs for Customer Story - Healthcare. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Customer Story - Healthcare. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Customer Story - Healthcare":
+            - button "Open details for Customer Story - Healthcare": Open details
+        - row "Open Loom Client record Q3 Product Recap Quick actions for Q3 Product Recap Add tag to Q3 Product Recap Q3 Product Recap stage progress Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions. Set deadline for Q3 Product Recap Open Project costs for Q3 Product Recap. $0, 0 unpaid invoices. Open details for Q3 Product Recap":
+          - cell "Open Loom Client record Q3 Product Recap Quick actions for Q3 Product Recap Add tag to Q3 Product Recap":
+            - link "Open Loom Client record":
+              - /url: /clients/loom
+              - generic: LOOM
+            - link "Q3 Product Recap":
+              - /url: /projects/loom-q3-recap/stages/brief
+            - generic "Quick actions for Q3 Product Recap":
+              - link "Open chat (2 unread)":
+                - /url: /chat?project=loom-q3-recap
+                - generic "2 unread messages": "2"
+                - text: Open chat (2 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Q3 Product Recap": +
+          - cell "Q3 Product Recap stage progress":
+            - generic "Q3 Product Recap stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-q3-recap/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-q3-recap/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-q3-recap/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-q3-recap/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-q3-recap/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-q3-recap/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions.":
+            - button "Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions.":
+              - strong: Media organised
+              - text: for edit
+              - time: Today Jul 22, 2026 at 5:32 PM
+          - cell:
+            - combobox "Change status for Q3 Product Recap":
+              - generic: In production
+          - cell "Set deadline for Q3 Product Recap":
+            - button "Set deadline for Q3 Product Recap": To be set
+          - cell "Open Project costs for Q3 Product Recap. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Q3 Product Recap. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Q3 Product Recap":
+            - button "Open details for Q3 Product Recap": Open details
+        - row "Open Harbour Health Client record Care Journey Quick actions for Care Journey Add tag to Care Journey Care Journey stage progress Brief waiting on Mia · Aug 31, 2026 at 10:00 AM. Open Latest actions. Set deadline for Care Journey Open Project costs for Care Journey. $0, 0 unpaid invoices. Open details for Care Journey":
+          - cell "Open Harbour Health Client record Care Journey Quick actions for Care Journey Add tag to Care Journey":
+            - link "Open Harbour Health Client record":
+              - /url: /clients/harbour-health
+              - generic: HH
+            - link "Care Journey":
+              - /url: /projects/harbour-health-care-journey/stages/brief
+            - generic "Quick actions for Care Journey":
+              - link "Open chat":
+                - /url: /chat?project=harbour-health-care-journey
+                - text: Open chat
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/harbour-health/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Care Journey": +
+          - cell "Care Journey stage progress":
+            - generic "Care Journey stage progress":
+              - link "Open Brief":
+                - /url: /projects/harbour-health-care-journey/stages/brief
+                - text: Brief - Waiting on Harbour Health
+              - generic: Brief
+              - generic: 1d ago
+              - link "Open Script":
+                - /url: /projects/harbour-health-care-journey/script
+                - text: Script - Not started
+              - generic: Script
+              - link "Open Shoot":
+                - /url: /projects/harbour-health-care-journey/stages/shoot
+                - text: Shoot - Not started
+              - generic: Shoot
+              - link "Open Video Review":
+                - /url: /projects/harbour-health-care-journey/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/harbour-health-care-journey/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/harbour-health-care-journey/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Brief waiting on Mia · Aug 31, 2026 at 10:00 AM. Open Latest actions.":
+            - button "Brief waiting on Mia · Aug 31, 2026 at 10:00 AM. Open Latest actions.":
+              - strong: Brief waiting
+              - text: on Mia
+              - time: Today Aug 31, 2026 at 10:00 AM
+          - cell:
+            - combobox "Change status for Care Journey":
+              - generic: In production
+          - cell "Set deadline for Care Journey":
+            - button "Set deadline for Care Journey": To be set
+          - cell "Open Project costs for Care Journey. $0, 0 unpaid invoices.":
+            - button "Open Project costs for Care Journey. $0, 0 unpaid invoices.":
+              - strong: $0
+              - generic: 0 unpaid invoices
+          - cell "Open details for Care Journey":
+            - button "Open details for Care Journey": Open details
+- dialog "Global Chat":
+  - button "Close Chat"
+  - main:
+    - complementary "Chat navigation":
+      - generic: North Star Films
+      - button "Search messages - Command K"
+      - navigation "Global conversations":
+        - button "DMs":
+          - generic: DMs
+        - button "Mark 1 unread dms as read": "1"
+        - button "Mentions":
+          - generic: Mentions
+        - button "Mark 2 unread mentions as read": "2"
+        - button "Groups":
+          - generic: Groups
+        - button "Mark 1 unread groups as read": "1"
+        - button "Threads":
+          - generic: Threads
+        - button "Calls":
+          - generic: Calls
+      - generic "Client conversations":
+        - button "All projects":
+          - generic: All projects
+        - button "Mark all 4 unread messages as read": "4"
+        - button "Loom" [pressed]:
+          - generic: Loom
+        - button "Mark 2 unread messages from Loom as read": "2"
+        - button "Deel":
+          - generic: Deel
+        - button "Mark 1 unread messages from Deel as read": "1"
+        - button "Hims":
+          - generic: Hims
+        - button "Mark 1 unread messages from Hims as read": "1"
+        - button "OpenAI":
+          - generic: OpenAI
+        - button "Canva":
+          - generic: Canva
+        - button "Linear":
+          - generic: Linear
+        - button "Harbour Health":
+          - generic: Harbour Health
+      - combobox "Filter Clients":
+        - generic: Active clients
+      - button "Unread only":
+        - generic: Unread only
+    - button "Back to all project conversations": Back to all project conversations
+    - heading "LOOM-24 Launch Film - Sales Narrative" [level=1]
+    - text: Loom
+    - group "Call options for LOOM-24 Launch Film - Sales Narrative":
+      - button "Start a call in LOOM-24 Launch Film - Sales Narrative"
+      - button "Open call options"
+    - link "Go to project":
+      - /url: /projects/loom-launch-film/stages/brief
+    - button "Manage project members": Manage project members
+    - button "Open External Chat settings": Open External Chat settings
+    - tablist "Chat channel":
+      - tab "External Chat with the client" [selected]:
+        - strong: External
+        - generic: Chat with the client
+      - tab "Internal North Star Films only":
+        - strong: Internal
+        - generic: North Star Films only
+    - separator "Tuesday 21 July":
+      - generic: Tuesday 21 July
+    - article:
+      - 'link "Script approved: The Script has been approved."':
+        - /url: /projects/loom-launch-film/script
+        - generic: Approved
+        - strong: Script approved
+        - generic: The Script has been approved.
+        - time: 91 days ago
+        - generic: External
+    - separator "Wednesday 22 July":
+      - generic: Wednesday 22 July
+    - article:
+      - generic "Jess Taylor": JT
+      - generic: Jess Taylor
+      - time: 9:12 am
+      - paragraph: The script is looking great. Could we keep the final customer quote on screen for another beat?
+      - link "Open comment in Script":
+        - /url: /projects/loom-launch-film/script
+      - button "Love":
+        - generic: ❤️
+        - generic: "2"
+    - article:
+      - generic "Tom Mitchell": TM
+      - generic: Tom Mitchell
+      - time: 9:18 am
+      - paragraph:
+        - text: Absolutely.
+        - generic: "@Marcus Lee"
+        - text: can you add eight frames to that final quote before today’s client cut?
+      - generic "Message actions":
+        - generic "Quick reactions":
+          - button "Strong": 🔥
+          - button "Approved": ✅
+          - button "Love": ❤️
+        - button "Find another reaction"
+        - button "Reply in thread": Reply Reply in thread
+        - button "Forward": Forward
+        - button "Mark unread": Mark unread
+      - button "Approved":
+        - generic: ✅
+        - generic: "1"
+      - button "Marcus Lee Tom Mitchell 2 replies Last reply 90 days ago":
+        - generic "Marcus Lee": ML
+        - generic "Tom Mitchell": TM
+        - generic: 2 replies
+        - generic: Last reply 90 days ago
+    - separator "Thursday 23 July":
+      - generic: Thursday 23 July
+    - article:
+      - generic: Update
+      - generic: External
+      - strong: Edit review requested
+      - paragraph: LOOM-24 Edit v3 is ready for review.
+      - time: 89 days ago
+      - link "Review Edit":
+        - /url: /projects/loom-launch-film/stages/edit
+        - text: Review Edit
+    - article:
+      - generic "Sarah Kim": SK
+      - generic: Sarah Kim
+      - time: 4:42 pm
+      - paragraph: Thanks team. The new pace feels much stronger. I’ve marked one small colour note in Edit.
+      - generic: Edit frame 184
+      - generic: Colour note - frame 184.png · 1.8 MB
+      - generic "This video has no source file in the prototype.":
+        - generic: Loom walkthrough
+        - strong: Product screen reference.mp4
+        - generic: Video unavailable
+      - strong: Sarah's colour note
+      - generic: Voice note · 0:24
+      - button "Play Sarah's colour note" [disabled]
+      - generic "This attachment has no source file in the prototype.":
+        - strong: Loom-approved-product-copy.pdf
+        - generic: 640 KB · File unavailable
+      - link "Open comment in Edit":
+        - /url: /projects/loom-launch-film/stages/edit
+    - separator "Friday 24 July":
+      - generic: Friday 24 July
+    - article:
+      - generic "Sarah Kim": SK
+      - generic: Sarah Kim
+      - time: 8:52 am
+      - paragraph:
+        - text: I’ve shared the updated product wording with the wider Loom team.
+        - generic: "@Marcus Lee"
+        - text: this version is ready for the final sound pass.
+      - generic "This attachment has no source file in the prototype.":
+        - strong: Loom-final-product-wording.docx
+        - generic: 86 KB · File unavailable
+      - button "Like reaction from Slack - display only" [disabled]:
+        - generic: 👍
+        - generic: "2"
+      - button "Jess Taylor 1 reply Last reply 88 days ago":
+        - generic "Jess Taylor": JT
+        - generic: 1 reply
+        - generic: Last reply 88 days ago
+    - separator "Thursday 20 August":
+      - generic: Thursday 20 August
+    - article:
+      - 'link "Script approved: The Script has been approved."':
+        - /url: /projects/loom-launch-film/script
+        - generic: Approved
+        - strong: Script approved
+        - generic: The Script has been approved.
+        - time: 61 days ago
+        - generic: External
+    - article:
+      - generic: Changed
+      - generic: External
+      - strong: Published call time changed
+      - paragraph: A published call time has changed. Review the latest call sheet.
+      - time: 61 days ago
+      - link "Review changes":
+        - /url: /share/call-sheet/loom-launch-film
+        - text: Review changes
+    - region "Write a message":
+      - textbox "Message LOOM-24 external channel":
+        - /placeholder: "Message #LOOM-24 - external"
+      - generic "Formatting tools":
+        - button "Bold - Command B":
+          - strong: B
+        - button "Italic - Command I":
+          - emphasis: I
+        - button "Add link" [disabled]
+        - button "Add image"
+        - button "Choose emoji"
+      - button "Attach file"
+      - button "Record video - coming in V2" [disabled]
+      - combobox "Choose outbound channel":
+        - generic: Brisk
+      - button "Send message" [disabled]
+      - button "Schedule message for later" [disabled]
+      - text: Schedule for later
+      - button "Choose File"

@@ -1,0 +1,15 @@
+--- Before this round
++++ src/components/navigation/HybridSidebar.tsx
+@@ -113,10 +113,10 @@
+       event.currentTarget.querySelector("[data-tooltip]:hover, [data-tooltip]:focus-visible"))}>
+     <div className="hybrid-sidebar-heading">
+       <div className="hybrid-sidebar-brand">{brand}</div>
+-      <IconButton aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
++      <IconButton size="M" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+         aria-expanded={!collapsed} aria-controls={navigationId} onClick={onToggle}
+         tooltipPlacement="bottom" tooltipAlign="end">
+-        <DsIcon name={collapsed ? "caret-right" : "caret-left"} />
++        <DsIcon name="sidebar-simple" size={20} />
+       </IconButton>
+     </div>
+     <div className="hybrid-sidebar-navigation" id={navigationId}>

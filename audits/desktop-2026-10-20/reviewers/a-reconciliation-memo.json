@@ -1,0 +1,107 @@
+{
+  "title": "Reviewer A reconciliation recommendations",
+  "purpose": "A coherent UI should repeat meaning and dependable interaction rules, while retaining useful differences in work scope. This memo supports the consolidated audit and is not approval to implement.",
+  "leadRecommendation": "Prioritise concrete field, selection and navigation issues before broad visual restyling. The existing shared workspace header and quiet-choice direction already give the main product a strong common hierarchy. Extend that coherence through correct consumer use and contextual navigation, not through one compulsory shape, size or density everywhere.",
+  "superficialUniformityRejected": [
+    {
+      "proposal": "Make every heading32px and remove supporting copy",
+      "reason": "The32/40 workspace rule names seven workspaces. Settings descriptions explain scope and consequences; project, profile, dialog and portal headings have different jobs. Keep the scoped approval."
+    },
+    {
+      "proposal": "Use one search width/height throughout",
+      "reason": "Workspace directory queries, integrated picker search, dark Chat launchers and address/people suggestions serve different tasks. A320px person search can be useful while220px Media search fits a dense toolbar. Focus language and accessibility should be dependable without forcing identical dimensions or inventing an unapproved Search primitive."
+    },
+    {
+      "proposal": "Convert every filter or segmented view to Tabs",
+      "reason": "Pressed list filters, linked project stages, exclusive content panels and specialised media/player controls have different semantics. Their current scoped approvals deliberately preserve those distinctions."
+    },
+    {
+      "proposal": "Make all tables fit1133 by shrinking labels or combining columns",
+      "reason": "This can bury access, capacity and financial distinctions. Horizontal scrolling can be legitimate. First verify important-column discovery and retained row identity; then choose the smallest width/layout improvement with readable text."
+    },
+    {
+      "proposal": "Give every icon-only action a border or enlarge its visual icon",
+      "reason": "Quiet DS IconButton intentionally has a32/40px visual surface within a44px native target. Borderless rest and contextual visual sizes are approved. Small apparent dots are not proof of a small target."
+    },
+    {
+      "proposal": "Merge Save, Assign now and Invite in Team editing",
+      "reason": "They alter different things. A cleaner footer would be misleading if it obscured whether an agreement was invited or a person was directly assigned. Repair checkbox targets/names/focus and save clarity without merging actions."
+    },
+    {
+      "proposal": "Replace native tables, every card or drawer with a DS import",
+      "reason": "The Figma catalogue does not establish React exports for these families. Do not demand nonexistent components or silently create new primitives. Preserve native semantics and approved app compositions while documenting source-sync gaps."
+    },
+    {
+      "proposal": "Restore older screenshot navigation, attached tabs or Media in the stage chain",
+      "reason": "Those aspects are superseded. Keep hybrid navigation, quiet filter/content semantics, adaptable stage sequence, optional Storyboard, Animation, single Shoot and pinned Media."
+    }
+  ],
+  "intentionalDifferencesRetained": [
+    "Staff editing fields versus read-only Client/Freelancer values and permitted destinations.",
+    "Primary creation/assignment buttons versus quiet source/document commands and separate destructive confirmations.",
+    "S dialog actions, M established page actions and context-sized field heights.",
+    "Versioned Script/Storyboard documents versus the unversioned Media transcript collection and explicit working-Script destination.",
+    "Client cream versus team lavender comments and dark-player/light-rail contrast where supported by Brisk visual references.",
+    "Immediate multiple selections/settings using Done or Close versus forms requiring Save/Cancel.",
+    "Settings form panels with useful explanatory copy versus efficient frequent-work tables and workspace headers.",
+    "Brand logo/font/palette previews: client-asset fonts are content, not a replacement for Plus Jakarta Sans interface typography.",
+    "At1133, Brand Kits becomes two columns, settings descriptions wrap, and Expenses filter controls move to a second row. These remain readable and do not need correction just to match1440.",
+    "Prototype sample controls and existing fixture values remain explicitly classified. They should not inflate headline UI findings or be mistaken for implemented production services.",
+    "Specialised two-column Brief choice grids, a long URL-entry field, compact Brand Kit selector and calendar answer different question types; all fit at the inspected desktop widths.",
+    "Brief summary bordered Main Video Details and borderless Additional Versions are an explicit hierarchy decision, not inconsistent card styling.",
+    "Brand content swatches and call-time/status accents communicate actual content, while decorative enclosing Brand Kit tints are the scoped issue in A06."
+  ],
+  "guidanceOrApprovalDecisionsForTom": [
+    {
+      "id": "DEC-A01",
+      "topic": "Ordinary toolbar selection appearance",
+      "recommendation": "Use the approved ordinary DS field for Media sort. If Tom prefers a quiet unframed toolbar variant, approve/document it in the shared family rather than retain local CSS overrides.",
+      "boundary": "Preserve choices, callbacks, query scope and contextual widths. This is A04, not a redesign of specialised media chips/view controls."
+    },
+    {
+      "id": "DEC-A02",
+      "topic": "Readable compact count treatment",
+      "recommendation": "Retain shared Chat/Updates adapter while approving a readable existing-token colour pairing, Label/XS and steady rest state.",
+      "boundary": "The shared adapter is approved; incidental10px/Pink40/white/pulse CSS is explicitly not new DS authority. Existing count values/scoping/caps remain."
+    },
+    {
+      "id": "DEC-A03",
+      "topic": "Missing design-source/React variant mapping",
+      "recommendation": "Confirm with Yura which app-level table, drawer, settings-panel and Badge compositions should be reflected in the design source before broad surface migration.",
+      "boundary": "No evidence inspected confirms a Figma sync. Do not create new components or stop the audit merely because such a sync is unresolved."
+    },
+    {
+      "id": "DEC-A04",
+      "topic": "Specialised Team controls",
+      "recommendation": "Repair current Checkbox usage with the existing approved component and preserve the selection model. Review any future Staff radio change or merged save boundary as a separate product decision.",
+      "boundary": "Team contents remain explicitly unapproved in the baseline; EditingDialog approval does not certify them. Keep invite/direct assign/unassign distinct."
+    },
+    {
+      "id": "DEC-A05",
+      "topic": "Search interaction treatment",
+      "recommendation": "Consider consistent visible keyboard focus across ordinary workspace searches while preserving widths, scopes and specialised pickers.",
+      "boundary": "No universal Search primitive is approved. Current dimensional variation alone is not a finding; validate each live consumer first."
+    },
+    {
+      "id": "DEC-A06",
+      "topic": "Brand Kit enclosing panel colour",
+      "recommendation": "Use white enclosing layers under current guidance, retaining actual brand-colour/content previews. If client-derived panel tints are intentional, document a scoped exception with Tom/Yura.",
+      "boundary": "A06. Do not erase brand palette, logo previews, content fonts or semantic status/time accents."
+    },
+    {
+      "id": "DEC-A07",
+      "topic": "Brand Kit desktop asset priority",
+      "recommendation": "Choose one frequent-task priority across 1440 and 1133. Favour routine Logos/Colours/Fonts before the larger video/editor-files section unless actual usage supports the reverse.",
+      "boundary": "A11 is a heuristic decision request, not proof of failed discovery. Preserve every section and logical DOM/focus order."
+    },
+    {
+      "id": "DEC-A08",
+      "topic": "Readable Brief production specification widths",
+      "recommendation": "Keep the approved table order/hierarchy and provide readable field/content widths at 1133; use meaningful minimum width with discoverable horizontal scrolling if necessary.",
+      "boundary": "A12 does not reopen the 30 September summary model or authorise a new stacked/card redesign."
+    }
+  ],
+  "specificSettingsConclusion": "Across the ten supplied settings routes, default content fits1440 and1133 without a supported overlap or clipping defect. The strongest new UI finding is loss of Studio settings navigation on notification descendants (A05). Settings descriptions and multi-line button labels remain useful rather than candidates for cosmetic removal.",
+  "limits": "Source plus genuine current screenshots were inspected. Reviewer A did not control the browser. Keyboard/focus measurements and nested behavioural reproduction remain with the lead. No formal accessibility compliance certification, user-research result, production integration or changed record is claimed.",
+  "latestSteering": "Focus the final report on current UI/UX. Viewer-switch quirks and prototype identity/data artefacts should not become headline findings. The Storage label-scope observation is recorded as a minor contextual question rather than a new major finding."
+}

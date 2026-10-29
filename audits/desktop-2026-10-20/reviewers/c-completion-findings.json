@@ -1,0 +1,91 @@
+[
+  {
+    "id": "C02",
+    "title": "Shared Brand Kit logo dialog exposes editing commands in a read-only view",
+    "area": "Brand Kits",
+    "family": "Read-only action variants",
+    "category": "UI consistency / misleading affordance",
+    "severity": "S3",
+    "impact": "A recipient opening a shared logo sees Replace and Delete beside legitimate download options, despite the containing shared Kit having no editing controls. This makes the scope of the shared view harder to understand.",
+    "classification": "Directly observed UI difference with source-confirmed read-only context",
+    "confidence": "High for the visible commands and the current canEdit=false guest consumer. No stored-data write or security behaviour claimed.",
+    "roles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "roleEvidenceScope": [
+      "Guest shared-link context rendered with underlying Studio Staff preview. isGuest forces canEdit=false independently of the three prototype roles; those three values were not separately repeated."
+    ],
+    "routes": [
+      "/share/brand/loom-2026"
+    ],
+    "states": [
+      "Current guest shared Kit",
+      "Download logo dialog",
+      "More actions menu"
+    ],
+    "observed": "The shared Kit hides page-level editing. Opening Loom horizontal - dark opens Download logo with a normal Replace button; its More actions menu contains Delete. Neither action was invoked. LogoDownloadModal has no canEdit parameter and unconditionally renders those actions.",
+    "expected": "Nested dialogs should preserve the containing view capability. A read-only shared Kit should present logo preview and permitted downloads consistently with its page-level actions.",
+    "authority": [
+      "Current shared route explicitly renders BrandKitPage with isGuest at src/app/share/brand/[token]/page.tsx17.",
+      "BrandKitContext.tsx136 defines canEdit as false whenever isGuest is true; this is the existing consumer contract, not a newly proposed permission model.",
+      "User audit requirement: judge task clarity and misleading controls, while keeping meaningful action distinctions."
+    ],
+    "recommendation": "Pass the existing canEdit capability into LogoDownloadModal and omit Replace and the editing-only More actions menu in the shared view. Preserve its preview and download options and preserve these editing commands in editable Kits.",
+    "rationale": "This is the smallest coherent presentation correction: the nested surface inherits the capability already used by its parent, without changing who may edit a normal Client Kit.",
+    "alternatives": "A visible disabled editing state with a short reason could teach capability boundaries, but adds noise to a delivery-focused logo dialog. Hiding editing commands is clearer for the shared recipient.",
+    "tradeoffs": "Do not remove Replace/Delete from legitimate editable Studio or Client Kits. Do not change guest persistence or invent new access rules as part of this visual correction.",
+    "rootCause": "LogoDownloadModal renders an unconditional editing footer instead of consuming the parent capability.",
+    "occurrences": [
+      "Shared Brand Kit > Logos > any selected logo uses the same LogoDownloadModal. Only the Loom horizontal - dark instance was directly opened."
+    ],
+    "sources": [
+      "src/app/share/brand/[token]/page.tsx:17",
+      "src/components/brand-kits/BrandKitContext.tsx:136",
+      "src/components/brand-kits/BrandKitContext.tsx:139",
+      "src/components/brand-kits/BrandKitContext.tsx:151",
+      "src/components/brand-kits/BrandKitPages.tsx:2245",
+      "src/components/brand-kits/BrandKitPages.tsx:2515",
+      "src/components/brand-kits/BrandKitPages.tsx:2529"
+    ],
+    "evidence": {
+      "currentScreenshot": "G014-brand-guest-logo-actions.jpg",
+      "additionalScreenshots": [
+        "G012-brand-guest-default.jpg",
+        "G013-brand-guest-logo-dialog.jpg"
+      ],
+      "approvedReferenceStatement": "No approved screenshot of a shared logo-dialog variant exists. Current page-level read-only presentation and the explicit current canEdit contract provide the comparison; G012 is current UI evidence, not an approved visual reference."
+    },
+    "currentScreenshot": [
+      "G013-brand-guest-logo-dialog",
+      "G014-brand-guest-logo-actions"
+    ],
+    "approvedReference": "No approved shared-logo dialog screenshot exists. G012 is the matching current read-only page, not an approved reference.",
+    "supportingScreenshots": [
+      "G012-brand-guest-default"
+    ],
+    "focusedCrop": null,
+    "currentComparison": [
+      "G012-brand-guest-default"
+    ],
+    "annotatedPanels": [],
+    "reproductionSteps": [
+      "Open the valid current shared Brand Kit route /share/brand/loom-2026.",
+      "Observe page-level editing controls are absent.",
+      "Open Loom horizontal - dark in Logos.",
+      "Observe Replace; open More actions and observe Delete.",
+      "Close the menu/dialog without selecting Replace or Delete."
+    ],
+    "verificationRemaining": [
+      "After any approved UI change, inspect valid shared and normal editable Kit consumers at1440 and1133.",
+      "Confirm shared logo preview/download affordances remain available and editable Studio/Client Kits retain their legitimate editing commands.",
+      "Actual Replace/Delete outcomes were deliberately not invoked; guest stored persistence is excluded and no write bypass is alleged."
+    ],
+    "reviewStatus": "Needs decision",
+    "implementationState": "Unfixed audit recommendation",
+    "mergedCandidateIds": [
+      "C02 source candidate, now browser-supported"
+    ]
+  }
+]

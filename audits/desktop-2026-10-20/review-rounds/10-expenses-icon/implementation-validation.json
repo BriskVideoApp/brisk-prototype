@@ -1,0 +1,48 @@
+{
+  "date": "29 October 2026",
+  "scope": "Expenses sidebar icon changed from money to approved simple dollar icon",
+  "approval": "Direct user instruction: replace the Expenses icon with the simple $ icon",
+  "status": "Implemented and desktop-verified",
+  "source": "Brisk DS/src/imports/icons/CurrencyDollarSimple (🔄 swap).svg",
+  "export": "public/brisk-icons/currency-dollar-simple.svg",
+  "exportMatchesDsSource": true,
+  "changedExistingFiles": [
+    "src/components/navigation/HybridSidebar.tsx",
+    "src/components/video-review/DsIcon.tsx",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "unexpectedChanges": [],
+  "newApplicationFiles": [
+    "public/brisk-icons/currency-dollar-simple.svg"
+  ],
+  "preserved": "Expenses label, /outstanding-invoices destination, access checks, styling, working data and all earlier app changes retained. Other money icon consumers unchanged.",
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed",
+    "http": {
+      "/active-videos?review=expenses-icon": 200,
+      "/brisk-icons/currency-dollar-simple.svg": 200
+    },
+    "browser": "Inspected current single dollar icon at 1440 desktop; collapsed 1133 href and accessible title retained; no warnings/errors. Viewport and navigation restored. Temporary tab closed; no working-origin interactions."
+  },
+  "screenshots": {
+    "expanded": "expanded-1440.png",
+    "collapsed": "collapsed-1133.png",
+    "crop": {
+      "file": "expenses-icon-navigation.png",
+      "source": "expanded-1440.png",
+      "box": [
+        10,
+        255,
+        228,
+        392
+      ]
+    }
+  },
+  "notRun": [
+    "tests",
+    "production build",
+    "dependency installation",
+    "commit",
+    "push"
+  ]
+}

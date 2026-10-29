@@ -1,0 +1,362 @@
+Browser tab: 1716948387, Title: "Brisk Prototype", URL: "http://127.0.0.1:8769/projects/loom-launch-film/stages/media".
+1 AXWebArea Brisk Prototype, URL: 127.0.0.1:8769/projects/loom-launch-film/stages/media
+	2 container
+		3 container Primary navigation
+			4 link Description: North Star Films logo North Star Films, Value: 127.0.0.1:8769/settings/studio
+			5 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				6 text Collapse navigation
+			7 container Workspace
+				8 link Description: Videos, Value: 127.0.0.1:8769/active-videos
+				9 link Description: To Do, Value: 127.0.0.1:8769/today
+				10 link Description: People, Value: 127.0.0.1:8769/people
+				11 link Description: Clients, Value: 127.0.0.1:8769/clients
+				12 link Description: Media Library, Value: 127.0.0.1:8769/media
+				13 link Description: Expenses, Value: 127.0.0.1:8769/outstanding-invoices
+				14 link Description: Brand Kits, Value: 127.0.0.1:8769/brand-kits
+			15 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				16 container Tom Mitchell
+					17 text TM
+				18 text Tom Mitchell
+				19 text North Star Films
+			20 container Studio administration
+				21 link Description: Studio settings, Value: 127.0.0.1:8769/settings/studio
+			22 container Prototype controls
+				23 button (collapsed) Test mode, Secondary Actions: Expand
+					24 text Test mode
+		25 container
+			26 container Navigation history
+				27 button Go back
+					28 text Back
+				29 button Go forward
+					30 text Forward
+				31 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					32 text Recent pages
+			33 container Global actions
+				34 button Open Chat, 22 unread
+					35 text Chat
+					36 container 22 unread messages
+						37 text 22
+				38 button (collapsed) Description: Updates, 5 unread, Secondary Actions: Expand
+					39 container 5 unread notifications
+						40 text 5
+					41 text Updates
+			42 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			43 container
+				44 container Project stage progress
+					45 container LOOM / Launch Film - Sales Narrative
+						46 link Description: Back to dashboard, Value: 127.0.0.1:8769/active-videos
+						47 text LOOM Launch Film - Sales Narrative
+						48 container Project share actions
+							49 button (collapsed) Description: Share project, Secondary Actions: Expand
+					50 container LOOM Launch Film - Sales Narrative
+						51 content list Sequential production stages
+							52 container
+								53 link Description: Brief: Approved, Value: 127.0.0.1:8769/projects/loom-launch-film/stages/brief
+								54 text Brief
+							55 container
+								56 link Description: Script: Approved, Value: 127.0.0.1:8769/projects/loom-launch-film/script
+								57 text Script
+							58 container
+								59 link Description: Shoot: Waiting on Loom, Value: 127.0.0.1:8769/projects/loom-launch-film/stages/shoot
+								60 text Shoot
+							61 container
+								62 link Description: Video Review: Not started, Value: 127.0.0.1:8769/projects/loom-launch-film/stages/edit
+								63 text Edit
+							64 container
+								65 link Description: Masters: Not started, Value: 127.0.0.1:8769/projects/loom-launch-film/stages/masters
+								66 text Masters
+						67 container
+							68 link Description: Media. 13 media files, Value: 127.0.0.1:8769/projects/loom-launch-film/stages/media
+							69 text Media
+						70 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							71 text Adjust project flow
+				72 container Media folders
+					336 text Folders
+					337 button Add folder
+						338 text Add folder
+					339 button Collapse folders
+						340 text Collapse folders
+					341 button All media
+					342 button Customer interviews
+					343 pop up button (collapsed) Description: More options for Customer interviews, Secondary Actions: Expand
+						344 text Folder options
+					345 button Product captures
+					346 pop up button (collapsed) Description: More options for Product captures, Secondary Actions: Expand
+						347 text Folder options
+					348 button Day one
+					349 pop up button (expanded) Description: More options for Day one, Secondary Actions: Collapse
+						350 text Folder options
+					351 button Client supplied
+					352 pop up button (collapsed) Description: More options for Client supplied, Secondary Actions: Expand
+						353 text Folder options
+					354 text Brisk Storage
+					355 container
+						356 text 86.0 GB  of  100.0 GB
+				75 button Open transcripts, 4 available
+					76 text Transcripts
+					77 text 4
+				78 pop up button (collapsed) Description: Upload, Secondary Actions: Expand
+				79 button Download media for Launch Film - Sales Narrative
+				80 button Choose files
+				81 container Filter media by type
+					82 checkbox All, Value: 1
+					83 checkbox Video, Value: 0
+					84 checkbox Audio, Value: 0
+					85 checkbox Image, Value: 0
+					86 checkbox Document, Value: 0
+				87 container Media view
+					88 checkbox Description: Card view, Value: 1
+						357 text Card view
+					90 checkbox Description: List view, Value: 0
+						358 text List view
+				92 container
+					93 text Sort media
+					94 combo box (collapsed) Description: Sort media, Value: Newest first, Secondary Actions: Expand
+						95 text Newest first
+				96 search text field (settable) Search media
+				97 container Project media
+					98 button Customer interviews Folder
+						99 text Customer interviews
+						100 text Folder
+					101 button Product captures Folder
+						102 text Product captures
+						103 text Folder
+					104 button Client supplied Folder
+						105 text Client supplied
+						106 text Folder
+					107 container Product-demo-playback-test.mov, video
+						108 text Failed - retry
+						109 checkbox Description: Select Product-demo-playback-test.mov, Value: 0
+						110 text 19 Aug 2026 · 1.2 GB · 02:58
+						111 text Product-demo-playback-test.mov
+						112 container Actions for Product-demo-playback-test.mov
+							113 button Retry Product-demo-playback-test.mov
+								359 text Retry
+							115 button Comment Product-demo-playback-test.mov
+								360 text Comment
+							117 button Transcript Product-demo-playback-test.mov
+								361 text Transcript
+							119 button Copy link Product-demo-playback-test.mov
+								362 text Copy link
+							121 button Download Product-demo-playback-test.mov
+								363 text Download
+							123 button Archive Product-demo-playback-test.mov
+								364 text Archive
+							125 button Delete Product-demo-playback-test.mov
+								365 text Delete
+					127 container Jess-interview-camera-a.mov, video
+						128 checkbox Description: Select Jess-interview-camera-a.mov, Value: 0
+						129 text 08 July 2026 · 4.8 GB · 18:42
+						130 text Jess-interview-camera-a.mov
+						131 container Actions for Jess-interview-camera-a.mov
+							132 button 2 comments for Jess-interview-camera-a.mov
+								133 text 2
+								366 text Comment
+							135 button Transcript Jess-interview-camera-a.mov
+								367 text Transcript
+							137 button Copy link Jess-interview-camera-a.mov
+								368 text Copy link
+							139 button Download Jess-interview-camera-a.mov
+								369 text Download
+							141 button Archive Jess-interview-camera-a.mov
+								370 text Archive
+							143 button Delete Jess-interview-camera-a.mov
+								371 text Delete
+					145 container Jess-interview-camera-b.mov, video
+						146 checkbox Description: Select Jess-interview-camera-b.mov, Value: 0
+						147 text 08 July 2026 · 3.9 GB · 18:39
+						148 text Jess-interview-camera-b.mov
+						149 container Actions for Jess-interview-camera-b.mov
+							150 button Comment Jess-interview-camera-b.mov
+								372 text Comment
+							152 button Transcript Jess-interview-camera-b.mov
+								373 text Transcript
+							154 button Copy link Jess-interview-camera-b.mov
+								374 text Copy link
+							156 button Download Jess-interview-camera-b.mov
+								375 text Download
+							158 button Archive Jess-interview-camera-b.mov
+								376 text Archive
+							160 button Delete Jess-interview-camera-b.mov
+								377 text Delete
+					162 container Jess-lapel-audio.wav, audio
+						163 checkbox Description: Select Jess-lapel-audio.wav, Value: 0
+						164 text 08 July 2026 · 862.4 MB · 19:04
+						165 text Jess-lapel-audio.wav
+						166 container Actions for Jess-lapel-audio.wav
+							167 button 1 comment for Jess-lapel-audio.wav
+								168 text 1
+								378 text Comment
+							170 button Transcript Jess-lapel-audio.wav
+								379 text Transcript
+							172 button Copy link Jess-lapel-audio.wav
+								380 text Copy link
+							174 button Download Jess-lapel-audio.wav
+								381 text Download
+							176 button Archive Jess-lapel-audio.wav
+								382 text Archive
+							178 button Delete Jess-lapel-audio.wav
+								383 text Delete
+					180 container Avery-customer-interview.mov, video
+						181 checkbox Description: Select Avery-customer-interview.mov, Value: 0
+						182 text 08 July 2026 · 2.8 GB · 12:16
+						183 text Avery-customer-interview.mov
+						184 container Actions for Avery-customer-interview.mov
+							185 button Comment Avery-customer-interview.mov
+								384 text Comment
+							187 button Transcript Avery-customer-interview.mov
+								385 text Transcript
+							189 button Copy link Avery-customer-interview.mov
+								386 text Copy link
+							191 button Download Avery-customer-interview.mov
+								387 text Download
+							193 button Archive Avery-customer-interview.mov
+								388 text Archive
+							195 button Delete Avery-customer-interview.mov
+								389 text Delete
+					197 container Care-team-roundtable.wav, audio
+						198 checkbox Description: Select Care-team-roundtable.wav, Value: 0
+						199 text 08 July 2026 · 624.7 MB · 08:42
+						200 text Care-team-roundtable.wav
+						201 container Actions for Care-team-roundtable.wav
+							202 button Comment Care-team-roundtable.wav
+								390 text Comment
+							204 button Transcript Care-team-roundtable.wav
+								391 text Transcript
+							206 button Copy link Care-team-roundtable.wav
+								392 text Copy link
+							208 button Download Care-team-roundtable.wav
+								393 text Download
+							210 button Archive Care-team-roundtable.wav
+								394 text Archive
+							212 button Delete Care-team-roundtable.wav
+								395 text Delete
+					214 container Dashboard-wide-take-03.mov, video
+						215 checkbox Description: Select Dashboard-wide-take-03.mov, Value: 0
+						216 text 08 July 2026 · 2.2 GB · 04:18
+						217 text Dashboard-wide-take-03.mov
+						218 container Actions for Dashboard-wide-take-03.mov
+							219 button Comment Dashboard-wide-take-03.mov
+								396 text Comment
+							221 button Transcript Dashboard-wide-take-03.mov
+								397 text Transcript
+							223 button Copy link Dashboard-wide-take-03.mov
+								398 text Copy link
+							225 button Download Dashboard-wide-take-03.mov
+								399 text Download
+							227 button Archive Dashboard-wide-take-03.mov
+								400 text Archive
+							229 button Delete Dashboard-wide-take-03.mov
+								401 text Delete
+					231 container Sales-team-collaboration-01.mov, video
+						232 checkbox Description: Select Sales-team-collaboration-01.mov, Value: 0
+						233 text 08 July 2026 · 1.7 GB · 03:06
+						234 text Sales-team-collaboration-01.mov
+						235 container Actions for Sales-team-collaboration-01.mov
+							236 button Comment Sales-team-collaboration-01.mov
+								402 text Comment
+							238 button Transcript Sales-team-collaboration-01.mov
+								403 text Transcript
+							240 button Copy link Sales-team-collaboration-01.mov
+								404 text Copy link
+							242 button Download Sales-team-collaboration-01.mov
+								405 text Download
+							244 button Archive Sales-team-collaboration-01.mov
+								406 text Archive
+							246 button Delete Sales-team-collaboration-01.mov
+								407 text Delete
+					248 container Pipeline-screen-recording.mp4, video
+						249 checkbox Description: Select Pipeline-screen-recording.mp4, Value: 0
+						250 text 08 July 2026 · 306.6 KB · 00:42
+						251 text Pipeline-screen-recording.mp4
+						252 container Actions for Pipeline-screen-recording.mp4
+							253 button Comment Pipeline-screen-recording.mp4
+								408 text Comment
+							255 button Transcript Pipeline-screen-recording.mp4
+								409 text Transcript
+							257 button Copy link Pipeline-screen-recording.mp4
+								410 text Copy link
+							259 button Download Pipeline-screen-recording.mp4
+								411 text Download
+							261 button Archive Pipeline-screen-recording.mp4
+								412 text Archive
+							263 button Delete Pipeline-screen-recording.mp4
+								413 text Delete
+					265 container Loom-wordmark-black.png, image
+						266 checkbox Description: Select Loom-wordmark-black.png, Value: 0
+						267 text 07 July 2026 · 184.2 KB
+						268 text Loom-wordmark-black.png
+						269 container Actions for Loom-wordmark-black.png
+							270 button Comment Loom-wordmark-black.png
+								414 text Comment
+							272 button (disabled) Transcript Loom-wordmark-black.png
+								415 text Transcript
+							274 button Copy link Loom-wordmark-black.png
+								416 text Copy link
+							276 button Download Loom-wordmark-black.png
+								417 text Download
+							278 button Archive Loom-wordmark-black.png
+								418 text Archive
+							280 button Delete Loom-wordmark-black.png
+								419 text Delete
+					282 container Launch-campaign-key-art.jpg, image
+						283 checkbox Description: Select Launch-campaign-key-art.jpg, Value: 0
+						284 text 07 July 2026 · 8.4 MB
+						285 text Launch-campaign-key-art.jpg
+						286 container Actions for Launch-campaign-key-art.jpg
+							287 button Comment Launch-campaign-key-art.jpg
+								420 text Comment
+							289 button (disabled) Transcript Launch-campaign-key-art.jpg
+								421 text Transcript
+							291 button Copy link Launch-campaign-key-art.jpg
+								422 text Copy link
+							293 button Download Launch-campaign-key-art.jpg
+								423 text Download
+							295 button Archive Launch-campaign-key-art.jpg
+								424 text Archive
+							297 button Delete Launch-campaign-key-art.jpg
+								425 text Delete
+					299 container Brand-guidelines-2026.pdf, document
+						300 checkbox Description: Select Brand-guidelines-2026.pdf, Value: 0
+						301 text 07 July 2026 · 12.7 MB
+						302 text Brand-guidelines-2026.pdf
+						303 container Actions for Brand-guidelines-2026.pdf
+							304 button Comment Brand-guidelines-2026.pdf
+								426 text Comment
+							306 button (disabled) Transcript Brand-guidelines-2026.pdf
+								427 text Transcript
+							308 button Copy link Brand-guidelines-2026.pdf
+								428 text Copy link
+							310 button Download Brand-guidelines-2026.pdf
+								429 text Download
+							312 button Archive Brand-guidelines-2026.pdf
+								430 text Archive
+							314 button Delete Brand-guidelines-2026.pdf
+								431 text Delete
+					316 container Room-tone-studio.wav, audio
+						317 checkbox Description: Select Room-tone-studio.wav, Value: 0
+						318 text 06 July 2026 · 48.6 MB · 02:10
+						319 text Room-tone-studio.wav
+						320 container Actions for Room-tone-studio.wav
+							321 button Comment Room-tone-studio.wav
+								432 text Comment
+							323 button Transcript Room-tone-studio.wav
+								433 text Transcript
+							325 button Copy link Room-tone-studio.wav
+								434 text Copy link
+							327 button Download Room-tone-studio.wav
+								435 text Download
+							329 button Archive Room-tone-studio.wav
+								436 text Archive
+							331 button Delete Room-tone-studio.wav
+								437 text Delete
+		333 container root-scribe-elem
+			334 container Notifications (F8)
+				335 content list
+		438 menu Folder actions
+			439 Rename
+			440 Move to top level
+			441 Copy folder link
+			442 Delete
+
+The focused UI element is 438 menu Folder actions

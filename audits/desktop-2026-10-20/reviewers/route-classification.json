@@ -1,0 +1,1130 @@
+[
+  {
+    "id": "R001",
+    "route": "/active-videos",
+    "exampleUrl": "/active-videos",
+    "classification": "Live workspace",
+    "surface": "Videos / My jobs",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Sidebar Videos. Staff all workspace projects; Freelancer accepted assignments/offers; Customer permitted projects.",
+    "sources": [
+      "src/app/active-videos/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R002",
+    "route": "/brand-kits/[customerSlug]/[subBrandSlug]",
+    "exampleUrl": "/brand-kits/loom/loom-ai",
+    "classification": "Live nested",
+    "surface": "Sub-brand Kit",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Brand Kit > sub-brand card. Freelancer membership; Customer own Client.",
+    "sources": [
+      "src/app/brand-kits/[customerSlug]/[subBrandSlug]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R003",
+    "route": "/brand-kits/[customerSlug]",
+    "exampleUrl": "/brand-kits/loom",
+    "classification": "Live",
+    "surface": "Client Brand Kit",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Sidebar Brand Kits > Client. Customer own Client; Freelancer accepted project membership.",
+    "sources": [
+      "src/app/brand-kits/[customerSlug]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R004",
+    "route": "/brand-kits",
+    "exampleUrl": "/brand-kits",
+    "classification": "Live workspace",
+    "surface": "Brand Kits",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Sidebar. Customer redirects to own Kit.",
+    "sources": [
+      "src/app/brand-kits/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R005",
+    "route": "/chat",
+    "exampleUrl": "/chat?project=loom-launch-film",
+    "classification": "Live",
+    "surface": "Chat",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Global Chat > project/channel; full-page direct URL.",
+    "sources": [
+      "src/app/chat/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R006",
+    "route": "/client/invoices",
+    "exampleUrl": "/client/invoices",
+    "classification": "Live account",
+    "surface": "Client invoices",
+    "applicableRoles": [
+      "Customer"
+    ],
+    "entryPath": "Account menu > Company > Invoices; billing setup and query-driven account permission boundary.",
+    "sources": [
+      "src/app/client/invoices/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/client/invoices?billing=hidden"
+    ]
+  },
+  {
+    "id": "R007",
+    "route": "/clients/[clientId]",
+    "exampleUrl": "/clients/loom",
+    "classification": "Live nested",
+    "surface": "Client profile",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Clients > Loom row; tabs Overview, Contacts, Work.",
+    "sources": [
+      "src/app/clients/[clientId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R008",
+    "route": "/clients",
+    "exampleUrl": "/clients",
+    "classification": "Live workspace",
+    "surface": "Clients",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Sidebar Clients. Non-Staff private-directory state.",
+    "sources": [
+      "src/app/clients/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R009",
+    "route": "/customer-dashboard",
+    "exampleUrl": "/customer-dashboard",
+    "classification": "Alias",
+    "surface": "Legacy Client portal route",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Resolves active scoped portal; Staff preview; Freelancer unavailable.",
+    "sources": [
+      "src/app/customer-dashboard/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R010",
+    "route": "/customer-dashboard/start-video",
+    "exampleUrl": "/customer-dashboard/start-video?client=loom",
+    "classification": "Live creation",
+    "surface": "Name video",
+    "applicableRoles": [
+      "Studio Staff",
+      "Customer"
+    ],
+    "entryPath": "Client portal > Start Video. Staff requires client query. Do not submit or type because draft auto-saves.",
+    "sources": [
+      "src/app/customer-dashboard/start-video/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R011",
+    "route": "/customer-dashboard/start-video/script",
+    "exampleUrl": "/customer-dashboard/start-video/script",
+    "classification": "Legacy demonstration",
+    "surface": "First-video Script fixture",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Legacy fixture destination for loom-first-video; no route layout ProjectAccessGate.",
+    "sources": [
+      "src/app/customer-dashboard/start-video/script/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R012",
+    "route": "/media/[assetId]",
+    "exampleUrl": "/media/media-01",
+    "classification": "Live nested",
+    "surface": "Media asset drawer",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Media Library > asset; permitted projects only.",
+    "sources": [
+      "src/app/media/[assetId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/media/media-failed-01",
+      "/media/media-missing-original",
+      "/media/media-archived-01"
+    ]
+  },
+  {
+    "id": "R013",
+    "route": "/media",
+    "exampleUrl": "/media",
+    "classification": "Live workspace",
+    "surface": "Media Library",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Sidebar Media Library; permitted projects and scoped download.",
+    "sources": [
+      "src/app/media/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R014",
+    "route": "/notifications/delivery",
+    "exampleUrl": "/notifications/delivery",
+    "classification": "Development QA",
+    "surface": "Email delivery diagnostics",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Direct only, development environment guard; non-Staff restricted.",
+    "sources": [
+      "src/app/notifications/delivery/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R015",
+    "route": "/notifications",
+    "exampleUrl": "/notifications",
+    "classification": "Live",
+    "surface": "Updates inbox",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Global Updates.",
+    "sources": [
+      "src/app/notifications/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R016",
+    "route": "/offers/[projectId]/brief",
+    "exampleUrl": "/offers/loom-launch-film/brief",
+    "classification": "Live offer",
+    "surface": "Pending offer Brief",
+    "applicableRoles": [
+      "Studio Freelancer"
+    ],
+    "entryPath": "My jobs > Pending invitation > Brief, only pending offer for matching Freelancer. Default Nina may have none; Jordan scenario needed for Loom pending seed.",
+    "sources": [
+      "src/app/offers/[projectId]/brief/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R017",
+    "route": "/outstanding-invoices",
+    "exampleUrl": "/outstanding-invoices",
+    "classification": "Live workspace",
+    "surface": "Expenses",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Sidebar Expenses; Studio administration guard.",
+    "sources": [
+      "src/app/outstanding-invoices/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R018",
+    "route": "/",
+    "exampleUrl": "/",
+    "classification": "Alias",
+    "surface": "To Do home",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Root renders same TodayPage as /today. Non-Staff route-specific unavailable/redirect.",
+    "sources": [
+      "src/app/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R019",
+    "route": "/people/[personId]",
+    "exampleUrl": "/people/sc",
+    "classification": "Live nested",
+    "surface": "Person profile",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "People > row; Work/Details/Access as applicable. Non-Staff private-directory state.",
+    "sources": [
+      "src/app/people/[personId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R020",
+    "route": "/people",
+    "exampleUrl": "/people",
+    "classification": "Live workspace",
+    "surface": "People",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Sidebar People.",
+    "sources": [
+      "src/app/people/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R021",
+    "route": "/print/[kind]/[projectId]",
+    "exampleUrl": "/print/script/loom-launch-film",
+    "classification": "Live document",
+    "surface": "Document export preview",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Script/Storyboard/Transcripts > Download/Print. Standalone shell, canViewProject boundary.",
+    "sources": [
+      "src/app/print/[kind]/[projectId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/print/storyboard/loom-launch-film",
+      "/print/transcript/loom-launch-film"
+    ]
+  },
+  {
+    "id": "R022",
+    "route": "/projects/[projectId]/costs",
+    "exampleUrl": "/projects/loom-launch-film/costs",
+    "classification": "Live utility",
+    "surface": "Project costs",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Project Team/costs entry; Staff-only route child within shared project gate.",
+    "sources": [
+      "src/app/projects/[projectId]/costs/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R023",
+    "route": "/projects/[projectId]/files",
+    "exampleUrl": "/projects/loom-launch-film/files",
+    "classification": "Live utility",
+    "surface": "Project Files",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer"
+    ],
+    "entryPath": "Project details > external files link; shared ProjectAccessGate; Customer redirects to Brief.",
+    "sources": [
+      "src/app/projects/[projectId]/files/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R024",
+    "route": "/projects/[projectId]",
+    "exampleUrl": "/projects/loom-launch-film",
+    "classification": "Redirect",
+    "surface": "Project overview alias",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project URL redirects to Brief.",
+    "sources": [
+      "src/app/projects/[projectId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R025",
+    "route": "/projects/[projectId]/script",
+    "exampleUrl": "/projects/loom-launch-film/script",
+    "classification": "Live stage",
+    "surface": "Script",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project progress > Script. ?subtab=transcripts redirects to pinned Media view.",
+    "sources": [
+      "src/app/projects/[projectId]/script/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/projects/harbour-health-care-journey/script",
+      "/projects/loom-launch-film/script?subtab=transcripts",
+      "/projects/loom-launch-film/script?preview=empty"
+    ]
+  },
+  {
+    "id": "R026",
+    "route": "/projects/[projectId]/stages/brief",
+    "exampleUrl": "/projects/loom-launch-film/stages/brief",
+    "classification": "Live stage",
+    "surface": "Brief",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project progress > Brief; membership gate.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/brief/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R027",
+    "route": "/projects/[projectId]/stages/edit",
+    "exampleUrl": "/projects/loom-launch-film/stages/edit",
+    "classification": "Live stage",
+    "surface": "Edit / Animation review",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project progress > Edit or Animation; membership gate, initially-empty by canonical route.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/edit/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R028",
+    "route": "/projects/[projectId]/stages/masters",
+    "exampleUrl": "/projects/loom-launch-film/stages/masters",
+    "classification": "Live stage",
+    "surface": "Masters",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project progress > Masters; canonical initially-empty, membership gate.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/masters/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R029",
+    "route": "/projects/[projectId]/stages/media",
+    "exampleUrl": "/projects/loom-launch-film/stages/media",
+    "classification": "Live pinned area",
+    "surface": "Project Media / Transcripts",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Pinned Media; ?view=transcripts for transcript workspace.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/media/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/projects/loom-launch-film/stages/media?view=transcripts",
+      "/projects/loom-launch-film/stages/media?view=transcripts&clip=clip-01"
+    ]
+  },
+  {
+    "id": "R030",
+    "route": "/projects/[projectId]/stages/shoot",
+    "exampleUrl": "/projects/loom-launch-film/stages/shoot",
+    "classification": "Live stage",
+    "surface": "Shoot",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Project progress > Shoot, Pre-production/On Set; membership gate, role-specific editing.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/shoot/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R031",
+    "route": "/projects/[projectId]/stages/storyboard",
+    "exampleUrl": "/projects/loom-launch-film/stages/storyboard",
+    "classification": "Live optional stage",
+    "surface": "Storyboard",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Optional Storyboard after Script; membership gate.",
+    "sources": [
+      "src/app/projects/[projectId]/stages/storyboard/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R032",
+    "route": "/prototype/journey-entry",
+    "exampleUrl": "/prototype/journey-entry",
+    "classification": "Prototype entry",
+    "surface": "Scenario journey entry",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Test mode > scenario New > invitation/magic-link entry. May accept invitation; inspect only.",
+    "sources": [
+      "src/app/prototype/journey-entry/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R033",
+    "route": "/prototype/production-flow",
+    "exampleUrl": "/prototype/production-flow",
+    "classification": "Prototype demonstration",
+    "surface": "Production flow preview",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Prototype-only direct route; no business record.",
+    "sources": [
+      "src/app/prototype/production-flow/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R034",
+    "route": "/prototype/scenarios",
+    "exampleUrl": "/prototype/scenarios",
+    "classification": "Prototype tooling",
+    "surface": "Scenario picker",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Test mode > choose scenario. Selecting scenario may replace persistent mock workspace; do not change without isolated record-preserving context.",
+    "sources": [
+      "src/app/prototype/scenarios/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R035",
+    "route": "/review",
+    "exampleUrl": "/review?project=loom-launch-film",
+    "classification": "Legacy demonstration",
+    "surface": "Populated video review fixture",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Client-edge scenario uses /review?project=loom-launch-film; route ignores query and always uses primaryDemoProject. No ProjectAccessGate layout.",
+    "sources": [
+      "src/app/review/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R036",
+    "route": "/settings/client/company",
+    "exampleUrl": "/settings/client/company",
+    "classification": "Live account",
+    "surface": "Company details",
+    "applicableRoles": [
+      "Customer"
+    ],
+    "entryPath": "Account menu > Company; query-driven Client Admin boundary.",
+    "sources": [
+      "src/app/settings/client/company/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/settings/client/company?client-role=member"
+    ]
+  },
+  {
+    "id": "R037",
+    "route": "/settings/client/team",
+    "exampleUrl": "/settings/client/team",
+    "classification": "Live account",
+    "surface": "Client team access",
+    "applicableRoles": [
+      "Customer"
+    ],
+    "entryPath": "Account menu > Company > Team access; query-driven Client Admin boundary.",
+    "sources": [
+      "src/app/settings/client/team/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/settings/client/team?client-role=member"
+    ]
+  },
+  {
+    "id": "R038",
+    "route": "/settings/client-billing",
+    "exampleUrl": "/settings/client-billing",
+    "classification": "Live Studio settings",
+    "surface": "Client billing setup",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Client billing; shell administration guard.",
+    "sources": [
+      "src/app/settings/client-billing/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R039",
+    "route": "/settings/notifications/[categoryId]",
+    "exampleUrl": "/settings/notifications/customer-reviews",
+    "classification": "Live Studio settings",
+    "surface": "Notification category editor",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Notifications > category.",
+    "sources": [
+      "src/app/settings/notifications/[categoryId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": [
+      "/settings/notifications/customer-comments",
+      "/settings/notifications/project-changes",
+      "/settings/notifications/published-shoot-updates",
+      "/settings/notifications/assignments-offers",
+      "/settings/notifications/media-requests",
+      "/settings/notifications/contractor-invoices",
+      "/settings/notifications/billing-security"
+    ]
+  },
+  {
+    "id": "R040",
+    "route": "/settings/notifications",
+    "exampleUrl": "/settings/notifications",
+    "classification": "Live Studio settings",
+    "surface": "Studio notifications",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Notifications.",
+    "sources": [
+      "src/app/settings/notifications/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R041",
+    "route": "/settings/notifications/templates",
+    "exampleUrl": "/settings/notifications/templates",
+    "classification": "Live Studio settings",
+    "surface": "Message templates",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Notifications > Client message templates.",
+    "sources": [
+      "src/app/settings/notifications/templates/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R042",
+    "route": "/settings/personal/notifications",
+    "exampleUrl": "/settings/personal/notifications",
+    "classification": "Live personal settings",
+    "surface": "Notification preferences",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Account menu > Notifications.",
+    "sources": [
+      "src/app/settings/personal/notifications/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R043",
+    "route": "/settings/personal/profile",
+    "exampleUrl": "/settings/personal/profile",
+    "classification": "Live personal settings",
+    "surface": "My profile",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Account menu > My profile.",
+    "sources": [
+      "src/app/settings/personal/profile/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R044",
+    "route": "/settings/personal/security",
+    "exampleUrl": "/settings/personal/security",
+    "classification": "Live personal settings",
+    "surface": "Security",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Account menu > Security; Customer magic-link-only copy.",
+    "sources": [
+      "src/app/settings/personal/security/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R045",
+    "route": "/settings/plan-billing",
+    "exampleUrl": "/settings/plan-billing",
+    "classification": "Live Studio settings",
+    "surface": "Brisk plan & billing",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Brisk plan & billing.",
+    "sources": [
+      "src/app/settings/plan-billing/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R046",
+    "route": "/settings/review-request-message",
+    "exampleUrl": "/settings/review-request-message",
+    "classification": "Live personal/shared setting",
+    "surface": "Review-request message",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer"
+    ],
+    "entryPath": "Stage Send > Edit default message; Customer redirects.",
+    "sources": [
+      "src/app/settings/review-request-message/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R047",
+    "route": "/settings/studio/ai-playbook",
+    "exampleUrl": "/settings/studio/ai-playbook",
+    "classification": "Live Studio settings",
+    "surface": "AI Playbook",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > AI Playbook.",
+    "sources": [
+      "src/app/settings/studio/ai-playbook/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R048",
+    "route": "/settings/studio/branding",
+    "exampleUrl": "/settings/studio/branding",
+    "classification": "Redirect",
+    "surface": "Branding alias",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Redirects /settings/studio#branding.",
+    "sources": [
+      "src/app/settings/studio/branding/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R049",
+    "route": "/settings/studio/details",
+    "exampleUrl": "/settings/studio/details",
+    "classification": "Redirect",
+    "surface": "Studio details alias",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Redirects /settings/studio#profile.",
+    "sources": [
+      "src/app/settings/studio/details/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R050",
+    "route": "/settings/studio/integrations",
+    "exampleUrl": "/settings/studio/integrations",
+    "classification": "Live Studio settings",
+    "surface": "Messaging connections",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Messaging connections.",
+    "sources": [
+      "src/app/settings/studio/integrations/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R051",
+    "route": "/settings/studio",
+    "exampleUrl": "/settings/studio",
+    "classification": "Live Studio settings",
+    "surface": "Studio setup",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Sidebar Studio settings.",
+    "sources": [
+      "src/app/settings/studio/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R052",
+    "route": "/settings/studio/portal-preview",
+    "exampleUrl": "/settings/studio/portal-preview",
+    "classification": "Sample demonstration",
+    "surface": "Sample Client portal",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer"
+    ],
+    "entryPath": "Studio setup > Preview sample Client portal. Customer unavailable.",
+    "sources": [
+      "src/app/settings/studio/portal-preview/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R053",
+    "route": "/settings/studio/production",
+    "exampleUrl": "/settings/studio/production",
+    "classification": "Live Studio settings",
+    "surface": "Production defaults",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Production defaults.",
+    "sources": [
+      "src/app/settings/studio/production/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R054",
+    "route": "/settings/studio/storage",
+    "exampleUrl": "/settings/studio/storage",
+    "classification": "Live Studio settings",
+    "surface": "Storage",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Studio settings > Storage.",
+    "sources": [
+      "src/app/settings/studio/storage/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R055",
+    "route": "/settings/studio/team",
+    "exampleUrl": "/settings/studio/team",
+    "classification": "Redirect",
+    "surface": "Studio team alias",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Redirects /people?view=Studio%20Staff.",
+    "sources": [
+      "src/app/settings/studio/team/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R056",
+    "route": "/share/brand/[token]",
+    "exampleUrl": "/share/brand/loom-2026",
+    "classification": "Live shared preview",
+    "surface": "Guest Brand Kit",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Brand Kit share URL; no auth, read-only guest intended.",
+    "sources": [
+      "src/app/share/brand/[token]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R057",
+    "route": "/share/call-sheet/[projectId]",
+    "exampleUrl": "/share/call-sheet/loom-launch-film?preview=1",
+    "classification": "Live shared document",
+    "surface": "Shared Call Sheet",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Shoot > Call Sheet > open/share; fixture project bypasses membership for intended share view.",
+    "sources": [
+      "src/app/share/call-sheet/[projectId]/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R058",
+    "route": "/share",
+    "exampleUrl": "/share",
+    "classification": "Prototype demonstration",
+    "surface": "Share control playground",
+    "applicableRoles": [
+      "Studio Staff",
+      "Studio Freelancer",
+      "Customer"
+    ],
+    "entryPath": "Prototype-only direct route with local stage/role controls.",
+    "sources": [
+      "src/app/share/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R059",
+    "route": "/studio-onboard",
+    "exampleUrl": "/studio-onboard",
+    "classification": "Live clean entry",
+    "surface": "Studio onboarding",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "New Studio sign-up entry; do not complete.",
+    "sources": [
+      "src/app/studio-onboard/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R060",
+    "route": "/today",
+    "exampleUrl": "/today",
+    "classification": "Live workspace",
+    "surface": "To Do",
+    "applicableRoles": [
+      "Studio Staff"
+    ],
+    "entryPath": "Sidebar To Do. Freelancer redirects My jobs; Customer unavailable.",
+    "sources": [
+      "src/app/today/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  },
+  {
+    "id": "R061",
+    "route": "/workspaces/[workspaceId]/clients/[clientId]/portal",
+    "exampleUrl": "/workspaces/northstar-films/clients/loom/portal",
+    "classification": "Live scoped portal",
+    "surface": "Client portal",
+    "applicableRoles": [
+      "Studio Staff",
+      "Customer"
+    ],
+    "entryPath": "Staff Clients > Open Client portal as preview; Customer Videos.",
+    "sources": [
+      "src/app/workspaces/[workspaceId]/clients/[clientId]/portal/page.tsx"
+    ],
+    "sourceReview": "Inspected route and downstream access architecture; browser confirmation required",
+    "browserStatus": "Not inspected by Reviewer C; lead owns browser",
+    "additionalBranches": []
+  }
+]

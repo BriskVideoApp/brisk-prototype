@@ -1,0 +1,89 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Project changes":
+  - link "Back to notification settings":
+    - /url: /settings/notifications
+    - text: Back to notification settings
+  - heading "Project changes" [level=2]
+  - paragraph: Choose an item to see or change its message.
+  - navigation "Project changes messages":
+    - generic: Messages
+    - generic: "2"
+    - button "Deadline changed":
+      - strong: Deadline changed
+    - button "Project paused":
+      - strong: Project paused
+  - article:
+    - heading "Deadline changed" [level=3]
+    - term: When it sends
+    - definition: When a project deadline changes.
+    - term: Who receives it
+    - definition: People following project changes.
+    - article "Deadline changed example":
+      - generic: Changed
+      - heading "Project deadline changed" [level=4]
+      - paragraph: The final delivery date has been updated.
+      - paragraph: Customer Story - APAC Hiring · Masters
+      - link "View project":
+        - /url: /projects/deel-customer-story
+        - text: View project
+    - button "Edit message"

@@ -1,0 +1,201 @@
+{
+  "baseline": "Original desktop audit captured20-21 October 2026; its initial findings remain historical evidence. This ledger tracks approved scoped implementations.",
+  "updates": [
+    {
+      "id": "MEDIA-01",
+      "title": "Media inspector layout, keyboard entry/exit and unsent comment protection",
+      "approvedOn": "28 October 2026",
+      "status": "Implemented, browser-verified and visually signed off by Tom on 28 October 2026",
+      "findingOccurrences": {
+        "A10": "Media inspector implemented. Shoot progress panel remains outside this batch.",
+        "B02": "Media card/list entry controls implemented. Transcript paragraph occurrence remains outside this batch."
+      },
+      "decision": "DEC02 adaptive dock/overlay approved for the shared global/project Media inspector only.",
+      "result": "../review-rounds/01-media-inspector/result.html",
+      "verification": "../review-rounds/01-media-inspector/implementation-validation.json",
+      "nextStep": "Signed off. Active next proposal: Team assignment; plans deferred."
+    },
+    {
+      "id": "TODO-01",
+      "title": "To Do time editor placement, actions, hours and keyboard proposal",
+      "status": "Implemented, browser-verified and visually signed off by Tom on28 October2026",
+      "proposal": "../review-rounds/02-todo-time-editor/index.html",
+      "findingOccurrences": [
+        "AC01",
+        "B15",
+        "REF06"
+      ],
+      "nextStep": "Signed off. Active next proposal: Team assignment; plans deferred.",
+      "approvedOn": "28 October2026",
+      "result": "../review-rounds/02-todo-time-editor/result.html",
+      "verification": "../review-rounds/02-todo-time-editor/implementation-validation.json"
+    },
+    {
+      "id": "PLAN-01",
+      "title": "Plan comparison visibility, scrolling and Back proposal",
+      "status": "Deferred by Tom",
+      "proposal": "../review-rounds/03-plan-comparison/index.html",
+      "findingOccurrences": [
+        "AC06",
+        "PC02 (new local draft observation)"
+      ],
+      "nextStep": "No implementation; revisit when Tom prioritises plans."
+    },
+    {
+      "id": "TEAM-01",
+      "title": "Team overview and direct Videos assignment with required hours and project pricing",
+      "status": "Implemented and desktop-checked; awaiting Tom visual sign-off",
+      "proposal": "../review-rounds/04-team-assignment/index.html",
+      "findingOccurrences": [
+        "B01",
+        "B10",
+        "Scoped project-rate label refinement"
+      ],
+      "nextStep": "Tom reviews the implemented Team result. Timing controls remain a separate design/implementation discussion.",
+      "reassessment": "../review-rounds/04-team-assignment/mobbin-review.html",
+      "latestRequirement": "../review-rounds/04-team-assignment/videos-entry-requirement.json",
+      "requiredHours": "Required hours must be visible/editable during quick assignment, with Freelancer rate and cost; not only in detailed management.",
+      "panelRefinement": "../review-rounds/04-team-assignment/panel-refinement-requirement.json",
+      "approvedOn": "28 October 2026",
+      "approvedPreview": "../review-rounds/04-team-assignment/visual-preview.html",
+      "result": "../review-rounds/04-team-assignment/result.html",
+      "verification": "../review-rounds/04-team-assignment/implementation-validation.json"
+    },
+    {
+      "id": "DEADLINE-01",
+      "title": "Turnaround timers or fixed dates, named stage/WIP targets and countdown clarity",
+      "status": "Approved timing-warning UI implemented and final desktop checks finished; awaiting Tom visual sign-off. Automatic scheduling and Studio settings remain separate.",
+      "proposal": "../review-rounds/05-stage-deadlines/timing-review.html",
+      "nextStep": "Tom reviews the finished warning pack. Final delivery proposal/agreement remains in DELIVERY-01. Separate Studio timing settings, automatic calculations and revision-round policy need their own scoped work.",
+      "designPlan": "../review-rounds/05-stage-deadlines/turnaround-design-plan.json",
+      "historicalProposal": "../review-rounds/05-stage-deadlines/index.html",
+      "interactivePreview": "../review-rounds/05-stage-deadlines/timing-preview.html",
+      "reviewRegister": "../review-rounds/05-stage-deadlines/proposal-review-register.json",
+      "sharedDefaultsRequirement": "../review-rounds/05-stage-deadlines/shared-defaults-requirement.json",
+      "chatPlacementReview": "../review-rounds/05-stage-deadlines/chat-placement-review.html",
+      "settingsRefinement": "../review-rounds/05-stage-deadlines/settings-simplification-and-units.json",
+      "revisionAllowance": "User clarified round-count semantics. Allowance and scope remain unconfigured; the existing two-day revision turnaround is separate.",
+      "latestSettingsReview": "../review-rounds/05-stage-deadlines/read-first-settings-and-copy.json",
+      "chatPlacementApprovedOn": "28 October 2026",
+      "chatPlacementDecision": "../review-rounds/05-stage-deadlines/chat-placement-recommendation.json",
+      "result": "../review-rounds/07-timing-warnings/result.html",
+      "verification": "../review-rounds/07-timing-warnings/implementation-validation.json",
+      "latestAppearance": "../review-rounds/11-notification-colours/result.html",
+      "latestTimingCard": "../review-rounds/16-timing-card-layout/result.html"
+    },
+    {
+      "id": "NAV-01",
+      "title": "Videos sidebar home icon",
+      "approvedOn": "28 October 2026",
+      "status": "Implemented and visually verified on desktop",
+      "change": "Use the existing house-line outline home icon, replacing the house asset with the filled left-side patch. Videos label, destination, permissions and styling retained.",
+      "source": "src/components/navigation/HybridSidebar.tsx",
+      "result": "../review-rounds/06-videos-home-icon/outline-home-icon-navigation.png",
+      "verification": "../review-rounds/06-videos-home-icon/outline-refinement-validation.json"
+    },
+    {
+      "id": "DELIVERY-01",
+      "title": "Final delivery proposal, Client agreement, discussion and retained history",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/08-delivery-agreement/result.html",
+      "verification": "../review-rounds/08-delivery-agreement/implementation-validation.json",
+      "nextStep": "Review the actual app result. No further implementation batch without Tom approval.",
+      "latestAppearance": "../review-rounds/11-notification-colours/result.html"
+    },
+    {
+      "id": "NAV-02",
+      "title": "People sidebar single-person icon",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and visually verified on desktop",
+      "change": "Use unmodified DS User export through DsIcon; retain label, route and permissions.",
+      "result": "../review-rounds/09-people-icon/people-icon-navigation.png",
+      "verification": "../review-rounds/09-people-icon/implementation-validation.json"
+    },
+    {
+      "id": "NAV-03",
+      "title": "Expenses sidebar simple dollar icon",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and visually verified on desktop",
+      "change": "Use unmodified DS CurrencyDollarSimple export through DsIcon; retain label, route, access and styling.",
+      "result": "../review-rounds/10-expenses-icon/expenses-icon-navigation.png",
+      "verification": "../review-rounds/10-expenses-icon/implementation-validation.json"
+    },
+    {
+      "id": "NOTIFY-01",
+      "title": "Notification colours without emergency/status icons",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "result": "../review-rounds/11-notification-colours/result.html",
+      "verification": "../review-rounds/11-notification-colours/implementation-validation.json"
+    },
+    {
+      "id": "NOTIFY-02",
+      "title": "Global Updates popover wording",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "change": "Popover heading, footer, empty copy and accessible names use Updates. Routes, settings terminology, counts and behaviour retained.",
+      "result": "../review-rounds/12-updates-label/updates-popover-focus.png",
+      "verification": "../review-rounds/12-updates-label/implementation-validation.json"
+    },
+    {
+      "id": "NAV-04",
+      "title": "Collapsed sidebar hover and keyboard tooltips",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "change": "Existing app tooltips label collapsed workspace/settings destinations, expand, Studio brand and account controls, positioned beside the scrollable rail. Routes and access retained.",
+      "result": "../review-rounds/13-collapsed-navigation-tooltips/collapsed-tooltip-focus.png",
+      "verification": "../review-rounds/13-collapsed-navigation-tooltips/implementation-validation.json"
+    },
+    {
+      "id": "DEADLINE-02",
+      "title": "Labelled requested and suggested delivery dates in Chat",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "change": "Pending timing cards show two labelled date values, followed by the audience-appropriate reason and existing Review date action. Dates, stored copy, permissions and agreement behaviour retained.",
+      "result": "../review-rounds/16-timing-card-layout/result.html",
+      "verification": "../review-rounds/16-timing-card-layout/implementation-validation.json"
+    },
+    {
+      "id": "SEARCH-01",
+      "title": "Single contextual top-bar Search with Everywhere",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "change": "One Search control and shortcut owner, default current scope with Everywhere/content filtering. Duplicate main-list bars removed. Existing permissions, working records and local filters retained.",
+      "result": "../review-rounds/17-global-search/result.html",
+      "verification": "../review-rounds/17-global-search/implementation-validation.json"
+    },
+    {
+      "id": "TEAM-02",
+      "title": "Assign team only in empty Team cells",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/18-team-empty-action/team-column.png",
+      "verification": "../review-rounds/18-team-empty-action/validation.json"
+    },
+    {
+      "id": "COLUMNS-01",
+      "title": "All Videos columns visible by default; Team after Deadline",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "result": "../review-rounds/19-video-column-defaults/column-order-detail.png",
+      "verification": "../review-rounds/19-video-column-defaults/validation.json"
+    },
+    {
+      "id": "NAV-05",
+      "title": "Clear sidebar toggle icon and state-specific tooltip",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "result": "../review-rounds/20-sidebar-toggle/sidebar-states.png",
+      "verification": "../review-rounds/20-sidebar-toggle/validation.json"
+    },
+    {
+      "id": "NAV-06",
+      "title": "Vertically centred Studio row and top-bar controls",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified",
+      "result": "../review-rounds/21-header-alignment/aligned-header.png",
+      "verification": "../review-rounds/21-header-alignment/validation.json"
+    }
+  ]
+}

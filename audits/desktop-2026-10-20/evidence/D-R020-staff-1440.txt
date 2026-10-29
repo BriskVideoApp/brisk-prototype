@@ -1,0 +1,733 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/people".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/people
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container People header
+					41 heading People, Value: 1
+						42 text People
+					43 container
+						44 text Search people
+						45 search text field (settable) Search people
+				46 container People views
+					47 checkbox All 32, Value: 1
+					48 checkbox Studio Staff 10, Value: 0
+					49 checkbox Studio Freelancers 7, Value: 0
+					50 checkbox Client contacts 15, Value: 0
+					51 checkbox Archived 2, Value: 0
+				52 button Invite person
+				53 container People directory controls
+					54 text Sort by
+					55 combo box (collapsed) Description: Sort people, Value: Latest activity, Secondary Actions: Expand
+						56 text Latest activity
+					57 text 32 people
+				58 container People directory
+					59 table
+						60 row
+							61 cell
+								62 text Person
+							63 cell
+								64 text Type
+							65 cell
+								66 text Role
+							67 cell
+								68 text Current work
+							69 cell
+								70 text Capacity
+							71 cell
+								72 text Access
+							73 cell
+								74 text Latest activity
+							75 cell
+								76 text View person details
+						77 row
+							78 cell
+								79 link Description: Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film, Value: localhost:3000/people/tom-maclachlan
+							80 cell
+								81 link Description: Open Tom Maclachlan's overview, Value: localhost:3000/people/tom-maclachlan
+								82 link Description: North Star Films, Value: localhost:3000/people/tom-maclachlan
+							83 cell
+								84 link Description: Studio Director, Value: localhost:3000/people/tom-maclachlan
+							85 cell
+								86 link Description: No active projects, Value: localhost:3000/people/tom-maclachlan
+							87 cell
+								88 button View Tom Maclachlan's workload - 40h available, 0/40h booked
+									89 text 40h available
+									90 container
+										91 text 0 / 40 h booked
+							92 cell
+								93 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/tom-maclachlan
+							94 cell
+								95 link Description: Reviewed Studio access Just now, Value: localhost:3000/people/tom-maclachlan
+							96 cell
+								97 link Description: Open Tom Maclachlan's full profile, Value: localhost:3000/people/tom-maclachlan
+						98 row
+							99 cell
+								100 link Description: Editor avatar Editor editor@chopchop.film, Value: localhost:3000/people/editor
+							101 cell
+								102 link Description: Open Editor's overview, Value: localhost:3000/people/editor
+								103 link Description: North Star Films, Value: localhost:3000/people/editor
+							104 cell
+								105 link Description: Editor, Value: localhost:3000/people/editor
+							106 cell
+								107 link Description: No active projects, Value: localhost:3000/people/editor
+							108 cell
+								109 button View Editor's workload - 40h available, 0/40h booked
+									110 text 40h available
+									111 container
+										112 text 0 / 40 h booked
+							113 cell
+								114 link Description: Pending Invite sent - waiting for them to join., Value: localhost:3000/people/editor
+								115 button Resend invite
+							116 cell
+								117 link Description: Studio invitation sent Just now, Value: localhost:3000/people/editor
+							118 cell
+								119 link Description: Open Editor's full profile, Value: localhost:3000/people/editor
+						120 row
+							121 cell
+								122 link Description: Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au, Value: localhost:3000/people/te
+							123 cell
+								124 link Description: Open Tom Mitchell's overview, Value: localhost:3000/people/te
+								125 link Description: North Star Films, Value: localhost:3000/people/te
+							126 cell
+								127 link Description: Producer, Studio Director, Value: localhost:3000/people/te
+							128 cell
+								129 link Description: Loom · Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film
+								130 link Description: Hims · Product Education - Sleep Series, Value: localhost:3000/projects/hims-product-education
+							131 cell
+								132 button View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client
+									133 text 26h available
+									134 container
+										135 text 14 / 40 h booked
+									136 container
+										137 text 12 h awaiting Client
+							138 cell
+								139 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/te
+							140 cell
+								141 link Description: Approved the Loom production schedule 1h ago, Value: localhost:3000/people/te
+							142 cell
+								143 link Description: Open Tom Mitchell's full profile, Value: localhost:3000/people/te
+						144 row
+							145 cell
+								146 link Description: Producer avatar Producer producer@chopchop.film, Value: localhost:3000/people/producer
+							147 cell
+								148 link Description: Open Producer's overview, Value: localhost:3000/people/producer
+								149 link Description: North Star Films, Value: localhost:3000/people/producer
+							150 cell
+								151 link Description: Producer, Value: localhost:3000/people/producer
+							152 cell
+								153 link Description: No active projects, Value: localhost:3000/people/producer
+							154 cell
+								155 button View Producer's workload - 40h available, 0/40h booked
+									156 text 40h available
+									157 container
+										158 text 0 / 40 h booked
+							159 cell
+								160 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/producer
+							161 cell
+								162 link Description: Updated a production schedule 1h ago, Value: localhost:3000/people/producer
+							163 cell
+								164 link Description: Open Producer's full profile, Value: localhost:3000/people/producer
+						165 row
+							166 cell
+								167 link Description: Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au, Value: localhost:3000/people/sc
+							168 cell
+								169 link Description: Open Sarah Chen's overview, Value: localhost:3000/people/sc
+								170 link Description: North Star Films, Value: localhost:3000/people/sc
+							171 cell
+								172 link Description: Editor, Value: localhost:3000/people/sc
+							173 cell
+								174 link Description: Loom · Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film
+								175 link Description: Deel · Customer Story - APAC Hiring, Value: localhost:3000/projects/deel-customer-story
+								176 link Description: +2 more active projects for Sarah Chen - view all 4, Value: localhost:3000/people/sc
+							177 cell
+								178 button View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client
+									179 text 8h over capacity
+									180 container
+										181 text 48 / 40 h booked
+									182 container
+										183 text 9 h awaiting Client
+							184 cell
+								185 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/sc
+							186 cell
+								187 link Description: Shared the Hims media handover 2h ago, Value: localhost:3000/people/sc
+							188 cell
+								189 link Description: Open Sarah Chen's full profile, Value: localhost:3000/people/sc
+						190 row
+							191 cell
+								192 link Description: Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au, Value: localhost:3000/people/md
+							193 cell
+								194 link Description: Open Maddie Diaz's overview, Value: localhost:3000/people/md
+								195 link Description: North Star Films, Value: localhost:3000/people/md
+							196 cell
+								197 link Description: Motion Designer, Value: localhost:3000/people/md
+							198 cell
+								199 link Description: Hims · Product Education - Sleep Series, Value: localhost:3000/projects/hims-product-education
+								200 link Description: Notion · Workflow Demo - Engineering Teams, Value: localhost:3000/projects/notion-workflows
+								201 link Description: +1 more active projects for Maddie Diaz - view all 3, Value: localhost:3000/people/md
+							202 cell
+								203 button View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client
+									204 text 28h available
+									205 container
+										206 text 12 / 40 h booked
+									207 container
+										208 text 24 h awaiting Client
+							209 cell
+								210 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/md
+							211 cell
+								212 link Description: Added direction to the Canva Script 3h ago, Value: localhost:3000/people/md
+							213 cell
+								214 link Description: Open Maddie Diaz's full profile, Value: localhost:3000/people/md
+						215 row
+							216 cell
+								217 link Description: Talia Green avatar Talia Green talia@canva.com, Value: localhost:3000/people/canva-contact-1
+							218 cell
+								219 link Description: Open Talia Green's overview, Value: localhost:3000/people/canva-contact-1
+								220 link Description: Canva, Value: localhost:3000/clients/canva
+							221 cell
+								222 link Description: Creative Operations Lead Creative operations, Value: localhost:3000/people/canva-contact-1
+							223 cell
+								224 link Description: Canva · Brand Refresh - Creator Templates, Value: localhost:3000/projects/canva-brand-refresh
+							225 cell
+								226 text Not applicable
+							227 cell
+								228 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/canva-contact-1
+							229 cell
+								230 link Description: Opened the Client portal 3h ago, Value: localhost:3000/people/canva-contact-1
+							231 cell
+								232 link Description: Open Talia Green's full profile, Value: localhost:3000/people/canva-contact-1
+						233 row
+							234 cell
+								235 link Description: Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au, Value: localhost:3000/people/rb
+							236 cell
+								237 link Description: Open Riley Brooks's overview, Value: localhost:3000/people/rb
+								238 link Description: North Star Films, Value: localhost:3000/people/rb
+							239 cell
+								240 link Description: Producer, Value: localhost:3000/people/rb
+							241 cell
+								242 link Description: Deel · Customer Story - APAC Hiring, Value: localhost:3000/projects/deel-customer-story
+								243 link Description: Notion · Workflow Demo - Engineering Teams, Value: localhost:3000/projects/notion-workflows
+								244 link Description: +1 more active projects for Riley Brooks - view all 3, Value: localhost:3000/people/rb
+							245 cell
+								246 button View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client
+									247 text 26h available
+									248 container
+										249 text 14 / 40 h booked
+									250 container
+										251 text 8 h awaiting Client
+							252 cell
+								253 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/rb
+							254 cell
+								255 link Description: Moved Deel into Media 4h ago, Value: localhost:3000/people/rb
+							256 cell
+								257 link Description: Open Riley Brooks's full profile, Value: localhost:3000/people/rb
+						258 row
+							259 cell
+								260 link Description: Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au, Value: localhost:3000/people/jm
+							261 cell
+								262 link Description: Open Marcus Johnson's overview, Value: localhost:3000/people/jm
+								263 link Description: North Star Films, Value: localhost:3000/people/jm
+							264 cell
+								265 link Description: Sound Designer, Value: localhost:3000/people/jm
+							266 cell
+								267 link Description: No active projects, Value: localhost:3000/people/jm
+							268 cell
+								269 button View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client
+									270 text 30h available
+									271 container
+										272 text 10 / 40 h booked
+									273 container
+										274 text 8 h awaiting Client
+							275 cell
+								276 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/jm
+							277 cell
+								278 link Description: Uploaded the OpenAI mix 18h ago, Value: localhost:3000/people/jm
+							279 cell
+								280 link Description: Open Marcus Johnson's full profile, Value: localhost:3000/people/jm
+						281 row
+							282 cell
+								283 link Description: Jordan Lee avatar Jordan Lee jordan@leevisuals.com, Value: localhost:3000/people/jl
+							284 cell
+								285 link Description: Open Jordan Lee's overview, Value: localhost:3000/people/jl
+								286 link Description: Sydney, NSW, Value: localhost:3000/people/jl
+							287 cell
+								288 link Description: Shooter, Director of Photography Cinematography - Lighting, Value: localhost:3000/people/jl
+							289 cell
+								290 link Description: Loom · Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film
+								291 link Description: Deel · Customer Story - APAC Hiring, Value: localhost:3000/projects/deel-customer-story
+								292 link Description: +1 more active projects for Jordan Lee - view all 3, Value: localhost:3000/people/jl
+							293 cell
+								294 button View Jordan Lee's workload - Available, 3 current projects
+									295 text Available
+									296 container
+										297 text 3  current  projects
+							298 cell
+								299 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/jl
+							300 cell
+								301 link Description: Accepted the Deel shoot offer 19h ago, Value: localhost:3000/people/jl
+							302 cell
+								303 link Description: Open Jordan Lee's full profile, Value: localhost:3000/people/jl
+						304 row
+							305 cell
+								306 link Description: Chris Taylor avatar Chris Taylor chris@tayloredits.com.au, Value: localhost:3000/people/ct
+							307 cell
+								308 link Description: Open Chris Taylor's overview, Value: localhost:3000/people/ct
+								309 link Description: Brisbane, QLD, Value: localhost:3000/people/ct
+							310 cell
+								311 link Description: Editor Editing - Motion graphics, Value: localhost:3000/people/ct
+							312 cell
+								313 link Description: Notion · Workflow Demo - Engineering Teams, Value: localhost:3000/projects/notion-workflows
+								314 link Description: Canva · Brand Refresh - Creator Templates, Value: localhost:3000/projects/canva-brand-refresh
+							315 cell
+								316 button View Chris Taylor's workload - Busy, 2 current projects
+									317 text Busy
+									318 container
+										319 text 2  current  projects
+							320 cell
+								321 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/ct
+							322 cell
+								323 link Description: Uploaded a Notion rough cut 21h ago, Value: localhost:3000/people/ct
+							324 cell
+								325 link Description: Open Chris Taylor's full profile, Value: localhost:3000/people/ct
+						326 row
+							327 cell
+								328 link Description: Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au, Value: localhost:3000/people/os
+							329 cell
+								330 link Description: Open Olivia Singh's overview, Value: localhost:3000/people/os
+								331 link Description: North Star Films, Value: localhost:3000/people/os
+							332 cell
+								333 link Description: Executive Producer, Value: localhost:3000/people/os
+							334 cell
+								335 link Description: Loom · Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film
+								336 link Description: Deel · Customer Story - APAC Hiring, Value: localhost:3000/projects/deel-customer-story
+							337 cell
+								338 button View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client
+									339 text 24h available
+									340 container
+										341 text 8 / 32 h booked
+									342 container
+										343 text 6 h awaiting Client
+							344 cell
+								345 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/os
+							346 cell
+								347 link Description: Reviewed the Loom client plan 22h ago, Value: localhost:3000/people/os
+							348 cell
+								349 link Description: Open Olivia Singh's full profile, Value: localhost:3000/people/os
+						350 row
+							351 cell
+								352 link Description: Aisha Khan avatar Aisha Khan aisha@khancolour.com, Value: localhost:3000/people/ak
+							353 cell
+								354 link Description: Open Aisha Khan's overview, Value: localhost:3000/people/ak
+								355 link Description: Adelaide, SA, Value: localhost:3000/people/ak
+							356 cell
+								357 link Description: Colourist Colour grading - Conform, Value: localhost:3000/people/ak
+							358 cell
+								359 link Description: No active projects, Value: localhost:3000/people/ak
+							360 cell
+								361 button View Aisha Khan's workload - Available, 2 current projects
+									362 text Available
+									363 container
+										364 text 2  current  projects
+							365 cell
+								366 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/ak
+							367 cell
+								368 link Description: Delivered the OpenAI grade 1d ago, Value: localhost:3000/people/ak
+							369 cell
+								370 link Description: Open Aisha Khan's full profile, Value: localhost:3000/people/ak
+						371 row
+							372 cell
+								373 link Description: Noah Williams avatar Noah Williams noah@hims.com, Value: localhost:3000/people/hims-contact-1
+							374 cell
+								375 link Description: Open Noah Williams's overview, Value: localhost:3000/people/hims-contact-1
+								376 link Description: Hims & Hers, Value: localhost:3000/clients/hims
+							377 cell
+								378 link Description: Content Producer Content review, Value: localhost:3000/people/hims-contact-1
+							379 cell
+								380 link Description: Hims · Product Education - Sleep Series, Value: localhost:3000/projects/hims-product-education
+							381 cell
+								382 text Not applicable
+							383 cell
+								384 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/hims-contact-1
+							385 cell
+								386 link Description: Opened the Client portal 1d ago, Value: localhost:3000/people/hims-contact-1
+							387 cell
+								388 link Description: Open Noah Williams's full profile, Value: localhost:3000/people/hims-contact-1
+						389 row
+							390 cell
+								391 link Description: Emma Davis avatar Emma Davis emma@davisanimation.com, Value: localhost:3000/people/ed
+							392 cell
+								393 link Description: Open Emma Davis's overview, Value: localhost:3000/people/ed
+								394 link Description: Hobart, TAS, Value: localhost:3000/people/ed
+							395 cell
+								396 link Description: Animator 2D animation - Character animation, Value: localhost:3000/people/ed
+							397 cell
+								398 link Description: Canva · Brand Refresh - Creator Templates, Value: localhost:3000/projects/canva-brand-refresh
+							399 cell
+								400 button View Emma Davis's workload - Available, 2 current projects
+									401 text Available
+									402 container
+										403 text 2  current  projects
+							404 cell
+								405 link Description: Accepted They have joined Brisk., Value: localhost:3000/people/ed
+							406 cell
+								407 link Description: Accepted the Canva animation offer 1d ago, Value: localhost:3000/people/ed
+							408 cell
+								409 link Description: Open Emma Davis's full profile, Value: …
+						410 row
+							411 cell
+								412 link Description: Hugo Bennett avatar Hugo Bennett hugo@bennettcamera.com, Value: …
+							413 cell
+								414 link Description: Open Hugo Bennett's overview, Value: …
+								415 link Description: Newcastle, NSW, Value: …
+							416 cell
+								417 link Description: Director of Photography Cinematography - Lighting, Value: …
+							418 cell
+								419 link Description: Ramp · Finance Recap - June Product Drop, Value: …
+							420 cell
+								421 button View Hugo Bennett's workload - Available, 1 current project
+									422 text Available
+									423 container
+										424 text 1  current  project
+							425 cell
+								426 link Description: Accepted They have joined Brisk., Value: …
+							427 cell
+								428 link Description: Sent availability for the Ramp shoot 2d ago, Value: …
+							429 cell
+								430 link Description: Open Hugo Bennett's full profile, Value: …
+						431 row
+							432 cell
+								433 link Description: Jess Taylor avatar Jess Taylor jess@loom.com, Value: …
+							434 cell
+								435 link Description: Open Jess Taylor's overview, Value: …
+								436 link Description: Loom, Value: …
+							437 cell
+								438 link Description: Marketing Director Brand approvals - Campaign strategy, Value: …
+							439 cell
+								440 link Description: Loom · Launch Film - Sales Narrative, Value: …
+							441 cell
+								442 text Not applicable
+							443 cell
+								444 link Description: Accepted They have joined Brisk., Value: …
+							445 cell
+								446 link Description: Opened the Client portal 2d ago, Value: …
+							447 cell
+								448 link Description: Open Jess Taylor's full profile, Value: …
+						449 row
+							450 cell
+								451 link Description: Sarah Kim avatar Sarah Kim sarah@loom.com, Value: …
+							452 cell
+								453 link Description: Open Sarah Kim's overview, Value: …
+								454 link Description: Loom, Value: …
+							455 cell
+								456 link Description: Brand Manager Brand approvals - Campaign delivery, Value: …
+							457 cell
+								458 link Description: Loom · Launch Film - Sales Narrative, Value: …
+							459 cell
+								460 text Not applicable
+							461 cell
+								462 link Description: Accepted They have joined Brisk., Value: …
+							463 cell
+								464 link Description: Opened the Client portal 2d ago, Value: …
+							465 cell
+								466 link Description: Open Sarah Kim's full profile, Value: …
+						467 row
+							468 cell
+								469 link Description: Maya Chen avatar Maya Chen maya@loom.com, Value: …
+							470 cell
+								471 link Description: Open Maya Chen's overview, Value: …
+								472 link Description: Loom, Value: …
+							473 cell
+								474 link Description: Marketing Director Brand approvals - Campaign strategy, Value: …
+							475 cell
+								476 link Description: Loom · Launch Film - Sales Narrative, Value: …
+							477 cell
+								478 text Not applicable
+							479 cell
+								480 link Description: Accepted They have joined Brisk., Value: …
+							481 cell
+								482 link Description: Opened the Client portal 2d ago, Value: …
+							483 cell
+								484 link Description: Open Maya Chen's full profile, Value: …
+						485 row
+							486 cell
+								487 link Description: Alex Morgan avatar Alex Morgan alex.morgan@example.com, Value: …
+							488 cell
+								489 link Description: Open Alex Morgan's overview, Value: …
+								490 link Description: Alex Morgan, Value: …
+							491 cell
+								492 link Description: Founder Approvals, Value: …
+							493 cell
+								494 link Description: No projects shared, Value: …
+							495 cell
+								496 text Not applicable
+							497 cell
+								498 link Description: Accepted They have joined Brisk., Value: …
+							499 cell
+								500 link Description: Opened the Client portal 2d ago, Value: …
+							501 cell
+								502 link Description: Open Alex Morgan's full profile, Value: …
+						503 row
+							504 cell
+								505 link Description: Nina Patel avatar Nina Patel nina@patelvfx.com, Value: …
+							506 cell
+								507 link Description: Open Nina Patel's overview, Value: …
+								508 link Description: Perth, WA, Value: …
+							509 cell
+								510 link Description: VFX Artist Compositing - Rotoscoping, Value: …
+							511 cell
+								512 link Description: Canva · Brand Refresh - Creator Templates, Value: …
+							513 cell
+								514 button View Nina Patel's workload - Available, 2 current projects
+									515 text Available
+									516 container
+										517 text 2  current  projects
+							518 cell
+								519 link Description: Accepted They have joined Brisk., Value: …
+							520 cell
+								521 link Description: Reviewed the Figma cleanup notes 2d ago, Value: …
+							522 cell
+								523 link Description: Open Nina Patel's full profile, Value: …
+						524 row
+							525 cell
+								526 link Description: Darcy Cole avatar Darcy Cole darcy@colepost.com, Value: …
+							527 cell
+								528 link Description: Open Darcy Cole's overview, Value: …
+								529 link Description: Melbourne, VIC, Value: …
+							530 cell
+								531 link Description: Editor Editing - Premiere Pro, Value: …
+							532 cell
+								533 link Description: No active projects, Value: …
+							534 cell
+								535 button View Darcy Cole's workload - Available, 0 current projects
+									536 text Available
+									537 container
+										538 text 0  current  projects
+							539 cell
+								540 link Description: Expired This invite has expired. Send a new one to continue., Value: …
+								541 button Resend invite
+							542 cell
+								543 link Description: Invitation sent 3d ago, Value: …
+							544 cell
+								545 link Description: Open Darcy Cole's full profile, Value: …
+						546 row
+							547 cell
+								548 link Description: Daniel Ortiz avatar Daniel Ortiz daniel@loom.com, Value: …
+							549 cell
+								550 link Description: Open Daniel Ortiz's overview, Value: …
+								551 link Description: Loom, Value: …
+							552 cell
+								553 link Description: Product Marketing Manager Product messaging, Value: …
+							554 cell
+								555 link Description: No projects shared, Value: …
+							556 cell
+								557 text Not applicable
+							558 cell
+								559 link Description: Pending Invite sent - waiting for them to join., Value: …
+								560 button Resend invite
+							561 cell
+								562 link Description: Portal invitation sent 3d ago, Value: …
+							563 cell
+								564 link Description: Open Daniel Ortiz's full profile, Value: …
+						565 row
+							566 cell
+								567 link Description: Mia Chen avatar Mia Chen mia@harbourhealth.com.au, Value: …
+							568 cell
+								569 link Description: Open Mia Chen's overview, Value: …
+								570 link Description: Harbour Health, Value: …
+							571 cell
+								572 link Description: Client collaborator Skills not added, Value: …
+							573 cell
+								574 link Description: No projects shared, Value: …
+							575 cell
+								576 text Not applicable
+							577 cell
+								578 link Description: Pending Invite sent - waiting for them to join., Value: …
+								579 button Resend invite
+							580 cell
+								581 link Description: Portal invitation sent 3d ago, Value: …
+							582 cell
+								583 link Description: Open Mia Chen's full profile, Value: …
+						584 row
+							585 cell
+								586 link Description: Sofia Patel avatar Sofia Patel sofia@openai.com, Value: …
+							587 cell
+								588 link Description: Open Sofia Patel's overview, Value: …
+								589 link Description: OpenAI, Value: …
+							590 cell
+								591 link Description: Partner Marketing Lead Partner communications, Value: …
+							592 cell
+								593 link Description: No projects shared, Value: …
+							594 cell
+								595 text Not applicable
+							596 cell
+								597 link Description: Accepted They have joined Brisk., Value: …
+							598 cell
+								599 link Description: Opened the Client portal 4d ago, Value: …
+							600 cell
+								601 link Description: Open Sofia Patel's full profile, Value: …
+						602 row
+							603 cell
+								604 link Description: Elliot Brooks avatar Elliot Brooks elliot@loom.com, Value: …
+							605 cell
+								606 link Description: Open Elliot Brooks's overview, Value: …
+								607 link Description: Loom, Value: …
+							608 cell
+								609 link Description: Product Marketing Manager Product messaging, Value: …
+							610 cell
+								611 link Description: Loom · Launch Film - Sales Narrative, Value: …
+							612 cell
+								613 text Not applicable
+							614 cell
+								615 link Description: Accepted They have joined Brisk., Value: …
+							616 cell
+								617 link Description: Opened the Client portal 5d ago, Value: …
+							618 cell
+								619 link Description: Open Elliot Brooks's full profile, Value: …
+						620 row
+							621 cell
+								622 link Description: Priya Nair avatar Priya Nair priya@deel.com, Value: …
+							623 cell
+								624 link Description: Open Priya Nair's overview, Value: …
+								625 link Description: Deel, Value: …
+							626 cell
+								627 link Description: Regional Marketing Lead Campaign strategy, Value: …
+							628 cell
+								629 link Description: Deel · Customer Story - APAC Hiring, Value: …
+							630 cell
+								631 text Not applicable
+							632 cell
+								633 link Description: Accepted They have joined Brisk., Value: …
+							634 cell
+								635 link Description: Opened the Client portal 6d ago, Value: …
+							636 cell
+								637 link Description: Open Priya Nair's full profile, Value: …
+						638 row
+							639 cell
+								640 link Description: Jon Bell avatar Jon Bell jon@linear.app, Value: …
+							641 cell
+								642 link Description: Open Jon Bell's overview, Value: …
+								643 link Description: Linear, Value: …
+							644 cell
+								645 link Description: Head of Content Content strategy, Value: …
+							646 cell
+								647 link Description: No projects shared, Value: …
+							648 cell
+								649 text Not applicable
+							650 cell
+								651 link Description: Accepted They have joined Brisk., Value: …
+							652 cell
+								653 link Description: Opened the Client portal 7d ago, Value: …
+							654 cell
+								655 link Description: Open Jon Bell's full profile, Value: …
+						656 row
+							657 cell
+								658 link Description: Ben Foster avatar Ben Foster ben@ramp.com, Value: …
+							659 cell
+								660 link Description: Open Ben Foster's overview, Value: …
+								661 link Description: Ramp, Value: …
+							662 cell
+								663 link Description: Brand Manager Brand approvals, Value: …
+							664 cell
+								665 link Description: Ramp · Finance Recap - June Product Drop, Value: …
+							666 cell
+								667 text Not applicable
+							668 cell
+								669 link Description: Accepted They have joined Brisk., Value: …
+							670 cell
+								671 link Description: Opened the Client portal 9d ago, Value: …
+							672 cell
+								673 link Description: Open Ben Foster's full profile, Value: …
+						674 row
+							675 cell
+								676 link Description: Max Evans avatar Max Evans max@northstarfilms.com.au, Value: …
+							677 cell
+								678 link Description: Open Max Evans's overview, Value: …
+								679 link Description: North Star Films, Value: …
+							680 cell
+								681 link Description: Production Coordinator, Value: …
+							682 cell
+								683 link Description: No active projects, Value: …
+							684 cell
+								685 button View Max Evans's workload - 40h available, 0/40h booked
+									686 text 40h available
+									687 container
+										688 text 0 / 40 h booked
+							689 cell
+								690 link Description: Accepted They have joined Brisk., Value: …
+							691 cell
+								692 link Description: Access paused by Olivia 10d ago, Value: …
+							693 cell
+								694 link Description: Open Max Evans's full profile, Value: …
+						695 row
+							696 cell
+								697 link Description: Clara Wu avatar Clara Wu clara@notion.so, Value: …
+							698 cell
+								699 link Description: Open Clara Wu's overview, Value: …
+								700 link Description: Notion, Value: …
+							701 cell
+								702 link Description: Developer Marketing Manager Product messaging, Value: …
+							703 cell
+								704 link Description: Notion · Workflow Demo - Engineering Teams, Value: …
+							705 cell
+								706 text Not applicable
+							707 cell
+								708 link Description: Accepted They have joined Brisk., Value: …
+							709 cell
+								710 link Description: Opened the Client portal 30 July 2026, Value: …
+							711 cell
+								712 link Description: Open Clara Wu's full profile, Value: …
+						713 row
+							714 cell
+								715 link Description: Amira James avatar Amira James amira@posthog.com, Value: …
+							716 cell
+								717 link Description: Open Amira James's overview, Value: …
+								718 link Description: PostHog, Value: …
+							719 cell
+								720 link Description: Product Marketing Manager Product messaging, Value: …
+							721 cell
+								722 link Description: No projects shared, Value: …
+							723 cell
+								724 text Not applicable
+							725 cell
+								726 link Description: Accepted They have joined Brisk., Value: …
+							727 cell
+								728 link Description: Opened the Client portal 6 June 2026, Value: …
+							729 cell
+								730 link Description: Open Amira James's full profile, Value: …
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/people

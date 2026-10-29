@@ -1,0 +1,52 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/edit".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 37-117
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/edit
+~				36 button Open Chat
++				37 button (collapsed) Description: Updates, Secondary Actions: Expand
++			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
++			39 container Project stage progress
++				40 container LOOM / Launch Film - Sales Narrative
++					41 link Description: Back to dashboard, Value: localhost:3000/active-videos
++					42 text LOOM Launch Film - Sales Narrative
++					43 container Project share actions
++						44 button (collapsed) Description: Share project, Secondary Actions: Expand
++				45 container LOOM Launch Film - Sales Narrative
++					46 content list Sequential production stages
++						47 container
++							48 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
++							49 text Brief
++						50 container
++							51 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
++							52 text Script
++						53 container
++							54 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
++							55 text Storyboard
++						56 container
++							57 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
++							58 text Shoot
++						59 container
++							60 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
++							61 text Edit
++						62 container
++							63 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
++							64 text Masters
++					65 container
++						66 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
++						67 text Media
++					68 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
++						69 text Adjust project flow
++			70 button Description: Upload a new version, ID: video-version-upload
++			71 container Edit readiness
++				72 heading Edit isn’t ready yet, Value: 2
++					73 text Edit isn’t ready yet
++				74 text Approve the previous stages and Media before editing begins.
++				75 content list Edit prerequisites
++					76 link Description: Open Brief - waiting on Brisk, Value: localhost:3000/projects/loom-launch-film/stages/brief
++					77 container
++						78 text Script approved
++					79 link Description: Open Storyboard - waiting on Brisk, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
++					80 link Description: Open Shoot - waiting on client, Value: localhost:3000/projects/loom-launch-film/stages/shoot
++					81 link Description: Open Media - not started, Value: localhost:3000/projects/loom-launch-film/stages/media
++				82 text Approve the Storyboard before marking Edit ready.
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/edit

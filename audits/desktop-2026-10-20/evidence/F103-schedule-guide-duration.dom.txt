@@ -1,0 +1,259 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 15 shots":
+      - strong: Shot List
+      - generic: 15 shots
+    - button "Interview Questions, 2 questions":
+      - strong: Interview Questions
+      - generic: 2 questions
+    - button "Visual References, 0 references":
+      - strong: Visual References
+      - generic: 0 references
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 3 shoot days":
+      - strong: Schedule
+      - generic: 3 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people":
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Shot List" [level=2]
+  - button "Add to Shot List": Add
+  - text: Created with Brisk AI
+  - generic: 8 shots
+  - generic "Why these?"
+  - button "Accept all": Accept all
+  - table:
+    - rowgroup:
+      - row "Reorder and shot number Shot Shot type Shot size Camera Reference Notes Actions":
+        - columnheader "Reorder and shot number":
+          - generic: Reorder and shot number
+        - columnheader "Shot"
+        - columnheader "Shot type"
+        - columnheader "Shot size"
+        - columnheader "Camera"
+        - columnheader "Reference"
+        - columnheader "Notes"
+        - columnheader "Actions"
+    - rowgroup:
+      - row:
+        - cell
+      - row "Collapse Founder interview 1 Drag to reorder group 1 Founder interview Primary frame, alternate angle, reactions and cutaways. 1 shot Add shot":
+        - cell "Collapse Founder interview 1 Drag to reorder group 1 Founder interview Primary frame, alternate angle, reactions and cutaways. 1 shot Add shot":
+          - button "Collapse Founder interview" [expanded]
+          - generic: "1"
+          - button "Drag to reorder group 1"
+          - textbox "Shot Group name": Founder interview
+          - textbox "Description for Founder interview":
+            - /placeholder: Add a group description
+            - text: Primary frame, alternate angle, reactions and cutaways.
+          - generic: 1 shot
+          - button "Add shot": Add shot
+      - row "1.1 Drag to reorder shot 1.1 Founder interview Captured Add image to Founder interview Choose File Add comment for shot 1.1 More actions for shot 1.1":
+        - cell "1.1 Drag to reorder shot 1.1":
+          - generic: "1.1"
+          - button "Drag to reorder shot 1.1"
+        - cell "Founder interview Captured":
+          - textbox "Description for shot 1.1": Founder interview
+          - generic: Captured
+        - cell:
+          - combobox "Shot type for shot 1.1":
+            - generic: + Shot type
+        - cell:
+          - combobox "Shot size for shot 1.1":
+            - generic: + Shot size
+        - cell:
+          - combobox "Camera approach for shot 1.1":
+            - generic: + Camera
+        - cell "Add image to Founder interview Choose File":
+          - button "Add image to Founder interview"
+          - button "Choose File"
+        - cell:
+          - textbox "Notes for shot 1.1":
+            - /placeholder: Add notes
+        - cell "Add comment for shot 1.1 More actions for shot 1.1":
+          - button "Add comment for shot 1.1": Add comment for shot 1.1
+          - button "More actions for shot 1.1": More actions for shot 1.1
+      - row:
+        - cell
+      - row "Expand Product demonstration 2 Drag to reorder group 2 Product demonstration Product workflow, screen detail and supporting inserts. 7 shots Accept group":
+        - cell "Expand Product demonstration 2 Drag to reorder group 2 Product demonstration Product workflow, screen detail and supporting inserts. 7 shots Accept group":
+          - button "Expand Product demonstration"
+          - generic: "2"
+          - button "Drag to reorder group 2"
+          - textbox "Shot Group name": Product demonstration
+          - textbox "Description for Product demonstration":
+            - /placeholder: Add a group description
+            - text: Product workflow, screen detail and supporting inserts.
+          - generic: 7 shots
+          - button "Accept group": Accept group
+      - row:
+        - cell
+      - row "Expand Team and workplace B-roll 3 Drag to reorder group 3 Team and workplace B-roll Natural team activity and workplace coverage. 2 shots Accept group":
+        - cell "Expand Team and workplace B-roll 3 Drag to reorder group 3 Team and workplace B-roll Natural team activity and workplace coverage. 2 shots Accept group":
+          - button "Expand Team and workplace B-roll"
+          - generic: "3"
+          - button "Drag to reorder group 3"
+          - textbox "Shot Group name": Team and workplace B-roll
+          - textbox "Description for Team and workplace B-roll":
+            - /placeholder: Add a group description
+            - text: Natural team activity and workplace coverage.
+          - generic: 2 shots
+          - button "Accept group": Accept group
+      - row:
+        - cell
+      - row "Expand Establishing coverage 4 Drag to reorder group 4 Establishing coverage Location, signage and atmosphere that set the scene. 3 shots Accept group":
+        - cell "Expand Establishing coverage 4 Drag to reorder group 4 Establishing coverage Location, signage and atmosphere that set the scene. 3 shots Accept group":
+          - button "Expand Establishing coverage"
+          - generic: "4"
+          - button "Drag to reorder group 4"
+          - textbox "Shot Group name": Establishing coverage
+          - textbox "Description for Establishing coverage":
+            - /placeholder: Add a group description
+            - text: Location, signage and atmosphere that set the scene.
+          - generic: 3 shots
+          - button "Accept group": Accept group
+      - row:
+        - cell
+      - row "Expand Additional coverage 5 Drag to reorder group 5 Additional coverage Extra shots to capture if the day allows. 2 shots Suggested by Brisk AI Accept group":
+        - cell "Expand Additional coverage 5 Drag to reorder group 5 Additional coverage Extra shots to capture if the day allows. 2 shots Suggested by Brisk AI Accept group":
+          - button "Expand Additional coverage"
+          - generic: "5"
+          - button "Drag to reorder group 5"
+          - textbox "Shot Group name": Additional coverage
+          - textbox "Description for Additional coverage":
+            - /placeholder: Add a group description
+            - text: Extra shots to capture if the day allows.
+          - generic: 2 shots
+          - img "Suggested by Brisk AI":
+            - generic: Suggested
+            - text: Suggested by Brisk AI
+          - button "Accept group": Accept group
+      - row:
+        - cell
+  - generic "Shot List readiness and actions":
+    - button "Mark shot list ready"
+- dialog "Check shot durations, step 2 of 2":
+  - banner:
+    - generic: 2 of 2
+    - button "Close missing details guide"
+  - heading "Check shot durations" [level=2]
+  - paragraph: Open shots to add individual filming times, or give every missing shot a 15 minute starting point.
+  - button "Use 15 min and continue"
+  - contentinfo:
+    - button "Back"
+    - button "Let Brisk estimate"
+    - button "Finish" [active]

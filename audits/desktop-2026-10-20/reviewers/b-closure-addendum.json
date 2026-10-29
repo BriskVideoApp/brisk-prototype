@@ -1,0 +1,231 @@
+{
+  "reviewer": "B",
+  "date": "2026-10-20T21:17:16.607148+00:00",
+  "scope": "Small closure addendum requested by lead: role account links/outside dismissal and remaining invoice PDF branch. No master/report edits.",
+  "browser": {
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "tabId": "1716948415",
+    "origin": "http://127.0.0.1:8768",
+    "isolation": "Prior B audit tab had auto-closed. Reopened only the already verified disposable B origin in own named session; no reset or storage injection.",
+    "viewport": "1440x1000"
+  },
+  "captures": [
+    "H052-account-freelancer-links",
+    "H053-account-freelancer-outside",
+    "H054-account-customer-links",
+    "H055-account-customer-outside",
+    "H056-account-staff-outside",
+    "H057-invoice-multiple-pdf-first",
+    "H058-invoice-pdf-arrow",
+    "H059-invoice-multiple-pdf-second",
+    "H060-invoice-review-cancelled",
+    "H061-invoice-area-freelancer-redirect",
+    "H062-invoice-area-customer-redirect",
+    "H063-account-invoice-addendum-restored"
+  ],
+  "closures": [
+    {
+      "id": "N085",
+      "status": "Inspected",
+      "finiteScope": "Current default account menu in each of the three access roles, initial focus, role-appropriate link destinations, outside click and existing Staff Escape.",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "states": [
+        {
+          "label": "Staff links and Escape return",
+          "evidence": [
+            "H012-account-escape"
+          ]
+        },
+        {
+          "label": "Freelancer links; initial identity/profile focus; outside dismissal",
+          "evidence": [
+            "H052-account-freelancer-links",
+            "H053-account-freelancer-outside"
+          ]
+        },
+        {
+          "label": "Customer Jess current Client Admin and billing links; initial My profile focus; outside dismissal",
+          "evidence": [
+            "H054-account-customer-links",
+            "H055-account-customer-outside"
+          ]
+        },
+        {
+          "label": "Staff outside dismissal",
+          "evidence": [
+            "H056-account-staff-outside"
+          ]
+        }
+      ],
+      "source": "src/components/navigation/UserAvatarMenu.tsx:59-92,235-254",
+      "limits": "Customer Company & team requires Client Admin; Invoices requires canAccessBilling. Those existing fixture conditions were true. No assertion that every Customer must see both. No menu destination navigation or Sign out activation required for this finite menu inspection. No full screen-reader/focus-trap audit."
+    },
+    {
+      "id": "N130",
+      "status": "Existing current evidence sufficient; no repetition",
+      "finiteScope": "Staff populated All/Unread/category inbox and read-only reminder preview",
+      "evidence": [
+        "H042-notifications-unread",
+        "H043-notifications-mentions",
+        "H044-notification-reminder-preview",
+        "H045-notification-preview-1133"
+      ],
+      "limits": "Empty/error preview branches remain separately labelled fixture/demo contexts, not fabricated failures. No mark-read or Retry/send action."
+    },
+    {
+      "id": "N119",
+      "status": "Inspected for finite safe precommit UI",
+      "roles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "states": [
+        {
+          "id": "N119-S01",
+          "label": "Single invoice file list and preview",
+          "evidence": [
+            "E093-cost-invoice-review",
+            "E094-invoice-pdf"
+          ]
+        },
+        {
+          "id": "N119-S02",
+          "label": "Matching and currency/amount mismatch review",
+          "evidence": [
+            "E095-expenses-submitted-review",
+            "E098-invoice-currency-mismatch"
+          ]
+        },
+        {
+          "id": "N119-S03",
+          "label": "Approve availability and required note guard only",
+          "evidence": [
+            "E095-expenses-submitted-review",
+            "E098-invoice-currency-mismatch"
+          ],
+          "boundary": "Approve invoice directly changes state at CostsPrimitives184; never invoke merely to inspect. Actual approval outcome is excluded."
+        },
+        {
+          "id": "N119-S04",
+          "label": "Existing approved invoice optional forward; picker and zero-destinations disabled",
+          "evidence": [
+            "E099-invoice-forward",
+            "E100-invoice-forward-picker",
+            "E101-invoice-no-destinations"
+          ],
+          "boundary": "Existing Approved fixture opens Forward safely. No approval or Email invoice invoked."
+        },
+        {
+          "id": "N119-S05",
+          "label": "Required send-back reason blank and local draft; Back then Cancel",
+          "evidence": [
+            "E096-invoice-send-back-empty",
+            "E097-invoice-send-back-draft"
+          ],
+          "boundary": "Send back in review opens a draft; Send back in the reason dialog commits. No final action."
+        },
+        {
+          "id": "N119-S06",
+          "label": "Mark paid control visible only, not activated",
+          "evidence": [
+            "H060-invoice-review-cancelled"
+          ]
+        },
+        {
+          "id": "N119-S07",
+          "label": "Two existing PDF tabs; Enter switches preview; Back then Cancel",
+          "evidence": [
+            "H057-invoice-multiple-pdf-first",
+            "H058-invoice-pdf-arrow",
+            "H059-invoice-multiple-pdf-second",
+            "H060-invoice-review-cancelled"
+          ]
+        },
+        {
+          "id": "N119-S08",
+          "label": "Freelancer and Customer Expenses restriction in settled UI",
+          "evidence": [
+            "H061-invoice-area-freelancer-redirect",
+            "H062-invoice-area-customer-redirect"
+          ],
+          "limits": "Freelancer switched while Expenses open and redirected. Customer direct known Expenses route redirected. This does not prove every project-cost URL/guard or production authorisation."
+        }
+      ],
+      "widths": "E single-preview/send-back1133 and mismatch/forward1440 plus forward disabled1133; H multiple-PDF1440. The two-file tab labels are existing short names; no exhaustive file-count/name combinations.",
+      "limits": "PDF is the current explicit prototype preview, not a decoded uploaded financial document. Actual Approve/Forward/Send back/Paid outcomes intentionally excluded. No financial record changed."
+    }
+  ],
+  "sourceChecks": {
+    "safePdfSwitch": "CostsPrimitives:219 only setPreviewFileName",
+    "approve": "CostsPrimitives:181-188 immediately approveInvoice then forward UI",
+    "sendBack": "CostsPrimitives:190-195 final action changes invoice and closes",
+    "forward": "CostsPrimitives:197-203 final email action changes forwarded state",
+    "paid": "CostsPrimitives:205-210 changes paid state",
+    "restricted": "OutstandingInvoicesPage:35-49 Staff administration guard; settled redirects directly verified"
+  },
+  "relatedFindingExtension": {
+    "id": "B07",
+    "recommendation": "Replace source-dead Masters RequestDialog tabs occurrence with live Invoice PDF files occurrence. Keep one finding, not a new total.",
+    "observation": "H058 ArrowRight on first PDF tab leaves first selected/focused. H059 Enter on second named tab switches title/content successfully. Source ordinary button role=tab markup has no panel relationship or arrow handler.",
+    "severity": "S3",
+    "classification": "Observed defect",
+    "sources": [
+      "src/components/costs/CostsPrimitives.tsx:219"
+    ],
+    "evidence": [
+      "H058-invoice-pdf-arrow",
+      "H059-invoice-multiple-pdf-second"
+    ],
+    "qualification": "Files remain reachable via ordinary Tab/Enter; no inability to view attachment claim."
+  },
+  "restoration": {
+    "evidence": "H063-account-invoice-addendum-restored",
+    "role": "Studio Staff",
+    "route": "/clients",
+    "viewport": "1440x1000",
+    "Test mode": "collapsed",
+    "dialogs": "none",
+    "financialChanges": "none"
+  },
+  "newUiFindings": 0,
+  "notRetested": [
+    "Updates All/Unread current populated views already H042-H045",
+    "Approval/forward/send-back cancelled states already E093-E101, source rechecked",
+    "No message/invitation/payment or destructive confirmation"
+  ],
+  "cleanup": {
+    "completedAt": "2026-10-20T21:18:46.148354+00:00",
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "ownedTabIds": [
+      "1716948402",
+      "1716948415"
+    ],
+    "ownedTabsAfter": [],
+    "tabClosure": "B audit tabs had already auto-closed after the completed turns. Browser-owned tab inventory was empty, so no further close operation was necessary.",
+    "viewportOverride": "Documented viewport.reset() completed successfully; explicit test override cleared.",
+    "otherWork": "No other profile, user tab, reviewer tab or window was selected, reset or closed.",
+    "verification": "Read supported viewport documentation; owned tabs list empty before reset and after reset.",
+    "historical": true
+  },
+  "remainingBranchPass": "reviewers/b-final-closure.json",
+  "latestCleanup": {
+    "completedAt": "2026-10-20T21:37:03.222Z",
+    "profile": "Tom Producer",
+    "browserId": "1",
+    "ownedTabId": "1716948424",
+    "origin": "http://127.0.0.1:8768",
+    "ownedTabsAfter": [],
+    "viewportOverride": "Documented viewport.reset() completed; read-only DOM confirmed normal 1512 × 767 viewport before closing.",
+    "tabClosure": "Explicitly closed only bound B audit tab1716948424; owned-tab inventory then empty.",
+    "restoredState": "Studio Staff; Videos All15; filters and search clear; expanded navigation; overlays closed; no local draft retained.",
+    "evidence": "H105-remaining-branches-final-restored",
+    "otherWork": "No other profile, user tab, reviewer tab or window selected, reset or closed."
+  }
+}

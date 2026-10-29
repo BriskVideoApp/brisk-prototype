@@ -1,0 +1,2856 @@
+[
+  {
+    "id": "G001-brand-kit-default",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Populated master Brand Kit at 1440",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:52:32.302Z",
+    "file": "evidence/G001-brand-kit-default.jpg",
+    "dom": "evidence/G001-brand-kit-default.txt",
+    "coverageIds": [
+      "N118",
+      "R003"
+    ],
+    "beforeCaptureId": null,
+    "afterCaptureId": "G001-brand-kit-default",
+    "actions": [
+      "Loaded studio-owner-active in verified isolated origin",
+      "Opened Loom Brand Kit; no stored changes"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529537136\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G002-brand-motion-version-menu",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Motion version menu, v3 selected",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:52:46.982Z",
+    "file": "evidence/G002-brand-motion-version-menu.jpg",
+    "dom": "evidence/G002-brand-motion-version-menu.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G001-brand-kit-default",
+    "afterCaptureId": "G002-brand-motion-version-menu",
+    "actions": [
+      "Opened Motion package version",
+      "v3, v2 and v1 are visible; no files downloaded"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  brand-version-select label-xs-semibold\" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Motion package version\" aria-controls=\"_r_l_\" aria-activedescendant=\"_r_l_-0\"><span class=\"brisk-select-trigger-label\"><span>v3 Active</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G003-brand-motion-history",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Historical v2 editor files",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:52:47.353Z",
+    "file": "evidence/G003-brand-motion-history.jpg",
+    "dom": "evidence/G003-brand-motion-history.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G002-brand-motion-version-menu",
+    "afterCaptureId": "G003-brand-motion-history",
+    "actions": [
+      "Selected v2 view; historical file names inspected",
+      "No version published or file downloaded"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  brand-version-select label-xs-semibold\" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Motion package version\"><span class=\"brisk-select-trigger-label\"><span>v2</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G004-brand-add-colour",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Add colour picker before confirmation",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:52:56.494Z",
+    "file": "evidence/G004-brand-add-colour.jpg",
+    "dom": "evidence/G004-brand-add-colour.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G003-brand-motion-history",
+    "afterCaptureId": "G004-brand-add-colour",
+    "actions": [
+      "Restored v3 Active",
+      "Add colour immediately inserted New colour #FFFFFF in isolated demo and opened picker; no Done pressed",
+      "Will reset own isolated scenario at cleanup to restore baseline"
+    ],
+    "focus": "<input class=\"brand-inline-input label-s-semibold\" aria-label=\"Hex colour\" value=\"#FFFFFF\">"
+  },
+  {
+    "id": "G005-brand-font-matrix",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Font roles matrix, existing values",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:53:45.340Z",
+    "file": "evidence/G005-brand-font-matrix.jpg",
+    "dom": "evidence/G005-brand-font-matrix.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G004-brand-add-colour",
+    "afterCaptureId": "G005-brand-font-matrix",
+    "actions": [
+      "Opened Add font; matrix shows existing roles",
+      "No font values changed or saved"
+    ],
+    "focus": "<input aria-label=\"Heading font family\" class=\"brand-inline-input paragraph-s\" placeholder=\"Not set\" value=\"Inter\">"
+  },
+  {
+    "id": "G006-brand-voice-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Voice and tone editor with source context",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:53:45.823Z",
+    "file": "evidence/G006-brand-voice-editor.jpg",
+    "dom": "evidence/G006-brand-voice-editor.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G005-brand-font-matrix",
+    "afterCaptureId": "G006-brand-voice-editor",
+    "actions": [
+      "Font matrix dismissed with Escape",
+      "Opened inline Add tone, showing empty Custom tone, disabled Add and Cancel",
+      "Cancelled inline tone draft; no tag saved"
+    ],
+    "focus": "<input aria-label=\"Custom tone\" class=\"tone-tag-input label-xs\" placeholder=\"Custom tone\" value=\"\">"
+  },
+  {
+    "id": "G007-brand-footage-empty",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Visual Assets Footage empty branch",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:53:46.556Z",
+    "file": "evidence/G007-brand-footage-empty.jpg",
+    "dom": "evidence/G007-brand-footage-empty.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G006-brand-voice-editor",
+    "afterCaptureId": "G007-brand-footage-empty",
+    "actions": [
+      "Cancelled inline tone draft",
+      "Switched Visual Assets to Footage; two existing video tiles shown",
+      "No upload or playback submitted"
+    ],
+    "focus": "<button class=\"label-xs-semibold active\" type=\"button\">Footage</button>"
+  },
+  {
+    "id": "G008-brand-imagery-preview",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Visual asset preview modal",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:54:02.211Z",
+    "file": "evidence/G008-brand-imagery-preview.jpg",
+    "dom": "evidence/G008-brand-imagery-preview.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G007-brand-footage-empty",
+    "afterCaptureId": "G008-brand-imagery-preview",
+    "actions": [
+      "Opened People collaborating preview; no download"
+    ],
+    "focus": "<button class=\"brand-imagery-asset\" type=\"button\"><img alt=\"People collaborating\" src=\"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&amp;fit=crop&amp;w=1200&amp;q=82\"></button>"
+  },
+  {
+    "id": "G009-brand-guidelines-preview",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Brand Guidelines PDF preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:54:05.913Z",
+    "file": "evidence/G009-brand-guidelines-preview.jpg",
+    "dom": "evidence/G009-brand-guidelines-preview.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G008-brand-imagery-preview",
+    "afterCaptureId": "G009-brand-guidelines-preview",
+    "actions": [
+      "Closed imagery preview using visible Close after Escape did not dismiss it",
+      "Opened existing guidelines preview; no download"
+    ],
+    "focus": "<button class=\"guidelines-file-thumbnail\" type=\"button\" aria-label=\"Open Loom-brand-guidelines.pdf\"><iframe src=\"data:application/pdf;charset=utf-8,%25PDF-1.4%0A1%200%20obj%0A%3C%3C%20%2FType%20%2FCatalog%20%2FPages%202%200%20R%20%3E%3E%0Aendobj%0A2%200%20obj%0A%3C%3C%20%2FType%20%2FPages%20%2FKids%20%5B3%200%20R%5D%20%2FCount%201%20%3E%3E%0Aendobj%0A3%200%20obj%0A%3C%3C%20%2FType%20%2FPage%20%2FParent%202%200%20R%20%2FMediaBox%20%5B0%200%20612%20792%5D%20%2FResources%20%3C%3C%20%2FFont%20%3C%3C%20%2FF1%204%200%20R%20%3E%3E%20%3E%3E%20%2FContents%205%200%20R%20%3E%3E%0Aendobj%0A4%200%20obj%0A%3C%3C%20%2FType%20%2FFont%20%2FSubtype%20%2FType1%20%2FBaseFont%20%2FHelvetica%20%3E%3E%0Aendobj%0A5"
+  },
+  {
+    "id": "G010-brand-selected-actions",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Selected editor file action scope",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:54:55.105Z",
+    "file": "evidence/G010-brand-selected-actions.jpg",
+    "dom": "evidence/G010-brand-selected-actions.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G009-brand-guidelines-preview",
+    "afterCaptureId": "G010-brand-selected-actions",
+    "actions": [
+      "Guidelines Escape did not dismiss; visible Close succeeded",
+      "One editor file checkbox is checked, aria-label Deselect asset; initial check tool return was stale",
+      "Opened selection actions; no download/copy/delete completed"
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_1l_-0\" id=\"_r_1l_\" aria-label=\"More actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_1l_-0\" tabindex=\"-1\" data-active=\"true\" data-action-tone=\"default\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Download</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_1l_-1\" tabindex=\"-1\" data-active=\"false\" data-action-tone=\"default\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-conte"
+  },
+  {
+    "id": "G011-brand-selected-delete-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Selected file delete confirmation, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T20:55:23.312Z",
+    "file": "evidence/G011-brand-selected-delete-confirm.jpg",
+    "dom": "evidence/G011-brand-selected-delete-confirm.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G010-brand-selected-actions",
+    "afterCaptureId": "G011-brand-selected-delete-confirm",
+    "actions": [
+      "Selected Delete from one-file menu",
+      "Confirmation only; no delete confirmed"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G012-brand-guest-default",
+    "role": "Guest share, underlying Studio Staff preview",
+    "width": 1440,
+    "height": 1000,
+    "state": "Shared Brand Kit read-only surface",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/share/brand/loom-2026",
+    "captured": "2026-10-20T20:56:00.596Z",
+    "file": "evidence/G012-brand-guest-default.jpg",
+    "dom": "evidence/G012-brand-guest-default.txt",
+    "coverageIds": [
+      "N118",
+      "R056"
+    ],
+    "beforeCaptureId": "G011-brand-selected-delete-confirm",
+    "afterCaptureId": "G012-brand-guest-default",
+    "actions": [
+      "Opened existing share token on isolated origin",
+      "Editor/upload controls omitted from shared surface; no download"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529725700\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G013-brand-guest-logo-dialog",
+    "role": "Guest share, underlying Studio Staff preview",
+    "width": 1440,
+    "height": 1000,
+    "state": "Guest logo dialog exposes Replace and actions",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/share/brand/loom-2026",
+    "captured": "2026-10-20T20:56:00.959Z",
+    "file": "evidence/G013-brand-guest-logo-dialog.jpg",
+    "dom": "evidence/G013-brand-guest-logo-dialog.txt",
+    "coverageIds": [
+      "N118",
+      "R056"
+    ],
+    "beforeCaptureId": "G012-brand-guest-default",
+    "afterCaptureId": "G013-brand-guest-logo-dialog",
+    "actions": [
+      "Opened logo preview from guest share",
+      "Replace and More actions remain visible; did not replace/delete/download"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Replace</button>"
+  },
+  {
+    "id": "G014-brand-guest-logo-actions",
+    "role": "Guest share, underlying Studio Staff preview",
+    "width": 1440,
+    "height": 1000,
+    "state": "Guest logo dialog Delete command",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/share/brand/loom-2026",
+    "captured": "2026-10-20T20:56:01.313Z",
+    "file": "evidence/G014-brand-guest-logo-actions.jpg",
+    "dom": "evidence/G014-brand-guest-logo-actions.txt",
+    "coverageIds": [
+      "N118",
+      "R056"
+    ],
+    "beforeCaptureId": "G013-brand-guest-logo-dialog",
+    "afterCaptureId": "G014-brand-guest-logo-actions",
+    "actions": [
+      "Opened More actions inside guest logo dialog",
+      "Delete is visible; did not activate"
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_l_-0\" id=\"_r_l_\" aria-label=\"More actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_l_-0\" tabindex=\"-1\" data-active=\"true\" data-action-tone=\"danger\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Delete</span></span></span></button></div></div>"
+  },
+  {
+    "id": "G015-studio-setup",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Studio setup focused overview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T20:56:43.275Z",
+    "file": "evidence/G015-studio-setup.jpg",
+    "dom": "evidence/G015-studio-setup.txt",
+    "coverageIds": [
+      "N122",
+      "R051"
+    ],
+    "beforeCaptureId": "G014-brand-guest-logo-actions",
+    "afterCaptureId": "G015-studio-setup",
+    "actions": [
+      "Opened Studio settings overview in isolated demo"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G016-studio-name-empty",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Studio name empty draft with disabled save",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T20:56:52.660Z",
+    "file": "evidence/G016-studio-name-empty.jpg",
+    "dom": "evidence/G016-studio-name-empty.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G015-studio-setup",
+    "afterCaptureId": "G016-studio-name-empty",
+    "actions": [
+      "Cleared name in local editor draft only",
+      "Save name disabled; no stored save"
+    ],
+    "focus": "<input id=\"_r_p_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G017-studio-logo-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Studio logo editor before upload",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T20:56:53.627Z",
+    "file": "evidence/G017-studio-logo-editor.jpg",
+    "dom": "evidence/G017-studio-logo-editor.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G016-studio-name-empty",
+    "afterCaptureId": "G017-studio-logo-editor",
+    "actions": [
+      "Cancelled name draft",
+      "Opened logo editor; no file selected or saved"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G018-studio-video-types",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing Studio video type choices",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T20:56:54.347Z",
+    "file": "evidence/G018-studio-video-types.jpg",
+    "dom": "evidence/G018-studio-video-types.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G017-studio-logo-editor",
+    "afterCaptureId": "G018-studio-video-types",
+    "actions": [
+      "Opened existing video type editor; no selections changed or saved"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G019-studio-default-brief",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Default Brief question editor",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T20:56:59.966Z",
+    "file": "evidence/G019-studio-default-brief.jpg",
+    "dom": "evidence/G019-studio-default-brief.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G018-studio-video-types",
+    "afterCaptureId": "G019-studio-default-brief",
+    "actions": [
+      "Cancelled video types without changes",
+      "Opened Brief question configuration; inspected order and required controls",
+      "No changes saved"
+    ],
+    "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\" checked=\"\">"
+  },
+  {
+    "id": "G020-studio-sample-portal",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit sample Client portal preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/portal-preview",
+    "captured": "2026-10-20T20:57:13.705Z",
+    "file": "evidence/G020-studio-sample-portal.jpg",
+    "dom": "evidence/G020-studio-sample-portal.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G019-studio-default-brief",
+    "afterCaptureId": "G020-studio-sample-portal",
+    "actions": [
+      "Preview sample Client portal opens labelled example",
+      "No real Client videos or records changed"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G021-production-defaults",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing production role defaults",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T20:57:15.352Z",
+    "file": "evidence/G021-production-defaults.jpg",
+    "dom": "evidence/G021-production-defaults.txt",
+    "coverageIds": [
+      "N123",
+      "R053"
+    ],
+    "beforeCaptureId": "G020-studio-sample-portal",
+    "afterCaptureId": "G021-production-defaults",
+    "actions": [
+      "Returned to Studio setup and opened Production defaults",
+      "Default roles and Staff assignments inspected; no save"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Production defaults\" href=\"/settings/studio/production\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/queue.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Production defaults</span></a>"
+  },
+  {
+    "id": "G022-production-role-options",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Role selector keyboard highlight without commit",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T20:57:38.257Z",
+    "file": "evidence/G022-production-role-options.jpg",
+    "dom": "evidence/G022-production-role-options.txt",
+    "coverageIds": [
+      "N123"
+    ],
+    "beforeCaptureId": "G021-production-defaults",
+    "afterCaptureId": "G022-production-role-options",
+    "actions": [
+      "Opened Producer role options and pressed End",
+      "Current Producer value not committed to another role"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Default project role\" aria-controls=\"_r_11_\" aria-activedescendant=\"_r_11_-7\"><span class=\"brisk-select-trigger-label\"><span>Producer</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G023-production-staff-options",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Default Staff selector and unassigned option",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T20:57:50.558Z",
+    "file": "evidence/G023-production-staff-options.jpg",
+    "dom": "evidence/G023-production-staff-options.txt",
+    "coverageIds": [
+      "N123"
+    ],
+    "beforeCaptureId": "G022-production-role-options",
+    "afterCaptureId": "G023-production-staff-options",
+    "actions": [
+      "Opened Default Producer selector; existing Staff options inspected",
+      "No search field offered for current list; no assignment committed"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Default Producer\" aria-controls=\"_r_12_\" aria-activedescendant=\"_r_12_-0\"><span class=\"brisk-select-trigger-label\"><span>Tom Mitchell</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G024-production-unsaved-guard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Unsaved production draft navigation guard",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T20:57:51.531Z",
+    "file": "evidence/G024-production-unsaved-guard.jpg",
+    "dom": "evidence/G024-production-unsaved-guard.txt",
+    "coverageIds": [
+      "N123"
+    ],
+    "beforeCaptureId": "G023-production-staff-options",
+    "afterCaptureId": "G024-production-unsaved-guard",
+    "actions": [
+      "Added role to local form draft only",
+      "Attempted AI Playbook navigation; unsaved guard opened",
+      "No defaults saved"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G025-ai-playbook",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "AI Playbook instructions and current references",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/ai-playbook",
+    "captured": "2026-10-20T20:58:33.618Z",
+    "file": "evidence/G025-ai-playbook.jpg",
+    "dom": "evidence/G025-ai-playbook.txt",
+    "coverageIds": [
+      "N124",
+      "R047"
+    ],
+    "beforeCaptureId": "G024-production-unsaved-guard",
+    "afterCaptureId": "G025-ai-playbook",
+    "actions": [
+      "Discarded unsaved production draft while navigating; no saved defaults changed",
+      "Opened AI Playbook"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"AI Playbook\" href=\"/settings/studio/ai-playbook\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/sparkle.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">AI Playbook</span></a>"
+  },
+  {
+    "id": "G026-ai-playbook-link-draft",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "AI reference added to local unsaved form draft",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/ai-playbook",
+    "captured": "2026-10-20T20:58:34.223Z",
+    "file": "evidence/G026-ai-playbook-link-draft.jpg",
+    "dom": "evidence/G026-ai-playbook-link-draft.txt",
+    "coverageIds": [
+      "N124"
+    ],
+    "beforeCaptureId": "G025-ai-playbook",
+    "afterCaptureId": "G026-ai-playbook-link-draft",
+    "actions": [
+      "Added reference link to form draft only; no external URL opened",
+      "Save AI Playbook not pressed"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Add link</button>"
+  },
+  {
+    "id": "G027-messaging-connections",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing Studio messaging connection states",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/integrations",
+    "captured": "2026-10-20T20:58:36.218Z",
+    "file": "evidence/G027-messaging-connections.jpg",
+    "dom": "evidence/G027-messaging-connections.txt",
+    "coverageIds": [
+      "N125",
+      "R050"
+    ],
+    "beforeCaptureId": "G026-ai-playbook-link-draft",
+    "afterCaptureId": "G027-messaging-connections",
+    "actions": [
+      "Discarded AI reference draft",
+      "Inspected connected/reconnect status and account scope",
+      "Reconnect was not invoked because it saves immediately"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Messaging connections\" href=\"/settings/studio/integrations\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/link.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Messaging connections</span></a>"
+  },
+  {
+    "id": "G028-storage-current",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Current storage provider before reversible inspection",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:46.527Z",
+    "file": "evidence/G028-storage-current.jpg",
+    "dom": "evidence/G028-storage-current.txt",
+    "coverageIds": [
+      "N125",
+      "R054"
+    ],
+    "beforeCaptureId": "G027-messaging-connections",
+    "afterCaptureId": "G028-storage-current",
+    "actions": [
+      "Opened Storage; current provider recorded for restoration"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Storage\" href=\"/settings/studio/storage\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/weather-cloud.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Storage</span></a>"
+  },
+  {
+    "id": "G029-storage-options",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Storage provider choices before selection",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:47.116Z",
+    "file": "evidence/G029-storage-options.jpg",
+    "dom": "evidence/G029-storage-options.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G028-storage-current",
+    "afterCaptureId": "G029-storage-options",
+    "actions": [
+      "Opened provider menu; no external connection started"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\" aria-controls=\"_r_1f_\" aria-activedescendant=\"_r_1f_-2\"><span class=\"brisk-select-trigger-label\"><img class=\"brisk-select-option-logo\" alt=\"\" src=\"/assets/logos/brisk.svg\"><span>Brisk Storage</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G030-storage-google-drive",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Google Drive mock storage branch",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:55.681Z",
+    "file": "evidence/G030-storage-google-drive.jpg",
+    "dom": "evidence/G030-storage-google-drive.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G029-storage-options",
+    "afterCaptureId": "G030-storage-google-drive",
+    "actions": [
+      "Reversible provider choice in isolated8767 only; no actual Google connection",
+      "Existing files not moved"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\"><span class=\"brisk-select-trigger-label\"><img class=\"brisk-select-option-logo\" alt=\"\" src=\"https://www.gstatic.com/marketing-cms/assets/images/a1/a6/49e0b7d9453b9b2a56526c0df3ff/drive.webp=s80-fcrop64=1,00000000ffffffff-rw\"><span>Google Drive</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G031-storage-dropbox",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Dropbox mock storage branch",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:56.644Z",
+    "file": "evidence/G031-storage-dropbox.jpg",
+    "dom": "evidence/G031-storage-dropbox.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G030-storage-google-drive",
+    "afterCaptureId": "G031-storage-dropbox",
+    "actions": [
+      "Reversible provider choice in isolated8767 only; no Dropbox connection"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\"><span class=\"brisk-select-trigger-label\"><img class=\"brisk-select-option-logo\" alt=\"\" src=\"https://cdn.prod.website-files.com/66c503d081b2f012369fc5d2/674000d6c0a42d41f8c331be_dropbox-2-logo-png-transparent.png\"><span>Dropbox</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G032-storage-remote",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Remote Studio mock storage branch",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:57.547Z",
+    "file": "evidence/G032-storage-remote.jpg",
+    "dom": "evidence/G032-storage-remote.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G031-storage-dropbox",
+    "afterCaptureId": "G032-storage-remote",
+    "actions": [
+      "Inspected protected project-folder description and project status labels",
+      "No files moved, uploaded or edited"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\"><span class=\"brisk-select-trigger-label\"><span>Remote Studio</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G033-storage-restored",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Original Brisk Storage provider restored",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T20:58:58.434Z",
+    "file": "evidence/G033-storage-restored.jpg",
+    "dom": "evidence/G033-storage-restored.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G032-storage-remote",
+    "afterCaptureId": "G033-storage-restored",
+    "actions": [
+      "Restored original provider Brisk Storage after authorised reversible inspection"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\"><span class=\"brisk-select-trigger-label\"><img class=\"brisk-select-option-logo\" alt=\"\" src=\"/assets/logos/brisk.svg\"><span>Brisk Storage</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G034-notifications-default",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Studio notification delivery and category policies",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications",
+    "captured": "2026-10-20T20:59:25.107Z",
+    "file": "evidence/G034-notifications-default.jpg",
+    "dom": "evidence/G034-notifications-default.txt",
+    "coverageIds": [
+      "N126",
+      "R040"
+    ],
+    "beforeCaptureId": "G033-storage-restored",
+    "afterCaptureId": "G034-notifications-default",
+    "actions": [
+      "Opened Notifications; current delivery, category and reminder states inspected"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Notifications\" href=\"/settings/notifications\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Notifications</span></a>"
+  },
+  {
+    "id": "G035-reminder-menu",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "First reminder timing options",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications",
+    "captured": "2026-10-20T20:59:25.710Z",
+    "file": "evidence/G035-reminder-menu.jpg",
+    "dom": "evidence/G035-reminder-menu.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G034-notifications-default",
+    "afterCaptureId": "G035-reminder-menu",
+    "actions": [
+      "Opened First reminder options without sending notification"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"First reminder\" aria-controls=\"_r_1h_\" aria-activedescendant=\"_r_1h_-2\"><span class=\"brisk-select-trigger-label\"><span>After 24 hours</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G036-reminders-disabled-draft",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "No-reminder draft disables dependent controls",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications",
+    "captured": "2026-10-20T20:59:33.973Z",
+    "file": "evidence/G036-reminders-disabled-draft.jpg",
+    "dom": "evidence/G036-reminders-disabled-draft.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G035-reminder-menu",
+    "afterCaptureId": "G036-reminders-disabled-draft",
+    "actions": [
+      "Selected No reminders in form draft only",
+      "Second reminder and Studio escalation are disabled; no Save"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"First reminder\"><span class=\"brisk-select-trigger-label\"><span>No reminders</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G037-review-notification-copy",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Work to review notification preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T20:59:35.701Z",
+    "file": "evidence/G037-review-notification-copy.jpg",
+    "dom": "evidence/G037-review-notification-copy.txt",
+    "coverageIds": [
+      "N126",
+      "R039"
+    ],
+    "beforeCaptureId": "G036-reminders-disabled-draft",
+    "afterCaptureId": "G037-review-notification-copy",
+    "actions": [
+      "Cancelled reminder draft back to original",
+      "Opened Work to review copy; no notification sent"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G038-review-trigger-demo",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Notification trigger demonstration popover",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T20:59:36.314Z",
+    "file": "evidence/G038-review-trigger-demo.jpg",
+    "dom": "evidence/G038-review-trigger-demo.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G037-review-notification-copy",
+    "afterCaptureId": "G038-review-trigger-demo",
+    "actions": [
+      "Opened demonstration only; no real review request sent"
+    ],
+    "focus": "<button aria-label=\"Close when this sends\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Close when this sends\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/x-close-cross.svg&quot;); --icon-size: 16px;\"></span></span></button>"
+  },
+  {
+    "id": "G039-notification-message-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Notification message editor default",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T20:59:50.739Z",
+    "file": "evidence/G039-notification-message-editor.jpg",
+    "dom": "evidence/G039-notification-message-editor.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G038-review-trigger-demo",
+    "afterCaptureId": "G039-notification-message-editor",
+    "actions": [
+      "Demonstration dismissed with Escape",
+      "Opened editable notification message; no save"
+    ],
+    "focus": "<input id=\"_r_1l_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"Edit v3 is ready to review\">"
+  },
+  {
+    "id": "G040-notification-empty-title",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Empty title notification draft validation",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T21:00:09.873Z",
+    "file": "evidence/G040-notification-empty-title.jpg",
+    "dom": "evidence/G040-notification-empty-title.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "saveEnabled": true,
+    "beforeCaptureId": "G039-notification-message-editor",
+    "afterCaptureId": "G040-notification-empty-title",
+    "actions": [
+      "Cleared Title in local message draft only",
+      "No saved notification copy changed"
+    ],
+    "focus": "<input id=\"_r_1l_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G041-notification-approval",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Alternate notification copy in same category",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T21:00:10.485Z",
+    "file": "evidence/G041-notification-approval.jpg",
+    "dom": "evidence/G041-notification-approval.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G040-notification-empty-title",
+    "afterCaptureId": "G041-notification-approval",
+    "actions": [
+      "Selected Approval recorded preview; no edit or send"
+    ],
+    "focus": "<button class=\"customer-message-template-list-item is-active\" type=\"button\" aria-current=\"true\"><span><strong class=\"label-s-semibold\">Approval recorded</strong></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></button>"
+  },
+  {
+    "id": "G042-notification-category",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Comments and replies default message preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-comments",
+    "captured": "2026-10-20T21:00:31.590Z",
+    "file": "evidence/G042-notification-category.jpg",
+    "dom": "evidence/G042-notification-category.txt",
+    "coverageIds": [
+      "N126",
+      "R039"
+    ],
+    "beforeCaptureId": "G041-notification-approval",
+    "afterCaptureId": "G042-notification-category",
+    "actions": [
+      "Opened linked category Comments and replies",
+      "Inspected send condition, recipient and message preview"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G043-notification-alternate",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Reply needed selected preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-comments",
+    "captured": "2026-10-20T21:00:32.163Z",
+    "file": "evidence/G043-notification-alternate.jpg",
+    "dom": "evidence/G043-notification-alternate.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G042-notification-category",
+    "afterCaptureId": "G043-notification-alternate",
+    "actions": [
+      "Selected alternate existing notification",
+      "No copy saved or notification sent"
+    ],
+    "focus": "<button class=\"customer-message-template-list-item is-active\" type=\"button\" aria-current=\"true\"><span><strong class=\"label-s-semibold\">Reply needed</strong></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></button>"
+  },
+  {
+    "id": "G044-notification-category",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Project changes default message preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/project-changes",
+    "captured": "2026-10-20T21:00:33.032Z",
+    "file": "evidence/G044-notification-category.jpg",
+    "dom": "evidence/G044-notification-category.txt",
+    "coverageIds": [
+      "N126",
+      "R039"
+    ],
+    "beforeCaptureId": "G043-notification-alternate",
+    "afterCaptureId": "G044-notification-category",
+    "actions": [
+      "Opened linked category Project changes",
+      "Inspected send condition, recipient and message preview"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G045-notification-alternate",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Project paused selected preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/project-changes",
+    "captured": "2026-10-20T21:00:33.610Z",
+    "file": "evidence/G045-notification-alternate.jpg",
+    "dom": "evidence/G045-notification-alternate.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G044-notification-category",
+    "afterCaptureId": "G045-notification-alternate",
+    "actions": [
+      "Selected alternate existing notification",
+      "No copy saved or notification sent"
+    ],
+    "focus": "<button class=\"customer-message-template-list-item is-active\" type=\"button\" aria-current=\"true\"><span><strong class=\"label-s-semibold\">Project paused</strong></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></button>"
+  },
+  {
+    "id": "G046-notification-category",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Invoices default message preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/contractor-invoices",
+    "captured": "2026-10-20T21:00:37.916Z",
+    "file": "evidence/G046-notification-category.jpg",
+    "dom": "evidence/G046-notification-category.txt",
+    "coverageIds": [
+      "N126",
+      "R039"
+    ],
+    "beforeCaptureId": "G045-notification-alternate",
+    "afterCaptureId": "G046-notification-category",
+    "actions": [
+      "Opened linked category Invoices",
+      "Inspected send condition, recipient and message preview"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529794108\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G047-notification-alternate",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Invoice paid selected preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/contractor-invoices",
+    "captured": "2026-10-20T21:00:38.237Z",
+    "file": "evidence/G047-notification-alternate.jpg",
+    "dom": "evidence/G047-notification-alternate.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G046-notification-category",
+    "afterCaptureId": "G047-notification-alternate",
+    "actions": [
+      "Selected alternate existing notification",
+      "No copy saved or notification sent"
+    ],
+    "focus": "<button class=\"customer-message-template-list-item is-active\" type=\"button\" aria-current=\"true\"><span><strong class=\"label-s-semibold\">Invoice paid</strong></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 14px;\"></span></button>"
+  },
+  {
+    "id": "G048-fixed-notification-copy",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Direct-entry fixed Account and access wording",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/billing-security",
+    "captured": "2026-10-20T21:01:03.483Z",
+    "file": "evidence/G048-fixed-notification-copy.jpg",
+    "dom": "evidence/G048-fixed-notification-copy.txt",
+    "coverageIds": [
+      "N126",
+      "R039"
+    ],
+    "beforeCaptureId": "G047-notification-alternate",
+    "afterCaptureId": "G048-fixed-notification-copy",
+    "actions": [
+      "Opened source-defined Account and access direct route; not linked from current four-category settings list",
+      "Fixed wording branch inspected; no edit control"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530061893\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G049-client-message-template",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Direct-entry Client message email preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/templates",
+    "captured": "2026-10-20T21:01:05.888Z",
+    "file": "evidence/G049-client-message-template.jpg",
+    "dom": "evidence/G049-client-message-template.txt",
+    "coverageIds": [
+      "N126",
+      "R041"
+    ],
+    "beforeCaptureId": "G048-fixed-notification-copy",
+    "afterCaptureId": "G049-client-message-template",
+    "actions": [
+      "Opened existing Client messages route",
+      "Email example and selectable template list inspected; no email sent"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530064489\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G050-client-template-editor",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client email message editor",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/templates",
+    "captured": "2026-10-20T21:01:06.286Z",
+    "file": "evidence/G050-client-template-editor.jpg",
+    "dom": "evidence/G050-client-template-editor.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G049-client-message-template",
+    "afterCaptureId": "G050-client-template-editor",
+    "actions": [
+      "Opened message editor; no fields saved"
+    ],
+    "focus": "<input id=\"_r_p_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"Edit ready for review\">"
+  },
+  {
+    "id": "G051-plan-current",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Current Brisk plan, usage and add-ons",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:18.952Z",
+    "file": "evidence/G051-plan-current.jpg",
+    "dom": "evidence/G051-plan-current.txt",
+    "coverageIds": [
+      "N127",
+      "R045"
+    ],
+    "beforeCaptureId": "G050-client-template-editor",
+    "afterCaptureId": "G051-plan-current",
+    "actions": [
+      "Opened plan billing; no billing action completed"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530067037\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G052-plan-comparison-monthly",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Plan comparison monthly selection",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:19.314Z",
+    "file": "evidence/G052-plan-comparison-monthly.jpg",
+    "dom": "evidence/G052-plan-comparison-monthly.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G051-plan-current",
+    "afterCaptureId": "G052-plan-comparison-monthly",
+    "actions": [
+      "Opened comparison; current plan disabled",
+      "No plan selected or charge made"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Close</button>"
+  },
+  {
+    "id": "G053-plan-comparison-annual",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Plan comparison annual selection",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:19.674Z",
+    "file": "evidence/G053-plan-comparison-annual.jpg",
+    "dom": "evidence/G053-plan-comparison-annual.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G052-plan-comparison-monthly",
+    "afterCaptureId": "G053-plan-comparison-annual",
+    "actions": [
+      "Attempted pointer click Annual",
+      "Follow-up aria-pressed remained false and Monthly confirmation G054 verifies unchanged frequency",
+      "No subscription changed"
+    ],
+    "focus": "<dialog class=\"DialogSurface_dialog__Dvp8i DialogSurface_full__jYUvv\" aria-labelledby=\"_r_o_-title\" aria-describedby=\"_r_o_-description\" open=\"\"><header class=\"DialogSurface_header__bWRQO\"><h2 class=\"headings-xs-bold\" id=\"_r_o_-title\">Compare Brisk plans</h2><div class=\"paragraph-s\" id=\"_r_o_-description\">Choose the plan and billing frequency that fit your Studio.</div></header><div class=\"DialogSurface_content__q3fP6 paragraph-s\"><div class=\"billing-modal-frequency\" role=\"group\" aria-label=\"Billing frequency for plan change\"><button class=\"label-s-semibold is-selected\" type=\"button\" aria-pressed=\"true\">Monthly</button><button class=\"label-s-semibold \" type=\"button\" aria-pressed=\"false\">Annu"
+  },
+  {
+    "id": "G054-plan-change-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Plan change financial confirmation, unsubmitted",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:34.060Z",
+    "file": "evidence/G054-plan-change-confirm.jpg",
+    "dom": "evidence/G054-plan-change-confirm.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G053-plan-comparison-annual",
+    "afterCaptureId": "G054-plan-change-confirm",
+    "actions": [
+      "Opened Business monthly confirmation after ineffective pointer Annual attempt",
+      "Frequency displayed Monthly; no Confirm change pressed"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G055-storage-addon-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Additional storage confirmation, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:35.236Z",
+    "file": "evidence/G055-storage-addon-confirm.jpg",
+    "dom": "evidence/G055-storage-addon-confirm.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G054-plan-change-confirm",
+    "afterCaptureId": "G055-storage-addon-confirm",
+    "actions": [
+      "Opened first Add-on confirmation only; no add-on purchased"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G056-staff-addon-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Additional Staff user confirmation, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:02:35.957Z",
+    "file": "evidence/G056-staff-addon-confirm.jpg",
+    "dom": "evidence/G056-staff-addon-confirm.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G055-storage-addon-confirm",
+    "afterCaptureId": "G056-staff-addon-confirm",
+    "actions": [
+      "Opened second Add-on confirmation only; no purchase"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G057-plan-frequency-keyboard",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Hidden Annual choice activated by keyboard",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:04:07.084Z",
+    "file": "evidence/G057-plan-frequency-keyboard.jpg",
+    "dom": "evidence/G057-plan-frequency-keyboard.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "annualPressed": "true",
+    "beforeCaptureId": "G056-staff-addon-confirm",
+    "afterCaptureId": "G057-plan-frequency-keyboard",
+    "actions": [
+      "Pointer Annual attempt had not changed monthly selection",
+      "Focused Annual and pressed Enter; aria-pressed now checked below",
+      "No plan change submitted"
+    ],
+    "focus": "<button class=\"label-s-semibold is-selected\" type=\"button\" aria-pressed=\"true\">Annual</button>"
+  },
+  {
+    "id": "G058-plan-annual-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Annual Business confirmation, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:04:07.450Z",
+    "file": "evidence/G058-plan-annual-confirm.jpg",
+    "dom": "evidence/G058-plan-annual-confirm.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G057-plan-frequency-keyboard",
+    "afterCaptureId": "G058-plan-annual-confirm",
+    "actions": [
+      "After keyboard Annual selection, opened Business confirmation",
+      "No Confirm change pressed"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G059-plan-trial",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock plan preview: trial",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing?preview=trial",
+    "captured": "2026-10-20T21:04:53.761Z",
+    "file": "evidence/G059-plan-trial.jpg",
+    "dom": "evidence/G059-plan-trial.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G058-plan-annual-confirm",
+    "afterCaptureId": "G059-plan-trial",
+    "actions": [
+      "Opened source-defined query preview trial",
+      "No billing action invoked"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530292307\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G060-plan-overdue",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock plan preview: overdue",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing?preview=overdue",
+    "captured": "2026-10-20T21:04:54.805Z",
+    "file": "evidence/G060-plan-overdue.jpg",
+    "dom": "evidence/G060-plan-overdue.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G059-plan-trial",
+    "afterCaptureId": "G060-plan-overdue",
+    "actions": [
+      "Opened source-defined query preview overdue",
+      "No billing action invoked"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530293785\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G061-plan-restricted",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock plan preview: no-permission",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing?preview=no-permission",
+    "captured": "2026-10-20T21:04:55.927Z",
+    "file": "evidence/G061-plan-restricted.jpg",
+    "dom": "evidence/G061-plan-restricted.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G060-plan-overdue",
+    "afterCaptureId": "G061-plan-restricted",
+    "actions": [
+      "Opened source-defined query preview no-permission",
+      "No billing action invoked"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530294845\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G062-plan-cancelling",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock plan preview: cancelling",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing?preview=cancelling",
+    "captured": "2026-10-20T21:04:57.241Z",
+    "file": "evidence/G062-plan-cancelling.jpg",
+    "dom": "evidence/G062-plan-cancelling.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G061-plan-restricted",
+    "afterCaptureId": "G062-plan-cancelling",
+    "actions": [
+      "Opened source-defined query preview cancelling",
+      "No billing action invoked"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530295951\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G063-client-billing-default",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Current Studio Client billing choice",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing",
+    "captured": "2026-10-20T21:04:59.331Z",
+    "file": "evidence/G063-client-billing-default.jpg",
+    "dom": "evidence/G063-client-billing-default.txt",
+    "coverageIds": [
+      "N127",
+      "R038"
+    ],
+    "beforeCaptureId": "G062-plan-cancelling",
+    "afterCaptureId": "G063-client-billing-default",
+    "actions": [
+      "Opened Client billing; subscription scope remains separate"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530298124\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G064-stripe-disconnect-confirm",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Stripe disconnect confirmation, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing",
+    "captured": "2026-10-20T21:05:11.972Z",
+    "file": "evidence/G064-stripe-disconnect-confirm.jpg",
+    "dom": "evidence/G064-stripe-disconnect-confirm.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G063-client-billing-default",
+    "afterCaptureId": "G064-stripe-disconnect-confirm",
+    "actions": [
+      "Opened More Stripe actions then Disconnect Stripe confirmation",
+      "Did not confirm disconnect"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep connected</button>"
+  },
+  {
+    "id": "G065-client-billing-unselected",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit unselected Client billing preview",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=unselected",
+    "captured": "2026-10-20T21:05:13.695Z",
+    "file": "evidence/G065-client-billing-unselected.jpg",
+    "dom": "evidence/G065-client-billing-unselected.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G064-stripe-disconnect-confirm",
+    "afterCaptureId": "G065-client-billing-unselected",
+    "actions": [
+      "Opened source-defined unselected preview; no billing method chosen"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530312296\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G066-stripe-connect-entry",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Stripe handoff entry, cancelled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=unselected",
+    "captured": "2026-10-20T21:05:25.360Z",
+    "file": "evidence/G066-stripe-connect-entry.jpg",
+    "dom": "evidence/G066-stripe-connect-entry.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G065-client-billing-unselected",
+    "afterCaptureId": "G066-stripe-connect-entry",
+    "actions": [
+      "Opened Connect Stripe explanation",
+      "Continue to Stripe not pressed; no OAuth or connection"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G067-client-independent",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock Client billing preview: independent",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=independent",
+    "captured": "2026-10-20T21:05:26.921Z",
+    "file": "evidence/G067-client-independent.jpg",
+    "dom": "evidence/G067-client-independent.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G066-stripe-connect-entry",
+    "afterCaptureId": "G067-client-independent",
+    "actions": [
+      "Opened source-defined query preview independent",
+      "No connection, disconnect, payment or method change"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530325723\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G068-client-stripe-action",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock Client billing preview: stripe-action-required",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=stripe-action-required",
+    "captured": "2026-10-20T21:05:28.168Z",
+    "file": "evidence/G068-client-stripe-action.jpg",
+    "dom": "evidence/G068-client-stripe-action.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G067-client-independent",
+    "afterCaptureId": "G068-client-stripe-action",
+    "actions": [
+      "Opened source-defined query preview stripe-action-required",
+      "No connection, disconnect, payment or method change"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530327040\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G069-client-stripe-disconnected",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock Client billing preview: stripe-disconnected",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=stripe-disconnected",
+    "captured": "2026-10-20T21:05:29.579Z",
+    "file": "evidence/G069-client-stripe-disconnected.jpg",
+    "dom": "evidence/G069-client-stripe-disconnected.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G068-client-stripe-action",
+    "afterCaptureId": "G069-client-stripe-disconnected",
+    "actions": [
+      "Opened source-defined query preview stripe-disconnected",
+      "No connection, disconnect, payment or method change"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530328265\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G070-client-billing-restricted",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit mock Client billing preview: no-permission",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/client-billing?preview=no-permission",
+    "captured": "2026-10-20T21:05:30.789Z",
+    "file": "evidence/G070-client-billing-restricted.jpg",
+    "dom": "evidence/G070-client-billing-restricted.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G069-client-stripe-disconnected",
+    "afterCaptureId": "G070-client-billing-restricted",
+    "actions": [
+      "Opened source-defined query preview no-permission",
+      "No connection, disconnect, payment or method change"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530329601\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G071-staff-personal-profile",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Staff personal and work profile sections",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:06:13.691Z",
+    "file": "evidence/G071-staff-personal-profile.jpg",
+    "dom": "evidence/G071-staff-personal-profile.txt",
+    "coverageIds": [
+      "N120",
+      "R043"
+    ],
+    "beforeCaptureId": "G070-client-billing-restricted",
+    "afterCaptureId": "G071-staff-personal-profile",
+    "actions": [
+      "Opened own profile; no values edited or saved"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530332044\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G072-timezone-no-results",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Personal timezone search no-results",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:06:26.635Z",
+    "file": "evidence/G072-timezone-no-results.jpg",
+    "dom": "evidence/G072-timezone-no-results.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G071-staff-personal-profile",
+    "afterCaptureId": "G072-timezone-no-results",
+    "actions": [
+      "Searched selector only; no timezone committed"
+    ],
+    "focus": "<input class=\"label-s\" role=\"combobox\" aria-label=\"Search personal timezone\" aria-expanded=\"true\" aria-controls=\"_r_1h_\" aria-autocomplete=\"list\" placeholder=\"Search\" type=\"search\" value=\"zzAuditNoMatch\">"
+  },
+  {
+    "id": "G073-personal-notifications",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Personal notification groups and mandatory security email",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/personal/notifications",
+    "captured": "2026-10-20T21:06:47.165Z",
+    "file": "evidence/G073-personal-notifications.jpg",
+    "dom": "evidence/G073-personal-notifications.txt",
+    "coverageIds": [
+      "N120",
+      "R042"
+    ],
+    "beforeCaptureId": "G072-timezone-no-results",
+    "afterCaptureId": "G073-personal-notifications",
+    "actions": [
+      "Inspected role-specific personal notification preferences and Always on security email",
+      "No saved toggle changed"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"My notifications\" href=\"/settings/personal/notifications\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">My notifications</span></a>"
+  },
+  {
+    "id": "G074-staff-security",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Staff password authentication details",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security",
+    "captured": "2026-10-20T21:06:49.144Z",
+    "file": "evidence/G074-staff-security.jpg",
+    "dom": "evidence/G074-staff-security.txt",
+    "coverageIds": [
+      "N120",
+      "R044"
+    ],
+    "beforeCaptureId": "G073-personal-notifications",
+    "afterCaptureId": "G074-staff-security",
+    "actions": [
+      "Inspected sign-in method only"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Security\" href=\"/settings/personal/security\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/lock.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Security</span></a>"
+  },
+  {
+    "id": "G075-password-dialog",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Password change dialog, cancelled before entry",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security",
+    "captured": "2026-10-20T21:06:49.745Z",
+    "file": "evidence/G075-password-dialog.jpg",
+    "dom": "evidence/G075-password-dialog.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G074-staff-security",
+    "afterCaptureId": "G075-password-dialog",
+    "actions": [
+      "Opened password dialog without entering credentials",
+      "No password form submitted"
+    ],
+    "focus": "<input id=\"_r_1p_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"password\">"
+  },
+  {
+    "id": "G076-freelancer-profile",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Freelancer personal profile and rates",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:07:39.792Z",
+    "file": "evidence/G076-freelancer-profile.jpg",
+    "dom": "evidence/G076-freelancer-profile.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G075-password-dialog",
+    "afterCaptureId": "G076-freelancer-profile",
+    "actions": [
+      "Loaded freelancer-active in own isolated origin, clearing earlier temporary Brand Kit colour",
+      "Opened own profile; professional/business fields inspected without save",
+      "No rates field exists in this current personal-profile consumer"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530458438\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G077-freelancer-notifications",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Freelancer notification preference scope",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/notifications",
+    "captured": "2026-10-20T21:07:57.755Z",
+    "file": "evidence/G077-freelancer-notifications.jpg",
+    "dom": "evidence/G077-freelancer-notifications.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G076-freelancer-profile",
+    "afterCaptureId": "G077-freelancer-notifications",
+    "actions": [
+      "Inspected assigned-project and direct-contact preference copy; no saved changes"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"My notifications\" href=\"/settings/personal/notifications\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">My notifications</span></a>"
+  },
+  {
+    "id": "G078-freelancer-security",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Freelancer sign-in method branch",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security",
+    "captured": "2026-10-20T21:07:58.246Z",
+    "file": "evidence/G078-freelancer-security.jpg",
+    "dom": "evidence/G078-freelancer-security.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G077-freelancer-notifications",
+    "afterCaptureId": "G078-freelancer-security",
+    "actions": [
+      "Inspected current authentication explanation only"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Security\" href=\"/settings/personal/security\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/lock.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Security</span></a>"
+  },
+  {
+    "id": "G079-security-google",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit authentication preview: google",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security?auth=google",
+    "captured": "2026-10-20T21:08:25.202Z",
+    "file": "evidence/G079-security-google.jpg",
+    "dom": "evidence/G079-security-google.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G078-freelancer-security",
+    "afterCaptureId": "G079-security-google",
+    "actions": [
+      "Inspected source-defined auth preview; no credentials or external sign-in"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530503629\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G080-security-microsoft",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit authentication preview: microsoft",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security?auth=microsoft",
+    "captured": "2026-10-20T21:08:26.593Z",
+    "file": "evidence/G080-security-microsoft.jpg",
+    "dom": "evidence/G080-security-microsoft.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G079-security-google",
+    "afterCaptureId": "G080-security-microsoft",
+    "actions": [
+      "Inspected source-defined auth preview; no credentials or external sign-in"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530505232\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G081-security-magic-link",
+    "role": "Studio Freelancer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Explicit authentication preview: magic-link",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security?auth=magic-link",
+    "captured": "2026-10-20T21:08:28.296Z",
+    "file": "evidence/G081-security-magic-link.jpg",
+    "dom": "evidence/G081-security-magic-link.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G080-security-microsoft",
+    "afterCaptureId": "G081-security-magic-link",
+    "actions": [
+      "Inspected source-defined auth preview; no credentials or external sign-in"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530506712\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G082-client-company",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client company details and read-only Studio context",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/company",
+    "captured": "2026-10-20T21:09:04.360Z",
+    "file": "evidence/G082-client-company.jpg",
+    "dom": "evidence/G082-client-company.txt",
+    "coverageIds": [
+      "N121",
+      "R036"
+    ],
+    "beforeCaptureId": "G081-security-magic-link",
+    "afterCaptureId": "G082-client-company",
+    "actions": [
+      "Loaded client-active in isolated origin",
+      "Opened company settings; no details saved"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530542940\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G083-client-team-admin",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client Admin team access list",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:14.997Z",
+    "file": "evidence/G083-client-team-admin.jpg",
+    "dom": "evidence/G083-client-team-admin.txt",
+    "coverageIds": [
+      "N121",
+      "R037"
+    ],
+    "beforeCaptureId": "G082-client-company",
+    "afterCaptureId": "G083-client-team-admin",
+    "actions": [
+      "Opened Team access as Client Admin; no membership changed"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Team access\" href=\"/settings/client/team\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/users-three.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Team access</span></a>"
+  },
+  {
+    "id": "G084-client-invite-entry",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client colleague invitation form, unsent",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:42.751Z",
+    "file": "evidence/G084-client-invite-entry.jpg",
+    "dom": "evidence/G084-client-invite-entry.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G083-client-team-admin",
+    "afterCaptureId": "G084-client-invite-entry",
+    "actions": [
+      "Opened invitation form only; no recipient entered or invitation sent"
+    ],
+    "focus": "<input id=\"_r_13_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G085-client-project-mixed",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Existing mixed project-access selection",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:43.465Z",
+    "file": "evidence/G085-client-project-mixed.jpg",
+    "dom": "evidence/G085-client-project-mixed.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G084-client-invite-entry",
+    "afterCaptureId": "G085-client-project-mixed",
+    "actions": [
+      "Opened Sarah Kim project access; original one selected project inspected"
+    ],
+    "focus": "<input aria-checked=\"mixed\" data-indeterminate=\"true\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">"
+  },
+  {
+    "id": "G086-client-project-all",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "All project-access draft",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:44.148Z",
+    "file": "evidence/G086-client-project-all.jpg",
+    "dom": "evidence/G086-client-project-all.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G085-client-project-mixed",
+    "afterCaptureId": "G086-client-project-all",
+    "actions": [
+      "Selected all current projects in local dialog draft only",
+      "Save access not pressed"
+    ],
+    "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">"
+  },
+  {
+    "id": "G087-client-project-none",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "No project-access draft",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:44.744Z",
+    "file": "evidence/G087-client-project-none.jpg",
+    "dom": "evidence/G087-client-project-none.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G086-client-project-all",
+    "afterCaptureId": "G087-client-project-none",
+    "actions": [
+      "Cleared all selections in local dialog draft only",
+      "Save access not pressed"
+    ],
+    "focus": "<input aria-checked=\"false\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">"
+  },
+  {
+    "id": "G088-client-member-actions",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Active Client member command menu",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:45.921Z",
+    "file": "evidence/G088-client-member-actions.jpg",
+    "dom": "evidence/G088-client-member-actions.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G087-client-project-none",
+    "afterCaptureId": "G088-client-member-actions",
+    "actions": [
+      "Cancelled access draft, restoring existing one-project access",
+      "Opened member menu only; Remove user not activated"
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_r_-0\" id=\"_r_r_\" aria-label=\"Actions for Sarah Kim\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_r_-0\" tabindex=\"-1\" data-active=\"true\" data-action-tone=\"danger\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Remove user</span></span></span></button></div></div>"
+  },
+  {
+    "id": "G089-client-pending-actions",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Pending Client invitation command menu",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:09:48.459Z",
+    "file": "evidence/G089-client-pending-actions.jpg",
+    "dom": "evidence/G089-client-pending-actions.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G088-client-member-actions",
+    "afterCaptureId": "G089-client-pending-actions",
+    "actions": [
+      "Opened pending invitation menu",
+      "No Resend or Cancel invitation activated"
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_t_-0\" id=\"_r_t_\" aria-label=\"Actions for Daniel Ortiz\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_t_-0\" tabindex=\"-1\" data-active=\"true\" data-action-tone=\"default\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Resend invitation</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   has-divider\" id=\"_r_t_-1\" tabindex=\"-1\" data-active=\"false\" data-action-tone=\"danger\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class"
+  },
+  {
+    "id": "G090-client-membership-role-menu",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client membership-role selector without commit",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:10:51.224Z",
+    "file": "evidence/G090-client-membership-role-menu.jpg",
+    "dom": "evidence/G090-client-membership-role-menu.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G089-client-pending-actions",
+    "afterCaptureId": "G090-client-membership-role-menu",
+    "actions": [
+      "Opened Client Admin/Client Member choices",
+      "No role change committed"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Role for Sarah Kim\" aria-controls=\"_r_q_\" aria-activedescendant=\"_r_q_-1\"><span class=\"brisk-select-trigger-label\"><span>Client Member</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G091-client-member-team-restricted",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client Member restricted Team access",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team?client-role=member",
+    "captured": "2026-10-20T21:10:53.085Z",
+    "file": "evidence/G091-client-member-team-restricted.jpg",
+    "dom": "evidence/G091-client-member-team-restricted.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G090-client-membership-role-menu",
+    "afterCaptureId": "G091-client-member-team-restricted",
+    "actions": [
+      "Opened explicit Client Member preview; no membership changed"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530651409\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G092-client-member-company-restricted",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client Member restricted Company details",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/company?client-role=member",
+    "captured": "2026-10-20T21:10:58.888Z",
+    "file": "evidence/G092-client-member-company-restricted.jpg",
+    "dom": "evidence/G092-client-member-company-restricted.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G091-client-member-team-restricted",
+    "afterCaptureId": "G092-client-member-company-restricted",
+    "actions": [
+      "Opened explicit Client Member company preview; no saved settings"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530653884\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G093-client-invoices",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client invoice history",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/client/invoices",
+    "captured": "2026-10-20T21:11:04.002Z",
+    "file": "evidence/G093-client-invoices.jpg",
+    "dom": "evidence/G093-client-invoices.txt",
+    "coverageIds": [
+      "N121",
+      "R006"
+    ],
+    "beforeCaptureId": "G092-client-member-company-restricted",
+    "afterCaptureId": "G093-client-invoices",
+    "actions": [
+      "Read current invoice history only; no payments or downloads"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530660198\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"6:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n8:\\\"$Sreact.fragment\\\"\\n17:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n19:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G094-client-invoices-restricted",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client invoices access-restricted state",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/client/invoices?billing=hidden",
+    "captured": "2026-10-20T21:11:28.421Z",
+    "file": "evidence/G094-client-invoices-restricted.jpg",
+    "dom": "evidence/G094-client-invoices-restricted.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G093-client-invoices",
+    "afterCaptureId": "G094-client-invoices-restricted",
+    "actions": [
+      "Opened source-defined billing=hidden preview",
+      "Read restriction explanation; no billing change"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530664284\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"6:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n8:\\\"$Sreact.fragment\\\"\\n17:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n19:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G095-client-personal-profile",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client personal profile and company membership",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:11:32.218Z",
+    "file": "evidence/G095-client-personal-profile.jpg",
+    "dom": "evidence/G095-client-personal-profile.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G094-client-invoices-restricted",
+    "afterCaptureId": "G095-client-personal-profile",
+    "actions": [
+      "Opened Client profile; no details saved"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530690402\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G096-client-personal-notifications",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client personal notification preferences",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/personal/notifications",
+    "captured": "2026-10-20T21:11:35.181Z",
+    "file": "evidence/G096-client-personal-notifications.jpg",
+    "dom": "evidence/G096-client-personal-notifications.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G095-client-personal-profile",
+    "afterCaptureId": "G096-client-personal-notifications",
+    "actions": [
+      "Inspected Client-specific notification group copy only"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"My notifications\" href=\"/settings/personal/notifications\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">My notifications</span></a>"
+  },
+  {
+    "id": "G097-client-security",
+    "role": "Customer",
+    "width": 1440,
+    "height": 1000,
+    "state": "Client magic-link security explanation",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security",
+    "captured": "2026-10-20T21:11:37.468Z",
+    "file": "evidence/G097-client-security.jpg",
+    "dom": "evidence/G097-client-security.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G096-client-personal-notifications",
+    "afterCaptureId": "G097-client-security",
+    "actions": [
+      "Read sign-in link explanation and Studio contact boundary",
+      "No email/authentication changed"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Security\" href=\"/settings/personal/security\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/lock.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Security</span></a>"
+  },
+  {
+    "id": "G098-client-security-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client security at narrower desktop",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/personal/security",
+    "captured": "2026-10-20T21:12:53.348Z",
+    "file": "evidence/G098-client-security-1133.jpg",
+    "dom": "evidence/G098-client-security-1133.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G097-client-security",
+    "afterCaptureId": "G098-client-security-1133",
+    "actions": [
+      "Changed only this audit window viewport to1133x1000"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Security\" href=\"/settings/personal/security\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/lock.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Security</span></a>"
+  },
+  {
+    "id": "G099-client-profile-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client personal profile at1133",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:12:58.052Z",
+    "file": "evidence/G099-client-profile-1133.jpg",
+    "dom": "evidence/G099-client-profile-1133.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G098-client-security-1133",
+    "afterCaptureId": "G099-client-profile-1133",
+    "actions": [
+      "Inspected narrower profile composition; no save"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"My profile\" href=\"/settings/personal/profile\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/user-switch.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">My profile</span></a>"
+  },
+  {
+    "id": "G100-client-team-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client Team access at1133",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:13:00.815Z",
+    "file": "evidence/G100-client-team-1133.jpg",
+    "dom": "evidence/G100-client-team-1133.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G099-client-profile-1133",
+    "afterCaptureId": "G100-client-team-1133",
+    "actions": [
+      "Inspected populated Client team desktop fit"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Team access\" href=\"/settings/client/team\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/users-three.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Team access</span></a>"
+  },
+  {
+    "id": "G101-client-access-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client project-access dialog at1133",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:13:01.642Z",
+    "file": "evidence/G101-client-access-1133.jpg",
+    "dom": "evidence/G101-client-access-1133.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G100-client-team-1133",
+    "afterCaptureId": "G101-client-access-1133",
+    "actions": [
+      "Inspected original mixed selection; no access changed"
+    ],
+    "focus": "<input aria-checked=\"mixed\" data-indeterminate=\"true\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">"
+  },
+  {
+    "id": "G102-client-invite-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client colleague invite at1133",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/settings/client/team",
+    "captured": "2026-10-20T21:13:02.610Z",
+    "file": "evidence/G102-client-invite-1133.jpg",
+    "dom": "evidence/G102-client-invite-1133.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G101-client-access-1133",
+    "afterCaptureId": "G102-client-invite-1133",
+    "actions": [
+      "Inspected blank invitation form; no invitation sent"
+    ],
+    "focus": "<input id=\"_r_1r_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G103-client-invoices-1133",
+    "role": "Customer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Client invoice history at1133",
+    "scenario": "client-active",
+    "url": "http://127.0.0.1:8767/client/invoices",
+    "captured": "2026-10-20T21:13:03.626Z",
+    "file": "evidence/G103-client-invoices-1133.jpg",
+    "dom": "evidence/G103-client-invoices-1133.txt",
+    "coverageIds": [
+      "N121"
+    ],
+    "beforeCaptureId": "G102-client-invite-1133",
+    "afterCaptureId": "G103-client-invoices-1133",
+    "actions": [
+      "Inspected table fit; no payment action"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Invoices\" href=\"/client/invoices\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/file-text.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Invoices</span></a>"
+  },
+  {
+    "id": "G104-freelancer-profile-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer profile at1133",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:13:27.428Z",
+    "file": "evidence/G104-freelancer-profile-1133.jpg",
+    "dom": "evidence/G104-freelancer-profile-1133.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G103-client-invoices-1133",
+    "afterCaptureId": "G104-freelancer-profile-1133",
+    "actions": [
+      "Loaded Freelancer active; inspected narrow personal profile"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530806181\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G105-freelancer-work-details-1133",
+    "role": "Studio Freelancer",
+    "width": 1133,
+    "height": 1000,
+    "state": "Freelancer work and business details at1133",
+    "scenario": "freelancer-active",
+    "url": "http://127.0.0.1:8767/settings/personal/profile",
+    "captured": "2026-10-20T21:13:27.562Z",
+    "file": "evidence/G105-freelancer-work-details-1133.jpg",
+    "dom": "evidence/G105-freelancer-work-details-1133.txt",
+    "coverageIds": [
+      "N120"
+    ],
+    "beforeCaptureId": "G104-freelancer-profile-1133",
+    "afterCaptureId": "G105-freelancer-work-details-1133",
+    "actions": [
+      "Keyboard navigation scrolled business details into view",
+      "No field edited or saved"
+    ],
+    "focus": "<input id=\"_r_2d_\" aria-describedby=\"_r_2d_-hint\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G106-studio-setup-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Studio setup overview at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T21:13:32.661Z",
+    "file": "evidence/G106-studio-setup-1133.jpg",
+    "dom": "evidence/G106-studio-setup-1133.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G105-freelancer-work-details-1133",
+    "afterCaptureId": "G106-studio-setup-1133",
+    "actions": [
+      "Restored Studio owner active baseline in isolated origin",
+      "No prior draft or asset change retained"
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530811350\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G107-studio-video-types-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Video type editor at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T21:13:55.605Z",
+    "file": "evidence/G107-studio-video-types-1133.jpg",
+    "dom": "evidence/G107-studio-video-types-1133.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G106-studio-setup-1133",
+    "afterCaptureId": "G107-studio-video-types-1133",
+    "actions": [
+      "Opened current video type grid; no selection changed"
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>"
+  },
+  {
+    "id": "G108-default-brief-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Default Brief editor at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T21:13:56.298Z",
+    "file": "evidence/G108-default-brief-1133.jpg",
+    "dom": "evidence/G108-default-brief-1133.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G107-studio-video-types-1133",
+    "afterCaptureId": "G108-default-brief-1133",
+    "actions": [
+      "Inspected full question editor and fixed action boundary; no save"
+    ],
+    "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\" checked=\"\">"
+  },
+  {
+    "id": "G109-production-defaults-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Production defaults at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T21:13:58.984Z",
+    "file": "evidence/G109-production-defaults-1133.jpg",
+    "dom": "evidence/G109-production-defaults-1133.txt",
+    "coverageIds": [
+      "N123"
+    ],
+    "beforeCaptureId": "G108-default-brief-1133",
+    "afterCaptureId": "G109-production-defaults-1133",
+    "actions": [
+      "Inspected row/control fit at narrower desktop"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Production defaults\" href=\"/settings/studio/production\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/queue.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Production defaults</span></a>"
+  },
+  {
+    "id": "G110-default-staff-menu-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Default Staff options at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/production",
+    "captured": "2026-10-20T21:13:59.431Z",
+    "file": "evidence/G110-default-staff-menu-1133.jpg",
+    "dom": "evidence/G110-default-staff-menu-1133.txt",
+    "coverageIds": [
+      "N123"
+    ],
+    "beforeCaptureId": "G109-production-defaults-1133",
+    "afterCaptureId": "G110-default-staff-menu-1133",
+    "actions": [
+      "Opened existing Staff selector without committing assignment"
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Default Producer\" aria-controls=\"_r_s_\" aria-activedescendant=\"_r_s_-0\"><span class=\"brisk-select-trigger-label\"><span>Tom Mitchell</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G111-ai-playbook-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "AI Playbook at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/ai-playbook",
+    "captured": "2026-10-20T21:14:02.032Z",
+    "file": "evidence/G111-ai-playbook-1133.jpg",
+    "dom": "evidence/G111-ai-playbook-1133.txt",
+    "coverageIds": [
+      "N124"
+    ],
+    "beforeCaptureId": "G110-default-staff-menu-1133",
+    "afterCaptureId": "G111-ai-playbook-1133",
+    "actions": [
+      "Inspected instructions/reference form desktop fit"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"AI Playbook\" href=\"/settings/studio/ai-playbook\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/sparkle.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">AI Playbook</span></a>"
+  },
+  {
+    "id": "G112-messaging-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Messaging connection cards at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/integrations",
+    "captured": "2026-10-20T21:14:02.751Z",
+    "file": "evidence/G112-messaging-1133.jpg",
+    "dom": "evidence/G112-messaging-1133.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G111-ai-playbook-1133",
+    "afterCaptureId": "G112-messaging-1133",
+    "actions": [
+      "Inspected connection-status cards; no reconnect"
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Messaging connections\" href=\"/settings/studio/integrations\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/link.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Messaging connections</span></a>"
+  },
+  {
+    "id": "G113-storage-remote-studio-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Remote Studio provider branch at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio/storage",
+    "captured": "2026-10-20T21:17:01.283Z",
+    "file": "evidence/G113-storage-remote-studio-1133.jpg",
+    "dom": "evidence/G113-storage-remote-studio-1133.txt",
+    "coverageIds": [
+      "N125"
+    ],
+    "beforeCaptureId": "G112-messaging-1133",
+    "afterCaptureId": "G113-storage-remote-studio-1133",
+    "actions": [
+      "Open Storage > Choose storage option > Remote Studio in isolated session. No external connect action."
+    ],
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose storage option\"><span class=\"brisk-select-trigger-label\"><span>Remote Studio</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>"
+  },
+  {
+    "id": "G114-notifications-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Studio Notifications overview at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications",
+    "captured": "2026-10-20T21:17:03.491Z",
+    "file": "evidence/G114-notifications-1133.jpg",
+    "dom": "evidence/G114-notifications-1133.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G113-storage-remote-studio-1133",
+    "afterCaptureId": "G114-notifications-1133",
+    "actions": [
+      "Restore Brisk Storage through provider selector. Open Notifications."
+    ],
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"Notifications\" href=\"/settings/notifications\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/bell.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">Notifications</span></a>"
+  },
+  {
+    "id": "G115-notification-descendant-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Work to review notification descendant at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/customer-reviews",
+    "captured": "2026-10-20T21:17:10.747Z",
+    "file": "evidence/G115-notification-descendant-1133.jpg",
+    "dom": "evidence/G115-notification-descendant-1133.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G114-notifications-1133",
+    "afterCaptureId": "G115-notification-descendant-1133",
+    "actions": [
+      "Open Work to review from Notifications, inspect inherited navigation context."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530811350\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/components/prototype-state/PrototypeStateConte"
+  },
+  {
+    "id": "G116-client-message-template-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Direct-entry Client messages template at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/notifications/templates",
+    "captured": "2026-10-20T21:17:13.102Z",
+    "file": "evidence/G116-client-message-template-1133.jpg",
+    "dom": "evidence/G116-client-message-template-1133.txt",
+    "coverageIds": [
+      "N126"
+    ],
+    "beforeCaptureId": "G115-notification-descendant-1133",
+    "afterCaptureId": "G116-client-message-template-1133",
+    "actions": [
+      "Use source-verified direct-entry legacy template route; no edit or send."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531031329\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G117-plan-comparison-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Plan comparison with collapsed billing frequency group at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:17:23.091Z",
+    "file": "evidence/G117-plan-comparison-1133.jpg",
+    "dom": "evidence/G117-plan-comparison-1133.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "beforeCaptureId": "G116-client-message-template-1133",
+    "afterCaptureId": "G117-plan-comparison-1133",
+    "actions": [
+      "Open Change plan; no confirmation or purchase."
+    ],
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Close</button>"
+  },
+  {
+    "id": "G118-plan-frequency-keyboard-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Annual selection works by keyboard while group remains visually collapsed",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/plan-billing",
+    "captured": "2026-10-20T21:17:23.335Z",
+    "file": "evidence/G118-plan-frequency-keyboard-1133.jpg",
+    "dom": "evidence/G118-plan-frequency-keyboard-1133.txt",
+    "coverageIds": [
+      "N127"
+    ],
+    "measurements": {
+      "children": [
+        {
+          "pressed": "true",
+          "rect": {
+            "bottom": 162,
+            "height": 40,
+            "left": 45,
+            "right": 132.84375,
+            "top": 122,
+            "width": 87.84375,
+            "x": 45,
+            "y": 122
+          },
+          "text": "Monthly"
+        },
+        {
+          "pressed": "false",
+          "rect": {
+            "bottom": 162,
+            "height": 40,
+            "left": 132.84375,
+            "right": 210.65625,
+            "top": 122,
+            "width": 77.8125,
+            "x": 132.84375,
+            "y": 122
+          },
+          "text": "Annual"
+        }
+      ],
+      "overflow": "hidden",
+      "rect": {
+        "bottom": 123,
+        "height": 2,
+        "left": 44,
+        "right": 211.65625,
+        "top": 121,
+        "width": 167.65625,
+        "x": 44,
+        "y": 121
+      }
+    },
+    "beforeCaptureId": "G117-plan-comparison-1133",
+    "afterCaptureId": "G118-plan-frequency-keyboard-1133",
+    "actions": [
+      "Focus Annual button and press Enter. Inspect aria-pressed; do not select plan."
+    ],
+    "focus": "<button class=\"label-s-semibold is-selected\" type=\"button\" aria-pressed=\"true\">Annual</button>"
+  },
+  {
+    "id": "G119-studio-setup-collapsed-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Studio setup with collapsed navigation at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/settings/studio",
+    "captured": "2026-10-20T21:17:29.892Z",
+    "file": "evidence/G119-studio-setup-collapsed-1133.jpg",
+    "dom": "evidence/G119-studio-setup-collapsed-1133.txt",
+    "coverageIds": [
+      "N122"
+    ],
+    "beforeCaptureId": "G118-plan-frequency-keyboard-1133",
+    "afterCaptureId": "G119-studio-setup-collapsed-1133",
+    "actions": [
+      "Close comparison without changing plan. Return Studio setup and collapse sidebar."
+    ],
+    "focus": "<button aria-label=\"Expand navigation\" aria-expanded=\"false\" aria-controls=\"_r_i_\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Expand navigation\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 16px;\"></span></span></button>"
+  },
+  {
+    "id": "G120-brand-kit-empty-intake-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Existing empty Hims & Hers Brand Kit intake at1133",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:17:39.168Z",
+    "file": "evidence/G120-brand-kit-empty-intake-1133.jpg",
+    "dom": "evidence/G120-brand-kit-empty-intake-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G119-studio-setup-collapsed-1133",
+    "afterCaptureId": "G120-brand-kit-empty-intake-1133",
+    "actions": [
+      "Open existing Hims & Hers Brand Kit with no customer profile; no new Kit created."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531051429\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G121-brand-kit-website-draft-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Website intake field and empty validation state",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:17:39.577Z",
+    "file": "evidence/G121-brand-kit-website-draft-1133.jpg",
+    "dom": "evidence/G121-brand-kit-website-draft-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G120-brand-kit-empty-intake-1133",
+    "afterCaptureId": "G121-brand-kit-website-draft-1133",
+    "actions": [
+      "Open Add your website without submitting."
+    ],
+    "focus": "<input aria-label=\"Your website\" class=\"brand-inline-input paragraph-s\" inputmode=\"url\" placeholder=\"yourwebsite.com\" type=\"text\" value=\"\">"
+  },
+  {
+    "id": "G122-brand-kit-source-ready-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Website source staged for mock Brand Kit build",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:17:53.739Z",
+    "file": "evidence/G122-brand-kit-source-ready-1133.jpg",
+    "dom": "evidence/G122-brand-kit-source-ready-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G121-brand-kit-website-draft-1133",
+    "afterCaptureId": "G122-brand-kit-source-ready-1133",
+    "actions": [
+      "Type public example hims.com and Add website; this stages a source inside the isolated front-end only."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531051429\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G123-brand-kit-processing-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Mock Brand Kit build progress",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:17:54.177Z",
+    "file": "evidence/G123-brand-kit-processing-1133.jpg",
+    "dom": "evidence/G123-brand-kit-processing-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G122-brand-kit-source-ready-1133",
+    "afterCaptureId": "G123-brand-kit-processing-1133",
+    "actions": [
+      "Click Build Brand Kit; source verified local mock provider with no network extraction."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531051429\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G124-brand-kit-build-result-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Mock Brand Kit populated after local build",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:18:00.414Z",
+    "file": "evidence/G124-brand-kit-build-result-1133.jpg",
+    "dom": "evidence/G124-brand-kit-build-result-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G123-brand-kit-processing-1133",
+    "afterCaptureId": "G124-brand-kit-build-result-1133",
+    "actions": [
+      "Wait for existing mock build transition and inspect populated result. No assets uploaded."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531051429\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G125-brand-kit-manual-empty-1133",
+    "role": "Studio Staff",
+    "width": 1133,
+    "height": 1000,
+    "state": "Manual Brand Kit empty section controls enabled",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:18:06.466Z",
+    "file": "evidence/G125-brand-kit-manual-empty-1133.jpg",
+    "dom": "evidence/G125-brand-kit-manual-empty-1133.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G124-brand-kit-build-result-1133",
+    "afterCaptureId": "G125-brand-kit-manual-empty-1133",
+    "actions": [
+      "Reset isolated scenario to clear generated sample. Open existing empty Hims & Hers Kit and Set up manually; no fields saved."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531084885\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G126-brand-kit-manual-empty-1440",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Manual Brand Kit empty composition at1440",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:18:10.486Z",
+    "file": "evidence/G126-brand-kit-manual-empty-1440.jpg",
+    "dom": "evidence/G126-brand-kit-manual-empty-1440.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G125-brand-kit-manual-empty-1133",
+    "afterCaptureId": "G126-brand-kit-manual-empty-1440",
+    "actions": [
+      "Resize only own audit window to1440; retain unsaved manual setup state."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531084885\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  },
+  {
+    "id": "G127-brand-selected-move-menu",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Selected editor asset offers Move to sub-brand",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T21:18:31.894Z",
+    "file": "evidence/G127-brand-selected-move-menu.jpg",
+    "dom": "evidence/G127-brand-selected-move-menu.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G126-brand-kit-manual-empty-1440",
+    "afterCaptureId": "G127-brand-selected-move-menu",
+    "actions": [
+      "Select first editor asset and open its contextual menu."
+    ],
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_m_-0\" id=\"_r_m_\" aria-label=\"More actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_m_-0\" tabindex=\"-1\" data-active=\"true\" data-action-tone=\"default\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Download</span></span></span></button></div><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_m_-1\" tabindex=\"-1\" data-active=\"false\" data-action-tone=\"default\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">"
+  },
+  {
+    "id": "G128-brand-move-toast-only",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Move command clears selection and shows ready-to-move toast without target step",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/loom",
+    "captured": "2026-10-20T21:18:32.275Z",
+    "file": "evidence/G128-brand-move-toast-only.jpg",
+    "dom": "evidence/G128-brand-move-toast-only.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G127-brand-selected-move-menu",
+    "afterCaptureId": "G128-brand-move-toast-only",
+    "actions": [
+      "Invoke source-verified notification-only Move to sub-brand; no actual asset mutation."
+    ],
+    "focus": "<button aria-label=\"More actions\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"More actions\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/dots-three.svg&quot;); --icon-size: 16px;\"></span></span></button>"
+  },
+  {
+    "id": "G129-isolated-session-reset",
+    "role": "Studio Staff",
+    "width": 1440,
+    "height": 1000,
+    "state": "Audit sample reset to original empty Hims & Hers Kit",
+    "scenario": "studio-owner-active",
+    "url": "http://127.0.0.1:8767/brand-kits/hims",
+    "captured": "2026-10-20T21:18:37.110Z",
+    "file": "evidence/G129-isolated-session-reset.jpg",
+    "dom": "evidence/G129-isolated-session-reset.txt",
+    "coverageIds": [
+      "N118"
+    ],
+    "beforeCaptureId": "G128-brand-move-toast-only",
+    "afterCaptureId": "G129-isolated-session-reset",
+    "actions": [
+      "Reset own isolated scenario; verify empty Kit intake is restored. Working application origin untouched."
+    ],
+    "focus": "<body data-feedly-mini=\"yes\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531115554\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/./src/components/prototype-scenarios/PrototypeScenarioContext.tsx\\\",[\\\"app/layout\\\",\\\"static/chunks/app/layout.js\\\"],\\\"PrototypeScenarioProvider\\\"]\\n1a:I[\\\"(app-pages-browser)/./src/componen"
+  }
+]

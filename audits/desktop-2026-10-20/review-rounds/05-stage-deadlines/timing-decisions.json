@@ -1,0 +1,87 @@
+{
+  "status": "Timing requirements clarified; no timer or date implementation approved or performed in this Team batch",
+  "implementedBaseline": "Stage ages are displayed from daysAgo. Manually entered deadlines use a fixed demo reference date. timerStartedAt is stored but not used as an automated turnaround rule. Studio production settings currently hold only the default team.",
+  "approvedByTom": {
+    "clockBasis": "Working days, excluding weekends",
+    "stageStartEvent": "When the stage becomes Waiting on Studio"
+  },
+  "requestedTiming": {
+    "internalWip": "48 hours from assignment per supplied Editor commitment",
+    "clientWip1": "72 hours for videos up to one minute",
+    "laterWips": "48 hours after each round of Client feedback",
+    "longerVideos": "Add one day for each additional minute of screen time",
+    "simpleTemplates": "24 hours internal, 48 hours external"
+  },
+  "proposal": "Studio production defaults can choose turnaround timers or fixed dates, with a project-level exception. Keep final delivery a separate promised date. Do not implement during Team work.",
+  "stillToResolve": [
+    "How the assignment-based internal commitment relates to an earlier Waiting on Studio stage start",
+    "Additional-minute rounding, where duration is fractional",
+    "Timer/date project override and treatment of existing active projects",
+    "Any per-type exception for full animation; do not copy legacy Style Frames into the current flow"
+  ],
+  "sources": [
+    {
+      "title": "Job Description | Editor",
+      "url": "https://www.notion.so/280abf184ca980ce9ef7c98a3400320e",
+      "lastEdited": "15 December 2025",
+      "read": "Full page retrieved through Notion connector; user-supplied latest commitment takes precedence."
+    },
+    {
+      "title": "How long will my video take?",
+      "url": "https://app.notion.com/p/27eabf184ca9803c8a02d03f01c18317",
+      "lastEdited": "13 November 2025",
+      "read": "Full page retrieved. Legacy readiness/assignment descriptions do not override Tom's new explicit Waiting on Studio start decision."
+    }
+  ],
+  "sourceLocations": [
+    "src/components/active-videos/StageProgress.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/active-videos/types.ts",
+    "src/components/project/ProjectStageStatusContext.tsx",
+    "src/data/studio-settings.ts"
+  ],
+  "producerChoiceAtPointOfUse": {
+    "status": "Confirmed interaction requirement in discussion; visual proposal and implementation approval still pending",
+    "userRequirement": "A producer can choose the deadline at the time, using automatic timing or overriding it with a specific deadline.",
+    "location": "Project stage deadline controls; the Studio preference provides the starting default.",
+    "choices": [
+      "Automatic, using the Studio turnaround rule and video duration",
+      "Specific date, overriding the calculated target for the relevant project stage"
+    ],
+    "scope": "A project-stage override does not edit Studio rules or other projects. Keep Internal review and Client delivery distinct, and final delivery separate.",
+    "reviewBeforeSave": "Show the resulting dates before an explicit save; do not silently move a promised date.",
+    "permissionBoundary": "Preserve existing Studio Staff editing access. Producer is the workflow actor/job title, not a new access role.",
+    "applicationChangesAuthorisedByThisClarification": false
+  },
+  "activeStageDisplay": {
+    "status": "Confirmed active-stage trigger and final-deadline requirement; multi-stage table presentation is a recommendation for visual review",
+    "userClarification": "Stage deadlines are needed when Script, Edit or another applicable stage is Waiting on Studio; show the relevant stage deadline and final deadline in Videos.",
+    "eligibility": "An active Studio turnaround countdown appears only while the relevant stage is Waiting on Studio. Waiting on Client and completed stages have no active Studio turnaround countdown.",
+    "ordinaryTableRows": [
+      "The named active stage and its due/remaining status",
+      "Separate overall final-delivery date"
+    ],
+    "multiStageProposal": "When several stages are Waiting on Studio, each retains its own deadline. Show the earliest stage deadline with an explicit +N stages disclosure in the compact table, and list every active stage deadline in the expanded panel. This presentation is proposed, not yet approved.",
+    "details": "Retain the active stage/WIP internal-review and Client-delivery breakdown in the expanded panel. Which target is the compact primary countdown remains part of visual review; do not silently conflate the two.",
+    "scope": "No timing implementation or additional permission role approved by this clarification."
+  },
+  "settingsAndWarningsDiscussion": {
+    "plan": "settings-and-warning-plan.json",
+    "userRequirement": "Configure Studio rules once, create active stage dates on Waiting on Studio, and assess final delivery at the Brief and throughout production.",
+    "status": "User requested the behaviour; warning communication policy, date-agreement UI and implementation remain for review."
+  },
+  "latestVisualReview": {
+    "date": "28 October 2026",
+    "review": "timing-review.html",
+    "interactive": "timing-preview.html",
+    "status": "Concrete visual proposal ready for Tom review; application unchanged"
+  },
+  "sharedDefaultsRefinement": {
+    "requirement": "shared-defaults-requirement.json",
+    "preview": "timing-preview.html",
+    "rule": "One shared Studio default with populated stage overrides; supersedes separate blank per-stage entry."
+  },
+  "conciseBriefRefinement": "brief-concise-requirement.json",
+  "simplifiedSettingsAndRevisionUnits": "settings-simplification-and-units.json",
+  "latestSettingsAndClientCopyReview": "read-first-settings-and-copy.json"
+}

@@ -1,0 +1,89 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Jordan Lee avatar": JL
+  - generic: Studio Freelancer
+  - heading "Jordan Lee" [level=1]
+  - button "Assign project Choose a project, role and hours.":
+    - generic: Assign project
+    - text: Choose a project, role and hours.
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Hours"
+    - tab "Skills" [active] [selected]
+    - tab "Access"
+    - tab "Commercial"
+    - tab "Notes and activity"
+  - tabpanel "Skills":
+    - heading "Skills and specialties" [level=2]
+    - paragraph: Choose the skills and styles that help match this person to the right work.
+    - article:
+      - heading "Skills" [level=3]
+      - button "Skills":
+        - generic: Cinematography
+        - generic: Lighting
+        - generic: Gimbal
+        - text: Choose the skills they use on projects.
+      - heading "Styles and genres" [level=3]
+      - combobox "Styles and genres":
+        - generic: Live action
+        - generic: Interview
+        - text: Choose the types of videos they make.

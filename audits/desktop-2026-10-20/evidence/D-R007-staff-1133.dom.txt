@@ -1,0 +1,101 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "Clients":
+    - /url: /clients
+    - text: Clients
+  - generic "Loom logo"
+  - generic: Client
+  - heading "Loom" [level=1]
+  - generic: loom.com
+  - button "Invite teammate"
+  - link "Go to Loom's dashboard":
+    - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+  - button "Start project":
+    - generic: Start project
+  - tablist "Client profile sections":
+    - tab "Overview" [selected]
+    - tab "Contacts"
+    - tab "Brand Kit"
+  - tabpanel "Overview":
+    - region "Client overview":
+      - article:
+        - heading "Client details" [level=2]
+        - generic: Client name
+        - textbox "Client name": Loom
+        - generic: Website
+        - textbox "Website": loom.com
+        - generic: Client code
+        - textbox "Client code": loom
+        - generic: Prefix for new project codes. Existing codes stay the same.
+        - generic: Logo
+        - button "Logo"
+        - generic: Primary contact
+        - combobox "Primary Client contact":
+          - generic: Maya Chen
+        - term: Portal status
+        - definition:
+          - generic: Active
+        - button "Save changes"
+      - link "Open Loom's Client dashboard":
+        - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+        - strong: "4"
+        - generic: Active projects
+        - generic: 5 total across this Client
+      - article:
+        - strong: 2 days ago
+        - generic: Maya approved the Brief
+        - generic: Latest activity
+      - heading "Archive Client" [level=3]
+      - paragraph: Remove the Client from the active list and pause portal access. Projects and files will not be deleted.
+      - button "Archive Client"

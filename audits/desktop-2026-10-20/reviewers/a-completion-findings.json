@@ -1,0 +1,530 @@
+{
+  "reviewer": "A",
+  "status": "Unfixed audit candidates, all Needs decision",
+  "integration": {
+    "mergeAC04Into": "A10",
+    "doNotDuplicate": [
+      "C02 guest nested mutation affordances, evidenceG012-G014 ownedC",
+      "B09 Brand Kit imagery/PDF Escape, evidenceG008/G009 ownedB"
+    ],
+    "decisionOnly": [
+      "AC-D01 branding benefit scope conflict"
+    ]
+  },
+  "findings": [
+    {
+      "id": "AC01",
+      "title": "To Do time editor places its action footer below the viewport",
+      "area": "To Do",
+      "family": "Anchored editors and viewport fit",
+      "category": "Visual placement and task access",
+      "severity": "S2",
+      "impact": "Footer Save/Cancel/Delete is initially below the viewport and pointer Cancel cannot be activated there. Keyboard focus plus Enter on Cancel can recover, so this is a substantial pointer-access/placement defect, not proof of a keyboard trap or impossible save.",
+      "classification": "Observed defect",
+      "confidence": "High: lead measured actual editor416px at top640/bottom1056, footer at1001, in1000px-high viewport at1440 and1133; keyboard Cancel recovery observed.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Existing Sarah Chen populated week, 1440x1000",
+        "Existing Wednesday time block opened with Enter",
+        "Local zero-hours draft, no save"
+      ],
+      "observed": "The anchored Log time panel begins near y640 in the supplied 1000px-high desktop frame. Its Note field continues to the lower edge and the complete action footer is below that edge. Source clamps top to viewportHeight minus 360px although the rendered editor includes a header, three fields, textarea, gaps, padding and footer, with no maximum-height/scroll treatment. Lead F087/F092 follow-up measured editor height416px, top640/bottom1056 and footer top1001 in1000px-high desktop at both widths. Pointer Cancel offscreen failed; focusing Cancel and pressing Enter safely recovered.",
+      "reproduction": [
+        "Open the existing populated To Do week as Sarah Chen.",
+        "Open the Wednesday Unspecified block with Enter.",
+        "Observe fields and the visible header Close while the footer is below the viewport in F002.",
+        "Do not save or delete the time entry; close/cancel safely after inspection."
+      ],
+      "expected": "An anchored editing surface should keep its primary save/cancel boundary visible or directly reachable within a deliberate bounded scroll area. Positioning should account for actual content height and the fixed app header.",
+      "authority": [
+        "General desktop usability: controls needed to finish or abandon an edit should be visible/reachable",
+        "Current DS and app overlay guidance supports viewport containment, but no exact approved To Do anchored-editor reference exists"
+      ],
+      "recommendation": "Measure the rendered editor and flip or clamp it within the available content viewport using its actual height. Provide bounded internal scrolling if content or textarea resizing exceeds that space, while retaining a reachable action boundary. Preserve the efficient anchored interaction rather than replacing it with a large modal solely for consistency.",
+      "rationale": "This addresses the actual placement error caused by a fixed height assumption without changing time values, stage choices, validation or the planning model.",
+      "alternatives": [
+        "A bottom-aligned anchored panel can keep the footer inside the viewport, provided it does not cover the global header or lose its connection to the selected entry.",
+        "A different shared overlay may be appropriate only after reviewing workflow/context; it is not required by the current observation."
+      ],
+      "tradeoffs": [
+        "Retain visible Close, Escape behaviour and focus return; keyboard recovery has not yet been fully checked.",
+        "Re-measure after content/viewport changes and textarea resizing.",
+        "Do not change B-owned numeric validation or save/delete semantics while fixing geometry."
+      ],
+      "rootCause": "Anchored editor placement assumes a 360px height while its actual content can exceed that height",
+      "occurrences": [
+        "TimeEntryEditor, populated To Do time blocks"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:682",
+        "src/components/today/TodayPage.tsx:698",
+        "src/components/today/TodayPage.tsx:720",
+        "src/components/today/today.css:691",
+        "src/components/today/today.css:760"
+      ],
+      "evidence": {
+        "currentScreenshot": "F002-todo-entry-editor.jpg",
+        "additionalScreenshots": [
+          "F003-todo-invalid-hours.jpg",
+          "F087-todo-editor-footer-1440.jpg",
+          "F092-todo-editor-1133.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved time-editor placement screenshot exists. Current before/open states and source establish the clipped footer; a proposed alternate layout is not supplied.",
+        "captureContextNote": "F087 is1440x1000 original. F092 image is1133x787 and contains differently scaled UI; lead DOM measurements establish1133 viewport behaviour. It is supplementary, not a matched-scale visual comparison.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC01-todo-footer.png"
+      },
+      "relatedExistingFindings": [
+        "A10 shares overlay-fit concerns but has a different header/stacking cause; do not merge the two defects."
+      ],
+      "verificationRemaining": [
+        "Verify actual-height positioning at both widths after any future change, including textarea resizing and fixed header bounds.",
+        "Preserve keyboard Cancel/Close/focus recovery and B-owned validation/save semantics."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC02",
+      "title": "Interview question tails disappear in the planning list",
+      "area": "Shoot / Planning",
+      "family": "Inline text and production tables",
+      "category": "Readability",
+      "severity": "S3",
+      "impact": "The planning list omits the end of short interview questions at rest, so a producer cannot read the exact wording without interacting with each field or opening the editor.",
+      "classification": "Observed defect",
+      "confidence": "High: F010/F055 show hidden tails and lead measured 56px client height against 80px content height at 186.281px width.",
+      "roles": [
+        "Studio Staff observed",
+        "Shared permitted Shoot views source-only"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "Planning Interview Questions, 1133px",
+        "Two existing questions, no stored edit"
+      ],
+      "observed": "F010 shows only \u201cWhat problem were / your customers facing\u201d, omitting \u201cbefore this launch?\u201d from the current source question. The second question similarly loses its tail. Both are two-row textareas. CSS hides overflow at rest and only permits scrolling on hover/focus. Rows have substantial height for vertically stacked actions while the question field remains short. Lead follow-up measured clientHeight 56px and scrollHeight 80px at 186.281px width. Resting overflow is hidden. Focus changes overflow to hidden auto, allowing internal vertical scrolling, but does not reveal the full question in the ordinary scan state.",
+      "expected": "The question list is a planning/review surface and should expose the full wording of ordinary short questions without requiring a separate read action.",
+      "authority": [
+        "Docs/shoot-pre-production-ticket.md - Interview Questions as the direct working list, subject to later scoped decisions",
+        "General readability and task-content hierarchy; no exact approved full-question row screenshot exists"
+      ],
+      "recommendation": "Let the question text/textarea grow to its actual content height for normal questions, preserving inline editing and interviewee/day assignment. Keep an intentional read/expand treatment for genuinely long content only if needed. Consider action-column refinement separately rather than requiring a new row design to fix text visibility.",
+      "rationale": "The main content should receive the height it needs; this avoids changing the question wording, field order or production model.",
+      "alternatives": [
+        "A static auto-height text display can switch into the existing editor, but loses immediate inline editing and is a separate interaction choice.",
+        "A narrower quiet action area could return question width, but moving Edit/Duplicate/Delete to a menu changes discoverability and needs review."
+      ],
+      "tradeoffs": [
+        "Do not reduce type size or truncate full questions with unexplained ellipsis.",
+        "Keep drag/reorder controls, selected interviewee, suggestion state and keyboard editing.",
+        "Read-only recipients must also be able to read full wording; those views have not been directly captured."
+      ],
+      "rootCause": "Fixed two-row inline textarea hides overflow despite variable question length",
+      "occurrences": [
+        "PreProductionInterviewQuestions planning list"
+      ],
+      "sources": [
+        "src/data/shoot.ts:494",
+        "src/data/shoot.ts:500",
+        "src/components/shoot/ShootStagePage.tsx:4481",
+        "src/components/shoot/shoot.css:1455",
+        "src/components/shoot/shoot.css:2231"
+      ],
+      "evidence": {
+        "currentScreenshot": "F010-shoot-interview-1133.jpg",
+        "additionalScreenshots": [
+          "F055-question-focus-readability.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved full-question planning row reference exists. F011 shows the separate current editor, not a replacement proposal; its question draft is blank for validation and does not prove the original wording.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC02-question-readability.png"
+      },
+      "verificationRemaining": [
+        "Confirm preferred full-text row layout with Tom and verify editing/reorder/filters after any future change.",
+        "Read-only question presentation has not been captured in this pass."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC03",
+      "title": "Short Schedule blocks visually cover consecutive entries",
+      "area": "Shoot / Schedule",
+      "family": "Timeline layout",
+      "category": "Visual placement and readability",
+      "severity": "S3",
+      "impact": "Part of the Travel entry and its metadata is hidden by the following block even when the underlying times do not overlap, making the schedule harder to read accurately.",
+      "classification": "Observed defect",
+      "confidence": "High: current screenshot and source agree; lead measured a 16px visual overlap between consecutive actual entries.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "Planning Schedule Day 1, expanded Unscheduled, 1440px and 1133px"
+      ],
+      "observed": "F021/F022 show Travel to Loom office underneath the top edge of the following B-roll group. The source Travel starts at10:15 for20minutes and the next entry at10:35. The timeline gives20minutes about32px at its current scale while a minimum48px block height extends its visual footprint. The collision routine uses actual durations, so consecutive entries remain in one lane while their rendered boxes intersect. Lead measured Travel height 48px at y891-939 and B-roll top y923: a 16px visual overlap, although the stored 20-minute Travel ends exactly when B-roll begins.",
+      "expected": "Consecutive schedule items should not obscure one another or appear to clash purely because of a display minimum. Real timing and intentional overlaps must remain accurate.",
+      "authority": [
+        "Existing timed Schedule model and actual entry times",
+        "General desktop readability; no exact approved compact short-event variant exists"
+      ],
+      "recommendation": "Choose a compact short-event content treatment or collision-aware display strategy that keeps adjacent titles and essential time information visible at the true schedule times. Expose secondary metadata through existing details/tooltip paths when a short footprint cannot hold it. Preserve actual start times, durations and real clash detection.",
+      "rationale": "This addresses rendered geometry rather than \u201crepairing\u201d correct production data or falsely marking consecutive items as overlapping.",
+      "alternatives": [
+        "Increase the timeline scale or provide an approved scale option; this makes short items readable but increases vertical scrolling.",
+        "Place visual conflicts in separate display lanes only with a treatment that does not imply a real scheduling clash."
+      ],
+      "tradeoffs": [
+        "Do not change stored times to make the screenshot fit.",
+        "Do not shrink type below approved readable styles or hide all event identity.",
+        "Keep move/resize hit areas and context menus usable; a new compact variant needs Tom review."
+      ],
+      "rootCause": "Minimum visual block height exceeds time-proportional footprint while lane layout considers only real temporal overlap",
+      "occurrences": [
+        "ScheduleTimeline short entries adjacent to the next item"
+      ],
+      "sources": [
+        "src/data/shoot.ts:298",
+        "src/data/shoot.ts:308",
+        "src/components/shoot/ShootStagePage.tsx:7234",
+        "src/components/shoot/ShootStagePage.tsx:7296",
+        "src/components/shoot/shoot.css:12249",
+        "src/components/shoot/shoot.css:12324"
+      ],
+      "evidence": {
+        "currentScreenshot": "F022-shoot-schedule-1440.jpg",
+        "additionalScreenshots": [
+          "F056-schedule-picker-escape.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved short-event replacement screenshot exists. On Set list rows show an alternative current reading context but do not replace the planning timeline.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC03-schedule-overlap.png"
+      },
+      "verificationRemaining": [
+        "Review a compact short-event treatment with Tom and verify genuine simultaneous/clashing events retain distinct meaning.",
+        "Source times remain the authority; do not infer a real scheduling clash from this visual overlap."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC04",
+      "title": "Shoot progress opens behind the desktop sidebar",
+      "area": "Shoot / On Set",
+      "family": "Anchored overlays and hybrid-shell bounds",
+      "category": "Visual placement and task access",
+      "severity": "S2",
+      "impact": "The visible progress panel loses its title, much of each shot label and selection area behind navigation. Managing scoped shot progress is harder because the contents are only partly visible.",
+      "classification": "Observed defect",
+      "confidence": "High: current F030/F031/F057 screenshots and measured panel/sidebar geometry and stacking agree.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/projects/loom-launch-film/stages/shoot"
+      ],
+      "states": [
+        "On Set Schedule progress popover at1133px",
+        "One selected shot and scoped bulk actions"
+      ],
+      "observed": "F030/F031 show only the right portion of the progress popover to the right of the sidebar. Its header title and left-hand list controls are occluded. Positioning clamps left against the browser gutter, using trigger.right minus a roughly440px width; the resulting left can be about16px while the hybrid sidebar occupies240px. The custom fixed popover uses z-index100. Lead measured the progress panel at left 16px, right 456px, width 440px and z-index 100; the persistent sidebar spans 0-240px and z-index 110. Thus 224px of its 440px width lies beneath the sidebar. The visible Close remains usable, but the title and leading row/selection content are hidden.",
+      "expected": "An anchored progress panel should be fully readable within the actual available work area or use the approved overlay layer intentionally; it must not sit behind navigation.",
+      "authority": [
+        "Approved hybrid desktop shell and general visible overlay bounds",
+        "Existing progress popover is specialised; no exact approved replacement exists"
+      ],
+      "recommendation": "Use the actual content boundary and supported overlay layer when positioning this specialised progress panel. Align or flip it where the entire label/selection area fits, keep its bounded scroll and Close action, and preserve current scoped progress controls.",
+      "rationale": "This corrects geometry and stacking without changing capture statuses, selected-shot scope or the purpose of progress navigation.",
+      "alternatives": [
+        "Overlaying the sidebar can be intentional if the correct layer and dismissal model are approved, but merely raising z-index may obscure essential navigation.",
+        "Clamp within the Shoot content area instead when enough width exists; preserve the link to its opener."
+      ],
+      "tradeoffs": [
+        "Reposition after scroll/resize and in Focus mode.",
+        "Do not infer a separate wrong-click/reveal defect from this visible occlusion; B is verifying any such behaviour independently.",
+        "Keep the selected-shot count and command scope visible before any mutation."
+      ],
+      "rootCause": "Custom popover uses window bounds and layering that do not account for the persistent hybrid sidebar",
+      "occurrences": [
+        "OnSetRunOfDay progress popover"
+      ],
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:4981",
+        "src/components/shoot/ShootStagePage.tsx:5301",
+        "src/components/shoot/shoot.css:110"
+      ],
+      "evidence": {
+        "currentScreenshot": "F030-onset-progress.jpg",
+        "additionalScreenshots": [
+          "F031-onset-progress-selection.jpg",
+          "F057-progress-sidebar-collision.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved Shoot progress overlay reference exists. These current captures prove occlusion; a generic DS popup screenshot is not approval to replace the specialised interaction.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC04-progress-occlusion.png"
+      },
+      "relatedExistingFindings": [
+        "A10: same broad hybrid-shell overlay boundary concern, different consumer and left-positioning path. Lead should decide whether to add this occurrence to a precisely scoped overlay-boundary finding or retain separately; do not count both a generic umbrella and its occurrences."
+      ],
+      "verificationRemaining": [
+        "Review whether this panel should sit inside content bounds or deliberately overlay navigation; Tom must approve the overlay contract before implementation.",
+        "Verify all progress rows/selection controls at 1440 and 1133 with expanded/collapsed navigation after any future fix.",
+        "Do not claim a separate progress row reveal/navigation defect; B is investigating that independently."
+      ],
+      "reviewStatus": "Needs decision",
+      "mergeInto": "A10",
+      "integrationNote": "Add precise Shoot progress occurrence to A10 hybrid-shell overlay positioning/layering finding. Do not add an independent duplicate count; retain per-consumer geometry and dismissal distinctions."
+    },
+    {
+      "id": "AC05",
+      "title": "Caption cues are constrained to a single unreadable line",
+      "area": "Masters",
+      "family": "Inline production text and inspectors",
+      "category": "Readability and review efficiency",
+      "severity": "S3",
+      "impact": "Longer ordinary caption sentences cannot be proofread as a whole in the inspector beside the video. Readers must move the caret/scroll inside an input to recover the hidden tail. This does not imply text is lost.",
+      "classification": "Heuristic judgement",
+      "confidence": "High for the observed readability limitation in editable and Client read-only views; lead measured the normal 66-character cue at 310px clientWidth and 386px scrollWidth.",
+      "roles": [
+        "Studio Staff observed",
+        "Customer observed"
+      ],
+      "routes": [
+        "/projects/[projectId]/stages/masters"
+      ],
+      "states": [
+        "Brief-linked Main Video with generated sample SRT attached",
+        "Caption inspector at 1440",
+        "Sample first cue edit saved on blur in authorised disposable session"
+      ],
+      "observed": "F063 shows the longer second cue ending mid-sentence at the edge of the narrow inspector, while shorter cues fit. Every cue is rendered as an HTML input, so there is no line wrapping. The source also reuses the input read-only for Clients. Current blur-save feedback is explicit and was observed as Captions saved and re-attached. F070/F071 confirm the same cue is clipped in editable and Client read-only views at 1440. Lead measured clientWidth 310px, scrollWidth 386px for the unchanged second cue: The middle develops the central idea through the approved footage. The source text is retained; 76px extends beyond the visible field.",
+      "reproduction": [
+        "Open Captions on a populated Main Video.",
+        "Read a normal longer cue in the inspector beside the player.",
+        "Observe that the single line cuts off before the sentence ends.",
+        "Do not edit or download merely to inspect; use supplied authorised sample evidence for the edited cue state."
+      ],
+      "expected": "Caption text should be readable for proofreading against the video, with timecode navigation and any editing boundary still clear. No exact approved compact caption-inspector reference exists.",
+      "authority": [
+        "Current source and screenshot establish the one-line limitation.",
+        "General production-review heuristic: show enough of the content being approved/proofread to understand it without serial caret navigation.",
+        "Use approved Brisk text/textarea patterns for any future multiline editor; do not invent a new DS component."
+      ],
+      "recommendation": "Allow cue text to wrap in a compact approved multiline or read-and-edit treatment. Preserve each cue timecode and its seek action. Keep the existing blur-save contract and confirmation visible unless Tom separately approves changing that boundary.",
+      "rationale": "This improves the content needed for caption proofreading without expanding the delivery register or changing SRT timing/data.",
+      "alternatives": [
+        "Wrapping read-only text with an explicit Edit action makes reading clear, but adds an edit step and changes the interaction contract.",
+        "A compact autosizing textarea can preserve direct editing, but must avoid unbounded growth and must keep the next cue accessible."
+      ],
+      "tradeoffs": [
+        "Verify multiline content, long unbroken words, existing line breaks and keyboard order.",
+        "Keep captions attached to the correct deliverable/version and retain authorised Client read-only treatment.",
+        "Do not change save timing or convert caret scrolling into data truncation."
+      ],
+      "rootCause": "Caption cue content uses a single-line input regardless of sentence length in a narrow inspector",
+      "occurrences": [
+        "SrtInspector cue text, editable Staff branch observed",
+        "SrtInspector read-only Customer branch observed"
+      ],
+      "sources": [
+        "src/components/masters/MastersPage.tsx:3207",
+        "src/components/masters/MastersPage.tsx:3215",
+        "src/components/masters/masters.css:3388"
+      ],
+      "evidence": {
+        "currentScreenshot": "F070-caption-text-fit.jpg",
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No exact approved caption-inspector wrapping reference exists. This is a local readability recommendation, not a claim of deviation from a supplied full-page mockup.",
+        "additionalScreenshots": [
+          "F071-client-caption-reading.jpg",
+          "F063-masters-caption-editor.jpg"
+        ],
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC05-caption-readability.png"
+      },
+      "relatedExistingFindings": [
+        "AC02 also constrains production copy while reading, but has a separate two-line textarea, row allocation and editing behaviour; group in a text-readability implementation batch without hiding these differences."
+      ],
+      "verificationRemaining": [
+        "Review a compact wrapping treatment with Tom and verify long/multiline captions plus timecode seeking after any future change.",
+        "No claim that hidden input text is lost or wholly inaccessible; caret scrolling can recover portions but not display the sentence together.",
+        "Preserve the explicit saved/re-attached feedback and current save semantics unless separately approved."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC06",
+      "title": "Billing frequency is clipped to a two-pixel line in plan comparison",
+      "area": "Studio settings / Brisk plan & billing",
+      "family": "Dialog content and segmented choices",
+      "category": "Visual fit and task access",
+      "severity": "S2",
+      "impact": "The Monthly/Annual choice is visually unavailable in a financial comparison even though the cards depend on it. The default frequency can persist after an attempted pointer choice. Keyboard activation still works.",
+      "classification": "Observed defect",
+      "confidence": "High: genuine1440 and1133 captures, DOM geometry, keyboard state and downstream confirmation agree; lead F141 corroborates.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/settings/plan-billing"
+      ],
+      "states": [
+        "Change plan comparison at1440x1000 and1133x1000",
+        "Monthly default",
+        "Pointer Annual attempted without changing value",
+        "Annual activated by Enter; confirmation inspected and cancelled"
+      ],
+      "observed": "The Billing frequency group has computed height2px and overflow:hidden while its two buttons are40px high, y122-162. At1440 groupx185/y121; at1133 x44/y121. Only a horizontal border remains visible. Pointer Annual attempt left aria-pressed=false and the following Business confirmation remained Monthly. Focusing Annual and pressing Enter sets aria-pressed=true and the Annual confirmation displays the correct annual amount. No plan was confirmed.",
+      "reproduction": [
+        "Open Studio settings > Brisk plan & billing > Change plan at1440 or1133 desktop.",
+        "Observe missing Monthly/Annual labels at the top of comparison.",
+        "Inspect controls by keyboard: Annual Enter changes pressed state and pricing.",
+        "Close or cancel; do not confirm a plan change."
+      ],
+      "expected": "Billing frequency must remain visible and directly operable above the plan cards, with the chosen state clear. The long comparison may scroll within a deliberate content boundary while preserving its controls and exit.",
+      "authority": [
+        "Approved Brisk DS EditingDialog/DialogSurface viewport-bounded content and visible focus contracts",
+        "General task clarity: a price-affecting choice must be visible and its selection understandable",
+        "No exact approved full plan-comparison screenshot exists"
+      ],
+      "recommendation": "Give this consumer a non-collapsing minimum block size for the frequency choice and a coherent scrolling layout for the tall comparison. Correct its integration with EditingDialog rather than changing all DS dialog content globally. Keep frequency state, price calculations, confirmation and Cancel behaviour.",
+      "rationale": "The rendering defect is local to the tall plan comparison; the choice itself and its annual logic already work by keyboard. Fixing fit preserves the existing commercial workflow.",
+      "alternatives": [
+        "Keep frequency in a non-scrolling comparison header and scroll only the cards, provided keyboard order and selected price context remain clear.",
+        "A vertically shorter summary plus expandable plan features may fit better, but changes comparison density and requires a separate design decision."
+      ],
+      "tradeoffs": [
+        "Do not change prices, entitlements or frequency persistence while repairing geometry.",
+        "Do not add a global minimum to every child of DS dialog content.",
+        "Verify all four cards, sticky/scroll boundaries,1133 width, focus visibility and keyboard/pointer confirmation paths."
+      ],
+      "rootCause": "Tall grid content permits the overflow-hidden frequency group to shrink; legacy billing-modal selectors target wrapper classes ClientModal no longer forwards after adopting EditingDialog.",
+      "occurrences": [
+        "PlanComparisonModal Billing frequency for plan change group"
+      ],
+      "sources": [
+        "src/components/settings/PlanBillingModals.tsx:46",
+        "src/components/settings/plan-billing.css:540",
+        "src/components/settings/plan-billing.css:548",
+        "src/components/settings/plan-billing.css:556",
+        "src/components/clients/ClientPrimitives.tsx:27",
+        "Brisk DS/src/app/components/DialogSurface.module.css:25"
+      ],
+      "evidence": {
+        "currentScreenshot": "G052-plan-comparison-monthly.jpg",
+        "additionalScreenshots": [
+          "G053-plan-comparison-annual.jpg",
+          "G054-plan-change-confirm.jpg",
+          "G057-plan-frequency-keyboard.jpg",
+          "G058-plan-annual-confirm.jpg",
+          "G117-plan-comparison-1133.jpg",
+          "G118-plan-frequency-keyboard-1133.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved full plan comparison reference exists. The annotated evidence compares genuine current1440/1133 crops and current confirmation states; none is a proposed fix.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC06-billing-frequency.png"
+      },
+      "verificationRemaining": [
+        "Review the local comparison scroll/layout treatment with Tom.",
+        "After implementation verify both pointer and keyboard frequency controls, all card lengths and confirmation values."
+      ],
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "AC08",
+      "title": "Move to sub-brand ends before choosing a destination",
+      "area": "Brand Kits",
+      "family": "Selection menus and feedback",
+      "category": "Misleading action and recovery",
+      "severity": "S3",
+      "impact": "A selected asset appears ready for a move, then selection is cleared without any destination picker or result. The user must reselect the asset to try again. No asset actually moves.",
+      "classification": "Observed defect",
+      "confidence": "High for current selected editor-asset path; source confirms notification-only handler.",
+      "roles": [
+        "Studio Staff observed"
+      ],
+      "routes": [
+        "/brand-kits/loom"
+      ],
+      "states": [
+        "One editor file selected",
+        "More actions menu",
+        "Move to sub-brand result"
+      ],
+      "observed": "The selected asset menu offers Move to sub-brand. Invoking it shows \u201c1 assets ready to move to a sub-brand\u201d, closes the menu and clears selection. There is no target picker/dialog or next step, and source only notifies and clears selectedAssets. The asset remains in place.",
+      "reproduction": [
+        "Open populated Loom Brand Kit, select the first Editor files item.",
+        "Open its More actions > Move to sub-brand.",
+        "Observe ready-to-move toast, zero selected items and no destination step."
+      ],
+      "expected": "The command should enter a clear destination-selection step or explain its unavailability before discarding selection. Readiness feedback must lead to an actionable next step.",
+      "authority": [
+        "General task feedback and action-label semantics",
+        "Current menu wording establishes a move intent; no exact approved move-flow reference exists"
+      ],
+      "recommendation": "Until a destination workflow is approved, make the unavailable action explicit and preserve selection. If Tom approves the existing feature, connect the command to its scoped destination choice and cancel/recovery boundary. Do not silently invent the full move product model as an audit fix.",
+      "rationale": "The smallest coherent improvement aligns the visible promise with actual capability and retains the user\u2019s selected scope.",
+      "alternatives": [
+        "Hide the unavailable command in this prototype until its workflow exists; simpler but less informative for future capability review.",
+        "Keep a disabled labelled command with a brief reason; requires an accessible explanation."
+      ],
+      "tradeoffs": [
+        "Keep genuine Download and Delete actions distinct from Move.",
+        "Any future move must define master/sub-brand destination eligibility, inheritance and undo before implementation.",
+        "Do not treat this as backend, security or data-loss evidence."
+      ],
+      "rootCause": "Selected menu exposes a notification-only placeholder as a complete action and clears its scope.",
+      "occurrences": [
+        "selectedAssetMenuItems Move to sub-brand handler"
+      ],
+      "sources": [
+        "src/components/brand-kits/BrandKitPages.tsx:1017",
+        "src/components/brand-kits/BrandKitPages.tsx:1020"
+      ],
+      "evidence": {
+        "currentScreenshot": "G127-brand-selected-move-menu.jpg",
+        "additionalScreenshots": [
+          "G128-brand-move-toast-only.jpg"
+        ],
+        "referenceScreenshot": null,
+        "approvedReferenceStatement": "No approved destination picker/move workflow reference exists. These genuine before/result states establish the missing next step.",
+        "annotatedComparison": "reviewers/a-completion-comparisons/AC08-brand-move-feedback.png"
+      },
+      "verificationRemaining": [
+        "Tom decide whether this capability is in current scope or should be unavailable.",
+        "If implemented later, verify target scope, cancellation preserving selection and actual asset placement; no such implementation was attempted."
+      ],
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "decisionNotes": [
+    {
+      "id": "AC-D01",
+      "title": "Plan benefits advertise branding options removed from V1 appearance",
+      "reviewStatus": "Needs decision",
+      "classification": "Approved-decision conflict requiring scope clarification",
+      "severity": "S3 decision note, not counted as a new observed UI defect",
+      "observed": "Current comparison lists Studio primary colour/Custom branding, fully white-labelled Client portal/No Brisk branding or footer and Business white-label/Custom domain. The30September V1 decision removed Studio colour customisation and paid white-label controls, with standard purple portals. That decision is scoped to settings and portal appearance; no separate later commercial catalogue approval was found.",
+      "recommendation": "Confirm whether current V1 plan benefits should reflect the approved appearance scope, or whether these are separately approved future offerings. Align copy after that decision; do not change entitlements/prices or reintroduce controls without approval.",
+      "sources": [
+        "Docs/ux-decision-log.md:179",
+        "src/data/billing.ts:107",
+        "src/data/billing.ts:143",
+        "src/data/billing.ts:182"
+      ],
+      "evidence": [
+        "G052-plan-comparison-monthly.jpg",
+        "G117-plan-comparison-1133.jpg"
+      ],
+      "reference": "No approved plan-benefit comparison screenshot found; explicit scoped user decision is the authority."
+    }
+  ],
+  "evidenceProvenance": "reviewers/a-completion-comparisons/provenance.json"
+}

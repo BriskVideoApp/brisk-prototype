@@ -1,0 +1,46 @@
+{
+  "checkedAt": "2026-10-27T23:27:52.847098+00:00",
+  "typeCheck": "npx tsc --noEmit passed",
+  "diffCheck": "git diff --check passed",
+  "httpChecks": {
+    "/media/media-01": 200,
+    "/projects/loom-launch-film/stages/media?asset=media-01": 200
+  },
+  "browserStatesRecorded": 36,
+  "assertions": "Passed for protected layout, adaptive modes, selection, focus return, draft retention/discard and actual horizontal scroll preservation.",
+  "roles": "Studio Staff plus existing permitted Freelancer and Customer assets. Read-only Filename and restricted actions inspected; no permission source changed.",
+  "originalProtectedFilesChecked": 1701,
+  "approvedChangedFiles": [
+    "src/components/media/MediaAssetGrid.tsx",
+    "src/components/media/MediaBrowser.tsx",
+    "src/components/media/MediaAssetCard.tsx",
+    "src/components/media/MediaAssetDrawer.tsx",
+    "src/components/media/media.css",
+    "src/components/media/MediaAssetRow.tsx"
+  ],
+  "unexpectedProtectedChanges": [],
+  "newFiles": [
+    "src/components/media/useMediaInspector.tsx",
+    "src/components/media/useMediaInspectorLayout.ts"
+  ],
+  "sourceHashes": {
+    "src/components/media/MediaAssetCard.tsx": "6ff1d89477c40c8627917675b0008ac970e73715c0423bbc8df8e238407172ce",
+    "src/components/media/MediaAssetDrawer.tsx": "c088fbcef98a938134880214ae3fc1a071ff57fb632d556ae7f4545c558d7bb3",
+    "src/components/media/MediaAssetGrid.tsx": "ff6ccefeee7ca998a69096a8540f0bb814c78a40b79d409a4943596eea2a83f3",
+    "src/components/media/MediaAssetRow.tsx": "49d2ccdc941fe933fdbe21b5ec336aebc33b294e1029b750f0aa3eb4a21e281c",
+    "src/components/media/MediaBrowser.tsx": "e8231743b593779bc6a648c176709a1d273c671c204cb170cb1c83a7dbfa97b8",
+    "src/components/media/media.css": "7841bb2c18a448bb8b17f76dafdafd2a67d76b0ac2aac94c2de7d7d3b2633da4",
+    "src/components/media/useMediaInspector.tsx": "df11f5a9734998edaa1ef6b55d025da81030a0562c7ac0f69e8a9bbf175e9f1b",
+    "src/components/media/useMediaInspectorLayout.ts": "e8462263d561bca6f0abc1b377a871efca321a28ae1f14d5db1955cb96d8f8ff"
+  },
+  "workingData": "Browser verification used only isolated origin8771 with zero initial local/session keys. Working-origin app pages were not opened; required HTTP checks do not execute browser storage. No comments posted, real invites/messages sent, payments, archive or delete confirmations executed.",
+  "untouched": "Mock data, permissions, assets, dependencies, other production stages and DS source unchanged.",
+  "runtimeNote": "The isolated preview encountered development layout-chunk timeouts during reload checks. A fresh asset load succeeded, followed by a successful reload with normal caching restored; native DOM and network response evidence are saved in native-fresh-load.json. Temporary cache and viewport overrides were restored. No unrelated application changes were made.",
+  "noTestsBuildInstallCommitPush": true,
+  "visualSignOff": "Tom signed off in chat on 28 October 2026: The Media inspector looks good.",
+  "freshLoad": "Verified: normal caching restored, layout.js returned200, Filename and inspector rendered on the project route.",
+  "viewportReset": true,
+  "livePreview": "Isolated demo8771 retained for Tom review; working-origin browser data was not opened.",
+  "resultReferencesChecked": 18,
+  "resultMissingReferences": []
+}

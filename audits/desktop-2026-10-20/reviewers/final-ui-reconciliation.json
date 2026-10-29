@@ -1,0 +1,436 @@
+{
+  "title": "Final UI shortlist reconciliation for the lead",
+  "purpose": "Recommendations for consolidation only. This file changes no finding approval, application code, b.json or report.",
+  "inputs": [
+    "reviewers/a.json",
+    "reviewers/b.json",
+    "reviewers/baseline-catalogue.json"
+  ],
+  "authority": "Latest scoped decisions and approved DS interaction contracts govern; a common appearance alone is not evidence of approval or usability.",
+  "highestConfirmed": "A10 is the highest confirmed current UI defect: hidden Media inspector identity/Close and pointer misactivation at 1133px.",
+  "executiveShortlist": [
+    "A10",
+    "B02",
+    "B01 + A02",
+    "B09",
+    "B03",
+    "A12",
+    "A07",
+    "A13",
+    "A05",
+    "B13"
+  ],
+  "dispositions": [
+    {
+      "id": "A10",
+      "title": "Narrow desktop Media inspector hides its filename and Close control",
+      "disposition": "Keep",
+      "reviewPriority": 1,
+      "originalSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "rationale": "Strongest confirmed UI defect: the global header obscures inspector identity and Close, and pointer activation opens Ask Brisk instead. The record includes before/result/Escape states and source geometry.",
+      "retainedScopeOrCondition": "Headline the verified 1133px Staff pointer barrier. Keep the 1440px squeezed browse area as a related layout symptom with separate acceptance checks. State that keyboard Enter on hidden Close works; do not claim no recovery or a keyboard trap.",
+      "approvedReferenceAudit": "No approved overlay/docking screenshot exists for this header boundary. E011 is a current 1440px comparison, not approval of its complete layout. E044-E046 prove the defect without needing a proposed replacement.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B02",
+      "title": "Media row keyboard handling intercepts its own action buttons",
+      "disposition": "Keep",
+      "reviewPriority": 2,
+      "originalSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "rationale": "A focused file-selection action produces the wrong result with Space. This is a directly reproduced keyboard barrier in a frequent Media task, not a request for visual uniformity.",
+      "retainedScopeOrCondition": "Lead with grid Select + Space. List/Enter/other commands and transcript comment-pin behaviour remain source-supported related occurrences. Do not claim downloads/deletion were tested.",
+      "approvedReferenceAudit": "No approved behaviour screenshot exists. E010/E011 provide genuine before/result evidence. A pointer-equivalent selected toolbar capture would strengthen comparison but is not required to establish the wrong action.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B01",
+      "title": "Team person checkboxes have no accessible person name",
+      "disposition": "Keep and merge A02",
+      "reviewPriority": 3,
+      "originalSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "rationale": "Accessible person identity is absent in live checkbox markup. A02 is the same custom selection implementation and should contribute its DS target, tick and focus evidence rather than become a second total.",
+      "retainedScopeOrCondition": "Consolidated title: Team person selection lacks named, dependable checkbox controls. Preserve checkbox deselection, Staff versus Freelancer actions and rate-field independence. Label semantics are verified; focused appearance/target measurements must retain their stated limits.",
+      "approvedReferenceAudit": "D-R040-staff-1133 and matched crops show a current consumer of the approved DS Checkbox. This is an approved component reference, not approval of an entire Team composition. No exact approved Team-row reference exists.",
+      "reviewStatus": "Needs decision",
+      "mergeInto": "B01"
+    },
+    {
+      "id": "B09",
+      "title": "Adjust project flow declares a modal without managing modal focus",
+      "disposition": "Keep",
+      "reviewPriority": 4,
+      "originalSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "rationale": "The project-flow editor declares modality while focus remains on its background opener and Escape fails there. The specialised editor can retain its useful layout while its overlay promise becomes reliable.",
+      "retainedScopeOrCondition": "Keep verified initial-focus/Escape observation. Full focus containment, background inertness and drag-only reordering are not verified; do not bundle those as proven failures. Decide modal versus non-modal behaviour explicitly.",
+      "approvedReferenceAudit": "No approved screenshot establishes specialised project-flow modal behaviour. DS EditingDialog/Popover text supplies interaction contracts only; do not present a generic modal screenshot as an approved flow-editor replacement.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B03",
+      "title": "Filtered Media selections give commands different scopes",
+      "disposition": "Keep",
+      "reviewPriority": 5,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Two selected files and one visible file produce visibly inconsistent action scopes in the same toolbar. This is important task clarity ahead of cosmetic consistency even though no destructive result was executed.",
+      "retainedScopeOrCondition": "Retain count/label/confirmation discrepancy. Tom must choose cross-filter selection policy; preserve scoped downloads and permissions. Do not say unintended deletion occurred.",
+      "approvedReferenceAudit": "No approved cross-filter policy reference exists. E012/E016/E017 establish the observed scope conflict and cancelled confirmation. The future policy requires a decision, not an invented canonical screenshot.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A12",
+      "title": "Brief production fields lose readable values at narrow desktop width",
+      "disposition": "Keep",
+      "reviewPriority": 6,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "The 1133px editor hides even short existing values and the summary breaks Landscape mid-word. This affects reading specifications, unlike harmless contextual field-width differences elsewhere in Brief.",
+      "retainedScopeOrCondition": "Preserve the approved table hierarchy, field order and aligned summary tracks. Recommend readable minimum content widths or clear overflow. Do not require every table column to fit or propose a new card layout.",
+      "approvedReferenceAudit": "BRIEF-deliverables/summary at 1440 are same-scale current responsive comparisons, not separately approved complete designs. No approved 1133 table reference exists. The 30 September decisions supply approved structure/order, not percentage widths.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A07",
+      "title": "Sticky Chat date pill obscures message text",
+      "disposition": "Keep",
+      "reviewPriority": 7,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "The date visibly covers a current message line. The static chevron also suggests an action that the element does not supply. These are concrete local UI issues independent of Chat visual style.",
+      "retainedScopeOrCondition": "Keep overlap and false-action cue together. Normal-flow date or reserved sticky strip are credible alternatives; preserve grouping and auto-scroll. Reproduction across more scroll positions remains a gap, not proof every day overlaps.",
+      "approvedReferenceAudit": "No approved unobstructed sticky-date reference exists. D-R005-staff-1440 is a current clear-gap example only; it does not certify all positions. A current affected crop is available.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A05",
+      "title": "Notification detail pages lose their Studio settings navigation",
+      "disposition": "Keep",
+      "reviewPriority": 8,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Opening a notification descendant changes the entire navigation context while the user remains in Studio settings. The route condition and matching root/detail screenshots give a clear, small repair.",
+      "retainedScopeOrCondition": "Retain settings navigation and Notifications active state for descendants. Preserve permission/unsaved-change boundaries and Back link. Collapsed navigation remains a verification gap.",
+      "approvedReferenceAudit": "D-R040-staff-1133 is a current canonical approved hybrid-settings pattern; D-R039/041 at the same width demonstrate the departure. This is sufficient for sidebar context, not proof of every page field.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B13",
+      "title": "Brief summary promises approval while Approve Brief is disabled",
+      "disposition": "Keep",
+      "reviewPriority": 9,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Visible reassurance promises approval while the control is disabled for missing content. This is a real feedback mismatch, not a reason to weaken approval rules or fill prototype data.",
+      "retainedScopeOrCondition": "Change only helper eligibility/copy to reflect the existing content/role guard. Keep empty content distinct from eligible partially confirmed details.",
+      "approvedReferenceAudit": "No approved screenshot resolves the combined state. E053/E054 plus disabled accessible explanation and source guard support the mismatch. Do not create a proposed approval rule as a reference.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B12",
+      "title": "The invitation Access step hides the direct Cancel route",
+      "disposition": "Keep",
+      "reviewPriority": 10,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "The second invitation step visibly loses the explicit whole-dialog exit required by its approved shell, leaving Back to serve a different purpose. A narrow footer improvement is justified.",
+      "retainedScopeOrCondition": "Retain Back, Send invite and an explicit Cancel. Do not add a top-right X or merge Back with cancellation. No invitation should be sent for verification.",
+      "approvedReferenceAudit": "E028 first-step footer is a current matched-flow exit reference. DS EditingDialog explicitly supplies the exit contract; no approved second-step exception exists.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B07",
+      "title": "Local tab widgets advertise incomplete keyboard semantics",
+      "disposition": "Keep with scope limit",
+      "reviewPriority": 11,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Verified Team tabs claim semantics they do not complete; repairing that interaction need not make specialised Chat/Media tabs look identical.",
+      "retainedScopeOrCondition": "The active defect is Team ArrowRight and missing panel relationships. List Media/Chat/Masters as source-supported occurrences pending live verification, rather than a proven cross-app total.",
+      "approvedReferenceAudit": "The catalogue has current approved Tabs consumer D-R019-staff-1133; it can illustrate the shared component if labelled contextual. No screenshot can prove keyboard semantics alone, and no exact approved Team tabs reference exists.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B06",
+      "title": "Version panels lack predictable dismissal and focus return",
+      "disposition": "Keep with evidence wording",
+      "reviewPriority": 12,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Escape leaves a version panel open while its opener remains the only direct toggle. That is useful local interaction feedback, but expected outside-dismissal behaviour is a heuristic design recommendation.",
+      "retainedScopeOrCondition": "Say observed Escape result plus recommended predictable dismissal. Keep outside click, focus return and Storyboard occurrence explicitly unverified. Preserve historical read-only versions and separate creation commands.",
+      "approvedReferenceAudit": "No approved version-panel dismissal screenshot exists. E058-E060 show current states; use DS lifecycle text as supporting guidance without claiming blanket popover approval.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Observed interaction; heuristic expected behaviour"
+    },
+    {
+      "id": "A06",
+      "title": "Brand Kit category panels tint enclosing layers with Client colours",
+      "disposition": "Keep",
+      "reviewPriority": 13,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Dynamic Client colour is applied to enclosing interface layers despite the explicit white-layer rule. This is a documented foundation conflict, not a demand to remove meaningful brand colour from content.",
+      "retainedScopeOrCondition": "Only enclosing Fonts/Voice/Documents surfaces are in scope. Retain swatches, logo preview backgrounds, font specimens, status colours and useful call-time highlights. Check for approval outside the inspected log before implementation.",
+      "approvedReferenceAudit": "Same-page white Logos/Colours crops show the foundation-aligned pattern at the same 1440 scale. They are current examples, not whole-page sign-off. No separately approved full Brand Kit replacement screenshot exists; white-layer text is the authority.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A08",
+      "title": "Folders and files share grid rows that leave large blank slots",
+      "disposition": "Keep as layout judgement",
+      "reviewPriority": 14,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Mixed 96px folders and tall files demonstrably create blank grid cells and push file rows down. Separating compact folders is a coherent density proposal, but improved discovery/scan order is not a tested outcome.",
+      "retainedScopeOrCondition": "Present the gap as observed layout and the separate-folder row as a heuristic option. Do not equalise folder/file heights or adopt masonry merely for visual sameness. Preserve folder-first order, drop targets and file selection.",
+      "approvedReferenceAudit": "E010 is current file-only rhythm, not an approved separate-folder replacement. No approved folder-group layout exists. Tom should review the layout option before implementation.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Observed layout; heuristic improvement"
+    },
+    {
+      "id": "A03",
+      "title": "Unread count styling uses tiny low-contrast text and perpetual pulsing",
+      "disposition": "Keep narrowly",
+      "reviewPriority": 15,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Small pale-pink count text is a credible readability issue in the current row screenshot and the declared token contrast is low. The source does not prove every global non-zero consumer or runtime motion preference.",
+      "retainedScopeOrCondition": "Lead with the captured row count and declared 10px/contrast values. Retain shared adapter/count semantics. Pulse/reduced-motion and global consumer claims remain verification gaps; do not describe them as observed runtime failures.",
+      "approvedReferenceAudit": "No approved exact badge variant screenshot exists. Label XS and colour tokens establish available approved ingredients, while the adapter approval leaves these values open. A new exact treatment needs Tom review, not a fabricated reference.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Observed small row count plus source-supported style/contrast and motion risk"
+    },
+    {
+      "id": "B11",
+      "title": "The workload detail drops the explicit over-capacity signal",
+      "disposition": "Keep as optional improvement",
+      "reviewPriority": 16,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "The detail contains correct numbers but drops the explicit excess highlighted in the directory. A small textual excess cue helps explain the warning without making layouts identical.",
+      "retainedScopeOrCondition": "Optional local heuristic requiring Tom decision. Preserve Booked, Potential, Weekly capacity and normal/exact-capacity states. Do not call this regression, wrong calculation or prior-approval violation.",
+      "approvedReferenceAudit": "E031 includes the current approved compact 8h over capacity signal for the same person behind the dialog. No approved over-capacity dialog variant exists.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "B10",
+      "title": "An empty suggested Staff list gives no reason for the blank space",
+      "disposition": "Keep low priority",
+      "reviewPriority": 17,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "An empty suggested subset lacks an explanation while Show all remains available. One short scope line is a restrained clarity proposal, not a proven selection failure.",
+      "retainedScopeOrCondition": "Retain current filter and Show all action; no large illustration or new invitation path. Do not claim the Studio has no Staff or suggested people are unavailable.",
+      "approvedReferenceAudit": "No approved empty suggested-person reference exists. E005/E006/E007 show current empty and expanded states; empty-state guidance supports the proposal.",
+      "reviewStatus": "Needs decision"
+    },
+    {
+      "id": "A04",
+      "title": "Media sort removes the ordinary selection field's approved border",
+      "disposition": "Decision only",
+      "reviewPriority": 18,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S4",
+      "rationale": "The ordinary DS border is overridden, but the ordering value and chevron still communicate an action and verified blue keyboard focus remains. Quiet toolbar selectors can be useful. A border cannot be justified merely because People Sort is framed, and adding chrome can worsen a dense toolbar.",
+      "retainedScopeOrCondition": "Remove from executive/active usability defects. Record as a DS variant-policy conflict: either retain/document a purposeful quiet toolbar selection variant or restore the ordinary field after comparing toolbar weight and fit. Do not add a visible Sort label by default without evidence of scope ambiguity. No focus-loss claim.",
+      "approvedReferenceAudit": "People Sort and E048/E049 provide actual ordinary-field and focused comparisons, so reference evidence is present. They establish standard drift, not proof Media must copy People dimensions or appearance.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Approved-component appearance conflict; practical discoverability unproven"
+    },
+    {
+      "id": "A11",
+      "title": "Brand Kit asset priority reverses between desktop widths",
+      "disposition": "Decision only",
+      "reviewPriority": 19,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Asset ordering differs between 1440 and 1133, but a narrower workstation may legitimately prioritise editor-file retrieval. Neither frequent task priority nor discovery failure has been established.",
+      "retainedScopeOrCondition": "Keep the responsive priority conflict visible for Tom, with options. Do not prescribe asset reordering until the primary task is confirmed. Column reflow itself is acceptable; retain logical reading/focus order.",
+      "approvedReferenceAudit": "Paired master/sub-brand captures prove the current difference. No approved stable-priority screenshot exists and neither page is a complete approved canonical design.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Heuristic priority question"
+    },
+    {
+      "id": "A09",
+      "title": "Client metrics stretch into mostly empty full-form-height columns",
+      "disposition": "Defer from active shortlist",
+      "reviewPriority": 20,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S4",
+      "rationale": "Full-height metric enclosures create visible emptiness, but Client fields remain operable/readable in the one loaded 1133 capture. There is no observed clipping, failed entry or approved profile arrangement to violate, and the 1440 comparison is blank. Reallocating columns would be a broader task-priority choice.",
+      "retainedScopeOrCondition": "Keep as optional polish/decision note. First obtain the loaded 1440 state and assess real long names/activity/form use. If Tom dislikes the empty enclosure, align short metric cards to start as the smallest option; defer the proposed new summary row/column and reclaimed form width.",
+      "approvedReferenceAudit": "No approved Client-profile metric layout exists. The valid current 1133 image supports the visual observation only; an approved reference and loaded 1440 comparison are missing.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Heuristic visual preference; task impact unproven"
+    },
+    {
+      "id": "A01",
+      "title": "Page CSS suppresses the approved selection-field focus outline",
+      "disposition": "Defer pending live evidence",
+      "reviewPriority": 21,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "CSS resets are relevant risks but computed winners and practical focused states are unverified on the named consumers. Media and People ordinary sort both retain clear blue focus, illustrating why source resets alone are insufficient.",
+      "retainedScopeOrCondition": "Keep in source-risk appendix and coverage gaps. Promote only an actually affected ordinary field after measurement. Do not merge with A04 resting border or infer loss from Media sort. Exclude prototype-only selector from product headline scope.",
+      "approvedReferenceAudit": "No current affected focus screenshot exists. Approved DS focus source is present, but both an affected screenshot and a matched current approved field state are needed to present a visual defect.",
+      "reviewStatus": "Needs decision",
+      "recommendedEvidenceWording": "Source-supported risk"
+    },
+    {
+      "id": "A02",
+      "title": "Team selection recreates a small checkbox without DS focus states",
+      "disposition": "Merge",
+      "reviewPriority": 3,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "A02 and B01 have the same local Team checkbox root, source rows and screenshots. Two findings would inflate the same repair.",
+      "retainedScopeOrCondition": "Merge approved-DS visual/target/focus concerns into B01 with the captured person-label barrier as the lead impact. Focus and target measurements remain qualified. Do not merge separate Team tab semantics, empty suggestions or distinct save boundaries.",
+      "approvedReferenceAudit": "Use the existing matched 1133 Team/Notifications DS Checkbox crops and retain exact limits.",
+      "reviewStatus": "Needs decision",
+      "mergeInto": "B01"
+    },
+    {
+      "id": "A13",
+      "title": "Brief step changes retain scroll that hides the new heading",
+      "disposition": "Keep",
+      "reviewPriority": 8,
+      "originalSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "rationale": "Lead reproduced retained app content scroll through explicit step navigation at both desktop widths; the new heading visibly sits behind the global header.",
+      "retainedScopeOrCondition": "Target the actual content scroll container and new-step heading on explicit step navigation; preserve all answers and summary field-targeting. No blanket window/page-top scrolling or on-change scrolling.",
+      "approvedReferenceAudit": "No exact approved step-scroll screenshot exists. E112-E114 are current before/after evidence; heuristic orientation supplies the expected behaviour.",
+      "reviewStatus": "Needs decision"
+    }
+  ],
+  "duplicateMerges": [
+    {
+      "from": [
+        "A02",
+        "B01"
+      ],
+      "into": "B01",
+      "reason": "Same custom person checkbox markup, selection row and repair. Keep accessible-name barrier and DS target/focus/asset aspects together.",
+      "notMerged": [
+        "B07: separate tabs interaction contract",
+        "B10: separate empty suggested-list explanation"
+      ]
+    }
+  ],
+  "relatedButDistinct": [
+    {
+      "ids": [
+        "A10",
+        "B02",
+        "B03",
+        "A08",
+        "A04"
+      ],
+      "reason": "All affect Media, but have distinct geometry, keyboard-event, selection-policy, grid-density and DS-variant causes. Group in the Media chapter/batches; do not hide them in one umbrella finding."
+    },
+    {
+      "ids": [
+        "A10",
+        "B09",
+        "B06"
+      ],
+      "reason": "Overlay lifecycle issues are related, but inspector layering, declared modal focus and non-modal version dismissal are different verified behaviours and need different acceptance checks."
+    },
+    {
+      "ids": [
+        "A12",
+        "B13"
+      ],
+      "reason": "Same Brief summary, but table readability and helper/approval contradiction are independent changes."
+    },
+    {
+      "ids": [
+        "A06",
+        "A11"
+      ],
+      "reason": "Brand surface authority and responsive content priority are separate questions. Approving one does not settle the other."
+    }
+  ],
+  "implementationBatchRecommendations": [
+    {
+      "order": 1,
+      "name": "Reliable Media actions and inspector",
+      "ids": [
+        "A10",
+        "B02",
+        "B03"
+      ],
+      "preserve": "Scoped files/permissions, existing selection model until Tom chooses a cross-filter policy, safe dismissal and separate Ask Brisk control."
+    },
+    {
+      "order": 2,
+      "name": "Named selection and honest overlay behaviour",
+      "ids": [
+        "B01 + A02",
+        "B09",
+        "B07",
+        "B06",
+        "B12"
+      ],
+      "preserve": "Specialised row/panel composition, direct assignment versus invitation, separate Back and Cancel, historical version behaviour."
+    },
+    {
+      "order": 3,
+      "name": "Readable work and coherent context",
+      "ids": [
+        "A12",
+        "A13",
+        "A07",
+        "A05",
+        "B13"
+      ],
+      "preserve": "Approved Brief table structure, message grouping, settings guards and approval eligibility."
+    },
+    {
+      "order": 4,
+      "name": "Targeted hierarchy and foundation review",
+      "ids": [
+        "A06",
+        "A08",
+        "A03",
+        "B11",
+        "B10"
+      ],
+      "preserve": "Real brand content, folder/file semantics, count sources and useful capacity breakdown. Decide the exact proposed variants with Tom."
+    }
+  ],
+  "referenceGapSummary": {
+    "exactApprovedReplacementMissing": [
+      "A10",
+      "A12",
+      "A07",
+      "B03",
+      "B09",
+      "B06",
+      "A08",
+      "A03",
+      "B13",
+      "B10",
+      "A13"
+    ],
+    "componentOrCurrentCanonicalReferencePresent": [
+      "B01 + A02: shared DS Checkbox through D-R040 at 1133",
+      "A05: approved hybrid settings context through Notifications root at 1133",
+      "A06: same-page white enclosures plus explicit foundation rule",
+      "B12: current first-step Cancel plus approved dialog exit contract",
+      "B07: shared Tabs consumer exists, but Team semantics need textual/live interaction evidence",
+      "B11: same-person approved compact excess warning visible in E031"
+    ],
+    "rule": "Label these honestly. A current wider layout or source-guideline reference is not a separately approved complete replacement. Lack of a replacement screenshot does not erase a directly observed wrong action, obscured text or contradiction. Never manufacture an approved reference."
+  },
+  "pendingLeadEvidence": [
+    "A01 affected live computed focus state is still absent.",
+    "E115 confirms full 3 mins value recovery by opening the Duration menu without changing it. Other truncated fields and remaining geometry remain separate checks."
+  ],
+  "noImplementation": true,
+  "reviewStatus": "Needs decision"
+}

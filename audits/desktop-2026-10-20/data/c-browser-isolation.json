@@ -1,0 +1,16 @@
+{
+  "browserId": "1",
+  "profile": "Tom Producer",
+  "sessionName": "📋 Brisk audit C",
+  "tabId": "1716948387",
+  "origin": "http://127.0.0.1:8769",
+  "beforeApp": {
+    "result": {
+      "type": "string",
+      "value": "{\"url\":\"http://127.0.0.1:8769/assets/logos/brisk.svg\",\"width\":1512,\"height\":767,\"dpr\":2,\"localStorageCount\":0,\"sessionStorageCount\":0}"
+    }
+  },
+  "rawReadMethod": "CDP Runtime.evaluate read-only",
+  "viewportChanged": false,
+  "notTouched": "Other tabs/profiles and working localhost3000"
+}

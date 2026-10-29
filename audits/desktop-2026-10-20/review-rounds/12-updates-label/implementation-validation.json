@@ -1,0 +1,54 @@
+{
+  "id": "NOTIFY-02",
+  "date": "2026-10-29",
+  "title": "Global Updates popover wording",
+  "approval": "Tom annotated the Notifications popover heading with Updates. Adjacent footer, empty copy and accessible names follow the same terminology.",
+  "changes": [
+    "Heading: Updates",
+    "Footer: View all updates",
+    "Empty state: No updates yet",
+    "Accessible region, close and unread-count names use updates"
+  ],
+  "preserved": [
+    "Notification routes and identifiers",
+    "Settings terminology",
+    "Role visibility",
+    "Counts, row colours and actions",
+    "Working browser records and drafts"
+  ],
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed, exit 0",
+    "runtime": {
+      "url": "http://127.0.0.1:8783/chat?project=loom-launch-film&review=updates-label",
+      "status": 200
+    },
+    "desktopWidths": [
+      1440,
+      1133
+    ],
+    "browser": "Verified rendered heading, footer and Recent updates region. Footer destination remains /notifications. Temporary isolated inspection tab closed and viewport reset. Working app tabs left untouched.",
+    "emptyState": "Source-reviewed; existing records were not changed to manufacture an empty state.",
+    "sourceComparison": "1785 pre-existing files compared. Only NotificationBell.tsx and desktop-design-baseline.md changed."
+  },
+  "evidence": {
+    "fullScreenshots": [
+      "updates-popover-1440.png",
+      "updates-popover-1133.png"
+    ],
+    "crop": "updates-popover-focus.png",
+    "cropSource": "updates-popover-1440.png",
+    "cropBounds": [
+      770,
+      50,
+      1315,
+      520
+    ],
+    "context": "Studio Staff, isolated demo on 8783, populated Updates popover. Faithful crop with no UI alterations."
+  },
+  "limitations": [
+    "Full notification centre headings and notification settings were outside this naming correction.",
+    "No empty-state browser scenario manufactured."
+  ],
+  "workingData": "No stored records or drafts changed in this task. No working-origin navigation/reload performed.",
+  "status": "Implemented and desktop-verified"
+}

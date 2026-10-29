@@ -1,0 +1,166 @@
+{
+  "date": "29 October 2026",
+  "status": "Implemented; awaiting Tom visual sign-off",
+  "approval": "One top-bar Search, current page by default, Everywhere option, remove duplicate search bars, preserve working data.",
+  "branch": "codex/unified-brisk-prototype",
+  "implementation": {
+    "existingFilesChanged": [
+      "src/app/layout.tsx",
+      "src/components/clients/ClientsPage.tsx",
+      "src/components/costs/OutstandingInvoicesPage.tsx",
+      "src/components/chat/ChatRail.tsx",
+      "src/components/chat/ChatPage.tsx",
+      "src/components/navigation/AppShell.tsx",
+      "src/components/navigation/GlobalHeaderActions.tsx",
+      "src/components/active-videos/FreelancerVideosPage.tsx",
+      "src/components/active-videos/ActiveVideosPage.tsx",
+      "src/components/script/ScriptPage.tsx",
+      "src/components/brand-kits/BrandKitPages.tsx",
+      "src/components/people/PeoplePage.tsx",
+      "src/components/brief/BriefPage.tsx",
+      "src/components/media/MediaBrowser.tsx",
+      "Docs/desktop-design-baseline.md"
+    ],
+    "newFiles": [
+      "src/components/search/SearchContext.tsx",
+      "src/components/search/global-search.css",
+      "src/components/search/SearchDialog.tsx",
+      "src/components/search/search-data.ts",
+      "src/components/search/GlobalSearch.tsx"
+    ],
+    "searchPersistence": "None. Query, index and scope are held in memory. Existing saved text is read without migrations.",
+    "composition": "Existing DS EditingDialog, Input, Select and Button; DsIcon search asset; existing tokens.",
+    "scopes": [
+      "Videos / My jobs",
+      "People",
+      "Clients",
+      "Media Library / project Media, respecting existing filters",
+      "Brand Kits",
+      "Expenses",
+      "This Brief",
+      "This Script",
+      "This conversation",
+      "Current rendered content on other pages"
+    ],
+    "everywhere": [
+      "Permitted projects",
+      "Configured Brief answers",
+      "Currently saved Script version; current open Script contributes live rows or an existing preview",
+      "Project Chat and member-only direct/group conversations; deleted messages excluded",
+      "Media filenames and project metadata",
+      "Permitted People and Client identity fields",
+      "Permitted Brand Kit names",
+      "Outstanding invoices for authorised Studio administration"
+    ]
+  },
+  "verification": {
+    "typeCheck": {
+      "command": "npx tsc --noEmit",
+      "result": "Passed"
+    },
+    "diffCheck": "Passed",
+    "httpRoutes200": [
+      "/active-videos",
+      "/chat",
+      "/projects/loom-launch-film/stages/brief",
+      "/projects/harbour-health-care-journey/script",
+      "/media",
+      "/people",
+      "/clients",
+      "/brand-kits",
+      "/outstanding-invoices"
+    ],
+    "desktop": [
+      {
+        "viewport": "1440 \u00d7 1000 CSS px",
+        "result": "Dialog within viewport; no horizontal overflow; full and scoped results, content selector, query and close action visible"
+      },
+      {
+        "viewport": "1133 \u00d7 1000 CSS px",
+        "result": "Dialog 800 \u00d7 483 at x166.5/y258.5 for two Chat matches; no horizontal overflow; top-bar search retains accessible name"
+      }
+    ],
+    "behaviour": [
+      "Single Cmd+K owner on Videos, Chat, Brief and Script; code handles Ctrl+K through the same path",
+      "Input focus on opening; down/Enter selection; Escape closes without clearing the list query",
+      "Current Videos search Loom Sales returns one result and one visible project; closed control exposes the active query",
+      "Everywhere preserves the query; content selector narrows customer matches from 13 to two Chat results",
+      "No-results state offers Search Everywhere",
+      "Live Brief answer searchable; saved answer found from Videos; result reveals Description step",
+      "Current Script result highlights row; Everywhere opens row-07/version v3; version v1 link opens existing read-only preview with Restore as new version left untouched",
+      "Current Media file match opens the correct inspector",
+      "Private conversation result opens David Ryan DM and its matching message",
+      "People Sarah returns two permitted names; Clients and Brand Kits Loom each return one result",
+      "Expenses Jordan opens Review contractor invoice; cancelled without approval or payment"
+    ],
+    "roles": [
+      "Studio Staff: permitted project, Internal/External Chat, directory and finance scope",
+      "Customer: alternate ending Internal phrase and Deel project query return no results; eight frames External Chat phrase returns one permitted result; no private directory/finance categories",
+      "Studio Freelancer: My jobs scope; no People/Clients/Expenses categories; member-only Post team group results remain available"
+    ],
+    "permissionEvidenceNote": "The Client/Freelancer PNGs capture the permission checks before the final compact content-selector refinement. Use current-page-1440, everywhere-1440 and chat-filter captures for final visual truth."
+  },
+  "preservation": {
+    "inspectionOrigin": "Fresh isolated http://127.0.0.1:8785, forwarding the existing local preview. No navigation/reload or inspection of the user working localhost tab.",
+    "mockDataFilesChanged": false,
+    "assetsChanged": false,
+    "dependenciesChanged": false,
+    "newSearchRecordWrites": false,
+    "demoChanges": "A single Brief Description sentence was entered only in the disposable demo origin to verify live and saved text. No Brief submitted, invitation/message sent, approval or payment recorded.",
+    "notRun": [
+      "Production build",
+      "Tests",
+      "Dependency installation",
+      "Commit",
+      "Push",
+      "Deployment"
+    ]
+  },
+  "limits": [
+    "Front-end prototype search, not a live server search service. Production search must enforce access on the server.",
+    "PDF/document contents, video/audio contents and OCR are not extracted. Media is searched by name and metadata.",
+    "Everywhere does not crawl every settings field, private profile note, historical Script version or unopened transcript. Other current pages use their rendered visible content; unexpanded or unrendered panels are outside that fallback.",
+    "Routine mobile checks remain deferred. Keyboard and role checks are bounded interaction checks, not a formal accessibility-compliance claim."
+  ],
+  "screenshots": [
+    {
+      "file": "current-page-1440.png",
+      "kind": "Current prototype screenshot",
+      "origin": "127.0.0.1:8785",
+      "role": "Studio Staff",
+      "viewport": "1440 \u00d7 1000"
+    },
+    {
+      "file": "everywhere-1440.png",
+      "kind": "Current prototype screenshot",
+      "origin": "127.0.0.1:8785",
+      "role": "Studio Staff",
+      "viewport": "1440 \u00d7 1000"
+    },
+    {
+      "file": "chat-filter-1440.png",
+      "kind": "Current prototype screenshot",
+      "origin": "127.0.0.1:8785",
+      "role": "Studio Staff",
+      "viewport": "1440 \u00d7 1000"
+    },
+    {
+      "file": "chat-filter-1133.png",
+      "kind": "Current prototype screenshot",
+      "origin": "127.0.0.1:8785",
+      "role": "Studio Staff",
+      "viewport": "1133 \u00d7 1000"
+    }
+  ],
+  "crop": {
+    "file": "search-result.png",
+    "source": "chat-filter-1440.png",
+    "bounds": [
+      312,
+      250,
+      1132,
+      754
+    ],
+    "method": "Faithful crop, no recreation, annotation or rescaling."
+  }
+}

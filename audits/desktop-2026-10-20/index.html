@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Brisk desktop audit - review pack</title>
+  <link rel="stylesheet" href="report.css?v=20261021-final">
+  <script defer src="data/report-data.js?v=20261021-final"></script>
+  <script defer src="report.js?v=20261021-final"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to report</a>
+  <aside class="report-sidebar" aria-label="Report navigation">
+    <a class="report-brand" href="#executive"><span class="brand-mark" aria-hidden="true">B</span><span>Brisk<span class="brand-caption">Desktop audit</span></span></a>
+    <p class="sidebar-date" id="sidebar-date">20 October 2026</p>
+    <nav><a href="#executive">Overview</a><a href="#scope">Scope & baseline</a><a href="#coverage">Coverage register</a><a href="#catalogue">Pattern catalogue</a><a href="#design-assessment">Design assessment</a><a href="#findings">Findings <span id="nav-finding-count"></span></a><a href="#comparisons">Cross-app comparisons</a><a href="#pages">Page-by-page review</a><a href="#decisions">Decisions for Tom</a><a href="#batches">Implementation batches</a></nav>
+    <div class="sidebar-foot"><strong>Audit only</strong><p>Recommendations remain unfixed and unapproved until Tom reviews them.</p><a href="REVIEWER-BRIEF.md">Reviewer brief</a></div>
+  </aside>
+  <main id="main" class="report-main">
+    <header class="report-topbar"><span>Local review pack</span><div><button type="button" id="export-review" class="button button-primary">Export review JSON</button><button type="button" id="import-review" class="button">Import review JSON</button><input id="import-file" type="file" accept="application/json,.json" hidden><button type="button" id="reset-review" class="button button-quiet">Reset session choices</button></div></header>
+    <div class="save-notice" role="status" id="save-notice">Review selections are temporary in this tab. Export JSON to save them, then import that file to continue. This report does not write to the application.</div>
+    <div class="save-notice">Audit baseline:20-21 October. <a href="review-rounds/01-media-inspector/result.html">Media inspector -signed off28 October</a>. <a href="review-rounds/02-todo-time-editor/result.html">To Do time editor -signed off28 October</a>. <a href="review-rounds/03-plan-comparison/index.html">Plans: deferred</a>. <a href="review-rounds/04-team-assignment/result.html">Team assignment result</a>. <a href="review-rounds/05-stage-deadlines/timing-review.html">Next: Turnaround times and delivery warnings</a>. <a href="data/implementation-register.json">Implementation register</a>.</div><section id="executive" class="report-section" aria-labelledby="executive-title"><div id="executive-content"></div></section>
+    <section id="scope" class="report-section" aria-labelledby="scope-title"><div class="section-heading"><span class="eyebrow">01 / Context</span><h2 id="scope-title">Scope & inspected baseline</h2></div><div id="scope-content"></div></section>
+    <section id="coverage" class="report-section" aria-labelledby="coverage-title"><div class="section-heading"><span class="eyebrow">02 / Accountability</span><h2 id="coverage-title">Coverage register</h2><p>Route defaults and nested workflows are tracked separately. Evidence of one state does not establish complete consumer or role coverage.</p></div><div id="coverage-content"></div></section>
+    <section id="catalogue" class="report-section" aria-labelledby="catalogue-title"><div class="section-heading"><span class="eyebrow">03 / Shared standards</span><h2 id="catalogue-title">Canonical components & patterns</h2><p>Scoped approvals establish the baseline. Useful contextual differences are preserved.</p></div><div id="catalogue-content"></div></section>
+    <section id="design-assessment" class="report-section" aria-labelledby="design-assessment-title"><div class="section-heading"><span class="eyebrow">04 / Product craft</span><h2 id="design-assessment-title">Design assessment</h2><p>What works well, what to preserve, and optional ways to make Brisk more deliberate and sophisticated.</p></div><div id="design-assessment-content"></div></section>
+    <section id="findings" class="report-section" aria-labelledby="findings-title"><div class="section-heading"><span class="eyebrow">05 / Recommendations</span><h2 id="findings-title">Findings</h2><p>Observed defects, standard violations and design judgements are labelled separately. None of these recommendations is approved by this report.</p></div><div class="filter-panel"><div class="search-filter"><label for="finding-search">Search findings</label><input type="search" id="finding-search" placeholder="Title, page, component or evidence"></div><div id="finding-filters" class="filter-grid"></div><div class="filter-summary"><span id="finding-results" role="status"></span><button type="button" id="clear-filters" class="text-button">Clear filters</button></div></div><div id="findings-content"></div></section>
+    <section id="comparisons" class="report-section" aria-labelledby="comparisons-title"><div class="section-heading"><span class="eyebrow">06 / Across the application</span><h2 id="comparisons-title">Consistency comparisons</h2><p>Compare elements serving the same task. Similar appearance alone does not justify merging distinct actions.</p></div><div id="comparisons-content"></div></section>
+    <section id="pages" class="report-section" aria-labelledby="pages-title"><div class="section-heading"><span class="eyebrow">07 / By location</span><h2 id="pages-title">Page-by-page review</h2></div><div id="pages-content"></div></section>
+    <section id="decisions" class="report-section" aria-labelledby="decisions-title"><div class="section-heading"><span class="eyebrow">08 / Approval boundaries</span><h2 id="decisions-title">Decisions for Tom</h2><p>Recommendations below need an explicit decision before implementation. A temporary report selection is a review note, not authorisation to change the prototype.</p></div><div id="decisions-content"></div></section>
+    <section id="batches" class="report-section" aria-labelledby="batches-title"><div class="section-heading"><span class="eyebrow">09 / Next work</span><h2 id="batches-title">Recommended implementation batches</h2><p>These are proposed work packages. Implementation starts only after approval of the relevant changes.</p></div><div id="batches-content"></div></section>
+    <footer class="report-footer"><p>Brisk desktop UI, consistency and usability audit</p><a href="#executive">Back to overview</a></footer>
+  </main>
+  <dialog id="evidence-dialog" class="evidence-dialog" aria-labelledby="evidence-dialog-title"><header><div><h2 id="evidence-dialog-title">Screenshot evidence</h2><p id="evidence-dialog-caption"></p></div><button type="button" id="close-evidence" class="button">Close</button></header><img id="enlarged-evidence" alt=""><a id="open-original" target="_blank" rel="noopener">Open original screenshot</a></dialog>
+  <script>if (location.protocol === 'file:') document.documentElement.dataset.localFile = 'true';</script>
+</body>
+</html>

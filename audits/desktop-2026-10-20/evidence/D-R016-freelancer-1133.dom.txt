@@ -1,0 +1,39 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Nina Patel":
+    - generic "Nina Patel": NP
+    - strong: Nina Patel
+    - generic: North Star Films
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Brief unavailable" [level=1]
+  - paragraph: This offer is no longer available to view.
+  - link "Back to offers":
+    - /url: /active-videos?view=offers

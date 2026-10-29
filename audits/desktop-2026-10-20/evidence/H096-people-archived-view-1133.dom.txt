@@ -1,0 +1,166 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "People header":
+    - heading "People" [level=1]
+    - generic: Search people
+    - searchbox "Search people"
+  - group "People views":
+    - button "All 32":
+      - text: All
+      - generic: "32"
+    - button "Studio Staff 10":
+      - text: Studio Staff
+      - generic: "10"
+    - button "Studio Freelancers 7":
+      - text: Studio Freelancers
+      - generic: "7"
+    - button "Client contacts 15":
+      - text: Client contacts
+      - generic: "15"
+    - button "Archived 2" [active] [pressed]:
+      - text: Archived
+      - generic: "2"
+  - button "Invite person":
+    - generic: Invite person
+  - region "People directory controls":
+    - generic: Sort by
+    - combobox "Sort people":
+      - generic: Latest activity
+    - generic: 2 people
+  - region "People directory":
+    - table:
+      - rowgroup:
+        - row "Person Type Role Projects Access Latest activity View person details":
+          - columnheader "Person"
+          - columnheader "Type"
+          - columnheader "Role"
+          - columnheader "Projects"
+          - columnheader "Access"
+          - columnheader "Latest activity"
+          - columnheader "View person details":
+            - generic: View person details
+      - rowgroup:
+        - row "Leila Rahman avatar Leila Rahman leila@northstarfilms.com.au Open Leila Rahman's overview North Star Films Producer No current work Accepted They have joined Brisk. Person archived 28 June 2026 Open Leila Rahman's full profile":
+          - cell "Leila Rahman avatar Leila Rahman leila@northstarfilms.com.au":
+            - link "Leila Rahman avatar Leila Rahman leila@northstarfilms.com.au":
+              - /url: /people/lr
+              - generic "Leila Rahman avatar": LR
+              - strong: Leila Rahman
+              - generic: leila@northstarfilms.com.au
+          - cell "Open Leila Rahman's overview North Star Films":
+            - link "Open Leila Rahman's overview":
+              - /url: /people/lr
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/lr
+          - cell "Producer":
+            - link "Producer":
+              - /url: /people/lr
+              - strong: Producer
+          - cell "No current work":
+            - link "No current work":
+              - /url: /people/lr?section=Work
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/lr
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Person archived 28 June 2026":
+            - link "Person archived 28 June 2026":
+              - /url: /people/lr?section=Notes%20and%20activity
+              - strong: Person archived
+              - generic: 28 June 2026
+          - cell "Open Leila Rahman's full profile":
+            - link "Open Leila Rahman's full profile":
+              - /url: /people/lr
+        - row "Zoe Okafor avatar Zoe Okafor zoe@okaforstudio.com Open Zoe Okafor's overview Auckland, NZ Illustrator, Animator Illustration - 2D animation No current work Accepted They have joined Brisk. Person archived 19 May 2026 Open Zoe Okafor's full profile":
+          - cell "Zoe Okafor avatar Zoe Okafor zoe@okaforstudio.com":
+            - link "Zoe Okafor avatar Zoe Okafor zoe@okaforstudio.com":
+              - /url: /people/zo
+              - generic "Zoe Okafor avatar": ZO
+              - strong: Zoe Okafor
+              - generic: zoe@okaforstudio.com
+          - cell "Open Zoe Okafor's overview Auckland, NZ":
+            - link "Open Zoe Okafor's overview":
+              - /url: /people/zo
+              - generic: Studio Freelancer
+            - link "Auckland, NZ":
+              - /url: /people/zo
+          - cell "Illustrator, Animator Illustration - 2D animation":
+            - link "Illustrator, Animator Illustration - 2D animation":
+              - /url: /people/zo
+              - strong: Illustrator, Animator
+              - generic: Illustration - 2D animation
+          - cell "No current work":
+            - link "No current work":
+              - /url: /people/zo?section=Work
+          - cell "Accepted They have joined Brisk.":
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/zo?section=Access
+              - generic: Accepted
+              - generic: They have joined Brisk.
+          - cell "Person archived 19 May 2026":
+            - link "Person archived 19 May 2026":
+              - /url: /people/zo?section=Notes%20and%20activity
+              - strong: Person archived
+              - generic: 19 May 2026
+          - cell "Open Zoe Okafor's full profile":
+            - link "Open Zoe Okafor's full profile":
+              - /url: /people/zo

@@ -1,0 +1,38 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/files".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 73-146
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/files
+~				71 container Project Files
+~					72 text PROJECT UTILITY
++					73 heading Project Files, Value: 1, ID: project-files-heading
++						74 text Project Files
++					75 text Links to the external storage your team already uses.
++					76 text 2 locations
++					77 container
++						78 text 1
++						79 heading Working files, Value: 2
++							80 text Working files
++						81 text https://app.lucidlink.com/projects/loom-launch-film
++						82 button Edit
++						83 button Remove
++						84 link Description: Open in LucidLink, Value: app.lucidlink.com/projects/loom-launch-film
++						85 button Copy link
++						86 text Added by  Tom Editor  ·  124 days ago  · Last confirmed working:  24 July 2026  by Sarah Chen
++						87 button Mark as confirmed working
++						88 text Notes
++						89 text entry area (settable) Notes, Value: Current edit files and renders. Latest exports live in /04_Exports.
++					90 container
++						91 text 2
++						92 heading Masters, Value: 2
++							93 text Masters
++						94 text https://drive.google.com/drive/folders/loom-masters
++						95 button Edit
++						96 button Remove
++						97 link Description: Open in Google Drive, Value: drive.google.com/drive/folders/loom-masters
++						98 button Copy link
++						99 text Added by  Tom Editor  ·  94 days ago  · Last confirmed working:  21 July 2026  by Tom Editor
++						100 button Mark as confirmed working
++						101 text Notes
++						102 text entry area (settable) Notes, Value: Approved masters and delivery paperwork.
++					103 button Add another location
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/files

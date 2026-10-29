@@ -1,0 +1,103 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/shoot".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/shoot
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 pop up button (collapsed) Description: Shoot actions, Secondary Actions: Expand
+					37 text Shoot actions
+				38 button Open Chat
+				39 button (collapsed) Description: Updates, Secondary Actions: Expand
+			40 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			41 container Project stage progress
+				42 container LOOM / Launch Film - Sales Narrative
+					43 link Description: Back to dashboard, Value: localhost:3000/active-videos
+					44 text LOOM Launch Film - Sales Narrative
+				45 container LOOM Launch Film - Sales Narrative
+					46 content list Sequential production stages
+						47 container
+							48 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+							49 text Brief
+						50 container
+							51 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+							52 text Script
+						53 container
+							54 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+							55 text Storyboard
+						56 container
+							57 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+							58 text Shoot
+						59 container
+							60 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+							61 text Edit
+						62 container
+							63 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+							64 text Masters
+					65 container
+						66 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+						67 text Media
+					68 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+						69 text Adjust project flow
+			70 container
+				71 heading Setup, Value: 2
+					72 text Setup
+				73 text Answer 6 quick questions, then Brisk will prepare the shoot workspace you choose.
+				74 heading What are you planning to capture?, Value: 3
+					75 text What are you planning to capture?
+				76 container What are you planning to capture?
+					77 checkbox Interviews, Value: 0
+					78 checkbox Scripted scenes, Value: 0
+					79 checkbox B-roll or general coverage, Value: 0
+				80 checkbox Not sure yet - decide later, Value: 1
+				81 container Shoot setup questions
+					82 button 1 What to capture
+						83 text 1
+						84 text What to capture
+					85 button 2 People
+						86 text 2
+						87 text People
+					88 button 3 Location
+						89 text 3
+						90 text Location
+					91 button 4 Date
+						92 text 4
+						93 text Date
+					94 button 5 Must-have shots
+						95 text 5
+						96 text Must-have shots
+					97 button 6 Workflow
+						98 text 6
+						99 text Workflow
+				100 button Next
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/shoot

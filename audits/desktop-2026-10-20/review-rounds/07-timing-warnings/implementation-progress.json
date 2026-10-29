@@ -1,0 +1,80 @@
+{
+  "date": "28 October 2026",
+  "scope": "Approved timing warnings in Brief, Project Chat and Deadline column",
+  "state": "Timing-warning implementation and final desktop verification finished; ready for Tom visual review",
+  "boundaries": [
+    "No working-origin interactions or stored-data migrations",
+    "Separate settings layout, auto timing engine and round policy remain out of scope",
+    "Current roles, approval flows, stage presentation and existing deadlines preserved",
+    "No backend, actual notification delivery, tests, build, dependencies, commit or push"
+  ],
+  "approval": "../05-stage-deadlines/chat-placement-recommendation.json",
+  "verifiedSoFar": [
+    "Type-check passes",
+    "Affected route HTTP checks pass",
+    "Deadline link selects Internal timing message",
+    "Unreviewed production risk absent from External and Customer views",
+    "Explicit Staff Share with Client creates safe External post and retains warning",
+    "Client date review has no Staff controls",
+    "Brief one-line hint and explicit demo submission exercised"
+  ],
+  "demoOrigin": "http://127.0.0.1:8782",
+  "notWorkingOrigins": "No verification interactions on 8773, 8777, 8778 or the user report tabs.",
+  "changedExistingApplicationFiles": [
+    "src/app/layout.tsx",
+    "src/components/chat/ChatMessageList.tsx",
+    "src/components/chat/ChatPage.tsx",
+    "src/components/navigation/GlobalHeaderActions.tsx",
+    "src/components/active-videos/FreelancerVideosPage.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/brief/BriefPage.tsx",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "src/components/notifications/types.ts",
+    "src/data/notification-registry.ts"
+  ],
+  "protectedFilesCompared": 1706,
+  "unexpectedProtectedChanges": [],
+  "latestTypeCheck": "Passed 29 October 2026 on current app",
+  "resumeFrom": [],
+  "runtime": {
+    "nextDev": "http://127.0.0.1:3000",
+    "isolatedDemo": "http://127.0.0.1:8782",
+    "reportServer": "http://127.0.0.1:8765",
+    "ownedProxyCommand": "python3 audits/desktop-2026-10-20/audit_proxy.py --port 8782",
+    "ownedProxySession": 40746,
+    "cuaTabId": "36",
+    "browserId": "2",
+    "restored": "Viewport reset, demo role Studio Staff; no working-origin role or data edits",
+    "resumedIsolatedDemo": "http://127.0.0.1:8783",
+    "assignedFreelancerOrigin": "http://127.0.0.1:8784 (temporary server stopped after verification)"
+  },
+  "unverified": [],
+  "laterApprovedIconRefinement": {
+    "scope": "Separate follow-up: clean outline home icon requested after this checkpoint",
+    "files": [
+      "src/components/navigation/HybridSidebar.tsx",
+      "Docs/desktop-design-baseline.md"
+    ],
+    "decision": "Use house-line, preserving the Videos label and destination",
+    "evidence": "../06-videos-home-icon/outline-refinement-validation.json",
+    "boundary": "Preserve this change when resuming timing verification; it is outside the timing batch."
+  },
+  "laterDeliveryRollout": {
+    "date": "29 October 2026",
+    "result": "../08-delivery-agreement/result.html",
+    "note": "New explicit approval extends this earlier warning-only scope into date proposal/agreement. Latest Chat review entry now opens Final delivery. Original unfinished evidence pack remains historical; see consolidated current result and explicit remaining checks."
+  },
+  "completedByResume": {
+    "date": "29 October 2026",
+    "verification": "implementation-validation.json",
+    "freshChecks": "resume-2026-10-29/browser-observations.json",
+    "result": "result.html",
+    "sourceChangesDuringResume": []
+  },
+  "remainingProductScope": [
+    "Automatic stage deadline calculations and live AI forecasts",
+    "Studio turnaround settings and holiday calendar",
+    "Revision-round policy",
+    "Backend and actual notification/email delivery"
+  ]
+}

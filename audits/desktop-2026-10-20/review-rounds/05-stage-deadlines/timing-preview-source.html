@@ -1,0 +1,222 @@
+<style>
+@font-face{font-family:BriskTimingPreview;src:url(data:font/woff2;base64,__BRISK_FONT__) format('woff2');font-weight:200 800;font-display:swap}
+#brisk-timing-preview{/*__BRISK_TOKENS__*/--font-brisk:BriskTimingPreview,'Plus Jakarta Sans',Arial,sans-serif;color-scheme:light;font:14px/20px var(--font-brisk);color:var(--brisk-text-primary)}
+#brisk-timing-preview *{box-sizing:border-box}
+#brisk-timing-preview [hidden]{display:none!important}
+#brisk-timing-preview h2,#brisk-timing-preview h3,#brisk-timing-preview p,#brisk-timing-preview fieldset{margin:var(--brisk-space-none)}
+#brisk-timing-preview button,#brisk-timing-preview input,#brisk-timing-preview textarea{font-family:var(--font-brisk)}
+#brisk-timing-preview .ds-icon{display:inline-block;width:var(--icon-size);height:var(--icon-size);flex-shrink:0;background:currentColor;mask:var(--icon-url) center/contain no-repeat;-webkit-mask:var(--icon-url) center/contain no-repeat}
+/*__DS_STYLES__*/
+#brisk-timing-preview .review-nav{display:flex;flex-wrap:wrap;gap:var(--brisk-space-xs);padding:var(--brisk-space-none) var(--brisk-space-none) var(--brisk-space-m)}
+#brisk-timing-preview .review-label{flex:1 0 100%;color:var(--brisk-text-secondary);font-size:12px;line-height:16px;padding:var(--brisk-space-xs) var(--brisk-space-none)}
+#brisk-timing-preview .review-nav [aria-pressed=true]{color:var(--brisk-brand-primary-click);text-decoration:underline;text-underline-offset:var(--brisk-space-xs)}
+#brisk-timing-preview .preview-area{padding:var(--brisk-space-xl) var(--brisk-space-m) var(--brisk-space-2xl)}
+#brisk-timing-preview .surface{max-width:680px;margin-inline:auto;background:var(--brisk-white);border:1px solid var(--brisk-border-primary);border-radius:var(--brisk-radius-m);box-shadow:var(--brisk-shadow-m)}
+#brisk-timing-preview .head{padding:var(--brisk-space-xl) var(--brisk-space-xl) var(--brisk-space-l)}
+#brisk-timing-preview .body{padding:var(--brisk-space-none) var(--brisk-space-xl) var(--brisk-space-xl)}
+#brisk-timing-preview .title{font-size:24px;line-height:32px;font-weight:700}
+#brisk-timing-preview .section-title{font-size:16px;line-height:24px;font-weight:700}
+#brisk-timing-preview .context{font-size:12px;line-height:16px;color:var(--brisk-text-secondary);margin-bottom:var(--brisk-space-s)}
+#brisk-timing-preview .muted{color:var(--brisk-text-secondary)}
+#brisk-timing-preview .small{font-size:12px;line-height:16px}
+#brisk-timing-preview .intro{margin-top:var(--brisk-space-s);color:var(--brisk-text-secondary)}
+#brisk-timing-preview .row{display:flex;align-items:center;justify-content:space-between;gap:var(--brisk-space-l)}
+#brisk-timing-preview .stack{display:grid;gap:var(--brisk-space-l)}
+#brisk-timing-preview .section{padding-top:var(--brisk-space-xl)}
+#brisk-timing-preview .boundary{border-top:1px solid var(--brisk-border-primary);margin-top:var(--brisk-space-xl);padding-top:var(--brisk-space-xl)}
+#brisk-timing-preview .subtle-boundary{border-top:1px solid var(--brisk-border-secondary);margin-top:var(--brisk-space-l);padding-top:var(--brisk-space-l)}
+#brisk-timing-preview .footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:var(--brisk-space-s);padding:var(--brisk-space-none) var(--brisk-space-xl) var(--brisk-space-xl)}
+#brisk-timing-preview .footer-note{margin-right:auto;max-width:270px;color:var(--brisk-text-secondary);font-size:12px;line-height:16px}
+#brisk-timing-preview .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--brisk-space-l)}
+#brisk-timing-preview .number-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--brisk-space-l)}
+#brisk-timing-preview fieldset{border:none;padding:var(--brisk-space-none);min-width:0}
+#brisk-timing-preview legend{padding:var(--brisk-space-none);font-weight:600;margin-bottom:var(--brisk-space-s)}
+#brisk-timing-preview .choices{display:flex;flex-wrap:wrap;gap:var(--brisk-space-xl)}
+#brisk-timing-preview .rule-grid{display:grid;grid-template-columns:1fr auto;align-items:center;gap:var(--brisk-space-s) var(--brisk-space-xl)}
+#brisk-timing-preview .rule-grid strong{font-weight:600}
+#brisk-timing-preview .tag{display:inline-flex;align-items:center;gap:var(--brisk-space-xs);border-radius:var(--brisk-radius-s);padding:var(--brisk-space-xs) var(--brisk-space-s);font-size:12px;line-height:16px;font-weight:600;background:var(--brisk-brand-secondary);color:var(--brisk-text-primary)}
+#brisk-timing-preview .tag.waiting{background:var(--status-waiting-studio);color:var(--brisk-pink-70)}
+#brisk-timing-preview .tag.warning{background:var(--brisk-yellow-10);color:var(--brisk-yellow-60)}
+#brisk-timing-preview .tag.overdue{background:var(--brisk-pink-10);color:var(--brisk-text-destructive)}
+#brisk-timing-preview .date-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--brisk-space-l);padding:var(--brisk-space-m) var(--brisk-space-none)}
+#brisk-timing-preview .date-row strong{font-weight:600;display:block}
+#brisk-timing-preview .date-value{text-align:right;font-variant-numeric:tabular-nums}
+#brisk-timing-preview .date-value .small{margin-top:var(--brisk-space-xs)}
+#brisk-timing-preview .stage-heading{display:flex;align-items:flex-start;gap:var(--brisk-space-m);margin-bottom:var(--brisk-space-l)}
+#brisk-timing-preview .stage-heading .tag{margin-top:var(--brisk-space-xs)}
+#brisk-timing-preview .stage-heading [data-edit]{margin-left:auto}
+#brisk-timing-preview .notice{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--brisk-space-m);padding:var(--brisk-space-l);border:1px solid var(--brisk-border-primary);border-radius:var(--brisk-radius-s);background:var(--brisk-white)}
+#brisk-timing-preview .notice .ds-icon{margin-top:var(--brisk-space-xxs);color:var(--brisk-yellow-60)}
+#brisk-timing-preview .notice strong{display:block;margin-bottom:var(--brisk-space-xs);font-weight:600}
+#brisk-timing-preview .notice p{color:var(--brisk-text-secondary)}
+#brisk-timing-preview .explanation{padding:var(--brisk-space-m) var(--brisk-space-none);color:var(--brisk-text-secondary);font-size:12px;line-height:16px}
+#brisk-timing-preview .length-control{display:flex;align-items:center;gap:var(--brisk-space-s);flex-wrap:wrap}
+#brisk-timing-preview .length-control .ds-Input-field{width:88px}
+#brisk-timing-preview .video-sample{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--brisk-space-l);padding:var(--brisk-space-l) var(--brisk-space-xl);background:var(--brisk-bg-block-secondary);border-radius:var(--brisk-radius-m) var(--brisk-radius-m) var(--brisk-radius-none) var(--brisk-radius-none);border-bottom:1px solid var(--brisk-border-primary)}
+#brisk-timing-preview .video-sample .deadline-button{display:flex;flex-direction:column;align-items:flex-start;gap:var(--brisk-space-xs);border:none;padding:var(--brisk-space-none);background:none;color:var(--brisk-text-primary);text-align:left;font:inherit}
+#brisk-timing-preview .video-sample .deadline-button:focus-visible{outline:4px solid var(--brisk-border-focus);outline-offset:var(--brisk-space-xs)}
+#brisk-timing-preview .history{margin-top:var(--brisk-space-l);font-size:12px;line-height:16px;color:var(--brisk-text-secondary)}
+#brisk-timing-preview .history summary{padding:var(--brisk-space-s) var(--brisk-space-none);color:var(--brisk-text-primary)}
+#brisk-timing-preview .history p{margin-top:var(--brisk-space-s)}
+#brisk-timing-preview .preview-feedback{min-height:var(--brisk-space-xl);font-size:12px;line-height:16px;color:var(--brisk-text-secondary);margin-top:var(--brisk-space-m)}
+#brisk-timing-preview .client-brand{font-weight:600;margin-bottom:var(--brisk-space-xl)}
+#brisk-timing-preview .editor{padding-top:var(--brisk-space-l)}
+#brisk-timing-preview .result{padding-top:var(--brisk-space-m);font-weight:600}
+#brisk-timing-preview .invalid{color:var(--brisk-text-destructive);font-size:12px;line-height:16px}
+#brisk-timing-preview .override-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(0,2fr) auto;align-items:center;gap:var(--brisk-space-m);padding:var(--brisk-space-s) var(--brisk-space-none)}
+#brisk-timing-preview .override-name strong,#brisk-timing-preview .override-name span{display:block}
+#brisk-timing-preview .override-name strong{font-weight:600}
+#brisk-timing-preview .override-source{font-size:12px;line-height:16px;color:var(--brisk-text-secondary);margin-top:var(--brisk-space-xs)}
+#brisk-timing-preview .override-source.custom{color:var(--brisk-brand-primary-click)}
+#brisk-timing-preview .override-editor{padding:var(--brisk-space-l) var(--brisk-space-none) var(--brisk-space-xl)}
+#brisk-timing-preview .override-heading{display:flex;flex-wrap:wrap;align-items:center;gap:var(--brisk-space-m)}
+#brisk-timing-preview .override-heading h3{margin-right:auto}
+#brisk-timing-preview .brief-why summary{width:max-content;padding:var(--brisk-space-xs) var(--brisk-space-none);font-weight:600}
+#brisk-timing-preview .brief-why summary:focus-visible{outline:var(--brisk-space-xs) solid var(--brisk-border-focus);outline-offset:var(--brisk-space-xs)}
+#brisk-timing-preview .brief-why-body{display:grid;gap:var(--brisk-space-s);padding-top:var(--brisk-space-s)}
+#brisk-timing-preview .settings-custom-rules>summary{display:flex;align-items:center;gap:var(--brisk-space-s);list-style:none;min-height:var(--brisk-space-3xl);width:max-content;max-width:100%;font-weight:600}
+#brisk-timing-preview .settings-custom-rules>summary::-webkit-details-marker{display:none}
+#brisk-timing-preview .settings-custom-rules>summary .ds-icon{transition:transform .1s}
+#brisk-timing-preview .settings-custom-rules[open]>summary .ds-icon{transform:rotate(90deg)}
+#brisk-timing-preview .settings-custom-rules>summary:focus-visible{outline:var(--brisk-space-xs) solid var(--brisk-border-focus);outline-offset:var(--brisk-space-xs)}
+#brisk-timing-preview .settings-custom-content{display:grid;gap:var(--brisk-space-xl);padding-top:var(--brisk-space-l)}
+#brisk-timing-preview .custom-count{font-size:12px;line-height:16px;font-weight:400;color:var(--brisk-text-secondary)}
+#brisk-timing-preview .duration-field{display:grid;gap:var(--brisk-space-xs)}
+#brisk-timing-preview .duration-value{display:flex;align-items:center;gap:var(--brisk-space-s);min-width:var(--brisk-space-none)}
+#brisk-timing-preview .duration-number{width:calc(var(--brisk-space-3xl) * 2);flex:0 0 calc(var(--brisk-space-3xl) * 2)}
+#brisk-timing-preview .revision-number{width:calc(var(--brisk-space-3xl) * 2 + var(--brisk-space-2xl));flex:0 0 calc(var(--brisk-space-3xl) * 2 + var(--brisk-space-2xl))}
+#brisk-timing-preview .revision-count-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--brisk-space-m)}
+#brisk-timing-preview .settings-value-row{display:flex;justify-content:space-between;align-items:center;gap:var(--brisk-space-l);padding:var(--brisk-space-s) var(--brisk-space-none)}
+#brisk-timing-preview .settings-value-row strong{font-weight:600;font-variant-numeric:tabular-nums}
+#brisk-timing-preview .settings-rule-copy{margin-top:var(--brisk-space-xs);color:var(--brisk-text-secondary);font-size:12px;line-height:16px}
+#brisk-timing-preview .saved-exception{display:flex;align-items:center;gap:var(--brisk-space-l);padding:var(--brisk-space-m) var(--brisk-space-none)}
+#brisk-timing-preview .saved-exception>div{flex:1;min-width:var(--brisk-space-none)}
+#brisk-timing-preview .saved-exception strong{font-weight:600}
+body:has(#brisk-timing-preview dialog[open]){overflow:hidden}
+@media(max-width:540px){#brisk-timing-preview .override-row{grid-template-columns:minmax(0,1fr) auto}#brisk-timing-preview .override-summary{grid-column:1;grid-row:2}#brisk-timing-preview .override-row>button{grid-column:2;grid-row:1/3}}
+@media(max-width:540px){#brisk-timing-preview .preview-area{padding:var(--brisk-space-l) var(--brisk-space-xs) var(--brisk-space-xl)}#brisk-timing-preview .head,#brisk-timing-preview .body,#brisk-timing-preview .footer,#brisk-timing-preview .video-sample{padding-left:var(--brisk-space-l);padding-right:var(--brisk-space-l)}#brisk-timing-preview .number-fields{grid-template-columns:1fr}#brisk-timing-preview .fields{grid-template-columns:1fr}#brisk-timing-preview .video-sample{grid-template-columns:1fr}#brisk-timing-preview .date-row{grid-template-columns:1fr;gap:var(--brisk-space-s)}#brisk-timing-preview .date-value{text-align:left}#brisk-timing-preview .choices{gap:var(--brisk-space-s)}#brisk-timing-preview .footer-note{flex-basis:100%;max-width:none}#brisk-timing-preview .stage-heading{flex-wrap:wrap}}
+</style>
+<div id="brisk-timing-preview">
+  <nav class="review-nav" aria-label="Timing proposal views">
+    <span class="review-label">Interactive design proposal · sample dates · no app records changed</span>
+    <ds-button variant="ghost" data-view="project" aria-pressed="true">Project deadlines</ds-button>
+    <ds-button variant="ghost" data-view="settings" aria-pressed="false">Studio defaults</ds-button>
+    <ds-button variant="ghost" data-view="brief" aria-pressed="false">Brief warning</ds-button>
+    <ds-button variant="ghost" data-view="risk" aria-pressed="false">Delivery risk</ds-button>
+    <ds-button variant="ghost" data-view="client" aria-pressed="false">Client view</ds-button>
+  </nav>
+  <div class="row" id="project-sample-control"><span class="context">Sample Brief length</span><span><ds-button variant="ghost" data-sample-length="1" aria-pressed="true">1 minute</ds-button><ds-button variant="ghost" data-sample-length="3" aria-pressed="false">3 minutes</ds-button></span></div>
+  <div class="preview-area viz-dotted-background">
+    <section class="surface" data-screen="project" aria-label="Proposed project deadlines">
+      <div class="video-sample"><div><p class="context">Videos · LOOM</p><strong>Launch Film - Sales Narrative</strong></div><button type="button" class="deadline-button cursor-interaction" data-action="focus-deadline" aria-label="Edit internal review, 1 working day left. Open deadlines"><span class="tag" id="video-stage-countdown">Edit review · 1 working day left</span><span class="muted small">Final due · Fri 6 Nov</span></button></div>
+      <header class="head"><p class="context">Project details · Studio view</p><h2 class="title">Deadlines</h2></header>
+      <div class="body">
+        <div class="stage-heading"><div><h3 class="section-title">Edit · WIP1</h3><span class="tag waiting">Waiting on Studio</span></div><ds-button variant="ghost" data-edit="stage">Change</ds-button></div>
+        <div id="stage-read">
+          <div class="row"><span class="muted small" id="stage-mode-label">Automatic · Standard edit</span><span class="muted small" id="stage-length-label">1 minute</span></div>
+          <div class="date-row"><div><strong>Internal review</strong><span class="muted small">For the producer · Studio only</span></div><div class="date-value"><strong id="internal-date">Fri 30 Oct · 10:00</strong><p class="small muted" id="internal-left">1 working day left</p></div></div>
+          <div class="date-row"><div><strong>Client WIP1</strong><span class="muted small">Includes time for Studio review</span></div><div class="date-value"><strong id="client-date">Mon 2 Nov · 10:00</strong><p class="small muted" id="client-left">2 working days left</p></div></div>
+          <p class="explanation">Started Wed 28 Oct at 10:00 when Edit became Waiting on Studio. Weekends excluded.</p>
+        </div>
+        <div id="stage-editor" class="editor stack" hidden>
+          <fieldset><legend>Set this deadline</legend><div class="choices"><ds-radio name="project-mode" value="auto" checked="true">Automatic</ds-radio><ds-radio name="project-mode" value="fixed">Specific date</ds-radio></div></fieldset>
+          <div id="auto-fields" class="stack"><div class="row"><span class="muted">Video length from Brief</span><strong id="video-length-label">1 minute</strong></div><input id="video-length" type="hidden" value="1" /><p class="muted small">Standard edit: 2 working days to internal review, 3 to Client WIP1. Add 1 working day per extra minute.</p><div class="rule-grid"><span>Internal review</span><strong id="draft-internal">Fri 30 Oct · 10:00</strong><span>Client WIP1</span><strong id="draft-client">Mon 2 Nov · 10:00</strong></div></div>
+          <div id="fixed-fields" class="stack" hidden><p class="muted small">Set dates for this Edit cycle. Studio default changes will not move them.</p><div class="fields"><ds-input id="fixed-internal-date" label="Internal review date" type="date" value="2026-10-30" /><ds-input id="fixed-internal-time" label="Time (Sydney)" type="time" value="10:00" /></div><div class="fields"><ds-input id="fixed-client-date" label="Client WIP1 date" type="date" value="2026-11-02" /><ds-input id="fixed-client-time" label="Time (Sydney)" type="time" value="10:00" /></div></div>
+          <p class="invalid" id="project-error" role="alert" hidden></p>
+          <div class="row"><span class="muted small">Applies to this stage cycle only.</span><span><ds-button variant="ghost" data-action="cancel-stage">Cancel</ds-button><ds-button data-action="save-stage">Save deadline</ds-button></span></div>
+        </div>
+        <div class="notice" id="stage-conflict" hidden><ds-icon name="info" /><div><strong>Stage delivery is after final delivery</strong><p>Review the final date with the producer. Saving this stage deadline does not change the Client commitment.</p></div></div><div class="boundary"><div class="row"><h3 class="section-title">Final delivery</h3><span class="tag">Agreed</span></div><div class="date-row"><div><strong>Fri 6 Nov · 17:00</strong><span class="muted small">Client commitment · Sydney time</span></div><ds-button variant="ghost" data-action="propose-date">Propose new date</ds-button></div></div>
+        <details class="history"><summary>Other stages</summary><p>Script · Approved</p><p>Masters · Not started</p><p>No Studio timers running for these stages. Existing dates are retained in history.</p></details>
+      </div>
+    </section>
+    <!--__SETTINGS_READ_FIRST__-->
+    <section class="surface" data-screen="brief" aria-label="Proposed Brief timing warning" hidden>
+      <header class="head"><p class="client-brand">North Star Films</p><p class="context">LOOM · Launch Film - Sales Narrative / Brief</p><h2 class="title">When do you need it?</h2></header>
+      <div class="body stack">
+        <ds-input id="requested-date" label="Requested final delivery" type="date" value="2026-10-30" />
+        <div class="notice" id="brief-warning"><ds-icon name="info" /><div class="stack" style="gap:var(--brisk-space-m)">
+          <strong id="brief-warning-title" aria-live="polite">We’ll need a little more time</strong>
+          <div class="row"><div><span class="muted small">Suggested delivery date</span><strong class="section-title" id="brief-earliest">Thu 5 Nov</strong></div><ds-button variant="secondary" data-action="use-suggested-date">Use this date</ds-button></div>
+          <details class="brief-why" id="brief-why"><summary>Why this date?</summary><div class="brief-why-body"><div class="rule-grid"><span>Editing your video</span><span>3 working days</span><span>Final checks and delivery</span><span>3 working days</span></div><p class="small muted">Based on your approved script and files being ready by 28 October. Weekends aren’t counted.</p><p class="small muted">We’ll confirm the date with you, allowing time for your feedback.</p></div></details>
+        </div></div>
+      </div>
+      <footer class="footer"><ds-button variant="secondary" data-action="brief-back">Back</ds-button><ds-button data-action="submit-brief">Submit Brief</ds-button></footer>
+    </section>
+    <section class="surface" data-screen="risk" aria-label="Proposed Studio delivery risk" hidden>
+      <header class="head"><p class="context">LOOM · Launch Film - Sales Narrative / Deadlines</p><div class="row"><h2 class="title">Final delivery at risk</h2><span class="tag warning">Studio review</span></div></header>
+      <div class="body stack">
+        <div class="notice"><ds-icon name="info" /><div><strong>Edit is 2 working days late</strong><p>The remaining work may run beyond the agreed final date. Review the impact before updating the Client.</p></div></div>
+        <div><div class="date-row"><strong>Agreed final delivery</strong><div class="date-value"><strong>Fri 6 Nov · 17:00</strong></div></div><div class="date-row"><div><strong>Revised estimate</strong><span class="muted small">Producer review required</span></div><div class="date-value"><strong>Mon 9 Nov · 17:00</strong></div></div></div>
+        <p class="muted small">Sample scenario: Edit finishes Fri 6 Nov at 17:00. The Studio’s configured Masters allowance is 1 working day. Client approval time is not yet included.</p>
+        <div class="row"><p class="muted small" id="risk-audience">Visible to the Studio until the producer confirms the impact.</p><ds-button variant="ghost" data-action="draft-update">Draft update</ds-button></div>
+        <div id="risk-draft" class="stack" hidden><ds-textarea id="risk-message" label="Client update" rows="3">Your final delivery is at risk because the Edit is taking longer than planned. We are reviewing the remaining work and will confirm a revised date with you.</ds-textarea></div>
+      </div>
+      <footer class="footer"><ds-button variant="secondary" data-action="keep-internal">Keep internal</ds-button><ds-button data-action="confirm-risk">Review Client update</ds-button></footer>
+    </section>
+    <section class="surface" data-screen="client" aria-label="Proposed Client delivery status" hidden>
+      <header class="head"><p class="client-brand">North Star Films</p><p class="context">LOOM · Launch Film - Sales Narrative</p><div class="row"><h2 class="title">Final delivery</h2><span class="tag warning" id="client-status">Delivery at risk</span></div></header>
+      <div class="body stack">
+        <div class="date-row"><div><strong id="client-final-label">Agreed date</strong><span class="muted small">Sydney time</span></div><div class="date-value"><strong id="client-final-date">Fri 6 Nov · 17:00</strong></div></div>
+        <div class="notice"><ds-icon name="info" /><div><strong id="client-update-title">An update from your producer</strong><p id="client-update-copy">The Edit is taking longer than planned. We are reviewing the remaining work and will confirm a revised date with you.</p></div></div>
+        <div id="client-proposal" hidden><div class="date-row"><div><strong>Proposed new delivery</strong><span class="muted small">Waiting for your agreement</span></div><div class="date-value"><strong id="client-proposed-date">Mon 9 Nov · 17:00</strong></div></div><div class="row"><ds-button variant="secondary" data-action="discuss-date">Discuss date</ds-button><ds-button data-action="accept-date">Agree new date</ds-button></div></div>
+        <details class="history"><summary>Delivery history</summary><p>Original agreed date: Fri 6 Nov · 17:00</p><p id="client-history-new" hidden>New date agreed in this preview: Mon 9 Nov · 17:00</p></details>
+      </div>
+      <footer class="footer"><span class="footer-note">Preview scenario</span><ds-button variant="ghost" data-action="show-at-risk">At risk</ds-button><ds-button variant="ghost" data-action="show-overdue">Date missed</ds-button><ds-button variant="secondary" data-action="show-proposed">New date proposed</ds-button></footer>
+    </section>
+    <section class="surface" data-screen="propose" aria-label="Proposed delivery date change" hidden>
+      <header class="head"><p class="context">LOOM · Launch Film - Sales Narrative / Studio view</p><h2 class="title">Propose a new delivery date</h2><p class="intro">The agreed date stays in place until the Client agrees.</p></header>
+      <div class="body stack"><div class="row"><span class="muted">Current agreed date</span><strong>Fri 6 Nov · 17:00</strong></div><div class="fields"><ds-input id="proposed-date" label="Proposed date" type="date" value="2026-11-09" /><ds-input id="proposed-time" label="Time (Sydney)" type="time" value="17:00" /></div><ds-textarea id="proposed-reason" label="Reason for the Client" rows="3">The Edit needs more time. We propose delivering your final video on Monday 9 November, allowing time for final checks.</ds-textarea><p class="invalid" id="proposal-error" role="alert" hidden></p></div>
+      <footer class="footer"><ds-button variant="ghost" data-view="project">Cancel</ds-button><ds-button data-action="preview-proposal">Preview Client request</ds-button></footer>
+    </section>
+  </div>
+  <p class="preview-feedback" id="timing-feedback" role="status">Proposal only. Save and agreement actions affect this preview, then reset on reload. Nothing is sent.</p>
+</div>
+<script>
+(() => {
+  const root=document.getElementById('brisk-timing-preview');
+  const $=s=>root.querySelector(s), $$=s=>[...root.querySelectorAll(s)];
+  const initialSettings={shared:{mode:'auto',internal:2,first:3,revision:2,increment:1},overrides:{},revisionRounds:null};
+  const state={view:'settings',editor:null,opener:null,settings:structuredClone(initialSettings),project:{mode:'auto',length:1,internal:'2026-10-30T10:00',client:'2026-11-02T10:00'},proposed:'2026-11-09T17:00',riskReviewed:false};
+  const feedback=text=>{$('#timing-feedback').textContent=text};
+  const parse=value=>new Date(value+':00Z');
+  const fmt=value=>{const d=parse(value);return new Intl.DateTimeFormat('en-AU',{weekday:'short',day:'numeric',month:'short',timeZone:'UTC'}).format(d).replace(',','')+' · '+value.slice(11,16)};
+  const addWorkingDays=(value,days)=>{const d=parse(value);let remaining=days;while(remaining>0){d.setUTCDate(d.getUTCDate()+1);if(d.getUTCDay()!==0&&d.getUTCDay()!==6)remaining--}return d.toISOString().slice(0,16)};
+  const remainingDays=value=>{const end=parse(value),d=parse('2026-10-29T10:00');let days=0;while(d<end){d.setUTCDate(d.getUTCDate()+1);if(d.getUTCDay()!==0&&d.getUTCDay()!==6)days++}return days};
+  const showView=view=>{state.view=view;$$('[data-screen]').forEach(el=>{el.hidden=el.dataset.screen!==view});$$('.review-nav [data-view]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.view===view)));$('#project-sample-control').hidden=view!=='project'};
+  const setRadio=(name,value)=>{$$(`input[name="${name}"]`).forEach(input=>input.checked=input.value===value)};
+  const projectMode=()=> $('input[name="project-mode"]:checked').value;
+  const updateDraft=()=>{const length=Number($('#video-length').value);$('#video-length-label').textContent=length+' '+(length===1?'minute':'minutes');if(Number.isInteger(length)&&length>=1&&length<=30){$('#draft-internal').textContent=fmt(addWorkingDays('2026-10-28T10:00',2+length-1));$('#draft-client').textContent=fmt(addWorkingDays('2026-10-28T10:00',3+length-1))}$('#auto-fields').hidden=projectMode()!=='auto';$('#fixed-fields').hidden=projectMode()!=='fixed'};
+  const openStage=()=>{$('#stage-read').hidden=true;$('#stage-editor').hidden=false;setRadio('project-mode',state.project.mode);$('#video-length').value=state.project.length;$('#fixed-internal-date').value=state.project.internal.slice(0,10);$('#fixed-internal-time').value=state.project.internal.slice(11);$('#fixed-client-date').value=state.project.client.slice(0,10);$('#fixed-client-time').value=state.project.client.slice(11);$('#project-error').hidden=true;updateDraft()};
+  const updateProject=()=>{const p=state.project;$('#internal-date').textContent=fmt(p.internal);$('#client-date').textContent=fmt(p.client);$('#internal-left').textContent=remainingDays(p.internal)+' working '+(remainingDays(p.internal)===1?'day':'days')+' left';$('#client-left').textContent=remainingDays(p.client)+' working days left';$('#stage-mode-label').textContent=p.mode==='auto'?'Automatic · Standard edit':'Specific dates · Project override';$('#stage-length-label').textContent=p.mode==='auto'?p.length+' '+(p.length===1?'minute':'minutes'):'';const left=remainingDays(p.internal);$('#video-stage-countdown').textContent='Edit review · '+left+' working '+(left===1?'day':'days')+' left';$('.deadline-button').setAttribute('aria-label','Edit internal review, '+left+' working '+(left===1?'day':'days')+' left. Open deadlines');$('#stage-conflict').hidden=p.client<='2026-11-06T17:00';$('#stage-read').hidden=false;$('#stage-editor').hidden=true};
+  /*__SETTINGS_READ_FIRST_BEHAVIOUR__*/
+  const clientScenario=mode=>{$('#client-status').textContent=mode==='overdue'?'Overdue':mode==='agreed'?'Agreed':mode==='proposed'?'New date proposed':'Delivery at risk';$('#client-status').className='tag '+(mode==='overdue'?'overdue':mode==='agreed'?'':'warning');$('#client-proposal').hidden=mode!=='proposed';$('#client-history-new').hidden=mode!=='agreed';$('#client-final-date').textContent=mode==='agreed'?fmt(state.proposed):'Fri 6 Nov · 17:00';$('#client-history-new').textContent='New date agreed in this preview: '+fmt(state.proposed);$('#client-proposed-date').textContent=fmt(state.proposed);$('#client-update-title').textContent=mode==='overdue'?'Your agreed delivery date has passed':mode==='agreed'?'New delivery date agreed':'An update from your producer';$('#client-update-copy').textContent=mode==='overdue'?'Your final video is still outstanding. The original agreed date remains visible while your producer arranges the next step.':mode==='agreed'?'Your producer and Studio team can now plan to this new date. Your previous agreed date remains in delivery history.':mode==='proposed'?$('#proposed-reason').value:$('#risk-message').value.replace('Your final delivery is at risk because the Edit','The Edit');showView('client')};
+  const briefSuggestion='2026-11-05';
+  const briefUpdate=()=>{const v=$('#requested-date').value;$('#brief-warning-title').textContent=!v?'Choose a date that works for you':v<briefSuggestion?'We’ll need a little more time':v===briefSuggestion?'You’ve selected our suggested date':'This looks achievable';$('[data-action="use-suggested-date"]').disabled=v===briefSuggestion};
+  root.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;if(button.dataset.view){showView(button.dataset.view);return}if(button.dataset.sampleLength){const length=Number(button.dataset.sampleLength);state.project=state.project.mode==='auto'?{mode:'auto',length,internal:addWorkingDays('2026-10-28T10:00',2+length-1),client:addWorkingDays('2026-10-28T10:00',3+length-1)}:{...state.project,length};$$('[data-sample-length]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));updateProject();feedback('Sample Brief changed to '+length+' '+(length===1?'minute':'minutes')+'. '+(state.project.mode==='auto'?'Automatic dates recalculated.':'Specific dates remain fixed.')+' No app record changed.');return}if(button.hasAttribute('data-edit')){openStage();return}if(button.dataset.openSettings){openSettingsEditor(button.dataset.openSettings,button.dataset.stage);return}const action=button.dataset.action;if(!action)return;
+    if(action==='cancel-settings-editor'){closeSettingsEditor();return;}
+    if(action==='save-settings-editor'){saveSettingsEditor();return;}
+    if(action==='restore-shared'){delete state.settings.overrides[state.editor.stage];renderSettings();closeSettingsEditor();feedback('This stage uses the Studio default again. Preview only.');return;}
+    if(action==='focus-deadline'){openStage();feedback('The Videos deadline opens this named stage directly. Sample clock: Thu 29 Oct, 10:00 Sydney.');}
+    if(action==='cancel-stage'){updateProject();feedback('Draft discarded. No deadline changed.');}
+    if(action==='save-stage'){const mode=projectMode(),length=Number($('#video-length').value);let internal,client;if(mode==='auto'){if(!Number.isInteger(length)||length<1||length>30){$('#project-error').textContent='Use a whole number from 1 to 30 minutes in this preview.';$('#project-error').hidden=false;return}internal=addWorkingDays('2026-10-28T10:00',2+length-1);client=addWorkingDays('2026-10-28T10:00',3+length-1)}else{internal=$('#fixed-internal-date').value+'T'+$('#fixed-internal-time').value;client=$('#fixed-client-date').value+'T'+$('#fixed-client-time').value;if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(internal)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(client)||internal>client){$('#project-error').textContent='Set both dates and times, with internal review before Client delivery.';$('#project-error').hidden=false;return}}state.project={mode,length,internal,client};updateProject();feedback('Preview deadline updated. Final delivery is still Fri 6 Nov at 17:00. No app records changed.');}
+    if(action==='propose-date'){showView('propose');}
+    if(action==='preview-proposal'){const value=$('#proposed-date').value+'T'+$('#proposed-time').value;if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)||!$('#proposed-reason').value.trim()){$('#proposal-error').textContent='Add a date, time and short reason.';$('#proposal-error').hidden=false;return}state.proposed=value;clientScenario('proposed');feedback('Client request preview. Nothing has been sent; the agreed date stays unchanged.');}
+    if(action==='draft-update'){$('#risk-draft').hidden=false;feedback('Illustrative draft for producer review. No AI service is connected and nothing is sent.');}
+    if(action==='keep-internal'){feedback('Kept internal in this preview. The Client has not been notified.');}
+    if(action==='confirm-risk'){state.riskReviewed=true;clientScenario('risk');feedback('Preview of the producer-reviewed Client update. No message sent.');}
+    if(action==='show-at-risk'){clientScenario('risk');}
+    if(action==='show-overdue'){clientScenario('overdue');feedback('Sample state after Fri 6 Nov, 17:00: outstanding delivery is overdue for both sides.');}
+    if(action==='show-proposed'){clientScenario('proposed');}
+    if(action==='accept-date'){clientScenario('agreed');feedback('Client agreement simulated. Previous agreed date retained in history. Nothing recorded in the app.');}
+    if(action==='discuss-date'){feedback('The Client would reply to the producer without agreeing to this date. No message is sent in this preview.');}
+    if(action==='submit-brief'){feedback('Brief submission simulated. The requested date needs producer confirmation; no record is created.');}
+    if(action==='use-suggested-date'){$('#requested-date').value=briefSuggestion;briefUpdate();$('#requested-date').focus();feedback('Suggested date selected in this preview. This remains a request for producer confirmation. Nothing submitted.');}
+    if(action==='brief-back'){feedback('Back would return to the previous Brief section. This preview is limited to timing.');}
+  });
+  root.addEventListener('change',event=>{if(event.target.name==='project-mode')updateDraft();if(state.editor)updateSettingsEditor()});
+  root.addEventListener('input',event=>{if(state.editor&&event.target.closest('dialog'))updateSettingsEditor()});
+  $('#video-length').addEventListener('input',updateDraft);$('#requested-date').addEventListener('input',briefUpdate);
+  root.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.editor){event.preventDefault();closeSettingsEditor();return;}if(event.key==='Escape'&&state.view==='project'&&!$('#stage-editor').hidden){updateProject();$('[data-edit="stage"]').focus();feedback('Deadline draft cancelled.');}});
+  renderSettings();showView('settings');
+})();
+</script>

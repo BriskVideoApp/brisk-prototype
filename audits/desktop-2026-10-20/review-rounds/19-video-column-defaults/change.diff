@@ -1,0 +1,25 @@
+--- Before this round
++++ Current ActiveVideosPage.tsx
+@@ -126,7 +126,8 @@
+ const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
+ const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
+ const projectColumnWidth = 300;
+-const columnOrderStorageKey = "brisk-active-videos-column-order-v3";
++// Apply the approved all-visible defaults once, keeping earlier view preferences stored.
++const columnOrderStorageKey = "brisk-active-videos-column-order-v4";
+ const fixedEndColumn: DataColumnKey = "actions";
+ 
+ const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
+@@ -140,9 +141,9 @@
+   actions: { label: "Actions", width: 64 },
+ };
+ 
+-const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "costs", "team", "actions"];
+-const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team", "actions"];
+-const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
++const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "team", "hours", "costs", "actions"];
++const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "team", "hours", "actions"];
++const defaultHiddenColumns: DataColumnKey[] = [];
+ 
+ function getProjectFlowHref(projectId: string) {
+   return getProjectStageHref(projectId, "brief");

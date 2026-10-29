@@ -1,5 +1,6 @@
 "use client";
 
+import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { usePathname } from "next/navigation";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { CommentCountBadge } from "@/components/CommentCountBadge";
@@ -14,6 +15,7 @@ import type { PrototypeState } from "@/data/prototype-state";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
 
 export const openCustomerLatestActivityEventName = "brisk:open-customer-latest-activity";
 export const openCustomerGlobalChatEventName = "brisk:open-customer-global-chat";
@@ -24,10 +26,12 @@ export function GlobalHeaderActions() {
   const { activeScenario } = usePrototypeScenario();
   const { state } = usePrototypeState();
   const viewer = usePrototypeViewer();
+  const { messages: timingMessages } = useProjectTiming();
   const { actions: shootActions } = useShootGlobalActions();
   const usesCustomerDashboardDrawers = selectedRole !== "Studio Freelancer" && pathname === "/customer-dashboard";
   const isScenarioEmpty = activeScenario?.state === "new";
-  const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(viewer, state);
+  const timingUnreadCount = viewer ? timingMessages.filter((message) => !message.readBy.includes(viewer.chatUserId)).length : 0;
+  const chatUnreadCount = isScenarioEmpty ? 0 : getChatUnreadCount(viewer, state) + timingUnreadCount;
 
   const openCustomerChat = () => {
     window.dispatchEvent(new Event(openCustomerGlobalChatEventName));
@@ -52,6 +56,7 @@ export function GlobalHeaderActions() {
     <nav className="app-global-header-actions" aria-label="Global actions">
       {shootActions ? <ShootActionsMenu actions={shootActions} /> : null}
       <div className="app-global-brief-actions-slot" data-brief-global-actions-slot />
+      <GlobalSearch />
       {chatControl}
       <NotificationBell />
     </nav>

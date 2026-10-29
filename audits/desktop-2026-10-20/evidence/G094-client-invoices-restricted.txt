@@ -1,0 +1,55 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile?billing=hidden
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications?billing=hidden
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security?billing=hidden
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Company details":
+      - /url: /settings/client/company?billing=hidden
+      - generic: Company details
+    - link "Team access":
+      - /url: /settings/client/team?billing=hidden
+      - generic: Team access
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Access restricted
+  - heading "Invoices & payments is restricted" [level=1]
+  - paragraph: Your account does not have access to Client invoices. Ask a Client Admin for help.
+  - link "Back to dashboard":
+    - /url: /customer-dashboard?billing=hidden

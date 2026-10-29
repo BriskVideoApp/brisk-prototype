@@ -1,0 +1,91 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - link "Updates, 5 unread":
+      - /url: /notifications
+      - generic "5 unread notifications": "5"
+      - generic: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Notifications" [level=1]
+  - paragraph: Updates that need your attention.
+  - link "Notification settings":
+    - /url: /settings/personal/notifications
+    - text: Notification settings
+  - group "Notification filters":
+    - button "All 8":
+      - text: All
+      - generic: "8"
+    - button "Unread 5":
+      - text: Unread
+      - generic: "5"
+    - button "Mentions 1" [active] [pressed]:
+      - text: Mentions
+      - generic: "1"
+    - button "Action required 4":
+      - text: Action required
+      - generic: "4"
+  - button "Mark all as read":
+    - generic: Mark all as read
+  - generic "1 notifications":
+    - region "Earlier updates":
+      - heading "Earlier updates" [level=2]
+      - generic: "1"
+      - article:
+        - link "Unread. Update. Three new mentions in Edit. Priya Nair and two others mentioned you in rapid feedback comments.. 20 Aug 2026, 3:42 pm":
+          - /url: /chat?project=hims-product-education&message=message-hims-001
+          - generic: Unread. Update.
+          - strong: Three new mentions in Edit
+          - generic: Priya Nair and two others mentioned you in rapid feedback comments.
+          - text: Priya Nair · HIMS-18 · Edit ·
+          - time: 61 days ago
+- region "Notifications (F8)":
+  - list

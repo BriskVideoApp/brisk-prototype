@@ -1,0 +1,57 @@
+    <section class="surface" data-screen="settings" aria-label="Proposed Production defaults" hidden>
+      <header class="head"><p class="context">Studio settings</p><h2 class="title">Production defaults</h2></header>
+      <div class="body stack">
+        <section aria-labelledby="shared-timing-heading">
+          <div class="row"><h3 class="section-title" id="shared-timing-heading">Turnaround times</h3><ds-button variant="ghost" aria-label="Edit turnaround times" data-open-settings="shared">Edit</ds-button></div>
+          <p class="settings-rule-copy" id="shared-mode-summary">Automatic · Working days, Monday to Friday</p>
+          <div id="shared-time-summary">
+            <div class="settings-value-row"><span>Internal WIP1</span><strong id="shared-internal-summary">2 days</strong></div>
+            <div class="settings-value-row"><span>Client WIP1</span><strong id="shared-first-summary">3 days</strong></div>
+            <div class="settings-value-row"><span>After Client feedback</span><strong id="shared-revision-summary">2 days</strong></div>
+          </div>
+          <p class="settings-rule-copy" id="shared-length-summary">Longer edits: +1 working day per extra minute.</p>
+        </section>
+        <section class="subtle-boundary" aria-labelledby="exception-heading" style="margin-top:var(--brisk-space-none)">
+          <div class="row"><h3 class="section-title" id="exception-heading">Stage exceptions</h3><ds-button variant="secondary" id="add-stage-exception" data-open-settings="exception"><ds-icon name="plus" />Add exception</ds-button></div>
+          <p class="settings-rule-copy" id="no-exceptions">All stages use the timings above.</p>
+          <div id="saved-stage-exceptions"></div>
+        </section>
+        <section class="boundary" aria-labelledby="revision-rounds-heading" style="margin-top:var(--brisk-space-s)">
+          <div class="row"><h3 class="section-title" id="revision-rounds-heading">Client revisions</h3><ds-button variant="ghost" aria-label="Edit included revision rounds" data-open-settings="rounds">Edit</ds-button></div>
+          <div class="settings-value-row"><span>Included rounds</span><strong id="round-allowance-summary">Not set</strong></div>
+        </section>
+        <p class="small muted">Existing deadlines stay unchanged.</p>
+      </div>
+    </section>
+    <template id="saved-exception-template"><div class="saved-exception"><div><strong data-exception-name></strong><p class="settings-rule-copy" data-exception-copy></p></div><ds-button variant="ghost" data-open-settings="exception" data-stage="">Edit</ds-button></div></template>
+
+    <ds-editing-dialog dialog-id="shared-editor" title="Edit turnaround times">
+      <fieldset><legend>Deadline mode</legend><div class="choices"><ds-radio name="settings-mode" value="auto" checked="true">Automatic</ds-radio><ds-radio name="settings-mode" value="fixed">Specific dates</ds-radio></div></fieldset>
+      <div id="shared-editor-times" class="stack">
+        <div class="revision-count-row"><label class="label-m-semibold" for="rule-internal">Internal WIP1</label><div class="duration-value"><ds-input id="rule-internal" aria-label="Internal WIP1" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <div class="revision-count-row"><label class="label-m-semibold" for="rule-first">Client WIP1</label><div class="duration-value"><ds-input id="rule-first" aria-label="Client WIP1" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <div class="revision-count-row"><label class="label-m-semibold" for="rule-revision">After Client feedback</label><div class="duration-value"><ds-input id="rule-revision" aria-label="Revision turnaround" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <p class="small muted">Working days. Client WIP1 includes internal review.</p>
+      </div>
+      <p class="small muted" id="shared-editor-fixed" hidden>Choose a date for each project stage.</p>
+      <details class="brief-why"><summary>Longer edits</summary><div class="brief-why-body"><div class="duration-value"><ds-input id="rule-increment" aria-label="Extra working days per minute" wrapperClassName="duration-number" type="number" min="0" step="1" /><span>extra working day per minute</span></div></div></details>
+      <p class="invalid" id="shared-editor-error" role="alert" hidden></p>
+    </ds-editing-dialog>
+
+    <ds-editing-dialog dialog-id="exception-editor" title="Add stage exception">
+      <fieldset id="exception-stage-picker"><legend>Stage</legend><div class="choices" style="gap:var(--brisk-space-s)"><ds-radio name="exception-stage" value="Script" checked="true">Script</ds-radio><ds-radio name="exception-stage" value="Storyboard">Storyboard</ds-radio><ds-radio name="exception-stage" value="Edit">Edit</ds-radio><ds-radio name="exception-stage" value="Animation">Animation</ds-radio><ds-radio name="exception-stage" value="Masters">Masters</ds-radio></div></fieldset>
+      <fieldset><legend>Deadline mode</legend><div class="choices"><ds-radio name="override-mode" value="auto" checked="true">Automatic</ds-radio><ds-radio name="override-mode" value="fixed">Specific dates</ds-radio></div></fieldset>
+      <div id="exception-editor-times" class="stack">
+        <div class="revision-count-row"><label class="label-m-semibold" for="override-internal">Internal WIP1</label><div class="duration-value"><ds-input id="override-internal" aria-label="Internal WIP1" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <div class="revision-count-row"><label class="label-m-semibold" for="override-first">Client WIP1</label><div class="duration-value"><ds-input id="override-first" aria-label="Client WIP1" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <div class="revision-count-row"><label class="label-m-semibold" for="override-revision">After Client feedback</label><div class="duration-value"><ds-input id="override-revision" aria-label="Revision turnaround" wrapperClassName="duration-number" type="number" min="1" step="1" /><span>days</span></div></div>
+        <div class="duration-value" id="exception-edit-length" hidden><ds-input id="override-increment" aria-label="Extra Edit working days for this exception" wrapperClassName="duration-number" type="number" min="0" step="1" /><span>extra day per minute</span></div>
+      </div>
+      <p class="small muted" id="exception-editor-fixed" hidden>The producer chooses specific dates for this stage.</p>
+      <p class="invalid" id="exception-editor-error" role="alert" hidden></p>
+    </ds-editing-dialog>
+
+    <ds-editing-dialog dialog-id="rounds-editor" title="Client revisions" size="compact">
+      <div class="duration-field"><label class="label-m-semibold" for="revision-rounds">Included rounds</label><div class="duration-value"><ds-input id="revision-rounds" aria-label="Included revision rounds" wrapperClassName="revision-number" type="number" min="0" step="1" placeholder="Not set" /><span>rounds</span></div></div>
+      <p class="invalid" id="rounds-editor-error" role="alert" hidden></p>
+    </ds-editing-dialog>

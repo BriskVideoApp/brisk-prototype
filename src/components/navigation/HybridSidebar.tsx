@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useId, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, type ReactNode } from "react";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
@@ -16,6 +16,16 @@ import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/p
 
 type SidebarLink = { label: string; href: string; icon: DsIconName };
 
+// Fixed tooltips keep the existing app treatment outside the scrollable rail.
+function positionSidebarTooltip(root: HTMLElement, target: EventTarget | null) {
+  if (!(target instanceof Element)) return;
+  const trigger = target.closest<HTMLElement>("[data-tooltip]");
+  if (!trigger || !root.contains(trigger)) return;
+  const rect = trigger.getBoundingClientRect();
+  trigger.style.setProperty("--hybrid-tooltip-edge", `${root.getBoundingClientRect().right}px`);
+  trigger.style.setProperty("--hybrid-tooltip-centre", `${rect.top + rect.height / 2}px`);
+}
+
 export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
   brand: ReactNode;
   collapsed: boolean;
@@ -24,6 +34,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
 }) {
   const pathname = usePathname();
   const navigationId = useId();
+  const sidebarRef = useRef<HTMLElement>(null);
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { people } = usePeople();
@@ -37,14 +48,14 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
   const isAccountSettings = pathname.startsWith("/settings/personal/")
     || (isClient && (pathname.startsWith("/settings/client/") || pathname === "/client/invoices"));
   const workspace: SidebarLink[] = [
-    { label: "Videos", href: videosHref, icon: "film-strip" },
+    { label: "Videos", href: videosHref, icon: "house-line" },
     ...(isStaff ? [
       { label: "To Do", href: "/today", icon: "check-circle" as const },
-      { label: "People", href: "/people", icon: "users-three" as const },
+      { label: "People", href: "/people", icon: "user" as const },
       { label: "Clients", href: "/clients", icon: "buildings" as const },
     ] : []),
     { label: "Media Library", href: "/media", icon: "image-square" },
-    ...(canAdministerStudio ? [{ label: "Expenses", href: "/outstanding-invoices", icon: "money" as const }] : []),
+    ...(canAdministerStudio ? [{ label: "Expenses", href: "/outstanding-invoices", icon: "currency-dollar-simple" as const }] : []),
     {
       label: isClient ? "Brand Kit" : "Brand Kits",
       href: isClient ? viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios" : "/brand-kits",
@@ -64,6 +75,18 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     ...(access.canAccessBilling ? [{ label: "Invoices", href: buildHref("/client/invoices"), icon: "file-text" as const }] : []),
   ] : [];
 
+  useLayoutEffect(() => {
+    if (!collapsed) return;
+    const reposition = () => {
+      const root = sidebarRef.current;
+      if (root) positionSidebarTooltip(root,
+        root.querySelector("[data-tooltip]:hover, [data-tooltip]:focus-visible"));
+    };
+    reposition();
+    window.addEventListener("resize", reposition);
+    return () => window.removeEventListener("resize", reposition);
+  }, [collapsed, pathname]);
+
   function links(items: readonly SidebarLink[], label: string) {
     return <nav className="hybrid-navigation-links" aria-label={label}>
       {items.map((item) => {
@@ -75,7 +98,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
           className={`hybrid-navigation-link label-s-semibold${active ? " is-active" : ""}`}
           aria-label={item.label}
           aria-current={active ? "page" : undefined}
-          title={collapsed ? item.label : undefined}>
+          data-tooltip={collapsed ? item.label : undefined}>
           <DsIcon name={item.icon} size={20} />
           <span className="hybrid-navigation-copy">{item.label}</span>
         </Link>;
@@ -83,20 +106,24 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     </nav>;
   }
 
-  return <aside className="hybrid-sidebar" aria-label="Primary navigation">
+  return <aside className="hybrid-sidebar" aria-label="Primary navigation" ref={sidebarRef}
+    onPointerOver={(event) => positionSidebarTooltip(event.currentTarget, event.target)}
+    onFocus={(event) => positionSidebarTooltip(event.currentTarget, event.target)}
+    onScrollCapture={(event) => positionSidebarTooltip(event.currentTarget,
+      event.currentTarget.querySelector("[data-tooltip]:hover, [data-tooltip]:focus-visible"))}>
     <div className="hybrid-sidebar-heading">
       <div className="hybrid-sidebar-brand">{brand}</div>
-      <IconButton aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+      <IconButton size="M" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         aria-expanded={!collapsed} aria-controls={navigationId} onClick={onToggle}
         tooltipPlacement="bottom" tooltipAlign="end">
-        <DsIcon name={collapsed ? "caret-right" : "caret-left"} />
+        <DsIcon name="sidebar-simple" size={20} />
       </IconButton>
     </div>
     <div className="hybrid-sidebar-navigation" id={navigationId}>
       {isStudioSettings || isAccountSettings ? <>
         <Link className="hybrid-navigation-link label-s-semibold" href={videosHref}
           aria-label={isClient ? "Back to your videos" : "Back to workspace"}
-          title={collapsed ? isClient ? "Back to your videos" : "Back to workspace" : undefined}>
+          data-tooltip={collapsed ? isClient ? "Back to your videos" : "Back to workspace" : undefined}>
           <DsIcon name="arrow-left" size={20} /><span className="hybrid-navigation-copy">{isClient ? "Back to your videos" : "Back to workspace"}</span>
         </Link>
         <div className="hybrid-settings-group">
@@ -110,7 +137,7 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
       </> : links(workspace, "Workspace")}
     </div>
     <div className="hybrid-sidebar-footer">
-      <UserAvatarMenu placement="sidebar" />
+      <UserAvatarMenu placement="sidebar" collapsed={collapsed} />
       {canAdministerStudio ? links([{ label: "Studio settings", href: "/settings/studio", icon: "settings" }], "Studio administration") : null}
       <PrototypeScenarioToolbar inline placement="sidebar" />
     </div>

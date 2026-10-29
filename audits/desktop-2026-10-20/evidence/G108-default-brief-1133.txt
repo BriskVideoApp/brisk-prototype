@@ -1,0 +1,169 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Studio setup" [level=1]
+  - link "Preview sample Client portal":
+    - /url: /settings/studio/portal-preview
+    - text: Preview sample Client portal
+- region "Studio setup":
+  - region "Studio identity":
+    - heading "Studio identity" [level=2]
+    - heading "Studio name" [level=3]
+    - strong: North Star Films
+    - button "Edit name"
+    - heading "Studio logo" [level=3]
+    - generic "North Star Films logo":
+      - generic: NS
+    - button "Add logo"
+  - region "Video setup":
+    - heading "Video setup" [level=2]
+    - heading "Video types" [level=3]
+    - generic: Brand films
+    - generic: Case studies
+    - generic: Documentaries
+    - generic: Live action
+    - button "Edit video types"
+    - heading "Default Client Brief" [level=3]
+    - strong: 14 questions in new Briefs
+    - button "Edit questions"
+- dialog "Edit default Client Brief":
+  - banner:
+    - heading "Edit default Client Brief" [level=2]
+    - generic: Choose which questions appear and their order in future Briefs. Existing project Briefs will not change.
+  - group "Default Brief questions":
+    - generic: "1"
+    - button "Drag Working title to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Working title" [checked] [active]
+    - generic: Working title
+    - paragraph: What is the working title of this video?
+    - generic: "2"
+    - button "Drag Video type to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Video type" [checked]
+    - generic: Video type
+    - paragraph: What type of video do you want to make?
+    - generic: "3"
+    - button "Drag Platform to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Platform" [checked]
+    - generic: Platform
+    - paragraph: Where will the main video be used?
+    - generic: "4"
+    - button "Drag Description to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Description" [checked]
+    - generic: Description
+    - paragraph: What is the video about? Include anything it must say or avoid.
+    - generic: "5"
+    - button "Drag Purpose to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Purpose" [checked]
+    - generic: Purpose
+    - paragraph: What should this video achieve?
+    - generic: "6"
+    - button "Drag Audience to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Audience" [checked]
+    - generic: Audience
+    - paragraph: Who's this video for?
+    - generic: "7"
+    - button "Drag Tone to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Tone" [checked]
+    - generic: Tone
+    - paragraph: What is the tone?
+    - generic: "8"
+    - button "Drag Similar videos to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Similar videos" [checked]
+    - generic: Similar videos
+    - paragraph: Any similar videos that already exist?
+    - generic: "9"
+    - button "Drag Brand kit to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Brand kit" [checked]
+    - generic: Brand kit
+    - paragraph: Which brand kit should we use?
+    - generic: "10"
+    - button "Drag Footage to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Footage" [checked]
+    - generic: Footage
+    - paragraph: What footage will the video use?
+    - generic: "11"
+    - button "Drag Voiceover to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Voiceover" [checked]
+    - generic: Voiceover
+    - paragraph: Do you want a voiceover?
+    - generic: "12"
+    - button "Drag Viewer action to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Viewer action" [checked]
+    - generic: Viewer action
+    - paragraph: What do we want them to do next?
+    - generic: "13"
+    - button "Drag Versions to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Versions" [checked]
+    - generic: Versions
+    - paragraph: What versions do you need?
+    - generic: "14"
+    - button "Drag Deadline to reorder. Use the up and down arrow keys to move it."
+    - checkbox "Deadline" [checked]
+    - generic: Deadline
+    - paragraph: When do you need it by?
+  - contentinfo:
+    - button "Cancel"
+    - button "Save default Brief"

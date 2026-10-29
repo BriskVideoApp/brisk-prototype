@@ -1,0 +1,29 @@
+{
+  "status": "User requirement recorded; revised proposal, no implementation approval",
+  "requirement": "Frequent assignment must be directly discoverable from each Videos project row, with the minimum meaningful steps and no need to hunt through details or enable columns.",
+  "sourceEvidence": {
+    "file": "src/components/active-videos/ActiveVideosPage.tsx",
+    "defaultTeamColumn": "Hidden by default; optional Team cell opens the Team panel rather than a role picker.",
+    "projectQuickActions": "Current project-name quick actions include Chat, Files where available, and Client portal; no direct labelled assignment action."
+  },
+  "assessment": "The previous editor-focused proposal did not fully address the entry path.",
+  "proposedEntry": "Always-visible Assign team action in the leading project identity area. Available in normal desktop row layout, without hover, overflow menu, horizontal scrolling or column configuration. Preserve Staff-only management rights.",
+  "proposedQuickFlow": "Open assignment directly from Videos. Show role and required hours at the top; show person choices with Staff capacity or Freelancer hourly rate/project cost. Review hours/cost and choose person before the distinct Assign or Invite action. Search is optional.",
+  "clickTarget": {
+    "knownRole": "Open chooser > choose person > Assign:3 clicks.",
+    "roleNeeded": "Open chooser > choose role > choose person > Assign:4 clicks.",
+    "limit": "3/4-click targets apply only when role and prefilled required hours are already correct. Editing required hours is a necessary additional interaction, and must not be removed to meet a click count. Preserve Freelancer rate/terms and pending-invitation safeguards."
+  },
+  "detailedManagement": "Retain full Team management for invitation history, withdrawal and broader role settings. Required hours is part of quick assignment, not confined to detailed management.",
+  "preserve": "Person selection is still distinct from assignment; invitations remain distinct from direct assignment. No new Undo or autosave behaviour is implied.",
+  "notApproved": "Control placement, compact chooser composition and role-selection defaults remain proposals requiring agreement.",
+  "requiredHours": {
+    "priority": "Essential part of quick assignment, explicitly requested by Tom.",
+    "placement": "Visible and editable alongside the role at the top of the quick chooser, before Assign or Invite. Do not move it behind detailed management.",
+    "initialValue": "Prefill existing role hours when available; allow review/edit without unnecessary retyping. Preserve current hours rules.",
+    "cost": "Show the Freelancer hourly rate and calculated project cost together. Hours changes update the calculated estimate. Preserve and clearly identify existing custom/agreed project-rate overrides; never silently replace them.",
+    "source": "RoleEditorModal.tsx:getProjectRateValue uses hourly rate times role hours unless a project-rate override exists."
+  },
+  "preservePreferredSummary": "Preserve the first screenshot\u2019s compact Videos Team summary and current function: avatars, role labels, invited treatment and +more count. Do not replace it with an assignment-only control.",
+  "overviewPanelRefinement": "panel-refinement-requirement.json"
+}

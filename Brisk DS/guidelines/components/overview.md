@@ -1,10 +1,14 @@
 # Brisk DS — Components Overview & Decision Trees
 
-All components use the `d-` prefix. Insert as instances. Apply variant properties only — never override strokes, fills, effects, or spacing on instances.
+Original Figma components use the `d-` prefix. Insert them as instances and apply variant properties rather than overriding their appearance. React uses the actual exports and approved contracts below, without a `d-` import prefix.
 
 Swap slots are marked (swap) · Boolean toggles are marked (bool).
 
 The catalogue and generic decision trees describe the original Figma kit. For the prototype, read the approved React standards below and the [desktop baseline](../../../Docs/desktop-design-baseline.md) first. A catalogue entry does not establish a React export. Scoped approvals take precedence over generic choices; preserve specialised controls until reviewed.
+
+Before adding a control, inspect the matching export in `Brisk DS/src/app/components/` and a current approved consumer. Available families are Button, IconButton, Input, Textarea, Checkbox, Radio, Toggle, Select/BriskSelect, FilterGroup/FilterButton, Tabs, EditingDialog, ConfirmationDialog and Popover. Their styles and native behaviour belong to the DS; consumer classes supply layout only unless a scoped variant approval says otherwise.
+
+Card, Table, Drawer, Badge, Tooltip and other catalogue names are not corresponding reusable React exports in this directory. Reuse an existing approved app composition where documented. Do not invent an import, build a second primitive or migrate a specialised player, calendar, composer or rich picker merely because it contains a button or field. If no approved implementation fits, follow the missing-asset protocol before creating one.
 
 ---
 

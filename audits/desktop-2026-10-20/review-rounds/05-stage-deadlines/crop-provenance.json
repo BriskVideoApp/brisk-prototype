@@ -1,0 +1,13 @@
+{
+  "current-detail.jpg": {
+    "source": "current-1440.jpg",
+    "rectangle": [
+      972,
+      516,
+      1428,
+      782
+    ],
+    "operation": "Pixel crop only; full genuine screenshot retained."
+  },
+  "user-deadline-screenshot.png": "User-supplied screenshot retained unedited."
+}

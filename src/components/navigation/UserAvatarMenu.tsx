@@ -18,6 +18,7 @@ import { hasStudioAdministrationAccess, prototypeCustomerPersonId, prototypeStud
 
 type UserAvatarMenuProps = {
   placement: "sidebar" | "header";
+  collapsed?: boolean;
   onNavigate?: () => void;
 };
 
@@ -33,7 +34,7 @@ const organisationByRole: Record<PrototypeRole, string> = {
   Customer: "Loom",
 };
 
-export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
+export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: UserAvatarMenuProps) {
   const pathname = usePathname();
   const { selectedRole } = usePrototypeRole();
   const viewer = usePrototypeViewer();
@@ -131,7 +132,8 @@ export function UserAvatarMenu({ placement, onNavigate }: UserAvatarMenuProps) {
         aria-controls={menuId}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
-        title={placement === "sidebar" ? displayName : undefined}
+        title={placement === "sidebar" && !collapsed ? displayName : undefined}
+        data-tooltip={placement === "sidebar" && collapsed && !isOpen ? "Your menu" : undefined}
         ref={triggerRef}
         onClick={() => setIsOpen((current) => !current)}
       >

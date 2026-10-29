@@ -1,5 +1,11 @@
 # Brisk DS — Overlays & Feedback
 
+## Approved React scope
+
+The original Figma descriptions below are not React migration instructions. Use the approved [ConfirmationDialog](confirmation-dialog.md) for confirmations, including simple destructive confirmations, and [EditingDialog](editing-dialog.md) for centred forms. Their shared surface owns focus, keyboard behaviour and footer boundaries. Use [Popover](popover.md) for its approved contextual settings purpose and [action menus](action-menus.md) for commands.
+
+Do not restore anchored Popconfirm merely because the historical Figma section recommends it. Existing contextual drawers, player panels and other specialised compositions retain their documented patterns. A Figma Drawer, Toast or Tooltip entry does not supply a React export or authorise a new local primitive. Consult the [desktop baseline](../../../Docs/desktop-design-baseline.md) and missing-asset protocol where no approved implementation fits.
+
 ---
 
 ## d-Modal

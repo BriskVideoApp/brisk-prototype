@@ -1,0 +1,16 @@
+{
+  "protectedFilesCompared": 1785,
+  "changed": [
+    "src/components/settings/StudioNotificationCategoryPage.tsx",
+    "src/components/settings/notification-settings.css",
+    "src/components/project-timing/ProjectTimingNotice.tsx",
+    "src/components/project-timing/project-timing.css",
+    "src/components/project-timing/FinalDeliveryPage.tsx",
+    "src/components/notifications/project-history.css",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "src/components/notifications/NotificationSemanticState.tsx",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "unexpectedChanges": [],
+  "recordsAssetsDependenciesChanged": []
+}

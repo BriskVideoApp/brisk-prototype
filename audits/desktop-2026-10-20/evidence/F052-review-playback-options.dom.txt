@@ -1,0 +1,204 @@
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /workspaces/northstar-films/clients/loom/portal
+        - tooltip "Back to dashboard"
+      - generic: Loom
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Approved"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Approved
+        - generic: Shoot
+        - 'link "Video Review: Approved"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Approved
+        - generic: Edit
+        - 'link "Masters: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Waiting on North Star Films
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+  - region "Video review workspace":
+    - region "MYLOT006_Customer_Story_V2.mp4 video player":
+      - generic: V2 · Approved
+      - img "Drawing layer"
+      - generic: Click to add a comment
+      - generic: 00:00
+      - slider "Video timeline":
+        - button "Go to comment at 00:02": 00:02 external
+        - button "Go to comment at 00:47": 00:47 external
+        - button "Go to comment at 01:48": 01:48 external
+        - button "Go to comment at 01:53": 01:53 external
+      - generic: 02:00
+      - button "Step back five seconds"
+      - button "Step forward five seconds"
+      - button "Previous comment"
+      - button "Play"
+      - button "Next comment"
+      - button "Playback speed 1.5x" [active]: 1.5x
+      - button "Mute"
+      - button "Fullscreen"
+    - region "Versions":
+      - text: FILES
+      - heading "Versions" [level=2]
+      - button "Compare V1 and V2": Compare V1 and V2
+      - article:
+        - button "V2 · Approved MYLOT006_Customer_Story_V2.mp4 22 July 2026 · David Ryan · 1920 × 1080 · 492 MB":
+          - generic: V2 · Approved
+          - generic: MYLOT006_Customer_Story_V2.mp4
+          - generic: 22 July 2026 · David Ryan · 1920 × 1080 · 492 MB
+        - generic: Current
+        - button "Download V2": Download
+      - article:
+        - button "V1 · Approved MYLOT006_Customer_Story_V1.mp4 18 July 2026 · David Ryan · 1920 × 1080 · 486 MB":
+          - generic: V1 · Approved
+          - generic: MYLOT006_Customer_Story_V1.mp4
+          - generic: 18 July 2026 · David Ryan · 1920 × 1080 · 486 MB
+        - button "Download V1": Download
+    - complementary "Review comments":
+      - heading "Comments (6)" [level=1]
+      - generic "Skip between visible comments":
+        - button "Previous visible comment" [disabled]
+        - button "Next visible comment"
+      - generic "Comment filters":
+        - button "All"
+        - button "Unresolved"
+      - article:
+        - generic "Jess Taylor": JT
+        - generic: Jess Taylor
+        - generic: 1h Jun 16, 2026 at 4:23 PM
+        - generic: Overall
+        - generic: Client
+        - button "Resolve comment": Mark as resolved
+        - button "Comment menu"
+        - paragraph: Overall this version is feeling much closer. The structure is strong - just a few polish notes in the comments below.
+      - article:
+        - generic "David R.": DR
+        - generic: David R.
+        - generic: 25m Jun 16, 2026 at 4:58 PM
+        - generic: Overall
+        - generic: Client
+        - button "Resolve comment": Mark as resolved
+        - button "Comment menu"
+        - paragraph: "Overall note for the client: pacing is nearly locked, with colour and audio polish still in progress."
+      - article:
+        - generic "Jess Taylor": JT
+        - generic: Jess Taylor
+        - generic: 2h Jun 16, 2026 at 3:23 PM
+        - button "00:02"
+        - generic: Client
+        - button "Resolve comment": Mark as resolved
+        - button "Comment menu"
+        - paragraph: The colour grade feels too warm in this section - can we pull back the orange tones?
+        - button "Edit drawing feedback": Drawing Edit drawing
+      - article:
+        - generic "Sarah K.": SK
+        - generic: Sarah K.
+        - generic: 5h Jun 16, 2026 at 12:23 PM
+        - button "00:47"
+        - generic: Client
+        - button "Resolve comment": Mark as resolved
+        - button "Comment menu"
+        - paragraph: Tighten the transition into the next shot - feeling a bit loose right now.
+        - generic "Comment reactions":
+          - button "Love by Jess Taylor":
+            - generic: ❤️
+            - text: 1 Love by Jess Taylor
+          - button "Strong by Tom Mitchell":
+            - generic: 🔥
+            - text: 1 Strong by Tom Mitchell
+          - button "Approved by Marcus L.":
+            - generic: ✅
+            - text: 1 Approved by Marcus L.
+        - generic "Jess Taylor": JT
+        - generic: Jess Taylor
+        - generic: 4h Jun 16, 2026 at 1:23 PM
+        - paragraph: Can you be more specific about how many frames?
+        - generic "Sarah K.": SK
+        - generic: Sarah K.
+        - generic: 3h Jun 16, 2026 at 2:23 PM
+        - paragraph: Maybe 4-6 frames should do it, try both.
+        - generic "David R.": DR
+        - generic: David R.
+        - generic: 2h Jun 16, 2026 at 3:23 PM
+        - paragraph: I'll test both and keep the stronger beat.
+      - article:
+        - generic "Jess Taylor": JT
+        - generic: Jess Taylor
+        - generic: 1d Jun 15, 2026 at 5:23 PM
+        - button "01:48"
+        - generic: Client
+        - button "Resolve comment": Mark as resolved
+        - button "Comment menu"
+        - paragraph: Can we make the lower third feel less busy here?
+      - button "Sarah K. 01:53 This ending works. The final line lands nicely.":
+        - generic: Sarah K.
+        - generic: 01:53
+        - generic: This ending works. The final line lands nicely.
+      - button "Comment menu"
+      - region "Add comment":
+        - button "Choose feedback attachments"
+        - textbox "Comment on 00:00..."
+        - button "Attach file": Attach file
+        - button "Record your screen and voice" [disabled]: Recording is not available in this prototype
+        - button "Draw on screen": Draw on screen
+        - button "Remove timecode to make this an overall comment":
+          - text: "@00:00"
+          - text: Remove timecode to make this an overall comment
+        - button "Send comment" [disabled]
+        - paragraph: Cmd+Enter to send
+    - generic "Edit review actions":
+      - generic "Edit share actions":
+        - button "Copy link"
+        - button "Send Edit Send to North Star Films or your team."
+        - button "Edit approved": Edit approved

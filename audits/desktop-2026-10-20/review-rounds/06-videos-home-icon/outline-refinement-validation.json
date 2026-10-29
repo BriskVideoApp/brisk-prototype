@@ -1,0 +1,27 @@
+{
+  "request": "Use a cleaner home icon without the filled patch on the left",
+  "status": "Implemented and desktop verified",
+  "change": "Videos sidebar now uses the existing house-line DsIcon asset. No SVG assets edited.",
+  "typeCheck": "npx tsc --noEmit passed",
+  "runtimeHTTP": 200,
+  "browser": "Actual Videos page on isolated origin 8782; expanded Staff sidebar",
+  "fullScreenshot": "outline-home-icon-full.png",
+  "crop": "outline-home-icon-navigation.png",
+  "cropBounds": [
+    0,
+    0,
+    240,
+    215
+  ],
+  "changedFiles": [
+    "src/components/navigation/HybridSidebar.tsx",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "protectedFilesCompared": 1710,
+  "workingData": "No working-origin interactions, forms, role changes or storage edits",
+  "priorTimingWork": "Checkpoint preserved; not resumed in this icon-only refinement",
+  "limits": [
+    "Other role views and collapsed navigation share the same icon mapping and were not separately rechecked.",
+    "Mobile verification deferred."
+  ]
+}

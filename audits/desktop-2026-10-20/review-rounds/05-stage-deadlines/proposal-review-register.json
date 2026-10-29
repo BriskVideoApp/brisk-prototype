@@ -1,0 +1,73 @@
+{
+  "id": "DEADLINE-01-VISUAL",
+  "date": "28 October 2026",
+  "status": "Approved Chat timing-warning placement implemented and verified on 29 October 2026; separate Studio settings and automatic timing remain for scoped review",
+  "request": "Ok go for it",
+  "executedScope": "Produce the concrete timing preview under the established review-before-implementation sequence. Continue the requested deadline direction without changing working data or app code.",
+  "review": "timing-review.html",
+  "interactivePreview": "timing-preview.html",
+  "directionCarriedForward": [
+    "Studio rules set once",
+    "Working days excluding weekends",
+    "Start on Waiting on Studio",
+    "Producer can choose automatic or specific date",
+    "Named active stage and separate final delivery",
+    "Brief feasibility warning",
+    "Producer review of forecast-risk Client updates",
+    "Factual overdue visible to both",
+    "Explicit proposed date and Client agreement with history",
+    "One entry populates all relevant stage rules; adjust only exceptions"
+  ],
+  "newVisualChoicesForReview": [
+    "Studio compact countdown prioritises pending internal review target",
+    "One shared Studio default, linked stage summaries, prefilled custom overrides and Use Studio default reset",
+    "Named internal/Client WIP rows with direct Change action",
+    "Brief requested-date notice and provisional estimate",
+    "Risk review and Client proposal screen composition"
+  ],
+  "notInvented": [
+    "No internal revision target",
+    "No automatic animation allowance",
+    "No new permission role",
+    "No promise that AI forecasts are implemented",
+    "No Client review allowance or holiday calendar assumed"
+  ],
+  "remainingImplementationDetails": [
+    "Fractional-minute rounding",
+    "Stage-specific presets and simple-template exceptions",
+    "Legacy stage start timestamps and existing manual dates",
+    "Demo-time reference",
+    "Multiple active-stage disclosure",
+    "Forecast assumptions and meaningful-change notification frequency"
+  ],
+  "sourceControls": [
+    "Brisk DS Button",
+    "Brisk DS Input",
+    "Brisk DS Radio",
+    "Brisk DS Textarea",
+    "DsIcon info"
+  ],
+  "scopeLimits": [
+    "Independent sample scenarios, not a connected scheduler",
+    "Contained desktop views, not full application shell verification",
+    "No actual records saved or messages sent",
+    "No app changes, dependencies, tests, production build, commit or push"
+  ],
+  "latestRequirement": "shared-defaults-requirement.json",
+  "conciseBriefRefinement": "brief-concise-requirement.json",
+  "chatPlacementRecommendation": "chat-placement-recommendation.json",
+  "simplifiedSettingsAndRevisionUnits": "settings-simplification-and-units.json",
+  "latestSettingsAndClientCopyReview": "read-first-settings-and-copy.json",
+  "approvedChatPlacement": {
+    "date": "28 October 2026",
+    "decision": "chat-placement-recommendation.json",
+    "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+    "result": "../07-timing-warnings/result.html",
+    "verification": "../07-timing-warnings/implementation-validation.json"
+  },
+  "laterApprovedDelivery": {
+    "date": "29 October 2026",
+    "result": "../08-delivery-agreement/result.html",
+    "scope": "Final delivery producer proposal, authorised Client agreement, discussion and retained history"
+  }
+}

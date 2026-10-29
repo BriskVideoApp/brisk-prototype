@@ -1,0 +1,17 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/media".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 159-194, 206-574
+~					43 search text field (settable) Description: Search media, Value: Office-arrivals
++					205 container 2 files selected
++						206 text 2  selected
++						207 button Clear selection
++							208 text Clear selection
++						209 button Download
+~						196 checkbox Description: Deselect Office-arrivals-camera-b.mov, Value: 1
++								210 text Transcript
++								211 text Copy link
++								212 text Download
++				213 container Office-arrivals-camera-b.mov share actions
++					214 button (collapsed) Description: Copy link, Secondary Actions: Expand
++					215 button Send selected file to Deel
+The focused UI element is 43 search text field (settable) Description: Search media, Value: Office-arrivals

@@ -1,0 +1,205 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main "Development-only email delivery diagnostics":
+  - generic: DEVELOPMENT QA ONLY
+  - heading "Email delivery diagnostics" [level=1]
+  - paragraph: Local fixtures for checking transactional delivery behaviour. This is not a V1 product surface.
+  - link "Notifications":
+    - /url: /notifications
+    - text: Notifications
+  - region "Development-only fixture notice":
+    - strong: Diagnostic fixture console
+    - paragraph: Available in local development only. Product users see simple contextual email states, never provider or deduplication details.
+    - generic: Local only
+    - generic: Not user-facing
+  - region "Delivery summary":
+    - article:
+      - generic: Delivery families
+      - strong: "6"
+      - generic: One per event and recipient
+    - article:
+      - generic: Delivered
+      - strong: "4"
+      - generic: Provider-confirmed
+    - article:
+      - generic: Reminder due
+      - strong: "1"
+      - generic: Action still open
+    - article:
+      - generic: Needs attention
+      - strong: "1"
+      - generic: Retries exhausted
+  - navigation "Email delivery filters":
+    - button "All 6":
+      - text: All
+      - generic: "6"
+    - button "Review requests 3":
+      - text: Review requests
+      - generic: "3"
+    - button "Reminders 3":
+      - text: Reminders
+      - generic: "3"
+    - button "Failures 1":
+      - text: Failures
+      - generic: "1"
+  - region "Email delivery requests":
+    - heading "Delivery families" [level=2]
+    - generic: Newest first
+    - 'button "Completed Delivered Urgent: LOOM-24 crew call changed to 6:30 am Nina Patel · LOOM-24 20 Aug, 10:15 pm 1 attempt"':
+      - generic: Completed
+      - generic: Delivered
+      - strong: "Urgent: LOOM-24 crew call changed to 6:30 am"
+      - generic: Nina Patel · LOOM-24
+      - time: 20 Aug, 10:15 pm
+      - generic: 1 attempt
+    - button "Completed Delivered You have 5 new mentions in HIMS-18 Edit Tom Mitchell · HIMS-18 20 Aug, 3:42 pm 1 attempt":
+      - generic: Completed
+      - generic: Delivered
+      - strong: You have 5 new mentions in HIMS-18 Edit
+      - generic: Tom Mitchell · HIMS-18
+      - time: 20 Aug, 3:42 pm
+      - generic: 1 attempt
+    - button "Failed Retries exhausted DEEL-18 Masters v2 is ready for review Alex Morgan · DEEL-18 20 Aug, 1:10 pm 3 attempts":
+      - generic: Failed
+      - generic: Retries exhausted
+      - strong: DEEL-18 Masters v2 is ready for review
+      - generic: Alex Morgan · DEEL-18
+      - time: 20 Aug, 1:10 pm
+      - generic: 3 attempts
+    - button "Completed Delivered LOOM-24 is ready to edit Nina Patel · LOOM-24 20 Aug, 11:05 am 1 attempt":
+      - generic: Completed
+      - generic: Delivered
+      - strong: LOOM-24 is ready to edit
+      - generic: Nina Patel · LOOM-24
+      - time: 20 Aug, 11:05 am
+      - generic: 1 attempt
+    - button "Needs attention Reminder due LOOM-24 Edit v3 is ready for review Jess Taylor · LOOM-24 20 Aug, 11:00 am 1 attempt":
+      - generic: Needs attention
+      - generic: Reminder due
+      - strong: LOOM-24 Edit v3 is ready for review
+      - generic: Jess Taylor · LOOM-24
+      - time: 20 Aug, 11:00 am
+      - generic: 1 attempt
+    - button "Completed Action completed LOOM-24 Script v4 is ready for review Jess Taylor · LOOM-24 19 Aug, 9:30 am 1 attempt":
+      - generic: Completed
+      - generic: Action completed
+      - strong: LOOM-24 Script v4 is ready for review
+      - generic: Jess Taylor · LOOM-24
+      - time: 19 Aug, 9:30 am
+      - generic: 1 attempt
+  - complementary "Delivery details for LOOM-24 Edit v3 is ready for review":
+    - generic: Needs attention
+    - generic: Reminder due
+    - heading "LOOM-24 Edit v3 is ready for review" [level=2]
+    - paragraph: Jess Taylor · jess@loom.com
+    - region "One event, separate outcomes":
+      - heading "One event, separate outcomes" [level=3]
+      - article:
+        - generic: In-app outcome
+        - strong: External system post + inbox item
+      - article:
+        - generic: Email outcome
+        - strong: One delivery request
+      - paragraph: Canonical event event-review-loom-edit-v3
+    - heading "Safe request" [level=3]
+    - generic: Customer-safe workflow
+    - term: Template
+    - definition: customer-stage-review-requested · v4
+    - term: Idempotency
+    - definition: event-review-loom-edit-v3:user-jess:email
+    - term: Project
+    - definition: LOOM-24 Launch Film - Sales Narrative
+    - term: Stage
+    - definition: Edit
+    - term: Version
+    - definition: Edit v3
+    - term: CTA
+    - definition: Review Edit
+    - heading "Provider attempts" [level=3]
+    - generic: 1 total
+    - list:
+      - strong: Attempt 1 · Delivered
+      - generic: Requested 20 Aug, 11:00 am · Resolved 20 Aug, 11:00 am
+      - generic: Provider reference em_01K34J9M7F
+    - generic: event-review-loom-edit-v3 remains one event. No extra inbox item was created.
+    - heading "Reminder plan" [level=3]
+    - generic: 24h + optional 48h
+    - list:
+      - strong: First Customer reminder
+      - generic: 21 Aug, 11:00 am · Scheduled
+      - generic: Send only if Edit v3 still needs review.
+      - strong: Final Customer reminder
+      - generic: 22 Aug, 11:00 am · Scheduled
+      - generic: Escalate to the assigned Studio Staff only after this reminder.
+    - paragraph:
+      - strong: Quiet hours
+      - text: Requested during delivery hours.
+    - paragraph:
+      - strong: Project mute
+      - text: Required review delivery takes precedence over routine project mute.
+  - region "Email that was intentionally not requested":
+    - generic: SUPPRESSION
+    - heading "Email that was intentionally not requested" [level=2]
+    - generic: Reply ingestion stays in Chat connectors
+    - article:
+      - strong: Normal project Chat message
+      - generic: No mention, assignment or opted-in important-message policy.
+      - generic: Chat unread state only
+    - article:
+      - strong: Review reminder
+      - generic: The recipient completed the required review before the reminder was requested.
+      - generic: Email suppressed
+    - article:
+      - strong: Non-urgent fallback
+      - generic: The recipient was active in Brisk within the configured product-policy window.
+      - generic: Email suppressed

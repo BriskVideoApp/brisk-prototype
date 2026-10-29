@@ -82,6 +82,7 @@ export type BriskAiCitation = {
 export type BriskAiResponse = {
   title: string;
   body: string;
+  links?: Array<{ label: string; href: string }>;
   draft?: string;
   categoryRows?: Array<{ label: string; body: string; citationIds: string[] }>;
   citations: BriskAiCitation[];

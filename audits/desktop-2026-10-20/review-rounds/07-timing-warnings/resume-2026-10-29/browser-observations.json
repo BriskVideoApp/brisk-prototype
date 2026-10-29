@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TW-R01",
+    "passed": true,
+    "observation": "Deadline warning opens the Loom project’s exact Internal timing-message URL; External and Customer views contain no unreviewed risk post or Internal tab."
+  },
+  {
+    "id": "TW-R02",
+    "passed": true,
+    "observation": "Staff review publishes the edited Client-safe reason; no Internal explanation or Staff sharing controls appear in the Client dialog. Escape closes and restores focus to Review date."
+  },
+  {
+    "id": "TW-R03",
+    "passed": true,
+    "observation": "View final delivery from the current Client timing review reaches the delivery utility and shows the unchanged agreed 29 August date; no proposal is created by review or navigation."
+  },
+  {
+    "id": "TW-R04",
+    "passed": true,
+    "observation": "Brief Deadline shows one-line suggestion for the existing sample requested date at 1440/1133. Explicit Send to Studio removes the matching draft hint and creates the timing hand-off; working data is not used."
+  },
+  {
+    "id": "TW-R05",
+    "passed": true,
+    "observation": "After sharing, submission and reading, Videos still shows Timing needs review and unchanged final due 29 August; latest warning targets the exact submitted Brief message."
+  },
+  {
+    "id": "TW-R06",
+    "passed": true,
+    "observation": "Review date inside Global Chat opens the date dialog. View final delivery closes both dialog and global drawer, reaches Final delivery, and does not change the agreed date."
+  },
+  {
+    "id": "TW-R07",
+    "passed": true,
+    "observation": "Existing freelancer-active scenario: accepted the existing Loom offer on disposable origin 8784 only. Assigned Jordan sees the warning on My jobs, opens exact Internal issue, and gets read-only date review with no Share with Client action."
+  }
+]

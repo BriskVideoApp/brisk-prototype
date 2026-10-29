@@ -1,0 +1,80 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Clients header":
+    - heading "Clients" [level=1]
+    - generic: Search Clients
+    - searchbox "Search Clients" [active]: zzzz-no-result
+  - group "Client views":
+    - button "All 12" [pressed]:
+      - text: All
+      - generic: "12"
+    - button "Active 8":
+      - text: Active
+      - generic: "8"
+    - button "Inactive 2":
+      - text: Inactive
+      - generic: "2"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Add Client":
+    - generic: Add Client
+  - region "Client list controls":
+    - generic: Sort by
+    - combobox "Sort Clients":
+      - generic: Latest activity
+    - generic: 0 Clients
+  - heading "No Clients match these controls." [level=2]
+  - paragraph: Try a different search or show all Client statuses.
+  - button "Clear controls"

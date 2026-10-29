@@ -1,0 +1,24 @@
+{
+  "date": "28 October 2026",
+  "status": "User requirements reflected in the revised visual proposal; no application implementation",
+  "userClarifications": [
+    "Simplify the settings and reduce simultaneous information",
+    "The numeric turnaround values must visibly say days",
+    "Client revisions is the number of included rounds, separate from turnaround times"
+  ],
+  "design": {
+    "defaultView": "Turnaround mode, two first-WIP durations with adjacent days, compact shared-scope note, and a separate Client revisions section in rounds.",
+    "disclosure": "Customise rules contains working week, the existing revision turnaround in days, video-length allowance and stage exceptions. Linked stages do not repeat all shared values.",
+    "exceptionVisibility": "Collapsed summary shows the number of overrides; changing the shared rule still updates linked stages.",
+    "revisionRounds": "Separate nullable value, initially Not set. No previous day value is converted into a revision allowance.",
+    "revisionTurnaround": "The existing two-working-day target after Client feedback is retained as a duration under Customise rules.",
+    "dataSafety": "Only preview/audit artefacts changed; no working records, active deadlines, application source or assets changed."
+  },
+  "decisionsStillNeededBeforeImplementation": [
+    "Included round allowance value",
+    "Whether the allowance applies per project, per stage or another agreed scope",
+    "How additional rounds are handled; no limit enforcement, fee or approval policy is assumed"
+  ],
+  "preview": "timing-preview.html",
+  "review": "timing-review.html"
+}

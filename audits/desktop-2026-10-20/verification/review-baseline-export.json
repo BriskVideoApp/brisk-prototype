@@ -1,0 +1,179 @@
+{
+  "schema": "brisk-desktop-audit-review/v1",
+  "auditId": "desktop-2026-10-20",
+  "exportedAt": "2026-10-20T21:36:28.089Z",
+  "baselineCommit": "3188bc4ca88d6ed2689c9b5bf8c47a7bfdd56e63",
+  "notice": "Review notes and statuses only. This file does not authorise or implement changes.",
+  "findings": [
+    {
+      "id": "A10",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC01",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC06",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B01",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B02",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B09",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B16",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B17",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B21",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A03",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A05",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A06",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A07",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A08",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A12",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "A13",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC02",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC03",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC05",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "AC08",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B03",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B06",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B07",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B11",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B12",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B13",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B15",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B18",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B19",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B20",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B22",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "C02",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "L01",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    },
+    {
+      "id": "B10",
+      "reviewStatus": "Needs decision",
+      "note": ""
+    }
+  ]
+}

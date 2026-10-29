@@ -1,0 +1,11 @@
+{
+  "exportedFile": "review-export-roundtrip.json",
+  "exportedFindings": 18,
+  "allExportedStatusesNeedsDecision": true,
+  "testNoteExported": true,
+  "importedFindings": 18,
+  "cleanFinalCopyHasBlankNotes": true,
+  "cleanFinalCopyHasNeedsDecisionStatuses": true,
+  "resetConfirmationAutomation": "Not verified; final copy opened fresh",
+  "applicationDataTouched": false
+}

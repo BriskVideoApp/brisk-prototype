@@ -1,0 +1,18 @@
+Confirm plan change
+Review the Brisk plan details before continuing.
+Current plan
+Professional
+New plan
+Business
+Billing frequency
+Annual
+New price
+$499 USD/month, billed as $5,988 annually
+Effective date
+12 October 2026
+
+Final financial confirmation would be completed securely through Stripe in production.
+
+Cancel
+Back
+Confirm change

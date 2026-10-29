@@ -1,0 +1,363 @@
+{
+  "screens-initial": [
+    {
+      "screens": [
+        {
+          "index": 0,
+          "id": "4d65ac63-3365-491e-826a-2f21cac339a5",
+          "image_url": "https://mobbin.com/api/mcp/short/Mrbc1R7E",
+          "mobbin_url": "https://mobbin.com/screens/4d65ac63-3365-491e-826a-2f21cac339a5",
+          "app_name": "Plane",
+          "platform": "web"
+        },
+        {
+          "index": 1,
+          "id": "6ddc5731-45e9-47e1-9d86-f02153543050",
+          "image_url": "https://mobbin.com/api/mcp/short/Dy0clMG0",
+          "mobbin_url": "https://mobbin.com/screens/6ddc5731-45e9-47e1-9d86-f02153543050",
+          "app_name": "hilos",
+          "platform": "web"
+        },
+        {
+          "index": 2,
+          "id": "8a52aeca-332a-48a9-99fc-30076fc2c5ed",
+          "image_url": "https://mobbin.com/api/mcp/short/xmSmiSVU",
+          "mobbin_url": "https://mobbin.com/screens/8a52aeca-332a-48a9-99fc-30076fc2c5ed",
+          "app_name": "Unify",
+          "platform": "web"
+        },
+        {
+          "index": 3,
+          "id": "b0b575c1-9c99-4435-ad27-0f5d377abdbb",
+          "image_url": "https://mobbin.com/api/mcp/short/W7wXk5q7",
+          "mobbin_url": "https://mobbin.com/screens/b0b575c1-9c99-4435-ad27-0f5d377abdbb",
+          "app_name": "Calendly",
+          "platform": "web"
+        },
+        {
+          "index": 4,
+          "id": "cc8e41be-38c5-4daf-a47f-c853daae3e38",
+          "image_url": "https://mobbin.com/api/mcp/short/4nggdLak",
+          "mobbin_url": "https://mobbin.com/screens/cc8e41be-38c5-4daf-a47f-c853daae3e38",
+          "app_name": "Mercury",
+          "platform": "web"
+        },
+        {
+          "index": 5,
+          "id": "055ac011-9832-4445-b267-f290ed24e612",
+          "image_url": "https://mobbin.com/api/mcp/short/tKcNBqXc",
+          "mobbin_url": "https://mobbin.com/screens/055ac011-9832-4445-b267-f290ed24e612",
+          "app_name": "Basecamp",
+          "platform": "web"
+        }
+      ]
+    }
+  ],
+  "flows-initial": [
+    {
+      "flows": [
+        {
+          "index": 0,
+          "id": "8c035c81-8eb6-4251-a1de-a8009150f697",
+          "name": "Assigning staff to project",
+          "actions": [
+            "Misc"
+          ],
+          "screen_count": 4,
+          "mobbin_url": "https://mobbin.com/flows/8c035c81-8eb6-4251-a1de-a8009150f697",
+          "app_name": "Xero",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "38b60b12-690a-41c4-a2f0-59a08dc39bf1",
+              "image_url": "https://mobbin.com/api/mcp/short/7t9Zce80",
+              "position": 1
+            },
+            {
+              "screen_id": "181ed733-387a-49ed-a5db-cc8486019a2b",
+              "image_url": "https://mobbin.com/api/mcp/short/W8MPkewa",
+              "position": 2
+            },
+            {
+              "screen_id": "1fdec1c7-8f2b-440c-9f17-3a0cc3e147e6",
+              "image_url": "https://mobbin.com/api/mcp/short/huR4WQ0H",
+              "position": 3
+            },
+            {
+              "screen_id": "3dc82735-3135-4df0-bee6-2c79a743a777",
+              "image_url": "https://mobbin.com/api/mcp/short/rxhhH8Xj",
+              "position": 4
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "id": "37f5b49c-ad4e-4f9e-8b01-52f8c64f8036",
+          "name": "Adding employees to a project (People)",
+          "actions": [
+            "Adding & Creating",
+            "Selecting & Choosing"
+          ],
+          "screen_count": 6,
+          "mobbin_url": "https://mobbin.com/flows/37f5b49c-ad4e-4f9e-8b01-52f8c64f8036",
+          "app_name": "Aboard",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "5508ba42-4a5f-460c-a83a-9f10533b13f4",
+              "image_url": "https://mobbin.com/api/mcp/short/6UOXXIas",
+              "position": 1
+            },
+            {
+              "screen_id": "a11fd84e-f730-42e6-8418-52ada0a014cb",
+              "image_url": "https://mobbin.com/api/mcp/short/qyXPEwt5",
+              "position": 2
+            },
+            {
+              "screen_id": "8fc8972e-a1ab-456c-97c5-208caa345a94",
+              "image_url": "https://mobbin.com/api/mcp/short/yhOHZM06",
+              "position": 3
+            },
+            {
+              "screen_id": "e958d21d-5bce-4edd-88b3-db1f063beff0",
+              "image_url": "https://mobbin.com/api/mcp/short/gACu3ROj",
+              "position": 4
+            },
+            {
+              "screen_id": "4d16bd2e-910f-4999-b185-8e829f1918b3",
+              "image_url": "https://mobbin.com/api/mcp/short/HLYsh4nR",
+              "position": 5
+            },
+            {
+              "screen_id": "d5f21cd3-73d2-48ff-b9b9-6ed83ad1f73e",
+              "image_url": "https://mobbin.com/api/mcp/short/GfmkoehD",
+              "position": 6
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "id": "439ba71b-0d5f-4101-8812-e6fa36b43e16",
+          "name": "Assigning task to a team member",
+          "actions": [
+            "Editing & Updating"
+          ],
+          "screen_count": 3,
+          "mobbin_url": "https://mobbin.com/flows/439ba71b-0d5f-4101-8812-e6fa36b43e16",
+          "app_name": "Motion",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "3384d266-1a1c-42bd-80c5-4840edfdfcb8",
+              "image_url": "https://mobbin.com/api/mcp/short/6x1CJW8O",
+              "position": 1
+            },
+            {
+              "screen_id": "c618b2a1-f16f-497f-9d18-6f6c574756b1",
+              "image_url": "https://mobbin.com/api/mcp/short/y2tGI2xx",
+              "position": 2
+            },
+            {
+              "screen_id": "6ddd6b26-9243-4de4-b743-27966edc33ec",
+              "image_url": "https://mobbin.com/api/mcp/short/pd7XA7b7",
+              "position": 3
+            }
+          ]
+        }
+      ],
+      "page": 1,
+      "has_next_page": true
+    },
+    "Flow 0: screen 1/4",
+    "Flow 0: screen 3/4",
+    "Flow 0: screen 4/4",
+    "Flow 1: screen 1/6",
+    "Flow 1: screen 4/6",
+    "Flow 1: screen 6/6",
+    "Flow 2: screen 1/3",
+    "Flow 2: screen 2/3",
+    "Flow 2: screen 3/3"
+  ],
+  "screens-availability": [
+    {
+      "screens": [
+        {
+          "index": 0,
+          "id": "1a3293d5-2d40-42ba-a132-d8d7e66c6921",
+          "image_url": "https://mobbin.com/api/mcp/short/H4Gv5VnX",
+          "mobbin_url": "https://mobbin.com/screens/1a3293d5-2d40-42ba-a132-d8d7e66c6921",
+          "app_name": "7shifts",
+          "platform": "web"
+        },
+        {
+          "index": 1,
+          "id": "f754f017-d74c-40f2-a016-e2eabaf6b518",
+          "image_url": "https://mobbin.com/api/mcp/short/BQFoKR6l",
+          "mobbin_url": "https://mobbin.com/screens/f754f017-d74c-40f2-a016-e2eabaf6b518",
+          "app_name": "Square",
+          "platform": "web"
+        },
+        {
+          "index": 2,
+          "id": "42d9229d-2df6-4245-a3c1-0802e8c89350",
+          "image_url": "https://mobbin.com/api/mcp/short/nxvyn0ub",
+          "mobbin_url": "https://mobbin.com/screens/42d9229d-2df6-4245-a3c1-0802e8c89350",
+          "app_name": "Deputy",
+          "platform": "web"
+        },
+        {
+          "index": 3,
+          "id": "ad2a41a5-4557-48f1-9afd-1e059a07cc97",
+          "image_url": "https://mobbin.com/api/mcp/short/QiJa6bua",
+          "mobbin_url": "https://mobbin.com/screens/ad2a41a5-4557-48f1-9afd-1e059a07cc97",
+          "app_name": "User Interviews",
+          "platform": "web"
+        },
+        {
+          "index": 4,
+          "id": "4e937b87-ad95-43a1-81de-8c9c8d04ceed",
+          "image_url": "https://mobbin.com/api/mcp/short/h27FGMrS",
+          "mobbin_url": "https://mobbin.com/screens/4e937b87-ad95-43a1-81de-8c9c8d04ceed",
+          "app_name": "Lyssna",
+          "platform": "web"
+        }
+      ]
+    }
+  ],
+  "screens-dialogs": [
+    {
+      "screens": [
+        {
+          "index": 0,
+          "id": "da0046ad-155c-4f65-a5c1-dc16e22bc0a3",
+          "image_url": "https://mobbin.com/api/mcp/short/KH9blNgz",
+          "mobbin_url": "https://mobbin.com/screens/da0046ad-155c-4f65-a5c1-dc16e22bc0a3",
+          "app_name": "Mixpanel",
+          "platform": "web"
+        },
+        {
+          "index": 1,
+          "id": "52215895-0426-4cbb-870f-8b7fc215b8d0",
+          "image_url": "https://mobbin.com/api/mcp/short/J1Adndoj",
+          "mobbin_url": "https://mobbin.com/screens/52215895-0426-4cbb-870f-8b7fc215b8d0",
+          "app_name": "Jira",
+          "platform": "web"
+        },
+        {
+          "index": 2,
+          "id": "09f791a4-1954-4035-bbdc-38daff566e6f",
+          "image_url": "https://mobbin.com/api/mcp/short/wzNyjdPa",
+          "mobbin_url": "https://mobbin.com/screens/09f791a4-1954-4035-bbdc-38daff566e6f",
+          "app_name": "Asana",
+          "platform": "web"
+        },
+        {
+          "index": 3,
+          "id": "decf1122-ea6f-4447-b56d-51086a1962da",
+          "image_url": "https://mobbin.com/api/mcp/short/r3pOAHa8",
+          "mobbin_url": "https://mobbin.com/screens/decf1122-ea6f-4447-b56d-51086a1962da",
+          "app_name": "Productboard",
+          "platform": "web"
+        },
+        {
+          "index": 4,
+          "id": "605de95e-0dfd-45c6-8fbf-7ac55f3190b3",
+          "image_url": "https://mobbin.com/api/mcp/short/vD4ZLztT",
+          "mobbin_url": "https://mobbin.com/screens/605de95e-0dfd-45c6-8fbf-7ac55f3190b3",
+          "app_name": "Toggl Track",
+          "platform": "web"
+        }
+      ]
+    }
+  ],
+  "flows-rates": [
+    {
+      "flows": [
+        {
+          "index": 0,
+          "id": "d18153e2-0f41-4264-aa62-481f812d3ace",
+          "name": "Billable rates",
+          "actions": [],
+          "screen_count": 3,
+          "mobbin_url": "https://mobbin.com/flows/d18153e2-0f41-4264-aa62-481f812d3ace",
+          "app_name": "Toggl Track",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "6b9db2f9-0243-4c4e-949d-219a55683f28",
+              "image_url": "https://mobbin.com/api/mcp/short/AxrIkO0q",
+              "position": 1
+            },
+            {
+              "screen_id": "23090f3b-19ec-4c40-bc87-f7ffd33dfe2b",
+              "image_url": "https://mobbin.com/api/mcp/short/O8YkMsob",
+              "position": 2
+            },
+            {
+              "screen_id": "5f94ecdf-d77a-4dda-addd-8803927b1dd8",
+              "image_url": "https://mobbin.com/api/mcp/short/Ooyu6BRU",
+              "position": 3
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "id": "896e6415-aa0c-453c-96cf-42d348ca9f57",
+          "name": "Adding a project member",
+          "actions": [
+            "Sharing"
+          ],
+          "screen_count": 7,
+          "mobbin_url": "https://mobbin.com/flows/896e6415-aa0c-453c-96cf-42d348ca9f57",
+          "app_name": "Toggl Track",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "04eef36f-d70a-44e5-83a3-cf4fff07c0ce",
+              "image_url": "https://mobbin.com/api/mcp/short/utw5nmN3",
+              "position": 1
+            },
+            {
+              "screen_id": "151a6e61-f895-4a77-97bf-30da8fbdc9c8",
+              "image_url": "https://mobbin.com/api/mcp/short/zrpGqHHW",
+              "position": 2
+            },
+            {
+              "screen_id": "d0b56a87-923e-4b8f-bfc8-8df406022157",
+              "image_url": "https://mobbin.com/api/mcp/short/jzeFJW2Z",
+              "position": 3
+            },
+            {
+              "screen_id": "605de95e-0dfd-45c6-8fbf-7ac55f3190b3",
+              "image_url": "https://mobbin.com/api/mcp/short/IGSMAEAF",
+              "position": 4
+            },
+            {
+              "screen_id": "cefa0ccc-9e29-4edb-93a3-b64d8ef75e87",
+              "image_url": "https://mobbin.com/api/mcp/short/PWzfM7Ze",
+              "position": 5
+            },
+            {
+              "screen_id": "88f483da-7888-4f31-a162-a3940ecef5bc",
+              "image_url": "https://mobbin.com/api/mcp/short/pHvEYwdw",
+              "position": 6
+            },
+            {
+              "screen_id": "bfd9fe5d-f9f8-4633-aad3-fe3f5888916f",
+              "image_url": "https://mobbin.com/api/mcp/short/LXufZjXy",
+              "position": 7
+            }
+          ]
+        }
+      ],
+      "page": 1,
+      "has_next_page": true
+    },
+    "Flow 0: screen 1/3",
+    "Flow 0: screen 2/3",
+    "Flow 0: screen 3/3",
+    "Flow 1: screen 1/7",
+    "Flow 1: screen 4/7",
+    "Flow 1: screen 7/7"
+  ]
+}

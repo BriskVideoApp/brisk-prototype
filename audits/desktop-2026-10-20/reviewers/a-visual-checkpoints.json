@@ -1,0 +1,951 @@
+{
+  "reviewer": "A",
+  "scope": "Visual reading of 111 genuine current route/step/nested captures supplied by the lead, including blank/transient frames explicitly limited below. This is composition review plus the lead's recorded reproduction evidence, not independent browser interaction verification.",
+  "captures": [
+    {
+      "routeId": "R001",
+      "images": [
+        "D-R001-staff-1440.jpg",
+        "D-R001-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition",
+      "observed": "Workspace title/search/filter hierarchy fits both widths. Main table has horizontal overflow; Project and Actions remain fixed, while Latest action/status and further columns move beyond1133 initial viewport. Circular per-project variable stage counts and pinned Media retained.",
+      "gaps": "Horizontal pan/column settings/focus not proved by screenshots. Do not infer that all columns must fit simultaneously."
+    },
+    {
+      "routeId": "R004",
+      "images": [
+        "D-R004-staff-1440.jpg",
+        "D-R004-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition",
+      "observed": "Three columns at1440 become two at1133. Kit names, state chips, palette/font previews and footer dates fit without overlap. Header search remains separate. Brand content fonts are client-asset previews rather than prohibited UI font replacements.",
+      "gaps": "Card/action menus and nested kit workflows require separate evidence. No issue promoted solely from rounded card variant without verifying applicable approval."
+    },
+    {
+      "routeId": "R008",
+      "images": [
+        "D-R008-staff-1440.jpg",
+        "D-R008-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition",
+      "observed": "Header search, quiet filters, Add Client placement and Sort by are coherent. Current project entries and contact metadata remain readable; all table columns and navigation arrow fit1133. Long project labels truncate in context.",
+      "gaps": "Full truncated-label discovery, keyboard focus, portals and menus not proved. No new default-layout defect supported."
+    },
+    {
+      "routeId": "R017",
+      "images": [
+        "D-R017-staff-1440.jpg",
+        "D-R017-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition",
+      "observed": "Summary has three cards at both widths. Outstanding value wraps to two lines at1133 without clipping. Include archived projects wraps to second filter row with intact target. Table Status/Tags lie outside initial1133 viewport; financial project/invoice identity remains readable.",
+      "gaps": "Horizontal-scroll discoverability and row-identity retention need live review. Mixed currency display sent to Reviewer B as heuristic question, not recorded as proven user failure."
+    },
+    {
+      "routeId": "R019",
+      "images": [
+        "D-R019-staff-1440.jpg",
+        "D-R019-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with capture limitation",
+      "observed": "Profile hierarchy and primary Assign project / secondary Pause access remain distinct. Overview labels/values and Studio details fit1133, with visible shared tab strip.",
+      "gaps": "1440 image lacks global/sidebar/field SVG icons compared with1133, likely loading capture. Do not use as missing-icon defect or comparison. Use1133 for catalogue default Tabs; record that nested role/notes/save paths remain unchecked by this image review."
+    },
+    {
+      "routeId": "R020",
+      "images": [
+        "D-R020-staff-1440.jpg",
+        "D-R020-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition",
+      "observed": "Header, filters, Invite action, sort/count fit both. People All table minimum1200 exceeds1136px inner frame at1440 and829px frame at1133. Latest activity/profile are clipped from default1440 view, Access/latest/profile beyond1133. This is horizontal overflow, not proof those data are inaccessible.",
+      "gaps": "Live horizontal pan, scrollbar/cue and identity anchoring required before treating layout tradeoff as a defect. Do not compress text or merge work/capacity semantics solely for fit. Current People Sort by now supplies same1440 ordinary-selection reference for A04."
+    },
+    {
+      "routeId": "R060",
+      "images": [
+        "D-R060-staff-1440.jpg",
+        "D-R060-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected existing empty composition",
+      "observed": "Existing Me scenario has no active videos. Headline, explanation and Open Videos action clear. Week/view/hours header wraps to second row at1133 without overlap. Historical June date is fixture context and not flagged against audit date.",
+      "gaps": "1133 image lacks several icons compared with1440 and should be re-captured for icon evidence. Populated work cards, time entry, dates and menus are not covered.1440 empty state can illustrate positive contextual pattern."
+    },
+    {
+      "routeId": "R025",
+      "images": [
+        "D-R025-staff-1440.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected current Script default composition",
+      "observed": "Project/stage hierarchy, pinned Media, V3 field, quiet document controls and fixed review footer fit1440. Text looks partial but AX capture confirms actual stored5-word content ('product', 'oduct update reaches t'); do not invent clipping or restore content.",
+      "gaps": "Menus, editor focus, versions and approval flows remain separately inspectable. No1133 screenshot in assigned set. Preserve current records."
+    },
+    {
+      "routeId": "R026",
+      "images": [
+        "D-R026-staff-1440.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected Brief first-question composition",
+      "observed": "Centred question/input and bottom step navigation fit with coherent primary Continue disabled until input. Pinned Media remains outside sequence. Specialised source/composer controls intentionally differ from ordinary fields.",
+      "gaps": "Summary, question branches, Brand Kit picker and source/share dialogs are not covered by this default screenshot. No1133 assigned capture."
+    },
+    {
+      "routeId": "R027",
+      "images": [
+        "D-R027-staff-1440.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected Edit prerequisite state",
+      "observed": "Centred prerequisite guidance and individual stage state lines are clear and fit1440. Approved Script has a tick in addition to colour. Share project is separate from readiness list. Current copy names Brisk in waiting lines despite Studio name in header; passed to lead as terminology question, not independently approved fix.",
+      "gaps": "Ready/edit/player populated state and1133 layout absent. Do not claim Video Review covered by this prerequisite screen."
+    },
+    {
+      "routeId": "R028",
+      "images": [
+        "D-R028-staff-1440.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Partially inspected Masters empty capture",
+      "observed": "Empty deliverables area offers Add deliverable and an explicitly labelled downloadable prototype sample/JSON explanation. Footer Download All/Complete video are disabled. No populated deliverable or file-control claim is supported.",
+      "gaps": "SVG icons absent throughout capture, likely load timing. Prototype-sample branch should be classified as demonstration affordance, not commercial capability. Re-capture and inspect nested/dialog/populated branches separately; do not create saved samples for screenshot."
+    },
+    {
+      "routeId": "R038",
+      "name": "Client billing",
+      "images": [
+        "D-R038-staff-1440.jpg",
+        "D-R038-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Connected-account details and primary dashboard action remain readable at1440/1133. Quiet overflow is an existing DS IconButton/ActionMenu, not a Unicode substitute or evidence of a small native target.",
+      "gaps": "Connection/overflow/disconnect dialogs not covered by default captures; no external dashboard or disconnect action submitted."
+    },
+    {
+      "routeId": "R039",
+      "name": "Notification category",
+      "images": [
+        "D-R039-staff-1440.jpg",
+        "D-R039-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Two-column message navigation/preview fits both widths. Description rows wrap at1133 without clipping. Sidebar changes from Studio settings to workspace links on this descendant; A05.",
+      "gaps": "Default message preview only; Edit message and Show when this sends require nested verification."
+    },
+    {
+      "routeId": "R040",
+      "name": "Studio Notifications",
+      "images": [
+        "D-R040-staff-1440.jpg",
+        "D-R040-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "1133 capture provides complete DS checkbox/tick/disabled-row reference. Section headings, description and category rows align and fit.1440 lacks some SVGs during capture, so no icon-absence claim.",
+      "gaps": "Save/discard, reminder rows below viewport, focus and checkbox/link action separation remain interactive checks."
+    },
+    {
+      "routeId": "R041",
+      "name": "Client message templates",
+      "images": [
+        "D-R041-staff-1440.jpg",
+        "D-R041-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Message list and email preview fit both widths; body lines wrap naturally. Email preview button is representation of message content, not an app-toolbar button to be restyled. Descendant sidebar loses settings context; A05.",
+      "gaps": "Template editor, variable selection, validation and save/restore not proved by default screenshot."
+    },
+    {
+      "routeId": "R045",
+      "name": "Brisk plan and billing",
+      "images": [
+        "D-R045-staff-1440.jpg",
+        "D-R045-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Price, plan, usage bars and billing card remain legible. At1133 Manage billing wraps to two lines, which is allowed by Button guidance and remains fully visible; no clipping finding.",
+      "gaps": "Plan chooser, Stripe boundary and add-ons below viewport require separate inspection; fixture renewal date not judged against current audit date."
+    },
+    {
+      "routeId": "R047",
+      "name": "AI Playbook",
+      "images": [
+        "D-R047-staff-1440.jpg",
+        "D-R047-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Studio instruction Textarea, reference link row and separate discard/save actions fit both widths. Instructions wrap at1133 and native vertical resize remains available. Empty References has direct upload/link controls.",
+      "gaps": "Focus/typing/dirty navigation guard and upload/link/save flows not proved. No actual AI/API work performed."
+    },
+    {
+      "routeId": "R050",
+      "name": "Messaging connections",
+      "images": [
+        "D-R050-staff-1440.jpg",
+        "D-R050-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Connected versus reconnect-required states have text and symbols in addition to colour. Account identity, project-scope explanation and Reconnect Slack fit1133. No reason to flatten these into an identical CTA state.",
+      "gaps": "Reconnect dialog or saved setting not activated. Integration claims remain prototype model rather than real connectivity validation."
+    },
+    {
+      "routeId": "R051",
+      "name": "Studio setup",
+      "images": [
+        "D-R051-staff-1440.jpg",
+        "D-R051-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "1440 capture is blank/loading.1133 shows Studio identity and Video setup sections, secondary edit actions and sample Client preview. Layout fits with no overlaps.",
+      "gaps": "Use1133 only for composition. Need loaded1440 recapture for full canonical visual evidence. Nested editors and preview are separate surfaces."
+    },
+    {
+      "routeId": "R053",
+      "name": "Production defaults",
+      "images": [
+        "D-R053-staff-1440.jpg",
+        "D-R053-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Role/person selectors remain aligned in two rows with44px removal actions and separate Add/Discard/Save.1133 fits without compressing labels. Scope notice correctly distinguishes new project defaults from existing teams.",
+      "gaps": "Menus, selection order, removal/save callbacks and unsaved changes not activated."
+    },
+    {
+      "routeId": "R054",
+      "name": "Storage",
+      "images": [
+        "D-R054-staff-1440.jpg",
+        "D-R054-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected default composition with stated limits",
+      "observed": "Storage selector, provider explanation and project-folder rows fit both widths.1133 paragraphs wrap with clear line length. Project status:Ready for editing is hardcoded; treat as prototype-data artefact/label-scope question under latest steering, not a headline visual defect.",
+      "gaps": "Provider selection immediately persists according to source, so was not changed to inspect alternative states. Do not infer actual file storage or readiness."
+    },
+    {
+      "routeId": "R002",
+      "name": "Sub-brand Brand Kit",
+      "images": [
+        "D-R002-staff-1440.jpg",
+        "D-R002-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Routine asset hierarchy changes with the desktop breakpoint; A11. Client-coloured enclosing panels share A06. Actual palette/font/logo contents remain legitimate previews.",
+      "gaps": "Default compositions only; nested upload/edit/share/version states require separate verification."
+    },
+    {
+      "routeId": "R003",
+      "name": "Master Brand Kit",
+      "images": [
+        "D-R003-staff-1440.jpg",
+        "D-R003-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "1440 places Logos/Colours/Fonts first; 1133 places video/editor files and Documents first. Fonts/Voice/Guidelines panels use client-derived tint on a beige canvas. A06 and A11 distinguish enclosing layers from actual brand content.",
+      "gaps": "No evidence of scoped tint approval found in current decision log or inspected Brand Kit guidance. Exact frequent-task priority needs Tom."
+    },
+    {
+      "routeId": "R005",
+      "name": "Project Chat",
+      "images": [
+        "D-R005-staff-1440.jpg",
+        "D-R005-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "1133 sticky date overlaps a message line; A07. Narrow header intentionally truncates long title while retaining project code/Client. No title failure promoted without recovery check.",
+      "gaps": "Date overlap is genuine captured UI; message state and scroll reproduction remain with lead. Hover/keyboard/composer actions are separate."
+    },
+    {
+      "routeId": "R007",
+      "name": "Client profile",
+      "images": [
+        "D-R007-staff-1440.jpg",
+        "D-R007-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "1133 two metric cards stretch to the long form height and consume two 200px minimum tracks, compressing form fields; A09. 1440 capture is blank/loading and is not evidence of empty profile.",
+      "gaps": "1440 needs loaded recapture for width comparison. Data edits, contacts and access actions not performed."
+    },
+    {
+      "routeId": "R010",
+      "name": "Name a video",
+      "images": [
+        "D-R010-staff-1440.jpg",
+        "D-R010-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Entry form and Cancel/Continue remain readable at both widths. Square full-page entry card is not an EditingDialog and is not an automatic radius violation.",
+      "gaps": "Existing required fields only; no new project submitted. Validation and nested naming rules remain interaction checks."
+    },
+    {
+      "routeId": "R012",
+      "name": "Shared asset detail",
+      "images": [
+        "D-R012-staff-1440.jpg",
+        "D-R012-staff-1133.jpg",
+        "D-R012-client-1440.jpg"
+      ],
+      "role": "Studio Staff / Customer",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Staff asset/player composition inspected at both widths. Client-labelled screenshot actually measures 1280x720; never use as a matched 1440 comparison. Shared inspector/header conflict is separately supported by E044-E046 and A10.",
+      "gaps": "Client screenshot must be labelled with actual pixels or recaptured. Player/review controls and all file actions are separate states."
+    },
+    {
+      "routeId": "R015",
+      "name": "Notifications",
+      "images": [
+        "D-R015-staff-1440.jpg",
+        "D-R015-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Existing empty list has direct contextual guidance and no supported overlap. Supporting copy is outside the scoped seven-workspace header simplification and need not be removed.",
+      "gaps": "Populated notification items, destinations and read states not covered by empty captures."
+    },
+    {
+      "routeId": "R042",
+      "name": "Personal notification preferences",
+      "images": [
+        "D-R042-staff-1440.jpg",
+        "D-R042-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Useful descriptions and preference rows wrap naturally; no supported clipping or overlap. Do not remove explanation just to match compact directory pages.",
+      "gaps": "Checkbox focus, changed preferences and persistence not verified by these captures."
+    },
+    {
+      "routeId": "R052",
+      "name": "Sample Client portal",
+      "images": [
+        "D-R052-staff-1440.jpg"
+      ],
+      "role": "Studio Staff preview",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Portal composition reviewed as a preview. Content appears washed out in supplied frame; not promoted into a contrast finding without a settled capture because transition/demo overlays may explain it.",
+      "gaps": "Need settled capture/overlay state before readability conclusion. Preview is not proof of actual Client role permissions."
+    },
+    {
+      "routeId": "R056",
+      "name": "Shared Brand Kit",
+      "images": [
+        "D-R056-staff-1440.jpg"
+      ],
+      "role": "Shared viewer",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Read-only asset access omits editing controls intentionally. Client-derived enclosing tint repeats A06. Content previews remain meaningful colour/font specimens.",
+      "gaps": "Share permission/download states not proved by default image; do not merge read-only/editable controls."
+    },
+    {
+      "routeId": "R057",
+      "name": "Shared call sheet",
+      "images": [
+        "D-R057-staff-1440.jpg"
+      ],
+      "role": "Shared viewer",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Call time highlight, schedule and contact hierarchy remain readable. Purposeful warning/time accent is not the same as decorative whole-panel tint and should not be removed via blanket white-only advice.",
+      "gaps": "Read-only default only; distribution, print and external destinations not activated."
+    },
+    {
+      "routeId": "R059",
+      "name": "Studio onboarding",
+      "images": [
+        "D-R059-staff-1440.jpg"
+      ],
+      "role": "Clean entry",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Clear full-page entry card with obvious next action. Prototype viewer control and fixture content are not headline product findings.",
+      "gaps": "No onboarding submission or new Studio created. Error and subsequent onboarding states not fabricated."
+    },
+    {
+      "routeId": "R061",
+      "name": "Studio portal preview",
+      "images": [
+        "D-R061-staff-1440.jpg"
+      ],
+      "role": "Studio Staff preview",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Preview frame reviewed, but faded content may reflect transient/overlay context. No contrast defect claimed without settled confirmation.",
+      "gaps": "Preview cannot establish role isolation or all Client interactions; lead classifies separately."
+    },
+    {
+      "routeId": "R029",
+      "name": "Global Media Library",
+      "images": [
+        "D-R029-staff-1440.jpg",
+        "D-R029-staff-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied default composition with stated limits",
+      "observed": "Mixed folder/file grid uses 96px folder cards and tall preview cards within the same grid row, producing large blank folder cells; A08. Inspector layout and header interference are separately verified in E011/E044-E046 under A10, not inferred from these default captures.",
+      "gaps": "Folder menus, drop targets, selection, scoped downloads and keyboard states require their own evidence; no files moved or uploaded."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: video-type",
+      "images": [
+        "BRIEF-video-type-1440.jpg",
+        "BRIEF-video-type-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Two-column specialised video-type cards remain legible and retain useful descriptions at both widths. Long choice list can scroll; no field changes performed.",
+      "gaps": "Selected/disabled/keyboard states and omitted choices not covered by default screenshot."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: audience",
+      "images": [
+        "BRIEF-audience-1440.jpg",
+        "BRIEF-audience-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Two-column call-to-action options fit both widths, but supplied captures place the Audience heading under the global header after the prior step. Lead confirms no deliberate scrolling; reproduction and scroll measurements pending.",
+      "gaps": "Do not call this a proven user failure before transition reproduction. Primary audience value and CTA were not changed."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: references",
+      "images": [
+        "BRIEF-references-1440.jpg",
+        "BRIEF-references-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Full-width URL entry serves long pasted links and is valid alongside the compact Brand Kit selector. Upload control and footer fit both widths.",
+      "gaps": "No upload/link submission or error manufactured."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: brand-kit",
+      "images": [
+        "BRIEF-brand-kit-1440.jpg",
+        "BRIEF-brand-kit-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Approved 584px Brand Kit field, compact palette and local 24px heading gap fit both desktop widths. Sparse space is consistent with one-question guidance and is not a density defect.",
+      "gaps": "Current missing-field state retained. Popup choices/focus are independently documented by approved checks, not proved by closed field screenshot."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: footage",
+      "images": [
+        "BRIEF-footage-1440.jpg",
+        "BRIEF-footage-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Existing/New footage choice cards fit in two columns with readable labels/descriptions. Footer has intact Back, AI, numbered steps, Summary and Next.",
+      "gaps": "No footage choice changed or production branch exposed by mutation. Apparent multiple hover tooltip ghosts require settled reproduction before any claim."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: deliverables",
+      "images": [
+        "BRIEF-deliverables-1440.jpg",
+        "BRIEF-deliverables-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "All five production field displays truncate at 1133, including short duration/format values, while identifying track stays large. Local desktop readability finding A12.",
+      "gaps": "Full-value recovery, custom fields and populated extra versions remain unchecked; no row added."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: deadline",
+      "images": [
+        "BRIEF-deadline-1440.jpg",
+        "BRIEF-deadline-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Calendar remains a clear, compact specialised control at both widths, with readable weekday/date labels and visible Clear/Today. Footer fits.",
+      "gaps": "No date committed. Month navigation/focus/range states require interaction checks."
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief step: summary",
+      "images": [
+        "BRIEF-summary-1440.jpg",
+        "BRIEF-summary-1133.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied current step composition",
+      "observed": "Main Video Details card and borderless Additional Versions hierarchy match the explicit 30 September decision. At 1133 Landscape breaks mid-word in a constrained track; A12. Two-row review footer fits.",
+      "gaps": "Below-viewport missing-detail handling, send/invite and approve remain separate states. No brief sent or approved."
+    },
+    {
+      "routeId": "R003",
+      "name": "Brand Kit nested editors and viewer",
+      "images": [
+        "E087-brand-logo-download.jpg",
+        "E088-brand-font-roles.jpg",
+        "E089-brand-font-roles-1440.jpg",
+        "E090-brand-voice-tone.jpg",
+        "E091-brand-voice-tone-1133.jpg",
+        "E092-brand-asset-preview.jpg"
+      ],
+      "role": "Customer",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Download formats, font roles, voice/tone and image preview layouts fit supplied desktop frames. Font rows have readable two-column structure; voice guidance distinguishes draft from saving. Preview intentionally has a top-right X, unlike editing dialogs. Existing tinted enclosing panels repeat A06.",
+      "gaps": "E087 EditingDialog footer has Replace/overflow but no visible whole-dialog exit; sent to B/lead as related custom-footer contract occurrence rather than a new finding. No download/replacement/save performed. Preview is not proof of all nested keyboard states.",
+      "captureContexts": [
+        {
+          "id": "E087-brand-logo-download",
+          "role": "Customer",
+          "width": 1133,
+          "height": 1000,
+          "state": "Download logo dialog showing format and source; no download/replacement",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:31:45.053Z"
+        },
+        {
+          "id": "E088-brand-font-roles",
+          "role": "Customer",
+          "width": 1133,
+          "height": 1000,
+          "state": "Font roles local editor, existing values, no edit/save",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:31:54.974Z"
+        },
+        {
+          "id": "E089-brand-font-roles-1440",
+          "role": "Customer",
+          "width": 1440,
+          "height": 1000,
+          "state": "Font roles existing values, no edit/save",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:31:59.596Z"
+        },
+        {
+          "id": "E090-brand-voice-tone",
+          "role": "Customer",
+          "width": 1440,
+          "height": 1000,
+          "state": "Voice and tone local editor; existing summary/tags; no save",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:32:05.794Z"
+        },
+        {
+          "id": "E091-brand-voice-tone-1133",
+          "role": "Customer",
+          "width": 1133,
+          "height": 1000,
+          "state": "Voice and tone editor narrower desktop; no save",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:32:05.896Z"
+        },
+        {
+          "id": "E092-brand-asset-preview",
+          "role": "Customer",
+          "width": 1133,
+          "height": 1000,
+          "state": "Existing visual asset preview; no download/delete",
+          "url": "http://localhost:3000/brand-kits/loom",
+          "captured": "2026-10-20T09:32:06.533Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R022",
+      "name": "Project costs invoice nested states",
+      "images": [
+        "E093-cost-invoice-review.jpg",
+        "E094-invoice-pdf.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Existing sent-back invoice exposes agreed and invoice amounts, mismatch, contractor note and sent-back reason. View PDF shows an explicitly labelled prototype PDF preview. Dialog content and footer fit.",
+      "gaps": "Do not caption E094 as verified rendering of the actual uploaded PDF. E093 Cancel and Close duplicate exits visually, but no new finding promoted. Stored invoice status was not changed.",
+      "captureContexts": [
+        {
+          "id": "E093-cost-invoice-review",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Existing Sent back invoice, mismatch and reason visible; no status changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/costs",
+          "captured": "2026-10-20T09:32:27.891Z"
+        },
+        {
+          "id": "E094-invoice-pdf",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Existing invoice PDF preview, no status change",
+          "url": "http://localhost:3000/projects/loom-launch-film/costs",
+          "captured": "2026-10-20T09:32:32.775Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R017",
+      "name": "Expenses review and send-back drafts",
+      "images": [
+        "E095-expenses-submitted-review.jpg",
+        "E096-invoice-send-back-empty.jpg",
+        "E097-invoice-send-back-draft.jpg",
+        "E098-invoice-currency-mismatch.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Review layout exposes comparison amounts before actions. Required versus optional note and disabled/enabled Send back are visibly distinct; the mismatch state explains the note needed before approval. Text and footer fit at supplied desktop widths.",
+      "gaps": "Send-back footer has Back only as the secondary action; B/lead informed to check explicit whole-flow exit contract. No send-back/approval/payment performed. Existing draft text is local inspection, not sent.",
+      "captureContexts": [
+        {
+          "id": "E095-expenses-submitted-review",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Submitted matching invoice, two PDFs, optional Approval note; no approval",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:49.832Z"
+        },
+        {
+          "id": "E096-invoice-send-back-empty",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Send back local form, required reason blank; no submission",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:50.201Z"
+        },
+        {
+          "id": "E097-invoice-send-back-draft",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Reason draft enables Send back; Back then Cancel discards, no submission",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:56.439Z"
+        },
+        {
+          "id": "E098-invoice-currency-mismatch",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Submitted invoice with currency mismatch; approval note required; no approval",
+          "url": "http://localhost:3000/outstanding-invoices",
+          "captured": "2026-10-20T09:32:57.428Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R022",
+      "name": "Approved invoice forwarding",
+      "images": [
+        "E099-invoice-forward.jpg",
+        "E100-invoice-forward-picker.jpg",
+        "E101-invoice-no-destinations.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Optional forwarding is explicitly separate from approval. Done remains available without recipients; Email invoice is disabled with none. Multi-selector options and clear/done footer fit.",
+      "gaps": "Existing approved fixture only. No approval or email executed. No production forwarding service claim.",
+      "captureContexts": [
+        {
+          "id": "E099-invoice-forward",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Existing Approved invoice forwarding draft; no email sent",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:09.102Z"
+        },
+        {
+          "id": "E100-invoice-forward-picker",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Accounts inbox multi-selector for approved invoice; no send",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:13.656Z"
+        },
+        {
+          "id": "E101-invoice-no-destinations",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "No forwarding destinations selected; Email invoice disabled, no send",
+          "url": "http://localhost:3000/projects/openai-partner-update/costs",
+          "captured": "2026-10-20T09:33:18.926Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R051",
+      "name": "Studio focused editors",
+      "images": [
+        "E102-studio-edit-name.jpg",
+        "E102-studio-add-logo.jpg",
+        "E102-studio-edit-video-types.jpg",
+        "E102-studio-edit-questions.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Name/logo editors retain specific task titles and Cancel/Save. Video-type choice grid has readable labels and selected ticks. Default Brief questions have clear scope copy, row ordering and visible save boundary. All supplied dialogs fit at 1133.",
+      "gaps": "Only visible question rows covered. Drag/keyboard reorder, all scroll branches, upload and save not exercised.",
+      "captureContexts": [
+        {
+          "id": "E102-studio-edit-name",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Edit name focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:28.751Z"
+        },
+        {
+          "id": "E102-studio-add-logo",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Add logo focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:29.395Z"
+        },
+        {
+          "id": "E102-studio-edit-video-types",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Edit video types focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:30.107Z"
+        },
+        {
+          "id": "E102-studio-edit-questions",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Edit questions focused editor; existing values, no save",
+          "url": "http://localhost:3000/settings/studio",
+          "captured": "2026-10-20T09:33:30.816Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R039/R040",
+      "name": "Notification navigation and message editor",
+      "images": [
+        "E103-notifications-root-navigation.jpg",
+        "E104-notifications-category-navigation.jpg",
+        "E105-notification-edit-message.jpg",
+        "E106-notification-fixed-message.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Direct root/detail pair verifies A05 navigation loss. Message editor has focused Title/Message fields and Cancel/Save. E106 visibly shows Approval recorded with active Edit message.",
+      "gaps": "E106 filename/state must not be used as proof of Wording fixed branch; lead notified. No message template changed or sent.",
+      "captureContexts": [
+        {
+          "id": "E103-notifications-root-navigation",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Notifications root reached through Studio settings sidebar",
+          "url": "http://localhost:3000/settings/notifications",
+          "captured": "2026-10-20T09:33:48.365Z"
+        },
+        {
+          "id": "E104-notifications-category-navigation",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Work to review category reached from notification root; sidebar changes to workspace",
+          "url": "http://localhost:3000/settings/notifications/customer-reviews",
+          "captured": "2026-10-20T09:33:55.537Z"
+        },
+        {
+          "id": "E105-notification-edit-message",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Notification message local editor with Title and Message; no edit/save",
+          "url": "http://localhost:3000/settings/notifications/customer-reviews",
+          "captured": "2026-10-20T09:34:06.238Z"
+        },
+        {
+          "id": "E106-notification-fixed-message",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Fixed approval notification preview, no setting changed",
+          "url": "http://localhost:3000/settings/notifications/customer-reviews",
+          "captured": "2026-10-20T09:34:06.850Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R045",
+      "name": "Plan comparison and confirmations",
+      "images": [
+        "E107-plan-comparison-1133.jpg",
+        "E108-plan-comparison-1440.jpg",
+        "E109-plan-confirmation.jpg",
+        "E110-addon-confirmation.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Four plan columns fit with distinct current-plan highlighting and readable content at both widths; long comparison continues below the visible body with Close footer retained. Confirmation presents current/new plan, frequency, price and date with distinct Cancel/Back/Confirm. Add-on confirmation is compact.",
+      "gaps": "Do not caption every card action or all content as simultaneously visible. No plan/add-on confirmation submitted; fixture dates/prices are not current commercial advice.",
+      "captureContexts": [
+        {
+          "id": "E107-plan-comparison-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Plan comparison dialog with current plan and change options; no purchase",
+          "url": "http://localhost:3000/settings/plan-billing",
+          "captured": "2026-10-20T09:34:15.222Z"
+        },
+        {
+          "id": "E108-plan-comparison-1440",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Plan comparison current plan and options; no selection committed",
+          "url": "http://localhost:3000/settings/plan-billing",
+          "captured": "2026-10-20T09:34:20.646Z"
+        },
+        {
+          "id": "E109-plan-confirmation",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Plan change confirmation; cancelled before Confirm change",
+          "url": "http://localhost:3000/settings/plan-billing",
+          "captured": "2026-10-20T09:34:21.055Z"
+        },
+        {
+          "id": "E110-addon-confirmation",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Additional storage confirmation; no add-on applied",
+          "url": "http://localhost:3000/settings/plan-billing",
+          "captured": "2026-10-20T09:34:32.530Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R044",
+      "name": "Password dialog",
+      "images": [
+        "E111-password-dialog.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "Three explicitly labelled fields and a separate Cancel/Save password footer form a focused editor. Visible initial focus and whitespace are clear in the supplied state.",
+      "gaps": "No credentials entered or submitted; password validation, strength, recovery and production auth not proved.",
+      "captureContexts": [
+        {
+          "id": "E111-password-dialog",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Change password dialog opened only; no credentials entered",
+          "url": "http://localhost:3000/settings/personal/security",
+          "captured": "2026-10-20T09:34:46.216Z"
+        }
+      ]
+    },
+    {
+      "routeId": "R026",
+      "name": "Brief scroll, menu recovery and collapsed navigation",
+      "images": [
+        "E112-brief-video-type-scroll-before.jpg",
+        "E113-brief-audience-scroll-after.jpg",
+        "E114-brief-audience-scroll-1133.jpg",
+        "E115-brief-duration-menu-1133.jpg",
+        "E116-brief-deliverables-collapsed-nav.jpg"
+      ],
+      "role": "Studio Staff",
+      "status": "Inspected supplied nested composition and lead reproduction evidence",
+      "observed": "A13 directly reproduced: retained content scroll after Video type to Audience places new heading behind global bar at both widths. E115 menu reveals full existing 3 mins without committing; A12 is closed-field scanability. Collapsed navigation returns width and fits labelled stages/footer but Duration still truncates.",
+      "gaps": "Only this explicit step transition is verified; Back/Next, Summary field targeting and heading focus remain future checks. No Brief answer, send or approval changed.",
+      "captureContexts": [
+        {
+          "id": "E112-brief-video-type-scroll-before",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Video type step after keyboard navigation toward footer, no choice changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:16.124Z"
+        },
+        {
+          "id": "E113-brief-audience-scroll-after",
+          "role": "Studio Staff",
+          "width": 1440,
+          "height": 1000,
+          "state": "Audience step selected from Video type footer; current scroll position, no content changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:16.531Z"
+        },
+        {
+          "id": "E114-brief-audience-scroll-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Audience heading partly behind fixed app header after step transition; no answer changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:22.175Z"
+        },
+        {
+          "id": "E115-brief-duration-menu-1133",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Duration menu reveals full existing 3 mins while resting table label is truncated; no option selected",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:35.088Z"
+        },
+        {
+          "id": "E116-brief-deliverables-collapsed-nav",
+          "role": "Studio Staff",
+          "width": 1133,
+          "height": 1000,
+          "state": "Brief Deliverables with collapsed navigation; no content changed",
+          "url": "http://localhost:3000/projects/loom-launch-film/stages/brief",
+          "captured": "2026-10-20T09:35:35.566Z"
+        }
+      ]
+    }
+  ],
+  "recommendedFollowup": [
+    "Lead verify source-only ordinary-field focus overrides on a genuinely available consumer. Media Sort retains blue focus and is not such an override.",
+    "Lead confirm Brief step scrolling and field-value recovery without committing edits.",
+    "Lead inspect People/Expenses horizontal pan and retained identity at 1133 before layout recommendation.",
+    "Retake blank, faded and icon-incomplete screenshots used as final evidence.",
+    "Keep default-route composition distinct from nested workflow and role coverage."
+  ],
+  "newFindingsPromoted": "A05 settings navigation context; A06 brand enclosing tints; A07 Chat date overlap; A08 mixed Media grid density; A09 Client form/metric balance; A10 inspector header layer; A11 Brand Kit desktop priority decision; A12 Brief specification readability. Each retains its evidence classification and verification gaps. A13 retained Brief step scroll is now verified at both widths in E112-E114.",
+  "noMutation": true,
+  "captureCount": 111
+}

@@ -1,6 +1,6 @@
 import Link from "next/link";
+import type { MouseEvent, ReactNode } from "react";
 import type { ChatChannel } from "@/components/chat/types";
-import { NotificationSemanticState } from "@/components/notifications/NotificationSemanticState";
 import type { ProjectSystemPostData } from "@/components/notifications/types";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { formatRelativeTime } from "@/components/chat/chat-utils";
@@ -11,17 +11,21 @@ export function ProjectSystemPost({
   createdAt,
   messageId,
   highlighted = false,
+  onAction,
+  children,
 }: {
   post: ProjectSystemPostData;
   channel: ChatChannel;
   createdAt: string;
   messageId: string;
   highlighted?: boolean;
+  onAction?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  children?: ReactNode;
 }) {
   if (post.presentation === "passive") {
     const passiveContent = (
       <>
-        <NotificationSemanticState state={post.state} label={post.label} compact />
+        <span className="sr-only">{post.label}. </span>
         <span className="project-system-post-passive-copy">
           <strong className="label-s-semibold">{post.title}</strong>
           <span className="label-s">{post.copy}</span>
@@ -50,7 +54,8 @@ export function ProjectSystemPost({
           <Link
             className="project-system-post-passive-link"
             href={post.href}
-            aria-label={`${post.title}: ${post.copy}`}
+            aria-label={`${post.label}. ${post.title}: ${post.copy}`}
+            onClick={onAction}
           >
             {passiveContent}
           </Link>
@@ -66,25 +71,22 @@ export function ProjectSystemPost({
       className={`project-system-post actionable ${post.state} ${channel} ${highlighted ? "highlighted" : ""}`}
       id={`chat-message-${messageId}`}
     >
-      <div className="project-system-post-header">
-        <NotificationSemanticState state={post.state} label={post.label} compact />
-        <span className={`project-system-post-audience ${channel} label-xs-semibold`}>
-          {channel === "internal" ? "Internal" : "External"}
-        </span>
-      </div>
-
+      <span className="sr-only">{post.label}. </span>
       <div className={`project-system-post-content ${post.thumbnailUrl ? "with-thumbnail" : ""}`}>
         {post.thumbnailUrl ? <img src={post.thumbnailUrl} alt="" /> : null}
         <div className="project-system-post-copy">
           <div className="project-system-post-title-row">
             <strong className="label-s-semibold">{post.title}</strong>
+            <span className={`project-system-post-audience ${channel} label-xs-semibold`}>
+              {channel === "internal" ? "Internal" : "External"}
+            </span>
             {post.groupedCount ? (
               <span className="project-system-post-grouped label-xs-semibold">
                 {post.groupedCount} Stages together
               </span>
             ) : null}
           </div>
-          <p className="label-s">{post.copy}</p>
+          {children ?? <p className="label-s">{post.copy}</p>}
           <time className="label-xs" dateTime={createdAt} title={createdAt}>
             {formatRelativeTime(createdAt)}
           </time>
@@ -92,7 +94,7 @@ export function ProjectSystemPost({
       </div>
 
       {post.href && post.ctaLabel ? (
-        <Link className="project-system-post-link label-s-semibold" href={post.href}>
+        <Link className="project-system-post-link label-s-semibold" href={post.href} onClick={onAction}>
           {post.ctaLabel}
           <DsIcon name="caret-right" size={16} />
         </Link>

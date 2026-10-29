@@ -690,8 +690,6 @@
 
 .today-entry-editor {
   position: fixed;
-  top: var(--editor-top);
-  left: var(--editor-left);
   z-index: 20;
   display: flex;
   width: 320px;
@@ -704,11 +702,35 @@
   padding: var(--brisk-space-l);
 }
 
+.today-entry-editor-header,
+.today-entry-editor-actions {
+  flex-shrink: 0;
+}
+
+.today-entry-editor-body {
+  min-height: var(--brisk-space-none);
+  overflow-y: auto;
+  /* Leave room for the existing field focus rings and hard hover shadows. */
+  margin: calc(var(--brisk-space-s) * -1);
+  padding: var(--brisk-space-s);
+}
+
+.today-entry-editor-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--brisk-space-m);
+}
+
 .today-entry-editor-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--brisk-space-m);
+}
+
+.today-entry-editor-header strong {
+  min-width: var(--brisk-space-none);
+  overflow-wrap: anywhere;
 }
 
 .today-field {
@@ -744,7 +766,13 @@
   background: transparent;
   color: var(--brisk-text-primary);
   font: inherit;
-  outline: none;
+}
+
+/* Preserve the DS focus ring against the global native-control reset. */
+.today-entry-editor .brisk-select-trigger:focus-visible,
+.today-entry-editor textarea:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
 }
 
 .today-field input,

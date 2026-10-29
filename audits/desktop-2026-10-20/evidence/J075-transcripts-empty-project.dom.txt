@@ -1,0 +1,102 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "FIGM / Config Highlights - Community Keynote":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: FIGM
+      - generic: /
+      - generic: Config Highlights - Community Keynote
+    - generic "FIGM Config Highlights - Community Keynote":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/figma-config-highlights/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Waiting on North Star Films"':
+          - /url: /projects/figma-config-highlights/script
+          - text: Waiting on North Star Films
+        - generic: Script
+        - 'link "Storyboard: Not started"':
+          - /url: /projects/figma-config-highlights/stages/storyboard
+          - text: Not started
+        - generic: Storyboard
+        - 'link "Video Review: Approved"':
+          - /url: /projects/figma-config-highlights/stages/edit
+          - text: Approved
+        - generic: Animation
+        - 'link "Masters: Approved"':
+          - /url: /projects/figma-config-highlights/stages/masters
+          - text: Approved
+        - generic: Masters
+      - link "Media. 2 media files":
+        - /url: /projects/figma-config-highlights/stages/media
+        - generic: "2"
+        - text: 2 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Project transcripts":
+    - heading "Transcripts" [level=1]
+    - generic "Transcript controls":
+      - button "Back to Media"
+      - button "Transcript actions": Transcript actions
+      - button "Show all script comments": Comments
+    - heading "No dialogue transcripts yet" [level=2]
+    - paragraph: Add interview footage or dialogue audio in Media to collect transcripts here.
+    - link "Open Media":
+      - /url: /projects/figma-config-highlights/stages/media

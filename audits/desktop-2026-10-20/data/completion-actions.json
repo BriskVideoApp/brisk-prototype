@@ -1,0 +1,3470 @@
+[
+  {
+    "id": "F001-todo-populated-1440",
+    "coverageIds": [
+      "N094",
+      "R018",
+      "R060"
+    ],
+    "state": "Existing populated week viewed as Sarah Chen",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Choose whose work to view\"><span class=\"brisk-select-trigger-label\"><span>Sarah Chen</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "actions": [
+      "Opened Viewing selector and selected existing Sarah Chen; no time entries edited"
+    ]
+  },
+  {
+    "id": "F002-todo-entry-editor",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Existing entry opened with Enter",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<div class=\"today-time-block unspecified todo todo-colour-3\" draggable=\"true\" role=\"button\" tabindex=\"0\" style=\"--today-entry-card-height: 91px;\"><span class=\"today-time-block-main\"><span class=\"label-xs-semibold\">Unspecified</span><span class=\"label-xs-semibold\">1.25h</span></span><span class=\"today-time-block-project label-xs\">Product Education - Sleep Series</span><span class=\"today-time-block-warning label-xs-semibold\">Set stage</span><button",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "actions": [
+      "Enter on time block opens Log time panel; Stage/Hours/Note and separate Delete, Cancel, Save visible"
+    ]
+  },
+  {
+    "id": "F003-todo-invalid-hours",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Zero hours draft validation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input min=\"0.25\" step=\"0.25\" type=\"number\" value=\"1.25\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "actions": [
+      "Stage menu opened and Escape closed it",
+      "Draft Hours changed to0 in isolated session; no Save",
+      "Save enabled=true"
+    ]
+  },
+  {
+    "id": "F004-todo-populated-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Populated week at narrower desktop",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527431272\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "actions": [
+      "Cancelled invalid Hours draft using Enter; Save had remained enabled despite native minimum error",
+      "Escape alone left Log time open",
+      "Resized to1133"
+    ]
+  },
+  {
+    "id": "F005-todo-collapsed-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Populated week with collapsed navigation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button aria-label=\"Expand navigation\" aria-expanded=\"false\" aria-controls=\"_r_o_\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Expand navigation\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "actions": [
+      "Collapsed navigation to compare calendar fit; no entries changed"
+    ]
+  },
+  {
+    "id": "F006-shoot-shot-list-1440",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ],
+    "state": "Populated Shot List default",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "width": 1440,
+    "actions": [
+      "Opened canonical Shoot with existing populated Studio scenario; no edits"
+    ]
+  },
+  {
+    "id": "F007-shot-actions",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Shot contextual action menu",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_e_-0\" id=\"_r_e_\" aria-label=\"More actions for shot 1.1\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_e_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Move to top level</span></span></span></button></div><div role=\"presenta",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "width": 1440,
+    "actions": [
+      "Opened More actions for shot1.1; Move/Duplicate/Delete visible; no command executed"
+    ]
+  },
+  {
+    "id": "F008-shot-type-picker",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Shot type field options",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"brisk-select-trigger label-s is-placeholder \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Shot type for shot 1.1\" aria-controls=\"_r_a_\" aria-activedescendant=\"_r_a_-0\"><span class=\"brisk-select-trigger-label\"><span>+ Shot type</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --ic",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "width": 1440,
+    "actions": [
+      "Add menu showed Shot and Shot group; Escape closed without adding",
+      "Opened shot type selector; no option changed"
+    ]
+  },
+  {
+    "id": "F009-shot-list-1133",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Shot List at1133 desktop",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"brisk-select-trigger label-s is-placeholder \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Shot type for shot 1.1\"><span class=\"brisk-select-trigger-label\"><span>+ Shot type</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot",
+    "width": 1133,
+    "actions": [
+      "Shot selector Escape closed and returned trigger focus",
+      "Compared constrained desktop table without editing"
+    ]
+  },
+  {
+    "id": "F010-shoot-interview-1133",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Existing interview questions",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"Interview Questions, 2 questions\" data-compact-tooltip=\"Interview Questions\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/quotes.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">Interview Questions</strong><s",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "width": 1133,
+    "actions": [
+      "Switched section to Interview Questions; inspected inline fields, person tabs and separate row actions"
+    ]
+  },
+  {
+    "id": "F011-interview-editor-validation",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Question editor empty draft",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<textarea rows=\"4\" placeholder=\"What would you like to ask?\"></textarea>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "width": 1133,
+    "actions": [
+      "Opened Edit question1; focus moved to Question",
+      "Cleared local Question draft; Save question enabled=false",
+      "No save"
+    ]
+  },
+  {
+    "id": "F012-visual-references-empty",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Visual References empty state",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"Visual References, 0 references\" data-compact-tooltip=\"Visual References\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/image-square.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">Visual References</strong><",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "width": 1133,
+    "actions": [
+      "Question dialog Escape cancelled and returned focus to Edit question1",
+      "Opened Visual References existing empty state"
+    ]
+  },
+  {
+    "id": "F013-shoot-media-picker",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Project Media reference picker",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "width": 1133,
+    "actions": [
+      "Opened Add reference menu: four approved source workflows in correct order",
+      "Opened Project Media picker; selecting asset immediately attaches reference"
+    ]
+  },
+  {
+    "id": "F014-shoot-reference-populated",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Sample visual reference attached in disposable session",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button aria-label=\"Add reference\" aria-expanded=\"false\" aria-haspopup=\"menu\" class=\"script-media-add shoot-reference-add-trigger label-s-semibold\" type=\"button\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/plus.svg&quot;); --icon-size: 14px;\"></span><span>Add reference</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=references",
+    "width": 1133,
+    "actions": [
+      "SAMPLE MUTATION: attached existing project campaign image to Visual References solely in8766 audit storage",
+      "No original Media or working data changed"
+    ]
+  },
+  {
+    "id": "F015-location-editor",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Existing Shoot location editor",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input autocomplete=\"off\" placeholder=\"Search Google Maps or paste a link\" role=\"combobox\" aria-autocomplete=\"list\" aria-label=\"Search Google Maps or paste a link\" aria-controls=\"_r_r_\" aria-expanded=\"false\" value=\"21 James Street, Thirroul NSW 2515\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=locations",
+    "width": 1133,
+    "actions": [
+      "Opened existing location; address links not followed externally",
+      "Inspected editable fields and day selection without saving"
+    ]
+  },
+  {
+    "id": "F016-shoot-people-1133",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Shoot people table",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"People, 6 people\" data-compact-tooltip=\"People\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/users-three.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">People</strong><small class=\"label-xs\">6 people</small",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "width": 1133,
+    "actions": [
+      "Location editor Escape closed without saving",
+      "People shows contact, shoot role and call time as separate information"
+    ]
+  },
+  {
+    "id": "F017-shoot-person-editor",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Shoot contact and call details dialog",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input id=\"_r_u_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"Jordan Lee\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "width": 1133,
+    "actions": [
+      "Opened existing shoot person contact dialog; no invite or contact change"
+    ]
+  },
+  {
+    "id": "F018-shoot-role-options",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Standard shoot roles within person editor",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "width": 1133,
+    "actions": [
+      "Opened standard crew role options; job titles kept distinct from access roles; no selection"
+    ]
+  },
+  {
+    "id": "F019-shoot-documents",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Supporting Shoot documents",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"Documents, 2 documents\" data-compact-tooltip=\"Documents\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/folder.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">Documents</strong><small class=\"label-xs\">2 docume",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=documents",
+    "width": 1133,
+    "actions": [
+      "Cancelled person draft; existing contact unchanged",
+      "Inspected supporting documents separately from native plan status"
+    ]
+  },
+  {
+    "id": "F020-shoot-document-link",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Supporting document link form",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input placeholder=\"https://\" type=\"url\" value=\"\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=documents",
+    "width": 1133,
+    "actions": [
+      "Opened Documents then Add link; no link submitted"
+    ]
+  },
+  {
+    "id": "F021-shoot-schedule-1133",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Populated Schedule and Unscheduled items",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"Schedule, 2 shoot days\" data-compact-tooltip=\"Schedule\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/clock-clockwise.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">Schedule</strong><small class=\"label-xs\">2",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1133,
+    "actions": [
+      "Opened Schedule after cancelling Documents form",
+      "Day1, Day2, timeline and Unscheduled visible; no schedule altered"
+    ]
+  },
+  {
+    "id": "F022-shoot-schedule-1440",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Schedule with expanded Unscheduled at1440",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"active\" type=\"button\" aria-label=\"Schedule, 2 shoot days\" data-compact-tooltip=\"Schedule\" aria-current=\"page\"><span class=\"shoot-navigation-icon\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/clock-clockwise.svg&quot;); --icon-size: 17px;\"></span></span><span class=\"shoot-preproduction-navigation-copy\"><strong class=\"label-s-semibold\">Schedule</strong><small class=\"label-xs\">2",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "actions": [
+      "Compared1440 layout; retained same Day1 schedule"
+    ]
+  },
+  {
+    "id": "F023-schedule-item-editor",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Schedule item editor and time suggestions",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input required=\"\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-controls=\"_r_1a_\" aria-expanded=\"true\" role=\"combobox\" type=\"text\" value=\"8:45 am\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "actions": [
+      "Enter on scheduled Founder interview opened Edit schedule item",
+      "Inspected Shoot day, Start time, Duration and Location override",
+      "No schedule save or unschedule"
+    ]
+  },
+  {
+    "id": "F024-shoot-day-editor",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Shoot day details editor",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button aria-label=\"Edit or delete Day 1\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Edit or delete Day 1\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/dots",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "actions": [
+      "Cancelled schedule item and opened Day1 Edit day",
+      "No delete or day save"
+    ]
+  },
+  {
+    "id": "F025-shoot-day2",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Second shoot day schedule state",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"shoot-schedule-day-card-select\" type=\"button\" role=\"tab\" aria-selected=\"true\"><strong class=\"heading-3xs\">Day 2</strong><small class=\"label-xs\">14 August, 2026</small><span class=\"shoot-schedule-day-card-time label-xs-semibold\">8:00 am - 3:30 pm</span><span class=\"shoot-schedule-day-card-location label-xs\" title=\"Loom Sydney Office\">Loom Sydney Office</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "actions": [
+      "Cancelled day editor; selected existing Day2 tab"
+    ]
+  },
+  {
+    "id": "F026-on-set-1440",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Populated On Set overview",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button data-mode=\"on-set\" class=\"active\" type=\"button\" role=\"tab\" aria-selected=\"true\"><span class=\"shoot-workspace-mode-title headings-s-bold\">On set</span><span class=\"shoot-workspace-mode-description label-xs\">Run the shoot day</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1440,
+    "actions": [
+      "Selected On set tab; default Day1 shown",
+      "Returned page to top for composition; no checklist or approval change"
+    ]
+  },
+  {
+    "id": "F027-onset-focus-schedule",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Focused On Set Schedule",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"is-call-sheet-focus\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"Segmen",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2&focus=run-of-day",
+    "width": 1440,
+    "actions": [
+      "Opened Focus on Schedule; recorded initial active element in evidence",
+      "No capture-status changes"
+    ]
+  },
+  {
+    "id": "F028-onset-focus-exit",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Focused Schedule keyboard exit",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1440,
+    "actions": [
+      "Focus on Schedule initially left body focused",
+      "Shift+Tab moved to the progress count button inside dialog Focused Schedule",
+      "Tab moved to Exit focus within focused dialog",
+      "Escape removed focus mode; active element was body rather than Focus on Schedule opener"
+    ]
+  },
+  {
+    "id": "F029-onset-1133",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "On Set at narrower desktop",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1133,
+    "actions": [
+      "Compared1133 desktop after exiting focused mode"
+    ]
+  },
+  {
+    "id": "F030-onset-progress",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Shoot day progress panel",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"shoot-call-sheet-section-count label-xs-semibold\" type=\"button\" aria-expanded=\"true\" aria-haspopup=\"dialog\" aria-label=\"1 of 4 captured. Open shoot day progress.\">1 of 4</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1133,
+    "actions": [
+      "Opened progress count; Remaining/Skipped/Pickup branches visible",
+      "Panel later dismissed before subsequent selection, selection not performed"
+    ]
+  },
+  {
+    "id": "F031-onset-progress-selection",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Single selected shot and scoped bulk actions",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input aria-label=\"Select shot 3.1\" type=\"checkbox\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1133,
+    "actions": [
+      "Space on Select shot3.1 checked one local selection",
+      "Footer explicitly1selected; Move to day and Mark as not required visible; no command executed"
+    ]
+  },
+  {
+    "id": "F032-shoot-approval-confirm",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Shoot approved state in disposable demo",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527521000\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1133,
+    "actions": [
+      "SAMPLE MUTATION: clicked explicit Approve Shoot action in authorised disposable demo",
+      "Action immediately approved sample Shoot and showed Approved status/toast; there was no confirmation dialog",
+      "No working-origin record changed"
+    ],
+    "sampleMutation": true
+  },
+  {
+    "id": "F033-edit-readiness-confirm",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Explicit readiness confirmation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1133,
+    "actions": [
+      "Opened Mark ready to edit",
+      "Confirmation names outstanding Media and approval consequence; not yet confirmed"
+    ]
+  },
+  {
+    "id": "F034-edit-ready-empty",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Edit ready with explicit first-version empty state",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527788576\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1133,
+    "actions": [
+      "SAMPLE MUTATION: approved outstanding Media and marked sample project ready in isolated demo",
+      "Canonical Edit remains empty; no file uploaded"
+    ]
+  },
+  {
+    "id": "F035-review-populated-1440",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Existing populated review demonstration V2",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"review-version-file-select\" type=\"button\"><span class=\"review-version-file-thumb\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/play.svg&quot;); --icon-size: 18px;\"></span></span><span class=\"review-version-file-copy\"><span class=\"review-version-file-title label-s-semibold\">V2 · In review</span><span class=\"label-s\">MYLOT006_Customer_Story_V2.mp4</span><span class=\"label-xs\">22 July 2026 · David",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Opened existing /review demonstration using shared VideoReviewScreen after readiness sample progression",
+      "Selected existing V2; legacy populated demonstration is explicitly distinguished from canonical empty project route"
+    ]
+  },
+  {
+    "id": "F036-review-compare",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Two-version comparison mode",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"review-compare-button label-s-semibold active\" type=\"button\" aria-pressed=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/columns.svg&quot;); --icon-size: 16px;\"></span>Exit V1 and V2 comparison</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Opened Compare V1 and V2; no versions replaced or deleted"
+    ]
+  },
+  {
+    "id": "F037-review-comment-menu",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Feedback comment actions",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"comment-action-icon row-menu-button\" type=\"button\" aria-label=\"Comment menu\" aria-expanded=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/dots-three-vertical.svg&quot;); --icon-size: 16px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Exited comparison using explicit Exit control",
+      "Opened first visible comment menu without Edit/Delete/Resolve action"
+    ]
+  },
+  {
+    "id": "F038-review-team-filter",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Team-only feedback filter",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"filter-chip label-xs-semibold active\" type=\"button\">Team</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Comment menu Escape attempted; Team filter selected",
+      "Inspected scope, empty composer and disabled Send without sending"
+    ]
+  },
+  {
+    "id": "F039-review-drawing-tools",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Drawing feedback mode and unsent composer",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"composer-drawing-toggle active\" type=\"button\" data-tooltip=\"Drawing mode is on\" aria-label=\"Turn off drawing mode\" aria-pressed=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/pencil-simple.svg&quot;); --icon-size: 16px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Turned drawing mode on without drawing or sending; disabled Undo and Send visible"
+    ]
+  },
+  {
+    "id": "F040-review-1133-overall",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Review at1133 with Team overall composer",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527823252\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1133,
+    "actions": [
+      "Switched unsent composer visibility toTeam and removed timecode; overallfeedbacklabel inspected",
+      "No comment sent; drawing mode off",
+      "Compared1133 layout"
+    ]
+  },
+  {
+    "id": "F041-review-approved-sample",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Edit approved state in disposable demo",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"script-approved-pill share-approved-status-trigger label-s-semibold\" type=\"button\" aria-controls=\"_r_11_\" aria-expanded=\"false\" aria-haspopup=\"dialog\">Edit approved<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1133,
+    "actions": [
+      "SAMPLE MUTATION: explicit Approve V2 immediately marked legacy sample Edit approved; no confirmation appeared",
+      "No real message or working record changed"
+    ]
+  },
+  {
+    "id": "F042-masters-sample-1133",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Masters built-in sample deliverable",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527976871\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1133,
+    "actions": [
+      "SAMPLE MUTATION: added built-in prototype download sample in isolated demo",
+      "Sample is explicitly a JSON data file, not a rendered video; playback/export outcome not inferred"
+    ]
+  },
+  {
+    "id": "F043-masters-sample-1440",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Expanded Masters deliverable at1440",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792527976871\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "Compared populated Masters desktop layout; sample file limitations retained"
+    ]
+  },
+  {
+    "id": "F044-masters-thumbnail-actions",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Masters thumbnail inspector actions",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_f_-0\" id=\"_r_f_\" aria-label=\"More thumbnail actions\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_f_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Replace with upload</span></span></span></button></div><div role=\"presentat",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "After Add asset action a thumbnail inspector appeared; no explicit file-selection step was recorded, so upload outcome is not certified",
+      "Opened More thumbnail actions only; no replacement or deletion"
+    ]
+  },
+  {
+    "id": "F045-masters-comments",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Masters comment panel via nested keyboard action",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"masters-comments-button ghosted selected\" type=\"button\" aria-label=\"Close comments for Prototype download sample\" aria-expanded=\"true\" data-tooltip=\"No comments\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/chat-circle.svg&quot;); --icon-size: 20px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "Thumbnail menu Escape closed; inspector closed",
+      "Space on nested Open comments opened correct comment panel without toggling deliverable row",
+      "No comment sent"
+    ]
+  },
+  {
+    "id": "F046-masters-download-zero",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Download dialog with zero selected assets",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"label-xs-semibold\" type=\"button\">Select all</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "Scoped Download dialog explicitly names Prototype download sample",
+      "Clear all produced0of2selected; Download selected0 disabled; no download triggered"
+    ]
+  },
+  {
+    "id": "F047-masters-delete-confirm",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Deliverable delete confirmation, unsubmitted",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "Opened Delete asset confirmation to inspect explicit item scope",
+      "No delete completed"
+    ]
+  },
+  {
+    "id": "F048-masters-client",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Client Masters delivery view",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1440,
+    "actions": [
+      "Switched isolated role toCustomer; inspected scoped deliverable, hidden filmmaker asset controls and download actions"
+    ]
+  },
+  {
+    "id": "F049-masters-client-1133",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Client Masters narrower desktop",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/masters",
+    "width": 1133,
+    "actions": [
+      "ComparedClient delivery UI at1133 without changing records"
+    ]
+  },
+  {
+    "id": "F050-review-client-1133",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Client populated review",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528152981\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1133,
+    "actions": [
+      "Customer sees released review versions and external feedback only; no Team filter or upload controls inferred",
+      "Inspected existing Client composer and approved version status; no send"
+    ]
+  },
+  {
+    "id": "F051-review-client-feedback",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Client external feedback and comment navigation",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"header-menu-button\" type=\"button\" aria-label=\"Next visible comment\"><span class=\"comment-skip-icon is-down\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 18px;\"></span></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "actions": [
+      "Selected existingV2 and All feedback; Space on Next visible comment navigated feedback",
+      "No version/feedback mutation or send; Customer view has noTeamfilter/upload/replace/delete controls"
+    ]
+  },
+  {
+    "id": "F052-review-playback-options",
+    "actionId": "F052-review-playback-options",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Playback speed cycles directly on click",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"speed-button label-xs-semibold\" type=\"button\" aria-label=\"Playback speed 1.5x\">1.5x <span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/review?project=loom-launch-film",
+    "width": 1440,
+    "beforeCaptureId": "F051-review-client-feedback",
+    "afterCaptureId": "F052-review-playback-options",
+    "sampleMutation": false,
+    "actions": [
+      "Clicked Playback speed1x; control immediately changed to1.5x",
+      "No options menu opened; previous expectation of a menu was incorrect",
+      "Change is temporary in isolated session; no stored working setting changed"
+    ]
+  },
+  {
+    "id": "F053-canonical-edit-upload",
+    "actionId": "F053-canonical-edit-upload",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Canonical Edit with audit-only version",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528255372\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1440,
+    "beforeCaptureId": "F052-review-playback-options",
+    "afterCaptureId": "F053-canonical-edit-upload",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: selected generated labelled2secondMOV explicitly throughfilechooser",
+      "Canonical project now shows V1, version card, comments composer and disabled only-version Delete",
+      "Codec/playback compatibility not yet certified"
+    ]
+  },
+  {
+    "id": "F054-canonical-edit-two-versions",
+    "actionId": "F054-canonical-edit-two-versions",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Canonical Edit two-version state at1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input class=\"visually-hidden-file-input\" id=\"video-version-upload\" accept=\"video/*\" aria-label=\"Upload a new version\" type=\"file\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1133,
+    "beforeCaptureId": "F053-canonical-edit-upload",
+    "afterCaptureId": "F054-canonical-edit-two-versions",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: uploaded second labelled auditMOV through explicitfilechooser",
+      "Version V2 selected; multi-version Delete enabled but notactivated",
+      "Timeline advertisedslider but ArrowRight interaction could not focus it; no successful seek claimed"
+    ]
+  },
+  {
+    "id": "F055-question-focus-readability",
+    "actionId": "F055-question-focus-readability",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Interview question readability on focus",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<textarea class=\"shoot-shot-table-input shoot-question-table-input\" aria-label=\"Interview question 1\" rows=\"2\">What problem were your customers facing before this launch?</textarea>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=questions",
+    "width": 1133,
+    "beforeCaptureId": "F054-canonical-edit-two-versions",
+    "afterCaptureId": "F055-question-focus-readability",
+    "sampleMutation": false,
+    "actions": [
+      "Measured first question before/after focus without changing text; dimensions saved in verification",
+      "Compared full source sentence with visible field; no edit/save"
+    ],
+    "measurements": {
+      "firstQuestionRest": {
+        "clientHeight": 56,
+        "scrollHeight": 80,
+        "overflow": "hidden",
+        "width": 186.28125
+      },
+      "firstQuestionFocused": {
+        "clientHeight": 56,
+        "scrollHeight": 80,
+        "overflow": "hidden auto"
+      }
+    }
+  },
+  {
+    "id": "F056-schedule-picker-escape",
+    "actionId": "F056-schedule-picker-escape",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Schedule time picker Escape result",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<article class=\"shoot-timeline-block is-coverage   \" data-shoot-entry-id=\"coverage-shot-group-founder-interview\" draggable=\"true\" role=\"button\" tabindex=\"0\" aria-label=\"Edit Founder interview, 8:45 am, 60 minutes\" title=\"Founder interview - 0 shots · 60 min · Precinct Studio 2\" style=\"--timeline-slot-offset: 5; --timeline-slot-span: 4; left: calc(0% + var(--brisk-space-xs)); width: calc(100% - var(--brisk-space-s));\"><div class=\"shoot-timeline-bl",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1133,
+    "beforeCaptureId": "F055-question-focus-readability",
+    "afterCaptureId": "F056-schedule-picker-escape",
+    "sampleMutation": false,
+    "actions": [
+      "Measured travel event48px high; next event begins32px later, causing16px visual overlap",
+      "Opened schedule item withEnter, first Start time suggestions appeared",
+      "PressedEscape once; actual dialog/listbox outcome recorded in supplement",
+      "No edits/save"
+    ],
+    "measurements": {
+      "travelRect": {
+        "bottom": 939,
+        "height": 48,
+        "left": 582,
+        "right": 864,
+        "top": 891,
+        "width": 282,
+        "x": 582,
+        "y": 891
+      },
+      "brollRect": {
+        "bottom": 1059,
+        "height": 136,
+        "left": 582,
+        "right": 864,
+        "top": 923,
+        "width": 282,
+        "x": 582,
+        "y": 923
+      },
+      "verticalOverlap": 16,
+      "dialogAfterEscape": 0,
+      "listAfterEscape": 0
+    }
+  },
+  {
+    "id": "F057-progress-sidebar-collision",
+    "actionId": "F057-progress-sidebar-collision",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Shoot progress placement relative to desktop sidebar",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"shoot-call-sheet-section-count label-xs-semibold\" type=\"button\" aria-expanded=\"true\" aria-haspopup=\"dialog\" aria-label=\"1 of 4 captured. Open shoot day progress.\">1 of 4</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F056-schedule-picker-escape",
+    "afterCaptureId": "F057-progress-sidebar-collision",
+    "sampleMutation": false,
+    "actions": [
+      "Reopened populated On Set progress at1133; measured dialog/sidebar rectangles and stacking",
+      "No shot selected or status changed"
+    ],
+    "measurements": {
+      "progressGeometry": {
+        "rect": {
+          "bottom": 943.4453125,
+          "height": 391,
+          "left": 16,
+          "right": 456,
+          "top": 552.4453125,
+          "width": 440,
+          "x": 16,
+          "y": 552.4453125
+        },
+        "z": "100"
+      },
+      "sidebarGeometry": {
+        "rect": {
+          "bottom": 1000,
+          "height": 1000,
+          "left": 0,
+          "right": 240,
+          "top": 0,
+          "width": 240,
+          "x": 0,
+          "y": 0
+        },
+        "z": "110"
+      }
+    }
+  },
+  {
+    "id": "F058-shoot-send-panel",
+    "actionId": "F058-shoot-send-panel",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Shoot sending scope and recipient panel",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F057-progress-sidebar-collision",
+    "afterCaptureId": "F058-shoot-send-panel",
+    "sampleMutation": false,
+    "actions": [
+      "Closed progress popover and opened Send Shoot panel",
+      "Inspected recipients and send scope only; no send completed"
+    ]
+  },
+  {
+    "id": "F059-shoot-client-onset",
+    "actionId": "F059-shoot-client-onset",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Client On Set presentation",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F058-shoot-send-panel",
+    "afterCaptureId": "F059-shoot-client-onset",
+    "sampleMutation": false,
+    "actions": [
+      "Send dialog Escape cancelled and no send occurred",
+      "Switched isolated roleCustomer; inspected available OnSet tools and labels"
+    ]
+  },
+  {
+    "id": "F060-shoot-client-planning",
+    "actionId": "F060-shoot-client-planning",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ],
+    "state": "Client planning composition",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<button data-mode=\"planning\" class=\"active\" type=\"button\" role=\"tab\" aria-selected=\"true\"><span class=\"shoot-workspace-mode-title headings-s-bold\">Planning</span><span class=\"shoot-workspace-mode-description label-xs\">Build the shoot plan</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F059-shoot-client-onset",
+    "afterCaptureId": "F060-shoot-client-planning",
+    "sampleMutation": false,
+    "actions": [
+      "ComparedCustomer planning and available controls at1440; access role identifiers preserved"
+    ]
+  },
+  {
+    "id": "F061-brief-delivery-sample",
+    "actionId": "F061-brief-delivery-sample",
+    "coverageIds": [
+      "N104",
+      "N117"
+    ],
+    "state": "Brief-linked delivery requirements in disposable demo",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold brief-add-version-button\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/plus.svg&quot;); --icon-size: 14px;\"></span><span>Add version</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/brief",
+    "width": 1440,
+    "beforeCaptureId": "F060-shoot-client-planning",
+    "afterCaptureId": "F061-brief-delivery-sample",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: changed existing default Main Video duration to2mins and added one sample delivery version via Brief controls",
+      "This persists real Main Video slot identifiers through existing UI; working origin unchanged"
+    ]
+  },
+  {
+    "id": "F062-main-video-delivery",
+    "actionId": "F062-main-video-delivery",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Brief-linked Main Video with an uploaded sample",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold masters-row-primary-action\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/download-simple.svg&quot;); --icon-size: 14px;\"></span>Download</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F061-brief-delivery-sample",
+    "afterCaptureId": "F062-main-video-delivery",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: explicitly uploaded officialMDNCC0 MP4 throughfilechooser toMain Video",
+      "Inspected Main Video and additional Brief slot, Mark up forre-cut and disabled global DownloadAll for incomplete delivery"
+    ]
+  },
+  {
+    "id": "F063-masters-caption-editor",
+    "actionId": "F063-masters-caption-editor",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Captions inspector and sample inline edit",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" class=\"label-xs-semibold\">00:30 - 01:00</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F062-main-video-delivery",
+    "afterCaptureId": "F063-masters-caption-editor",
+    "sampleMutation": true,
+    "actions": [
+      "Space opened nested Captions inspector without collapsing row",
+      "SAMPLE MUTATION: edited first generated sample caption and moved focus to another cue; save feedback inspected",
+      "No original file, message or working record changed"
+    ]
+  },
+  {
+    "id": "F064-masters-recut-entry",
+    "actionId": "F064-masters-recut-entry",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Current recut mark-up workspace",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold masters-row-recut-action\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/scissors.svg&quot;); --icon-size: 14px;\"></span>Continue mark-up</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F063-masters-caption-editor",
+    "afterCaptureId": "F064-masters-recut-entry",
+    "sampleMutation": false,
+    "actions": [
+      "Opened live Mark up forre-cut on Brief-linked Main Video",
+      "0marks, target format, deliverable name, explicitCancel and disabledSendtoeditor inspected",
+      "No instruction or message sent"
+    ]
+  },
+  {
+    "id": "F065-recut-source-picker",
+    "actionId": "F065-recut-source-picker",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Recut source chooser, no alternative uploaded",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F064-masters-recut-entry",
+    "afterCaptureId": "F065-recut-source-picker",
+    "sampleMutation": false,
+    "actions": [
+      "Opened Change source; current sample has no other eligible uploaded video",
+      "Cancel and Upload a different source visible; nofile selected"
+    ]
+  },
+  {
+    "id": "F066-recut-range-draft",
+    "actionId": "F066-recut-range-draft",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Recut range selection before instruction",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"label-xs-semibold\" type=\"button\">Change source</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1133,
+    "beforeCaptureId": "F065-recut-source-picker",
+    "afterCaptureId": "F066-recut-range-draft",
+    "sampleMutation": false,
+    "actions": [
+      "Clicked timeline to expose Start/End handles and Keep/Remove/Describe commands",
+      "0marks remained; no instruction chosen or sent"
+    ]
+  },
+  {
+    "id": "F067-recut-cancel-result",
+    "actionId": "F067-recut-cancel-result",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Unsent recut range cancelled",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528650902\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1133,
+    "beforeCaptureId": "F066-recut-range-draft",
+    "afterCaptureId": "F067-recut-cancel-result",
+    "sampleMutation": false,
+    "actions": [
+      "Clicking Start handle focused it; ArrowRight left displayed00:00 unchanged",
+      "Cancel recut mark-up returned delivery details with0committedmarks; no Sendtoeditor used",
+      "Caption edit earlier showed explicit Captions saved and re-attached toast"
+    ]
+  },
+  {
+    "id": "F068-masters-comments-1133",
+    "actionId": "F068-masters-comments-1133",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Main Video comment rail at1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"masters-comments-button ghosted selected\" type=\"button\" aria-label=\"Close comments for Main Video\" aria-expanded=\"true\" data-tooltip=\"No comments\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/chat-circle.svg&quot;); --icon-size: 20px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1133,
+    "beforeCaptureId": "F067-recut-cancel-result",
+    "afterCaptureId": "F068-masters-comments-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Opened actual Main Video comment rail at1133; inspected register/panel/footer fit",
+      "No comment sent"
+    ]
+  },
+  {
+    "id": "F069-masters-composer-reachable",
+    "actionId": "F069-masters-composer-reachable",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Masters composer keyboard visibility at1440",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"anchor-chip label-xs-semibold\" type=\"button\" data-tooltip=\"Remove timecode to make this an overall comment\" aria-label=\"Remove timecode to make this an overall comment\">@00:12<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/x-close-cross.svg&quot;); --icon-size: 11px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F068-masters-comments-1133",
+    "afterCaptureId": "F069-masters-composer-reachable",
+    "sampleMutation": false,
+    "actions": [
+      "Focused Draw tool thenTab to next composer control; browser scrolled it into view without sending",
+      "Checked bottom toolbar remains reachable above global stage footer"
+    ]
+  },
+  {
+    "id": "F070-caption-text-fit",
+    "actionId": "F070-caption-text-fit",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Editable caption cue readability",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"masters-asset-tile\" type=\"button\" aria-label=\"Open captions for Main Video\"><span class=\"masters-asset-tile-preview is-icon\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/file-text.svg&quot;); --icon-size: 16px;\"></span></span><span class=\"label-xs-semibold\">Captions</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F069-masters-composer-reachable",
+    "afterCaptureId": "F070-caption-text-fit",
+    "sampleMutation": false,
+    "actions": [
+      "Measured existing ordinary second caption cue without editing; single-line input width recorded",
+      "Only first cue had prioraudit-onlysampleedit"
+    ],
+    "measurements": {
+      "clientWidth": 310,
+      "rect": {
+        "bottom": 595,
+        "height": 16,
+        "left": 1113,
+        "right": 1423,
+        "top": 579,
+        "width": 310,
+        "x": 1113,
+        "y": 579
+      },
+      "scrollWidth": 386,
+      "tag": "INPUT",
+      "value": "The middle develops the central idea through the approved footage."
+    }
+  },
+  {
+    "id": "F071-client-caption-reading",
+    "actionId": "F071-client-caption-reading",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Client read-only caption presentation",
+    "role": "Customer",
+    "scenario": "studio-owner-active",
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F070-caption-text-fit",
+    "afterCaptureId": "F071-client-caption-reading",
+    "sampleMutation": false,
+    "actions": [
+      "SwitchedCustomer role in isolateddemo; inspected samecaptioncue readonly rendering"
+    ]
+  },
+  {
+    "id": "F072-freelancer-active-1440",
+    "actionId": "F072-freelancer-active-1440",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ],
+    "state": "Populated Freelancer My jobs",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos",
+    "width": 1440,
+    "beforeCaptureId": "F071-client-caption-reading",
+    "afterCaptureId": "F072-freelancer-active-1440",
+    "sampleMutation": false,
+    "actions": [
+      "Loaded existingFreelancerActive scenario in isolatedorigin only; prior disposabledemo reset",
+      "Existing2acceptedjobs,1pendingoffer, financialterms and time totals visible"
+    ]
+  },
+  {
+    "id": "F073-freelancer-active-1133",
+    "actionId": "F073-freelancer-active-1133",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ],
+    "state": "Freelancer accepted jobs at narrower desktop",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos",
+    "width": 1133,
+    "beforeCaptureId": "F072-freelancer-active-1440",
+    "afterCaptureId": "F073-freelancer-active-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Compared intentionallywide commercial table at1133; no jobactionexecuted"
+    ]
+  },
+  {
+    "id": "F074-freelancer-commercial-pan",
+    "actionId": "F074-freelancer-commercial-pan",
+    "coverageIds": [
+      "N090",
+      "N132"
+    ],
+    "state": "Freelancer commercial columns after horizontal pan",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos",
+    "width": 1133,
+    "beforeCaptureId": "F073-freelancer-active-1133",
+    "afterCaptureId": "F074-freelancer-commercial-pan",
+    "sampleMutation": false,
+    "actions": [
+      "Panned widejobs table right; checked stickyVideo identity and commercial/time columns remainreachable"
+    ]
+  },
+  {
+    "id": "F075-freelancer-time-invalid",
+    "actionId": "F075-freelancer-time-invalid",
+    "coverageIds": [
+      "N132"
+    ],
+    "state": "Freelancer Log hours invalid draft",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<input min=\"0.25\" max=\"24\" step=\"0.25\" id=\"_r_1e_\" data-brisk-input=\"\" data-size=\"S\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-s \" type=\"number\" value=\"1\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos?log=1&project=deel-customer-story&stage=shoot",
+    "width": 1133,
+    "beforeCaptureId": "F074-freelancer-commercial-pan",
+    "afterCaptureId": "F075-freelancer-time-invalid",
+    "sampleMutation": false,
+    "actions": [
+      "OpenedLoghours forDeel; Date/assignedStage/Hours/Note inspected",
+      "ChangedlocalHoursdraftto0; SaveTime disabled; no save"
+    ]
+  },
+  {
+    "id": "F076-freelancer-invoice-draft",
+    "actionId": "F076-freelancer-invoice-draft",
+    "coverageIds": [
+      "N132"
+    ],
+    "state": "Invoice upload form with rate mismatch warning",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<input id=\"_r_1h_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"number\" value=\"2280\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos",
+    "width": 1133,
+    "beforeCaptureId": "F075-freelancer-time-invalid",
+    "afterCaptureId": "F076-freelancer-invoice-draft",
+    "sampleMutation": false,
+    "actions": [
+      "Opened invoiceform usingEnter after route settled",
+      "Changedlocaldraftamount from2280 to2200; mismatchwarning and noPDFdisabledSubmit inspected",
+      "No invoice submitted or paymentrecorded"
+    ]
+  },
+  {
+    "id": "F077-freelancer-open-offer",
+    "actionId": "F077-freelancer-open-offer",
+    "coverageIds": [
+      "N132"
+    ],
+    "state": "Pending Freelancer offer terms",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"label-s-semibold is-active\" type=\"button\" aria-current=\"page\">Offers <span class=\"label-xs\">1</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos",
+    "width": 1133,
+    "beforeCaptureId": "F076-freelancer-invoice-draft",
+    "afterCaptureId": "F077-freelancer-open-offer",
+    "sampleMutation": false,
+    "actions": [
+      "Openoffer showsrole,assignedStage, estimatedwork,total and deadline separately",
+      "Accept/Decline were not activated; source says no pre-confirmation step"
+    ]
+  },
+  {
+    "id": "F078-offer-brief-1133",
+    "actionId": "F078-offer-brief-1133",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ],
+    "state": "Pending-offer read-only Brief preview",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "width": 1133,
+    "beforeCaptureId": "F077-freelancer-open-offer",
+    "afterCaptureId": "F078-offer-brief-1133",
+    "sampleMutation": false,
+    "actions": [
+      "OpenedViewbrief beforeacceptance; existingbrief data is empty and preview explicitlyread-only",
+      "Actualsummary/default-values and inert editing subtree inspected; no edit performed"
+    ]
+  },
+  {
+    "id": "F079-offer-brief-1440",
+    "actionId": "F079-offer-brief-1440",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ],
+    "state": "Pending-offer Brief at1440",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "width": 1440,
+    "beforeCaptureId": "F078-offer-brief-1133",
+    "afterCaptureId": "F079-offer-brief-1440",
+    "sampleMutation": false,
+    "actions": [
+      "Comparedread-onlyofferBrief at1440; noofferresponseorprojectedit"
+    ]
+  },
+  {
+    "id": "F080-offer-brief-top",
+    "actionId": "F080-offer-brief-top",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ],
+    "state": "Read-only offer Brief with entry heading",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "width": 1440,
+    "beforeCaptureId": "F079-offer-brief-1440",
+    "afterCaptureId": "F080-offer-brief-top",
+    "sampleMutation": false,
+    "actions": [
+      "ReturneddocumenttopwithCommandUp toinspectread-onlyheading and Backtooffers entry",
+      "Addcutdown button remainsvisuallyactionableinsideinert summary; didnottryedits",
+      "Screenshotreviewshowsentrytitle/read-onlylabelstilloutsidecapturedvisiblearea despitewindowScrollY0; innercontainer scroll was not measured. Do not claim headerrestored."
+    ]
+  },
+  {
+    "id": "F081-offer-brief-top-1133",
+    "actionId": "F081-offer-brief-top-1133",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ],
+    "state": "Read-only offer Brief top at1133",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792528881090\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "width": 1133,
+    "beforeCaptureId": "F080-offer-brief-top",
+    "afterCaptureId": "F081-offer-brief-top-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Comparedtopentryheader andreadonlysummary at1133",
+      "Screenshotreviewshowsentrytitle/read-onlylabelstilloutsidecapturedvisiblearea despitewindowScrollY0; innercontainer scroll was not measured. Do not claim headerrestored."
+    ]
+  },
+  {
+    "id": "F082-freelancer-history",
+    "actionId": "F082-freelancer-history",
+    "coverageIds": [
+      "N132"
+    ],
+    "state": "Revoked offer history",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"label-s-semibold is-active\" type=\"button\">History <span class=\"label-xs\">1</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos?view=offers",
+    "width": 1440,
+    "beforeCaptureId": "F081-offer-brief-top-1133",
+    "afterCaptureId": "F082-freelancer-history",
+    "sampleMutation": false,
+    "actions": [
+      "ViewedexistingRevokedRampoffer; responseactions absent; noaccept/declineexecuted"
+    ]
+  },
+  {
+    "id": "F083-freelancer-offer-no-results",
+    "actionId": "F083-freelancer-offer-no-results",
+    "coverageIds": [
+      "N132"
+    ],
+    "state": "Offer history no-results feedback",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<input id=\"freelancer-videos-search\" placeholder=\"Search your jobs\" type=\"search\" value=\"zzzauditnomatch\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/active-videos?view=offers",
+    "width": 1440,
+    "beforeCaptureId": "F082-freelancer-history",
+    "afterCaptureId": "F083-freelancer-offer-no-results",
+    "sampleMutation": false,
+    "actions": [
+      "Filteredofferhistorywithlocalquery; explicitClearsearch recoveryshown"
+    ]
+  },
+  {
+    "id": "F084-offer-header-geometry",
+    "actionId": "F084-offer-header-geometry",
+    "coverageIds": [
+      "N132",
+      "R016"
+    ],
+    "state": "Direct-entry offer Brief header geometry",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529454990\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/offers/loom-launch-film/brief",
+    "width": 1440,
+    "beforeCaptureId": "F083-freelancer-offer-no-results",
+    "afterCaptureId": "F084-offer-header-geometry",
+    "sampleMutation": false,
+    "actions": [
+      "Directnavigationrenderedheaderbelowglobalbar:main/header top65px, read-onlylabeltop77px, projecttitletop97px,windowScrollY0",
+      "This counters a universalheadercollision claim; earlierclient-linkcaptures had a different inner scroll context",
+      "No edit/offerresponse"
+    ],
+    "measurements": {
+      "offerGeometry": {
+        "header": {
+          "bottom": 190,
+          "height": 125,
+          "left": 240,
+          "right": 1440,
+          "top": 65,
+          "width": 1200,
+          "x": 240,
+          "y": 65
+        },
+        "headerStyle": {
+          "position": "static",
+          "top": "auto"
+        },
+        "heading": {
+          "bottom": 129,
+          "height": 32,
+          "left": 272,
+          "right": 605.703125,
+          "top": 97,
+          "width": 333.703125,
+          "x": 272,
+          "y": 97
+        },
+        "main": {
+          "bottom": 1065,
+          "height": 1000,
+          "left": 240,
+          "right": 1440,
+          "top": 65,
+          "width": 1200,
+          "x": 240,
+          "y": 65
+        },
+        "scrollY": 0
+      },
+      "offerReadOnlyRect": {
+        "bottom": 93,
+        "height": 16,
+        "left": 272,
+        "right": 605.703125,
+        "top": 77,
+        "width": 333.703125,
+        "x": 272,
+        "y": 77
+      }
+    }
+  },
+  {
+    "id": "F085-todo-top-1440",
+    "actionId": "F085-todo-top-1440",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Populated To Do entry layout at1440",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Choose whose work to view\" aria-controls=\"_r_n_\" aria-activedescendant=\"_r_n_-9\"><span class=\"brisk-select-trigger-label\"><span>Sarah Chen</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12p",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F084-offer-header-geometry",
+    "afterCaptureId": "F085-todo-top-1440",
+    "sampleMutation": false,
+    "actions": [
+      "ViewedSarahChenexistingweek; fulltopcompositionrecorded",
+      "No timeentrychanged"
+    ]
+  },
+  {
+    "id": "F086-todo-this-week-1440",
+    "actionId": "F086-todo-this-week-1440",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Week range control returns to the reference week, Viewing Sarah Chen",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"today-week-current label-s-semibold\" type=\"button\">22 June - 26 June</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F085-todo-top-1440",
+    "afterCaptureId": "F086-todo-this-week-1440",
+    "sampleMutation": false,
+    "actions": [
+      "Clicked next week then week-range label; returns to 22-26 June."
+    ]
+  },
+  {
+    "id": "F087-todo-editor-footer-1440",
+    "actionId": "F087-todo-editor-footer-1440",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Time editor exceeds viewport: footer starts at1001px in1000px viewport",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<div class=\"today-time-block unspecified todo todo-colour-3\" draggable=\"true\" role=\"button\" tabindex=\"0\" style=\"--today-entry-card-height: 91px;\"><span class=\"today-time-block-main\"><span class=\"label-xs-semibold\">Unspecified</span><span class=\"label-xs-semibold\">1.25h</span></span><span class=\"today-time-block-project label-xs\">Product Education - Sleep Series</span><span class=\"today-time-block-warning label-xs-semibold\">Set stage</span><button",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F086-todo-this-week-1440",
+    "afterCaptureId": "F087-todo-editor-footer-1440",
+    "sampleMutation": false,
+    "actions": [
+      "Opened existing Unspecified entry; measured editor bottom1056 and action top1001."
+    ]
+  },
+  {
+    "id": "F088-todo-default-1133",
+    "actionId": "F088-todo-default-1133",
+    "coverageIds": [
+      "N094",
+      "R018"
+    ],
+    "state": "Populated To Do at1440 (viewport override had not changed), expanded navigation",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529574025\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F087-todo-editor-footer-1440",
+    "afterCaptureId": "F088-todo-default-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Pointer Cancel outside viewport failed; focusing Cancel and Enter closed editor; resized isolated viewport1133."
+    ],
+    "corrections": [
+      "Actual1440; narrow comparison replaced byF090/F091."
+    ]
+  },
+  {
+    "id": "F089-todo-collapsed-1133",
+    "actionId": "F089-todo-collapsed-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Populated To Do at1440 (viewport override had not changed), collapsed navigation",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button aria-label=\"Expand navigation\" aria-expanded=\"false\" aria-controls=\"_r_i_\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Expand navigation\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F088-todo-default-1133",
+    "afterCaptureId": "F089-todo-collapsed-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Collapsed navigation."
+    ],
+    "corrections": [
+      "Actual1440; narrow comparison replaced byF090/F091."
+    ]
+  },
+  {
+    "id": "F090-todo-collapsed-actual-1133",
+    "actionId": "F090-todo-collapsed-actual-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Populated To Do at verified1133, collapsed navigation",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button aria-label=\"Expand navigation\" aria-expanded=\"false\" aria-controls=\"_r_i_\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Expand navigation\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "beforeCaptureId": "F089-todo-collapsed-1133",
+    "afterCaptureId": "F090-todo-collapsed-actual-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Explicit isolated tab device metrics; verified DOM viewport1133."
+    ]
+  },
+  {
+    "id": "F091-todo-expanded-actual-1133",
+    "actionId": "F091-todo-expanded-actual-1133",
+    "coverageIds": [
+      "N094",
+      "R018"
+    ],
+    "state": "Populated To Do at verified1133, expanded navigation",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button aria-label=\"Collapse navigation\" aria-expanded=\"true\" aria-controls=\"_r_i_\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Collapse navigation\" data-tooltip-placement=\"bottom\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/car",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "beforeCaptureId": "F090-todo-collapsed-actual-1133",
+    "afterCaptureId": "F091-todo-expanded-actual-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Expanded navigation."
+    ]
+  },
+  {
+    "id": "F092-todo-editor-1133",
+    "actionId": "F092-todo-editor-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Time editor at verified1133 with footer position measured",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<div class=\"today-time-block unspecified todo todo-colour-3\" draggable=\"true\" role=\"button\" tabindex=\"0\" style=\"--today-entry-card-height: 91px;\"><span class=\"today-time-block-main\"><span class=\"label-xs-semibold\">Unspecified</span><span class=\"label-xs-semibold\">1.25h</span></span><span class=\"today-time-block-project label-xs\">Product Education - Sleep Series</span><span class=\"today-time-block-warning label-xs-semibold\">Set stage</span><button",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "beforeCaptureId": "F091-todo-expanded-actual-1133",
+    "afterCaptureId": "F092-todo-editor-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Enter existing entry; measure editor footer and viewport."
+    ]
+  },
+  {
+    "id": "F093-shoot-setup-question1",
+    "actionId": "F093-shoot-setup-question1",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Current Shoot setup question1 andsix-questionnavigator",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-step-dot label-xs-semibold active \" type=\"button\" data-tooltip=\"What to capture\" aria-current=\"step\">1</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F092-todo-editor-1133",
+    "afterCaptureId": "F093-shoot-setup-question1",
+    "sampleMutation": false,
+    "actions": [
+      "Edit Setup opens existing workflow selection; choose question1."
+    ]
+  },
+  {
+    "id": "F094-shoot-setup-people",
+    "actionId": "F094-shoot-setup-people",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Shoot setup People question",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-step-dot label-xs-semibold active \" type=\"button\" data-tooltip=\"People\" aria-current=\"step\">2</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F093-shoot-setup-question1",
+    "afterCaptureId": "F094-shoot-setup-people",
+    "sampleMutation": false,
+    "actions": [
+      "Choose question2."
+    ]
+  },
+  {
+    "id": "F095-shoot-setup-location",
+    "actionId": "F095-shoot-setup-location",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Shoot setup Location question",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-step-dot label-xs-semibold active \" type=\"button\" data-tooltip=\"Location\" aria-current=\"step\">3</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F094-shoot-setup-people",
+    "afterCaptureId": "F095-shoot-setup-location",
+    "sampleMutation": false,
+    "actions": [
+      "Choose question3."
+    ]
+  },
+  {
+    "id": "F096-shoot-setup-date",
+    "actionId": "F096-shoot-setup-date",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Shoot setup date picker with existing shoot days",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-date-display label-s is-placeholder\" type=\"button\" aria-expanded=\"true\" aria-haspopup=\"dialog\"><span class=\"brief-deliverable-trigger-label\">Add a shoot date</span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F095-shoot-setup-location",
+    "afterCaptureId": "F096-shoot-setup-date",
+    "sampleMutation": false,
+    "actions": [
+      "Open Add a shoot date without selecting date."
+    ]
+  },
+  {
+    "id": "F097-shoot-must-have",
+    "actionId": "F097-shoot-must-have",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Shoot setup must-have shots question",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-step-dot label-xs-semibold active \" type=\"button\" data-tooltip=\"Must-have shots\" aria-current=\"step\">5</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F096-shoot-setup-date",
+    "afterCaptureId": "F097-shoot-must-have",
+    "sampleMutation": false,
+    "actions": [
+      "Move to question5."
+    ]
+  },
+  {
+    "id": "F098-shoot-workflow",
+    "actionId": "F098-shoot-workflow",
+    "coverageIds": [
+      "N112"
+    ],
+    "state": "Shoot setup workflow and contextual tool selection",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"brief-step-dot label-xs-semibold active \" type=\"button\" data-tooltip=\"Workflow\" aria-current=\"step\">6</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=quick-start",
+    "width": 1440,
+    "beforeCaptureId": "F097-shoot-must-have",
+    "afterCaptureId": "F098-shoot-workflow",
+    "sampleMutation": false,
+    "actions": [
+      "Move to question6."
+    ]
+  },
+  {
+    "id": "F099-shoot-ai-suggestions",
+    "actionId": "F099-shoot-ai-suggestions",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ],
+    "state": "AI-created suggested shots awaiting explicit acceptance",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529877970\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "width": 1440,
+    "beforeCaptureId": "F098-shoot-workflow",
+    "afterCaptureId": "F099-shoot-ai-suggestions",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Create with Brisk AI immediately adds8 suggested shots in isolated8766; no external service."
+    ]
+  },
+  {
+    "id": "F100-ai-schedule-readiness",
+    "actionId": "F100-ai-schedule-readiness",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "AI schedule check for new disposableDay3 with missingdetails",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F099-shoot-ai-suggestions",
+    "afterCaptureId": "F100-ai-schedule-readiness",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Add shoot day createsDay3 immediately; openCreatewithBrisk readinesscheck."
+    ]
+  },
+  {
+    "id": "F101-schedule-ready-warning",
+    "actionId": "F101-schedule-ready-warning",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Schedule readiness lists concrete unscheduled/location/break issues",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Continue editing</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F100-ai-schedule-readiness",
+    "afterCaptureId": "F101-schedule-ready-warning",
+    "sampleMutation": false,
+    "actions": [
+      "Cancel AI; openMarkscheduleReady; do notMarkreadyanyway."
+    ]
+  },
+  {
+    "id": "F102-schedule-missing-guide",
+    "actionId": "F102-schedule-missing-guide",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Guided missing-details step linked to the schedule",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold shoot-button primary\">Create with Brisk</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F101-schedule-ready-warning",
+    "afterCaptureId": "F102-schedule-missing-guide",
+    "sampleMutation": false,
+    "actions": [
+      "OpenAIcheck thenAddmissingdetails; noAIgeneration."
+    ]
+  },
+  {
+    "id": "F103-schedule-guide-duration",
+    "actionId": "F103-schedule-guide-duration",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Missing-details duration guidance, step2",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold shoot-button primary\">Finish</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "width": 1440,
+    "beforeCaptureId": "F102-schedule-missing-guide",
+    "afterCaptureId": "F103-schedule-guide-duration",
+    "sampleMutation": false,
+    "actions": [
+      "Next opens secondguide step without savingday."
+    ]
+  },
+  {
+    "id": "F104-new-standalone-shot",
+    "actionId": "F104-new-standalone-shot",
+    "coverageIds": [
+      "N113",
+      "N114"
+    ],
+    "state": "New standalone shot ready for inline description",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<input class=\"shoot-shot-table-input label-s\" aria-label=\"Description for shot 6\" value=\"New shot\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots",
+    "width": 1440,
+    "beforeCaptureId": "F103-schedule-guide-duration",
+    "afterCaptureId": "F104-new-standalone-shot",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: AddShotcreatesblankstandaloneshotin8766."
+    ]
+  },
+  {
+    "id": "F105-backlog-group-selection",
+    "actionId": "F105-backlog-group-selection",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Selected standalone shot and group destination menu",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_1i_-0\" id=\"_r_1i_\" aria-label=\"Add selected shots to group\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_1i_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">Additional coverage</span></span></span></button></div></div>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F104-new-standalone-shot",
+    "afterCaptureId": "F105-backlog-group-selection",
+    "sampleMutation": false,
+    "actions": [
+      "Selectstandaloneshot; openAddtogroup destination menu."
+    ]
+  },
+  {
+    "id": "F106-backlog-new-group-draft",
+    "actionId": "F106-backlog-new-group-draft",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "New shot group name draft and disabled creation boundary",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<input placeholder=\"e.g. Product B-roll\" id=\"_r_1j_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"false\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F105-backlog-group-selection",
+    "afterCaptureId": "F106-backlog-new-group-draft",
+    "sampleMutation": false,
+    "actions": [
+      "OpenCreatenewgroup; do notcommit."
+    ]
+  },
+  {
+    "id": "F107-shoot-contact-no-results",
+    "actionId": "F107-shoot-contact-no-results",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Existing contact search no-results with create path",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<input placeholder=\"Search by name, role or email…\" type=\"search\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people",
+    "width": 1440,
+    "beforeCaptureId": "F106-backlog-new-group-draft",
+    "afterCaptureId": "F107-shoot-contact-no-results",
+    "sampleMutation": false,
+    "actions": [
+      "OpenAddperson; unmatchedsearch; no contact/invite saved."
+    ]
+  },
+  {
+    "id": "F108-shoot-day-delete-guard",
+    "actionId": "F108-shoot-day-delete-guard",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Delete day confirmation reached without confirming",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule",
+    "width": 1440,
+    "beforeCaptureId": "F107-shoot-contact-no-results",
+    "afterCaptureId": "F108-shoot-day-delete-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenDeleteday guard; do notDelete."
+    ]
+  },
+  {
+    "id": "F109-onset-day2",
+    "actionId": "F109-onset-day2",
+    "coverageIds": [
+      "N115",
+      "R057"
+    ],
+    "state": "OnSet Day2 schedule and essentials update together",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792529877970\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1440,
+    "beforeCaptureId": "F108-shoot-day-delete-guard",
+    "afterCaptureId": "F109-onset-day2",
+    "sampleMutation": false,
+    "actions": [
+      "ChooseDay2; no completionorcommunication."
+    ]
+  },
+  {
+    "id": "F110-call-sheet-actions",
+    "actionId": "F110-call-sheet-actions",
+    "coverageIds": [
+      "N115",
+      "N106"
+    ],
+    "state": "Call Sheet action menu",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_1p_-0\" id=\"_r_1p_\" aria-label=\"Call Sheet actions\"><div role=\"presentation\"><a class=\"brisk-select-option label-s   \" id=\"_r_1p_-0\" tabindex=\"-1\" data-active=\"true\" href=\"/share/call-sheet/loom-launch-film?print=1&amp;day=day-2\" target=\"_blank\" rel=\"noreferrer\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=call-sheet&view=on-set&day=day-2",
+    "width": 1440,
+    "beforeCaptureId": "F109-onset-day2",
+    "afterCaptureId": "F110-call-sheet-actions",
+    "sampleMutation": false,
+    "actions": [
+      "OpenMore actions; noSendCopyorPDFdownload."
+    ]
+  },
+  {
+    "id": "F111-masters-two-versions",
+    "actionId": "F111-masters-two-versions",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Masters currentV2 aftertwo actualsampleuploads; priorversionlibraryhasnoliveopener",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button aria-label=\"Actions for Main Video\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Actions for Main Video\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID \"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F110-call-sheet-actions",
+    "afterCaptureId": "F111-masters-two-versions",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: chooseofficialCC0MP4twiceviaUploadnewversionin8766; sourcefindsnoliveVersionsPanelopener."
+    ]
+  },
+  {
+    "id": "F112-recut-unsent-draft-guard",
+    "actionId": "F112-recut-unsent-draft-guard",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Cancel warnsbeforeleavinganunsentone-mark re-cut draft",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F111-masters-two-versions",
+    "afterCaptureId": "F112-recut-unsent-draft-guard",
+    "sampleMutation": false,
+    "actions": [
+      "SAMPLE LOCAL DRAFT: Keeprange; Cancelmarkupopensguard; do notDiscard."
+    ]
+  },
+  {
+    "id": "F113-recut-undo-recovery",
+    "actionId": "F113-recut-undo-recovery",
+    "coverageIds": [
+      "N117"
+    ],
+    "state": "Cancellingdiscardpreservesmark;Undo returnstozeromarks",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530042734\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/hims-product-education/stages/masters",
+    "width": 1440,
+    "beforeCaptureId": "F112-recut-unsent-draft-guard",
+    "afterCaptureId": "F113-recut-undo-recovery",
+    "sampleMutation": false,
+    "actions": [
+      "CancelDiscardguardpreservesoneinstruction;Undo removeslocaldraftinstruction; noSend."
+    ]
+  },
+  {
+    "id": "F114-canonical-edit-sample-play",
+    "actionId": "F114-canonical-edit-sample-play",
+    "coverageIds": [
+      "N116",
+      "R027"
+    ],
+    "state": "CanonicalEdit uploadedofficialsample andPlaystate",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"play-control\" type=\"button\" aria-label=\"Pause\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/pause.svg&quot;); --icon-size: 18px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1440,
+    "beforeCaptureId": "F113-recut-undo-recovery",
+    "afterCaptureId": "F114-canonical-edit-sample-play",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: ApproveandmarkreadythenUploadV1CC0MP4; Mute; keyboardPlay; do notSend."
+    ]
+  },
+  {
+    "id": "F115-edit-keyboard-seek",
+    "actionId": "F115-edit-keyboard-seek",
+    "coverageIds": [
+      "N116"
+    ],
+    "state": "Keyboard five-secondstepcontrol feedback",
+    "role": "Studio Staff",
+    "scenario": "freelancer-active",
+    "focus": "<button class=\"ghost-control\" type=\"button\" aria-label=\"Step forward five seconds\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/arrow-clockwise.svg&quot;); --icon-size: 18px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/edit",
+    "width": 1440,
+    "beforeCaptureId": "F114-canonical-edit-sample-play",
+    "afterCaptureId": "F115-edit-keyboard-seek",
+    "sampleMutation": false,
+    "actions": [
+      "Pause; EnterStepforwardfiveseconds; inspecttimefeedback."
+    ]
+  },
+  {
+    "id": "F116-onboard-name-empty",
+    "actionId": "F116-onboard-name-empty",
+    "coverageIds": [
+      "N128",
+      "R059"
+    ],
+    "state": "Owner name field with disabled Continue",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=your-name",
+    "width": 1440,
+    "beforeCaptureId": "F115-edit-keyboard-seek",
+    "afterCaptureId": "F116-onboard-name-empty",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Loadstudio-owner-new inisolated8766; mockContinuewithGoogleopenslocalname step."
+    ]
+  },
+  {
+    "id": "F117-onboard-concepts",
+    "actionId": "F117-onboard-concepts",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "First production question with useful contextual choices",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=contextual",
+    "width": 1440,
+    "beforeCaptureId": "F116-onboard-name-empty",
+    "afterCaptureId": "F117-onboard-concepts",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: saveisolatedownerandStudioname; reachproductionquestions."
+    ]
+  },
+  {
+    "id": "F118-onboard-shooting",
+    "actionId": "F118-onboard-shooting",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Question1 selected answer briefly disables choices while advancing",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=contextual",
+    "width": 1440,
+    "beforeCaptureId": "F117-onboard-concepts",
+    "afterCaptureId": "F118-onboard-shooting",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: selectconceptanswer byEnter, advancesautomatically."
+    ]
+  },
+  {
+    "id": "F119-onboard-shooting-settled",
+    "actionId": "F119-onboard-shooting-settled",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Question2 shooting versuspost-productionmodel",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=production-model",
+    "width": 1440,
+    "beforeCaptureId": "F118-onboard-shooting",
+    "afterCaptureId": "F119-onboard-shooting-settled",
+    "sampleMutation": false,
+    "actions": [
+      "Waitforvisiblequestion2afterautoadvance."
+    ]
+  },
+  {
+    "id": "F120-onboard-video-types-expanded",
+    "actionId": "F120-onboard-video-types-expanded",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Video types expanded with no selection anddisabledContinue",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<button aria-controls=\"studio-additional-video-types\" aria-expanded=\"true\" type=\"button\" data-brisk-button=\"\" data-variant=\"ghost\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold studio-review-text-button studio-video-types-more-action\">Show fewer options<span class=\"is-expanded\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 14px;\"></span></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "width": 1440,
+    "beforeCaptureId": "F119-onboard-shooting-settled",
+    "afterCaptureId": "F120-onboard-video-types-expanded",
+    "sampleMutation": false,
+    "actions": [
+      "Expandvideochoices; inspectrequiredselection."
+    ]
+  },
+  {
+    "id": "F121-onboard-custom-type",
+    "actionId": "F121-onboard-custom-type",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Customvideotype draft validation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "width": 1440,
+    "beforeCaptureId": "F120-onboard-video-types-expanded",
+    "afterCaptureId": "F121-onboard-custom-type",
+    "sampleMutation": false,
+    "actions": [
+      "OpenAddcustom; do notsavecustomtype."
+    ]
+  },
+  {
+    "id": "F122-onboard-video-types-1133",
+    "actionId": "F122-onboard-video-types-1133",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Video types selected at1133,Continueenabled",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<input aria-checked=\"true\" data-indeterminate=\"false\" class=\"Checkbox_input__VsLXL \" type=\"checkbox\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=video-types",
+    "width": 1133,
+    "beforeCaptureId": "F121-onboard-custom-type",
+    "afterCaptureId": "F122-onboard-video-types-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Cancelcustom; keyboardselectBrandfilms; narrowdesktop1133."
+    ]
+  },
+  {
+    "id": "F123-onboard-skip-client-guard",
+    "actionId": "F123-onboard-skip-client-guard",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "SkipfirstClient confirmation at1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Back</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=first-client",
+    "width": 1133,
+    "beforeCaptureId": "F122-onboard-video-types-1133",
+    "afterCaptureId": "F123-onboard-skip-client-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenSkipaddingClient guard; donotskip."
+    ]
+  },
+  {
+    "id": "F124-first-client-added",
+    "actionId": "F124-first-client-added",
+    "coverageIds": [
+      "N128"
+    ],
+    "state": "Clientaddedconfirmation offersStartavideo andDothislater",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/studio-onboard?onboarding-step=first-client",
+    "width": 1133,
+    "beforeCaptureId": "F123-onboard-skip-client-guard",
+    "afterCaptureId": "F124-first-client-added",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: AddAuditExampleClientonlyinisolated8766; noinvitation."
+    ]
+  },
+  {
+    "id": "F125-first-video-name-empty",
+    "actionId": "F125-first-video-name-empty",
+    "coverageIds": [
+      "N128",
+      "N133",
+      "R010"
+    ],
+    "state": "Firstvideoemptyname keepsContinuetoBriefdisabledat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/customer-dashboard/start-video?client=audit-example-client",
+    "width": 1133,
+    "beforeCaptureId": "F124-first-client-added",
+    "afterCaptureId": "F125-first-video-name-empty",
+    "sampleMutation": false,
+    "actions": [
+      "Onboardinghandoff reachesNameyourvideo withassignedprojectcode."
+    ]
+  },
+  {
+    "id": "F126-first-video-name-ready",
+    "actionId": "F126-first-video-name-ready",
+    "coverageIds": [
+      "N133"
+    ],
+    "state": "Firstvideoname1440 enabledContinuetoBrief",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<input placeholder=\"For example, Customer story\" id=\"client-video-name\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"Audit review film\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/customer-dashboard/start-video?client=audit-example-client",
+    "width": 1440,
+    "beforeCaptureId": "F125-first-video-name-empty",
+    "afterCaptureId": "F126-first-video-name-ready",
+    "sampleMutation": false,
+    "actions": [
+      "Enterdisposablesamplename; donotyetcontinue."
+    ]
+  },
+  {
+    "id": "F127-first-video-brief-handoff",
+    "actionId": "F127-first-video-brief-handoff",
+    "coverageIds": [
+      "N128",
+      "N133",
+      "N104"
+    ],
+    "state": "NamedfirstvideocontinuesintoBrief",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-new",
+    "focus": "<body><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530158847\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fragment\\\"\\n18:I[\\\"(app-pages-browser)/.",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/audit-review-film/stages/brief",
+    "width": 1440,
+    "beforeCaptureId": "F126-first-video-name-ready",
+    "afterCaptureId": "F127-first-video-brief-handoff",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: ContinuecreatesAuditreviewfilm onlyin8766; noinviteorsend."
+    ]
+  },
+  {
+    "id": "F128-freelancer-invitation-1440",
+    "actionId": "F128-freelancer-invitation-1440",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ],
+    "state": "Freelancerinvitation explainsassignedworkscope",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530256858\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1440,
+    "beforeCaptureId": "F127-first-video-brief-handoff",
+    "afterCaptureId": "F128-freelancer-invitation-1440",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Loadfreelancer-new isolatedfixture; inspectwithoutAcceptinvitation."
+    ]
+  },
+  {
+    "id": "F129-freelancer-invitation-1133",
+    "actionId": "F129-freelancer-invitation-1133",
+    "coverageIds": [
+      "N134"
+    ],
+    "state": "Freelancerinvitation at1133",
+    "role": "Studio Freelancer",
+    "scenario": "freelancer-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530256858\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1133,
+    "beforeCaptureId": "F128-freelancer-invitation-1440",
+    "afterCaptureId": "F129-freelancer-invitation-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Narrowdesktop fit; invitationnotaccepted."
+    ]
+  },
+  {
+    "id": "F130-staff-invitation-1133",
+    "actionId": "F130-staff-invitation-1133",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ],
+    "state": "Staffinvitation namesworkspaceandaccessrole",
+    "role": "Studio Staff",
+    "scenario": "producer-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530267794\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1133,
+    "beforeCaptureId": "F129-freelancer-invitation-1133",
+    "afterCaptureId": "F130-staff-invitation-1133",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Loadproducer-new isolatedfixture; noJoinStudio."
+    ]
+  },
+  {
+    "id": "F131-staff-invitation-1440",
+    "actionId": "F131-staff-invitation-1440",
+    "coverageIds": [
+      "N134"
+    ],
+    "state": "Staffinvitationat1440",
+    "role": "Studio Staff",
+    "scenario": "producer-new",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530267794\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1440,
+    "beforeCaptureId": "F130-staff-invitation-1133",
+    "afterCaptureId": "F131-staff-invitation-1440",
+    "sampleMutation": false,
+    "actions": [
+      "Inspectdefaultdesktopcomposition."
+    ]
+  },
+  {
+    "id": "F132-client-entry-required",
+    "actionId": "F132-client-entry-required",
+    "coverageIds": [
+      "N134",
+      "R032"
+    ],
+    "state": "Cliententry emptyName disablesOpenClientportal",
+    "role": "Customer",
+    "scenario": "client-new",
+    "focus": "<input id=\"_r_d_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"text\" value=\"\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1440,
+    "beforeCaptureId": "F131-staff-invitation-1440",
+    "afterCaptureId": "F132-client-entry-required",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Loadclient-new; clearlocalnamefieldwithoutsubmit."
+    ]
+  },
+  {
+    "id": "F133-client-entry-1133",
+    "actionId": "F133-client-entry-1133",
+    "coverageIds": [
+      "N134"
+    ],
+    "state": "Cliententryat1133 withnativeemailtypemismatchnot submitted",
+    "role": "Customer",
+    "scenario": "client-new",
+    "focus": "<input id=\"_r_e_\" data-brisk-input=\"\" data-size=\"M\" data-error=\"false\" data-typing=\"true\" data-icon-start=\"false\" data-icon-end=\"false\" class=\"Input_input__o_zJE paragraph-m \" type=\"email\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/prototype/journey-entry",
+    "width": 1133,
+    "beforeCaptureId": "F132-client-entry-required",
+    "afterCaptureId": "F133-client-entry-1133",
+    "sampleMutation": false,
+    "actions": [
+      "Enterinvalidlocalemaildraft; nativevalidityfalse; nosubmit."
+    ]
+  },
+  {
+    "id": "F134-portal-series-only-1133",
+    "actionId": "F134-portal-series-only-1133",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "ClientportalSeriesonly retainsseries hierarchy at1133",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" id=\"_r_25_\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Video grouping\"><span class=\"brisk-select-trigger-label\"><span>Series only</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 12px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F133-client-entry-1133",
+    "afterCaptureId": "F134-portal-series-only-1133",
+    "sampleMutation": false,
+    "actions": [
+      "ChooseSeriesonly; inspectseriesandprojectprogress."
+    ]
+  },
+  {
+    "id": "F135-portal-series-expanded",
+    "actionId": "F135-portal-series-expanded",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "KeyboardexpandCustomerStoriesseries",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<button class=\"customer-series-toggle\" type=\"button\" aria-expanded=\"true\" aria-label=\"Collapse Customer Stories series\" data-tooltip=\"Collapse series\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-right.svg&quot;); --icon-size: 16px;\"></span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F134-portal-series-only-1133",
+    "afterCaptureId": "F135-portal-series-expanded",
+    "sampleMutation": false,
+    "actions": [
+      "Enterseriesexpand."
+    ]
+  },
+  {
+    "id": "F136-portal-project-menu",
+    "actionId": "F136-portal-project-menu",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "StandaloneClientprojectactionmenu",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" aria-activedescendant=\"_r_2j_-0\" id=\"_r_2j_\" aria-label=\"Open actions for Launch Film - Sales Narrative\"><div role=\"presentation\"><button class=\"brisk-select-option label-s   \" id=\"_r_2j_-0\" tabindex=\"-1\" data-active=\"true\" type=\"button\" role=\"menuitem\"><span class=\"brisk-select-option-label\"><span><span class=\"brisk-select-option-content\">View comments and history</span></span></span></",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F135-portal-series-expanded",
+    "afterCaptureId": "F136-portal-project-menu",
+    "sampleMutation": false,
+    "actions": [
+      "Choosestandaloneonly; openLoomLaunchprojectactions."
+    ]
+  },
+  {
+    "id": "F137-portal-project-history",
+    "actionId": "F137-portal-project-history",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "Clientprojectcomments/historysecondarypanel",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<button aria-label=\"Open actions for Launch Film - Sales Narrative\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Open actions for Launch Film - Sales Narrative\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID customer-dashboard-menu-trigger\"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><spa",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F136-portal-project-menu",
+    "afterCaptureId": "F137-portal-project-history",
+    "sampleMutation": false,
+    "actions": [
+      "OpenViewcommentsandhistory; noPost."
+    ]
+  },
+  {
+    "id": "F138-portal-project-chat-loaded",
+    "actionId": "F138-portal-project-chat-loaded",
+    "coverageIds": [
+      "N099",
+      "N139"
+    ],
+    "state": "LoadedClientprojectexternalhistory andemptycomposer",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<button aria-label=\"Open actions for Launch Film - Sales Narrative\" aria-expanded=\"false\" aria-haspopup=\"menu\" type=\"button\" data-brisk-icon-button=\"\" data-size=\"S\" data-variant=\"quiet\" data-shape=\"square\" data-tooltip=\"Open actions for Launch Film - Sales Narrative\" data-tooltip-placement=\"top\" data-tooltip-align=\"end\" class=\"IconButton_button__mBRID customer-dashboard-menu-trigger\"><span class=\"IconButton_control__OS10w\" aria-hidden=\"true\"><spa",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F137-portal-project-history",
+    "afterCaptureId": "F138-portal-project-chat-loaded",
+    "sampleMutation": false,
+    "actions": [
+      "WaitforProjectchatcontent; nosend."
+    ]
+  },
+  {
+    "id": "F139-portal-queued-empty",
+    "actionId": "F139-portal-queued-empty",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "ClientportalQueuedemptyfilter at1133",
+    "role": "Customer",
+    "scenario": "client-active",
+    "focus": "<button aria-label=\"Queued. Planned next. Your Studio has not started work yet.\" data-tooltip=\"Planned next. Your Studio has not started work yet.\" type=\"button\" aria-pressed=\"true\" data-brisk-filter=\"\" class=\"QuietChoices_choice__V72PB label-s-semibold \">Queued<span class=\"QuietChoices_count__Up8L9 label-xs\">0</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F138-portal-project-chat-loaded",
+    "afterCaptureId": "F139-portal-queued-empty",
+    "sampleMutation": false,
+    "actions": [
+      "Closeprojectchat; choosezerocountQueued."
+    ]
+  },
+  {
+    "id": "F140-client-portal-staff-preview",
+    "actionId": "F140-client-portal-staff-preview",
+    "coverageIds": [
+      "N099"
+    ],
+    "state": "Staffpreviewportalbannerandcontext",
+    "role": "Studio Staff",
+    "scenario": "client-active",
+    "focus": "<summary class=\"label-xs\">Test mode<span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&quot;); --icon-size: 16px;\"></span></summary>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/workspaces/northstar-films/clients/loom/portal",
+    "width": 1133,
+    "beforeCaptureId": "F139-portal-queued-empty",
+    "afterCaptureId": "F140-client-portal-staff-preview",
+    "sampleMutation": false,
+    "actions": [
+      "TemporaryroleStudioStaffin8766; closeddemomenu."
+    ]
+  },
+  {
+    "id": "F141-plan-frequency-lead-verification",
+    "actionId": "F141-plan-frequency-lead-verification",
+    "coverageIds": [
+      "N127"
+    ],
+    "state": "Leadverificationbillingfrequencygroupclips40pxbuttonsinto2pxheight",
+    "role": "Studio Staff",
+    "scenario": "client-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Close</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/settings/plan-billing",
+    "width": 1440,
+    "beforeCaptureId": "F140-client-portal-staff-preview",
+    "afterCaptureId": "F141-plan-frequency-lead-verification",
+    "sampleMutation": false,
+    "actions": [
+      "OpenChangeplanat1440; measuredgroupheight2overflowhidden."
+    ]
+  },
+  {
+    "id": "F142-clean-history",
+    "actionId": "F142-clean-history",
+    "coverageIds": [
+      "N084"
+    ],
+    "state": "Cleanisolatedfixturehistorymenu",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<div class=\"brisk-select-options\" role=\"menu\" tabindex=\"-1\" id=\"_r_r_\" aria-label=\"Recent pages\"></div>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F141-plan-frequency-lead-verification",
+    "afterCaptureId": "F142-clean-history",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Loadstudio-owner-active resets8766only; openRecentpagesbeforefurthernavigation."
+    ]
+  },
+  {
+    "id": "F143-todo-planned-sample",
+    "actionId": "F143-todo-planned-sample",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Draggingprojectintodaycreates2hUnspecifiedplannedblock",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530511545\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F142-clean-history",
+    "afterCaptureId": "F143-todo-planned-sample",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: DragHimsprojectcardtoMondayTodoat650400; creates2hplanned."
+    ]
+  },
+  {
+    "id": "F144-todo-done-sample",
+    "actionId": "F144-todo-done-sample",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "DragplannedblockintoDoneupdatesdailyandweektotals",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530511545\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F143-todo-planned-sample",
+    "afterCaptureId": "F144-todo-done-sample",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: Drag2hblockfromMondayTodo toMondayDone; noexternalbilling."
+    ]
+  },
+  {
+    "id": "F145-todo-sample-saved",
+    "actionId": "F145-todo-sample-saved",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Stageandhourssavedtodoneblock",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530511545\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F144-todo-done-sample",
+    "afterCaptureId": "F145-todo-sample-saved",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: selectScriptand1.5h; keyboardSave; inspecttotalsandnamedblock."
+    ]
+  },
+  {
+    "id": "F146-todo-full-height-1133",
+    "actionId": "F146-todo-full-height-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "PopulatedToDo1133 full-heightretainedcapture",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530511545\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "beforeCaptureId": "F145-todo-sample-saved",
+    "afterCaptureId": "F146-todo-full-height-1133",
+    "sampleMutation": false,
+    "actions": [
+      "VerifiedtabCDPcapturesfull1133x1000; earlierwrappercapturesretainvisibleextentonly."
+    ]
+  },
+  {
+    "id": "F147-simple-shoot-1133",
+    "actionId": "F147-simple-shoot-1133",
+    "coverageIds": [
+      "N112",
+      "N113"
+    ],
+    "state": "Simple shoot opens consolidated Shoot day at1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530777944\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F146-todo-full-height-1133",
+    "afterCaptureId": "F147-simple-shoot-1133",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: SelectSimpleShoot andStartmanuallyin8766; existingdatapreservedwithinfixture."
+    ]
+  },
+  {
+    "id": "F148-onset-completion",
+    "actionId": "F148-onset-completion",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "CompletingCrewcalladvancesNow/Next",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input aria-label=\"Mark Crew call and gear unload as not complete\" type=\"checkbox\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F147-simple-shoot-1133",
+    "afterCaptureId": "F148-onset-completion",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: keyboardSpaceCrewcallcompletion; inspectNowposition."
+    ]
+  },
+  {
+    "id": "F149-simple-shoot-day-selector",
+    "actionId": "F149-simple-shoot-day-selector",
+    "coverageIds": [
+      "N112",
+      "N115"
+    ],
+    "state": "SimpleShootdayselector withtwoexistingdays",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"brisk-select-trigger label-s  shoot-on-set-global-day-trigger\" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"true\" aria-haspopup=\"listbox\" aria-label=\"Choose shoot day\" aria-controls=\"_r_i_\" aria-activedescendant=\"_r_i_-0\"><span class=\"brisk-select-trigger-label\"><span class=\"label-xs-semibold\">Day 1 of 2</span><strong>13 August, 2026</strong></span><span aria-hidden=\"true\" class=\"ds-icon\" s",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F148-onset-completion",
+    "afterCaptureId": "F149-simple-shoot-day-selector",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: undoCrewcallcompletionbySpace; openshootdayselector."
+    ]
+  },
+  {
+    "id": "F150-onset-shot-captured",
+    "actionId": "F150-onset-shot-captured",
+    "coverageIds": [
+      "N115"
+    ],
+    "state": "Shotcapturecheckboxupdatesprogress",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530777944\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&view=on-set&day=day-1",
+    "width": 1133,
+    "beforeCaptureId": "F149-simple-shoot-day-selector",
+    "afterCaptureId": "F150-onset-shot-captured",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: SpaceMarkshot4.1captured; noapprovalsend."
+    ]
+  },
+  {
+    "id": "F151-schedule-drag-add-dialog",
+    "actionId": "F151-schedule-drag-add-dialog",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "MovingexistingentryalsoopensblankAddtoscheduledialog",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input required=\"\" placeholder=\"e.g. Lighting and camera setup\" value=\"\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F150-onset-shot-captured",
+    "afterCaptureId": "F151-schedule-drag-add-dialog",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: DragCrewcallfrom7:30down40px; entrymoves8:00andblankAddtoscheduledialogappearsat8:00."
+    ]
+  },
+  {
+    "id": "F152-schedule-resize-feedback",
+    "actionId": "F152-schedule-resize-feedback",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "Resizechangesdurationinthedaytimeline",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<input required=\"\" placeholder=\"e.g. Lighting and camera setup\" value=\"\">",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F151-schedule-drag-add-dialog",
+    "afterCaptureId": "F152-schedule-resize-feedback",
+    "sampleMutation": true,
+    "actions": [
+      "SAMPLE MUTATION: DragCrewcallbottomhandle32px; inspectnewdurationanddialogstate."
+    ]
+  },
+  {
+    "id": "F153-schedule-drag-after-cancel",
+    "actionId": "F153-schedule-drag-after-cancel",
+    "coverageIds": [
+      "N114"
+    ],
+    "state": "CancellingblankAdddialogkeepsmoved/resizedexistingentry",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body class=\"\"><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792530777944\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F152-schedule-resize-feedback",
+    "afterCaptureId": "F153-schedule-drag-after-cancel",
+    "sampleMutation": false,
+    "actions": [
+      "CancelblankAdddialog; Crewcallremains8:00withnewduration."
+    ]
+  },
+  {
+    "id": "F154-schedule-delete-guard",
+    "actionId": "F154-schedule-delete-guard",
+    "coverageIds": [
+      "N113",
+      "N114"
+    ],
+    "state": "Scheduleitemdeleteconfirmationwithoutconfirming",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep it</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=schedule&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F153-schedule-drag-after-cancel",
+    "afterCaptureId": "F154-schedule-delete-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenexistingentryDeleteguard; noDeleteconfirmed."
+    ]
+  },
+  {
+    "id": "F155-shoot-person-remove-guard",
+    "actionId": "F155-shoot-person-remove-guard",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "PersonremovalconfirmationnamesJordanandkeepsparentdraft",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep person</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=people&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F154-schedule-delete-guard",
+    "afterCaptureId": "F155-shoot-person-remove-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenJordancontactDeleteguard; noYesremove."
+    ]
+  },
+  {
+    "id": "F156-location-remove-guard",
+    "actionId": "F156-location-remove-guard",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "Locationremovalconfirmationnamestheexistinglocation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Keep location</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=locations&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F155-shoot-person-remove-guard",
+    "afterCaptureId": "F156-location-remove-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenPrecinctStudio2Deleteguard; noYesremove."
+    ]
+  },
+  {
+    "id": "F157-shot-delete-guard",
+    "actionId": "F157-shot-delete-guard",
+    "coverageIds": [
+      "N113"
+    ],
+    "state": "ShotdeleteconfirmationnamesFounderinterview",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"secondary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Cancel</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/projects/loom-launch-film/stages/shoot?section=shots&day=day-1",
+    "width": 1440,
+    "beforeCaptureId": "F156-location-remove-guard",
+    "afterCaptureId": "F157-shot-delete-guard",
+    "sampleMutation": false,
+    "actions": [
+      "OpenDeleteShotguard; do notDelete."
+    ]
+  },
+  {
+    "id": "F158-todo-horizontal-pan",
+    "actionId": "F158-todo-horizontal-pan",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "HorizontalpanreachesFridaywithoutshrinkingdaygrid",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"To Do\" href=\"/today\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/check-circle.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">To Do</span></a>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1440,
+    "beforeCaptureId": "F157-shot-delete-guard",
+    "afterCaptureId": "F158-todo-horizontal-pan",
+    "sampleMutation": false,
+    "actions": [
+      "Nativehorizontalpanovertheweek; recordactualscrollcontainers."
+    ]
+  },
+  {
+    "id": "F159-todo-horizontal-pan-1133",
+    "actionId": "F159-todo-horizontal-pan-1133",
+    "coverageIds": [
+      "N094"
+    ],
+    "state": "Narrowdesktopweekpanandnestedscrollboundaries",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<a class=\"hybrid-navigation-link label-s-semibold is-active\" aria-label=\"To Do\" href=\"/today\" aria-current=\"page\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/check-circle.svg&quot;); --icon-size: 20px;\"></span><span class=\"hybrid-navigation-copy\">To Do</span></a>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/today",
+    "width": 1133,
+    "beforeCaptureId": "F158-todo-horizontal-pan",
+    "afterCaptureId": "F159-todo-horizontal-pan-1133",
+    "sampleMutation": false,
+    "actions": [
+      "1133horizontalpan; preservegridminimum; noFridayinaccessibleclaim."
+    ]
+  },
+  {
+    "id": "F160-freelancer-commercial-profile",
+    "actionId": "F160-freelancer-commercial-profile",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "StaffviewofFreelancercommercialratesandinvoicehistory",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_o_-tab-5\" aria-selected=\"true\" aria-controls=\"_r_o_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Commercial</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl",
+    "width": 1440,
+    "beforeCaptureId": "F159-todo-horizontal-pan-1133",
+    "afterCaptureId": "F160-freelancer-commercial-profile",
+    "sampleMutation": false,
+    "actions": [
+      "PeopleFreelancers>Jordanprofile>Commercial; no ratechange."
+    ]
+  },
+  {
+    "id": "F161-freelancer-profile-access",
+    "actionId": "F161-freelancer-profile-access",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "StaffviewofFreelancerassignedprojectaccess",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_o_-tab-4\" aria-selected=\"true\" aria-controls=\"_r_o_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Access</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl",
+    "width": 1440,
+    "beforeCaptureId": "F160-freelancer-commercial-profile",
+    "afterCaptureId": "F161-freelancer-profile-access",
+    "sampleMutation": false,
+    "actions": [
+      "SelectAccess; noPauseorrolechange."
+    ]
+  },
+  {
+    "id": "F162-client-contact-access",
+    "actionId": "F162-client-contact-access",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "StaffviewofClientcontactaccessandvisibilityexplanation",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_o_-tab-2\" aria-selected=\"true\" aria-controls=\"_r_o_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Access</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "width": 1440,
+    "beforeCaptureId": "F161-freelancer-profile-access",
+    "afterCaptureId": "F162-client-contact-access",
+    "sampleMutation": false,
+    "actions": [
+      "PeopleClientcontacts>Jess>Access; noaccesschange."
+    ]
+  },
+  {
+    "id": "F163-existing-client-access-editor",
+    "actionId": "F163-existing-client-access-editor",
+    "coverageIds": [
+      "N096",
+      "N097"
+    ],
+    "state": "ExistingClientcontactaccessstep andexplicitno-duplicatecopy",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"S\" class=\"Button_button__tsZAT label-s-semibold \">Send invite</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "width": 1440,
+    "beforeCaptureId": "F162-client-contact-access",
+    "afterCaptureId": "F163-existing-client-access-editor",
+    "sampleMutation": false,
+    "actions": [
+      "Manageaccess>Next; inspectlocalprojectaccessdraft; nosaveorsend."
+    ]
+  },
+  {
+    "id": "F164-client-contact-access-1133",
+    "actionId": "F164-client-contact-access-1133",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "ClientcontactAccessat1133aftercancellingdraft",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button type=\"button\" data-tooltip=\"Choose which projects they can open.\" aria-description=\"Choose which projects they can open.\" data-brisk-button=\"\" data-variant=\"primary\" data-size=\"M\" class=\"Button_button__tsZAT label-m-semibold \"><span class=\"people-button-content\"><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/plus.svg&quot;); --icon-size: 16px;\"></span> Manage access</span></button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/client-jess",
+    "width": 1133,
+    "beforeCaptureId": "F163-existing-client-access-editor",
+    "afterCaptureId": "F164-client-contact-access-1133",
+    "sampleMutation": false,
+    "actions": [
+      "BackthenCancelexistingaccessdraft; narrowdesktopprofile."
+    ]
+  },
+  {
+    "id": "F165-freelancer-commercial-1133",
+    "actionId": "F165-freelancer-commercial-1133",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "FreelancerCommercialratehistoryat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531624121\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F164-client-contact-access-1133",
+    "afterCaptureId": "F165-freelancer-commercial-1133",
+    "sampleMutation": false,
+    "actions": [
+      "KnownprofilequeryopensCommercial; nostoreddatachange."
+    ]
+  },
+  {
+    "id": "F166-freelancer-profile-work",
+    "actionId": "F166-freelancer-profile-work",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "Freelancerprofilecurrentworklistat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_n_-tab-1\" aria-selected=\"true\" aria-controls=\"_r_n_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Work</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F165-freelancer-commercial-1133",
+    "afterCaptureId": "F166-freelancer-profile-work",
+    "sampleMutation": false,
+    "actions": [
+      "OpenWork; noassignmentchange."
+    ]
+  },
+  {
+    "id": "F167-freelancer-profile-hours",
+    "actionId": "F167-freelancer-profile-hours",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "Freelancerprofilehourssummaryat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_n_-tab-2\" aria-selected=\"true\" aria-controls=\"_r_n_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Hours</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F166-freelancer-profile-work",
+    "afterCaptureId": "F167-freelancer-profile-hours",
+    "sampleMutation": false,
+    "actions": [
+      "OpenHours; notimeentrysaved."
+    ]
+  },
+  {
+    "id": "F168-freelancer-profile-skills",
+    "actionId": "F168-freelancer-profile-skills",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "Freelancerprofileskillsandportfolioat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_n_-tab-3\" aria-selected=\"true\" aria-controls=\"_r_n_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Skills</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F167-freelancer-profile-hours",
+    "afterCaptureId": "F168-freelancer-profile-skills",
+    "sampleMutation": false,
+    "actions": [
+      "OpenSkills; nofieldchange."
+    ]
+  },
+  {
+    "id": "F169-freelancer-profile-activity",
+    "actionId": "F169-freelancer-profile-activity",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "FreelancerprofileNotesandactivityat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"QuietChoices_choice__V72PB QuietChoices_tab__hHk1I label-s-semibold\" type=\"button\" role=\"tab\" id=\"_r_n_-tab-6\" aria-selected=\"true\" aria-controls=\"_r_n_-panel\" tabindex=\"0\" data-brisk-tab=\"\">Notes and activity</button>",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F168-freelancer-profile-skills",
+    "afterCaptureId": "F169-freelancer-profile-activity",
+    "sampleMutation": false,
+    "actions": [
+      "OpenNotesandactivity; nonoteposted."
+    ]
+  },
+  {
+    "id": "F170-person-invitation-history-empty",
+    "actionId": "F170-person-invitation-history-empty",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "Freelancerinvitationhistoryfilteremptywithrecovery",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<button class=\"brisk-select-trigger label-s  \" data-brisk-select-placeholder-tone=\"hint\" type=\"button\" role=\"combobox\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-label=\"Filter events\" aria-description=\"Show one type of activity.\" data-tooltip=\"Show one type of activity.\"><span class=\"brisk-select-trigger-label\"><span>Invitations</span></span><span aria-hidden=\"true\" class=\"ds-icon\" style=\"--icon-url: url(&quot;/brisk-icons/caret-down.svg&",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/jl?section=Commercial",
+    "width": 1133,
+    "beforeCaptureId": "F169-freelancer-profile-activity",
+    "afterCaptureId": "F170-person-invitation-history-empty",
+    "sampleMutation": false,
+    "actions": [
+      "ChooseInvitationsfilter; noinvitationaction."
+    ]
+  },
+  {
+    "id": "F171-staff-invitation-history-populated",
+    "actionId": "F171-staff-invitation-history-populated",
+    "coverageIds": [
+      "N096"
+    ],
+    "state": "PendingStaffinvitationhistoryeventat1133",
+    "role": "Studio Staff",
+    "scenario": "studio-owner-active",
+    "focus": "<body><div hidden=\"\"><!--$--><!--/$--></div><!--$--><!--/$--><script src=\"/_next/static/chunks/webpack.js?v=1792531694445\" id=\"_R_\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,\"7:I[\\\"(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/segment-explorer-node.js\\\",[\\\"app-pages-internals\\\",\\\"static/chunks/app-pages-internals.js\\\"],\\\"SegmentViewNode\\\"]\\n9:\\\"$Sreact.fr",
+    "height": 1000,
+    "url": "http://127.0.0.1:8766/people/editor?section=Notes%20and%20activity",
+    "width": 1133,
+    "beforeCaptureId": "F170-person-invitation-history-empty",
+    "afterCaptureId": "F171-staff-invitation-history-populated",
+    "sampleMutation": false,
+    "actions": [
+      "OpenexistingpendingEditorNotesandactivity; noResendorCancelinvitation."
+    ]
+  }
+]

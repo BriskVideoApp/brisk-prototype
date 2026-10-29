@@ -1,0 +1,4814 @@
+{
+  "version": 1,
+  "purpose": "Deduplicated proposed nested-workflow denominator for lead master coverage. 53 workflow groups; no named component count inflation. Stable IDs retained from source inventory, with additions N129+.",
+  "groups": [
+    {
+      "id": "N084",
+      "name": "Global history menu",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Recent pages, Back and Forward",
+      "finiteSafeStates": [
+        {
+          "id": "N084-S01",
+          "label": "empty history",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N084-S02",
+          "label": "native-link rows",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N084-S03",
+          "label": "Home/End/Arrow keys",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N084-S04",
+          "label": "Escape returns opener",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Clear or otherwise rewrite history"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/navigation/GlobalHistoryNavigation.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N085",
+      "name": "Account menu",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Sidebar avatar",
+      "finiteSafeStates": [
+        {
+          "id": "N085-S01",
+          "label": "role-appropriate personal/company links",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N085-S02",
+          "label": "outside dismissal",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N085-S03",
+          "label": "keyboard focus",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Sign out or change account/workspace"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/navigation/UserAvatarMenu.tsx:1",
+        "src/components/navigation/AppShell.tsx:102",
+        "src/components/navigation/HybridSidebar.tsx:113"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N086",
+      "name": "Test mode role/scenario controls",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Sidebar footer Test mode",
+      "finiteSafeStates": [
+        {
+          "id": "N086-S01",
+          "label": "three role choices",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N086-S02",
+          "label": "current scenario",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N086-S03",
+          "label": "avoid activating scenario reset",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Choosing a scenario can reset/replace persisted workspace records; scenario options source-reviewed only"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/prototype-scenarios/PrototypeScenarioToolbar.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N087",
+      "name": "Global Updates popover",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Top-right Updates",
+      "finiteSafeStates": [
+        {
+          "id": "N087-S01",
+          "label": "unread/all",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N087-S02",
+          "label": "empty",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N087-S03",
+          "label": "notification action menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N087-S04",
+          "label": "do not mark read manually",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Mark read/unread, dismiss or notification response"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/navigation/GlobalHeaderActions.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N088",
+      "name": "Global Chat drawer",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Top-right Chat",
+      "finiteSafeStates": [
+        {
+          "id": "N088-S01",
+          "label": "project picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N088-S02",
+          "label": "Internal/External content",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N088-S03",
+          "label": "settings",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N088-S04",
+          "label": "close/Escape",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N088-S05",
+          "label": "automatic read side effect source-review",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Opening a conversation may auto-mark it read; inspect automatic-read side effects before entering",
+        "Send/edit/delete a message or change a connector"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/navigation/AppShell.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N089",
+      "name": "Ask Brisk drawer",
+      "routeIds": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006",
+        "R007",
+        "R008",
+        "R009",
+        "R010",
+        "R011",
+        "R012",
+        "R013",
+        "R014",
+        "R015",
+        "R016",
+        "R017",
+        "R018",
+        "R019",
+        "R020",
+        "R021",
+        "R022",
+        "R023",
+        "R024",
+        "R025",
+        "R026",
+        "R027",
+        "R028",
+        "R029",
+        "R030",
+        "R031",
+        "R032",
+        "R033",
+        "R034",
+        "R035",
+        "R036",
+        "R037",
+        "R038",
+        "R039",
+        "R040",
+        "R041",
+        "R042",
+        "R043",
+        "R044",
+        "R045",
+        "R046",
+        "R047",
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057",
+        "R058",
+        "R059",
+        "R060",
+        "R061"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Top-right Ask Brisk",
+      "finiteSafeStates": [
+        {
+          "id": "N089-S01",
+          "label": "history",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N089-S02",
+          "label": "Add source menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N089-S03",
+          "label": "Media/source picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N089-S04",
+          "label": "prompt chips",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N089-S05",
+          "label": "minimise",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N089-S06",
+          "label": "no submit",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Submit a prompt or attach/import a source"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/ai/BriskAiAssistant.tsx:1",
+        "src/components/ai/BriskAiAssistant.tsx:914"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N090",
+      "name": "Videos filters and status fields",
+      "routeIds": [
+        "R001"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Filter row and table status",
+      "finiteSafeStates": [
+        {
+          "id": "N090-S01",
+          "label": "status/client/stage/assignee filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N090-S02",
+          "label": "no results",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N090-S03",
+          "label": "clear",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N090-S04",
+          "label": "Staff status picker; do not select saved status",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N090-S05",
+          "label": "Client read-only status",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Choose saved table status; edit tags; persist column preferences beyond temporary restored view"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/active-videos/ActiveVideosPage.tsx:1",
+        "src/components/active-videos/ActiveVideosPage.tsx:677",
+        "src/components/active-videos/ActiveVideosPage.tsx:827"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N091",
+      "name": "Project details drawer",
+      "routeIds": [
+        "R001"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Click project row or ?project=loom-launch-film",
+      "finiteSafeStates": [
+        {
+          "id": "N091-S01",
+          "label": "Overview/Team",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S02",
+          "label": "deadline popover",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S03",
+          "label": "status",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S04",
+          "label": "tags",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S05",
+          "label": "hours breakdown",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S06",
+          "label": "progress",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S07",
+          "label": "Copy link settings",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S08",
+          "label": "next/previous",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N091-S09",
+          "label": "read-only footer",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save status, Mark complete, Archive, change deadline/tags or shared access"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/active-videos/ActiveVideosPage.tsx:1",
+        "src/components/active-videos/ActiveVideosPage.tsx:841",
+        "src/components/active-videos/ActiveVideosPage.tsx:1201",
+        "src/components/active-videos/ActiveVideosPage.tsx:1623"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E003-team-drawer-1440",
+          "state": "Team section expanded; other sections still unverified",
+          "role": "Studio Staff",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N092",
+      "name": "Team role assignment editor",
+      "routeIds": [
+        "R001"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Project drawer Team > Edit role/Add role",
+      "finiteSafeStates": [
+        {
+          "id": "N092-S01",
+          "label": "Staff vs Freelancers",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S02",
+          "label": "search",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S03",
+          "label": "selected/disabled person",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S04",
+          "label": "Staff hours",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S05",
+          "label": "Freelancer project rate",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S06",
+          "label": "invitation history",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S07",
+          "label": "Save role separate from Assign/Send",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N092-S08",
+          "label": "remove-role confirmation; cancel only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Assign Staff, Save role/hours/rates, Send invitation, resend/withdraw, remove role or save stages"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/project/team/RoleEditorModal.tsx:1",
+        "src/components/active-videos/ActiveVideosPage.tsx:1490",
+        "src/components/project/team/TeamPanel.tsx:554"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E004-team-role-editor-1440",
+          "state": "Default Shooter editor",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E005-team-staff-1440",
+          "state": "Staff choice view",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E006-team-staff-1133",
+          "state": "Staff choice at 1133",
+          "role": "Studio Staff",
+          "width": 1133
+        },
+        {
+          "id": "E007-team-staff-expanded-1133",
+          "state": "Show all Staff expansion",
+          "role": "Studio Staff",
+          "width": 1133
+        },
+        {
+          "id": "E008-team-freelancers-1133",
+          "state": "Freelancer rates/invitation view",
+          "role": "Studio Staff",
+          "width": 1133
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N094",
+      "name": "Today week/time entry",
+      "routeIds": [
+        "R060",
+        "R018"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "To Do week controls, empty calendar slot/entry",
+      "finiteSafeStates": [
+        {
+          "id": "N094-S01",
+          "label": "viewing selector",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N094-S02",
+          "label": "week/date navigation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N094-S03",
+          "label": "project/stage/hour selection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N094-S04",
+          "label": "existing entry editor",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N094-S05",
+          "label": "completion/uncompletion; source only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N094-S06",
+          "label": "current-user vs other-person read-only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save/add/delete/complete time entry; drag/resize entries; select persistent capacity defaults"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/today/TodayPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N095",
+      "name": "People directory views",
+      "routeIds": [
+        "R020"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "All/Staff/Freelancers/Client contacts/Archived",
+      "finiteSafeStates": [
+        {
+          "id": "N095-S01",
+          "label": "search/sort",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N095-S02",
+          "label": "no results",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N095-S03",
+          "label": "capacity workload dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N095-S04",
+          "label": "project + more links",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N095-S05",
+          "label": "view-specific invitation defaults",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N095-S06",
+          "label": "non-Staff private directory",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Send invitation or archive record"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/people/PeoplePage.tsx:1",
+        "src/components/people/PeoplePage.tsx:161"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N096",
+      "name": "People profile sections",
+      "routeIds": [
+        "R019"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "People row > Details/Work/Access",
+      "finiteSafeStates": [
+        {
+          "id": "N096-S01",
+          "label": "type-specific details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S02",
+          "label": "inline editors",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S03",
+          "label": "current work",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S04",
+          "label": "rate/history",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S05",
+          "label": "project access",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S06",
+          "label": "invitation history",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N096-S07",
+          "label": "archive/delete/remove-access confirmations; cancel only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save profile/rate/access; assign person; archive/delete/remove access"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/people/PersonProfilePage.tsx:1",
+        "src/components/people/PersonProfilePage.tsx:45",
+        "src/components/people/PersonProfilePage.tsx:122",
+        "src/components/people/PersonProfilePage.tsx:123",
+        "src/components/people/PersonProfilePage.tsx:124",
+        "src/components/people/PersonProfilePage.tsx:125"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N097",
+      "name": "Invitation wizard",
+      "routeIds": [
+        "R020",
+        "R008",
+        "R007"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Invite person / Invite colleague",
+      "finiteSafeStates": [
+        {
+          "id": "N097-S01",
+          "label": "three access roles",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N097-S02",
+          "label": "name/email validation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N097-S03",
+          "label": "Client selection and inline creation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N097-S04",
+          "label": "project checklists all/mixed/none",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N097-S05",
+          "label": "back/cancel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N097-S06",
+          "label": "Send not activated",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Send invitation or create Client/person"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/invitations/InvitePersonModal.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N098",
+      "name": "Client profile contacts/work",
+      "routeIds": [
+        "R007"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Clients > Loom > Contacts/Work",
+      "finiteSafeStates": [
+        {
+          "id": "N098-S01",
+          "label": "company/details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N098-S02",
+          "label": "contacts",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N098-S03",
+          "label": "project access dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N098-S04",
+          "label": "Start project",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N098-S05",
+          "label": "archive/delete confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N098-S06",
+          "label": "Staff portal preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save company/contact/access; start project; archive/delete Client"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/clients/ClientProfilePage.tsx:1",
+        "src/components/clients/ClientProfilePage.tsx:50",
+        "src/components/clients/ClientProfilePage.tsx:163",
+        "src/components/clients/ClientProfilePage.tsx:174",
+        "src/components/clients/ClientProfilePage.tsx:186",
+        "src/components/clients/ClientsPage.tsx:206"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N099",
+      "name": "Client portal queue",
+      "routeIds": [
+        "R061"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "entryPath": "Customer Videos or Staff Open Client portal",
+      "finiteSafeStates": [
+        {
+          "id": "N099-S01",
+          "label": "grouping All/Series/Standalone",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S02",
+          "label": "status filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S03",
+          "label": "series expansion",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S04",
+          "label": "project actions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S05",
+          "label": "activity secondary panel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S06",
+          "label": "Client vs preview banner",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N099-S07",
+          "label": "Start Video not submitted",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Start/create Video; reorder/expand series if it persists without a reversible restoration record",
+        "Automatic chat/read effects"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/customer-dashboard/CustomerDashboard.tsx:1",
+        "src/components/customer-dashboard/CustomerDashboard.tsx:911",
+        "src/components/customer-dashboard/CustomerDashboard.tsx:1095",
+        "src/components/customer-dashboard/CustomerDashboard.tsx:1247"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E014-client-loom-ready",
+          "state": "Jess Taylor Loom portal default; nested controls not covered",
+          "role": "Customer",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N100",
+      "name": "Media filter and selection toolbar",
+      "routeIds": [
+        "R013",
+        "R029"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Media Library or project Media",
+      "finiteSafeStates": [
+        {
+          "id": "N100-S01",
+          "label": "client/project scope",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S02",
+          "label": "Media/Masters/Archived",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S03",
+          "label": "kind/transcript/people filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S04",
+          "label": "sort",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S05",
+          "label": "selected-file menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S06",
+          "label": "scoped bulk download",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S07",
+          "label": "no global Download all",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N100-S08",
+          "label": "no-results",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Download/export; move/archive/delete assets; change saved visibility/access"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/media/MediaBrowser.tsx:1",
+        "src/components/media/MediaBrowser.tsx:362",
+        "src/components/media/MediaBrowser.tsx:363",
+        "src/components/media/MediaBrowser.tsx:364"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E009-media-library-1440",
+          "state": "Global default",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E012-media-hidden-selection",
+          "state": "Filtered selection state",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E016-project-media-filtered-selection",
+          "state": "Project filtered selection",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E017-project-media-delete-scope",
+          "state": "Delete confirmation opened but not confirmed",
+          "role": "Studio Staff",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N101",
+      "name": "Media folder tree menus",
+      "routeIds": [
+        "R013",
+        "R029"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Folder menu/row",
+      "finiteSafeStates": [
+        {
+          "id": "N101-S01",
+          "label": "expand/collapse",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N101-S02",
+          "label": "new folder",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N101-S03",
+          "label": "rename",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N101-S04",
+          "label": "delete confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N101-S05",
+          "label": "move target",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N101-S06",
+          "label": "read-only capability branches",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Create/rename/delete/move folders or assets"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/media/MediaFolderTree.tsx:1",
+        "src/components/media/MediaFolderTree.tsx:33"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N102",
+      "name": "Media asset details/comments",
+      "routeIds": [
+        "R012",
+        "R029"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Click asset",
+      "finiteSafeStates": [
+        {
+          "id": "N102-S01",
+          "label": "Details/Comments",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S02",
+          "label": "player/image/document preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S03",
+          "label": "technical source information",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S04",
+          "label": "unavailable original",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S05",
+          "label": "failed/processing",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S06",
+          "label": "internal vs external comments",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N102-S07",
+          "label": "no comment send",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Rename asset; send comment; retry processing; download original"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/media/MediaAssetDrawer.tsx:1",
+        "src/components/media/MediaBrowser.tsx:357"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E011-media-keyboard-after",
+          "state": "Inspector opened by unintended checkbox keyboard action; Details/Comments content still unverified",
+          "role": "Studio Staff",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N103",
+      "name": "Media upload source menu",
+      "routeIds": [
+        "R029"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Project Media Upload",
+      "finiteSafeStates": [
+        {
+          "id": "N103-S01",
+          "label": "Upload file",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N103-S02",
+          "label": "cloud-source selection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N103-S03",
+          "label": "cloud picker search/list",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N103-S04",
+          "label": "disabled import",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N103-S05",
+          "label": "cancel without selecting/importing file",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Choose/upload/import a file or connect provider"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/media/MediaUploadMenu.tsx:1",
+        "src/components/media/MediaBrowser.tsx:268",
+        "src/components/media/MediaBrowser.tsx:309"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N104",
+      "name": "Brief field and summary panels",
+      "routeIds": [
+        "R026"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Brief Summary/Questions",
+      "finiteSafeStates": [
+        {
+          "id": "N104-S01",
+          "label": "question navigation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S02",
+          "label": "confidence/missing field",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S03",
+          "label": "specialised choice fields",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S04",
+          "label": "Brand Kit picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S05",
+          "label": "AI clarification Edit/Delete menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S06",
+          "label": "approval/readiness warning",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N104-S07",
+          "label": "do not type auto-saving values",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Typing Brief question fields or clarification can auto-save; do not change stored draft",
+        "Approve/unapprove or submit review"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/brief/BriefPage.tsx:1",
+        "src/components/brief/BriefPage.tsx:1152"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E015-client-direct-deel",
+          "state": "Direct cross-Client access defect, not complete Brief coverage",
+          "role": "Customer",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N105",
+      "name": "Share link access panel",
+      "routeIds": [
+        "R026",
+        "R030"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage menu Copy link; open panel only",
+      "finiteSafeStates": [
+        {
+          "id": "N105-S01",
+          "label": "scope choices",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N105-S02",
+          "label": "view/comment/download access",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N105-S03",
+          "label": "link audience",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N105-S04",
+          "label": "copy disabled conditions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N105-S05",
+          "label": "do not copy or save access",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save access, Copy link or generate a new link"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/share/ShareActionRow.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N106",
+      "name": "Stage Send confirmation",
+      "routeIds": [
+        "R026",
+        "R030",
+        "R025",
+        "R031"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage action menu Send",
+      "finiteSafeStates": [
+        {
+          "id": "N106-S01",
+          "label": "recipient",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N106-S02",
+          "label": "message",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N106-S03",
+          "label": "stage-specific request details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N106-S04",
+          "label": "default message setting link",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N106-S05",
+          "label": "cancel; do not submit",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Send/re-send/remind request"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/share/ShareActionRow.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N107",
+      "name": "Stage approve/unapprove confirmations",
+      "routeIds": [
+        "R026",
+        "R030",
+        "R025",
+        "R031",
+        "R027",
+        "R028"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Stage approval command",
+      "finiteSafeStates": [
+        {
+          "id": "N107-S01",
+          "label": "disabled reason",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N107-S02",
+          "label": "approval snapshot",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N107-S03",
+          "label": "unapproval consequences",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N107-S04",
+          "label": "confirmation only; do not complete",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Confirm approval/unapproval or downstream status change"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/share/ShareActionRow.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N108",
+      "name": "Script version menu",
+      "routeIds": [
+        "R025"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Version control",
+      "finiteSafeStates": [
+        {
+          "id": "N108-S01",
+          "label": "list versions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N108-S02",
+          "label": "current/selected",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N108-S03",
+          "label": "Create/Duplicate/Rename",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N108-S04",
+          "label": "historical preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N108-S05",
+          "label": "restore/delete confirmations",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N108-S06",
+          "label": "no version-changing command",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Create, Duplicate, Rename, Restore, Delete, or select Storyboard version (selected version persists)"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/script/ScriptVersionControl.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N109",
+      "name": "Script row/context/media tools",
+      "routeIds": [
+        "R025"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Row overflow, media cell, selection",
+      "finiteSafeStates": [
+        {
+          "id": "N109-S01",
+          "label": "row selection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S02",
+          "label": "insert/duplicate/delete",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S03",
+          "label": "approved edit guard",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S04",
+          "label": "media source menu four options",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S05",
+          "label": "link editor",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S06",
+          "label": "comments/reactions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S07",
+          "label": "document menu Export/Print",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N109-S08",
+          "label": "do not save content",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Edit/insert/duplicate/delete/reorder rows, send comment, upload/select media, confirm approved editing"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/script/ScriptPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N110",
+      "name": "Project transcript workspace",
+      "routeIds": [
+        "R029"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Pinned Media > Transcripts",
+      "finiteSafeStates": [
+        {
+          "id": "N110-S01",
+          "label": "clip list/search",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S02",
+          "label": "paragraph selection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S03",
+          "label": "search highlights",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S04",
+          "label": "clip menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S05",
+          "label": "download/export",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S06",
+          "label": "Send to Script selection boundary",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S07",
+          "label": "empty/processing clips",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N110-S08",
+          "label": "no send/change",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Rename/hide/delete transcript, apply highlights, send to Script, export/download"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/script-transcripts/TranscriptsPanel.tsx:1",
+        "src/components/script-transcripts/TranscriptClipBlock.tsx:131",
+        "src/components/script/ScriptPage.tsx:2190"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N111",
+      "name": "Storyboard board/AV/review",
+      "routeIds": [
+        "R031"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Storyboard Board/AV, frame Review",
+      "finiteSafeStates": [
+        {
+          "id": "N111-S01",
+          "label": "frame image menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S02",
+          "label": "four Add/Replace sources",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S03",
+          "label": "frame context commands",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S04",
+          "label": "review canvas and comment rail",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S05",
+          "label": "unavailable image",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S06",
+          "label": "versions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S07",
+          "label": "approved-edit confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N111-S08",
+          "label": "no create/update",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Create board/version, edit frame/duration, replace/remove media, draw, reorder, comment or approve"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/storyboard/StoryboardPage.tsx:1"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E018-storyboard-actions",
+          "state": "quiet action menu disabled safeguards",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E019-storyboard-review",
+          "state": "Frame review image unavailable, comment panel",
+          "role": "Studio Staff",
+          "width": 1440
+        },
+        {
+          "id": "E020-storyboard-review-1133",
+          "state": "Frame review narrower desktop",
+          "role": "Studio Staff",
+          "width": 1133
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "Staff frame review/menu has captures at 1440/1133. Keyboard/focus return, Client/Freelancer capability branches, safe creation/approved-edit confirmation, source picker menus and other nested frame/AV states still require individual evidence.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N112",
+      "name": "Shoot entry and module setup",
+      "routeIds": [
+        "R030"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Shoot dashboard > choose plan/create path",
+      "finiteSafeStates": [
+        {
+          "id": "N112-S01",
+          "label": "Quick start questions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S02",
+          "label": "attach existing plan",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S03",
+          "label": "Creative Plan",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S04",
+          "label": "Plan the Day",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S05",
+          "label": "On Set",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S06",
+          "label": "skip/restore module",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S07",
+          "label": "new vs populated state",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N112-S08",
+          "label": "avoid auto-save fields",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Answer auto-saving setup questions, build plan, attach plan, skip/restore module"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/shoot/ShootStagePage.tsx:1",
+        "src/components/shoot/ShootStagePage.tsx:1908",
+        "src/components/shoot/ShootStagePage.tsx:1909"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N113",
+      "name": "Shoot planning editors",
+      "routeIds": [
+        "R030"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Creative Plan > shot/person/location/reference",
+      "finiteSafeStates": [
+        {
+          "id": "N113-S01",
+          "label": "shot taxonomy selectors",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S02",
+          "label": "interview questions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S03",
+          "label": "image/source picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S04",
+          "label": "Existing person picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S05",
+          "label": "person/location dialogs",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S06",
+          "label": "documents",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S07",
+          "label": "delete confirmations",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S08",
+          "label": "access settings view/edit/manage",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N113-S09",
+          "label": "cancel without saving",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save shot/person/location/questions/reference; change access; confirm deletion"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/shoot/ShootStagePage.tsx:1",
+        "src/components/shoot/ShootStagePage.tsx:1822",
+        "src/components/shoot/ShootStagePage.tsx:1859",
+        "src/components/shoot/ShootStagePage.tsx:1869",
+        "src/components/shoot/ShootStagePage.tsx:1882",
+        "src/components/shoot/ShootStagePage.tsx:1883",
+        "src/components/shoot/ShootStagePage.tsx:1896",
+        "src/components/shoot/ShootStagePage.tsx:1902",
+        "src/components/shoot/ShootStagePage.tsx:1910",
+        "src/components/shoot/ShootStagePage.tsx:4345",
+        "src/components/shoot/ShootStagePage.tsx:4672",
+        "src/components/shoot/ShootStagePage.tsx:7755",
+        "src/components/shoot/ShootStagePage.tsx:8319",
+        "src/components/shoot/ShootStagePage.tsx:8334"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N114",
+      "name": "Shoot schedule and grouping",
+      "routeIds": [
+        "R030"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Plan the Day > Schedule / Unscheduled",
+      "finiteSafeStates": [
+        {
+          "id": "N114-S01",
+          "label": "day selector",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S02",
+          "label": "filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S03",
+          "label": "shot/group selection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S04",
+          "label": "Add to group menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S05",
+          "label": "Create new group inline editor",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S06",
+          "label": "AI schedule check",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S07",
+          "label": "readiness and guided missing details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N114-S08",
+          "label": "timeline drag/resize source only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Create group, move/group/unschedule shots, generate/apply schedule, mark ready"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/shoot/ShootStagePage.tsx:1",
+        "src/components/shoot/ShootStagePage.tsx:1809",
+        "src/components/shoot/ShootStagePage.tsx:2636",
+        "src/components/shoot/ShootStagePage.tsx:4642",
+        "src/components/shoot/ShootStagePage.tsx:5253",
+        "src/components/shoot/ShootStagePage.tsx:5348",
+        "src/components/shoot/ShootStagePage.tsx:5399",
+        "src/components/shoot/ShootStagePage.tsx:5759",
+        "src/components/shoot/ShootStagePage.tsx:5796",
+        "src/components/shoot/ShootStagePage.tsx:6359",
+        "src/components/shoot/ShootStagePage.tsx:2834",
+        "src/components/shoot/ShootStagePage.tsx:2841",
+        "src/components/shoot/ShootStagePage.tsx:5869"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N115",
+      "name": "Shoot On Set and Call Sheet",
+      "routeIds": [
+        "R030",
+        "R057"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "On Set substage / Open Call Sheet",
+      "finiteSafeStates": [
+        {
+          "id": "N115-S01",
+          "label": "Now/Next",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S02",
+          "label": "shoot-day selector",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S03",
+          "label": "capture status",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S04",
+          "label": "completion",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S05",
+          "label": "Call Sheet shared/print/preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S06",
+          "label": "Crew contact exposure",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N115-S07",
+          "label": "no readiness/publish submission",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Change capture/completion, publish/finalise/handover/approve Call Sheet"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/shoot/ShootStagePage.tsx:1",
+        "src/components/navigation/GlobalHeaderActions.tsx:53",
+        "src/components/shoot/ShootStagePage.tsx:2849"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N116",
+      "name": "Edit/Animation review",
+      "routeIds": [
+        "R027",
+        "R035"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Edit stage / legacy populated /review",
+      "finiteSafeStates": [
+        {
+          "id": "N116-S01",
+          "label": "empty/upload",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S02",
+          "label": "version picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S03",
+          "label": "comments filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S04",
+          "label": "timeline markers",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S05",
+          "label": "drawing tools",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S06",
+          "label": "comment composer",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S07",
+          "label": "transcript panel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S08",
+          "label": "share/review/approve",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S09",
+          "label": "readiness",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N116-S10",
+          "label": "do not mutate or send",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Upload version, send/edit/delete feedback, draw, approve/unapprove, change readiness"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/video-review/VideoReviewScreen.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N117",
+      "name": "Masters delivery tree",
+      "routeIds": [
+        "R028"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Masters deliverable row/expand",
+      "finiteSafeStates": [
+        {
+          "id": "N117-S01",
+          "label": "empty vs populated",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S02",
+          "label": "parent/child recuts",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S03",
+          "label": "asset checklist",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S04",
+          "label": "version panel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S05",
+          "label": "player",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S06",
+          "label": "SRT inspector",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S07",
+          "label": "thumbnail menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S08",
+          "label": "comment panel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S09",
+          "label": "download selector",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S10",
+          "label": "request dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S11",
+          "label": "recut brief/markup",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N117-S12",
+          "label": "draft discard/delete confirmations",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Upload/update/delete deliverable/version, change current version, submit request/recut, edit SRT/thumbnail, approve or download"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/masters/MastersPage.tsx:1",
+        "src/components/masters/MastersPage.tsx:1429",
+        "src/components/masters/MastersPage.tsx:1454",
+        "src/components/masters/MastersPage.tsx:1494",
+        "src/components/masters/MastersPage.tsx:1729",
+        "src/components/masters/MastersPage.tsx:1737",
+        "src/components/masters/MastersPage.tsx:1752",
+        "src/components/masters/MastersPage.tsx:1769"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N118",
+      "name": "Brand Kit asset management",
+      "routeIds": [
+        "R003",
+        "R002",
+        "R056"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Brand Kit tiles and asset overflow",
+      "finiteSafeStates": [
+        {
+          "id": "N118-S01",
+          "label": "setup modal/manual/AI phases",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S02",
+          "label": "motion version picker",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S03",
+          "label": "logo download dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S04",
+          "label": "colour editor",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S05",
+          "label": "font matrix",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S06",
+          "label": "Voice and Tone dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S07",
+          "label": "imagery filters/preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S08",
+          "label": "guidelines preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S09",
+          "label": "sub-brand create",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S10",
+          "label": "selection menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S11",
+          "label": "delete confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N118-S12",
+          "label": "guest read-only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Upload/replace/delete/rename/reorder asset, change primary, move assets, save colour/fonts/tone, complete setup, download"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/brand-kits/BrandKitPages.tsx:1",
+        "src/components/brand-kits/BrandKitPages.tsx:2188",
+        "src/components/brand-kits/BrandKitPages.tsx:2200",
+        "src/components/brand-kits/BrandKitPages.tsx:2212",
+        "src/components/brand-kits/BrandKitPages.tsx:2230",
+        "src/components/brand-kits/BrandKitPages.tsx:2245",
+        "src/components/brand-kits/BrandKitPages.tsx:2271",
+        "src/components/brand-kits/BrandKitPages.tsx:2274"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N119",
+      "name": "Expenses review",
+      "routeIds": [
+        "R017",
+        "R022"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Invoice row > review",
+      "finiteSafeStates": [
+        {
+          "id": "N119-S01",
+          "label": "invoice file list/preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S02",
+          "label": "offer comparison mismatch",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S03",
+          "label": "Approve",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S04",
+          "label": "Forward",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S05",
+          "label": "Send back reason",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S06",
+          "label": "mark Paid control; no activation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S07",
+          "label": "multiple PDF attachments",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N119-S08",
+          "label": "restricted roles",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Mark Paid, approve, send back, forward/send invoice or upload invoice"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/costs/CostsPrimitives.tsx:1",
+        "src/components/costs/OutstandingInvoicesPage.tsx:128",
+        "src/components/costs/ProjectCostsPage.tsx:172"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N120",
+      "name": "Personal settings",
+      "routeIds": [
+        "R043",
+        "R042",
+        "R044"
+      ],
+      "applicableRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "entryPath": "Account menu",
+      "finiteSafeStates": [
+        {
+          "id": "N120-S01",
+          "label": "profile details and freelancer rates",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N120-S02",
+          "label": "notification channel/group toggles; no saved changes",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N120-S03",
+          "label": "Security authentication variants",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N120-S04",
+          "label": "change password dialog",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N120-S05",
+          "label": "read-only Studio details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save profile/security/notification/rate change; update any immediate toggle"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/PersonalProfilePage.tsx:1",
+        "src/components/settings/PersonalSecurityPage.tsx:88"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N121",
+      "name": "Client account/team settings",
+      "routeIds": [
+        "R036",
+        "R037",
+        "R006"
+      ],
+      "applicableRoles": [
+        "Customer"
+      ],
+      "entryPath": "Account > Company",
+      "finiteSafeStates": [
+        {
+          "id": "N121-S01",
+          "label": "Client Admin/Member preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N121-S02",
+          "label": "billing unavailable/restricted",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N121-S03",
+          "label": "Invite colleague",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N121-S04",
+          "label": "project-access all/mixed/none",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N121-S05",
+          "label": "member actions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N121-S06",
+          "label": "do not invite/remove/save",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Send/resend/cancel invitation, remove user, change membership role or save project access/company"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/ClientTeamPage.tsx:1",
+        "src/components/settings/ClientTeamPage.tsx:189",
+        "src/components/settings/ClientTeamPage.tsx:209"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N122",
+      "name": "Studio setup focused editors",
+      "routeIds": [
+        "R051"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings four setup cards",
+      "finiteSafeStates": [
+        {
+          "id": "N122-S01",
+          "label": "Studio profile",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S02",
+          "label": "branding",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S03",
+          "label": "video types",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S04",
+          "label": "default Brief",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S05",
+          "label": "sample portal preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S06",
+          "label": "unsaved discard navigation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N122-S07",
+          "label": "cancel all edits",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save any setup card or discard existing user changes"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/StudioSetupOverviewPage.tsx:1",
+        "src/components/settings/StudioSetupOverviewPage.tsx:222",
+        "src/components/settings/StudioSetupOverviewPage.tsx:257",
+        "src/components/settings/StudioSetupOverviewPage.tsx:317",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:65",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:120",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:184",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:242",
+        "src/components/studio-onboard/StudioReviewEditors.tsx:306"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N123",
+      "name": "Studio production defaults",
+      "routeIds": [
+        "R053"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > Production defaults",
+      "finiteSafeStates": [
+        {
+          "id": "N123-S01",
+          "label": "default roles/stages",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N123-S02",
+          "label": "default Staff",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N123-S03",
+          "label": "required/optional",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N123-S04",
+          "label": "add role",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N123-S05",
+          "label": "save/discard",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N123-S06",
+          "label": "do not commit",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save defaults, create role or assign default Staff"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/StudioProductionDefaultsPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N124",
+      "name": "Studio AI Playbook",
+      "routeIds": [
+        "R047"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > AI Playbook",
+      "finiteSafeStates": [
+        {
+          "id": "N124-S01",
+          "label": "instructions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N124-S02",
+          "label": "references",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N124-S03",
+          "label": "upload/link source",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N124-S04",
+          "label": "preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N124-S05",
+          "label": "save/discard; no mutations",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save instruction/reference/upload"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/StudioAiPlaybookPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N125",
+      "name": "Studio integrations/storage",
+      "routeIds": [
+        "R050",
+        "R054"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings sections",
+      "finiteSafeStates": [
+        {
+          "id": "N125-S01",
+          "label": "connect/disconnect preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N125-S02",
+          "label": "messaging providers",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N125-S03",
+          "label": "storage provider choices",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N125-S04",
+          "label": "connection status",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N125-S05",
+          "label": "do not connect/save",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Connect/disconnect provider, select immediate setting or save storage changes"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/StudioIntegrationsPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N126",
+      "name": "Studio notification content",
+      "routeIds": [
+        "R040",
+        "R039",
+        "R041"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Notifications > category/template",
+      "finiteSafeStates": [
+        {
+          "id": "N126-S01",
+          "label": "category enabled/timing",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N126-S02",
+          "label": "fixed vs editable messages",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N126-S03",
+          "label": "message editor and preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N126-S04",
+          "label": "restore defaults",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N126-S05",
+          "label": "unsaved safeguards",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N126-S06",
+          "label": "no save",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Toggle/save category/timing/template or restore defaults"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/StudioNotificationCategoryPage.tsx:1",
+        "src/components/settings/CustomerMessageTemplatesPage.tsx:135",
+        "src/components/settings/StudioNotificationCategoryPage.tsx:256"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N127",
+      "name": "Plan/client billing confirmations",
+      "routeIds": [
+        "R045",
+        "R038"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio settings > billing",
+      "finiteSafeStates": [
+        {
+          "id": "N127-S01",
+          "label": "plan comparison",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N127-S02",
+          "label": "plan-change confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N127-S03",
+          "label": "add-on confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N127-S04",
+          "label": "Stripe connect/disconnect",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N127-S05",
+          "label": "payment/setup unavailable variants",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N127-S06",
+          "label": "cancel only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Confirm plan/add-on/payment/Stripe changes"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/settings/PlanBillingModals.tsx:1",
+        "src/components/settings/ClientBillingPage.tsx:249",
+        "src/components/settings/ClientBillingPage.tsx:257",
+        "src/components/settings/PlanBillingPage.tsx:178",
+        "src/components/settings/PlanBillingPage.tsx:191",
+        "src/components/settings/PlanBillingPage.tsx:205"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N128",
+      "name": "Onboarding focused forms",
+      "routeIds": [
+        "R059"
+      ],
+      "applicableRoles": [
+        "Studio Staff"
+      ],
+      "entryPath": "Studio sign-up",
+      "finiteSafeStates": [
+        {
+          "id": "N128-S01",
+          "label": "initial name/brand",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N128-S02",
+          "label": "AI questions",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N128-S03",
+          "label": "review generated setup",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N128-S04",
+          "label": "skip/back",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N128-S05",
+          "label": "discard/restart confirmation",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N128-S06",
+          "label": "no completion or stored-field changes",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Answer auto-saving onboarding questions, commit generated setup, complete/restart onboarding"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/studio-onboard/StudioOnboardScreen.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N129",
+      "name": "Project Files utility",
+      "routeIds": [
+        "R023"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer"
+      ],
+      "entryPath": "Project details > file location / direct Files URL",
+      "finiteSafeStates": [
+        {
+          "id": "N129-S01",
+          "label": "populated location cards and metadata",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N129-S02",
+          "label": "Add another location form empty",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N129-S03",
+          "label": "Edit location form and Cancel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N129-S04",
+          "label": "Remove location confirmation and Cancel",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N129-S05",
+          "label": "Freelancer read-only notes; mark-confirmed action visible",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N129-S06",
+          "label": "existing empty preview; no records manufactured",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Save/edit/remove location, blur-save Notes, Mark as confirmed working, Copy/open external link"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/project/ProjectFilesPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N130",
+      "name": "Updates full-page inbox",
+      "routeIds": [
+        "R015"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Global Updates > full-page inbox /notifications",
+      "finiteSafeStates": [
+        {
+          "id": "N130-S01",
+          "label": "default inbox",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N130-S02",
+          "label": "unread/all and existing category filters",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N130-S03",
+          "label": "notification item action menu",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N130-S04",
+          "label": "read-only notification content",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N130-S05",
+          "label": "existing empty/no-results branch",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N130-S06",
+          "label": "keyboard tab/arrow/Escape where available",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Mark read/unread, respond, dismiss or trigger notification side effect"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/notifications/NotificationsPage.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N131",
+      "name": "Document export preview",
+      "routeIds": [
+        "R021"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Document menu > Print/Download preview",
+      "finiteSafeStates": [
+        {
+          "id": "N131-S01",
+          "label": "Script preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N131-S02",
+          "label": "Storyboard preview",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N131-S03",
+          "label": "Transcript preview with clip context",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N131-S04",
+          "label": "return destination",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N131-S05",
+          "label": "Customer/Freelancer denied unavailable project",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N131-S06",
+          "label": "readability at both desktop widths",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Invoke browser Print, Save PDF or file download"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/document-export/DocumentExportPreview.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N132",
+      "name": "Freelancer offer preview and decisions",
+      "routeIds": [
+        "R016",
+        "R001"
+      ],
+      "applicableRoles": [
+        "Studio Freelancer"
+      ],
+      "entryPath": "My jobs Pending > Brief/details",
+      "finiteSafeStates": [
+        {
+          "id": "N132-S01",
+          "label": "existing pending offer Brief",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N132-S02",
+          "label": "offer price/rate terms",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N132-S03",
+          "label": "Accept/Decline confirmation content if safely openable",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N132-S04",
+          "label": "accepted job time dialog initial/invalid empty",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N132-S05",
+          "label": "invoice upload dialog empty",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N132-S06",
+          "label": "restricted offer of other Freelancer",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Accept/Decline offer, submit invoice, log time, send communication"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/active-videos/FreelancerOfferBrief.tsx:1",
+        "src/components/active-videos/FreelancerVideosPage.tsx:333",
+        "src/components/active-videos/FreelancerVideosPage.tsx:334",
+        "src/components/active-videos/FreelancerVideosPage.tsx:433"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N133",
+      "name": "Name first Client video",
+      "routeIds": [
+        "R010"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Customer"
+      ],
+      "entryPath": "Client portal > Start Video",
+      "finiteSafeStates": [
+        {
+          "id": "N133-S01",
+          "label": "initial project code and saved/empty name",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N133-S02",
+          "label": "Continue disabled on existing empty name",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N133-S03",
+          "label": "Cancel/back destination",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N133-S04",
+          "label": "Staff correct Client query",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N133-S05",
+          "label": "Freelancer unavailable",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Type name because it persists immediately; submit Continue creates a project"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/app/customer-dashboard/start-video/page.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N134",
+      "name": "Journey invitation and magic-link entry",
+      "routeIds": [
+        "R032"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Test scenario New > journey entry",
+      "finiteSafeStates": [
+        {
+          "id": "N134-S01",
+          "label": "current scenario entry",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N134-S02",
+          "label": "invitation details",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N134-S03",
+          "label": "existing expired/unavailable branch if exposed by fixture",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N134-S04",
+          "label": "name/email read-only inspection",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N134-S05",
+          "label": "back/cancel route",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Accept invitation, confirm identity, change saved name/email or proceed into workspace setup"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/prototype-scenarios/PrototypeJourneyEntry.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N135",
+      "name": "Prototype-only demonstration surfaces",
+      "routeIds": [
+        "R033",
+        "R034",
+        "R058",
+        "R014",
+        "R052"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Direct prototype/QA/sample routes",
+      "finiteSafeStates": [
+        {
+          "id": "N135-S01",
+          "label": "scenario picker labels without activating",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N135-S02",
+          "label": "production-flow local preview current state",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N135-S03",
+          "label": "share playground stage/role local toggles only if demonstrably non-persisting",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N135-S04",
+          "label": "development delivery diagnostics Staff/restricted state",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N135-S05",
+          "label": "sample portal preview banner/links",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Activate/reset scenario, delivery retry/send, apply flow to a real project, submit Share request"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/prototype-scenarios/PrototypeScenarioPicker.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N136",
+      "name": "Legacy standalone Script and review guards",
+      "routeIds": [
+        "R011",
+        "R035"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Direct legacy fixture routes / customer-edge scenario",
+      "finiteSafeStates": [
+        {
+          "id": "N136-S01",
+          "label": "populated review fixture default",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N136-S02",
+          "label": "route query ignored vs expected project",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N136-S03",
+          "label": "Customer allowed membership context",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N136-S04",
+          "label": "Freelancer with no Loom membership",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N136-S05",
+          "label": "legacy first-video Script authoring controls inspection only",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Create/duplicate/rename version, edit Script, submit feedback/approval or upload"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/app/review/page.tsx:1"
+      ],
+      "currentEvidence": [],
+      "status": "Not inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    },
+    {
+      "id": "N137",
+      "name": "Direct-entry access boundaries",
+      "routeIds": [
+        "R007",
+        "R019",
+        "R022",
+        "R023",
+        "R026",
+        "R061",
+        "R056"
+      ],
+      "applicableRoles": [
+        "Studio Staff",
+        "Studio Freelancer",
+        "Customer"
+      ],
+      "entryPath": "Direct route entry with unchanged role/scenario",
+      "finiteSafeStates": [
+        {
+          "id": "N137-S01",
+          "label": "Staff any own-Studio Client preview retains identity",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S02",
+          "label": "Freelancer unrelated project unavailable",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S03",
+          "label": "Customer Loom to Deel direct project",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S04",
+          "label": "Customer unrelated portal URL",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S05",
+          "label": "Client/Freelancer People/Clients/settings restriction",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S06",
+          "label": "guest valid/invalid shared token",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        },
+        {
+          "id": "N137-S07",
+          "label": "own vs unavailable print document",
+          "status": "Not inspected",
+          "evidence": [],
+          "method": "Open/read/cancel or inspect current data; no dependent mutation"
+        }
+      ],
+      "mutationOnlyBranches": [
+        "Any access mutation; never grant membership to manufacture a state"
+      ],
+      "interactionContract": [
+        "At least one visible enabled control hover and keyboard focus per consumer",
+        "Open/expanded and Escape/focus return for every distinct menu/dialog implementation",
+        "Selected/disabled/read-only/empty/no-results/validation only where obtainable from existing data without mutation"
+      ],
+      "desktopWidthsRequired": [
+        1440,
+        1133
+      ],
+      "sourceMapping": [
+        "src/components/prototype-state/usePrototypeViewer.ts:1"
+      ],
+      "currentEvidence": [
+        {
+          "id": "E014-client-loom-ready",
+          "state": "Original Jess/Loom identity",
+          "role": "Customer",
+          "width": 1440
+        },
+        {
+          "id": "E015-client-direct-deel",
+          "state": "Deel route changes Customer identity and grants view",
+          "role": "Customer",
+          "width": 1440
+        }
+      ],
+      "status": "Partially inspected",
+      "remainingGap": "All finite safe states and role variants not individually evidenced remain unverified; default route captures do not close these gaps. Both widths required where layout is relevant.",
+      "ownershipBoundary": "This workflow owns its unique nested surfaces; shared primitives do not count again as business workflow coverage."
+    }
+  ],
+  "mergedSourceIds": {
+    "N093": "Merged into N092 Team role assignment and capacity, because there is no separately reachable EditStagesModal in the import graph."
+  },
+  "coreGapsAsOfEvidenceSnapshot": {
+    "capturedThrough": "2026-10-20T09:02:10.103Z",
+    "highPriority": [
+      "N137 identity isolation is observed defective; other direct-entry variants still require verification.",
+      "N118 guest logo footer and no-op command states await lead confirmation.",
+      "N108 Customer version commands and unassigned-Freelancer authoring need non-mutating menu inspection.",
+      "N092 Team is only partly covered: keyboard focus, existing disabled rows, rate/hour save boundaries and safe cancellation remain.",
+      "N100 bulk filtered selection has evidence, but scope, restricted roles, no-results, folder menus and download-unavailable states remain.",
+      "N111 Staff Storyboard frame review has 1440/1133 evidence E018-E020; role permissions, source picker branches and keyboard states remain."
+    ],
+    "broadRemaining": [
+      "Global account/history/Test mode/Updates/Chat/Ask Brisk nested states",
+      "Brief/Script/Storyboard/Shoot/Media/Review/Masters nested branches",
+      "People/Client invitation, access and profile editors",
+      "Expenses invoice review/forward/send-back confirmation states",
+      "Personal/Studio/onboarding settings editors and unsaved safeguards",
+      "Document export kinds, pending offers and first-video entry",
+      "Narrower desktop and role variants across almost all groups"
+    ],
+    "notClaimed": [
+      "Full mutation/persistence verification",
+      "Every data combination",
+      "Accessibility compliance",
+      "Any application fix"
+    ]
+  },
+  "validatedSeedUrls": [
+    {
+      "url": "/share/brand/loom-2026",
+      "source": "src/data/brand-kits.ts:396",
+      "resolution": "getBrandKitCustomerByShareToken in src/data/brand-kits.ts:545; route accepts token independently of persisted kit."
+    },
+    {
+      "url": "/brand-kits/loom/loom-ai",
+      "source": "src/data/brand-kits.ts:401",
+      "resolution": "Seeded sub-brand. Persisted kit may differ. BrandKitClientRoute constructs fallback for unknown subBrandSlug, so successful navigation is not proof the saved sub-brand exists."
+    }
+  ],
+  "evidencePolicy": "CurrentEvidence records only explicit lead screenshots available at generation. A screenshot match is not a passed interaction/state checklist. Lead should merge new captures and mark each safe state separately.",
+  "limitations": [
+    "Some source-discovered states depend on unavailable existing fixtures and must be marked Blocked with the actual reason, not manufactured.",
+    "Normal navigation may auto-write recent history, Brand Kit initialisation and Chat read markers; preservation evidence must include these side effects.",
+    "Workflow groups split ownership by user task, while routes are a separate denominator. Do not add route and workflow counts into one tested total."
+  ]
+}

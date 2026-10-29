@@ -1,0 +1,105 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Jordan Lee avatar": JL
+  - generic: Studio Freelancer
+  - heading "Jordan Lee" [level=1]
+  - button "Assign project Choose a project, role and hours.":
+    - generic: Assign project
+    - text: Choose a project, role and hours.
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Hours" [active] [selected]
+    - tab "Skills"
+    - tab "Access"
+    - tab "Commercial"
+    - tab "Notes and activity"
+  - tabpanel "Hours":
+    - heading "Logged hours" [level=2]
+    - paragraph: A weekly history of time recorded against projects and Stages.
+    - generic "Choose week":
+      - button "Previous week": Show the previous week's hours.
+      - strong: 15 - 21 June 2026
+      - button "Next week" [disabled]: Show the next week's hours.
+    - strong: 12.5h
+    - generic: Logged this week
+    - text: Total hours recorded for the selected week.
+    - strong: "2"
+    - generic: Projects
+    - text: Projects with logged time in the selected week.
+    - strong: "2"
+    - generic: Time entries
+    - text: Separate time entries for the selected week.
+    - paragraph: Time is operational history for both hourly and flat-rate work. It does not change the agreed payment automatically.
+    - strong: Tuesday 16 June 2026
+    - generic: 12.5h
+    - article:
+      - link "Customer Story - APAC Hiring":
+        - /url: /projects/deel-customer-story
+      - generic: Deel - Shoot
+      - paragraph: Shoot work logged
+      - strong: 4h
+    - article:
+      - link "Roadmap Film - Planning Week":
+        - /url: /projects/linear-roadmap-film
+      - generic: Linear - Shoot
+      - paragraph: Shoot work logged
+      - strong: 8.5h

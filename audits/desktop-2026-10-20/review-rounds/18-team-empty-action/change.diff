@@ -1,0 +1,88 @@
+--- Before this change
++++ Current ActiveVideosPage.tsx
+@@ -2276,7 +2276,6 @@
+         onAddTag={onAddTag}
+         onRemoveTag={onRemoveTag}
+         onCreateTag={onCreateTag}
+-        onAssignTeam={onAssignTeam}
+       />
+       {visibleColumns.map((columnKey) => (
+         <ProjectDataCell
+@@ -2292,6 +2291,8 @@
+           deadline={deadline}
+           onOpenPanelSection={onOpenPanelSection}
+           onSaveStatus={onSaveStatus}
++          canAssignTeam={hasLoadedRole && selectedRole === "Studio Staff"}
++          onAssignTeam={onAssignTeam}
+           canEditStatus={selectedRole === "Studio Staff"}
+           onOpenDetails={onOpenDetails}
+           onOpenLatestActions={onOpenLatestActions}
+@@ -2315,7 +2316,6 @@
+   onAddTag,
+   onRemoveTag,
+   onCreateTag,
+-  onAssignTeam,
+ }: {
+   project: ScopedProject;
+   fileLocations: ProjectFileLocation[];
+@@ -2330,7 +2330,6 @@
+   onAddTag: (tag: string) => void;
+   onRemoveTag: (tag: string) => void;
+   onCreateTag: (tag: string, tagClass: TagClass) => void;
+-  onAssignTeam: () => void;
+ }) {
+   const [isCreatingTag, setIsCreatingTag] = useState(false);
+   const [draftTagName, setDraftTagName] = useState("");
+@@ -2454,14 +2453,6 @@
+           </div>
+         </div>
+         <div className="project-meta-row">
+-          {hasLoadedRole && selectedRole === "Studio Staff" ? <Button
+-            size="S"
+-            variant="secondary"
+-            className="project-assign-team-entry"
+-            aria-label={`Assign team for ${project.name}`}
+-            aria-haspopup="dialog"
+-            onClick={(event) => { event.stopPropagation(); onAssignTeam(); }}
+-          ><DsIcon name="user-plus" size={16} />Assign team</Button> : null}
+           {tags.map((tag) => (
+             <span className={`project-tag-chip tag-option ${getTagClass(tag, tagClasses)} label-s-semibold`} key={tag}>
+               {tag}
+@@ -2609,6 +2600,8 @@
+   onOpenPanelSection,
+   onSaveStatus,
+   canEditStatus,
++  canAssignTeam,
++  onAssignTeam,
+   onOpenDetails,
+   onOpenLatestActions,
+ }: {
+@@ -2624,6 +2617,8 @@
+   onOpenPanelSection: (section: ProjectPanelSection) => void;
+   onSaveStatus: (status: Project["status"]) => void;
+   canEditStatus: boolean;
++  canAssignTeam: boolean;
++  onAssignTeam: () => void;
+   onOpenDetails: () => void;
+   onOpenLatestActions: () => void;
+ }) {
+@@ -2769,6 +2764,19 @@
+     const accessibleTeamSummary = teamMembers.members
+       .map((member) => `${member.person.name}, ${member.roles.join(" and ")}${member.isInvited ? ", invited" : ""}`)
+       .join("; ");
++
++    if (teamMembers.members.length === 0 && canAssignTeam) {
++      return <td className={columnClassName}>
++          <Button
++            size="S"
++            variant="secondary"
++            className="project-assign-team-entry"
++            aria-label={`Assign team for ${project.name}`}
++            aria-haspopup="dialog"
++            onClick={(event) => { event.stopPropagation(); onAssignTeam(); }}
++          ><DsIcon name="user-plus" size={16} />Assign team</Button>
++      </td>;
++    }
+ 
+     return (
+       <td className={columnClassName}>

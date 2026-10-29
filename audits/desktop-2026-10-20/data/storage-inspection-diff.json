@@ -1,0 +1,33 @@
+{
+  "local": [
+    {
+      "key": "brisk-project-stage-status-v1",
+      "change": "changed",
+      "beforeBytes": 366,
+      "afterBytes": 434,
+      "changedTopLevelKeys": [
+        "northstar-films:client-new"
+      ]
+    },
+    {
+      "key": "brisk-recent-pages-v2",
+      "change": "changed",
+      "beforeBytes": 835,
+      "afterBytes": 878
+    },
+    {
+      "key": "brisk-script-draft-v1:northstar-films:loom-first-video",
+      "change": "added",
+      "beforeBytes": 0,
+      "afterBytes": 410
+    }
+  ],
+  "session": [
+    {
+      "key": "brisk-prototype-role-v1",
+      "change": "added",
+      "beforeBytes": 0,
+      "afterBytes": 12
+    }
+  ]
+}

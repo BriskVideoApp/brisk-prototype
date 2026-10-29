@@ -1,0 +1,165 @@
+{
+  "status": "Excluded from consolidated finding count and implementation batches",
+  "scopeUpdate": "Latest user steering prioritises desktop UI and user experience; ignore prototype identity/persistence/mock implementation issues.",
+  "candidates": [
+    {
+      "id": "B04",
+      "title": "To Do planning and completion rely on dragging",
+      "area": "To Do",
+      "family": "Planning interactions",
+      "category": "Accessibility / Efficiency",
+      "severity": "S2",
+      "impact": "A keyboard user can edit existing hours but cannot create the ordinary planned block or move it to Done through equivalent controls.",
+      "classification": "Source-supported risk",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "normal populated working week",
+        "project rail",
+        "existing time block",
+        "time editor"
+      ],
+      "observed": "The normal working week creates blocks only when a project-card drag payload is dropped onto a To do day. The project card offers only a project-navigation link. Existing blocks expose a keyboard-openable editor for Stage/Hours/Note, with no date or To do/Done control. The Add time button occurs only in preview empty/complete states. Resize targets also have pointer-only handlers.",
+      "expected": "A non-drag route supports the same core creation and completion tasks while dragging remains available.",
+      "authority": [
+        "User audit scope: keyboard interaction, daily task efficiency",
+        "brisk-production-journey.md: time logging at project/Stage level"
+      ],
+      "recommendation": "Add a small accessible Add time entry point and expose date and completion changes through the existing contextual editor or adjacent actions. Keep drag/drop as the faster pointer shortcut.",
+      "rationale": "This gives parity for core work without redesigning the working-week layout.",
+      "alternatives": [
+        "A project-card Add to day menu can provide a contextual route, but avoid making every day a large new button."
+      ],
+      "tradeoffs": "Decide whether Done means a completed plan or logged hours before choosing labels; preserve existing time model and role restrictions. Do not expand into a new time-tracking product.",
+      "rootCause": "Drag-and-drop is the only normal creation/completion affordance.",
+      "occurrences": [
+        "ProjectCard",
+        "DaySection",
+        "TimeBlock",
+        "TimeEntryEditor"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:335",
+        "src/components/today/TodayPage.tsx:535",
+        "src/components/today/TodayPage.tsx:623",
+        "src/components/today/TodayPage.tsx:698"
+      ],
+      "evidence": [
+        "Requested lead capture: /today normal working week and existing time editor, keyboard reachable actions without saving."
+      ],
+      "approvedReference": "No approved screenshot specifies a keyboard alternative. Existing To Do visual references establish layout only.",
+      "verificationRemaining": "Browser keyboard inspection pending. Creation, dragging, completion, Delete and Save must remain unsubmitted during this audit.",
+      "reviewStatus": "Needs decision",
+      "exclusionReason": "Current captured To Do fixture is empty. Drag-only populated UI concern remains a verification question, excluded from active findings until applicable UI is observed."
+    },
+    {
+      "id": "B05",
+      "title": "Cancelling Staff assignment can still save edited hours",
+      "area": "Project Team",
+      "family": "Save and confirmation boundaries",
+      "category": "Behaviour / Error prevention",
+      "severity": "S2",
+      "impact": "A user can cancel the withdrawal/assignment confirmation while unknowingly retaining a preceding hours change.",
+      "classification": "Source-supported risk",
+      "confidence": "High",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/active-videos?project=loom-launch-film",
+        "/projects/[projectId]/stages/brief"
+      ],
+      "states": [
+        "role has pending invitations",
+        "hours draft dirty",
+        "select Staff > Assign > confirmation > Cancel"
+      ],
+      "observed": "addStaff invokes onSaveSettings(draftRoleHours) before checking activeInvitations and opening the withdrawal confirmation. Cancelling that confirmation clears only staffPendingConfirmation. The parent save callback persists the redistributed hours independently.",
+      "expected": "Cancel at the confirmation boundary leaves unconfirmed edits unchanged, or the UI explicitly explains which changes have already been saved.",
+      "authority": [
+        "Brisk DS/guidelines/components/editing-dialog.md: preserve save boundaries and cancellation meaning",
+        "Brisk DS/guidelines/components/confirmation-dialog.md: cancel confirmation without changing data"
+      ],
+      "recommendation": "Defer the implicit hours save until Staff assignment is confirmed, keeping the separate explicit Save changes action intact.",
+      "rationale": "This is a small ordering correction; assigning and editing role hours remain distinct actions.",
+      "alternatives": [
+        "Require Save changes before assignment, but this adds friction and should be justified if chosen."
+      ],
+      "tradeoffs": "Do not merge Save, Assign, Invite, Withdraw or Remove into one action; preserve pending-invitation safeguards and capacity recalculation.",
+      "rootCause": "Mutation occurs before the confirmation decision.",
+      "occurrences": [
+        "RoleEditorModal addStaff",
+        "staffPendingConfirmation onConfirm/onCancel",
+        "TeamPanel onSaveSettings"
+      ],
+      "sources": [
+        "src/components/project/team/RoleEditorModal.tsx:139",
+        "src/components/project/team/RoleEditorModal.tsx:365",
+        "src/components/project/team/TeamPanel.tsx:568"
+      ],
+      "evidence": [
+        "E004-team-role-editor-1440",
+        "E007-team-staff-expanded-1133"
+      ],
+      "approvedReference": "No approved screenshot for this branch; the DS cancellation contract is authoritative.",
+      "verificationRemaining": "Not executed because entering this confirmation after dirty hours would itself change stored hours. Source-backed review only; verify with isolated non-persisting state before implementation.",
+      "reviewStatus": "Needs decision",
+      "exclusionReason": "Unverified source-only hours-save ordering issue removed from UI-focused recommendations under latest user steering. Retained solely as an inspection safety note."
+    },
+    {
+      "id": "B08",
+      "title": "To Do accepts cross-day drops without rescheduling the block",
+      "area": "To Do",
+      "family": "Planning interactions",
+      "category": "Behaviour / Feedback",
+      "severity": "S3",
+      "impact": "If cross-day rescheduling is intended, the apparent drop target silently leaves work on its original day. Current fixture and source do not establish the intended restriction.",
+      "classification": "Source-supported risk",
+      "confidence": "High about source outcome; intent unconfirmed",
+      "roles": [
+        "Studio Staff"
+      ],
+      "routes": [
+        "/today"
+      ],
+      "states": [
+        "Existing time block dragged to a different weekday",
+        "To do/Done drop target"
+      ],
+      "observed": "Every DaySection accepts time-entry drag payloads and calls onMoveEntry with its date. moveEntry changes status only when entry.date already equals the destination date; otherwise it returns the original entry. It never changes the entry date, and there is no rejection or explanation for a cross-day drop.",
+      "expected": "A presented rescheduling target either moves the block to that date or explains a deliberate restriction before the user drops it.",
+      "authority": [
+        "User audit scope: controls whose apparent and actual behaviour differ",
+        "Current TodayPage UI presents each weekday as a valid time-entry drop target; no approved cross-day restriction found"
+      ],
+      "recommendation": "Confirm cross-day rescheduling as the intended task. If allowed, update date with the destination and give brief feedback; if forbidden, make the invalid target and reason apparent.",
+      "rationale": "The smallest coherent repair aligns the drag affordance and outcome rather than redesigning the calendar.",
+      "alternatives": [
+        "A date field in the existing editor also supports keyboard rescheduling but does not by itself correct misleading drag targets."
+      ],
+      "tradeoffs": "Keep same-day To do/Done transitions, hours, notes and viewed-person scope intact. Do not persist new planning behaviour without clarifying the prototype time model.",
+      "rootCause": "The drop callback passes a date that moveEntry deliberately never assigns.",
+      "occurrences": [
+        "WeekGrid > DayColumn > DaySection drop",
+        "StudioTodayPage moveEntry"
+      ],
+      "sources": [
+        "src/components/today/TodayPage.tsx:168",
+        "src/components/today/TodayPage.tsx:530",
+        "src/components/today/TodayPage.tsx:550"
+      ],
+      "evidence": [
+        "Requested current /today default screenshot; cross-day mutation not performed."
+      ],
+      "approvedReference": "No approved reference establishes a cross-day restriction. No before/after evidence exists because no planning record was changed.",
+      "verificationRemaining": "Source-supported only. Verify with isolated disposable planning state, then confirm actual product intent with Tom.",
+      "reviewStatus": "Needs decision",
+      "exclusionReason": "Unverified prototype rescheduling implementation logic removed from UI-focused recommendations under latest user steering."
+    }
+  ]
+}

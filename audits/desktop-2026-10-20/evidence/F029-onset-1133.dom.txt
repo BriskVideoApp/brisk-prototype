@@ -1,0 +1,334 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "On set" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan":
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day" [selected]:
+      - generic: On set
+      - generic: Run the shoot day
+  - generic "Call Sheet actions":
+    - generic "Call Sheet share actions":
+      - button "Share Call Sheet": Share Call Sheet
+    - link "Edit":
+      - /url: /projects/loom-launch-film/stages/shoot?section=schedule&day=day-2
+      - text: Edit
+    - link "PDF":
+      - /url: /share/call-sheet/loom-launch-film?print=1&day=day-2
+      - text: PDF
+    - button "Call Sheet actions": More
+  - article:
+    - region "Day 1 essentials":
+      - navigation "Shoot days":
+        - button "Day 1 13 Aug":
+          - generic: Day 1
+          - generic: 13 Aug
+        - button "Day 2 14 Aug":
+          - generic: Day 2
+          - generic: 14 Aug
+      - generic: Shoot date
+      - heading "Thursday 13 August 2026" [level=2]
+      - generic: General call time
+      - strong: 7:30 am
+      - generic: Expected wrap 5:00 pm
+      - generic: Primary location
+      - strong: Precinct Studio 2
+      - link "21 James Street, Thirroul NSW 2515":
+        - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+      - strong: 18°C
+      - paragraph: Partly cloudy · 20% rain
+      - generic: Key contacts
+      - strong: Tom Maclachlan · Producer · 0412 555 018
+      - link "Call production":
+        - /url: tel:0412555018
+    - heading "Schedule" [level=2]
+    - button "1 of 4 captured. Open shoot day progress.": 1 of 4
+    - button "Collapse Schedule" [expanded]
+    - button "Focus on Schedule"
+    - list:
+      - checkbox "Mark Crew call and gear unload as complete"
+      - time: 7:30 am
+      - generic: Setup
+      - button "Crew call and gear unload 30 min · Precinct Studio 2":
+        - strong: Crew call and gear unload
+        - generic: 30 min · Precinct Studio 2
+      - generic: Now
+      - button "More actions for Crew call and gear unload": More actions for Crew call and gear unload
+      - checkbox "Mark Lighting and camera setup as complete"
+      - time: 8:00 am
+      - generic: Setup
+      - button "Lighting and camera setup 45 min · Precinct Studio 2":
+        - strong: Lighting and camera setup
+        - generic: 45 min · Precinct Studio 2
+      - generic: Next
+      - button "More actions for Lighting and camera setup": More actions for Lighting and camera setup
+      - time: 8:45 am
+      - generic: Shot group
+      - button "Founder interview 1 of 1 captured · 60 min · Precinct Studio 2":
+        - strong: Founder interview
+        - generic: 1 of 1 captured · 60 min · Precinct Studio 2
+      - checkbox "Mark Travel to Loom office as complete"
+      - time: 10:15 am
+      - generic: Travel
+      - button "Travel to Loom office 20 min · Loom Sydney Office":
+        - strong: Travel to Loom office
+        - generic: 20 min · Loom Sydney Office
+      - generic: Upcoming
+      - button "More actions for Travel to Loom office": More actions for Travel to Loom office
+      - time: 10:35 am
+      - generic: Shot group
+      - button "Team and workplace B-roll 0 of 1 captured · 85 min · Loom Sydney Office":
+        - strong: Team and workplace B-roll
+        - generic: 0 of 1 captured · 85 min · Loom Sydney Office
+      - generic: Upcoming
+      - button "More actions for Team and workplace B-roll": More actions for Team and workplace B-roll
+      - checkbox "Mark Lunch as complete"
+      - time: 12:00 pm
+      - generic: Lunch
+      - strong: Lunch
+      - generic: 45 min · Loom Sydney Office
+      - generic: Upcoming
+      - button "More actions for Lunch": More actions for Lunch
+    - heading "Unscheduled coverage" [level=3]
+    - paragraph: Shots and groups without a time remain available on the shoot day.
+    - article:
+      - button "Establishing coverage 0 of 2 captured" [expanded]:
+        - strong: Establishing coverage
+        - generic: 0 of 2 captured
+      - table "Establishing coverage shots":
+        - 'row "Mark shot 4.1 as captured 4.1 Edit shot 4.1: Exterior establishing shots More actions for shot 4.1"':
+          - checkbox "Mark shot 4.1 as captured"
+          - generic: "4.1"
+          - 'button "Edit shot 4.1: Exterior establishing shots"':
+            - strong: Exterior establishing shots
+          - textbox "Quick note for shot 4.1":
+            - /placeholder: Add note
+          - button "More actions for shot 4.1": More actions for shot 4.1
+        - 'row "Mark shot 4.2 as captured 4.2 Edit shot 4.2: Office signage and general atmosphere More actions for shot 4.2"':
+          - checkbox "Mark shot 4.2 as captured"
+          - generic: "4.2"
+          - 'button "Edit shot 4.2: Office signage and general atmosphere"':
+            - strong: Office signage and general atmosphere
+          - textbox "Quick note for shot 4.2":
+            - /placeholder: Add note
+          - button "More actions for shot 4.2": More actions for shot 4.2
+    - button "Edit schedule in Planning": Edit schedule in Planning
+    - heading "Interview" [level=2]
+    - generic: 0 of 2
+    - button "Add question": Add question
+    - button "Collapse Interview" [expanded]
+    - button "Focus on Interview"
+    - group "Filter interview questions":
+      - button "All" [pressed]
+      - button "Remaining"
+      - button "Asked"
+    - combobox "Filter interview questions by talent":
+      - generic: All talent
+    - list:
+      - checkbox "1 What problem were your customers facing before this launch? Amelia Chen"
+      - generic: "1"
+      - strong: What problem were your customers facing before this launch?
+      - generic: Amelia Chen
+      - button "Edit question 1": Edit
+      - checkbox "2 What changed for your team once the new workflow was in place? Amelia Chen"
+      - generic: "2"
+      - strong: What changed for your team once the new workflow was in place?
+      - generic: Amelia Chen
+      - button "Edit question 2": Edit
+    - heading "Locations" [level=2]
+    - generic: "2"
+    - button "Collapse Locations" [expanded]
+    - button "Focus on Locations"
+    - button "Manage locations in Planning": Manage locations in Planning
+    - article:
+      - strong: Precinct Studio 2
+      - generic: Primary
+      - link "21 James Street, Thirroul NSW 2515":
+        - /url: https://www.google.com/maps/search/?api=1&query=21%20James%20Street%2C%20Thirroul%20NSW%202515
+    - article:
+      - strong: Loom Sydney Office
+      - link "44 Market Street, Sydney NSW 2000":
+        - /url: https://www.google.com/maps/search/?api=1&query=44%20Market%20Street%2C%20Sydney%20NSW%202000
+    - heading "People" [level=2]
+    - generic: "6"
+    - button "Collapse People" [expanded]
+    - button "Focus on People"
+    - button "Edit phone numbers": Edit phone numbers
+    - button "Manage people in Planning": Manage people in Planning
+    - article:
+      - generic: TM
+      - strong: Tom Maclachlan
+      - generic: Producer / Director · Call 7:15 am
+      - link "tom@northstarfilms.com.au":
+        - /url: mailto:tom@northstarfilms.com.au
+      - link "Call Tom Maclachlan":
+        - /url: tel:0412555018
+        - generic: Call
+        - generic: 0412 555 018
+    - article:
+      - generic: JL
+      - strong: Jordan Lee
+      - generic: Camera Operator · Call 7:30 am
+      - link "jordan@northstarfilms.com.au":
+        - /url: mailto:jordan@northstarfilms.com.au
+      - link "Call Jordan Lee":
+        - /url: tel:0422555284
+        - generic: Call
+        - generic: 0422 555 284
+    - article:
+      - generic: MS
+      - strong: Maya Singh
+      - generic: Sound Recordist · Call 7:30 am
+      - link "maya@northstarfilms.com.au":
+        - /url: mailto:maya@northstarfilms.com.au
+      - link "Call Maya Singh":
+        - /url: tel:0431555906
+        - generic: Call
+        - generic: 0431 555 906
+    - article:
+      - generic: AC
+      - strong: Amelia Chen
+      - generic: Founder / Interviewee · Call 8:30 am
+      - link "amelia@loomexample.com":
+        - /url: mailto:amelia@loomexample.com
+      - link "Call Amelia Chen":
+        - /url: tel:0404555731
+        - generic: Call
+        - generic: 0404 555 731
+    - article:
+      - generic: LO
+      - strong: Liam O'Connor
+      - generic: Communications Manager · Call 8:15 am
+      - link "liam@loomexample.com":
+        - /url: mailto:liam@loomexample.com
+      - link "Call Liam O'Connor":
+        - /url: tel:0408555412
+        - generic: Call
+        - generic: 0408 555 412
+    - article:
+      - generic: RW
+      - strong: Ruth Williams
+      - generic: Venue Contact · Call 7:00 am
+      - link "ruth@precinctstudios.com.au":
+        - /url: mailto:ruth@precinctstudios.com.au
+      - link "Call Ruth Williams":
+        - /url: tel:0466555193
+        - generic: Call
+        - generic: 0466 555 193
+    - heading "Notes for the day" [level=2]
+    - button "Collapse Notes for the day" [expanded]
+    - button "Focus on Notes for the day"
+    - generic: Day 1 notes
+    - textbox "Day 1 notes":
+      - /placeholder: "Parking:\nAccess:\nWi-Fi:\nOther practical details:"
+      - text: "Parking: Two crew parks in the rear loading dock. Street parking on James Street for clients and talent. Access: Enter via the loading dock off King Lane. Call Ruth on arrival. Accessibility: Both locations have lift access. Please tell Tom in advance if you need step-free assistance. Wi-Fi: Network: Precinct-Guest · Password: create-together Emergency contact: 000 - Tom Maclachlan · 0412 555 018 Other practical details: Quiet set during interviews. Avoid showing unreleased product screens and keep the eastern collaboration area available for staff. Keep the equipment holding area clear and follow the producer's direction when moving between locations. Studio is on level one. Freight lift is available for equipment."
+    - heading "Documents" [level=2]
+    - generic: "2"
+    - button "Expand Documents"
+    - button "Focus on Documents"
+    - heading "Nearest emergency hospital" [level=2]
+    - strong: Wollongong Hospital Emergency Department
+    - link "348-352 Crown Street, Wollongong NSW 2500":
+      - /url: https://www.google.com/maps/search/?api=1&query=348-352%20Crown%20Street%2C%20Wollongong%20NSW%202500
+    - generic: Calculated from Precinct Studio 2
+    - link "Directions":
+      - /url: https://www.google.com/maps/search/?api=1&query=348-352%20Crown%20Street%2C%20Wollongong%20NSW%202500
+      - text: Directions
+    - generic: Emergency
+    - link "000":
+      - /url: tel:000
+  - generic "Shoot review actions":
+    - generic "Shoot actions":
+      - button "Send Shoot Send to Loom or your team."
+      - button "Approve Shoot Sign-off and continue to the next stage."

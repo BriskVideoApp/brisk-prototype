@@ -1,0 +1,159 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Sarah Chen avatar": SC
+  - generic: Studio Staff
+  - heading "Sarah Chen" [level=1]
+  - button "Assign project Choose a project, role and hours.":
+    - generic: Assign project
+    - text: Choose a project, role and hours.
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview" [selected]
+    - tab "Work"
+    - tab "Hours"
+    - tab "Skills"
+    - tab "Notes and activity"
+  - tabpanel "Overview":
+    - heading "Access" [level=2]
+    - 'generic "Invitation status: Accepted"': Accepted
+    - generic: Role
+    - combobox "Studio permission":
+      - generic: Team Member
+      - text: Change what this person can access.
+    - generic: Billing access
+    - strong: "Off"
+    - button "Turn on Let this person manage Studio billing."
+    - article:
+      - heading "Overview" [level=2]
+      - generic: Active
+      - term: Name
+      - definition:
+        - button "Edit Name":
+          - generic: Sarah Chen
+          - text: Edit name
+      - term: Job titles
+      - definition:
+        - button "Edit Job titles":
+          - generic: Editor
+          - text: Edit job titles
+      - term: Email
+      - definition:
+        - button "Edit Email":
+          - generic: sarah@northstarfilms.com.au
+          - text: Edit email
+      - term: Phone
+      - definition:
+        - button "Edit Phone":
+          - generic: +61 403 555 205
+          - text: Edit phone
+      - term: Location
+      - definition:
+        - button "Edit Location":
+          - generic: Melbourne, VIC
+          - text: Edit location
+      - term: Timezone
+      - definition:
+        - button "Edit Timezone":
+          - generic: Australia/Melbourne
+          - text: Edit timezone
+      - term: Availability
+      - definition:
+        - button "Edit Availability":
+          - generic: Available
+          - text: Edit availability
+      - term: Portfolio or reel
+      - definition:
+        - button "Edit Portfolio or reel":
+          - generic: Not added
+          - text: Edit portfolio or reel
+    - heading "Studio details" [level=2]
+    - term: Seniority
+    - definition:
+      - combobox "Seniority":
+        - generic: Senior
+    - term: Onboarding
+    - definition:
+      - combobox "Onboarding":
+        - generic: Complete
+        - text: Track whether they have finished joining.
+    - term: Agreement
+    - definition:
+      - button "Edit Agreement status":
+        - generic: Not required
+        - text: Edit agreement status
+      - button "Choose File"
+      - button "Attach PDF"
+    - region "Record actions":
+      - heading "Record actions" [level=2]
+      - button "Archive person Hide from active lists. Keep their history.": Archive person Hide from active lists. Keep their history.
+      - button "Delete incorrect record Use only for duplicates or mistakes.": Delete incorrect record Use only for duplicates or mistakes.
+- region "Notifications (F8)":
+  - list
+- dialog "Archive Sarah Chen?":
+  - banner:
+    - heading "Archive Sarah Chen?" [level=2]
+    - generic: This removes the person from active lists and assignment pickers.
+  - paragraph:
+    - strong: Project history will not be deleted.
+    - text: Projects, comments, approvals, files, invoices and activity remain intact. Studio Staff can restore this Person later.
+  - contentinfo:
+    - button "Keep person active" [active]
+    - button "Archive person"

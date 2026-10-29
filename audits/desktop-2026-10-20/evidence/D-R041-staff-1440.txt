@@ -1,0 +1,97 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/notifications/templates".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/notifications/templates
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 heading Notifications, Value: 1
+					41 text Notifications
+				42 text Choose what Brisk sends and when.
+			43 container Client messages
+				44 container
+					45 link Description: Back to notification settings, Value: localhost:3000/settings/notifications
+					46 heading Client messages, Value: 2, ID: customer-messages-title
+						47 text Client messages
+					48 text Choose a message to see or edit.
+				49 container Client messages
+					50 container
+						51 text Messages 14
+					52 button Invitation
+						53 text Invitation
+					54 button Brief review
+						55 text Brief review
+					56 button Brief reminder
+						57 text Brief reminder
+					58 button Script review
+						59 text Script review
+					60 button Call sheet
+						61 text Call sheet
+					62 button Shoot change
+						63 text Shoot change
+					64 button File request
+						65 text File request
+					66 button Edit review
+						67 text Edit review
+					68 button Changes requested
+						69 text Changes requested
+					70 button New version
+						71 text New version
+					72 button Approval
+						73 text Approval
+					74 button Masters ready
+						75 text Masters ready
+					76 button Freelancer offer
+						77 text Freelancer offer
+					78 button Invoice correction
+						79 text Invoice correction
+				80 container
+					81 heading Edit review, Value: 3
+						82 text Edit review
+					83 text Sent when an Edit is ready for Client review.
+					84 container Edit review email example
+						85 container
+							86 text From North Star Films  <updates@northstarfilms.com> To Jess Taylor  < jess@loom.com > Subject LOOM-24 - Launch Film - Sales Narrative: Edit ready for review
+						87 container
+							88 text Hi  Jess ,
+						89 text Please watch the latest version and add any feedback in Brisk.
+						90 text Launch Film - Sales Narrative Edit v3 is ready for your review.
+						91 text Review Edit
+						92 text Thanks,
+						93 text North Star Films
+					94 button Edit message
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/notifications/templates

@@ -1,0 +1,31 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/active-videos?project=loom-launch-film".
+0 AXWebArea Brisk Prototype, URL: localhost:3000/active-videos?project=loom-launch-film
+	1 container Shooter
+		2 container
+			3 heading Shooter, Value: 2
+				4 text Shooter
+		5 container Role settings
+			6 text Total hours needed
+			7 stepper (settable, integer) Description: Total hours needed for Shooter, Value: 8, ID: role-hours-loom-launch-film-shooter
+		8 container
+			9 text Invited ( 2 ): Jordan Lee · $980 · Seen · Sent 8d ago
+			10 button · Withdraw
+				35 text ·
+				12 text Withdraw
+			13 text Aisha Khan · $880 · Invited · Sent 9d ago
+			14 button · Withdraw
+				36 text ·
+				16 text Withdraw
+			17 button Withdraw all
+		18 container
+			19 heading Assign a person, Value: 3
+				20 text Assign a person
+			21 tab group Fill type
+				22 tab (selected, settable, boolean) Staff, Value: 1
+				23 tab (selectable, settable, boolean) Freelancers, Value: 0
+			30 button Show all 10
+		32 container
+			33 button Remove role
+			34 button Cancel
+
+The focused UI element is 22 tab (selected, settable, boolean) Staff, Value: 1

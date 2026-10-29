@@ -1,0 +1,73 @@
+{
+  "date": "28 October 2026",
+  "status": "Visual proposal only. Needs Tom decision. No Team implementation approved.",
+  "entry": "visual-preview.html",
+  "fragment": "/Users/gclt1/.codex/visualizations/2026/10/20/01a1587f-4447-76b0-a90a-ef4a8d1bc011/team-assignment-preview.html",
+  "fragmentBytes": 109675,
+  "views": [
+    "Videos entry with additional visible Assign team action and preserved avatar/role Team summary",
+    "Refined Team overview with aligned identity, secondary role, clear Change/Assign and invitation disclosure",
+    "Assignment chooser with role, editable required hours, Staff capacity, Freelancer hourly reference and project-rate column"
+  ],
+  "actualDSImports": [
+    "Button",
+    "Input",
+    "Checkbox",
+    "Tabs",
+    "BriskSelect",
+    "DsIcon"
+  ],
+  "sampleContext": "Existing LOOM sample project; deliberately bounded sample people. This is a proposed composition, not current-prototype screenshot evidence or a complete implementation.",
+  "browserChecks": [
+    "Team overview and expandable invitation affordance",
+    "Chooser opens from role Assign",
+    "Named checkbox selection",
+    "8 to 10 required hours changes Hugo project estimate from $1,250 to $1,562.50",
+    "Custom $1,400 rate remains $1,400 when hours change to 12",
+    "Existing invited $980 rate stays unchanged",
+    "Staff Space-key selection and projected capacity",
+    "Optional search no-results and recovery",
+    "Role selection updates role label and hides unrelated invitation block",
+    "Videos Team summary opens overview; distinct Assign team entry",
+    "Desktop preview inspected at 1133 and 1440; viewport reset"
+  ],
+  "limitations": [
+    "Proposal contains a bounded sample list, not the complete People catalogue",
+    "Rates are presentation-only sample context, not stored changes",
+    "Buttons only show preview feedback. No assignment, invitation, payment or permission change occurs",
+    "Add role and profile navigation are retained as separate affordances; their destination workflows are not simulated",
+    "Detailed withdrawal/removal, commercial terms, restricted roles and complete keyboard picker behaviour remain implementation verification work after approval",
+    "No mobile pass or application verification claimed"
+  ],
+  "screenshotClassification": "Genuine browser captures of the proposed mockup. Not current application UI and not verified fixes.",
+  "screenshots": [
+    {
+      "file": "proposal-team-panel-1133.png",
+      "sha256": "10dd8c72ff49509b50cd8d05aa25ebbaed7806b4459606d39676a731597fe766"
+    },
+    {
+      "file": "proposal-assignment-1133.png",
+      "sha256": "5ffa114a88990a6ebb82332cb3a426b4e5606336f4ce6255c112f5733d141e20"
+    },
+    {
+      "file": "proposal-videos-entry-1440.png",
+      "sha256": "231f7fa62cc25b98e3d5eec4b7376faa758547da38eefc892797809c4c46f155"
+    }
+  ],
+  "protectedFilesChecked": 1701,
+  "existingApprovedApplicationDifferences": [
+    "src/components/today/today.css",
+    "src/components/today/TodayPage.tsx",
+    "src/components/media/MediaAssetGrid.tsx",
+    "src/components/media/MediaBrowser.tsx",
+    "src/components/media/MediaAssetCard.tsx",
+    "src/components/media/MediaAssetDrawer.tsx",
+    "src/components/media/media.css",
+    "src/components/media/MediaAssetRow.tsx"
+  ],
+  "unexpectedProtectedChanges": [],
+  "sourceSignatureMismatches": [],
+  "preservation": "Application code, DS, assets, dependencies, permissions and mock data match the previously recorded signatures. User application tabs were not used or reloaded. No tests, build, install, commit or push.",
+  "previewConsoleErrorsOrWarnings": [],
+  "staticHttpCheck": "The shell could not connect to the listening local server. The in-app browser opened and reloaded the current preview successfully; interactions and DOM were verified there. No application route check is required for this proposal-only artefact."
+}

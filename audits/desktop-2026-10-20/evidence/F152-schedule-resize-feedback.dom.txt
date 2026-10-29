@@ -1,0 +1,219 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 7 shots":
+      - strong: Shot List
+      - generic: 7 shots
+    - button "Visual References, 0 references":
+      - strong: Visual References
+      - generic: 0 references
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 2 shoot days":
+      - strong: Schedule
+      - generic: 2 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people":
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Schedule" [level=2]
+  - tablist "Shoot days":
+    - tab "Day 1 13 August, 2026 7:30 am - 5:00 pm Precinct Studio 2" [selected]:
+      - strong: Day 1
+      - generic: 13 August, 2026
+      - generic: 7:30 am - 5:00 pm
+      - generic "Precinct Studio 2"
+    - button "Edit or delete Day 1": Edit or delete Day 1
+    - tab "Day 2 14 August, 2026":
+      - strong: Day 2
+      - generic: 14 August, 2026
+    - button "Add shoot day"
+  - heading "Run of day" [level=3]
+  - button "Add to Schedule": Add
+  - generic "Day 1 schedule timeline":
+    - paragraph: Drag entries to change their start time. Resize an entry from its bottom edge to change its duration.
+    - generic: 7:30 am
+    - generic: 8:30 am
+    - generic: 9:30 am
+    - generic: 10:30 am
+    - generic: 11:30 am
+    - generic: 12:30 pm
+    - generic: 1:30 pm
+    - generic: 2:30 pm
+    - generic: 3:30 pm
+    - generic: 4:30 pm
+    - button "Edit Crew call and gear unload, 8:00 am, 45 minutes":
+      - generic: Setup
+      - generic "Overlaps with Lighting and camera setup by 45 minutes. They share people and a location."
+      - strong: Crew call and gear unload
+      - generic "45 min · Precinct Studio 2"
+      - button "Resize Crew call and gear unload"
+    - button "Edit Lighting and camera setup, 8:00 am, 45 minutes":
+      - generic: Setup
+      - generic "Overlaps with Crew call and gear unload by 45 minutes. They share people and a location."
+      - strong: Lighting and camera setup
+      - generic "45 min · Precinct Studio 2"
+      - button "Resize Lighting and camera setup"
+    - button "Edit Founder interview, 8:45 am, 60 minutes":
+      - generic: Shot group
+      - strong: Founder interview
+      - generic "0 shots · 60 min · Precinct Studio 2"
+      - button "Resize Founder interview"
+    - button "Edit Travel to Loom office, 10:15 am, 20 minutes":
+      - generic: Travel
+      - strong: Travel to Loom office
+      - generic "20 min · Loom Sydney Office"
+      - button "Resize Travel to Loom office"
+    - button "Edit Team and workplace B-roll, 10:35 am, 85 minutes":
+      - generic: Shot group
+      - strong: Team and workplace B-roll
+      - generic "0 shots · 85 min · Loom Sydney Office"
+      - button "Resize Team and workplace B-roll"
+    - button "Edit Lunch, 12:00 pm, 45 minutes":
+      - generic: Lunch
+      - strong: Lunch
+      - generic "45 min · Loom Sydney Office"
+      - button "Resize Lunch"
+  - complementary "Unscheduled items":
+    - heading "Unscheduled" [level=3]
+    - button "Collapse Unscheduled" [expanded]
+    - list:
+      - article:
+        - button "Establishing coverage 2 shots · Precinct Studio":
+          - strong: Establishing coverage
+          - generic "2 shots · Precinct Studio"
+  - generic "Schedule readiness and actions":
+    - button "Mark schedule ready"
+  - dialog "Add to schedule":
+    - form "Add to schedule":
+      - generic: Time
+      - combobox "Time": 8:45 am
+      - generic: Description
+      - textbox "Description" [active]:
+        - /placeholder: e.g. Lighting and camera setup
+      - generic: Duration (optional)
+      - combobox "Duration (optional) min": "30"
+      - generic: min
+      - group "Type":
+        - generic: Type
+        - button "Setup" [pressed]: Setup
+        - button "Lunch": Lunch
+        - button "Travel": Travel
+        - button "Break": Break
+      - generic: Location
+      - combobox "Location":
+        - generic: Precinct Studio 2
+      - button "Cancel"
+      - button "Add to schedule" [disabled]:
+        - generic: Add to schedule

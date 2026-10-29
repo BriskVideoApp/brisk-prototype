@@ -1,0 +1,149 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/costs".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/costs
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Project stage progress
+					41 container LOOM / Launch Film - Sales Narrative
+						42 link Description: Back to dashboard, Value: localhost:3000/active-videos
+						43 text LOOM Launch Film - Sales Narrative
+						44 container Project share actions
+							45 button (collapsed) Description: Share project, Secondary Actions: Expand
+					46 container LOOM Launch Film - Sales Narrative
+						47 content list Sequential production stages
+							48 container
+								49 link Description: Brief: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								50 text Brief
+							51 container
+								52 link Description: Script: Approved, Value: localhost:3000/projects/loom-launch-film/script
+								53 text Script
+							54 container
+								55 link Description: Storyboard: Waiting on North Star Films, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								56 text Storyboard
+							57 container
+								58 link Description: Shoot: Waiting on Loom, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								59 text Shoot
+							60 container
+								61 link Description: Video Review: Not started, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								62 text Edit
+							63 container
+								64 link Description: Masters: Not started, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								65 text Masters
+						66 container
+							67 link Description: Media. 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+							68 text Media
+						69 button (collapsed) Description: Adjust project flow, Secondary Actions: Expand
+							70 text Adjust project flow
+				71 container Project costs
+					72 container
+						73 text PROJECT
+						74 heading Project costs, Value: 1, ID: project-costs-heading
+							75 text Project costs
+						76 text See what you agreed to pay, review invoices and mark them as paid.
+						77 link Description: Open Team panel, Value: localhost:3000/active-videos?project=loom-launch-film&section=team
+					78 container Project cost summary
+						79 container
+							80 text AGREED COST USD 2,040 1 accepted offer
+						81 container
+							82 text INVOICE RECEIVED USD 2,140 USD 100 more than agreed
+						83 container
+							84 text READY TO PAY USD 0 No approved invoices
+					85 container Agreed costs
+						86 container
+							87 heading Agreed costs, Value: 2, ID: project-offers-heading
+								88 text Agreed costs
+							89 text Accepted offers for this project. Manage offers from the Team panel.
+						90 table
+							91 row
+								92 cell
+									93 text Contractor
+								94 cell
+									95 text Role
+								96 cell
+									97 text Agreed amount
+								98 cell
+									99 text Accepted on
+								100 cell
+									101 text Status
+							102 row
+								103 cell
+									104 link Description: Chris Taylor, Value: localhost:3000/people/ct
+								105 cell
+									106 text Editor
+								107 cell
+									108 text USD 2,040
+								109 cell
+									110 text 2 Aug 2026
+								111 cell
+									112 text Accepted
+					113 container Contractor invoices
+						114 container
+							115 heading Contractor invoices, Value: 2, ID: project-invoices-heading
+								116 text Contractor invoices
+							117 text Compare each invoice with the agreed cost. Approve it, send it back or mark it as paid.
+						118 table
+							119 row
+								120 cell
+									121 text Invoice
+								122 cell
+									123 text Contractor
+								124 cell
+									125 text Invoice amount
+								126 cell
+									127 text Received
+								128 cell
+									129 text Status
+								130 cell
+									131 text Actions
+							132 row Open CT-3142-edit-services.pdf
+								133 cell
+									134 text CT-3142-edit-services.pdf
+								135 cell
+									136 link Description: Chris Taylor, Value: localhost:3000/people/ct
+								137 cell
+									138 text USD 2,140
+									139 text USD 100 more than agreed
+								140 cell
+									141 text 18 Aug 2026
+								142 cell
+									143 combo box (collapsed) Description: Change status for CT-3142-edit-services.pdf, Value: Sent back, Secondary Actions: Expand
+										144 text Sent back
+								145 cell
+									146 button Review invoice
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/costs

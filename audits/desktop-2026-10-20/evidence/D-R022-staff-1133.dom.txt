@@ -1,0 +1,166 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+      - generic "Project share actions":
+        - button "Share project": Share project
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/storyboard
+          - text: Waiting on North Star Films
+        - generic: Storyboard
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 15 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "15"
+        - text: 15 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Project costs":
+    - generic: PROJECT
+    - heading "Project costs" [level=1]
+    - paragraph: See what you agreed to pay, review invoices and mark them as paid.
+    - link "Open Team panel":
+      - /url: /active-videos?project=loom-launch-film&section=team
+    - region "Project cost summary":
+      - article:
+        - generic: Agreed cost
+        - strong: USD 2,040
+        - generic: 1 accepted offer
+      - article:
+        - generic: Invoice received
+        - strong: USD 2,140
+        - generic: USD 100 more than agreed
+      - article:
+        - generic: Ready to pay
+        - strong: USD 0
+        - generic: No approved invoices
+    - region "Agreed costs":
+      - heading "Agreed costs" [level=2]
+      - paragraph: Accepted offers for this project. Manage offers from the Team panel.
+      - table:
+        - rowgroup:
+          - row "Contractor Role Agreed amount Accepted on Status":
+            - columnheader "Contractor"
+            - columnheader "Role"
+            - columnheader "Agreed amount"
+            - columnheader "Accepted on"
+            - columnheader "Status"
+        - rowgroup:
+          - row "Chris Taylor Editor USD 2,040 2 Aug 2026 Accepted":
+            - cell "Chris Taylor":
+              - link "Chris Taylor":
+                - /url: /people/ct
+                - strong: Chris Taylor
+            - cell "Editor"
+            - cell "USD 2,040":
+              - strong: USD 2,040
+            - cell "2 Aug 2026"
+            - cell "Accepted":
+              - generic: Accepted
+    - region "Contractor invoices":
+      - heading "Contractor invoices" [level=2]
+      - paragraph: Compare each invoice with the agreed cost. Approve it, send it back or mark it as paid.
+      - table:
+        - rowgroup:
+          - row "Invoice Contractor Invoice amount Received Status Actions":
+            - columnheader "Invoice"
+            - columnheader "Contractor"
+            - columnheader "Invoice amount"
+            - columnheader "Received"
+            - columnheader "Status"
+            - columnheader "Actions"
+        - rowgroup:
+          - row "Open CT-3142-edit-services.pdf":
+            - cell "CT-3142-edit-services.pdf":
+              - strong: CT-3142-edit-services.pdf
+            - cell "Chris Taylor":
+              - link "Chris Taylor":
+                - /url: /people/ct
+                - strong: Chris Taylor
+            - cell "USD 2,140 USD 100 more than agreed":
+              - strong: USD 2,140
+              - generic: USD 100 more than agreed
+            - cell "18 Aug 2026"
+            - cell:
+              - combobox "Change status for CT-3142-edit-services.pdf":
+                - generic: Sent back
+            - cell "Review invoice":
+              - button "Review invoice"

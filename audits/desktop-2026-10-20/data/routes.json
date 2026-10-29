@@ -1,0 +1,551 @@
+[
+  {
+    "id": "R001",
+    "route": "/active-videos",
+    "source": "src/app/active-videos/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R002",
+    "route": "/brand-kits/[customerSlug]/[subBrandSlug]",
+    "source": "src/app/brand-kits/[customerSlug]/[subBrandSlug]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R003",
+    "route": "/brand-kits/[customerSlug]",
+    "source": "src/app/brand-kits/[customerSlug]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R004",
+    "route": "/brand-kits",
+    "source": "src/app/brand-kits/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R005",
+    "route": "/chat",
+    "source": "src/app/chat/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R006",
+    "route": "/client/invoices",
+    "source": "src/app/client/invoices/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R007",
+    "route": "/clients/[clientId]",
+    "source": "src/app/clients/[clientId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R008",
+    "route": "/clients",
+    "source": "src/app/clients/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R009",
+    "route": "/customer-dashboard",
+    "source": "src/app/customer-dashboard/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R010",
+    "route": "/customer-dashboard/start-video",
+    "source": "src/app/customer-dashboard/start-video/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R011",
+    "route": "/customer-dashboard/start-video/script",
+    "source": "src/app/customer-dashboard/start-video/script/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R012",
+    "route": "/media/[assetId]",
+    "source": "src/app/media/[assetId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R013",
+    "route": "/media",
+    "source": "src/app/media/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R014",
+    "route": "/notifications/delivery",
+    "source": "src/app/notifications/delivery/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R015",
+    "route": "/notifications",
+    "source": "src/app/notifications/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R016",
+    "route": "/offers/[projectId]/brief",
+    "source": "src/app/offers/[projectId]/brief/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R017",
+    "route": "/outstanding-invoices",
+    "source": "src/app/outstanding-invoices/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R018",
+    "route": "/",
+    "source": "src/app/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R019",
+    "route": "/people/[personId]",
+    "source": "src/app/people/[personId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R020",
+    "route": "/people",
+    "source": "src/app/people/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R021",
+    "route": "/print/[kind]/[projectId]",
+    "source": "src/app/print/[kind]/[projectId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R022",
+    "route": "/projects/[projectId]/costs",
+    "source": "src/app/projects/[projectId]/costs/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R023",
+    "route": "/projects/[projectId]/files",
+    "source": "src/app/projects/[projectId]/files/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R024",
+    "route": "/projects/[projectId]",
+    "source": "src/app/projects/[projectId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R025",
+    "route": "/projects/[projectId]/script",
+    "source": "src/app/projects/[projectId]/script/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R026",
+    "route": "/projects/[projectId]/stages/brief",
+    "source": "src/app/projects/[projectId]/stages/brief/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R027",
+    "route": "/projects/[projectId]/stages/edit",
+    "source": "src/app/projects/[projectId]/stages/edit/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R028",
+    "route": "/projects/[projectId]/stages/masters",
+    "source": "src/app/projects/[projectId]/stages/masters/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R029",
+    "route": "/projects/[projectId]/stages/media",
+    "source": "src/app/projects/[projectId]/stages/media/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R030",
+    "route": "/projects/[projectId]/stages/shoot",
+    "source": "src/app/projects/[projectId]/stages/shoot/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R031",
+    "route": "/projects/[projectId]/stages/storyboard",
+    "source": "src/app/projects/[projectId]/stages/storyboard/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R032",
+    "route": "/prototype/journey-entry",
+    "source": "src/app/prototype/journey-entry/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R033",
+    "route": "/prototype/production-flow",
+    "source": "src/app/prototype/production-flow/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R034",
+    "route": "/prototype/scenarios",
+    "source": "src/app/prototype/scenarios/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R035",
+    "route": "/review",
+    "source": "src/app/review/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R036",
+    "route": "/settings/client/company",
+    "source": "src/app/settings/client/company/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R037",
+    "route": "/settings/client/team",
+    "source": "src/app/settings/client/team/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R038",
+    "route": "/settings/client-billing",
+    "source": "src/app/settings/client-billing/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R039",
+    "route": "/settings/notifications/[categoryId]",
+    "source": "src/app/settings/notifications/[categoryId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R040",
+    "route": "/settings/notifications",
+    "source": "src/app/settings/notifications/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R041",
+    "route": "/settings/notifications/templates",
+    "source": "src/app/settings/notifications/templates/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R042",
+    "route": "/settings/personal/notifications",
+    "source": "src/app/settings/personal/notifications/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R043",
+    "route": "/settings/personal/profile",
+    "source": "src/app/settings/personal/profile/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R044",
+    "route": "/settings/personal/security",
+    "source": "src/app/settings/personal/security/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R045",
+    "route": "/settings/plan-billing",
+    "source": "src/app/settings/plan-billing/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R046",
+    "route": "/settings/review-request-message",
+    "source": "src/app/settings/review-request-message/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R047",
+    "route": "/settings/studio/ai-playbook",
+    "source": "src/app/settings/studio/ai-playbook/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R048",
+    "route": "/settings/studio/branding",
+    "source": "src/app/settings/studio/branding/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R049",
+    "route": "/settings/studio/details",
+    "source": "src/app/settings/studio/details/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R050",
+    "route": "/settings/studio/integrations",
+    "source": "src/app/settings/studio/integrations/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R051",
+    "route": "/settings/studio",
+    "source": "src/app/settings/studio/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R052",
+    "route": "/settings/studio/portal-preview",
+    "source": "src/app/settings/studio/portal-preview/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R053",
+    "route": "/settings/studio/production",
+    "source": "src/app/settings/studio/production/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R054",
+    "route": "/settings/studio/storage",
+    "source": "src/app/settings/studio/storage/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R055",
+    "route": "/settings/studio/team",
+    "source": "src/app/settings/studio/team/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R056",
+    "route": "/share/brand/[token]",
+    "source": "src/app/share/brand/[token]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R057",
+    "route": "/share/call-sheet/[projectId]",
+    "source": "src/app/share/call-sheet/[projectId]/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R058",
+    "route": "/share",
+    "source": "src/app/share/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R059",
+    "route": "/studio-onboard",
+    "source": "src/app/studio-onboard/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R060",
+    "route": "/today",
+    "source": "src/app/today/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  },
+  {
+    "id": "R061",
+    "route": "/workspaces/[workspaceId]/clients/[clientId]/portal",
+    "source": "src/app/workspaces/[workspaceId]/clients/[clientId]/portal/page.tsx",
+    "status": "Not inspected",
+    "browser": [],
+    "screenshots": [],
+    "gaps": "Default and nested states, applicable roles, both desktop widths awaiting verification."
+  }
+]

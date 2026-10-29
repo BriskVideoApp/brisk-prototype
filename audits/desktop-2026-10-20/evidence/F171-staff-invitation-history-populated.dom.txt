@@ -1,0 +1,89 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "People":
+    - /url: /people
+    - text: People
+  - generic "Editor avatar": E
+  - generic: Studio Staff
+  - heading "Editor" [level=1]
+  - button "Assign project Choose a project, role and hours.":
+    - generic: Assign project
+    - text: Choose a project, role and hours.
+  - button "Pause access Stop access for now. You can restore it."
+  - tablist "Person profile sections":
+    - tab "Overview"
+    - tab "Work"
+    - tab "Hours"
+    - tab "Skills"
+    - tab "Notes and activity" [selected]
+  - tabpanel "Notes and activity":
+    - article:
+      - heading "Internal notes" [level=2]
+      - textbox "Internal notes":
+        - /placeholder: Add internal notes…
+        - text: Invited Studio Staff member. Profile details can be completed after acceptance.
+      - generic: Never shown to this person
+      - button "Save notes Save for Studio Staff only."
+    - heading "Events log" [level=2]
+    - combobox "Filter events":
+      - generic: All activity
+      - text: Show one type of activity.
+    - article:
+      - strong: Studio invitation sent
+      - generic: Editor in Brisk
+      - text: Invitation ·
+      - time: 13 Aug 2026, 11:05 am

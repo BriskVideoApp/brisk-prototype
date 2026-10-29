@@ -1,0 +1,69 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to your videos":
+    - /url: /workspaces/northstar-films/clients/loom/portal
+    - generic: Back to your videos
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - generic: Loom
+  - navigation "Company settings":
+    - link "Company details":
+      - /url: /settings/client/company
+      - generic: Company details
+    - link "Team access":
+      - /url: /settings/client/team
+      - generic: Team access
+    - link "Invoices":
+      - /url: /client/invoices
+      - generic: Invoices
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Company details" [level=1]
+  - region "Company details":
+    - region "Company logo":
+      - generic "Loom logo"
+      - heading "Company logo" [level=2]
+      - button "Choose File"
+      - button "Replace logo":
+        - generic: Replace logo
+      - button "Remove"
+    - generic: Company name
+    - textbox "Company name": Loom
+    - generic: Main contact
+    - button "Main contact":
+      - generic: Maya Chen
+    - button "Discard changes"
+    - button "Save changes" [disabled]

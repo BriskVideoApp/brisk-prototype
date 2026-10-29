@@ -1,0 +1,24 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/brand-kits".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 53-835
+~1 AXWebArea Brisk Prototype, URL: localhost:3000/brand-kits
+~				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+~				40 container Brand Kits header
+~					41 heading Brand Kits, Value: 1
+~						42 text Brand Kits
+~						44 text Search Brand Kits
+~						45 search text field (settable) Search Brand Kits, ID: brand-kits-search
+~				46 container Client Brand Kits
+~					47 link Description: Loom loom.com Brand Kit ready Last updated Just now, Value: localhost:3000/brand-kits/loom
+~					48 link Description: Deel deel.com Brand Kit ready Last updated 22 Jul 2026, Value: localhost:3000/brand-kits/deel
+~					49 link Description: Hims & Hers hims.com Set up needed Last updated Not set up, Value: localhost:3000/brand-kits/hims
+~					50 link Description: Notion notion.so Brand Kit ready Last updated 19 Jul 2026, Value: localhost:3000/brand-kits/notion
+~					51 link Description: OpenAI openai.com Brand Kit ready Last updated 16 Jul 2026, Value: localhost:3000/brand-kits/openai
+~					52 link Description: PostHog posthog.com Brand Kit ready Last updated 11 Jul 2026, Value: localhost:3000/brand-kits/posthog
++					53 link Description: Ramp ramp.com Brand Kit ready Last updated 4 Jul 2026, Value: localhost:3000/brand-kits/ramp
++					54 link Description: Canva canva.com Brand Kit ready Last updated 28 Jun 2026, Value: localhost:3000/brand-kits/canva
++					55 link Description: Linear linear.app Brand Kit ready Last updated 21 Jun 2026, Value: localhost:3000/brand-kits/linear
++					56 link Description: Figma figma.com Brand Kit ready Last updated 15 Jun 2026, Value: localhost:3000/brand-kits/figma
++					57 link Description: Alex Morgan Set up needed Last updated Not set up, Value: localhost:3000/brand-kits/alex-morgan
++					58 link Description: Harbour Health harbourhealth.com.au Set up needed Last updated Just now, Value: localhost:3000/brand-kits/harbour-health
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/brand-kits

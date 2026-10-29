@@ -1,0 +1,227 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 7 shots":
+      - strong: Shot List
+      - generic: 7 shots
+    - button "Interview Questions, 2 questions":
+      - strong: Interview Questions
+      - generic: 2 questions
+    - button "Visual References, 1 reference":
+      - strong: Visual References
+      - generic: 1 reference
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 2 shoot days":
+      - strong: Schedule
+      - generic: 2 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people" [active]:
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Who is involved?" [level=2]
+  - paragraph: Manage crew, talent and client roles for this shoot.
+  - button "Add person": Add person
+  - table "People involved in this shoot":
+    - row "Person Shoot role Call time Actions":
+      - columnheader "Person"
+      - columnheader "Shoot role"
+      - columnheader "Call time"
+      - columnheader "Actions"
+    - row "TM Tom Maclachlan tom@northstarfilms.com.au 0412 555 018 Edit Crew - Producer / Director role Call time 7:15 am Edit Tom Maclachlan's contact and call details":
+      - cell "TM Tom Maclachlan tom@northstarfilms.com.au 0412 555 018":
+        - generic: TM
+        - strong: Tom Maclachlan
+        - generic: tom@northstarfilms.com.au
+        - generic: 0412 555 018
+      - cell "Edit Crew - Producer / Director role":
+        - button "Edit Crew - Producer / Director role":
+          - generic: Crew - Producer / Director
+      - cell "Call time 7:15 am":
+        - generic: Call time
+        - strong: 7:15 am
+      - cell "Edit Tom Maclachlan's contact and call details":
+        - button "Edit Tom Maclachlan's contact and call details"
+    - row "JL Jordan Lee jordan@northstarfilms.com.au 0422 555 284 Edit Crew - Camera Operator role Call time 7:30 am Edit Jordan Lee's contact and call details":
+      - cell "JL Jordan Lee jordan@northstarfilms.com.au 0422 555 284":
+        - generic: JL
+        - strong: Jordan Lee
+        - generic: jordan@northstarfilms.com.au
+        - generic: 0422 555 284
+      - cell "Edit Crew - Camera Operator role":
+        - button "Edit Crew - Camera Operator role":
+          - generic: Crew - Camera Operator
+      - cell "Call time 7:30 am":
+        - generic: Call time
+        - strong: 7:30 am
+      - cell "Edit Jordan Lee's contact and call details":
+        - button "Edit Jordan Lee's contact and call details"
+    - row "MS Maya Singh maya@northstarfilms.com.au 0431 555 906 Edit Crew - Sound Recordist role Call time 7:30 am Edit Maya Singh's contact and call details":
+      - cell "MS Maya Singh maya@northstarfilms.com.au 0431 555 906":
+        - generic: MS
+        - strong: Maya Singh
+        - generic: maya@northstarfilms.com.au
+        - generic: 0431 555 906
+      - cell "Edit Crew - Sound Recordist role":
+        - button "Edit Crew - Sound Recordist role":
+          - generic: Crew - Sound Recordist
+      - cell "Call time 7:30 am":
+        - generic: Call time
+        - strong: 7:30 am
+      - cell "Edit Maya Singh's contact and call details":
+        - button "Edit Maya Singh's contact and call details"
+    - row "AC Amelia Chen amelia@loomexample.com 0404 555 731 Edit Talent - Founder / Interviewee role Call time 8:30 am Edit Amelia Chen's contact and call details":
+      - cell "AC Amelia Chen amelia@loomexample.com 0404 555 731":
+        - generic: AC
+        - strong: Amelia Chen
+        - generic: amelia@loomexample.com
+        - generic: 0404 555 731
+      - cell "Edit Talent - Founder / Interviewee role":
+        - button "Edit Talent - Founder / Interviewee role":
+          - generic: Talent - Founder / Interviewee
+      - cell "Call time 8:30 am":
+        - generic: Call time
+        - strong: 8:30 am
+      - cell "Edit Amelia Chen's contact and call details":
+        - button "Edit Amelia Chen's contact and call details"
+    - row "LO Liam O'Connor liam@loomexample.com 0408 555 412 Edit Client - Communications Manager role Call time 8:15 am Edit Liam O'Connor's contact and call details":
+      - cell "LO Liam O'Connor liam@loomexample.com 0408 555 412":
+        - generic: LO
+        - strong: Liam O'Connor
+        - generic: liam@loomexample.com
+        - generic: 0408 555 412
+      - cell "Edit Client - Communications Manager role":
+        - button "Edit Client - Communications Manager role":
+          - generic: Client - Communications Manager
+      - cell "Call time 8:15 am":
+        - generic: Call time
+        - strong: 8:15 am
+      - cell "Edit Liam O'Connor's contact and call details":
+        - button "Edit Liam O'Connor's contact and call details"
+    - row "RW Ruth Williams ruth@precinctstudios.com.au 0466 555 193 Edit Other - Venue Contact role Call time 7:00 am Edit Ruth Williams's contact and call details":
+      - cell "RW Ruth Williams ruth@precinctstudios.com.au 0466 555 193":
+        - generic: RW
+        - strong: Ruth Williams
+        - generic: ruth@precinctstudios.com.au
+        - generic: 0466 555 193
+      - cell "Edit Other - Venue Contact role":
+        - button "Edit Other - Venue Contact role":
+          - generic: Other - Venue Contact
+      - cell "Call time 7:00 am":
+        - generic: Call time
+        - strong: 7:00 am
+      - cell "Edit Ruth Williams's contact and call details":
+        - button "Edit Ruth Williams's contact and call details"
+  - generic "People readiness and actions":
+    - button "Mark people ready"

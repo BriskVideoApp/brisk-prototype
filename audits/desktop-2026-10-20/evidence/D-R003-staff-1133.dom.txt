@@ -1,0 +1,227 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - navigation "Breadcrumb":
+    - link "Brand Kits":
+      - /url: /brand-kits
+    - generic: Loom
+  - heading "Loom Brand Kit" [level=1]
+  - paragraph: Master brand
+  - region "Loom brand assets":
+    - article:
+      - heading "Brand Kit" [level=2]
+      - generic "Loom motion package preview. Hover or focus to play.":
+        - strong: Loom
+        - generic: Motion package · titles · lower thirds
+        - generic: Hover to preview
+        - button "More actions": More actions
+      - complementary:
+        - generic: Active
+        - region "Editor files":
+          - heading "Editor files" [level=3]
+          - combobox "Motion package version":
+            - generic: v3 Active
+          - link "Download all editor files":
+            - /url: data:application/zip;charset=utf-8,loom-titles-v3.mogrt%0Aloom-motion-package-v3.aep%0Aloom-source-graphics%0Aloom-brand-fonts.zip
+            - text: Download all editor files
+          - strong: loom-titles-v3.mogrt
+          - generic: 18.4 MB
+          - checkbox "Select asset"
+          - button "Download"
+          - button "More actions": More actions
+          - strong: loom-motion-package-v3.aep
+          - generic: 246 MB
+          - checkbox "Select asset"
+          - button "Download"
+          - button "More actions": More actions
+          - strong: loom-source-graphics
+          - generic: 82.7 MB
+          - checkbox "Select asset"
+          - button "Download"
+          - button "More actions": More actions
+          - strong: loom-brand-fonts.zip
+          - generic: 12.1 MB
+          - checkbox "Select asset"
+          - button "Download"
+          - button "More actions": More actions
+    - article:
+      - heading "Logos" [level=2]
+      - button "Upload logos": Upload logos
+      - button "Choose File"
+      - button "Tile actions": Tile actions
+      - button "Loom horizontal - dark SVG":
+        - generic: Loom horizontal - dark
+        - generic: SVG
+      - button "Download"
+      - button "More actions": More actions
+      - button "Loom horizontal - light SVG":
+        - generic: Loom horizontal - light
+        - generic: SVG
+      - button "Download"
+      - button "More actions": More actions
+      - button "Loom mark - mono PNG":
+        - generic: Loom mark - mono
+        - generic: PNG
+      - button "Download"
+      - button "More actions": More actions
+    - article:
+      - heading "Colours" [level=2]
+      - button "+ Add colour"
+      - button "Colour actions": Colour actions
+      - 'button "Copy Loom purple #625DF5"':
+        - generic: "#625DF5"
+      - button "Actions for Loom purple": Actions for Loom purple
+      - 'button "Copy Cloud #F4F3FF"':
+        - generic: "#F4F3FF"
+      - button "Actions for Cloud": Actions for Cloud
+      - 'button "Copy Signal pink #FF6BCE"':
+        - generic: "#FF6BCE"
+      - button "Actions for Signal pink": Actions for Signal pink
+      - 'button "Copy Ink #1B1B1F"':
+        - generic: "#1B1B1F"
+      - button "Actions for Ink": Actions for Ink
+    - article:
+      - heading "Fonts" [level=2]
+      - button "Add font": Add font
+      - button "Tile actions": Tile actions
+      - generic: Heading
+      - strong: Inter
+      - button "Download"
+      - button "More actions": More actions
+      - generic: Clear ideas, beautifully told
+      - generic: Body
+      - strong: Inter
+      - button "Download"
+      - button "More actions": More actions
+      - generic: The quick brown fox…
+      - generic: Mono
+      - strong: IBM Plex Mono
+      - button "Download"
+      - button "More actions": More actions
+      - generic: Aa Bb Cc 0123456789
+    - article:
+      - heading "Visual Assets" [level=2]
+      - button "Upload photos": Upload photos
+      - button "Choose File"
+      - button "Tile actions": Tile actions
+      - group "Visual asset type":
+        - button "Photos"
+        - button "Footage"
+        - button "Icons and graphics"
+        - button "Audio"
+      - button "People collaborating":
+        - img "People collaborating"
+      - button "Download"
+      - button "More actions": More actions
+      - button "Product in context":
+        - img "Product in context"
+      - button "Download"
+      - button "More actions": More actions
+    - article:
+      - heading "Voice & Tone" [level=2]
+      - button "Add tone": Add tone
+      - button "Tile actions": Tile actions
+      - paragraph: Loom sounds clear, human and useful. Lead with the outcome, keep sentences conversational, and make complex teamwork feel simple. Confidence comes from direct language rather than hype.
+      - generic: Warm
+      - generic: Direct
+      - generic: Useful
+      - generic: Optimistic
+      - button "+ Add tone"
+    - article:
+      - heading "Brand Guidelines + Documents" [level=2]
+      - button "Upload guidelines": Upload guidelines
+      - button "Choose File"
+      - button "Tile actions": Tile actions
+      - button "Open Loom-brand-guidelines.pdf":
+        - iframe
+      - button "Loom-brand-guidelines.pdf 2.4 MB · PDF":
+        - strong: Loom-brand-guidelines.pdf
+        - generic: 2.4 MB · PDF
+      - link "Download Loom-brand-guidelines.pdf":
+        - /url: data:application/pdf;charset=utf-8,%25PDF-1.4%0A1%200%20obj%0A%3C%3C%20%2FType%20%2FCatalog%20%2FPages%202%200%20R%20%3E%3E%0Aendobj%0A2%200%20obj%0A%3C%3C%20%2FType%20%2FPages%20%2FKids%20%5B3%200%20R%5D%20%2FCount%201%20%3E%3E%0Aendobj%0A3%200%20obj%0A%3C%3C%20%2FType%20%2FPage%20%2FParent%202%200%20R%20%2FMediaBox%20%5B0%200%20612%20792%5D%20%2FResources%20%3C%3C%20%2FFont%20%3C%3C%20%2FF1%204%200%20R%20%3E%3E%20%3E%3E%20%2FContents%205%200%20R%20%3E%3E%0Aendobj%0A4%200%20obj%0A%3C%3C%20%2FType%20%2FFont%20%2FSubtype%20%2FType1%20%2FBaseFont%20%2FHelvetica%20%3E%3E%0Aendobj%0A5%200%20obj%0A%3C%3C%20%2FLength%20122%20%3E%3E%0Astream%0ABT%0A%2FF1%2022%20Tf%0A72%20720%20Td%20(Loom%20Brand%20Guidelines)%20Tj%0A%2FF1%2011%20Tf%0A0%20-36%20Td%20(Logo%2C%20colour%2C%20typography%20and%20layout%20guidance.)%20Tj%0AET%0Aendstream%0Aendobj%0Axref%0A0%206%0A0000000000%2065535%20f%20%0A0000000009%2000000%20n%20%0A0000000058%2000000%20n%20%0A0000000115%2000000%20n%20%0A0000000241%2000000%20n%20%0A0000000311%2000000%20n%20%0Atrailer%0A%3C%3C%20%2FSize%206%20%2FRoot%201%200%20R%20%3E%3E%0Astartxref%0A484%0A%25%25EOF
+      - button "More actions": More actions
+      - button "Open Loom-content-guidelines.pdf":
+        - iframe
+      - button "Loom-content-guidelines.pdf 806 KB · PDF":
+        - strong: Loom-content-guidelines.pdf
+        - generic: 806 KB · PDF
+      - link "Download Loom-content-guidelines.pdf":
+        - /url: data:application/pdf;charset=utf-8,%25PDF-1.4%0A1%200%20obj%0A%3C%3C%20%2FType%20%2FCatalog%20%2FPages%202%200%20R%20%3E%3E%0Aendobj%0A2%200%20obj%0A%3C%3C%20%2FType%20%2FPages%20%2FKids%20%5B3%200%20R%5D%20%2FCount%201%20%3E%3E%0Aendobj%0A3%200%20obj%0A%3C%3C%20%2FType%20%2FPage%20%2FParent%202%200%20R%20%2FMediaBox%20%5B0%200%20612%20792%5D%20%2FResources%20%3C%3C%20%2FFont%20%3C%3C%20%2FF1%204%200%20R%20%3E%3E%20%3E%3E%20%2FContents%205%200%20R%20%3E%3E%0Aendobj%0A4%200%20obj%0A%3C%3C%20%2FType%20%2FFont%20%2FSubtype%20%2FType1%20%2FBaseFont%20%2FHelvetica%20%3E%3E%0Aendobj%0A5%200%20obj%0A%3C%3C%20%2FLength%20117%20%3E%3E%0Astream%0ABT%0A%2FF1%2022%20Tf%0A72%20720%20Td%20(Loom%20Content%20Guidelines)%20Tj%0A%2FF1%2011%20Tf%0A0%20-36%20Td%20(Voice%2C%20imagery%20and%20content%20principles.)%20Tj%0AET%0Aendstream%0Aendobj%0Axref%0A0%206%0A0000000000%2065535%20f%20%0A0000000009%2000000%20n%20%0A0000000058%2000000%20n%20%0A0000000115%2000000%20n%20%0A0000000241%2000000%20n%20%0A0000000311%2000000%20n%20%0Atrailer%0A%3C%3C%20%2FSize%206%20%2FRoot%201%200%20R%20%3E%3E%0Astartxref%0A479%0A%25%25EOF
+      - button "More actions": More actions
+    - article:
+      - heading "Sub-brands" [level=2]
+      - button "Add sub-brand": Add sub-brand
+      - button "Tile actions": Tile actions
+      - link "Loom AI Sub-brand · 18 Jul 2026":
+        - /url: /brand-kits/loom/loom-ai
+        - strong: Loom AI
+        - generic: Sub-brand · 18 Jul 2026
+      - checkbox "Select asset"
+      - button "Download"
+      - button "More actions": More actions
+      - link "Loom Enterprise Sub-brand · 18 Jul 2026":
+        - /url: /brand-kits/loom/loom-enterprise
+        - strong: Loom Enterprise
+        - generic: Sub-brand · 18 Jul 2026
+      - checkbox "Select asset"
+      - button "Download"
+      - button "More actions": More actions
+      - link "Loom for Education Sub-brand · 18 Jul 2026":
+        - /url: /brand-kits/loom/loom-education
+        - strong: Loom for Education
+        - generic: Sub-brand · 18 Jul 2026
+      - checkbox "Select asset"
+      - button "Download"
+      - button "More actions": More actions
+      - button "+ Add sub-brand"
+      - button "View all"

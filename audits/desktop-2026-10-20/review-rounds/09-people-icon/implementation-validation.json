@@ -1,0 +1,48 @@
+{
+  "date": "29 October 2026",
+  "scope": "People sidebar icon changed from users-three to the existing DS User icon",
+  "approval": "Direct browser comment from Tom requesting one person",
+  "status": "Implemented and desktop-verified",
+  "source": "Brisk DS/src/imports/icons/User (🔄 swap).svg",
+  "export": "public/brisk-icons/user.svg",
+  "exportMatchesApprovedSource": true,
+  "changedExistingFiles": [
+    "src/components/navigation/HybridSidebar.tsx",
+    "src/components/video-review/DsIcon.tsx",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "unexpectedExistingChanges": [],
+  "newApplicationFiles": [
+    "public/brisk-icons/user.svg"
+  ],
+  "preserved": "People label, /people href, access checks, CSS and all earlier app changes retained. Working origins and working browser data untouched. Other users-three consumers remain as before.",
+  "verification": {
+    "typeCheck": "npx tsc --noEmit passed",
+    "http": {
+      "/active-videos?review=people-icon": 200,
+      "/brisk-icons/user.svg": 200
+    },
+    "browser": "Single-person outline visually inspected at 1440 desktop; collapsed 1133 People href and title verified; no browser warnings/errors. Viewport and navigation restored; temporary tab closed."
+  },
+  "screenshots": {
+    "expanded": "expanded-1440.png",
+    "collapsed": "collapsed-1133.png",
+    "crop": {
+      "file": "people-icon-navigation.png",
+      "source": "expanded-1440.png",
+      "box": [
+        10,
+        78,
+        228,
+        218
+      ]
+    }
+  },
+  "notRun": [
+    "tests",
+    "production build",
+    "dependency installation",
+    "commit",
+    "push"
+  ]
+}

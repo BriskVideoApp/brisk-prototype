@@ -1,0 +1,46 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/projects/loom-launch-film/stages/storyboard".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/projects/loom-launch-film/stages/storyboard
+	2 container Meet Maya, a nurse helping families navigate care decisions with calm and clarity.
+		3 container
+			4 button Back to Storyboard
+			5 text Storyboard frame  1
+			6 heading Meet Maya, a nurse helping families navigate care decisions with calm and clarity., Value: 2, ID: storyboard-review-title
+				7 text Meet Maya, a nurse helping families navigate care decisions with calm and clarity.
+			8 container Actions for storyboard frame 1
+				9 pop up button (collapsed) Description: Replace media for frame 1, Secondary Actions: Expand
+				10 button Copy link to frame 1
+					11 text Copy link
+				12 button Download media from frame 1
+					13 text Download
+				14 pop up button (collapsed) Description: More actions for frame 1, Secondary Actions: Expand
+					15 text More actions
+			16 text Image preview unavailable
+			17 image Drawing layer
+			18 text Click the frame to pin a comment WORDS
+			19 text Meet Maya, a nurse helping families navigate care decisions with calm and clarity.
+			20 text VISUAL DIRECTION
+			21 text Maya walks through a bright clinic corridor, greeting a family at reception.
+		22 container Frame comments
+			23 container
+				24 heading Comments (0), Value: 3
+					25 text Comments ( 0 )
+				26 container Comment filters
+					27 button All
+					28 button Unresolved
+					29 button Team
+					30 button Client
+			31 text No comments here
+			32 text Click the frame or draw to leave a note.
+			33 container Add comment
+				34 button Posting to Client
+				35 text entry area (settable)
+				36 button (disabled) Description: Attach file, Help: Attachments are not available in this view.
+					37 text Attachments are not available in this view
+				38 button (disabled) Description: Record your screen and voice, Help: Recording is not available in this prototype.
+					39 text Recording is not available in this prototype
+				40 checkbox Description: Draw on screen, Value: 0
+					41 text Draw on screen
+				42 button (disabled) Send comment
+				43 text Cmd+Enter to send
+
+The focused UI element is 4 button Back to Storyboard

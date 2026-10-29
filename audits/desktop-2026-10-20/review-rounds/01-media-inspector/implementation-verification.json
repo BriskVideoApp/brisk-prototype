@@ -1,0 +1,2190 @@
+[
+  {
+    "label": "global-1440",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 197,
+      "width": 44,
+      "x": 1384,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 1081,
+      "right": 1440,
+      "top": 254,
+      "width": 359,
+      "x": 1081,
+      "y": 254
+    },
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 185,
+      "width": 359,
+      "x": 1081,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1283,
+      "height": 1098,
+      "left": 860,
+      "right": 1440,
+      "top": 185,
+      "width": 580,
+      "x": 860,
+      "y": 185
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 1080,
+      "right": 1440,
+      "top": 185,
+      "width": 360,
+      "x": 1080,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1283,
+      "height": 1098,
+      "left": 240,
+      "right": 1440,
+      "top": 185,
+      "width": 1200,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "global-1133",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 197,
+      "width": 44,
+      "x": 1077,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 774,
+      "right": 1133,
+      "top": 254,
+      "width": 359,
+      "x": 774,
+      "y": 254
+    },
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 185,
+      "width": 359,
+      "x": 774,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1786.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": 185,
+      "width": 273,
+      "x": 860,
+      "y": 185
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 773,
+      "right": 1133,
+      "top": 185,
+      "width": 360,
+      "x": 773,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1786.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": 185,
+      "width": 893,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "pointer-close",
+    "focus": {
+      "file": "media-01",
+      "label": "Jess-interview-camera-a.mov, video",
+      "tag": "ARTICLE"
+    },
+    "main": {
+      "bottom": 1786.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": 185,
+      "width": 273,
+      "x": 860,
+      "y": 185
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  ",
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1786.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": 185,
+      "width": 893,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "keyboard-select",
+    "focus": {
+      "file": "media-01",
+      "label": "Deselect Jess-interview-camera-a.mov",
+      "tag": "BUTTON"
+    },
+    "main": {
+      "bottom": 1914.1875,
+      "height": 1759.1875,
+      "left": 860,
+      "right": 1133,
+      "top": 155,
+      "width": 273,
+      "x": 860,
+      "y": 155
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  ",
+    "scroll": {
+      "top": 30
+    },
+    "selected": [
+      "media-01"
+    ],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1914.1875,
+      "height": 1759.1875,
+      "left": 240,
+      "right": 1133,
+      "top": 155,
+      "width": 893,
+      "x": 240,
+      "y": 155
+    }
+  },
+  {
+    "label": "keyboard-open",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1662.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": 61,
+      "width": 273,
+      "x": 860,
+      "y": 61
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 124
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1662.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": 61,
+      "width": 893,
+      "x": 240,
+      "y": 61
+    }
+  },
+  {
+    "label": "keyboard-escape-return",
+    "focus": {
+      "file": "media-01",
+      "label": "Jess-interview-camera-a.mov, video",
+      "tag": "ARTICLE"
+    },
+    "main": {
+      "bottom": 1662.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": 61,
+      "width": 273,
+      "x": 860,
+      "y": 61
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  ",
+    "scroll": {
+      "top": 124
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1662.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": 61,
+      "width": 893,
+      "x": 240,
+      "y": 61
+    }
+  },
+  {
+    "label": "draft-confirm",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "dialog": "Discard unsent comment?\nYour comment has not been posted. Discard it to leave this file, or keep editing.\nKeep editing\nDiscard comment",
+    "draft": "Audit-only unsent inspector comment",
+    "focus": {
+      "label": null,
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "main": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -30,
+      "width": 273,
+      "x": 860,
+      "y": -30
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 215
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -30,
+      "width": 893,
+      "x": 240,
+      "y": -30
+    }
+  },
+  {
+    "label": "draft-kept",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "draft": "Audit-only unsent inspector comment",
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -30,
+      "width": 273,
+      "x": 860,
+      "y": -30
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 215
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -30,
+      "width": 893,
+      "x": 240,
+      "y": -30
+    }
+  },
+  {
+    "label": "draft-survives-tabs",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "draft": "Audit-only unsent inspector comment",
+    "focus": {
+      "label": null,
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -30,
+      "width": 273,
+      "x": 860,
+      "y": -30
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 215
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -30,
+      "width": 893,
+      "x": 240,
+      "y": -30
+    }
+  },
+  {
+    "label": "escape-draft-confirm",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "dialog": "Discard unsent comment?\nYour comment has not been posted. Discard it to leave this file, or keep editing.\nKeep editing\nDiscard comment",
+    "draft": "@Mad",
+    "focus": {
+      "label": null,
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "main": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -30,
+      "width": 273,
+      "x": 860,
+      "y": -30
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 215
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -30,
+      "width": 893,
+      "x": 240,
+      "y": -30
+    }
+  },
+  {
+    "label": "confirmation-escape-keeps-draft",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "draft": "@Mad",
+    "focus": {
+      "label": null,
+      "tag": "TEXTAREA"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -30,
+      "width": 273,
+      "x": 860,
+      "y": -30
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 215
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1571.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -30,
+      "width": 893,
+      "x": 240,
+      "y": -30
+    }
+  },
+  {
+    "label": "switch-draft-confirm",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "dialog": "Discard unsent comment?\nYour comment has not been posted. Discard it to leave this file, or keep editing.\nKeep editing\nDiscard comment",
+    "draft": "@Mad",
+    "focus": {
+      "label": null,
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "main": {
+      "bottom": 1414.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -187,
+      "width": 273,
+      "x": 860,
+      "y": -187
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 372
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1414.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -187,
+      "width": 893,
+      "x": 240,
+      "y": -187
+    }
+  },
+  {
+    "label": "switch-after-discard",
+    "close": {
+      "bottom": 121,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 77,
+      "width": 44,
+      "x": 1077,
+      "y": 77
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 866,
+      "left": 774,
+      "right": 1133,
+      "top": 134,
+      "width": 359,
+      "x": 774,
+      "y": 134
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 134,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 65,
+      "width": 359,
+      "x": 774,
+      "y": 65
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1414.1875,
+      "height": 1601.1875,
+      "left": 860,
+      "right": 1133,
+      "top": -187,
+      "width": 273,
+      "x": 860,
+      "y": -187
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 935,
+      "left": 773,
+      "right": 1133,
+      "top": 65,
+      "width": 360,
+      "x": 773,
+      "y": 65
+    },
+    "scroll": {
+      "top": 372
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1414.1875,
+      "height": 1601.1875,
+      "left": 240,
+      "right": 1133,
+      "top": -187,
+      "width": 893,
+      "x": 240,
+      "y": -187
+    }
+  },
+  {
+    "label": "context-before-open",
+    "focus": {
+      "file": "media-01",
+      "label": "Deselect Jess-interview-camera-a.mov",
+      "tag": "BUTTON"
+    },
+    "main": {
+      "bottom": 1171.875,
+      "height": 1016.875,
+      "left": 860,
+      "right": 1133,
+      "top": 155,
+      "width": 273,
+      "x": 860,
+      "y": 155
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  ",
+    "scroll": {
+      "top": 30
+    },
+    "selected": [
+      "media-01"
+    ],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1171.875,
+      "height": 1016.875,
+      "left": 240,
+      "right": 1133,
+      "top": 155,
+      "width": 893,
+      "x": 240,
+      "y": 155
+    }
+  },
+  {
+    "label": "context-after-close",
+    "focus": {
+      "file": "media-01",
+      "label": "Jess-interview-camera-a.mov, video",
+      "tag": "ARTICLE"
+    },
+    "main": {
+      "bottom": 999.875,
+      "height": 1016.875,
+      "left": 860,
+      "right": 1133,
+      "top": -17,
+      "width": 273,
+      "x": 860,
+      "y": -17
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  ",
+    "scroll": {
+      "top": 202
+    },
+    "selected": [
+      "media-01"
+    ],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 999.875,
+      "height": 1016.875,
+      "left": 240,
+      "right": 1133,
+      "top": -17,
+      "width": 893,
+      "x": 240,
+      "y": -17
+    }
+  },
+  {
+    "label": "global-collapsed-1440",
+    "close": {
+      "bottom": 229,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 185,
+      "width": 44,
+      "x": 1384,
+      "y": 185
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 758,
+      "left": 1081,
+      "right": 1440,
+      "top": 242,
+      "width": 359,
+      "x": 1081,
+      "y": 242
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 242,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 173,
+      "width": 359,
+      "x": 1081,
+      "y": 173
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 917.25,
+      "height": 744.25,
+      "left": 692,
+      "right": 1440,
+      "top": 173,
+      "width": 748,
+      "x": 692,
+      "y": 173
+    },
+    "mode": "media-workspace has-client-rail has-project-folder-rail  inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 827,
+      "left": 1080,
+      "right": 1440,
+      "top": 173,
+      "width": 360,
+      "x": 1080,
+      "y": 173
+    },
+    "scroll": {
+      "top": 12
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media/media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 917.25,
+      "height": 744.25,
+      "left": 72,
+      "right": 1440,
+      "top": 173,
+      "width": 1368,
+      "x": 72,
+      "y": 173
+    }
+  },
+  {
+    "label": "project-docked-1440",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 253,
+      "width": 44,
+      "x": 1384,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 1081,
+      "right": 1440,
+      "top": 310,
+      "width": 359,
+      "x": 1081,
+      "y": 310
+    },
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 241,
+      "width": 359,
+      "x": 1081,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1308.875,
+      "height": 1067.875,
+      "left": 480,
+      "right": 1080,
+      "top": 241,
+      "width": 600,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-docked",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 1080,
+      "right": 1440,
+      "top": 241,
+      "width": 360,
+      "x": 1080,
+      "y": 241
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1308.875,
+      "height": 1067.875,
+      "left": 240,
+      "right": 1440,
+      "top": 241,
+      "width": 1200,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "project-overlay-1133",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 253,
+      "width": 44,
+      "x": 1077,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 774,
+      "right": 1133,
+      "top": 310,
+      "width": 359,
+      "x": 774,
+      "y": 310
+    },
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 241,
+      "width": 359,
+      "x": 774,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1353.59375,
+      "height": 1112.59375,
+      "left": 480,
+      "right": 1133,
+      "top": 241,
+      "width": 653,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 773,
+      "right": 1133,
+      "top": 241,
+      "width": 360,
+      "x": 773,
+      "y": 241
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1353.59375,
+      "height": 1112.59375,
+      "left": 240,
+      "right": 1133,
+      "top": 241,
+      "width": 893,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "list-keyboard-select",
+    "focus": {
+      "file": "media-01",
+      "label": "Deselect Jess-interview-camera-a.mov",
+      "tag": "BUTTON"
+    },
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1133,
+      "top": 241,
+      "width": 653,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    ",
+    "scroll": {
+      "left": 0,
+      "top": 0
+    },
+    "selected": [
+      "media-01"
+    ],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1133,
+      "top": 241,
+      "width": 893,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "list-open",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 253,
+      "width": 44,
+      "x": 1077,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 774,
+      "right": 1133,
+      "top": 310,
+      "width": 359,
+      "x": 774,
+      "y": 310
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 241,
+      "width": 359,
+      "x": 774,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1133,
+      "top": 241,
+      "width": 653,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 773,
+      "right": 1133,
+      "top": 241,
+      "width": 360,
+      "x": 773,
+      "y": 241
+    },
+    "scroll": {
+      "left": 0,
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1133,
+      "top": 241,
+      "width": 893,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "list-pan-before-close",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 253,
+      "width": 44,
+      "x": 1077,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 774,
+      "right": 1133,
+      "top": 310,
+      "width": 359,
+      "x": 774,
+      "y": 310
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 241,
+      "width": 359,
+      "x": 774,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1133,
+      "top": 241,
+      "width": 653,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 773,
+      "right": 1133,
+      "top": 241,
+      "width": 360,
+      "x": 773,
+      "y": 241
+    },
+    "scroll": {
+      "left": 0,
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1133,
+      "top": 241,
+      "width": 893,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "list-pan-after-close",
+    "focus": {
+      "file": "media-01",
+      "label": null,
+      "tag": "TR"
+    },
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1133,
+      "top": 241,
+      "width": 653,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    ",
+    "scroll": {
+      "left": 0,
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1133,
+      "top": 241,
+      "width": 893,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "freelancer-1133",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 197,
+      "width": 44,
+      "x": 1077,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 774,
+      "right": 1133,
+      "top": 254,
+      "width": 359,
+      "x": 774,
+      "y": 254
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 185,
+      "width": 359,
+      "x": 774,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 805,
+      "height": 620,
+      "left": 640,
+      "right": 1133,
+      "top": 185,
+      "width": 493,
+      "x": 640,
+      "y": 185
+    },
+    "mode": "media-workspace has-client-rail   inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 773,
+      "right": 1133,
+      "top": 185,
+      "width": 360,
+      "x": 773,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 805,
+      "height": 620,
+      "left": 240,
+      "right": 1133,
+      "top": 185,
+      "width": 893,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "freelancer-1440",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 197,
+      "width": 44,
+      "x": 1384,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 1081,
+      "right": 1440,
+      "top": 254,
+      "width": 359,
+      "x": 1081,
+      "y": 254
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 185,
+      "width": 359,
+      "x": 1081,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 805,
+      "height": 620,
+      "left": 640,
+      "right": 1440,
+      "top": 185,
+      "width": 800,
+      "x": 640,
+      "y": 185
+    },
+    "mode": "media-workspace has-client-rail   inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 1080,
+      "right": 1440,
+      "top": 185,
+      "width": 360,
+      "x": 1080,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 805,
+      "height": 620,
+      "left": 240,
+      "right": 1440,
+      "top": 185,
+      "width": 1200,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "client-1440",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 197,
+      "width": 44,
+      "x": 1384,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 1081,
+      "right": 1440,
+      "top": 254,
+      "width": 359,
+      "x": 1081,
+      "y": 254
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 185,
+      "width": 359,
+      "x": 1081,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 2278.375,
+      "height": 2093.375,
+      "left": 480,
+      "right": 1080,
+      "top": 185,
+      "width": 600,
+      "x": 480,
+      "y": 185
+    },
+    "mode": "media-workspace    inspector-open inspector-docked",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 1080,
+      "right": 1440,
+      "top": 185,
+      "width": 360,
+      "x": 1080,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 2278.375,
+      "height": 2093.375,
+      "left": 240,
+      "right": 1440,
+      "top": 185,
+      "width": 1200,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "client-1133",
+    "close": {
+      "bottom": 241,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 197,
+      "width": 44,
+      "x": 1077,
+      "y": 197
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 746,
+      "left": 774,
+      "right": 1133,
+      "top": 254,
+      "width": 359,
+      "x": 774,
+      "y": 254
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 254,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 185,
+      "width": 359,
+      "x": 774,
+      "y": 185
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 2334.71875,
+      "height": 2149.71875,
+      "left": 480,
+      "right": 1133,
+      "top": 185,
+      "width": 653,
+      "x": 480,
+      "y": 185
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 815,
+      "left": 773,
+      "right": 1133,
+      "top": 185,
+      "width": 360,
+      "x": 773,
+      "y": 185
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/media",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 2334.71875,
+      "height": 2149.71875,
+      "left": 240,
+      "right": 1133,
+      "top": 185,
+      "width": 893,
+      "x": 240,
+      "y": 185
+    }
+  },
+  {
+    "label": "list-real-pan-open",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 253,
+      "width": 44,
+      "x": 1384,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 1081,
+      "right": 1440,
+      "top": 310,
+      "width": 359,
+      "x": 1081,
+      "y": 310
+    },
+    "focus": {
+      "label": "Close asset drawer",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 241,
+      "width": 359,
+      "x": 1081,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1440,
+      "top": 241,
+      "width": 960,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 1080,
+      "right": 1440,
+      "top": 241,
+      "width": 360,
+      "x": 1080,
+      "y": 241
+    },
+    "scroll": {
+      "left": 282,
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1440,
+      "top": 241,
+      "width": 1200,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "list-real-pan-closed",
+    "focus": {
+      "file": "media-01",
+      "label": null,
+      "tag": "TR"
+    },
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1440,
+      "top": 241,
+      "width": 960,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    ",
+    "scroll": {
+      "left": 282,
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1440,
+      "top": 241,
+      "width": 1200,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "project-collapsed-1440",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 253,
+      "width": 44,
+      "x": 1384,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 1081,
+      "right": 1440,
+      "top": 310,
+      "width": 359,
+      "x": 1081,
+      "y": 310
+    },
+    "focus": {
+      "label": "Expand navigation",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 241,
+      "width": 359,
+      "x": 1081,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 312,
+      "right": 1080,
+      "top": 241,
+      "width": 768,
+      "x": 312,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-docked",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 1080,
+      "right": 1440,
+      "top": 241,
+      "width": 360,
+      "x": 1080,
+      "y": 241
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 72,
+      "right": 1440,
+      "top": 241,
+      "width": 1368,
+      "x": 72,
+      "y": 241
+    }
+  },
+  {
+    "label": "project-collapsed-1133",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1077,
+      "right": 1121,
+      "top": 253,
+      "width": 44,
+      "x": 1077,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 774,
+      "right": 1133,
+      "top": 310,
+      "width": 359,
+      "x": 774,
+      "y": 310
+    },
+    "focus": {
+      "label": "Expand navigation",
+      "tag": "BUTTON"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 774,
+      "right": 1133,
+      "top": 241,
+      "width": 359,
+      "x": 774,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1013.625,
+      "height": 772.625,
+      "left": 312,
+      "right": 1133,
+      "top": 241,
+      "width": 821,
+      "x": 312,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-overlay",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 773,
+      "right": 1133,
+      "top": 241,
+      "width": 360,
+      "x": 773,
+      "y": 241
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1133
+    },
+    "workspace": {
+      "bottom": 1013.625,
+      "height": 772.625,
+      "left": 72,
+      "right": 1133,
+      "top": 241,
+      "width": 1061,
+      "x": 72,
+      "y": 241
+    }
+  },
+  {
+    "label": "preserved-image-preview",
+    "filename": "Loom-wordmark-black.png",
+    "image": false,
+    "transcriptDisabled": true
+  },
+  {
+    "label": "preserved-document-preview",
+    "filename": "Brand-guidelines-2026.pdf",
+    "preview": "File preview",
+    "transcriptDisabled": true
+  },
+  {
+    "label": "image-background-verified",
+    "background": "url(\"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80\")",
+    "filename": "Loom-wordmark-black.png",
+    "previewClass": "media-inspector-preview is-image"
+  },
+  {
+    "label": "discard-close-focus-return",
+    "focus": {
+      "file": "media-01",
+      "label": "Jess-interview-camera-a.mov, video",
+      "tag": "ARTICLE"
+    },
+    "main": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 480,
+      "right": 1440,
+      "top": 241,
+      "width": 960,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    ",
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 240,
+      "right": 1440,
+      "top": 241,
+      "width": 1200,
+      "x": 240,
+      "y": 241
+    }
+  },
+  {
+    "label": "startup-blank-not-used-as-verification",
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "scroll": {},
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    }
+  },
+  {
+    "label": "project-final-1440",
+    "close": {
+      "bottom": 297,
+      "height": 44,
+      "left": 1384,
+      "right": 1428,
+      "top": 253,
+      "width": 44,
+      "x": 1384,
+      "y": 253
+    },
+    "content": {
+      "bottom": 1000,
+      "height": 690,
+      "left": 1081,
+      "right": 1440,
+      "top": 310,
+      "width": 359,
+      "x": 1081,
+      "y": 310
+    },
+    "focus": {
+      "label": null,
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 310,
+      "height": 69,
+      "left": 1081,
+      "right": 1440,
+      "top": 241,
+      "width": 359,
+      "x": 1081,
+      "y": 241
+    },
+    "hitAtClose": "Close asset drawer",
+    "main": {
+      "bottom": 1308.875,
+      "height": 1067.875,
+      "left": 480,
+      "right": 1080,
+      "top": 241,
+      "width": 600,
+      "x": 480,
+      "y": 241
+    },
+    "mode": "media-workspace    inspector-open inspector-docked",
+    "panel": {
+      "bottom": 1000,
+      "height": 759,
+      "left": 1080,
+      "right": 1440,
+      "top": 241,
+      "width": 360,
+      "x": 1080,
+      "y": 241
+    },
+    "scroll": {
+      "top": 0
+    },
+    "selected": [],
+    "url": "http://127.0.0.1:8771/projects/loom-launch-film/stages/media?asset=media-01",
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    },
+    "workspace": {
+      "bottom": 1308.875,
+      "height": 1067.875,
+      "left": 240,
+      "right": 1440,
+      "top": 241,
+      "width": 1200,
+      "x": 240,
+      "y": 241
+    }
+  }
+]

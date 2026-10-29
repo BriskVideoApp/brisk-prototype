@@ -1,0 +1,32 @@
+{
+  "current-team-detail.jpg": {
+    "source": "current-freelancers-1440.jpg",
+    "rectangle": [
+      332,
+      480,
+      1108,
+      757
+    ],
+    "operation": "Pixel crop only; full genuine capture retained."
+  },
+  "current-empty-detail.jpg": {
+    "source": "current-staff-empty-1440.jpg",
+    "rectangle": [
+      332,
+      405,
+      1108,
+      700
+    ],
+    "operation": "Pixel crop only; full genuine capture retained."
+  },
+  "reference-checkbox-detail.jpg": {
+    "source": "reference-ds-checkboxes-1133.jpg",
+    "rectangle": [
+      286,
+      620,
+      650,
+      750
+    ],
+    "operation": "Pixel crop only; full genuine capture retained."
+  }
+}

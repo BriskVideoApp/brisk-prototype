@@ -1,0 +1,43 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Name your video" [level=1]
+  - generic: Project code
+  - strong: loom044
+  - generic: Video name
+  - textbox "Video name":
+    - /placeholder: For example, Customer story
+    - text: Button verification
+  - button "Cancel"
+  - button "Continue to Brief"

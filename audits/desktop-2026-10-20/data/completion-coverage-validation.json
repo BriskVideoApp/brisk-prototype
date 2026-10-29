@@ -1,0 +1,13 @@
+{
+  "coverageEntries": 117,
+  "counts": {
+    "Inspected": 109,
+    "Not applicable": 8
+  },
+  "finiteStateCounts": {
+    "Inspected": 297,
+    "Not applicable": 67
+  },
+  "remaining": [],
+  "authority": "Lead accepted source applicability corrections and explicit current action evidence. No default screenshot or component reuse closes an unseen consumer."
+}

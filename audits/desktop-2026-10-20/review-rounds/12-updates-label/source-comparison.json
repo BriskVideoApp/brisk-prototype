@@ -1,0 +1,7 @@
+{
+  "comparedFiles": 1785,
+  "changed": [
+    "src/components/notifications/NotificationBell.tsx",
+    "Docs/desktop-design-baseline.md"
+  ]
+}

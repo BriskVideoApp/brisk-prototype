@@ -1,0 +1,68 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor" [expanded]:
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - dialog "Your menu":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: jess@loom.com
+    - generic: Client Admin · Loom
+    - button "Close your menu"
+    - navigation "Your settings":
+      - generic: Personal
+      - link "My profile" [active]:
+        - /url: /settings/personal/profile
+        - generic: My profile
+      - link "My notifications":
+        - /url: /settings/personal/notifications
+        - generic: My notifications
+      - link "Security":
+        - /url: /settings/personal/security
+        - generic: Security
+      - generic: Company
+      - link "Company & team":
+        - /url: /settings/client/company
+        - generic: Company & team
+      - link "Invoices":
+        - /url: /client/invoices
+        - generic: Invoices
+    - button "Sign out":
+      - generic: Sign out
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "Your work lives in your Client portal" [level=1]
+  - paragraph: Your portal shows only your projects, Briefs, reviews, approvals, deliverables and messages.
+  - link "Open Client portal":
+    - /url: /customer-dashboard

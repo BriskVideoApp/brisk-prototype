@@ -1,0 +1,31 @@
+{
+  "date": "28 October 2026",
+  "request": "Replace the film icon on the Videos sidebar link with a home icon",
+  "source": "src/components/navigation/HybridSidebar.tsx",
+  "asset": "public/brisk-icons/house.svg",
+  "typeCheck": "npx tsc --noEmit passed",
+  "runtime": {
+    "route": "http://127.0.0.1:8777/active-videos",
+    "status": 200
+  },
+  "desktopVerification": "Existing expanded Staff Videos page refreshed and visually inspected. Home icon and Videos accessible link confirmed. No role switching, forms submitted or stored record editing.",
+  "screenshots": {
+    "full": "current-videos-home-icon-full.png",
+    "crop": "current-videos-home-icon-navigation.png",
+    "cropBounds": [
+      0,
+      0,
+      240,
+      390
+    ]
+  },
+  "protectedFilesCompared": 1705,
+  "changedProtectedFiles": [
+    "src/components/navigation/HybridSidebar.tsx"
+  ],
+  "limits": [
+    "Collapsed navigation and other role views not separately browser-rechecked; they share the same icon mapping and unchanged navigation rendering.",
+    "Mobile verification deferred."
+  ],
+  "noBuildTestsCommitPush": true
+}

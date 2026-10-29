@@ -1,0 +1,174 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/outstanding-invoices".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/outstanding-invoices
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Expenses header
+					41 heading Expenses, Value: 1
+						42 text Expenses
+					43 container
+						44 text Search invoices to pay
+						45 search text field (settable) Search invoices to pay, ID: outstanding-invoice-search
+				46 container Invoices to pay summary
+					47 container
+						48 text OUTSTANDING USD 5,260 + $2,900 5 visible invoices
+					49 container
+						50 text READY TO PAY $1,760 1 approved
+					51 container
+						52 text NEEDS REVIEW 2 Submitted invoices
+				53 container Invoice filters
+					54 container
+						55 text Project status
+						56 combo box (collapsed) Description: Filter by project status, Value: All project statuses, Secondary Actions: Expand
+							57 text All project statuses
+					58 container Filter by tags
+						59 text Tags
+						60 checkbox Urgent, Value: 0
+						61 checkbox Disputed, Value: 0
+						62 checkbox Follow up, Value: 0
+						63 checkbox Waiting, Value: 0
+					64 checkbox Include archived projects, Value: 0
+				65 container Outstanding contractor invoices
+					66 table
+						67 row
+							68 cell
+								69 text Project
+							70 cell
+								71 text Contractor
+							72 cell
+								73 text Invoice
+							74 cell
+								75 text Total
+							76 cell
+								77 text Status
+							78 cell
+								79 text Tags
+							80 cell
+								81 text Actions
+						82 row
+							83 cell
+								84 link Description: Launch Film - Sales Narrative Loom - In Production, Value: localhost:3000/projects/loom-launch-film/costs
+							85 cell
+								86 text Chris Taylor
+								87 text Editor
+							88 cell
+								89 text CT-3142-edit-services.pdf
+								90 container
+									91 text Submitted  18 Aug 2026
+							92 cell
+								93 text USD 2,140
+							94 cell
+								95 text Sent back
+							96 cell
+								97 text Disputed
+							98 cell
+								99 link Description: View project costs, Value: localhost:3000/projects/loom-launch-film/costs
+						100 row
+							101 cell
+								102 link Description: Customer Story - APAC Hiring Deel - In Production, Value: localhost:3000/projects/deel-customer-story/costs
+							103 cell
+								104 text Jordan Lee
+								105 text Shooter
+							106 cell
+								107 text JL-1042-shoot.pdf
+								108 container
+									109 text Submitted  18 Aug 2026
+							110 cell
+								111 text $1,140
+							112 cell
+								113 text Submitted
+							114 cell
+								115 text Follow up
+							116 cell
+								117 button Review
+						118 row
+							119 cell
+								120 link Description: Product Education - Sleep Series Hims - In Production, Value: localhost:3000/projects/hims-product-education/costs
+							121 cell
+								122 text Emma Davis
+								123 text Animator
+							124 cell
+								125 text ED-508-animation.pdf
+								126 container
+									127 text Submitted  17 Aug 2026
+							128 cell
+								129 text USD 980
+							130 cell
+								131 text Submitted
+							132 cell
+								133 text Disputed
+							134 cell
+								135 button Review
+						136 row
+							137 cell
+								138 link Description: Workflow Demo - Engineering Teams Notion - Paused, Value: localhost:3000/projects/notion-workflows/costs
+							139 cell
+								140 text Chris Taylor
+								141 text Editor
+							142 cell
+								143 text CT-208-edit.pdf
+								144 container
+									145 text Submitted  14 Aug 2026
+							146 cell
+								147 text USD 2,140
+							148 cell
+								149 text Sent back
+							150 cell
+								151 text Disputed
+							152 cell
+								153 link Description: View project costs, Value: localhost:3000/projects/notion-workflows/costs
+						154 row
+							155 cell
+								156 link Description: Partner Update - Studio Reel OpenAI - Completed, Value: localhost:3000/projects/openai-partner-update/costs
+							157 cell
+								158 text Aisha Khan
+								159 text Colourist
+							160 cell
+								161 text AK-088-colour.pdf
+								162 container
+									163 text Submitted  12 Aug 2026
+							164 cell
+								165 text $1,760
+							166 cell
+								167 text Approved
+							168 cell
+								169 text Urgent
+							170 cell
+								171 button Mark paid
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/outstanding-invoices

@@ -1,0 +1,838 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/active-videos".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/active-videos
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-in…
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Videos header
+					41 heading Videos, Value: 1
+						42 text Videos
+					43 container
+						44 text Search projects
+						45 search text field (settable) Search projects, ID: active-videos-search
+				46 container Project status
+					47 checkbox All 15, Value: 1
+					48 checkbox Queued 1, Value: 0
+					49 checkbox In production 7, Value: 0
+					50 checkbox Completed 2, Value: 0
+					51 checkbox Paused 3, Value: 0
+					52 checkbox Archived 2, Value: 0
+				53 button (collapsed) Filters, Secondary Actions: Expand
+				54 container Videos table
+					55 table
+						56 row
+							57 cell
+								58 text Project
+							59 cell
+								60 text Progress
+							61 cell
+								62 text Latest action
+							63 cell
+								64 text Status
+							65 cell
+								66 text Deadline
+							67 cell
+								68 text Project costs
+							69 cell
+								70 text Actions
+						71 row
+							72 cell
+								73 link Description: Open Loom Client record, Value: localhost:3000/clients/loom
+								74 link Description: Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-…
+								75 container Quick actions for Launch Film - Sales Narrative
+									76 link Description: Open chat (2 unread), Value: localhost:3000/chat
+									77 container
+										78 button (collapsed) Description: Open project files (2 locations), Secondary Actions: Expand
+											79 text Open project files (2 locations)
+									80 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								81 container
+									82 text Critical
+									83 button Remove Critical tag from Launch Film - Sales Narrative
+									84 button (collapsed) Description: Add tag to Launch Film - Sales Narrative, Secondary Actions: Expand
+							85 cell
+								86 container Launch Film - Sales Narrative stage progress
+									87 container
+										88 link Description: Open Brief, Value: localhost:3000/projects/loom-…
+										89 text Brief 0d ago
+									90 container
+										91 link Description: Open Script, Value: localhost:3000/projects/loom-…
+										92 text Script 0d ago
+									93 container
+										94 link Description: Open Storyboard, Value: localhost:3000/projects/loom-…
+										95 text Storyboard 0d ago
+									96 container
+										97 link Description: Open Shoot, Value: localhost:3000/projects/loom-…
+										98 text Shoot 1d ago
+									99 container
+										100 link Description: Open Video Review, Value: localhost:3000/projects/loom-…
+										101 text Edit
+									102 container
+										103 link Description: Open Masters, Value: localhost:3000/projects/loom-…
+										104 text Masters
+									105 container
+										106 link Description: Open Media (15). 15 media files, Value: localhost:3000/projects/loom-…
+										107 text Media (15)
+							108 cell
+								109 button Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions.
+									110 text Brief approved
+									111 text  by client
+									112 container
+										113 text Today Aug 11, 2026 at 10:24 AM
+							114 cell
+								115 combo box (collapsed) Description: Change status for Launch Film - Sales Narrative, Value: Paused, Secondary Actions: Expand
+									116 text Paused
+							117 cell
+								118 pop up button Edit deadline for Launch Film - Sales Narrative
+									119 text Shoot
+									120 text  - 
+									121 text 41d left
+									122 text Final due - 
+									123 text Sat, Aug 29
+							124 cell
+								125 button Open Project costs for Launch Film - Sales Narrative. USD 2,040, 1 unpaid invoice.
+									126 text USD 2,040
+									127 text 1 unpaid invoice
+							128 cell
+								129 button Open details for Launch Film - Sales Narrative
+									130 text Open details
+						131 row
+							132 cell
+								133 link Description: Open Deel Client record, Value: localhost:3000/clients/deel
+								134 link Description: Customer Story - APAC Hiring, Value: localhost:3000/projects/deel-…
+								135 container Quick actions for Customer Story - APAC Hiring
+									136 link Description: Open chat (1 unread), Value: localhost:3000/chat
+									137 link Description: Open project files in Dropbox, Value: dropbox.com/home/Deel/APAC-Cu…
+									138 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								139 container
+									140 text High Priority
+									141 button Remove High Priority tag from Customer Story - APAC Hiring
+									142 text In Review
+									143 button Remove In Review tag from Customer Story - APAC Hiring
+									144 button (collapsed) Description: Add tag to Customer Story - APAC Hiring, Secondary Actions: Expand
+							145 cell
+								146 container Customer Story - APAC Hiring stage progress
+									147 container
+										148 link Description: Open Brief, Value: localhost:3000/projects/deel-…
+										149 text Brief 0d ago
+									150 container
+										151 link Description: Open Script, Value: localhost:3000/projects/deel-…
+										152 text Script 7d ago
+									153 container
+										154 link Description: Open Shoot, Value: localhost:3000/projects/deel-…
+										155 text Shoot 4d ago
+									156 container
+										157 link Description: Open Video Review, Value: localhost:3000/projects/deel-…
+										158 text Edit
+									159 container
+										160 link Description: Open Masters, Value: localhost:3000/projects/deel-…
+										161 text Masters
+									162 container
+										163 link Description: Open Media (3). 3 media files, Value: localhost:3000/projects/deel-…
+										164 text Media (3)
+							165 cell
+								166 button Script approved by client · Aug 6, 2026 at 3:15 PM. Open Latest actions.
+									167 text Script approved
+									168 text  by client
+									169 container
+										170 text Today Aug 6, 2026 at 3:15 PM
+							171 cell
+								172 combo box (collapsed) Description: Change status for Customer Story - APAC Hiring, Value: In production, Secondary Actions: Expand
+									173 text In production
+							174 cell
+								175 pop up button Edit deadline for Customer Story - APAC Hiring
+									176 text Media
+									177 text  - 
+									178 text 39d left
+									179 text Final due - 
+									180 text Sun, Sep 6
+							181 cell
+								182 button Open Project costs for Customer Story - APAC Hiring. $1,140, 1 unpaid invoice.
+									183 text $1,140
+									184 text 1 unpaid invoice
+							185 cell
+								186 button Open details for Customer Story - APAC Hiring
+									187 text Open details
+						188 row
+							189 cell
+								190 link Description: Open Hims Client record, Value: localhost:3000/clients/hims
+								191 link Description: Product Education - Sleep Series, Value: localhost:3000/projects/hims-…
+								192 container Quick actions for Product Education - Sleep Series
+									193 link Description: Open chat (4 unread), Value: localhost:3000/chat
+									194 link Description: Open project files in Google Drive, Value: drive.google.com/drive/folder…
+									195 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								196 container
+									197 text Critical
+									198 button Remove Critical tag from Product Education - Sleep Series
+									199 text High Priority
+									200 button Remove High Priority tag from Product Education - Sleep Series
+									201 button (collapsed) Description: Add tag to Product Education - Sleep Series, Secondary Actions: Expand
+							202 cell
+								203 container Product Education - Sleep Series stage progress
+									204 container
+										205 link Description: Open Brief, Value: localhost:3000/projects/hims-…
+										206 text Brief 0d ago
+									207 container
+										208 link Description: Open Script, Value: localhost:3000/projects/hims-…
+										209 text Script 1d ago
+									210 container
+										211 link Description: Open Storyboard, Value: localhost:3000/projects/hims-…
+										212 text Storyboard
+									213 container
+										214 link Description: Open Video Review, Value: localhost:3000/projects/hims-…
+										215 text Animation
+									216 container
+										217 link Description: Open Masters, Value: localhost:3000/projects/hims-…
+										218 text Masters
+									219 container
+										220 link Description: Open Media (2). 2 media files, Value: localhost:3000/projects/hims-…
+										221 text Media (2)
+							222 cell
+								223 button Maddie shared the shoot internally · Aug 12, 2026 at 9:05 AM. Open Latest actions.
+									224 text Maddie shared
+									225 text  the shoot internally
+									226 container
+										227 text Today Aug 12, 2026 at 9:05 AM
+									228 text Maddie shared the shoot internally
+							229 cell
+								230 combo box (collapsed) Description: Change status for Product Education - Sleep Series, Value: In production, Secondary Actions: Expand
+									231 text In production
+							232 cell
+								233 pop up button Edit deadline for Product Education - Sleep Series
+									234 text Script
+									235 text  - 
+									236 text 38d left
+									237 text Final due - 
+									238 text Sat, Aug 22
+							239 cell
+								240 button Open Project costs for Product Education - Sleep Series. $920, 1 unpaid invoice.
+									241 text $920
+									242 text 1 unpaid invoice
+							243 cell
+								244 button Open details for Product Education - Sleep Series
+									245 text Open details
+						246 row
+							247 cell
+								248 link Description: Open Notion Client record, Value: localhost:3000/clients/notion
+								249 link Description: Workflow Demo - Engineering Teams, Value: localhost:3000/projects/notio…
+								250 container Quick actions for Workflow Demo - Engineering Teams
+									251 link Description: Open chat, Value: localhost:3000/chat
+									252 link Description: Open project files in Shade, Value: app.shade.inc/project/notion-…
+									253 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								254 container
+									255 text In Review
+									256 button Remove In Review tag from Workflow Demo - Engineering Teams
+									257 button (collapsed) Description: Add tag to Workflow Demo - Engineering Teams, Secondary Actions: Expand
+							258 cell
+								259 container Workflow Demo - Engineering Teams stage progress
+									260 container
+										261 link Description: Open Brief, Value: localhost:3000/projects/notio…
+										262 text Brief 0d ago
+									263 container
+										264 link Description: Open Script, Value: localhost:3000/projects/notio…
+										265 text Script 0d ago
+									266 container
+										267 link Description: Open Storyboard, Value: localhost:3000/projects/notio…
+										268 text Storyboard 8d ago
+									269 container
+										270 link Description: Open Video Review, Value: localhost:3000/projects/notio…
+										271 text Animation 3d ago
+									272 container
+										273 link Description: Open Masters, Value: localhost:3000/projects/notio…
+										274 text Masters
+									275 container
+										276 link Description: Open Media (2). 2 media files, Value: localhost:3000/projects/notio…
+										277 text Media (2)
+							278 cell
+								279 button Media organised for edit · Aug 10, 2026 at 11:40 AM. Open Latest actions.
+									280 text Media organised
+									281 text  for edit
+									282 container
+										283 text Today Aug 10, 2026 at 11:40 AM
+							284 cell
+								285 combo box (collapsed) Description: Change status for Workflow Demo - Engineering Teams, Value: Paused, Secondary Actions: Expand
+									286 text Paused
+							287 cell
+								288 pop up button Edit deadline for Workflow Demo - Engineering Teams
+							289 cell
+								290 button Open Project costs for Workflow Demo - Engineering Teams. USD 2,040, 1 unpaid invoice.
+									291 text USD 2,040
+									292 text 1 unpaid invoice
+							293 cell
+								294 button Open details for Workflow Demo - Engineering Teams
+									295 text Open details
+						296 row
+							297 cell
+								298 link Description: Open OpenAI Client record, Value: localhost:3000/clients/openai
+								299 link Description: Partner Update - Studio Reel, Value: localhost:3000/projects/opena…
+								300 container Quick actions for Partner Update - Studio Reel
+									301 link Description: Open chat (1 unread), Value: localhost:3000/chat
+									302 link Description: Open project files in Frame.io, Value: app.frame.io/projects/openai-…
+									303 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								304 container
+									305 text Critical
+									306 button Remove Critical tag from Partner Update - Studio Reel
+									307 button (collapsed) Description: Add tag to Partner Update - Studio Reel, Secondary Actions: Expand
+							308 cell
+								309 container Partner Update - Studio Reel stage progress
+									310 container
+										311 link Description: Open Brief, Value: localhost:3000/projects/opena…
+										312 text Brief 25d ago
+									313 container
+										314 link Description: Open Script, Value: localhost:3000/projects/opena…
+										315 text Script 22d ago
+									316 container
+										317 link Description: Open Shoot, Value: localhost:3000/projects/opena…
+										318 text Shoot 17d ago
+									319 container
+										320 link Description: Open Video Review, Value: localhost:3000/projects/opena…
+										321 text Edit 5d ago
+									322 container
+										323 link Description: Open Masters, Value: localhost:3000/projects/opena…
+										324 text Masters 4d ago
+									325 container
+										326 link Description: Open Media (1). 1 media file, Value: localhost:3000/projects/opena…
+										327 text Media (1)
+								328 text Delivered  8 Aug 2026
+							329 cell
+								330 button Masters delivered · Aug 8, 2026 at 4:20 PM. Open Latest actions.
+									331 text Masters delivered
+									332 container
+										333 text Today Aug 8, 2026 at 4:20 PM
+							334 cell
+								335 combo box (collapsed) Description: Change status for Partner Update - Studio Reel, Value: Completed, Secondary Actions: Expand
+									336 text Completed
+							337 cell
+								338 pop up button Edit deadline for Partner Update - Studio Reel
+									339 text Masters
+									340 text  - 
+									341 text 43d left
+									342 text Final due - 
+									343 text Sun, Aug 23
+							344 cell
+								345 button Open Project costs for Partner Update - Studio Reel. $1,760, 1 unpaid invoice.
+									346 text $1,760
+									347 text 1 unpaid invoice
+							348 cell
+								349 button Open details for Partner Update - Studio Reel
+									350 text Open details
+						351 row
+							352 cell
+								353 link Description: Open PostHog Client record, Value: localhost:3000/clients/posthog
+								354 link Description: Onboarding Film - Product Analytics, Value: localhost:3000/projects/posth…
+								355 container Quick actions for Onboarding Film - Product Analytics
+									356 link Description: Open chat, Value: localhost:3000/chat
+									357 link Description: Open project files in OneDrive, Value: northstarfilms.sharepoint.com…
+									358 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								359 button (collapsed) Description: Add tag to Onboarding Film - Product Analytics, Secondary Actions: Expand
+							360 cell
+								361 container Onboarding Film - Product Analytics stage progress
+									362 container
+										363 link Description: Open Brief, Value: localhost:3000/projects/posth…
+										364 text Brief 34d ago
+									365 container
+										366 link Description: Open Script, Value: localhost:3000/projects/posth…
+										367 text Script 31d ago
+									368 container
+										369 link Description: Open Storyboard, Value: localhost:3000/projects/posth…
+										370 text Storyboard
+									371 container
+										372 link Description: Open Video Review, Value: localhost:3000/projects/posth…
+										373 text Animation 13d ago
+									374 container
+										375 link Description: Open Masters, Value: localhost:3000/projects/posth…
+										376 text Masters 12d ago
+									377 container
+										378 link Description: Open Media (1). 1 media file, Value: localhost:3000/projects/posth…
+										379 text Media (1)
+							380 cell
+								381 button Master ready for download · Aug 1, 2026 at 12:05 PM. Open Latest actions.
+									382 text Master ready
+									383 text  for download
+									384 container
+										385 text Today Aug 1, 2026 at 12:05 PM
+									386 text Master ready for download
+							387 cell
+								388 combo box (collapsed) Description: Change status for Onboarding Film - Product Analytics, Value: Archived, Secondary Actions: Expand
+									389 text Archived
+							390 cell
+								391 pop up button Edit deadline for Onboarding Film - Product Analytics
+							392 cell
+								393 button Open Project costs for Onboarding Film - Product Analytics. $1,320, 1 unpaid invoice.
+									394 text $1,320
+									395 text 1 unpaid invoice
+							396 cell
+								397 button Open details for Onboarding Film - Product Analytics
+									398 text Open details
+						399 row
+							400 cell
+								401 link Description: Open Ramp Client record, Value: localhost:3000/clients/ramp
+								402 link Description: Finance Recap - June Product Drop, Value: localhost:3000/projects/ramp-…
+								403 container Quick actions for Finance Recap - June Product Drop
+									404 link Description: Open chat (3 unread), Value: localhost:3000/chat
+									405 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								406 container
+									407 text In Review
+									408 button Remove In Review tag from Finance Recap - June Product Drop
+									409 button (collapsed) Description: Add tag to Finance Recap - June Product Drop, Secondary Actions: Expand
+							410 cell
+								411 container Finance Recap - June Product Drop stage progress
+									412 container
+										413 link Description: Open Brief, Value: localhost:3000/projects/ramp-…
+										414 text Brief 14d ago
+									415 container
+										416 link Description: Open Script, Value: localhost:3000/projects/ramp-…
+										417 text Script 11d ago
+									418 container
+										419 link Description: Open Shoot, Value: localhost:3000/projects/ramp-…
+										420 text Shoot 4d ago
+									421 container
+										422 link Description: Open Video Review, Value: localhost:3000/projects/ramp-…
+										423 text Edit
+									424 container
+										425 link Description: Open Masters, Value: localhost:3000/projects/ramp-…
+										426 text Masters
+									427 container
+										428 link Description: Open Media (2). 2 media files, Value: localhost:3000/projects/ramp-…
+										429 text Media (2)
+							430 cell
+								431 button Client requested a pause · Aug 9, 2026 at 1:30 PM. Open Latest actions.
+									432 text Client requested
+									433 text  a pause
+									434 container
+										435 text Today Aug 9, 2026 at 1:30 PM
+							436 cell
+								437 combo box (collapsed) Description: Change status for Finance Recap - June Product Drop, Value: Paused, Secondary Actions: Expand
+									438 text Paused
+							439 cell
+								440 pop up button Edit deadline for Finance Recap - June Product Drop
+									441 text Shoot
+									442 text  - 
+									443 text 39d left
+									444 text Final due - 
+									445 text Fri, Aug 28
+							446 cell
+								447 button Open Project costs for Finance Recap - June Product Drop. $0, 0 unpaid invoices.
+									448 text $0
+									449 text 0 unpaid invoices
+							450 cell
+								451 button Open details for Finance Recap - June Product Drop
+									452 text Open details
+						453 row
+							454 cell
+								455 link Description: Open Canva Client record, Value: localhost:3000/clients/canva
+								456 link Description: Brand Refresh - Creator Templates, Value: localhost:3000/projects/canva…
+								457 container Quick actions for Brand Refresh - Creator Templates
+									458 link Description: Open chat (1 unread), Value: localhost:3000/chat
+									459 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								460 container
+									461 text High Priority
+									462 button Remove High Priority tag from Brand Refresh - Creator Templates
+									463 button (collapsed) Description: Add tag to Brand Refresh - Creator Templates, Secondary Actions: Expand
+							464 cell
+								465 container Brand Refresh - Creator Templates stage progress
+									466 container
+										467 link Description: Open Brief, Value: localhost:3000/projects/canva…
+										468 text Brief 3d ago
+									469 container
+										470 link Description: Open Script, Value: localhost:3000/projects/canva…
+										471 text Script 1d ago
+									472 container
+										473 link Description: Open Storyboard, Value: localhost:3000/projects/canva…
+										474 text Storyboard
+									475 container
+										476 link Description: Open Video Review, Value: localhost:3000/projects/canva…
+										477 text Animation
+									478 container
+										479 link Description: Open Masters, Value: localhost:3000/projects/canva…
+										480 text Masters
+									481 container
+										482 link Description: Open Media (2). 2 media files, Value: localhost:3000/projects/canva…
+										483 text Media (2)
+							484 cell
+								485 button Creative direction ready · Aug 13, 2026 at 8:45 AM. Open Latest actions.
+									486 text Creative direction
+									487 text  ready
+									488 container
+										489 text Today Aug 13, 2026 at 8:45 AM
+							490 cell
+								491 combo box (collapsed) Description: Change status for Brand Refresh - Creator Templates, Value: Queued, Secondary Actions: Expand
+									492 text Queued
+							493 cell
+								494 pop up button Edit deadline for Brand Refresh - Creator Templates
+									495 text Script
+									496 text  - 
+									497 text 40d left
+									498 text Final due - 
+									499 text Thu, Sep 3
+							500 cell
+								501 button Open Project costs for Brand Refresh - Creator Templates. $0, 0 unpaid invoices.
+									502 text $0
+									503 text 0 unpaid invoices
+							504 cell
+								505 button Open details for Brand Refresh - Creator Templates
+									506 text Open details
+						507 row
+							508 cell
+								509 link Description: Open Linear Client record, Value: localhost:3000/clients/linear
+								510 link Description: Roadmap Film - Planning Week, Value: localhost:3000/projects/linea…
+								511 container Quick actions for Roadmap Film - Planning Week
+									512 link Description: Open chat, Value: localhost:3000/chat
+									513 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								514 button (collapsed) Description: Add tag to Roadmap Film - Planning Week, Secondary Actions: Expand
+							515 cell
+								516 container Roadmap Film - Planning Week stage progress
+									517 container
+										518 link Description: Open Brief, Value: localhost:3000/projects/linea…
+										519 text Brief 28d ago
+									520 container
+										521 link Description: Open Script, Value: localhost:3000/projects/linea…
+										522 text Script 26d ago
+									523 container
+										524 link Description: Open Shoot, Value: localhost:3000/projects/linea…
+										525 text Shoot 20d ago
+									526 container
+										527 link Description: Open Video Review, Value: localhost:3000/projects/linea…
+										528 text Edit 6d ago
+									529 container
+										530 link Description: Open Masters, Value: localhost:3000/projects/linea…
+										531 text Masters 5d ago
+									532 container
+										533 link Description: Open Media (1). 1 media file, Value: localhost:3000/projects/linea…
+										534 text Media (1)
+							535 cell
+								536 button Jordan resolved edit review comments · Aug 7, 2026 at 2:10 PM. Open Latest actions.
+									537 text Jordan resolved
+									538 text  edit review comments
+									539 container
+										540 text Today Aug 7, 2026 at 2:10 PM
+									541 text Jordan resolved edit review comments
+							542 cell
+								543 combo box (collapsed) Description: Change status for Roadmap Film - Planning Week, Value: Completed, Secondary Actions: Expand
+									544 text Completed
+							545 cell
+								546 pop up button Edit deadline for Roadmap Film - Planning Week
+									547 text Masters
+									548 text  - 
+									549 text 41d left
+									550 text Final due - 
+									551 text Fri, Aug 21
+							552 cell
+								553 button Open Project costs for Roadmap Film - Planning Week. $2,280, 0 unpaid invoices.
+									554 text $2,280
+									555 text 0 unpaid invoices
+							556 cell
+								557 button Open details for Roadmap Film - Planning Week
+									558 text Open details
+						559 row
+							560 cell
+								561 link Description: Open Figma Client record, Value: localhost:3000/clients/figma
+								562 link Description: Config Highlights - Community Keynote, Value: localhost:3000/projects/figma…
+								563 container Quick actions for Config Highlights - Community Keynote
+									564 link Description: Open chat, Value: localhost:3000/chat
+									565 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								566 button (collapsed) Description: Add tag to Config Highlights - Community Keynote, Secondary Actions: Expand
+							567 cell
+								568 container Config Highlights - Community Keynote stage progress
+									569 container
+										570 link Description: Open Brief, Value: localhost:3000/projects/figma…
+										571 text Brief 45d ago
+									572 container
+										573 link Description: Open Script, Value: localhost:3000/projects/figma…
+										574 text Script 41d ago
+									575 container
+										576 link Description: Open Storyboard, Value: localhost:3000/projects/figma…
+										577 text Storyboard
+									578 container
+										579 link Description: Open Video Review, Value: localhost:3000/projects/figma…
+										580 text Animation 20d ago
+									581 container
+										582 link Description: Open Masters, Value: localhost:3000/projects/figma…
+										583 text Masters 18d ago
+									584 container
+										585 link Description: Open Media (2). 2 media files, Value: localhost:3000/projects/figma…
+										586 text Media (2)
+							587 cell
+								588 button Project archived · Jul 26, 2026 at 5:50 PM. Open Latest actions.
+									589 text Project archived
+									590 container
+										591 text Today Jul 26, 2026 at 5:50 PM
+							592 cell
+								593 combo box (collapsed) Description: Change status for Config Highlights - Community Keynote, Value: Archived, Secondary Actions: Expand
+									594 text Archived
+							595 cell
+								596 pop up button Set deadline for Config Highlights - Community Keynote
+							597 cell
+								598 button Open Project costs for Config Highlights - Community Keynote. NZD 1,800, 0 unpaid invoices.
+									599 text NZD 1,800
+									600 text 0 unpaid invoices
+							601 cell
+								602 button Open details for Config Highlights - Community Keynote
+									603 text Open details
+						604 row
+							605 cell
+								606 link Description: Open Loom Client record, Value: localhost:3000/clients/loom
+								607 link Description: WACF Customer Cutdown 01, Value: localhost:3000/projects/loom-…
+								608 container Quick actions for WACF Customer Cutdown 01
+									609 link Description: Open chat (1 unread), Value: localhost:3000/chat
+									610 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								611 button (collapsed) Description: Add tag to WACF Customer Cutdown 01, Secondary Actions: Expand
+							612 cell
+								613 container WACF Customer Cutdown 01 stage progress
+									614 container
+										615 link Description: Open Brief, Value: localhost:3000/projects/loom-…
+										616 text Brief 5d ago
+									617 container
+										618 link Description: Open Script, Value: localhost:3000/projects/loom-…
+										619 text Script 4d ago
+									620 container
+										621 link Description: Open Shoot, Value: localhost:3000/projects/loom-…
+										622 text Shoot 3d ago
+									623 container
+										624 link Description: Open Video Review, Value: localhost:3000/projects/loom-…
+										625 text Edit 1d ago
+									626 container
+										627 link Description: Open Masters, Value: localhost:3000/projects/loom-…
+										628 text Masters
+									629 container
+										630 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-…
+										631 text Media (0)
+							632 cell
+								633 button Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions.
+									634 text Rough cut
+									635 text  uploaded
+									636 container
+										637 text Today Jul 25, 2026 at 4:40 PM
+							638 cell
+								639 combo box (collapsed) Description: Change status for WACF Customer Cutdown 01, Value: In production, Secondary Actions: Expand
+									640 text In production
+							641 cell
+								642 pop up button Set deadline for WACF Customer Cutdown 01
+							643 cell
+								644 button Open Project costs for WACF Customer Cutdown 01. $0, 0 unpaid invoices.
+									645 text $0
+									646 text 0 unpaid invoices
+							647 cell
+								648 button Open details for WACF Customer Cutdown 01
+									649 text Open details
+						650 row
+							651 cell
+								652 link Description: Open Loom Client record, Value: localhost:3000/clients/loom
+								653 link Description: Product Tour - Team Workflows, Value: localhost:3000/projects/loom-…
+								654 container Quick actions for Product Tour - Team Workflows
+									655 link Description: Open chat, Value: localhost:3000/chat
+									656 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								657 button (collapsed) Description: Add tag to Product Tour - Team Workflows, Secondary Actions: Expand
+							658 cell
+								659 container Product Tour - Team Workflows stage progress
+									660 container
+										661 link Description: Open Brief, Value: localhost:3000/projects/loom-…
+										662 text Brief 3d ago
+									663 container
+										664 link Description: Open Script, Value: localhost:3000/projects/loom-…
+										665 text Script 2d ago
+									666 container
+										667 link Description: Open Shoot, Value: localhost:3000/projects/loom-…
+										668 text Shoot 1d ago
+									669 container
+										670 link Description: Open Video Review, Value: localhost:3000/projects/loom-…
+										671 text Edit
+									672 container
+										673 link Description: Open Masters, Value: localhost:3000/projects/loom-…
+										674 text Masters
+									675 container
+										676 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-…
+										677 text Media (0)
+							678 cell
+								679 button Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions.
+									680 text Script approved
+									681 text  by Emma
+									682 container
+										683 text Today Jul 24, 2026 at 12:18 PM
+									684 text Script approved by Emma
+							685 cell
+								686 combo box (collapsed) Description: Change status for Product Tour - Team Workflows, Value: In production, Secondary Actions: Expand
+									687 text In production
+							688 cell
+								689 pop up button Set deadline for Product Tour - Team Workflows
+							690 cell
+								691 button Open Project costs for Product Tour - Team Workflows. $0, 0 unpaid invoices.
+									692 text $0
+									693 text 0 unpaid invoices
+							694 cell
+								695 button Open details for Product Tour - Team Workflows
+									696 text Open details
+						697 row
+							698 cell
+								699 link Description: Open Loom Client record, Value: localhost:3000/clients/loom
+								700 link Description: Customer Story - Healthcare, Value: localhost:3000/projects/loom-…
+								701 container Quick actions for Customer Story - Healthcare
+									702 link Description: Open chat (4 unread), Value: localhost:3000/chat
+									703 link Description: Go to Client portal, Value: localhost:3000/workspaces/nor…
+								704 button (collapsed) Description: Add tag to Customer Story - Healthcare, Secondary Actions: Expand
+							705 cell
+								706 container Customer Story - Healthcare stage progress
+									707 container
+										708 link Description: Open Brief, Value: localhost:3000/projects/loom-…
+										709 text Brief 5d ago
+									710 container
+										711 link Description: Open Script, Value: …
+										712 text Script 4d ago
+									713 container
+										714 link Description: Open Shoot, Value: …
+										715 text Shoot 3d ago
+									716 container
+										717 link Description: Open Video Review, Value: …
+										718 text Edit 1d ago
+									719 container
+										720 link Description: Open Masters, Value: …
+										721 text Masters
+									722 container
+										723 link Description: Open Media (0). 0 media files, Value: …
+										724 text Media (0)
+							725 cell
+								726 button Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions.
+									727 text Edit preparation
+									728 text  started by Maddie
+									729 container
+										730 text Today Jul 23, 2026 at 10:05 AM
+									731 text Edit preparation started by Maddie
+							732 cell
+								733 combo box (collapsed) Description: Change status for Customer Story - Healthcare, Value: In production, Secondary Actions: Expand
+									734 text In production
+							735 cell
+								736 pop up button Set deadline for Customer Story - Healthcare
+							737 cell
+								738 button Open Project costs for Customer Story - Healthcare. $0, 0 unpaid invoices.
+									739 text $0
+									740 text 0 unpaid invoices
+							741 cell
+								742 button Open details for Customer Story - Healthcare
+									743 text Open details
+						744 row
+							745 cell
+								746 link Description: Open Loom Client record, Value: …
+								747 link Description: Q3 Product Recap, Value: …
+								748 container Quick actions for Q3 Product Recap
+									749 link Description: Open chat (2 unread), Value: …
+									750 link Description: Go to Client portal, Value: …
+								751 button (collapsed) Description: Add tag to Q3 Product Recap, Secondary Actions: Expand
+							752 cell
+								753 container Q3 Product Recap stage progress
+									754 container
+										755 link Description: Open Brief, Value: …
+										756 text Brief 5d ago
+									757 container
+										758 link Description: Open Script, Value: …
+										759 text Script 4d ago
+									760 container
+										761 link Description: Open Shoot, Value: …
+										762 text Shoot 3d ago
+									763 container
+										764 link Description: Open Video Review, Value: …
+										765 text Edit 1d ago
+									766 container
+										767 link Description: Open Masters, Value: …
+										768 text Masters
+									769 container
+										770 link Description: Open Media (0). 0 media files, Value: …
+										771 text Media (0)
+							772 cell
+								773 button Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions.
+									774 text Media organised
+									775 text  for edit
+									776 container
+										777 text Today Jul 22, 2026 at 5:32 PM
+							778 cell
+								779 combo box (collapsed) Description: Change status for Q3 Product Recap, Value: In production, Secondary Actions: Expand
+									780 text In production
+							781 cell
+								782 pop up button Set deadline for Q3 Product Recap
+							783 cell
+								784 button Open Project costs for Q3 Product Recap. $0, 0 unpaid invoices.
+									785 text $0
+									786 text 0 unpaid invoices
+							787 cell
+								788 button Open details for Q3 Product Recap
+									789 text Open details
+						790 row
+							791 cell
+								792 link Description: Open Harbour Health Client record, Value: …
+								793 link Description: Care Journey, Value: …
+								794 container Quick actions for Care Journey
+									795 link Description: Open chat, Value: …
+									796 link Description: Go to Client portal, Value: …
+								797 button (collapsed) Description: Add tag to Care Journey, Secondary Actions: Expand
+							798 cell
+								799 container Care Journey stage progress
+									800 container
+										801 link Description: Open Brief, Value: …
+										802 text Brief 1d ago
+									803 container
+										804 link Description: Open Script, Value: …
+										805 text Script
+									806 container
+										807 link Description: Open Shoot, Value: …
+										808 text Shoot
+									809 container
+										810 link Description: Open Video Review, Value: …
+										811 text Edit
+									812 container
+										813 link Description: Open Masters, Value: …
+										814 text Masters
+									815 container
+										816 link Description: Open Media (0). 0 media files, Value: …
+										817 text Media (0)
+							818 cell
+								819 button Brief waiting on Mia · Aug 31, 2026 at 10:00 AM. Open Latest actions.
+									820 text Brief waiting
+									821 text  on Mia
+									822 container
+										823 text Today Aug 31, 2026 at 10:00 AM
+							824 cell
+								825 combo box (collapsed) Description: Change status for Care Journey, Value: In production, Secondary Actions: Expand
+									826 text In production
+							827 cell
+								828 pop up button Set deadline for Care Journey
+							829 cell
+								830 button Open Project costs for Care Journey. $0, 0 unpaid invoices.
+									831 text $0
+									832 text 0 unpaid invoices
+							833 cell
+								834 button Open details for Care Journey
+									835 text Open details
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/active-videos

@@ -1,0 +1,94 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Work to review":
+  - link "Back to notification settings":
+    - /url: /settings/notifications
+    - text: Back to notification settings
+  - heading "Work to review" [level=2]
+  - paragraph: Choose an item to see or change its message.
+  - navigation "Work to review messages":
+    - generic: Messages
+    - generic: "2"
+    - button "Edit sent for review":
+      - strong: Edit sent for review
+    - button "Approval recorded":
+      - strong: Approval recorded
+  - article:
+    - heading "Edit sent for review" [level=3]
+    - term: When it sends
+    - definition: When a filmmaker sends an Edit version for review.
+    - term: Who receives it
+    - definition: A client or filmmaker chosen to review it.
+    - button "Show when this sends"
+    - article "Edit sent for review example":
+      - generic: Action needed
+      - heading "Edit v3 is ready to review" [level=4]
+      - paragraph: David Ryan requested your review.
+      - paragraph: Launch Film – Sales Narrative · Edit
+      - link "Review Edit":
+        - /url: /projects/loom-launch-film/stages/edit
+        - text: Review Edit
+    - button "Edit message"
+- dialog "Edit Edit sent for review":
+  - banner:
+    - heading "Edit Edit sent for review" [level=2]
+  - generic: Title
+  - textbox "Title" [active]: Edit v3 is ready to review
+  - generic: Message
+  - textbox "Message": David Ryan requested your review.
+  - contentinfo:
+    - button "Cancel"
+    - button "Save"

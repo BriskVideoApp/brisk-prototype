@@ -1,0 +1,14 @@
+{
+  "mode": "write",
+  "entries": 117,
+  "routes": 61,
+  "workflowGroups": 56,
+  "statuses": {
+    "Inspected": 0,
+    "Partially inspected": 113,
+    "Not inspected": 2,
+    "Blocked": 0,
+    "Not applicable": 2
+  },
+  "evidenceScope": "Registered E001-E146 captures, BRIEF question/summary captures and current registered D-R defaults. Later E-series captures are excluded until the next checkpoint."
+}

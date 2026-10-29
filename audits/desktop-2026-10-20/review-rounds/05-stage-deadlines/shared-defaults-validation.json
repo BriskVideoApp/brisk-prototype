@@ -1,0 +1,36 @@
+{
+  "date": "28 October 2026",
+  "type": "Revised design preview only",
+  "sourceFilesCompared": 1705,
+  "changedProtectedSourceFiles": [],
+  "checks": [
+    "One shared edit populates all five stages",
+    "Custom editor starts with populated effective values",
+    "Custom values survive later shared edits",
+    "Use Studio default restores link",
+    "Save then Discard restores the saved draft",
+    "Animation can use a Specific dates override",
+    "Escape closes the override editor and returns focus"
+  ],
+  "desktopCaptureWidths": [
+    1440,
+    1133
+  ],
+  "captureHeight": 1200,
+  "applicationBoundary": "No application editing or records actions; no app implementation",
+  "sourceControls": [
+    "Button",
+    "Input",
+    "Radio",
+    "Textarea",
+    "DsIcon"
+  ],
+  "pending": "Tom reviews the revised design before application implementation.",
+  "browserChecksCount": 9,
+  "browserObservations": "shared-defaults-browser-observations.json",
+  "browserWarningsOrErrors": 0,
+  "reportImagesLoaded": 6,
+  "viewportRestored": true,
+  "reviewTab": "New proposal tab retained; user working tabs not operated",
+  "missingLocalReviewLinks": []
+}

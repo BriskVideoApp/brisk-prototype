@@ -45,7 +45,7 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
 }
 
 .brisk-ai-launcher::after,
-.brisk-ai-header-actions button::after {
+.brisk-ai-header-actions button:not([data-brisk-icon-button])::after {
   position: absolute;
   z-index: 10;
   width: max-content;
@@ -81,8 +81,8 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
 
 .brisk-ai-launcher:hover::after,
 .brisk-ai-launcher:focus-visible::after,
-.brisk-ai-header-actions button:hover::after,
-.brisk-ai-header-actions button:focus-visible::after {
+.brisk-ai-header-actions button:not([data-brisk-icon-button]):hover::after,
+.brisk-ai-header-actions button:not([data-brisk-icon-button]):focus-visible::after {
   opacity: 1;
 }
 
@@ -423,7 +423,7 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   gap: var(--brisk-space-xs);
 }
 
-.brisk-ai-header-actions button,
+.brisk-ai-header-actions button:not([data-brisk-icon-button]),
 .brisk-ai-source-picker > header > button,
 .brisk-ai-source-preview > header > button {
   position: relative;
@@ -439,14 +439,14 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   padding: var(--brisk-space-none);
 }
 
-.brisk-ai-header-actions button::after {
+.brisk-ai-header-actions button:not([data-brisk-icon-button])::after {
   top: auto;
   right: var(--brisk-space-none);
   bottom: calc(100% + var(--brisk-space-s));
 }
 
-.brisk-ai-header-actions button:hover,
-.brisk-ai-header-actions button:focus-visible,
+.brisk-ai-header-actions button:not([data-brisk-icon-button]):hover,
+.brisk-ai-header-actions button:not([data-brisk-icon-button]):focus-visible,
 .brisk-ai-source-picker > header > button:hover,
 .brisk-ai-source-picker > header > button:focus-visible,
 .brisk-ai-source-preview > header > button:hover,
@@ -560,23 +560,23 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   margin: var(--brisk-space-xs) var(--brisk-space-none) var(--brisk-space-s);
 }
 
-.brisk-ai-primary-response-action {
+.brisk-ai-primary-response-action:not([data-brisk-button]) {
   background: var(--brisk-brand-primary);
   color: var(--brisk-text-white);
 }
 
-.brisk-ai-primary-response-action:hover,
-.brisk-ai-primary-response-action:focus-visible {
+.brisk-ai-primary-response-action:not([data-brisk-button]):hover,
+.brisk-ai-primary-response-action:not([data-brisk-button]):focus-visible {
   background: var(--brisk-brand-primary-click);
   color: var(--brisk-text-white);
 }
 
-.brisk-ai-primary-response-action:active {
+.brisk-ai-primary-response-action:not([data-brisk-button]):active {
   background: var(--brisk-brand-primary-click);
   color: var(--brisk-text-white);
 }
 
-.brisk-ai-try-again-button {
+.brisk-ai-try-again-button:not([data-brisk-button]) {
   min-height: var(--brisk-space-2xl);
   border: var(--brisk-space-none);
   background: transparent;
@@ -584,14 +584,14 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
-.brisk-ai-try-again-button:hover,
-.brisk-ai-try-again-button:focus-visible {
+.brisk-ai-try-again-button:not([data-brisk-button]):hover,
+.brisk-ai-try-again-button:not([data-brisk-button]):focus-visible {
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
   outline: var(--brisk-space-none);
 }
 
-.brisk-ai-text-action {
+.brisk-ai-text-action:not([data-brisk-button]) {
   display: inline-flex;
   min-height: var(--brisk-space-2xl);
   align-items: center;
@@ -603,8 +603,8 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   padding: var(--brisk-space-xs) var(--brisk-space-s);
 }
 
-.brisk-ai-text-action:hover,
-.brisk-ai-text-action:focus-visible {
+.brisk-ai-text-action:not([data-brisk-button]):hover,
+.brisk-ai-text-action:not([data-brisk-button]):focus-visible {
   background: var(--brisk-brand-secondary);
   color: var(--brisk-brand-primary-click);
 }
@@ -926,7 +926,7 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   color: var(--brisk-text-primary);
 }
 
-.brisk-ai-send-button {
+.brisk-ai-send-button:not([data-brisk-button]) {
   display: inline-flex;
   min-height: var(--brisk-space-2xl);
   align-items: center;
@@ -939,16 +939,16 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
   padding: var(--brisk-space-xs) var(--brisk-space-m);
 }
 
-.brisk-ai-send-button:hover:not(:disabled),
-.brisk-ai-send-button:focus-visible:not(:disabled) {
+.brisk-ai-send-button:not([data-brisk-button]):hover:not(:disabled),
+.brisk-ai-send-button:not([data-brisk-button]):focus-visible:not(:disabled) {
   box-shadow: var(--brisk-shadow-s);
 }
 
-.brisk-ai-send-button:active:not(:disabled) {
+.brisk-ai-send-button:not([data-brisk-button]):active:not(:disabled) {
   box-shadow: none;
 }
 
-.brisk-ai-send-button:disabled,
+.brisk-ai-send-button:not([data-brisk-button]):disabled,
 .brisk-ai-prompt-field textarea:disabled {
   border-color: var(--brisk-border-secondary);
   background: var(--brisk-bg-block-secondary);
@@ -1478,11 +1478,164 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
 @media (prefers-reduced-motion: reduce) {
   .brisk-ai-launcher,
   .brisk-ai-launcher::after,
-  .brisk-ai-header-actions button::after {
+  .brisk-ai-header-actions button:not([data-brisk-icon-button])::after {
     transition: none;
   }
 
   .brisk-ai-spinner {
     animation-duration: 1.4s;
   }
+}
+
+/* Ask Brisk desktop composition, approved by Tom on 29 October 2026.
+   Reuses the existing assistant surface, source chips and DS controls. */
+.ask-brisk-panel .brisk-ai-history-popover {
+  top: calc(100% + var(--brisk-space-m));
+  bottom: auto;
+}
+
+.ask-brisk-scope,
+.ask-brisk-preview-footer,
+.ask-brisk-insights,
+.ask-brisk-insight,
+.ask-brisk-brief-thread,
+.ask-brisk-reminder,
+.ask-brisk-priority,
+.ask-brisk-answer-sources {
+  display: grid;
+  gap: var(--brisk-space-m);
+  min-width: var(--brisk-space-none);
+}
+
+.ask-brisk-scope,
+.ask-brisk-preview-footer {
+  padding: var(--brisk-space-m) var(--brisk-space-l);
+}
+
+.ask-brisk-scope {
+  border-bottom: 1px solid var(--brisk-border-secondary);
+}
+
+.ask-brisk-scope > span,
+.ask-brisk-demo-note,
+.ask-brisk-preview-footer > span,
+.ask-brisk-insight > span {
+  color: var(--brisk-text-secondary);
+}
+
+.ask-brisk-actions,
+.ask-brisk-questions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-s);
+}
+
+.ask-brisk-insights h2,
+.ask-brisk-insight h3,
+.ask-brisk-brief-thread h2,
+.ask-brisk-reminder h2,
+.ask-brisk-panel p {
+  margin: var(--brisk-space-none);
+}
+
+.ask-brisk-insight {
+  border-bottom: 1px solid var(--brisk-border-secondary);
+  padding-bottom: var(--brisk-space-l);
+}
+
+.ask-brisk-insight:last-child {
+  border-bottom: none;
+}
+
+.ask-brisk-panel a {
+  color: var(--brisk-brand-primary-click);
+  text-underline-offset: var(--brisk-space-xxs);
+}
+
+.ask-brisk-panel a:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+}
+
+.ask-brisk-panel .brisk-ai-message p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ask-brisk-demo-note {
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.ask-brisk-panel .brisk-ai-prompt-field textarea {
+  min-height: calc(var(--brisk-space-3xl) * 2);
+}
+
+.ask-brisk-panel .brisk-ai-prompt-field textarea:focus-visible {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+}
+
+.ask-brisk-panel.is-preview {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100vw - var(--brisk-space-2xl) * 2);
+}
+
+.ask-brisk-panel.is-preview .brisk-ai-thread {
+  flex: 0 1 auto;
+}
+
+/* Retain a usable scrolling panel when the desktop browser is constrained. */
+.brisk-ai-floating.ask-brisk-panel.is-expanded {
+  display: flex;
+  flex-direction: column;
+  top: calc(var(--brisk-space-3xl) * 2);
+  bottom: var(--brisk-space-l);
+  height: auto;
+  max-width: calc(100vw - var(--brisk-space-2xl) * 2);
+  max-height: none;
+}
+
+.brisk-ai-floating.ask-brisk-panel.is-expanded .brisk-ai-thread {
+  flex: 1 1 auto;
+}
+
+.ask-brisk-panel > .brisk-ai-header,
+.ask-brisk-panel > .ask-brisk-scope,
+.ask-brisk-panel > .brisk-ai-composer,
+.ask-brisk-panel > .ask-brisk-demo-note {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .brisk-ai-floating.ask-brisk-panel.is-expanded {
+    top: calc(var(--brisk-space-3xl) * 2);
+    right: var(--brisk-space-l);
+    bottom: var(--brisk-space-l);
+    display: flex;
+    flex-direction: column;
+    width: calc(var(--brisk-space-3xl) * 13);
+    height: auto;
+    max-height: none;
+  }
+
+  .brisk-ai-floating.ask-brisk-panel.is-expanded .brisk-ai-thread {
+    flex: 1 1 auto;
+  }
+
+  .ask-brisk-panel > .brisk-ai-header,
+  .ask-brisk-panel > .ask-brisk-scope,
+  .ask-brisk-panel > .brisk-ai-composer,
+  .ask-brisk-panel > .ask-brisk-demo-note {
+    flex: 0 0 auto;
+  }
+}
+
+.ask-brisk-panel .brisk-ai-send-button {
+  margin-left: auto;
+}
+
+.ask-brisk-header-button {
+  position: relative;
 }

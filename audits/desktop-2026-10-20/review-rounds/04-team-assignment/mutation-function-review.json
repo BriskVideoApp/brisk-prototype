@@ -1,0 +1,10 @@
+{
+  "updateSlot": true,
+  "revokePendingOffers": true,
+  "addStaffToSlot": true,
+  "inviteFreelancerToSlot": true,
+  "assignFreelancerDirectlyToSlot": true,
+  "unassignSlot": true,
+  "withdrawInvitation": true,
+  "withdrawAllInvitations": true
+}

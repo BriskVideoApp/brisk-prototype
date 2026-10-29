@@ -1,0 +1,150 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Project workflow
+  - heading "Production flow" [level=1]
+  - paragraph: Brisk recommends one adaptable flow from the completed Brief. Studios can then adjust it without losing work.
+  - generic: Viewing as
+  - strong: Studio Staff
+  - region "See how Brisk recommends a flow":
+    - generic: Completed Brief simulation
+    - heading "See how Brisk recommends a flow" [level=2]
+    - generic: "Recommended: Scripted shoot"
+    - generic: Video type
+    - button "Video type":
+      - generic: Live Action
+    - generic: Explicit production answer
+    - combobox "Explicit production answer":
+      - generic: Use the video type recommendation
+    - button "Complete Brief and create flow"
+  - region "Loom / Recommended production flow":
+    - generic: Project flow
+    - heading "Loom / Recommended production flow" [level=2]
+    - button "Adjust project flow": Adjust project flow
+    - list "Production stages":
+      - 'button "Brief: Approved"': Approved
+      - generic: Brief
+      - generic: Approved
+      - 'button "Script: Approved"': Approved
+      - generic: Script
+      - generic: Approved
+      - 'button "Shoot: Waiting on Studio"': Waiting on Studio
+      - generic: Shoot
+      - generic: Waiting on Studio
+      - 'button "Edit: Not started"': Not started
+      - generic: Edit
+      - generic: Not started
+      - 'button "Masters: Not started"': Not started
+      - generic: Masters
+      - generic: Not started
+    - button "Open Media. 12 files available throughout the project.":
+      - generic: Media (12)
+      - generic: Always available
+  - status:
+    - generic: Live Action maps to the Scripted shoot template.
+  - region "Brief":
+    - generic: Approved
+    - heading "Brief" [level=2]
+    - paragraph: The source of truth for the video, audience, message and production needs.
+    - article:
+      - generic: Video type
+      - strong: Live Action
+      - paragraph: The video type provided the first recommendation.
+    - article:
+      - generic: Explicit Brief answer
+      - strong: Use the video type recommendation
+      - paragraph: An explicit answer overrides the video-type recommendation.
+    - article:
+      - generic: Created flow
+      - strong: Scripted shoot
+      - paragraph: No approval was required before Brisk created the flow.
+  - region "Template examples":
+    - generic: Video type mapping
+    - heading "Template examples" [level=2]
+    - paragraph: Choose the Brief answers to see the production flow Brisk recommends.
+    - generic: Video type
+    - button "Template example video type":
+      - generic: Live Action
+    - generic: Content and production
+    - combobox "Template example content and production answer":
+      - generic: Use the video type recommendation
+    - article:
+      - generic: Matching template
+      - strong: Scripted shoot
+      - paragraph: Brief → Script → Shoot → Edit → Masters | Media
+      - paragraph: A written Script leads into the Shoot, including its Creative Plan, Plan the Day and On Set work.
+    - article:
+      - generic: Default and edit only
+      - strong: Brief → Script → Edit → Masters | Media
+      - paragraph: "Explicit Brief answer: Existing footage only"
+      - button "Preview"
+    - article:
+      - generic: Scripted shoot
+      - strong: Brief → Script → Shoot → Edit → Masters | Media
+      - paragraph: Brand Film, Commercial / TVC, Fashion / Lookbook, Live Action, Music Video, Real Estate, Short-Form / Reels, Training / How To
+      - button "Showing"
+    - article:
+      - generic: Interview-led shoot
+      - strong: Brief → Shoot → Script → Edit → Masters | Media
+      - paragraph: Case Study / Testimonial, Documentary, Event, Internal Comms, Podcast, Wedding / Events
+      - button "Preview"
+    - article:
+      - generic: Animation
+      - strong: Brief → Script → Storyboard → Animation → Masters | Media
+      - paragraph: Animation, AI Video, Explainer, Product / Demo
+      - button "Preview"
+    - article:
+      - generic: Mixed production
+      - strong: Brief → Script → Shoot → Edit → Masters | Media
+      - paragraph: "Explicit Brief answer: Scripted and interview production"
+      - button "Preview"

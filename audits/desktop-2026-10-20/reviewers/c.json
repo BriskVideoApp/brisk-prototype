@@ -1,0 +1,349 @@
+[
+  {
+    "id": "C01",
+    "title": "Brand Kit commands claim completion without performing the named action",
+    "area": "Brand Kits",
+    "family": "Action menus and feedback",
+    "category": "Functional / misleading affordance",
+    "severity": "S2",
+    "impact": "A Filmmaker can believe versions were opened, assets reordered, moved or made primary when only a transient success toast changes. This undermines the production reference and obscures unfinished workflows.",
+    "roles": [
+      "Studio Staff",
+      "Studio Freelancer"
+    ],
+    "routes": [
+      "/brand-kits/loom"
+    ],
+    "states": [
+      "motion overflow",
+      "asset overflow",
+      "selected assets menu",
+      "post-command toast"
+    ],
+    "observed": "Manage versions only invokes notify(\"Version management opened\"); Reorder only says ready to reorder; Set as primary only reports success; Move to sub-brand clears selection after a toast without changing a brand. Many per-file/bulk Download commands report download started without producing a file. Actual editor-files download-all is a separate data anchor, so commands are not interchangeable.",
+    "expected": "A labelled command opens its workflow or produces its advertised result. Front-end-only scope permits local simulations, but their outcome must be honest and reviewable.",
+    "authority": [
+      "User audit section 9: controls that appear usable but do nothing, feedback and recovery",
+      "AGENTS.md: front-end reference mission and requested happy path"
+    ],
+    "recommendation": "Finish a small coherent local mock interaction for each intended command, or mark the command as an unavailable prototype step with explanatory copy. Remove false success feedback. Prioritise Manage versions, Set as primary and Move to sub-brand; keep actual downloads separate from simulated actions.",
+    "rationale": "This corrects the action/result contract without adding a backend or inventing a download service.",
+    "alternatives": "Hide unfinished commands if they are outside the approved scope; alternatively retain discoverability with a clear disabled explanation.",
+    "tradeoffs": "Hiding loses review visibility; disabled controls require concise explanations. Do not turn a mock notification into a real integration.",
+    "rootCause": "Command callbacks use notification-only stubs alongside functional commands with identical presentation.",
+    "occurrences": [
+      "Motion: Download video and Manage versions",
+      "Tile menus: Download all and Reorder",
+      "Logo menu: Set as primary",
+      "Selected assets: Download and Move to sub-brand",
+      "Editor file menu: Copy link reports copied via onDownload",
+      "Sub-brand: Brand Kit download"
+    ],
+    "sources": [
+      "src/components/brand-kits/BrandKitPages.tsx:969",
+      "src/components/brand-kits/BrandKitPages.tsx:975",
+      "src/components/brand-kits/BrandKitPages.tsx:1010",
+      "src/components/brand-kits/BrandKitPages.tsx:1140",
+      "src/components/brand-kits/BrandKitPages.tsx:1464",
+      "src/components/brand-kits/BrandKitPages.tsx:2444"
+    ],
+    "evidence": {
+      "requestedCapture": "Staff /brand-kits/loom > motion menu > Manage versions. Capture menu then toast; inspect no stored-data mutation."
+    },
+    "verificationRemaining": "Lead to confirm current rendered menu and notification result. Check which download stubs are intentional demonstration boundaries before implementation.",
+    "classification": "Source-supported risk",
+    "confidence": "High in source, browser verification pending",
+    "reviewStatus": "Needs decision",
+    "approvedReference": "No approved screenshot exists for the specific behaviour. Use current baseline authority and current captures; do not treat historical audit claims as verification."
+  },
+  {
+    "id": "C02",
+    "title": "Guest logo preview exposes Replace and Delete",
+    "area": "Shared Brand Kits",
+    "family": "Read-only dialog actions",
+    "category": "Permissions / misleading affordance",
+    "severity": "S2",
+    "impact": "A recipient of a shared Brand Kit encounters editing and destructive controls in an intended read-only preview. Even transient changes misrepresent who can manage the Studio assets.",
+    "roles": [
+      "Customer",
+      "Studio Staff",
+      "Studio Freelancer"
+    ],
+    "routes": [
+      "/share/brand/loom-2026",
+      "/brand-kits/loom"
+    ],
+    "states": [
+      "guest logo click",
+      "Download logo dialog footer",
+      "Delete menu, not activated"
+    ],
+    "observed": "LogoVariant is clickable regardless of canEdit. LogoDownloadModal always receives Replace/Delete callbacks and renders those actions without a canEdit prop. isGuest prevents BrandKitContext persistence but updateSection still changes local profile state. Thus this is an exposed read-only affordance and transient mutation risk, not evidence of persistent guest writes.",
+    "expected": "Guest/read-only asset previews permit reading/downloading and omit management commands. Capability checks should govern both action display and handlers.",
+    "authority": [
+      "brisk-saas-patterns.md: every feature answers who can see and act",
+      "BrandKitContext.tsx:136 establishes canEdit=false for guests",
+      "User audit section 4: read-only and restricted states"
+    ],
+    "recommendation": "Pass the existing edit capability into the logo preview; show Replace/Delete only when permitted and guard callbacks. Preserve genuine download choices for recipients.",
+    "rationale": "Use the capability already established for the surrounding asset tile instead of creating a new role model.",
+    "alternatives": "Separate a guest download-only dialog from the editable dialog only if the content differs materially.",
+    "tradeoffs": "A split dialog risks duplication; one capability-aware dialog is smaller. Existing Client-editable Brand Kits must retain their approved management capabilities.",
+    "rootCause": "The tile gates AssetActions, but the nested logo dialog does not inherit that gate.",
+    "occurrences": [
+      "All logo cards opened from guest shared kits",
+      "Non-editable Customer Brand Kit logo dialogs"
+    ],
+    "sources": [
+      "src/components/brand-kits/BrandKitPages.tsx:1439",
+      "src/components/brand-kits/BrandKitPages.tsx:2244",
+      "src/components/brand-kits/BrandKitPages.tsx:2524",
+      "src/components/brand-kits/BrandKitContext.tsx:136",
+      "src/components/brand-kits/BrandKitContext.tsx:151",
+      "src/components/brand-kits/BrandKitContext.tsx:159"
+    ],
+    "evidence": {
+      "requestedCapture": "Open /share/brand/loom-2026; click logo; capture Replace and overflow Delete without invoking either."
+    },
+    "verificationRemaining": "Confirm the guest logo card and nested footer in the current prototype. Do not invoke replacement/deletion to prove the source callback.",
+    "classification": "Source-supported risk",
+    "confidence": "High in source, browser verification pending",
+    "reviewStatus": "Needs decision",
+    "approvedReference": "No approved screenshot exists for the specific behaviour. Use current baseline authority and current captures; do not treat historical audit claims as verification.",
+    "scopeNote": "Include only if lead confirms an actual confusing task in the current UI; otherwise exclude as prototype nuance under latest steering."
+  },
+  {
+    "id": "C03",
+    "title": "Client project navigation silently changes the viewer to another Client",
+    "area": "Client project access",
+    "family": "Role and context boundaries",
+    "category": "Permissions / product decision",
+    "severity": "S1",
+    "impact": "If confirmed, a Client viewing Loom may open another Client project or portal by URL because route context selects that Client and a permitted contact before access checks. The prototype could teach the wrong isolation behaviour.",
+    "roles": [
+      "Customer"
+    ],
+    "routes": [
+      "/projects/deel-customer-story/stages/brief",
+      "/workspaces/northstar-films/clients/deel/portal",
+      "/print/script/deel-customer-story"
+    ],
+    "states": [
+      "Customer Loom context",
+      "direct different-Client URL"
+    ],
+    "observed": "Lead verified Customer Jess Taylor on the Loom portal (E014), then directly opened /projects/deel-customer-story/stages/brief without a role/scenario change. Deel Brief opened under Priya Nair while the account subtitle still said Loom (E015). Source root: URL project lookup provides contextualProject.clientId ahead of scenario/session client, then invited projectMember is selected ahead of the original participant. ProjectAccessGate validates that substituted contact rather than the original Jess identity.",
+    "expected": "Customer membership and Client identity remain anchored to the selected viewer; Studio Staff alone can preview any Client without changing identity. Test mode changes should be explicit and separate from navigation.",
+    "authority": [
+      "AGENTS.md: one dataset with visibility per role, Customer access scoped to memberships",
+      "brisk-saas-patterns.md: Clients never see another Client projects; Staff preview keeps identity"
+    ],
+    "recommendation": "Confirm the intended role-test context with Tom, then anchor Customer identity to the explicit scenario/session viewer and use route identifiers only as access targets. Preserve Staff Client-preview behaviour and same-viewer export context.",
+    "rationale": "A sound access guard cannot express the intended boundary if navigation first substitutes a permitted viewer.",
+    "alternatives": "If contextual identity selection is required for demonstrations, expose it as an explicit named Test mode operation and label the switch; do not imply it is normal Client access.",
+    "tradeoffs": "Fixing context selection may reveal previously convenient demo links as unavailable. Validate scenario entry and export URLs, then choose coherent fallback copy.",
+    "rootCause": "Route target is reused as simulated viewer identity.",
+    "occurrences": [
+      "Project routes",
+      "Scoped Client portals",
+      "Print document previews"
+    ],
+    "sources": [
+      "src/components/prototype-state/usePrototypeViewer.ts:34",
+      "src/components/prototype-state/usePrototypeViewer.ts:49",
+      "src/components/prototype-state/usePrototypeViewer.ts:51",
+      "src/components/prototype-state/usePrototypeViewer.ts:59",
+      "src/data/prototype-access.ts:23",
+      "src/components/project/ProjectAccessGate.tsx:13"
+    ],
+    "evidence": {
+      "screenshots": [
+        "E014",
+        "E015"
+      ],
+      "browserVerifiedBy": "Lead",
+      "reproduction": [
+        "Open Loom portal as Customer Jess Taylor.",
+        "Without changing role/scenario, navigate directly to /projects/deel-customer-story/stages/brief.",
+        "Observe Deel project and Priya Nair identity alongside Loom account subtitle."
+      ]
+    },
+    "verificationRemaining": "Lead verified project-route path. Same routedClientId precedence exists for portal URLs and print routes, but those occurrences require independent browser verification. Tom to decide any explicit Test mode context-switch mechanism. This is a front-end prototype visibility defect, not a claim about production authentication.",
+    "classification": "Observed defect",
+    "confidence": "High: lead browser reproduction plus source trace",
+    "reviewStatus": "Needs decision",
+    "approvedReference": "No approved screenshot exists for the specific behaviour. Use current baseline authority and current captures; do not treat historical audit claims as verification.",
+    "excludedFromCurrentRecommendationScope": true,
+    "scopeNote": "Latest user steering prioritises UX/UI and excludes prototype identity, permission architecture and fixture issues. Retained only as historical audit evidence, not a recommended UI fix or decision request."
+  },
+  {
+    "id": "C04",
+    "title": "Script and Storyboard version authoring does not inherit project edit capability",
+    "area": "Script and Storyboard",
+    "family": "Version controls",
+    "category": "Permissions / workflow",
+    "severity": "S2",
+    "impact": "A Client or a Freelancer assigned to a different stage may receive Create, Duplicate and Rename commands that alter current versions and can restart an approved stage. The expected boundary between viewing, reviewing and authoring is unclear.",
+    "roles": [
+      "Customer",
+      "Studio Freelancer"
+    ],
+    "routes": [
+      "/projects/loom-launch-film/script",
+      "/projects/loom-launch-film/stages/storyboard"
+    ],
+    "states": [
+      "version menu",
+      "approved/current version",
+      "non-assigned stage"
+    ],
+    "observed": "Both pages always supply create/duplicate/rename callbacks to ScriptVersionControl. Script createNewScriptDocument and duplicateVersion do not check canActOnProject; guardEditable protects approved row changes only. Storyboard context mutations also do not check the viewer. Script/Storyboard version arrays are displayed in full; a release-to-Client model is not present in their version records. Shared ProjectAccessGate checks viewing only.",
+    "expected": "The existing project capability model makes Customer edit=false for non-Media stages and limits Freelancer editing to assigned stages. Production guidance requires Clients to see released versions only. Any deliberate co-authoring exception needs an explicit scoped decision.",
+    "authority": [
+      "src/data/prototype-access.ts:67 canActOnProject",
+      "brisk-production-journey.md:110-111 released-version boundary",
+      "AGENTS.md: preserve role and workflow boundaries"
+    ],
+    "recommendation": "Resolve Client co-authoring/release intent with Tom before implementation. At minimum align version-management command visibility and handlers with approved edit capability while preserving review/approval and historical viewing. Define which versions Clients may view if the release rule applies to these document stages.",
+    "rationale": "Selecting a historical version, making a new authoring version and approving work are distinct actions and should not share an accidental broad permission.",
+    "alternatives": "Explicitly approve Client co-authoring for selected stages, with separate authored/released states, rather than applying blanket read-only to all Client document interactions.",
+    "tradeoffs": "Broadly hiding version controls could remove useful history and approved review behaviour. Do not conflate Author permission with Approve permission or change stored role identifiers.",
+    "rootCause": "Version control composes authoring callbacks independently from project capability model; version data lacks release scope.",
+    "occurrences": [
+      "Script current version menu",
+      "Storyboard current version menu",
+      "All listed historical versions"
+    ],
+    "sources": [
+      "src/components/script/ScriptPage.tsx:570",
+      "src/components/script/ScriptPage.tsx:1141",
+      "src/components/script/ScriptPage.tsx:1167",
+      "src/components/script/ScriptPage.tsx:1908",
+      "src/components/storyboard/StoryboardPage.tsx:310",
+      "src/components/storyboard/StoryboardContext.tsx:234",
+      "src/data/prototype-access.ts:67"
+    ],
+    "evidence": {
+      "requestedCapture": "Customer Script and Storyboard > open version picker, capture authoring commands only. Do not create/duplicate/rename/delete or change current version."
+    },
+    "verificationRemaining": "Lead menu confirmation; Tom decision on intended Client co-authoring and release scope. Mutation and persistence intentionally not exercised.",
+    "classification": "Source-supported risk",
+    "confidence": "High in source, browser verification pending",
+    "reviewStatus": "Needs decision",
+    "approvedReference": "No approved screenshot exists for the specific behaviour. Use current baseline authority and current captures; do not treat historical audit claims as verification.",
+    "excludedFromCurrentRecommendationScope": true,
+    "scopeNote": "Latest user steering prioritises UX/UI and excludes prototype identity, permission architecture and fixture issues. Retained only as historical audit evidence, not a recommended UI fix or decision request."
+  },
+  {
+    "id": "C05",
+    "title": "Client settings default to an Admin preview independently of the current contact",
+    "area": "Client account settings",
+    "family": "Access-management boundaries",
+    "category": "Permissions / product decision",
+    "severity": "S2",
+    "impact": "Client account settings can show company/team management to a contact without deriving the contact membership. Restricted states are selected by a hidden URL parameter, which may mislead demonstrations of the approved three access roles.",
+    "roles": [
+      "Customer"
+    ],
+    "routes": [
+      "/settings/client/company",
+      "/settings/client/team",
+      "/client/invoices"
+    ],
+    "states": [
+      "ordinary URL",
+      "?client-role=member",
+      "?billing=hidden"
+    ],
+    "observed": "ClientAccountSettingsContext sets access.role to Client Admin unless client-role=member is present. It does not derive this from usePrototypeViewer or the current contact. Company/team data derive from state.session.activeClientId while project/portal viewer context can derive from route. ClientInvoices retains shared stored account invoices while replacing only company/team metadata for another active Client. These are source-supported context mismatches; current available fixture may have only Loom records.",
+    "expected": "Three access roles remain the prototype authority; any approved within-Client responsibility should derive from the explicit current viewer/contact and Client, or be clearly labelled as an isolated preview. Client finances must remain scoped.",
+    "authority": [
+      "AGENTS.md: exactly three access roles; no additional granular permission screens unless explicitly requested",
+      "brisk-saas-patterns.md: settings scopes separate and Client data isolated"
+    ],
+    "recommendation": "Ask Tom to confirm whether Client Admin/Member is an intentional retained demonstration. Derive rendered capability/company/invoices from the same scoped viewer when live; move URL-driven variants into clearly labelled preview context if retained. Do not add a new permission system.",
+    "rationale": "Clarifies what the prototype proves about access and prevents current URL/defaults being treated as approved product behaviour.",
+    "alternatives": "Keep legacy account settings as explicitly excluded demonstration pages until a later scoped Client settings ticket, rather than expanding the current audit into implementation.",
+    "tradeoffs": "Removing tiers without approval could erase intentional responsibility distinctions. A source-driven fix needs existing contact data and finance scoping verified before changing UI.",
+    "rootCause": "Legacy settings preview access uses query parameters and global stored account data separately from canonical viewer state.",
+    "occurrences": [
+      "Client company/team access boundaries",
+      "Client invoices availability and data",
+      "Personal account preview query propagation"
+    ],
+    "sources": [
+      "src/components/settings/ClientAccountSettingsContext.tsx:48",
+      "src/components/settings/ClientAccountSettingsContext.tsx:89",
+      "src/components/settings/ClientAccountSettingsContext.tsx:96",
+      "src/components/settings/AccountSettingsShell.tsx:195",
+      "src/components/settings/ClientInvoicesPage.tsx:10"
+    ],
+    "evidence": {
+      "requestedCapture": "Customer Company/Team ordinary URLs and ?client-role=member; inspect access state only, do not save or invite."
+    },
+    "verificationRemaining": "Tom confirmation of legacy tier approval, current contact membership, and browser account/Client context comparison. No persistent data leak asserted.",
+    "classification": "Source-supported risk",
+    "confidence": "High in source, browser verification pending",
+    "reviewStatus": "Needs decision",
+    "approvedReference": "No approved screenshot exists for the specific behaviour. Use current baseline authority and current captures; do not treat historical audit claims as verification.",
+    "excludedFromCurrentRecommendationScope": true,
+    "scopeNote": "Latest user steering prioritises UX/UI and excludes prototype identity, permission architecture and fixture issues. Retained only as historical audit evidence, not a recommended UI fix or decision request."
+  },
+  {
+    "id": "C06",
+    "title": "Direct Storyboard creation falls back to the global Harbour Health Script",
+    "area": "Storyboard",
+    "family": "Creation and source scope",
+    "category": "Functional / scope mismatch",
+    "severity": "S2",
+    "impact": "Creating a Storyboard from the project stage can populate a different Client narrative, while conversion from the project Script uses the actual selected approved version. Users cannot trust what the Create confirmation refers to.",
+    "classification": "Source-supported risk",
+    "confidence": "High for divergent source paths; current stored Loom board provenance uncertain",
+    "roles": [
+      "Studio Staff",
+      "Customer",
+      "Studio Freelancer"
+    ],
+    "routes": [
+      "/projects/loom-launch-film/stages/storyboard",
+      "/projects/[projectId]/stages/storyboard"
+    ],
+    "states": [
+      "empty Storyboard Create confirmation",
+      "existing saved Loom board",
+      "Script Convert to Storyboard"
+    ],
+    "observed": "Lead saw a persisted Loom Storyboard containing Harbour Health/Maya content. Initial Storyboard records seed only Notion, so the existing Loom board cannot be attributed to the current default seed alone. Source independently confirms that the direct Create confirmation omits sourceVersion, and createStoryboardRecord defaults to getLatestApprovedScriptVersion from the global Harbour Health script fixtures. The Script-page conversion passes its selectedVersion rows explicitly. No create action was performed during this audit.",
+    "expected": "Create Storyboard from the approved Script means the approved Script of the same project. Both creation entry points should resolve identical project-scoped source data.",
+    "authority": [
+      "brisk-production-journey.md: Script and Storyboard are project artefacts; Client data isolation",
+      "StoryboardPage.tsx:549-551 confirmation promises one frame per approved Script row",
+      "AGENTS.md: one dataset shared across views and project-specific workflows"
+    ],
+    "recommendation": "Resolve the approved Script for the target project once and pass it explicitly in both creation paths. If no approved project Script is available, show the existing prerequisite state rather than silently using a global sample. Preserve existing saved boards until Tom separately approves any data correction.",
+    "rationale": "Corrects source scope with a shared resolver and leaves current user work intact.",
+    "alternatives": "Keep a visibly labelled sample creation mode on a prototype-only route, separate from normal project creation.",
+    "tradeoffs": "Removing the generic fallback can expose projects whose mock stage says approved without a corresponding saved Script. Treat that as a fixture/data decision; do not replace or delete saved boards automatically.",
+    "rootCause": "Optional sourceVersion parameter defaults to a global fixture; only one caller supplies project-specific version data.",
+    "occurrences": [
+      "Direct Storyboard Create confirmation",
+      "Document export initial Storyboard fallback also calls createStoryboardRecord without a scoped source; DocumentExportPreview may prefer stored payload and requires independent check"
+    ],
+    "sources": [
+      "src/components/storyboard/StoryboardPage.tsx:555",
+      "src/components/storyboard/StoryboardContext.tsx:184",
+      "src/data/storyboard.ts:52",
+      "src/data/storyboard.ts:112",
+      "src/components/script/ScriptPage.tsx:355",
+      "src/app/print/[kind]/[projectId]/page.tsx:86"
+    ],
+    "evidence": {
+      "requestedCapture": "Retain D-R031-staff-1440 showing current stored Loom/Harbour content; label provenance uncertain. If existing empty Storyboard available, open Create confirmation then cancel; do not create."
+    },
+    "approvedReference": "No approved screenshot exists for this behaviour. Same-project source scope follows the workflow and the existing correct Script conversion path.",
+    "verificationRemaining": "Do not mutate stored records to reproduce creation. Source confirms parameter mismatch; a disposable authorised fixture would be needed for full result verification. Existing Loom board provenance cannot be established from current code alone.",
+    "reviewStatus": "Needs decision",
+    "excludedFromCurrentRecommendationScope": true,
+    "scopeNote": "Latest user steering prioritises UX/UI and excludes prototype identity, permission architecture and fixture issues. Retained only as historical audit evidence, not a recommended UI fix or decision request."
+  }
+]

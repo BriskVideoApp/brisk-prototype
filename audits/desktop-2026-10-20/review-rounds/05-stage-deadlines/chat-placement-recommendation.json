@@ -1,0 +1,69 @@
+{
+  "date": "28 October 2026",
+  "status": "Placement approved by Tom on 28 October 2026; warning UI implemented and desktop verification finished on 29 October 2026, awaiting visual sign-off",
+  "request": "Check current Chat and consider an automated Brisk message plus a Deadline column indicator.",
+  "existingVerified": [
+    "Chat renders ProjectSystemPost for system messages",
+    "Separate Internal and External project channels",
+    "Specific-message route selects an existing message and its channel",
+    "Videos DeadlineCell currently only edits dates; no timing-to-Chat link exists",
+    "Viewing project Chat automatically updates read state, so inspection used fresh origin 8781"
+  ],
+  "proposal": {
+    "draftBrief": "One-line suggested date before submission; do not post draft edits to Chat",
+    "submittedBrief": "Project Chat system post with timing message, suggested date, short reason and Review date action; keep the submitted Brief timing conversation available to its permitted audience",
+    "videos": "Keep active stage countdown and final date; show a small Timing needs review link to the corresponding Chat message",
+    "production": "Internal forecast-risk post first; Client-safe External update after producer review",
+    "readState": "Reading a post does not clear an unresolved timing warning",
+    "branding": "System-generated update; Studio branding retained for Clients",
+    "scope": "No new permission role, no real send, backend, integration or separate notification surface"
+  },
+  "messageCopy": {
+    "title": "Delivery date needs review",
+    "body": "Requested 30 Oct · Suggested 5 Nov",
+    "action": "Review date",
+    "reasonRequirement": "Include a short, understandable explanation of why the suggested date differs; exact message wording is illustrative"
+  },
+  "remaining": [
+    "Live forecast assessment inputs and meaningful-change triggers belong to the separate scheduling engine",
+    "Studio turnaround settings, automatic timing rules and revision-round policy remain separate"
+  ],
+  "report": "chat-placement-review.html",
+  "sources": [
+    "src/components/chat/ChatMessageList.tsx",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "src/components/notifications/project-history.css",
+    "src/components/chat/ChatPage.tsx",
+    "src/app/chat/page.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "Docs/notification-event-registry.md",
+    "brisk-saas-patterns.md"
+  ],
+  "approval": {
+    "by": "Tom",
+    "date": "28 October 2026",
+    "source": "Direct user approval in this chat",
+    "scope": [
+      "Brief: one-line suggested date before submission",
+      "Project Chat: timing message, suggested date, reason and Review date action",
+      "Deadline column: small Timing needs review warning links directly to the related Chat message",
+      "Reading the message does not clear an unresolved warning",
+      "Production risks go to Internal Chat first",
+      "Client updates go to External Chat after producer review"
+    ],
+    "doesNotApprove": "This placement approval does not approve the separate settings editing design, unsettled timing calculations or revision-round policy."
+  },
+  "implementation": {
+    "date": "29 October 2026",
+    "result": "../07-timing-warnings/result.html",
+    "verification": "../07-timing-warnings/implementation-validation.json",
+    "scope": "Approved Brief, Project Chat and Deadline warning placement; the later Final delivery agreement has a separate result."
+  },
+  "remainingBeforeImplementationHistorical": [
+    "Add frontend timing event/state without claiming an existing implemented engine",
+    "Verify Customer/Freelancer scoped destinations",
+    "Verify exact-message targeting in global Chat drawer if used instead of the existing dedicated route",
+    "Define meaningful risk-state changes and avoid duplicate posts",
+    "Implement and verify the approved placement within the frontend prototype; no actual messages or outbound notifications"
+  ]
+}

@@ -1,0 +1,115 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - complementary "Chat navigation":
+    - generic: North Star Films
+    - button "Search messages - Command K"
+    - navigation "Global conversations":
+      - button "DMs":
+        - generic: DMs
+      - button "Mark 1 unread dms as read": "1"
+      - button "Mentions":
+        - generic: Mentions
+      - button "Mark 2 unread mentions as read": "2"
+      - button "Groups":
+        - generic: Groups
+      - button "Mark 1 unread groups as read": "1"
+      - button "Threads" [active] [pressed]:
+        - generic: Threads
+      - button "Calls":
+        - generic: Calls
+    - generic "Client conversations":
+      - button "All projects":
+        - generic: All projects
+      - button "Mark all 4 unread messages as read": "4"
+      - button "Loom":
+        - generic: Loom
+      - button "Mark 2 unread messages from Loom as read": "2"
+      - button "Deel":
+        - generic: Deel
+      - button "Mark 1 unread messages from Deel as read": "1"
+      - button "Hims":
+        - generic: Hims
+      - button "Mark 1 unread messages from Hims as read": "1"
+      - button "OpenAI":
+        - generic: OpenAI
+      - button "Canva":
+        - generic: Canva
+      - button "Linear":
+        - generic: Linear
+      - button "Harbour Health":
+        - generic: Harbour Health
+    - combobox "Filter Clients":
+      - generic: Active clients
+    - button "Unread only":
+      - generic: Unread only
+  - heading "Threads" [level=1]
+  - region "Threads":
+    - textbox:
+      - /placeholder: Search threads
+    - button "LOOM-24 Launch Film - Sales Narrative Sarah Kim Sarah Kim I’ve shared the updated product wording with the wider Loom team. @Marcus Lee this version is ready for the final sound pass. 1 replies 24 July, 8:52 am":
+      - strong: LOOM-24
+      - generic: Launch Film - Sales Narrative
+      - generic "Sarah Kim": SK
+      - strong: Sarah Kim
+      - generic: I’ve shared the updated product wording with the wider Loom team. @Marcus Lee this version is ready for the final sound pass.
+      - generic: 1 replies
+      - time: 24 July, 8:52 am
+    - button "LOOM-24 Launch Film - Sales Narrative Tom Mitchell Tom Mitchell Absolutely. @Marcus Lee can you add eight frames to that final quote before today’s client cut? 2 replies 22 July, 9:18 am":
+      - strong: LOOM-24
+      - generic: Launch Film - Sales Narrative
+      - generic "Tom Mitchell": TM
+      - strong: Tom Mitchell
+      - generic: Absolutely. @Marcus Lee can you add eight frames to that final quote before today’s client cut?
+      - generic: 2 replies
+      - time: 22 July, 9:18 am

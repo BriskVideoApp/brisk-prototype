@@ -1,0 +1,311 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/workspaces/northstar-films/clients/loom/portal".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/workspaces/northstar-films/clients/loom/portal
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 container North Star Films logo
+				7 text NS
+			8 text North Star Films
+			9 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				10 text Collapse navigation
+			11 container Workspace
+				12 link Description: Videos, Value: localhost:3000/workspaces/northstar-films/clients/loom/portal
+				13 link Description: Media Library, Value: localhost:3000/media
+				14 link Description: Brand Kit, Value: localhost:3000/brand-kits/loom
+			15 pop up button (collapsed) Description: Open your menu, signed in as Jess Taylor, Help: Jess Taylor, Secondary Actions: Expand
+				16 container Jess Taylor
+					17 text JT
+				18 text Jess Taylor
+				19 text Loom
+			20 container Prototype controls
+				21 button (collapsed) Test mode, Secondary Actions: Expand
+					22 text Test mode
+		23 container
+			24 container Navigation history
+				25 button Go back
+					26 text Back
+				27 button Go forward
+					28 text Forward
+				29 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					30 text Recent pages
+			31 container Global actions
+				32 button Open Chat
+				33 button (collapsed) Description: Updates, Secondary Actions: Expand
+			34 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			35 container
+				36 heading Your videos, Value: 1
+					37 text Your videos
+				38 button Start Video
+				39 container In progress (5) Your Studio is working on these videos.
+					40 heading In progress (5) Your Studio is working on these videos., Value: 2, ID: customer-production-title
+						41 text In progress (
+						42 text 5
+						43 text )
+						44 text Your Studio is working on these videos.
+					45 container
+						46 link Description: Open Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film/stages/brief
+						47 text LOOM-24 Launch Film - Sales Narrative Waiting on North Star Films to work on the brief Shoot details shared by Maddie · 23h ago
+						48 button Open chat for Launch Film - Sales Narrative
+							49 container 3 unread messages
+								50 text 3
+						51 pop up button (collapsed) Description: Open actions for Launch Film - Sales Narrative, Secondary Actions: Expand
+							52 text Open actions for Launch Film - Sales Narrative
+						53 container Launch Film - Sales Narrative stage progress
+							54 container
+								55 link Description: Open Brief, Value: localhost:3000/projects/loom-launch-film/stages/brief
+								56 text Brief
+							57 container
+								58 link Description: Open Script, Value: localhost:3000/projects/loom-launch-film/script
+								59 text Script
+							60 container
+								61 link Description: Open Storyboard, Value: localhost:3000/projects/loom-launch-film/stages/storyboard
+								62 text Storyboard
+							63 container
+								64 link Description: Open Shoot, Value: localhost:3000/projects/loom-launch-film/stages/shoot
+								65 text Shoot
+							66 container
+								67 link Description: Open Video Review, Value: localhost:3000/projects/loom-launch-film/stages/edit
+								68 text Edit
+							69 container
+								70 link Description: Open Masters, Value: localhost:3000/projects/loom-launch-film/stages/masters
+								71 text Masters
+							72 container
+								73 link Description: Open Media (15). 15 media files, Value: localhost:3000/projects/loom-launch-film/stages/media
+								74 text Media (15)
+					75 container
+						76 link Description: Open WACF Customer Cutdown 01, Value: localhost:3000/projects/loom-wacf-01/stages/edit
+						77 text LOOM-31 WACF Customer Cutdown 01 Waiting on North Star Films to edit the video Rough cut uploaded · 1d ago Series:  WACF CC
+						78 button Open chat for WACF Customer Cutdown 01
+							79 container 1 unread messages
+								80 text 1
+						81 pop up button (collapsed) Description: Open actions for WACF Customer Cutdown 01, Secondary Actions: Expand
+							82 text Open actions for WACF Customer Cutdown 01
+						83 container WACF Customer Cutdown 01 stage progress
+							84 container
+								85 link Description: Open Brief, Value: localhost:3000/projects/loom-wacf-01/stages/brief
+								86 text Brief
+							87 container
+								88 link Description: Open Script, Value: localhost:3000/projects/loom-wacf-01/script
+								89 text Script
+							90 container
+								91 link Description: Open Shoot, Value: localhost:3000/projects/loom-wacf-01/stages/shoot
+								92 text Shoot
+							93 container
+								94 link Description: Open Video Review, Value: localhost:3000/projects/loom-wacf-01/stages/edit
+								95 text Edit
+							96 container
+								97 link Description: Open Masters, Value: localhost:3000/projects/loom-wacf-01/stages/masters
+								98 text Masters
+							99 container
+								100 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-wacf-01/stages/media
+								101 text Media (0)
+					102 container
+						103 link Description: Open Product Tour - Team Workflows, Value: localhost:3000/projects/loom-product-tour/stages/shoot
+						104 text LOOM-34 Product Tour - Team Workflows Waiting on North Star Films to prepare the shoot Script approved by Emma · 2d ago
+						105 button Open chat for Product Tour - Team Workflows
+						106 pop up button (collapsed) Description: Open actions for Product Tour - Team Workflows, Secondary Actions: Expand
+							107 text Open actions for Product Tour - Team Workflows
+						108 container Product Tour - Team Workflows stage progress
+							109 container
+								110 link Description: Open Brief, Value: localhost:3000/projects/loom-product-tour/stages/brief
+								111 text Brief
+							112 container
+								113 link Description: Open Script, Value: localhost:3000/projects/loom-product-tour/script
+								114 text Script
+							115 container
+								116 link Description: Open Shoot, Value: localhost:3000/projects/loom-product-tour/stages/shoot
+								117 text Shoot
+							118 container
+								119 link Description: Open Video Review, Value: localhost:3000/projects/loom-product-tour/stages/edit
+								120 text Edit
+							121 container
+								122 link Description: Open Masters, Value: localhost:3000/projects/loom-product-tour/stages/masters
+								123 text Masters
+							124 container
+								125 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-product-tour/stages/media
+								126 text Media (0)
+					127 container
+						128 link Description: Open Customer Story - Healthcare, Value: localhost:3000/projects/loom-customer-stories/stages/edit
+						129 text LOOM-27 Customer Story - Healthcare Waiting on North Star Films to edit the video Edit preparation started by Maddie · 3d ago Series:  Customer Stories
+						130 button Open chat for Customer Story - Healthcare
+							131 container 4 unread messages
+								132 text 4
+						133 pop up button (collapsed) Description: Open actions for Customer Story - Healthcare, Secondary Actions: Expand
+							134 text Open actions for Customer Story - Healthcare
+						135 container Customer Story - Healthcare stage progress
+							136 container
+								137 link Description: Open Brief, Value: localhost:3000/projects/loom-customer-stories/stages/brief
+								138 text Brief
+							139 container
+								140 link Description: Open Script, Value: localhost:3000/projects/loom-customer-stories/script
+								141 text Script
+							142 container
+								143 link Description: Open Shoot, Value: localhost:3000/projects/loom-customer-stories/stages/shoot
+								144 text Shoot
+							145 container
+								146 link Description: Open Video Review, Value: localhost:3000/projects/loom-customer-stories/stages/edit
+								147 text Edit
+							148 container
+								149 link Description: Open Masters, Value: localhost:3000/projects/loom-customer-stories/stages/masters
+								150 text Masters
+							151 container
+								152 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-customer-stories/stages/media
+								153 text Media (0)
+					154 container
+						155 link Description: Open Q3 Product Recap, Value: localhost:3000/projects/loom-q3-recap/stages/edit
+						156 text LOOM-36 Q3 Product Recap Waiting on North Star Films to edit the video Media organised for edit · 4d ago
+						157 button Open chat for Q3 Product Recap
+							158 container 2 unread messages
+								159 text 2
+						160 pop up button (collapsed) Description: Open actions for Q3 Product Recap, Secondary Actions: Expand
+							161 text Open actions for Q3 Product Recap
+						162 container Q3 Product Recap stage progress
+							163 container
+								164 link Description: Open Brief, Value: localhost:3000/projects/loom-q3-recap/stages/brief
+								165 text Brief
+							166 container
+								167 link Description: Open Script, Value: localhost:3000/projects/loom-q3-recap/script
+								168 text Script
+							169 container
+								170 link Description: Open Shoot, Value: localhost:3000/projects/loom-q3-recap/stages/shoot
+								171 text Shoot
+							172 container
+								173 link Description: Open Video Review, Value: localhost:3000/projects/loom-q3-recap/stages/edit
+								174 text Edit
+							175 container
+								176 link Description: Open Masters, Value: localhost:3000/projects/loom-q3-recap/stages/masters
+								177 text Masters
+							178 container
+								179 link Description: Open Media (0). 0 media files, Value: localhost:3000/projects/loom-q3-recap/stages/media
+								180 text Media (0)
+				181 container All videos (5)
+					182 heading All videos (5), Value: 2, ID: customer-all-videos-title
+						183 text All videos ( 5 )
+					184 container
+						185 text Video grouping
+						186 combo box (collapsed) Description: Video grouping, Value: All videos, Secondary Actions: Expand
+							187 text All videos
+					188 container Video status
+						189 checkbox Description: All. Every video shared with you., Value: 1
+							190 text All
+							191 text 5
+							192 text Every video shared with you.
+						193 checkbox Description: Active. Videos currently in production., Value: 0
+							194 text Active
+							195 text 5
+							196 text Videos currently in production.
+						197 checkbox Description: Queued. Planned next. Your Studio has not started work yet., Value: 0
+							198 text Queued
+							199 text 0
+							200 text Planned next. Your Studio has not started work yet.
+						201 checkbox Description: Completed. Finished videos that have been approved., Value: 0
+							202 text Completed
+							203 text 0
+							204 text Finished videos that have been approved.
+						205 checkbox Description: Paused. Work is temporarily on hold., Value: 0
+							206 text Paused
+							207 text 0
+							208 text Work is temporarily on hold.
+						209 checkbox Description: Archived. Kept for reference and no longer active., Value: 0
+							210 text Archived
+							211 text 0
+							212 text Kept for reference and no longer active.
+					213 table All videos
+						214 row
+							215 cell
+								216 text Video
+							217 cell
+								218 text Progress
+							219 cell
+								220 text Status
+							221 cell
+								222 text Created
+							223 cell
+								224 text Actions
+						225 row
+							226 link Description: Open Q3 Product Recap, Value: localhost:3000/projects/loom-q3-recap/stages/edit
+							227 cell
+								228 text LOOM-36 Q3 Product Recap Media organised for edit  ·  4d ago
+							229 cell
+								230 text In Production
+							231 cell
+								232 text 19 June 2026
+							233 cell
+								234 button Open chat for Q3 Product Recap
+									235 container 2 unread messages
+										236 text 2
+								237 pop up button (collapsed) Description: Open actions for Q3 Product Recap, Secondary Actions: Expand
+									238 text Open actions for Q3 Product Recap
+						239 row
+							240 link Description: Open Product Tour - Team Workflows, Value: localhost:3000/projects/loom-product-tour/stages/shoot
+							241 cell
+								242 text LOOM-34 Product Tour - Team Workflows Script approved by Emma  ·  2d ago
+							243 cell
+								244 text In Production
+							245 cell
+								246 text 8 June 2026
+							247 cell
+								248 button Open chat for Product Tour - Team Workflows
+								249 pop up button (collapsed) Description: Open actions for Product Tour - Team Workflows, Secondary Actions: Expand
+									250 text Open actions for Product Tour - Team Workflows
+						251 container
+							252 row
+								253 button (expanded) Description: Collapse WACF CC series, Secondary Actions: Collapse
+									254 text Collapse series
+								255 cell
+									256 text SERIES
+									257 text WACF CC
+									258 text Rough cut uploaded  ·  1d ago
+								259 cell
+									260 text 1 active video
+								261 cell
+									262 text In Production
+								263 cell
+									264 text 2 June 2026
+								265 cell
+									266 button Open WACF CC conversations
+							267 row
+								268 link Description: Open WACF Customer Cutdown 01, Value: localhost:3000/projects/loom-wacf-01/stages/edit
+								269 cell
+									270 text LOOM-31 WACF Customer Cutdown 01 Rough cut uploaded  ·  1d ago
+								271 cell
+									272 text 2 June 2026
+								273 cell
+									274 button Open chat for WACF Customer Cutdown 01
+										275 container 1 unread messages
+											276 text 1
+									277 pop up button (collapsed) Description: Open actions for WACF Customer Cutdown 01, Secondary Actions: Expand
+										278 text Open actions for WACF Customer Cutdown 01
+						279 row
+							280 button (collapsed) Description: Expand Customer Stories series, Secondary Actions: Expand
+								281 text Expand series
+							282 cell
+								283 text SERIES
+								284 text Customer Stories
+								285 text Edit preparation started by Maddie  ·  3d ago
+							286 cell
+								287 text 1 active video
+							288 cell
+								289 text In Production
+							290 cell
+								291 text 27 May 2026
+							292 cell
+								293 button Open Customer Stories conversations
+						294 row
+							295 link Description: Open Launch Film - Sales Narrative, Value: localhost:3000/projects/loom-launch-film/stages/brief
+							296 cell
+								297 text LOOM-24 Launch Film - Sales Narrative Shoot details shared by Maddie  ·  23h ago
+							298 cell
+								299 text In Production
+							300 cell
+								301 text 18 May 2026
+							302 cell
+								303 button Open chat for Launch Film - Sales Narrative
+									304 container 3 unread messages
+										305 text 3
+								306 pop up button (collapsed) Description: Open actions for Launch Film - Sales Narrative, Secondary Actions: Expand
+									307 text Open actions for Launch Film - Sales Narrative
+				308 text Powered by Brisk
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/workspaces/northstar-films/clients/loom/portal

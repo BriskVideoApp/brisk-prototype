@@ -1,0 +1,89 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Comments and replies":
+  - link "Back to notification settings":
+    - /url: /settings/notifications
+    - text: Back to notification settings
+  - heading "Comments and replies" [level=2]
+  - paragraph: Choose an item to see or change its message.
+  - navigation "Comments and replies messages":
+    - generic: Messages
+    - generic: "2"
+    - button "Mention":
+      - strong: Mention
+    - button "Reply needed" [active]:
+      - strong: Reply needed
+  - article:
+    - heading "Reply needed" [level=3]
+    - term: When it sends
+    - definition: When someone asks you to reply to a client.
+    - term: Who receives it
+    - definition: The person asked to reply.
+    - article "Reply needed example":
+      - generic: Action needed
+      - heading "Reply needed" [level=4]
+      - paragraph: A client reply needs an answer.
+      - paragraph: Launch Film - Sales Narrative · Brief
+      - link "Reply":
+        - /url: /chat
+        - text: Reply
+    - button "Edit message"

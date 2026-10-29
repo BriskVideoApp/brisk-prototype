@@ -1,0 +1,99 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/settings/notifications".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/notifications
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container
+				10 link Description: Back to workspace, Value: localhost:3000/active-videos
+				11 text Studio settings
+				12 container Studio settings
+					13 link Description: Studio setup, Value: localhost:3000/settings/studio
+					14 link Description: Production defaults, Value: localhost:3000/settings/studio/production
+					15 link Description: AI Playbook, Value: localhost:3000/settings/studio/ai-playbook
+					16 link Description: Messaging connections, Value: localhost:3000/settings/studio/integrations
+					17 link Description: Storage, Value: localhost:3000/settings/studio/storage
+					18 link Description: Notifications, Value: localhost:3000/settings/notifications
+					19 link Description: Brisk plan & billing, Value: localhost:3000/settings/plan-billing
+					20 link Description: Client billing, Value: localhost:3000/settings/client-billing
+			21 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				22 container Tom Mitchell
+					23 text TM
+				24 text Tom Mitchell
+				25 text North Star Films
+			26 container Studio administration
+				27 link Description: Studio settings, Value: localhost:3000/settings/studio
+			28 container Prototype controls
+				29 button (collapsed) Test mode, Secondary Actions: Expand
+					30 text Test mode
+		31 container
+			32 container Navigation history
+				33 button Go back
+					34 text Back
+				35 button Go forward
+					36 text Forward
+				37 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					38 text Recent pages
+			39 container Global actions
+				40 button Open Chat
+				41 button (collapsed) Description: Updates, Secondary Actions: Expand
+			42 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			43 container
+				44 heading Notifications, Value: 1
+					45 text Notifications
+				46 text Choose what Brisk sends and when.
+			47 container Studio notification settings
+				48 container
+					49 heading Delivery, Value: 2
+						50 text Delivery
+					51 container
+						52 checkbox (settable, integer) Description: Email, Value: 1
+						53 text Email
+					54 container
+						55 checkbox (disabled, settable, integer) Description: WhatsApp and browser notifications, Value: 0
+						56 text WhatsApp and browser notifications
+					57 text Coming soon Account and security emails are always sent.
+					58 container
+						59 heading Notifications, Value: 2
+							60 text Notifications
+						61 text Choose which updates Brisk sends. Open an item to see its message.
+					62 link Open Work to review messages
+						63 container
+							64 checkbox (settable, integer) Description: Work to review, Value: 1
+							65 text Work to review
+						66 button Open Work to review
+					67 link Open Comments and replies messages
+						68 container
+							69 checkbox (settable, integer) Description: Comments and replies, Value: 1
+							70 text Comments and replies
+						71 button Open Comments and replies
+					72 link Open Project changes messages
+						73 container
+							74 checkbox (settable, integer) Description: Project changes, Value: 1
+							75 text Project changes
+						76 button Open Project changes
+					77 link Open Invoices messages
+						78 container
+							79 checkbox (settable, integer) Description: Invoices, Value: 1
+							80 text Invoices
+						81 button Open Invoices
+					82 heading Reminders, Value: 2
+						83 text Reminders
+					84 container
+						85 text First reminder
+						86 combo box (collapsed) Description: First reminder, Value: After 24 hours, Secondary Actions: Expand
+							87 text After 24 hours
+					88 container
+						89 text Second reminder
+						90 combo box (collapsed) Description: Second reminder, Value: After 48 hours, Secondary Actions: Expand
+							91 text After 48 hours
+					92 container
+						93 checkbox (settable, integer) Description: Notify the Studio if there is no response, Value: 1
+						94 text Notify the Studio if there is no response
+					95 button Cancel
+					96 button Save changes
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/settings/notifications

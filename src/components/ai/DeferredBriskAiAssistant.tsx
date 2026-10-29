@@ -10,7 +10,7 @@ const BriskAiAssistant = dynamic(
 );
 
 export function DeferredBriskAiAssistant() {
-  const { openAssistant, view } = useBriskAi();
+  const { openAssistant, view, sessionKey } = useBriskAi();
   const [hasOpened, setHasOpened] = useState(false);
 
   useEffect(() => {
@@ -29,5 +29,5 @@ export function DeferredBriskAiAssistant() {
   }, [openAssistant]);
 
   // Retain conversation state after the first opening, including while closed.
-  return hasOpened || view !== "closed" ? <BriskAiAssistant /> : null;
+  return hasOpened || view !== "closed" ? <BriskAiAssistant key={sessionKey} /> : null;
 }

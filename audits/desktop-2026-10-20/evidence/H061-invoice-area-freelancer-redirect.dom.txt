@@ -1,0 +1,143 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Nina Patel":
+    - generic "Nina Patel": NP
+    - strong: Nina Patel
+    - generic: North Star Films
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+    - generic: View as role
+    - region "Prototype view":
+      - group "View as role":
+        - button "Studio Staff"
+        - button "Studio Freelancer" [active] [pressed]
+        - button "Client"
+    - button "Reset" [disabled]
+    - link "Testing scenarios":
+      - /url: /prototype/scenarios
+      - generic: Testing scenarios
+    - link "Production flow":
+      - /url: /prototype/production-flow
+      - generic: Production flow
+    - link "Share controls":
+      - /url: /share
+      - generic: Share controls
+    - link "Studio onboarding":
+      - /url: /studio-onboard
+      - generic: Studio onboarding
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates, 2 unread":
+      - generic "2 unread notifications": "2"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "My jobs header":
+    - heading "My jobs" [level=1]
+    - generic: Search your jobs
+    - searchbox "Search your jobs"
+  - navigation "Contractor job views":
+    - button "Active jobs 1":
+      - text: Active jobs
+      - generic: "1"
+    - button "Offers 0":
+      - text: Offers
+      - generic: "0"
+    - generic: Payment
+    - combobox "Filter by payment status":
+      - generic: All payment states
+  - region "My videos":
+    - table:
+      - rowgroup:
+        - row "Video Your work Progress Latest action Deadline Time Commercial":
+          - columnheader "Video"
+          - columnheader "Your work"
+          - columnheader "Progress"
+          - columnheader "Latest action"
+          - columnheader "Deadline"
+          - columnheader "Time"
+          - columnheader "Commercial"
+      - rowgroup:
+        - row "FIGM Config Highlights - Community Keynote Project tools for Config Highlights - Community Keynote Editor Media Edit Config Highlights - Community Keynote stage progress Project archived 18 days ago 26 July 2026 Final delivery 19.8h / 20h Log hours Paid NZD 1,800 agreed rate":
+          - cell "FIGM Config Highlights - Community Keynote Project tools for Config Highlights - Community Keynote":
+            - generic: FIGM
+            - link "Config Highlights - Community Keynote":
+              - /url: /projects/figma-config-highlights/stages/masters
+            - generic "Project tools for Config Highlights - Community Keynote":
+              - link "Open chat":
+                - /url: /chat?project=figma-config-highlights
+                - text: Open chat
+              - link "Open Client queue":
+                - /url: /customer-dashboard
+                - text: Open Client queue
+          - cell "Editor Media Edit":
+            - strong: Editor
+            - generic: Media
+            - generic: Edit
+          - cell "Config Highlights - Community Keynote stage progress":
+            - generic "Config Highlights - Community Keynote stage progress":
+              - link "Open Brief":
+                - /url: /projects/figma-config-highlights/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 45d ago
+              - link "Open Script":
+                - /url: /projects/figma-config-highlights/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 41d ago
+              - link "Open Storyboard":
+                - /url: /projects/figma-config-highlights/stages/storyboard
+                - text: Storyboard - Not started
+              - generic: Storyboard
+              - link "Open Video Review":
+                - /url: /projects/figma-config-highlights/stages/edit
+                - text: Animation - Complete
+              - generic: Animation
+              - generic: 20d ago
+              - link "Open Masters":
+                - /url: /projects/figma-config-highlights/stages/masters
+                - text: Masters - Complete
+              - generic: Masters
+              - generic: 18d ago
+              - link "Open Media (2). 2 media files":
+                - /url: /projects/figma-config-highlights/stages/media
+                - text: 2 media files
+              - generic: Media (2)
+          - cell "Project archived 18 days ago":
+            - strong: Project archived
+            - generic: 18 days ago
+          - cell "26 July 2026 Final delivery":
+            - strong: 26 July 2026
+            - generic: Final delivery
+          - cell "19.8h / 20h Log hours":
+            - strong: 19.8h / 20h
+            - link "Log hours":
+              - /url: /active-videos?log=1&project=figma-config-highlights&stage=edit
+          - cell "Paid NZD 1,800 agreed rate":
+            - generic: Paid
+            - generic: NZD 1,800 agreed rate

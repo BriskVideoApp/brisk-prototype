@@ -1,0 +1,75 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/media".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 201, 203, 205
++								504 text Transcript
++								505 text Copy link
++								506 text Download
++				507 container Inspect Office-arrivals-camera-b.mov
++					508 text field (settable) Description: Filename, Value: Office-arrivals-camera-b.mov
++					509 button Close asset drawer
++						510 text Close
++					511 container Actions for Office-arrivals-camera-b.mov
++						512 button Comment Office-arrivals-camera-b.mov
++							513 text Comment
++						514 button Transcript Office-arrivals-camera-b.mov
++							515 text Transcript
++						516 button Copy link Office-arrivals-camera-b.mov
++							517 text Copy link
++						518 button Download Office-arrivals-camera-b.mov
++							519 text Download
++						520 button Archive Office-arrivals-camera-b.mov
++							521 text Archive
++						522 button Delete Office-arrivals-camera-b.mov
++							523 text Delete
++					524 container Unable to play media.
++						525 container buffering
++						526 slider (disabled) video time scrubber
++					527 tab group Asset information
++						528 tab (selected, settable, boolean) Details, Value: 1
++						529 tab (selectable, settable, boolean) Comments, Value: 0
++						530 tab (selectable, settable, boolean) Transcript, Value: 0
++					531 container Details
++						532 definition list
++							533 container Kind
++								534 text Kind
++							535 text video
++							536 container Size
++								537 text Size
++							538 text 2.3 GB
++							539 container Duration
++								540 text Duration
++							541 text 05:12
++							542 container Uploaded
++								543 text Uploaded
++							544 text 19 August 2026
++							545 container Uploaded by
++								546 text Uploaded by
++							547 text Sam Chen
++							548 container Project
++								549 text Project
++							550 text Customer Story - APAC Hiring
++							551 container Folder
++								552 text Folder
++							553 text B-roll
++							554 container Storage location
++								555 text Storage location
++							556 text Dropbox
++							557 container Original
++								558 text Original
++							559 text Available
++							560 container Playback
++								561 text Playback
++							562 text Ready
++							563 container Source location
++								564 text Source location
++							565 text Dropbox / Deel / B-roll
++							566 container Provider file ID
++								567 text Provider file ID
++							568 text dbid:AADeelArrivals03
++							569 container Playback ID
++								570 text Playback ID
++							571 text mux-playback-media-stored-01
++							572 container Project link
++								573 text Project link
++							574 link Description: Open project media, Value: localhost:3000/projects/deel-customer-story/stages/media
+The focused UI element is 196 checkbox Description: Select Office-arrivals-camera-b.mov, Value: 0

@@ -1,0 +1,241 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Brief actions": Brief actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/script
+          - text: Waiting on North Star Films
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Brief intake":
+    - heading "What video are we making?" [level=1]
+    - paragraph: Answer a few quick questions, then Brisk AI will build your brief.
+    - textbox "Describe the video brief" [active]:
+      - /placeholder: ""
+      - text: AUDIT SAMPLE ONLY - a short internal product demonstration for the disposable review.
+    - generic "Attachment tools":
+      - button "Record a brief" [disabled]: Recording is not available in this prototype
+      - button "Paste a link": Paste a link
+      - button "Upload a doc": Upload a doc
+    - button "Fill manually"
+    - button "Continue"
+    - button "Back"
+    - navigation "Brief steps":
+      - button "Start with AI Start with AI":
+        - generic: Start with AI
+        - text: Start with AI
+      - button "1 1. Description"
+      - button "2 2. Video type"
+      - button "3 3. Audience and action"
+      - button "4 4. Similar videos"
+      - button "5 5. Brand kit"
+      - button "6 6. Footage and filming"
+      - button "7 7. Deliverables"
+      - button "8 8. Deadline"
+      - button "Summary 9. Review your brief"
+- dialog "Global Chat":
+  - button "Close Chat"
+  - main:
+    - complementary "Chat navigation":
+      - generic: North Star Films
+      - button "Search messages - Command K"
+      - navigation "Global conversations":
+        - button "DMs":
+          - generic: DMs
+        - button "Mark 1 unread dms as read": "1"
+        - button "Mentions":
+          - generic: Mentions
+        - button "Mark 2 unread mentions as read": "2"
+        - button "Groups":
+          - generic: Groups
+        - button "Mark 1 unread groups as read": "1"
+        - button "Threads":
+          - generic: Threads
+        - button "Mark 1 unread threads as read": "1"
+        - button "Calls":
+          - generic: Calls
+      - generic "Client conversations":
+        - button "All projects":
+          - generic: All projects
+        - button "Mark all 7 unread messages as read": "7"
+        - button "Loom":
+          - generic: Loom
+        - button "Mark 5 unread messages from Loom as read": "5"
+        - button "Deel":
+          - generic: Deel
+        - button "Mark 1 unread messages from Deel as read": "1"
+        - button "Hims":
+          - generic: Hims
+        - button "Mark 1 unread messages from Hims as read": "1"
+        - button "OpenAI":
+          - generic: OpenAI
+        - button "Canva":
+          - generic: Canva
+        - button "Linear":
+          - generic: Linear
+        - button "Harbour Health":
+          - generic: Harbour Health
+      - combobox "Filter Clients":
+        - generic: Active clients
+      - button "Unread only":
+        - generic: Unread only
+    - region "All project conversations":
+      - heading "All project conversations" [level=1]
+      - generic "Workspace members":
+        - generic "Tom Mitchell": TM
+        - generic "David Ryan": DR
+        - generic "Marcus Lee": ML
+        - generic "Jess Taylor": JT
+        - generic "Sarah Kim": SK
+        - generic: "+10"
+      - group "Project status":
+        - button "In Production" [pressed]
+        - button "Queued"
+        - button "Completed"
+        - button "All"
+      - button "Launch Film - Sales Narrative, LOOM-24, Loom, In Production":
+        - strong: Launch Film - Sales Narrative
+        - generic: LOOM-24 · Loom
+        - generic: In Production
+        - strong: Brisk
+        - text: ": Published call time changed"
+        - generic: 20 Aug, 4:15 pm
+        - text: "Brisk: Published call time changed"
+      - button "Mark 3 unread messages in LOOM-24 as read": "3"
+      - button "Customer Stories - Enterprise Series, LOOM-27, Loom, In Production":
+        - strong: Customer Stories - Enterprise Series
+        - generic: LOOM-27 · Loom
+        - generic: In Production
+        - strong: No messages yet
+        - text: ": Open this video and start the conversation."
+        - text: "No messages yet: Open this video and start the conversation."
+      - button "Customer Story - APAC Hiring, DEEL-18, Deel, In Production":
+        - strong: Customer Story - APAC Hiring
+        - generic: DEEL-18 · Deel
+        - generic: In Production
+        - strong: Alex Morgan
+        - text: ": Can we move the Singapore customer quote ahead of the payroll product section?"
+        - generic: 24 July, 9:10 am
+        - text: "Alex Morgan: Can we move the Singapore customer quote ahead of the payroll product section?"
+      - button "Mark 1 unread messages in DEEL-18 as read": "1"
+      - button "Product Education - Sleep Series, HIMS-12, Hims, In Production":
+        - strong: Product Education - Sleep Series
+        - generic: HIMS-12 · Hims
+        - generic: In Production
+        - strong: Priya Nair
+        - text: ": The sleep animation needs a softer handoff between chapters two and three."
+        - generic: 24 July, 8:42 am
+        - text: "Priya Nair: The sleep animation needs a softer handoff between chapters two and three."
+      - button "Mark 1 unread messages in HIMS-12 as read": "1"
+      - button "WACF Customer Cutdown 01, LOOM-31, Loom, In Production":
+        - strong: WACF Customer Cutdown 01
+        - generic: LOOM-31 · Loom
+        - generic: In Production
+        - strong: No messages yet
+        - text: ": Open this video and start the conversation."
+        - text: "No messages yet: Open this video and start the conversation."
+      - button "Product Tour - Team Workflows, LOOM-34, Loom, In Production":
+        - strong: Product Tour - Team Workflows
+        - generic: LOOM-34 · Loom
+        - generic: In Production
+        - strong: No messages yet
+        - text: ": Open this video and start the conversation."
+        - text: "No messages yet: Open this video and start the conversation."
+      - button "Q3 Product Recap, LOOM-36, Loom, In Production":
+        - strong: Q3 Product Recap
+        - generic: LOOM-36 · Loom
+        - generic: In Production
+        - strong: No messages yet
+        - text: ": Open this video and start the conversation."
+        - text: "No messages yet: Open this video and start the conversation."
+      - button "Care Journey, HH, Harbour Health, In Production":
+        - strong: Care Journey
+        - generic: HH · Harbour Health
+        - generic: In Production
+        - strong: No messages yet
+        - text: ": Open this video and start the conversation."
+        - text: "No messages yet: Open this video and start the conversation."

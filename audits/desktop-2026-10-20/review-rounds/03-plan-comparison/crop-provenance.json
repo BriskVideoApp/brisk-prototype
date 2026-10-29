@@ -1,0 +1,21 @@
+{
+  "current-frequency-detail.jpg": {
+    "source": "current-1440.jpg",
+    "rectangle": [
+      176,
+      35,
+      780,
+      180
+    ]
+  },
+  "current-annual-confirmation-detail.jpg": {
+    "source": "current-annual-confirmation.jpg",
+    "rectangle": [
+      368,
+      252,
+      1076,
+      748
+    ]
+  },
+  "operation": "Pixel crops only; no reconstructed UI. The report adds an outline around the collapsed control as a labelled annotation."
+}

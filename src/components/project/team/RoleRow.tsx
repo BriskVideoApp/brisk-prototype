@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Button } from "../../../../Brisk DS/src/app/components/Button";
+import { PeopleAvatar } from "@/components/people/PeoplePrimitives";
 import {
   getAcceptedInvitation,
   getInvitationCost,
@@ -30,90 +32,68 @@ export function RoleRow({ slot, people, canEdit, showCosts, onOpenEditor }: Role
   const pendingInvitations = getVisibleInvitations(slot);
 
   return (
-    <div className="team-role-row" role="row">
-      <div className="team-role-row-primary">
-        <div className="team-role-main">
-          <span className="team-role-titleline">
-            {canEdit ? (
-              <button
-                className="team-role-name team-role-name-trigger label-s-semibold"
-                type="button"
-                aria-label={`Edit ${roleLabel} role`}
-                aria-haspopup="dialog"
-                onClick={onOpenEditor}
-              >
-                {roleLabel}
-              </button>
-            ) : (
-              <span className="team-role-name label-s-semibold">{roleLabel}</span>
-            )}
+    <div className="team-overview-role" role="listitem">
+      <div className="team-overview-person-row">
+        {acceptedPerson ? <TeamPersonAvatar person={acceptedPerson} /> : null}
+        <div className="team-overview-identity">
+          {acceptedPerson ? <Link
+            className="team-overview-profile label-s-semibold"
+            href={`/people/${encodeURIComponent(acceptedPerson.id)}`}
+            aria-label={`Open ${acceptedPerson.name}'s People profile`}
+          >{acceptedPerson.name}</Link> : <span className="label-s-semibold">{roleLabel}</span>}
+          <span className="team-overview-meta label-xs">
+            {acceptedPerson ? `${roleLabel} · ${acceptedPerson.personType}` : "Unassigned"} · {estimatedHours}h required
           </span>
+          {acceptedPerson?.personType === "Studio Freelancer" && acceptedInvitation?.assignmentMethod === "direct" ? <span className="team-overview-meta label-xs">Assigned</span> : null}
         </div>
+        {canEdit ? <Button
+          size="S"
+          variant={acceptedPerson ? "ghost" : "primary"}
+          aria-label={`${acceptedPerson ? "Change" : "Assign"} ${roleLabel}`}
+          aria-haspopup="dialog"
+          onClick={onOpenEditor}
+        >
+          {acceptedPerson ? "Change" : "Assign"}
+        </Button> : null}
       </div>
-
-      {acceptedPerson && acceptedInvitation ? (
-        <ResolvedSlotState person={acceptedPerson} invitation={acceptedInvitation} />
-      ) : pendingInvitations.length > 0 ? (
+      {!acceptedPerson && pendingInvitations.length > 0 ? (
         <InvitationList invitations={pendingInvitations} people={people} roleHours={estimatedHours} showCosts={showCosts} />
-      ) : (
-        <EmptySlotState canEdit={canEdit} onOpenEditor={onOpenEditor} />
-      )}
+      ) : null}
     </div>
   );
 }
 
-function ResolvedSlotState({
-  person,
-  invitation,
-}: {
-  person: TeamPerson;
-  invitation: Invitation;
-}) {
-  const isFreelancer = person.personType === "Studio Freelancer";
-  const isDirectFreelancer = isFreelancer && invitation.assignmentMethod === "direct";
-
-  return (
-    <div className="team-role-fill-state">
-      <span className="team-role-person-name label-s">
-        <Link
-          className="team-role-person-trigger label-s"
-          href={`/people/${encodeURIComponent(person.id)}`}
-          aria-label={`Open ${person.name}'s People profile`}
-        >
-          {person.name}
-        </Link>
-        {isFreelancer ? <FreelancePill /> : <StaffPill />}
-        {isDirectFreelancer ? <span className="team-assigned-indicator label-xs-semibold">Assigned</span> : null}
-      </span>
-    </div>
-  );
+export function TeamPersonAvatar({ person }: { person: TeamPerson }) {
+  return <PeopleAvatar person={{ name: person.name, avatarUrl: person.photoUrl ?? null, type: person.personType === "Studio Staff" ? "Team" : "Freelancer" }} size="S" />;
 }
 
 function InvitationList({ invitations, people, roleHours, showCosts }: { invitations: Invitation[]; people: TeamPerson[]; roleHours: number; showCosts: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
+  const id = useId();
 
   return (
-    <div className="team-invitation-list">
-      <button
-        className="team-invitation-toggle label-s-semibold"
-        type="button"
+    <div className="team-overview-invitations">
+      <Button
+        size="S"
+        variant="ghost"
         aria-expanded={isOpen}
+        aria-controls={id}
         onClick={(event) => {
           event.stopPropagation();
           setIsOpen((currentValue) => !currentValue);
         }}
       >
-        Invited ({invitations.length})
         <DsIcon name="caret-down" size={12} />
-      </button>
+        {invitations.length} invited
+      </Button>
       {isOpen ? (
-        <div className="team-invitation-dropdown" onClick={(event) => event.stopPropagation()}>
+        <div className="team-overview-invitation-detail" id={id} onClick={(event) => event.stopPropagation()}>
           {invitations.map((invitation) => {
             const person = people.find((teamPerson) => teamPerson.id === invitation.personId);
             const cost = getInvitationCost(invitation, roleHours);
 
             return person ? (
-              <p className="team-invitation-line label-s" key={invitation.id}>
+              <p className="team-overview-invitation-line label-s" key={invitation.id}>
                 <span className="team-invitation-person label-s-semibold">{person.name}</span>
                 {showCosts && typeof cost === "number" ? (
                   <span>{typeof invitation.projectRateSnapshot === "number" || invitation.paymentBasis === "flat" ? `Project rate ${formatCurrency(cost)}` : formatCurrency(cost)}</span>
@@ -124,19 +104,6 @@ function InvitationList({ invitations, people, roleHours, showCosts }: { invitat
             ) : null;
           })}
         </div>
-      ) : null}
-    </div>
-  );
-}
-
-function EmptySlotState({ canEdit, onOpenEditor }: { canEdit: boolean; onOpenEditor: () => void }) {
-  return (
-    <div className="team-empty-fill-state">
-      <span className="team-empty-slot label-s">No-one assigned.</span>
-      {canEdit ? (
-        <button className="team-row-edit-hint label-xs-semibold" type="button" onClick={onOpenEditor}>
-          Fill role
-        </button>
       ) : null}
     </div>
   );

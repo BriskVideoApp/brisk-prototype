@@ -1,0 +1,136 @@
+{
+  "status": "Approved",
+  "implementation": "Implemented and browser-verified; visually signed off by Tom on 28 October 2026.",
+  "reviewedOn": "28 October 2026",
+  "role": "Studio Staff",
+  "origin": "http://127.0.0.1:8770",
+  "isolationBeforeApp": {
+    "localKeys": 0,
+    "sessionKeys": 0
+  },
+  "sourceHashes": {
+    "src/components/media/MediaAssetDrawer.tsx": "cf7647b6c3ffc8eb4873e947b72424e5d910de4dfc84c94dc9c48d1ac3d7d6c4",
+    "src/components/media/MediaBrowser.tsx": "60a77e6b1a49205fb6d712802dba44003ff147cc5ef981ea6edf476510a1347d",
+    "src/components/media/MediaAssetCard.tsx": "6c96ed7fe0fe71a44342ccade56080d8bed702d06a9c2ff2afcd4f6e39ae406f",
+    "src/components/media/MediaAssetRow.tsx": "00d6cc4708ccd0795b8c37223b8c3ad3cc91a9d4b86c5f9189e5635c6fdfed8a",
+    "src/components/media/media.css": "718f174a101e2034f8a0261b122d69322239ff4801a5c9414ecf6a598acc1420",
+    "src/components/navigation/app-shell.css": "5c84faeea45918811d10020edd60905fa7522d56433e3a1566a30ff614c4756e"
+  },
+  "evidence": [
+    {
+      "file": "current-1440-full.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "46bc9583f55b9c240ee71439fa2ff4abfdaf20a4e7e825ec2140e86263b9e610",
+      "note": "Genuine current browser capture, with the full CSS viewport represented. No reconstruction or image editing."
+    },
+    {
+      "file": "current-1133-full.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "63e5008aeb65c5bed08f1fc6e662201f507c60c551d61891b0e2385187cb3512",
+      "note": "Genuine current browser capture, with the full CSS viewport represented. No reconstruction or image editing."
+    },
+    {
+      "file": "current-1440-closed.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "a9a4e7db482ce39eac41d2d01f0b7012330344679ea746b6db97662dd6f5a159",
+      "note": "Genuine current browser capture, with the full CSS viewport represented. No reconstruction or image editing."
+    }
+  ],
+  "observed": [
+    {
+      "id": "MI01",
+      "finding": "A10",
+      "issue": "Narrow inspector filename and Close are behind global header",
+      "proof": "1133 geometry places Close at y14; element at its centre is Ask Brisk. Escape from Filename leaves inspector open."
+    },
+    {
+      "id": "MI02",
+      "finding": "A10",
+      "issue": "Wide multi-rail composition squeezes browsing",
+      "proof": "1440 workspace has180/220/220px location rails,220px file area and360px inspector. Closing restores580px file area."
+    },
+    {
+      "id": "MI03",
+      "finding": "B02",
+      "issue": "Keyboard Select opens inspector instead of selection",
+      "proof": "Space on Select Jess-interview-camera-a.mov opens inspector, control remains unselected and no selection toolbar appears."
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "MIP01",
+      "title": "Protect identity and exit",
+      "proposal": "Anchor the inspector inside its Media workspace below the page heading/search and global navigation. Keep Filename and Close visible while panel content scrolls. Use the approved quiet Close control."
+    },
+    {
+      "id": "MIP02",
+      "title": "Dock only when browsing remains usable",
+      "proposal": "Keep the current inspector width. Dock only when the remaining file area supports at least two existing minimum-size grid columns; use a right overlay otherwise. List mode needs its own readable-column check. Do not collapse navigation automatically. Global 1440 with all location rails should use overlay; a project view with enough room can remain docked.",
+      "classification": "Design judgement requiring approval",
+      "tradeoff": "Overlay covers browsing while open at constrained widths, but avoids reflowing the grid into a sliver and preserves location."
+    },
+    {
+      "id": "MIP03",
+      "title": "Make entry and exit predictable",
+      "proposal": "Correct Media grid/list child keyboard activation so Select selects and opening opens. Keyboard opening moves focus into the inspector; Close or Escape returns focus to the opening file. Inner menus handle Escape first. Retain non-modal background access and no click-away dismissal.",
+      "scope": "Shared Media inspector and its Media card/list entry controls. Transcript paragraph fix is outside this first pass."
+    },
+    {
+      "id": "MIP04",
+      "title": "Protect context and unfinished work",
+      "proposal": "Preserve current Client/project/folder, query, selected files and list scroll on close. A non-empty unsent comment triggers the existing DS confirmation pattern before closing or switching asset: keep editing or discard. Preserve existing rename save behaviour and action permissions.",
+      "classification": "Proposed safeguard for new dismissal behaviour; not an observed data-loss claim"
+    }
+  ],
+  "preserve": [
+    "Current Brisk visual language and DS tokens",
+    "Preview, asset metadata and Details/Comments/Transcript tabs",
+    "File capabilities, role boundaries and explicitly scoped actions",
+    "Existing filename rename save boundary",
+    "Global navigation, page search and location context"
+  ],
+  "deferred": [
+    "Media bulk-selection policy",
+    "Folder grouping and Brand Kit refinement",
+    "Shoot progress panel occurrence of A10",
+    "Transcript paragraph occurrence of B02",
+    "Mobile pass"
+  ],
+  "verificationAfterApproval": [
+    "1440 and1133; expanded/collapsed main navigation",
+    "Global library multi-rail and project Media consumers",
+    "Pointer Close; Enter/Space; child controls; Escape; return focus",
+    "Existing role-specific, long-name, comments, transcript and read-only states",
+    "Unsent comment cancellation and asset switching, using disposable data only"
+  ],
+  "references": [
+    {
+      "app": "Google Drive",
+      "url": "https://mobbin.com/screens/50679553-4fdc-4bb1-a068-d63654a6a767",
+      "observed": "Visible file identity and Close at the top of a right details panel, below the application header, with the selected file still visible in the list.",
+      "limit": "One supporting example; does not establish Brisk docking breakpoints, keyboard behaviour or an approved Brisk variant."
+    },
+    {
+      "app": "NordVPN",
+      "url": "https://mobbin.com/screens/854fe125-a125-4bb1-ae5e-38af09eb6b1d",
+      "observed": "File list and selected-file details occupy separate adjacent regions.",
+      "limit": "File-storage structure only; not a Brisk styling or narrow-width reference."
+    }
+  ],
+  "excludedCaptureAttempts": [
+    {
+      "file": "current-1440.jpg",
+      "reason": "Initial capture API produced a clipped frame; retained for traceability, not used as full-viewport evidence."
+    },
+    {
+      "file": "current-1133.jpg",
+      "reason": "Initial capture API produced a clipped frame; retained for traceability, not used as full-viewport evidence."
+    }
+  ],
+  "approval": "Tom explicitly approved all four changes in this chat on 28 October 2026.",
+  "result": "result.html",
+  "visualSignOff": "Tom: \u201cThe Media inspector looks good.\u201d"
+}

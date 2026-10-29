@@ -1,0 +1,587 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "People header":
+    - heading "People" [level=1]
+    - generic: Search people
+    - searchbox "Search people"
+  - group "People views":
+    - button "All 32":
+      - text: All
+      - generic: "32"
+    - button "Studio Staff 10" [pressed]:
+      - text: Studio Staff
+      - generic: "10"
+    - button "Studio Freelancers 7":
+      - text: Studio Freelancers
+      - generic: "7"
+    - button "Client contacts 15":
+      - text: Client contacts
+      - generic: "15"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Invite Studio Staff":
+    - generic: Invite Studio Staff
+  - region "People directory controls":
+    - generic: Sort by
+    - combobox "Sort people":
+      - generic: Latest activity
+    - generic: 10 people
+  - region "People directory":
+    - table:
+      - rowgroup:
+        - row "Person Type Role Current work Capacity Access Latest activity View person details":
+          - columnheader "Person"
+          - columnheader "Type"
+          - columnheader "Role"
+          - columnheader "Current work"
+          - columnheader "Capacity"
+          - columnheader "Access"
+          - columnheader "Latest activity"
+          - columnheader "View person details":
+            - generic: View person details
+      - rowgroup:
+        - 'row "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film Open Tom Maclachlan''s overview North Star Films Studio Director No active projects View Tom Maclachlan''s workload - 40h available, 0/40h booked Accepted They have joined Brisk. Billing: Admin Manage Reviewed Studio access Just now Open Tom Maclachlan''s full profile"':
+          - cell "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film":
+            - link "Tom Maclachlan avatar Tom Maclachlan tom@chopchop.film":
+              - /url: /people/tom-maclachlan
+              - generic "Tom Maclachlan avatar": TM
+              - strong: Tom Maclachlan
+              - generic: tom@chopchop.film
+          - cell "Open Tom Maclachlan's overview North Star Films":
+            - link "Open Tom Maclachlan's overview":
+              - /url: /people/tom-maclachlan
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/tom-maclachlan
+          - cell "Studio Director":
+            - link "Studio Director":
+              - /url: /people/tom-maclachlan
+              - strong: Studio Director
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/tom-maclachlan?section=Work
+          - cell "View Tom Maclachlan's workload - 40h available, 0/40h booked":
+            - button "View Tom Maclachlan's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - 'cell "Accepted They have joined Brisk. Billing: Admin Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/tom-maclachlan
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: Admin"
+            - link "Manage":
+              - /url: /people/tom-maclachlan
+          - cell "Reviewed Studio access Just now":
+            - link "Reviewed Studio access Just now":
+              - /url: /people/tom-maclachlan?section=Notes%20and%20activity
+              - strong: Reviewed Studio access
+              - generic: Just now
+          - cell "Open Tom Maclachlan's full profile":
+            - link "Open Tom Maclachlan's full profile":
+              - /url: /people/tom-maclachlan
+        - 'row "Editor avatar Editor editor@chopchop.film Open Editor''s overview North Star Films Editor No active projects View Editor''s workload - 40h available, 0/40h booked Pending Invite sent - waiting for them to join. Resend invite Billing: No access Manage Studio invitation sent Just now Open Editor''s full profile"':
+          - cell "Editor avatar Editor editor@chopchop.film":
+            - link "Editor avatar Editor editor@chopchop.film":
+              - /url: /people/editor
+              - generic "Editor avatar": E
+              - strong: Editor
+              - generic: editor@chopchop.film
+          - cell "Open Editor's overview North Star Films":
+            - link "Open Editor's overview":
+              - /url: /people/editor
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/editor
+          - cell "Editor":
+            - link "Editor":
+              - /url: /people/editor
+              - strong: Editor
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/editor?section=Work
+          - cell "View Editor's workload - 40h available, 0/40h booked":
+            - button "View Editor's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - 'cell "Pending Invite sent - waiting for them to join. Resend invite Billing: No access Manage"':
+            - link "Pending Invite sent - waiting for them to join.":
+              - /url: /people/editor
+              - generic: Pending
+              - generic: Invite sent - waiting for them to join.
+            - button "Resend invite"
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/editor
+          - cell "Studio invitation sent Just now":
+            - link "Studio invitation sent Just now":
+              - /url: /people/editor?section=Notes%20and%20activity
+              - strong: Studio invitation sent
+              - generic: Just now
+          - cell "Open Editor's full profile":
+            - link "Open Editor's full profile":
+              - /url: /people/editor
+        - 'row "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au Open Tom Mitchell''s overview North Star Films Producer, Studio Director Loom · Launch Film - Sales Narrative Hims · Product Education - Sleep Series View Tom Mitchell''s workload - 26h available, 14/40h booked, 12h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Approved the Loom production schedule 1h ago Open Tom Mitchell''s full profile"':
+          - cell "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au":
+            - link "Tom Mitchell avatar Tom Mitchell tom@northstarfilms.com.au":
+              - /url: /people/te
+              - generic "Tom Mitchell avatar": TM
+              - strong: Tom Mitchell
+              - generic: tom@northstarfilms.com.au
+          - cell "Open Tom Mitchell's overview North Star Films":
+            - link "Open Tom Mitchell's overview":
+              - /url: /people/te
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/te
+          - cell "Producer, Studio Director":
+            - link "Producer, Studio Director":
+              - /url: /people/te
+              - strong: Producer, Studio Director
+          - cell "Loom · Launch Film - Sales Narrative Hims · Product Education - Sleep Series":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Hims · Product Education - Sleep Series":
+              - /url: /projects/hims-product-education
+              - generic: Hims ·
+              - text: Product Education - Sleep Series
+          - cell "View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client":
+            - button "View Tom Mitchell's workload - 26h available, 14/40h booked, 12h awaiting Client":
+              - strong: 26h available
+              - generic: 14/40h booked
+              - generic: 12h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/te
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/te
+          - cell "Approved the Loom production schedule 1h ago":
+            - link "Approved the Loom production schedule 1h ago":
+              - /url: /people/te?section=Notes%20and%20activity
+              - strong: Approved the Loom production schedule
+              - generic: 1h ago
+          - cell "Open Tom Mitchell's full profile":
+            - link "Open Tom Mitchell's full profile":
+              - /url: /people/te
+        - 'row "Producer avatar Producer producer@chopchop.film Open Producer''s overview North Star Films Producer No active projects View Producer''s workload - 40h available, 0/40h booked Accepted They have joined Brisk. Billing: No access Manage Updated a production schedule 1h ago Open Producer''s full profile"':
+          - cell "Producer avatar Producer producer@chopchop.film":
+            - link "Producer avatar Producer producer@chopchop.film":
+              - /url: /people/producer
+              - generic "Producer avatar": P
+              - strong: Producer
+              - generic: producer@chopchop.film
+          - cell "Open Producer's overview North Star Films":
+            - link "Open Producer's overview":
+              - /url: /people/producer
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/producer
+          - cell "Producer":
+            - link "Producer":
+              - /url: /people/producer
+              - strong: Producer
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/producer?section=Work
+          - cell "View Producer's workload - 40h available, 0/40h booked":
+            - button "View Producer's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/producer
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/producer
+          - cell "Updated a production schedule 1h ago":
+            - link "Updated a production schedule 1h ago":
+              - /url: /people/producer?section=Notes%20and%20activity
+              - strong: Updated a production schedule
+              - generic: 1h ago
+          - cell "Open Producer's full profile":
+            - link "Open Producer's full profile":
+              - /url: /people/producer
+        - 'row "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au Open Sarah Chen''s overview North Star Films Editor Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +2 more active projects for Sarah Chen - view all 4 View Sarah Chen''s workload - 8h over capacity, 48/40h booked, 9h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Shared the Hims media handover 2h ago Open Sarah Chen''s full profile"':
+          - cell "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au":
+            - link "Sarah Chen avatar Sarah Chen sarah@northstarfilms.com.au":
+              - /url: /people/sc
+              - generic "Sarah Chen avatar": SC
+              - strong: Sarah Chen
+              - generic: sarah@northstarfilms.com.au
+          - cell "Open Sarah Chen's overview North Star Films":
+            - link "Open Sarah Chen's overview":
+              - /url: /people/sc
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/sc
+          - cell "Editor":
+            - link "Editor":
+              - /url: /people/sc
+              - strong: Editor
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring +2 more active projects for Sarah Chen - view all 4":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "+2 more active projects for Sarah Chen - view all 4":
+              - /url: /people/sc?section=Work
+              - text: +2 more
+          - cell "View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client":
+            - button "View Sarah Chen's workload - 8h over capacity, 48/40h booked, 9h awaiting Client":
+              - strong: 8h over capacity
+              - generic: 48/40h booked
+              - generic: 9h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/sc
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/sc
+          - cell "Shared the Hims media handover 2h ago":
+            - link "Shared the Hims media handover 2h ago":
+              - /url: /people/sc?section=Notes%20and%20activity
+              - strong: Shared the Hims media handover
+              - generic: 2h ago
+          - cell "Open Sarah Chen's full profile":
+            - link "Open Sarah Chen's full profile":
+              - /url: /people/sc
+        - 'row "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au Open Maddie Diaz''s overview North Star Films Motion Designer Hims · Product Education - Sleep Series Notion · Workflow Demo - Engineering Teams +1 more active projects for Maddie Diaz - view all 3 View Maddie Diaz''s workload - 28h available, 12/40h booked, 24h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Added direction to the Canva Script 3h ago Open Maddie Diaz''s full profile"':
+          - cell "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au":
+            - link "Maddie Diaz avatar Maddie Diaz maddie@northstarfilms.com.au":
+              - /url: /people/md
+              - generic "Maddie Diaz avatar": MD
+              - strong: Maddie Diaz
+              - generic: maddie@northstarfilms.com.au
+          - cell "Open Maddie Diaz's overview North Star Films":
+            - link "Open Maddie Diaz's overview":
+              - /url: /people/md
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/md
+          - cell "Motion Designer":
+            - link "Motion Designer":
+              - /url: /people/md
+              - strong: Motion Designer
+          - cell "Hims · Product Education - Sleep Series Notion · Workflow Demo - Engineering Teams +1 more active projects for Maddie Diaz - view all 3":
+            - link "Hims · Product Education - Sleep Series":
+              - /url: /projects/hims-product-education
+              - generic: Hims ·
+              - text: Product Education - Sleep Series
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "+1 more active projects for Maddie Diaz - view all 3":
+              - /url: /people/md?section=Work
+              - text: +1 more
+          - cell "View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client":
+            - button "View Maddie Diaz's workload - 28h available, 12/40h booked, 24h awaiting Client":
+              - strong: 28h available
+              - generic: 12/40h booked
+              - generic: 24h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/md
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/md
+          - cell "Added direction to the Canva Script 3h ago":
+            - link "Added direction to the Canva Script 3h ago":
+              - /url: /people/md?section=Notes%20and%20activity
+              - strong: Added direction to the Canva Script
+              - generic: 3h ago
+          - cell "Open Maddie Diaz's full profile":
+            - link "Open Maddie Diaz's full profile":
+              - /url: /people/md
+        - 'row "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au Open Riley Brooks''s overview North Star Films Producer Deel · Customer Story - APAC Hiring Notion · Workflow Demo - Engineering Teams +1 more active projects for Riley Brooks - view all 3 View Riley Brooks''s workload - 26h available, 14/40h booked, 8h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Moved Deel into Media 4h ago Open Riley Brooks''s full profile"':
+          - cell "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au":
+            - link "Riley Brooks avatar Riley Brooks riley@northstarfilms.com.au":
+              - /url: /people/rb
+              - generic "Riley Brooks avatar": RB
+              - strong: Riley Brooks
+              - generic: riley@northstarfilms.com.au
+          - cell "Open Riley Brooks's overview North Star Films":
+            - link "Open Riley Brooks's overview":
+              - /url: /people/rb
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/rb
+          - cell "Producer":
+            - link "Producer":
+              - /url: /people/rb
+              - strong: Producer
+          - cell "Deel · Customer Story - APAC Hiring Notion · Workflow Demo - Engineering Teams +1 more active projects for Riley Brooks - view all 3":
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+            - link "Notion · Workflow Demo - Engineering Teams":
+              - /url: /projects/notion-workflows
+              - generic: Notion ·
+              - text: Workflow Demo - Engineering Teams
+            - link "+1 more active projects for Riley Brooks - view all 3":
+              - /url: /people/rb?section=Work
+              - text: +1 more
+          - cell "View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client":
+            - button "View Riley Brooks's workload - 26h available, 14/40h booked, 8h awaiting Client":
+              - strong: 26h available
+              - generic: 14/40h booked
+              - generic: 8h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/rb
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/rb
+          - cell "Moved Deel into Media 4h ago":
+            - link "Moved Deel into Media 4h ago":
+              - /url: /people/rb?section=Notes%20and%20activity
+              - strong: Moved Deel into Media
+              - generic: 4h ago
+          - cell "Open Riley Brooks's full profile":
+            - link "Open Riley Brooks's full profile":
+              - /url: /people/rb
+        - 'row "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au Open Marcus Johnson''s overview North Star Films Sound Designer No active projects View Marcus Johnson''s workload - 30h available, 10/40h booked, 8h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Uploaded the OpenAI mix 18h ago Open Marcus Johnson''s full profile"':
+          - cell "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au":
+            - link "Marcus Johnson avatar Marcus Johnson marcus@northstarfilms.com.au":
+              - /url: /people/jm
+              - generic "Marcus Johnson avatar": MJ
+              - strong: Marcus Johnson
+              - generic: marcus@northstarfilms.com.au
+          - cell "Open Marcus Johnson's overview North Star Films":
+            - link "Open Marcus Johnson's overview":
+              - /url: /people/jm
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/jm
+          - cell "Sound Designer":
+            - link "Sound Designer":
+              - /url: /people/jm
+              - strong: Sound Designer
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/jm?section=Work
+          - cell "View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client":
+            - button "View Marcus Johnson's workload - 30h available, 10/40h booked, 8h awaiting Client":
+              - strong: 30h available
+              - generic: 10/40h booked
+              - generic: 8h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/jm
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/jm
+          - cell "Uploaded the OpenAI mix 18h ago":
+            - link "Uploaded the OpenAI mix 18h ago":
+              - /url: /people/jm?section=Notes%20and%20activity
+              - strong: Uploaded the OpenAI mix
+              - generic: 18h ago
+          - cell "Open Marcus Johnson's full profile":
+            - link "Open Marcus Johnson's full profile":
+              - /url: /people/jm
+        - 'row "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au Open Olivia Singh''s overview North Star Films Executive Producer Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring View Olivia Singh''s workload - 24h available, 8/32h booked, 6h awaiting Client Accepted They have joined Brisk. Billing: No access Manage Reviewed the Loom client plan 22h ago Open Olivia Singh''s full profile"':
+          - cell "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au":
+            - link "Olivia Singh avatar Olivia Singh olivia@northstarfilms.com.au":
+              - /url: /people/os
+              - generic "Olivia Singh avatar": OS
+              - strong: Olivia Singh
+              - generic: olivia@northstarfilms.com.au
+          - cell "Open Olivia Singh's overview North Star Films":
+            - link "Open Olivia Singh's overview":
+              - /url: /people/os
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/os
+          - cell "Executive Producer":
+            - link "Executive Producer":
+              - /url: /people/os
+              - strong: Executive Producer
+          - cell "Loom · Launch Film - Sales Narrative Deel · Customer Story - APAC Hiring":
+            - link "Loom · Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film
+              - generic: Loom ·
+              - text: Launch Film - Sales Narrative
+            - link "Deel · Customer Story - APAC Hiring":
+              - /url: /projects/deel-customer-story
+              - generic: Deel ·
+              - text: Customer Story - APAC Hiring
+          - cell "View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client":
+            - button "View Olivia Singh's workload - 24h available, 8/32h booked, 6h awaiting Client":
+              - strong: 24h available
+              - generic: 8/32h booked
+              - generic: 6h awaiting Client
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/os
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/os
+          - cell "Reviewed the Loom client plan 22h ago":
+            - link "Reviewed the Loom client plan 22h ago":
+              - /url: /people/os?section=Notes%20and%20activity
+              - strong: Reviewed the Loom client plan
+              - generic: 22h ago
+          - cell "Open Olivia Singh's full profile":
+            - link "Open Olivia Singh's full profile":
+              - /url: /people/os
+        - 'row "Max Evans avatar Max Evans max@northstarfilms.com.au Open Max Evans''s overview North Star Films Production Coordinator No active projects View Max Evans''s workload - 40h available, 0/40h booked Accepted They have joined Brisk. Billing: No access Manage Access paused by Olivia 10d ago Open Max Evans''s full profile"':
+          - cell "Max Evans avatar Max Evans max@northstarfilms.com.au":
+            - link "Max Evans avatar Max Evans max@northstarfilms.com.au":
+              - /url: /people/me
+              - generic "Max Evans avatar": ME
+              - strong: Max Evans
+              - generic: max@northstarfilms.com.au
+          - cell "Open Max Evans's overview North Star Films":
+            - link "Open Max Evans's overview":
+              - /url: /people/me
+              - generic: Studio Staff
+            - link "North Star Films":
+              - /url: /people/me
+          - cell "Production Coordinator":
+            - link "Production Coordinator":
+              - /url: /people/me
+              - strong: Production Coordinator
+          - cell "No active projects":
+            - link "No active projects":
+              - /url: /people/me?section=Work
+          - cell "View Max Evans's workload - 40h available, 0/40h booked":
+            - button "View Max Evans's workload - 40h available, 0/40h booked":
+              - strong: 40h available
+              - generic: 0/40h booked
+          - 'cell "Accepted They have joined Brisk. Billing: No access Manage"':
+            - link "Accepted They have joined Brisk.":
+              - /url: /people/me
+              - generic: Accepted
+              - generic: They have joined Brisk.
+            - strong: "Billing: No access"
+            - link "Manage":
+              - /url: /people/me
+          - cell "Access paused by Olivia 10d ago":
+            - link "Access paused by Olivia 10d ago":
+              - /url: /people/me?section=Notes%20and%20activity
+              - strong: Access paused by Olivia
+              - generic: 10d ago
+          - cell "Open Max Evans's full profile":
+            - link "Open Max Evans's full profile":
+              - /url: /people/me
+- dialog "Sarah Chen's workload":
+  - banner:
+    - heading "Sarah Chen's workload" [level=2]
+    - generic: Current project work, ordered by what the Studio can act on first.
+  - strong: 0h
+  - generic: Available hours
+  - strong: 48h
+  - generic: Booked hours
+  - strong: 9h
+  - generic: Potential hours
+  - strong: 40h
+  - generic: Weekly capacity
+  - article:
+    - link "Product Education - Sleep Series":
+      - /url: /projects/hims-product-education
+    - generic: Hims - Editor - Assigned
+    - generic: Stage
+    - strong: Media
+    - generic: Waiting on Studio
+    - strong: 18h
+  - article:
+    - link "Finance Recap - June Product Drop":
+      - /url: /projects/ramp-finance-recap
+    - generic: Ramp - Editor - Assigned
+    - generic: Stage
+    - strong: Edit
+    - generic: Waiting on Studio
+    - strong: 16h
+  - article:
+    - link "Launch Film - Sales Narrative":
+      - /url: /projects/loom-launch-film
+    - generic: Loom - Editor - Assigned
+    - generic: Stage
+    - strong: Edit
+    - generic: Waiting on Studio
+    - strong: 14h
+  - article:
+    - link "Customer Story - APAC Hiring":
+      - /url: /projects/deel-customer-story
+    - generic: Deel - Editor - Assigned
+    - generic: Stage
+    - strong: Media
+    - generic: Waiting on Client
+    - strong: 9h
+  - paragraph: Booked hours are predicted work waiting on the Studio. Available hours are what remains this week. Near capacity begins at 75%. Potential work waiting on the Client is shown separately.
+  - contentinfo:
+    - button "Close" [active]

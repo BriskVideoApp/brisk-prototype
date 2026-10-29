@@ -1,0 +1,114 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Notifications" [level=1]
+  - paragraph: Choose what Brisk sends and when.
+- region "Studio notification settings":
+  - heading "Delivery" [level=2]
+  - checkbox "Email" [checked]
+  - generic: Email
+  - checkbox "WhatsApp and browser notifications" [disabled]
+  - generic: WhatsApp and browser notifications
+  - generic: Coming soon
+  - paragraph: Account and security emails are always sent.
+  - heading "Notifications" [level=2]
+  - paragraph: Choose which updates Brisk sends. Open an item to see its message.
+  - link "Open Work to review messages":
+    - checkbox "Work to review" [checked]
+    - generic: Work to review
+    - button "Open Work to review"
+  - link "Open Comments and replies messages":
+    - checkbox "Comments and replies" [checked]
+    - generic: Comments and replies
+    - button "Open Comments and replies"
+  - link "Open Project changes messages":
+    - checkbox "Project changes" [checked]
+    - generic: Project changes
+    - button "Open Project changes"
+  - link "Open Invoices messages":
+    - checkbox "Invoices" [checked]
+    - generic: Invoices
+    - button "Open Invoices"
+  - heading "Reminders" [level=2]
+  - generic: First reminder
+  - combobox "First reminder" [expanded] [active]:
+    - generic: After 24 hours
+  - generic: Second reminder
+  - combobox "Second reminder":
+    - generic: After 48 hours
+  - checkbox "Notify the Studio if there is no response" [checked]
+  - generic: Notify the Studio if there is no response
+  - button "Cancel"
+  - button "Save changes"
+- listbox "First reminder":
+  - option "No reminders":
+    - generic: No reminders
+  - option "After 12 hours":
+    - generic: After 12 hours
+  - option "After 24 hours" [selected]:
+    - generic: After 24 hours
+  - option "After 48 hours":
+    - generic: After 48 hours

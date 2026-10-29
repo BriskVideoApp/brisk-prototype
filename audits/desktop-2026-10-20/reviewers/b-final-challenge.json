@@ -1,0 +1,535 @@
+{
+  "reviewer": "B",
+  "purpose": "Lead-independent final challenge of existing18 plus completion9; recommendations only, no master or report mutation.",
+  "reviewedAt": "2026-10-20T21:11:36.840129+00:00",
+  "scopeCount": 27,
+  "recommendation": "Retain evidence-backed local improvements. Make B14 optionalS4/defer, B10 optionalS4, B18/B19 conservativeS3, A08 heuristic rather than defect, B15 mixed observed/source risk. Root makes final selection.",
+  "severityCountsAfterRecommendations": {
+    "S2": 7,
+    "S3": 18,
+    "S4": 2
+  },
+  "findings": [
+    {
+      "id": "A10",
+      "title": "Inspectors and the Shoot progress panel need a protected desktop layer",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain core finding",
+      "recommendedClassification": "Observed defect",
+      "reason": "The obscured filename/Close and pointer opening Ask Brisk are directly observed desktop obstruction. Keyboard Enter still closes, so this is a substantial pointer/visible-exit barrier, not total inability to exit.",
+      "necessaryQualificationOrEdit": "Keep 1133 header obstruction as main impact. Treat 1440 squeezed browsing as separate lower-priority composition evidence, not proof of same task failure or automatic permission to remove rails. Other roles source-supported.",
+      "credibleAlternativeOrMitigation": "Collapse navigation can recover browsing space but does not excuse covered Close. Coordinated header/layer boundary is smaller than a new inspector design.",
+      "priority": "Highest-impact current UI",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A12",
+      "title": "Brief production fields lose readable values at narrow desktop width",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "Short real values become ellipses at1133 and Format breaks mid-word; this directly undermines specification scanability. Open selector reveals value, so data is available.",
+      "necessaryQualificationOrEdit": "Describe closed-field readability, not inability to select/read the value. Keep approved table structure/column order; extra-version row remains separate verification.",
+      "credibleAlternativeOrMitigation": "Rebalance name track before requiring horizontal scroll. Do not force cards/stacked fields or smaller type without material need.",
+      "priority": "Core desktop readability",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B02",
+      "title": "Container shortcuts intercept nested file and comment buttons",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "Two named native child actions perform a different task on Space. This is stronger than a theoretical keyboard concern and affects frequent selection/comment work.",
+      "necessaryQualificationOrEdit": "Only Staff grid Select and transcript Add comment Space are direct evidence. List/Enter/other roles remain source-supported. Never imply a destructive command was triggered.",
+      "credibleAlternativeOrMitigation": "Native sibling open/select actions or parent-target guard both preserve tasks. Working Masters comment pin F045 shows nested controls can remain independent.",
+      "priority": "Highest-impact task/accessibility",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B01",
+      "title": "Team person selection needs named, dependable checkbox controls",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "Choosing which person to assign/invite needs a dependable programmatic name. Empty checkbox names are directly evidenced; the DS custom-checkbox deviation shares this consumer root.",
+      "necessaryQualificationOrEdit": "Say checkbox has no programmatic person name in inspected DOM, not that a screen-reader trial proved a failed assignment. Remove repeated recommendation sentence in consolidated record.",
+      "credibleAlternativeOrMitigation": "Associate visible name with native control if a DS migration would disturb rate inputs; approved Checkbox is preferred where compatible. Keep metadata description separate.",
+      "priority": "Highest-impact task/accessibility",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B09",
+      "title": "Adjust project flow declares a modal without managing modal focus",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain scoped modal contract",
+      "recommendedClassification": "Observed defect",
+      "reason": "The flow panel declares modality while focus stays on the background opener and Escape there leaves it open. This semantic/lifecycle mismatch is materially different from a non-modal panel preference.",
+      "necessaryQualificationOrEdit": "Remove keyboard reorder from rootCause if the finding remains modal focus/dismissal. Keep reorder as separately labelled source risk/decision. Add G008/G009 only as missing-Escape related preview occurrences; their initial focus/trapping was not tested. H007/H008/H039 prove nested Hide cancellation works and must not be regressed.",
+      "credibleAlternativeOrMitigation": "A deliberately non-modal anchored panel could be valid. Do not force the specialised flow panel or read-only previews into a centred EditingDialog.",
+      "priority": "Substantial access/declared-modality",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A07",
+      "title": "Sticky Chat date pill obscures message text",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain main overlap; secondary chevron refinement",
+      "recommendedClassification": "Observed defect",
+      "reason": "Text actually overlaps at a specific scroll position and current H051 also visibly places a sticky date across an attachment. Clear-gap states do not negate conditional overlap.",
+      "necessaryQualificationOrEdit": "Avoid claiming every date always overlaps. Static down-chevron removal is a small affordance note, secondary to readable message content.",
+      "credibleAlternativeOrMitigation": "Reserve a non-overlapping strip or normal flow; no reason to redesign Chat header or replace every date separator.",
+      "priority": "Core reading quality",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A13",
+      "title": "Brief step changes retain scroll that hides the new heading",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "A deliberate guided-step jump hides the new heading under the fixed header. Current screenshots and measured container scroll identify the cause.",
+      "necessaryQualificationOrEdit": "Limit direct proof to captured Video type -> Audience footer transition. Do not assume every Back/Next or Summary jump fails. Focus/reveal applies to explicit step navigation, not every field change.",
+      "credibleAlternativeOrMitigation": "Reveal heading within existing scroll container first; check whether deliberate heading focus helps announcement without introducing extra normal tab stops.",
+      "priority": "Core guided-flow orientation",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A05",
+      "title": "Notification detail pages lose their Studio settings navigation",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "Losing Studio settings navigation on a live descendant breaks orientation during occasional administration; root/category transition is directly recorded.",
+      "necessaryQualificationOrEdit": "Keep hierarchy/destination/guards. Do not conflate notification detail editing with a global navigation redesign.",
+      "credibleAlternativeOrMitigation": "Back to notification settings remains an escape route, so this is local friction, not a blocker.",
+      "priority": "Administration coherence",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B03",
+      "title": "Filtered Media selections give commands different scopes",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain decision-dependent recommendation",
+      "recommendedClassification": "Observed defect",
+      "reason": "Toolbar count and commands use different visible/all selected sets. The Delete confirmation accurately names2, preventing a proven silent deletion claim.",
+      "necessaryQualificationOrEdit": "State mismatch is observed; unintended deletion remains hypothetical. Tom must choose complete-selection or clear-on-filter policy before implementation. Show hidden-selection count/file list as policy-specific scope aid.",
+      "credibleAlternativeOrMitigation": "Clearing on filter is simpler but loses cross-folder selection; complete selection is efficient but needs reviewable scope. Neither is already approved.",
+      "priority": "Scope and error prevention",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B12",
+      "title": "Custom dialog footers omit a visible way to finish or cancel",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Approved-standard violation",
+      "reason": "Approved EditingDialog and ConfirmationDialog explicitly require a visible whole-flow exit when custom actions are supplied. Back has a different purpose.",
+      "necessaryQualificationOrEdit": "Keep claim about visible footer exit, not inability to leave. Escape/backdrop and Back then Cancel remain alternatives; do not imply Cancel undoes immediate saves.",
+      "credibleAlternativeOrMitigation": "Done/Close for immediately saved/read-only logo work; Cancel for unsaved invitation/invoice drafts. Avoid redundant Cancel+Close.",
+      "priority": "Approved-pattern correction",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B13",
+      "title": "Brief summary promises approval while Approve Brief is disabled",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "The screen promises approval while its current guard disables the action. This is an observed contradictory message, not a request to weaken the approval guard.",
+      "necessaryQualificationOrEdit": "Use existing eligibility/content/role conditions for helper copy. Do not mark optional unconfirmed details mandatory or invent a new approval policy.",
+      "credibleAlternativeOrMitigation": "A neutral missing-details statement is also coherent if no reassurance is needed; current contextual reassurance can remain when action is available.",
+      "priority": "Core task clarity",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A03",
+      "title": "Unread count styling uses tiny low-contrast text and perpetual pulsing",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain targeted readability/motion refinement",
+      "recommendedClassification": "Source-supported risk",
+      "reason": "10px white-on-pink badge styling and perpetual pulse are measured/source-backed. This directly affects legibility/attention, but is less consequential than blocked named actions.",
+      "necessaryQualificationOrEdit": "No formal WCAG failure or user distraction rate claim. Verify per-consumer computed overrides; do not assume all small badges match. Reduced-motion behaviour remains unchecked.",
+      "credibleAlternativeOrMitigation": "Use existing readable DS token/text treatment; retain compact capped counts, accessible count names and distinct unread meaning.",
+      "priority": "Refinement after task/obstruction repairs",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A08",
+      "title": "Folders and files share grid rows that leave large blank slots",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain as heuristic refinement",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "Large blank slots are visible, but a mixed-height grid is not inherently a functional defect. The recommendation is a grouping/density judgement for scanning media.",
+      "necessaryQualificationOrEdit": "Change classification from Observed defect to Heuristic judgement supported by observed geometry. No measured scan-time improvement or failed-user claim.",
+      "credibleAlternativeOrMitigation": "A separate compact folder group is small and coherent. Verify0/1/many folders, sorting/drop targets; do not impose uniform folder/file card height merely for symmetry.",
+      "priority": "Optional composition refinement",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "A06",
+      "title": "Brand Kit category panels tint enclosing layers with Client colours",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain with approval conflict visible",
+      "recommendedClassification": "Approved-standard violation",
+      "reason": "The approved white elevated panel rule supports the recommendation; arbitrary Client colour on enclosing UI changes emphasis beyond the asset itself.",
+      "necessaryQualificationOrEdit": "Keep unlocated external approval as a decision check, not approval inferred from code frequency. Do not remove actual Client swatches/logo preview colours/specimens. Voice live state remains separately bounded.",
+      "credibleAlternativeOrMitigation": "If Tom explicitly approved tinted panels for a scoped Brand Kit context, document that exception and assess readability there rather than applying a blanket white rule.",
+      "priority": "DS consistency with contextual judgement",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B06",
+      "title": "Version panels lack predictable dismissal and focus return",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain scoped lifecycle refinement",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "Escape/outside persistence is directly observed, but an intentionally persistent Versions panel can be useful. This is a heuristic lifecycle recommendation, not a proven approved-standard violation.",
+      "necessaryQualificationOrEdit": "Prioritise explicit Escape/focus return. Outside dismissal should depend on whether this is intended as a transient overlay or persistent version navigator. Do not assume historical/read-only behaviour is faulty.",
+      "credibleAlternativeOrMitigation": "Keep a deliberate persistent version navigator with obvious active toggle/Close if Tom chooses that model. Existing quiet actions menu provides supporting comparison only.",
+      "priority": "Optional document-tool refinement",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B07",
+      "title": "Local tab widgets advertise incomplete keyboard semantics",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain live scoped occurrences, trim dead code",
+      "recommendedClassification": "Observed defect",
+      "reason": "Team ArrowRight does not change tabs and relationships are incomplete. Repeated Tab still reaches controls, so it is friction/semantic inconsistency, not total task exclusion.",
+      "necessaryQualificationOrEdit": "Remove Masters RequestDialog tabs if they are C-confirmed source-dead N117-S10. Team is directly verified; Media/Chat live consumers remain source-backed until tested. Do not force all specialised tab styling into DS without preserving unread actions.",
+      "credibleAlternativeOrMitigation": "Correct roles/relationships/keyboard model in place when shared Tabs cannot retain meaningful composition.",
+      "priority": "Keyboard semantics consistency",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B10",
+      "title": "An empty suggested Staff list gives no reason for the blank space",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S4",
+      "decision": "Downgrade to optional copy refinement",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "The blank suggested Staff result lacks explanation, but Show all10 gives a direct clear recovery and no selection failure was observed. A standalone S3 can overstate this small issue.",
+      "necessaryQualificationOrEdit": "Present as a concise Team finishing note bundled with B01, not executive risk or evidence of failed discoverability.",
+      "credibleAlternativeOrMitigation": "Keep current minimal UI if Tom judges Show all sufficient; a one-line scoped empty explanation is smallest alternative.",
+      "priority": "Optional polish/clarity",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B11",
+      "title": "The workload detail drops the explicit over-capacity signal",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain lower-priority clarity refinement",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "Overcapacity is real and already known from the directory. The detail has accurate48/40 and red0Available, so the problem is the lost explicit excess, not wrong capacity or absent warning.",
+      "necessaryQualificationOrEdit": "Keep heuristic class. Say it requires subtraction, not that people make incorrect allocation decisions. Profile Work occurrence remains source-only.",
+      "credibleAlternativeOrMitigation": "A single8h over capacity summary preserves accurate supporting values; avoid colouring all overloaded cards more loudly.",
+      "priority": "Optional capacity insight",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B14",
+      "title": "Log time opens and closes without keeping keyboard context",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S4",
+      "decision": "Defer from core findings or keep optional refinement",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "The Log time editor is non-modal and remains reachable. No complete tab sequence, trap or failed edit was tested. Initial/opener focus and return are useful polish but do not support a broad modal-defect framing.",
+      "necessaryQualificationOrEdit": "Rename to keyboard context recovery. Remove any implied inability to edit; Escape is a proposed non-modal convenience, not an established mandatory standard. AC01 visible footer clipping is a stronger current UI issue in this flow.",
+      "credibleAlternativeOrMitigation": "Keep focus on the block for intentional non-modal workflows if opening also provides an efficient focus transfer. At minimum restore the block after Cancel. Do not add inert/trap.",
+      "priority": "Optional, after geometry",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B15",
+      "title": "Save remains enabled for out-of-range logged hours",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain mixed observed/source risk, clarify policy",
+      "recommendedClassification": "Source-supported risk",
+      "reason": "0 is visibly outside native min while Save is enabled and source clamps it. Enabled Save alone is not automatically defective: forms may validate or intentionally normalise at submit. Here lack of visible normalisation is the real concern.",
+      "necessaryQualificationOrEdit": "Title may be Hours constraints are not explained before normalisation. Keep native invalid/UI evidence observed; different saved value remains source-supported because Save was not invoked. Do not claim corrupted records.",
+      "credibleAlternativeOrMitigation": "Either clear local validation or visible normalised value/rounding explanation is coherent. Do not silently enforce a new rule from a numeric attribute without Tom confirming intended policy.",
+      "priority": "Time-entry clarity",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B16",
+      "title": "Schedule item Start time has no accessible name",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain",
+      "recommendedClassification": "Observed defect",
+      "reason": "Start time is a core schedule field whose combobox has no accessible name in DOM. Adjacent fields are named, giving a credible smallest correction without redesign.",
+      "necessaryQualificationOrEdit": "No screen-reader session claimed. Only this EntryModal consumer directly demonstrated; other TimeSelect consumers must retain their existing label associations.",
+      "credibleAlternativeOrMitigation": "Stable label/id or aria-labelledby; existing ariaLabel prop is an equally small compatible fix.",
+      "priority": "Substantial field identification",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B17",
+      "title": "Populated To Do has no keyboard route to plan or complete work",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain as source-supported task-access risk",
+      "recommendedClassification": "Source-supported risk",
+      "reason": "The populated project rail only exposes Brief links; creation/moving/status is handled by native pointer drag/drop. Existing editor supports hours/stage but no day/status, so those controls are not equivalent planning/completion alternatives. Source search confirms no app keyboard route in the normal populated branch.",
+      "necessaryQualificationOrEdit": "Prefer title To Do planning and completion rely on drag-and-drop. Keep final keyboard-only route walkthrough as verification; do not say a user was observed unable to work. Ignore prototype date persistence/role issues. Resize split native range and hours entry are not missing.",
+      "credibleAlternativeOrMitigation": "Add small Plan time/day/completion commands to existing editor/menu. Preserve spatial drag workflow; no calendar redesign or universal Add button needed.",
+      "priority": "Substantial task initiation, evidence-qualified",
+      "reviewStatus": "Needs decision; lead selection only",
+      "completionAddendum": "Lead F143/F144 verifies intended pointer planning -> Done, and F145 verifies Stage/Hours keyboard edit+Save. This confirms these actions work; it does not provide keyboard creation/day/status movement, so the source-supported planning/completion qualification remains."
+    },
+    {
+      "id": "B18",
+      "title": "Delete version has no review or recovery step",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S3",
+      "decision": "Retain source risk, conservative priority",
+      "recommendedClassification": "Source-supported risk",
+      "reason": "Enabled version Delete calls removal directly without confirmation/recovery. This is a product error-prevention risk, but no deletion/loss was performed and intended retention policy is not approved.",
+      "necessaryQualificationOrEdit": "Keep Source-supported risk throughout. Do not label explicit approved Edit violation; full-screen review is outside EditingDialog migration. No claims about comment loss or production persistence. Retain last-version disabled guard as strength.",
+      "credibleAlternativeOrMitigation": "Shared version/file-specific confirmation is the small recommendation; reliable Undo would be a separate product/recovery decision. Occasional deletion need not outrank everyday UI blockers.",
+      "priority": "Error prevention, decision-dependent",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B19",
+      "title": "Review timeline is advertised as a slider but cannot receive keyboard focus",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S3",
+      "decision": "Downgrade severity, retain semantic defect",
+      "recommendedClassification": "Observed defect",
+      "reason": "Slider focus/range semantics are directly deficient, but named native five-second buttons offer keyboard seeking, plus comment navigation. Therefore this is a limit on direct/fine timeline control, not complete inability to seek/review.",
+      "necessaryQualificationOrEdit": "Do not claim ArrowRight was processed; the tool could not focus it. No actual MOV decoding/seek or screen-reader announcements certified. Expose time values and keyboard contract without asserting frame-specific precision requirement.",
+      "credibleAlternativeOrMitigation": "A native range is supporting current comparison player evidence, not approval to restyle. Preserve existing coarse step and comment controls.",
+      "priority": "Keyboard control refinement",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B20",
+      "title": "Nested Escape dismisses the parent task as well as its picker",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Approved-standard violation",
+      "reason": "One Escape exits both child and surrounding task in Shoot and Chat search. Working External Chat settings provides strong same-drawer comparison. No dirty-draft loss claim is needed.",
+      "necessaryQualificationOrEdit": "Keep Shoot DS violation distinct in classification detail; Chat drawer is a related observed event-boundary defect, not instruction to migrate it to centred form. H014/H015 vsH050/H051 panel is genuine same-scale evidence.",
+      "credibleAlternativeOrMitigation": "Consume Escape only while child layer is open. Preserve second Escape parent close and working nested settings/cancel boundaries.",
+      "priority": "Task-boundary correction",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B21",
+      "title": "Starting the first recut instruction requires a pointer",
+      "currentSeverity": "S2",
+      "recommendedSeverity": "S2",
+      "decision": "Retain as source-supported task-initiation risk",
+      "recommendedClassification": "Source-supported risk",
+      "reason": "Masters supports keyboard timeline seeking, but initial0marks has only pointer-based draft creation. K/X/T require draftRange and numeric bounds appear only after a mark. A later editor is not an initiation alternative.",
+      "necessaryQualificationOrEdit": "Do not merge with B19 or say all markup inaccessible. Do not claim Start handle ArrowRight proved no frame adjustment from coarse00:00 display alone. No send or completed instruction outcome.",
+      "credibleAlternativeOrMitigation": "Keyboard Add instruction or Set start/end at playhead complements current pointer model; define range using existing time model.",
+      "priority": "Substantial first-step dependency, evidence-qualified",
+      "reviewStatus": "Needs decision; lead selection only"
+    },
+    {
+      "id": "B22",
+      "title": "Invoice submission does not identify its project",
+      "currentSeverity": "S3",
+      "recommendedSeverity": "S3",
+      "decision": "Retain",
+      "recommendedClassification": "Heuristic judgement",
+      "reason": "Financial form identifies role/amount but not job, while accepted rows shareShooter. Small project identity restores scope at the moment of PDF/amount submission. Originating row/different amounts mitigate risk, so no wrong invoice claim.",
+      "necessaryQualificationOrEdit": "Keep Client/project as context, never payer. No proof of billing error or financial loss. Check long names narrow width.",
+      "credibleAlternativeOrMitigation": "Short project summary row rather than larger heading; preserve accepted-rate mismatch warning and separate PDF submission.",
+      "priority": "Financial scope clarity",
+      "reviewStatus": "Needs decision; lead selection only"
+    }
+  ],
+  "duplicateAndScopeReconciliation": [
+    {
+      "members": [
+        "B02",
+        "B20"
+      ],
+      "decision": "Keep separate findings; share implementation batch only",
+      "reason": "Both involve event boundaries but normal activation hijacking and child-first Escape cancellation affect different tasks and callbacks."
+    },
+    {
+      "members": [
+        "B09",
+        "B14",
+        "B06",
+        "B20"
+      ],
+      "decision": "Do not turn into one universal modal mandate",
+      "reason": "Declared-modal flow, non-modal time editor, version navigation and nested picker cancellation have different valid lifecycles. B14 optional; B09 explicit semantics mismatch."
+    },
+    {
+      "members": [
+        "B01",
+        "B16"
+      ],
+      "decision": "Batch accessible naming; retain concrete affected controls",
+      "reason": "Same general label principle, different person-selection and schedule-input implementations. Avoid vague all-fields umbrella or duplicate DS checkbox finding."
+    },
+    {
+      "members": [
+        "B19",
+        "B21"
+      ],
+      "decision": "Keep separate, qualify alternatives",
+      "reason": "Edit ScrubBar lacks direct range keyboard contract; Masters has keyboard seeking but cannot start a recut draft without pointer. Do not conflate players."
+    },
+    {
+      "members": [
+        "B14",
+        "AC01"
+      ],
+      "decision": "Prioritise AC01 visible footer fit; B14 optional context recovery",
+      "reason": "Same editor but distinct causes. Clipping is the stronger directly visible desktop issue; do not inflate B14 into hidden/unreachable form claim."
+    },
+    {
+      "members": [
+        "B09",
+        "G008",
+        "G009"
+      ],
+      "decision": "Qualified related occurrence, no inherited trap claim",
+      "reason": "Brand previews fail Escape in A checks; only flow has directly verified initial focus outside declared modal."
+    },
+    {
+      "members": [
+        "B07",
+        "N117-S10"
+      ],
+      "decision": "Remove unreachable Masters request-tabs consumer",
+      "reason": "C confirmed RequestDialog has no live opener; source-only unused code is not a current user-facing defect."
+    },
+    {
+      "members": [
+        "B07",
+        "H058",
+        "H059"
+      ],
+      "decision": "Use live Invoice PDF tabs as an observed additional occurrence; no new finding",
+      "reason": "ArrowRight does not switch, but Tab/Enter remains a working attachment route. Source-dead RequestDialog tabs stay excluded."
+    }
+  ],
+  "positiveCraftAssessment": [
+    {
+      "theme": "Production model is coherent",
+      "assessment": "Single Shoot with Planning/On Set, optional Storyboard, Edit/Animation naming and pinned Media are task-specific differences worth preserving. H007-H009 show the flow and scoped hide/term controls without changing work. Do not flatten these into a fixed-stage uniform UI.",
+      "evidence": [
+        "H007-flow-hide-confirm",
+        "H008-flow-keep-visible",
+        "H009-flow-term-menu"
+      ]
+    },
+    {
+      "theme": "Team distinguishes the right verbs",
+      "assessment": "Select, Save changes, Invite, Assign now, Withdraw and Remove role represent different commitments. Nested Remove Cancel preserves draft/focus, parent Cancel discards draft, and invite Cancel preserves selection. This is substantive workflow quality; add names and clarity without merging actions.",
+      "evidence": [
+        "H001-team-remove-role-confirm",
+        "H002-team-remove-cancel-draft",
+        "H003-team-draft-discarded",
+        "H004-team-zero-rate",
+        "H005-team-invite-empty-message",
+        "H006-team-invite-cancel-selection"
+      ]
+    },
+    {
+      "theme": "Shared native dialogs carry useful craft",
+      "assessment": "Many forms focus the first field or Cancel, use readable white surfaces and retain visible validation. Archive/typed-delete scopes explain retained history. Different approved widths suit different content and should remain contextual.",
+      "evidence": [
+        "F011-interview-editor-validation",
+        "H022-person-archive-confirm",
+        "H023-person-delete-guard",
+        "H025-client-start-project",
+        "H046-add-client-empty-1133"
+      ]
+    },
+    {
+      "theme": "Navigation recovery often works",
+      "assessment": "History Home/ArrowDown/End and Escape, account Escape, Updates Escape, scoped channel settings Escape and date-picker Escape already preserve useful task boundaries. These are current working references for local repairs, not proof every consumer is approved or tested.",
+      "evidence": [
+        "H011-history-escape",
+        "H012-account-escape",
+        "H013-updates-escape",
+        "H037-project-deadline-calendar-1133",
+        "H041-history-keyboard-sequence",
+        "H051-chat-settings-child-escape-1440"
+      ]
+    },
+    {
+      "theme": "Error prevention is already specific",
+      "assessment": "Zero freelancer project rate, blank invitation message/name, missing PDF and invoice amount mismatch each have task-specific guards or warnings. Keep these. Start project explains one primary Client; reminder preview explicitly excludes internal/commercial content.",
+      "evidence": [
+        "H004-team-zero-rate",
+        "H005-team-invite-empty-message",
+        "H025-client-start-project",
+        "H044-notification-reminder-preview",
+        "H046-add-client-empty-1133",
+        "F076-freelancer-invoice-draft"
+      ]
+    },
+    {
+      "theme": "Media and review retain useful control distinctions",
+      "assessment": "Scoped Download0selection disables the command; Masters comment control activates independently; review native5second and comment-navigation controls provide keyboard alternatives. Repair the isolated failing consumer instead of replacing the specialised player or making blanket keyboard-blocker claims.",
+      "evidence": [
+        "F045-masters-comments",
+        "F046-masters-download-zero",
+        "F054-canonical-edit-two-versions"
+      ]
+    },
+    {
+      "theme": "Save feedback should stay contextual",
+      "assessment": "The local SRT cue editor saves on blur and provides saved/re-attached feedback. A universal Save/Cancel redesign would add friction and ignore existing feedback. Captured composer Tab recovery also disproves a blanket permanently hidden toolbar claim.",
+      "evidence": [
+        "F063-masters-caption-editor",
+        "F067-recut-cancel-result",
+        "F069-masters-composer-reachable"
+      ]
+    },
+    {
+      "theme": "Desktop refinement is the right next step",
+      "assessment": "The warm canvas, role-specific navigation, circular stage rail, quiet actions and DS dialog hierarchy provide an established visual language. Current strongest improvements are spatial fit, readable production values, explicit action scope and dependable keyboard boundaries. No evidence supports a broad restyle or superficial uniformity pass.",
+      "evidence": [
+        "H028-chat-settings-1133",
+        "H035-team-editor-1133",
+        "H039-flow-hide-confirm-1133",
+        "BRIEF-deliverables-1133"
+      ]
+    }
+  ],
+  "proposedExecutiveLanguage": "Brisk already has a recognisable and task-appropriate desktop language. The next improvement is refinement: keep clear production stages, deliberate collaboration/assignment verbs and strong shared dialogs, then repair the few obstructed controls, unreadable production values, inconsistent bulk scope and keyboard event boundaries. Treat untested deletion and keyboard-initiation concerns as source-backed risks rather than observed user failures.",
+  "limits": [
+    "No new browser actions in this challenge pass. Source and saved current evidence only.",
+    "No user research, formal accessibility conformance or successful playback/precision seek was inferred.",
+    "No pure prototype identity, persistence, fixture or backend issue promoted to product finding.",
+    "Positive assessment is bounded to inspected examples, not blanket approval of every surface.",
+    "All findings/recommendations remain Needs decision, unfixed and unapproved."
+  ],
+  "finalClosureAddendum": {
+    "file": "reviewers/b-final-closure.json",
+    "observation": "H104 actual Message thread Escape repeats B20 parent-dismissal defect; H103 visible Close retains parent. No new finding or severity change. Remaining finite invitation/filter/source branches inspected with no additional material defect.",
+    "noNewResearchClaims": true
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "id": "DEADLINE-01",
+  "status": "Needs decision",
+  "date": "28 October2026",
+  "requested": "Clear stage identity and best way to set a deadline for each production stage.",
+  "role": "Studio Staff",
+  "route": "/active-videos?project=deel-customer-story&section=deadline",
+  "current": {
+    "stage": "media",
+    "dueAt": "2026-08-17T18:30:00+10:00",
+    "finalDueAt": "2026-09-06T17:00:00+10:00",
+    "model": "ProjectDeadline currently stores one optional StageKey and dueAt, plus finalDueAt and timerStartedAt.",
+    "labels": [
+      "Stage deadline",
+      "Final delivery"
+    ],
+    "timeFit": "78px input versus88-90px scroll width at both desktop references."
+  },
+  "recommendations": [
+    {
+      "id": "DP01",
+      "title": "Identify the dated stage",
+      "proposal": "Use a visible stage name, never only Stage deadline. In this fixture, preserve and label the existing Media deadline. Rename the section Deadlines when it contains a plan for multiple items.",
+      "basis": "Observed ambiguity: source stage=media,17 August18:30; current read/edit labels both say Stage deadline.",
+      "classification": "Observed defect; proposed label repair",
+      "severity": "S3"
+    },
+    {
+      "id": "DP02",
+      "title": "One row per included production stage",
+      "proposal": "List each stage from the project\u2019s current configured production flow with its date/time or Set deadline. Use the current order and Edit/Animation label, include Storyboard only when configured, and preserve dates for hidden stages.",
+      "basis": "User requests per-stage scheduling; Linear supports the named-item/date pattern. The current model has one stage/date pair, so this is a front-end model and UI extension, not merely a style fix.",
+      "classification": "Product/UI recommendation requiring approval",
+      "severity": "Scope decision"
+    },
+    {
+      "id": "DP03",
+      "title": "Edit dates directly and read complete times",
+      "proposal": "Click an existing date or Set deadline in its row to open the existing picker. Keep an explicit Save/Cancel boundary for the plan draft. Show stored dates and times in full; size the controls without shrinking type.",
+      "basis": "At1440 and1133, each time text input is78px wide while its scroll width is88-90px. The screenshot clips pm. Read mode also omits the stored final-delivery time.",
+      "classification": "Observed fit issue plus proposed interaction refinement",
+      "severity": "S3"
+    },
+    {
+      "id": "DP04",
+      "title": "Keep final delivery and the Videos summary clear",
+      "proposal": "Keep Final delivery as the separate Client commitment. Show the named next outstanding dated item plus Final delivery in the Videos row; clicking it opens the deadlines list. Preserve meaningful existing Media dates separately from the reorderable flow.",
+      "basis": "Current production guidance distinguishes stage work and final Client delivery. Current table already has a direct deadline entry, but its model only summarises one stage/date.",
+      "classification": "Product/UI recommendation requiring approval",
+      "severity": "Scope decision"
+    }
+  ],
+  "references": [
+    {
+      "app": "Linear",
+      "url": "https://mobbin.com/flows/0bdcf569-3288-4d3d-9a6e-bbbf6a512fc8",
+      "file": "mobbin-references/linear-milestones.jpg",
+      "observed": "Named milestones are listed with their target dates beside them; the project overview also exposes them in a side panel.",
+      "relevance": "Supports a named stage/date list that can be scanned without switching a generic stage selector.",
+      "limit": "Milestones are not Brisk production stages. This does not approve new stage types, stage status rules or date dependencies.",
+      "sha256": "17a8e0424a69f43d1b09376426cc297efc1f259968638717e2f0e674b9ac1df6"
+    },
+    {
+      "app": "Linear",
+      "url": "https://mobbin.com/flows/0bdcf569-3288-4d3d-9a6e-bbbf6a512fc8",
+      "file": "mobbin-references/linear-milestone-datepicker.jpg",
+      "observed": "A calendar is open beside a named milestone\u2019s Target date.",
+      "relevance": "A date can be edited at the named item rather than losing its context.",
+      "limit": "The screenshot does not establish Brisk save timing. Keep the existing explicit Save/Cancel boundary in this proposal.",
+      "sha256": "845f3f754ca070c8ddc15f0ae87d2e361238dd5dff7a87871eb2dc489405d314"
+    },
+    {
+      "app": "GitLab",
+      "url": "https://mobbin.com/flows/a0cebb6a-ed19-4813-a283-fa450b6312e0",
+      "file": "mobbin-references/gitlab-milestone.jpg",
+      "observed": "New Milestone identifies its Title, Start Date and Due Date as separate fields.",
+      "relevance": "Date meaning is tied to an identified item; start and due have distinct meanings.",
+      "limit": "Brisk does not need start dates or the full milestone creation form for this request.",
+      "sha256": "94d866ace8b5ea49e22f02800da7d66e86752a22b83fb7a2bfe8a9cabb1a8166"
+    },
+    {
+      "app": "Asana",
+      "url": "https://mobbin.com/screens/d3baa960-5d60-4590-9835-1c4704499a42",
+      "file": "mobbin-references/asana-timeline.jpg",
+      "observed": "A wide timeline places named work items on a calendar grid.",
+      "relevance": "Useful as a broader scheduling comparison.",
+      "limit": "This takes more space and introduces planning complexity beyond setting the few stage deadlines in the drawer. The compact list is the recommended starting point.",
+      "sha256": "3b9e49a4b7ca07a3f4a59c413216d8f6637c68c516863d2f93bddf68932d6d4a"
+    }
+  ],
+  "sourceHashes": {
+    "src/components/active-videos/ActiveVideosPage.tsx": "da824ac9dccd93ca6662ee4de812e42378d34b324b81f1ebbfceec3592efe521",
+    "src/components/active-videos/types.ts": "caa2069beb839dc8d4f99e466d2e17c9650302fe6aa755369b729498a2a62def",
+    "src/components/active-videos/active-videos.css": "4fa1c3d7c50513e18db0021a43a3fb20d9553ae2df64ca58d8d007fae918003c",
+    "src/data/active-videos/mockData.ts": "85070de4d4d338ed57435245f4db088923c49b4177d58e465bf0c01334d183c8",
+    "src/components/project/ProjectFlowContext.tsx": "ff54b9c7bc3451fbfdedc479d13b2f35707e8d29323b909ca7291786e185c670",
+    "src/data/production-flow.ts": "82970fadfc98d956a61d3a87f3f52a06bf2cff52fb374096d408d15541b0373f",
+    "src/components/form/BriskDatePicker.tsx": "18dfbba6522810b0dbd7a8beca891d0e9d43097a34c5b8800352c8b2d86a858a",
+    "src/components/shoot/BriskTimePicker.tsx": "b499fd7fe91117b13cc8ca3e3bd217ee0fe2c4890ab4806f1dd1e88d4c019782"
+  },
+  "preserve": [
+    "All existing dates and stored times",
+    "Existing Media date remains Media; never migrate it to Edit or discard it",
+    "Final delivery remains distinct from internal stage dates and Masters readiness",
+    "Current configurable order, optional Storyboard and Animation label",
+    "Pinned Media outside reorderable production flow",
+    "Hidden-stage work and dates retained",
+    "Working-day urgency calculations and current role permissions",
+    "Explicit Save/Cancel; no autosave or automatic shifting of other dates"
+  ],
+  "decisions": [
+    {
+      "topic": "Per-stage scope",
+      "recommendation": "Support a due timestamp per configured production stage while retaining finalDueAt separately. Import the existing single date only to its identified stage/item; other rows stay unset."
+    },
+    {
+      "topic": "Media",
+      "recommendation": "Keep existing Media dates as a separately labelled pinned-area row. Do not convert Media into a sequential production stage. This preserves the current fixture and current capability."
+    },
+    {
+      "topic": "Next deadline",
+      "recommendation": "For Videos, use the nearest outstanding dated item and show its name, with Final delivery separately. Exclude completed/hidden stage dates from the next-action summary while retaining their data. Confirm this derivation before implementation because filters/urgency depend on it."
+    },
+    {
+      "topic": "Time and dependencies",
+      "recommendation": "Retain current date/time semantics and stored times for this pass. Flag suspicious dates after final delivery without silently moving other dates or enforcing chronological non-overlap. No dependency engine or new date-only storage policy."
+    }
+  ],
+  "browser": {
+    "origin": "http://127.0.0.1:8776",
+    "initialStorage": {
+      "localKeys": 0,
+      "sessionKeys": 0
+    },
+    "widths": [
+      1440,
+      1133
+    ],
+    "height": 1000,
+    "actions": "Opened existing editor from direct query, inspected values, Cancelled without Save, captured read state, restored viewport and closed temporary tab.",
+    "limits": [
+      "No date saved or mock record changed.",
+      "Calendar and time-picker nested selection branches were source reviewed, not retested in this scoped recommendation.",
+      "Other roles, animation/Storyboard examples and hidden stages were source reviewed, not browser-retested in this proposal.",
+      "No accessibility compliance or user-research outcome claimed."
+    ]
+  },
+  "verificationAfterApproval": [
+    "1440/1133 and shorter desktop, readable date/time fields and reachable Save/Cancel",
+    "Stage-specific labels and named picker controls; default/empty/edit/cancel/saved states",
+    "Configured live action, interview order, optional Storyboard, Animation and hidden-stage preservation",
+    "Legacy Media date and final-delivery timestamp retained exactly",
+    "Named Videos summary/filter/urgency behaviour and role visibility",
+    "Keyboard, nested Escape/focus return and existing calendar/time-picker interactions",
+    "Date edits never silently cascade to other stages; unset stage dates not invented",
+    "Type check, route HTTP200 and scoped source/data preservation"
+  ],
+  "noApplicationChanges": true,
+  "teamStatus": "Team proposals remain pending; deadline request is additional, not Team approval or cancellation.",
+  "evidence": [
+    {
+      "file": "current-detail.jpg",
+      "width": 456,
+      "height": 266,
+      "sha256": "c7cacd0a90bad2c360b82d29a7ec94694c37f8e54f2540a1845c245170e7c545"
+    },
+    {
+      "file": "current-read-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "169797bade8c0ebca6847f27acebb0d08a09460e556df22fabd295f59462e3f4"
+    },
+    {
+      "file": "current-1440.jpg",
+      "width": 1440,
+      "height": 1000,
+      "sha256": "c3c0ff7376cc656f422c4dbde407e24ecd94d133c0fc88ebc36d4b1bcf1c330b"
+    },
+    {
+      "file": "current-1133.jpg",
+      "width": 1133,
+      "height": 1000,
+      "sha256": "98cbb468f2602fc3618cd5e5428bc2d3247cfe6bb246a01a950f40040f54764c"
+    }
+  ]
+}

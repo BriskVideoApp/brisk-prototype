@@ -1,0 +1,17 @@
+{
+  "browser": "2",
+  "profile": "Tom Producer",
+  "tab": "1716948401",
+  "origin": "http://127.0.0.1:8767",
+  "beforeApp": {
+    "local": [],
+    "session": [],
+    "width": 1512,
+    "height": 767
+  },
+  "auditViewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "workingOriginsUntouched": true
+}

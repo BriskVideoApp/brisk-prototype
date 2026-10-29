@@ -1,5 +1,8 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import type {
   CSSProperties,
   KeyboardEvent as ReactKeyboardEvent,
@@ -56,6 +59,9 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { canViewProject } from "@/data/prototype-access";
+import { ProjectTimingWarning } from "@/components/project-timing/ProjectTimingNotice";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
+import { applyDeliveryAgreement, deliveryHref, deliveryTimeZone, formatDeliveryDate } from "@/data/project-delivery";
 import { selectWorkspaceProjects, type ScopedProject } from "@/data/prototype-state";
 import { getFileLocationDisplayLabel, getFileLocationHref, getFileLocationTooltip } from "@/lib/project-files";
 import type { Project, ProjectDeadline, ProjectFileLocation, RoleSlot, StageKey, TeamPerson, TimeEntry } from "./types";
@@ -120,7 +126,8 @@ const projectStatusOptions = statusTabs.filter((status): status is Project["stat
 const latestUpdateReferenceDate = new Date("2026-06-18T12:00:00+10:00");
 const deadlineReferenceDate = new Date("2026-06-22T09:30:00+10:00");
 const projectColumnWidth = 300;
-const columnOrderStorageKey = "brisk-active-videos-column-order-v3";
+// Apply the approved all-visible defaults once, keeping earlier view preferences stored.
+const columnOrderStorageKey = "brisk-active-videos-column-order-v4";
 const fixedEndColumn: DataColumnKey = "actions";
 
 const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
@@ -134,9 +141,9 @@ const columnConfig: Record<DataColumnKey, { label: string; width: number }> = {
   actions: { label: "Actions", width: 64 },
 };
 
-const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "costs", "team", "actions"];
-const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "hours", "team", "actions"];
-const defaultHiddenColumns: DataColumnKey[] = ["hours", "team"];
+const defaultColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "team", "hours", "costs", "actions"];
+const nonStaffColumnOrder: DataColumnKey[] = ["progress", "latestUpdate", "status", "deadline", "team", "hours", "actions"];
+const defaultHiddenColumns: DataColumnKey[] = [];
 
 function getProjectFlowHref(projectId: string) {
   return getProjectStageHref(projectId, "brief");
@@ -188,6 +195,8 @@ function ActiveVideosWorkspace() {
   const { invoices, offers } = useCostsData();
   const router = useRouter();
   const [isStartVideoClientPickerOpen, setIsStartVideoClientPickerOpen] = useState(false);
+  const [quickAssignmentProjectId, setQuickAssignmentProjectId] = useState<string | null>(null);
+  const [teamAssignmentNotice, setTeamAssignmentNotice] = useState<string | null>(null);
   const [selectedStartVideoClientId, setSelectedStartVideoClientId] = useState("");
   const searchParams = useSearchParams();
   const projectIdFromParams = searchParams.get("project");
@@ -197,7 +206,11 @@ function ActiveVideosWorkspace() {
   const availableClients = clients.filter((client) => client.status !== "Archived");
   const startVideoClientOptions = availableClients.map((client) => ({ value: client.id, label: client.name }));
   const [selectedTab, setSelectedTab] = useState<StatusTab>("All");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("Videos", () => searchScopeProjects.map((project) => ({
+    id: `video:${project.id}`, source: "videos", kind: "Videos" as const, title: project.name,
+    text: `${project.name} ${project.clientBadge}`, meta: project.clientName, projectId: project.id,
+    href: `/active-videos?project=${project.id}`,
+  })));
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
   const [filters, setFilters] = useState<FilterState>({
     client: null,
@@ -207,9 +220,12 @@ function ActiveVideosWorkspace() {
     deadline: null,
   });
   const projectTags: Record<string, string[]> = Object.fromEntries(canonicalProjects.map((project) => [project.id, project.tags ?? []]));
-  const [projectDeadlines, setProjectDeadlines] = useState<Record<string, ProjectDeadline | undefined>>(() =>
+  const { getDeliveryAgreement } = useProjectTiming();
+  const [draftProjectDeadlines, setProjectDeadlines] = useState<Record<string, ProjectDeadline | undefined>>(() =>
     Object.fromEntries(canonicalProjects.map((project) => [project.id, project.deadline])),
   );
+  const projectDeadlines = Object.fromEntries(canonicalProjects.map((project) => [project.id,
+    applyDeliveryAgreement(draftProjectDeadlines[project.id], getDeliveryAgreement(project))]));
   const [extraProjectTimeEntries, setExtraProjectTimeEntries] = useState<Record<string, TimeEntry[]>>({});
   const [tagClasses, setTagClasses] = useState<Record<string, TagClass>>(defaultTagClasses);
   const [openTagProjectId, setOpenTagProjectId] = useState<string | null>(null);
@@ -328,17 +344,11 @@ function ActiveVideosWorkspace() {
     () => getUniqueOptions([...tagFilterOptions, ...Object.values(projectTags).flat()]),
     [projectTags],
   );
-  const filteredProjects = useMemo(() => {
+  const searchScopeProjects = useMemo(() => {
     if (previewState === "no-results") return [];
-
-    const normalisedQuery = query.trim().toLowerCase();
 
     return projects.filter((project) => {
       const matchesTab = selectedTab === "All" || project.status === selectedTab;
-      const matchesSearch =
-        normalisedQuery.length === 0 ||
-        project.name.toLowerCase().includes(normalisedQuery) ||
-        project.clientBadge.toLowerCase().includes(normalisedQuery);
       const matchesClient = filters.client === null || project.clientBadge === filters.client;
       const matchesTeammate = filters.teammate === null || getPrimaryTeamPerson(project.team)?.initials === filters.teammate;
       const matchesTags =
@@ -347,9 +357,11 @@ function ActiveVideosWorkspace() {
       const deadlineCategory = getDeadlineCategory(projectDeadlines[project.id]);
       const matchesDeadline = filters.deadline === null || deadlineCategory === filters.deadline;
 
-      return matchesTab && matchesSearch && matchesClient && matchesTeammate && matchesTags && matchesStatus && matchesDeadline;
+      return matchesTab && matchesClient && matchesTeammate && matchesTags && matchesStatus && matchesDeadline;
     });
-  }, [filters, previewState, projectDeadlines, projectTags, projects, query, selectedTab]);
+  }, [filters, previewState, projectDeadlines, projectTags, projects, selectedTab]);
+
+  const filteredProjects = searchScopeProjects.filter((project) => !query.trim() || matchesSearchText(`${project.name} ${project.clientBadge}`, query));
 
   const clearControls = () => {
     setQuery("");
@@ -369,6 +381,13 @@ function ActiveVideosWorkspace() {
     () => projects.find((project) => project.id === panelProjectId) ?? null,
     [panelProjectId, projects],
   );
+  const quickAssignmentProject = projects.find((project) => project.id === quickAssignmentProjectId);
+
+  useEffect(() => {
+    if (!teamAssignmentNotice) return;
+    const timeout = window.setTimeout(() => setTeamAssignmentNotice(null), 3600);
+    return () => window.clearTimeout(timeout);
+  }, [teamAssignmentNotice]);
 
   const updateProjectQuery = (projectId: string | null, mode: "push" | "replace" = "push", section?: ProjectPanelSection) => {
     const url = new URL(window.location.href);
@@ -537,7 +556,8 @@ function ActiveVideosWorkspace() {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented) return;
+      // Native dialogs own keyboard input, including arrows in number fields.
+      if (event.defaultPrevented || document.querySelector("dialog[open]")) return;
       if (event.key === "Escape") {
         event.preventDefault();
         closeProjectPanel();
@@ -576,6 +596,8 @@ function ActiveVideosWorkspace() {
     }
 
     const handlePointerDown = (event: PointerEvent) => {
+      // Portalled dialogs sit outside the drawer but are not outside clicks.
+      if (event.defaultPrevented || document.querySelector("dialog[open]")) return;
       const target = event.target;
 
       if (
@@ -599,16 +621,6 @@ function ActiveVideosWorkspace() {
     <main className={`active-videos-shell ${areFiltersVisible ? "filters-open" : ""}`}>
       <div className="active-videos-main">
         <WorkspacePageHeader title="Videos" actions={<>
-            <label className="active-videos-search label-s" htmlFor="active-videos-search">
-              <span className="sr-only">Search projects</span>
-              <input
-                id="active-videos-search"
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search projects..."
-              />
-            </label>
             {selectedRole === "Studio Staff" ? (
               <div className="active-videos-utility-links active-videos-mobile-utility-links">
                 <Link className="active-videos-utility-link label-s-semibold" href="/outstanding-invoices">Expenses</Link>
@@ -752,6 +764,7 @@ function ActiveVideosWorkspace() {
                   onCreateTag={(tag, tagClass) => createProjectTag(project.id, tag, tagClass)}
                   deadline={projectDeadlines[project.id]}
                   onOpenPanelSection={(section) => openProjectPanel(project.id, "push", false, section)}
+                  onAssignTeam={() => { if (selectedRole === "Studio Staff") setQuickAssignmentProjectId(project.id); }}
                   onSaveStatus={(status) => saveProjectStatus(project.id, status)}
                   visibleColumns={visibleDataColumns}
                   visibleTableColumns={visibleTableColumns}
@@ -837,6 +850,20 @@ function ActiveVideosWorkspace() {
           onClose={() => setColumnContextMenu(null)}
         />
       ) : null}
+      {quickAssignmentProject && selectedRole === "Studio Staff" ? <TeamPanel
+        key={quickAssignmentProject.id}
+        projectId={quickAssignmentProject.id}
+        projectName={quickAssignmentProject.name}
+        videoType={quickAssignmentProject.videoType}
+        videoLengthSeconds={quickAssignmentProject.videoLengthSeconds}
+        initialTeam={quickAssignmentProject.team}
+        timeEntries={quickAssignmentProject.timeEntries}
+        access="producerAdmin"
+        assignmentOnly
+        onCloseAssignment={() => setQuickAssignmentProjectId(null)}
+        onAssignmentComplete={(message) => { setQuickAssignmentProjectId(null); setTeamAssignmentNotice(message); }}
+      /> : null}
+      {teamAssignmentNotice ? <div className="team-toast label-s-semibold" role="status">{teamAssignmentNotice}</div> : null}
       {panelProject ? (
         <ProjectDetailPanel
           project={panelProject}
@@ -1192,6 +1219,7 @@ export function ProjectDetailsSidebar({
   const { updateProjectStatus } = usePrototypeState();
   const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const [deadline, setDeadline] = useState<ProjectDeadline | undefined>(project.deadline);
+  const { getDeliveryAgreement } = useProjectTiming();
 
   useEffect(() => {
     setDeadline(project.deadline);
@@ -1201,7 +1229,7 @@ export function ProjectDetailsSidebar({
     <ProjectDetailPanel
       project={project}
       costSummary={{ totalLabel: formatCurrencyTotals([]), outstandingInvoiceCount: 0 }}
-      deadline={deadline}
+      deadline={applyDeliveryAgreement(deadline, getDeliveryAgreement(project))}
       isOpen={isOpen}
       isSwitching={false}
       selectedRole={selectedRole}
@@ -2034,20 +2062,16 @@ function ProjectPanelDeadline({
 }) {
   const stageKey = deadline?.stage ?? inferCurrentStage(project);
   const [draftDueAt, setDraftDueAt] = useState("");
-  const [draftFinalDueAt, setDraftFinalDueAt] = useState("");
   const dueHelper = getDeadlineHelper(deadline?.dueAt);
-  const finalHelper = getDeadlineHelper(deadline?.finalDueAt);
   const draftDueHelper = draftDueAt.startsWith("T") ? null : getDeadlineHelper(fromDateTimeInputValue(draftDueAt));
-  const draftFinalHelper = draftFinalDueAt.startsWith("T") ? null : getDeadlineHelper(fromDateTimeInputValue(draftFinalDueAt));
 
   useEffect(() => {
     setDraftDueAt(toDateTimeInputValue(deadline?.dueAt));
-    setDraftFinalDueAt(toDateTimeInputValue(deadline?.finalDueAt));
   }, [deadline?.dueAt, deadline?.finalDueAt, project.id]);
 
   const buildDeadline = (): ProjectDeadline | undefined => {
     const dueAt = draftDueAt.startsWith("T") ? undefined : fromDateTimeInputValue(draftDueAt);
-    const finalDueAt = draftFinalDueAt.startsWith("T") ? undefined : fromDateTimeInputValue(draftFinalDueAt);
+    const finalDueAt = deadline?.finalDueAt;
 
     if (!dueAt && !finalDueAt) {
       return undefined;
@@ -2068,7 +2092,6 @@ function ProjectPanelDeadline({
 
   const cancelDeadline = () => {
     setDraftDueAt(toDateTimeInputValue(deadline?.dueAt));
-    setDraftFinalDueAt(toDateTimeInputValue(deadline?.finalDueAt));
     onCancel();
   };
 
@@ -2094,18 +2117,11 @@ function ProjectPanelDeadline({
       <div className="deadline-read-row-v2">
         <div className="deadline-read-copy">
           <span className="deadline-read-label label-xs-semibold">Final delivery</span>
-          {isEditing ? (
-            <ProjectDetailDeadlinePicker ariaLabel="Final delivery" value={draftFinalDueAt} onChange={setDraftFinalDueAt} />
-          ) : (
-            <span className="deadline-read-date label-s-semibold">
-              {deadline?.finalDueAt ? formatDeadlineReadDate(deadline.finalDueAt, "final") : "To be set"}
-            </span>
-          )}
-          {(isEditing ? draftFinalHelper ?? finalHelper : finalHelper) ? (
-            <span className={`deadline-helper deadline-text-${(isEditing ? draftFinalHelper ?? finalHelper : finalHelper)?.categoryClass} label-xs-semibold`}>
-              {(isEditing ? draftFinalHelper ?? finalHelper : finalHelper)?.label}
-            </span>
-          ) : null}
+          <span className="deadline-read-date label-s-semibold">
+            {deadline?.finalDueAt ? formatDeliveryDate(deadline.finalDueAt) : "To be agreed"}
+          </span>
+          <Link className="timing-review-deadline-link label-xs-semibold" href={deliveryHref(project.id)}>View final delivery</Link>
+          <ProjectTimingWarning projectId={project.id} />
         </div>
       </div>
       {isEditing ? <ProjectDetailInlineActions onCancel={cancelDeadline} onSave={saveDeadline} /> : null}
@@ -2167,6 +2183,7 @@ function ProjectRow({
   onCreateTag,
   deadline,
   onOpenPanelSection,
+  onAssignTeam,
   onSaveStatus,
   visibleColumns,
   visibleTableColumns,
@@ -2193,6 +2210,7 @@ function ProjectRow({
   onCreateTag: (tag: string, tagClass: TagClass) => void;
   deadline: ProjectDeadline | undefined;
   onOpenPanelSection: (section: ProjectPanelSection) => void;
+  onAssignTeam: () => void;
   onSaveStatus: (status: Project["status"]) => void;
   visibleColumns: DataColumnKey[];
   visibleTableColumns: TableColumnKey[];
@@ -2274,6 +2292,8 @@ function ProjectRow({
           deadline={deadline}
           onOpenPanelSection={onOpenPanelSection}
           onSaveStatus={onSaveStatus}
+          canAssignTeam={hasLoadedRole && selectedRole === "Studio Staff"}
+          onAssignTeam={onAssignTeam}
           canEditStatus={selectedRole === "Studio Staff"}
           onOpenDetails={onOpenDetails}
           onOpenLatestActions={onOpenLatestActions}
@@ -2581,6 +2601,8 @@ function ProjectDataCell({
   onOpenPanelSection,
   onSaveStatus,
   canEditStatus,
+  canAssignTeam,
+  onAssignTeam,
   onOpenDetails,
   onOpenLatestActions,
 }: {
@@ -2596,6 +2618,8 @@ function ProjectDataCell({
   onOpenPanelSection: (section: ProjectPanelSection) => void;
   onSaveStatus: (status: Project["status"]) => void;
   canEditStatus: boolean;
+  canAssignTeam: boolean;
+  onAssignTeam: () => void;
   onOpenDetails: () => void;
   onOpenLatestActions: () => void;
 }) {
@@ -2742,6 +2766,19 @@ function ProjectDataCell({
       .map((member) => `${member.person.name}, ${member.roles.join(" and ")}${member.isInvited ? ", invited" : ""}`)
       .join("; ");
 
+    if (teamMembers.members.length === 0 && canAssignTeam) {
+      return <td className={columnClassName}>
+          <Button
+            size="S"
+            variant="secondary"
+            className="project-assign-team-entry"
+            aria-label={`Assign team for ${project.name}`}
+            aria-haspopup="dialog"
+            onClick={(event) => { event.stopPropagation(); onAssignTeam(); }}
+          ><DsIcon name="user-plus" size={16} />Assign team</Button>
+      </td>;
+    }
+
     return (
       <td className={columnClassName}>
         <button
@@ -2870,6 +2907,7 @@ function DeadlineCell({ project, deadline, onOpen }: {
         </button>
       )}
 
+      <ProjectTimingWarning projectId={project.id} />
     </div>
   );
 }
@@ -3218,6 +3256,7 @@ function formatCompactDateTime(timestamp: string) {
 
 function formatShortDeadlineDate(timestamp: string) {
   return new Intl.DateTimeFormat("en-US", {
+    timeZone: deliveryTimeZone,
     weekday: "short",
     month: "short",
     day: "numeric",

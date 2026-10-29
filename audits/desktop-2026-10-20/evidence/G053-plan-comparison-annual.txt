@@ -1,0 +1,249 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- banner:
+  - heading "Brisk plan & billing" [level=1]
+  - paragraph: Manage your Brisk plan, usage and billing details.
+- main:
+  - region "Professional":
+    - generic: Current plan
+    - heading "Professional" [level=2]
+    - generic: Active
+    - paragraph: Small production companies and boutique agencies
+    - strong: $249 USD/month
+    - generic: Monthly billing
+    - term: Next renewal
+    - definition: 12 October 2026
+    - button "Change plan"
+  - region "Usage":
+    - heading "Usage" [level=2]
+    - paragraph: Your current Studio allowance.
+    - generic: Studio Staff
+    - generic: 6 of 10
+    - 'progressbar "Studio Staff: 6 of 10"'
+    - generic: Active projects
+    - generic: 14 of 15
+    - 'progressbar "Active projects: 14 of 15"'
+    - generic: Storage
+    - generic: 86 GB of 100 GB
+    - 'progressbar "Storage: 86 GB of 100 GB"'
+    - paragraph: You’re approaching your active project limit.
+  - region "Billing account":
+    - heading "Billing account" [level=2]
+    - paragraph: Payment methods, invoices and subscription settings are managed securely through Stripe.
+    - button "Manage billing"
+  - region "Add-ons":
+    - heading "Add-ons" [level=2]
+    - paragraph: Optional additions for your Brisk subscription.
+    - article:
+      - heading "Additional storage" [level=3]
+      - strong: $25 USD/month per 100 GB
+      - paragraph: Add storage to the Studio's shared allowance.
+      - button "Add"
+    - article:
+      - heading "Additional Studio Staff user" [level=3]
+      - strong: $20 USD/month
+      - paragraph: Add one Studio Staff user to your Professional or Business plan.
+      - button "Add"
+- dialog "Compare Brisk plans" [active]:
+  - banner:
+    - heading "Compare Brisk plans" [level=2]
+    - generic: Choose the plan and billing frequency that fit your Studio.
+  - group "Billing frequency for plan change":
+    - button "Monthly" [pressed]
+    - button "Annual"
+  - article:
+    - heading "Starter" [level=3]
+    - paragraph: Solo creators and freelancers
+    - paragraph:
+      - generic: Monthly
+      - strong: $49 USD/month
+    - paragraph:
+      - generic: Annual
+      - strong: $39 USD/month, billed as $468 annually
+    - term: Users
+    - definition: 1 account owner + 2 collaborators
+    - term: Active projects
+    - definition: "3"
+    - term: Storage
+    - definition: 25 GB
+    - term: Client access
+    - definition: Unlimited Client collaborators
+    - generic: Client portal
+    - paragraph: Review, comment and approve
+    - list:
+      - listitem: Studio name and logo
+      - listitem: Standard Brisk portal styling
+      - listitem: Small Powered by Brisk footer
+    - generic: Core features
+    - list:
+      - listitem: Client briefing
+      - listitem: Script development
+      - listitem: Basic storyboarding
+      - listitem: Client review, comments and approval
+      - listitem: Project timeline
+    - generic: 14 days, no card required
+    - generic: Email support, 48-hour response
+    - button "Choose Starter"
+    - generic: Change using monthly billing
+  - article:
+    - heading "Professional" [level=3]
+    - generic: Current plan
+    - paragraph: Small production companies and boutique agencies
+    - paragraph:
+      - generic: Monthly
+      - strong: $249 USD/month
+    - paragraph:
+      - generic: Annual
+      - strong: $199 USD/month, billed as $2,388 annually
+    - term: Users
+    - definition: "10"
+    - term: Active projects
+    - definition: "15"
+    - term: Storage
+    - definition: 100 GB
+    - term: Client access
+    - definition: Unlimited Client collaborators
+    - generic: Client portal
+    - paragraph: Review, comment and approve
+    - list:
+      - listitem: Studio logo
+      - listitem: Studio primary colour
+      - listitem: Custom branding
+      - listitem: Small Powered by Brisk footer
+    - generic: Includes Starter features plus
+    - list:
+      - listitem: Advanced storyboarding
+      - listitem: Project cost estimation
+      - listitem: Resource management
+      - listitem: Time tracking
+      - listitem: Workflow automation
+    - generic: 14 days
+    - generic: Onboarding assistance included
+    - button "Current plan" [disabled]
+  - article:
+    - heading "Business" [level=3]
+    - paragraph: Mid-sized production companies and agencies
+    - paragraph:
+      - generic: Monthly
+      - strong: $599 USD/month
+    - paragraph:
+      - generic: Annual
+      - strong: $499 USD/month, billed as $5,988 annually
+    - term: Users
+    - definition: "25"
+    - term: Active projects
+    - definition: Unlimited
+    - term: Storage
+    - definition: 250 GB
+    - term: Client access
+    - definition: Unlimited Client collaborators
+    - generic: Client portal
+    - paragraph: Review, comment and approve
+    - list:
+      - listitem: Fully white-labelled Client portal
+      - listitem: No Brisk branding or footer
+    - generic: Includes Professional features plus
+    - list:
+      - listitem: Portfolio management
+      - listitem: Advanced analytics
+      - listitem: Business intelligence
+      - listitem: Resource-pool management
+      - listitem: Custom workflows
+    - generic: 30 days
+    - generic: Dedicated onboarding
+    - button "Choose Business"
+    - generic: Change using monthly billing
+  - article:
+    - heading "Enterprise" [level=3]
+    - paragraph: Large production companies, agencies and corporate teams
+    - strong: Custom
+    - generic: Typical range $1,500-$5,000 USD/month
+    - term: Users
+    - definition: Unlimited
+    - term: Active projects
+    - definition: Unlimited
+    - term: Storage
+    - definition: Custom, normally 5 TB+
+    - term: Client access
+    - definition: Unlimited Client collaborators
+    - generic: Client portal
+    - paragraph: Review, comment and approve
+    - list:
+      - listitem: Business white-label treatment
+      - listitem: Custom domain
+      - listitem: Enterprise portal configuration
+    - generic: Includes Business features plus
+    - list:
+      - listitem: Single Sign-On
+      - listitem: SAML authentication
+      - listitem: Advanced security and compliance
+      - listitem: Custom data-retention settings
+      - listitem: Dedicated account manager
+    - generic: Sales-led onboarding
+    - generic: Sales-led onboarding
+    - button "Contact sales"
+  - contentinfo:
+    - button "Close"

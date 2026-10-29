@@ -1,0 +1,208 @@
+[
+  {
+    "file": "resume-2026-10-29/brief-suggestion-1440.png",
+    "role": "Customer",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "state": "Draft Deadline, before explicit submission",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "69559322f08d65107a150a42c2fcafa11fe5b928132e7c6d2a4b7343c4a72788"
+  },
+  {
+    "file": "resume-2026-10-29/brief-suggestion-1133.png",
+    "role": "Customer",
+    "route": "/projects/loom-launch-film/stages/brief",
+    "state": "Draft Deadline, before explicit submission",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "e4725b6712291509030a69afe2f4e40959713c8e699d91a3f8792942f4a58d72"
+  },
+  {
+    "file": "resume-2026-10-29/producer-date-review-1440.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Internal risk, before sharing, DS EditingDialog",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "97cfede4d761d29580e916951f3de9b98a9813694884672cec51bd8c96f4d77f"
+  },
+  {
+    "file": "resume-2026-10-29/producer-date-review-1133.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Internal risk, before sharing, DS EditingDialog",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "e89e0012dc2319233d159eb157512dc77684d8cbaf42d41eb170544e22daeb6b"
+  },
+  {
+    "file": "resume-2026-10-29/internal-warning-1440.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film&message=timing-risk-loom-launch-film-2026-08-13-internal",
+    "state": "Exact Internal risk message",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "c4d55495b8de03a8a03a10ce3ee2f8650bc96c777096cb55c47795bbd7793bbe"
+  },
+  {
+    "file": "resume-2026-10-29/client-warning-1440.png",
+    "role": "Customer",
+    "route": "/chat?project=loom-launch-film",
+    "state": "External risk after deliberate Staff review/share",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "3be727cdcd00c74cb7a3863a1e9be60b3c1ff45e8ec2c53e6ca45ee6cc5727b1"
+  },
+  {
+    "file": "resume-2026-10-29/client-warning-1133.png",
+    "role": "Customer",
+    "route": "/chat?project=loom-launch-film",
+    "state": "External risk after deliberate Staff review/share",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "ef43323e2c45025b42c86afa40727ec2d371918ce5486d1def5d60ea68b68447"
+  },
+  {
+    "file": "resume-2026-10-29/brief-submitted-chat-1133.png",
+    "role": "Customer",
+    "route": "/chat?project=loom-launch-film&message=timing-brief-loom-launch-film-2026-08-29-2026-09-02-external",
+    "state": "Submitted Brief timing hand-off",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "a22b827ac6b4c01f966015c870e7f90a4d84523813832e45f3e4bfad8482093b"
+  },
+  {
+    "file": "resume-2026-10-29/videos-warning-1440.png",
+    "role": "Studio Staff",
+    "route": "/active-videos",
+    "state": "Warning persists after read/share/submit; table scrolled to Deadline",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1440,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "e32ef10bcfa34ee06899588eb5731d5d803b39e283971fc38e0751899ca753ef"
+  },
+  {
+    "file": "resume-2026-10-29/videos-warning-1133.png",
+    "role": "Studio Staff",
+    "route": "/active-videos",
+    "state": "Warning persists after read/share/submit; table scrolled to Deadline",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "55fd4a12e0572b67e7127da15006d9e7305489de6ee4bd9335c634e70112cd47"
+  },
+  {
+    "file": "resume-2026-10-29/global-chat-date-review-1133.png",
+    "role": "Studio Staff",
+    "route": "/active-videos",
+    "state": "Date review launched from Global Chat",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "15a1a86001720945856f6b1e130c54cb97c2f2c6db3ca66ac2c5d746413600f9"
+  },
+  {
+    "file": "resume-2026-10-29/chat-collapsed-navigation-1133.png",
+    "role": "Studio Staff",
+    "route": "/chat?project=loom-launch-film",
+    "state": "External Brief timing hand-off, collapsed navigation",
+    "origin": "http://127.0.0.1:8783",
+    "viewport": [
+      1133,
+      1000
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "efc7b6bf1baf01c16550e432869d79a6d4614296fe25959a693e946ea160f0a6"
+  },
+  {
+    "file": "resume-2026-10-29/freelancer-warning-1133.png",
+    "role": "Studio Freelancer",
+    "route": "/active-videos",
+    "state": "Existing freelancer-active scenario after accepting the existing mock Loom offer",
+    "origin": "http://127.0.0.1:8784",
+    "viewport": [
+      1280,
+      720
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "df2ee84718020d570dcba9ff2a96e5c988ba3020eede9a79907a9ebd1cb7c781"
+  },
+  {
+    "file": "resume-2026-10-29/freelancer-date-review-1133.png",
+    "role": "Studio Freelancer",
+    "route": "/chat?project=loom-launch-film",
+    "state": "Assigned Freelancer read-only Internal date review",
+    "origin": "http://127.0.0.1:8784",
+    "viewport": [
+      1280,
+      720
+    ],
+    "kind": "Genuine current app screenshot",
+    "sha256": "bb2f820c2202181b10e302de78007f8a0ea179e3488eae8c98af1f0e8819b215"
+  },
+  {
+    "file": "resume-2026-10-29/client-warning-focus.png",
+    "source": "resume-2026-10-29/client-warning-1440.png",
+    "cropBox": [
+      630,
+      555,
+      1315,
+      845
+    ],
+    "kind": "Faithful crop; no generated content, recolouring or annotations",
+    "sha256": "574e2ac91a02c2d2448706aaa2660ba9539d38684daf77623b43df42f830e22c"
+  },
+  {
+    "file": "resume-2026-10-29/videos-warning-focus.png",
+    "source": "resume-2026-10-29/videos-warning-1133.png",
+    "cropBox": [
+      760,
+      239,
+      970,
+      800
+    ],
+    "kind": "Faithful crop; no generated content, recolouring or annotations",
+    "sha256": "d197dea139224b69beb92018942ff7f9c2d4bfb527bdcf9f46cbfdbe6a1e421b"
+  }
+]

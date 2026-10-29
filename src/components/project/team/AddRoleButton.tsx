@@ -22,8 +22,7 @@ export function AddRoleButton({ isOpen, roles, onOpenChange, onAddRole }: AddRol
     open={isOpen}
     onOpenChange={onOpenChange}
     className="team-add-role-wrap"
-    triggerClassName="team-add-role-button label-s-semibold"
-    triggerContent={<><DsIcon name="plus" size={16} /><span>Add role</span></>}
+    actionTrigger={(props) => <Button {...props} size="S" variant="ghost"><DsIcon name="plus" size={16} />Add role</Button>}
     hideCaret
     clearable={false}
     options={roles.filter((role) => role !== "custom").map((role) => ({ value: role, label: teamRoleLabels[role] }))}

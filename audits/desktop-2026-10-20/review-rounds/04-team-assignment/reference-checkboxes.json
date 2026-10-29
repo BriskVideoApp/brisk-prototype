@@ -1,0 +1,58 @@
+[
+  {
+    "input": null,
+    "label": "Email",
+    "rect": {
+      "bottom": 344,
+      "height": 44,
+      "left": 297,
+      "right": 360.703125,
+      "top": 300,
+      "width": 63.703125,
+      "x": 297,
+      "y": 300
+    }
+  },
+  {
+    "input": null,
+    "label": "WhatsApp and browser notifications",
+    "rect": {
+      "bottom": 413,
+      "height": 44,
+      "left": 297,
+      "right": 565.1875,
+      "top": 369,
+      "width": 268.1875,
+      "x": 297,
+      "y": 369
+    }
+  },
+  {
+    "input": null,
+    "label": "Work to review",
+    "rect": {
+      "bottom": 676,
+      "height": 44,
+      "left": 297,
+      "right": 422.296875,
+      "top": 632,
+      "width": 125.296875,
+      "x": 297,
+      "y": 632
+    }
+  },
+  {
+    "input": null,
+    "label": "Comments and replies",
+    "rect": {
+      "bottom": 745,
+      "height": 44,
+      "left": 297,
+      "right": 474.546875,
+      "top": 701,
+      "width": 177.546875,
+      "x": 297,
+      "y": 701
+    }
+  }
+]

@@ -1,0 +1,309 @@
+{
+  "method": "Genuine current screenshots cropped with built-in sips at original pixel scale; no UI recreated or generated. Full screenshots retained in evidence/. Rectangles are x,y,width,height.",
+  "crops": [
+    {
+      "id": "A04-current-media-sort",
+      "full": "E010-media-keyboard-before.jpg",
+      "crop": [
+        1140,
+        184,
+        300,
+        126
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "state": "Default toolbar sort"
+    },
+    {
+      "id": "A04-reference-people-sort",
+      "full": "D-R020-staff-1440.jpg",
+      "crop": [
+        240,
+        251,
+        300,
+        126
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "state": "Default ordinary sort field"
+    },
+    {
+      "id": "A02-current-team-selection",
+      "full": "E008-team-freelancers-1133.jpg",
+      "crop": [
+        175,
+        489,
+        790,
+        156
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1133,
+        1000
+      ],
+      "state": "Freelancers tab; unselected and disabled invited"
+    },
+    {
+      "id": "A03-current-row-badge",
+      "full": "E002-staff-videos-1440.jpg",
+      "crop": [
+        240,
+        330,
+        300,
+        156
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "state": "Loom row comment count"
+    },
+    {
+      "id": "A05-current-notification-detail-sidebar",
+      "full": "D-R039-staff-1133.jpg",
+      "crop": [
+        0,
+        65,
+        240,
+        500
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1133,
+        1000
+      ],
+      "state": "Work to review detail showing workspace links"
+    },
+    {
+      "id": "A05-reference-notification-root-sidebar",
+      "full": "D-R040-staff-1133.jpg",
+      "crop": [
+        0,
+        65,
+        240,
+        500
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1133,
+        1000
+      ],
+      "state": "Notifications root showing settings links and selected Notifications"
+    },
+    {
+      "id": "A02-reference-notification-checkbox",
+      "full": "D-R040-staff-1133.jpg",
+      "crop": [
+        280,
+        612,
+        790,
+        156
+      ],
+      "role": "Studio Staff",
+      "viewport": [
+        1133,
+        1000
+      ],
+      "state": "Current approved DS checked/labelled rows"
+    },
+    {
+      "id": "A06-current-fonts-panel",
+      "full": "D-R003-staff-1440.jpg",
+      "crop": [
+        1045,
+        238,
+        365,
+        450
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Current tinted Fonts panel"
+    },
+    {
+      "id": "A06-reference-white-logos-panel",
+      "full": "D-R003-staff-1440.jpg",
+      "crop": [
+        272,
+        238,
+        365,
+        450
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Same-family white Logos panel"
+    },
+    {
+      "id": "A07-current-chat-date-overlap",
+      "full": "D-R005-staff-1133.jpg",
+      "crop": [
+        489,
+        196,
+        620,
+        155
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Sticky date overlays Tom message"
+    },
+    {
+      "id": "A08-current-mixed-folder-file-grid",
+      "full": "D-R029-staff-1133.jpg",
+      "crop": [
+        504,
+        442,
+        605,
+        388
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Compact folders share a tall file row"
+    },
+    {
+      "id": "A09-current-client-metric-stretch",
+      "full": "D-R007-staff-1133.jpg",
+      "crop": [
+        272,
+        315,
+        829,
+        628
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Two summary cards stretched beside Client details form"
+    },
+    {
+      "id": "A10-current-hidden-inspector-header",
+      "full": "E044-media-inspector-hidden-close.jpg",
+      "crop": [
+        760,
+        0,
+        373,
+        380
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Inspector filename/Close hidden by global header"
+    },
+    {
+      "id": "A10-reference-visible-inspector-header",
+      "full": "E011-media-keyboard-after.jpg",
+      "crop": [
+        1067,
+        0,
+        373,
+        380
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Wider viewport retains inspector filename/Close"
+    },
+    {
+      "id": "A12-current-deliverables-1133",
+      "full": "BRIEF-deliverables-1133.jpg",
+      "crop": [
+        272,
+        364,
+        829,
+        183
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Deliverables short values truncated"
+    },
+    {
+      "id": "A12-reference-deliverables-1440",
+      "full": "BRIEF-deliverables-1440.jpg",
+      "crop": [
+        272,
+        364,
+        1136,
+        183
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Same existing row at wider desktop; responsive comparison, not separate approval"
+    },
+    {
+      "id": "A12-current-summary-1133",
+      "full": "BRIEF-summary-1133.jpg",
+      "crop": [
+        272,
+        472,
+        829,
+        215
+      ],
+      "viewport": [
+        1133,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Main Video Details Format breaks inside Landscape"
+    },
+    {
+      "id": "A12-reference-summary-1440",
+      "full": "BRIEF-summary-1440.jpg",
+      "crop": [
+        272,
+        472,
+        1136,
+        178
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Same summary value readable at wider desktop; original pixel scale"
+    },
+    {
+      "id": "A13-current-audience-heading-1440",
+      "full": "E113-brief-audience-scroll-after.jpg",
+      "crop": [
+        240,
+        0,
+        850,
+        210
+      ],
+      "viewport": [
+        1440,
+        1000
+      ],
+      "role": "Studio Staff",
+      "state": "Audience after footer step selection, heading behind global header; original pixel scale"
+    }
+  ]
+}

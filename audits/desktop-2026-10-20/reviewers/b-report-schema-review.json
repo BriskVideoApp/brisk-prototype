@@ -1,0 +1,98 @@
+{
+  "reviewer": "B",
+  "reviewed": [
+    "index.html",
+    "report.js",
+    "report.css"
+  ],
+  "scope": "Read-only schema review of current local report scaffold. No rendered final dataset existed when checked; this is not final visual QA.",
+  "findingFieldsSupported": [
+    "id",
+    "title",
+    "category",
+    "severity",
+    "impact",
+    "classification",
+    "confidence",
+    "roles",
+    "routes",
+    "states",
+    "current screenshots",
+    "approved screenshot or explicit no-reference statement",
+    "observed",
+    "expected",
+    "authority",
+    "recommendation",
+    "rationale",
+    "alternatives",
+    "tradeoffs",
+    "rootCause",
+    "occurrences",
+    "sources",
+    "verificationRemaining",
+    "reviewStatus",
+    "reproduction/reproSteps"
+  ],
+  "gaps": [
+    {
+      "id": "SCHEMA-01",
+      "priority": "Required before handoff",
+      "issue": "Figure caption chooses caption or notes instead of the role/width/state context. A supplied note can hide the required capture context.",
+      "location": "report.js:66-70",
+      "recommendation": "Always display route, role, viewport and state together, then append notes/caption. Keep timestamp and full-image option.",
+      "verification": "Check one capture with notes and one with caption in the final rendered report."
+    },
+    {
+      "id": "SCHEMA-02",
+      "priority": "Required before handoff",
+      "issue": "Session Export saves only status and note; it is not the complete supporting finding register.",
+      "location": "report.js:193-195",
+      "recommendation": "Save a separate full finding JSON or CSV alongside the report and link it from the report. Retain the explicit session-only review export notice.",
+      "verification": "Ensure the full register includes every consolidated finding and all mandatory fields."
+    },
+    {
+      "id": "SCHEMA-03",
+      "priority": "Dataset QA",
+      "issue": "An approvedReference narrative containing an evidence ID does not display that image.",
+      "location": "report.js:155-157",
+      "recommendation": "Set approvedReferenceScreenshot to the actual approved reference capture where available, and keep approvedReference as the authority/context statement. Do not label a merely existing implementation as approved.",
+      "verification": "Check comparisons at matching scale and viewport, and ensure every absent reference says so explicitly."
+    },
+    {
+      "id": "SCHEMA-04",
+      "priority": "Dataset QA",
+      "issue": "Behavioural findings need explicit reproduction steps; prose alone is easy to miss.",
+      "location": "report.js:159",
+      "recommendation": "Populate reproSteps or reproduction for each observed behavioural finding, including the safe stop/cancel boundary. Reviewer B findings now all include reproSteps.",
+      "verification": "Every claimed observed interaction is traceable to a lead-recorded action and current capture."
+    },
+    {
+      "id": "SCHEMA-05",
+      "priority": "Dataset QA",
+      "issue": "Multi-area findings supplied as one joined string become a composite Area filter option.",
+      "location": "report.js:143-147",
+      "recommendation": "Supply area as an array for findings with independently affected areas, and ensure visible tags render each value clearly.",
+      "verification": "Filter Media, Transcripts, Script and Storyboard independently and confirm shared findings appear as intended."
+    },
+    {
+      "id": "SCHEMA-06",
+      "priority": "Required before handoff",
+      "issue": "The renderer fallback allows a scaffold with no populated report data; no data/report-data.js was available at this review checkpoint.",
+      "location": "index.html and report.js initial data handling",
+      "recommendation": "Populate consolidated data, then render-check navigation, evidence links, filters, enlarge and review export/import. Do not present the scaffold as the finished review pack.",
+      "verification": "Data totals reconcile with master coverage and full finding register; no broken image/source links."
+    }
+  ],
+  "positiveChecks": [
+    "Mandatory finding field renderers are present.",
+    "Open/enlarge original screenshot is supported.",
+    "Coverage, baseline, comparisons, pages, decisions, batches and limitations have navigable sections.",
+    "Review choices are described as temporary; explicit JSON export/import exists.",
+    "Selecting Approved in the local review session is explicitly not authority to implement."
+  ],
+  "limitations": [
+    "No final dataset or rendered final report was validated in this source schema pass.",
+    "No screenshot image approval is inferred from an evidence ID.",
+    "Parent lead remains responsible for consolidated decisions, duplicates and final handoff."
+  ]
+}

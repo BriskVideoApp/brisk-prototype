@@ -1,5 +1,8 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import { WorkspacePageHeader } from "@/components/layout/WorkspacePageHeader";
 
 import Link from "next/link";
@@ -35,7 +38,10 @@ export function ClientsPage() {
   const { state } = usePrototypeState();
   const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
   const { selectedRole } = usePrototypeRole();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("Clients", () => canManageClients ? clients.filter((client) => status === "All" || client.status === status).map((client) => ({
+    id: `client:${client.id}`, source: "clients", kind: "Clients" as const, title: client.name,
+    text: `${client.name} ${client.website}`, meta: client.website, href: `/clients/${client.id}`,
+  })) : []);
   const [status, setStatus] = useState<StatusFilter>("All");
   const [sort, setSort] = useState<SortOption>("activity");
   const requestedDialog = searchParams.get("dialog");
@@ -49,7 +55,7 @@ export function ClientsPage() {
     if (isEmptyPreview || isNoResultsPreview) return [];
     return clients
       .filter((client) => status === "All" || client.status === status)
-      .filter((client) => !normalisedQuery || `${client.name} ${client.website}`.toLocaleLowerCase("en-AU").includes(normalisedQuery))
+      .filter((client) => !normalisedQuery || matchesSearchText(`${client.name} ${client.website}`, normalisedQuery))
       .sort((left, right) => sort === "name"
         ? left.name.localeCompare(right.name, "en-AU")
         : right.latestActivity.occurredAt.localeCompare(left.latestActivity.occurredAt));
@@ -61,13 +67,7 @@ export function ClientsPage() {
 
   return (
     <main className="clients-page">
-      <WorkspacePageHeader title="Clients" actions={
-        <label className="clients-search" htmlFor="clients-search">
-          <DsIcon name="search" size={16} />
-          <span className="sr-only">Search Clients</span>
-          <input id="clients-search" type="search" value={query} placeholder="Search Clients" onChange={(event) => setQuery(event.target.value)} />
-        </label>
-      } />
+      <WorkspacePageHeader title="Clients" />
 
       <div className="clients-view-tabs">
         <div className="clients-view-tabs-row">

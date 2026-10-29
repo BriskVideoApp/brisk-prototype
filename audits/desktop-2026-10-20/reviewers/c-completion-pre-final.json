@@ -1,0 +1,934 @@
+{
+  "status": "Current isolated C browser pass J001-J089 complete; closure proposal still integrating final root/B evidence.",
+  "date": "21 October 2026",
+  "baseline": {
+    "masterEntries": 117,
+    "capturesRegistered": 292,
+    "FSeriesCapturesAtStart": []
+  },
+  "method": [
+    "Finite semantic workflows, not exhaustive cross-product permutations.",
+    "At 1440 inspect content and interaction; at 1133 inspect the same page composition and densest/reflowing overlay. Repeat a behavioural path at both widths only when layout or layering changes the behaviour.",
+    "For roles, inspect genuinely different visible/capability branches. Shared controls are not repeated for every role when content and interaction are identical; record the consumer and variant actually observed.",
+    "A source-only existence/guard review is not browser verification. Safety constraints are recorded as boundaries, not UI states.",
+    "Lead decides and applies all master status changes after explicit action evidence."
+  ],
+  "remainingBatches": [
+    {
+      "id": "CB01",
+      "priority": 1,
+      "title": "Populated Shoot from setup through On Set",
+      "coverageIds": [
+        "R030",
+        "R057",
+        "N112",
+        "N113",
+        "N114",
+        "N115"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer review/view-only",
+        "Studio Freelancer assigned edit or view-only only where UI differs"
+      ],
+      "actions": [
+        "Use disposable sample setup to reach actual Creative Plan, Plan the Day and On Set.",
+        "Open shot/person/location/interview/document editors; inspect required/disabled fields and cancel.",
+        "Inspect scheduled day/filter/unscheduled selection, existing-group menu and new-group inline draft.",
+        "Open AI schedule/readiness/missing-detail confirmations; cancel without sending/publishing.",
+        "Inspect On Set Now/Next and capture states on disposable sample, then shared/print Call Sheet."
+      ],
+      "stopBefore": [
+        "External send/invitation/payment",
+        "Destructive confirmation"
+      ],
+      "sourceCautions": [
+        "Shoot Add shot/build/accept suggestions and several status toggles mutate immediately, now permitted only in disposable sample.",
+        "ShootAccessModal has no reachable true opener. Existing-plan Replace is reachable only when an existingPlan already exists (source lines2641/2793); initial Attach from empty setup is not exposed. Classify the exact branch, do not force it."
+      ],
+      "completionActionIds": [
+        "F006-shoot-shot-list-1440",
+        "F007-shot-actions",
+        "F008-shot-type-picker",
+        "F009-shot-list-1133",
+        "F010-shoot-interview-1133",
+        "F011-interview-editor-validation",
+        "F012-visual-references-empty",
+        "F013-shoot-media-picker",
+        "F014-shoot-reference-populated",
+        "F015-location-editor",
+        "F016-shoot-people-1133",
+        "F017-shoot-person-editor",
+        "F018-shoot-role-options",
+        "F019-shoot-documents",
+        "F020-shoot-document-link",
+        "F021-shoot-schedule-1133",
+        "F022-shoot-schedule-1440",
+        "F023-schedule-item-editor",
+        "F024-shoot-day-editor",
+        "F025-shoot-day2",
+        "F026-on-set-1440",
+        "F027-onset-focus-schedule",
+        "F028-onset-focus-exit",
+        "F029-onset-1133",
+        "F030-onset-progress",
+        "F031-onset-progress-selection",
+        "F032-shoot-approval-confirm",
+        "F055-question-focus-readability",
+        "F056-schedule-picker-escape",
+        "F057-progress-sidebar-collision",
+        "F058-shoot-send-panel",
+        "F059-shoot-client-onset",
+        "F060-shoot-client-planning"
+      ],
+      "alreadyEvidenced": [
+        "Populated Shot List1440/1133,More actions,Shot type picker Escape/return.",
+        "Interview question empty/disabled Save and Escape/return.",
+        "Visual Reference empty/four sources/Media picker and authorised sample attachment.",
+        "Location/person/Crew-role editors and cancellation; Documents/Add link empty validation.",
+        "Schedule1440/1133,keyboard existing-entry editor,day editor Cancel,Day2 switch.",
+        "On Set1440/1133,Focus Schedule keyboard/Escape,progress panel and local selected-shot scope.",
+        "Explicit disposable Shoot approval result without a confirmation.",
+        "Actual nested Start time Escape outcome and geometry F056.",
+        "On Set progress layering F057; Send Shoot recipient/scope panel and Escape cancellation F058/F059.",
+        "Customer On Set/planning variants F059/F060."
+      ],
+      "remainingActions": [
+        "One shot size/camera approach option menu if a different interaction implementation.",
+        "Existing-person picker and Documents Upload-tab appearance; delete item/day confirmation Cancel only.",
+        "Unassigned/group selection > existing group menu and new-group draft.",
+        "AI schedule/guided missing-details and readiness panels; do not manufacture unrelated failures.",
+        "Conditional Now/Next and On Set day switch; capture status filter contents only where meaningful and currently supported."
+      ],
+      "excludedStaleRequirements": [
+        "ShootAccessModal no true opener",
+        "Skip/Restore unused dashboard",
+        "Unused Schedule filter toolbar",
+        "Initial Attach plan path absent; existing-plan Replace only conditional"
+      ],
+      "remainingFiniteStateIds": [
+        "N112-S01",
+        "N112-S02",
+        "N113-S01",
+        "N113-S03",
+        "N113-S04",
+        "N113-S06",
+        "N113-S07",
+        "N114-S03",
+        "N114-S04",
+        "N114-S05",
+        "N114-S06",
+        "N114-S07",
+        "N114-S08",
+        "N115-S01",
+        "N115-S02",
+        "N115-S03",
+        "N115-S04",
+        "N115-S05"
+      ]
+    },
+    {
+      "id": "CB02",
+      "priority": 1,
+      "title": "Populated Edit/Animation and Masters",
+      "coverageIds": [
+        "R027",
+        "R028",
+        "R035",
+        "N116",
+        "N117"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer released review/download/approval presentation",
+        "Studio Freelancer only structurally different authoring toolbar"
+      ],
+      "actions": [
+        "Inspect remaining current Review/Masters tools without submitting feedback.",
+        "Use actual audit-only MP4 for a representative canonical player/seek check.",
+        "Open actual Master version library and dirty recut discard confirmation, cancel."
+      ],
+      "stopBefore": [
+        "Real message/review send",
+        "Destructive confirmation",
+        "Payment"
+      ],
+      "sourceCautions": [
+        "RequestDialog openRequest has no caller. Explicit parentDeliverableId hierarchy has no writer/seed; current source-linked recut context remains live N117-S11.",
+        "Generated MOV codec was not validated. MDN official CC0 MP4 now saved with provenance in audit/media; player checks require explicit lead outcome.",
+        "F044 has no recorded chooser provenance; its thumbnail appearance is not certified as a successful upload."
+      ],
+      "completionActionIds": [
+        "F033-edit-readiness-confirm",
+        "F034-edit-ready-empty",
+        "F035-review-populated-1440",
+        "F036-review-compare",
+        "F037-review-comment-menu",
+        "F038-review-team-filter",
+        "F039-review-drawing-tools",
+        "F040-review-1133-overall",
+        "F041-review-approved-sample",
+        "F042-masters-sample-1133",
+        "F043-masters-sample-1440",
+        "F044-masters-thumbnail-actions",
+        "F045-masters-comments",
+        "F046-masters-download-zero",
+        "F047-masters-delete-confirm",
+        "F048-masters-client",
+        "F049-masters-client-1133",
+        "F050-review-client-1133",
+        "F051-review-client-feedback",
+        "F052-review-playback-options",
+        "F053-canonical-edit-upload",
+        "F054-canonical-edit-two-versions",
+        "F061-brief-delivery-sample",
+        "F062-main-video-delivery",
+        "F063-masters-caption-editor",
+        "F064-masters-recut-entry",
+        "F065-recut-source-picker",
+        "F066-recut-range-draft",
+        "F067-recut-cancel-result",
+        "F068-masters-comments-1133",
+        "F069-masters-composer-reachable",
+        "F070-caption-text-fit",
+        "F071-client-caption-reading"
+      ],
+      "remainingFiniteStateIds": [
+        "N116-S04",
+        "N116-S05",
+        "N116-S08",
+        "N117-S03",
+        "N117-S04",
+        "N117-S05",
+        "N117-S11",
+        "N117-S12"
+      ],
+      "alreadyEvidenced": [
+        "Canonical empty-to-uploaded Edit and two-version narrow shell F053/F054; shared reference review/compare/filter/composer and Client released view F035-F052.",
+        "Actual Masters sample delivery, thumbnail menu, comments keyboard opener, zero-selection download guard and delete confirmation F042-F049.",
+        "Brief-linked Main Video with official MDN CC0 video, caption edit/blur feedback and Client read-only cue F061-F063/F067/F070/F071.",
+        "Actual recut workspace, source chooser empty alternatives, range handles and zero-mark Cancel F064-F067.",
+        "Narrow Main Video comment rail and composer keyboard reachability F068/F069."
+      ],
+      "remainingActions": [
+        "Canonical actual video playback/seek/timeline marker and local drawing stroke/Undo without Send, if retained as meaningful interaction.",
+        "Masters version library with at least two file versions, source/current presentation and safe close.",
+        "Recut: one unsent Keep draft > Cancel > inspect Discard confirmation > Cancel; Undo draft mark then exit without submission.",
+        "Saved sent recut brief is not inspected: reaching it requires Send to editor, outside no-message boundary.",
+        "No RequestDialog or explicit parentDeliverableId tree: source-unreachable legacy branches, not missing current UI."
+      ]
+    },
+    {
+      "id": "CB03",
+      "priority": 1,
+      "title": "Populated To Do and Freelancer jobs/offers",
+      "coverageIds": [
+        "R001",
+        "R016",
+        "R060",
+        "N094",
+        "N132"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Studio Freelancer existing active/pending offer scenario"
+      ],
+      "actions": [
+        "Load supported producer-active/studio-owner-active in isolated origin, inspect populated week and current/other-person view.",
+        "Open existing time entry Stage/Hours/Note, inspect empty validation and cancellation, sample completion/keyboard affordance.",
+        "Load freelancer-active/edge; inspect pending offer terms, read-only Brief, accepted job time dialog and invoice upload empty state."
+      ],
+      "stopBefore": [
+        "Send invitation/message/invoice",
+        "Record payment",
+        "Destructive action"
+      ],
+      "sourceCautions": [
+        "Do not treat previous empty client-new fixture as permanent inability; scenario isolation now authorises existing active fixtures.",
+        "Check whether accept/decline opens confirmation or acts immediately before invoking it; capture exposed terms without forcing an outcome."
+      ],
+      "completionActionIds": [
+        "F001-todo-populated-1440",
+        "F002-todo-entry-editor",
+        "F003-todo-invalid-hours",
+        "F004-todo-populated-1133",
+        "F005-todo-collapsed-1133",
+        "F072-freelancer-active-1440",
+        "F073-freelancer-active-1133",
+        "F074-freelancer-commercial-pan",
+        "F075-freelancer-time-invalid",
+        "F076-freelancer-invoice-draft",
+        "F077-freelancer-open-offer",
+        "F078-offer-brief-1133",
+        "F079-offer-brief-1440",
+        "F080-offer-brief-top",
+        "F081-offer-brief-top-1133"
+      ],
+      "alreadyEvidenced": [
+        "Viewing Sarah Chen exposes existing populated week.",
+        "Existing entry Enter opener,Stage picker Escape,Hours0 draft with Save enabled,Cancel,failed editor Escape.",
+        "Populated To Do1133 expanded/collapsed navigation.",
+        "Actual Freelancer accepted jobs1440/1133 and commercial horizontalpan F072-F074.",
+        "Loghours0draftdisabledSave F075; invoiceamountmismatch/noPDFdisabledSubmit F076.",
+        "Pending offerterms F077 and actual read-only offerBrief1440/1133 F078-F081."
+      ],
+      "remainingActions": [
+        "To Do week/date navigation.",
+        "Keyboard planning/completion affordance check or explicit supported failure; do not run repeated drag/date permutations.",
+        "No Accept/Decline outcome required to invent a missing pre-confirmation; current response affordances/terms are inspected."
+      ],
+      "remainingFiniteStateIds": [
+        "N094-S02",
+        "N094-S03",
+        "N094-S05"
+      ]
+    },
+    {
+      "id": "CB04",
+      "priority": 1,
+      "title": "Later onboarding and entry forms",
+      "coverageIds": [
+        "R032",
+        "R059",
+        "N128",
+        "N134"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer magic-link entry layout",
+        "Studio Freelancer invitation entry layout"
+      ],
+      "actions": [
+        "Progress disposable Studio setup into AI questions, focused review editors and generated setup.",
+        "Inspect Back/Skip and discard/restart confirmation only; no real invitation.",
+        "Inspect client and collaborator entry forms from existing new scenarios; initial/required and unavailable variants only where supplied."
+      ],
+      "stopBefore": [
+        "Real invitation/email",
+        "Destructive confirmation"
+      ],
+      "sourceCautions": [
+        "Scenario selection resets origin storage; use isolated disposable origin only.",
+        "Expired/unavailable is conditional on real fixture support; do not invent a new failure case."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N128-S02",
+        "N128-S03",
+        "N128-S04",
+        "N128-S05",
+        "N134-S03",
+        "N134-S05"
+      ]
+    },
+    {
+      "id": "CB05",
+      "priority": 2,
+      "title": "Global and Chat completion",
+      "coverageIds": [
+        "N084",
+        "N085",
+        "N086",
+        "N087",
+        "N088",
+        "N089",
+        "N130",
+        "N138",
+        "N139"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer account/chat/updates differences",
+        "Studio Freelancer account/chat differences"
+      ],
+      "actions": [
+        "Recent pages empty plus populated keyboard Home/End/Arrow, Escape and focus return.",
+        "Account menu outside dismissal; Test mode three-role switch visual choice only.",
+        "Populated Updates action menu/unread-all and read-only item; Chat settings/thread/call menu without calling/sending.",
+        "Ask Brisk history/minimise and source picker dismissal, no real prompt.",
+        "Project-flow term panel/hide confirmation Cancel, Close and focus return."
+      ],
+      "stopBefore": [
+        "Call initiation",
+        "Message/prompt send",
+        "Destructive confirmation"
+      ],
+      "sourceCautions": [
+        "Automatic read persistence and viewer identity mechanisms are excluded; inspect visible feedback, not plumbing."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N084-S01",
+        "N084-S03",
+        "N084-S04",
+        "N085-S01",
+        "N085-S02",
+        "N085-S03",
+        "N087-S01",
+        "N087-S03",
+        "N088-S01",
+        "N088-S02",
+        "N088-S03",
+        "N088-S04",
+        "N089-S01",
+        "N089-S05",
+        "N130-S02",
+        "N130-S03",
+        "N130-S04",
+        "N130-S06",
+        "N138-S04",
+        "N138-S05",
+        "N138-S06",
+        "N139-S02",
+        "N139-S04",
+        "N139-S06",
+        "N139-S07"
+      ]
+    },
+    {
+      "id": "CB06",
+      "priority": 2,
+      "title": "Directories, project drawer and Team",
+      "coverageIds": [
+        "N090",
+        "N091",
+        "N092",
+        "N095",
+        "N096",
+        "N097",
+        "N098",
+        "N140"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer project drawer read-only presentation",
+        "Studio Freelancer project Team self/read-only presentation"
+      ],
+      "actions": [
+        "Videos no-results/Clear; drawer tags/link settings/next/previous and read-only footer.",
+        "Team selected/disabled rows, local Staff hours and Freelancer rate drafts, remove-role confirmation Cancel. No search field exists in RoleEditorModal; N092-S02 is N/A.",
+        "People project +more link, Work/rates/history/access/invitation sections and safe inline edit/cancel.",
+        "Client archive confirmation Cancel and Staff portal preview; keep invitation/create/export outcomes unsubmitted."
+      ],
+      "stopBefore": [
+        "Invitation or access save",
+        "Destructive confirmation"
+      ],
+      "sourceCautions": [
+        "Assignment editor is Staff-only. Customer/Freelancer Team read-only state belongs to project drawer, not editable RoleEditorModal.",
+        "Restore/resend/remove-access shortcuts may act immediately; do not invoke as modal openers."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N090-S01",
+        "N090-S02",
+        "N090-S03",
+        "N090-S04",
+        "N091-S01",
+        "N091-S03",
+        "N091-S04",
+        "N091-S07",
+        "N091-S08",
+        "N091-S09",
+        "N092-S08",
+        "N095-S04",
+        "N095-S05",
+        "N095-S06",
+        "N096-S01",
+        "N096-S02",
+        "N096-S03",
+        "N096-S04",
+        "N096-S05",
+        "N096-S06",
+        "N096-S07",
+        "N097-S01",
+        "N097-S03",
+        "N097-S04",
+        "N097-S05",
+        "N098-S05",
+        "N098-S06",
+        "N140-S01",
+        "N140-S04",
+        "N140-S05"
+      ]
+    },
+    {
+      "id": "CB07",
+      "priority": 2,
+      "title": "Media, document tools and exports",
+      "coverageIds": [
+        "N100",
+        "N101",
+        "N102",
+        "N103",
+        "N104",
+        "N105",
+        "N106",
+        "N107",
+        "N108",
+        "N109",
+        "N110",
+        "N111",
+        "N129",
+        "N131"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer visible review/Media/download variants",
+        "Studio Freelancer editing vs read-only toolbar where meaningful"
+      ],
+      "actions": [
+        "Media no-results, folder expand/rename/new/move, failed/processing/missing-original details, external/internal comment presentation.",
+        "Inspect upload/cloud Cancel, link-copy unavailable explanation and send confirmation without submitting.",
+        "Script version restore/delete confirmation Cancel; four source options/link local draft without replacing source.",
+        "Storyboard frame commands, version controls and approved-edit guard Cancel.",
+        "Transcript highlights/search and empty/processing using supplied clips.",
+        "Script/Storyboard/Transcript export previews, with narrow fit where dense and return destination, no print/download.",
+        "Files empty preview and Freelancer read-only notes."
+      ],
+      "stopBefore": [
+        "Sending/approving/deleting real content",
+        "Cloud import or real account connection",
+        "Unapproved external upload/publication"
+      ],
+      "sourceCautions": [
+        "Folder Delete has no confirmation; inspect actual availability/disabled explanation and do not demand a nonexistent modal.",
+        "Storyboard library/stock selection can mutate immediately; use disposable sample only."
+      ],
+      "completionActionIds": [
+        "F032-shoot-approval-confirm",
+        "F041-review-approved-sample",
+        "F058-shoot-send-panel",
+        "F059-shoot-client-onset",
+        "F061-brief-delivery-sample"
+      ],
+      "remainingFiniteStateIds": [
+        "N100-S02",
+        "N100-S03",
+        "N100-S06",
+        "N100-S08",
+        "N101-S01",
+        "N101-S02",
+        "N101-S03",
+        "N101-S04",
+        "N101-S06",
+        "N102-S01",
+        "N102-S02",
+        "N102-S04",
+        "N102-S05",
+        "N102-S06",
+        "N103-S01",
+        "N103-S05",
+        "N104-S03",
+        "N104-S04",
+        "N104-S05",
+        "N104-S06",
+        "N105-S01",
+        "N105-S04",
+        "N106-S03",
+        "N107-S01",
+        "N108-S03",
+        "N108-S05",
+        "N109-S01",
+        "N109-S02",
+        "N109-S04",
+        "N109-S05",
+        "N109-S06",
+        "N110-S01",
+        "N110-S03",
+        "N110-S07",
+        "N111-S02",
+        "N111-S03",
+        "N111-S06",
+        "N111-S07",
+        "N129-S03",
+        "N129-S05",
+        "N129-S06",
+        "N131-S02",
+        "N131-S03",
+        "N131-S06"
+      ]
+    },
+    {
+      "id": "CB08",
+      "priority": 2,
+      "title": "Brand Kit specialised tools",
+      "coverageIds": [
+        "N118"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer editable kit",
+        "Guest download-only presentation"
+      ],
+      "actions": [
+        "Inspect empty/manual/AI setup phase via disposable sample brand, colour editor, guideline preview, motion version picker.",
+        "Open sub-brand draft, asset-selection menu and delete confirmation Cancel.",
+        "Check nested modal closure/focus; do not redesign working specialised tools for uniformity."
+      ],
+      "stopBefore": [
+        "Destructive confirmation",
+        "Real upload/download"
+      ],
+      "sourceCautions": [
+        "Manage versions/Set primary/Reorder may be notification-only prototype stubs; record exact visible result, not an invented panel."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N118-S01",
+        "N118-S02",
+        "N118-S04",
+        "N118-S07",
+        "N118-S08",
+        "N118-S09",
+        "N118-S10",
+        "N118-S11"
+      ]
+    },
+    {
+      "id": "CB09",
+      "priority": 2,
+      "title": "Personal, Client and Studio settings",
+      "coverageIds": [
+        "N120",
+        "N121",
+        "N122",
+        "N123",
+        "N124",
+        "N125",
+        "N126",
+        "N127"
+      ],
+      "primaryRole": "Studio Staff",
+      "otherSemanticRoles": [
+        "Customer company/team/invoice presentation",
+        "Studio Freelancer profile/rates/security"
+      ],
+      "actions": [
+        "Personal role-specific fields and read-only Studio details; Client company/team invite draft/access checklist/member menu, no submission.",
+        "One controlled local dirty Studio form to observe discard-navigation safeguard, then Cancel/restore.",
+        "Production Add role draft, AI Playbook link draft (no separate Preview feature exists), messaging/storage connection preview only.",
+        "Notification default-restore confirmation and unsaved state; plan/add-on/Stripe setup-unavailable confirmation layouts."
+      ],
+      "stopBefore": [
+        "Real connection",
+        "Send/invite",
+        "Payment",
+        "Destructive confirmation"
+      ],
+      "sourceCautions": [
+        "Client Admin/Member URL variants are legacy visual fixtures, not new access roles or a requested permission-system audit.",
+        "Preview states may be missing; classify only source-confirmed absence instead of inventing UI."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N120-S01",
+        "N120-S03",
+        "N120-S05",
+        "N121-S01",
+        "N121-S03",
+        "N121-S04",
+        "N121-S05",
+        "N122-S06",
+        "N122-S07",
+        "N123-S04",
+        "N123-S05",
+        "N124-S03",
+        "N124-S05",
+        "N125-S01",
+        "N126-S02",
+        "N126-S04",
+        "N126-S05",
+        "N127-S04",
+        "N127-S05"
+      ]
+    },
+    {
+      "id": "CB10",
+      "priority": 3,
+      "title": "Portal and first-video local naming",
+      "coverageIds": [
+        "N099",
+        "N119",
+        "N133"
+      ],
+      "primaryRole": "Customer",
+      "otherSemanticRoles": [
+        "Studio Staff preview and Expenses restricted message only"
+      ],
+      "actions": [
+        "Verify portal grouping/status/series/actions/history dismissal semantics from existing captures plus short targeted keyboard steps.",
+        "Name video empty/disabled Continue, Cancel/back and Staff Client query.",
+        "Expenses restricted-role visible redirect/empty state; no payment or financial mutations."
+      ],
+      "stopBefore": [
+        "Invoice send/payment",
+        "Invitation",
+        "Destructive action"
+      ],
+      "sourceCautions": [
+        "Do not reopen excluded cross-Client identity plumbing."
+      ],
+      "completionActionIds": [],
+      "remainingFiniteStateIds": [
+        "N099-S01",
+        "N119-S08",
+        "N133-S02",
+        "N133-S03",
+        "N133-S04"
+      ]
+    }
+  ],
+  "recommendedOrder": [
+    "CB01",
+    "CB02",
+    "CB03",
+    "CB04",
+    "CB05",
+    "CB06",
+    "CB07",
+    "CB08",
+    "CB09",
+    "CB10"
+  ],
+  "prototypeMechanicsExcluded": [
+    "N136 legacy route/identity guards",
+    "N137 direct-entry identity mechanics",
+    "automatic persistence/read bookkeeping as an issue in itself"
+  ],
+  "applicationChanges": false,
+  "browserActionsByReviewerC": {
+    "captures": "data/c-completion-captures.json",
+    "actions": "data/c-completion-actions.json",
+    "captureCount": 89,
+    "origin": "http://127.0.0.1:8769",
+    "nativePrompt": "J082 reached/captured/Cancel, original active Inbox restored; no human messages or Gmail content capture.",
+    "localSimulation": "Explicitly authorised labelled sample folder, Script duplicate/content/link/approval, Storyboard creation, example.com File location, Brief local AI prompt. No external human message or integration."
+  },
+  "latestCompletionCheckpoint": "All meaningful C Media/Script/Storyboard/Transcript/Files/export states reached, native prompt and Notion approved-edit guard included. Awaiting final B H064+ and root profile F160-F171 merge.",
+  "routeClosureProposalFile": "reviewers/completion-coverage-map.json#routeEntryClosureModel",
+  "finiteStateClosureProposalFile": "reviewers/c-final-coverage-proposal.json",
+  "minimalRemainingPass": [
+    {
+      "id": "MC01",
+      "coverageIds": [
+        "N116",
+        "N117"
+      ],
+      "purpose": "Finish real video/version/draft boundaries",
+      "checks": [
+        "Actual canonical MP4 playback/seek/marker or recorded failure.",
+        "Masters two-version selector and safe exit.",
+        "One unsent recut mark dirty-cancel confirmation; no Send."
+      ]
+    },
+    {
+      "id": "MC02",
+      "coverageIds": [
+        "R016",
+        "N132",
+        "N094"
+      ],
+      "purpose": "Daily work and offers",
+      "checks": [
+        "To Do week/date navigation and keyboard planning/completion availability; no all-date permutations."
+      ],
+      "closedSincePreviousCheckpoint": [
+        "Actual pending-offer Brief and terms F077-F081.",
+        "Accepted-job time/invoice invalid drafts F075/F076.",
+        "Freelancer table horizontalaccess F074."
+      ]
+    },
+    {
+      "id": "MC03",
+      "coverageIds": [
+        "R032",
+        "N128",
+        "N134",
+        "N133"
+      ],
+      "purpose": "Clean entry and creation",
+      "checks": [
+        "Later onboarding AI/review and Back/Skip.",
+        "Current invitation form/clean entry at narrow desktop.",
+        "Empty video name disabled Continue and safe Back."
+      ]
+    },
+    {
+      "id": "MC04",
+      "coverageIds": [
+        "N090",
+        "N091",
+        "N092",
+        "N095",
+        "N096",
+        "N097",
+        "N098",
+        "N140"
+      ],
+      "purpose": "Directory/drawer boundaries",
+      "checks": [
+        "Videos no-results/Clear, drawer tags/link/next-previous and actual role-different footer.",
+        "Team remove-role confirmation; People profile type/rate/access controls and safe editor.",
+        "Invitation role/Client-selection/checklist/cancel remaining meaningful paths.",
+        "Client archive confirmation and preview; no create/invite/access save."
+      ]
+    },
+    {
+      "id": "MC05",
+      "coverageIds": [
+        "N100",
+        "N101",
+        "N102",
+        "N103",
+        "N104",
+        "N105",
+        "N106",
+        "N107",
+        "N108",
+        "N109",
+        "N110",
+        "N111",
+        "N129",
+        "N131"
+      ],
+      "purpose": "Media/documents and stage nested consumers",
+      "checks": [
+        "Media no-results, new/rename folder draft and real comment/processing variants from supplied fixtures.",
+        "Remaining Script/Storyboard version/source/guard tools; do not repeat primitive menus already checked.",
+        "Transcript actual search/empty-processing; existing no-highlights is already captured.",
+        "Stage-specific Send/Share details only where current consumers differ.",
+        "Storyboard/Transcript export preview and narrow readability; Files empty/Freelancer note view."
+      ]
+    },
+    {
+      "id": "MC06",
+      "coverageIds": [
+        "N118"
+      ],
+      "purpose": "Brand tools",
+      "checks": [
+        "Manual/AI setup phase in disposable sample, colour, motion-version, guidelines and sub-brand draft.",
+        "Asset selection/delete confirmation only, no destructive confirm."
+      ]
+    },
+    {
+      "id": "MC07",
+      "coverageIds": [
+        "N120",
+        "N121",
+        "N122",
+        "N123",
+        "N124",
+        "N125",
+        "N126",
+        "N127"
+      ],
+      "purpose": "Focused settings",
+      "checks": [
+        "Role-different profile/rates and Client team invite/member/access draft.",
+        "One meaningful dirty-navigation/discard form per distinct implementation.",
+        "Add role, AI link draft, connection/storage preview; no actual external connection/payment.",
+        "Notification fixed-message and restore/unsaved safeguards only if source-supported."
+      ]
+    },
+    {
+      "id": "MC08",
+      "coverageIds": [
+        "N084",
+        "N085",
+        "N087",
+        "N088",
+        "N089",
+        "N130",
+        "N138",
+        "N139",
+        "N099"
+      ],
+      "purpose": "Bespoke global/panel interactions",
+      "checks": [
+        "History keyboard/empty and account role-links/outside close.",
+        "Updates populated item menu if existing supported fixture; do not manufacture notifications.",
+        "Ask history/minimise; global Chat project/settings and main Chat thread/call menu no-send.",
+        "Flow Close/focus/term/hide-confirm Cancel; existing Escape failure is already inspected.",
+        "Portal grouping chosen-variant/action/history safe close; static/expanded queue already captured."
+      ]
+    }
+  ],
+  "optionalRefinements": [
+    {
+      "id": "C-R01",
+      "title": "Let the read-only offer Brief look like reference material",
+      "area": "Brief and Freelancer offer",
+      "family": "Read-only fields and actions",
+      "category": "Optional UI refinement",
+      "severity": "Optional, not added to formal defect totals",
+      "impact": "A Freelancer evaluating an offer may interpret normal purple Add/Edit labels and Add cutdown as usable controls. Task impact is a design judgement; no failed user task or permission bypass was established.",
+      "classification": "Heuristic judgement supported by current screenshots and source guard",
+      "confidence": "High on rendered affordances/inert source; medium on practical task impact",
+      "roles": [
+        "Studio Freelancer"
+      ],
+      "routes": [
+        "R016"
+      ],
+      "states": [
+        "Pending offer Brief summary at1440px and1133px; current empty Brief"
+      ],
+      "screenshots": [
+        "F078-offer-brief-1133",
+        "F080-offer-brief-top",
+        "F081-offer-brief-top-1133"
+      ],
+      "currentScreenshot": "F080-offer-brief-top",
+      "approvedReferenceScreenshot": null,
+      "referenceNote": "No approved read-only Brief reference screenshot exists. The normal editable Brisk Brief is not an approved read-only reference.",
+      "observed": "Normal Add/Edit styling and ordinary secondary Add cutdown button remain inside inert read-only summary content. Source/DOM contains an Offer preview - read only header; direct current screenshot F080 shows only the Loom subtitle/no-details sentence below the fixed header, so label visibility is not assumed. The content is inert and updateField returns when readOnly; no active edit/bypass claim.",
+      "expected": "The visible reference should explain what can be read and what can be acted on. Approved DS disabled state is muted, but the appropriate read-only summary treatment is a product/presentation decision for Tom.",
+      "authority": [
+        "Latest UI-focused user scope",
+        "Brisk DS/guidelines/components/buttons.md:43",
+        "src/components/active-videos/FreelancerOfferBrief.tsx:35",
+        "src/components/brief/BriefPage.tsx:1437",
+        "src/components/brief/BriefPage.tsx:1477"
+      ],
+      "smallestCoherentChange": "In this read-only consumer, omit Add actions and show existing values as non-interactive reference values while preserving summary hierarchy and Back to offers. Retain editable Brief behaviours in their actual editing consumer.",
+      "recommendation": "Consider the small read-only presentation treatment after the shared header-clipping issue is reviewed.",
+      "rationale": "The structure and information density are useful; removing unusable creation cues can make the offer preview calmer without merging distinct version/approval actions.",
+      "alternatives": [
+        "Keep the present summary after ensuring its read-only header remains visible, then assess whether that is sufficient.",
+        "Keep disabled action shapes with a clear explanation; this can preserve feature familiarity but adds controls that cannot help the current task."
+      ],
+      "tradeoffs": [
+        "Static reference values must remain readable and selectable; do not dim important content or remove its semantic structure merely to disable editing.",
+        "Removing action shapes reduces continuity with the later editable Brief, so preserve labels, order and grouping."
+      ],
+      "preserve": [
+        "Existing summary sections and readable hierarchy",
+        "Read-only safety/source boundary",
+        "Back to offers and step navigation",
+        "Distinct Main Video/additional-version concepts"
+      ],
+      "rootCause": "Editable summary markup is reused under an inert wrapper without a dedicated presentation variant.",
+      "occurrences": [
+        "Pending-offer read-only Brief via FreelancerOfferBrief; other read-only consumers require separate current evidence."
+      ],
+      "sources": [
+        "src/components/active-videos/FreelancerOfferBrief.tsx:35",
+        "src/components/active-videos/FreelancerOfferBrief.tsx:47",
+        "src/components/brief/BriefPage.tsx:1437",
+        "src/components/brief/BriefPage.tsx:1473",
+        "src/components/brief/BriefPage.tsx:6014",
+        "src/components/brief/brief.css:4664"
+      ],
+      "verificationRemaining": [
+        "Lead to reconcile actual header geometry; source/DOM label presence is not visible screenshot proof.",
+        "If promoted, compare the full read-only and editable consumer and check readability, selection, keyboard navigation and Back to offers.",
+        "Optional short task check with a Freelancer can establish whether visible inactive affordances create hesitation; no research result is claimed."
+      ],
+      "reviewStatus": "Needs decision",
+      "implementationStatus": "Unfixed; audit recommendation only"
+    }
+  ],
+  "findingsFile": "reviewers/c-completion-findings.json"
+}

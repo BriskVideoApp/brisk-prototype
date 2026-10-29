@@ -11,6 +11,7 @@ import {
 import { getMessageSourceDirection, SourceLogo } from "@/components/chat/SourceLogo";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { ProjectSystemPost } from "@/components/notifications/ProjectSystemPost";
+import { ProjectTimingPost } from "@/components/project-timing/ProjectTimingPost";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import type {
   ChatAttachment,
@@ -44,6 +45,7 @@ type ChatMessageListProps = {
   onMarkUnread: (messageId: string) => void;
   onFilesDropped: (files: File[]) => void;
   onNotify: (message: string) => void;
+  onNavigate?: () => void;
 };
 
 const reactionChoices: Array<{ emoji: ReactionEmoji; label: string }> = [
@@ -78,6 +80,7 @@ export function ChatMessageList({
   onMarkUnread,
   onFilesDropped,
   onNotify,
+  onNavigate,
 }: ChatMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
@@ -181,6 +184,7 @@ export function ChatMessageList({
                     onEditMessage={onEditMessage}
                     onMarkUnread={onMarkUnread}
                     onNotify={onNotify}
+                    onNavigate={onNavigate}
                   />
                 );
               })}
@@ -220,6 +224,7 @@ type ChatMessageCardProps = {
   onEditMessage?: (messageId: string, body: string) => void;
   onMarkUnread?: (messageId: string) => void;
   onNotify?: (message: string) => void;
+  onNavigate?: () => void;
 };
 
 export function ChatMessageCard({
@@ -236,6 +241,7 @@ export function ChatMessageCard({
   onToggleReaction,
   onMarkUnread,
   onNotify,
+  onNavigate,
 }: ChatMessageCardProps) {
   const [isReactionPickerOpen, setIsReactionPickerOpen] = useState(false);
   const sender = message.senderId ? usersById.get(message.senderId) : undefined;
@@ -270,6 +276,7 @@ export function ChatMessageCard({
     };
 
     if (projectUpdate.kind === "event") {
+      if (projectUpdate.timingIssueId) return <ProjectTimingPost message={message} highlighted={highlighted} onNavigate={onNavigate} />;
       return (
         <ProjectSystemPost
           post={projectUpdate}
@@ -277,6 +284,7 @@ export function ChatMessageCard({
           createdAt={message.createdAt}
           messageId={message.id}
           highlighted={highlighted}
+          onAction={(event) => { if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate?.(); }}
         />
       );
     }

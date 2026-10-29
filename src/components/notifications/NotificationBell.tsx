@@ -86,10 +86,10 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
       )}
 
       {!isNotificationsPage && isOpen ? (
-        <section className="notification-popover" id={popoverId} aria-label="Recent notifications">
+        <section className="notification-popover" id={popoverId} aria-label="Recent updates">
           <header className="notification-popover-header">
             <div>
-              <h2 className="headings-xs-bold">Notifications</h2>
+              <h2 className="headings-xs-bold">Updates</h2>
             </div>
             <div className="notification-popover-actions">
               <Button size="S" variant="ghost"
@@ -101,7 +101,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
                 Mark all as read
               </Button>
               <span className="notification-popover-close">
-                <IconButton tooltipAlign="end" tooltipPlacement="bottom" type="button" aria-label="Close notifications" onClick={() => setIsOpen(false)}>
+                <IconButton tooltipAlign="end" tooltipPlacement="bottom" type="button" aria-label="Close updates" onClick={() => setIsOpen(false)}>
                   <DsIcon name="x-close-cross" size={16} />
                 </IconButton>
               </span>
@@ -127,7 +127,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
             </div>
           ) : (
             <div className="notification-popover-empty">
-              <strong className="label-s-semibold">No notifications yet</strong>
+              <strong className="label-s-semibold">No updates yet</strong>
             </div>
           )}
 
@@ -136,7 +136,7 @@ export function NotificationBell({ onNavigate }: { onNavigate?: () => void }) {
               setIsOpen(false);
               onNavigate?.();
             }}>
-              View all notifications
+              View all updates
             </Link>
           </footer>
         </section>
@@ -151,7 +151,7 @@ function NotificationBellContents({ unreadCount }: { unreadCount: number }) {
       <span className="app-notification-bell-icon">
         <DsIcon name="bell" size={18} />
       </span>
-      <CommentCountBadge count={unreadCount} maxCount={99} label={`${unreadCount} unread notifications`} />
+      <CommentCountBadge count={unreadCount} maxCount={99} label={`${unreadCount} unread updates`} />
     </>
   );
 }

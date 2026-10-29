@@ -1,9 +1,9 @@
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { useState, type DragEvent, type MouseEvent, type ReactNode } from "react";
+import { useState, type DragEvent, type ReactNode } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView, MediaFolder } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
-import { MediaAssetCard } from "./MediaAssetCard";
+import { MediaAssetCard, type MediaActivationEvent } from "./MediaAssetCard";
 import { MediaAssetRow } from "./MediaAssetRow";
 import type { MediaViewMode } from "./MediaFilterBar";
 
@@ -15,7 +15,7 @@ type MediaAssetGridProps = {
   viewMode: MediaViewMode;
   selectedAssetIds: Set<string>;
   activeAssetId: string | null;
-  onActivate: (asset: MediaAssetView, event: MouseEvent<HTMLElement>) => void;
+  onActivate: (asset: MediaAssetView, event: MediaActivationEvent) => void;
   onComment: (asset: MediaAssetView) => void;
   onTranscript: (asset: MediaAssetView) => void;
   onShare: (asset: MediaAssetView) => void;
@@ -89,7 +89,7 @@ export function MediaAssetGrid(props: MediaAssetGridProps) {
   };
 
   return (
-    <section className="media-assets-region" aria-label="Project media">
+    <section className="media-assets-region" aria-label="Project media" tabIndex={-1}>
       {props.folderPath.length > 0 ? (
         <nav className="media-folder-breadcrumb" aria-label="Current media folder">
           <button className="label-s-semibold" type="button" onClick={() => props.onFolderOpen(null)}>All media</button>

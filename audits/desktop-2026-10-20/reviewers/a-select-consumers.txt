@@ -1,0 +1,629 @@
+src/components/media/media.css-805-  box-shadow: var(--brisk-shadow-s);
+src/components/media/media.css-806-}
+src/components/media/media.css-807-
+src/components/media/media.css:808:.media-select-shell .brisk-select-trigger {
+src/components/media/media.css-809-  height: 100%;
+src/components/media/media.css-810-  appearance: none;
+src/components/media/media.css-811-  border: 0;
+src/components/media/media.css-812-  background: transparent;
+src/components/media/media.css-813-  color: var(--brisk-text-primary);
+src/components/media/media.css-814-  padding: var(--brisk-space-none) var(--brisk-space-m);
+src/components/media/media.css-815-  min-height: var(--brisk-space-3xl);
+src/components/media/media.css-816-}
+src/components/media/media.css-817-
+--
+src/components/media/media.css-1957-  padding-left: var(--brisk-space-m);
+src/components/media/media.css-1958-}
+src/components/media/media.css-1959-
+src/components/media/media.css:1960:.media-cloud-folder-filter .brisk-select-trigger {
+src/components/media/media.css-1961-  min-width: var(--brisk-space-none);
+src/components/media/media.css-1962-  width: 100%;
+src/components/media/media.css-1963-  height: 100%;
+src/components/media/media.css-1964-  appearance: none;
+src/components/media/media.css-1965-  border: 0;
+src/components/media/media.css-1966-  outline: 0;
+src/components/media/media.css-1967-  background: transparent;
+src/components/media/media.css-1968-  color: var(--brisk-text-primary);
+src/components/media/media.css-1969-  padding-right: var(--brisk-space-2xl);
+--
+src/components/media/media.css-2331-    gap: var(--brisk-space-xs);
+src/components/media/media.css-2332-  }
+src/components/media/media.css-2333-
+src/components/media/media.css:2334:  .media-mobile-location .brisk-select-trigger {
+src/components/media/media.css-2335-    min-width: var(--brisk-space-none);
+src/components/media/media.css-2336-    width: 100%;
+src/components/media/media.css-2337-    height: 40px;
+src/components/media/media.css-2338-    border: 1px solid var(--brisk-border-primary);
+src/components/media/media.css-2339-    border-radius: var(--brisk-radius-s);
+src/components/media/media.css-2340-    background: var(--brisk-white);
+src/components/media/media.css-2341-    color: var(--brisk-text-primary);
+src/components/media/media.css-2342-    padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/media/media.css-2343-  }
+--
+src/components/prototype-scenarios/prototype-scenarios.css-112-  gap: var(--brisk-space-s);
+src/components/prototype-scenarios/prototype-scenarios.css-113-}
+src/components/prototype-scenarios/prototype-scenarios.css-114-
+src/components/prototype-scenarios/prototype-scenarios.css:115:.prototype-scenario-fields .brisk-select-trigger {
+src/components/prototype-scenarios/prototype-scenarios.css-116-  width: 100%;
+src/components/prototype-scenarios/prototype-scenarios.css-117-  padding: var(--brisk-space-m) var(--brisk-space-l);
+src/components/prototype-scenarios/prototype-scenarios.css-118-  border: 1px solid var(--brisk-border-primary);
+src/components/prototype-scenarios/prototype-scenarios.css-119-  border-radius: var(--brisk-radius-s);
+src/components/prototype-scenarios/prototype-scenarios.css-120-  background: var(--brisk-bg-block-primary);
+src/components/prototype-scenarios/prototype-scenarios.css-121-  color: var(--brisk-text-primary);
+src/components/prototype-scenarios/prototype-scenarios.css-122-}
+src/components/prototype-scenarios/prototype-scenarios.css-123-
+src/components/prototype-scenarios/prototype-scenarios.css:124:.prototype-scenario-fields .brisk-select-trigger:hover,
+src/components/prototype-scenarios/prototype-scenarios.css:125:.prototype-scenario-fields .brisk-select-trigger:focus-visible {
+src/components/prototype-scenarios/prototype-scenarios.css-126-  background: var(--brisk-brand-primary-hover);
+src/components/prototype-scenarios/prototype-scenarios.css-127-  box-shadow: var(--brisk-shadow-s);
+src/components/prototype-scenarios/prototype-scenarios.css-128-  outline: none;
+src/components/prototype-scenarios/prototype-scenarios.css-129-}
+src/components/prototype-scenarios/prototype-scenarios.css-130-
+src/components/prototype-scenarios/prototype-scenarios.css-131-.prototype-scenario-summary {
+src/components/prototype-scenarios/prototype-scenarios.css-132-  display: grid;
+src/components/prototype-scenarios/prototype-scenarios.css-133-  gap: var(--brisk-space-l);
+src/components/prototype-scenarios/prototype-scenarios.css-134-  padding: var(--brisk-space-xl);
+--
+src/components/people/people.css-882-.person-inline-editor { display: grid; min-width: min(100%, calc(var(--brisk-space-3xl) * 7)); gap: var(--brisk-space-s); }
+src/components/people/people.css-883-.person-inline-editor > div:last-child { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--brisk-space-xs); }
+src/components/people/people.css-884-.person-inline-editor textarea,
+src/components/people/people.css:885:.person-inline-editor .brisk-select-trigger { width: 100%; border: 1px solid var(--brisk-border-primary); border-radius: var(--brisk-radius-s); background: var(--brisk-bg-elevated-primary); color: var(--brisk-text-primary); font: inherit; padding: var(--brisk-space-s) var(--brisk-space-m); }
+src/components/people/people.css-886-.person-inline-editor textarea { min-height: calc(var(--brisk-space-3xl) * 2); resize: vertical; }
+src/components/people/people.css:887:.person-inline-editor .brisk-select-trigger:focus-visible,
+src/components/people/people.css-888-.person-inline-editor textarea:focus-visible { outline: 2px solid var(--brisk-brand-primary-click); outline-offset: 2px; }
+src/components/people/people.css-889-.person-tag-multiselect .person-inline-multiselect-trigger { min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-s)); align-items: center; border-color: var(--brisk-border-primary); padding: var(--brisk-space-s); }
+src/components/people/people.css:890:.person-tag-multiselect .person-inline-multiselect-trigger > .brisk-select-trigger-label { max-width: 100%; overflow: visible; white-space: normal; }
+src/components/people/people.css-891-.person-tag-multiselect .person-inline-multiselect-trigger .person-tag-list { align-items: center; overflow: visible; white-space: normal; }
+src/components/people/people.css-892-.person-inline-role-select { max-width: calc(var(--brisk-space-3xl) * 5); }
+src/components/people/people.css-893-.person-inline-role-select-trigger { min-height: calc(var(--brisk-space-3xl) - var(--brisk-space-s)); border-color: var(--brisk-border-primary); border-radius: var(--brisk-radius-s); background: var(--brisk-bg-elevated-primary); font-weight: 600; }
+src/components/people/people.css-894-.person-agreement-field { display: grid; justify-items: start; gap: var(--brisk-space-s); }
+src/components/people/people.css-895-.person-agreement-file { display: grid; justify-items: start; gap: var(--brisk-space-xs); }
+src/components/people/people.css-896-.person-agreement-file a { overflow-wrap: anywhere; }
+src/components/people/people.css-897-.person-agreement-file > div { display: flex; flex-wrap: wrap; align-items: center; gap: var(--brisk-space-s); }
+src/components/people/people.css-898-.person-capacity-inline { display: flex; align-items: center; gap: var(--brisk-space-s); }
+src/components/people/people.css-899-.person-capacity-inline > div { width: calc(var(--brisk-space-3xl) * 3); flex: 0 0 calc(var(--brisk-space-3xl) * 3); }
+--
+src/components/today/today.css-737-  flex: 0 0 32px;
+src/components/today/today.css-738-}
+src/components/today/today.css-739-
+src/components/today/today.css:740:.today-stage-select-wrap .brisk-select-trigger {
+src/components/today/today.css-741-  min-width: 0;
+src/components/today/today.css-742-  flex: 1;
+src/components/today/today.css-743-  border: 0;
+src/components/today/today.css-744-  background: transparent;
+src/components/today/today.css-745-  color: var(--brisk-text-primary);
+src/components/today/today.css-746-  font: inherit;
+src/components/today/today.css-747-  outline: none;
+src/components/today/today.css-748-}
+src/components/today/today.css-749-
+--
+src/components/costs/costs.css-246-  width: fit-content;
+src/components/costs/costs.css-247-}
+src/components/costs/costs.css-248-
+src/components/costs/costs.css:249:.costs-state-select .brisk-select-trigger {
+src/components/costs/costs.css-250-  width: fit-content;
+src/components/costs/costs.css-251-  min-height: auto;
+src/components/costs/costs.css-252-  border: var(--brisk-space-none);
+src/components/costs/costs.css-253-  cursor: pointer;
+src/components/costs/costs.css-254-}
+src/components/costs/costs.css-255-
+src/components/costs/costs.css:256:.costs-state-select .brisk-select-trigger:hover,
+src/components/costs/costs.css:257:.costs-state-select .brisk-select-trigger:focus-visible {
+src/components/costs/costs.css-258-  box-shadow: var(--brisk-shadow-s);
+src/components/costs/costs.css-259-  outline: none;
+src/components/costs/costs.css-260-}
+src/components/costs/costs.css-261-
+src/components/costs/costs.css-262-.costs-state-badge.is-pending,
+src/components/costs/costs.css-263-.costs-state-badge.is-submitted {
+src/components/costs/costs.css-264-  background: var(--brisk-yellow-10);
+src/components/costs/costs.css-265-  color: var(--brisk-yellow-60);
+src/components/costs/costs.css-266-}
+--
+src/components/masters/masters.css-890-}
+src/components/masters/masters.css-891-
+src/components/masters/masters.css-892-.masters-add-grid input,
+src/components/masters/masters.css:893:.masters-add-grid .brisk-select-trigger,
+src/components/masters/masters.css-894-.masters-request-form input,
+src/components/masters/masters.css:895:.masters-request-form .brisk-select-trigger,
+src/components/masters/masters.css-896-.masters-request-form textarea {
+src/components/masters/masters.css-897-  width: 100%;
+src/components/masters/masters.css-898-  min-height: 36px;
+src/components/masters/masters.css-899-  border: 1px solid var(--brisk-border-primary);
+src/components/masters/masters.css-900-  border-radius: var(--brisk-radius-s);
+src/components/masters/masters.css-901-  background: var(--brisk-white);
+src/components/masters/masters.css-902-  color: var(--brisk-text-primary);
+src/components/masters/masters.css-903-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/masters/masters.css-904-}
+--
+src/components/masters/masters.css-1350-
+src/components/masters/masters.css-1351-.masters-shell button:focus-visible,
+src/components/masters/masters.css-1352-.masters-shell input:focus-visible,
+src/components/masters/masters.css:1353:.masters-shell .brisk-select-trigger:focus-visible,
+src/components/masters/masters.css-1354-.masters-shell textarea:focus-visible {
+src/components/masters/masters.css-1355-  outline: none;
+src/components/masters/masters.css-1356-  box-shadow: var(--brisk-shadow-s);
+src/components/masters/masters.css-1357-}
+src/components/masters/masters.css-1358-
+src/components/masters/masters.css-1359-@media (max-width: 1100px) {
+src/components/masters/masters.css-1360-  .masters-workspace {
+src/components/masters/masters.css-1361-    grid-template-columns: minmax(0, 1fr) 340px;
+src/components/masters/masters.css-1362-  }
+--
+src/components/masters/masters.css-2443-}
+src/components/masters/masters.css-2444-
+src/components/masters/masters.css-2445-.masters-add-grid input,
+src/components/masters/masters.css:2446:.masters-add-grid .brisk-select-trigger,
+src/components/masters/masters.css-2447-.masters-request-form input,
+src/components/masters/masters.css:2448:.masters-request-form .brisk-select-trigger,
+src/components/masters/masters.css-2449-.masters-request-form textarea {
+src/components/masters/masters.css-2450-  width: 100%;
+src/components/masters/masters.css-2451-  min-height: 36px;
+src/components/masters/masters.css-2452-  border: 1px solid var(--brisk-border-primary);
+src/components/masters/masters.css-2453-  border-radius: var(--brisk-radius-s);
+src/components/masters/masters.css-2454-  background: var(--brisk-white);
+src/components/masters/masters.css-2455-  color: var(--brisk-text-primary);
+src/components/masters/masters.css-2456-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/masters/masters.css-2457-}
+--
+src/components/masters/masters.css-3921-.masters-recut-mark-editor textarea,
+src/components/masters/masters.css-3922-.masters-recut-panel-footer input,
+src/components/masters/masters.css-3923-.masters-recut-panel-footer textarea,
+src/components/masters/masters.css:3924:.masters-recut-panel-footer .brisk-select-trigger {
+src/components/masters/masters.css-3925-  width: 100%;
+src/components/masters/masters.css-3926-  border: 1px solid var(--brisk-border-primary);
+src/components/masters/masters.css-3927-  border-radius: var(--brisk-radius-s);
+src/components/masters/masters.css-3928-  background: var(--brisk-white);
+src/components/masters/masters.css-3929-  color: var(--brisk-text-primary);
+src/components/masters/masters.css-3930-  padding: var(--brisk-space-s);
+src/components/masters/masters.css-3931-}
+src/components/masters/masters.css-3932-
+src/components/masters/masters.css-3933-.masters-recut-card-actions {
+--
+src/components/chat/chat.css-67-.chat-shell a,
+src/components/chat/chat.css-68-.chat-shell input,
+src/components/chat/chat.css-69-.chat-shell textarea,
+src/components/chat/chat.css:70:.chat-shell .brisk-select-trigger {
+src/components/chat/chat.css-71-  transition:
+src/components/chat/chat.css-72-    background 120ms ease,
+src/components/chat/chat.css-73-    border-color 120ms ease,
+src/components/chat/chat.css-74-    box-shadow 120ms ease,
+src/components/chat/chat.css-75-    color 120ms ease,
+src/components/chat/chat.css-76-    opacity 120ms ease,
+src/components/chat/chat.css-77-    transform 120ms ease;
+src/components/chat/chat.css-78-}
+src/components/chat/chat.css-79-
+--
+src/components/chat/chat.css-82-.chat-shell a:focus-visible,
+src/components/chat/chat.css-83-.chat-shell input:focus-visible,
+src/components/chat/chat.css-84-.chat-shell textarea:focus-visible,
+src/components/chat/chat.css:85:.chat-shell .brisk-select-trigger:not(.chat-client-filter-trigger):focus-visible {
+src/components/chat/chat.css-86-  outline: none;
+src/components/chat/chat.css-87-  box-shadow: var(--brisk-shadow-s);
+src/components/chat/chat.css-88-}
+src/components/chat/chat.css-89-
+src/components/chat/chat.css-90-.chat-rail {
+src/components/chat/chat.css-91-  display: flex;
+src/components/chat/chat.css-92-  min-width: 0;
+src/components/chat/chat.css-93-  min-height: 0;
+src/components/chat/chat.css-94-  flex-direction: column;
+--
+src/components/chat/chat.css-2583-  align-items: center;
+src/components/chat/chat.css-2584-}
+src/components/chat/chat.css-2585-
+src/components/chat/chat.css:2586:.chat-call-filters .brisk-select-trigger {
+src/components/chat/chat.css-2587-  height: var(--brisk-space-3xl);
+src/components/chat/chat.css-2588-  appearance: none;
+src/components/chat/chat.css-2589-  border: 1px solid var(--brisk-border-primary);
+src/components/chat/chat.css-2590-  border-radius: var(--brisk-radius-s);
+src/components/chat/chat.css-2591-  background: var(--brisk-white);
+src/components/chat/chat.css-2592-  color: var(--brisk-text-primary);
+src/components/chat/chat.css-2593-  padding: 0 var(--brisk-space-2xl) 0 var(--brisk-space-m);
+src/components/chat/chat.css-2594-}
+src/components/chat/chat.css-2595-
+--
+src/components/chat/chat.css-2855-  color: var(--brisk-text-secondary);
+src/components/chat/chat.css-2856-}
+src/components/chat/chat.css-2857-
+src/components/chat/chat.css:2858:.chat-call-device-grid .brisk-select-trigger {
+src/components/chat/chat.css-2859-  width: 100%;
+src/components/chat/chat.css-2860-  min-height: var(--brisk-space-3xl);
+src/components/chat/chat.css-2861-  border: 1px solid var(--brisk-border-primary);
+src/components/chat/chat.css-2862-  border-radius: var(--brisk-radius-s);
+src/components/chat/chat.css-2863-  background: var(--brisk-white);
+src/components/chat/chat.css-2864-  color: var(--brisk-text-primary);
+src/components/chat/chat.css-2865-  padding: 0 var(--brisk-space-s);
+src/components/chat/chat.css-2866-}
+src/components/chat/chat.css-2867-
+--
+src/components/chat/chat.css-3050-  color: var(--brisk-text-secondary);
+src/components/chat/chat.css-3051-}
+src/components/chat/chat.css-3052-
+src/components/chat/chat.css:3053:.chat-settings-field .brisk-select-trigger {
+src/components/chat/chat.css-3054-  min-width: calc(var(--brisk-space-3xl) * 4);
+src/components/chat/chat.css-3055-  height: var(--brisk-space-3xl);
+src/components/chat/chat.css-3056-  border: 1px solid var(--brisk-border-primary);
+src/components/chat/chat.css-3057-  border-radius: var(--brisk-radius-s);
+src/components/chat/chat.css-3058-  background: var(--brisk-white);
+src/components/chat/chat.css-3059-  padding: 0 var(--brisk-space-s);
+src/components/chat/chat.css-3060-}
+src/components/chat/chat.css-3061-
+src/components/chat/chat.css-3062-.chat-settings-summary-grid {
+--
+src/components/chat/chat.css-3351-  gap: var(--brisk-space-xs);
+src/components/chat/chat.css-3352-}
+src/components/chat/chat.css-3353-
+src/components/chat/chat.css:3354:.chat-connector-config-field .brisk-select-trigger {
+src/components/chat/chat.css-3355-  width: 100%;
+src/components/chat/chat.css-3356-  height: var(--brisk-space-3xl);
+src/components/chat/chat.css-3357-  border: 1px solid var(--brisk-border-primary);
+src/components/chat/chat.css-3358-  border-radius: var(--brisk-radius-s);
+src/components/chat/chat.css-3359-  background: var(--brisk-bg-block-primary);
+src/components/chat/chat.css-3360-  color: var(--brisk-text-primary);
+src/components/chat/chat.css-3361-  padding: var(--brisk-space-none) var(--brisk-space-m);
+src/components/chat/chat.css-3362-}
+src/components/chat/chat.css-3363-
+--
+src/components/active-videos/freelancer-time-dialog.css-72-}
+src/components/active-videos/freelancer-time-dialog.css-73-
+src/components/active-videos/freelancer-time-dialog.css-74-.freelancer-time-fields input,
+src/components/active-videos/freelancer-time-dialog.css:75:.freelancer-time-fields .brisk-select-trigger,
+src/components/active-videos/freelancer-time-dialog.css-76-.freelancer-time-fields textarea {
+src/components/active-videos/freelancer-time-dialog.css-77-  width: 100%;
+src/components/active-videos/freelancer-time-dialog.css-78-  min-height: 44px;
+src/components/active-videos/freelancer-time-dialog.css-79-  border: 1px solid var(--brisk-border-primary);
+src/components/active-videos/freelancer-time-dialog.css-80-  border-radius: var(--brisk-radius-s);
+src/components/active-videos/freelancer-time-dialog.css-81-  background: var(--brisk-white);
+src/components/active-videos/freelancer-time-dialog.css-82-  color: var(--brisk-text-primary);
+src/components/active-videos/freelancer-time-dialog.css-83-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/active-videos/freelancer-time-dialog.css-84-}
+--
+src/components/shoot/shoot.css-314-  padding: var(--brisk-space-s) var(--brisk-space-l);
+src/components/shoot/shoot.css-315-}
+src/components/shoot/shoot.css-316-
+src/components/shoot/shoot.css:317:.shoot-on-set-global-day-trigger .brisk-select-trigger-label {
+src/components/shoot/shoot.css-318-  display: grid;
+src/components/shoot/shoot.css-319-  align-items: start;
+src/components/shoot/shoot.css-320-  gap: var(--brisk-space-2xs);
+src/components/shoot/shoot.css-321-}
+src/components/shoot/shoot.css-322-
+src/components/shoot/shoot.css-323-.shoot-on-set-global-day-trigger:is(:hover, :focus-visible) {
+src/components/shoot/shoot.css-324-  background: var(--brisk-bg-block-secondary);
+src/components/shoot/shoot.css-325-  box-shadow: inset 0 0 0 2px var(--brisk-border-focus);
+src/components/shoot/shoot.css-326-}
+--
+src/components/shoot/shoot.css-1974-  outline: none;
+src/components/shoot/shoot.css-1975-}
+src/components/shoot/shoot.css-1976-
+src/components/shoot/shoot.css:1977:.shoot-on-set-status .brisk-select-trigger {
+src/components/shoot/shoot.css-1978-  min-height: var(--brisk-space-2xl);
+src/components/shoot/shoot.css-1979-  font-size: 12px;
+src/components/shoot/shoot.css-1980-  line-height: 16px;
+src/components/shoot/shoot.css-1981-}
+src/components/shoot/shoot.css-1982-
+src/components/shoot/shoot.css-1983-.shoot-on-set-capture-control {
+src/components/shoot/shoot.css-1984-  position: relative;
+src/components/shoot/shoot.css-1985-  display: grid;
+src/components/shoot/shoot.css-1986-  min-width: 0;
+--
+src/components/shoot/shoot.css-2252-  padding: var(--brisk-space-2xs) var(--brisk-space-xs);
+src/components/shoot/shoot.css-2253-}
+src/components/shoot/shoot.css-2254-
+src/components/shoot/shoot.css:2255:.shoot-shot-table-select .brisk-select-trigger {
+src/components/shoot/shoot.css-2256-  min-height: var(--brisk-space-2xl);
+src/components/shoot/shoot.css-2257-  border-color: transparent;
+src/components/shoot/shoot.css-2258-  background: transparent;
+src/components/shoot/shoot.css-2259-  font-family: var(--font-brisk);
+src/components/shoot/shoot.css-2260-  font-size: 14px;
+src/components/shoot/shoot.css-2261-  font-weight: 400;
+src/components/shoot/shoot.css-2262-  line-height: 20px;
+src/components/shoot/shoot.css-2263-  padding: var(--brisk-space-xs);
+src/components/shoot/shoot.css-2264-}
+src/components/shoot/shoot.css-2265-
+src/components/shoot/shoot.css:2266:.shoot-shot-abbreviated-select .brisk-select-trigger {
+src/components/shoot/shoot.css-2267-  gap: var(--brisk-space-2xs);
+src/components/shoot/shoot.css-2268-  padding-inline: var(--brisk-space-2xs);
+src/components/shoot/shoot.css-2269-}
+src/components/shoot/shoot.css-2270-
+src/components/shoot/shoot.css-2271-.shoot-shot-table .shoot-people-picker.is-compact .shoot-people-search > input,
+src/components/shoot/shoot.css-2272-.shoot-shot-table-static {
+src/components/shoot/shoot.css-2273-  font-family: var(--font-brisk);
+src/components/shoot/shoot.css-2274-  font-size: 14px;
+src/components/shoot/shoot.css-2275-  font-weight: 400;
+src/components/shoot/shoot.css-2276-  line-height: 20px;
+src/components/shoot/shoot.css-2277-}
+src/components/shoot/shoot.css-2278-
+src/components/shoot/shoot.css:2279:.shoot-shot-table-select .brisk-select-trigger:is(:hover, :focus-visible) {
+src/components/shoot/shoot.css-2280-  border-color: var(--brisk-border-primary);
+src/components/shoot/shoot.css-2281-  background: var(--brisk-white);
+src/components/shoot/shoot.css-2282-}
+src/components/shoot/shoot.css-2283-
+src/components/shoot/shoot.css-2284-.shoot-shot-custom-taxonomy-input.is-table {
+src/components/shoot/shoot.css-2285-  min-height: var(--brisk-space-2xl);
+src/components/shoot/shoot.css-2286-  border-color: transparent;
+src/components/shoot/shoot.css-2287-  background: transparent;
+src/components/shoot/shoot.css-2288-  font-family: var(--font-brisk);
+--
+src/components/shoot/shoot.css-3226-  gap: var(--brisk-space-m);
+src/components/shoot/shoot.css-3227-}
+src/components/shoot/shoot.css-3228-
+src/components/shoot/shoot.css:3229:.shoot-schedule-day-editor :is(.brief-date-display, .brisk-select-trigger, .shoot-time-input > input) {
+src/components/shoot/shoot.css-3230-  min-height: calc(var(--brisk-space-3xl) + var(--brisk-space-xs));
+src/components/shoot/shoot.css-3231-}
+src/components/shoot/shoot.css-3232-
+src/components/shoot/shoot.css-3233-.shoot-schedule-day-editor .shoot-time-input > input {
+src/components/shoot/shoot.css-3234-  width: 100%;
+src/components/shoot/shoot.css-3235-  min-width: 0;
+src/components/shoot/shoot.css-3236-  border: 1px solid var(--brisk-border-primary);
+src/components/shoot/shoot.css-3237-  border-radius: var(--brisk-radius-s);
+src/components/shoot/shoot.css-3238-  background: var(--brisk-white);
+--
+src/components/shoot/shoot.css-5445-  transform: translateY(-50%);
+src/components/shoot/shoot.css-5446-}
+src/components/shoot/shoot.css-5447-
+src/components/shoot/shoot.css:5448:.shoot-hero-time :is(input, .brisk-select-trigger) {
+src/components/shoot/shoot.css-5449-  width: calc(var(--brisk-space-3xl) * 6);
+src/components/shoot/shoot.css-5450-  max-width: 100%;
+src/components/shoot/shoot.css-5451-  border: var(--brisk-space-none);
+src/components/shoot/shoot.css-5452-  border-bottom: 2px solid transparent;
+src/components/shoot/shoot.css-5453-  background: transparent;
+src/components/shoot/shoot.css-5454-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-5455-  font-size: 40px;
+src/components/shoot/shoot.css-5456-  font-weight: 700;
+src/components/shoot/shoot.css-5457-  line-height: 48px;
+--
+src/components/shoot/shoot.css-5462-  display: none;
+src/components/shoot/shoot.css-5463-}
+src/components/shoot/shoot.css-5464-
+src/components/shoot/shoot.css:5465:.shoot-hero-time :is(input, .brisk-select-trigger):hover,
+src/components/shoot/shoot.css:5466:.shoot-hero-time :is(input, .brisk-select-trigger):focus {
+src/components/shoot/shoot.css-5467-  border-bottom-color: var(--brisk-brand-primary);
+src/components/shoot/shoot.css-5468-  outline: var(--brisk-space-none);
+src/components/shoot/shoot.css-5469-}
+src/components/shoot/shoot.css-5470-
+src/components/shoot/shoot.css-5471-.shoot-inline-field,
+src/components/shoot/shoot.css-5472-.shoot-field,
+src/components/shoot/shoot.css-5473-.shoot-practical-field {
+src/components/shoot/shoot.css-5474-  display: grid;
+src/components/shoot/shoot.css-5475-  min-width: var(--brisk-space-none);
+--
+src/components/shoot/shoot.css-5482-}
+src/components/shoot/shoot.css-5483-
+src/components/shoot/shoot.css-5484-.shoot-inline-field input,
+src/components/shoot/shoot.css:5485:.shoot-inline-field .brisk-select-trigger,
+src/components/shoot/shoot.css-5486-.shoot-field input,
+src/components/shoot/shoot.css:5487:.shoot-field .brisk-select-trigger,
+src/components/shoot/shoot.css-5488-.shoot-field textarea,
+src/components/shoot/shoot.css-5489-.shoot-textarea-field textarea,
+src/components/shoot/shoot.css-5490-.shoot-practical-field textarea,
+src/components/shoot/shoot.css-5491-.shoot-notice textarea,
+src/components/shoot/shoot.css-5492-.shoot-inline-add input,
+src/components/shoot/shoot.css-5493-.shoot-document-form input,
+src/components/shoot/shoot.css:5494:.shoot-document-form .brisk-select-trigger {
+src/components/shoot/shoot.css-5495-  width: 100%;
+src/components/shoot/shoot.css-5496-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-5497-  border: 1px solid var(--brisk-border-primary);
+src/components/shoot/shoot.css-5498-  border-radius: var(--brisk-radius-s);
+src/components/shoot/shoot.css-5499-  background: var(--brisk-white);
+src/components/shoot/shoot.css-5500-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-5501-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/shoot/shoot.css-5502-}
+src/components/shoot/shoot.css-5503-
+--
+src/components/shoot/shoot.css-5543-}
+src/components/shoot/shoot.css-5544-
+src/components/shoot/shoot.css-5545-.shoot-inline-field input:hover,
+src/components/shoot/shoot.css:5546:.shoot-inline-field .brisk-select-trigger:hover,
+src/components/shoot/shoot.css-5547-.shoot-field input:hover,
+src/components/shoot/shoot.css:5548:.shoot-field .brisk-select-trigger:hover,
+src/components/shoot/shoot.css-5549-.shoot-field textarea:hover,
+src/components/shoot/shoot.css-5550-.shoot-textarea-field textarea:hover,
+src/components/shoot/shoot.css-5551-.shoot-practical-field textarea:hover,
+src/components/shoot/shoot.css-5552-.shoot-inline-add input:hover,
+src/components/shoot/shoot.css-5553-.shoot-document-form input:hover,
+src/components/shoot/shoot.css:5554:.shoot-document-form .brisk-select-trigger:hover {
+src/components/shoot/shoot.css-5555-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-5556-}
+src/components/shoot/shoot.css-5557-
+src/components/shoot/shoot.css-5558-.shoot-shell input:focus-visible,
+src/components/shoot/shoot.css:5559:.shoot-shell .brisk-select-trigger:focus-visible,
+src/components/shoot/shoot.css-5560-.shoot-shell textarea:focus-visible,
+src/components/shoot/shoot.css-5561-.shoot-shell a:focus-visible {
+src/components/shoot/shoot.css-5562-  outline: none;
+src/components/shoot/shoot.css-5563-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-5564-}
+src/components/shoot/shoot.css-5565-
+src/components/shoot/shoot.css-5566-.shoot-notice {
+src/components/shoot/shoot.css-5567-  display: grid;
+src/components/shoot/shoot.css-5568-  grid-template-columns: auto minmax(var(--brisk-space-none), 1fr);
+--
+src/components/shoot/shoot.css-6529-  grid-template-columns: minmax(calc(var(--brisk-space-3xl) * 4), 1fr) minmax(calc(var(--brisk-space-3xl) * 5), 1.5fr) calc(var(--brisk-space-3xl) * 3) auto;
+src/components/shoot/shoot.css-6530-}
+src/components/shoot/shoot.css-6531-
+src/components/shoot/shoot.css:6532:.shoot-inline-add .brisk-select-trigger {
+src/components/shoot/shoot.css-6533-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-6534-  border: 1px solid var(--brisk-border-primary);
+src/components/shoot/shoot.css-6535-  border-radius: var(--brisk-radius-s);
+src/components/shoot/shoot.css-6536-  background: var(--brisk-white);
+src/components/shoot/shoot.css-6537-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-6538-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/shoot/shoot.css-6539-}
+src/components/shoot/shoot.css-6540-
+src/components/shoot/shoot.css-6541-.shoot-add-section-wrap {
+--
+src/components/shoot/shoot.css-7196-    padding: var(--brisk-space-l);
+src/components/shoot/shoot.css-7197-  }
+src/components/shoot/shoot.css-7198-
+src/components/shoot/shoot.css:7199:  .shoot-hero-time :is(input, .brisk-select-trigger) {
+src/components/shoot/shoot.css-7200-    font-size: 32px;
+src/components/shoot/shoot.css-7201-    line-height: 40px;
+src/components/shoot/shoot.css-7202-  }
+src/components/shoot/shoot.css-7203-
+src/components/shoot/shoot.css-7204-  .shoot-section-header {
+src/components/shoot/shoot.css-7205-    min-height: auto;
+src/components/shoot/shoot.css-7206-  }
+src/components/shoot/shoot.css-7207-
+src/components/shoot/shoot.css-7208-  .shoot-section-actions {
+--
+src/components/shoot/shoot.css-8289-  color: var(--brisk-text-secondary);
+src/components/shoot/shoot.css-8290-}
+src/components/shoot/shoot.css-8291-
+src/components/shoot/shoot.css:8292:.shoot-setup-field :is(input, .brisk-select-trigger, textarea),
+src/components/shoot/shoot.css:8293:.shoot-setup-entry-list :is(input, .brisk-select-trigger),
+src/components/shoot/shoot.css-8294-.shoot-setup-shot-review-list input {
+src/components/shoot/shoot.css-8295-  width: 100%;
+src/components/shoot/shoot.css-8296-  min-width: var(--brisk-space-none);
+src/components/shoot/shoot.css-8297-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-8298-  border: 1px solid var(--brisk-border-primary);
+src/components/shoot/shoot.css-8299-  border-radius: var(--brisk-radius-s);
+src/components/shoot/shoot.css-8300-  background: var(--brisk-white);
+src/components/shoot/shoot.css-8301-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-8302-  padding: var(--brisk-space-s) var(--brisk-space-m);
+--
+src/components/shoot/shoot.css-8306-  resize: vertical;
+src/components/shoot/shoot.css-8307-}
+src/components/shoot/shoot.css-8308-
+src/components/shoot/shoot.css:8309:.shoot-setup-field :is(input, .brisk-select-trigger, textarea):hover,
+src/components/shoot/shoot.css:8310:.shoot-setup-entry-list :is(input, .brisk-select-trigger):hover,
+src/components/shoot/shoot.css-8311-.shoot-setup-shot-review-list input:hover {
+src/components/shoot/shoot.css-8312-  background: var(--brisk-brand-secondary);
+src/components/shoot/shoot.css-8313-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-8314-}
+src/components/shoot/shoot.css-8315-
+src/components/shoot/shoot.css:8316:.shoot-setup-field :is(input, .brisk-select-trigger, textarea):focus-visible,
+src/components/shoot/shoot.css:8317:.shoot-setup-entry-list :is(input, .brisk-select-trigger):focus-visible,
+src/components/shoot/shoot.css-8318-.shoot-setup-shot-review-list input:focus-visible {
+src/components/shoot/shoot.css-8319-  background: var(--brisk-white);
+src/components/shoot/shoot.css-8320-  outline: none;
+src/components/shoot/shoot.css-8321-  box-shadow: 0 0 0 var(--brisk-space-xs) var(--brisk-border-focus);
+src/components/shoot/shoot.css-8322-}
+src/components/shoot/shoot.css-8323-
+src/components/shoot/shoot.css-8324-.shoot-brisk-time-picker {
+src/components/shoot/shoot.css-8325-  position: relative;
+src/components/shoot/shoot.css-8326-  width: 100%;
+--
+src/components/shoot/shoot.css-10727-}
+src/components/shoot/shoot.css-10728-
+src/components/shoot/shoot.css-10729-.shoot-quick-field input,
+src/components/shoot/shoot.css:10730:.shoot-quick-field .brisk-select-trigger,
+src/components/shoot/shoot.css:10731:.shoot-quick-more-options .brisk-select-trigger {
+src/components/shoot/shoot.css-10732-  width: 100%;
+src/components/shoot/shoot.css-10733-  min-width: 0;
+src/components/shoot/shoot.css-10734-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-10735-  border: 1px solid var(--shoot-soft-border);
+src/components/shoot/shoot.css-10736-  border-radius: var(--brisk-radius-s);
+src/components/shoot/shoot.css-10737-  background: var(--brisk-white);
+src/components/shoot/shoot.css-10738-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-10739-  padding: var(--brisk-space-s) var(--brisk-space-m);
+src/components/shoot/shoot.css-10740-}
+--
+src/components/shoot/shoot.css-11269-  outline: none;
+src/components/shoot/shoot.css-11270-}
+src/components/shoot/shoot.css-11271-
+src/components/shoot/shoot.css:11272:.shoot-call-sheet-hero :is(input, .brisk-select-trigger, textarea):focus-visible,
+src/components/shoot/shoot.css:11273:.shoot-section :is(input, .brisk-select-trigger, textarea):focus-visible,
+src/components/shoot/shoot.css:11274:.shoot-modal :is(input, .brisk-select-trigger, textarea):focus-visible {
+src/components/shoot/shoot.css-11275-  border-color: var(--brisk-border-primary);
+src/components/shoot/shoot.css-11276-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-11277-  outline: none;
+src/components/shoot/shoot.css-11278-}
+src/components/shoot/shoot.css-11279-
+src/components/shoot/shoot.css-11280-.shoot-shell button:not([data-brisk-button]):hover {
+src/components/shoot/shoot.css-11281-  box-shadow: none !important;
+src/components/shoot/shoot.css-11282-}
+src/components/shoot/shoot.css-11283-
+--
+src/components/shoot/shoot.css-11293-}
+src/components/shoot/shoot.css-11294-
+src/components/shoot/shoot.css-11295-.shoot-inline-field input,
+src/components/shoot/shoot.css:11296:.shoot-inline-field .brisk-select-trigger,
+src/components/shoot/shoot.css-11297-.shoot-field input,
+src/components/shoot/shoot.css:11298:.shoot-field .brisk-select-trigger,
+src/components/shoot/shoot.css-11299-.shoot-field textarea,
+src/components/shoot/shoot.css-11300-.shoot-textarea-field textarea,
+src/components/shoot/shoot.css-11301-.shoot-practical-field textarea,
+src/components/shoot/shoot.css-11302-.shoot-inline-add input,
+src/components/shoot/shoot.css:11303:.shoot-inline-add .brisk-select-trigger,
+src/components/shoot/shoot.css-11304-.shoot-document-form input,
+src/components/shoot/shoot.css:11305:.shoot-document-form .brisk-select-trigger,
+src/components/shoot/shoot.css-11306-.shoot-checkbox-list {
+src/components/shoot/shoot.css-11307-  border-color: var(--shoot-soft-border);
+src/components/shoot/shoot.css-11308-}
+src/components/shoot/shoot.css-11309-
+src/components/shoot/shoot.css-11310-.shoot-inline-field input:hover,
+src/components/shoot/shoot.css:11311:.shoot-inline-field .brisk-select-trigger:hover,
+src/components/shoot/shoot.css-11312-.shoot-field input:hover,
+src/components/shoot/shoot.css:11313:.shoot-field .brisk-select-trigger:hover,
+src/components/shoot/shoot.css-11314-.shoot-field textarea:hover,
+src/components/shoot/shoot.css-11315-.shoot-textarea-field textarea:hover,
+src/components/shoot/shoot.css-11316-.shoot-practical-field textarea:hover,
+src/components/shoot/shoot.css-11317-.shoot-inline-add input:hover,
+src/components/shoot/shoot.css-11318-.shoot-document-form input:hover,
+src/components/shoot/shoot.css:11319:.shoot-document-form .brisk-select-trigger:hover {
+src/components/shoot/shoot.css-11320-  box-shadow: none;
+src/components/shoot/shoot.css-11321-}
+src/components/shoot/shoot.css-11322-
+src/components/shoot/shoot.css-11323-.shoot-hero-grid > div + div,
+src/components/shoot/shoot.css-11324-.shoot-hero-support {
+src/components/shoot/shoot.css-11325-  border-color: var(--shoot-soft-divider);
+src/components/shoot/shoot.css-11326-}
+src/components/shoot/shoot.css-11327-
+src/components/shoot/shoot.css-11328-.shoot-day-actions {
+--
+src/components/shoot/shoot.css-13494-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-13495-}
+src/components/shoot/shoot.css-13496-
+src/components/shoot/shoot.css:13497:.shoot-shot-cell > :is(input, .brisk-select-trigger),
+src/components/shoot/shoot.css-13498-.shoot-shot-cell .shoot-duration-combobox > input {
+src/components/shoot/shoot.css-13499-  width: 100%;
+src/components/shoot/shoot.css-13500-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-13501-  border: 1px solid transparent;
+src/components/shoot/shoot.css-13502-  border-radius: var(--brisk-radius-xs);
+src/components/shoot/shoot.css-13503-  background: transparent;
+src/components/shoot/shoot.css-13504-  color: var(--brisk-text-primary);
+src/components/shoot/shoot.css-13505-  padding: var(--brisk-space-s);
+src/components/shoot/shoot.css-13506-}
+src/components/shoot/shoot.css-13507-
+src/components/shoot/shoot.css:13508:.shoot-shot-cell > .brisk-select .brisk-select-trigger {
+src/components/shoot/shoot.css-13509-  min-height: var(--brisk-space-3xl);
+src/components/shoot/shoot.css-13510-  border: var(--brisk-space-none);
+src/components/shoot/shoot.css-13511-  border-radius: var(--brisk-space-none);
+src/components/shoot/shoot.css-13512-  background: transparent;
+src/components/shoot/shoot.css-13513-  box-shadow: none;
+src/components/shoot/shoot.css-13514-  padding-inline: var(--brisk-space-xs);
+src/components/shoot/shoot.css-13515-}
+src/components/shoot/shoot.css-13516-
+src/components/shoot/shoot.css-13517-.shoot-shot-cell:has(> .brisk-select):is(:hover, :focus-within) {
+--
+src/components/shoot/shoot.css-13522-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-13523-}
+src/components/shoot/shoot.css-13524-
+src/components/shoot/shoot.css:13525:.shoot-shot-cell > .brisk-select .brisk-select-trigger:is(:hover, :focus-visible) {
+src/components/shoot/shoot.css-13526-  background: transparent;
+src/components/shoot/shoot.css-13527-  box-shadow: none;
+src/components/shoot/shoot.css-13528-}
+src/components/shoot/shoot.css-13529-
+src/components/shoot/shoot.css:13530:.shoot-shot-cell > :is(input, .brisk-select-trigger):hover,
+src/components/shoot/shoot.css:13531:.shoot-shot-cell > :is(input, .brisk-select-trigger):focus,
+src/components/shoot/shoot.css-13532-.shoot-shot-cell .shoot-duration-combobox > input:hover,
+src/components/shoot/shoot.css-13533-.shoot-shot-cell .shoot-duration-combobox > input:focus {
+src/components/shoot/shoot.css-13534-  border-color: var(--shoot-soft-border);
+src/components/shoot/shoot.css-13535-  background: var(--brisk-white);
+src/components/shoot/shoot.css-13536-  outline: none;
+src/components/shoot/shoot.css-13537-}
+src/components/shoot/shoot.css-13538-
+src/components/shoot/shoot.css-13539-.shoot-shot-cell .shoot-duration-options {
+src/components/shoot/shoot.css-13540-  width: 100%;
+--
+src/components/shoot/shoot.css-13964-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-13965-}
+src/components/shoot/shoot.css-13966-
+src/components/shoot/shoot.css:13967:.shoot-quick-entry :is(input, .brisk-select-trigger, textarea):focus-visible {
+src/components/shoot/shoot.css-13968-  border-color: var(--brisk-border-primary);
+src/components/shoot/shoot.css-13969-  outline: none;
+src/components/shoot/shoot.css-13970-  box-shadow: var(--brisk-shadow-s);
+src/components/shoot/shoot.css-13971-}
+src/components/shoot/shoot.css-13972-
+src/components/shoot/shoot.css-13973-.shoot-people-results {
+src/components/shoot/shoot.css-13974-  position: absolute;
+src/components/shoot/shoot.css-13975-  top: calc(100% + var(--brisk-space-xs));
+src/components/shoot/shoot.css-13976-  right: 0;

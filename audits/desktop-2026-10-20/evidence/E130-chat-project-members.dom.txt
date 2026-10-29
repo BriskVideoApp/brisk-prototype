@@ -1,0 +1,307 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - complementary "Chat navigation":
+    - generic: North Star Films
+    - button "Search messages - Command K"
+    - navigation "Global conversations":
+      - button "DMs":
+        - generic: DMs
+      - button "Mark 1 unread dms as read": "1"
+      - button "Mentions":
+        - generic: Mentions
+      - button "Mark 2 unread mentions as read": "2"
+      - button "Groups":
+        - generic: Groups
+      - button "Mark 1 unread groups as read": "1"
+      - button "Threads":
+        - generic: Threads
+      - button "Calls":
+        - generic: Calls
+    - generic "Client conversations":
+      - button "All projects":
+        - generic: All projects
+      - button "Mark all 4 unread messages as read": "4"
+      - button "Loom" [pressed]:
+        - generic: Loom
+      - button "Mark 2 unread messages from Loom as read": "2"
+      - button "Deel":
+        - generic: Deel
+      - button "Mark 1 unread messages from Deel as read": "1"
+      - button "Hims":
+        - generic: Hims
+      - button "Mark 1 unread messages from Hims as read": "1"
+      - button "OpenAI":
+        - generic: OpenAI
+      - button "Canva":
+        - generic: Canva
+      - button "Linear":
+        - generic: Linear
+      - button "Harbour Health":
+        - generic: Harbour Health
+    - combobox "Filter Clients":
+      - generic: Active clients
+    - button "Unread only":
+      - generic: Unread only
+  - button "Back to all project conversations": Back to all project conversations
+  - heading "LOOM-24 Launch Film - Sales Narrative" [level=1]
+  - text: Loom
+  - group "Call options for LOOM-24 Launch Film - Sales Narrative":
+    - button "Start a call in LOOM-24 Launch Film - Sales Narrative"
+    - button "Open call options"
+  - link "Go to project":
+    - /url: /projects/loom-launch-film/stages/brief
+  - button "Manage project members": Manage project members
+  - button "Open External Chat settings": Open External Chat settings
+  - tablist "Chat channel":
+    - tab "External Chat with the client" [selected]:
+      - strong: External
+      - generic: Chat with the client
+    - tab "Internal North Star Films only":
+      - strong: Internal
+      - generic: North Star Films only
+    - button "Mark 1 unread Internal messages as read": "1"
+  - separator "Tuesday 21 July":
+    - generic: Tuesday 21 July
+  - article:
+    - 'link "Script approved: The Script has been approved."':
+      - /url: /projects/loom-launch-film/script
+      - generic: Approved
+      - strong: Script approved
+      - generic: The Script has been approved.
+      - time: 91 days ago
+      - generic: External
+  - separator "Wednesday 22 July":
+    - generic: Wednesday 22 July
+  - article:
+    - generic "Jess Taylor": JT
+    - generic: Jess Taylor
+    - time: 9:12 am
+    - paragraph: The script is looking great. Could we keep the final customer quote on screen for another beat?
+    - link "Open comment in Script":
+      - /url: /projects/loom-launch-film/script
+    - button "Love":
+      - generic: ❤️
+      - generic: "2"
+  - article:
+    - generic "Tom Mitchell": TM
+    - generic: Tom Mitchell
+    - time: 9:18 am
+    - paragraph:
+      - text: Absolutely.
+      - generic: "@Marcus Lee"
+      - text: can you add eight frames to that final quote before today’s client cut?
+    - button "Approved":
+      - generic: ✅
+      - generic: "1"
+    - button "Marcus Lee Tom Mitchell 2 replies Last reply 90 days ago":
+      - generic "Marcus Lee": ML
+      - generic "Tom Mitchell": TM
+      - generic: 2 replies
+      - generic: Last reply 90 days ago
+  - separator "Thursday 23 July":
+    - generic: Thursday 23 July
+  - article:
+    - generic: Update
+    - generic: External
+    - strong: Edit review requested
+    - paragraph: LOOM-24 Edit v3 is ready for review.
+    - time: 89 days ago
+    - link "Review Edit":
+      - /url: /projects/loom-launch-film/stages/edit
+      - text: Review Edit
+  - article:
+    - generic "Sarah Kim": SK
+    - generic: Sarah Kim
+    - time: 4:42 pm
+    - paragraph: Thanks team. The new pace feels much stronger. I’ve marked one small colour note in Edit.
+    - generic: Edit frame 184
+    - generic: Colour note - frame 184.png · 1.8 MB
+    - generic "This video has no source file in the prototype.":
+      - generic: Loom walkthrough
+      - strong: Product screen reference.mp4
+      - generic: Video unavailable
+    - strong: Sarah's colour note
+    - generic: Voice note · 0:24
+    - button "Play Sarah's colour note" [disabled]
+    - generic "This attachment has no source file in the prototype.":
+      - strong: Loom-approved-product-copy.pdf
+      - generic: 640 KB · File unavailable
+    - link "Open comment in Edit":
+      - /url: /projects/loom-launch-film/stages/edit
+  - separator "Friday 24 July":
+    - generic: Friday 24 July
+  - article:
+    - generic "Sarah Kim": SK
+    - generic: Sarah Kim
+    - time: 8:52 am
+    - paragraph:
+      - text: I’ve shared the updated product wording with the wider Loom team.
+      - generic: "@Marcus Lee"
+      - text: this version is ready for the final sound pass.
+    - generic "This attachment has no source file in the prototype.":
+      - strong: Loom-final-product-wording.docx
+      - generic: 86 KB · File unavailable
+    - button "Like reaction from Slack - display only" [disabled]:
+      - generic: 👍
+      - generic: "2"
+    - button "Jess Taylor 1 reply Last reply 88 days ago":
+      - generic "Jess Taylor": JT
+      - generic: 1 reply
+      - generic: Last reply 88 days ago
+  - separator "Thursday 20 August":
+    - generic: Thursday 20 August
+  - article:
+    - 'link "Script approved: The Script has been approved."':
+      - /url: /projects/loom-launch-film/script
+      - generic: Approved
+      - strong: Script approved
+      - generic: The Script has been approved.
+      - time: 61 days ago
+      - generic: External
+  - article:
+    - generic: Changed
+    - generic: External
+    - strong: Published call time changed
+    - paragraph: A published call time has changed. Review the latest call sheet.
+    - time: 61 days ago
+    - link "Review changes":
+      - /url: /share/call-sheet/loom-launch-film
+      - text: Review changes
+  - separator "Wednesday 30 September":
+    - generic: Wednesday 30 September
+  - article:
+    - generic: Needs attention
+    - generic: External
+    - strong: Brief ready for review
+    - paragraph: Please review the Brief for Launch Film - Sales Narrative and share any feedback.
+    - time: 20 days ago
+    - link "Review Brief":
+      - /url: /projects/loom-launch-film/stages/brief
+      - text: Review Brief
+  - article:
+    - generic "Tom Mitchell": TM
+    - generic: Tom Mitchell
+    - time: 9:33 am
+    - paragraph: Please review the Brief for Launch Film - Sales Narrative and share any feedback.
+  - separator "Thursday 1 October":
+    - generic: Thursday 1 October
+  - article:
+    - generic: Needs attention
+    - generic: External
+    - strong: Reminder to review Brief
+    - paragraph: Just a reminder to review the Brief for Launch Film - Sales Narrative and share any feedback.
+    - time: 19 days ago
+    - link "Review Brief":
+      - /url: /projects/loom-launch-film/stages/brief
+      - text: Review Brief
+  - article:
+    - generic "Tom Mitchell": TM
+    - generic: Tom Mitchell
+    - time: 10:31 am
+    - paragraph: Just a reminder to review the Brief for Launch Film - Sales Narrative and share any feedback.
+  - region "Write a message":
+    - textbox "Message LOOM-24 external channel":
+      - /placeholder: "Message #LOOM-24 - external"
+    - generic "Formatting tools":
+      - button "Bold - Command B":
+        - strong: B
+      - button "Italic - Command I":
+        - emphasis: I
+      - button "Add link" [disabled]
+      - button "Add image"
+      - button "Choose emoji"
+    - button "Attach file"
+    - button "Record video - coming in V2" [disabled]
+    - combobox "Choose outbound channel":
+      - generic: Brisk
+    - button "Send message" [disabled]
+    - button "Schedule message for later" [disabled]
+    - text: Schedule for later
+    - button "Choose File"
+- dialog "People with access":
+  - banner:
+    - heading "People with access" [level=2]
+    - generic: LOOM-24 Launch Film - Sales Narrative
+  - strong: Studio team
+  - article:
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: Studio Owner
+  - article:
+    - generic "David Ryan": DR
+    - strong: David Ryan
+    - generic: Producer
+  - article:
+    - generic "Marcus Lee": ML
+    - strong: Marcus Lee
+    - generic: Editor
+  - strong: Loom access
+  - article:
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Marketing Director · jess@loom.com
+  - article:
+    - generic "Sarah Kim": SK
+    - strong: Sarah Kim
+    - generic: Brand Manager · sarah@loom.com
+  - article:
+    - generic "Maya Chen": MC
+    - strong: Maya Chen
+    - generic: Client · maya@loom.com
+  - article:
+    - generic "Elliot Brooks": EB
+    - strong: Elliot Brooks
+    - generic: Client · elliot@loom.com
+  - contentinfo:
+    - button "Cancel" [active]

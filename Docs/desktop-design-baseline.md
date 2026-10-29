@@ -1,15 +1,39 @@
 # Approved desktop design baseline
 
-Reconciled with Tom's explicit decisions on 20 October 2026. This is an index of approved rules and their scope, not a completed UI audit, a new design proposal or confirmation that Yura's Figma source has been updated.
+Current approval register, established on 20 October and updated with the scoped decisions recorded below through 29 October 2026. Use it for future work. It is not blanket screen sign-off, a new design proposal or confirmation that Yura's Figma source has been updated.
+
+### Ask Brisk first prototype slice - approved 29 October 2026
+
+Source: Tom's Ask Brisk ticket discussion, preference answers and explicit instruction to implement on 29 October. This is an app composition of existing controls, not a new DS Drawer, Card, composer primitive or production AI service. Scope is the desktop assistant, guided Brief connection and one simulated approval-reminder workflow. Preserve To Do's layout and surrounding screens.
+
+- Keep the quiet top-bar entry. Reuse `CommentCountBadge` for new insights, with an independent permission-scoped count and accessible name. A click opens a compact insight preview; Open conversation opens the taller right-side assistant using its existing surface and source-chip treatment, with a smaller composer. No automatic pop-up or external notification is introduced.
+- Show the project/Stage or workload scope, source links and relevant suggested questions. Broader scope uses existing project membership checks. Respect optional Storyboard and the Animation label. The initial briefing uses current Stage records and explicit producer priorities; it does not claim to monitor meetings, email or every comment, forecast delivery, or calculate a complete workload.
+- Viewing an insight clears its unread state. Dismiss hides that insight until its recorded status or priority changes. Briefings, private conversations and instructions are separated by workspace, scenario, access role and user. Their in-memory state survives in-app navigation and role changes; a full reload resets it.
+- Keep the guided Brief on its page. Both surfaces share one Brief conversation, source attachments and clarification progress. Read-only project questions in that conversation do not count as Brief answers. Drafting uses the existing editable Brief workflow and does not approve it. Avoid a second independent Brief assistant panel.
+- Use Ask Brisk for Filmmakers and Ask plus the Studio name for Clients. This scoped assistant naming decision does not restore broader white-label colour controls or change the approved portal theme.
+- Staff can set or clear their priority instruction. Keep that instruction distinct from the linked Stage status; edit the actual source to correct project facts. Do not introduce a new producer/admin access role or a team-wide briefing publication workflow.
+- Staff can prepare an approval reminder for a review Stage waiting on the Client. Review shows the project, Stage/version when recorded, active assigned Client contacts, Client-visible Project Chat destination and editable copy. Posting requires an explicit Post reminder (demo) click, rechecks the pending review and recipients, and adds one clearly labelled simulated Chat message. Cancel sends nothing. Clients and Freelancers do not receive this action. No email, calendar or other external service is contacted.
+
+Implementation sources: [assistant](../src/components/ai/BriskAiAssistant.tsx), [shared state](../src/components/ai/BriskAiContext.tsx), [briefing](../src/components/ai/AskBriskInsights.tsx), [reminder review](../src/components/ai/ApprovalReminderReview.tsx) and [guided Brief](../src/components/brief/BriefPage.tsx). Reference evidence: [Asana suggested questions and side panel](https://mobbin.com/screens/f2b651ef-bce1-464c-9c47-52f2fb187238), [Fireflies contextual panel](https://mobbin.com/screens/2047129f-d283-45ef-81bb-09aa79a32ffe), [Plane suggested questions](https://mobbin.com/screens/1d95ef0c-69df-49e5-a2af-45ba7bb5d456) and [Voicenotes visible source context](https://mobbin.com/screens/bdba68b3-995c-425b-99a9-82fdccbfad62). These references informed structure; Brisk's tokens and controls retain their own appearance. Implementation and desktop behaviour checks do not constitute Tom's final visual sign-off or Figma parity.
+
+Desktop verification on 29 October: TypeScript and diff checks passed. Browser interaction checks covered all three roles, separate private conversations, broader Client scope, priority editing, the shared Brief clarification/draft/review path and an edited Hims reminder appearing in external Project Chat. Missing recipients blocked posting. Brief, To Do and Chat returned HTTP 200 in browser network observations; shell curl was unavailable because sandbox networking denied localhost connections. Captures: [workload briefing](../audits/ask-brisk-2026-10-29/workload.png) and [Client Brief connection](../audits/ask-brisk-2026-10-29/client-brief.png). No production build, tests, mobile design pass, staging or commit was performed.
 
 ## Authority and approval boundaries
 
 1. Latest explicit user-approved decisions take precedence within their stated scope.
 2. Follow [AGENTS.md](../AGENTS.md), the [Brisk visual guidance](../brisk-design-system.md) and the approved component-specific React guidance linked below.
 3. Use original-kit descriptions and screenshots where they do not conflict with a later scoped approval.
-4. Existing code, repeated use, commit messages and historical review notes are evidence of implementation, not independent product approval. Verify consumers in the forthcoming audit.
+4. Existing code, repeated use, commit messages and historical review notes are evidence of implementation, not independent product approval. Check the original audit against its [later implementation register](../audits/desktop-2026-10-20/data/implementation-register.json) and subsequent scoped approvals before treating a finding as open or authorising a repair.
 
 Record a conflict rather than silently choosing a new standard. Approval of a component does not certify all its consumers. Approval of a layout does not approve every element inside it. Consistency permits meaningful contextual differences in content, permissions and workflows.
+
+### Maintaining this register
+
+- Record a newly approved reusable pattern here with its decision date, scope/exclusions, actual source component and reference evidence. Update the corresponding component guide if the reusable contract changes; do not duplicate the full specification across documents.
+- Label an unapproved current implementation as current evidence, not a standard. Label a genuinely unresolved choice as pending and ask only when the requested work depends on it.
+- Track implementation, browser verification and visual sign-off separately in the existing implementation register when audit work is involved. An implemented fix need not be visually signed off, and a multi-occurrence finding may be only partly fixed.
+- Preserve the original audit's evidence and findings. Its initial Unfixed/Needs decision labels are historical; later fixes and explicit Keep decisions take precedence within their scope. A full audit reconciliation is not required before every feature.
+- Preserve existing approved appearances during feature work. Token cleanup, unrelated audit repairs and new reusable variants require their own authorised scope. Guidance checks do not certify accessibility or Figma parity.
 
 ### What belongs where
 
@@ -42,10 +66,15 @@ For specialised Add/Replace media sources, keep all four workflows in their exis
 
 - Use the left-hand hybrid sidebar for workspace destinations, with the collapse/expand icon at its top.
 - Keep Chat, Updates and the quiet Ask Brisk action at the top right. Chat has its speech-bubble icon and visible label; Updates has its bell icon and visible label. Do not rename notification records, preferences or every notification-related heading purely to match the global Updates trigger.
+- Tom explicitly renamed the global popover to Updates on 29 October 2026. Its heading, View all updates footer, empty-state text and accessible labels use Updates. Keep notification routes, record identifiers, settings terminology and behaviour unchanged.
 - Keep Back, Forward and Recent pages together at the top left of the content bar. Recent pages uses the approved history icon and text-first native-link menu. It is separate from project breadcrumbs and progress.
 - Put the account/avatar control above Studio settings where permitted. Place the inconspicuous Test mode control below it and Studio settings. Preserve the existing narrow-screen/clean-entry fallback, rather than moving the desktop role control back into the top bar.
 - Sidebar background: `--brisk-bg-block-secondary` in expanded, collapsed and settings views. Keep the top bar and content surfaces white. Preserve lavender selection and keyboard focus.
-- Staff workspace order: Videos, To Do, People, Clients, Media Library, Expenses, Brand Kits, subject to existing access checks. Clients use the approved `buildings` icon, Expenses `money` and Brand Kits `palette` through `DsIcon`.
+- Staff workspace order: Videos, To Do, People, Clients, Media Library, Expenses, Brand Kits, subject to existing access checks. Clients use the approved `buildings` icon, Expenses `currency-dollar-simple` and Brand Kits `palette` through `DsIcon`.
+- Tom approved a home icon for the Videos sidebar entry on 28 October 2026, then requested a clean outline without the filled patch on the left. Use the existing `house-line` asset through `DsIcon`. Keep the Videos label and role-appropriate destination.
+- Tom approved the single-person `User` icon for the People sidebar entry on 29 October 2026. Use the unmodified DS export through `DsIcon` as `user`; keep the People label, destination and access checks.
+- Tom approved the simple dollar icon for the Expenses sidebar entry on 29 October 2026. Use the unmodified DS `CurrencyDollarSimple` export; keep the Expenses label, destination and access checks.
+- Tom requested tooltips for the collapsed sidebar on 29 October 2026. Use the existing app tooltip treatment on hover and keyboard focus, positioned beside the rail so scrolling does not clip the label. Cover workspace and settings destinations, the expand control, the account menu and the clickable Studio brand. Expanded navigation keeps its visible labels.
 - Freelancer and Client views retain only their permitted destinations. The Client Brand Kit is singular and scoped to their company; Videos retains the role-appropriate destination. Do not grant destinations or capabilities to make the sidebars identical.
 - Brand Kits belongs below Expenses in the Staff sidebar. The old desktop All Brand Kits link beneath the Clients title is not the primary entry point; preserve any existing narrow-screen fallback.
 
@@ -57,18 +86,27 @@ Implementation references: [HybridSidebar](../src/components/navigation/HybridSi
 - Use a white surface and primary bottom border. Allow actions to wrap when constrained; retain readable text and usable targets.
 - Do not apply this workspace rule indiscriminately to project, profile, section, dialog or Client portal headings. The Freelancer Videos workspace retains its My jobs title and original workflow.
 - Omit explanatory text directly below these workspace titles. To Do retains its date below its title. Elsewhere, explanatory text is appropriate when it clarifies scope or consequences; it is not mandatory decoration below every heading.
-- People and Clients: search belongs at the right of the page header. Invite person and Add Client belong to the right of the filters/tabs row below. Preserve People view-specific invitation labels and role preselection. Keep sort and result count above the table, without a duplicate search field.
+- People and Clients: Invite person and Add Client belong to the right of the filters/tabs row below. Preserve People view-specific invitation labels and role preselection. Keep sort and result count above the table. The former right-hand header search placement is superseded by the approved single top-bar Search below.
 - Add Client creates a Client company; it is not renamed Invite Client. In People, Client contacts names the people filter. Preserve its existing stored `Clients` value, URL compatibility and filtering.
-- Videos, Media Library, Expenses and Brand Kits retain their existing header search and scope. To Do retains its week/viewing controls. This does not standardise all search-field dimensions or certify their implementation as a shared DS Search primitive.
+- To Do retains its week/viewing controls. Former separate workspace search fields are superseded by the approved single top-bar Search below.
 - Expenses is the top-level workspace heading replacing Invoices to pay and the WORKSPACE OWNER eyebrow. Preserve invoice-specific data, filters, routes and access checks.
 
 Implementation/approval trace: `cc92544` (workspace headers), `61f3029` (People/Clients search and actions), [PeoplePage](../src/components/people/PeoplePage.tsx) and [ClientsPage](../src/components/clients/ClientsPage.tsx).
 
+### Single top-bar Search - approved 29 October 2026
+
+- One Search control immediately before Chat opens a composition of the existing DS EditingDialog, Input and Select. Use the existing search icon through DsIcon. Keep an accessible name and tooltip when the visible label is hidden at narrower desktop widths.
+- Default to the current page, document or Chat conversation. Show that scope in the selector and offer Everywhere without changing the query. Each opening returns to the current scope. Cmd/Ctrl+K has one owner across the app.
+- Remove the duplicate main-list fields from Videos/My jobs, Media Library/project Media, People, Clients, Brand Kits and Expenses. Preserve their local list filtering, existing status/location/type controls and clear actions. Show active list-search text in the top-bar control's visible label where space permits and accessible name.
+- Search results retain source labels, matching text and native destinations. Document matches reveal the relevant Brief step/field or Script row. Chat matches reveal the message and reply thread. Keep picker-specific searches, such as selecting a person or asset, because they select within a workflow.
+- Reuse existing project membership, Client/Filmmaker role visibility, conversation membership and administration checks. Everywhere does not grant access to Internal Chat, other Clients or restricted directories/finance.
+- Search is a read-only, front-end prototype composition. No search history, migrations, record writes, external search service, AI service or new dependency is introduced. This approval does not authorise a production backend.
+
 ### Media Library search and bulk-action scope
 
-- The global Media Library header contains Search media, not Download all. Remove the duplicate search from its media filter toolbar; keep the existing query/filter behaviour.
+- The global Media Library has no Download all action in its page header. Its former Search media field is superseded by the single top-bar Search; preserve its existing list filtering behaviour.
 - No bulk download action is available for All clients / All projects. Selecting a Client or project exposes the local, explicitly scoped download action beside that location's media controls, subject to the existing download capability.
-- Project Media retains its existing toolbar, Transcripts count, Upload workflow, scoped download, filters and search. The global library remains browse-only for uploads; moving search is not approval to add global uploads.
+- Project Media retains its existing toolbar, Transcripts count, Upload workflow, scoped download and filters. Search is accessed through the single top-bar control, defaulting to the current Media scope. The global library remains browse-only for uploads; moving search is not approval to add global uploads.
 - Preserve per-file and explicitly selected-file actions, unavailable-original handling and all visibility/membership checks. A scoped bulk action must not silently expand into the whole Studio library.
 
 Trace: `a5d54eb` and [MediaBrowser](../src/components/media/MediaBrowser.tsx). This remains a front-end mock workflow, not an implemented archive/download service.
@@ -77,7 +115,23 @@ Trace: `a5d54eb` and [MediaBrowser](../src/components/media/MediaBrowser.tsx). T
 
 Chat and Updates reuse the same compact app-level [CommentCountBadge](../src/components/CommentCountBadge.tsx), rather than combining a small Chat pill with a separate oversized purple Updates badge. Preserve independent count sources, permission scoping, accessible labels, zero-count hiding and existing display-cap behaviour. The approval standardises their shared presentation, not their numerical values.
 
-Trace: `f4e92f4`. This adapter and its current CSS are not a newly confirmed DS Badge primitive. Exact token use, readability, animation and other badge consumers remain audit subjects; do not treat incidental implementation values as new DS tokens.
+Trace: `f4e92f4`. Tom confirmed keeping the current pink unread-badge appearance, including its existing pulse, during the visual style review on 29 October 2026. Preserve the shared adapter and current presentation; this is a scoped app pattern, not a new general-purpose DS Badge primitive or formal accessibility sign-off. The original A03 recommendation is historical evidence, not permission to restyle this approved pattern. Do not generalise its compact typography or animation to unrelated controls.
+
+### Visual style confirmations - 29 October 2026
+
+Tom reviewed three existing screenshot crops against the treatments still present in the current code and answered Keep for all three:
+
+- **Quiet toolbar sorting:** retain the borderless Media sort dropdown, including its visible value, chevron and existing keyboard focus. This is a contextual toolbar treatment; ordinary form selection fields retain their approved DS appearance. Reuse the existing implementation rather than inventing another selector. The earlier DEC05 / DES-R04 choice is resolved for this shown treatment.
+- **Brand Kit category tints:** retain the existing Client-derived tinted Fonts, Voice and Guidelines cards as a scoped Brand Kit exception to the general white-panel rule. Do not extend this exception to unrelated panels. The earlier A06 recommendation does not authorise removing these approved tints.
+- **Unread badges:** retain the current pink compact badge treatment and existing pulse described above. Preserve count sources, labels, zero hiding and caps.
+
+Visual references: [Media sort](../audits/desktop-2026-10-20/reviewers/a-comparisons/A04-current-media-sort.png), [Brand Kit Fonts card](../audits/desktop-2026-10-20/reviewers/a-comparisons/A06-current-fonts-panel.png) and [unread badge](../audits/desktop-2026-10-20/reviewers/a-comparisons/A03-current-row-badge.png). These historical crops identify the specific styles reviewed; approval does not certify entire screens, unrelated behaviour or Figma parity. No application styling was changed to record these decisions.
+
+### Notification and timing state presentation
+
+Tom reaffirmed on 29 October 2026 that notification urgency uses colour and clear text, without emergency/status icons. Project Chat system updates follow the existing Notifications row fills: neutral grey, pale yellow for attention, pale pink for failure and pale green for success. Do not add a separate severity pill to these posts. Keep meaningful titles, actions, audience labels and screen-reader status text. Notification message previews use the same colour treatment without a severity header. Shared dense status labels retain their text and colour without an icon. Brief suggestions and timing warnings likewise omit status symbols; preserve all review, sharing, read-state and agreement behaviour.
+
+Tom approved the pending Project Chat timing-card layout on 29 October 2026: Requested delivery and Suggested delivery have separate labelled values, followed by the audience-appropriate reason and the existing Review date action. Retain the Internal/External label, timestamp and colour treatment. Keep the suggested date distinct from an agreed change. This is a timing-card variant; other system posts and resolved historical summaries retain their existing presentation.
 
 ### Project progress and specialised workflows
 
@@ -88,10 +142,30 @@ Existing approval safeguards, version destinations, Staff-only status editing, a
 ## What remains unresolved or unverified
 
 - This reconciliation is documentation-only. It does not establish full app coverage, browser verification of every consumer, formal accessibility compliance or production readiness.
-- Team-assignment hours fields, Staff/Freelancers selectors, selection rows, spacing and separated save/assign/destructive actions require the forthcoming audit. Use of a shared EditingDialog or Button does not certify the contents or justify merging their actions.
-- Search controls are existing specialised implementations. Their visual and accessibility consistency requires review; no new universal Search primitive is approved here.
+- The original Team inspection is superseded where the later Team implementation records apply. Check their scoped status and outstanding visual sign-off; using a shared EditingDialog or Button does not certify unrelated consumers or justify merging distinct actions.
+- The single top-bar Search composition is approved above. Picker-specific searches remain contextual; this does not establish a universal DS Search primitive or certify every search consumer.
 - Older navigation metadata, inactive components and review-log statements may differ from the approved hybrid shell. Classify live usage before recommending a migration.
-- Screenshots can demonstrate canonical aspects only where they agree with the approvals above. Capture current reference evidence during the audit; do not present an older screenshot as proof of current behaviour.
+- Screenshots can demonstrate canonical aspects only where they agree with the approvals above. Check the current consumer before reuse; do not present an older screenshot as proof of current behaviour.
 - [Yura's review log](yura-review.md) records the design-source synchronisation questions. No Figma changes or newly supplied assets have been confirmed by this reconciliation. Missing components still follow the DS missing-asset protocol.
 
-The next audit should identify and justify further improvements, with screenshots and explicit coverage. New variants, consequential workflow changes and unresolved design choices require Tom's approval before implementation.
+Future reviews should identify and justify further improvements with current evidence. Historical recommendations alone do not authorise them. New variants, consequential workflow changes and unresolved design choices require Tom's approval before implementation.
+
+### Final delivery agreement - 29 October 2026
+
+Tom approved rollout of the supplied Final delivery proposal. The scoped project utility shows the current agreed date, producer-reviewed Client message, proposed new date, Discuss date and authorised Client agreement, with collapsed delivery history. Keep the agreed date until the Client agrees; retain the original date and superseded proposals. Staff propose, scoped Customers agree, Freelancers read only. Compose the existing DS Buttons, EditingDialog, Textarea and approved date/time pickers. Proposal-only navigation and scenario switches do not enter the app. This approval does not implement automatic turnaround calculations or Studio timing settings. [Implemented review](../audits/desktop-2026-10-20/review-rounds/08-delivery-agreement/result.html).
+
+### Videos empty Team action - approved 29 October 2026
+
+Place Assign team in the Team column, replacing No team assigned for Studio Staff. Show it only when the existing team summary has no active assigned or invited people. Remove the repeated action from the Project column. Populated team summaries retain their existing team-panel entry; permissions, assignment dialog, required hours and working records are unchanged.
+
+### Videos column defaults - approved 29 October 2026
+
+Show every permitted Videos column by default, ordered Project, Progress, Latest action, Status, Deadline, Team, Hours, Project costs, Actions. The Columns checklist follows the same order. Preserve existing role restrictions, locked Project/fixed Actions, hiding, dragging, saved view preferences and Reset columns. Apply the revised initial view under the next column-preference version without deleting the prior preference or changing project records. Users can personalise the new view afterwards.
+
+### Sidebar toggle - approved 29 October 2026
+
+Use the existing DS SidebarSimple rectangle/divider asset through DsIcon for the shared hybrid desktop sidebar toggle. Keep the control beside the sidebar it affects, with the DS M IconButton, its 44px native target, keyboard activation and expanded/control semantics. Its accessible name and existing app tooltip are Collapse sidebar when expanded and Expand sidebar when collapsed. The icon remains the same left-sidebar symbol in both states. Narrow-screen fallback navigation and route/role behaviour are unchanged.
+
+### Expanded sidebar / top-bar alignment - approved 29 October 2026
+
+Vertically centre the expanded Studio logo, Studio name and sidebar toggle with the top-bar controls. Derive both rows from the same desktop header-height token, using DS spacing. Retain the collapsed rail's stacked arrangement, toggle labels, focus/tooltip treatment and narrow-screen fallback.

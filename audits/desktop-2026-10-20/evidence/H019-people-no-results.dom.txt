@@ -1,0 +1,89 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "People header":
+    - heading "People" [level=1]
+    - generic: Search people
+    - searchbox "Search people" [active]: <redacted>
+  - group "People views":
+    - button "All 32" [pressed]:
+      - text: All
+      - generic: "32"
+    - button "Studio Staff 10":
+      - text: Studio Staff
+      - generic: "10"
+    - button "Studio Freelancers 7":
+      - text: Studio Freelancers
+      - generic: "7"
+    - button "Client contacts 15":
+      - text: Client contacts
+      - generic: "15"
+    - button "Archived 2":
+      - text: Archived
+      - generic: "2"
+  - button "Invite person":
+    - generic: Invite person
+  - region "People directory controls":
+    - generic: Sort by
+    - combobox "Sort people":
+      - generic: Latest activity
+    - generic: 0 people
+  - heading "No people match this search" [level=2]
+  - paragraph: Try a different name or email address.
+  - button "Clear search"
+- region "Notifications (F8)":
+  - list

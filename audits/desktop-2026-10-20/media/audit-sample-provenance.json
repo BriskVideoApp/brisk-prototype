@@ -1,0 +1,17 @@
+{
+  "asset": "mdn-cc0-flower-audit-sample.mp4",
+  "purpose": "Explicitly authorised disposable audit sample for real video-player inspection. Not a Brisk application asset or audit screenshot.",
+  "downloadedFrom": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  "officialFileReference": "https://github.com/mdn/interactive-examples/tree/main/live-examples/media/cc0-videos",
+  "officialDocumentationExample": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video",
+  "licenceReference": "https://github.com/mdn/interactive-examples/blob/main/LICENSE",
+  "licence": "CC0 1.0 Universal",
+  "licenceLocalFile": "mdn-interactive-examples-LICENSE.txt",
+  "bytes": 1128375,
+  "sha256": "0cd83d944a6ca7822b4a8306cecc60a36e859b041f6702c6a1ad9ead78924451",
+  "verification": "Download completed; browser playback must be verified by lead in isolated sample session.",
+  "syntheticAlternativeLimits": {
+    "brisk-audit-sample-2s.mov": "Generated Motion JPEG container metadata2seconds/48frames640x360. Host decode check failed; browser playback not certified.",
+    "brisk-audit-sample-2s.mp4": "Zero-byte failed H264 encoder output. Do not use."
+  }
+}

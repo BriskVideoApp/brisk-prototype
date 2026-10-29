@@ -1,5 +1,8 @@
 "use client";
 
+import { matchesSearchText } from "@/components/search/search-data";
+import { usePageSearch } from "@/components/search/SearchContext";
+
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
@@ -44,6 +47,9 @@ import { useNotificationInbox } from "@/components/notifications/NotificationInb
 import { getFreelancerNotificationRecipientId, notificationInboxRecipientByRole } from "@/data/notification-inbox";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { ClientModal } from "@/components/clients/ClientPrimitives";
+import { ProjectTimingWarning } from "@/components/project-timing/ProjectTimingNotice";
+import { useProjectTiming } from "@/components/project-timing/ProjectTimingContext";
+import { applyDeliveryAgreement, deliveryTimeZone } from "@/data/project-delivery";
 
 type FreelancerView = "videos" | "offers";
 type OfferView = "open" | "history";
@@ -102,6 +108,7 @@ export function FreelancerVideosPage() {
   const searchParams = useSearchParams();
   const viewer = usePrototypeViewer();
   const { state, updateProjectTeam } = usePrototypeState();
+  const { getDeliveryAgreement } = useProjectTiming();
   const personId = viewer?.personId ?? "";
   const { activeScenario } = usePrototypeScenario();
   const { completionRecords } = useProjectCompletion();
@@ -118,6 +125,8 @@ export function FreelancerVideosPage() {
     if (!scoped) return [];
     return [{
       ...project,
+      deadline: applyDeliveryAgreement(scoped.deadline, getDeliveryAgreement(scoped)),
+      deadlineAt: getDeliveryAgreement(scoped).agreedDate ?? project.deadlineAt,
       team: scoped.team,
       timeEntries: [...project.timeEntries, ...sharedTimeEntries.filter((entry) => entry.projectId === project.id
         && !project.timeEntries.some((existing) => existing.id === entry.id)).map(toProjectTimeEntry)],
@@ -125,7 +134,7 @@ export function FreelancerVideosPage() {
       stages: getProjectStages(project),
       deliveredAt: completion?.deliveredAt ?? project.deliveredAt,
     }];
-  }), [completionRecords, getProjectStages, scenarioProjects, sharedTimeEntries, state.projects, state.session.activeWorkspaceId]);
+  }), [completionRecords, getDeliveryAgreement, getProjectStages, scenarioProjects, sharedTimeEntries, state.projects, state.session.activeWorkspaceId]);
   const baseEngagements = useMemo(
     () => getFreelancerEngagements(projects, personId),
     [personId, projects],
@@ -133,7 +142,13 @@ export function FreelancerVideosPage() {
   const [view, setView] = useState<FreelancerView>(() => searchParams.get("view") === "offers" || searchParams.get("scenario-view") === "offer-history" ? "offers" : "videos");
   const [offerView, setOfferView] = useState<OfferView>(() => searchParams.get("scenario-view") === "offer-history" ? "history" : "open");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = usePageSearch("My jobs", () => (view === "videos" ? acceptedEngagements.filter((engagement) => paymentFilter === "all" || getPaymentStatus(engagement) === paymentFilter)
+    : offerView === "open" ? openOffers : offerHistory).map((engagement) => ({
+      id: `job:${engagement.invitationId}`, source: "jobs", kind: "Videos" as const, title: engagement.project.name,
+      text: `${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`,
+      meta: `${engagement.project.clientName} · ${engagement.roleLabel}`,
+      href: view === "videos" ? getProjectEntryHref(engagement.project) : `/projects/${engagement.project.id}/stages/brief`,
+    })));
   const [invoiceOffer, setInvoiceOffer] = useState<ContractorOffer | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [offerResponse, setOfferResponse] = useState<{ outcome: "accepted" | "declined"; projectId: string; projectName: string } | null>(null);
@@ -181,12 +196,12 @@ export function FreelancerVideosPage() {
     .filter((engagement) => {
       const paymentStatus = getPaymentStatus(engagement);
       const matchesPayment = paymentFilter === "all" || paymentStatus === paymentFilter;
-      const matchesQuery = !normalisedQuery || `${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`.toLocaleLowerCase("en-AU").includes(normalisedQuery);
+      const matchesQuery = !normalisedQuery || matchesSearchText(`${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`, normalisedQuery);
       return matchesPayment && matchesQuery;
     })
     .sort(compareFreelancerVideos);
   const visibleOffers = (offerView === "open" ? openOffers : offerHistory).filter((engagement) =>
-    !normalisedQuery || `${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`.toLocaleLowerCase("en-AU").includes(normalisedQuery),
+    !normalisedQuery || matchesSearchText(`${engagement.project.name} ${engagement.project.clientName} ${engagement.roleLabel}`, normalisedQuery),
   );
 
   const acceptOffer = (engagement: OfferedFreelancerEngagement) => {
@@ -285,13 +300,7 @@ export function FreelancerVideosPage() {
 
   return (
     <main className="freelancer-videos-page">
-      <WorkspacePageHeader title="My jobs" actions={
-        <label className="freelancer-videos-search" htmlFor="freelancer-videos-search">
-          <DsIcon name="search" size={16} />
-          <span className="sr-only">Search your jobs</span>
-          <input id="freelancer-videos-search" type="search" value={query} placeholder="Search your jobs" onChange={(event) => setQuery(event.target.value)} />
-        </label>
-      } />
+      <WorkspacePageHeader title="My jobs" />
 
       <nav className="freelancer-primary-tabs" aria-label="Contractor job views">
         <button className={`label-s-semibold ${view === "videos" ? "is-active" : ""}`} type="button" aria-current={view === "videos" ? "page" : undefined} onClick={() => setView("videos")}>Active jobs <span className="label-xs">{acceptedEngagements.length}</span></button>
@@ -517,7 +526,7 @@ function FreelancerVideoDataCell({
   }
 
   if (columnKey === "deadline") {
-    return <td className={className} data-label="Deadline"><strong className="label-s-semibold">{formatDeadline(engagement.project.deadlineAt)}</strong><small className="label-xs">Final delivery</small></td>;
+    return <td className={className} data-label="Deadline"><strong className="label-s-semibold">{formatDeadline(engagement.project.deadlineAt)}</strong><small className="label-xs">Final delivery</small><ProjectTimingWarning projectId={engagement.project.id} /></td>;
   }
 
   if (columnKey === "time") {
@@ -729,7 +738,7 @@ function getFreelancerVideoPriority(
 }
 
 function formatDeadline(value: string) {
-  return new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-AU", { timeZone: deliveryTimeZone, day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
 }
 
 function formatHours(value: number) {

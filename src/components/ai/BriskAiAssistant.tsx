@@ -2,7 +2,14 @@
 
 import { useConfirmation } from "../../../Brisk DS/src/app/components/ConfirmationDialog";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
+import { AskBriskInsights } from "./AskBriskInsights";
+import { ApprovalReminderReview } from "./ApprovalReminderReview";
+import { getAskInsights, getAskProjectResponse, askWorkloadQuestions, askProjectQuestions, type AskInsight } from "@/data/ask-brisk";
+import { getProjectStageHref } from "@/data/project-fixtures";
+import { briefClarifyingQuestions } from "@/data/brief";
 import {
   useCallback,
   useEffect,
@@ -14,7 +21,7 @@ import {
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
-import { useBriskAi } from "@/components/ai/BriskAiContext";
+import { useBriskAi, useScopedAiState } from "@/components/ai/BriskAiContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
@@ -32,6 +39,7 @@ import {
   type FilmmakerModeId,
   type MockBriskAiChat,
 } from "@/data/brisk-ai";
+import { canActOnProject } from "@/data/prototype-access";
 import { getDemoProject } from "@/data/projects";
 
 type AssistantMessageStatus = "ready" | "using" | "used" | "editing" | "retrying";
@@ -89,9 +97,13 @@ const launcherDragThreshold = 5;
 export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: boolean }) {
   const { confirm, confirmationDialog } = useConfirmation();
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { selectedRole } = usePrototypeRole();
   const { studio } = useStudioSettings();
   const {
+    assistantName, model, insights: workloadInsights, markInsightsSeen, briefStates, setBriefState, getBriefHandler,
+    handoffToBrief, setAssistantView, dismissedInsightKeys,
     applyResponseDraft,
     closeAssistant,
     conversationModeId,
@@ -100,18 +112,26 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     playbook,
     view,
   } = useBriskAi();
-  const routeContext = useMemo(() => getCurrentAiContext(pathname), [pathname]);
-  const [conversationContext, setConversationContext] = useState<CurrentAiContext>(routeContext);
-  const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>(() => mockBriskAiChatHistory.map(hydrateMockChat));
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [isHistoricalConversation, setIsHistoricalConversation] = useState(false);
+  const routeContext = useMemo(() => {
+    const context = getCurrentAiContext(pathname);
+    if (pathname === "/chat" && searchParams.get("project")) { context.projectId = searchParams.get("project"); context.stage = "project"; }
+    const project = model.projects.find((entry) => entry.id === context.projectId);
+    return { ...context, projectName: project?.name ?? null, clientName: project?.clientName ?? null };
+  }, [model.projects, pathname, searchParams]);
+  const [scope, setScope] = useScopedAiState("scope", "current");
+  const [chooseReminder, setChooseReminder] = useState(false);
+  const [reminder, setReminder] = useState<AskInsight | null>(null);
+  const [conversationContext, setConversationContext] = useScopedAiState<CurrentAiContext>("context", routeContext);
+  const [chatHistory, setChatHistory] = useScopedAiState<ChatHistoryItem[]>("history", () => selectedRole === "Studio Staff" ? mockBriskAiChatHistory.map(hydrateMockChat) : []);
+  const [activeChatId, setActiveChatId] = useScopedAiState<string | null>("active", null);
+  const [isHistoricalConversation, setIsHistoricalConversation] = useScopedAiState("historical", false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [historyQuery, setHistoryQuery] = useState("");
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
-  const [manualSources, setManualSources] = useState<BriskAiSource[]>(() => optionalBriskAiSources.map(cloneSource));
-  const [messages, setMessages] = useState<AssistantMessage[]>([]);
-  const [inputValue, setInputValue] = useState("");
+  const [manualSources, setManualSources] = useScopedAiState<BriskAiSource[]>("sources", () => optionalBriskAiSources.map((source) => ({ ...source, selected: false })));
+  const [messages, setMessages] = useScopedAiState<AssistantMessage[]>("messages", []);
+  const [inputValue, setInputValue] = useScopedAiState("input", "");
   const [isProcessing, setIsProcessing] = useState(false);
   const [sourcePickerView, setSourcePickerView] = useState<SourcePickerView | null>(null);
   const [sourceQuery, setSourceQuery] = useState("");
@@ -133,31 +153,97 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   const suppressLauncherClickRef = useRef(false);
   const isStandaloneDocument = pathname.startsWith("/print/") || pathname.startsWith("/share/call-sheet/");
   const automaticSources = useMemo(() => getAutomaticBriskAiSources({
-    clientName: conversationContext.clientName,
-    projectName: conversationContext.projectName,
-    stage: conversationContext.stage,
+    clientName: scope === "current" ? conversationContext.clientName : null,
+    projectName: scope === "current" ? conversationContext.projectName : null,
+    stage: scope === "current" ? conversationContext.stage : "workspace",
     studioName: studio.details.name,
-  }), [conversationContext.clientName, conversationContext.projectName, conversationContext.stage, studio.details.name]);
-  const visibleAutomaticSources = automaticSources.filter((source) => selectedRole !== "Customer" || source.clientVisible);
-  const visibleManualSources = manualSources.filter((source) =>
-    (!conversationContext.projectId || conversationContext.projectId === "loom-launch-film")
-    && (selectedRole !== "Customer" || source.clientVisible));
-  const visibleChatHistory = chatHistory.filter((chat) => selectedRole !== "Customer" || chat.clientName === routeContext.clientName);
+  }), [conversationContext.clientName, conversationContext.projectName, conversationContext.stage, scope, studio.details.name]);
+  const contextProject = model.projects.find((project) => project.id === conversationContext.projectId);
+  const scopedProjects = scope === "everywhere" ? model.projects : scope === "workload" || !conversationContext.projectId ? model.workloadProjects : contextProject ? [contextProject] : [];
+  const allScopedInsights = getAskInsights(scopedProjects, selectedRole === "Customer", model.priorities);
+  const scopedInsights = allScopedInsights.filter((insight) => !dismissedInsightKeys.includes(`${insight.id}:${insight.fingerprint}`));
+  const workloadSource: BriskAiSource = { id: "permitted-projects", label: "Project statuses", kind: "record", context: "automatic", required: true,
+    selected: true, available: true, clientVisible: true, preview: `${scopedProjects.length} permitted projects in this scope`, detail: "Uses the current Stage statuses and production flow of the projects available to you. This prototype does not monitor external services." };
+  const visibleAutomaticSources = (scope !== "current" || !conversationContext.projectId ? [workloadSource] : automaticSources).filter((source) =>
+    (scope !== "current" || !conversationContext.projectId || contextProject)
+    && (selectedRole === "Studio Staff" || source.clientVisible)
+    && (selectedRole === "Studio Staff" || !["current-script", "current-edit", "current-brief"].includes(source.id) || source.id === `current-${conversationContext.stage}`))
+    .map((source) => {
+      if (source.id === "current-project") return { ...source, preview: contextProject?.name ?? "Current project", detail: "Project status and production flow. Open the linked Stage in an answer to inspect its source." };
+      if (["current-brief", "current-script", "current-edit"].includes(source.id)) return { ...source, detail: "The work available to you in this project. Its status is shown on the project Stage; no version or approval is inferred." };
+      return source;
+    });
+  const visibleManualSources = manualSources.filter((source) => scope === "current" && conversationContext.projectId === "loom-launch-film" && contextProject
+    && (selectedRole === "Studio Staff" || source.clientVisible));
+  const visibleChatHistory = chatHistory.filter((chat) => chat.projectId ? model.projects.some((project) => project.id === chat.projectId) : chat.id.startsWith("brisk-ai-chat-"));
+  const sharedBrief = scope === "current" && conversationContext.stage === "brief" && contextProject
+    ? briefStates[contextProject.id] : undefined;
+  const briefMessages = sharedBrief?.messages ?? [];
+  const canEditBrief = Boolean(contextProject && model.viewer && (model.viewer.role !== "Studio Freelancer"
+    || canActOnProject(model.viewer, contextProject, model.state, "edit", "brief")));
+  const isSharedBrief = scope === "current" && conversationContext.stage === "brief" && Boolean(contextProject);
+  const scopeLabel = scope === "everywhere" ? "All permitted projects" : scope === "workload" || !conversationContext.projectId
+    ? selectedRole === "Customer" ? "Your projects" : "Your workload" : contextProject
+      ? `${contextProject.clientName} · ${contextProject.name} · ${conversationContext.stage === "edit" && contextProject.videoType === "animation" ? "Animation" : contextProject.assistantStages.find((stage) => stage.key === conversationContext.stage)?.label ?? "Project"}` : "Project unavailable";
+  const compact = view === "compact";
+  const insightSeenKeys = (compact ? scopedInsights.slice(0, 1) : scopedInsights.slice(0, 6)).map((insight) => `${insight.id}:${insight.fingerprint}`).join("\n");
+  useEffect(() => {
+    if ((view === "compact" || (view === "panel" && !isSharedBrief && !reminder && messages.length === 0)) && insightSeenKeys) markInsightsSeen(insightSeenKeys.split("\n"));
+  }, [insightSeenKeys, isSharedBrief, markInsightsSeen, messages.length, reminder, view]);
   const activeChatTitle = activeChatId ? chatHistory.find((chat) => chat.id === activeChatId)?.title ?? "New chat" : "New chat";
   const allVisibleSources = [...visibleAutomaticSources, ...visibleManualSources];
   const selectedSources = allVisibleSources.filter((source) => source.selected && source.available);
   const visibleContextSources = selectedSources.filter((source) => !hiddenContextSourceIds.includes(source.id));
   const selectedApproach = getSelectedApproach(conversationModeId, playbook.customModeName, playbook.customModeBehaviour);
   const previewSource = previewSourceId ? allVisibleSources.find((source) => source.id === previewSourceId) ?? null : null;
-  const helperCopy = getStageHelperCopy(conversationContext.stage);
   const shownContextSources = getCompactContextSources(visibleContextSources, promotedSourceId).slice(0, 3);
   const previewIsAnchoredToChip = previewSource ? shownContextSources.some((source) => source.id === previewSource.id) : false;
-  const hasConversationContent = messages.length > 0 || isProcessing || conversationState !== "default";
+  const hasConversationContent = messages.length > 0 || briefMessages.length > 0 || isProcessing || conversationState !== "default";
 
   const submitPrompt = useCallback((requestedPrompt?: string) => {
     const prompt = (requestedPrompt ?? inputValue).trim();
     if (!prompt || isProcessing) return;
 
+    setAssistantView("panel");
+    if (isSharedBrief && contextProject && (!canEditBrief || /where.*(?:project|up to)|what.*(?:next|waiting|approve|attention)|summari[sz]e|deadline|internal|costs|rates/iu.test(prompt))) {
+      const restricted = selectedRole !== "Studio Staff" && /internal|staff.only|costs|rates|other client|owner|management/iu.test(prompt);
+      const response = restricted ? { body: "I can only use the information available to you. Internal notes and restricted business information are excluded.", links: [] }
+        : getAskProjectResponse(prompt, [contextProject], allScopedInsights, selectedRole === "Customer");
+      const answer = !canEditBrief && !/where|what|summari[sz]e|deadline|internal|costs|rates/iu.test(prompt)
+        ? "This Brief is read only for your assignment. I have not changed its answers. You can ask about project progress."
+        : [response.body, ...("categoryRows" in response ? response.categoryRows?.map((row) => `${row.label}: ${row.body}`) ?? [] : [])].join("\n\n");
+      setBriefState(contextProject.id, (current) => ({ ...current, messages: [...(current.messages ?? []),
+        { id: `brief-question-${Date.now()}`, role: "client", body: prompt, authorLabel: "You", createdAt: "Now", scope: "project" },
+        { id: `brief-answer-${Date.now()}`, role: "ai", body: answer, createdAt: "Now", scope: "project", sources: response.links },
+      ] }));
+      setInputValue(""); return;
+    }
+    if (isSharedBrief && contextProject) {
+      const handler = getBriefHandler(contextProject.id);
+      if (!canEditBrief) return;
+      if (handler) handler.submit(prompt, visibleManualSources.filter((source) => source.selected && source.available && !briefMessages.some((message) => message.attachments?.some((attachment) => attachment.id === source.id))).map((source) => ({
+        id: source.id, kind: source.kind === "video" ? "reference_video" as const : "document" as const, label: source.label, source: source.preview,
+      })));
+      else {
+        handoffToBrief(contextProject.id, prompt);
+        router.push(getProjectStageHref(contextProject.id, "brief"));
+      }
+      setInputValue("");
+      return;
+    }
+    if (/\b(draft|create|build|write|fill)\b.*\bbrief\b/iu.test(prompt) && contextProject && canEditBrief) {
+      handoffToBrief(contextProject.id, prompt);
+      router.push(getProjectStageHref(contextProject.id, "brief"));
+      setInputValue("");
+      return;
+    }
+    if (/remind|reminder/iu.test(prompt)) {
+      const candidates = allScopedInsights.filter((insight) => insight.reviewStage);
+      if (selectedRole === "Studio Staff" && candidates.length === 1) {
+        setReminder(candidates[0]); setInputValue(""); return;
+      }
+      if (selectedRole === "Studio Staff" && candidates.length > 1) { setChooseReminder(true); setInputValue(""); return; }
+    }
     const userMessage: AssistantMessage = {
       id: `brisk-ai-user-${Date.now()}`,
       role: "user",
@@ -206,22 +292,13 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
         return;
       }
 
-      const isRestrictedClientPrompt = selectedRole === "Customer" && (
-        normalisedPrompt.includes("two weeks")
-        || normalisedPrompt.includes("not moved")
-        || normalisedPrompt.includes("internal comment")
-        || normalisedPrompt.includes("other client")
-      );
-      const response = isRestrictedClientPrompt
-        ? {
-            title: "That information is not available here",
-            body: `This Client portal can only use ${conversationContext.clientName ? `${conversationContext.clientName}'s` : "its own"} AI Brand Profile, assigned projects, released work and Client-visible comments. Ask Studio Staff if you need information from elsewhere.`,
-            citations: [],
-          }
-        : limitResponseToSelectedSources(
-            applyCreativeApproach(getMockBriskAiResponse(prompt, conversationContext.stage, conversationContext.projectId), selectedApproach),
-            selectedSources,
-          );
+      const isRestrictedPrompt = selectedRole !== "Studio Staff" && /internal|staff.only|costs|rates|other client|owner|management/iu.test(prompt);
+      const isCreativeRequest = /rewrite|pacing|review this edit|alternative opening|draft.*script|suggest.*angle|concise|call to action|brand profile/iu.test(prompt);
+      const response = isRestrictedPrompt ? { title: "That information is not available here",
+        body: "I can only use the projects and information available to you in this workspace. Internal notes and restricted business information are excluded.", citations: [] }
+        : isCreativeRequest && selectedRole === "Studio Staff" && contextProject?.id === "loom-launch-film"
+          ? limitResponseToSelectedSources(applyCreativeApproach(getMockBriskAiResponse(prompt, conversationContext.stage, contextProject.id), selectedApproach), selectedSources)
+          : getAskProjectResponse(prompt, scopedProjects, allScopedInsights, selectedRole === "Customer");
       const assistantMessage: AssistantMessage = {
         id: `brisk-ai-assistant-${Date.now()}`,
         role: "assistant",
@@ -231,14 +308,12 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
         committedDraft: response.draft ?? "",
       };
 
-      setMessages((current) => {
-        const completedMessages = [...current, assistantMessage];
-        setChatHistory((history) => history.map((chat) => chat.id === chatId ? { ...chat, messages: cloneMessages(completedMessages) } : chat));
-        return completedMessages;
-      });
+      const completedMessages = [...nextMessages, assistantMessage];
+      setMessages(completedMessages);
+      setChatHistory((history) => history.map((chat) => chat.id === chatId ? { ...chat, messages: cloneMessages(completedMessages) } : chat));
       setIsProcessing(false);
     }, 720);
-  }, [activeChatId, conversationContext, inputValue, isProcessing, manualSources, messages, selectedApproach, selectedRole, selectedSources]);
+  }, [activeChatId, conversationContext, inputValue, isProcessing, manualSources, messages, selectedApproach, selectedRole, selectedSources, scopedProjects, scopedInsights, contextProject, isSharedBrief, getBriefHandler, handoffToBrief, router, setAssistantView, canEditBrief, visibleManualSources, setBriefState, briefMessages, allScopedInsights]);
 
   useEffect(() => {
     if (!openRequest || handledRequestIdRef.current === openRequest.id) return;
@@ -256,8 +331,9 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   }, [view]);
 
   useEffect(() => {
-    threadRef.current?.scrollTo({ top: threadRef.current.scrollHeight, behavior: "smooth" });
-  }, [isProcessing, messages]);
+    const thread = threadRef.current;
+    if (thread) thread.scrollTo({ top: messages.length || briefMessages.length ? thread.scrollHeight : 0, behavior: "smooth" });
+  }, [isProcessing, messages.length, briefMessages.length]);
 
   useEffect(() => {
     setSourcePickerView(null);
@@ -269,8 +345,9 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     setHiddenContextSourceIds([]);
     setPreviewSourceId(null);
     setConversationState("default");
+    setReminder(null); setChooseReminder(false);
     if (!isHistoricalConversation && messages.length === 0) setConversationContext(routeContext);
-  }, [pathname, selectedRole]);
+  }, [pathname, selectedRole, routeContext.projectId]);
 
   useEffect(() => {
     const handleGlobalKeyDown = (event: globalThis.KeyboardEvent) => {
@@ -595,6 +672,17 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     }, 620);
   };
 
+  const askAboutInsight = (prompt: string) => {
+    const insight = scopedInsights.find((entry) => prompt.includes(entry.projectName));
+    if (insight) {
+      const project = model.projects.find((entry) => entry.id === insight.projectId);
+      setConversationContext({ projectId: insight.projectId, projectName: project?.name ?? null, clientName: project?.clientName ?? null, stage: "project" });
+      setScope("current"); setMessages([]); setActiveChatId(null); setIsHistoricalConversation(false);
+    }
+    setInputValue(prompt); setAssistantView("panel");
+  };
+  const questions = isSharedBrief ? [] : selectedRole === "Customer" ? ["Where are my projects up to?", "What do I need to approve?", "What happens next?"] : scopedProjects.length === 1 ? askProjectQuestions : askWorkloadQuestions;
+
   const composer = (
     <div className="brisk-ai-composer">
       <ContextChips
@@ -608,12 +696,12 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
         onUpdateVideoRange={(sourceId, range) => updateVideoRange(sourceId, range)}
       />
       <label className="brisk-ai-prompt-field">
-        <span className="sr-only">Ask Brisk AI</span>
+        <span className="sr-only">{assistantName}</span>
         <textarea
           ref={promptRef}
           className="paragraph-s"
           disabled={isProcessing}
-          placeholder={helperCopy.placeholder}
+          placeholder={isSharedBrief ? "Continue your Brief conversation…" : `Ask about ${scope === "current" && contextProject ? "this project" : "your work"}…`}
           rows={2}
           value={inputValue}
           onChange={(event) => handlePromptChange(event.target.value)}
@@ -736,8 +824,8 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
           ref={launcherRef}
           className={`brisk-ai-launcher ${isLauncherDragging ? "is-dragging" : ""}`}
           type="button"
-          aria-label="Ask Brisk AI"
-          data-tooltip="Ask Brisk AI"
+          aria-label={assistantName}
+          data-tooltip={assistantName}
           style={{
             position: "fixed",
             top: launcherPosition ? `${launcherPosition.y}px` : "auto",
@@ -764,8 +852,10 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
       ) : null}
 
       {view === "compact" || view === "panel" ? (
-        <aside className={`brisk-ai-floating ${hasConversationContent ? "has-conversation" : "is-empty"}`} aria-label="Brisk AI conversation">
+        <aside className={`brisk-ai-floating ask-brisk-panel ${compact ? "is-preview" : "is-expanded"} ${hasConversationContent ? "has-conversation" : "is-empty"}`} aria-label={`${assistantName} conversation`}>
           <AssistantHeader
+            assistantName={assistantName}
+            isBriefConversation={isSharedBrief}
             activeChatId={activeChatId}
             chatTitle={activeChatTitle}
             chatHistory={visibleChatHistory}
@@ -792,7 +882,43 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
               setEditingChatId(null);
             }}
           />
+          <div className="ask-brisk-scope">
+            <span className="label-xs">{scopeLabel}</span>
+            {!compact ? <BriskSelect<string> ariaLabel="Assistant scope" placeholder="Choose scope" value={scope} clearable={false} onChange={(value) => { setScope(value); setMessages([]); setReminder(null); setActiveChatId(null); }} options={[
+              { value: "current", label: contextProject ? "This project / Stage" : "This page" },
+              { value: "workload", label: selectedRole === "Customer" ? "Your projects" : "Your workload" },
+              { value: "everywhere", label: "All permitted projects" },
+            ]} /> : null}
+            {routeContext.projectId !== conversationContext.projectId ? <Button size="S" variant="ghost" onClick={() => { setConversationContext(routeContext); setScope("current"); setMessages([]); setReminder(null); setActiveChatId(null); }}>Use current page</Button> : null}
+          </div>
           <div className="brisk-ai-thread" ref={threadRef} aria-live="polite">
+            {chooseReminder && !compact ? <section className="ask-brisk-reminder" aria-label="Choose reminder project">
+              <h2 className="headings-2xs-bold">Which review should I follow up?</h2>
+              <p className="paragraph-s">Choose a project to review the recipients and message. Nothing has been sent.</p>
+              {allScopedInsights.filter((insight) => insight.reviewStage).map((insight) => <Button key={insight.id} size="S" variant="secondary" onClick={() => { setChooseReminder(false); setReminder(insight); }}>{insight.projectName} · {insight.sourceLabel}</Button>)}
+              <Button size="S" variant="ghost" onClick={() => setChooseReminder(false)}>Cancel</Button>
+            </section> : null}
+            {reminder && !compact ? <ApprovalReminderReview key={reminder.id} insight={reminder} onCancel={() => setReminder(null)} /> : null}
+            {!chooseReminder && !reminder && (compact || (!messages.length && !isSharedBrief)) ? <>
+              <AskBriskInsights insights={scopedInsights} compact={compact} onAsk={askAboutInsight} onRemind={(insight) => { setReminder(insight); setAssistantView("panel"); }} />
+              {!compact && questions.length ? <div className="ask-brisk-questions" aria-label="Suggested questions">{questions.map((question) => <Button key={question} size="S" variant="secondary" onClick={() => submitPrompt(question)}>{question}</Button>)}</div> : null}
+            </> : null}
+            {!chooseReminder && !compact && !reminder && isSharedBrief ? <section className="ask-brisk-brief-thread" aria-label="Shared Brief conversation">
+              <h2 className="headings-2xs-bold">Let’s build your Brief</h2>
+              <p className="paragraph-s">{canEditBrief ? "This is the same conversation as the Brief page. Your answers and attachments carry across." : "Your assignment allows you to read this Brief. Ask about the project using the workload scope."}</p>
+              {!briefMessages.length ? <p className="paragraph-s">What video are we making? Describe it or add your sources on the Brief page.</p> : null}
+              {briefMessages.map((message) => <article key={message.id} className={`brisk-ai-message ${message.role === "client" ? "is-user" : "is-assistant"}`}>
+                <strong className="label-xs-semibold">{message.role === "client" ? "You" : assistantName}</strong>
+                <p className="paragraph-s">{message.body}</p>
+                {message.sources?.map((source) => <Link className="label-xs-semibold" key={source.href} href={source.href}>{source.label}</Link>)}
+                {message.attachments?.map((attachment) => <span className="label-xs" key={attachment.id}>Source: {attachment.label}</span>)}
+              </article>)}
+              {(sharedBrief?.answerCount ?? 0) >= briefClarifyingQuestions.length && !sharedBrief?.drafted ? <Button size="S" onClick={() => getBriefHandler(contextProject!.id)?.draft()}>Draft my Brief</Button> : null}
+              {sharedBrief?.drafting ? <p className="paragraph-s" role="status">Drafting your Brief…</p> : null}
+              {sharedBrief?.drafted && !sharedBrief.drafting ? <Button size="S" variant="secondary" onClick={() => { getBriefHandler(contextProject!.id)?.reveal(); closeAssistant(); }}>Review Brief</Button> : null}
+            </section> : null}
+            {!chooseReminder && !compact && !reminder && !isSharedBrief ? <>
+
             {conversationState === "failure" ? (
               <ConversationState
                 icon="alert-triangle"
@@ -834,14 +960,19 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
                   key={message.id}
                   message={message}
                   stage={conversationContext.stage}
+                  assistantName={assistantName}
                   onDraftChange={(draft) => updateMessage(message.id, (current) => ({ ...current, editableDraft: draft }))}
                   onAction={(action) => runResponseAction(message.id, action)}
                 />
               ))
             )}
-            {isProcessing ? <ProcessingState /> : null}
+            {isProcessing ? <ProcessingState assistantName={assistantName} /> : null}
+            </> : null}
           </div>
-          {composer}
+          {compact ? <div className="ask-brisk-preview-footer"><Button size="S" onClick={() => setAssistantView("panel")}>{briefMessages.length ? "Continue Brief conversation" : "Open conversation"}</Button><span className="label-xs">{scopedInsights.length > 1 ? `${scopedInsights.length - 1} more insights · ` : ""}Prototype briefing</span></div> : <>
+            <p className="ask-brisk-demo-note label-xs">Prototype assistant · mock answers · actions require review</p>
+            {composer}
+          </>}
         </aside>
       ) : null}
 
@@ -859,6 +990,8 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
 }
 
 function AssistantHeader({
+  assistantName,
+  isBriefConversation,
   activeChatId,
   chatTitle,
   chatHistory,
@@ -877,6 +1010,8 @@ function AssistantHeader({
   onRenameValueChange,
   onToggleHistory,
 }: {
+  assistantName: string;
+  isBriefConversation: boolean;
   activeChatId: string | null;
   chatTitle: string;
   chatHistory: ChatHistoryItem[];
@@ -907,11 +1042,12 @@ function AssistantHeader({
             aria-haspopup="dialog"
             onClick={onToggleHistory}
           >
-            <strong className="label-s-semibold">{chatTitle}</strong>
+            <strong className="label-s-semibold">{assistantName}</strong>
             <DsIcon name="caret-down" size={13} />
           </button>
           {isHistoryOpen ? (
             <ChatHistoryPopover
+              newChatLabel={isBriefConversation ? "Continue Brief conversation" : "Start new chat"}
               activeChatId={activeChatId}
               chats={chatHistory}
               editingChatId={editingChatId}
@@ -929,18 +1065,19 @@ function AssistantHeader({
         </div>
       </div>
       <div className="brisk-ai-header-actions">
-        <button type="button" aria-label="Start new chat" data-tooltip="Start new chat" onClick={onNewChat}>
+        {!isBriefConversation ? <IconButton aria-label="Start new chat" onClick={onNewChat}>
           <DsIcon name="pencil-simple-ds" size={16} />
-        </button>
-        <button type="button" aria-label="Close Brisk AI" data-tooltip="Close" onClick={onClose}>
+        </IconButton> : null}
+        <IconButton aria-label={`Close ${assistantName}`} tooltipAlign="end" onClick={onClose}>
           <DsIcon name="x-close-cross" size={16} />
-        </button>
+        </IconButton>
       </div>
     </header>
   );
 }
 
 function ChatHistoryPopover({
+  newChatLabel,
   activeChatId,
   chats,
   editingChatId,
@@ -954,6 +1091,7 @@ function ChatHistoryPopover({
   onQueryChange,
   onRenameValueChange,
 }: {
+  newChatLabel: string;
   activeChatId: string | null;
   chats: ChatHistoryItem[];
   editingChatId: string | null;
@@ -987,7 +1125,7 @@ function ChatHistoryPopover({
       </div>
       <button className="brisk-ai-history-new label-s-semibold" type="button" onClick={onNewChat}>
         <DsIcon name="pencil-simple-ds" size={16} />
-        Start new chat
+        {newChatLabel}
       </button>
       <div className="brisk-ai-history-list">
         {filteredChats.length === 0 ? (
@@ -1102,11 +1240,13 @@ function ContextChips({
 }
 
 function AssistantResponse({
+  assistantName,
   message,
   onAction,
   onDraftChange,
   stage,
 }: {
+  assistantName: string;
   message: Extract<AssistantMessage, { role: "assistant" }>;
   onAction: (action: ResponseAction) => void;
   onDraftChange: (draft: string) => void;
@@ -1117,7 +1257,8 @@ function AssistantResponse({
 
   return (
     <article className={`brisk-ai-message is-assistant is-${message.status}`}>
-      <header><span><DsIcon name="sparkle" size={14} /></span><strong className="label-s-semibold">Brisk AI</strong></header>
+      <header><span><DsIcon name="sparkle" size={14} /></span><strong className="label-s-semibold">{assistantName}</strong></header>
+      {message.response.title ? <h3 className="label-s-semibold">{message.response.title}</h3> : null}
       <p className="paragraph-s">{message.response.body}</p>
       {message.response.categoryRows ? (
         <div className="brisk-ai-review-categories">
@@ -1129,6 +1270,7 @@ function AssistantResponse({
           ))}
         </div>
       ) : null}
+      {message.response.links?.length ? <div className="ask-brisk-answer-sources">{message.response.links.map((link) => <Link className="label-xs-semibold" href={link.href} key={link.href}>{link.label}</Link>)}</div> : null}
       {message.response.draft ? (
         <div className="brisk-ai-draft-output">
           <span className="label-xs-semibold">Suggested editable copy</span>
@@ -1173,11 +1315,11 @@ function AssistantResponse({
   );
 }
 
-function ProcessingState() {
+function ProcessingState({ assistantName }: { assistantName: string }) {
   return (
     <div className="brisk-ai-processing" role="status">
       <span className="brisk-ai-spinner" aria-hidden="true" />
-      <span className="label-s">Brisk AI is reviewing the request…</span>
+      <span className="label-s">{assistantName} is reviewing the request…</span>
     </div>
   );
 }

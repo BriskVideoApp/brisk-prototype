@@ -1,0 +1,13 @@
+{
+  "after-editor-detail.jpg": {
+    "source": "after-final-1440.jpg",
+    "rectangle": [
+      928,
+      178,
+      1272,
+      644
+    ],
+    "operation": "Pixel crop only; no UI reconstruction or overlays."
+  },
+  "excluded-native-clip-attempt.jpg": "Native screenshot API ignored crop origin; excluded from result evidence."
+}

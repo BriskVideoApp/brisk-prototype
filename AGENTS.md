@@ -99,6 +99,23 @@ Before generating any screen, read the relevant project guidance:
 
 If a question spans multiple topics (most do), read all relevant guidance files.
 
+## Design contract for future features
+
+Preserve the approved design. A feature request is not permission to redesign its surrounding screens or repair unrelated historical mismatches.
+
+Before changing UI:
+1. Read the current [desktop baseline](Docs/desktop-design-baseline.md), [visual guidance](brisk-design-system.md) and relevant component-specific guide in `Brisk DS/guidelines/components/`.
+2. Identify the actual reusable React export or approved app composition and inspect an existing consumer. The Figma `d-` catalogue describes design instances, not importable React components. Do not recreate a primitive, copy a consumer into a new fork or invent an export because a catalogue entry exists.
+3. Reuse that component's variants and interaction states. Consumer CSS may arrange it, but must not override its colour, typography, padding, border, radius, shadow or focus treatment unless a scoped approval explicitly permits it.
+4. Verify every new icon name in `src/components/video-review/DsIcon.tsx` and its mapped asset under `public/brisk-icons/`. Use `StageChip` for production-stage presentation. Do not install an icon library, inline paths, draw substitutes or revive the legacy `FlowIcon` export.
+5. Check that referenced tokens and text-style classes exist in the running app. Do not guess a name, silently add a fallback or redefine global tokens in a feature stylesheet. Missing definitions and genuinely new patterns follow the DS missing-asset protocol; pause the affected part and ask Tom before inventing a solution.
+
+The [baseline](Docs/desktop-design-baseline.md) is the current approval register. The [implementation register](audits/desktop-2026-10-20/data/implementation-register.json) tracks later audit work. Historical findings and screenshots do not override later approvals. In particular, preserve the approved quiet Media sort, tinted Brand Kit category cards and pink pulsing unread badges within their documented scope.
+
+Before handoff, review the changed code for component duplication, visual overrides, undefined tokens and unapproved icon sources, then follow the existing verification rules. Distinguish ordinary controls from player overlays, artwork/swatches, rich editors and other specialised treatments. Reuse an approved contextual pattern without applying generic white-panel, border or shadow rules to it. An exception must name its scope and approval; a whole media stylesheet is not automatically exempt.
+
+When Tom approves a new reusable pattern or changes an existing one, update the baseline with the date, scope, source and reference evidence. Update the relevant component guide only when its reusable contract changes. Keep design approval, implementation, browser verification and visual sign-off distinct. Do not create another competing DS document or claim Figma parity without evidence.
+
 ## Screen references
 
 Before building or modifying any screen, read `Docs/References/screen-inventory.md` and consult the referenced screenshots.
@@ -112,7 +129,7 @@ Before building or modifying any screen, read `Docs/References/screen-inventory.
 - TypeScript strict. No `any`. No `@ts-ignore` without a comment explaining why.
 - Server components by default; add `"use client"` only when needed.
 - Keep components small and readable. The developer will read this code.
-- Commit early and often. One commit per logical change.
+- Discuss staging and commits with Tom first. When authorised, keep one commit per logical change and exclude unrelated work.
 
 ## Verification rules (critical - read before every session)
 
@@ -137,9 +154,9 @@ Before marking a ticket complete:
 
 ## Design system rules
 
-- **Always import from `Brisk DS/`.** Do not rebuild Button, Input, Card, Modal, Table, etc.
+- **Reuse actual React exports from `Brisk DS/src/app/components/`.** Do not rebuild available primitives. Use `EditingDialog` and `ConfirmationDialog` for their approved purposes; `BriskSelect` also has an app compatibility re-export. Figma Card, Table and Drawer entries do not establish React exports. Reuse documented app compositions where approved; ask before creating a missing primitive.
 - If a component is missing from `Brisk DS/`, ask before creating it locally. Don't silently invent.
-- Use Brisk DS tokens (CSS variables) for every colour, spacing, radius, shadow, and text style. No magic numbers.
+- Use the existing Brisk runtime tokens and named text styles; see the runtime map in `Brisk DS/guidelines/Guidelines.md`. Preserve exact dimensions already specified by an approved component or pattern, including documented non-token geometry. Do not round values, introduce arbitrary styling or use this exception to bypass tokens.
 - Use existing `StageChip` stage icons and `DsIcon` general UI icons, with approved assets under `/public/brisk-icons/`. Do not import icons from other libraries.
 - Use approved visual assets for logos, illustrations and pictograms. Never import archived stage icons from `Brisk Visuals/Flow icons/`.
 - If an approved icon is missing, follow the missing-asset protocol and use text until it is supplied. Do not substitute generic icons, letter tiles or local approximations.

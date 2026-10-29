@@ -40,7 +40,6 @@ type ChatRailProps = {
   onUnreadOnlyChange: (showUnreadOnly: boolean) => void;
   onMarkRead: (target: ChatRailReadTarget) => void;
   onGlobalMarkRead: (view: Exclude<ChatRailView, "projects">) => void;
-  onSearchOpen: () => void;
 };
 
 const globalItems: Array<{
@@ -74,7 +73,6 @@ export function ChatRail({
   onUnreadOnlyChange,
   onMarkRead,
   onGlobalMarkRead,
-  onSearchOpen,
 }: ChatRailProps) {
   const showClients = role === "Studio Staff";
   const clientStatusByName = new Map(clients.map((client) => [client.name, client.status]));
@@ -131,14 +129,7 @@ export function ChatRail({
           </span>
           <span className="label-s-semibold">{workspaceName}</span>
         </div>
-        <button
-          className="chat-rail-search"
-          type="button"
-          aria-label="Search messages - Command K"
-          onClick={onSearchOpen}
-        >
-          <DsIcon name="search" size={18} />
-        </button>
+
       </div>
 
       {showGlobalNavigation ? (

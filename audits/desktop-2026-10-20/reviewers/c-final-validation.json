@@ -1,0 +1,29 @@
+{
+  "status": "Passed audit-artifact integrity checks only; no application test/build",
+  "entries": 117,
+  "routeEntries": 61,
+  "workflows": 56,
+  "finiteStates": 364,
+  "counts": {
+    "routeEntries": {
+      "Inspected": 56,
+      "Not applicable": 5
+    },
+    "finiteStates": {
+      "Inspected": 297,
+      "Not applicable": 67
+    },
+    "nestedWorkflowRollups": {
+      "Inspected": 53,
+      "Not applicable": 3
+    }
+  },
+  "captureLedgerCount": 788,
+  "completionEvidenceFilesChecked": 496,
+  "allInspectedFiniteStatesHaveGenuineCaptureReferences": true,
+  "allInspectedFiniteStatesHaveActualWidthMetadata": true,
+  "noRemainingMeaningfulUiStates": true,
+  "ownFinding": "C02 - Needs decision, unfixed",
+  "masterModifiedByReviewerC": false,
+  "appTrackedDiff": "empty at final check"
+}

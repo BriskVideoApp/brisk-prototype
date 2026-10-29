@@ -1,0 +1,17 @@
+- button "Open Next.js Dev Tools":
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- main:
+  - region "Start your Brisk studio":
+    - heading "Start your Brisk studio" [level=1]
+    - paragraph: Create your workspace, add your first Client and start a real video in under 10 minutes.
+    - button "Continue with Google"
+    - strong: or
+    - generic: Work email
+    - textbox "Work email":
+      - /placeholder: you@yourstudio.com
+    - button "Email me a sign-in link"

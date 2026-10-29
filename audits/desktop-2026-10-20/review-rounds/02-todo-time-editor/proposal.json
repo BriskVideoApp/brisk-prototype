@@ -1,0 +1,171 @@
+{
+  "id": "TODO-01",
+  "status": "Approved",
+  "reviewedOn": "28 October 2026",
+  "route": "/today",
+  "role": "Studio Staff",
+  "entry": "Viewing Sarah Chen > Wednesday 24 June > existing Unspecified 1.25h block",
+  "origin": "http://127.0.0.1:8772",
+  "initialStorage": {
+    "localKeys": 0,
+    "sessionKeys": 0
+  },
+  "recommendations": [
+    {
+      "id": "TDP01",
+      "title": "Keep the editor on screen",
+      "issue": "Save and Cancel sit below the viewport at both 1440 x 1000 and 1133 x 1000. The measured panel is 416px high; positioning reserves only 360px.",
+      "recommendation": "Place the editor using its actual size. Open above the time block when there is more room, clamp it below the global header, and update its position when the workspace scrolls or resizes.",
+      "classification": "Observed defect",
+      "finding": "AC01",
+      "priority": "High",
+      "tradeoff": "The editor can change side relative to its block. Preserve a small visual gap and the existing block context rather than introducing a full-screen dialog."
+    },
+    {
+      "id": "TDP02",
+      "title": "Protect the header and action row",
+      "issue": "The entire panel currently has one unbounded height. Enlarging Note or adding validation can push the actions further off screen. The framed Close also competes with the form fields.",
+      "recommendation": "Keep project identity and a quiet DS Close control in the header. Keep Delete on the left and Cancel / Save on the right in a visible footer. Let only the fields scroll when space is constrained, retaining the existing field sizing, labels and Brisk styling.",
+      "classification": "Observed layout limitation plus design refinement",
+      "finding": "AC01",
+      "priority": "High",
+      "tradeoff": "A short desktop may need a little internal scrolling. This preserves readable controls and reachable actions without making the editor wider. Do not replace this specialised editor with the Columns settings popover."
+    },
+    {
+      "id": "TDP03",
+      "title": "Make valid hours obvious",
+      "issue": "With Hours set to 0, the native field reports invalid, but Save stays enabled and there is no inline explanation. Source code would silently clamp and round the submitted number; that invalid save was not executed.",
+      "recommendation": "Show a quiet hint: \u201c0.25-24 hours, in 0.25-hour steps.\u201d Allow temporary incomplete typing. Show a concise error after interaction when needed and disable Save until the value is valid. Never silently change the hours on Save.",
+      "classification": "Observed field state; save outcome supported by source",
+      "finding": "B15",
+      "priority": "Medium",
+      "tradeoff": "Explicit validation asks the user to correct an invalid value. It is clearer than silently converting it. Keep the existing quarter-hour precision and 24-hour maximum; no new time policy."
+    },
+    {
+      "id": "TDP04",
+      "title": "Make keyboard entry and exit predictable",
+      "issue": "Enter opens the editor while focus remains on its time block. Escape from Hours leaves the editor open. Close and Cancel leave focus on the page body. The Stage list correctly consumes its own Escape.",
+      "recommendation": "On keyboard opening, move focus to Stage. Let the Stage list handle Escape first; a subsequent Escape cancels the editor and returns focus to the original time block. Close and Cancel also return focus. Preserve non-modal access to the board and the existing explicit Save boundary.",
+      "classification": "Observed behaviour plus proposed interaction refinement",
+      "finding": "REF06",
+      "priority": "Medium",
+      "tradeoff": "Escape discards the local draft, matching Cancel. Keep that meaning explicit. Do not add autosave, a focus trap or the Media comment confirmation flow to this small editor."
+    }
+  ],
+  "preserve": [
+    "Compact non-modal anchored editor",
+    "Project identity and Stage / Hours / Note",
+    "Explicit Save and Cancel semantics",
+    "Distinct Delete action, no deletion performed",
+    "Existing records, roles, time accounting and board interactions"
+  ],
+  "deferred": [
+    "Keyboard alternative to drag-and-drop planning (B17)",
+    "Weekly board scrolling and overall To Do composition",
+    "Stage option vocabulary and project-specific stage availability",
+    "New date/status fields, time policies or deletion workflow",
+    "Mobile"
+  ],
+  "authority": [
+    "Latest explicit user decisions",
+    "Docs/desktop-design-baseline.md",
+    "Brisk DS/guidelines/components/inputs.md",
+    "Brisk DS/guidelines/components/icon-buttons.md",
+    "Brisk DS/guidelines/components/popover.md (behavioural guidance only; Columns pilot does not approve migration)"
+  ],
+  "approvedReference": "No exact approved screenshot exists for this specialised time editor. Recommendations require Tom approval. The current screenshot is evidence, not a newly approved DS standard.",
+  "sourceHashes": {
+    "src/components/today/TodayPage.tsx": "67b003f0632b5e0c6309c478a0c3502ceb2cb06d202f900935b4180ebc06bac4",
+    "src/components/today/today.css": "ed5a37d140e615bc88b9cfd868edafe887138eb7a0fcd8e59c0bfdab172e003e"
+  },
+  "browserChecks": [
+    {
+      "viewport": "1440 x 1000",
+      "editor": {
+        "top": 640,
+        "bottom": 1056,
+        "height": 416
+      },
+      "footer": {
+        "top": 1001,
+        "bottom": 1039
+      }
+    },
+    {
+      "viewport": "1133 x 1000",
+      "editor": {
+        "top": 640,
+        "bottom": 1056,
+        "height": 416
+      },
+      "footer": {
+        "top": 1001,
+        "bottom": 1039
+      }
+    },
+    {
+      "state": "Hours 0",
+      "valid": false,
+      "min": "0.25",
+      "maxAttribute": "",
+      "step": "0.25",
+      "saveDisabled": false,
+      "ariaInvalid": null
+    },
+    {
+      "state": "Keyboard",
+      "openingFocus": "Original time block",
+      "escapeFromHours": "Editor remains open",
+      "stageEscape": "List closes; editor remains open",
+      "cancelFocus": "BODY"
+    }
+  ],
+  "limits": [
+    "No invalid Save or Delete executed. No formal accessibility compliance claim.",
+    "Only existing populated Staff entries inspected in this scoped proposal. Freelancer and Customer access boundaries were source-reviewed, not retested.",
+    "Tall screenshot is supplementary: editor opened at 1440 x 1200 then viewport enlarged to 1440 x 1500 to reveal the existing action row. It does not prove responsive placement.",
+    "Screenshots include the board at its existing scrolled position after keyboard opening. Page-header composition is outside this proposal."
+  ],
+  "verificationAfterApproval": [
+    "1440 and 1133 desktop, expanded/collapsed navigation",
+    "Upper/lower and left/right existing time blocks; shorter desktop height",
+    "Note resize, workspace scroll, window resize and nested Stage list placement",
+    "Empty / zero / negative / off-step / over-24 drafts, valid quarter-hour entries and unchanged save values",
+    "Keyboard focus entry, Tab order, nested Escape, Cancel and focus return",
+    "Existing Save, Cancel and Delete behaviour using disposable demo data only",
+    "Type check, affected route HTTP check and scoped diff review"
+  ],
+  "noAppChanges": false,
+  "evidence": [
+    {
+      "file": "current-1440.jpg",
+      "sha256": "f99f9589cd32de859a38ae9217e1aeeb5c46d8a94a4293734eca8039c42bbfff",
+      "kind": "Genuine browser capture; unedited"
+    },
+    {
+      "file": "current-1133.jpg",
+      "sha256": "a0c279f73251b562207e70e3b9d6bca3e71673b5c24b83f0ac65b7e424609faa",
+      "kind": "Genuine browser capture; unedited"
+    },
+    {
+      "file": "current-invalid-hours-1440.jpg",
+      "sha256": "c7918ec25d6906228d7dc3754b52be7cf96f954664e3b507f4c41e8a1ea9f988",
+      "kind": "Genuine browser capture; unedited"
+    },
+    {
+      "file": "current-invalid-hours-1440x1200.jpg",
+      "sha256": "168622d3a960889e0f0865d9467715d26b50359307714cb7f7527d865201a026",
+      "kind": "Genuine browser capture; unedited"
+    },
+    {
+      "file": "current-invalid-hours-tall.jpg",
+      "sha256": "dd0732ff33c1436914a5e107fbabbb2574d5893835ffd11b6e52be93e13f737a",
+      "kind": "Genuine browser capture; unedited"
+    }
+  ],
+  "approval": "Tom explicitly approved all four proposed changes in chat on28 October2026.",
+  "implementation": "Implemented and browser-verified; visually signed off by Tom on28 October2026.",
+  "result": "result.html",
+  "noAppChangesNote": "Original proposal was audit-only. Subsequent implementation was explicitly approved.",
+  "visualSignOff": "Tom: The To Do time editor looks good."
+}

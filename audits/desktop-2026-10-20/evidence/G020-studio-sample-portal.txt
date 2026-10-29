@@ -1,0 +1,181 @@
+- generic "feedly Mini tookit"
+- region "Notifications (F8)":
+  - list
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Studio settings
+  - navigation "Studio settings":
+    - link "Studio setup":
+      - /url: /settings/studio
+      - generic: Studio setup
+    - link "Production defaults":
+      - /url: /settings/studio/production
+      - generic: Production defaults
+    - link "AI Playbook":
+      - /url: /settings/studio/ai-playbook
+      - generic: AI Playbook
+    - link "Messaging connections":
+      - /url: /settings/studio/integrations
+      - generic: Messaging connections
+    - link "Storage":
+      - /url: /settings/studio/storage
+      - generic: Storage
+    - link "Notifications":
+      - /url: /settings/notifications
+      - generic: Notifications
+    - link "Brisk plan & billing":
+      - /url: /settings/plan-billing
+      - generic: Brisk plan & billing
+    - link "Client billing":
+      - /url: /settings/client-billing
+      - generic: Client billing
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - complementary "Client portal preview":
+    - paragraph: Previewing a sample Client portal This is an example of the Client portal. It does not show a real Client or their videos.
+    - link "Back to Studio setup":
+      - /url: /settings/studio
+  - heading "Your videos" [level=1]
+  - region "To review (1) Waiting for your review.":
+    - heading "To review (1) Waiting for your review." [level=2]
+    - article:
+      - generic: SAMPLE-001
+      - generic: Brand launch film
+      - generic: Updated 1h ago
+      - generic: Review media
+      - generic: "1"
+      - generic "Brand launch film stage progress":
+        - link "Open Brief":
+          - /url: /projects/sample-client-brand-film/stages/brief
+          - text: Brief - Complete
+        - generic: Brief
+        - link "Open Script":
+          - /url: /projects/sample-client-brand-film/script
+          - text: Script - Complete
+        - generic: Script
+        - link "Open Shoot":
+          - /url: /projects/sample-client-brand-film/stages/shoot
+          - text: Shoot - Complete
+        - generic: Shoot
+        - link "Open Video Review":
+          - /url: /projects/sample-client-brand-film/stages/edit
+          - text: Edit - Not started
+        - generic: Edit
+        - link "Open Masters":
+          - /url: /projects/sample-client-brand-film/stages/masters
+          - text: Masters - Not started
+        - generic: Masters
+        - link "Open Media (0). 0 media files":
+          - /url: /projects/sample-client-brand-film/stages/media
+          - text: 0 media files
+        - generic: Media (0)
+  - region "In progress (0) Your Studio is working on these videos.":
+    - heading "In progress (0) Your Studio is working on these videos." [level=2]
+    - strong: No videos in production
+    - generic: Your planned videos appear in All videos.
+    - button "View all videos"
+  - region "All videos (1)":
+    - heading "All videos (1)" [level=2]
+    - generic: Video grouping
+    - combobox "Video grouping":
+      - generic: All videos
+    - group "Video status":
+      - button "All. Every video shared with you." [pressed]:
+        - text: All
+        - generic: "1"
+        - text: Every video shared with you.
+      - button "Active. Videos currently in production.":
+        - text: Active
+        - generic: "1"
+        - text: Videos currently in production.
+      - button "Queued. Planned next. Your Studio has not started work yet.":
+        - text: Queued
+        - generic: "0"
+        - text: Planned next. Your Studio has not started work yet.
+      - button "Completed. Finished videos that have been approved.":
+        - text: Completed
+        - generic: "0"
+        - text: Finished videos that have been approved.
+      - button "Paused. Work is temporarily on hold.":
+        - text: Paused
+        - generic: "0"
+        - text: Work is temporarily on hold.
+      - button "Archived. Kept for reference and no longer active.":
+        - text: Archived
+        - generic: "0"
+        - text: Kept for reference and no longer active.
+    - table "All videos":
+      - row "Video Progress Status Created Actions":
+        - columnheader "Video"
+        - columnheader "Progress"
+        - columnheader "Status"
+        - columnheader "Created"
+        - columnheader "Actions"
+      - row "SAMPLE-001 Brand launch film Media ready for review · 1h ago Brand launch film stage progress In Production 28 Sept 2026":
+        - cell "SAMPLE-001 Brand launch film Media ready for review · 1h ago":
+          - generic: SAMPLE-001
+          - generic: Brand launch film
+          - generic: Media ready for review · 1h ago
+        - cell "Brand launch film stage progress":
+          - generic "Brand launch film stage progress":
+            - link "Open Brief":
+              - /url: /projects/sample-client-brand-film/stages/brief
+              - text: Brief - Complete
+            - generic: Brief
+            - link "Open Script":
+              - /url: /projects/sample-client-brand-film/script
+              - text: Script - Complete
+            - generic: Script
+            - link "Open Shoot":
+              - /url: /projects/sample-client-brand-film/stages/shoot
+              - text: Shoot - Complete
+            - generic: Shoot
+            - link "Open Video Review":
+              - /url: /projects/sample-client-brand-film/stages/edit
+              - text: Edit - Not started
+            - generic: Edit
+            - link "Open Masters":
+              - /url: /projects/sample-client-brand-film/stages/masters
+              - text: Masters - Not started
+            - generic: Masters
+            - link "Open Media (0). 0 media files":
+              - /url: /projects/sample-client-brand-film/stages/media
+              - text: 0 media files
+            - generic: Media (0)
+        - cell "In Production":
+          - generic: In Production
+        - cell "28 Sept 2026"
+        - cell

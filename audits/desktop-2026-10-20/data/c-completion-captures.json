@@ -1,0 +1,1781 @@
+[
+  {
+    "id": "J001-media-existing-processing",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Media existing failed, preparing, uploading and unavailable fixtures",
+    "file": "evidence/J001-media-existing-processing.jpg",
+    "coverageIds": [
+      "N100",
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:52:50.783Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J002-media-no-results",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Media no-results query",
+    "file": "evidence/J002-media-no-results.jpg",
+    "coverageIds": [
+      "N100"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:52:59.351Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J003-library-masters",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Global Masters filter after Clear controls",
+    "file": "evidence/J003-library-masters.jpg",
+    "coverageIds": [
+      "N100"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:04.856Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J004-library-archived",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Archived Media current branch",
+    "file": "evidence/J004-library-archived.jpg",
+    "coverageIds": [
+      "N100"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:10.853Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J005-media-kind-filter",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Image kind selected",
+    "file": "evidence/J005-media-kind-filter.jpg",
+    "coverageIds": [
+      "N100"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:11.553Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J006-unavailable-original-inspector",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing unavailable-original asset inspector",
+    "file": "evidence/J006-unavailable-original-inspector.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:20.649Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J007-asset-comments",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Asset comment panel empty/current audience",
+    "file": "evidence/J007-asset-comments.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:29.773Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J008-asset-escape-outcome",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape from asset comment composer",
+    "file": "evidence/J008-asset-escape-outcome.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:38.439Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J009-failed-asset-inspector",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing failed asset inspector",
+    "file": "evidence/J009-failed-asset-inspector.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:53:45.386Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J010-processing-asset",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Preparing72percent asset inspector",
+    "file": "evidence/J010-processing-asset.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/media",
+    "captured": "2026-10-20T20:54:06.475Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize",
+    "imageWidth": 1440,
+    "imageHeight": 1000
+  },
+  {
+    "id": "J011-folder-rail-collapsed",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Project folder rail collapsed",
+    "file": "evidence/J011-folder-rail-collapsed.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:55:11.751Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize; wrapper screenshot vertically truncated; no full-height comparison claim",
+    "imageWidth": 1440,
+    "imageHeight": 730
+  },
+  {
+    "id": "J012-nested-folder-actions",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Nested folder action menu",
+    "file": "evidence/J012-nested-folder-actions.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:55:13.081Z",
+    "notes": "Isolated Tom Producer Chrome session, original actual viewport; no resize; wrapper screenshot vertically truncated; no full-height comparison claim",
+    "imageWidth": 1440,
+    "imageHeight": 730
+  },
+  {
+    "id": "J013-nested-folder-actions-full",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Nested folder action menu, full approved viewport",
+    "file": "evidence/J013-nested-folder-actions-full.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:57:09.787Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted; no other profile/tab touched"
+  },
+  {
+    "id": "J014-folder-rename-field",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Day one inline rename editor",
+    "file": "evidence/J014-folder-rename-field.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:57:56.891Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J015-folder-rename-escape",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape leaves inline rename editor active",
+    "file": "evidence/J015-folder-rename-escape.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:57:57.092Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J016-new-folder-inline",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Immediate disposable New folder creation and inline name",
+    "file": "evidence/J016-new-folder-inline.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:57:57.843Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J017-folder-draft-escape",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable folder name draft after Escape",
+    "file": "evidence/J017-folder-draft-escape.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:10.001Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J018-folder-name-committed",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Enter commits labelled disposable folder",
+    "file": "evidence/J018-folder-name-committed.jpg",
+    "coverageIds": [
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:10.205Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J019-cloud-picker-current",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Google Drive picker current files and disabled import",
+    "file": "evidence/J019-cloud-picker-current.jpg",
+    "coverageIds": [
+      "N103"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:24.558Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J020-cloud-picker-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Cloud picker Cancel outcome",
+    "file": "evidence/J020-cloud-picker-cancel.jpg",
+    "coverageIds": [
+      "N103"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:25.077Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J021-project-media-comments",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing Media comments from Filmmaker and Client",
+    "file": "evidence/J021-project-media-comments.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:53.189Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J022-client-media-comments",
+    "role": "Customer",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Client Media asset comments and available actions",
+    "file": "evidence/J022-client-media-comments.jpg",
+    "coverageIds": [
+      "N101",
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:58:54.511Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J023-move-file-target",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "One selected-file Move target picker",
+    "file": "evidence/J023-move-file-target.jpg",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:59:26.571Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J024-move-cancel-selection-clear",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Move cancelled and selection cleared",
+    "file": "evidence/J024-move-cancel-selection-clear.jpg",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T20:59:27.596Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J025-transcript-clip-menu",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual transcript clip command menu",
+    "file": "evidence/J025-transcript-clip-menu.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T20:59:40.269Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J026-transcript-rename-draft",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Uncommitted transcript rename draft",
+    "file": "evidence/J026-transcript-rename-draft.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T21:00:31.174Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J027-transcript-rename-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape cancels transcript rename",
+    "file": "evidence/J027-transcript-rename-cancel.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T21:00:31.416Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J028-transcript-highlights-empty",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Existing no-highlights state",
+    "file": "evidence/J028-transcript-highlights-empty.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T21:00:32.061Z",
+    "notes": "Isolated8769; actual CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J029-transcript-export-clip",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual per-clip transcript PDF preview",
+    "file": "evidence/J029-transcript-export-clip.jpg",
+    "coverageIds": [
+      "R021",
+      "N110",
+      "N131"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/transcript/loom-launch-film?clip=transcript-media-01",
+    "captured": "2026-10-20T21:02:15.486Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J030-transcript-export-return",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "PDF Back to Transcripts actual return",
+    "file": "evidence/J030-transcript-export-return.jpg",
+    "coverageIds": [
+      "N131"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media?view=transcripts",
+    "captured": "2026-10-20T21:02:36.387Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J031-script-empty-version",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Fresh Script sole-version and disabled approval state",
+    "file": "evidence/J031-script-empty-version.jpg",
+    "coverageIds": [
+      "N108",
+      "N107"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:02:53.571Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J032-script-rename-draft",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Uncommitted Script version title draft",
+    "file": "evidence/J032-script-rename-draft.jpg",
+    "coverageIds": [
+      "N108"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:23.999Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J033-script-rename-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Escape restores current Script version name",
+    "file": "evidence/J033-script-rename-cancel.jpg",
+    "coverageIds": [
+      "N108"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:24.134Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J034-script-sample-duplicate",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable duplicate V2 current",
+    "file": "evidence/J034-script-sample-duplicate.jpg",
+    "coverageIds": [
+      "N108"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:24.779Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J035-script-restore-confirm",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Historical V1 restore-as-new confirmation",
+    "file": "evidence/J035-script-restore-confirm.jpg",
+    "coverageIds": [
+      "N108"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:31.218Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J036-script-delete-confirm",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Unapproved V2 deletion confirmation",
+    "file": "evidence/J036-script-delete-confirm.jpg",
+    "coverageIds": [
+      "N108"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:41.572Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J037-script-sample-visuals",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Sample Script words with Visuals expanded",
+    "file": "evidence/J037-script-sample-visuals.jpg",
+    "coverageIds": [
+      "N109"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:03:58.073Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J038-script-four-media-sources",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Script four approved media sources",
+    "file": "evidence/J038-script-four-media-sources.jpg",
+    "coverageIds": [
+      "N109"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:04:13.673Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J039-script-link-dismissed",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Script Add link inserts a placeholder immediately",
+    "file": "evidence/J039-script-link-dismissed.jpg",
+    "coverageIds": [
+      "N109"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:04:23.689Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J040-script-export-current",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Current V2 Script PDF with labelled sample content",
+    "file": "evidence/J040-script-export-current.jpg",
+    "coverageIds": [
+      "R021",
+      "N131"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/script/loom-launch-film",
+    "captured": "2026-10-20T21:05:38.458Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J041-script-export-return",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "PDF Back to Script actual return",
+    "file": "evidence/J041-script-export-return.jpg",
+    "coverageIds": [
+      "N131"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:05:41.687Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J042-storyboard-script-gate",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual Storyboard approved-Script prerequisite",
+    "file": "evidence/J042-storyboard-script-gate.jpg",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:06:20.557Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J043-script-sample-approved",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Disposable sample Script approved for Storyboard inspection",
+    "file": "evidence/J043-script-sample-approved.jpg",
+    "coverageIds": [
+      "N107",
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/script",
+    "captured": "2026-10-20T21:06:21.602Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J044-storyboard-create-ready",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Approved Script ready to create Storyboard",
+    "file": "evidence/J044-storyboard-create-ready.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:06:32.503Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J045-storyboard-created-sample",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Create Storyboard confirmation before creation",
+    "file": "evidence/J045-storyboard-created-sample.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:06:32.917Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J046-storyboard-current-fixture",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual created Storyboard uses12-frame prototype fixture",
+    "file": "evidence/J046-storyboard-current-fixture.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:07:33.839Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J047-storyboard-version-consumer",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Storyboard saved-version consumer",
+    "file": "evidence/J047-storyboard-version-consumer.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:07:44.556Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J048-storyboard-frame-commands",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Actual Storyboard frame context commands",
+    "file": "evidence/J048-storyboard-frame-commands.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:07:45.448Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J049-storyboard-media-sources",
+    "role": "Studio Staff",
+    "scenario": "Fresh default; no scenario loaded; Test mode Reset disabled",
+    "state": "Storyboard Add image source consumer",
+    "file": "evidence/J049-storyboard-media-sources.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:08:11.256Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J050-storyboard-session-return",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Return after browser session interruption - approved Script entry",
+    "file": "evidence/J050-storyboard-session-return.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:13:37.629Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J051-storyboard-av",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV view with current seeded frames",
+    "file": "evidence/J051-storyboard-av.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:04.323Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J052-storyboard-comments-empty",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV comments rail - empty and audience filters",
+    "file": "evidence/J052-storyboard-comments-empty.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:09.949Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J053-storyboard-client-filter-empty",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client comment filter empty",
+    "file": "evidence/J053-storyboard-client-filter-empty.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:10.354Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J054-storyboard-export-current",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Storyboard export preview - populated current fixture",
+    "file": "evidence/J054-storyboard-export-current.jpg",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/storyboard/loom-launch-film",
+    "captured": "2026-10-20T21:14:23.101Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J055-storyboard-export-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Storyboard export preview at 1133 desktop",
+    "file": "evidence/J055-storyboard-export-narrow.jpg",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/storyboard/loom-launch-film",
+    "captured": "2026-10-20T21:14:23.215Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J056-storyboard-export-back",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Export Back to Storyboard destination",
+    "file": "evidence/J056-storyboard-export-back.jpg",
+    "coverageIds": [
+      "N131"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:25.202Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J057-storyboard-av-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "AV view narrower desktop",
+    "file": "evidence/J057-storyboard-av-narrow.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:34.205Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J058-storyboard-board-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Board view narrower desktop",
+    "file": "evidence/J058-storyboard-board-narrow.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:34.825Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J059-storyboard-approve-outcome",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approve control outcome in disposable fixture",
+    "file": "evidence/J059-storyboard-approve-outcome.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:14:55.627Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J060-storyboard-send-form-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Send Storyboard form narrower desktop - Client selected",
+    "file": "evidence/J060-storyboard-send-form-narrow.jpg",
+    "coverageIds": [
+      "N106",
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:15:00.743Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J061-storyboard-send-studio",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Send Storyboard Studio destination draft",
+    "file": "evidence/J061-storyboard-send-studio.jpg",
+    "coverageIds": [
+      "N106"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/storyboard",
+    "captured": "2026-10-20T21:15:01.203Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J062-files-staff-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Files utility Staff narrower desktop",
+    "file": "evidence/J062-files-staff-narrow.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files",
+    "captured": "2026-10-20T21:15:12.346Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J063-files-freelancer-readonly",
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Freelancer project-restricted Files route",
+    "file": "evidence/J063-files-freelancer-readonly.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files",
+    "captured": "2026-10-20T21:15:17.605Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted; Corrected from intended read-only task: actual saved DOM and screen show Project unavailable, Nina Patel unassigned."
+  },
+  {
+    "id": "J064-files-empty-readonly",
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Freelancer project restriction persists with empty-preview query",
+    "file": "evidence/J064-files-empty-readonly.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files?preview=empty",
+    "captured": "2026-10-20T21:15:22.707Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted; Corrected from intended read-only task: actual saved DOM and screen show Project unavailable, Nina Patel unassigned."
+  },
+  {
+    "id": "J065-files-empty-staff",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Supported empty Files preview - Staff",
+    "file": "evidence/J065-files-empty-staff.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/files?preview=empty",
+    "captured": "2026-10-20T21:15:45.614Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J066-media-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Project Media narrower desktop composition",
+    "file": "evidence/J066-media-narrow.jpg",
+    "coverageIds": [
+      "N100",
+      "N101"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T21:16:12.878Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J067-transcript-processing",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing asset transcript processing at narrower desktop",
+    "file": "evidence/J067-transcript-processing.jpg",
+    "coverageIds": [
+      "N102",
+      "N110"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T21:16:17.968Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J068-transcript-workspace-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Current transcript collection narrower desktop",
+    "file": "evidence/J068-transcript-workspace-narrow.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T21:16:18.782Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J069-files-assigned-freelancer-empty",
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Assigned Freelancer empty Files - true current role",
+    "file": "evidence/J069-files-assigned-freelancer-empty.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "captured": "2026-10-20T21:16:50.879Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J070-files-labelled-sample-before-save",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Disposable sample Files draft - before Save",
+    "file": "evidence/J070-files-labelled-sample-before-save.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "captured": "2026-10-20T21:17:07.070Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J071-files-labelled-sample-saved",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Disposable sample saved - Staff metadata",
+    "file": "evidence/J071-files-labelled-sample-saved.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "captured": "2026-10-20T21:17:10.771Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J072-files-assigned-readonly",
+    "role": "Studio Freelancer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Assigned Freelancer populated read-only Files",
+    "file": "evidence/J072-files-assigned-readonly.jpg",
+    "coverageIds": [
+      "N129"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/files",
+    "captured": "2026-10-20T21:17:16.743Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J073-script-export-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Current Script PDF preview narrower desktop",
+    "file": "evidence/J073-script-export-narrow.jpg",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/script/loom-launch-film",
+    "captured": "2026-10-20T21:17:48.119Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J074-transcript-export-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Clip-scoped Transcript PDF preview narrower desktop",
+    "file": "evidence/J074-transcript-export-narrow.jpg",
+    "coverageIds": [
+      "N131",
+      "R021"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/print/transcript/loom-launch-film?clip=transcript-media-01",
+    "captured": "2026-10-20T21:17:52.497Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J075-transcripts-empty-project",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing Figma project without clips",
+    "file": "evidence/J075-transcripts-empty-project.jpg",
+    "coverageIds": [
+      "N110"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/figma-config-highlights/stages/media?view=transcripts",
+    "captured": "2026-10-20T21:18:56.878Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J076-storyboard-approved-seed",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Existing approved Notion Storyboard",
+    "file": "evidence/J076-storyboard-approved-seed.jpg",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:27.627Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J077-storyboard-approved-edit-guard",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approved-edit guard at narrower desktop",
+    "file": "evidence/J077-storyboard-approved-edit-guard.jpg",
+    "coverageIds": [
+      "N111",
+      "N107"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:36.030Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J078-storyboard-approved-edit-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Approved-edit Cancel preserves board",
+    "file": "evidence/J078-storyboard-approved-edit-cancel.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:36.450Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J079-storyboard-populated-review-narrow",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Populated frame review canvas at narrower desktop",
+    "file": "evidence/J079-storyboard-populated-review-narrow.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1133,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1133,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:42.047Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J080-storyboard-populated-review-1440",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Populated frame review canvas desktop reference",
+    "file": "evidence/J080-storyboard-populated-review-1440.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:42.321Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J081-storyboard-review-return",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Frame review Back returns approved board",
+    "file": "evidence/J081-storyboard-review-return.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:20:42.733Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J082-storyboard-native-link-prompt",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Native Storyboard Add link prompt - empty, Cancel inspected",
+    "file": "evidence/J082-storyboard-native-link-prompt.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:23:38.764Z",
+    "notes": "Genuine native Chrome screenshot, includes browser chrome and desktop whitespace. This is not a CSS viewport screenshot. Exact isolated origin verified in native address bar before opening prompt. No URL typed. Native app selected owned audit tab from original active Inbox; user content not captured. Original tab restoration follows."
+  },
+  {
+    "id": "J083-storyboard-link-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Native link Cancel preserves approved Storyboard",
+    "file": "evidence/J083-storyboard-link-cancel.jpg",
+    "coverageIds": [
+      "N111"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/notion-workflows/stages/storyboard",
+    "captured": "2026-10-20T21:23:45.181Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J084-media-image-preview",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Media image preview consumer",
+    "file": "evidence/J084-media-image-preview.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T21:24:30.370Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J085-media-document-preview",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Media document preview consumer",
+    "file": "evidence/J085-media-document-preview.jpg",
+    "coverageIds": [
+      "N102"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/media",
+    "captured": "2026-10-20T21:24:31.128Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J086-brief-brand-kit-options",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Brief Brand Kit options - no selection",
+    "file": "evidence/J086-brief-brand-kit-options.jpg",
+    "coverageIds": [
+      "N104"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T21:24:50.795Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J087-brief-ai-local-prompt-draft",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local AI prompt draft with accidental Global Chat overlay",
+    "file": "evidence/J087-brief-ai-local-prompt-draft.jpg",
+    "coverageIds": [
+      "N104"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T21:25:59.211Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted; Actual saved DOM includes an accidental Global Chat overlay. This capture is not clean Brief intake evidence. J088/J089 verify intended local thread/menu."
+  },
+  {
+    "id": "J088-brief-ai-message-menu",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local simulated Client clarification message menu",
+    "file": "evidence/J088-brief-ai-message-menu.jpg",
+    "coverageIds": [
+      "N104"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T21:26:37.063Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J089-brief-ai-message-menu-cancel",
+    "role": "Studio Staff",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Local message menu dismissed without Edit/Delete",
+    "file": "evidence/J089-brief-ai-message-menu-cancel.jpg",
+    "coverageIds": [
+      "N104"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/projects/loom-launch-film/stages/brief",
+    "captured": "2026-10-20T21:26:44.713Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J090-client-project-drawer-readonly",
+    "role": "Customer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client project details read-only status/footer",
+    "file": "evidence/J090-client-project-drawer-readonly.jpg",
+    "coverageIds": [
+      "N091"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T21:31:50.103Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  },
+  {
+    "id": "J091-client-project-team-readonly",
+    "role": "Customer",
+    "scenario": "Fresh default plus labelled disposable samples; no scenario reset",
+    "state": "Client project details Team current read-only presentation",
+    "file": "evidence/J091-client-project-team-readonly.jpg",
+    "coverageIds": [
+      "N091",
+      "N092"
+    ],
+    "width": 1440,
+    "height": 1000,
+    "dpr": 1,
+    "imageWidth": 1440,
+    "imageHeight": 1000,
+    "scrollX": 0,
+    "scrollY": 0,
+    "url": "http://127.0.0.1:8769/active-videos?project=loom-launch-film",
+    "captured": "2026-10-20T21:31:50.283Z",
+    "notes": "Isolated8769; genuine CDP viewport screenshot dimensions asserted"
+  }
+]

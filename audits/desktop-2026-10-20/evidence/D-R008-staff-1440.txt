@@ -1,0 +1,243 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/clients".
+1 AXWebArea Brisk Prototype, URL: localhost:3000/clients
+	2 container
+		3 pop up button (collapsed) Description: Open Next.js Dev Tools, ID: next-logo, Secondary Actions: Expand
+			4 image
+		5 container Primary navigation
+			6 link Description: North Star Films logo North Star Films, Value: localhost:3000/settings/studio
+			7 button (expanded) Description: Collapse navigation, Secondary Actions: Collapse
+				8 text Collapse navigation
+			9 container Workspace
+				10 link Description: Videos, Value: localhost:3000/active-videos
+				11 link Description: To Do, Value: localhost:3000/today
+				12 link Description: People, Value: localhost:3000/people
+				13 link Description: Clients, Value: localhost:3000/clients
+				14 link Description: Media Library, Value: localhost:3000/media
+				15 link Description: Expenses, Value: localhost:3000/outstanding-invoices
+				16 link Description: Brand Kits, Value: localhost:3000/brand-kits
+			17 pop up button (collapsed) Description: Open your menu, signed in as Tom Mitchell, Help: Tom Mitchell, Secondary Actions: Expand
+				18 container Tom Mitchell
+					19 text TM
+				20 text Tom Mitchell
+				21 text North Star Films
+			22 container Studio administration
+				23 link Description: Studio settings, Value: localhost:3000/settings/studio
+			24 container Prototype controls
+				25 button (collapsed) Test mode, Secondary Actions: Expand
+					26 text Test mode
+		27 container
+			28 container Navigation history
+				29 button Go back
+					30 text Back
+				31 button Go forward
+					32 text Forward
+				33 pop up button (collapsed) Description: Recent pages, Secondary Actions: Expand
+					34 text Recent pages
+			35 container Global actions
+				36 button Open Chat
+				37 button (collapsed) Description: Updates, Secondary Actions: Expand
+			38 button (collapsed) Description: Ask Brisk, Secondary Actions: Expand
+			39 container
+				40 container Clients header
+					41 heading Clients, Value: 1
+						42 text Clients
+					43 container
+						44 text Search Clients
+						45 search text field (settable) Search Clients, ID: clients-search
+				46 container Client views
+					47 checkbox All 12, Value: 1
+					48 checkbox Active 8, Value: 0
+					49 checkbox Inactive 2, Value: 0
+					50 checkbox Archived 2, Value: 0
+				51 button Add Client
+				52 container Client list controls
+					53 text Sort by
+					54 combo box (collapsed) Description: Sort Clients, Value: Latest activity, Secondary Actions: Expand
+						55 text Latest activity
+					56 text 12 Clients
+				57 container Clients list
+					58 table
+						59 row
+							60 cell
+								61 text Client
+							62 cell
+								63 text Current projects
+							64 cell
+								65 text Primary Client contact
+							66 cell
+								67 text Latest activity
+							68 cell
+								69 text Portal
+							70 cell
+								71 text Open Client
+						72 row
+							73 cell
+								74 link Description: Harbour Health logo Harbour Health harbourhealth.com.au, Value: localhost:3000/clients/harbour-health
+							75 cell
+								76 link Description: 1 active, Value: localhost:3000/workspaces/northstar-films/clients/harbour-health/portal?studio-preview=1
+								77 link Description: Care Journey Brief - Waiting on client, Value: localhost:3000/projects/harbour-health-care-journey
+							78 cell
+								79 link Description: Mia Chen mia@harbourhealth.com.au, Value: localhost:3000/clients/harbour-health?section=Contacts
+							80 cell
+								81 link Description: Client added Today, Value: localhost:3000/clients/harbour-health
+							82 cell
+								83 link Description: Active, Value: localhost:3000/clients/harbour-health?section=Contacts
+							84 cell
+								85 link Description: Open Harbour Health, Value: localhost:3000/clients/harbour-health
+						86 row
+							87 cell
+								88 link Description: Canva logo Canva canva.com, Value: localhost:3000/clients/canva
+							89 cell
+								90 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/canva/portal?studio-preview=1
+								91 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/canva/portal?studio-preview=1
+							92 cell
+								93 link Description: Talia Green talia@canva.com, Value: localhost:3000/clients/canva?section=Contacts
+							94 cell
+								95 link Description: Creative direction added Today, Value: localhost:3000/clients/canva
+							96 cell
+								97 link Description: Active, Value: localhost:3000/clients/canva?section=Contacts
+							98 cell
+								99 link Description: Open Canva, Value: localhost:3000/clients/canva
+						100 row
+							101 cell
+								102 link Description: Hims & Hers logo Hims & Hers hims.com, Value: localhost:3000/clients/hims
+							103 cell
+								104 link Description: 1 active, Value: localhost:3000/workspaces/northstar-films/clients/hims/portal?studio-preview=1
+								105 link Description: Product Education - Sleep Series Script - Waiting on client, Value: localhost:3000/projects/hims-product-education
+							106 cell
+								107 link Description: Noah Williams noah@hims.com, Value: localhost:3000/clients/hims?section=Contacts
+							108 cell
+								109 link Description: Noah shared new product assets Yesterday, Value: localhost:3000/clients/hims
+							110 cell
+								111 link Description: Active, Value: localhost:3000/clients/hims?section=Contacts
+							112 cell
+								113 link Description: Open Hims & Hers, Value: localhost:3000/clients/hims
+						114 row
+							115 cell
+								116 link Description: Loom logo Loom loom.com, Value: localhost:3000/clients/loom
+							117 cell
+								118 link Description: 4 active, Value: localhost:3000/workspaces/northstar-films/clients/loom/portal?studio-preview=1
+								119 link Description: WACF Customer Cutdown 01 Edit - Waiting on Studio, Value: localhost:3000/projects/loom-wacf-01
+								120 link Description: Product Tour - Team Workflows Shoot - Waiting on Studio, Value: localhost:3000/projects/loom-product-tour
+							121 cell
+								122 link Description: Maya Chen maya@loom.com, Value: localhost:3000/clients/loom?section=Contacts
+							123 cell
+								124 link Description: Maya approved the Brief 2 days ago, Value: localhost:3000/clients/loom
+							125 cell
+								126 link Description: Active, Value: localhost:3000/clients/loom?section=Contacts
+							127 cell
+								128 link Description: Open Loom, Value: localhost:3000/clients/loom
+						129 row
+							130 cell
+								131 link Description: Notion logo Notion notion.so, Value: localhost:3000/clients/notion
+							132 cell
+								133 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/notion/portal?studio-preview=1
+								134 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/notion/portal?studio-preview=1
+							135 cell
+								136 link Description: Clara Wu clara@notion.so, Value: localhost:3000/clients/notion?section=Contacts
+							137 cell
+								138 link Description: Project paused by Studio 3 days ago, Value: localhost:3000/clients/notion
+							139 cell
+								140 link Description: Active, Value: localhost:3000/clients/notion?section=Contacts
+							141 cell
+								142 link Description: Open Notion, Value: localhost:3000/clients/notion
+						143 row
+							144 cell
+								145 link Description: Ramp logo Ramp ramp.com, Value: localhost:3000/clients/ramp
+							146 cell
+								147 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/ramp/portal?studio-preview=1
+								148 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/ramp/portal?studio-preview=1
+							149 cell
+								150 link Description: Ben Foster ben@ramp.com, Value: localhost:3000/clients/ramp?section=Contacts
+							151 cell
+								152 link Description: Ben requested a pause 4 days ago, Value: localhost:3000/clients/ramp
+							153 cell
+								154 link Description: Active, Value: localhost:3000/clients/ramp?section=Contacts
+							155 cell
+								156 link Description: Open Ramp, Value: localhost:3000/clients/ramp
+						157 row
+							158 cell
+								159 link Description: Alex Morgan logo Alex Morgan, Value: localhost:3000/clients/alex-morgan
+							160 cell
+								161 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/alex-morgan/portal?studio-preview=1
+								162 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/alex-morgan/portal?studio-preview=1
+							163 cell
+								164 link Description: Alex Morgan alex.morgan@example.com, Value: localhost:3000/clients/alex-morgan?section=Contacts
+							165 cell
+								166 link Description: Client added 4 days ago, Value: localhost:3000/clients/alex-morgan
+							167 cell
+								168 link Description: Active, Value: localhost:3000/clients/alex-morgan?section=Contacts
+							169 cell
+								170 link Description: Open Alex Morgan, Value: localhost:3000/clients/alex-morgan
+						171 row
+							172 cell
+								173 link Description: OpenAI logo OpenAI openai.com, Value: localhost:3000/clients/openai
+							174 cell
+								175 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/openai/portal?studio-preview=1
+								176 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/openai/portal?studio-preview=1
+							177 cell
+								178 link Description: Sofia Patel sofia@openai.com, Value: localhost:3000/clients/openai?section=Contacts
+							179 cell
+								180 link Description: Masters delivered 5 days ago, Value: localhost:3000/clients/openai
+							181 cell
+								182 link Description: Active, Value: localhost:3000/clients/openai?section=Contacts
+							183 cell
+								184 link Description: Open OpenAI, Value: localhost:3000/clients/openai
+						185 row
+							186 cell
+								187 link Description: Linear logo Linear linear.app, Value: localhost:3000/clients/linear
+							188 cell
+								189 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/linear/portal?studio-preview=1
+								190 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/linear/portal?studio-preview=1
+							191 cell
+								192 link Description: Jon Bell jon@linear.app, Value: localhost:3000/clients/linear?section=Contacts
+							193 cell
+								194 link Description: Project completed 6 days ago, Value: localhost:3000/clients/linear
+							195 cell
+								196 link Description: Active, Value: localhost:3000/clients/linear?section=Contacts
+							197 cell
+								198 link Description: Open Linear, Value: localhost:3000/clients/linear
+						199 row
+							200 cell
+								201 link Description: Deel logo Deel deel.com, Value: localhost:3000/clients/deel
+							202 cell
+								203 link Description: 1 active, Value: localhost:3000/workspaces/northstar-films/clients/deel/portal?studio-preview=1
+								204 link Description: Customer Story - APAC Hiring Media - Waiting on client, Value: localhost:3000/projects/deel-customer-story
+							205 cell
+								206 link Description: Priya Nair priya@deel.com, Value: localhost:3000/clients/deel?section=Contacts
+							207 cell
+								208 link Description: Script approved by Priya 7 days ago, Value: localhost:3000/clients/deel
+							209 cell
+								210 link Description: Active, Value: localhost:3000/clients/deel?section=Contacts
+							211 cell
+								212 link Description: Open Deel, Value: localhost:3000/clients/deel
+						213 row
+							214 cell
+								215 link Description: PostHog logo PostHog posthog.com, Value: localhost:3000/clients/posthog
+							216 cell
+								217 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/posthog/portal?studio-preview=1
+								218 link Description: No active projects, Value: localhost:3000/workspaces/northstar-films/clients/posthog/portal?studio-preview=1
+							219 cell
+								220 link Description: Amira James amira@posthog.com, Value: localhost:3000/clients/posthog?section=Contacts
+							221 cell
+								222 link Description: Client archived 12 days ago, Value: localhost:3000/clients/posthog
+							223 cell
+								224 link Description: Paused, Value: localhost:3000/clients/posthog?section=Contacts
+							225 cell
+								226 link Description: Open PostHog, Value: localhost:3000/clients/posthog
+						227 row
+							228 cell
+								229 link Description: Figma logo Figma figma.com, Value: localhost:3000/clients/figma
+							230 cell
+								231 link Description: 0 active, Value: localhost:3000/workspaces/northstar-films/clients/figma/portal?studio-preview=1
+								232 link Description: No active projects, Value: …
+							233 cell
+								234 link Description: No primary contact, Value: …
+							235 cell
+								236 link Description: Project archived 26 July 2026, Value: …
+							237 cell
+								238 link Description: Paused, Value: …
+							239 cell
+								240 link Description: Open Figma, Value: …
+
+The focused UI element is 1 AXWebArea Brisk Prototype, URL: localhost:3000/clients

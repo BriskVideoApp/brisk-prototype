@@ -1,0 +1,113 @@
+{
+  "reviewer": "A",
+  "captureRegistry": "data/a-completion-captures.json",
+  "actions": "data/a-completion-actions.json",
+  "totalCaptures": 129,
+  "cleanup": {
+    "scope": [
+      "CB08 / N118 Brand Kit",
+      "CB09 / N120-N127 settings"
+    ],
+    "authorisedOrigin": "http://127.0.0.1:8767",
+    "assignedBrowser": "Chrome2 Tom Producer",
+    "assignedTab": "1716948401 (created for audit and now closed)",
+    "isolationEvidence": "data/a-browser-isolation.json",
+    "status": "Completed G001-G129",
+    "viewport": "Own audit window1440x1000 and1133x1000; restored original1512x767",
+    "changesMade": "Only authorised isolated mock scenario progression and reversible local inspection. Working localhost origin never manipulated. No application source/assets changed.",
+    "cleanup": "Scenario reset Studio Owner/Admin Active, Hims empty restored G129; Brisk Storage provider restored; expanded sidebar restored; own audit tab closed."
+  },
+  "surfaces": [
+    {
+      "id": "N118",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Populated Kit and motion versions v3/v2/restored; colour picker, font matrix, inline Voice/Tone draft Cancel, Footage populated filter, imagery and PDF previews, selected menu/delete confirmation Cancel, guest nested logo actions; existing empty Hims intake, website staging, local mock build processing/result, scenario reset, manual empty states; Move command toast observed.",
+      "remainingExcluded": "Native file upload/replacement chooser, actual deletion not invoked. New sub-brand opener immediately creates a stored sample and was not invoked; existing sub-brand route has separate lead captures. Legacy SetupModal has no set-open path and is excluded. Every asset/format permutation and full keyboard traversal not claimed.",
+      "evidence": [
+        "G001-G014",
+        "G120-G129"
+      ]
+    },
+    {
+      "id": "N120",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Studio Staff, Studio Freelancer and Customer profile/notifications/security. Freelancer professional/business fields; Client company context separately. Timezone no-results, password dialog Cancel; Google/Microsoft/magic-link preview variants; 1133 Client/Freelancer and existing lead Staff profiles.",
+      "remainingExcluded": "No credentials entered or saved; no auth-provider connect. Freelancer personal profile has no rates field: exclude that mistaken inventory branch; rates live elsewhere in People/assignment. No saved toggles.",
+      "evidence": [
+        "G071-G082",
+        "G095-G105"
+      ]
+    },
+    {
+      "id": "N121",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Client Admin/Member Team and Company; blank invite Cancel, active/pending menus, project access mixed/all/none local drafts Cancel; Client invoices and hidden billing preview; 1133 Team/project-access/invite/invoices.",
+      "remainingExcluded": "No invitation/resend/remove/access-role mutation. Remove user/cancel invitation source commands mutate immediately and have no confirmation state to inspect. Invoice payment not attempted.",
+      "evidence": [
+        "G082-G094",
+        "G100-G103"
+      ]
+    },
+    {
+      "id": "N122",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Studio setup overview and four focused editors; empty-name disabled Save; logo editor Cancel; video types/default Brief Cancel; sample portal preview and back. 1440,1133 and collapsed1133.",
+      "remainingExcluded": "No native logo upload or saved settings. No Studio colour/paid white-label controls exist in this approved V1 setup.",
+      "evidence": [
+        "G015-G020",
+        "G106-G108",
+        "G119"
+      ]
+    },
+    {
+      "id": "N123",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Production defaults role selector, Staff options and current defaults; local Add role draft then navigation discard guard; discard confirmed without save. Narrow composition and Staff menu.",
+      "remainingExcluded": "Current source has no required/optional stages controls in this section: exclude inventory overreach. No saved default role/assignee changes.",
+      "evidence": [
+        "G021-G024",
+        "G109-G110"
+      ]
+    },
+    {
+      "id": "N124",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "AI Playbook instructions/references; local public example link staged then discard guard/restoration; narrow composition.",
+      "remainingExcluded": "Native upload not invoked and external links not opened. Current references do not have an internal preview panel: source exclusion. No saved instructions.",
+      "evidence": [
+        "G025-G026",
+        "G111"
+      ]
+    },
+    {
+      "id": "N125",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "WhatsApp connected and Slack reconnect-required cards; current Brisk Storage, provider menu, Google Drive, Dropbox and Remote Studio conditional branches; Brisk Storage restored. 1133 messaging and Remote Studio.",
+      "remainingExcluded": "No actual external connect/reconnect/OAuth. These connection actions are beyond allowed inspection; no proof of real integration.",
+      "evidence": [
+        "G027-G033",
+        "G112-G113"
+      ]
+    },
+    {
+      "id": "N126",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Notification delivery/groups/reminder selector; No reminders dependent disabled states in unsaved draft, Cancel; all four normally linked message categories with alternate records; local editable copy/empty-title Cancel; trigger demo; direct fixed AccountAccess content; direct legacy Client template editor Cancel; 1133 root/descendant/template.",
+      "remainingExcluded": "Restore defaults absent on unmodified baseline, not manufactured; it writes immediately. Data has8 categories but current navigation links4, other direct-only categories not blanket treated as normal live entry. No messages sent or copy saved. Full every-token/body-error combination not claimed.",
+      "evidence": [
+        "G034-G050",
+        "G114-G116"
+      ]
+    },
+    {
+      "id": "N127",
+      "recommendedStatus": "Inspected",
+      "finiteVerification": "Plan summary/comparison, Monthly and Annual by keyboard, both plan-change confirmation frequencies Cancel, storage/Staff add-on confirmation Cancel; trial/overdue/restricted/cancelling previews. Client billing connected/disconnect Cancel, unselected/connect entry Cancel, independent/action-required/disconnected/restricted previews. 1133 comparison and keyboard frequency.",
+      "remainingExcluded": "No purchase/plan confirmation/Stripe continuation/payment; no real external account connection. Contact sales/Manage billing external destination not invoked. Frequency visibility defect observed.",
+      "evidence": [
+        "G051-G070",
+        "G117-G118"
+      ]
+    }
+  ]
+}

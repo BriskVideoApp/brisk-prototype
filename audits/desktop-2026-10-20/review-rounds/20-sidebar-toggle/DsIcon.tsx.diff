@@ -1,0 +1,10 @@
+--- Before this round
++++ src/components/video-review/DsIcon.tsx
+@@ -37,6 +37,7 @@
+   "pencil-simple": "/brisk-icons/pencil-simple.svg",
+   "pencil-simple-ds": "/brisk-icons/pencil-simple-ds.svg",
+   "columns": "/brisk-icons/columns.svg",
++  "sidebar-simple": "/brisk-icons/sidebar-simple.svg",
+   "queue": "/brisk-icons/queue.svg",
+   "picture-in-picture": "/brisk-icons/picture-in-picture.svg",
+   "frame-corners": "/brisk-icons/frame-corners.svg",

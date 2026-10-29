@@ -1,0 +1,334 @@
+- generic "feedly Mini tookit"
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - link "Clients":
+    - /url: /clients
+    - text: Clients
+  - generic "Loom logo"
+  - generic: Client
+  - heading "Loom" [level=1]
+  - generic: loom.com
+  - button "Invite teammate"
+  - link "Go to Loom's dashboard":
+    - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+  - button "Start project":
+    - generic: Start project
+  - tablist "Client profile sections":
+    - tab "Overview"
+    - tab "Contacts" [selected]
+    - tab "Brand Kit"
+  - tabpanel "Contacts":
+    - region "Client contacts":
+      - heading "Client contacts" [level=2]
+      - paragraph: Client contacts use a secure magic link. They never need a password.
+      - table "Loom Client contacts":
+        - rowgroup:
+          - row "Person Invitation Last active Projects they can access Actions":
+            - columnheader "Person"
+            - columnheader "Invitation"
+            - columnheader "Last active"
+            - columnheader "Projects they can access"
+            - columnheader "Actions"
+        - rowgroup:
+          - row "Jess Taylor avatar Jess Taylor jess@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Loom · WACF Customer Cutdown 01 Loom · Product Tour - Team Workflows Loom · Customer Story - Healthcare Loom · Q3 Product Recap Change project access Remove portal access":
+            - cell "Jess Taylor avatar Jess Taylor jess@loom.com":
+              - link "Jess Taylor avatar Jess Taylor jess@loom.com":
+                - /url: /people/client-jess
+                - generic "Jess Taylor avatar": JT
+                - strong: Jess Taylor
+                - generic: jess@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative Loom · WACF Customer Cutdown 01 Loom · Product Tour - Team Workflows Loom · Customer Story - Healthcare Loom · Q3 Product Recap":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+              - link "Loom · WACF Customer Cutdown 01":
+                - /url: /projects/loom-wacf-01
+                - generic: Loom ·
+                - text: WACF Customer Cutdown 01
+              - link "Loom · Product Tour - Team Workflows":
+                - /url: /projects/loom-product-tour
+                - generic: Loom ·
+                - text: Product Tour - Team Workflows
+              - link "Loom · Customer Story - Healthcare":
+                - /url: /projects/loom-customer-stories
+                - generic: Loom ·
+                - text: Customer Story - Healthcare
+              - link "Loom · Q3 Product Recap":
+                - /url: /projects/loom-q3-recap
+                - generic: Loom ·
+                - text: Q3 Product Recap
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Sarah Kim avatar Sarah Kim sarah@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Sarah Kim avatar Sarah Kim sarah@loom.com":
+              - link "Sarah Kim avatar Sarah Kim sarah@loom.com":
+                - /url: /people/client-sarah
+                - generic "Sarah Kim avatar": SK
+                - strong: Sarah Kim
+                - generic: sarah@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com Pending Waiting for them to join. Not yet Loom · Customer Story - Healthcare Resend invite Change project access Remove portal access":
+            - cell "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+              - link "Daniel Ortiz avatar Daniel Ortiz daniel@loom.com":
+                - /url: /people/client-daniel
+                - generic "Daniel Ortiz avatar": DO
+                - strong: Daniel Ortiz
+                - generic: daniel@loom.com
+            - cell "Pending Waiting for them to join.":
+              - generic: Pending
+              - generic: Waiting for them to join.
+            - cell "Not yet"
+            - cell "Loom · Customer Story - Healthcare":
+              - link "Loom · Customer Story - Healthcare":
+                - /url: /projects/loom-customer-stories
+                - generic: Loom ·
+                - text: Customer Story - Healthcare
+            - cell "Resend invite Change project access Remove portal access":
+              - button "Resend invite"
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Maya Chen avatar Maya Chen maya@loom.com Accepted 2 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Maya Chen avatar Maya Chen maya@loom.com":
+              - link "Maya Chen avatar Maya Chen maya@loom.com":
+                - /url: /people/loom-contact-1
+                - generic "Maya Chen avatar": MC
+                - strong: Maya Chen
+                - generic: maya@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "2 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+          - row "Elliot Brooks avatar Elliot Brooks elliot@loom.com Accepted 6 days ago Loom · Launch Film - Sales Narrative Change project access Remove portal access":
+            - cell "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+              - link "Elliot Brooks avatar Elliot Brooks elliot@loom.com":
+                - /url: /people/loom-contact-2
+                - generic "Elliot Brooks avatar": EB
+                - strong: Elliot Brooks
+                - generic: elliot@loom.com
+            - cell "Accepted":
+              - generic: Accepted
+            - cell "6 days ago"
+            - cell "Loom · Launch Film - Sales Narrative":
+              - link "Loom · Launch Film - Sales Narrative":
+                - /url: /projects/loom-launch-film
+                - generic: Loom ·
+                - text: Launch Film - Sales Narrative
+            - cell "Change project access Remove portal access":
+              - button "Change project access"
+              - button "Remove portal access"
+- dialog "Global Chat":
+  - button "Close Chat"
+  - main:
+    - complementary "Chat navigation":
+      - generic: North Star Films
+      - button "Search messages - Command K"
+      - navigation "Global conversations":
+        - button "DMs":
+          - generic: DMs
+        - button "Mark 1 unread dms as read": "1"
+        - button "Mentions":
+          - generic: Mentions
+        - button "Mark 2 unread mentions as read": "2"
+        - button "Groups":
+          - generic: Groups
+        - button "Mark 1 unread groups as read": "1"
+        - button "Threads":
+          - generic: Threads
+        - button "Calls":
+          - generic: Calls
+      - generic "Client conversations":
+        - button "All projects":
+          - generic: All projects
+        - button "Mark all 4 unread messages as read": "4"
+        - button "Loom" [pressed]:
+          - generic: Loom
+        - button "Mark 2 unread messages from Loom as read": "2"
+        - button "Deel":
+          - generic: Deel
+        - button "Mark 1 unread messages from Deel as read": "1"
+        - button "Hims":
+          - generic: Hims
+        - button "Mark 1 unread messages from Hims as read": "1"
+        - button "OpenAI":
+          - generic: OpenAI
+        - button "Canva":
+          - generic: Canva
+        - button "Linear":
+          - generic: Linear
+        - button "Harbour Health":
+          - generic: Harbour Health
+      - combobox "Filter Clients":
+        - generic: Active clients
+      - button "Unread only":
+        - generic: Unread only
+    - button "Back to all project conversations": Back to all project conversations
+    - heading "LOOM-24 Launch Film - Sales Narrative" [level=1]
+    - text: Loom
+    - group "Call options for LOOM-24 Launch Film - Sales Narrative":
+      - button "Start a call in LOOM-24 Launch Film - Sales Narrative"
+      - button "Open call options"
+    - link "Go to project":
+      - /url: /projects/loom-launch-film/stages/brief
+    - button "Manage project members": Manage project members
+    - tablist "Chat channel":
+      - tab "External Chat with the client":
+        - strong: External
+        - generic: Chat with the client
+      - tab "Internal North Star Films only" [active] [selected]:
+        - strong: Internal
+        - generic: North Star Films only
+    - separator "Thursday 23 July":
+      - generic: Thursday 23 July
+    - article:
+      - generic "David Ryan": DR
+      - generic: David Ryan
+      - time: 2:08 pm
+      - paragraph: Client cut is out. Let’s keep the alternate ending internal until Sarah confirms the new product line.
+      - button "Watching":
+        - generic: 👀
+        - generic: "2"
+    - article:
+      - generic "Marcus Lee": ML
+      - generic: Marcus Lee
+      - time: 2:22 pm
+      - paragraph: Here’s a two-minute walkthrough of the ending options. Option B is landing better for me.
+      - link "Loom walkthrough Ending options walkthrough Open embedded video":
+        - /url: https://www.loom.com/share/brisk-ending-options
+        - generic: Loom walkthrough
+        - strong: Ending options walkthrough
+        - generic: Open embedded video
+    - separator "Friday 24 July":
+      - generic: Friday 24 July
+    - article:
+      - generic "Priya Nair": PN
+      - generic: Priya Nair
+      - time: 8:35 am
+      - paragraph:
+        - generic: "@David Ryan"
+        - text: I’ve added the approved type treatments and colour references.
+      - generic "This attachment has no source file in the prototype.":
+        - strong: LOOM-24-type-and-colour-reference.pdf
+        - generic: 4.2 MB · File unavailable
+    - separator "Thursday 20 August":
+      - generic: Thursday 20 August
+    - article:
+      - 'link "Ready to edit: Brief, Script, Shoot and Media were completed together."':
+        - /url: /projects/loom-launch-film/stages/edit
+        - generic: Completed
+        - strong: Ready to edit
+        - generic: Brief, Script, Shoot and Media were completed together.
+        - generic: 4 Stages together
+        - time: 61 days ago
+        - generic: Internal
+    - article:
+      - 'link "Jess Harper approved the Script: Script v4 is approved and can move to the next production step."':
+        - /url: /projects/loom-launch-film/script
+        - generic: Approved
+        - strong: Jess Harper approved the Script
+        - generic: Script v4 is approved and can move to the next production step.
+        - time: 61 days ago
+        - generic: Internal
+    - article:
+      - generic: Changed
+      - generic: Internal
+      - strong: Published call time changed
+      - paragraph: Crew call changed from 7:00 am to 6:30 am. Affected crew have been notified.
+      - time: 61 days ago
+      - link "Open call sheet":
+        - /url: /share/call-sheet/loom-launch-film
+        - text: Open call sheet
+    - region "Write a message":
+      - textbox "Message LOOM-24 internal channel":
+        - /placeholder: "Message #LOOM-24 - internal"
+      - generic "Formatting tools":
+        - button "Bold - Command B":
+          - strong: B
+        - button "Italic - Command I":
+          - emphasis: I
+        - button "Add link" [disabled]
+        - button "Add image"
+        - button "Choose emoji"
+      - button "Attach file"
+      - button "Record video - coming in V2" [disabled]
+      - button "Send message" [disabled]
+      - button "Schedule message for later" [disabled]
+      - text: Schedule for later
+      - button "Choose File"
+- region "Notifications (F8)":
+  - list

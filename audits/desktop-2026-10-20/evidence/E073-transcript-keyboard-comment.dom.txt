@@ -1,0 +1,267 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Waiting on North Star Films
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Storyboard: Waiting on North Star Films"':
+          - /url: /projects/loom-launch-film/stages/storyboard
+          - text: Waiting on North Star Films
+        - generic: Storyboard
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 15 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "15"
+        - text: 15 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - region "Project transcripts":
+    - heading "Transcripts" [level=1]
+    - generic "Transcript controls":
+      - button "Back to Media"
+      - button "Transcript actions": Transcript actions
+      - button "Show all script comments": Comments
+    - group "Transcript view":
+      - button "All" [pressed]
+      - button "Highlights only"
+    - article:
+      - heading "Jess-interview-camera-a.mov" [level=2]
+      - paragraph: Video · 18:42
+      - button "More transcript actions": More transcript actions
+      - region "Jess-interview-camera-a.mov video player":
+        - generic: 00:08
+        - slider "Video timeline"
+        - generic: 18:42
+        - button "Step back five seconds"
+        - button "Step forward five seconds"
+        - button "Pause"
+        - button "Playback speed 1x": 1x
+        - button "Unmute" [pressed]
+        - button "Fullscreen"
+      - region "Jess-interview-camera-a.mov":
+        - button "Play Interviewer at 00:08":
+          - strong: Interviewer
+          - generic: "@00:08"
+          - generic: What changes when a product update reaches the sales team?
+          - button "Add comment for Interviewer at 00:08" [active]: Add comment for Interviewer at 00:08
+        - button "Play Jess Taylor at 00:16":
+          - strong: Jess Taylor
+          - generic: "@00:16"
+          - generic: The team needs a clear way to explain the change before the next customer conversation.
+          - button "Add comment for Jess Taylor at 00:16": Add comment for Jess Taylor at 00:16
+        - button "Play Interviewer at 00:27":
+          - strong: Interviewer
+          - generic: "@00:27"
+          - generic: Where does Loom help most?
+          - button "Add comment for Interviewer at 00:27": Add comment for Interviewer at 00:27
+        - button "Play Jess Taylor at 00:35":
+          - strong: Jess Taylor
+          - generic: "@00:35"
+          - generic: We can show the update in context and share the same story with everyone, wherever they work.
+          - button "Add comment for Jess Taylor at 00:35": Add comment for Jess Taylor at 00:35
+        - button "Play Jess Taylor at 00:47":
+          - strong: Jess Taylor
+          - generic: "@00:47"
+          - generic: A short recording lets people see the product and hear why it matters, without another meeting.
+          - button "Add comment for Jess Taylor at 00:47": Add comment for Jess Taylor at 00:47
+        - button "Play Interviewer at 01:00":
+          - strong: Interviewer
+          - generic: "@01:00"
+          - generic: What should customers take away from this film?
+          - button "Add comment for Interviewer at 01:00": Add comment for Interviewer at 01:00
+        - button "Play Jess Taylor at 01:08":
+          - strong: Jess Taylor
+          - generic: "@01:08"
+          - generic: That the team understands their needs and can explain each new capability with confidence.
+          - button "Add comment for Jess Taylor at 01:08": Add comment for Jess Taylor at 01:08
+    - article:
+      - heading "Jess-lapel-audio.wav" [level=2]
+      - paragraph: Audio · 19:04
+      - button "More transcript actions": More transcript actions
+      - region "Jess-lapel-audio.wav video player":
+        - generic: 00:00
+        - slider "Video timeline"
+        - generic: 19:04
+        - button "Step back five seconds"
+        - button "Step forward five seconds"
+        - button "Play"
+        - button "Playback speed 1x": 1x
+        - button "Mute"
+        - button "Fullscreen"
+      - region "Jess-lapel-audio.wav":
+        - button "Play Jess Taylor at 00:08":
+          - strong: Jess Taylor
+          - generic: "@00:08"
+          - generic: The best sales conversations start with genuine curiosity about the customer.
+          - button "Add comment for Jess Taylor at 00:08": Add comment for Jess Taylor at 00:08
+        - button "Play Interviewer at 00:18":
+          - strong: Interviewer
+          - generic: "@00:18"
+          - generic: How does the team prepare for a new product launch?
+          - button "Add comment for Interviewer at 00:18": Add comment for Interviewer at 00:18
+        - button "Play Jess Taylor at 00:26":
+          - strong: Jess Taylor
+          - generic: "@00:26"
+          - generic: We record a clear walkthrough, share it with the team and keep the important details easy to revisit.
+          - button "Add comment for Jess Taylor at 00:26": Add comment for Jess Taylor at 00:26
+        - button "Play Interviewer at 00:39":
+          - strong: Interviewer
+          - generic: "@00:39"
+          - generic: What does that change for sellers?
+          - button "Add comment for Interviewer at 00:39": Add comment for Interviewer at 00:39
+        - button "Play Jess Taylor at 00:47":
+          - strong: Jess Taylor
+          - generic: "@00:47"
+          - generic: They can focus on the customer's question instead of trying to remember every slide from a meeting.
+          - button "Add comment for Jess Taylor at 00:47": Add comment for Jess Taylor at 00:47
+    - article:
+      - heading "Avery-customer-interview.mov" [level=2]
+      - paragraph: Video · 12:16
+      - button "More transcript actions": More transcript actions
+      - region "Avery-customer-interview.mov video player":
+        - generic: 00:00
+        - slider "Video timeline"
+        - generic: 12:16
+        - button "Step back five seconds"
+        - button "Step forward five seconds"
+        - button "Play"
+        - button "Playback speed 1x": 1x
+        - button "Mute"
+        - button "Fullscreen"
+      - region "Avery-customer-interview.mov":
+        - button "Play Interviewer at 00:05":
+          - strong: Interviewer
+          - generic: "@00:05"
+          - generic: What makes a product story useful to a customer?
+          - button "Add comment for Interviewer at 00:05": Add comment for Interviewer at 00:05
+        - button "Play Avery Taylor at 00:13":
+          - strong: Avery Taylor
+          - generic: "@00:13"
+          - generic: Show the problem first, then let people see how the product fits into their day.
+          - button "Add comment for Avery Taylor at 00:13": Add comment for Avery Taylor at 00:13
+        - button "Play Interviewer at 00:27":
+          - strong: Interviewer
+          - generic: "@00:27"
+          - generic: What should the opening of this film communicate?
+          - button "Add comment for Interviewer at 00:27": Add comment for Interviewer at 00:27
+        - button "Play Avery Taylor at 00:35":
+          - strong: Avery Taylor
+          - generic: "@00:35"
+          - generic: A familiar moment for a sales team, followed by a practical way to share the answer.
+          - button "Add comment for Avery Taylor at 00:35": Add comment for Avery Taylor at 00:35
+        - button "Play Avery Taylor at 00:49":
+          - strong: Avery Taylor
+          - generic: "@00:49"
+          - generic: The ending should leave people ready to explain the update in their own words.
+          - button "Add comment for Avery Taylor at 00:49": Add comment for Avery Taylor at 00:49
+    - article:
+      - heading "Care-team-roundtable.wav" [level=2]
+      - paragraph: Audio · 08:42
+      - button "More transcript actions": More transcript actions
+      - region "Care-team-roundtable.wav video player":
+        - generic: 00:00
+        - slider "Video timeline"
+        - generic: 08:42
+        - button "Step back five seconds"
+        - button "Step forward five seconds"
+        - button "Play"
+        - button "Playback speed 1x": 1x
+        - button "Mute"
+        - button "Fullscreen"
+      - region "Care-team-roundtable.wav":
+        - button "Play Priya Nair at 00:11":
+          - strong: Priya Nair
+          - generic: "@00:11"
+          - generic: Start with the sales team's question and move quickly to the product demonstration.
+          - button "Add comment for Priya Nair at 00:11": Add comment for Priya Nair at 00:11
+        - button "Play David Ryan at 00:24":
+          - strong: David Ryan
+          - generic: "@00:24"
+          - generic: The edit should give the screen recording room to show the change clearly.
+          - button "Add comment for David Ryan at 00:24": Add comment for David Ryan at 00:24
+        - button "Play Jess Taylor at 00:38":
+          - strong: Jess Taylor
+          - generic: "@00:38"
+          - generic: Keep the Client language simple and specific to what customers can do next.
+          - button "Add comment for Jess Taylor at 00:38": Add comment for Jess Taylor at 00:38
+        - button "Play Priya Nair at 00:51":
+          - strong: Priya Nair
+          - generic: "@00:51"
+          - generic: Jess's explanation gives us the human thread through the film.
+          - button "Add comment for Priya Nair at 00:51": Add comment for Priya Nair at 00:51

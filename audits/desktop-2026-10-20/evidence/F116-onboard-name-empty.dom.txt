@@ -1,0 +1,19 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - generic: "1"
+    - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- main:
+  - region "What's your name?":
+    - heading "What's your name?" [level=1]
+    - generic: Your name
+    - textbox "Your name"
+    - button "Back"
+    - button "Continue" [disabled]

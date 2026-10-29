@@ -1,0 +1,179 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - button "Edit Setup": Edit Setup
+  - complementary "Current shoot-day position":
+    - combobox "Choose shoot day" [expanded] [active]:
+      - generic: Day 1 of 2
+      - strong: 13 August, 2026
+    - button "Now Crew call and gear unload 7:30 am · 30 min · Precinct Studio 2":
+      - generic: Now
+      - strong: Crew call and gear unload
+      - generic: 7:30 am · 30 min · Precinct Studio 2
+    - generic: Next
+    - strong: Lighting and camera setup
+    - generic: 8:00 am · 45 min · Precinct Studio 2
+  - heading "Shoot day" [level=2]
+  - button "1 of 4 captured. Open shoot day progress.": 1 of 4
+  - button "Add to Shoot day": Add
+  - list:
+    - checkbox "Mark Crew call and gear unload as complete"
+    - time: 7:30 am
+    - generic: Setup
+    - button "Crew call and gear unload 30 min · Precinct Studio 2":
+      - strong: Crew call and gear unload
+      - generic: 30 min · Precinct Studio 2
+    - generic: Now
+    - button "More actions for Crew call and gear unload": More actions for Crew call and gear unload
+    - checkbox "Mark Lighting and camera setup as complete"
+    - time: 8:00 am
+    - generic: Setup
+    - button "Lighting and camera setup 45 min · Precinct Studio 2":
+      - strong: Lighting and camera setup
+      - generic: 45 min · Precinct Studio 2
+    - generic: Next
+    - button "More actions for Lighting and camera setup": More actions for Lighting and camera setup
+    - time: 8:45 am
+    - generic: Shot group
+    - button "Founder interview 1 of 1 captured · 60 min · Precinct Studio 2":
+      - strong: Founder interview
+      - generic: 1 of 1 captured · 60 min · Precinct Studio 2
+    - checkbox "Mark Travel to Loom office as complete"
+    - time: 10:15 am
+    - generic: Travel
+    - button "Travel to Loom office 20 min · Loom Sydney Office":
+      - strong: Travel to Loom office
+      - generic: 20 min · Loom Sydney Office
+    - generic: Upcoming
+    - button "More actions for Travel to Loom office": More actions for Travel to Loom office
+    - time: 10:35 am
+    - generic: Shot group
+    - button "Team and workplace B-roll 0 of 1 captured · 85 min · Loom Sydney Office":
+      - strong: Team and workplace B-roll
+      - generic: 0 of 1 captured · 85 min · Loom Sydney Office
+    - generic: Upcoming
+    - button "More actions for Team and workplace B-roll": More actions for Team and workplace B-roll
+    - checkbox "Mark Lunch as complete"
+    - time: 12:00 pm
+    - generic: Lunch
+    - strong: Lunch
+    - generic: 45 min · Loom Sydney Office
+    - generic: Upcoming
+    - button "More actions for Lunch": More actions for Lunch
+  - article:
+    - button "Establishing coverage 0 of 2 captured" [expanded]:
+      - strong: Establishing coverage
+      - generic: 0 of 2 captured
+    - table "Establishing coverage shots":
+      - 'row "Mark shot 4.1 as captured 4.1 Edit shot 4.1: Exterior establishing shots More actions for shot 4.1"':
+        - checkbox "Mark shot 4.1 as captured"
+        - generic: "4.1"
+        - 'button "Edit shot 4.1: Exterior establishing shots"':
+          - strong: Exterior establishing shots
+        - textbox "Quick note for shot 4.1":
+          - /placeholder: Add note
+        - button "More actions for shot 4.1": More actions for shot 4.1
+      - 'row "Mark shot 4.2 as captured 4.2 Edit shot 4.2: Office signage and general atmosphere More actions for shot 4.2"':
+        - checkbox "Mark shot 4.2 as captured"
+        - generic: "4.2"
+        - 'button "Edit shot 4.2: Office signage and general atmosphere"':
+          - strong: Office signage and general atmosphere
+        - textbox "Quick note for shot 4.2":
+          - /placeholder: Add note
+        - button "More actions for shot 4.2": More actions for shot 4.2
+    - button "Add shot": Add shot
+- listbox "Choose shoot day":
+  - option "Day 1 - 13 August, 2026" [selected]:
+    - generic: Day 1 - 13 August, 2026
+  - option "Day 2 - 14 August, 2026":
+    - generic: Day 2 - 14 August, 2026

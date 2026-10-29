@@ -15,6 +15,8 @@ export type StoredChatState = {
   groupConversations: ConversationPreview[];
 };
 
+export const storedProjectChatMessageEvent = "brisk:stored-project-chat-message";
+
 export function isStoredChatState(value: unknown): value is StoredChatState {
   if (!value || typeof value !== "object") return false;
   const chat = value as Partial<StoredChatState>;
@@ -35,13 +37,16 @@ export function appendStoredProjectChatMessage(workspaceId: string, message: Cha
     const stored = window.localStorage.getItem(storageKey);
     const parsed: unknown = stored ? JSON.parse(stored) : null;
     const current = isStoredChatState(parsed) ? parsed : fixtureState;
-    if (current.messages.some((candidate) => candidate.id === message.id)) return;
+    if (current.messages.some((candidate) => candidate.id === message.id)) return true;
     window.localStorage.setItem(storageKey, JSON.stringify({
       ...current,
       messages: [...current.messages, message],
     }));
+    window.dispatchEvent(new CustomEvent(storedProjectChatMessageEvent, { detail: { workspaceId, message } }));
+    return true;
   } catch {
     // Keep the Brief handoff available if prototype Chat storage is unavailable.
+    return false;
   }
 }
 

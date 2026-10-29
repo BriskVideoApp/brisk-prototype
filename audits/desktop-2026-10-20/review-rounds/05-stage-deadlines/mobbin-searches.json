@@ -1,0 +1,190 @@
+{
+  "milestone-screens": [
+    {
+      "screens": [
+        {
+          "index": 0,
+          "id": "d3baa960-5d60-4590-9835-1c4704499a42",
+          "image_url": "https://mobbin.com/api/mcp/short/qO89pqIG",
+          "mobbin_url": "https://mobbin.com/screens/d3baa960-5d60-4590-9835-1c4704499a42",
+          "app_name": "Asana",
+          "platform": "web"
+        },
+        {
+          "index": 1,
+          "id": "d9b96362-0f22-4783-8be4-a238485091b6",
+          "image_url": "https://mobbin.com/api/mcp/short/Mk7hob1E",
+          "mobbin_url": "https://mobbin.com/screens/d9b96362-0f22-4783-8be4-a238485091b6",
+          "app_name": "Zoom",
+          "platform": "web"
+        },
+        {
+          "index": 2,
+          "id": "6fb01d9a-6529-4d05-8528-1150e6aeb6c1",
+          "image_url": "https://mobbin.com/api/mcp/short/ZIbO4Cdt",
+          "mobbin_url": "https://mobbin.com/screens/6fb01d9a-6529-4d05-8528-1150e6aeb6c1",
+          "app_name": "GitLab",
+          "platform": "web"
+        },
+        {
+          "index": 3,
+          "id": "5f63b05f-bf4c-44d9-89c1-556204c5231a",
+          "image_url": "https://mobbin.com/api/mcp/short/32o4isYH",
+          "mobbin_url": "https://mobbin.com/screens/5f63b05f-bf4c-44d9-89c1-556204c5231a",
+          "app_name": "Plane",
+          "platform": "web"
+        },
+        {
+          "index": 4,
+          "id": "a3c86b72-4d6d-403f-9476-7fad2fbd7ac1",
+          "image_url": "https://mobbin.com/api/mcp/short/eRdIdC63",
+          "mobbin_url": "https://mobbin.com/screens/a3c86b72-4d6d-403f-9476-7fad2fbd7ac1",
+          "app_name": "Qatalog",
+          "platform": "web"
+        },
+        {
+          "index": 5,
+          "id": "26de30d4-c951-4024-a0a0-45016db1c23b",
+          "image_url": "https://mobbin.com/api/mcp/short/zD5xWM7C",
+          "mobbin_url": "https://mobbin.com/screens/26de30d4-c951-4024-a0a0-45016db1c23b",
+          "app_name": "Upwork",
+          "platform": "web"
+        }
+      ]
+    }
+  ],
+  "milestone-flows": [
+    {
+      "flows": [
+        {
+          "index": 0,
+          "id": "c0ec89a3-08aa-4b8d-9a50-1646d55a9c6f",
+          "name": "Adding a target date",
+          "actions": [
+            "Adding & Creating"
+          ],
+          "screen_count": 3,
+          "mobbin_url": "https://mobbin.com/flows/c0ec89a3-08aa-4b8d-9a50-1646d55a9c6f",
+          "app_name": "Linear",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "030dc9a2-5e4c-4a97-821a-e6acba101c17",
+              "image_url": "https://mobbin.com/api/mcp/short/CuRjE2XV",
+              "position": 1
+            },
+            {
+              "screen_id": "ebeec61e-927c-4d36-99fa-a1f5ab250222",
+              "image_url": "https://mobbin.com/api/mcp/short/7RGFuZ2K",
+              "position": 2
+            },
+            {
+              "screen_id": "e202915c-130d-4e3b-8d03-334f09650bb5",
+              "image_url": "https://mobbin.com/api/mcp/short/f2p6Kujx",
+              "position": 3
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "id": "0bdcf569-3288-4d3d-9a6e-bbbf6a512fc8",
+          "name": "Creating milestones",
+          "actions": [
+            "Adding & Creating"
+          ],
+          "screen_count": 8,
+          "mobbin_url": "https://mobbin.com/flows/0bdcf569-3288-4d3d-9a6e-bbbf6a512fc8",
+          "app_name": "Linear",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "f687b5fd-9354-45b2-af71-74140aaedf3d",
+              "image_url": "https://mobbin.com/api/mcp/short/DFvQhBdu",
+              "position": 1
+            },
+            {
+              "screen_id": "8030cf60-b6b9-4ae9-a08d-8ca29cef6469",
+              "image_url": "https://mobbin.com/api/mcp/short/Eyd0TP0c",
+              "position": 2
+            },
+            {
+              "screen_id": "74320f37-d2e8-4646-ae43-9235f2f30399",
+              "image_url": "https://mobbin.com/api/mcp/short/ZZGA0oQl",
+              "position": 3
+            },
+            {
+              "screen_id": "40c3f3c4-f02b-4317-aff3-822bfaf84b3b",
+              "image_url": "https://mobbin.com/api/mcp/short/ZV0G0RE7",
+              "position": 4
+            },
+            {
+              "screen_id": "fb59ac32-54a6-4539-8a03-450addb61b6d",
+              "image_url": "https://mobbin.com/api/mcp/short/XOBOnMia",
+              "position": 5
+            },
+            {
+              "screen_id": "e6e7369e-f46a-47f3-9434-e481de972f90",
+              "image_url": "https://mobbin.com/api/mcp/short/z1j9NzQ9",
+              "position": 6
+            },
+            {
+              "screen_id": "21868ab4-8721-4702-a824-ac4844e87dda",
+              "image_url": "https://mobbin.com/api/mcp/short/NNSlcVif",
+              "position": 7
+            },
+            {
+              "screen_id": "4609e1db-a9f7-459d-9e7f-87e52dfb2418",
+              "image_url": "https://mobbin.com/api/mcp/short/9YRXIK3K",
+              "position": 8
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "id": "a0cebb6a-ed19-4813-a283-fa450b6312e0",
+          "name": "Creating a milestone",
+          "actions": [
+            "Adding & Creating"
+          ],
+          "screen_count": 4,
+          "mobbin_url": "https://mobbin.com/flows/a0cebb6a-ed19-4813-a283-fa450b6312e0",
+          "app_name": "GitLab",
+          "platform": "web",
+          "screens": [
+            {
+              "screen_id": "727cbf70-5798-4301-b236-dc825a54d98c",
+              "image_url": "https://mobbin.com/api/mcp/short/jLTfC1H7",
+              "position": 1
+            },
+            {
+              "screen_id": "ce54dec5-7342-465b-b210-914774d4c57c",
+              "image_url": "https://mobbin.com/api/mcp/short/M06XwKj2",
+              "position": 2
+            },
+            {
+              "screen_id": "d9de744b-1cea-4609-96db-134e290052db",
+              "image_url": "https://mobbin.com/api/mcp/short/vNmM72y5",
+              "position": 3
+            },
+            {
+              "screen_id": "fbfddddf-bfbe-44f6-92c5-e0fdabd450d7",
+              "image_url": "https://mobbin.com/api/mcp/short/V6hEoRgB",
+              "position": 4
+            }
+          ]
+        }
+      ],
+      "page": 1,
+      "has_next_page": true
+    },
+    "Flow 0: screen 1/3",
+    "Flow 0: screen 2/3",
+    "Flow 0: screen 3/3",
+    "Flow 1: screen 1/8",
+    "Flow 1: screen 5/8",
+    "Flow 1: screen 8/8",
+    "Flow 2: screen 1/4",
+    "Flow 2: screen 3/4",
+    "Flow 2: screen 4/4"
+  ]
+}

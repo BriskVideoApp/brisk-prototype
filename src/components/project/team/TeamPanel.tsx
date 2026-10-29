@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { EditingDialog } from "../../../../Brisk DS/src/app/components/EditingDialog";
 import {
   applyStudioDefaultTeam,
   fallbackRoleStages,
@@ -44,6 +45,9 @@ type TeamPanelProps = {
   viewerPersonId?: string;
   hideHeader?: boolean;
   assignPersonId?: string;
+  assignmentOnly?: boolean;
+  onCloseAssignment?: () => void;
+  onAssignmentComplete?: (message: string) => void;
 };
 
 type ToastState = {
@@ -60,6 +64,9 @@ export function TeamPanel({
   viewerPersonId,
   hideHeader = false,
   assignPersonId,
+  assignmentOnly = false,
+  onCloseAssignment,
+  onAssignmentComplete,
 }: TeamPanelProps) {
   const router = useRouter();
   const { people: directoryPeople, syncProjectStaffWorkloads } = usePeople();
@@ -77,6 +84,7 @@ export function TeamPanel({
   const [isRolePickerOpen, setIsRolePickerOpen] = useState(false);
   const [pendingAssignmentPersonId, setPendingAssignmentPersonId] = useState<string | undefined>();
   const handledAssignmentRequest = useRef<string | null>(null);
+  const hasOpenedQuickAssignment = useRef(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const storedTeam = teamsByProjectId[projectId];
   const startingTeam = useMemo(() => applyStudioDefaultTeam({
@@ -105,6 +113,7 @@ export function TeamPanel({
     setIsRolePickerOpen(false);
     setPendingAssignmentPersonId(undefined);
     handledAssignmentRequest.current = null;
+    hasOpenedQuickAssignment.current = false;
   }, [projectId]);
 
   useEffect(() => {
@@ -122,6 +131,14 @@ export function TeamPanel({
     url.searchParams.delete("assignPerson");
     router.replace(`${url.pathname}${url.search}${url.hash}`, { scroll: false });
   }, [access, assignPersonId, people, projectId, router, storedTeam, team]);
+
+  useEffect(() => {
+    if (!assignmentOnly || !storedTeam || access !== "producerAdmin" || hasOpenedQuickAssignment.current) return;
+    hasOpenedQuickAssignment.current = true;
+    const roles = storedTeam.filter((slot) => !slot.archivedAt);
+    const role = roles.find((slot) => !getAcceptedInvitation(slot)) ?? roles[0];
+    if (role) setRoleEditorSlotId(role.id);
+  }, [access, assignmentOnly, storedTeam]);
 
   useEffect(() => {
     syncProjectStaffWorkloads(projectId, getProjectStaffWorkloads(projectId, team, people));
@@ -149,6 +166,15 @@ export function TeamPanel({
   const activeRoleEditorSlot = canEdit ? team.find((slot) => slot.id === roleEditorSlotId) : undefined;
   const primaryRoleEditorSlot = displayTeam.find((slot) => slot.role === "producer") ?? displayTeam[0];
   const assignedPersonIds = getAssignedPersonIds(activeTeam);
+  const closeRoleEditor = () => {
+    setRoleEditorSlotId(null);
+    if (assignmentOnly) onCloseAssignment?.();
+  };
+  const finishAssignment = (message: string) => {
+    setRoleEditorSlotId(null);
+    setToast({ id: String(Date.now()), message });
+    onAssignmentComplete?.(message);
+  };
 
   const updateSlot = (slotId: string, updater: (slot: RoleSlot) => RoleSlot) => {
     setProjectTeam(projectId, (currentTeam) => currentTeam.map((slot) => (slot.id === slotId ? updater(slot) : slot)));
@@ -507,8 +533,8 @@ export function TeamPanel({
   };
 
   return (
-    <section className="team-panel" aria-label={`${projectName} team`}>
-      {!hideHeader ? <header className="team-panel-header">
+    <section className={assignmentOnly ? undefined : "team-panel"} aria-label={`${projectName} team`}>
+      {!assignmentOnly && !hideHeader ? <header className="team-panel-header">
         <span className="team-panel-heading">
           {canEdit ? (
             <button
@@ -529,8 +555,8 @@ export function TeamPanel({
         </span>
       </header> : null}
 
-      <div className="team-panel-body">
-        <div className="team-panel-slot-list" role="table" aria-label="Project roles">
+      {!assignmentOnly ? <div className="team-panel-body">
+        <div className="team-overview-list" role="list" aria-label="Project roles">
           {displayTeam.map((slot) => (
             <RoleRow
               key={slot.id}
@@ -548,18 +574,31 @@ export function TeamPanel({
             <AddRoleButton isOpen={isRolePickerOpen} roles={teamRoleOptions} onAddRole={addRole} onOpenChange={setIsRolePickerOpen} />
           </div>
         ) : null}
-      </div>
+      </div> : null}
+
+      {assignmentOnly && storedTeam && activeTeam.length === 0 ? <EditingDialog title="Assign team member" description="Add a role to this project first." onCancel={() => onCloseAssignment?.()}>
+        <AddRoleButton isOpen={isRolePickerOpen} roles={teamRoleOptions} onAddRole={addRole} onOpenChange={setIsRolePickerOpen} />
+      </EditingDialog> : null}
 
       {activeRoleEditorSlot ? (
         <RoleEditorModal
+          key={activeRoleEditorSlot.id}
           slot={activeRoleEditorSlot}
           projectName={projectName}
           people={people}
           assignedPersonIds={assignedPersonIds}
           showCosts={showCosts}
-          onAddStaff={(person) => addStaffToSlot(activeRoleEditorSlot.id, person)}
+          roles={activeTeam}
+          onSelectRole={setRoleEditorSlotId}
+          onAddStaff={(person) => {
+            addStaffToSlot(activeRoleEditorSlot.id, person);
+            finishAssignment(`${person.name} assigned as ${getSlotLabel(activeRoleEditorSlot)}.`);
+          }}
           onInviteFreelancer={(person, paymentTerms, message) => inviteFreelancerToSlot(activeRoleEditorSlot.id, person, paymentTerms, message)}
-          onAssignFreelancer={(person, paymentTerms) => assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person, paymentTerms)}
+          onAssignFreelancer={(person, paymentTerms) => {
+            assignFreelancerDirectlyToSlot(activeRoleEditorSlot.id, person, paymentTerms);
+            finishAssignment(`${person.name} assigned as ${getSlotLabel(activeRoleEditorSlot)}.`);
+          }}
           onUnassign={() => unassignSlot(activeRoleEditorSlot.id)}
           onInviteNewFreelancer={() => openNewFreelancerInvite(activeRoleEditorSlot)}
           onWithdrawInvitation={(invitationId) => withdrawInvitation(activeRoleEditorSlot.id, invitationId)}
@@ -569,7 +608,7 @@ export function TeamPanel({
             updateSlot(activeRoleEditorSlot.id, (slot) => redistributeRoleHours(slot, hours));
           }}
           initialPersonId={pendingAssignmentPersonId}
-          onClose={() => setRoleEditorSlotId(null)}
+          onClose={closeRoleEditor}
         />
       ) : null}
 

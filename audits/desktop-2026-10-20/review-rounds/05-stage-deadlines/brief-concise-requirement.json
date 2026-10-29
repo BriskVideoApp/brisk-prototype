@@ -1,0 +1,20 @@
+{
+  "date": "28 October 2026",
+  "status": "Revised visual proposal; application unchanged",
+  "request": "More efficiently show that the requested date is too soon, show the suggested date, then explain why.",
+  "pattern": [
+    "We need more time",
+    "Suggested delivery with a visible date",
+    "Use date selects the suggestion without submitting the Brief",
+    "Collapsed Why? reveals the stage allowances and assumptions"
+  ],
+  "scenario": {
+    "requested": "2026-10-30",
+    "suggested": "2026-11-05",
+    "basis": "Illustrative remaining Edit and Masters at 3 working days each, from Wednesday 28 October. Script and Media assumed ready; weekends excluded; Client review time not assumed.",
+    "correction": "The earlier Mon 2 Nov sample covered the first Edit WIP only. The revised final-delivery suggestion includes the illustrated Masters allowance as well. This is proposal data, not a working-record change or an implemented forecast engine."
+  },
+  "preservation": "Requested date may still be earlier; choosing a suggestion is not agreement to a committed date. No active timers or application records changed.",
+  "review": "timing-review.html",
+  "preview": "timing-preview.html"
+}

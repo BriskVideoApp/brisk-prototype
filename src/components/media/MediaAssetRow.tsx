@@ -1,16 +1,16 @@
-import type { DragEvent, MouseEvent } from "react";
+import type { DragEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
 import { formatMediaBytes, formatMediaDuration } from "@/lib/media";
-import { MediaAssetActions, MediaAssetIndicators, MediaThumbnail } from "./MediaAssetCard";
+import { MediaAssetActions, MediaAssetIndicators, MediaThumbnail, type MediaActivationEvent } from "./MediaAssetCard";
 
 type MediaAssetRowProps = {
   asset: MediaAssetView;
   capabilities: MediaCapabilities;
   isActive: boolean;
   isSelected: boolean;
-  onActivate: (asset: MediaAssetView, event: MouseEvent<HTMLElement>) => void;
+  onActivate: (asset: MediaAssetView, event: MediaActivationEvent) => void;
   onComment: (asset: MediaAssetView) => void;
   onTranscript: (asset: MediaAssetView) => void;
   onShare: (asset: MediaAssetView) => void;
@@ -32,14 +32,16 @@ export function MediaAssetRow(props: MediaAssetRowProps) {
     <tr
       className={`${isSelected ? "is-selected" : ""} ${isActive ? "is-active" : ""}`}
       tabIndex={0}
+      data-media-asset-id={asset.id}
       draggable={props.capabilities.canMoveAssets}
       onClick={(event) => onActivate(asset, event)}
       onDragStart={props.onDragStart}
       onDragEnd={props.onDragEnd}
       onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          onActivate(asset, event as unknown as MouseEvent<HTMLElement>);
+          onActivate(asset, event);
         }
       }}
     >

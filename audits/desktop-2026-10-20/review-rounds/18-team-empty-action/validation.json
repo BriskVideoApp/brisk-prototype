@@ -1,0 +1,16 @@
+{
+  "approval": "Move Assign team to the empty Team column, only when no team is assigned.",
+  "result": "Implemented; awaiting Tom visual sign-off",
+  "verification": {
+    "types": "npx tsc --noEmit passed",
+    "route": "/active-videos HTTP 200",
+    "browser": "Studio Staff, isolated origin 127.0.0.1:8786, actual 1280 \u00d7 720 desktop capture",
+    "placement": "All six empty-team assignment controls are inside td.column-team; none in the Project column.",
+    "populated": "Nine populated/invited summaries retain Open Team; no Assign team control.",
+    "interaction": "Canva Assign team opens existing Assign team member dialog with Required hours. Cancelled without assigning.",
+    "scope": "Existing active assigned/invited summary determines emptiness; existing Staff-only permission retained.",
+    "records": "No assignments, invitations, mock records, assets or dependencies changed. User working localhost tab left in place.",
+    "limits": "No assignment submitted and no tests or production build run.",
+    "capture": "result.png full capture; team-column.png is an unaltered crop [240,157,1218,471]. An invalid tiled capture was discarded."
+  }
+}

@@ -47,6 +47,8 @@ export type ConfidenceChipModel = {
 };
 
 export type ChatMessage = {
+  scope?: "project";
+  sources?: Array<{ label: string; href: string }>;
   id: string;
   role: "client" | "ai";
   authorLabel?: "You" | "Client";

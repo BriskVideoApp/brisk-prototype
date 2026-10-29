@@ -1,0 +1,377 @@
+- alert
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /workspaces/northstar-films/clients/loom/portal
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kit":
+      - /url: /brand-kits/loom
+      - generic: Brand Kit
+  - button "Open your menu, signed in as Jess Taylor":
+    - generic "Jess Taylor": JT
+    - strong: Jess Taylor
+    - generic: Loom
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat, 6 unread":
+      - text: Chat
+      - generic "6 unread messages": "6"
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Videos header":
+    - heading "Videos" [level=1]
+    - generic: Search projects
+    - searchbox "Search projects"
+  - group "Project status":
+    - button "All 5" [pressed]:
+      - text: All
+      - generic: "5"
+    - button "Queued 0":
+      - text: Queued
+      - generic: "0"
+    - button "In production 5":
+      - text: In production
+      - generic: "5"
+    - button "Completed 0":
+      - text: Completed
+      - generic: "0"
+    - button "Paused 0":
+      - text: Paused
+      - generic: "0"
+    - button "Archived 0":
+      - text: Archived
+      - generic: "0"
+  - button "Filters": Filters
+  - region "Videos table":
+    - table:
+      - rowgroup:
+        - row "Project Progress Latest action Status Deadline Actions":
+          - columnheader "Project":
+            - generic: Project
+          - columnheader "Progress"
+          - columnheader "Latest action"
+          - columnheader "Status":
+            - generic: Status
+          - columnheader "Deadline"
+          - columnheader "Actions":
+            - generic: Actions
+      - rowgroup:
+        - row "LOOM Launch Film - Sales Narrative Quick actions for Launch Film - Sales Narrative Critical Remove Critical tag from Launch Film - Sales Narrative Add tag to Launch Film - Sales Narrative Launch Film - Sales Narrative stage progress Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions. In production Edit deadline for Launch Film - Sales Narrative Open details for Launch Film - Sales Narrative":
+          - cell "LOOM Launch Film - Sales Narrative Quick actions for Launch Film - Sales Narrative Critical Remove Critical tag from Launch Film - Sales Narrative Add tag to Launch Film - Sales Narrative":
+            - generic: LOOM
+            - link "Launch Film - Sales Narrative":
+              - /url: /projects/loom-launch-film/stages/brief
+            - generic "Quick actions for Launch Film - Sales Narrative":
+              - link "Open chat (2 unread)":
+                - /url: /chat?project=loom-launch-film
+                - generic "2 unread messages": "2"
+                - text: Open chat (2 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - text: Critical
+            - button "Remove Critical tag from Launch Film - Sales Narrative": ×
+            - button "Add tag to Launch Film - Sales Narrative": +
+          - cell "Launch Film - Sales Narrative stage progress":
+            - generic "Launch Film - Sales Narrative stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-launch-film/stages/brief
+                - text: Brief - Waiting on North Star Films
+              - generic: Brief
+              - generic: 0d ago
+              - link "Open Script":
+                - /url: /projects/loom-launch-film/script
+                - text: Script - Waiting on North Star Films
+              - generic: Script
+              - generic: 0d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-launch-film/stages/shoot
+                - text: Shoot - Waiting on Loom
+              - generic: Shoot
+              - generic: 1d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-launch-film/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/loom-launch-film/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (13). 13 media files":
+                - /url: /projects/loom-launch-film/stages/media
+                - text: 13 media files
+              - generic: Media (13)
+          - cell "Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions.":
+            - button "Brief approved by client · Aug 11, 2026 at 10:24 AM. Open Latest actions.":
+              - strong: Brief approved
+              - text: by client
+              - time: Today Aug 11, 2026 at 10:24 AM
+          - cell "In production":
+            - generic: In production
+          - cell "Edit deadline for Launch Film - Sales Narrative":
+            - button "Edit deadline for Launch Film - Sales Narrative":
+              - generic: Shoot - 41d left
+              - generic: Final due - Sat, Aug 29
+          - cell "Open details for Launch Film - Sales Narrative":
+            - button "Open details for Launch Film - Sales Narrative": Open details
+        - row "LOOM WACF Customer Cutdown 01 Quick actions for WACF Customer Cutdown 01 Add tag to WACF Customer Cutdown 01 WACF Customer Cutdown 01 stage progress Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions. In production Set deadline for WACF Customer Cutdown 01 Open details for WACF Customer Cutdown 01":
+          - cell "LOOM WACF Customer Cutdown 01 Quick actions for WACF Customer Cutdown 01 Add tag to WACF Customer Cutdown 01":
+            - generic: LOOM
+            - link "WACF Customer Cutdown 01":
+              - /url: /projects/loom-wacf-01/stages/brief
+            - generic "Quick actions for WACF Customer Cutdown 01":
+              - link "Open chat (1 unread)":
+                - /url: /chat?project=loom-wacf-01
+                - generic "1 unread messages": "1"
+                - text: Open chat (1 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to WACF Customer Cutdown 01": +
+          - cell "WACF Customer Cutdown 01 stage progress":
+            - generic "WACF Customer Cutdown 01 stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-wacf-01/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-wacf-01/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-wacf-01/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-wacf-01/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-wacf-01/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-wacf-01/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions.":
+            - button "Rough cut uploaded · Jul 25, 2026 at 4:40 PM. Open Latest actions.":
+              - strong: Rough cut
+              - text: uploaded
+              - time: Today Jul 25, 2026 at 4:40 PM
+          - cell "In production":
+            - generic: In production
+          - cell "Set deadline for WACF Customer Cutdown 01":
+            - button "Set deadline for WACF Customer Cutdown 01": To be set
+          - cell "Open details for WACF Customer Cutdown 01":
+            - button "Open details for WACF Customer Cutdown 01": Open details
+        - row "LOOM Product Tour - Team Workflows Quick actions for Product Tour - Team Workflows Add tag to Product Tour - Team Workflows Product Tour - Team Workflows stage progress Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions. In production Set deadline for Product Tour - Team Workflows Open details for Product Tour - Team Workflows":
+          - cell "LOOM Product Tour - Team Workflows Quick actions for Product Tour - Team Workflows Add tag to Product Tour - Team Workflows":
+            - generic: LOOM
+            - link "Product Tour - Team Workflows":
+              - /url: /projects/loom-product-tour/stages/brief
+            - generic "Quick actions for Product Tour - Team Workflows":
+              - link "Open chat":
+                - /url: /chat?project=loom-product-tour
+                - text: Open chat
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Product Tour - Team Workflows": +
+          - cell "Product Tour - Team Workflows stage progress":
+            - generic "Product Tour - Team Workflows stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-product-tour/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 3d ago
+              - link "Open Script":
+                - /url: /projects/loom-product-tour/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 2d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-product-tour/stages/shoot
+                - text: Shoot - Waiting on North Star Films
+              - generic: Shoot
+              - generic: 1d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-product-tour/stages/edit
+                - text: Edit - Not started
+              - generic: Edit
+              - link "Open Masters":
+                - /url: /projects/loom-product-tour/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-product-tour/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions.":
+            - button "Script approved by Emma · Jul 24, 2026 at 12:18 PM. Open Latest actions.":
+              - strong: Script approved
+              - text: by Emma
+              - time: Today Jul 24, 2026 at 12:18 PM
+              - text: Script approved by Emma
+          - cell "In production":
+            - generic: In production
+          - cell "Set deadline for Product Tour - Team Workflows":
+            - button "Set deadline for Product Tour - Team Workflows": To be set
+          - cell "Open details for Product Tour - Team Workflows":
+            - button "Open details for Product Tour - Team Workflows": Open details
+        - row "LOOM Customer Story - Healthcare Quick actions for Customer Story - Healthcare Add tag to Customer Story - Healthcare Customer Story - Healthcare stage progress Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions. In production Set deadline for Customer Story - Healthcare Open details for Customer Story - Healthcare":
+          - cell "LOOM Customer Story - Healthcare Quick actions for Customer Story - Healthcare Add tag to Customer Story - Healthcare":
+            - generic: LOOM
+            - link "Customer Story - Healthcare":
+              - /url: /projects/loom-customer-stories/stages/brief
+            - generic "Quick actions for Customer Story - Healthcare":
+              - link "Open chat (4 unread)":
+                - /url: /chat?project=loom-customer-stories
+                - generic "4 unread messages": "4"
+                - text: Open chat (4 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Customer Story - Healthcare": +
+          - cell "Customer Story - Healthcare stage progress":
+            - generic "Customer Story - Healthcare stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-customer-stories/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-customer-stories/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-customer-stories/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-customer-stories/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-customer-stories/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-customer-stories/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions.":
+            - button "Edit preparation started by Maddie · Jul 23, 2026 at 10:05 AM. Open Latest actions.":
+              - strong: Edit preparation
+              - text: started by Maddie
+              - time: Today Jul 23, 2026 at 10:05 AM
+              - text: Edit preparation started by Maddie
+          - cell "In production":
+            - generic: In production
+          - cell "Set deadline for Customer Story - Healthcare":
+            - button "Set deadline for Customer Story - Healthcare": To be set
+          - cell "Open details for Customer Story - Healthcare":
+            - button "Open details for Customer Story - Healthcare": Open details
+        - row "LOOM Q3 Product Recap Quick actions for Q3 Product Recap Add tag to Q3 Product Recap Q3 Product Recap stage progress Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions. In production Set deadline for Q3 Product Recap Open details for Q3 Product Recap":
+          - cell "LOOM Q3 Product Recap Quick actions for Q3 Product Recap Add tag to Q3 Product Recap":
+            - generic: LOOM
+            - link "Q3 Product Recap":
+              - /url: /projects/loom-q3-recap/stages/brief
+            - generic "Quick actions for Q3 Product Recap":
+              - link "Open chat (2 unread)":
+                - /url: /chat?project=loom-q3-recap
+                - generic "2 unread messages": "2"
+                - text: Open chat (2 unread)
+              - link "Go to Client portal":
+                - /url: /workspaces/northstar-films/clients/loom/portal?studio-preview=1
+                - text: Go to Client portal
+            - button "Add tag to Q3 Product Recap": +
+          - cell "Q3 Product Recap stage progress":
+            - generic "Q3 Product Recap stage progress":
+              - link "Open Brief":
+                - /url: /projects/loom-q3-recap/stages/brief
+                - text: Brief - Complete
+              - generic: Brief
+              - generic: 5d ago
+              - link "Open Script":
+                - /url: /projects/loom-q3-recap/script
+                - text: Script - Complete
+              - generic: Script
+              - generic: 4d ago
+              - link "Open Shoot":
+                - /url: /projects/loom-q3-recap/stages/shoot
+                - text: Shoot - Complete
+              - generic: Shoot
+              - generic: 3d ago
+              - link "Open Video Review":
+                - /url: /projects/loom-q3-recap/stages/edit
+                - text: Edit - Waiting on North Star Films
+              - generic: Edit
+              - generic: 1d ago
+              - link "Open Masters":
+                - /url: /projects/loom-q3-recap/stages/masters
+                - text: Masters - Not started
+              - generic: Masters
+              - link "Open Media (0). 0 media files":
+                - /url: /projects/loom-q3-recap/stages/media
+                - text: 0 media files
+              - generic: Media (0)
+          - cell "Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions.":
+            - button "Media organised for edit · Jul 22, 2026 at 5:32 PM. Open Latest actions.":
+              - strong: Media organised
+              - text: for edit
+              - time: Today Jul 22, 2026 at 5:32 PM
+          - cell "In production":
+            - generic: In production
+          - cell "Set deadline for Q3 Product Recap":
+            - button "Set deadline for Q3 Product Recap": To be set
+          - cell "Open details for Q3 Product Recap":
+            - button "Open details for Q3 Product Recap": Open details
+  - complementary "Launch Film - Sales Narrative project details":
+    - generic: LOOM
+    - heading "Launch Film - Sales Narrative" [level=2]
+    - generic: Status
+    - generic: In production
+    - button "Close project details"
+    - link "Open full project":
+      - /url: /projects/loom-launch-film/stages/brief
+    - link "2 unread messages Open chat":
+      - /url: /chat?project=loom-launch-film
+      - generic "2 unread messages": "2"
+      - text: Open chat
+    - button "Hours"
+    - button "Expand Hours"
+    - button "Team" [expanded]
+    - button "Collapse Team" [expanded] [active]
+    - button "Project costs"
+    - button "Expand Project costs"
+    - button "Deadline"
+    - button "Expand Deadline"
+    - button "Latest actions"
+    - button "Expand Latest actions"
+    - button "Notes"
+    - button "Expand Notes"
+    - generic "Project actions":
+      - button "Copy link": Copy link Copy link

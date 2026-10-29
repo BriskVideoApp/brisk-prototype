@@ -1,0 +1,18 @@
+{
+  "ownedTab": "1716948411",
+  "origin": "http://127.0.0.1:8769",
+  "roleRestored": "Studio Staff",
+  "viewportRestored": "1512x767 initial owned browser size",
+  "actual": {
+    "url": "http://127.0.0.1:8769/active-videos",
+    "width": 1512,
+    "height": 767,
+    "dpr": 1,
+    "localKeyCount": 14,
+    "sessionKeyCount": 1
+  },
+  "nativeActiveTab": "Original Inbox restored after exact owned-tab prompt inspection. No native input to Inbox content; no screenshot of Inbox content.",
+  "samples": "Authorised labelled audit-only state remains solely8769; no destructive cleanup or source/storage injection.",
+  "note": "Native Chrome exposed owned audit group in existing window; this limitation and reversible active-tab restoration are explicit.",
+  "captured": "2026-10-20T21:32:06.761Z"
+}

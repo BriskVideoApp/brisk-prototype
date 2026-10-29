@@ -1,15 +1,17 @@
-import { useRef, useState, type DragEvent, type MouseEvent } from "react";
+import { useRef, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from "react";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { MediaAssetView } from "@/data/media";
 import type { MediaCapabilities } from "@/lib/media";
 import { formatMediaBytes, formatMediaDuration } from "@/lib/media";
+
+export type MediaActivationEvent = MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>;
 
 type MediaAssetCardProps = {
   asset: MediaAssetView;
   isActive: boolean;
   isSelected: boolean;
   capabilities: MediaCapabilities;
-  onActivate: (asset: MediaAssetView, event: MouseEvent<HTMLElement>) => void;
+  onActivate: (asset: MediaAssetView, event: MediaActivationEvent) => void;
   onComment: (asset: MediaAssetView) => void;
   onTranscript: (asset: MediaAssetView) => void;
   onShare: (asset: MediaAssetView) => void;
@@ -46,14 +48,16 @@ export function MediaAssetCard({
       className={`media-asset-card ${isSelected ? "is-selected" : ""} ${isActive ? "is-active" : ""}`}
       tabIndex={0}
       aria-label={`${asset.name}, ${asset.kind}`}
+      data-media-asset-id={asset.id}
       draggable={capabilities.canMoveAssets}
       onClick={(event) => onActivate(asset, event)}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          onActivate(asset, event as unknown as MouseEvent<HTMLElement>);
+          onActivate(asset, event);
         }
       }}
     >

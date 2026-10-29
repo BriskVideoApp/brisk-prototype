@@ -1,0 +1,85 @@
+{
+  "date": "28 October 2026",
+  "status": "Requirements and recommended behaviour for the deadline design; no application implementation authorised or performed",
+  "userQuestions": [
+    "How do Studios set turnaround times?",
+    "Avoid filling timing rules at the start of each project; create each stage deadline when it becomes Waiting on Studio.",
+    "How is a Client-chosen final deadline checked against the expected schedule?",
+    "Warn at the Brief stage and during the project when overruns threaten or pass final delivery.",
+    "Should AI warn the Studio and Client, and how should the date be adjusted?"
+  ],
+  "verifiedCurrentCode": {
+    "productionSettings": "StudioProductionDefaults currently contains defaultTeam only; StudioProductionDefaultsPage edits that default team.",
+    "brief": "Brief includes Client deadline entry and a formatted date/countdown. No schedule-feasibility comparison was found in the inspected Brief implementation.",
+    "ai": "Ask Brisk responses are produced by getMockBriskAiResponse; no predictive deadline-risk monitor is implemented there.",
+    "notifications": "A Deadline changed notification copy/template exists. This does not establish an executing deadline-monitoring or Client-agreement workflow.",
+    "existingDeadlineDisplay": "Manual date countdown/overdue presentation exists in Videos, using the prototype's fixed reference date; it is not the proposed automatic per-stage turnaround system."
+  },
+  "settingsProposal": {
+    "location": "Existing Studio settings / Production, with a Turnaround times section",
+    "configureOnce": [
+      "Default first-WIP Client turnaround",
+      "Revision Client turnaround",
+      "Video-length increment",
+      "Separate internal-review targets",
+      "Relevant stage or video-type exceptions, including animation and fixed dates"
+    ],
+    "inheritance": "New projects inherit Studio rules. No repeated timing questionnaire at project creation. Producers only intervene for overrides or exceptions.",
+    "startEvent": "Only an applicable transition to Waiting on Studio creates the active stage turnaround deadline; Brief feasibility checks do not start future stage clocks."
+  },
+  "recommendedChecks": [
+    {
+      "checkpoint": "Brief",
+      "rule": "Compare the Client's requested final date with a provisional schedule using the known Brief scope, video duration, selected production flow, Studio rules and scheduled/fixed constraints.",
+      "studioUI": "Show requested date, earliest/provisional estimate, missing inputs and assumptions. Producer can assess rush work or propose another date.",
+      "clientUI": "Show Timing needs confirmation when the request conflicts with the estimate. A date request is not silently treated as an agreed promise.",
+      "caution": "The estimate is provisional; Client review time, shoots and unknown scope must not be invented or represented as guaranteed."
+    },
+    {
+      "checkpoint": "During production",
+      "rule": "Reassess final-delivery risk on relevant stage changes, lateness, feedback handoffs, scope/duration changes and elapsed time. Client waiting time is outside the Studio turnaround clock but can still threaten the fixed final date.",
+      "studioUI": "Warn the producer when the remaining schedule threatens the agreed final date, with the affected stage and cause.",
+      "clientUI": "Recommend a Client-facing final-delivery risk update once the producer confirms forecast risk; do not expose every internal WIP overrun.",
+      "reviewStatus": "Client risk-notification policy is a recommendation for Tom, not an approved automated messaging instruction."
+    },
+    {
+      "checkpoint": "Agreed final date passed",
+      "rule": "If final delivery remains outstanding after the agreed date, mark the missed date as Overdue for both Studio and Client. Retain the agreed date.",
+      "clientUI": "Clear factual overdue status and any acknowledged revised date; do not quietly replace the original date."
+    }
+  ],
+  "dateChangeProposal": {
+    "requestVersusCommitment": "Treat the Client's Brief date as Requested delivery until the Studio confirms the commitment.",
+    "ownership": "Producer proposes an achievable revised date, with a short reason and Client agreement before changing the agreed final deadline.",
+    "history": "Keep original requested/agreed dates, proposed dates and confirmed changes distinct. Internal stage overrides remain separate from changing a Client commitment.",
+    "ai": "Use schedule calculations to detect known date conflicts. AI may explain causes, suggest recovery options or draft a Client update for approval. It does not independently change promised dates or send communications."
+  },
+  "beforeImplementation": [
+    "Approve the UI states and any new requested/agreed/proposed date states.",
+    "Decide whether forecast-risk Client notifications require producer confirmation; recommendation is yes, while factual overdue status is visible automatically.",
+    "Agree how Client consent to a revised final date is represented in the prototype.",
+    "Define forecast assumptions, including Client review allowance and incomplete Brief information.",
+    "Bound notification frequency to meaningful risk-state changes.",
+    "Keep this a front-end mock reference; no backend scheduler, AI integration or real notification sending authorised."
+  ],
+  "sources": [
+    "src/components/settings/StudioProductionDefaultsPage.tsx",
+    "src/data/studio-settings.ts",
+    "src/components/brief/BriefPage.tsx",
+    "src/data/brisk-ai.ts",
+    "src/data/studio-notification-copy.ts",
+    "src/components/active-videos/ActiveVideosPage.tsx"
+  ],
+  "latestVisualReview": {
+    "date": "28 October 2026",
+    "review": "timing-review.html",
+    "interactive": "timing-preview.html",
+    "status": "Concrete visual proposal ready for Tom review; application unchanged"
+  },
+  "sharedDefaultsRefinement": {
+    "requirement": "shared-defaults-requirement.json",
+    "preview": "timing-preview.html",
+    "rule": "One shared Studio default with populated stage overrides; supersedes separate blank per-stage entry."
+  },
+  "simplifiedSettingsAndRevisionUnits": "settings-simplification-and-units.json"
+}

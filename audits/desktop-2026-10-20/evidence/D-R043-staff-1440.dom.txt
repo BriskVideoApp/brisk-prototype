@@ -1,0 +1,102 @@
+- button "Open Next.js Dev Tools":
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - link "Back to workspace":
+    - /url: /active-videos
+    - generic: Back to workspace
+  - generic: Personal
+  - navigation "Personal settings":
+    - link "My profile":
+      - /url: /settings/personal/profile
+      - generic: My profile
+    - link "My notifications":
+      - /url: /settings/personal/notifications
+      - generic: My notifications
+    - link "Security":
+      - /url: /settings/personal/security
+      - generic: Security
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates": Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic: Your settings
+  - heading "My profile" [level=1]
+  - paragraph: Manage the personal details used across Brisk.
+  - region "Personal profile":
+    - region "Profile photo":
+      - generic "Tom Mitchell avatar": TM
+      - heading "Profile photo" [level=2]
+      - button "Choose File"
+      - button "Upload photo":
+        - generic: Upload photo
+    - region "Contact details":
+      - heading "Contact details" [level=2]
+      - generic: Full name
+      - textbox "Full name": Tom Mitchell
+      - generic: Phone number
+      - textbox "Phone number": <redacted>
+      - generic: Personal timezone
+      - button "Personal timezone":
+        - generic: Australia/Sydney
+      - term: Sign-in email
+      - definition: tom@northstarfilms.com.au
+      - term: Studio
+      - definition: North Star Films
+    - button "Discard changes"
+    - button "Save changes"
+    - generic: All profile changes are saved.
+  - region "Work details":
+    - heading "Work details" [level=2]
+    - paragraph: Keep the professional details your Studio uses for project work up to date.
+    - term: Worker type
+    - definition: Team Member
+    - term: Department
+    - definition: Studio leadership
+    - term: Weekly capacity
+    - definition: 40 hours
+    - region "Professional profile":
+      - heading "Professional profile" [level=3]
+      - generic: Primary role
+      - textbox "Primary role": Producer
+      - generic: Availability
+      - combobox "Availability":
+        - generic: Available
+      - generic: Location
+      - textbox "Location": Sydney, NSW
+      - generic: Portfolio or reel
+      - textbox "Portfolio or reel":
+        - /placeholder: https://
+      - generic: Skills and specialties
+      - textbox "Skills and specialties": Producing, Creative direction
+      - generic: Separate skills with commas
+      - generic: Styles and genres
+      - textbox "Styles and genres": Documentary, Brand film
+      - generic: Separate styles with commas
+    - paragraph: Studio Owners control your department, weekly capacity, worker type and Studio access.
+    - button "Discard changes"
+    - button "Save changes"
+    - generic: All work detail changes are saved.

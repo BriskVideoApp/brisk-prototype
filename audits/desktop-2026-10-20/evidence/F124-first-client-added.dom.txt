@@ -1,0 +1,20 @@
+- alert
+- group "Prototype controls":
+  - generic "Test mode": Test mode
+- banner:
+  - generic "Brisk":
+    - generic: Brisk
+- region "Studio onboarding progress":
+  - list:
+    - button "Go to Set up Studio":
+      - generic: Set up Studio
+    - generic: "2"
+    - generic: Add first Client
+- status "Audit Example Client":
+  - generic "Audit Example Client logo":
+    - generic: AE
+  - generic: Client added
+  - heading "Audit Example Client" [level=1]
+  - paragraph: They won’t be notified unless you invite them.
+  - button "Do this later"
+  - button "Start a video"

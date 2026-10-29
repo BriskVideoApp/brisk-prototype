@@ -1,0 +1,50 @@
+- button "Open Next.js Dev Tools":
+- alert
+- main:
+  - link "Back to Script":
+    - /url: /projects/loom-launch-film/script
+    - text: Back to Script
+  - generic: PDF preview
+  - strong: Launch Film - Sales Narrative - First draft
+  - region "Launch Film - Sales Narrative - First draft page preview":
+    - article:
+      - generic: NS
+      - strong: North Star Films
+      - generic: Production document
+      - generic: Loom · Script · V1
+      - heading "Launch Film - Sales Narrative" [level=2]
+      - paragraph: First draft
+      - term: Created
+      - definition: 11 August 2026
+      - table "AV script":
+        - row "Row Words Visuals Media Duration":
+          - columnheader "Row"
+          - columnheader "Words"
+          - columnheader "Visuals"
+          - columnheader "Media"
+          - columnheader "Duration"
+      - generic: 0 words · 00:00
+      - generic: 1 of 1
+  - complementary "PDF details":
+    - generic: Ready to save
+    - heading "Launch Film - Sales Narrative - First draft" [level=1]
+    - term: Studio
+    - definition: North Star Films
+    - term: Project
+    - definition: Launch Film - Sales Narrative
+    - term: Format
+    - definition: A4 portrait
+    - region "Included in this PDF":
+      - heading "Included in this PDF" [level=2]
+      - list:
+        - listitem: Words and visuals
+        - listitem: Media references
+        - listitem: Row duration and totals
+        - listitem: Created date and version
+    - paragraph:
+      - text: Choose
+      - strong: Save as PDF
+      - text: in the browser print window.
+    - button "Download PDF": Download PDF
+    - link "Cancel":
+      - /url: /projects/loom-launch-film/script

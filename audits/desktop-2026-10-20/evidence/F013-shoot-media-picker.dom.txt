@@ -1,0 +1,175 @@
+- alert
+- complementary "Primary navigation":
+  - link "North Star Films logo North Star Films":
+    - /url: /settings/studio
+    - generic "North Star Films logo":
+      - generic: NS
+    - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "To Do":
+      - /url: /today
+      - generic: To Do
+    - link "People":
+      - /url: /people
+      - generic: People
+    - link "Clients":
+      - /url: /clients
+      - generic: Clients
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Expenses":
+      - /url: /outstanding-invoices
+      - generic: Expenses
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Tom Mitchell":
+    - generic "Tom Mitchell": TM
+    - strong: Tom Mitchell
+    - generic: North Star Films
+  - navigation "Studio administration":
+    - link "Studio settings":
+      - /url: /settings/studio
+      - generic: Studio settings
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Shoot actions": Shoot actions
+    - button "Open Chat, 22 unread":
+      - text: Chat
+      - generic "22 unread messages": "22"
+    - button "Updates, 5 unread":
+      - generic "5 unread notifications": "5"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - generic "Project stage progress":
+    - generic "LOOM / Launch Film - Sales Narrative":
+      - link "Back to dashboard":
+        - /url: /active-videos
+        - tooltip "Back to dashboard"
+      - generic: LOOM
+      - generic: /
+      - generic: Launch Film - Sales Narrative
+    - generic "LOOM Launch Film - Sales Narrative":
+      - list "Sequential production stages":
+        - 'link "Brief: Approved"':
+          - /url: /projects/loom-launch-film/stages/brief
+          - text: Approved
+        - generic: Brief
+        - 'link "Script: Approved"':
+          - /url: /projects/loom-launch-film/script
+          - text: Approved
+        - generic: Script
+        - 'link "Shoot: Waiting on Loom"':
+          - /url: /projects/loom-launch-film/stages/shoot
+          - text: Waiting on Loom
+        - generic: Shoot
+        - 'link "Video Review: Not started"':
+          - /url: /projects/loom-launch-film/stages/edit
+          - text: Not started
+        - generic: Edit
+        - 'link "Masters: Not started"':
+          - /url: /projects/loom-launch-film/stages/masters
+          - text: Not started
+        - generic: Masters
+      - link "Media. 13 media files":
+        - /url: /projects/loom-launch-film/stages/media
+        - generic: "13"
+        - text: 13 media files
+      - generic: Media
+      - button "Adjust project flow": Adjust project flow
+  - heading "Planning" [level=1]
+  - tablist "Shoot mode":
+    - tab "Planning Build the shoot plan" [selected]:
+      - generic: Planning
+      - generic: Build the shoot plan
+    - tab "On set Run the shoot day":
+      - generic: On set
+      - generic: Run the shoot day
+  - complementary "Shoot sections":
+    - button "Collapse Shoot sections" [expanded]
+    - heading "Start" [level=2]
+    - button "Edit Setup, Plan the shoot":
+      - strong: Edit Setup
+      - generic: Plan the shoot
+    - heading "What to capture" [level=2]
+    - button "Shot List, 7 shots":
+      - strong: Shot List
+      - generic: 7 shots
+    - button "Interview Questions, 2 questions":
+      - strong: Interview Questions
+      - generic: 2 questions
+    - button "Visual References, 0 references":
+      - strong: Visual References
+      - generic: 0 references
+    - heading "Plan the day" [level=2]
+    - button "Schedule, 2 shoot days":
+      - strong: Schedule
+      - generic: 2 shoot days
+    - button "Locations, 2 locations":
+      - strong: Locations
+      - generic: 2 locations
+    - button "People, 6 people":
+      - strong: People
+      - generic: 6 people
+    - button "Documents, 2 documents":
+      - strong: Documents
+      - generic: 2 documents
+    - button "View Call Sheet":
+      - strong: View Call Sheet
+  - heading "Visual References" [level=2]
+  - button "Add reference":
+    - generic: Add reference
+  - button
+  - strong: No visual references yet
+  - paragraph: Add images or videos to set the visual direction for the shoot.
+  - generic "Visual References readiness and actions":
+    - button "Mark references reviewed"
+- dialog "Choose from Project Media":
+  - banner:
+    - heading "Choose from Project Media" [level=2]
+  - button "Jess-interview-camera-a.mov Referenced from Project Media":
+    - strong: Jess-interview-camera-a.mov
+    - generic: Referenced from Project Media
+  - button "Jess-interview-camera-b.mov Referenced from Project Media":
+    - strong: Jess-interview-camera-b.mov
+    - generic: Referenced from Project Media
+  - button "Dashboard-wide-take-03.mov Referenced from Project Media":
+    - strong: Dashboard-wide-take-03.mov
+    - generic: Referenced from Project Media
+  - button "Sales-team-collaboration-01.mov Referenced from Project Media":
+    - strong: Sales-team-collaboration-01.mov
+    - generic: Referenced from Project Media
+  - button "Pipeline-screen-recording.mp4 Referenced from Project Media":
+    - strong: Pipeline-screen-recording.mp4
+    - generic: Referenced from Project Media
+  - button "Loom-wordmark-black.png Referenced from Project Media":
+    - strong: Loom-wordmark-black.png
+    - generic: Referenced from Project Media
+  - button "Launch-campaign-key-art.jpg Referenced from Project Media":
+    - strong: Launch-campaign-key-art.jpg
+    - generic: Referenced from Project Media
+  - button "Avery-customer-interview.mov Referenced from Project Media":
+    - strong: Avery-customer-interview.mov
+    - generic: Referenced from Project Media
+  - button "Loom-launch-film-master-v6.mp4 Referenced from Project Media":
+    - strong: Loom-launch-film-master-v6.mp4
+    - generic: Referenced from Project Media
+  - button "Product-demo-playback-test.mov Referenced from Project Media":
+    - strong: Product-demo-playback-test.mov
+    - generic: Referenced from Project Media
+  - contentinfo:
+    - button "Cancel" [active]

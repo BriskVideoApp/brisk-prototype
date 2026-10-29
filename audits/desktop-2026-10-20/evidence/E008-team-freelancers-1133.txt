@@ -1,0 +1,38 @@
+Browser tab: 1, Title: "Brisk Prototype", URL: "http://localhost:3000/active-videos?project=loom-launch-film".
+0 AXWebArea Brisk Prototype, URL: localhost:3000/active-videos?project=loom-launch-film
+	1 container Shooter
+		2 container
+			3 heading Shooter, Value: 2
+				4 text Shooter
+		5 container Role settings
+			6 text Total hours needed
+			7 stepper (settable, integer) Description: Total hours needed for Shooter, Value: 8, ID: role-hours-loom-launch-film-shooter
+		8 container
+			9 text Invited ( 2 ): Jordan Lee · $980 · Seen · Sent 8d ago
+			10 button · Withdraw
+				35 text ·
+				12 text Withdraw
+			13 text Aisha Khan · $880 · Invited · Sent 9d ago
+			14 button · Withdraw
+				36 text ·
+				16 text Withdraw
+			17 button Withdraw all
+		18 container
+			19 heading Assign a person, Value: 3
+				20 text Assign a person
+			21 tab group Fill type
+				22 tab (selectable, settable, boolean) Staff, Value: 0
+				23 tab (selected, settable, boolean) Freelancers, Value: 1
+			37 checkbox (settable, integer) 0
+			38 text Hugo Bennett $156.25/hr Project rate for  Hugo Bennett
+			39 stepper (settable, integer) Project rate for Hugo Bennett, Value: 1250
+			40 checkbox (disabled, settable, integer) 0
+			41 text Jordan Lee Already invited $122.5/hr Project rate for  Jordan Lee
+			42 stepper (disabled, settable, integer) Project rate for Jordan Lee, Value: 980
+			30 button Show all 7
+			43 button + Invite new freelancer
+		32 container
+			33 button Remove role
+			34 button Cancel
+
+The focused UI element is 23 tab (selected, settable, boolean) Freelancers, Value: 1

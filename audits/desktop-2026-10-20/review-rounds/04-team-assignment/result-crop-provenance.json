@@ -1,0 +1,16 @@
+{
+  "classification": "Pixel crop of genuine current application screenshot, after implementation. Not a mockup.",
+  "source": "result-team-drawer-1440.png",
+  "sourcePixels": [
+    1440,
+    1000
+  ],
+  "box": [
+    961,
+    257,
+    1440,
+    679
+  ],
+  "crop": "result-team-panel-crop.png",
+  "context": "Studio Staff, 1440 x 1000, expanded navigation, LOOM Team drawer expanded. DOM section bounds used to crop. Full source retained."
+}

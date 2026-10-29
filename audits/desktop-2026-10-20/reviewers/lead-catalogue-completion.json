@@ -1,0 +1,50 @@
+{
+  "BASE05": {
+    "canonicalExample": "Studio name editor; Team hours/rates are contextual consumers",
+    "conflicts": "Search, inline editing, calendars/time, suggestion fields and rich composers are contextual variants. Team hours and project-rate fields were inspected; whether to migrate their bespoke controls remains a design-system decision, not unchecked audit scope.",
+    "inspectionNote": "Current Studio name editor demonstrates a labelled DS Input with initial keyboard focus. Separate password, Team hours/rates and validation consumers are recorded in the coverage register."
+  },
+  "BASE06": {
+    "screenshot": "G025-ai-playbook",
+    "conflicts": "Chat, AI, Script, Brief, review and specialised Shoot editors remain contextual; different heights serve different content. Studio instructions and their local draft/discard guard were inspected.",
+    "captureLimit": "G025/G026 record current instructions and local draft/discard interaction. This does not establish every rich composer as an ordinary Textarea."
+  },
+  "BASE09": {
+    "screenshot": "E062-script-actions-menu",
+    "conflicts": "Later scoped approvals supersede the original pilot limits. Current command menus were inspected; the specialised media-source picker preserves four distinct workflows.",
+    "captureLimit": "The current open Script actions menu is shown. Consumer keyboard and dismissal checks are separately recorded in H010/H011/H041 and the finite workflow register."
+  },
+  "BASE11": {
+    "conflicts": "Profile tabs use the approved Tabs component. Team's specialised Staff/Freelancers switch was inspected; any migration must preserve its distinct selection, hours, rate, assignment and invitation behaviours. Keyboard-semantic defects are recorded in B07 rather than treating the whole task model as interchangeable.",
+    "captureLimit": "The profile strip is a current visual example. Profile consumers F160-F171 and Team E007/E008/H035 retain separate task evidence; the screenshot alone does not certify keyboard behaviour."
+  },
+  "BASE12": {
+    "screenshot": "G034-notifications-default",
+    "conflicts": "Studio Notifications uses the approved Checkbox adapter. Invitation all/mixed/none and disabled-selection states were inspected. Team retains a bespoke selector whose missing accessible names are recorded in B01; do not infer that every specialised row needs the same interaction.",
+    "captureLimit": "Current notification default is shown. H083-H085/H090-H093 record invitation selection variants; E005-E008 record the separate Team selector."
+  },
+  "BASE13": {
+    "screenshot": "H050-chat-settings-1440",
+    "conflicts": "Chat preferred-route radios use DS Radio. Specialised Brief choice grids, filters and voice/icon/sharing choices keep their contextual behaviour; a migration needs its own approved scope.",
+    "inspectionNote": "H050 shows current Brisk-only/WhatsApp route choices; H028 records the narrower layout. No selected preference was changed merely to obtain a screenshot."
+  },
+  "BASE14": {
+    "screenshot": "H050-chat-settings-1440",
+    "conflicts": "Chat connector switches retain their approved immediate-update behaviour when the settings dialog closes with Cancel. Current enabled and reconnect-disabled variants were inspected; no switch was changed merely to inspect."
+  },
+  "BASE16": {
+    "screenshot": "H001-team-remove-role-confirm",
+    "conflicts": "Studio Settings native history/reload warning remains the documented synchronous exception. Current React confirmation consumers were inspected without completing destructive or external actions; older Popconfirm guidance does not supersede the current DS standard.",
+    "inspectionNote": "H001/H002 show removal confirmation and Cancel preserving a Team draft. Approved Storyboard guards, distinct Shoot guards and Send-back variants retain separate current evidence; their action boundaries are not merged."
+  },
+  "BASE17": {
+    "screenshot": "H069-videos-columns",
+    "conflicts": "Videos Columns is the approved anchored checklist example. Its locked/fixed columns, current selected/hidden states, Done and narrow-desktop fit were inspected; this does not authorise migrating every specialised picker.",
+    "inspectionNote": "H069 is the current open checklist; H097 records its1133px consumer."
+  },
+  "BASE25": {
+    "screenshot": "J075-transcripts-empty-project",
+    "canonicalExample": "Existing project Transcripts empty state",
+    "conflicts": "No generic React EmptyState or Toast export is established by the Figma catalogue. Current first-use, no-results, unavailable and disabled-feedback consumers were inspected using existing records or explicitly labelled isolated samples; each keeps its task-specific action and recovery."
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "date": "28 October 2026",
+  "scope": "Approved timing warnings in Brief, Project Chat and Deadline column",
+  "state": "Checkpoint saved at Tom’s request before closing the computer. Implementation saved; final verification and result pack unfinished.",
+  "boundaries": [
+    "No working-origin interactions or stored-data migrations",
+    "Separate settings layout, auto timing engine and round policy remain out of scope",
+    "Current roles, approval flows, stage presentation and existing deadlines preserved",
+    "No backend, actual notification delivery, tests, build, dependencies, commit or push"
+  ],
+  "approval": "../05-stage-deadlines/chat-placement-recommendation.json",
+  "verifiedSoFar": [
+    "Type-check passes",
+    "Affected route HTTP checks pass",
+    "Deadline link selects Internal timing message",
+    "Unreviewed production risk absent from External and Customer views",
+    "Explicit Staff Share with Client creates safe External post and retains warning",
+    "Client date review has no Staff controls",
+    "Brief one-line hint and explicit demo submission exercised"
+  ],
+  "demoOrigin": "http://127.0.0.1:8782",
+  "notWorkingOrigins": "No verification interactions on 8773, 8777, 8778 or the user report tabs.",
+  "changedExistingApplicationFiles": [
+    "src/app/layout.tsx",
+    "src/components/chat/ChatMessageList.tsx",
+    "src/components/chat/ChatPage.tsx",
+    "src/components/navigation/GlobalHeaderActions.tsx",
+    "src/components/active-videos/FreelancerVideosPage.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/brief/BriefPage.tsx",
+    "src/components/notifications/ProjectSystemPost.tsx",
+    "src/components/notifications/types.ts",
+    "src/data/notification-registry.ts"
+  ],
+  "protectedFilesCompared": 1706,
+  "unexpectedProtectedChanges": [],
+  "latestTypeCheck": "Passed after the Open project deadline link was added",
+  "resumeFrom": [
+    "Read this checkpoint, source-before.json and browser-observations.json. Reuse branch codex/unified-brisk-prototype and preserve all earlier working changes.",
+    "Do not operate working origins 8773, 8777 or 8778. Resume only the isolated demo on 8782, or create a new disposable origin if unavailable.",
+    "Verify latest Staff Open project deadline link in date review reaches the existing project drawer without saving dates. Latest link forwarding and corrected Internal wording/canonical event IDs need final runtime review.",
+    "Capture final Hims Internal risk and producer date-review dialog at 1440/1133. Current demo has an unreleased Hims risk; Loom was reviewed/shared and its Brief submitted in this isolated demo.",
+    "Finish screenshot crops and provenance, implementation-validation.json, and draft result.html. Its missing final evidence links are explicitly marked as pending.",
+    "Finish current source/role/permission review, check no new assets/dependencies/old mock records changed, run final approved type/runtime checks and inspect browser logs.",
+    "Update implementation register, approval/review registers and PROGRESS.md; present the verified result for Tom’s review. Separate timing settings, timer/AI forecast engine and date agreement/resolution remain outside this batch."
+  ],
+  "runtime": {
+    "nextDev": "http://127.0.0.1:3000",
+    "isolatedDemo": "http://127.0.0.1:8782",
+    "reportServer": "http://127.0.0.1:8765",
+    "ownedProxyCommand": "python3 audits/desktop-2026-10-20/audit_proxy.py --port 8782",
+    "ownedProxySession": 40746,
+    "cuaTabId": "36",
+    "browserId": "2",
+    "restored": "Viewport reset, demo role Studio Staff; no working-origin role or data edits"
+  },
+  "unverified": [
+    "Latest deadline navigation link and embedded navigation forwarding",
+    "Assigned Freelancer positive timing-warning case",
+    "Global drawer full timing flow",
+    "Automatic timing calculations and warning resolution are not implemented in this scoped batch"
+  ],
+  "laterApprovedIconRefinement": {
+    "scope": "Separate follow-up: clean outline home icon requested after this checkpoint",
+    "files": [
+      "src/components/navigation/HybridSidebar.tsx",
+      "Docs/desktop-design-baseline.md"
+    ],
+    "decision": "Use house-line, preserving the Videos label and destination",
+    "evidence": "../06-videos-home-icon/outline-refinement-validation.json",
+    "boundary": "Preserve this change when resuming timing verification; it is outside the timing batch."
+  },
+  "laterDeliveryRollout": {
+    "date": "29 October 2026",
+    "result": "../08-delivery-agreement/result.html",
+    "note": "New explicit approval extends this earlier warning-only scope into date proposal/agreement. Latest Chat review entry now opens Final delivery. Original unfinished evidence pack remains historical; see consolidated current result and explicit remaining checks."
+  }
+}

@@ -6,6 +6,212 @@
   box-shadow: var(--brisk-shadow-m);
 }
 
+/* Approved desktop Team composition. Primitive controls retain their DS styles. */
+.team-overview-list {
+  display: grid;
+  min-width: var(--brisk-space-none);
+}
+
+.team-overview-role {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+  padding: var(--brisk-space-m) var(--brisk-space-none);
+}
+
+.team-overview-role + .team-overview-role {
+  border-top: 1px solid var(--brisk-border-secondary);
+}
+
+.team-overview-person-row,
+.team-assignment-person-label {
+  display: flex;
+  min-width: var(--brisk-space-none);
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
+.team-overview-identity,
+.team-assignment-person-copy {
+  display: grid;
+  flex: 1;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+}
+
+.team-overview-profile,
+.team-assignment-name {
+  color: var(--brisk-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.team-overview-profile {
+  text-decoration: none;
+}
+
+.team-overview-profile:hover {
+  color: var(--brisk-brand-primary-click);
+  text-decoration: underline;
+}
+
+.team-overview-meta,
+.team-assignment-note {
+  color: var(--brisk-text-secondary);
+}
+
+.team-overview-invitation-detail,
+.team-assignment-invitation-detail {
+  display: grid;
+  gap: var(--brisk-space-s);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-secondary);
+  padding: var(--brisk-space-m);
+}
+
+.team-overview-invitation-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--brisk-space-xs) var(--brisk-space-m);
+  margin: var(--brisk-space-none);
+}
+
+.team-assignment-chooser,
+.team-assignment-tab-content {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-m);
+}
+
+.team-assignment-chooser p {
+  margin: var(--brisk-space-none);
+}
+
+.team-assignment-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .5fr);
+  align-items: start;
+  gap: var(--brisk-space-l);
+}
+
+.team-assignment-role-field {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+}
+
+.team-assignment-list {
+  display: grid;
+  gap: var(--brisk-space-xs);
+}
+
+.team-assignment-list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-s);
+}
+
+.team-assignment-invitation-list {
+  display: grid;
+  gap: var(--brisk-space-s);
+}
+
+.team-assignment-invitation-row {
+  display: flex;
+  min-width: var(--brisk-space-none);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--brisk-space-m);
+}
+
+.team-assignment-list-toggle {
+  justify-self: start;
+}
+
+.team-assignment-person,
+.team-assignment-list-heading {
+  display: flex;
+  min-width: var(--brisk-space-none);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--brisk-space-l);
+}
+
+.team-assignment-person {
+  border-radius: var(--brisk-radius-s);
+  padding: var(--brisk-space-s);
+}
+
+.team-assignment-person.has-rate,
+.team-assignment-list-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--brisk-space-3xl) * 3 + var(--brisk-space-m));
+}
+
+.team-assignment-person.is-selected {
+  background: var(--brisk-brand-secondary);
+}
+
+.team-assignment-choice {
+  width: 100%;
+}
+
+.team-assignment-rate {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  gap: var(--brisk-space-xs);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.team-assignment-rate input,
+.team-assignment-list-heading > :last-child {
+  text-align: right;
+}
+
+.team-assignment-list-heading {
+  color: var(--brisk-text-secondary);
+}
+
+.team-assignment-footer-summary {
+  min-width: var(--brisk-space-none);
+  margin-right: auto;
+  color: var(--brisk-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.team-assignment-options summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--brisk-text-secondary);
+}
+
+.team-assignment-options-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: var(--brisk-space-l);
+  padding-top: var(--brisk-space-l);
+}
+
+@media (max-width: 640px) {
+  .team-assignment-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-assignment-person.has-rate,
+  .team-assignment-list-heading {
+    grid-template-columns: minmax(0, 1fr) calc(var(--brisk-space-3xl) * 2 + var(--brisk-space-xl));
+    gap: var(--brisk-space-s);
+  }
+
+  .team-assignment-footer-summary {
+    flex-basis: 100%;
+  }
+}
+
 .team-panel-header {
   display: flex;
   min-height: 64px;

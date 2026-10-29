@@ -1,0 +1,60 @@
+- generic "feedly Mini tookit"
+- alert
+- region "Notifications (F8)":
+  - list
+- complementary "Primary navigation":
+  - generic "North Star Films logo":
+    - generic: NS
+  - strong: North Star Films
+  - button "Collapse navigation" [expanded]: Collapse navigation
+  - navigation "Workspace":
+    - link "Videos":
+      - /url: /active-videos
+      - generic: Videos
+    - link "Media Library":
+      - /url: /media
+      - generic: Media Library
+    - link "Brand Kits":
+      - /url: /brand-kits
+      - generic: Brand Kits
+  - button "Open your menu, signed in as Nina Patel" [expanded]:
+    - generic "Nina Patel": NP
+    - strong: Nina Patel
+    - generic: North Star Films
+  - dialog "Your menu":
+    - link "Open My profile" [active]:
+      - /url: /settings/personal/profile
+      - generic "Nina Patel": NP
+      - strong: Nina Patel
+      - generic: nina@patelvfx.com
+      - generic: Studio Freelancer · North Star Films
+    - button "Close your menu"
+    - navigation "Your settings":
+      - link "My notifications":
+        - /url: /settings/personal/notifications
+        - generic: My notifications
+      - link "Security":
+        - /url: /settings/personal/security
+        - generic: Security
+    - button "Sign out":
+      - generic: Sign out
+  - group "Prototype controls":
+    - generic "Test mode": Test mode
+- banner:
+  - text: Videos
+  - navigation "Navigation history":
+    - button "Go back": Back
+    - button "Go forward": Forward
+    - button "Recent pages": Recent pages
+  - navigation "Global actions":
+    - button "Open Chat": Chat
+    - button "Updates, 2 unread":
+      - generic "2 unread notifications": "2"
+      - text: Updates
+    - text: Updates
+  - button "Ask Brisk": Ask Brisk
+- main:
+  - heading "The full Clients area is for Studio Staff" [level=1]
+  - paragraph: Freelancers see the Client details needed for projects they have been invited to, but cannot browse every Client in the Studio.
+  - link "Back to invited projects":
+    - /url: /active-videos

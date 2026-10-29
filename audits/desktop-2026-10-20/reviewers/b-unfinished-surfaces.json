@@ -1,0 +1,2376 @@
+{
+  "reviewer": "B",
+  "checkpoint": "Registered E001-E146 captures, BRIEF question/summary captures and current registered D-R defaults. Later E-series captures are excluded until the next checkpoint.",
+  "status": "Partial audit; no complete-coverage claim",
+  "knownFixtureLimitations": [
+    "Populated To Do editor unavailable in current empty assigned-work/time fixture.",
+    "Freelancer currently has zero offers, history and active jobs. Direct pending-offer Brief unavailable at both widths; offer terms, time and invoice-upload dialogs blocked.",
+    "Current Edit is not ready and Masters has no deliverables; populated review/delivery branches not reached.",
+    "Freelancer Loom Brand Kit direct entry returns 404 for current non-membership; no editable asset consumer verified."
+  ],
+  "generalRemaining": "Audit remains partial. Shoot planning editors N113 and schedule/grouping N114 have no mapped browser evidence. All other live workflow groups have only partial finite-state, role, width or interaction coverage. Fixture-dependent blocked states are identified individually; mutation-dependent outcomes intentionally remain untested.",
+  "safetyBoundaries": [
+    "No invitation/message/payment/status/approval submission.",
+    "No upload/import/source attachment, record creation or existing-field edits merely for screenshots.",
+    "No claim that every possible data combination or formal accessibility compliance was tested."
+  ],
+  "groups": [
+    {
+      "id": "N084",
+      "surface": "Global history menu",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E023-recent-pages-menu"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N084-S01",
+          "label": "empty history",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N084-S03",
+          "label": "Home/End/Arrow keys",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N084-S04",
+          "label": "Escape returns opener",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N085",
+      "surface": "Account menu",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E022-account-menu",
+        "E141-staff-account-menu"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N085-S02",
+          "label": "outside dismissal",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N086",
+      "surface": "Test mode role/scenario controls",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E139-test-mode-three-roles"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safeRemaining": [
+        "Three roles/current scenario menu captured at 1133px. Other role/width and keyboard/dismissal states remain unverified; do not reset scenarios."
+      ]
+    },
+    {
+      "id": "N087",
+      "surface": "Global Updates popover",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E027-updates-popover"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N087-S01",
+          "label": "unread/all",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N087-S03",
+          "label": "notification action menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N088",
+      "surface": "Global Chat drawer",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E140-global-chat-drawer"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N088-S03",
+          "label": "settings",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N088-S05",
+          "label": "automatic read side effect source-review",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safeRemaining": [
+        "Global Chat current drawer and Escape dismissal verified at 1133px Staff. Project picker expansion, settings, other roles/widths and full focus-return/keyboard lifecycle remain unverified; no message send."
+      ]
+    },
+    {
+      "id": "N089",
+      "surface": "Ask Brisk drawer",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E024-ask-brisk-panel",
+        "E025-ask-brisk-ready",
+        "E026-assistant-source-menu",
+        "E045-media-close-click-result",
+        "E142-ai-source-menu",
+        "E143-ai-source-picker"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N089-S01",
+          "label": "history",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N089-S05",
+          "label": "minimise",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N090",
+      "surface": "Videos filters and status fields",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E001-client-videos-1440",
+        "E002-staff-videos-1440",
+        "D-R001-staff-1440",
+        "D-R001-staff-1133",
+        "E117-video-unread-badges"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N090-S02",
+          "label": "no results",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N090-S03",
+          "label": "clear",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N091",
+      "surface": "Project details drawer",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E003-team-drawer-1440",
+        "E118-project-hours",
+        "E118-project-deadline",
+        "E118-project-latest-actions",
+        "E118-project-notes",
+        "E119-project-notes-editor"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N091-S04",
+          "label": "tags",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N091-S07",
+          "label": "Copy link settings",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N091-S08",
+          "label": "next/previous",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N091-S09",
+          "label": "read-only footer",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N092",
+      "surface": "Team role assignment editor",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E004-team-role-editor-1440",
+        "E005-team-staff-1440",
+        "E006-team-staff-1133",
+        "E007-team-staff-expanded-1133",
+        "E008-team-freelancers-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N092-S02",
+          "label": "search",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N092-S08",
+          "label": "remove-role confirmation; cancel only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N094",
+      "surface": "Today week/time entry",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R060-staff-1440",
+        "D-R060-staff-1133",
+        "D-R018-staff-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N094-S03",
+          "label": "project/stage/hour selection",
+          "status": "Blocked",
+          "reason": "Existing To Do fixture has no active assigned jobs or time entries; no records manufactured."
+        },
+        {
+          "id": "N094-S04",
+          "label": "existing entry editor",
+          "status": "Blocked",
+          "reason": "Existing To Do fixture has no active assigned jobs or time entries; no records manufactured."
+        },
+        {
+          "id": "N094-S05",
+          "label": "completion/uncompletion; source only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N094-S06",
+          "label": "current-user vs other-person read-only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "fixtureBlocked": [
+        {
+          "states": [
+            "N094-S03",
+            "N094-S04"
+          ],
+          "reason": "Current captured To Do fixture has no active assigned videos or time entries. Populated project/stage/hour editing cannot be verified without manufacturing records."
+        }
+      ],
+      "safeRemaining": [
+        "Week/viewing navigation and current-user versus another-person read-only choice where an existing selectable person is available; do not create time entries."
+      ],
+      "fixtureLimitation": "Existing To Do fixture has no active assigned jobs or time entries; no records manufactured."
+    },
+    {
+      "id": "N095",
+      "surface": "People directory views",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R020-staff-1440",
+        "D-R020-staff-1133",
+        "D-R055-staff-1440",
+        "E031-people-capacity",
+        "E032-people-no-results",
+        "E033-people-freelancers",
+        "E034-people-archived",
+        "E049-people-sort-keyboard-focus"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N095-S04",
+          "label": "project + more links",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N095-S06",
+          "label": "non-Staff private directory",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N096",
+      "surface": "People profile sections",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R019-staff-1440",
+        "D-R019-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N096-S02",
+          "label": "inline editors",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N096-S03",
+          "label": "current work",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N096-S04",
+          "label": "rate/history",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N096-S05",
+          "label": "project access",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N096-S06",
+          "label": "invitation history",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N096-S07",
+          "label": "archive/delete/remove-access confirmations; cancel only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N097",
+      "surface": "Invitation wizard",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E028-invitation-staff",
+        "E029-invitation-client-access",
+        "E030-invitation-mixed-projects"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N098",
+      "surface": "Client profile contacts/work",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R007-staff-1440",
+        "D-R007-staff-1133",
+        "E035-client-contacts-1133",
+        "E036-client-project-access-1133",
+        "E037-client-project-access-1440",
+        "E038-start-project-1440",
+        "E039-start-project-1133",
+        "E144-client-access-editor",
+        "E145-client-access-local-draft",
+        "E146-client-access-cancel-preserved"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N098-S05",
+          "label": "archive/delete confirmation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N098-S06",
+          "label": "Staff portal preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N099",
+      "surface": "Client portal queue",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E013-client-identity-loom",
+        "E014-client-loom-ready",
+        "D-R061-staff-1440",
+        "D-R061-staff-1133",
+        "D-R009-staff-1440",
+        "D-R061-client-1440",
+        "E079-client-portal-grouping",
+        "E080-client-portal-no-completed",
+        "E081-client-series-expanded",
+        "E082-client-project-actions",
+        "E083-client-project-actions-1133",
+        "E084-client-history-1133",
+        "D-R061-client-1133"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N100",
+      "surface": "Media filter and selection toolbar",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E009-media-library-1440",
+        "E010-media-keyboard-before",
+        "E011-media-keyboard-after",
+        "E012-media-hidden-selection",
+        "D-R029-staff-1440",
+        "E016-project-media-filtered-selection",
+        "E017-project-media-delete-scope",
+        "D-R029-staff-1133",
+        "E047-media-scoped-client",
+        "E048-media-sort-keyboard-focus",
+        "D-R013-client-1440",
+        "D-R013-freelancer-1440",
+        "D-R013-freelancer-1133"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N100-S08",
+          "label": "no-results",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N101",
+      "surface": "Media folder tree menus",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R029-staff-1440",
+        "D-R029-staff-1133",
+        "E136-media-folder-menu",
+        "E137-media-move-dialog",
+        "E138-media-move-folder-options"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N101-S01",
+          "label": "expand/collapse",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N101-S02",
+          "label": "new folder",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N101-S03",
+          "label": "rename",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N101-S04",
+          "label": "delete confirmation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N101-S06",
+          "label": "read-only capability branches",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N102",
+      "surface": "Media asset details/comments",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E011-media-keyboard-after",
+        "D-R012-client-1440",
+        "D-R012-staff-1440",
+        "D-R012-staff-1133",
+        "E044-media-inspector-hidden-close",
+        "E045-media-close-click-result",
+        "E046-media-escape-result"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1280,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N102-S04",
+          "label": "unavailable original",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N102-S05",
+          "label": "failed/processing",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N102-S06",
+          "label": "internal vs external comments",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N102-S07",
+          "label": "no comment send",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N103",
+      "surface": "Media upload source menu",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E133-media-upload-menu",
+        "E134-media-cloud-picker",
+        "E135-media-cloud-no-results"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N103-S05",
+          "label": "cancel without selecting/importing file",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safeRemaining": [
+        "Project Media menu and empty/no-results Drive picker now captured at 1133px without import. Other consumers, source types, width/role variants, keyboard and cancel/focus lifecycle remain unverified. Do not assume Storyboard library/stock sources are safe: those write immediately."
+      ]
+    },
+    {
+      "id": "N104",
+      "surface": "Brief field and summary panels",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E015-client-direct-deel",
+        "D-R026-staff-1133",
+        "D-R024-staff-1440",
+        "D-R026-staff-1440",
+        "E050-brief-description",
+        "BRIEF-video-type-1440",
+        "BRIEF-video-type-1133",
+        "BRIEF-audience-1440",
+        "BRIEF-audience-1133",
+        "BRIEF-references-1440",
+        "BRIEF-references-1133",
+        "BRIEF-brand-kit-1440",
+        "BRIEF-brand-kit-1133",
+        "BRIEF-footage-1440",
+        "BRIEF-footage-1133",
+        "BRIEF-deliverables-1440",
+        "BRIEF-deliverables-1133",
+        "BRIEF-deadline-1440",
+        "BRIEF-deadline-1133",
+        "BRIEF-summary-1440",
+        "BRIEF-summary-1133",
+        "E053-brief-link-access-1440",
+        "E054-brief-link-access-1133",
+        "E112-brief-video-type-scroll-before",
+        "E113-brief-audience-scroll-after",
+        "E114-brief-audience-scroll-1133",
+        "E115-brief-duration-menu-1133",
+        "E116-brief-deliverables-collapsed-nav"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N104-S05",
+          "label": "AI clarification Edit/Delete menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N105",
+      "surface": "Share link access panel",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E053-brief-link-access-1440",
+        "E054-brief-link-access-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N105-S04",
+          "label": "copy disabled conditions",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N106",
+      "surface": "Stage Send confirmation",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E051-brief-send-confirmation-1133",
+        "E052-brief-send-confirmation-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N107",
+      "surface": "Stage approve/unapprove confirmations",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E067-approved-script-edit-guard"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N107-S01",
+          "label": "disabled reason",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N107-S02",
+          "label": "approval snapshot",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N108",
+      "surface": "Script version menu",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R025-staff-1440",
+        "D-R025-staff-1133",
+        "E058-script-versions-1440",
+        "E059-script-versions-escape",
+        "E060-script-versions-1133",
+        "E061-script-versions-outside",
+        "E064-script-historical-read-only"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N108-S05",
+          "label": "restore/delete confirmations",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N109",
+      "surface": "Script row/context/media tools",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R025-staff-1440",
+        "D-R025-staff-1133",
+        "E062-script-actions-menu",
+        "E063-script-comments",
+        "E065-script-row-actions",
+        "E066-script-visual-column",
+        "E067-approved-script-edit-guard"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N109-S04",
+          "label": "media source menu four options",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N109-S05",
+          "label": "link editor",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N110",
+      "surface": "Project transcript workspace",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E071-transcripts-1440",
+        "E072-transcripts-1133",
+        "E073-transcript-keyboard-comment",
+        "E074-transcript-collection-actions",
+        "E075-transcript-clip-actions",
+        "E076-transcript-highlights-empty",
+        "E077-transcript-empty-actions",
+        "E078-transcript-selection-toolbar"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N110-S03",
+          "label": "search highlights",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N110-S07",
+          "label": "empty/processing clips",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N111",
+      "surface": "Storyboard board/AV/review",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R031-staff-1440",
+        "E018-storyboard-actions",
+        "E019-storyboard-review",
+        "E020-storyboard-review-1133",
+        "D-R031-staff-1133",
+        "E068-shared-media-source-menu",
+        "E069-media-add-link-1133",
+        "E070-media-add-link-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N111-S03",
+          "label": "frame context commands",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N111-S06",
+          "label": "versions",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N111-S07",
+          "label": "approved-edit confirmation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safetyExcluded": [
+        {
+          "states": [
+            "N111-S02"
+          ],
+          "reason": "Four-source menu inspected only. Library and stock commands immediately write frame images and were not invoked. Add Link exposed no native prompt/form; E069/E070 are not form inspection."
+        }
+      ],
+      "safeRemaining": [
+        "Versions/historical read-only preview and approved-edit guard where safe; no source attachment, frame creation or edits."
+      ]
+    },
+    {
+      "id": "N112",
+      "surface": "Shoot entry and module setup",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R030-staff-1440",
+        "D-R030-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N112-S02",
+          "label": "attach existing plan",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N112-S03",
+          "label": "Creative Plan",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N112-S04",
+          "label": "Plan the Day",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N112-S05",
+          "label": "On Set",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N112-S06",
+          "label": "skip/restore module",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N112-S08",
+          "label": "avoid auto-save fields",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N113",
+      "surface": "Shoot planning editors",
+      "status": "Not inspected",
+      "capturedEvidence": [],
+      "observedRoles": [],
+      "observedWidths": [],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N113-S01",
+          "label": "shot taxonomy selectors",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S02",
+          "label": "interview questions",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S03",
+          "label": "image/source picker",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S04",
+          "label": "Existing person picker",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S05",
+          "label": "person/location dialogs",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S06",
+          "label": "documents",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S07",
+          "label": "delete confirmations",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S08",
+          "label": "access settings view/edit/manage",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N113-S09",
+          "label": "cancel without saving",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safeRemaining": [
+        "Planning tools are source-inventoried but not browser-mapped. Inspect only if currently reachable with existing data; do not complete Quick start merely to unlock them, or use Add shot/captured/asked controls."
+      ]
+    },
+    {
+      "id": "N114",
+      "surface": "Shoot schedule and grouping",
+      "status": "Not inspected",
+      "capturedEvidence": [],
+      "observedRoles": [],
+      "observedWidths": [],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N114-S01",
+          "label": "day selector",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S02",
+          "label": "filters",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S03",
+          "label": "shot/group selection",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S04",
+          "label": "Add to group menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S05",
+          "label": "Create new group inline editor",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S06",
+          "label": "AI schedule check",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S07",
+          "label": "readiness and guided missing details",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N114-S08",
+          "label": "timeline drag/resize source only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "safeRemaining": [
+        "Schedule/group tools are source-inventoried but not browser-mapped. Inspect existing accessible day/filter/group menus only; group creation or scheduling writes are excluded."
+      ]
+    },
+    {
+      "id": "N115",
+      "surface": "Shoot On Set and Call Sheet",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R057-staff-1440",
+        "D-R057-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N115-S01",
+          "label": "Now/Next",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N115-S02",
+          "label": "shoot-day selector",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N115-S03",
+          "label": "capture status",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N115-S04",
+          "label": "completion",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N115-S07",
+          "label": "no readiness/publish submission",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N116",
+      "surface": "Edit/Animation review",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R027-staff-1440",
+        "D-R027-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N116-S02",
+          "label": "version picker",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S03",
+          "label": "comments filters",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S04",
+          "label": "timeline markers",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S05",
+          "label": "drawing tools",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S06",
+          "label": "comment composer",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S07",
+          "label": "transcript panel",
+          "status": "Blocked",
+          "reason": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+        },
+        {
+          "id": "N116-S08",
+          "label": "share/review/approve",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N116-S10",
+          "label": "do not mutate or send",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "fixtureBlocked": [
+        {
+          "states": [
+            "N116-S02",
+            "N116-S03",
+            "N116-S04",
+            "N116-S05",
+            "N116-S06",
+            "N116-S07"
+          ],
+          "reason": "Current Edit route shows readiness/not-ready rather than a populated review video. Populated player, version, timeline, drawing, comment and transcript branches require existing ready media that was not present in the captured route."
+        }
+      ],
+      "safeRemaining": [
+        "Existing readiness/disabled explanations and safe empty-state dialogs where currently reachable; do not upload to manufacture a player."
+      ],
+      "fixtureLimitation": "Current Edit is not ready; no existing populated review asset reached and no upload performed to manufacture one."
+    },
+    {
+      "id": "N117",
+      "surface": "Masters delivery tree",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R028-staff-1440",
+        "D-R028-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N117-S02",
+          "label": "parent/child recuts",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S03",
+          "label": "asset checklist",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S04",
+          "label": "version panel",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S05",
+          "label": "player",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S06",
+          "label": "SRT inspector",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S07",
+          "label": "thumbnail menu",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S08",
+          "label": "comment panel",
+          "status": "Blocked",
+          "reason": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+        },
+        {
+          "id": "N117-S09",
+          "label": "download selector",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N117-S10",
+          "label": "request dialog",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N117-S11",
+          "label": "recut brief/markup",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N117-S12",
+          "label": "draft discard/delete confirmations",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "fixtureBlocked": [
+        {
+          "states": [
+            "N117-S02",
+            "N117-S03",
+            "N117-S04",
+            "N117-S05",
+            "N117-S06",
+            "N117-S07",
+            "N117-S08"
+          ],
+          "reason": "Current Masters route shows No deliverables yet. Populated delivery hierarchy, versions, player, SRT, thumbnail and comment branches cannot be proven from this empty state."
+        }
+      ],
+      "safeRemaining": [
+        "Inspect existing download/request controls only if enabled and opening does not create a draft or record; do not create deliverables."
+      ],
+      "fixtureLimitation": "Current Masters has No deliverables yet; populated delivery/video/version branches unavailable without creating records."
+    },
+    {
+      "id": "N118",
+      "surface": "Brand Kit asset management",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R004-staff-1440",
+        "D-R004-staff-1133",
+        "D-R002-staff-1440",
+        "D-R003-staff-1440",
+        "D-R056-staff-1440",
+        "D-R002-staff-1133",
+        "D-R003-staff-1133",
+        "D-R056-staff-1133",
+        "D-R004-freelancer-1440",
+        "D-R004-freelancer-1133",
+        "D-R003-freelancer-1440",
+        "D-R003-freelancer-1133",
+        "D-R003-client-1133",
+        "E087-brand-logo-download",
+        "E088-brand-font-roles",
+        "E089-brand-font-roles-1440",
+        "E090-brand-voice-tone",
+        "E091-brand-voice-tone-1133",
+        "E092-brand-asset-preview"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Freelancer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N118-S01",
+          "label": "setup modal/manual/AI phases",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S02",
+          "label": "motion version picker",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S04",
+          "label": "colour editor",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S08",
+          "label": "guidelines preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S09",
+          "label": "sub-brand create",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S10",
+          "label": "selection menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N118-S11",
+          "label": "delete confirmation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "permissionRestricted": [
+        {
+          "role": "Studio Freelancer",
+          "reason": "Loom Brand Kit direct route is 404 for current non-membership. This is unavailable content, not a verified editable Brand Kit consumer. Freelancer Brand Kits directory and global restricted Media have populated current evidence."
+        }
+      ],
+      "safeRemaining": [
+        "Colour editor, motion versions, guidelines preview, local setup/sub-brand drafts and selection/delete confirmation only after verifying opener has no immediate mutation; all role/width and lifecycle checks not individually captured remain."
+      ]
+    },
+    {
+      "id": "N119",
+      "surface": "Expenses review",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R017-staff-1440",
+        "D-R022-staff-1440",
+        "D-R022-staff-1133",
+        "E093-cost-invoice-review",
+        "E094-invoice-pdf",
+        "D-R017-staff-1133",
+        "E095-expenses-submitted-review",
+        "E096-invoice-send-back-empty",
+        "E097-invoice-send-back-draft",
+        "E098-invoice-currency-mismatch",
+        "E099-invoice-forward",
+        "E100-invoice-forward-picker",
+        "E101-invoice-no-destinations"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N119-S08",
+          "label": "restricted roles",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N120",
+      "surface": "Personal settings",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R042-staff-1440",
+        "D-R043-staff-1440",
+        "D-R044-staff-1440",
+        "D-R042-staff-1133",
+        "D-R043-staff-1133",
+        "D-R044-staff-1133",
+        "E111-password-dialog"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N120-S05",
+          "label": "read-only Studio details",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N121",
+      "surface": "Client account/team settings",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R006-client-1440",
+        "D-R036-client-1440",
+        "D-R037-client-1440",
+        "D-R006-client-1133",
+        "D-R036-client-1133",
+        "D-R037-client-1133"
+      ],
+      "observedRoles": [
+        "Customer"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N121-S01",
+          "label": "Client Admin/Member preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N121-S03",
+          "label": "Invite colleague",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N121-S04",
+          "label": "project-access all/mixed/none",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N121-S05",
+          "label": "member actions",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N121-S06",
+          "label": "do not invite/remove/save",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N122",
+      "surface": "Studio setup focused editors",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R051-staff-1440",
+        "D-R051-staff-1133",
+        "D-R052-staff-1440",
+        "D-R052-staff-1133",
+        "D-R048-staff-1440",
+        "D-R049-staff-1440",
+        "E102-studio-edit-name",
+        "E102-studio-add-logo",
+        "E102-studio-edit-video-types",
+        "E102-studio-edit-questions"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N122-S06",
+          "label": "unsaved discard navigation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N123",
+      "surface": "Studio production defaults",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R053-staff-1440",
+        "D-R053-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N123-S04",
+          "label": "add role",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N123-S05",
+          "label": "save/discard",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N123-S06",
+          "label": "do not commit",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N124",
+      "surface": "Studio AI Playbook",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R047-staff-1440",
+        "D-R047-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N124-S04",
+          "label": "preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N124-S05",
+          "label": "save/discard; no mutations",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N125",
+      "surface": "Studio integrations/storage",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R050-staff-1440",
+        "D-R054-staff-1440",
+        "D-R050-staff-1133",
+        "D-R054-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N125-S01",
+          "label": "connect/disconnect preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N125-S05",
+          "label": "do not connect/save",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N126",
+      "surface": "Studio notification content",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R039-staff-1440",
+        "D-R040-staff-1440",
+        "D-R041-staff-1440",
+        "D-R039-staff-1133",
+        "D-R040-staff-1133",
+        "D-R041-staff-1133",
+        "D-R046-staff-1440",
+        "D-R046-staff-1133",
+        "E103-notifications-root-navigation",
+        "E104-notifications-category-navigation",
+        "E105-notification-edit-message",
+        "E106-notification-fixed-message"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N126-S04",
+          "label": "restore defaults",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N126-S05",
+          "label": "unsaved safeguards",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N127",
+      "surface": "Plan/client billing confirmations",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R038-staff-1440",
+        "D-R045-staff-1440",
+        "D-R038-staff-1133",
+        "D-R045-staff-1133",
+        "E107-plan-comparison-1133",
+        "E108-plan-comparison-1440",
+        "E109-plan-confirmation",
+        "E110-addon-confirmation"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N127-S04",
+          "label": "Stripe connect/disconnect",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N127-S05",
+          "label": "payment/setup unavailable variants",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N128",
+      "surface": "Onboarding focused forms",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R059-staff-1440",
+        "D-R059-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N128-S02",
+          "label": "AI questions",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N128-S03",
+          "label": "review generated setup",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N128-S04",
+          "label": "skip/back",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N128-S05",
+          "label": "discard/restart confirmation",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N128-S06",
+          "label": "no completion or stored-field changes",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N129",
+      "surface": "Project Files utility",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R023-staff-1440",
+        "D-R023-staff-1133",
+        "E120-files-add-location",
+        "E121-files-edit-location",
+        "E122-files-remove-confirmation"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N129-S05",
+          "label": "Freelancer read-only notes; mark-confirmed action visible",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N129-S06",
+          "label": "existing empty preview; no records manufactured",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N130",
+      "surface": "Updates full-page inbox",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R015-staff-1440",
+        "D-R015-staff-1133",
+        "E123-updates-unread-empty"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N130-S03",
+          "label": "notification item action menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N130-S04",
+          "label": "read-only notification content",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N130-S06",
+          "label": "keyboard tab/arrow/Escape where available",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N131",
+      "surface": "Document export preview",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R021-staff-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N131-S02",
+          "label": "Storyboard preview",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N131-S03",
+          "label": "Transcript preview with clip context",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N131-S05",
+          "label": "Customer/Freelancer denied unavailable project",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N131-S06",
+          "label": "readability at both desktop widths",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N132",
+      "surface": "Freelancer offer preview and decisions",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R001-freelancer-1440",
+        "D-R001-freelancer-1133",
+        "E085-freelancer-offers-empty",
+        "E086-freelancer-offer-history",
+        "D-R016-freelancer-1440",
+        "D-R016-freelancer-1133"
+      ],
+      "observedRoles": [
+        "Studio Freelancer"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N132-S01",
+          "label": "existing pending offer Brief",
+          "status": "Blocked",
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        },
+        {
+          "id": "N132-S02",
+          "label": "offer price/rate terms",
+          "status": "Blocked",
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        },
+        {
+          "id": "N132-S03",
+          "label": "Accept/Decline confirmation content if safely openable",
+          "status": "Blocked",
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        },
+        {
+          "id": "N132-S04",
+          "label": "accepted job time dialog initial/invalid empty",
+          "status": "Blocked",
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        },
+        {
+          "id": "N132-S05",
+          "label": "invoice upload dialog empty",
+          "status": "Blocked",
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "fixtureBlocked": [
+        {
+          "states": [
+            "N132-S01",
+            "N132-S02",
+            "N132-S03",
+            "N132-S04",
+            "N132-S05"
+          ],
+          "reason": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+        }
+      ],
+      "safeRemaining": [
+        "No populated offer/job dialog is available in the current fixture. Continue only with a separate existing eligible fixture if later authorised; do not create offers, jobs or invoices."
+      ],
+      "fixtureLimitation": "Current Freelancer has zero Offers, Offer history and active jobs; direct Brief unavailable at both widths. No pending offer, time-entry or invoice-upload state manufactured."
+    },
+    {
+      "id": "N133",
+      "surface": "Name first Client video",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R010-staff-1440",
+        "D-R010-staff-1133",
+        "D-R010-client-1440",
+        "D-R010-client-1133"
+      ],
+      "observedRoles": [
+        "Customer",
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N133-S02",
+          "label": "Continue disabled on existing empty name",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N133-S03",
+          "label": "Cancel/back destination",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N133-S04",
+          "label": "Staff correct Client query",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N133-S05",
+          "label": "Freelancer unavailable",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N134",
+      "surface": "Journey invitation and magic-link entry",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R032-staff-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N134-S03",
+          "label": "existing expired/unavailable branch if exposed by fixture",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N134-S04",
+          "label": "name/email read-only inspection",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N134-S05",
+          "label": "back/cancel route",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N135",
+      "surface": "Prototype-only demonstration surfaces",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R014-staff-1440",
+        "D-R033-staff-1440",
+        "D-R034-staff-1440",
+        "D-R052-staff-1440",
+        "D-R058-staff-1440",
+        "D-R052-staff-1133"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N136",
+      "surface": "Legacy standalone Script and review guards",
+      "status": "Not applicable",
+      "capturedEvidence": [
+        "D-R011-staff-1440",
+        "D-R035-staff-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N136-S02",
+          "label": "route query ignored vs expected project",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N136-S03",
+          "label": "Customer allowed membership context",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N136-S04",
+          "label": "Freelancer with no Loom membership",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N137",
+      "surface": "Direct-entry access boundaries",
+      "status": "Not applicable",
+      "capturedEvidence": [
+        "D-R003-freelancer-1440",
+        "D-R003-freelancer-1133"
+      ],
+      "observedRoles": [
+        "Studio Freelancer"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N137-S01",
+          "label": "Staff any own-Studio Client preview retains identity",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S02",
+          "label": "Freelancer unrelated project unavailable",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S03",
+          "label": "Customer Loom to Deel direct project",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S04",
+          "label": "Customer unrelated portal URL",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S05",
+          "label": "Client/Freelancer People/Clients/settings restriction",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S06",
+          "label": "guest valid/invalid shared token",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        },
+        {
+          "id": "N137-S07",
+          "label": "own vs unavailable print document",
+          "status": "Not applicable",
+          "reason": "Excluded prototype mechanics; no production-isolation finding or completion claim."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour.",
+      "excludedScope": "Prototype identity, persistence and guard mechanics excluded by latest user steering. Product-facing restricted states remain in relevant route/workflow groups. No production-security conclusion."
+    },
+    {
+      "id": "N138",
+      "surface": "Project flow adjuster",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "E055-project-flow-panel-1133",
+        "E056-project-flow-escape",
+        "E057-project-flow-panel-1440"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N138-S04",
+          "label": "Close and focus return",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N138-S05",
+          "label": "term subpanel without changing selection",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N138-S06",
+          "label": "hide confirmation cancel only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N138-S07",
+          "label": "reorder alternative source review only",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N139",
+      "surface": "Main Chat workspace",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R005-staff-1440",
+        "D-R005-staff-1133",
+        "E124-chat-date-overlap",
+        "E125-chat-date-scroll",
+        "E126-chat-page-scroll",
+        "E127-chat-search-default",
+        "E128-chat-search-no-results",
+        "E129-chat-settings",
+        "E130-chat-project-members",
+        "E131-chat-dms",
+        "E131-chat-mentions",
+        "E131-chat-groups",
+        "E131-chat-threads",
+        "E131-chat-calls",
+        "E132-chat-call-notes"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [
+        {
+          "id": "N139-S04",
+          "label": "thread panel",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        },
+        {
+          "id": "N139-S06",
+          "label": "call menu",
+          "status": "Not inspected",
+          "reason": "No matching capture through E146/BRIEF/current D-R defaults."
+        }
+      ],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    },
+    {
+      "id": "N140",
+      "surface": "Client directory create/search",
+      "status": "Partially inspected",
+      "capturedEvidence": [
+        "D-R008-staff-1440",
+        "D-R008-staff-1133",
+        "E040-add-client-1133",
+        "E041-add-client-duplicate-1133",
+        "E042-add-client-duplicate-1440",
+        "E043-clients-no-results"
+      ],
+      "observedRoles": [
+        "Studio Staff"
+      ],
+      "observedWidths": [
+        1133,
+        1440
+      ],
+      "uncapturedFiniteStates": [],
+      "remainingInteractionRequirement": "Captured appearance is partial. Hover, focus, selected/expanded, disabled/read-only, Escape/focus return and validation are unverified unless an explicit lead action is attached. Screenshots alone do not certify keyboard behaviour."
+    }
+  ]
+}

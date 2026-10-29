@@ -1,0 +1,65 @@
+{
+  "date": "29 October 2026",
+  "scope": "Use Notifications colour treatment without severity icons in Chat system updates and timing notices",
+  "approval": "Direct user correction: no emergency icons, use colours like Notifications",
+  "status": "Implemented and desktop-verified",
+  "changed": {
+    "protectedFilesCompared": 1785,
+    "changed": [
+      "src/components/settings/StudioNotificationCategoryPage.tsx",
+      "src/components/settings/notification-settings.css",
+      "src/components/project-timing/ProjectTimingNotice.tsx",
+      "src/components/project-timing/project-timing.css",
+      "src/components/project-timing/FinalDeliveryPage.tsx",
+      "src/components/notifications/project-history.css",
+      "src/components/notifications/ProjectSystemPost.tsx",
+      "src/components/notifications/NotificationSemanticState.tsx",
+      "Docs/desktop-design-baseline.md"
+    ],
+    "unexpectedChanges": [],
+    "recordsAssetsDependenciesChanged": []
+  },
+  "typeCheck": "npx tsc --noEmit passed after final JSX refinement",
+  "http": {
+    "/chat?project=loom-launch-film": 200,
+    "/active-videos": 200,
+    "/projects/loom-launch-film/delivery": 200,
+    "/notifications/delivery": 200,
+    "/settings/notifications/media-requests?review=colour-failure-final": 200
+  },
+  "observed": [
+    "Existing Notifications attention fill matches current Chat attention fill exactly: color(srgb 0.974118 0.950588 0.88)",
+    "Chat has no severity pills or alert icons; Internal/External label retained beside title",
+    "Success and information posts inspected with current titles and actions",
+    "Review date opens its existing dialog and View final delivery still navigates",
+    "Deadline link has no triangle and retains exact-message destination",
+    "Client view has no Internal tab",
+    "Final delivery notice has no status icon and uses the matched attention fill",
+    "Existing QA-only shared labels retain Completed, Failed and Needs attention text with no icons",
+    "Notification wording previews use matched row fills with no severity pill/header or status icon; existing attention, success and failure examples were inspected without editing/saving settings",
+    "Preview success fill: color(srgb 0.929098 0.967373 0.941647); failure fill: color(srgb 0.999686 0.932549 0.936941)"
+  ],
+  "screenReaderSemantics": "Existing post labels retained as screen-reader text; passive-link accessible labels include state, title and copy. Visible titles still describe the outcome or required action. No formal accessibility compliance claim.",
+  "limits": [
+    "No failure Chat state manufactured; failure palette was checked in the existing notification example and matches Notifications source",
+    "Brief symbol removal source-reviewed on submitted demo",
+    "Mobile deferred",
+    "Generic empty/error-state illustrations are outside the notification-row and timing correction"
+  ],
+  "preserved": "Working origins 8773,8777,8778 untouched. No mock records, assets, dependencies or permission logic modified. Review, sharing, read-state and agreement behaviour unchanged.",
+  "notRun": [
+    "tests",
+    "production build",
+    "dependency installation",
+    "commit",
+    "push",
+    "external publication"
+  ],
+  "screenshots": "screenshot-provenance.json",
+  "developmentObservation": "One cached IAB category navigation showed a blank page; a fresh review URL loaded the existing preview with the same data and no logged error. No data reset or dev-server restart.",
+  "restored": "Viewport reset, Staff role restored in the isolated review, and temporary inspection tabs closed. Working tabs and origins untouched.",
+  "reportLinks": {
+    "checked": 21,
+    "missing": []
+  }
+}
