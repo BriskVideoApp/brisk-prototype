@@ -93,7 +93,8 @@ export default function RootLayout({
             <NotificationInboxProvider>
               <StudioSettingsProvider>
                 <ClientBillingProvider>
-                  <ClientAccountSettingsProvider>
+                  <Suspense fallback={null}>
+                    <ClientAccountSettingsProvider>
                     <ProjectCompletionProvider>
                       <ProjectFlowProvider>
                         <StoryboardProvider>
@@ -123,7 +124,8 @@ export default function RootLayout({
                         </StoryboardProvider>
                       </ProjectFlowProvider>
                     </ProjectCompletionProvider>
-                  </ClientAccountSettingsProvider>
+                    </ClientAccountSettingsProvider>
+                  </Suspense>
                 </ClientBillingProvider>
               </StudioSettingsProvider>
             </NotificationInboxProvider>
