@@ -1,5 +1,8 @@
 "use client";
 
+import { StageDeadlinePanel } from "@/components/project-timing/StageDeadlinePanel";
+import { useTurnaround } from "@/components/project-timing/TurnaroundContext";
+import { countdown } from "@/data/turnaround";
 import { matchesSearchText } from "@/components/search/search-data";
 import { usePageSearch } from "@/components/search/SearchContext";
 
@@ -189,6 +192,7 @@ function ActiveVideosWorkspace() {
   const viewer = usePrototypeViewer();
   const canonicalProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId)
     .filter((project) => canViewProject(viewer, project, state));
+  const canonicalProjectIds = canonicalProjects.map((project) => project.id).join("|");
   const { completionRecords, undoProjectCompletion } = useProjectCompletion();
   const { fileLocationsByProjectId } = useProjectFiles();
   const { getProjectStages } = useProjectStageStatus();
@@ -221,17 +225,18 @@ function ActiveVideosWorkspace() {
   });
   const projectTags: Record<string, string[]> = Object.fromEntries(canonicalProjects.map((project) => [project.id, project.tags ?? []]));
   const { getDeliveryAgreement } = useProjectTiming();
+  const turnaround = useTurnaround();
   const [draftProjectDeadlines, setProjectDeadlines] = useState<Record<string, ProjectDeadline | undefined>>(() =>
     Object.fromEntries(canonicalProjects.map((project) => [project.id, project.deadline])),
   );
   const projectDeadlines = Object.fromEntries(canonicalProjects.map((project) => [project.id,
-    applyDeliveryAgreement(draftProjectDeadlines[project.id], getDeliveryAgreement(project))]));
+    applyDeliveryAgreement(draftProjectDeadlines[project.id] ?? project.deadline, getDeliveryAgreement(project))]));
   const [extraProjectTimeEntries, setExtraProjectTimeEntries] = useState<Record<string, TimeEntry[]>>({});
   const [tagClasses, setTagClasses] = useState<Record<string, TagClass>>(defaultTagClasses);
   const [openTagProjectId, setOpenTagProjectId] = useState<string | null>(null);
   const [areFiltersVisible, setAreFiltersVisible] = useState(false);
-  const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams));
-  const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams) !== null);
+  const [panelProjectId, setPanelProjectId] = useState<string | null>(() => getValidProjectId(projectIdFromParams, canonicalProjects));
+  const [isProjectPanelOpen, setIsProjectPanelOpen] = useState(() => getValidProjectId(projectIdFromParams, canonicalProjects) !== null);
   const [panelSectionRequest, setPanelSectionRequest] = useState<{ section: ProjectPanelSection; requestId: number } | null>(null);
   const panelSectionRequestIdRef = useRef(0);
   const [isPanelContentSwitching, setIsPanelContentSwitching] = useState(false);
@@ -354,7 +359,9 @@ function ActiveVideosWorkspace() {
       const matchesTags =
         filters.tags.length === 0 || filters.tags.some((tag) => (projectTags[project.id] ?? []).includes(tag));
       const matchesStatus = filters.status === null || project.status === filters.status;
-      const deadlineCategory = getDeadlineCategory(projectDeadlines[project.id]);
+      const nearest = turnaround.getActiveDeadlines(project, projectDeadlines[project.id]).map((entry) => entry.dueAt)
+        .filter((date): date is string => Boolean(date)).sort()[0];
+      const deadlineCategory = getDeadlineCategory({ dueAt: nearest });
       const matchesDeadline = filters.deadline === null || deadlineCategory === filters.deadline;
 
       return matchesTab && matchesClient && matchesTeammate && matchesTags && matchesStatus && matchesDeadline;
@@ -530,7 +537,7 @@ function ActiveVideosWorkspace() {
   };
 
   useEffect(() => {
-    const validProjectId = getValidProjectId(projectIdFromParams);
+    const validProjectId = getValidProjectId(projectIdFromParams, canonicalProjects);
 
     if (validProjectId) {
       setPanelProjectId(validProjectId);
@@ -548,7 +555,7 @@ function ActiveVideosWorkspace() {
     setIsProjectPanelOpen(false);
     setPanelProjectId(null);
     setPanelSectionRequest(null);
-  }, [panelSectionFromParams, projectIdFromParams]);
+  }, [canonicalProjectIds, panelSectionFromParams, projectIdFromParams]);
 
   useEffect(() => {
     if (!isProjectPanelOpen || !panelProjectId) {
@@ -1555,16 +1562,8 @@ function ProjectDetailPanel({
           sectionRef={(element) => { panelSectionRefs.current.deadline = element; }}
           onSelect={selectPanelSection}
           onToggle={togglePanelSection}
-          onEdit={() => setEditingSection("deadline")}
         >
-          <ProjectPanelDeadline
-            project={project}
-            deadline={deadline}
-            isEditing={editingSection === "deadline"}
-            onCancel={cancelPanelEdit}
-            onDone={() => setEditingSection(null)}
-            onSave={onSaveDeadline}
-          />
+          <StageDeadlinePanel project={project} deadline={deadline} />
         </ProjectDetailCollapsibleSection>
 
         <ProjectDetailCollapsibleSection
@@ -2045,127 +2044,6 @@ function DeadlineReadFirstRow({
   );
 }
 
-function ProjectPanelDeadline({
-  project,
-  deadline,
-  isEditing,
-  onCancel,
-  onDone,
-  onSave,
-}: {
-  project: Project;
-  deadline: ProjectDeadline | undefined;
-  isEditing: boolean;
-  onCancel: () => void;
-  onDone: () => void;
-  onSave: (deadline: ProjectDeadline | undefined) => void;
-}) {
-  const stageKey = deadline?.stage ?? inferCurrentStage(project);
-  const [draftDueAt, setDraftDueAt] = useState("");
-  const dueHelper = getDeadlineHelper(deadline?.dueAt);
-  const draftDueHelper = draftDueAt.startsWith("T") ? null : getDeadlineHelper(fromDateTimeInputValue(draftDueAt));
-
-  useEffect(() => {
-    setDraftDueAt(toDateTimeInputValue(deadline?.dueAt));
-  }, [deadline?.dueAt, deadline?.finalDueAt, project.id]);
-
-  const buildDeadline = (): ProjectDeadline | undefined => {
-    const dueAt = draftDueAt.startsWith("T") ? undefined : fromDateTimeInputValue(draftDueAt);
-    const finalDueAt = deadline?.finalDueAt;
-
-    if (!dueAt && !finalDueAt) {
-      return undefined;
-    }
-
-    return {
-      stage: dueAt ? stageKey : undefined,
-      dueAt,
-      timerStartedAt: dueAt ? deadline?.timerStartedAt ?? deadlineReferenceDate.toISOString() : undefined,
-      finalDueAt,
-    };
-  };
-
-  const saveDeadline = () => {
-    onSave(buildDeadline());
-    onDone();
-  };
-
-  const cancelDeadline = () => {
-    setDraftDueAt(toDateTimeInputValue(deadline?.dueAt));
-    onCancel();
-  };
-
-  return (
-    <div className="deadline-read-list">
-      <div className="deadline-read-row-v2">
-        <div className="deadline-read-copy">
-          <span className="deadline-read-label label-xs-semibold">Stage deadline</span>
-          {isEditing ? (
-            <ProjectDetailDeadlinePicker ariaLabel="Stage deadline" value={draftDueAt} onChange={setDraftDueAt} />
-          ) : (
-            <span className="deadline-read-date label-s-semibold">
-              {deadline?.dueAt ? formatDeadlineReadDate(deadline.dueAt, "stage") : "To be set"}
-            </span>
-          )}
-          {(isEditing ? draftDueHelper ?? dueHelper : dueHelper) ? (
-            <span className={`deadline-helper deadline-text-${(isEditing ? draftDueHelper ?? dueHelper : dueHelper)?.categoryClass} label-xs-semibold`}>
-              {(isEditing ? draftDueHelper ?? dueHelper : dueHelper)?.label}
-            </span>
-          ) : null}
-        </div>
-      </div>
-      <div className="deadline-read-row-v2">
-        <div className="deadline-read-copy">
-          <span className="deadline-read-label label-xs-semibold">Final delivery</span>
-          <span className="deadline-read-date label-s-semibold">
-            {deadline?.finalDueAt ? formatDeliveryDate(deadline.finalDueAt) : "To be agreed"}
-          </span>
-          <Link className="timing-review-deadline-link label-xs-semibold" href={deliveryHref(project.id)}>View final delivery</Link>
-          <ProjectTimingWarning projectId={project.id} />
-        </div>
-      </div>
-      {isEditing ? <ProjectDetailInlineActions onCancel={cancelDeadline} onSave={saveDeadline} /> : null}
-    </div>
-  );
-}
-
-function ProjectDetailDeadlinePicker({
-  ariaLabel,
-  value,
-  onChange,
-}: {
-  ariaLabel: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  const [dateValue, timeValue = ""] = value.split("T");
-
-  return (
-    <div className="project-detail-deadline-date-time">
-      <div className="project-detail-deadline-picker">
-        <BriskDatePicker
-          ariaLabel={ariaLabel}
-          placeholder="Choose date"
-          value={dateValue}
-          variant="field"
-          onChange={(nextDate) => onChange(updateDateTimeInputDate(value, nextDate))}
-        />
-      </div>
-      <div className="project-detail-deadline-time-picker">
-        <BriskTimePicker
-          ariaLabel={`${ariaLabel} time`}
-          placeholder="Choose time"
-          value={timeValue}
-          onChange={(nextTime) => {
-            if (nextTime) onChange(`${dateValue}T${nextTime}`);
-            else if (dateValue) onChange(`${dateValue}T17:00`);
-            else onChange("");
-          }}
-        />
-      </div>
-    </div>
-  );
-}
 
 function ProjectRow({
   project,
@@ -2867,49 +2745,19 @@ function DeadlineCell({ project, deadline, onOpen }: {
   deadline: ProjectDeadline | undefined;
   onOpen: () => void;
 }) {
-  const summary = getDeadlineSummary(deadline);
-  const stageLabel = getStageLabel(deadline?.stage ?? inferCurrentStage(project));
-
-  return (
-    <div className="deadline-cell">
-      {deadline?.dueAt || deadline?.finalDueAt ? (
-        <button
-          className="deadline-display"
-          type="button"
-          aria-label={`Edit deadline for ${project.name}`}
-          aria-haspopup="dialog"
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpen();
-          }}
-        >
-          {summary ? (
-            <span className={`deadline-stage-chip deadline-${summary.categoryClass} label-xs-semibold`}>
-              {stageLabel} - {summary.label}
-            </span>
-          ) : null}
-          {deadline.finalDueAt ? (
-            <span className="deadline-final-text label-xs">Final due - {formatShortDeadlineDate(deadline.finalDueAt)}</span>
-          ) : null}
-        </button>
-      ) : (
-        <button
-          className="deadline-chip label-s-semibold"
-          type="button"
-          aria-label={`Set deadline for ${project.name}`}
-          aria-haspopup="dialog"
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpen();
-          }}
-        >
-          To be set
-        </button>
-      )}
-
-      <ProjectTimingWarning projectId={project.id} />
-    </div>
-  );
+  const timing = useTurnaround();
+  const { selectedRole } = usePrototypeRole();
+  const active = timing.getActiveDeadlines(project, deadline);
+  const ordered = [...active].sort((left, right) => Date.parse(left.dueAt ?? "9999-12-31") - Date.parse(right.dueAt ?? "9999-12-31"));
+  const first = ordered[0];
+  const category = first?.dueAt && Date.parse(first.dueAt) < timing.now ? "overdue" : "on-track";
+  return <div className="deadline-cell">
+    <button className="deadline-display" type="button" aria-label={`View deadlines for ${project.name}`} onClick={(event) => { event.stopPropagation(); onOpen(); }}>
+      {first ? <span className={`deadline-stage-chip deadline-${category} label-xs-semibold`}>{first.label} - {first.dueAt ? countdown(first.dueAt, timing.now, timing.timezone) : selectedRole === "Studio Staff" ? "Set deadline" : "No deadline set"}{active.length > 1 ? ` · +${active.length - 1}` : ""}</span> : null}
+      {deadline?.finalDueAt ? <span className="deadline-final-text label-xs">Final due - {formatShortDeadlineDate(deadline.finalDueAt)}</span> : <span className="deadline-final-text label-xs">Final delivery to be agreed</span>}
+    </button>
+    <ProjectTimingWarning projectId={project.id} />
+  </div>;
 }
 
 function LatestUpdateCell({
@@ -2994,8 +2842,8 @@ function getUniqueOptions(values: string[]) {
   return Array.from(new Set(values)).sort((first, second) => first.localeCompare(second));
 }
 
-function getValidProjectId(projectId: string | null) {
-  if (!projectId || !activeVideoProjects.some((project) => project.id === projectId)) {
+function getValidProjectId(projectId: string | null, projects: readonly Pick<Project, "id">[]) {
+  if (!projectId || !projects.some((project) => project.id === projectId)) {
     return null;
   }
 
@@ -3057,7 +2905,9 @@ function formatDeliveredDate(value: string) {
 }
 
 function getDeadlineCategory(deadline: ProjectDeadline | undefined) {
-  return getDeadlineSummary(deadline)?.category ?? null;
+  if (!deadline?.dueAt) return null;
+  const remaining = Date.parse(deadline.dueAt) - Date.now();
+  return remaining < 0 ? "Overdue" : remaining <= 86400000 ? "Due Soon" : "On Track";
 }
 
 function getDeadlineSummary(deadline: Pick<ProjectDeadline, "dueAt"> | undefined) {

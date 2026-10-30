@@ -196,6 +196,62 @@
       "status": "Implemented and desktop-verified",
       "result": "../review-rounds/21-header-alignment/aligned-header.png",
       "verification": "../review-rounds/21-header-alignment/validation.json"
+    },
+    {
+      "id": "TIMING-04",
+      "title": "Shared turnaround defaults, active stage cycles and live provisional timing forecast",
+      "approvedOn": "29 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/22-turnaround-implementation/result.html",
+      "verification": "../review-rounds/22-turnaround-implementation/validation.json"
+    },
+    {
+      "id": "BRIEF-01",
+      "title": "Brief readable tables, step orientation and consistent approval guidance",
+      "findings": [
+        "A12",
+        "A13",
+        "B13"
+      ],
+      "approvedOn": "30 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/23-brief-usability/result.html",
+      "verification": "../review-rounds/23-brief-usability/validation.json"
+    },
+    {
+      "id": "ASK-UI-01",
+      "title": "Ask Brisk question-first opening",
+      "approvedOn": "30 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/25-ask-brisk-simplicity/result.html",
+      "verification": "../review-rounds/25-ask-brisk-simplicity/validation.json",
+      "nextStep": "Tom reviews the simplified opening and conversation behaviour. Shoot remains proposal only."
+    },
+    {
+      "id": "ASK-UI-02",
+      "title": "Ask Brisk header and single composer",
+      "approvedOn": "30 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "supersedes": "ASK-UI-01 opening layout only",
+      "result": "../review-rounds/26-ask-brisk-composer/result.html",
+      "verification": "../review-rounds/26-ask-brisk-composer/validation.json",
+      "nextStep": "Tom reviews compact entry. No Shoot implementation in this batch."
+    },
+    {
+      "id": "BRIEF-AI-CHOICE-01",
+      "title": "Separate Continue and Draft in Brief intake",
+      "approvedOn": "30 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/27-brief-chat-or-draft/result.html",
+      "verification": "../review-rounds/27-brief-chat-or-draft/validation.json"
+    },
+    {
+      "id": "ASK-SOURCE-01",
+      "title": "Unified Add source and Ask across control",
+      "approvedOn": "30 October 2026",
+      "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+      "result": "../review-rounds/28-unified-add-source/result.html",
+      "verification": "../review-rounds/28-unified-add-source/validation.json"
     }
   ]
 }

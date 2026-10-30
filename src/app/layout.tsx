@@ -64,6 +64,7 @@ import { CostsDataProvider } from "@/components/costs/CostsDataContext";
 import { MediaLibraryProvider } from "@/components/media/MediaLibraryContext";
 import { BriskAiProvider } from "@/components/ai/BriskAiContext";
 import { StoryboardProvider } from "@/components/storyboard/StoryboardContext";
+import { TurnaroundProvider } from "@/components/project-timing/TurnaroundContext";
 import { ProjectTimingProvider } from "@/components/project-timing/ProjectTimingContext";
 import "@/components/project-timing/project-timing.css";
 
@@ -107,11 +108,11 @@ export default function RootLayout({
                                 <CostsDataProvider>
                                   <InvitationProvider>
                                     <BriskAiProvider>
-                                      <ProjectTimingProvider>
+                                      <TurnaroundProvider><ProjectTimingProvider>
                                         <Suspense fallback={null}>
                                           <SearchProvider><AppShell>{children}</AppShell></SearchProvider>
                                         </Suspense>
-                                      </ProjectTimingProvider>
+                                      </ProjectTimingProvider></TurnaroundProvider>
                                     </BriskAiProvider>
                                   </InvitationProvider>
                                 </CostsDataProvider>

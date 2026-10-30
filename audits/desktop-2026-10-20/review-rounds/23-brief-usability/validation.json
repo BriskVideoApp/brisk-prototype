@@ -1,0 +1,68 @@
+{
+  "date": "30 October 2026",
+  "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+  "findings": [
+    "A12",
+    "A13",
+    "B13"
+  ],
+  "scope": "Brief readability, explicit step navigation and approval guidance only",
+  "applicationFiles": [
+    "src/components/brief/BriefPage.tsx",
+    "src/components/brief/brief.css"
+  ],
+  "checks": {
+    "typeScript": "npx tsc --noEmit passed",
+    "runtime": "Brief route HTTP 200",
+    "diff": "git diff --check passed",
+    "viewport": "1133px CSS viewport; native screenshot area retained without reconstruction",
+    "table": {
+      "width": 1040,
+      "viewportWidth": 829,
+      "documentWidth": 1133,
+      "durationControlWidth": 111.1875,
+      "platformControlWidth": 163.1875,
+      "formatControlWidth": 142.390625,
+      "captionsControlWidth": 163.1875,
+      "values": [
+        "3 mins",
+        "YouTube (Main)",
+        "Landscape",
+        "Baked in captions"
+      ]
+    },
+    "summary": "Main Video and populated Additional Versions both measured identical 1040px tables and matching column tracks [146,114,146,156,125,146,104,104]. Format uses normal word wrapping.",
+    "keyboardScroll": "Focusable Main Video table region moved horizontally to scrollLeft 80 using ArrowRight.",
+    "menus": "Duration popup portalled outside table. Row action menu bounds 926-1096px within 1133px viewport; Notes and Duplicate visible; no destructive command run.",
+    "stepNavigation": {
+      "before": {
+        "scrollTop": 551,
+        "headingTop": -257
+      },
+      "after": {
+        "scrollTop": 171,
+        "headerBottom": 65,
+        "introTop": 89,
+        "headingTop": 123,
+        "focusedHeading": "Audience and action"
+      },
+      "next": "Similar videos heading visible and focused",
+      "back": "Returned to Audience and action",
+      "data": "Question navigation changed no answers"
+    },
+    "approval": {
+      "emptyStaff": "Add Brief details before approving. Approve Brief disabled.",
+      "partialStaff": "You can still approve this brief. Approve Brief enabled.",
+      "emptyClient": "Same minimum-content explanation and disabled action.",
+      "guards": "Original role/minimum-content checks and approval confirmation preserved. No submission or approval performed."
+    }
+  },
+  "preservation": "All mutations for checking were in the isolated origin 127.0.0.1:8792. Working localhost tab not operated. Mock records, DS exports, dependencies, assets and other application files unchanged by this batch. Prior uncommitted changes preserved.",
+  "limitations": [
+    "No mobile pass or repeated 1440px capture.",
+    "Custom duration/format input branches and the embedded onboarding Brief were source-reviewed; not independently exercised in this batch.",
+    "Freelancer restriction shares the original guard; no extra project access was granted for inspection.",
+    "Native screenshot area is smaller than the emulated CSS viewport height, so captures do not claim full-page coverage."
+  ],
+  "prohibitedWork": "No tests added, production build, dependency installation, commit, push, backend or external messaging."
+}

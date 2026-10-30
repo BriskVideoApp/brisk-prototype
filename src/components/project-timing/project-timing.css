@@ -256,3 +256,12 @@
 .delivery-proposal-fields .shoot-time-picker {
   width: 100%;
 }
+
+/* Turnaround settings compose DS controls without changing their visual contract. */
+.turnaround-heading, .turnaround-summary-row { display: flex; align-items: center; justify-content: space-between; gap: var(--brisk-space-l); }
+.turnaround-form { display: flex; flex-direction: column; gap: var(--brisk-space-xl); }
+.turnaround-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--brisk-space-l); }
+.turnaround-mode { display: flex; flex-wrap: wrap; gap: var(--brisk-space-xl); }
+.turnaround-details { display: flex; flex-direction: column; gap: var(--brisk-space-m); }
+.turnaround-details summary { cursor: pointer; margin-bottom: var(--brisk-space-m); }
+.turnaround-summary-row p { color: var(--brisk-text-secondary); }

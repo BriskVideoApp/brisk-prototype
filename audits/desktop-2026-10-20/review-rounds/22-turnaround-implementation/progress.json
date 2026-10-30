@@ -1,0 +1,31 @@
+{
+  "state": "Implemented and verified on desktop; awaiting Tom visual review",
+  "approved": [
+    "Shared Studio defaults, stage exceptions and distinct revision rounds",
+    "Waiting on Studio trigger; weekdays only",
+    "10-second tolerance on video-length increments",
+    "Manual stage overrides; existing dates retained; final dates require existing Client agreement",
+    "Length allowance applies to first WIP only, not revisions"
+  ],
+  "pending": [],
+  "verificationPending": [],
+  "implemented": [
+    "Studio settings, shared rules and genuine stage exceptions",
+    "Working-day cycle observer and persisted manual/automatic dates",
+    "Named active stages in Deadline panel and Videos column",
+    "Live provisional forecast connected to Brief and internal production warnings"
+  ],
+  "verified": [
+    "TypeScript passes",
+    "14 calculation checks",
+    "Settings save and prefilled stage exceptions in isolated browser",
+    "Manual override and reload persistence",
+    "Actual Studio review hand-off creates revision timer",
+    "Client review ends Studio cycle",
+    "Parallel stage display and independent deadlines",
+    "Client read-only panel without internal target",
+    "Settings change keeps active manual date",
+    "Brief suggested date and Internal Chat forecast",
+    "1133px layout inspected"
+  ]
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { cloneTurnaround, type StudioTurnaround } from "@/data/turnaround";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getStudioBrandColours, type StudioReviewDraft } from "@/data/studio-onboard";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
@@ -21,6 +22,8 @@ import {
 
 type StudioSettingsContextValue = {
   studio: StudioSettings;
+  hasHydrated: boolean;
+  updateTurnaround: (turnaround: StudioTurnaround) => void;
   updateDetails: (details: StudioDetails) => void;
   updateBranding: (branding: StudioBranding) => void;
   updateProductionDefaults: (production: StudioProductionDefaults) => void;
@@ -43,6 +46,7 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
   } = usePrototypeState();
   const [studio, setStudio] = useState<StudioSettings>(() => cloneStudioSettings(initialStudioSettings));
   const studioRef = useRef(studio);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const activeWorkspaceName = prototypeState.workspaces.find((workspace) => workspace.id === prototypeState.session.activeWorkspaceId)?.name;
 
   useEffect(() => {
@@ -52,6 +56,7 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
       setStudio(storedStudio);
     }
 
+    setSettingsLoaded(true);
     const syncStoredStudio = (event: StorageEvent) => {
       if (event.key !== studioSettingsStorageKey) return;
       const nextStudio = readStoredStudioSettings();
@@ -101,8 +106,13 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
       ...current,
       production: {
         defaultTeam: production.defaultTeam.map((member) => ({ ...member })),
+        turnaround: cloneTurnaround(current.production.turnaround),
       },
     }));
+  }, [commitStudio]);
+
+  const updateTurnaround = useCallback((turnaround: StudioTurnaround) => {
+    commitStudio((current) => ({ ...current, production: { ...current.production, turnaround: cloneTurnaround(turnaround) } }));
   }, [commitStudio]);
 
   const updateStaffAccess = useCallback((staffAccess: StudioStaffAccess[]) => {
@@ -143,6 +153,8 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<StudioSettingsContextValue>(() => ({
     studio,
+    hasHydrated: settingsLoaded,
+    updateTurnaround,
     updateDetails,
     updateBranding,
     updateProductionDefaults,
@@ -150,7 +162,7 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
     updateNotificationSettings,
     updateStaffAccess,
     applyOnboardingSetup,
-  }), [applyOnboardingSetup, studio, updateBranding, updateDetails, updateIntegrationConnection, updateNotificationSettings, updateProductionDefaults, updateStaffAccess]);
+  }), [applyOnboardingSetup, settingsLoaded, updateTurnaround, studio, updateBranding, updateDetails, updateIntegrationConnection, updateNotificationSettings, updateProductionDefaults, updateStaffAccess]);
 
   return <StudioSettingsContext.Provider value={value}>{children}</StudioSettingsContext.Provider>;
 }

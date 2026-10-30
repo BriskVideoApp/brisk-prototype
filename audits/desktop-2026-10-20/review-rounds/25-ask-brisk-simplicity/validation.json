@@ -1,0 +1,42 @@
+{
+  "date": "30 October 2026",
+  "status": "Implemented; desktop verified; awaiting Tom visual sign-off",
+  "approval": "Tom approved question-first restoration after rejecting the compact insight preview.",
+  "applicationFiles": [
+    "src/components/ai/BriskAiAssistant.tsx",
+    "src/components/ai/BriskAiContext.tsx",
+    "src/components/ai/brisk-ai.css"
+  ],
+  "checks": [
+    "Top-bar Ask Brisk opens composer directly; no Open conversation, Worth a look or Prototype briefing on entry.",
+    "Staff empty entry at 1440 CSS px; narrower desktop observations ranged from 1020 to 1258 due browser zoom/emulation behaviour. Final narrow screenshot has 1020 CSS px; no formal viewport-wide claim.",
+    "Suggested Brief project-status question produced answer and source link in the same assistant; shared Brief thread reflected the same read-only question.",
+    "Unsent input and answer survived close/reopen.",
+    "Scope menu switched to Your workload; Enter retained native newline; Command+Enter submitted and displayed workload response.",
+    "Your briefing opened from assistant header menu; unread count cleared when viewed. Staff Set priority and Prepare reminder remained available.",
+    "Reminder review opened with existing recipients, destination and explicit Post reminder (demo); cancelled without posting.",
+    "Client entry retained Ask North Star Films naming, separate conversation and no Staff priority/reminder actions.",
+    "Freelancer without Loom project access saw Project unavailable and no project details in the opening panel.",
+    "Role restored to Studio Staff in isolated browser; no user tab or stored records changed.",
+    "Add source menu and existing automatic Current Brief source selection retained.",
+    "TypeScript no-emit passed; Brief HTTP 200; git diff --check passed."
+  ],
+  "preservation": "Existing uncommitted work retained. No app data/assets/dependencies changed by this batch. Browser checks used disposable origin 127.0.0.1:8794. Private assistant questions existed only in that isolated session.",
+  "limitations": [
+    "Front-end prototype with mock answers; no AI integration.",
+    "No exhaustive permission audit, mobile pass, tests or production build.",
+    "Full Brief drafting and all reminder posting variants were not repeated; existing handlers and guards were preserved."
+  ],
+  "evidence": {
+    "before": "before.png",
+    "opening": "after-1440.png",
+    "finalNarrowOpening": "after-narrow.png",
+    "answer": "answer.png",
+    "client": "client-narrow.png"
+  },
+  "afterHashes": {
+    "src/components/ai/BriskAiAssistant.tsx": "b1257bb09b2dc6cde9bf44ce95872a2725d8845ce2e38fa635578dce43175270",
+    "src/components/ai/BriskAiContext.tsx": "52ec094f58dabc8bc62b8b0b016669adb29e3b3187999bea6c21eb6d5abf4759",
+    "src/components/ai/brisk-ai.css": "28cf0a94deee1c3173c050d8915ffbb0a712e10eb9cd7d0c8bf2c1c29049ed49"
+  }
+}

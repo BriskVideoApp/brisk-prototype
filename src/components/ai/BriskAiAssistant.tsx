@@ -7,7 +7,7 @@ import Link from "next/link";
 import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { AskBriskInsights } from "./AskBriskInsights";
 import { ApprovalReminderReview } from "./ApprovalReminderReview";
-import { getAskInsights, getAskProjectResponse, askWorkloadQuestions, askProjectQuestions, type AskInsight } from "@/data/ask-brisk";
+import { getAskInsights, getAskProjectResponse, type AskInsight } from "@/data/ask-brisk";
 import { getProjectStageHref } from "@/data/project-fixtures";
 import { briefClarifyingQuestions } from "@/data/brief";
 import {
@@ -20,7 +20,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
-import { BriskSelect } from "../../../Brisk DS/src/app/components/Select";
+import { Popover } from "../../../Brisk DS/src/app/components/Popover";
+import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { useBriskAi, useScopedAiState } from "@/components/ai/BriskAiContext";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
@@ -61,7 +62,7 @@ type AssistantMessage =
     };
 
 type ConversationStateId = "default" | "failure" | "insufficient" | "profile-learning";
-type SourcePickerView = "menu" | "files" | "mentions";
+type SourcePickerView = "sources";
 type ChatHistoryPeriod = MockBriskAiChat["period"];
 
 type ChatHistoryItem = Omit<MockBriskAiChat, "messages"> & {
@@ -120,6 +121,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   }, [model.projects, pathname, searchParams]);
   const [scope, setScope] = useScopedAiState("scope", "current");
   const [chooseReminder, setChooseReminder] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(false);
   const [reminder, setReminder] = useState<AskInsight | null>(null);
   const [conversationContext, setConversationContext] = useScopedAiState<CurrentAiContext>("context", routeContext);
   const [chatHistory, setChatHistory] = useScopedAiState<ChatHistoryItem[]>("history", () => selectedRole === "Studio Staff" ? mockBriskAiChatHistory.map(hydrateMockChat) : []);
@@ -173,8 +175,11 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
       if (["current-brief", "current-script", "current-edit"].includes(source.id)) return { ...source, detail: "The work available to you in this project. Its status is shown on the project Stage; no version or approval is inferred." };
       return source;
     });
-  const visibleManualSources = manualSources.filter((source) => scope === "current" && conversationContext.projectId === "loom-launch-film" && contextProject
-    && (selectedRole === "Studio Staff" || source.clientVisible));
+  const manualSourceScope = scope === "current" ? conversationContext.projectId ?? "workspace" : scope;
+  const visibleManualSources = manualSources.filter((source) => (source.id.startsWith("added-link:") || source.id.startsWith("added-file:"))
+    ? (source.id.startsWith(`added-link:${manualSourceScope}:`) || source.id.startsWith(`added-file:${manualSourceScope}:`)) && (scope !== "current" || !conversationContext.projectId || Boolean(contextProject))
+    : scope === "current" && conversationContext.projectId === "loom-launch-film" && contextProject
+      && (selectedRole === "Studio Staff" || source.clientVisible));
   const visibleChatHistory = chatHistory.filter((chat) => chat.projectId ? model.projects.some((project) => project.id === chat.projectId) : chat.id.startsWith("brisk-ai-chat-"));
   const sharedBrief = scope === "current" && conversationContext.stage === "brief" && contextProject
     ? briefStates[contextProject.id] : undefined;
@@ -185,26 +190,27 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   const scopeLabel = scope === "everywhere" ? "All permitted projects" : scope === "workload" || !conversationContext.projectId
     ? selectedRole === "Customer" ? "Your projects" : "Your workload" : contextProject
       ? `${contextProject.clientName} · ${contextProject.name} · ${conversationContext.stage === "edit" && contextProject.videoType === "animation" ? "Animation" : contextProject.assistantStages.find((stage) => stage.key === conversationContext.stage)?.label ?? "Project"}` : "Project unavailable";
-  const compact = view === "compact";
-  const insightSeenKeys = (compact ? scopedInsights.slice(0, 1) : scopedInsights.slice(0, 6)).map((insight) => `${insight.id}:${insight.fingerprint}`).join("\n");
+  const insightSeenKeys = scopedInsights.slice(0, 6).map((insight) => `${insight.id}:${insight.fingerprint}`).join("\n");
   useEffect(() => {
-    if ((view === "compact" || (view === "panel" && !isSharedBrief && !reminder && messages.length === 0)) && insightSeenKeys) markInsightsSeen(insightSeenKeys.split("\n"));
-  }, [insightSeenKeys, isSharedBrief, markInsightsSeen, messages.length, reminder, view]);
+    if ((view === "compact" || view === "panel") && showBriefing && insightSeenKeys) markInsightsSeen(insightSeenKeys.split("\n"));
+  }, [insightSeenKeys, markInsightsSeen, showBriefing, view]);
   const activeChatTitle = activeChatId ? chatHistory.find((chat) => chat.id === activeChatId)?.title ?? "New chat" : "New chat";
   const allVisibleSources = [...visibleAutomaticSources, ...visibleManualSources];
   const selectedSources = allVisibleSources.filter((source) => source.selected && source.available);
   const visibleContextSources = selectedSources.filter((source) => !hiddenContextSourceIds.includes(source.id));
   const selectedApproach = getSelectedApproach(conversationModeId, playbook.customModeName, playbook.customModeBehaviour);
   const previewSource = previewSourceId ? allVisibleSources.find((source) => source.id === previewSourceId) ?? null : null;
-  const shownContextSources = getCompactContextSources(visibleContextSources, promotedSourceId).slice(0, 3);
+  const composerSources = visibleContextSources.filter((source) => source.context === "manual");
+  const shownContextSources = getCompactContextSources(composerSources, promotedSourceId).slice(0, 3);
   const previewIsAnchoredToChip = previewSource ? shownContextSources.some((source) => source.id === previewSource.id) : false;
-  const hasConversationContent = messages.length > 0 || briefMessages.length > 0 || isProcessing || conversationState !== "default";
+  const hasConversationContent = (isSharedBrief ? briefMessages.length : messages.length) > 0 || isProcessing || conversationState !== "default";
 
   const submitPrompt = useCallback((requestedPrompt?: string) => {
     const prompt = (requestedPrompt ?? inputValue).trim();
     if (!prompt || isProcessing) return;
 
     setAssistantView("panel");
+    setShowBriefing(false);
     if (isSharedBrief && contextProject && (!canEditBrief || /where.*(?:project|up to)|what.*(?:next|waiting|approve|attention)|summari[sz]e|deadline|internal|costs|rates/iu.test(prompt))) {
       const restricted = selectedRole !== "Studio Staff" && /internal|staff.only|costs|rates|other client|owner|management/iu.test(prompt);
       const response = restricted ? { body: "I can only use the information available to you. Internal notes and restricted business information are excluded.", links: [] }
@@ -318,6 +324,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   useEffect(() => {
     if (!openRequest || handledRequestIdRef.current === openRequest.id) return;
     handledRequestIdRef.current = openRequest.id;
+    setShowBriefing(false);
     setConversationState("default");
     if (openRequest.prompt) setInputValue(openRequest.prompt);
     if (openRequest.prompt && openRequest.submit) {
@@ -345,7 +352,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     setHiddenContextSourceIds([]);
     setPreviewSourceId(null);
     setConversationState("default");
-    setReminder(null); setChooseReminder(false);
+    setReminder(null); setChooseReminder(false); setShowBriefing(false);
     if (!isHistoricalConversation && messages.length === 0) setConversationContext(routeContext);
   }, [pathname, selectedRole, routeContext.projectId]);
 
@@ -383,18 +390,6 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [isHistoryOpen]);
 
-  useEffect(() => {
-    if (!sourcePickerView || sourcePickerView === "menu") return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!(event.target instanceof Node) || sourceAnchorRef.current?.contains(event.target)) return;
-      setSourcePickerView(null);
-      setSourceQuery("");
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown);
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
-  }, [sourcePickerView]);
 
   useEffect(() => {
     if (!toast) return;
@@ -461,6 +456,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   };
 
   const resetConversationToCurrentScreen = () => {
+    setShowBriefing(false);
     if (responseTimerRef.current) window.clearTimeout(responseTimerRef.current);
     setActiveChatId(null);
     setMessages([]);
@@ -488,6 +484,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   };
 
   const openHistoryChat = async (chatId: string) => {
+    setShowBriefing(false);
     if (chatId === activeChatId) {
       setIsHistoryOpen(false);
       setHistoryQuery("");
@@ -569,6 +566,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
   const closeSourcePicker = () => {
     setSourcePickerView(null);
     setSourceQuery("");
+    window.requestAnimationFrame(() => sourceAnchorRef.current?.querySelector<HTMLButtonElement>("button")?.focus());
   };
 
   const selectSource = (sourceId: string) => {
@@ -589,13 +587,36 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     window.requestAnimationFrame(() => promptRef.current?.focus());
   };
 
-  const addMockedFile = () => {
-    const nextSource = visibleManualSources.find((source) => source.available && !source.selected && isFileSource(source));
-    if (!nextSource) {
-      setToast("All available mocked files are already included.");
-      return;
-    }
-    selectSource(nextSource.id);
+  const addFileSources = (files: FileList) => {
+    const sources = Array.from(files).map((file): BriskAiSource => ({
+      id: `added-file:${manualSourceScope}:${file.name}:${file.size}:${file.lastModified}`,
+      label: file.name, kind: file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "document",
+      context: "manual", required: false, selected: true, available: true, clientVisible: true,
+      preview: file.name, detail: "Attached to this private conversation. File contents are not processed in this prototype.",
+    }));
+    if (!sources.length) return;
+    const ids = new Set(sources.map((source) => source.id));
+    setManualSources((current) => [...current.filter((source) => !ids.has(source.id)), ...sources]);
+    setPromotedSourceId(sources[0].id);
+    setHiddenContextSourceIds((current) => current.filter((id) => !ids.has(id)));
+    setToast("File attached. Its contents are not processed in this prototype.");
+    closeSourcePicker();
+    window.requestAnimationFrame(() => promptRef.current?.focus());
+  };
+
+  const addLinkSource = (url: URL) => {
+    const id = `added-link:${manualSourceScope}:${url.href}`;
+    const source: BriskAiSource = {
+      id, label: `${url.hostname}${url.pathname === "/" ? "" : url.pathname}`,
+      kind: "page", context: "manual", required: false, selected: true,
+      available: true, clientVisible: true, preview: url.href, detail: url.href,
+    };
+    setManualSources((current) => [...current.filter((entry) => entry.id !== id), source]);
+    setPromotedSourceId(id);
+    setHiddenContextSourceIds((current) => current.filter((entry) => entry !== id));
+    setToast("Link added. Its contents are not fetched in this prototype.");
+    closeSourcePicker();
+    window.requestAnimationFrame(() => promptRef.current?.focus());
   };
 
   const handlePromptChange = (value: string) => {
@@ -603,7 +624,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
     const mentionMatch = value.match(/(?:^|\s)@([^@\s]*)$/u);
     if (!mentionMatch) return;
     setSourceQuery(mentionMatch[1] ?? "");
-    setSourcePickerView("mentions");
+    setSourcePickerView("sources");
   };
 
   const updateVideoRange = (sourceId: string, referenceRange: string) => {
@@ -679,88 +700,73 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
       setConversationContext({ projectId: insight.projectId, projectName: project?.name ?? null, clientName: project?.clientName ?? null, stage: "project" });
       setScope("current"); setMessages([]); setActiveChatId(null); setIsHistoricalConversation(false);
     }
-    setInputValue(prompt); setAssistantView("panel");
+    setInputValue(prompt); setShowBriefing(false); setAssistantView("panel");
   };
-  const questions = isSharedBrief ? [] : selectedRole === "Customer" ? ["Where are my projects up to?", "What do I need to approve?", "What happens next?"] : scopedProjects.length === 1 ? askProjectQuestions : askWorkloadQuestions;
+  const isCurrentPageContext = conversationContext.projectId === routeContext.projectId
+    && conversationContext.stage === routeContext.stage;
+  const currentStageLabel = contextProject?.assistantStages.find((stage) => stage.key === conversationContext.stage)?.label ?? "project";
+  const compactScopeLabel = scope === "current" && contextProject && isCurrentPageContext
+    ? `This ${conversationContext.stage === "edit" && contextProject.videoType === "animation" ? "Animation" : currentStageLabel}`
+    : scopeLabel;
+
 
   const composer = (
     <div className="brisk-ai-composer">
-      <ContextChips
-        sources={visibleContextSources}
-        promotedSourceId={promotedSourceId}
-        previewSource={previewIsAnchoredToChip ? previewSource : null}
-        onClosePreview={() => setPreviewSourceId(null)}
-        onOpenOverflow={() => setSourcePickerView("mentions")}
-        onOpenSource={(sourceId) => setPreviewSourceId((current) => current === sourceId ? null : sourceId)}
-        onRemoveSource={removeContextChip}
-        onUpdateVideoRange={(sourceId, range) => updateVideoRange(sourceId, range)}
-      />
-      <label className="brisk-ai-prompt-field">
-        <span className="sr-only">{assistantName}</span>
-        <textarea
-          ref={promptRef}
-          className="paragraph-s"
-          disabled={isProcessing}
-          placeholder={isSharedBrief ? "Continue your Brief conversation…" : `Ask about ${scope === "current" && contextProject ? "this project" : "your work"}…`}
-          rows={2}
-          value={inputValue}
-          onChange={(event) => handlePromptChange(event.target.value)}
-          onKeyDown={(event) => handleComposerKeyDown(event, () => submitPrompt())}
-        />
-      </label>
-      <div className="brisk-ai-composer-actions">
-        <div className="brisk-ai-add-source-anchor" ref={sourceAnchorRef}>
-          <BriskSelect mode="action" value="" clearable={false} ariaLabel="Add a source" placeholder="Add source"
-            open={sourcePickerView === "menu"}
-            onOpenChange={(open) => {
-              if (open) { setSourceQuery(""); setSourcePickerView("menu"); }
-              else setSourcePickerView((current) => current === "menu" ? null : current);
-            }}
-            options={[{value: "files", label: "Add photos, video or files"}, {value: "mentions", label: "Mention pages, projects or people"}]}
-            onChange={(value) => { if (value === "files" || value === "mentions") setSourcePickerView(value); }}
-            actionTrigger={(props) => <Button {...props} size="S" variant="ghost" aria-expanded={Boolean(sourcePickerView)}
-              onClick={(event) => { if (sourcePickerView && sourcePickerView !== "menu") closeSourcePicker(); else props.onClick?.(event); }}
-            ><DsIcon name="plus" size={13} />Add source</Button>}
+      <div className="ask-brisk-message-box">
+        {composerSources.some((source) => source.selected && source.available) ? <ContextChips
+          sources={composerSources}
+          promotedSourceId={promotedSourceId}
+          previewSource={previewIsAnchoredToChip ? previewSource : null}
+          onClosePreview={() => setPreviewSourceId(null)}
+          onOpenOverflow={() => setSourcePickerView("sources")}
+          onOpenSource={(sourceId) => setPreviewSourceId((current) => current === sourceId ? null : sourceId)}
+          onRemoveSource={removeContextChip}
+          onUpdateVideoRange={(sourceId, range) => updateVideoRange(sourceId, range)}
+        /> : null}
+        <label className="brisk-ai-prompt-field">
+          <span className="sr-only">{assistantName}</span>
+          <textarea
+            ref={promptRef}
+            className="paragraph-s"
+            disabled={isProcessing}
+            placeholder="What would you like to know?"
+            rows={2}
+            value={inputValue}
+            onChange={(event) => handlePromptChange(event.target.value)}
+            onKeyDown={(event) => handleComposerKeyDown(event, () => submitPrompt())}
           />
-          {sourcePickerView === "files" ? (
-            <SourcePicker
-              mode="files"
-              sources={visibleManualSources.filter(isFileSource)}
-              query={sourceQuery}
-              onBack={() => {
-                setSourceQuery("");
-                setSourcePickerView("menu");
-              }}
-              onClose={closeSourcePicker}
-              onQueryChange={setSourceQuery}
-              onSelect={selectSource}
-              onUpload={addMockedFile}
-            />
-          ) : null}
-          {sourcePickerView === "mentions" ? (
-            <SourcePicker
-              mode="mentions"
-              sources={[...visibleAutomaticSources.filter(isMentionSource), ...visibleManualSources.filter(isMentionSource)]}
-              query={sourceQuery}
-              onBack={() => {
-                setSourceQuery("");
-                setSourcePickerView("menu");
-              }}
-              onClose={closeSourcePicker}
-              onQueryChange={setSourceQuery}
-              onSelect={selectSource}
-            />
-          ) : null}
+        </label>
+        <div className="brisk-ai-composer-actions">
+          <div className="brisk-ai-add-source-anchor" ref={sourceAnchorRef}>
+            <Popover open={Boolean(sourcePickerView)} title="Add source"
+              onOpenChange={(open) => { setSourcePickerView(open ? "sources" : null); if (!open) setSourceQuery(""); }}
+              trigger={(props) => <Button {...props} size="S" variant="ghost" aria-label="Add a source"
+                onClick={(event) => { if (!sourcePickerView) setSourceQuery(""); props.onClick?.(event); }}>
+                <DsIcon name="plus" size={16} />Add source
+              </Button>}
+            >
+              <SourcePicker
+                sources={allVisibleSources}
+                query={sourceQuery}
+                onQueryChange={setSourceQuery}
+                onSelect={selectSource}
+                onUpload={scope !== "current" || !conversationContext.projectId || contextProject ? addFileSources : undefined}
+                onAddLink={scope !== "current" || !conversationContext.projectId || contextProject ? addLinkSource : undefined}
+
+              />
+            </Popover>
+          </div>
+          <span className="ask-brisk-scope-label label-xs" title={scopeLabel}>{compactScopeLabel}</span>
+          <Button size="S" variant="primary"
+            className="brisk-ai-send-button"
+            type="button"
+            disabled={!inputValue.trim() || isProcessing}
+            onClick={() => submitPrompt()}
+          >
+            {isProcessing ? <span className="brisk-ai-spinner" aria-hidden="true" /> : <DsIcon name="paper-plane-tilt" size={14} />}
+            {isProcessing ? "Working" : "Send"}
+          </Button>
         </div>
-        <Button size="S" variant="primary"
-          className="brisk-ai-send-button"
-          type="button"
-          disabled={!inputValue.trim() || isProcessing}
-          onClick={() => submitPrompt()}
-        >
-          {isProcessing ? <span className="brisk-ai-spinner" aria-hidden="true" /> : <DsIcon name="paper-plane-tilt" size={14} />}
-          {isProcessing ? "Working" : "Send"}
-        </Button>
       </div>
     </div>
   );
@@ -852,7 +858,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
       ) : null}
 
       {view === "compact" || view === "panel" ? (
-        <aside className={`brisk-ai-floating ask-brisk-panel ${compact ? "is-preview" : "is-expanded"} ${hasConversationContent ? "has-conversation" : "is-empty"}`} aria-label={`${assistantName} conversation`}>
+        <aside className={`brisk-ai-floating ask-brisk-panel ${hasConversationContent || reminder || chooseReminder || showBriefing ? "is-expanded" : "is-preview"} ${hasConversationContent ? "has-conversation" : "is-empty"}`} aria-label={`${assistantName} conversation`}>
           <AssistantHeader
             assistantName={assistantName}
             isBriefConversation={isSharedBrief}
@@ -872,6 +878,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
             onDeleteChat={deleteHistoryChat}
             onFinishRename={finishRenamingChat}
             onHistoryQueryChange={setHistoryQuery}
+            onShowBriefing={() => { setIsHistoryOpen(false); setShowBriefing(true); }}
             onNewChat={startNewChat}
             onOpenChat={openHistoryChat}
             onRenameValueChange={setRenameValue}
@@ -882,31 +889,19 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
               setEditingChatId(null);
             }}
           />
-          <div className="ask-brisk-scope">
-            <span className="label-xs">{scopeLabel}</span>
-            {!compact ? <BriskSelect<string> ariaLabel="Assistant scope" placeholder="Choose scope" value={scope} clearable={false} onChange={(value) => { setScope(value); setMessages([]); setReminder(null); setActiveChatId(null); }} options={[
-              { value: "current", label: contextProject ? "This project / Stage" : "This page" },
-              { value: "workload", label: selectedRole === "Customer" ? "Your projects" : "Your workload" },
-              { value: "everywhere", label: "All permitted projects" },
-            ]} /> : null}
-            {routeContext.projectId !== conversationContext.projectId ? <Button size="S" variant="ghost" onClick={() => { setConversationContext(routeContext); setScope("current"); setMessages([]); setReminder(null); setActiveChatId(null); }}>Use current page</Button> : null}
-          </div>
-          <div className="brisk-ai-thread" ref={threadRef} aria-live="polite">
-            {chooseReminder && !compact ? <section className="ask-brisk-reminder" aria-label="Choose reminder project">
+          <div className="brisk-ai-thread" ref={threadRef} aria-live="polite" hidden={!hasConversationContent && !showBriefing && !reminder && !chooseReminder}>
+            {chooseReminder ? <section className="ask-brisk-reminder" aria-label="Choose reminder project">
               <h2 className="headings-2xs-bold">Which review should I follow up?</h2>
               <p className="paragraph-s">Choose a project to review the recipients and message. Nothing has been sent.</p>
               {allScopedInsights.filter((insight) => insight.reviewStage).map((insight) => <Button key={insight.id} size="S" variant="secondary" onClick={() => { setChooseReminder(false); setReminder(insight); }}>{insight.projectName} · {insight.sourceLabel}</Button>)}
               <Button size="S" variant="ghost" onClick={() => setChooseReminder(false)}>Cancel</Button>
             </section> : null}
-            {reminder && !compact ? <ApprovalReminderReview key={reminder.id} insight={reminder} onCancel={() => setReminder(null)} /> : null}
-            {!chooseReminder && !reminder && (compact || (!messages.length && !isSharedBrief)) ? <>
-              <AskBriskInsights insights={scopedInsights} compact={compact} onAsk={askAboutInsight} onRemind={(insight) => { setReminder(insight); setAssistantView("panel"); }} />
-              {!compact && questions.length ? <div className="ask-brisk-questions" aria-label="Suggested questions">{questions.map((question) => <Button key={question} size="S" variant="secondary" onClick={() => submitPrompt(question)}>{question}</Button>)}</div> : null}
+            {reminder ? <ApprovalReminderReview key={reminder.id} insight={reminder} onCancel={() => setReminder(null)} /> : null}
+            {!chooseReminder && !reminder && showBriefing ? <>
+              <Button size="S" variant="ghost" onClick={() => setShowBriefing(false)}>Back to conversation</Button>
+              <AskBriskInsights insights={scopedInsights} compact={false} onAsk={askAboutInsight} onRemind={(insight) => { setShowBriefing(false); setReminder(insight); }} />
             </> : null}
-            {!chooseReminder && !compact && !reminder && isSharedBrief ? <section className="ask-brisk-brief-thread" aria-label="Shared Brief conversation">
-              <h2 className="headings-2xs-bold">Let’s build your Brief</h2>
-              <p className="paragraph-s">{canEditBrief ? "This is the same conversation as the Brief page. Your answers and attachments carry across." : "Your assignment allows you to read this Brief. Ask about the project using the workload scope."}</p>
-              {!briefMessages.length ? <p className="paragraph-s">What video are we making? Describe it or add your sources on the Brief page.</p> : null}
+            {!chooseReminder && !reminder && !showBriefing && isSharedBrief ? <section className="ask-brisk-brief-thread" aria-label="Shared Brief conversation">
               {briefMessages.map((message) => <article key={message.id} className={`brisk-ai-message ${message.role === "client" ? "is-user" : "is-assistant"}`}>
                 <strong className="label-xs-semibold">{message.role === "client" ? "You" : assistantName}</strong>
                 <p className="paragraph-s">{message.body}</p>
@@ -917,7 +912,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
               {sharedBrief?.drafting ? <p className="paragraph-s" role="status">Drafting your Brief…</p> : null}
               {sharedBrief?.drafted && !sharedBrief.drafting ? <Button size="S" variant="secondary" onClick={() => { getBriefHandler(contextProject!.id)?.reveal(); closeAssistant(); }}>Review Brief</Button> : null}
             </section> : null}
-            {!chooseReminder && !compact && !reminder && !isSharedBrief ? <>
+            {!chooseReminder && !reminder && !showBriefing && !isSharedBrief ? <>
 
             {conversationState === "failure" ? (
               <ConversationState
@@ -937,7 +932,7 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
                 title="Add a little more context"
                 body="Add a Brief, Script, Edit version or supporting file for a useful review."
                 actionLabel="Add source"
-                onAction={() => setSourcePickerView("menu")}
+                onAction={() => setSourcePickerView("sources")}
               />
             ) : conversationState === "profile-learning" ? (
               <ConversationState
@@ -969,10 +964,8 @@ export function BriskAiAssistant({ showLauncher = false }: { showLauncher?: bool
             {isProcessing ? <ProcessingState assistantName={assistantName} /> : null}
             </> : null}
           </div>
-          {compact ? <div className="ask-brisk-preview-footer"><Button size="S" onClick={() => setAssistantView("panel")}>{briefMessages.length ? "Continue Brief conversation" : "Open conversation"}</Button><span className="label-xs">{scopedInsights.length > 1 ? `${scopedInsights.length - 1} more insights · ` : ""}Prototype briefing</span></div> : <>
-            <p className="ask-brisk-demo-note label-xs">Prototype assistant · mock answers · actions require review</p>
-            {composer}
-          </>}
+          {hasConversationContent ? <p className="ask-brisk-demo-note label-xs">Prototype assistant · mock answers</p> : null}
+          {composer}
         </aside>
       ) : null}
 
@@ -1005,6 +998,7 @@ function AssistantHeader({
   onDeleteChat,
   onFinishRename,
   onHistoryQueryChange,
+  onShowBriefing,
   onNewChat,
   onOpenChat,
   onRenameValueChange,
@@ -1025,6 +1019,7 @@ function AssistantHeader({
   onDeleteChat: (chat: ChatHistoryItem) => void;
   onFinishRename: (chatId: string) => void;
   onHistoryQueryChange: (query: string) => void;
+  onShowBriefing: () => void;
   onNewChat: () => void;
   onOpenChat: (chatId: string) => void;
   onRenameValueChange: (value: string) => void;
@@ -1033,7 +1028,7 @@ function AssistantHeader({
   return (
     <header className="brisk-ai-header">
       <div className="brisk-ai-heading">
-        <span className="brisk-ai-heading-icon"><DsIcon name="sparkle" size={17} /></span>
+        <DsIcon name="star-four" size={16} />
         <div className="brisk-ai-history-anchor" ref={historyAnchorRef}>
           <button
             className="brisk-ai-history-trigger"
@@ -1056,6 +1051,7 @@ function AssistantHeader({
               onBeginRename={onBeginRename}
               onDeleteChat={onDeleteChat}
               onFinishRename={onFinishRename}
+              onShowBriefing={onShowBriefing}
               onNewChat={onNewChat}
               onOpenChat={onOpenChat}
               onQueryChange={onHistoryQueryChange}
@@ -1086,6 +1082,7 @@ function ChatHistoryPopover({
   onBeginRename,
   onDeleteChat,
   onFinishRename,
+  onShowBriefing,
   onNewChat,
   onOpenChat,
   onQueryChange,
@@ -1100,6 +1097,7 @@ function ChatHistoryPopover({
   onBeginRename: (chat: ChatHistoryItem) => void;
   onDeleteChat: (chat: ChatHistoryItem) => void;
   onFinishRename: (chatId: string) => void;
+  onShowBriefing: () => void;
   onNewChat: () => void;
   onOpenChat: (chatId: string) => void;
   onQueryChange: (query: string) => void;
@@ -1123,10 +1121,13 @@ function ChatHistoryPopover({
           onChange={(event) => onQueryChange(event.target.value)}
         />
       </div>
+      <div className="ask-brisk-actions">
+      <Button size="S" variant="ghost" onClick={onShowBriefing}>Your briefing</Button>
       <button className="brisk-ai-history-new label-s-semibold" type="button" onClick={onNewChat}>
         <DsIcon name="pencil-simple-ds" size={16} />
         {newChatLabel}
       </button>
+      </div>
       <div className="brisk-ai-history-list">
         {filteredChats.length === 0 ? (
           <div className="brisk-ai-history-empty">
@@ -1335,66 +1336,62 @@ function ConversationState({ actionLabel, body, icon, onAction, title }: { actio
 }
 
 function SourcePicker({
-  mode,
-  sources,
-  query,
-  onBack,
-  onClose,
-  onQueryChange,
-  onSelect,
-  onUpload,
+  sources, query, onQueryChange, onSelect, onUpload, onAddLink,
 }: {
-  mode: "files" | "mentions";
   sources: BriskAiSource[];
   query: string;
-  onBack: () => void;
-  onClose: () => void;
   onQueryChange: (query: string) => void;
   onSelect: (sourceId: string) => void;
-  onUpload?: () => void;
+  onUpload?: (files: FileList) => void;
+  onAddLink?: (url: URL) => void;
 }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [addingLink, setAddingLink] = useState(false);
+  const [linkValue, setLinkValue] = useState("");
   const normalisedQuery = query.trim().toLocaleLowerCase("en-AU");
-  const suggested = getSuggestedSources(mode, sources);
-  const matches = sources.filter((source) => {
-    const searchText = `${source.label} ${source.preview} ${source.detail ?? ""} ${getSourceSearchTerms(source.kind)}`.toLocaleLowerCase("en-AU");
-    return searchText.includes(normalisedQuery);
-  });
-  const visibleSources = normalisedQuery ? matches : suggested;
-  const hasResults = visibleSources.length > 0;
+  const matches = sources.filter((source) => `${source.label} ${source.preview} ${source.detail ?? ""} ${getSourceSearchTerms(source.kind)}`.toLocaleLowerCase("en-AU").includes(normalisedQuery));
+  const visibleSources = normalisedQuery ? matches : getSuggestedSources(sources);
+  let linkUrl: URL | null = null;
+  try {
+    const url = new URL(linkValue);
+    if (url.protocol === "http:" || url.protocol === "https:") linkUrl = url;
+  } catch { /* Keep Add link disabled until a full web address is entered. */ }
 
-  return (
-    <section className="brisk-ai-source-picker" role="dialog" aria-modal="false" aria-labelledby="brisk-ai-source-picker-title">
-      <header>
-        <div className="brisk-ai-source-picker-heading">
-          <button type="button" aria-label="Back to source options" onClick={onBack}><DsIcon name="arrow-left" size={16} /></button>
-          <h2 className="headings-2xs-bold" id="brisk-ai-source-picker-title">{mode === "files" ? "Add photos, video or files" : "Mention a source"}</h2>
-        </div>
-        <button type="button" aria-label="Close source picker" onClick={onClose}><DsIcon name="x-close-cross" size={17} /></button>
-      </header>
-      <div className="brisk-ai-source-picker-toolbar">
-        <label>
-          <span className="sr-only">{mode === "files" ? "Search photos, video or files" : "Search pages, projects or people"}</span>
-          <DsIcon name="search" size={16} />
-          <input
-            autoFocus
-            className="label-s"
-            type="search"
-            placeholder={mode === "files" ? "Search photos, video or files" : "Search pages, projects or people"}
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-          />
-        </label>
-        {mode === "files" && onUpload ? <Button size="S" variant="ghost" onClick={onUpload}><DsIcon name="plus" size={14} />Upload file</Button> : null}
-      </div>
-      <div className="brisk-ai-source-picker-list">
-        {!hasResults ? (
-          <div className="brisk-ai-source-empty"><DsIcon name="search" size={20} /><strong className="label-s-semibold">No sources found</strong><Button size="S" variant="ghost" className="brisk-ai-text-action" type="button" onClick={() => onQueryChange("")}>Clear search</Button></div>
-        ) : (
-          <SourcePickerSection title={normalisedQuery ? "Search results" : "Suggested"} sources={visibleSources} onSelect={onSelect} />
-        )}
-      </div>
-    </section>
-  );
+  if (addingLink) return <form className="ask-brisk-link-form" onSubmit={(event) => {
+    event.preventDefault();
+    if (linkUrl) onAddLink?.(linkUrl);
+  }}>
+    <Input autoFocus label="Link" type="url" placeholder="https://…" value={linkValue} onChange={(event) => setLinkValue(event.target.value)} />
+    <div className="ask-brisk-source-actions">
+      <Button size="S" variant="secondary" onClick={() => setAddingLink(false)}>Cancel</Button>
+      <Button size="S" type="submit" disabled={!linkUrl}>Add link</Button>
+    </div>
+  </form>;
+
+  return <div className="ask-brisk-source-content">
+    <div className="brisk-ai-source-picker-toolbar">
+      <label>
+        <span className="sr-only">Search sources</span>
+        <DsIcon name="search" size={16} />
+        <input autoFocus className="label-s" type="search" placeholder="Search sources" value={query}
+          onChange={(event) => onQueryChange(event.target.value)} />
+      </label>
+    </div>
+    <div className="ask-brisk-source-actions">
+      {onUpload ? <>
+        <input ref={fileInputRef} type="file" multiple hidden aria-label="Choose source files" onChange={(event) => {
+          if (event.target.files) onUpload(event.target.files);
+        }} />
+        <Button size="S" variant="ghost" onClick={() => fileInputRef.current?.click()}>Upload file</Button>
+      </> : null}
+      {onAddLink ? <Button size="S" variant="ghost" onClick={() => setAddingLink(true)}>Add link</Button> : null}
+    </div>
+    {visibleSources.length ? <SourcePickerSection title={normalisedQuery ? "Search results" : "Suggested sources"} sources={visibleSources} onSelect={onSelect} />
+      : <div className="brisk-ai-source-empty"><strong className="label-s-semibold">No sources found</strong>
+        {query ? <Button size="S" variant="ghost" onClick={() => onQueryChange("")}>Clear search</Button> : null}
+      </div>}
+
+  </div>;
 }
 
 function SourcePickerSection({ onSelect, sources, title }: { onSelect: (sourceId: string) => void; sources: BriskAiSource[]; title: string }) {
@@ -1606,30 +1603,13 @@ function getSourceSearchTerms(kind: BriskAiSourceKind) {
   return terms[kind];
 }
 
-function isFileSource(source: BriskAiSource) {
-  return source.kind === "document" || source.kind === "image" || source.kind === "video";
-}
 
-function isMentionSource(source: BriskAiSource) {
-  return source.kind === "brief"
-    || source.kind === "script"
-    || source.kind === "edit"
-    || source.kind === "project"
-    || source.kind === "client"
-    || source.kind === "page"
-    || source.kind === "record"
-    || source.kind === "person";
-}
-
-function getSuggestedSources(mode: "files" | "mentions", sources: BriskAiSource[]) {
-  const priorityIds = mode === "files"
-    ? ["brand-guidelines-pdf", "reference-image", "edit-v3", "product-dashboard-screenshot"]
-    : ["current-script", "current-brief", "current-edit", "current-project", "current-client", "maddie-lee"];
+function getSuggestedSources(sources: BriskAiSource[]) {
+  const priorityIds = ["current-script", "current-brief", "current-edit", "current-project", "current-client", "maddie-lee"];
   const availableSources = sources.filter((source) => source.available);
-  const prioritised = priorityIds
-    .map((id) => availableSources.find((source) => source.id === id))
+  const prioritised = priorityIds.map((id) => availableSources.find((source) => source.id === id))
     .filter((source): source is BriskAiSource => Boolean(source));
-  return deduplicateSources([...prioritised, ...availableSources]).slice(0, 5);
+  return deduplicateSources([...prioritised, ...availableSources]).slice(0, 4);
 }
 
 function getCompactContextSources(sources: BriskAiSource[], promotedSourceId?: string | null) {

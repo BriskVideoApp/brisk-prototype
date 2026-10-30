@@ -23,6 +23,7 @@ import {
 } from "@/data/storyboard";
 
 type StoryboardContextValue = {
+  hasHydrated: boolean;
   addFrame: (projectId: string) => void;
   approveStoryboard: (projectId: string, approvedBy: string) => void;
   createBlankVersion: (projectId: string, createdBy: StoryboardVersion["createdBy"]) => void;
@@ -60,6 +61,7 @@ const StoryboardContext = createContext<StoryboardContextValue | null>(null);
 
 export function StoryboardProvider({ children }: { children: ReactNode }) {
   const [records, setRecords] = useState<Record<string, StoryboardRecord>>(() => cloneStoryboardRecords(initialStoryboardRecords));
+  const [hasHydrated, setHasHydrated] = useState(false);
   const frameHistoryRef = useRef<Record<string, { past: StoryboardFrame[][]; future: StoryboardFrame[][] }>>({});
 
   useEffect(() => {
@@ -69,6 +71,7 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
     } catch {
       // Prototype-only persistence falls back to the current session.
     }
+    setHasHydrated(true);
   }, []);
 
   const commitRecords = useCallback((update: (current: Record<string, StoryboardRecord>) => Record<string, StoryboardRecord>) => {
@@ -119,6 +122,7 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
   }, [updateCurrentVersion]);
 
   const value = useMemo<StoryboardContextValue>(() => ({
+    hasHydrated,
     addFrame(projectId) {
       updateCurrentVersion(projectId, (version) => ({
         ...version,
@@ -420,7 +424,7 @@ export function StoryboardProvider({ children }: { children: ReactNode }) {
     updateFrameComments(projectId, frameId, comments) {
       updateFrame(projectId, frameId, (frame) => ({ ...frame, comments }));
     },
-  }), [commitRecords, records, updateCurrentVersion, updateFrame]);
+  }), [hasHydrated, commitRecords, records, updateCurrentVersion, updateFrame]);
 
   return <StoryboardContext.Provider value={value}>{children}</StoryboardContext.Provider>;
 }

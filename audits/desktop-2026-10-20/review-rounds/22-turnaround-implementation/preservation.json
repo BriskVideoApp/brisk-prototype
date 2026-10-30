@@ -1,0 +1,21 @@
+{
+  "changedBaselineFiles": [
+    "src/app/layout.tsx",
+    "src/components/settings/StudioSettingsShell.tsx",
+    "src/components/settings/StudioSettingsContext.tsx",
+    "src/components/settings/StudioProductionDefaultsPage.tsx",
+    "src/components/project-timing/project-timing.css",
+    "src/components/project-timing/ProjectTimingContext.tsx",
+    "src/components/storyboard/StoryboardContext.tsx",
+    "src/components/active-videos/ActiveVideosPage.tsx",
+    "src/components/project/ProjectStageStatusContext.tsx",
+    "src/data/project-timing.ts",
+    "src/data/studio-settings.ts",
+    "Docs/desktop-design-baseline.md"
+  ],
+  "missingBaselineFiles": [],
+  "publicAssetsUnchanged": true,
+  "designSystemUnchanged": true,
+  "mockRecordsUnchanged": true,
+  "workingBrowser": "No interaction or storage writes performed on localhost:3000 user tabs. Test changes used isolated ports 8790/8791. Local dev server restarted without clearing browser data."
+}

@@ -1,3 +1,4 @@
+import { cloneTurnaround, type StudioTurnaround } from "@/data/turnaround";
 import type { DefaultProjectTeamMember } from "@/components/active-videos/types";
 import {
   createStudioBrandColours,
@@ -31,6 +32,7 @@ export type StudioBranding = {
 };
 
 export type StudioProductionDefaults = {
+  turnaround?: StudioTurnaround;
   defaultTeam: DefaultProjectTeamMember[];
 };
 
@@ -132,6 +134,7 @@ export function cloneStudioSettings(settings: StudioSettings): StudioSettings {
     },
     production: {
       defaultTeam: (settings.production.defaultTeam ?? initialStudioSettings.production.defaultTeam).map((member) => ({ ...member })),
+      turnaround: cloneTurnaround(settings.production.turnaround),
     },
     integrations: {
       whatsapp: { ...settings.integrations.whatsapp },

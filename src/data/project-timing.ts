@@ -12,8 +12,8 @@ export type ProjectTimingAssessment = {
   productionRisk: boolean;
 };
 
-// Explicit assessments for the front-end reference, not a scheduler or AI forecast.
-// New projects need an assessment before Brisk can suggest a delivery date.
+// Historical demo assessments retained for traceability. Current suggestions use
+// the working-day forecast in TurnaroundContext, not these fixed dates.
 export const projectTimingAssessments: readonly ProjectTimingAssessment[] = [
   {
     projectId: "loom-launch-film",

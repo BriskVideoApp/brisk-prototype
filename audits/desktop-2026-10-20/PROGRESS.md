@@ -213,3 +213,44 @@ Replaced the hybrid sidebar chevron with the unmodified DS SidebarSimple rectang
 ### 29 October 2026 - header vertical alignment
 
 Aligned the expanded Studio logo/name/toggle with the top-bar controls using a shared header-height token. Measured all centres at y32px at 1280 and 1133 desktop widths. Collapse/expand and existing collapsed arrangement retained. Type-check, To Do HTTP 200 and diff checks passed; no working data changed. Evidence: review-rounds/21-header-alignment/validation.json.
+
+
+## Turnaround implementation - 29-30 October 2026
+
+Completed the approved front-end timing rules: shared Studio settings and exceptions, working-day stage cycles, named active stage panel and compact earliest/+N summary, explicit automatic/manual overrides, first-WIP-only length allowance with ten-second buffer, current Main Video Brief duration, and live provisional forecast feeding the existing Brief/Chat/Deadline warning flow. Existing final dates and Client agreement boundary preserved. Browser checks used isolated origins, including automatic save/reload, manual override, revision start, Client-review cycle end, parallel stages and Client read-only access. Seventeen direct calculation checks and TypeScript passed. Native browser captures at 1280px and 1133px; no mobile or exhaustive state-combination claim. Existing dev server restarted to restore missing chunks, without clearing browser data. See review-rounds/22-turnaround-implementation/result.html and validation.json. Awaiting Tom visual review. No build, tests, dependencies, backend, commit or push.
+
+
+## Brief usability - 30 October 2026
+
+Implemented A12/A13/B13 on Tom's explicit instruction. Only BriefPage.tsx and brief.css changed in application code. Native tables retain approved order/hierarchy; readable minima, matching summary tracks, scoped horizontal scrolling and unclipped DS row menus. Explicit question navigation reveals/focuses the new heading; ordinary answers and search targeting retain their own behaviour. Approval copy now shares existing role/content checks with the action. TypeScript and HTTP 200 passed; browser checked 1133px tables, menu visibility, keyboard scroll, scrolled Video type to Audience, Next/Back and empty/partial approval messages in isolated port 8792. No working data edits, sends or approvals. Bounded gaps in review-rounds/23-brief-usability/validation.json. Awaiting visual sign-off; no tests/build/commit/push.
+
+
+## Shoot scheduling focused review - 30 October 2026
+
+Proposal only. Rechecked live CanonicalShootRoute / ShootStagePage in isolated port 8793. AC02 reproduced at 1133 CSS px: question content 104px in a 56px field. AC03 reproduced: consecutive 20-minute Travel block overlaps following B-roll by 16px because rendered minimum height exceeds duration footprint. L01 current canvas/gesture source risk confirmed, but fresh pointer replay failed and did not reproduce Add dialog; isolated Crew call moved 7:30 to 7:45 only. Report explicitly distinguishes that gap. No application source/typed mocks/assets changed; source hashes verified. See review-rounds/24-shoot-review/index.html and review.json. Awaiting approval of scoped fixes; no implementation.
+
+
+## Ask Brisk simplicity - 30 October 2026
+
+Tom approved replacing the compact insight preview with direct question entry. Reused existing assistant composer and DS controls; one quiet context row, optional questions, answers in place, briefing via header menu. Shared Brief, role-scoped conversations, source selection, priority and reminder review preserved. Opening, read-only answer, draft close/reopen, workload scope, Command+Enter, briefing unread state, reminder cancel and Client/Freelancer boundaries inspected in isolated origin 8794. TypeScript, HTTP 200 and diff checks passed. No working records, assets, dependencies, sends, builds, tests or commits. Screenshot captions state actual viewport limitations. See review-rounds/25-ask-brisk-simplicity/result.html and validation.json. Awaiting Tom visual sign-off. Shoot remains proposal only.
+
+
+## Ask Brisk single composer - 30 October 2026
+
+Tom approved removing the repeated question, suggested buttons and separate context strip. Changed only BriskAiAssistant.tsx and brisk-ai.css in application code: specialised composer encloses source/context/send controls, short This Brief label when on that page, explicit project/Stage for historical context, hidden empty thread and existing expansion on answers. Desktop opening, read-only response/citation, draft retention, context menu Escape, source selection, historic context and Client opening inspected on isolated origin 8795. Native capture at 1164px; unusable tiled emulation capture rejected and overwritten with native evidence. TypeScript, Brief HTTP 200 and diff checks passed. No working data/assets/dependencies/messages/build/tests/commits. See review-rounds/26-ask-brisk-composer/result.html and validation.json. Awaiting visual sign-off; Shoot remains proposal only.
+
+Ask Brisk icon follow-up, 30 October: matched header to toolbar with unframed 16px star-four DsIcon, preserving inherited colour. One JSX line changed; type-check, HTTP 200 and native desktop screenshot/DOM checks passed. No working data changes. Evidence: review-rounds/26-ask-brisk-composer/matching-icon.png.
+
+
+## Brief intake chat or draft choice - 30 October 2026
+
+Always render separate Continue and OK, draft my brief actions beside one another. Continue no longer changes meaning when clarification is complete. Draft can use context supplied so far and includes pending text/attachments. Only BriefPage.tsx changed in application code; DS Buttons and existing layout reused. Browser verified initial disabled controls, early draft with pending audience retained in generated field, and Continue after all three questions remaining in chat. Isolated port 8795 used; working data untouched. TypeScript, HTTP 200 and diff checks passed. Reload/caching limitation recorded in validation.json. No CSS/assets/dependencies, sends/approvals, tests/builds or commits. See review-rounds/27-brief-chat-or-draft/result.html. Awaiting Tom visual review.
+
+
+## Unified Ask Brisk Add source - 30 October 2026
+
+Combined source search/suggestions, upload/link actions and grouped Ask across choices behind one Add source. Active context is quiet text. DS Popover/Radio/Input/Button reused, existing source rows retained. Optional @ shortcut opens the same picker. Private context-scoped file/link metadata supported without content processing or network upload. Browser checked source selection, scope/link isolation, no results, Escape/focus and unsent draft, actual disposable file chooser selection/removal, Client source/draft separation and restricted Freelancer access; restored Staff in isolated localhost:8794. TypeScript, Brief HTTP 200 and diff checks passed. Only AI assistant TSX/CSS changed in application code; no working records/mock arrays/assets/dependencies/permissions/messages/approvals/build/tests/commits. Native evidence retained; failed CDP detail capture excluded. See review-rounds/28-unified-add-source/result.html and validation.json. Awaiting visual review.
+
+Source-search edge follow-up, 30 October: removed the inner input's inherited global focus shadow and retained a visible blue outline on the enclosing search field. Scoped CSS only. Desktop visual/computed-style and filtering checks on isolated localhost:8793 passed, plus TypeScript, HTTP 200 and diff checks. Working data unchanged. Evidence: review-rounds/28-unified-add-source/search-single-edge.png.
+
+Ask across removal, 30 October: removed the fieldset and unused option/radio layout code on Tom's explicit instruction. Current scope values/filtering, source search/suggestions and upload/link actions preserved. Desktop DOM, screenshot, type-check, HTTP 200 and diff checks passed. Working data unchanged. Evidence: review-rounds/28-unified-add-source/without-ask-across.png.

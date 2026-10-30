@@ -1,0 +1,44 @@
+{
+  "date": "30 October 2026",
+  "status": "Implemented and desktop verified; awaiting Tom visual sign-off",
+  "approvedScope": "Header and one composer; remove repeated question/suggestions; integrated context/source/send controls; compact until conversation begins.",
+  "applicationFiles": [
+    "src/components/ai/BriskAiAssistant.tsx",
+    "src/components/ai/brisk-ai.css"
+  ],
+  "checks": [
+    "TypeScript no-emit passed; Brief HTTP 200; diff whitespace check passed.",
+    "Empty thread hidden, no welcome heading or suggestions; only placeholder repeats the question once.",
+    "Current page context shows This Brief; disabled Send for empty input; input focused on open.",
+    "1440px emulated DOM measured compact panel 480px wide and 224px high; that emulated screenshot tiled and was rejected. Readable native captures and visual checks used actual 1164x655 desktop viewport.",
+    "Sending a read-only project-status question revealed the shared Brief answer and citation in the same expanded panel.",
+    "Unsent input retained across close/reopen and navigation.",
+    "Context menu retained scopes; Escape dismissed menu without closing assistant.",
+    "Add source / Mention pages opened; selecting Launch campaign page showed its source chip without clearing input.",
+    "Loading existing Latest client approval chat from Videos showed explicit Loom project and Script context rather than This Brief.",
+    "Client used same compact composition and Studio assistant naming with separate empty conversation. Role restored to Staff in disposable origin."
+  ],
+  "preservation": "Only the two listed application files changed in this batch. Existing uncommitted work retained. Source selection and read-only questions were confined to isolated 127.0.0.1:8795. No working data, assets, dependencies, permissions, backend or external messages changed.",
+  "limitations": [
+    "No new AI integration; responses remain mocked.",
+    "No mobile pass, exhaustive role audit or repeated complete Brief/reminder workflow; existing guards and handlers retained.",
+    "No tests, production build, commit or push."
+  ],
+  "evidence": {
+    "opening": "opening.png",
+    "answer": "answer.png",
+    "historyContext": "history-context.png",
+    "client": "client.png",
+    "before": "before-user.png"
+  },
+  "afterHashes": {
+    "src/components/ai/BriskAiAssistant.tsx": "f6721497fd38f21489a2a2dbc997b7cb7b01277b17a285e95511168331ba21b0",
+    "src/components/ai/brisk-ai.css": "1cb20e0058f8630c28335f9a237b460f5174eee9b50e92a82879b95d815361d2"
+  },
+  "iconFollowup": {
+    "requestedOn": "30 October 2026",
+    "change": "Header uses the same unframed star-four DsIcon as the toolbar, 16px, inherited colour. Only one JSX line changed in application code.",
+    "verification": "Desktop DOM confirmed both controls use /brisk-icons/star-four.svg at 16px with rgb(14,17,20); screenshot inspected. TypeScript and Brief HTTP 200 passed.",
+    "screenshot": "matching-icon.png"
+  }
+}

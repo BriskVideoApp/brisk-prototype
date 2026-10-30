@@ -1639,3 +1639,75 @@ body:has(.shoot-plan-entry-choice) .brisk-ai-launcher::after {
 .ask-brisk-header-button {
   position: relative;
 }
+
+/* Single-composer Ask Brisk opening approved 30 October 2026.
+   The existing specialised composer owns this enclosing edge and focus state. */
+.ask-brisk-panel .brisk-ai-composer {
+  border-top: none;
+}
+
+.ask-brisk-message-box {
+  display: grid;
+  min-width: var(--brisk-space-none);
+  border: 1px solid var(--brisk-border-primary);
+  border-radius: var(--brisk-radius-s);
+  background: var(--brisk-bg-block-primary);
+  padding: var(--brisk-space-xs);
+  gap: var(--brisk-space-xs);
+}
+
+.ask-brisk-message-box:has(textarea:focus-visible) {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+}
+
+.ask-brisk-panel .ask-brisk-message-box .brisk-ai-prompt-field textarea {
+  border: none;
+  border-radius: var(--brisk-radius-none);
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+  padding: var(--brisk-space-s) var(--brisk-space-m);
+}
+
+.ask-brisk-message-box .brisk-ai-composer-actions {
+  flex-wrap: wrap;
+}
+
+.ask-brisk-scope-label {
+  flex: 1 1 var(--brisk-space-none);
+  min-width: var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ask-brisk-panel .brisk-ai-thread[hidden] {
+  display: none;
+}
+
+/* Unified source selection, approved 30 October 2026.
+   Popover, Input and Button keep their own DS states. */
+.ask-brisk-source-content,
+.ask-brisk-link-form {
+  display: grid;
+  gap: var(--brisk-space-m);
+}
+
+.ask-brisk-source-content .brisk-ai-source-picker-toolbar {
+  padding: var(--brisk-space-none);
+}
+
+.ask-brisk-source-content .brisk-ai-source-picker-toolbar input:focus-visible {
+  box-shadow: none;
+}
+
+.ask-brisk-source-content .brisk-ai-source-picker-toolbar label:has(input:focus-visible) {
+  outline: var(--brisk-space-xxs) solid var(--brisk-border-focus);
+  outline-offset: var(--brisk-space-xxs);
+}
+
+.ask-brisk-source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--brisk-space-s);
+}

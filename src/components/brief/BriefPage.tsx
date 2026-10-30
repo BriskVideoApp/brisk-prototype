@@ -13,6 +13,8 @@ import { createPortal } from "react-dom";
 import {
   createContext,
   useEffect,
+  useLayoutEffect,
+  useId,
   useContext,
   useRef,
   useState,
@@ -22,6 +24,7 @@ import {
   type DragEvent,
   type KeyboardEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { Button } from "../../../Brisk DS/src/app/components/Button";
 import { videoTypeIconMap } from "@/components/brief/videoTypeIcons";
@@ -557,6 +560,39 @@ export function getBriefConfigurableOptions(
   return [];
 }
 
+function useBriefStepNavigation(activeStepId: BriefStepId, setStep: (step: BriefStepId) => void) {
+  const regionRef = useRef<HTMLElement | null>(null);
+  const [request, setRequest] = useState(0);
+  const handledRequest = useRef(0);
+  const selectStep = (step: BriefStepId) => {
+    setStep(step);
+    setRequest((current) => current + 1);
+  };
+
+  useLayoutEffect(() => {
+    if (!request || handledRequest.current === request) return;
+    const heading = regionRef.current?.querySelector<HTMLElement>("h2");
+    if (!heading) return;
+    handledRequest.current = request;
+    // Programmatic heading focus does not add a stop to the ordinary Tab order.
+    heading.tabIndex = -1;
+    if (!heading.closest("[inert]")) heading.focus({ preventScroll: true });
+    let scroller = heading.parentElement;
+    while (scroller && scroller !== document.body) {
+      if (/(auto|scroll)/u.test(getComputedStyle(scroller).overflowY) && scroller.scrollHeight > scroller.clientHeight) {
+        const headerBottom = document.querySelector(".app-global-header")?.getBoundingClientRect().bottom ?? 0;
+        const gap = parseFloat(getComputedStyle(heading).getPropertyValue("--brisk-space-xl"));
+        const visibleTop = Math.max(scroller.getBoundingClientRect().top, headerBottom) + gap;
+        scroller.scrollTo({ top: scroller.scrollTop + (heading.closest(".brief-section-intro") ?? heading).getBoundingClientRect().top - visibleTop, behavior: "instant" });
+        break;
+      }
+      scroller = scroller.parentElement;
+    }
+  }, [activeStepId, request]);
+
+  return { regionRef, selectStep };
+}
+
 export function BriefPage({ approvalDestination, briefConfiguration, initialFields, onFieldsChange, project, studioName: providedStudioName }: BriefPageProps) {
   const router = useRouter();
   const viewer = usePrototypeViewer();
@@ -593,6 +629,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const [activeStepId, setActiveStepId] = useBriefAiState(project.id, "step", () => clientHasBriefToApprove
     ? "summary"
     : getConfiguredBriefSteps(briefConfiguration, initialFields ?? initialBriefFields)[0].id);
+  const { regionRef: stepRegionRef, selectStep } = useBriefStepNavigation(activeStepId, setActiveStepId);
   const [briefFields, setBriefFields] = useBriefAiState(project.id, "fields", () => cloneBriefFields(initialFields ?? initialBriefFields));
   const [searchFieldFocus, setSearchFieldFocus] = useState<BriefFieldId | null>(null);
   const revealSearchField = (fieldId: BriefFieldId) => {
@@ -655,6 +692,11 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
   const isSummaryStep = activeStepId === "summary";
   const summaryMissingCount = getSummaryMissingCount(briefFields, logline, studioName);
   const hasBriefContent = Object.values(briefFields).some((field) => field.value.trim());
+  const approvalDisabledReason = selectedRole === "Studio Freelancer"
+    ? "Only Studio Staff and Clients can approve this Brief"
+    : !hasBriefContent ? "Add Brief details before approving" : undefined;
+  const approvalGuidance = isBriefApproved ? "This Brief is approved."
+    : approvalDisabledReason ? `${approvalDisabledReason}.` : "You can still approve this brief.";
   useEffect(() => {
     if (!clientHasBriefToApprove) return;
     setBriefMode("steps");
@@ -784,12 +826,23 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     submitBriefPrompt(submission, "landing");
   }
 
-  function draftLandingBrief() {
-    if (clarifyingAnswerCount < briefClarifyingQuestions.length || hasDraftedBrief) {
-      return;
-    }
+  function draftLandingBrief(submission?: BriefAiSubmit) {
+    if (hasDraftedBrief || isDraftingBrief) return;
+    const prompt = submission?.prompt.trim() ?? "";
+    const attachments = submission?.attachments ?? [];
+    const pendingContext = `${prompt} ${describeAttachmentsForPrompt(attachments)}`.trim();
+    const draftPrompt = `${sourcePrompt} ${pendingContext}`.trim();
+    if (!draftPrompt) return;
 
-    draftBriefFromPrompt(sourcePrompt || "Client supplied brief details.", "landing");
+    const clientMessage = pendingContext ? createChatMessage("client", prompt || "Attached sources for the brief.", {
+      authorLabel: "You",
+      attachments: [...attachments],
+    }) : undefined;
+    if (pendingContext) {
+      setHasStartedClarifying(true);
+      setSourcePrompt(draftPrompt);
+    }
+    draftBriefFromPrompt(draftPrompt, "landing", clientMessage);
   }
 
   function rewindLandingConversation(messageId: string) {
@@ -1112,13 +1165,13 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     const nextStep = configuredSteps[activeStepIndex + direction];
 
     if (nextStep) {
-      setActiveStepId(nextStep.id);
+      selectStep(nextStep.id);
     }
   }
 
   function enterStepFlow() {
     setBriefMode("steps");
-    setActiveStepId(configuredSteps[0].id);
+    selectStep(configuredSteps[0].id);
   }
 
   function skipAiAndFillManually() {
@@ -1147,7 +1200,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
     }
 
     setBriefMode("steps");
-    setActiveStepId(stepId);
+    selectStep(stepId);
   }
 
   function jumpToSummaryMissing(direction: "previous" | "next") {
@@ -1223,8 +1276,8 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
       copyLinkIconOnly
       copyLinkLabel="Copy link"
       approveLabel="Approve Brief"
-      approveDisabled={selectedRole === "Studio Freelancer" || !hasBriefContent}
-      approveDisabledTooltip={selectedRole === "Studio Freelancer" ? "Only Studio Staff and Clients can approve this Brief" : "Add Brief details before approving"}
+      approveDisabled={Boolean(approvalDisabledReason)}
+      approveDisabledTooltip={approvalDisabledReason}
       approvedAt={briefStageStatus.approvedAt}
       approvedBy={briefStageStatus.approvedBy ?? briefActorName}
       isApproved={isBriefApproved}
@@ -1250,7 +1303,9 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
           <BriefLandingScreen
             steps={configuredSteps}
             backHref={selectedRole === "Customer" ? "/customer-dashboard" : "/active-videos"}
-            canDraft={clarifyingAnswerCount >= briefClarifyingQuestions.length && hasStartedClarifying && !hasDraftedBrief}
+            canDraft={!hasDraftedBrief}
+            hasDraftContext={Boolean(sourcePrompt.trim())}
+            isDrafting={isDraftingBrief}
             messages={chatMessages}
             onDraft={draftLandingBrief}
             onRewind={rewindLandingConversation}
@@ -1261,6 +1316,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
           />
         ) : (
           <BriefStepShell
+            stepRegionRef={stepRegionRef}
             activeStepId={activeStepId}
             activeStepIndex={activeStepIndex}
             steps={configuredSteps}
@@ -1295,7 +1351,7 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
             ) : null}
             onBack={activeStepIndex > 0 ? () => goToRelativeStep(-1) : undefined}
             onStartWithAi={resetToLanding}
-            onSelectStep={setActiveStepId}
+            onSelectStep={selectStep}
           >
             <BriefFieldOrderContext.Provider value={briefConfiguration ? getStudioBriefFieldOrder(briefConfiguration, briefFields) : null}>
             {activeStepId === "basics" ? (
@@ -1402,10 +1458,11 @@ export function BriefPage({ approvalDestination, briefConfiguration, initialFiel
                 fields={briefFields}
                 logline={logline}
                 summaryMissingCount={summaryMissingCount}
+                approvalGuidance={approvalGuidance}
                 onConfirmField={confirmBriefField}
                 onCycleSummaryMissing={jumpToSummaryMissing}
                 onFieldChange={updateBriefField}
-                onGoToStep={setActiveStepId}
+                onGoToStep={selectStep}
                 studioName={studioName}
               />
             ) : null}
@@ -1460,6 +1517,7 @@ export function BriefGuidedExperience({
   videoTypeOptionIds?: readonly BriefVideoTypeId[];
 }) {
   const [activeStepId, setActiveStepId] = useState<BriefStepId>(initialStepId);
+  const { regionRef: stepRegionRef, selectStep } = useBriefStepNavigation(activeStepId, setActiveStepId);
   const [logline, setLogline] = useState<Logline>({ text: "", status: "not_generated" });
   const activeStepIndex = briefSteps.findIndex((step) => step.id === activeStepId);
   const availableVideoTypeIds = videoTypeOptionIds ?? videoTypeIds;
@@ -1497,7 +1555,7 @@ export function BriefGuidedExperience({
     const nextStep = briefSteps[activeStepIndex + direction];
 
     if (nextStep) {
-      setActiveStepId(nextStep.id);
+      selectStep(nextStep.id);
     }
   }
 
@@ -1505,6 +1563,7 @@ export function BriefGuidedExperience({
     <section className={`brief-guided-experience ${readOnly ? "read-only" : "editable"} ${onToggleFieldExcluded ? "exclusion-mode" : ""}`} aria-label="Client Brief">
       <div className="brief-guided-experience-stage">
         <div
+          ref={stepRegionRef as RefObject<HTMLDivElement | null>}
           className="brief-guided-experience-content"
           aria-readonly={readOnly || undefined}
           inert={readOnly && (!onToggleFieldExcluded || activeStepId === "summary") ? true : undefined}
@@ -1548,7 +1607,7 @@ export function BriefGuidedExperience({
               logline={logline}
               onConfirmField={confirmField}
               onFieldChange={updateField}
-              onGoToStep={setActiveStepId}
+              onGoToStep={selectStep}
               studioName={studioName}
             />
           ) : null}
@@ -1559,7 +1618,7 @@ export function BriefGuidedExperience({
           <span className="brief-footer-side">
             {activeStepIndex > 0 ? <Button size="S" variant="secondary" onClick={() => goToRelativeStep(-1)}>Back</Button> : null}
           </span>
-          <BriefStepDots activeStepIndex={activeStepIndex} showAi={false} onSelectStep={setActiveStepId} onStartWithAi={() => setActiveStepId("basics")} />
+          <BriefStepDots activeStepIndex={activeStepIndex} showAi={false} onSelectStep={selectStep} onStartWithAi={() => selectStep("basics")} />
           <span className="brief-footer-side right">
             {activeStepId === "summary" ? (
               <Button className="brief-client-primary-action" size="S" variant="primary" onClick={onDone}>{doneLabel}</Button>
@@ -1691,6 +1750,7 @@ function summariseBriefAuditEntry(entry: BriefActionAuditEntry) {
 }
 
 function BriefStepShell({
+  stepRegionRef,
   activeStepId,
   activeStepIndex,
   steps,
@@ -1702,6 +1762,7 @@ function BriefStepShell({
   onStartWithAi,
   onSelectStep,
 }: {
+  stepRegionRef: RefObject<HTMLElement | null>;
   activeStepId: BriefStepId;
   activeStepIndex: number;
   steps: typeof briefSteps;
@@ -1715,7 +1776,7 @@ function BriefStepShell({
 }) {
   return (
     <>
-      <section className={`brief-stage-area brief-step-${activeStepId}`} aria-label="Brief step">
+      <section ref={stepRegionRef} className={`brief-stage-area brief-step-${activeStepId}`} aria-label="Brief step">
         <div className="brief-workspace">
           {children}
         </div>
@@ -1806,6 +1867,8 @@ function BriefStepDots({
 function BriefLandingScreen({
   backHref,
   canDraft,
+  hasDraftContext,
+  isDrafting,
   steps,
   messages,
   onDraft,
@@ -1817,9 +1880,11 @@ function BriefLandingScreen({
 }: {
   backHref: string;
   canDraft: boolean;
+  hasDraftContext: boolean;
+  isDrafting: boolean;
   steps: typeof briefSteps;
   messages: ChatMessage[];
-  onDraft: () => void;
+  onDraft: (submission?: BriefAiSubmit) => void;
   onRewind: (messageId: string) => void;
   onSelectStep: (stepId: BriefStepId) => void;
   onSkip: () => void;
@@ -1831,13 +1896,13 @@ function BriefLandingScreen({
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const canSendMessage = inputValue.trim().length > 0 || attachments.length > 0;
   const isClarifying = messages.length > 0;
-  const canUseFooterContinue = isClarifying ? canSendMessage || canDraft : canSendMessage;
+  const canDraftNow = canDraft && !isDrafting && (hasDraftContext || canSendMessage);
   const inputPlaceholder = isClarifying
     ? "Type your answer here..."
     : landingIntroPlaceholder;
 
   function submitLandingPrompt(): boolean {
-    if (!canSendMessage) {
+    if (!canSendMessage || isDrafting) {
       return false;
     }
 
@@ -1850,20 +1915,14 @@ function BriefLandingScreen({
     return true;
   }
 
-  function handleFooterContinue() {
-    if (isClarifying) {
-      if (canDraft) {
-        onDraft();
-        return;
-      }
-
-      if (canSendMessage) {
-        submitLandingPrompt();
-      }
-      return;
-    }
-
-    submitLandingPrompt();
+  function handleDraft() {
+    if (!canDraftNow) return;
+    onDraft(canSendMessage ? {
+      prompt: inputValue,
+      attachments,
+    } : undefined);
+    setInputValue("");
+    setAttachments([]);
   }
 
   function editMessage(message: ChatMessage) {
@@ -1973,30 +2032,18 @@ function BriefLandingScreen({
         <BriefRichInput
           attachments={attachments}
           landingActions={
-            isClarifying ? (
-              <Button size="S" variant="primary"
-                className="brief-landing-next"
-                type="button"
-                disabled={!canUseFooterContinue}
-                onClick={handleFooterContinue}
-              >
-                {canDraft ? "OK, draft my brief" : "Continue"}
+            <>
+              {!isClarifying ? <Button size="S" variant="ghost" className="brief-landing-skip" type="button" disabled={isDrafting} onClick={onSkip}>
+                Fill manually
+              </Button> : null}
+              <Button size="S" variant="secondary" className="brief-landing-next" type="button"
+                disabled={!canSendMessage || isDrafting} onClick={submitLandingPrompt}>
+                Continue
               </Button>
-            ) : (
-              <>
-                <Button size="S" variant="ghost" className="brief-landing-skip" type="button" onClick={onSkip}>
-                  Fill manually
-                </Button>
-                <Button size="S" variant="primary"
-                  className="brief-landing-next"
-                  type="button"
-                  disabled={!canUseFooterContinue}
-                  onClick={handleFooterContinue}
-                >
-                  Continue
-                </Button>
-              </>
-            )
+              <Button size="S" variant="primary" type="button" disabled={!canDraftNow} onClick={handleDraft}>
+                {isDrafting ? "Drafting your brief…" : "OK, draft my brief"}
+              </Button>
+            </>
           }
           placeholder={inputPlaceholder}
           value={inputValue}
@@ -3078,6 +3125,26 @@ function BriefDeliverablesSection({
   );
 }
 
+function BriefTableViewport({ children, className, label }: { children: ReactNode; className: string; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const hintId = useId();
+  const [overflows, setOverflows] = useState(false);
+  useEffect(() => {
+    const viewport = ref.current;
+    if (!viewport) return;
+    const measure = () => setOverflows(viewport.scrollWidth > viewport.clientWidth + 1);
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    if (viewport.firstElementChild) observer.observe(viewport.firstElementChild);
+    measure();
+    return () => observer.disconnect();
+  }, []);
+  return <div className="brief-table-viewport">
+    <div ref={ref} className={className} role="region" aria-label={label} tabIndex={overflows ? 0 : undefined} aria-describedby={overflows ? hintId : undefined}>{children}</div>
+    {overflows ? <p className="brief-table-scroll-hint label-xs" id={hintId}>Scroll horizontally to see all details.</p> : null}
+  </div>;
+}
+
 function BriefDeliverablesTable({
   fallbackDeadline,
   onChange,
@@ -3088,12 +3155,8 @@ function BriefDeliverablesTable({
   value: string;
 }) {
   const rows = parseDeliverables(value, fallbackDeadline);
-  const [openMenuRowId, setOpenMenuRowId] = useState<string | null>(null);
   const [openNotesRowIds, setOpenNotesRowIds] = useState<string[]>([]);
-  const actionsMenuRef = useBriefOutsidePointerClose<HTMLDivElement>(
-    openMenuRowId !== null,
-    () => setOpenMenuRowId(null),
-  );
+
 
   function updateRows(nextRows: DeliverableRow[]) {
     onChange(serialiseDeliverables(nextRows));
@@ -3121,24 +3184,21 @@ function BriefDeliverablesTable({
         name: row.name ? `${row.name} copy` : "Version copy",
       },
     ]);
-    setOpenMenuRowId(null);
   }
 
   function removeRow(rowId: string) {
     updateRows(rows.filter((row) => row.id !== rowId || row.isMain));
-    setOpenMenuRowId(null);
   }
 
   function toggleNotes(rowId: string) {
     setOpenNotesRowIds((current) =>
       current.includes(rowId) ? current.filter((currentRowId) => currentRowId !== rowId) : [...current, rowId],
     );
-    setOpenMenuRowId(null);
   }
 
   return (
     <div className="brief-deliverables-control">
-      <div className="brief-deliverables-table-wrap">
+      <BriefTableViewport className="brief-deliverables-table-wrap" label="Deliverable specifications">
         <table className="brief-deliverables-table">
           <thead>
             <tr>
@@ -3209,41 +3269,21 @@ function BriefDeliverablesTable({
                   />
                 </td>
                 <td>
-                  <div
-                    className="brief-deliverable-actions"
-                    ref={openMenuRowId === row.id ? actionsMenuRef : undefined}
-                  >
-                    <button
-                      className="brief-deliverable-menu-button"
-                      type="button"
-                      aria-label={`Open menu for ${row.name || "version"}`}
-                      aria-expanded={openMenuRowId === row.id}
-                      onClick={() => setOpenMenuRowId(openMenuRowId === row.id ? null : row.id)}
-                    >
-                      <DsIcon name="dots-three" size={14} />
-                    </button>
-                    {openMenuRowId === row.id ? (
-                      <span className="brief-deliverable-menu">
-                        <button className="label-xs-semibold" type="button" onClick={() => toggleNotes(row.id)}>
-                          {openNotesRowIds.includes(row.id) || row.notes ? "Hide notes" : "Notes"}
-                        </button>
-                        <button className="label-xs-semibold" type="button" onClick={() => duplicateRow(row)}>
-                          Duplicate
-                        </button>
-                        {!row.isMain ? (
-                          <button className="delete label-xs-semibold" type="button" onClick={() => removeRow(row.id)}>
-                            Delete
-                          </button>
-                        ) : null}
-                      </span>
-                    ) : null}
-                  </div>
+                  <BriskSelect<string> ariaLabel={`Open menu for ${row.name || "version"}`} mode="action" actionMenuSize="compact" placeholder="" value="" clearable={false} searchable={false}
+                    options={[
+                      { value: "notes", label: openNotesRowIds.includes(row.id) || row.notes ? "Hide notes" : "Notes" },
+                      { value: "duplicate", label: "Duplicate" },
+                      ...(!row.isMain ? [{ value: "delete", label: "Delete", tone: "danger" as const }] : []),
+                    ]}
+                    actionTrigger={(props) => <IconButton {...props} size="S" aria-label={`Open menu for ${row.name || "version"}`}><DsIcon name="dots-three" size={14} /></IconButton>}
+                    onChange={(action) => { if (action === "notes") toggleNotes(row.id); else if (action === "duplicate") duplicateRow(row); else if (action === "delete") removeRow(row.id); }}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </BriefTableViewport>
       <Button size="S" variant="secondary" className="brief-add-version-button" type="button" onClick={addRow}>
         <DsIcon name="plus" size={14} />
         <span>Add version</span>
@@ -4501,6 +4541,7 @@ function BriefSummaryPage({
   studioName,
   summaryMissingCount,
   timingSuggestion,
+  approvalGuidance,
 }: {
   fields: BriefFields;
   intro?: BriefSectionIntroModel;
@@ -4512,6 +4553,7 @@ function BriefSummaryPage({
   studioName: string;
   summaryMissingCount?: number;
   timingSuggestion?: ReactNode;
+  approvalGuidance?: string;
 }) {
   const [editingFieldId, setEditingFieldId] = useState<BriefSummaryEditTarget | null>(null);
   const [editingDeliverableCell, setEditingDeliverableCell] = useState<string | null>(null);
@@ -4575,6 +4617,7 @@ function BriefSummaryPage({
       {summaryMissingCount && summaryMissingCount > 0 && onCycleSummaryMissing ? (
         <BriefSummaryConfirmationNote
           missingCount={summaryMissingCount}
+          approvalGuidance={approvalGuidance}
           onCycle={onCycleSummaryMissing}
         />
       ) : null}
@@ -4583,9 +4626,11 @@ function BriefSummaryPage({
 }
 
 function BriefSummaryConfirmationNote({
+  approvalGuidance,
   missingCount,
   onCycle,
 }: {
+  approvalGuidance?: string;
   missingCount: number;
   onCycle: (direction: "previous" | "next") => void;
 }) {
@@ -4595,7 +4640,7 @@ function BriefSummaryConfirmationNote({
         <span className="brief-summary-confirmation-note-count">
           <strong>{missingCount}</strong> {missingCount === 1 ? "detail" : "details"}
         </span>{" "}
-        {missingCount === 1 ? "hasn't" : "haven't"} been confirmed. You can still approve this brief.
+        {missingCount === 1 ? "hasn't" : "haven't"} been confirmed. {approvalGuidance}
       </span>
       <span className="brief-summary-confirmation-cycler" aria-label="Cycle unconfirmed details">
         <button
@@ -4718,7 +4763,7 @@ function BriefSummarySpecStrip({
         index="02"
         title="Main Video Details"
       />
-      <div className="brief-summary-spec-table-wrap">
+      <BriefTableViewport className="brief-summary-spec-table-wrap" label="Main Video Details specifications">
         <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-spec-table">
           <thead>
             <tr>
@@ -4744,7 +4789,7 @@ function BriefSummarySpecStrip({
             </tr>
           </tbody>
         </table>
-      </div>
+      </BriefTableViewport>
     </section>
   );
 }
@@ -5837,6 +5882,7 @@ function BriefSummaryDeliverablesTable({
     <div className="brief-summary-deliverables">
       {additionalRows.length > 0 ? (
         <>
+          <BriefTableViewport className="brief-summary-version-table-wrap" label="Additional version specifications">
           <table className="brief-deliverables-table brief-deliverables-table-summary brief-summary-version-table">
             <thead>
               <tr>
@@ -5952,6 +5998,7 @@ function BriefSummaryDeliverablesTable({
               ))}
             </tbody>
           </table>
+          </BriefTableViewport>
           <Button size="S" variant="secondary" className="brief-add-version-button" type="button" onClick={addRow}>
             <DsIcon name="plus" size={14} />
             <span>Add version</span>

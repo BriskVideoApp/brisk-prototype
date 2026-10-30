@@ -1,0 +1,65 @@
+{
+  "date": "30 October 2026",
+  "status": "Proposal only; application code unchanged",
+  "route": "/projects/loom-launch-film/stages/shoot",
+  "role": "Studio Staff",
+  "session": "Isolated origin http://127.0.0.1:8793; working browser not operated",
+  "viewport": "1133 CSS px; browser zoom accounted for; screenshots retained at genuine browser resolution",
+  "findings": [
+    {
+      "id": "AC02",
+      "currentVerification": "Reproduced",
+      "measurements": {
+        "questionWidth": 174,
+        "fieldHeight": 56,
+        "contentHeight": 104,
+        "restingOverflow": "hidden"
+      },
+      "recommendation": "Auto-size the existing question field to its content on load, edit and width changes. Preserve inline editing, assignment, reorder and filters. Do not redesign the row actions in this batch.",
+      "screenshot": "questions-current.png",
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:4481",
+        "src/components/shoot/shoot.css:2231"
+      ]
+    },
+    {
+      "id": "AC03",
+      "currentVerification": "Reproduced",
+      "measurements": {
+        "travelTop": 508.1179,
+        "travelHeight": 47.9972,
+        "travelBottom": 556.115,
+        "nextBlockTop": 540.1136,
+        "visualOverlap": 16.0014
+      },
+      "recommendation": "Use the actual duration footprint. For sub-30-minute items, fit a compact title/duration line and expose full time/location in details or an existing tooltip on hover/focus. Retain richer content where height allows. Do not change stored times, grid scale or genuine clash detection.",
+      "screenshot": "schedule-current.png",
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:7225",
+        "src/components/shoot/shoot.css:12244",
+        "src/components/shoot/shoot.css:12323"
+      ]
+    },
+    {
+      "id": "L01",
+      "currentVerification": "Historical reproduction and current source path confirmed; fresh pointer reproduction inconclusive",
+      "observed": "The pointer replay failed partway through. Crew call moved from 7:30 to 7:45 in the isolated demo; no blank Add dialog was observed. This is not a successful reproduction of the historical bug.",
+      "sourceRisk": "Entry click checks suppressClickRef, but empty-canvas creation does not. Move resets the flag on a timer; resize does not set it.",
+      "recommendation": "Consume the click belonging to a completed move/resize before canvas Add or entry Edit handles it. Keep ordinary entry click, blank-space Add, snapping, keyboard controls and immediate saves unchanged.",
+      "verificationRequired": "Repeat genuine move and resize plus ordinary click and empty-space click, with and without clashes, before calling this behaviour fixed.",
+      "sources": [
+        "src/components/shoot/ShootStagePage.tsx:7143",
+        "src/components/shoot/ShootStagePage.tsx:7173",
+        "src/components/shoot/ShootStagePage.tsx:7188",
+        "src/components/shoot/ShootStagePage.tsx:7251"
+      ]
+    }
+  ],
+  "preservation": "No app source, assets, dependencies or typed mock records changed. Browser gesture affected only the disposable isolated session. No call sheet was published or sent.",
+  "scopeExclusions": [
+    "No wider Shoot redesign",
+    "No extra workflow/permission changes",
+    "No mobile pass",
+    "No production build, tests, commit or push"
+  ]
+}

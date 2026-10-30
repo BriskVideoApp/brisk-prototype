@@ -26,6 +26,7 @@ export type EditReadinessItem = {
 type ProjectStageOverrides = Record<string, Partial<Record<StageKey, StageStatus>>>;
 
 type ProjectStageStatusContextValue = {
+  hasHydrated: boolean;
   getEditReadiness: (project: EditReadinessSource) => { ready: boolean; items: EditReadinessItem[] };
   getProjectStages: (project: ProjectStageSource) => Record<StageKey, StageStatus>;
   markReadyToEdit: (project: ProjectStageSource) => void;
@@ -48,12 +49,14 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
   const { getStoryboardStatus } = useStoryboard();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const { hasHydrated: hasHydratedPrototypeState, state } = usePrototypeState();
+  const [loadedScope, setLoadedScope] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<ProjectStageOverrides>({});
   const stageStatusScopeKey = `${state.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}`;
 
   useEffect(() => {
     if (!hasLoadedScenario || !hasHydratedPrototypeState) return;
     setOverrides(readProjectStageOverrides(stageStatusScopeKey));
+    setLoadedScope(stageStatusScopeKey);
   }, [hasHydratedPrototypeState, hasLoadedScenario, stageStatusScopeKey]);
 
   const commitOverrides = useCallback((update: (current: ProjectStageOverrides) => ProjectStageOverrides) => {
@@ -143,8 +146,8 @@ export function ProjectStageStatusProvider({ children }: { children: ReactNode }
   }, [commitOverrides, completionRecords, undoProjectCompletion]);
 
   const value = useMemo(
-    () => ({ getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus }),
-    [getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus],
+    () => ({ hasHydrated: loadedScope === stageStatusScopeKey, getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus }),
+    [loadedScope, stageStatusScopeKey, getEditReadiness, getProjectStages, markReadyToEdit, setProjectStageStatus],
   );
 
   return <ProjectStageStatusContext.Provider value={value}>{children}</ProjectStageStatusContext.Provider>;

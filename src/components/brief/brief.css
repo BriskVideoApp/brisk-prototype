@@ -2045,7 +2045,7 @@
 }
 
 .brief-deliverables-table-wrap {
-  overflow: visible;
+  overflow-x: auto;
   border-top: 1px solid var(--brisk-border-primary);
   border-bottom: 1px solid var(--brisk-border-primary);
   border-radius: var(--brisk-radius-none);
@@ -2055,7 +2055,7 @@
 .brief-deliverables-table {
   overflow: visible;
   width: 100%;
-  min-width: calc(var(--brisk-space-3xl) * 20);
+  min-width: calc(var(--brisk-space-3xl) * 26);
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
@@ -2076,27 +2076,27 @@
 }
 
 .brief-deliverables-table th:first-child {
-  width: 27%;
+  width: 14%;
 }
 
 .brief-deliverables-table th:nth-child(2) {
-  width: 10%;
+  width: 13%;
 }
 
 .brief-deliverables-table th:nth-child(3) {
-  width: 14%;
+  width: 17%;
 }
 
 .brief-deliverables-table th:nth-child(4) {
-  width: 16%;
+  width: 18%;
 }
 
 .brief-deliverables-table th:nth-child(5) {
-  width: 14%;
+  width: 16%;
 }
 
 .brief-deliverables-table th:nth-child(6) {
-  width: 15%;
+  width: 18%;
 }
 
 .brief-deliverables-table th:last-child {
@@ -3653,7 +3653,8 @@ button.brief-confidence-chip {
 
 .brief-deliverables-table-summary.brief-summary-spec-table td {
   padding: var(--brisk-space-m) var(--brisk-space-s) 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
   vertical-align: top;
 }
 
@@ -4279,12 +4280,12 @@ button.brief-confidence-chip {
 
 .brief-deliverables-table-summary.brief-summary-version-table th:first-child,
 .brief-deliverables-table-summary.brief-summary-spec-table th:first-child {
-  width: 22%;
+  width: 14%;
 }
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(2),
 .brief-deliverables-table-summary.brief-summary-spec-table th:nth-child(2) {
-  width: 10%;
+  width: 11%;
 }
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(3),
@@ -4294,17 +4295,17 @@ button.brief-confidence-chip {
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(4),
 .brief-deliverables-table-summary.brief-summary-spec-table th:nth-child(4) {
-  width: 12%;
+  width: 15%;
 }
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(5),
 .brief-deliverables-table-summary.brief-summary-spec-table th:nth-child(5) {
-  width: 11%;
+  width: 12%;
 }
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(6),
 .brief-deliverables-table-summary.brief-summary-spec-table th:nth-child(6) {
-  width: 11%;
+  width: 14%;
 }
 
 .brief-deliverables-table-summary.brief-summary-version-table th:nth-child(7),
@@ -5133,4 +5134,32 @@ button.brief-confidence-chip {
 
 .brief-brand-kit-description {
   color: var(--brisk-text-secondary);
+}
+
+/* Keep the approved production tables readable instead of shrinking their controls. */
+.brief-table-viewport,
+.brief-deliverables-control,
+.brief-step-deliverablesTiming .brief-section-panel,
+.brief-step-deliverablesTiming .brief-field-list,
+.brief-step-deliverablesTiming .brief-field-row,
+.brief-step-deliverablesTiming .brief-field-control {
+  min-width: 0;
+}
+
+.brief-summary-version-table-wrap {
+  overflow-x: auto;
+}
+
+.brief-deliverables-table-summary.brief-summary-spec-table,
+.brief-deliverables-table-summary.brief-summary-version-table {
+  min-width: calc(var(--brisk-space-3xl) * 26);
+}
+
+.brief-table-scroll-hint {
+  margin: var(--brisk-space-s) var(--brisk-space-none) var(--brisk-space-none);
+  color: var(--brisk-text-secondary);
+}
+
+.brief-summary-spec-groups .brief-table-scroll-hint {
+  margin: var(--brisk-space-s) var(--brisk-space-xl) var(--brisk-space-l);
 }

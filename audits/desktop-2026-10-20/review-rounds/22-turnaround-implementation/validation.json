@@ -1,0 +1,87 @@
+{
+  "date": "29-30 October 2026",
+  "scope": "Front-end deadline flow only; isolated origins 8790 and 8791",
+  "checks": [
+    {
+      "name": "TypeScript",
+      "result": "Passed after latest application edit"
+    },
+    {
+      "name": "Calculation boundaries",
+      "result": "17 direct calculation checks passed, including Main Video and custom-duration parsing"
+    },
+    {
+      "name": "Settings shared save",
+      "result": "2/3 changed to 3/4 explicitly in isolated origin 8790"
+    },
+    {
+      "name": "Stage exceptions",
+      "result": "Animation editor prefilled 3/4; same-as-default save disabled; Specific dates saved as a genuine exception"
+    },
+    {
+      "name": "Automatic timer",
+      "result": "Explicit start for existing untimestamped WACF Edit created internal Mon 2 Nov 17:20, Client Tue 3 Nov 17:20"
+    },
+    {
+      "name": "Reload persistence",
+      "result": "Same automatic dates survived reload"
+    },
+    {
+      "name": "Manual override",
+      "result": "Client time changed to 18:00; mode Specific date; internal date retained"
+    },
+    {
+      "name": "Return to Studio",
+      "result": "Hims Script sent through existing Studio review action; observer created a 2-working-day revision cycle to Mon 2 Nov 17:29"
+    },
+    {
+      "name": "Final date preservation",
+      "result": "Hims final Sat 22 Aug 17:00 unchanged; WACF final remained unset"
+    },
+    {
+      "name": "Client access",
+      "result": "Own-project stage due date visible; no edit controls or internal WIP target; unreviewed production warnings hidden"
+    },
+    {
+      "name": "Freelancer access",
+      "result": "My jobs remained scoped to assigned job; no Studio settings navigation"
+    },
+    {
+      "name": "Frozen active manual date after settings save",
+      "result": "Shared Client WIP1 changed from 3 to 4 days; active WACF manual date stayed Tue 3 Nov 18:00, internal Mon 2 Nov 17:20"
+    },
+    {
+      "name": "Parallel stage deadlines",
+      "result": "Script and Edit both active in WACF panel; column chose earlier Edit and displayed +1"
+    },
+    {
+      "name": "Live production forecast",
+      "result": "Internal Hims Chat showed requested Sat 22 Aug, calculated suggested Thu 19 Nov and current remaining-stage allowances; External channel contained no unreviewed warning"
+    },
+    {
+      "name": "Brief suggestion",
+      "result": "Manual Brief deadline 30 Oct produced one-line suggested date before submission; Brief not submitted"
+    },
+    {
+      "name": "Client review ends Studio cycle",
+      "result": "WACF Script sent through existing Client review action. Script disappeared from active deadlines; independent Edit manual date stayed Tue 3 Nov 18:00; +1 removed."
+    },
+    {
+      "name": "Narrow desktop",
+      "result": "1133px screenshot inspected. Existing drawer scrolls; stage heading, date and Edit remain legible. Final delivery remains further down the scrollable panel."
+    }
+  ],
+  "remaining": [],
+  "limitations": [
+    "Prototype local persistence only. No server scheduler or external notifications.",
+    "No historical start timestamp is invented for an existing active stage. Producer may explicitly start now or set a date.",
+    "Forecast excludes Client review duration and assumes unfinished filming/footage readiness; producer confirmation remains required.",
+    "No mobile pass, tests, build, commit or push."
+  ],
+  "environment": "Existing server was restarted without cache deletion to restore its missing project layout script.",
+  "verificationGaps": [
+    "No public-holiday calendars, weekend customisation, server scheduler or real messaging in this front-end scope.",
+    "No exhaustive combination of all stage states, Studio timezones and multi-tab races was exercised.",
+    "1440px capture not repeated; actual browser captures are 1280px and narrower 1133px."
+  ]
+}

@@ -55,7 +55,7 @@ export const studioSettingsNavigation = [
     label: "Production defaults",
     href: "/settings/studio/production",
     icon: "queue",
-    description: "Choose the roles and Staff added to new project teams.",
+    description: "Set turnaround times and the default project team.",
   },
   {
     id: "ai-playbook",

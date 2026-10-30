@@ -1,0 +1,30 @@
+{
+  "date": "30 October 2026",
+  "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+  "requirement": "Always place OK, draft my brief beside Continue in Brief intake. Continue chats; Draft generates from supplied context.",
+  "applicationFiles": [
+    "src/components/brief/BriefPage.tsx"
+  ],
+  "behaviour": "Both actions are always rendered in the intake action row. Continue sends only a non-empty message/source submission. Draft is enabled when there is submitted or pending context, including before clarification is complete. Draft includes unsent text/attachments and retains the existing generated Brief review flow. Both actions are disabled during drafting. Existing already-drafted guard retained.",
+  "checks": [
+    "Initial empty intake showed Fill manually, disabled Continue and disabled OK, draft my brief.",
+    "Continue sent an initial description, displayed the first audience question, and retained both actions side by side.",
+    "With the first audience answer still in the input, Draft started immediately before the remaining two questions; audience field contained Marketing managers in small teams. in generated Brief.",
+    "Fresh isolated origin: answered all three clarification questions with Continue; both actions retained. An additional Continue sent Also include captions. and remained in chat without generating a draft.",
+    "Native desktop screenshot inspected at 1164px width, including action placement. Existing DS Buttons and layout reused; no CSS change.",
+    "TypeScript no-emit, Brief HTTP 200 and diff checks passed."
+  ],
+  "preservation": "Only BriefPage.tsx changed in application code for this batch. Working localhost:3000 browser data untouched. Typed prompts, generated draft fields and role/session state changes confined to disposable port 8795 origins. No sends, approvals, assets, dependencies or permissions changed.",
+  "limitations": [
+    "No mobile verification, tests, build, commit or push.",
+    "Attachments retained through the existing draft message path by source review; no new upload performed.",
+    "An isolated 127.0.0.1:8795 reload was blank; the remaining checks completed on fresh localhost:8795. Canonical localhost:3000 returned HTTP 200. No claim of exhaustive reload/caching verification.",
+    "Existing mock generation and missing-field/approval rules remain; no real AI service added."
+  ],
+  "evidence": {
+    "choice": "choice.png",
+    "draftAudience": "audience-in-draft.png",
+    "continueAfterReady": "continue-after-ready.png"
+  },
+  "afterHash": "f053125084001bcded56018de2c2b709bf5bb599f52a249138271972a77c5b44"
+}

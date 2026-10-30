@@ -1,11 +1,13 @@
 "use client";
 
+import { useTurnaround } from "./TurnaroundContext";
+import { deadlineInput } from "@/data/turnaround";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { canActOnProject, canViewProject } from "@/data/prototype-access";
-import { createTimingMessage, projectTimingAssessments, timingMessageId, type ProjectTimingIssue } from "@/data/project-timing";
+import { createTimingMessage, timingMessageId, type ProjectTimingAssessment, type ProjectTimingIssue } from "@/data/project-timing";
 import type { ChatChannel, ChatMessage } from "@/components/chat/types";
 import type { Project } from "@/components/active-videos/types";
 import { createDeliveryMessages, getPendingDeliveryProposal, initialDeliveryAgreement, type ProjectDeliveryAgreement } from "@/data/project-delivery";
@@ -18,7 +20,7 @@ type TimingContextValue = {
   getDeliveryAgreement: (project: Project) => ProjectDeliveryAgreement;
   proposeDeliveryDate: (projectId: string, date: string, reason: string) => boolean;
   agreeDeliveryDate: (projectId: string, proposalId: string) => boolean;
-  getBriefAssessment: (projectId: string, requestedDate: string) => typeof projectTimingAssessments[number] | null;
+  getBriefAssessment: (projectId: string, requestedDate: string) => ProjectTimingAssessment | null;
   submitBriefTiming: (projectId: string, requestedDate: string, occurredAt: string) => void;
   shareClientUpdate: (issueId: string, reason: string) => boolean;
   markChannelRead: (projectId: string, channel: ChatChannel) => void;
@@ -52,6 +54,8 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
   const { state: prototypeState, hasHydrated } = usePrototypeState();
   const { activeScenario, hasLoadedScenario } = usePrototypeScenario();
   const viewer = usePrototypeViewer();
+  const turnaround = useTurnaround();
+  const [sessionStartedAt] = useState(() => new Date().toISOString());
   const storageKey = `brisk-timing-warnings-v1:${prototypeState.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}`;
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [saved, setSaved] = useState<TimingState>({ issues: [], readBy: {}, deliveries: [] });
@@ -89,24 +93,26 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
     return true;
   }, [loadedKey, storageKey]);
 
-  const assessments = useMemo(() => projectTimingAssessments.filter((assessment) => {
-    const project = prototypeState.projects.find((entry) => entry.id === assessment.projectId
-      && entry.workspaceId === prototypeState.session.activeWorkspaceId);
-    return project?.deadline?.finalDueAt?.slice(0, 10) === assessment.referenceFinalDate;
-  }), [prototypeState]);
-
   const allIssues = useMemo(() => {
-    if (loadedKey !== storageKey) return [];
-    const seeded: ProjectTimingIssue[] = assessments.filter((assessment) => assessment.productionRisk).map((assessment) => ({
-      id: `risk-${assessment.projectId}-${assessment.assessedAt.slice(0, 10)}`,
-      projectId: assessment.projectId, kind: "production", requestedDate: assessment.referenceFinalDate,
-      suggestedDate: assessment.suggestedDate, reason: assessment.reason, internalReason: assessment.internalReason,
-      createdAt: assessment.assessedAt, clientUpdate: null, resolvedAt: null,
-    }));
-    const byId = new Map(seeded.map((issue) => [issue.id, issue]));
+    if (loadedKey !== storageKey || !turnaround.hasHydrated) return [];
+    const dynamic: ProjectTimingIssue[] = [];
+    for (const project of prototypeState.projects.filter((entry) => entry.workspaceId === prototypeState.session.activeWorkspaceId)) {
+      const forecast = turnaround.getForecast(project);
+      const agreement = saved.deliveries.find((entry) => entry.projectId === project.id) ?? initialDeliveryAgreement(project);
+      const requested = deadlineInput(agreement.agreedDate, turnaround.timezone).slice(0, 10);
+      if (!forecast || !requested || forecast.suggestedDate <= requested && Date.parse(agreement.agreedDate!) >= turnaround.now) continue;
+      const active = turnaround.getActiveDeadlines(project);
+      const cycleKey = active.map((entry) => entry.cycle?.id ?? entry.stage).join("-");
+      dynamic.push({ id: `risk-live-${project.id}-${requested}-${cycleKey}`, projectId: project.id, kind: "production",
+        requestedDate: requested, suggestedDate: forecast.suggestedDate, reason: forecast.reason, internalReason: forecast.internalReason,
+        createdAt: active.map((entry) => entry.cycle?.startedAt).filter((value): value is string => Boolean(value)).sort().at(-1) ?? sessionStartedAt,
+        clientUpdate: null, resolvedAt: null });
+    }
+    const byId = new Map(dynamic.map((issue) => [issue.id, issue]));
+    // Producer-reviewed external updates are saved snapshots, not silently rewritten forecasts.
     saved.issues.forEach((issue) => byId.set(issue.id, issue));
     return [...byId.values()];
-  }, [assessments, loadedKey, saved.issues, storageKey]);
+  }, [loadedKey, prototypeState, saved.deliveries, saved.issues, sessionStartedAt, storageKey, turnaround]);
 
   const issues = useMemo(() => allIssues.filter((issue) => {
     const project = prototypeState.projects.find((entry) => entry.id === issue.projectId);
@@ -171,9 +177,11 @@ export function ProjectTimingProvider({ children }: { children: ReactNode }) {
   const getBriefAssessment = useCallback((projectId: string, requestedDate: string) => {
     const project = prototypeState.projects.find((entry) => entry.id === projectId);
     if (!project || !canViewProject(viewer, project, prototypeState)) return null;
-    const assessment = assessments.find((entry) => entry.projectId === projectId);
-    return /^\d{4}-\d{2}-\d{2}$/u.test(requestedDate) && assessment && requestedDate < assessment.suggestedDate ? assessment : null;
-  }, [assessments, prototypeState, viewer]);
+    const forecast = turnaround.getForecast(project);
+    return /^\d{4}-\d{2}-\d{2}$/u.test(requestedDate) && forecast && requestedDate < forecast.suggestedDate ? {
+      ...forecast, projectId, assessedAt: new Date(turnaround.now).toISOString(), referenceFinalDate: requestedDate, productionRisk: false,
+    } : null;
+  }, [prototypeState, turnaround, viewer]);
 
   const submitBriefTiming = useCallback((projectId: string, requestedDate: string, occurredAt: string) => {
     const assessment = getBriefAssessment(projectId, requestedDate);

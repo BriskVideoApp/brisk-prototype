@@ -1,0 +1,53 @@
+{
+  "date": "30 October 2026",
+  "status": "Implemented and desktop-verified; awaiting Tom visual sign-off",
+  "approvedScope": "One Add source control containing source search/suggestions, file/link actions and grouped Ask across choices; active scope remains quiet text.",
+  "applicationFiles": [
+    "src/components/ai/BriskAiAssistant.tsx",
+    "src/components/ai/brisk-ai.css"
+  ],
+  "implementation": "Reused DS Popover, Radio, Input and Button. SourcePicker is now one combined composition; no intermediate Mention a source or separate context dropdown. @ typing is an optional shortcut to the same picker. Private, context-scoped file/link metadata uses existing in-memory assistant state.",
+  "checks": [
+    "Unified panel visually inspected with search, selected source marks, Upload file/Add link, and Ask across radio choices. Quiet This Brief text replaces the second context button.",
+    "Search Maddie returned the permitted person; selecting added the source chip. Source search no-results state retained scope options.",
+    "Changing to Your workload closed the menu and updated quiet scope. A link added in that scope was hidden when returning to This Brief.",
+    "Added https://example.com/production-notes through the inline DS link form; chip appeared, no content fetch.",
+    "After refreshing the isolated preview to the latest compiled code, selected source-check.txt through the browser file chooser. File metadata chip appeared and was removable. No file contents were sent or processed.",
+    "Escape dismissed the source picker, returned focus to Add a source, left assistant open and retained an unsent draft.",
+    "@Maddie opened the same Add source panel with search prefilled; no separate Mention a source entry.",
+    "Client panel used Your projects and excluded Staff-only Maddie source and Staff draft. Freelancer without Loom access saw Project unavailable, no project sources or attachment actions. Restored Staff in the disposable origin.",
+    "TypeScript no-emit, Brief HTTP 200 and git diff --check passed."
+  ],
+  "preservation": "No working localhost:3000 records, mock arrays, assets, dependencies or permissions changed. Manual verification used localhost:8794; private attachment metadata, example URL and drafts were confined to that disposable origin. No actual messages or approvals sent.",
+  "limitations": [
+    "This remains a front-end prototype. File metadata is attached locally; file contents are not processed, uploaded to a backend or persisted across reload. Links are not fetched.",
+    "Native desktop captures covered the current 1280px and later 2660px windows. No mobile or exhaustive permission/data-combination claim.",
+    "A CDP detail-capture attempt was unusable and is excluded from report evidence. Native full screenshots retained.",
+    "No tests, production build, commit or push."
+  ],
+  "evidence": {
+    "menu": "menu-full.png",
+    "client": "client-menu.png",
+    "composer": "composer.png",
+    "file": "file-attached.png"
+  },
+  "afterHashes": {
+    "src/components/ai/BriskAiAssistant.tsx": "fba411e072f00d9e38d6f52b6518c53f60a5b20c3f2fd997a975a326adce712e",
+    "src/components/ai/brisk-ai.css": "26ee68338f31fbbb90dcf332a969383fe6818dea635961e09113a6f222ed7660"
+  },
+  "searchEdgeFollowup": {
+    "date": "30 October 2026",
+    "request": "Remove extra line underneath source-search text",
+    "cause": "Global :focus-visible hard shadow was also applied to the borderless inner input, duplicating the enclosing field edge.",
+    "change": "Scoped inner shadow suppression; token-based blue focus outline on enclosing label. No primitive/global style change.",
+    "verification": "Desktop visual and computed-style check confirmed inner border 0px and box-shadow none, visible outer blue outline; Maddie filtering retained. TypeScript and Brief HTTP 200 passed.",
+    "screenshot": "search-single-edge.png"
+  },
+  "removeAskAcrossFollowup": {
+    "date": "30 October 2026",
+    "request": "Remove Ask across fieldset",
+    "change": "Removed fieldset, options/callback props, unused Radio/useId imports and fieldset CSS. Current scope values and filtering untouched.",
+    "verification": "Desktop DOM confirms zero scope fieldsets; search, Upload file, Add link and suggestions remain. TypeScript and Brief HTTP 200 passed.",
+    "screenshot": "without-ask-across.png"
+  }
+}

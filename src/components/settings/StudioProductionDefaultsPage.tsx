@@ -5,6 +5,7 @@ import { Button } from "../../../Brisk DS/src/app/components/Button";
 import type { DefaultProjectTeamMember, TeamRole } from "@/components/active-videos/types";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { usePeople } from "@/components/people/PeopleDataContext";
+import { TurnaroundSettingsSection } from "./TurnaroundSettingsSection";
 import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
 import { useStudioSettingsUnsavedChanges } from "@/components/settings/StudioSettingsShell";
 import { DsIcon } from "@/components/video-review/DsIcon";
@@ -21,7 +22,7 @@ export function StudioProductionDefaultsPage() {
   const { setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const [draft, setDraft] = useState<StudioProductionDefaults>(() => cloneProductionDefaults(studio.production));
   const [toast, setToast] = useState<string | null>(null);
-  const hasChanges = useMemo(() => JSON.stringify(draft) !== JSON.stringify(studio.production), [draft, studio.production]);
+  const hasChanges = useMemo(() => JSON.stringify(draft.defaultTeam) !== JSON.stringify(studio.production.defaultTeam), [draft, studio.production]);
   const studioStaffOptions = useMemo(() => people
     .filter((person) => person.type === "Team" && person.status === "Active")
     .map((person) => ({ value: person.id, label: person.name })), [people]);
@@ -84,8 +85,10 @@ export function StudioProductionDefaultsPage() {
     <section className="studio-settings-section studio-production-settings" aria-labelledby="production-defaults-heading">
       <div className="studio-settings-info-block">
         <DsIcon name="info" size={18} />
-        <p className="paragraph-s" id="production-defaults-heading">These roles appear when a new project team is set up. Existing project teams will not change.</p>
+        <p className="paragraph-s" id="production-defaults-heading">Set defaults for new work. Existing project teams and active deadlines will not change.</p>
       </div>
+
+      <TurnaroundSettingsSection />
 
       <form className="studio-production-form" onSubmit={saveDefaults}>
         <ProductionSection

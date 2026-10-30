@@ -166,7 +166,7 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
       prompt: options.prompt,
       submit: options.submit,
     });
-    setView(options.expanded ? "panel" : "compact");
+    setView("panel");
   }, []);
 
   const registerResponseDraftHandler = useCallback((handler: BriskAiResponseDraftHandler) => {

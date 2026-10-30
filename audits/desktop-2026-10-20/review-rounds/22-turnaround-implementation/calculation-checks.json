@@ -1,0 +1,87 @@
+[
+  {
+    "name": "Length 60 seconds",
+    "actual": 0,
+    "expected": 0
+  },
+  {
+    "name": "Length 70 seconds",
+    "actual": 0,
+    "expected": 0
+  },
+  {
+    "name": "Length 71 seconds",
+    "actual": 1,
+    "expected": 1
+  },
+  {
+    "name": "Length 120 seconds",
+    "actual": 1,
+    "expected": 1
+  },
+  {
+    "name": "Length 130 seconds",
+    "actual": 1,
+    "expected": 1
+  },
+  {
+    "name": "Length 131 seconds",
+    "actual": 2,
+    "expected": 2
+  },
+  {
+    "name": "Length 180 seconds",
+    "actual": 2,
+    "expected": 2
+  },
+  {
+    "name": "Length 190 seconds",
+    "actual": 2,
+    "expected": 2
+  },
+  {
+    "name": "Length 191 seconds",
+    "actual": 3,
+    "expected": 3
+  },
+  {
+    "name": "Friday + 2 working days",
+    "actual": "2026-11-03T06:00:00.000Z",
+    "expected": "2026-11-03T06:00:00.000Z"
+  },
+  {
+    "name": "Friday + 3 working days",
+    "actual": "2026-11-04T06:00:00.000Z",
+    "expected": "2026-11-04T06:00:00.000Z"
+  },
+  {
+    "name": "DST weekend keeps 17:00",
+    "actual": "2026-10-05T17:00",
+    "expected": "2026-10-05T17:00"
+  },
+  {
+    "name": "Manual date uses Studio timezone",
+    "actual": "2026-11-03T06:00:00.000Z",
+    "expected": "2026-11-03T06:00:00.000Z"
+  },
+  {
+    "name": "Client target cannot precede internal",
+    "actual": false,
+    "expected": false
+  },
+  {
+    "name": "Main video overrides demo length",
+    "actual": 180,
+    "expected": 180
+  },
+  {
+    "name": "Custom length preserves ten-second boundary",
+    "actual": 71,
+    "expected": 71
+  },
+  {
+    "name": "Cutdown does not define main length",
+    "actual": 120,
+    "expected": 120
+  }
+]
