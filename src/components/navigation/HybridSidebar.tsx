@@ -7,12 +7,10 @@ import { IconButton } from "../../../Brisk DS/src/app/components/IconButton";
 import { UserAvatarMenu } from "@/components/navigation/UserAvatarMenu";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
-import { usePeople } from "@/components/people/PeopleDataContext";
 import { PrototypeScenarioToolbar } from "@/components/prototype-scenarios/PrototypeScenarioToolbar";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { studioSettingsNavigation } from "@/components/settings/StudioSettingsShell";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 type SidebarLink = { label: string; href: string; icon: DsIconName };
 
@@ -35,14 +33,12 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
   const pathname = usePathname();
   const navigationId = useId();
   const sidebarRef = useRef<HTMLElement>(null);
-  const { selectedRole } = usePrototypeRole();
+  const { selectedRole, canManageStudio } = usePrototypeRole();
   const viewer = usePrototypeViewer();
-  const { people } = usePeople();
   const { access, account, buildHref } = useClientAccountSettings();
   const isStaff = selectedRole === "Studio Staff";
   const isClient = selectedRole === "Customer";
-  const studioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canAdministerStudio = isStaff && hasStudioAdministrationAccess(studioMember);
+  const canAdministerStudio = canManageStudio;
   const isStudioSettings = canAdministerStudio && (pathname.startsWith("/settings/studio")
     || ["/settings/notifications", "/settings/plan-billing", "/settings/client-billing"].includes(pathname));
   const isAccountSettings = pathname.startsWith("/settings/personal/")
@@ -51,11 +47,11 @@ export function HybridSidebar({ brand, collapsed, onToggle, videosHref }: {
     { label: "Videos", href: videosHref, icon: "house-line" },
     ...(isStaff ? [
       { label: "To Do", href: "/today", icon: "check-circle" as const },
-      { label: "People", href: "/people", icon: "user" as const },
+      ...(canManageStudio ? [{ label: "People", href: "/people", icon: "user" as const }] : []),
       { label: "Clients", href: "/clients", icon: "buildings" as const },
     ] : []),
     { label: "Media Library", href: "/media", icon: "image-square" },
-    ...(canAdministerStudio ? [{ label: "Expenses", href: "/outstanding-invoices", icon: "currency-dollar-simple" as const }] : []),
+    ...(isStaff ? [{ label: "Expenses", href: "/outstanding-invoices", icon: "currency-dollar-simple" as const }] : []),
     {
       label: isClient ? "Brand Kit" : "Brand Kits",
       href: isClient ? viewer?.clientId ? `/brand-kits/${viewer.clientId}` : "/prototype/scenarios" : "/brand-kits",

@@ -41,7 +41,9 @@ export type StudioStaffStatus = "Active" | "Pending invite" | "Expired invite" |
 export type StudioStaffAccess = {
   personId: string;
   status: StudioStaffStatus;
+  /** Legacy billing flag; access now follows studioPermission. */
   hasBillingAccess: boolean;
+  studioPermission?: import("@/data/people").StudioPermission;
 };
 
 export type StudioIntegrationId = "whatsapp" | "slack";

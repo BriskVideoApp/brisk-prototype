@@ -25,7 +25,7 @@ import {
 } from "@/components/people/PeoplePrimitives";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
-import { getWorkloadRollup, hasStudioAdministrationAccess, prototypeStudioPersonId, type Person } from "@/data/people";
+import { getWorkloadRollup, type Person } from "@/data/people";
 
 type PeopleView = "All" | "Studio Staff" | "Studio Freelancers" | "Clients" | "Archived";
 type SortOption = "activity" | "name" | "workload" | "availability";
@@ -48,7 +48,7 @@ export function PeoplePage() {
   const { people } = usePeople();
   const { getInvitationStatus, openInvitePerson, resendInvitation } = useInvitations();
   const { studio, updateStaffAccess } = useStudioSettings();
-  const { selectedRole } = usePrototypeRole();
+  const { canManageStudio, selectedRole } = usePrototypeRole();
   const [view, setView] = useState<PeopleView>(() => getPeopleView(searchParams.get("view")));
   const [query, setQuery] = usePageSearch("People", () => canBrowsePeople ? people.filter((person) => matchesView(person, view)).map((person) => ({
     id: `person:${person.id}`, source: "people", kind: "People" as const, title: person.name,
@@ -58,8 +58,7 @@ export function PeoplePage() {
   const [sort, setSort] = useState<SortOption>("activity");
   const [openedInviteFromQuery, setOpenedInviteFromQuery] = useState(false);
   const [workloadPerson, setWorkloadPerson] = useState<Person | null>(null);
-  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canBrowsePeople = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
+  const canBrowsePeople = canManageStudio;
   const columns = getPeopleColumns(view);
   const visibleSortOptions = view === "Clients" || view === "Archived"
     ? sortOptions.filter((option) => option.value === "activity" || option.value === "name")
@@ -81,7 +80,7 @@ export function PeoplePage() {
       if (studio.staffAccess.some((member) => member.personId === person.id)) return;
       updateStaffAccess([
         ...studio.staffAccess,
-        { personId: person.id, status: "Pending invite", hasBillingAccess: false },
+        { personId: person.id, status: "Pending invite", hasBillingAccess: submission.studioPermission === "Studio Owner", studioPermission: submission.studioPermission },
       ]);
     });
   };
@@ -95,10 +94,10 @@ export function PeoplePage() {
   };
 
   useEffect(() => {
-    if (searchParams.get("dialog") !== "invite" || openedInviteFromQuery) return;
+    if (!canManageStudio || searchParams.get("dialog") !== "invite" || openedInviteFromQuery) return;
     setOpenedInviteFromQuery(true);
     openInvitePerson();
-  }, [openInvitePerson, openedInviteFromQuery, searchParams]);
+  }, [canManageStudio, openInvitePerson, openedInviteFromQuery, searchParams]);
 
   const visiblePeople = useMemo(() => {
     if (previewState === "empty" || previewState === "no-results") return [];
@@ -154,7 +153,7 @@ export function PeoplePage() {
                         return;
                       }
                       router.push(peopleProfileHref(person, column.id));
-                    }}>{renderPeopleCell({ column, person, view, currentProjects, invitationStatus, studioBillingAccess: Boolean(studio.staffAccess.find((member) => member.personId === person.id)?.hasBillingAccess), onResend: () => resendInvitation(person), onWorkload: () => setWorkloadPerson(person) })}</td>)}
+                    }}>{renderPeopleCell({ column, person, view, currentProjects, invitationStatus, studioBillingAccess: person.studioPermission === "Studio Owner", onResend: () => resendInvitation(person), onWorkload: () => setWorkloadPerson(person) })}</td>)}
                   </tr>
                 );
               })}
@@ -182,7 +181,7 @@ function PeopleEmptyState({ hasControls, onClear, onInvite, view }: { hasControl
 function PeoplePermissionState({ role }: { role: "Studio Staff" | "Studio Freelancer" | "Customer" }) {
   const isCustomer = role === "Customer";
   const isTeamMember = role === "Studio Staff";
-  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "The Studio People directory is private" : isTeamMember ? "The People directory is restricted" : "The full People directory is for Studio Staff"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see only permitted collaborators inside their Client portal. Other Clients, private contact details and internal notes stay hidden." : isTeamMember ? "Only Studio Owners can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only the people and Client information needed for projects they can access. Ask the Studio producer if you need something else."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to To Do" : "Back to invited projects"}</Link></main>;
+  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "The Studio People directory is private" : isTeamMember ? "The People directory is restricted" : "The full People directory is for Studio Staff"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see only permitted collaborators inside their Client portal. Other Clients, private contact details and internal notes stay hidden." : isTeamMember ? "Only Studio Admins can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only the people and Client information needed for projects they can access. Ask the Studio producer if you need something else."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to To Do" : "Back to invited projects"}</Link></main>;
 }
 
 function matchesView(person: Person, view: PeopleView) {
@@ -235,7 +234,7 @@ function renderPeopleCell({ column, person, view, currentProjects, invitationSta
     moreLabel={`+${currentProjects.length - 2} more ${view === "Archived" ? "" : person.type === "Client contact" ? "shared " : "active "}projects for ${person.name} - view all ${currentProjects.length}`}
   />;
   if (column.id === "activity") return <Link className="people-activity-cell people-profile-link" href={peopleProfileHref(person, column.id)}><strong className="label-s-semibold">{person.latestActivity.label}</strong><small className="label-xs">{formatPersonDate(person.latestActivity.occurredAt)}</small></Link>;
-  if (column.id === "invitation") return <div className="people-invitation-cell"><Link className="people-invitation-link people-profile-link" href={peopleProfileHref(person, column.id)}>{person.type === "Contact" ? <><strong className="label-s-semibold">No Brisk access</strong><small className="label-xs">Production contact only.</small></> : <><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? (view === "Clients" ? "Portal invite sent." : "Invite sent - waiting for them to join.") : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : view === "Clients" ? "Portal access is active." : "They have joined Brisk."}</small></>}</Link>{person.type !== "Contact" && invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={onResend}>Resend invite</Button> : null}{view === "Studio Staff" && person.type === "Team" ? <div className="people-billing-cell"><strong className="label-xs-semibold">Billing: {studioBillingAccess ? "Admin" : "No access"}</strong><Link className="client-text-button label-xs-semibold" href={peopleProfileHref(person, "invitation")}>Manage</Link></div> : null}</div>;
+  if (column.id === "invitation") return <div className="people-invitation-cell"><Link className="people-invitation-link people-profile-link" href={peopleProfileHref(person, column.id)}>{person.type === "Contact" ? <><strong className="label-s-semibold">No Brisk access</strong><small className="label-xs">Production contact only.</small></> : <><InvitationStatusBadge status={invitationStatus} /><small className="label-xs">{invitationStatus === "Pending" ? (view === "Clients" ? "Portal invite sent." : "Invite sent - waiting for them to join.") : invitationStatus === "Expired" ? "This invite has expired. Send a new one to continue." : view === "Clients" ? "Portal access is active." : "They have joined Brisk."}</small></>}</Link>{person.type !== "Contact" && invitationStatus !== "Accepted" ? <Button size="S" variant="ghost" className="client-text-button" type="button" onClick={onResend}>Resend invite</Button> : null}{view === "Studio Staff" && person.type === "Team" ? <div className="people-billing-cell"><strong className="label-xs-semibold">Access: {studioBillingAccess ? "Admin" : "Staff"}</strong><Link className="client-text-button label-xs-semibold" href={peopleProfileHref(person, "invitation")}>Manage</Link></div> : null}</div>;
   return <Link className="people-row-open" href={peopleProfileHref(person, column.id)} aria-label={`Open ${person.name}'s full profile`}><DsIcon name="caret-right" size={16} /></Link>;
 }
 

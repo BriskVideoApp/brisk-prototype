@@ -22,17 +22,19 @@ import {
   type ClientMembershipRole,
   type ClientTeamMember,
 } from "@/data/client-account-settings";
+import { clientMembershipLabels } from "@/data/prototype-permissions";
 import { prototypeCustomerPersonId } from "@/data/people";
 import { selectClientProjects } from "@/data/prototype-state";
 
 const clientRoleOptions: ReadonlyArray<{ value: ClientMembershipRole; label: string }> = [
-  { value: "Client Admin", label: "Client Admin" },
-  { value: "Client Member", label: "Client Member" },
+  { value: "Client Admin", label: "Owner" },
+  { value: "Client Member", label: "Teammate" },
 ];
 
 export function ClientTeamPage() {
   const { state, setClientMemberProjects } = usePrototypeState();
-  const clientId = state.session.activeClientId ?? "loom";
+  const { account, clientId: accountClientId } = useClientAccountSettings();
+  const clientId = accountClientId ?? "loom";
   const projectOptions = selectClientProjects(state, state.session.activeWorkspaceId, clientId)
     .map((project) => ({ id: project.id, code: project.code ?? "", name: project.name }));
   const { resendInvitation } = useInvitations();
@@ -44,7 +46,6 @@ export function ClientTeamPage() {
     updatePersonClientMembershipRole,
     updatePersonProjectAccess,
   } = usePeople();
-  const { account } = useClientAccountSettings();
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [projectMember, setProjectMember] = useState<ClientTeamMember | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -103,7 +104,7 @@ export function ClientTeamPage() {
           <div className="account-settings-section-heading">
             <div>
               <h2 className="headings-xs-bold" id="client-team-heading">{account.company.name} team</h2>
-              <p className="paragraph-s">Client Admins manage access. Anyone on a project can review and approve.</p>
+              <p className="paragraph-s">Client Owners manage company details, billing and access. Anyone on a project can review and approve.</p>
             </div>
             <Button size="S" onClick={() => setInviteModalOpen(true)}>
               <span className="account-settings-button-content"><DsIcon name="plus" size={16} />Invite colleague</span>
@@ -144,7 +145,7 @@ export function ClientTeamPage() {
                       </td>
                       <td data-label="Role">
                         {isCurrentUser ? (
-                          <span className="label-s-semibold">{member.role}</span>
+                          <span className="label-s-semibold">{clientMembershipLabels[member.role]}</span>
                         ) : (
                           <BriskSelect
                             ariaLabel={`Role for ${member.name}`}

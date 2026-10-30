@@ -64,13 +64,11 @@ Preserve the implemented flow described above while carrying out this instructio
 
 ## User roles
 
-The prototype has exactly three access roles, defined in `src/components/navigation/PrototypeRoleContext.tsx`:
+The prototype exposes five access levels: **Studio Admin**, **Studio Staff**, **Studio Freelancer**, **Client Owner** and **Client Teammate**. The definitions live in `src/data/prototype-permissions.ts`; the role context retains three base compatibility groups for existing production workflows.
 
-- **Studio Staff** - internal Studio team view.
-- **Studio Freelancer** - collaborator view scoped to relevant memberships and projects.
-- **Customer** - Client-facing view of relevant projects, feedback and approvals.
+Admin/Staff and Owner/Teammate separate administration from project work. Staff still see and act on all Studio projects. Preserve existing release, review and approval behaviour; named approvers and new stage restrictions remain V2 work. Client Teammate approval is an explicit retained prototype default pending Tom's decision, not a settled product requirement. See the 30 October desktop baseline entry and its source ticket.
 
-The former five-role scheme is superseded for the current prototype. Do not add it as separate roles or permission screens. Use **Filmmaker** and **Client** in normal interface copy as defined in `AGENTS.md`; these professional labels do not rename the underlying access roles. The role switcher is a prototype demo control, not real authentication.
+Use **Filmmaker** and **Client** in normal interface copy as defined in `AGENTS.md`. Job titles never grant access. Test mode is a demo control, not real authentication.
 
 ## Project structure conventions
 

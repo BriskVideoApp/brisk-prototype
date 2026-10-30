@@ -22,11 +22,11 @@ This is reusable project guidance, not an installed skill. Latest explicit decis
 
 ## User roles
 
-Brisk has two access-role groups: **Studio** (the production company) and **Customer** (the client side). The only prototype access roles are **Studio Staff**, **Studio Freelancer** and **Customer**. See the Production Journey guidance for role definitions. These are mock-data visibility rules, not production authentication.
+Brisk has two access-role groups: **Studio** (the production company) and **Customer** (the client side). The prototype exposes **Studio Admin**, **Studio Staff**, **Studio Freelancer**, **Client Owner** and **Client Teammate**, within the existing Studio Staff, Studio Freelancer and Customer compatibility groups. See the 30 October permission scope in the desktop baseline for the current matrix and unresolved approval default. These are mock-data visibility rules, not production authentication.
 
 ### User-facing terminology
 
-- **Filmmaker** means anyone working for or with a Studio, including Studio Staff and Studio Freelancers.
+- **Filmmaker** means anyone working for or with a Studio, including Studio Admins, Studio Staff and Studio Freelancers.
 - **Client** means someone on the Customer side.
 - Use **Filmmaker** and **Client** in normal interface copy.
 - The underlying access roles remain **Studio Staff**, **Studio Freelancer** and **Customer**.
@@ -60,7 +60,7 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 - Follow the recorded 30 September 2026 V1 Studio branding decision in `Docs/ux-decision-log.md`: retain Studio logo upload and Client portal preview; Client portals use Brisk's standard purple accent.
 - Studio colour customisation and paid white-label branding controls were removed from the V1 appearance scope. Do not reintroduce them from older screenshots or plan-benefit copy. Preserve existing saved colour data.
 - The longer-term white-label ambition and plan catalogue do not authorise changing current portal appearance, footers, prices or entitlements. Resolve a material conflict with Tom when a ticket depends on it.
-- Studio identity does not create an additional Studio Owner access role. Preserve the three access roles and the approved Staff preview behaviour.
+- Studio Admin is an access level, not a job title or separate Studio identity. Preserve the approved Staff preview behaviour and all-project Staff access. Narrower project and stage restrictions remain V2 work.
 
 ## Client experience
 
@@ -82,7 +82,7 @@ Studio Staff can open Client-facing screens for any Client in their own Studio. 
 
 - If a user can't do something, explain why in plain English.
 - Bad: "Insufficient permissions."
-- Good: "Only Studio Staff can manage Studio settings in this prototype."
+- Good: "Only Studio Admins can manage Studio settings in this prototype."
 - Name the relevant prototype role when access matters without suggesting production access controls are implemented.
 
 ## Empty states (SaaS-specific)

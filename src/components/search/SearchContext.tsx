@@ -10,7 +10,7 @@ import { usePeople } from "@/components/people/PeopleDataContext";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { canViewClientBrandKit } from "@/data/prototype-access";
 import { useCostsData } from "@/components/costs/CostsDataContext";
-import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { buildSearchEntries, type SearchEntry } from "./search-data";
 import { SearchDialog } from "./SearchDialog";
 
@@ -36,6 +36,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { state } = usePrototypeState();
   const viewer = usePrototypeViewer();
+  const { canManageStudio, selectedAccessLevel } = usePrototypeRole();
   const { assetViews } = useMediaLibrary();
   const { messages } = useProjectTiming();
   const { people } = usePeople();
@@ -44,7 +45,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   const sources = useRef(new Map<symbol, { path: string; read: SourceReader }>());
   const [isOpen, setIsOpen] = useState(false);
   const [openedAs, setOpenedAs] = useState("");
-  const identity = `${viewer?.workspaceId}:${viewer?.id}:${viewer?.role}`;
+  const identity = `${viewer?.workspaceId}:${viewer?.id}:${selectedAccessLevel}`;
   const [, refresh] = useState(0);
   const notifySource = useCallback(() => refresh((version) => version + 1), []);
   const [query, setQuery] = useState("");
@@ -62,7 +63,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     if (viewer?.role === "Studio Staff") {
       for (const client of clients) indexed.push({ id: `client:${client.id}`, source: "clients", kind: "Clients", title: client.name,
         text: `${client.name} ${client.website}`, meta: "Client", href: `/clients/${client.id}` });
-      if (hasStudioAdministrationAccess(people.find((person) => person.id === prototypeStudioPersonId) ?? null)) {
+      if (canManageStudio) {
         for (const person of people) indexed.push({ id: `person:${person.id}`, source: "people", kind: "People", title: person.name,
           text: `${person.name} ${person.email}`, meta: "People", href: `/people/${person.id}` });
       }
@@ -71,7 +72,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       indexed.push({ id: `brand:${client.id}`, source: "brand-kits", kind: "Brand Kits", title: client.name,
         text: `${client.name} ${client.website}`, meta: "Brand Kit", href: `/brand-kits/${client.id}` });
     }
-    if (viewer?.role === "Studio Staff" && hasStudioAdministrationAccess(people.find((person) => person.id === prototypeStudioPersonId) ?? null)) {
+    if (viewer?.role === "Studio Staff") {
       for (const invoice of invoices.filter((candidate) => candidate.state !== "Paid")) {
         const project = state.projects.find((candidate) => candidate.id === invoice.projectId && candidate.workspaceId === viewer.workspaceId);
         if (!project) continue;
@@ -90,8 +91,8 @@ export function SearchProvider({ children }: { children: ReactNode }) {
     setEverywhere(false);
     setOpenedAs(identity);
     setIsOpen(true);
-  }, [assetViews, clients, currentSource, identity, invoices, messages, pathname, people, state, viewer]);
-  useEffect(() => { setIsOpen(false); setQuery(""); }, [pathname, viewer?.id, viewer?.role]);
+  }, [assetViews, canManageStudio, clients, currentSource, identity, invoices, messages, pathname, people, state, viewer]);
+  useEffect(() => { setIsOpen(false); setQuery(""); }, [pathname, viewer?.id, selectedAccessLevel]);
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
       if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== "k" || event.shiftKey) return;

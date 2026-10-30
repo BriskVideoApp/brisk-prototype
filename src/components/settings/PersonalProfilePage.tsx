@@ -414,7 +414,7 @@ function TeamMemberWorkDetailsCard({
 
         <div className="account-settings-info-block">
           <DsIcon name="info" size={18} />
-          <p className="paragraph-s">Studio Owners control your department, weekly capacity, worker type and Studio access.</p>
+          <p className="paragraph-s">Studio Admins control your department, weekly capacity, worker type and Studio access.</p>
         </div>
 
         <div className="account-settings-form-actions">

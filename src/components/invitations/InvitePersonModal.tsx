@@ -13,10 +13,16 @@ import { usePrototypeState } from "@/components/prototype-state/PrototypeStateCo
 import { useStudioCompanyName } from "@/components/prototype-state/useStudioCompanyName";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { selectWorkspaceProjects } from "@/data/prototype-state";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { clientMembershipLabels, studioPermissionLabels } from "@/data/prototype-permissions";
+import type { StudioPermission } from "@/data/people";
+import type { ClientMembershipRole } from "@/data/client-account-settings";
 import type { InvitationRole, InvitePersonPrefill } from "@/data/invitations";
 
 export type InvitePersonSubmission = {
   role: InvitationRole;
+  studioPermission: StudioPermission;
+  clientMembershipRole: ClientMembershipRole;
   email: string;
   name: string;
   jobTitle: string;
@@ -40,13 +46,14 @@ const jobTitleOptions: ReadonlyArray<{ value: Exclude<JobTitleChoice, "">; label
 ];
 
 const roleOptions: ReadonlyArray<{ role: InvitationRole; description: string }> = [
-  { role: "Studio Staff", description: "Full Studio workspace access is automatic in V1." },
+  { role: "Studio Staff", description: "Admin or Staff access to the Studio workspace." },
   { role: "Studio Freelancer", description: "Access only to the Clients and projects you choose." },
   { role: "Customer", description: "One Client company and only the projects you choose." },
 ];
 
 export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonModalProps) {
   const { clients } = useClients();
+  const { canManageStudio, canManageClientAccount, selectedRole } = usePrototypeRole();
   const { people } = usePeople();
   const { state } = usePrototypeState();
   const workspaceProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId);
@@ -58,7 +65,9 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
     .filter((clientId): clientId is string => Boolean(clientId));
   const initialClientIds = unique([...(prefill.clientIds ?? []), ...projectClientIds]);
   const [step, setStep] = useState<1 | 2>(1);
-  const [role, setRole] = useState<InvitationRole>(prefill.role ?? "Studio Staff");
+  const [role, setRole] = useState<InvitationRole>(prefill.role ?? (canManageStudio ? "Studio Staff" : selectedRole === "Customer" ? "Customer" : "Studio Freelancer"));
+  const [studioPermission, setStudioPermission] = useState<StudioPermission>(prefill.studioPermission ?? "Team Member");
+  const [clientMembershipRole, setClientMembershipRole] = useState<ClientMembershipRole>(prefill.clientMembershipRole ?? "Client Member");
   const [email, setEmail] = useState(prefill.email ?? "");
   const [name, setName] = useState(prefill.name ?? "");
   const [jobTitle, setJobTitle] = useState(prefill.jobTitle ?? "");
@@ -81,7 +90,8 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
   const availableProjects = workspaceProjects.filter((project) => project.status !== "Archived" && selectedClientIds.includes(project.clientId));
   const selectedProjects = projectIds.filter((projectId) => availableProjects.some((project) => project.id === projectId));
   const hasCustomerConflict = role === "Customer" && existingPerson?.type === "Client contact" && existingPerson.clientId !== customerClientId;
-  const canSend = emailIsValid
+  const canSend = (canManageStudio || selectedRole === "Customer" || selectedProjects.length > 0)
+    && emailIsValid
     && !hasCustomerConflict
     && (
       role === "Studio Staff"
@@ -91,6 +101,8 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
 
   const goNext = () => {
     setAttemptedNext(true);
+    if (existingPerson?.studioPermission) setStudioPermission(existingPerson.studioPermission);
+    if (existingPerson?.clientMembershipRole) setClientMembershipRole(existingPerson.clientMembershipRole);
     if (emailIsValid) setStep(2);
   };
 
@@ -151,6 +163,8 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
     if (!canSend) return;
     onSubmit({
       role,
+      studioPermission,
+      clientMembershipRole,
       email: normalisedEmail,
       name,
       jobTitle,
@@ -192,7 +206,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
             <fieldset className="invite-role-choice">
               <legend className="label-m-semibold">Who are you inviting?</legend>
               <div>
-                {roleOptions.map((option) => (
+                {roleOptions.filter((option) => option.role === "Studio Staff" ? canManageStudio : selectedRole !== "Customer" || option.role === "Customer").map((option) => (
                   <Radio
                     wrapperClassName={role === option.role ? "is-selected" : ""}
                     key={option.role}
@@ -220,6 +234,13 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
             </section>
 
             {role === "Studio Staff" ? (
+              <>
+              <fieldset className="invite-role-choice">
+                <legend className="label-m-semibold">Studio access level</legend>
+                <div>{(["Team Member", "Studio Owner"] as const).map((permission) => <Radio
+                  key={permission} name="studio-access-level" value={permission} checked={studioPermission === permission}
+                  onChange={() => setStudioPermission(permission)} label={<span><strong className="label-s-semibold">{studioPermissionLabels[permission]}</strong><small className="label-xs">{permission === "Studio Owner" ? "Projects, Studio settings, billing and access." : "All Studio projects and project costs."}</small></span>} />)}</div>
+              </fieldset>
               <JobTitleField
                 choice={jobTitleChoice}
                 jobTitle={jobTitle}
@@ -227,6 +248,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                 onChoiceChange={changeJobTitleChoice}
                 onCustomChange={setJobTitle}
               />
+              </>
             ) : null}
 
             {role === "Studio Freelancer" ? (
@@ -259,6 +281,12 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
 
             {role === "Customer" ? (
               <>
+                {canManageStudio || canManageClientAccount ? <fieldset className="invite-role-choice">
+                  <legend className="label-m-semibold">Client access level</legend>
+                  <div>{(["Client Member", "Client Admin"] as const).map((membership) => <Radio
+                    key={membership} name="client-access-level" value={membership} checked={clientMembershipRole === membership}
+                    onChange={() => setClientMembershipRole(membership)} label={<span><strong className="label-s-semibold">{clientMembershipLabels[membership]}</strong><small className="label-xs">{membership === "Client Admin" ? "Company details, billing and team access, plus permitted projects." : "Review and approve permitted projects."}</small></span>} />)}</div>
+                </fieldset> : null}
                 <div className="invite-person-select-field">
                   <span className="label-m-semibold">Client company</span>
                   <BriskSelect
@@ -272,7 +300,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
                   />
                 </div>
                 <SearchableSelection
-                  label="Projects (optional)"
+                  label={canManageStudio || selectedRole === "Customer" ? "Projects (optional)" : "Projects"}
                   emptyMessage={customerClientId ? "No projects match this search." : "Choose a Client company to see projects."}
                   options={availableProjects.map((project) => ({ value: project.id, label: project.name, description: project.status }))}
                   selected={selectedProjects}
@@ -286,7 +314,7 @@ export function InvitePersonModal({ onClose, onSubmit, prefill }: InvitePersonMo
             {hasCustomerConflict ? (
               <div className="invite-person-warning" role="alert"><DsIcon name="alert-triangle" size={18} /><p className="label-s">This email is already a Client contact for {existingPerson?.clientName}. Choose that Client or use a different email to keep Client data isolated.</p></div>
             ) : null}
-            <AccessExplanation role={role} clientIds={selectedClientIds} inviteeName={inviteeName} projectIds={selectedProjects} />
+            <AccessExplanation studioPermission={studioPermission} clientMembershipRole={clientMembershipRole} role={role} clientIds={selectedClientIds} inviteeName={inviteeName} projectIds={selectedProjects} />
           </>
         )}
       </div>
@@ -331,7 +359,7 @@ function JobTitleField({ choice, jobTitle, label, onChoiceChange, onCustomChange
   );
 }
 
-function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clientIds: string[]; inviteeName: string; projectIds: string[]; role: InvitationRole }) {
+function AccessExplanation({ clientIds, inviteeName, projectIds, role, studioPermission, clientMembershipRole }: { clientIds: string[]; inviteeName: string; projectIds: string[]; role: InvitationRole; studioPermission: StudioPermission; clientMembershipRole: ClientMembershipRole }) {
   const { clients } = useClients();
   const { state } = usePrototypeState();
   const studioName = useStudioCompanyName();
@@ -339,7 +367,7 @@ function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clien
   const selectedProjects = selectWorkspaceProjects(state, state.session.activeWorkspaceId).filter((project) => projectIds.includes(project.id));
   const firstProject = selectedProjects[0];
   const accessSentence = role === "Studio Staff"
-    ? "They can see and act on everything in the Studio workspace."
+    ? (studioPermission === "Studio Owner" ? "Admins can work on all Studio projects and manage Studio settings, billing and access." : "Staff can work on all Studio projects and manage project costs. Studio settings, billing and access are for Admins.")
     : role === "Studio Freelancer"
       ? "They can only see the Clients and projects you choose."
       : projectIds.length > 0
@@ -362,7 +390,7 @@ function AccessExplanation({ clientIds, inviteeName, projectIds, role }: { clien
         {role === "Customer" ? (
           <p className="label-xs">
             {projectIds.length > 0
-              ? "They can comment, approve and invite other Client contacts from the same Client. Studio notes, rates, freelancer costs, other Clients and internal comments stay private."
+              ? (clientMembershipRole === "Client Admin" ? "Owners can manage company details, billing and team access, and review and approve permitted projects. Studio-only information stays private." : "Teammates can comment and approve permitted projects. Company settings, billing and invitations are for Owners. Studio notes, rates, freelancer costs, other Clients and internal comments stay private.")
               : "Add project access when the first video is ready. Other Clients and Studio-only information stay private."}
           </p>
         ) : null}

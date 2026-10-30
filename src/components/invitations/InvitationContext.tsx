@@ -20,6 +20,8 @@ import {
   type InvitationStatus,
   type InvitePersonPrefill,
 } from "@/data/invitations";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import type { Person } from "@/data/people";
 
 export type { InvitationRole, InvitationStatus, InvitePersonPrefill } from "@/data/invitations";
@@ -54,6 +56,8 @@ type OpenInvitation = {
 const InvitationContext = createContext<InvitationContextValue | null>(null);
 
 export function InvitationProvider({ children }: { children: ReactNode }) {
+  const { selectedAccessLevel, selectedRole, canManageStudio, canManageClientAccount } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const { inviteClient, inviteClientTeammate } = usePrototypeState();
   const {
     createPerson,
@@ -61,6 +65,8 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     setPersonStatus,
     updatePersonIdentity,
     updatePersonProjectAccess,
+    updatePersonStudioDetails,
+    updatePersonClientMembershipRole,
   } = usePeople();
   const [openInvitation, setOpenInvitation] = useState<OpenInvitation | null>(null);
   const [invitations, setInvitations] = useState<InvitationRecord[]>([]);
@@ -71,6 +77,8 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
     const timeout = window.setTimeout(() => setToast(null), 4000);
     return () => window.clearTimeout(timeout);
   }, [toast]);
+
+  useEffect(() => { setOpenInvitation(null); }, [selectedAccessLevel]);
 
   const openInvitePerson = useCallback((prefill: InvitePersonPrefill = {}, onComplete?: InvitePersonCompleteHandler) => {
     setOpenInvitation({ id: Date.now(), prefill: normalisePrefill(prefill), onComplete });
@@ -98,8 +106,16 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendInvitation = useCallback((submission: InvitePersonSubmission, onComplete?: InvitePersonCompleteHandler) => {
+    if (submission.role === "Studio Staff" && !canManageStudio) return;
+    if (selectedRole === "Studio Staff" && !canManageStudio && !submission.projectIds.length) return;
+    if (selectedRole === "Customer" && (!canManageClientAccount || submission.role !== "Customer"
+      || submission.clientIds.some((clientId) => clientId !== viewer?.clientId))) return;
+    if (selectedRole === "Studio Freelancer") return;
     const email = normaliseEmail(submission.email);
     const existingPerson = people.find((person) => normaliseEmail(person.email) === email);
+    // Project invites may retain an existing Owner, but cannot promote a Teammate.
+    if (submission.role === "Customer" && submission.clientMembershipRole === "Client Admin"
+      && !canManageStudio && !canManageClientAccount && existingPerson?.clientMembershipRole !== "Client Admin") return;
     const name = submission.name.trim() || makeNameFromEmail(email);
     const jobTitle = submission.jobTitle.trim();
     let person = existingPerson;
@@ -138,6 +154,9 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       if (submission.projectIds.length) updatePersonProjectAccess(person.id, submission.projectIds);
     }
 
+    if (submission.role === "Studio Staff") updatePersonStudioDetails(person.id, { studioPermission: submission.studioPermission });
+    if (submission.role === "Customer") updatePersonClientMembershipRole(person.id, submission.clientMembershipRole);
+
     const status = existingPerson && getInvitationStatus(existingPerson) === "Accepted" ? "Accepted" : "Pending";
     addInvitationRecord({
       personId: person.id,
@@ -155,21 +174,25 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
           projectId: submission.projectIds[0],
           name,
           email,
+          role: submission.clientMembershipRole,
         });
       } else {
         inviteClientTeammate({
           clientId: submission.clientIds[0],
           name,
           email,
+          role: submission.clientMembershipRole,
         });
       }
     }
     onComplete?.(person, submission);
     setOpenInvitation(null);
     setToast(`Invite sent to ${email}.`);
-  }, [addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
+  }, [canManageClientAccount, canManageStudio, selectedRole, viewer?.clientId, updatePersonClientMembershipRole, updatePersonStudioDetails, addInvitationRecord, createPerson, getInvitationStatus, inviteClient, inviteClientTeammate, people, setPersonStatus, updatePersonIdentity, updatePersonProjectAccess]);
 
   const resendInvitation = useCallback((person: Person) => {
+    if (person.accessRole === "Studio Staff" && !canManageStudio) return;
+    if (selectedRole === "Studio Freelancer" || (selectedRole === "Customer" && (!canManageClientAccount || person.clientId !== viewer?.clientId))) return;
     if (!person.accessRole || !person.email) return;
     const projectIds = unique([
       ...person.projectAccessIds,
@@ -191,9 +214,10 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       destination: getInvitationDestination(role, clientIds, projectIds),
     });
     setToast(`Invite sent to ${person.email}.`);
-  }, [addInvitationRecord, setPersonStatus]);
+  }, [addInvitationRecord, canManageClientAccount, canManageStudio, selectedRole, setPersonStatus, viewer?.clientId]);
 
   const resendStudioStaffInvitation = useCallback((recipient: { id: string; email: string }) => {
+    if (!canManageStudio) return;
     addInvitationRecord({
       personId: recipient.id,
       email: recipient.email,
@@ -204,7 +228,7 @@ export function InvitationProvider({ children }: { children: ReactNode }) {
       destination: "/active-videos",
     });
     setToast(`Invite sent to ${recipient.email}.`);
-  }, [addInvitationRecord]);
+  }, [addInvitationRecord, canManageStudio]);
 
   const value = useMemo<InvitationContextValue>(() => ({
     openInvitePerson,

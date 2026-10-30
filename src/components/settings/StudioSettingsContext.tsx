@@ -3,6 +3,7 @@
 import { cloneTurnaround, type StudioTurnaround } from "@/data/turnaround";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getStudioBrandColours, type StudioReviewDraft } from "@/data/studio-onboard";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import {
   cloneStudioNotificationSettings,
@@ -37,6 +38,7 @@ const StudioSettingsContext = createContext<StudioSettingsContextValue | null>(n
 const studioSettingsStorageKey = "brisk-studio-settings-v2";
 
 export function StudioSettingsProvider({ children }: { children: ReactNode }) {
+  const { canManageStudio } = usePrototypeRole();
   const {
     commitStudioSetup,
     hasHydrated,
@@ -85,11 +87,13 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
   }, [activeWorkspaceName, commitStudio, hasHydrated]);
 
   const updateDetails = useCallback((details: StudioDetails) => {
+    if (!canManageStudio) return;
     updateWorkspaceDetails(details);
     commitStudio((current) => ({ ...current, details: { ...details } }));
-  }, [commitStudio, updateWorkspaceDetails]);
+  }, [canManageStudio, commitStudio, updateWorkspaceDetails]);
 
   const updateBranding = useCallback((branding: StudioBranding) => {
+    if (!canManageStudio) return;
     updateWorkspaceBranding(branding);
     commitStudio((current) => ({
       ...current,
@@ -99,9 +103,10 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
         brandColours: getStudioBrandColours(branding),
       },
     }));
-  }, [commitStudio, updateWorkspaceBranding]);
+  }, [canManageStudio, commitStudio, updateWorkspaceBranding]);
 
   const updateProductionDefaults = useCallback((production: StudioProductionDefaults) => {
+    if (!canManageStudio) return;
     commitStudio((current) => ({
       ...current,
       production: {
@@ -109,20 +114,23 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
         turnaround: cloneTurnaround(current.production.turnaround),
       },
     }));
-  }, [commitStudio]);
+  }, [canManageStudio, commitStudio]);
 
   const updateTurnaround = useCallback((turnaround: StudioTurnaround) => {
+    if (!canManageStudio) return;
     commitStudio((current) => ({ ...current, production: { ...current.production, turnaround: cloneTurnaround(turnaround) } }));
-  }, [commitStudio]);
+  }, [canManageStudio, commitStudio]);
 
   const updateStaffAccess = useCallback((staffAccess: StudioStaffAccess[]) => {
+    if (!canManageStudio) return;
     commitStudio((current) => ({
       ...current,
       staffAccess: staffAccess.map((staffMember) => ({ ...staffMember })),
     }));
-  }, [commitStudio]);
+  }, [canManageStudio, commitStudio]);
 
   const updateIntegrationConnection = useCallback((integrationId: StudioIntegrationId, connected: boolean) => {
+    if (!canManageStudio) return;
     commitStudio((current) => ({
       ...current,
       integrations: {
@@ -130,14 +138,15 @@ export function StudioSettingsProvider({ children }: { children: ReactNode }) {
         [integrationId]: { ...current.integrations[integrationId], connected },
       },
     }));
-  }, [commitStudio]);
+  }, [canManageStudio, commitStudio]);
 
   const updateNotificationSettings = useCallback((notifications: StudioNotificationSettings) => {
+    if (!canManageStudio) return;
     commitStudio((current) => ({
       ...current,
       notifications: cloneStudioNotificationSettings(notifications),
     }));
-  }, [commitStudio]);
+  }, [canManageStudio, commitStudio]);
 
   const applyOnboardingSetup = useCallback((draft: StudioReviewDraft) => {
     commitStudioSetup(draft);

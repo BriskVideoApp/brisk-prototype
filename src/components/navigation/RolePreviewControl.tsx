@@ -6,11 +6,9 @@ import {
   getNavigationItem,
 } from "@/components/navigation/navigationConfig";
 import {
-  prototypeRoleLabels,
-  prototypeRoles,
   usePrototypeRole,
-  type PrototypeRole,
 } from "@/components/navigation/PrototypeRoleContext";
+import { prototypeAccessLevels, prototypeAccessLevelLabels, getAccessLevelRole, type PrototypeAccessLevel } from "@/data/prototype-permissions";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
@@ -25,7 +23,8 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const {
     selectedRole,
-    setSelectedRole,
+    selectedAccessLevel,
+    setSelectedAccessLevel,
     allPages,
     setAllPages,
   } = usePrototypeRole();
@@ -42,8 +41,9 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
     : null;
   const currentItem = getNavigationItem(pathname, searchParams.toString());
 
-  function selectRole(role: PrototypeRole) {
-    setSelectedRole(role);
+  function selectRole(level: PrototypeAccessLevel) {
+    setSelectedAccessLevel(level);
+    const role = getAccessLevelRole(level);
 
     // Test mode previews another role on the current screen. Keep the scenario
     // and its in-progress page state in place while the role changes.
@@ -72,15 +72,15 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
     return (
       <section className="role-preview-control is-compact" aria-label="Prototype view">
         <div className="role-preview-options" role="group" aria-label="View as role">
-          {prototypeRoles.map((role) => (
+          {prototypeAccessLevels.map((level) => (
             <button
-              className={`label-xs-semibold ${selectedRole === role ? "is-active" : ""}`}
+              className={`label-xs-semibold ${selectedAccessLevel === level ? "is-active" : ""}`}
               type="button"
-              aria-pressed={selectedRole === role}
-              key={role}
-              onClick={() => selectRole(role)}
+              aria-pressed={selectedAccessLevel === level}
+              key={level}
+              onClick={() => selectRole(level)}
             >
-              {prototypeRoleLabels[role]}
+              {prototypeAccessLevelLabels[level]}
             </button>
           ))}
         </div>
@@ -91,15 +91,15 @@ export function RolePreviewControl({ compact = false }: { compact?: boolean }) {
   return (
     <section className="role-preview-control" aria-label="Prototype view">
       <div className="role-preview-options" role="group" aria-label="View as role">
-        {prototypeRoles.map((role) => (
+        {prototypeAccessLevels.map((level) => (
           <button
-            className={`label-xs-semibold ${selectedRole === role ? "is-active" : ""}`}
+            className={`label-xs-semibold ${selectedAccessLevel === level ? "is-active" : ""}`}
             type="button"
-            aria-pressed={selectedRole === role}
-            key={role}
-            onClick={() => selectRole(role)}
+            aria-pressed={selectedAccessLevel === level}
+            key={level}
+            onClick={() => selectRole(level)}
           >
-            {prototypeRoleLabels[role]}
+            {prototypeAccessLevelLabels[level]}
           </button>
         ))}
       </div>

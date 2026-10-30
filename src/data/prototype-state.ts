@@ -553,7 +553,7 @@ export function markClientPreviewedState(state: PrototypeState): PrototypeState 
 
 export function inviteClientTeammateState(
   state: PrototypeState,
-  input: { clientId: string; name: string; email: string },
+  input: { clientId: string; name: string; email: string; role?: ClientContact["membershipRole"] },
 ): PrototypeState {
   const workspaceId = state.session.activeWorkspaceId;
   const client = selectScopedClient(state, workspaceId, input.clientId);
@@ -574,6 +574,7 @@ export function inviteClientTeammateState(
   const sentAt = "2026-09-02T09:04:00+10:00";
   const contact: ClientContact = existingContact ? {
     ...existingContact,
+    membershipRole: input.role ?? existingContact.membershipRole,
     name: input.name.trim(),
     email: normalisedEmail,
     portalAccess: "Invited",
@@ -584,7 +585,7 @@ export function inviteClientTeammateState(
     portalAccess: "Invited",
     lastActive: null,
     projectIds: [],
-    membershipRole: "Client Member",
+    membershipRole: input.role ?? "Client Member",
   };
   const existingInvitation = state.invitations.find((invitation) => invitation.workspaceId === workspaceId
     && invitation.clientId === client.id && invitation.userId === userId);
@@ -631,7 +632,7 @@ export function inviteClientTeammateState(
 
 export function inviteClientToProjectState(
   state: PrototypeState,
-  input: { clientId: string; projectId: string; name: string; email: string },
+  input: { clientId: string; projectId: string; name: string; email: string; role?: ClientContact["membershipRole"] },
 ): PrototypeState {
   const workspaceId = state.session.activeWorkspaceId;
   const client = selectScopedClient(state, workspaceId, input.clientId);
@@ -649,7 +650,7 @@ export function inviteClientToProjectState(
     portalAccess: "Invited",
     lastActive: null,
     projectIds: [project.id],
-    membershipRole: "Client Admin",
+    membershipRole: input.role ?? "Client Admin",
   };
   const sentAt = "2026-09-02T09:05:00+10:00";
   const existingInvitation = state.invitations.find((invitation) => invitation.workspaceId === workspaceId
@@ -669,7 +670,7 @@ export function inviteClientToProjectState(
       primaryContactId: candidate.primaryContactId ?? contact.id,
       contacts: candidate.contacts.some((candidateContact) => candidateContact.id === contact.id)
         ? candidate.contacts.map((candidateContact) => candidateContact.id === contact.id
-          ? { ...candidateContact, projectIds: [...new Set([...candidateContact.projectIds, project.id])] }
+          ? { ...candidateContact, membershipRole: input.role ?? candidateContact.membershipRole, projectIds: [...new Set([...candidateContact.projectIds, project.id])] }
           : candidateContact)
         : [...candidate.contacts, contact],
       latestActivity: { label: `Invite sent to ${contact.name}`, occurredAt: sentAt },

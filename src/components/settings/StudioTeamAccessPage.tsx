@@ -14,7 +14,7 @@ import type { StudioStaffAccess } from "@/data/studio-settings";
 
 export function StudioTeamAccessPage() {
   const router = useRouter();
-  const { people, setPersonStatus } = usePeople();
+  const { people, setPersonStatus, updatePersonStudioDetails } = usePeople();
   const { studio, updateStaffAccess } = useStudioSettings();
   const { openInvitePerson, resendStudioStaffInvitation } = useInvitations();
   const staffRows = studio.staffAccess.flatMap((access) => {
@@ -37,7 +37,8 @@ export function StudioTeamAccessPage() {
         {
           personId: person.id,
           status: "Pending invite",
-          hasBillingAccess: false,
+          hasBillingAccess: submission.studioPermission === "Studio Owner",
+          studioPermission: submission.studioPermission,
         },
       ]);
     });
@@ -84,9 +85,12 @@ export function StudioTeamAccessPage() {
           onSelect: () => openProfile(person.id),
         },
         {
-          label: staffMember.hasBillingAccess ? "Remove billing access" : "Grant billing access",
+          label: person.studioPermission === "Studio Owner" ? "Make Staff" : "Make Admin",
           icon: "lock",
-          onSelect: () => updateMember(person.id, { hasBillingAccess: !staffMember.hasBillingAccess }),
+          onSelect: () => {
+            const isAdmin = person.studioPermission !== "Studio Owner";
+            updatePersonStudioDetails(person.id, { studioPermission: isAdmin ? "Studio Owner" : "Team Member" });
+          },
         },
         {
           label: "Pause access",
@@ -117,7 +121,7 @@ export function StudioTeamAccessPage() {
         <div>
           <h2 className="headings-xs-bold" id="studio-team-access-heading">Studio Staff</h2>
           <div className="studio-team-description-row">
-            <p className="paragraph-s">Everyone listed here has full Studio workspace access.</p>
+            <p className="paragraph-s">All staff can work on Studio projects. Admins also manage settings, billing and access.</p>
             <Link className="studio-team-directory-link label-s-semibold" href="/people">Open People directory</Link>
           </div>
         </div>
@@ -133,7 +137,7 @@ export function StudioTeamAccessPage() {
               <th>Person</th>
               <th>Job title</th>
               <th>Status</th>
-              <th>Billing access</th>
+              <th>Access level</th>
             </tr>
           </thead>
           <tbody>
@@ -169,10 +173,10 @@ export function StudioTeamAccessPage() {
                       {access.status}
                     </span>
                   </td>
-                  <td data-label="Billing access">
+                  <td data-label="Access level">
                     <div className="studio-team-billing-cell">
-                      <span className={`studio-team-billing-access ${access.hasBillingAccess ? "is-admin" : ""} label-xs-semibold`}>
-                        {access.hasBillingAccess ? "Admin" : "None"}
+                      <span className={`studio-team-billing-access ${person.studioPermission === "Studio Owner" ? "is-admin" : ""} label-xs-semibold`}>
+                        {person.studioPermission === "Studio Owner" ? "Admin" : "Staff"}
                       </span>
                       <ActionMenu label={`Actions for ${person.name}`} items={getMemberActions(person, access)} />
                     </div>

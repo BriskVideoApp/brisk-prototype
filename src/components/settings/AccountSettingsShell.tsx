@@ -195,7 +195,7 @@ export function ClientSettingsAccessBoundary({
   if (requireAdmin && access.role !== "Client Admin") {
     return (
       <AccountSettingsPermissionState
-        description="Only Client Admins can update company details and manage the Client team. Ask a Client Admin at Loom for access."
+        description="Only Client Owners can update company details and manage the Client team. Ask a Client Owner at your company for access."
         href={buildHref("/settings/personal/profile")}
         linkLabel="Open my profile"
         title="Company & team is restricted"
@@ -239,7 +239,7 @@ function getUnavailableBillingCopy(availability: ClientAccountAccess["billingAva
   }
   return {
     title: "Invoices & payments is restricted",
-    description: "Your account does not have access to Client invoices. Ask a Client Admin for help.",
+    description: "Your account does not have access to Client invoices. Ask a Client Owner for help.",
     eyebrow: "Access restricted",
     icon: "lock" as const satisfies DsIconName,
   };

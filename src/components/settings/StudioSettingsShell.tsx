@@ -19,9 +19,7 @@ import {
   getRoleHome,
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
-import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 export type StudioSettingsSectionId =
   | "overview"
@@ -165,16 +163,13 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
   const pathname = usePathname();
   const router = useRouter();
   const { confirm, confirmationDialog } = useConfirmation();
-  const { selectedRole } = usePrototypeRole();
-  const { people } = usePeople();
+  const { selectedRole, canManageStudio: canManageStudioSettings } = usePrototypeRole();
   const { hasUnsavedChanges, setHasUnsavedChanges } = useStudioSettingsUnsavedChanges();
   const allowNavigationRef = useRef(false);
   const restoringHistoryRef = useRef(false);
   const activeSection = studioSettingsNavigation.find((item) => item.id === sectionId) ?? studioSettingsNavigation[0];
   const title = activeSection.label;
   const activeSectionNote = "note" in activeSection ? activeSection.note : undefined;
-  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canManageStudioSettings = hasStudioAdministrationAccess(currentStudioMember);
 
   const confirmNavigation = useCallback(async () => {
     if (!hasUnsavedChanges) return true;
@@ -262,7 +257,7 @@ function StudioSettingsFrame({ children, sectionId }: { children: ReactNode; sec
         <span className="studio-settings-permission-icon"><DsIcon name="lock" size={28} /></span>
         <span className="label-xs-semibold">Studio Settings</span>
         <h1 className="headings-s-bold">Studio Settings are restricted</h1>
-        <p className="paragraph-s">Only Studio Owners can manage Studio-wide details, access, defaults and billing.</p>
+        <p className="paragraph-s">Only Studio Admins can manage Studio-wide details, access, defaults and billing.</p>
         <Link className="client-secondary-button label-s-semibold" href="/settings/personal/profile">Open my profile</Link>
       </main>
     );

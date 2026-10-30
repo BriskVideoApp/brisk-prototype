@@ -2,6 +2,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useClients } from "@/components/clients/ClientDataContext";
+import { useStudioSettings } from "@/components/settings/StudioSettingsContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import type { Client, ClientContact } from "@/data/clients";
 import {
@@ -49,6 +52,9 @@ type PeopleDataContextValue = {
 const PeopleDataContext = createContext<PeopleDataContextValue | null>(null);
 
 export function PeopleDataProvider({ children }: { children: ReactNode }) {
+  const { canManageStudio, canManageClientAccount, selectedRole, setSelectedAccessLevel } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
+  const { studio, updateStaffAccess } = useStudioSettings();
   const { hasHydrated, state: prototypeState } = usePrototypeState();
   const { addContact, clients, removeContact, updateContact, updateContactAccess, updateContactProjects, updateContactRole } = useClients();
   const [nativePeople, setNativePeople] = useState<Person[]>(initialNativePeople);
@@ -75,7 +81,10 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
     contactActivityOverrides[contact.id],
   ))), [archivedContactIds, clients, contactActivityOverrides, contactNotes, contactProfileOverrides]);
 
-  const people = useMemo(() => [...nativePeople, ...clientContacts], [clientContacts, nativePeople]);
+  const people = useMemo(() => [...nativePeople.map((person) => {
+    const access = studio.staffAccess.find((member) => member.personId === person.id);
+    return access?.studioPermission ? { ...person, studioPermission: access.studioPermission } : person;
+  }), ...clientContacts], [clientContacts, nativePeople, studio.staffAccess]);
   const syncProjectStaffWorkloads = useCallback((projectId: string, assignments: ProjectStaffWorkload[]) => {
     setNativePeople((current) => {
       let didChange = false;
@@ -153,9 +162,24 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
     },
     updatePersonClientMembershipRole(personId, role) {
       const contactOwner = clients.find((client) => client.contacts.some((contact) => contact.id === personId));
+      if (!canManageStudio && !(canManageClientAccount && contactOwner?.id === viewer?.clientId)) return;
       if (contactOwner) updateContactRole(contactOwner.id, personId, role);
+      if (selectedRole === "Customer" && viewer?.id === personId) setSelectedAccessLevel(role === "Client Admin" ? "client-owner" : "client-teammate");
     },
     updatePersonStudioDetails(personId, update) {
+      if (update.studioPermission !== undefined && !canManageStudio) return;
+      if (update.studioPermission && personId === prototypeStudioPersonId && selectedRole === "Studio Staff") {
+        setSelectedAccessLevel(update.studioPermission === "Studio Owner" ? "studio-admin" : "studio-staff");
+      }
+      const studioPermission = update.studioPermission;
+      if (studioPermission) {
+        const hasMembership = studio.staffAccess.some((member) => member.personId === personId);
+        const person = people.find((candidate) => candidate.id === personId);
+        updateStaffAccess(hasMembership ? studio.staffAccess.map((member) => member.personId === personId
+          ? { ...member, studioPermission, hasBillingAccess: studioPermission === "Studio Owner" } : member)
+          : [...studio.staffAccess, { personId, studioPermission, hasBillingAccess: studioPermission === "Studio Owner",
+            status: person?.status === "Invited" ? "Pending invite" : person?.status === "Paused" ? "Paused" : "Active" }]);
+      }
       setNativePeople((current) => current.map((person) => {
         if (person.id !== personId) return person;
         const { defaultRate, rateType, ...details } = update;
@@ -218,7 +242,7 @@ export function PeopleDataProvider({ children }: { children: ReactNode }) {
       }
       setNativePeople((current) => current.map((person) => person.id === personId ? { ...person, notes } : person));
     },
-  }), [addContact, clientContacts, clients, people, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects, updateContactRole]);
+  }), [studio.staffAccess, updateStaffAccess, canManageStudio, canManageClientAccount, selectedRole, setSelectedAccessLevel, viewer?.clientId, viewer?.id, addContact, clientContacts, clients, people, removeContact, syncProjectStaffWorkloads, updateContact, updateContactAccess, updateContactProjects, updateContactRole]);
 
   return <PeopleDataContext.Provider value={value}>{children}</PeopleDataContext.Provider>;
 }

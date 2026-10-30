@@ -6,13 +6,13 @@ import { Input } from "../../../Brisk DS/src/app/components/Input";
 import { useClients } from "@/components/clients/ClientDataContext";
 import { BriskSelect } from "@/components/form/BriskSelect";
 import { ClientCompanySettingsPageShell, ClientSettingsAccessBoundary } from "@/components/settings/AccountSettingsShell";
-import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 
 export function ClientCompanyPage() {
-  const { state } = usePrototypeState();
+  const { clientId } = useClientAccountSettings();
   const { clients, updateClient } = useClients();
-  const client = clients.find((candidate) => candidate.id === (state.session.activeClientId ?? "loom"));
+  const client = clients.find((candidate) => candidate.id === (clientId ?? "loom"));
   if (!client) throw new Error("The Client company is missing");
 
   return <ClientCompanyDetails client={client} onSave={updateClient} />;

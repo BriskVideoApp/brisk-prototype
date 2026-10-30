@@ -13,12 +13,10 @@ import { BriskSelect } from "@/components/form/BriskSelect";
 import { useCostsData } from "@/components/costs/CostsDataContext";
 import { formatCostDate, getInvoiceTagClass, InvoiceReviewModal, InvoiceStateBadge, InvoiceTagBadge } from "@/components/costs/CostsPrimitives";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { Project } from "@/components/active-videos/types";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { formatCostAmount, type ContractorInvoice, type ContractorOffer, type CostCurrency, type InvoiceTag } from "@/data/costs";
-import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 
 type ProjectStatusFilter = "all" | Project["status"];
 type ReviewState = { invoice: ContractorInvoice; offer: ContractorOffer } | null;
@@ -37,10 +35,8 @@ export function OutstandingInvoicesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { hasLoadedRole, selectedRole } = usePrototypeRole();
-  const { people } = usePeople();
   const { invoices, markInvoicePaid, offers } = useCostsData();
-  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canViewContractorInvoices = selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember);
+  const canViewContractorInvoices = selectedRole === "Studio Staff";
   const [projectStatus, setProjectStatus] = useState<ProjectStatusFilter>("all");
   const [selectedTags, setSelectedTags] = useState<InvoiceTag[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
@@ -55,7 +51,7 @@ export function OutstandingInvoicesPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    if (hasLoadedRole && !canViewContractorInvoices) router.replace(selectedRole === "Studio Staff" ? "/today" : "/active-videos");
+    if (hasLoadedRole && !canViewContractorInvoices) router.replace("/active-videos");
   }, [canViewContractorInvoices, hasLoadedRole, router, selectedRole]);
 
   useEffect(() => {

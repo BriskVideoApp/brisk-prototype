@@ -8,7 +8,7 @@ Read `Brisk DS/guidelines/Guidelines.md` before using any component; it defines 
 
 - Work in `BriskVideoApp/brisk-prototype` on `codex/unified-brisk-prototype`. Do not switch to or update `main`, or create another branch, unless Tom explicitly asks.
 - Latest explicit user-approved decisions take precedence over older planning documents and screenshots. Existing code is evidence of current behaviour, not proof that a conflicting product decision was approved.
-- The only prototype access roles are **Studio Staff**, **Studio Freelancer** and **Customer**, defined in `src/components/navigation/PrototypeRoleContext.tsx`. Job titles do not create additional access roles.
+- The prototype exposes **Studio Admin**, **Studio Staff**, **Studio Freelancer**, **Client Owner** and **Client Teammate** access levels, defined in `src/data/prototype-permissions.ts`. Existing `Studio Staff`, `Studio Freelancer` and `Customer` strings remain compatibility groups. Job titles do not grant access. See the 30 October permission scope in `Docs/desktop-design-baseline.md`.
 - Never use legacy assets from `Brisk Visuals/Flow icons/`. Use the current `StageChip` stage presentation and approved assets exposed through `DsIcon` under `/public/brisk-icons/`.
 - Keep the prototype front-end only with mock data. Product plans for authentication, Studio isolation or integrations do not authorise backend work.
 - Preserve this branch's newer production flows, optional Storyboard, Animation, pinned Media, Client preview and project naming behaviour. Do not replace them with older fixed-stage or five-role guidance from `main` or Notion. Resolve material conflicts before changing the affected behaviour.
@@ -167,12 +167,14 @@ Before marking a ticket complete:
 
 ## Role-switcher requirement
 
-The prototype must include a persistent role switcher that lets the user view any screen as:
+The prototype must include a persistent Test mode switcher for:
+- Studio Admin
 - Studio Staff
 - Studio Freelancer
-- Customer
+- Client Owner
+- Client Teammate
 
-Keep the prototype to exactly these three access roles. The former five-role split is superseded for the current prototype; do not introduce additional roles or granular permission screens unless explicitly requested.
+Tom requested this split on 30 October 2026 and supplied the [Brisk User Roles ticket](https://app.notion.com/p/35dabf184ca980abaebee740b3abb5bf). Staff retain all Studio projects. Narrower Staff project visibility and new stage permission controls remain deferred to V2. Preserve existing production actions and Client-only visibility boundaries. This supersedes the earlier three-view restriction, not the front-end-only scope. The unrelated historical five-role/job-title scheme remains superseded.
 
 Tom approved the hybrid desktop navigation on 20 October 2026. Put the role switcher inside the quiet Test mode control at the bottom of the left sidebar, below the account menu and Studio settings where permitted. Preserve the existing top-bar control on narrow screens and clean-entry views while the mobile design pass is deferred.
 
@@ -180,10 +182,10 @@ This is a prototype demo affordance only - in production, role is set by the use
 
 ## User-facing terminology
 
-- **Filmmaker** means anyone working for or with a Studio, including Studio Staff and Studio Freelancers.
+- **Filmmaker** means anyone working for or with a Studio, including Studio Admins, Studio Staff and Studio Freelancers.
 - **Client** means someone on the Customer side.
 - Use **Filmmaker** and **Client** in normal interface copy.
-- The underlying access roles remain **Studio Staff**, **Studio Freelancer** and **Customer**.
+- The underlying compatibility groups remain **Studio Staff**, **Studio Freelancer** and **Customer**; the five access levels control the Admin/Staff and Owner/Teammate distinctions.
 - Show an exact access role only when the distinction affects access, invitations, project visibility, rates, costs, invoices, time tracking or responsibilities.
 - **Filmmaker** is a shared professional identity, not an access role.
 - Do not rename code types, stored values or permission identifiers purely for this language change.

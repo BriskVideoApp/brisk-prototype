@@ -58,8 +58,8 @@ type PrototypeStateContextValue = {
   createClient: (input: NewClientInput) => ScopedClient;
   createProject: (input: CreateProjectInput) => ScopedProject | null;
   createClientVideo: (input: { clientId: string; userId: string; name: string; fields?: BriefFields }) => ScopedProject | null;
-  inviteClientTeammate: (input: { clientId: string; name: string; email: string }) => void;
-  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string }) => void;
+  inviteClientTeammate: (input: { clientId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => void;
+  inviteClient: (input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => void;
   setClientMemberProjects: (input: { clientId: string; memberId: string; projectIds: string[]; role?: "Client Admin" | "Client Member" }) => void;
   markClientPreviewed: () => void;
   completeOnboarding: () => void;
@@ -157,11 +157,11 @@ export function PrototypeStateProvider({ children }: { children: ReactNode }) {
     return result.project;
   }, [persistState]);
 
-  const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string }) => {
+  const inviteClient = useCallback((input: { clientId: string; projectId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => {
     commitState((current) => inviteClientToProjectState(current, input));
   }, [commitState]);
 
-  const inviteClientTeammate = useCallback((input: { clientId: string; name: string; email: string }) => {
+  const inviteClientTeammate = useCallback((input: { clientId: string; name: string; email: string; role?: "Client Admin" | "Client Member" }) => {
     commitState((current) => inviteClientTeammateState(current, input));
   }, [commitState]);
 

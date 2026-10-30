@@ -5,16 +5,16 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { CommentAvatar } from "@/components/comments/CommentPrimitives";
 import {
-  prototypeRoleLabels,
   usePrototypeRole,
   type PrototypeRole,
 } from "@/components/navigation/PrototypeRoleContext";
 import { usePeople } from "@/components/people/PeopleDataContext";
 import { useClientAccountSettings } from "@/components/settings/ClientAccountSettingsContext";
+import { prototypeAccessLevelLabels } from "@/data/prototype-permissions";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { chatUsers, chatWorkspace } from "@/data/chat";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
-import { hasStudioAdministrationAccess, prototypeCustomerPersonId, prototypeStudioPersonId } from "@/data/people";
+import { prototypeCustomerPersonId, prototypeStudioPersonId } from "@/data/people";
 
 type UserAvatarMenuProps = {
   placement: "sidebar" | "header";
@@ -36,7 +36,7 @@ const organisationByRole: Record<PrototypeRole, string> = {
 
 export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: UserAvatarMenuProps) {
   const pathname = usePathname();
-  const { selectedRole } = usePrototypeRole();
+  const { selectedRole, selectedAccessLevel, canManageStudio: canManageStudioSettings } = usePrototypeRole();
   const viewer = usePrototypeViewer();
   const { people } = usePeople();
   const { account, access, buildHref } = useClientAccountSettings();
@@ -55,11 +55,10 @@ export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: Use
   const customer = isClient ? people.find((person) => person.id === prototypeCustomerPersonId) ?? null : null;
   const freelancer = isFreelancer ? people.find((person) => person.id === viewer?.personId) ?? null : null;
   const studioMember = isStudioStaff ? people.find((person) => person.id === prototypeStudioPersonId) ?? null : null;
-  const canManageStudioSettings = hasStudioAdministrationAccess(studioMember);
 
   useEffect(() => {
     setIsOpen(false);
-  }, [pathname, selectedRole]);
+  }, [pathname, selectedAccessLevel]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -110,11 +109,7 @@ export function UserAvatarMenu({ placement, collapsed = false, onNavigate }: Use
   const displayEmail = viewer?.email ?? (isClient ? customer?.email ?? account.profile.signInEmail : isFreelancer ? freelancer?.email ?? user.email : studioMember?.email ?? user.email);
   const photoUrl = isClient ? customer?.avatarUrl ?? account.profile.photoUrl : isFreelancer ? freelancer?.avatarUrl ?? null : studioMember?.avatarUrl ?? null;
   const organisationName = isClient ? account.company.name : organisationByRole[selectedRole];
-  const roleLine = isClient
-    ? `${access.role} · ${organisationName}`
-    : isStudioStaff
-      ? `${studioMember?.studioPermission ?? "Team Member"} · ${organisationName}`
-      : `${prototypeRoleLabels[selectedRole]} · ${organisationName}`;
+  const roleLine = `${prototypeAccessLevelLabels[selectedAccessLevel]} · ${organisationName}`;
   const closeAfterNavigation = () => {
     setIsOpen(false);
     onNavigate?.();

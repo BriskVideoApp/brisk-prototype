@@ -20,6 +20,7 @@ import {
 } from "@/data/brisk-ai";
 
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { useAskBriskModel } from "./useAskBriskModel";
@@ -102,7 +103,8 @@ export function BriskAiProvider({ children }: { children: ReactNode }) {
   const [viewerStates, setViewerStates] = useState<Record<string, AskViewerState>>({});
   const { state: prototypeState } = usePrototypeState();
   const viewer = usePrototypeViewer();
-  const sessionKey = `${prototypeState.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}:${viewer?.role ?? "none"}:${viewer?.id ?? "none"}`;
+  const { selectedAccessLevel } = usePrototypeRole();
+  const sessionKey = `${prototypeState.session.activeWorkspaceId}:${activeScenario?.id ?? "default"}:${selectedAccessLevel}:${viewer?.id ?? "none"}`;
   const viewerState = viewerStates[sessionKey] ?? emptyViewerState;
   const model = useAskBriskModel(viewerState.priorities);
   const workspaceName = model.state.workspaces.find((workspace) => workspace.id === model.viewer?.workspaceId)?.name ?? "your Studio";

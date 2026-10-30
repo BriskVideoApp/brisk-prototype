@@ -20,6 +20,8 @@ import {
 } from "@/data/client-account-settings";
 import { useClientBilling } from "@/components/settings/ClientBillingContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
+import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
+import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
 import { selectWorkspaceClients } from "@/data/prototype-state";
 
 type ClientBillingAvailability = "available" | "managed-externally" | "setup-required" | "no-access";
@@ -33,6 +35,7 @@ export type ClientAccountAccess = {
 
 type ClientAccountSettingsContextValue = {
   account: ClientAccountSettings;
+  clientId: string | null;
   access: ClientAccountAccess;
   buildHref: (pathname: string) => string;
   saveProfile: (profile: ClientPersonalProfile) => void;
@@ -40,15 +43,17 @@ type ClientAccountSettingsContextValue = {
 
 const ClientAccountSettingsContext = createContext<ClientAccountSettingsContextValue | null>(null);
 const clientAccountStorageKey = "brisk-client-account-settings-v1";
-const previewParameterNames = ["client-role", "billing", "auth"] as const;
+const previewParameterNames = ["billing", "auth"] as const;
 
 export function ClientAccountSettingsProvider({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const { state } = usePrototypeState();
+  const { canManageClientAccount } = usePrototypeRole();
+  const viewer = usePrototypeViewer();
   const { billingSettings } = useClientBilling();
   const [storedAccount, setAccount] = useState<ClientAccountSettings>(() => cloneClientAccountSettings(initialClientAccountSettings));
   const activeClient = selectWorkspaceClients(state, state.session.activeWorkspaceId)
-    .find((client) => client.id === (state.session.activeClientId ?? "loom"));
+    .find((client) => client.id === (viewer?.clientId ?? state.session.activeClientId ?? "loom"));
   const account = useMemo<ClientAccountSettings>(() => {
     if (!activeClient) return storedAccount;
     const primaryContact = activeClient.contacts.find((contact) => contact.id === activeClient.primaryContactId);
@@ -88,17 +93,17 @@ export function ClientAccountSettingsProvider({ children }: { children: ReactNod
 
   const access = useMemo<ClientAccountAccess>(() => {
     const billingAvailability = resolveBillingAvailability(
-      searchParams.get("billing") !== "hidden",
+      canManageClientAccount && searchParams.get("billing") !== "hidden",
       billingSettings.method,
       billingSettings.stripeStatus,
     );
     return {
-      role: searchParams.get("client-role") === "member" ? "Client Member" : "Client Admin",
+      role: canManageClientAccount ? "Client Admin" : "Client Member",
       canAccessBilling: billingAvailability === "available",
       billingAvailability,
       authenticationMethod: resolveAuthenticationMethod(searchParams.get("auth")),
     };
-  }, [billingSettings, searchParams]);
+  }, [billingSettings, canManageClientAccount, searchParams]);
 
   const buildHref = useCallback((pathname: string) => (
     previewQuery ? `${pathname}?${previewQuery}` : pathname
@@ -118,10 +123,11 @@ export function ClientAccountSettingsProvider({ children }: { children: ReactNod
 
   const value = useMemo<ClientAccountSettingsContextValue>(() => ({
     account,
+    clientId: activeClient?.id ?? null,
     access,
     buildHref,
     saveProfile,
-  }), [access, account, buildHref, saveProfile]);
+  }), [access, account, activeClient?.id, buildHref, saveProfile]);
 
   return <ClientAccountSettingsContext.Provider value={value}>{children}</ClientAccountSettingsContext.Provider>;
 }

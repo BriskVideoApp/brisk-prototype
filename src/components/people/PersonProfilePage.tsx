@@ -27,7 +27,7 @@ import {
 import { DsIcon } from "@/components/video-review/DsIcon";
 import { activeVideoProjects } from "@/data/active-videos/mockData";
 import { stageLabels } from "@/data/active-videos/teamDefaults";
-import { getWorkloadRollup, hasStudioAdministrationAccess, prototypeStudioPersonId, type Person, type PersonProfileUpdate, type PersonStudioDetailsUpdate, type StudioPermission } from "@/data/people";
+import { getWorkloadRollup, type Person, type PersonProfileUpdate, type PersonStudioDetailsUpdate, type StudioPermission } from "@/data/people";
 
 type ProfileSection = "Overview" | "Work" | "Hours" | "Skills" | "Access" | "Commercial" | "Notes and activity";
 type ProfileDialog = "archive" | "assign" | "remove-access" | "delete" | null;
@@ -38,14 +38,13 @@ export function PersonProfilePage({ personId }: { personId: string }) {
   const { deletePerson, people, setPersonStatus, updatePersonClientMembershipRole, updatePersonIdentity, updatePersonNotes, updatePersonProjectAccess, updatePersonStudioDetails } = usePeople();
   const { getInvitationStatus, openInvitePerson, resendInvitation } = useInvitations();
   const { studio, updateStaffAccess } = useStudioSettings();
-  const { allPages, selectedRole } = usePrototypeRole();
+  const { canManageStudio, selectedRole } = usePrototypeRole();
   const person = people.find((candidate) => candidate.id === personId) ?? null;
   const requestedSection = searchParams.get("section");
   const [section, setSection] = useState<ProfileSection>(() => isProfileSection(requestedSection) ? requestedSection : "Overview");
   const [dialog, setDialog] = useState<ProfileDialog>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const currentStudioMember = people.find((candidate) => candidate.id === prototypeStudioPersonId) ?? null;
-  const isStudioStaff = allPages || (selectedRole === "Studio Staff" && hasStudioAdministrationAccess(currentStudioMember));
+  const isStudioStaff = canManageStudio;
 
   useEffect(() => {
     if (!toast) return;
@@ -66,7 +65,6 @@ export function PersonProfilePage({ personId }: { personId: string }) {
   const sections = getProfileSections(person);
   const activeSection = sections.includes(section) ? section : "Overview";
   const invitationStatus = getInvitationStatus(person);
-  const staffAccess = studio.staffAccess.find((member) => member.personId === person.id);
   const togglePersonAccess = () => {
     const nextStatus = person.status === "Paused" ? "Active" : "Paused";
     setPersonStatus(person.id, nextStatus);
@@ -103,13 +101,7 @@ export function PersonProfilePage({ personId }: { personId: string }) {
         onValueChange={setSection}
       >
       <div className="person-profile-content">
-        {activeSection === "Overview" ? <div className="person-profile-sections">{person.type !== "Contact" ? <AccessSummarySection person={person} invitationStatus={invitationStatus} hasBillingAccess={staffAccess?.hasBillingAccess ?? false} onStudioUpdate={(update) => { updatePersonStudioDetails(person.id, update); setToast("Studio details updated"); }} onClientRoleChange={(role) => { updatePersonClientMembershipRole(person.id, role); setToast("Client role updated"); }} onBillingAccessChange={(hasBillingAccess) => {
-          const nextAccess = studio.staffAccess.some((member) => member.personId === person.id)
-            ? studio.staffAccess.map((member) => member.personId === person.id ? { ...member, hasBillingAccess } : member)
-            : [...studio.staffAccess, { personId: person.id, status: person.status === "Invited" ? "Pending invite" as const : "Active" as const, hasBillingAccess }];
-          updateStaffAccess(nextAccess);
-          setToast(hasBillingAccess ? "Billing access granted" : "Billing access removed");
-        }} /> : null}<OverviewSection id="overview" person={person} onUpdate={(update) => { updatePersonIdentity(person.id, update); setToast("Profile updated"); }} />{person.type === "Team" || person.type === "Freelancer" ? <StudioRecordSection id="studio-record" person={person} onStudioUpdate={(update) => { updatePersonStudioDetails(person.id, update); setToast("Studio details updated"); }} onSeniorityChange={(seniority) => { updatePersonIdentity(person.id, { seniority }); setToast("Seniority updated"); }} /> : null}<RecordActions person={person} onArchive={() => setDialog("archive")} onDelete={() => setDialog("delete")} /></div> : null}
+        {activeSection === "Overview" ? <div className="person-profile-sections">{person.type !== "Contact" ? <AccessSummarySection person={person} invitationStatus={invitationStatus} onStudioUpdate={(update) => { updatePersonStudioDetails(person.id, update); setToast("Studio details updated"); }} onClientRoleChange={(role) => { updatePersonClientMembershipRole(person.id, role); setToast("Client role updated"); }} /> : null}<OverviewSection id="overview" person={person} onUpdate={(update) => { updatePersonIdentity(person.id, update); setToast("Profile updated"); }} />{person.type === "Team" || person.type === "Freelancer" ? <StudioRecordSection id="studio-record" person={person} onStudioUpdate={(update) => { updatePersonStudioDetails(person.id, update); setToast("Studio details updated"); }} onSeniorityChange={(seniority) => { updatePersonIdentity(person.id, { seniority }); setToast("Seniority updated"); }} /> : null}<RecordActions person={person} onArchive={() => setDialog("archive")} onDelete={() => setDialog("delete")} /></div> : null}
         {activeSection === "Work" ? <WorkSection person={person} onCapacityChange={(weeklyCapacityHours) => { updatePersonStudioDetails(person.id, { weeklyCapacityHours }); setToast("Weekly capacity updated"); }} /> : null}
         {activeSection === "Hours" ? <PersonHoursSection person={person} /> : null}
         {activeSection === "Skills" ? <SkillsSection id="skills" person={person} onIdentityUpdate={(update) => { updatePersonIdentity(person.id, update); setToast("Profile updated"); }} /> : null}
@@ -204,8 +196,8 @@ function AgreementField({ onSave, person }: { onSave: (update: PersonStudioDetai
 }
 
 const studioPermissionOptions: ReadonlyArray<{ value: StudioPermission; label: string }> = [
-  { value: "Team Member", label: "Team Member" },
-  { value: "Studio Owner", label: "Studio Owner" },
+  { value: "Team Member", label: "Staff" },
+  { value: "Studio Owner", label: "Admin" },
 ];
 
 const seniorityOptions: ReadonlyArray<{ value: Person["seniority"]; label: string }> = [
@@ -392,16 +384,39 @@ function StudioRecordSection({ id, onStudioUpdate, onSeniorityChange, person }: 
   return <section id={id} className="person-detail-card person-studio-record-card"><h2 className="headings-xs-bold">Studio details</h2><dl><div><dt className="label-xs">Seniority</dt><dd><SeniorityDropdown value={person.seniority} onChange={onSeniorityChange} /></dd></div><div><dt className="label-xs">Onboarding</dt><dd><OnboardingDropdown value={person.onboardingStatus} onChange={(onboardingStatus) => onStudioUpdate({ onboardingStatus })} /></dd></div><div><dt className="label-xs">Agreement</dt><dd><AgreementField person={person} onSave={onStudioUpdate} /></dd></div></dl></section>;
 }
 
-function AccessSummarySection({ hasBillingAccess, invitationStatus, onBillingAccessChange, onClientRoleChange, onStudioUpdate, person }: { hasBillingAccess: boolean; invitationStatus: InvitationStatus; onBillingAccessChange: (hasBillingAccess: boolean) => void; onClientRoleChange: (role: "Client Admin" | "Client Member") => void; onStudioUpdate: (update: PersonStudioDetailsUpdate) => void; person: Person }) {
-  const projects = getPersonProjects(person);
+function AccessSummarySection({ invitationStatus, onClientRoleChange, onStudioUpdate, person }: {
+  invitationStatus: InvitationStatus;
+  onClientRoleChange: (role: "Client Admin" | "Client Member") => void;
+  onStudioUpdate: (update: PersonStudioDetailsUpdate) => void;
+  person: Person;
+}) {
   const isClientContact = person.type === "Client contact";
-  return <section className={`person-access-at-glance person-summary-card ${person.type === "Team" ? "has-billing" : ""}`}><header className="person-access-summary-header"><h2 className="headings-xs-bold">Access</h2><span aria-label={`Invitation status: ${invitationStatus}`} className={`invitation-status is-${invitationStatus.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{invitationStatus}</span></header><div className="person-access-summary-inline"><div className="person-access-role"><span className="label-xs">Role</span>{person.type === "Team" ? <StudioPermissionDropdown value={person.studioPermission ?? "Team Member"} onChange={(value) => onStudioUpdate({ studioPermission: value })} /> : isClientContact ? <InlineChoice label="Client role" value={person.clientMembershipRole ?? "Client Member"} options={["Client Admin", "Client Member"]} onSave={(value) => onClientRoleChange(value as "Client Admin" | "Client Member")} /> : <strong className="label-s-semibold">{person.accessRole ?? "No role"}</strong>}{person.type !== "Team" && !isClientContact ? <span className="label-xs">{projects.length} {projects.length === 1 ? "project" : "projects"}</span> : null}</div></div>{person.type === "Team" ? <div className="person-studio-access is-compact"><span className="label-xs">Billing access</span><div><strong className="label-s-semibold">{hasBillingAccess ? "On" : "Off"}</strong><Button size="S" variant="secondary" tooltip={hasBillingAccess ? "Stop this person managing Studio billing." : "Let this person manage Studio billing."} onClick={() => onBillingAccessChange(!hasBillingAccess)}>{hasBillingAccess ? "Turn off" : "Turn on"}</Button></div></div> : null}</section>;
+  const projects = getPersonProjects(person);
+  return <section className="person-access-at-glance person-summary-card">
+    <header className="person-access-summary-header">
+      <h2 className="headings-xs-bold">Access</h2>
+      <span aria-label={`Invitation status: ${invitationStatus}`} className={`invitation-status is-${invitationStatus.toLocaleLowerCase("en-AU")} label-xs-semibold`}>{invitationStatus}</span>
+    </header>
+    <div className="person-access-summary-inline"><div className="person-access-role">
+      <span className="label-xs">Access level</span>
+      {person.type === "Team" ? <StudioPermissionDropdown value={person.studioPermission ?? "Team Member"} onChange={(value) => onStudioUpdate({ studioPermission: value })} />
+        : isClientContact ? <BriskSelect ariaLabel="Client access level" placeholder="Choose access level" clearable={false} searchable={false}
+          value={person.clientMembershipRole ?? "Client Member"}
+          options={[{ value: "Client Admin", label: "Owner" }, { value: "Client Member", label: "Teammate" }]}
+          onChange={(value) => { if (value) onClientRoleChange(value); }} />
+        : <strong className="label-s-semibold">{person.accessRole ?? "No role"}</strong>}
+      {person.type !== "Team" && !isClientContact ? <span className="label-xs">{projects.length} {projects.length === 1 ? "project" : "projects"}</span> : null}
+    </div></div>
+    {person.type === "Team" ? <p className="paragraph-s">{person.studioPermission === "Studio Owner"
+      ? "Admins manage Studio settings, billing and access."
+      : "Staff can work on all Studio projects and manage project costs. Studio settings, billing and access are for Admins."}</p> : null}
+  </section>;
 }
 
 function AccessSection({ id, invitationStatus, onInvite, onManage, onProjectAccessChange, onRemoveAccess, person }: { id: string; invitationStatus: InvitationStatus; onInvite: () => void; onManage: () => void; onProjectAccessChange: (projectIds: string[]) => void; onRemoveAccess: () => void; person: Person }) {
   const projects = getPersonProjects(person);
   const isClientContact = person.type === "Client contact";
-  return <section id={id} className="person-section-stack"><header className="person-section-header"><div><h2 className="headings-s-bold">Access</h2><p className="paragraph-s">Manage invitations and the projects this Person can access.</p></div><div className="person-section-actions">{invitationStatus !== "Accepted" ? <Button size="M" variant="secondary" tooltip="Send another invitation email." onClick={onInvite}>Resend invite</Button> : null}{person.type !== "Team" ? <Button size="M" tooltip="Choose which projects they can open." onClick={onManage}><span className="people-button-content"><DsIcon name="plus" size={16} /> Manage access</span></Button> : null}{isClientContact ? <Button size="S" variant="danger" className="client-danger-button" type="button" data-tooltip="Stop access to the Client portal and projects." aria-description="Stop access to the Client portal and projects." onClick={onRemoveAccess}>Remove portal access</Button> : null}</div></header>{isClientContact || person.type === "Freelancer" ? <ClientAccessProjectList person={person} projects={projects} onRemoveProject={(projectId) => onProjectAccessChange(person.projectAccessIds.filter((id) => id !== projectId))} /> : <p className="paragraph-s">Studio role and billing access are shown on the Overview tab.</p>}</section>;
+  return <section id={id} className="person-section-stack"><header className="person-section-header"><div><h2 className="headings-s-bold">Access</h2><p className="paragraph-s">Manage invitations and the projects this Person can access.</p></div><div className="person-section-actions">{invitationStatus !== "Accepted" ? <Button size="M" variant="secondary" tooltip="Send another invitation email." onClick={onInvite}>Resend invite</Button> : null}{person.type !== "Team" ? <Button size="M" tooltip="Choose which projects they can open." onClick={onManage}><span className="people-button-content"><DsIcon name="plus" size={16} /> Manage access</span></Button> : null}{isClientContact ? <Button size="S" variant="danger" className="client-danger-button" type="button" data-tooltip="Stop access to the Client portal and projects." aria-description="Stop access to the Client portal and projects." onClick={onRemoveAccess}>Remove portal access</Button> : null}</div></header>{isClientContact || person.type === "Freelancer" ? <ClientAccessProjectList person={person} projects={projects} onRemoveProject={(projectId) => onProjectAccessChange(person.projectAccessIds.filter((id) => id !== projectId))} /> : <p className="paragraph-s">Studio access level is shown on the Overview tab.</p>}</section>;
 }
 
 function ClientAccessProjectList({ onRemoveProject, person, projects }: { onRemoveProject?: (projectId: string) => void; person: Person; projects: ReturnType<typeof getPersonProjects> }) {
@@ -469,7 +484,7 @@ function AssignPersonDialog({ onAssign, onClose, person }: { onAssign: (projectI
 function PersonProfilePermissionState({ role }: { role: "Studio Staff" | "Studio Freelancer" | "Customer" }) {
   const isCustomer = role === "Customer";
   const isTeamMember = role === "Studio Staff";
-  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "This Studio profile is private" : isTeamMember ? "This profile is restricted" : "This profile is outside your invited projects"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see permitted collaborators in their Client portal, but cannot browse Studio profiles, rates or internal notes." : isTeamMember ? "Only Studio Owners can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only people needed for projects they can access. Ask the Studio producer if you need this profile."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to To Do" : "Back to invited projects"}</Link></main>;
+  return <main className="people-permission-state"><span><DsIcon name="lock" size={28} /></span><h1 className="headings-s-bold">{isCustomer ? "This Studio profile is private" : isTeamMember ? "This profile is restricted" : "This profile is outside your invited projects"}</h1><p className="paragraph-s">{isCustomer ? "Customers can see permitted collaborators in their Client portal, but cannot browse Studio profiles, rates or internal notes." : isTeamMember ? "Only Studio Admins can browse personal details, access, capacity and internal notes." : "Studio Freelancers can see only people needed for projects they can access. Ask the Studio producer if you need this profile."}</p><Link className="client-secondary-button label-s-semibold" href={isCustomer ? "/customer-dashboard" : isTeamMember ? "/today" : "/active-videos"}>{isCustomer ? "Open Client portal" : isTeamMember ? "Back to To Do" : "Back to invited projects"}</Link></main>;
 }
 
 function getPersonProjects(person: Person) {
@@ -487,6 +502,8 @@ function getInvitePrefill(person: Person) {
   ])];
   return {
     role: person.accessRole ?? undefined,
+    studioPermission: person.studioPermission ?? undefined,
+    clientMembershipRole: person.clientMembershipRole ?? undefined,
     email: person.email,
     name: person.name,
     jobTitle: person.jobTitles[0],

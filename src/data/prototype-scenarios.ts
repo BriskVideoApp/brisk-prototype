@@ -43,7 +43,7 @@ export const prototypeScenarioPersonas = [
   { id: "studio-owner", label: "Studio Owner / Admin", accessRole: "Studio Staff" },
   { id: "producer", label: "Studio Staff / Producer", accessRole: "Studio Staff" },
   { id: "freelancer", label: "Studio Freelancer", accessRole: "Studio Freelancer" },
-  { id: "client", label: "Client", accessRole: "Customer" },
+  { id: "client", label: "Client Owner", accessRole: "Customer" },
 ] as const satisfies readonly {
   id: PrototypeScenarioPersonaId;
   label: string;
@@ -267,7 +267,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "client-new",
     personaId: "client",
-    personaLabel: "Client",
+    personaLabel: "Client Owner",
     state: "new",
     stateLabel: "New",
     accessRole: "Customer",
@@ -286,7 +286,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "client-active",
     personaId: "client",
-    personaLabel: "Client",
+    personaLabel: "Client Owner",
     state: "active",
     stateLabel: "Active",
     accessRole: "Customer",
@@ -301,7 +301,7 @@ export const prototypeScenarios: readonly PrototypeScenario[] = [
   {
     id: "client-edge",
     personaId: "client",
-    personaLabel: "Client",
+    personaLabel: "Client Owner",
     state: "edge",
     stateLabel: "Edge Case",
     accessRole: "Customer",

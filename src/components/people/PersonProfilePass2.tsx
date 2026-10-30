@@ -61,8 +61,8 @@ const rateTypeOptions: ReadonlyArray<{ value: NonNullable<Person["commercial"]>[
 ];
 
 const studioPermissionOptions: ReadonlyArray<{ value: StudioPermission; label: string }> = [
-  { value: "Team Member", label: "Team Member" },
-  { value: "Studio Owner", label: "Studio Owner" },
+  { value: "Team Member", label: "Staff" },
+  { value: "Studio Owner", label: "Admin" },
 ];
 
 type PersonTimeEntry = {

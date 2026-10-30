@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { usePrototypeRole, type PrototypeRole } from "@/components/navigation/PrototypeRoleContext";
 import { usePrototypeViewer } from "@/components/prototype-state/usePrototypeViewer";
+import { prototypeAccessLevels, prototypeAccessLevelLabels } from "@/data/prototype-permissions";
 import { DsIcon } from "@/components/video-review/DsIcon";
 import type { DsIconName } from "@/components/video-review/DsIcon";
 
@@ -15,7 +16,7 @@ type WorkspaceSidebarProps = {
   className?: string;
 };
 
-const prototypeRoles: PrototypeRole[] = ["Studio Staff", "Studio Freelancer", "Customer"];
+
 const recentPagesStorageKey = "brisk-recent-pages";
 
 type RecentPage = {
@@ -239,21 +240,21 @@ export function WorkspaceSidebar({
 }
 
 export function RoleSwitcher() {
-  const { selectedRole, setSelectedRole } = usePrototypeRole();
+  const { selectedAccessLevel, setSelectedAccessLevel } = usePrototypeRole();
 
   return (
     <section className="workspace-role-control" aria-label="Prototype role">
       <p className="label-xs-semibold">Prototype view</p>
       <div className="workspace-role-options" role="group" aria-label="View pages as role">
-        {prototypeRoles.map((role) => (
+        {prototypeAccessLevels.map((level) => (
           <button
-            className={`label-xs-semibold ${selectedRole === role ? "active" : ""}`}
+            className={`label-xs-semibold ${selectedAccessLevel === level ? "active" : ""}`}
             type="button"
-            key={role}
-            aria-pressed={selectedRole === role}
-            onClick={() => setSelectedRole(role)}
+            key={level}
+            aria-pressed={selectedAccessLevel === level}
+            onClick={() => setSelectedAccessLevel(level)}
           >
-            {role}
+            {prototypeAccessLevelLabels[level]}
           </button>
         ))}
       </div>

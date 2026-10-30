@@ -178,6 +178,7 @@ function StudioHeaderBrand({
   compact?: boolean;
   collapsed?: boolean;
 }) {
+  const { canManageStudio } = usePrototypeRole();
   const initials = studioName.split(/\s+/u).map((part) => part.charAt(0)).slice(0, 2).join("");
   const content = <>
     <span className="app-global-client-studio-logo" aria-label={`${studioName} logo`}>
@@ -189,9 +190,9 @@ function StudioHeaderBrand({
 
   if (selectedRole === "Studio Staff") {
     return (
-      <Link className="app-global-client-studio-brand is-link" href="/settings/studio"
-        aria-label={compact && collapsed ? `${studioName} - Studio settings` : undefined}
-        data-tooltip={compact && collapsed ? "Studio settings" : undefined}>
+      <Link className="app-global-client-studio-brand is-link" href={canManageStudio ? "/settings/studio" : "/active-videos"}
+        aria-label={compact && collapsed ? `${studioName} - ${canManageStudio ? "Studio settings" : "Videos"}` : undefined}
+        data-tooltip={compact && collapsed ? canManageStudio ? "Studio settings" : "Videos" : undefined}>
         {content}
       </Link>
     );

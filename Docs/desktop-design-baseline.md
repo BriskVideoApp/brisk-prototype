@@ -1,6 +1,24 @@
 # Approved desktop design baseline
 
-Current approval register, established on 20 October and updated with the scoped decisions recorded below through 29 October 2026. Use it for future work. It is not blanket screen sign-off, a new design proposal or confirmation that Yura's Figma source has been updated.
+Current approval register, established on 20 October and updated with the scoped decisions recorded below through 30 October 2026. Use it for future work. It is not blanket screen sign-off, a new design proposal or confirmation that Yura's Figma source has been updated.
+
+### Admin/Staff and Owner/Teammate access - 30 October 2026
+
+Source: Tom's explicit request to implement the permission split and the supplied [Brisk User Roles ticket](https://app.notion.com/p/35dabf184ca980abaebee740b3abb5bf), including Deferred to V2. The five Test mode views are Studio Admin, Studio Staff, Studio Freelancer, Client Owner and Client Teammate. Reuse existing controls and layouts; this is front-end mock behaviour only. No production security, services or new granular permission screen is authorised.
+
+| Capability | Studio Admin | Studio Staff | Freelancer | Client Owner | Client Teammate |
+| --- | --- | --- | --- | --- | --- |
+| Studio projects and project costs | All | All | Existing invited-project/commercial scope | Permitted projects; no Studio costs | Same Client project scope |
+| Studio settings, subscription billing, People/access administration | Yes | No | No | No | No |
+| Company details, team access and Client billing | Studio administration stays separate | No | No | Own company; billing still needs Studio setup | No |
+| Existing review/approval and manual release actions | Retained | Retained | Existing assigned-work rules | Existing permitted-project actions | Existing permitted-project actions |
+| Internal comments | Existing Studio access | Existing Studio access | Existing project scope | Never | Never |
+
+Implementation defaults were stated during preflight: Staff retain commercial project work and can invite project collaborators, while adding Studio members and assigning elevated roles require Admin. Owners manage company details, invitations and billing. Both Client levels retain existing permitted-project approval behaviour. The source ticket explicitly leaves Teammate approval and the precise settings split open; these defaults need product review, and must not be presented as final permission policy. Staff project restrictions, named approvers and additional stage access controls remain deferred to V2. Job titles never add permissions.
+
+Implementation: [access-level definitions](../src/data/prototype-permissions.ts), [role context](../src/components/navigation/PrototypeRoleContext.tsx), existing Test mode, People/invitation controls and settings boundaries. Legacy stored membership values remain compatible: Studio Owner = Admin, Team Member = Staff, Client Admin = Owner, Client Member = Teammate. The separate legacy Studio billing flag no longer grants access. Test mode previews a different level for the same fixture identity; it does not replace the shared dataset. Assigned Studio levels use the existing saved Studio membership state. Client roles use the existing Client contact records. The `client-role` query parameter no longer grants access. All pages remains a navigation preview, with administration boundaries enforced.
+
+Verification on 30 October: TypeScript and diff checks passed. Desktop interaction checks covered all five Test mode levels; Admin settings allowed and Staff direct-route settings/People denied; Owner team access and Teammate team/invoice denial, including `client-role=admin`; Studio and Client role changes surviving reload, with fixture values restored; both invitation forms, cancelled without sending; Staff Expenses and the existing Freelancer My jobs scope. Client Script retained its existing review controls (the selected fixture was already approved). Browser network responses confirmed HTTP 200 for Studio settings, Client invoices and Expenses. Shell curl could not reach localhost, so those HTTP checks used the browser. No production build, tests, mobile pass, backend, staging or commit was performed. Evidence: [five access levels and Staff settings boundary](../audits/permissions-2026-10-30/access-levels.png). Tom's visual sign-off and final permission policy remain separate.
 
 ### Ask Brisk first prototype slice - approved 29 October 2026
 

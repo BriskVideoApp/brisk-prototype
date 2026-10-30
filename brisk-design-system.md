@@ -4,7 +4,7 @@ You are designing screens for **Brisk**, a multi-tenant SaaS platform for video 
 
 ## Current authority
 
-Follow `AGENTS.md` for the three prototype access roles, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
+Follow `AGENTS.md` for the five prototype access levels, front-end-only scope and precedence of explicit approved decisions. Preserve this branch's adaptable production flow and current icon mapping. Older Notion exports, five-role examples and archived assets do not override these rules.
 
 Read the [approved desktop design baseline](Docs/desktop-design-baseline.md) before an audit or desktop UI change. It indexes recent approvals, distinguishes DS primitives from app-level compositions, and identifies unresolved patterns. It does not certify every existing consumer or claim that the Figma source is synchronised.
 

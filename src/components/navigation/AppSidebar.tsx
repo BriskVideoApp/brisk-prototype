@@ -13,11 +13,9 @@ import {
   type NavigationItem,
 } from "@/components/navigation/navigationConfig";
 import { usePrototypeRole } from "@/components/navigation/PrototypeRoleContext";
-import { usePeople } from "@/components/people/PeopleDataContext";
 import { DsIcon, type DsIconName } from "@/components/video-review/DsIcon";
 import { chatClients, chatProjects } from "@/data/chat";
 import { createChatProjectForRecord, getChatUsers, getScopedChatClient, getScopedChatProject } from "@/data/chat-access";
-import { hasStudioAdministrationAccess, prototypeStudioPersonId } from "@/data/people";
 import { usePrototypeScenario } from "@/components/prototype-scenarios/PrototypeScenarioContext";
 import { usePrototypeState } from "@/components/prototype-state/PrototypeStateContext";
 import {
@@ -51,14 +49,11 @@ export function AppSidebar({
   const searchParams = useSearchParams();
   const currentSearch = searchParams.toString();
   const currentItem = getNavigationItem(pathname, currentSearch);
-  const { selectedRole, allPages } = usePrototypeRole();
+  const { selectedRole, allPages, canManageStudio: canManageStudioSettings } = usePrototypeRole();
   const { activeScenario } = usePrototypeScenario();
   const { state } = usePrototypeState();
   const chatUsers = getChatUsers(state);
   const clientPortalDestination = getClientPortalDestination(state);
-  const { people } = usePeople();
-  const currentStudioMember = people.find((person) => person.id === prototypeStudioPersonId) ?? null;
-  const canManageStudioSettings = hasStudioAdministrationAccess(currentStudioMember);
   const contextualProjectId = getContextualProjectId(pathname, searchParams.get("project"));
   const hideLegacyCurrentVideo = shouldHideLegacyCurrentVideo(
     pathname,
@@ -70,7 +65,7 @@ export function AppSidebar({
     .filter((group) => group.id !== "studio-settings" || allPages || canManageStudioSettings)
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => allPages || canManageStudioSettings || !["people", "outstanding-invoices"].includes(item.id)),
+      items: group.items.filter((item) => allPages || canManageStudioSettings || item.id !== "people"),
     }))
     .filter((group) => group.items.length > 0);
   const [isCollapsed, setIsCollapsed] = useState(false);
